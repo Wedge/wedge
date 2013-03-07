@@ -139,7 +139,7 @@ function template_modify_category()
 						<dfn>', $txt['name_on_display'], '</dfn>
 					</dt>
 					<dd>
-						<input type="text" name="cat_name" value="', $context['category']['editable_name'], '" size="30" tabindex="', $context['tabindex']++, '">
+						<input name="cat_name" value="', $context['category']['editable_name'], '" size="30" tabindex="', $context['tabindex']++, '">
 					</dd>
 					<dt>
 						<strong>' . $txt['collapse_enable'] . '</strong>
@@ -305,7 +305,7 @@ function template_modify_board()
 						<dfn>', $txt['name_on_display'], '</dfn>
 					</dt>
 					<dd>
-						<input type="text" name="board_name" value="', $context['board']['name'], '" size="30">
+						<input name="board_name" value="', $context['board']['name'], '" size="30">
 					</dd>';
 
 	if (!empty($settings['pretty_filters']['boards']))
@@ -328,7 +328,7 @@ function template_modify_board()
 							<option value="' . $subdo . '"' . (isset($m[1], $m[2]) && ($m[1] . '.' . $m[2] == $subdo || $m[2] == $subdo) ? ' selected' : '') . '>' . $subdo . '</option>' : '';
 
 		echo '
-						</select>/<input type="text" maxlength="32" name="pretty_url" value="' . (!empty($m[3]) ? $m[3] : '') . '" size="25">
+						</select>/<input maxlength="32" name="pretty_url" value="' . (!empty($m[3]) ? $m[3] : '') . '" size="25">
 					</dd>';
 	}
 
@@ -481,7 +481,7 @@ function template_modify_board()
 						<dfn>', $txt['mboards_moderators_desc'], '</dfn>
 					</dt>
 					<dd>
-						<input type="text" name="moderators" id="moderators" value="', $context['board']['moderator_list'], '" size="30">
+						<input name="moderators" id="moderators" value="', $context['board']['moderator_list'], '" size="30">
 					</dd>
 				</dl>
 				<hr>';
@@ -520,7 +520,7 @@ function template_modify_board()
 							<dfn>', $txt['mboards_redirect_url_desc'], '</dfn>
 						</dt>
 						<dd>
-							<input type="text" name="redirect_address" value="', $context['board']['redirect'], '" size="40">
+							<input name="redirect_address" value="', $context['board']['redirect'], '" size="40">
 						</dd>
 						<dt>
 							<strong>', $txt['mboards_redirect_newtab'], ':</strong>

@@ -37,7 +37,7 @@ function template_search_members()
 								</select>
 							</dt>
 							<dd>
-								<input type="text" name="mem_id" size="6">
+								<input name="mem_id" size="6">
 							</dd>
 							<dt class="right">
 								<strong>', $txt['age'], ':</strong>
@@ -50,7 +50,7 @@ function template_search_members()
 								</select>
 							</dt>
 							<dd>
-								<input type="text" name="age" size="6">
+								<input name="age" size="6">
 							</dd>
 							<dt class="right">
 								<strong>', $txt['member_postcount'], ':</strong>
@@ -63,7 +63,7 @@ function template_search_members()
 								</select>
 							</dt>
 							<dd>
-								<input type="text" name="posts" size="6">
+								<input name="posts" size="6">
 							</dd>
 							<dt class="right">
 								<strong>', $txt['date_registered'], ':</strong>
@@ -76,7 +76,7 @@ function template_search_members()
 								</select>
 							</dt>
 							<dd>
-								<input type="text" name="reg_date" size="10"> <span class="smalltext">', $txt['date_format'], '</span>
+								<input name="reg_date" size="10"> <span class="smalltext">', $txt['date_format'], '</span>
 							</dd>
 							<dt class="right">
 								<strong>', $txt['viewmembers_online'], ':</strong>
@@ -89,7 +89,7 @@ function template_search_members()
 								</select>
 							</dt>
 							<dd>
-								<input type="text" name="last_online" size="10"> <span class="smalltext">', $txt['date_format'], '</span>
+								<input name="last_online" size="10"> <span class="smalltext">', $txt['date_format'], '</span>
 							</dd>
 						</dl>
 					</div>
@@ -99,7 +99,7 @@ function template_search_members()
 								<strong>', $txt['username'], ':</strong>
 							</dt>
 							<dd>
-								<input type="text" name="membername">
+								<input name="membername">
 							</dd>
 							<dt class="right">
 								<strong>', $txt['email_address'], ':</strong>
@@ -111,19 +111,19 @@ function template_search_members()
 								<strong>', $txt['website'], ':</strong>
 							</dt>
 							<dd>
-								<input type="text" name="website">
+								<input name="website">
 							</dd>
 							<dt class="right">
 								<strong>', $txt['location'], ':</strong>
 							</dt>
 							<dd>
-								<input type="text" name="location">
+								<input name="location">
 							</dd>
 							<dt class="right">
 								<strong>', $txt['ip_address'], ':</strong>
 							</dt>
 							<dd>
-								<input type="text" name="ip"', allowedTo('manage_bans') ? '' : ' disabled', '>
+								<input name="ip"', allowedTo('manage_bans') ? '' : ' disabled', '>
 							</dd>
 						</dl>
 					</div>
@@ -270,7 +270,7 @@ function template_admin_browse()
 						', $txt['admin_browse_outstanding_days_1'], ':
 					</dt>
 					<dd>
-						<input type="text" name="time_passed" value="14" maxlength="4" size="3"> ', $txt['admin_browse_outstanding_days_2'], '.
+						<input name="time_passed" value="14" maxlength="4" size="3"> ', $txt['admin_browse_outstanding_days_2'], '.
 					</dd>
 					<dt>
 						', $txt['admin_browse_outstanding_perform'], ':

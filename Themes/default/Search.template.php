@@ -59,7 +59,7 @@ function template_main()
 			<fieldset id="advanced_search">
 				<dl id="search_options">
 					<dt>', $txt['by_user'], ':</dt>
-					<dd><input id="userspec" type="text" name="userspec" value="', empty($context['search_params']['userspec']) ? '*' : $context['search_params']['userspec'], '" size="40"></dd>
+					<dd><input id="userspec" name="userspec" value="', empty($context['search_params']['userspec']) ? '*' : $context['search_params']['userspec'], '" size="40"></dd>
 					<dt>', $txt['search_order'], ':</dt>
 					<dd>
 						<select id="sort" name="sort">
@@ -198,7 +198,7 @@ function template_search_ajax()
 			<div id="advanced_search">
 				<dl>
 					<dt>', $txt['by_user'], ':</dt>
-					<dd><input id="userspec" type="text" name="userspec" value="', empty($context['search_params']['userspec']) ? '*' : $context['search_params']['userspec'], '" size="30"></dd>
+					<dd><input id="userspec" name="userspec" value="', empty($context['search_params']['userspec']) ? '*' : $context['search_params']['userspec'], '" size="30"></dd>
 					<dt>', $txt['search_order'], ':</dt>
 					<dd>
 						<select id="sort" name="sort">

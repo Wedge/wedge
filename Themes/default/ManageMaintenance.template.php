@@ -161,7 +161,7 @@ function template_maintain_members()
 						<label for="to"><strong>', $txt['reattribute_current_member'], ':</strong></label>
 					</dt>
 					<dd>
-						<input type="text" name="to" id="to" value="">
+						<input name="to" id="to" value="">
 					</dd>
 				</dl>
 				<p class="maintain_members">
@@ -181,7 +181,7 @@ function template_maintain_members()
 				<select name="del_type">
 					<option value="activated" selected>', $txt['maintain_members_activated'], '</option>
 					<option value="logged">', $txt['maintain_members_logged_in'], '</option>
-				</select> ', $txt['maintain_members_since2'], ' <input type="text" name="maxdays" value="30" size="3">', $txt['maintain_members_since3'], '</p>';
+				</select> ', $txt['maintain_members_since2'], ' <input name="maxdays" value="30" size="3">', $txt['maintain_members_since3'], '</p>';
 
 	echo '
 				<p><a href="#membersLink" onclick="swapMembers(); return false;"><div class="foldable" title="+" id="membersIcon"></div></a> <a href="#membersLink" onclick="swapMembers(); return false;" id="membersText" style="font-weight: bold">', $txt['maintain_members_all'], '</a></p>

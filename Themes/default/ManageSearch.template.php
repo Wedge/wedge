@@ -27,7 +27,7 @@ function template_modify_weights()
 						', $txt['search_weight_frequency'], ':
 					</dt>
 					<dd class="large_caption">
-						<span class="search_weight"><input type="text" name="search_weight_frequency" id="weight1_val" value="', empty($settings['search_weight_frequency']) ? '0' : $settings['search_weight_frequency'], '" onchange="calculateNewValues()" size="3"></span>
+						<span class="search_weight"><input name="search_weight_frequency" id="weight1_val" value="', empty($settings['search_weight_frequency']) ? '0' : $settings['search_weight_frequency'], '" onchange="calculateNewValues()" size="3"></span>
 						<span id="weight1" class="search_weight">', $context['relative_weights']['search_weight_frequency'], '%</span>
 					</dd>
 					<dt class="large_caption">
@@ -35,7 +35,7 @@ function template_modify_weights()
 						', $txt['search_weight_age'], ':
 					</dt>
 					<dd class="large_caption">
-						<span class="search_weight"><input type="text" name="search_weight_age" id="weight2_val" value="', empty($settings['search_weight_age']) ? '0' : $settings['search_weight_age'], '" onchange="calculateNewValues()" size="3"></span>
+						<span class="search_weight"><input name="search_weight_age" id="weight2_val" value="', empty($settings['search_weight_age']) ? '0' : $settings['search_weight_age'], '" onchange="calculateNewValues()" size="3"></span>
 						<span id="weight2" class="search_weight">', $context['relative_weights']['search_weight_age'], '%</span>
 					</dd>
 					<dt class="large_caption">
@@ -43,7 +43,7 @@ function template_modify_weights()
 						', $txt['search_weight_length'], ':
 					</dt>
 					<dd class="large_caption">
-						<span class="search_weight"><input type="text" name="search_weight_length" id="weight3_val" value="', empty($settings['search_weight_length']) ? '0' : $settings['search_weight_length'], '" onchange="calculateNewValues()" size="3"></span>
+						<span class="search_weight"><input name="search_weight_length" id="weight3_val" value="', empty($settings['search_weight_length']) ? '0' : $settings['search_weight_length'], '" onchange="calculateNewValues()" size="3"></span>
 						<span id="weight3" class="search_weight">', $context['relative_weights']['search_weight_length'], '%</span>
 					</dd>
 					<dt class="large_caption">
@@ -51,7 +51,7 @@ function template_modify_weights()
 						', $txt['search_weight_subject'], ':
 					</dt>
 					<dd class="large_caption">
-						<span class="search_weight"><input type="text" name="search_weight_subject" id="weight4_val" value="', empty($settings['search_weight_subject']) ? '0' : $settings['search_weight_subject'], '" onchange="calculateNewValues()" size="3"></span>
+						<span class="search_weight"><input name="search_weight_subject" id="weight4_val" value="', empty($settings['search_weight_subject']) ? '0' : $settings['search_weight_subject'], '" onchange="calculateNewValues()" size="3"></span>
 						<span id="weight4" class="search_weight">', $context['relative_weights']['search_weight_subject'], '%</span>
 					</dd>
 					<dt class="large_caption">
@@ -59,7 +59,7 @@ function template_modify_weights()
 						', $txt['search_weight_first_message'], ':
 					</dt>
 					<dd class="large_caption">
-						<span class="search_weight"><input type="text" name="search_weight_first_message" id="weight5_val" value="', empty($settings['search_weight_first_message']) ? '0' : $settings['search_weight_first_message'], '" onchange="calculateNewValues()" size="3"></span>
+						<span class="search_weight"><input name="search_weight_first_message" id="weight5_val" value="', empty($settings['search_weight_first_message']) ? '0' : $settings['search_weight_first_message'], '" onchange="calculateNewValues()" size="3"></span>
 						<span id="weight5" class="search_weight">', $context['relative_weights']['search_weight_first_message'], '%</span>
 					</dd>
 					<dt class="large_caption">
@@ -67,7 +67,7 @@ function template_modify_weights()
 						', $txt['search_weight_pinned'], ':
 					</dt>
 					<dd class="large_caption">
-						<span class="search_weight"><input type="text" name="search_weight_pinned" id="weight6_val" value="', empty($settings['search_weight_pinned']) ? '0' : $settings['search_weight_pinned'], '" onchange="calculateNewValues()" size="3"></span>
+						<span class="search_weight"><input name="search_weight_pinned" id="weight6_val" value="', empty($settings['search_weight_pinned']) ? '0' : $settings['search_weight_pinned'], '" onchange="calculateNewValues()" size="3"></span>
 						<span id="weight6" class="search_weight">', $context['relative_weights']['search_weight_pinned'], '%</span>
 					</dd>
 					<dt class="large_caption">
@@ -301,14 +301,14 @@ function template_spider_edit()
 						<dfn>', $txt['spider_name_desc'], '</dfn>
 					</dt>
 					<dd>
-						<input type="text" name="spider_name" value="', $context['spider']['name'], '">
+						<input name="spider_name" value="', $context['spider']['name'], '">
 					</dd>
 					<dt>
 						<strong>', $txt['spider_agent'], ':</strong>
 						<dfn>', $txt['spider_agent_desc'], '</dfn>
 					</dt>
 					<dd>
-						<input type="text" name="spider_agent" value="', $context['spider']['agent'], '">
+						<input name="spider_agent" value="', $context['spider']['agent'], '">
 					</dd>
 					<dt>
 						<strong>', $txt['spider_ip_info'], ':</strong>
@@ -341,7 +341,7 @@ function template_show_spider_log()
 			<div class="windowbg wrc">
 				<p>
 					', $txt['spider_log_delete_older'], '
-					<input type="text" name="older" id="older" value="7" size="3">
+					<input name="older" id="older" value="7" size="3">
 					', $txt['spider_log_delete_day'], '
 				</p>
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
@@ -366,7 +366,7 @@ function template_show_spider_stats()
 			<div class="windowbg wrc">
 				<p>
 					', $txt['spider_log_delete_older'], '
-					<input type="text" name="older" id="older" value="7" size="3">
+					<input name="older" id="older" value="7" size="3">
 					', $txt['spider_log_delete_day'], '
 				</p>
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">

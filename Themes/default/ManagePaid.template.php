@@ -56,7 +56,7 @@ function template_modify_subscription()
 						', $txt['paid_mod_name'], ':
 					</dt>
 					<dd>
-						<input type="text" name="name" value="', $context['sub']['name'], '" size="30">
+						<input name="name" value="', $context['sub']['name'], '" size="30">
 					</dd>
 					<dt>
 						', $txt['paid_mod_desc'], ':
@@ -114,7 +114,7 @@ function template_modify_subscription()
 						<dfn>', $txt['paid_mod_reminder_desc'], '</dfn>
 					</dt>
 					<dd>
-						<input type="text" name="reminder" value="', $context['sub']['reminder'], '" size="6">
+						<input name="reminder" value="', $context['sub']['reminder'], '" size="6">
 					</dd>
 					<dt>
 						', $txt['paid_mod_email'], ':
@@ -156,13 +156,13 @@ function template_modify_subscription()
 								', $txt['paid_cost'], ' (', str_replace('%1.2f', '', $settings['paid_currency_symbol']), '):
 							</dt>
 							<dd>
-								<input type="text" name="fixed_cost" value="', empty($context['sub']['cost']['fixed']) || empty($context['sub']['duration']) || $context['sub']['duration'] != 'fixed' ? '0' : $context['sub']['cost']['fixed'], '" size="4">
+								<input name="fixed_cost" value="', empty($context['sub']['cost']['fixed']) || empty($context['sub']['duration']) || $context['sub']['duration'] != 'fixed' ? '0' : $context['sub']['cost']['fixed'], '" size="4">
 							</dd>
 							<dt>
 								', $txt['paid_mod_span'], ':
 							</dt>
 							<dd>
-								<input type="text" name="span_value" value="', $context['sub']['span']['value'], '" size="4">
+								<input name="span_value" value="', $context['sub']['span']['value'], '" size="4">
 								<select name="span_unit">
 									<option value="D"', $context['sub']['span']['unit'] == 'D' ? ' selected' : '', '>', $txt['paid_mod_span_days'], '</option>
 									<option value="W"', $context['sub']['span']['unit'] == 'W' ? ' selected' : '', '>', $txt['paid_mod_span_weeks'], '</option>
@@ -208,25 +208,25 @@ function template_modify_subscription()
 								', $txt['paid_per_day'], ':
 							</dt>
 							<dd>
-								<input type="text" name="cost_day" value="', empty($context['sub']['cost']['day']) ? '0' : $context['sub']['cost']['day'], '" size="5">
+								<input name="cost_day" value="', empty($context['sub']['cost']['day']) ? '0' : $context['sub']['cost']['day'], '" size="5">
 							</dd>
 							<dt>
 								', $txt['paid_per_week'], ':
 							</dt>
 							<dd>
-								<input type="text" name="cost_week" value="', empty($context['sub']['cost']['week']) ? '0' : $context['sub']['cost']['week'], '" size="5">
+								<input name="cost_week" value="', empty($context['sub']['cost']['week']) ? '0' : $context['sub']['cost']['week'], '" size="5">
 							</dd>
 							<dt>
 								', $txt['paid_per_month'], ':
 							</dt>
 							<dd>
-								<input type="text" name="cost_month" value="', empty($context['sub']['cost']['month']) ? '0' : $context['sub']['cost']['month'], '" size="5">
+								<input name="cost_month" value="', empty($context['sub']['cost']['month']) ? '0' : $context['sub']['cost']['month'], '" size="5">
 							</dd>
 							<dt>
 								', $txt['paid_per_year'], ':
 							</dt>
 							<dd>
-								<input type="text" name="cost_year" value="', empty($context['sub']['cost']['year']) ? '0' : $context['sub']['cost']['year'], '" size="5">
+								<input name="cost_year" value="', empty($context['sub']['cost']['year']) ? '0' : $context['sub']['cost']['year'], '" size="5">
 							</dd>
 						</dl>
 					</fieldset>
@@ -241,7 +241,7 @@ function template_modify_subscription()
 								', $txt['paid_cost'], ' (', str_replace('%1.2f', '', $settings['paid_currency_symbol']), '):
 							</dt>
 							<dd>
-								<input type="text" name="life_cost" value="', empty($context['sub']['cost']['fixed']) || empty($context['sub']['duration']) || $context['sub']['duration'] != 'lifetime' ? '0' : $context['sub']['cost']['fixed'], '" size="4">
+								<input name="life_cost" value="', empty($context['sub']['cost']['fixed']) || empty($context['sub']['duration']) || $context['sub']['duration'] != 'lifetime' ? '0' : $context['sub']['cost']['fixed'], '" size="4">
 							</dd>
 						</dl>
 					</fieldset>
@@ -318,7 +318,7 @@ function template_modify_user_subscription()
 						<dfn>', $txt['one_username'], '</dfn>
 					</dt>
 					<dd>
-						<input type="text" name="name" id="name_control" value="', $context['sub']['username'], '" size="30">
+						<input name="name" id="name_control" value="', $context['sub']['username'], '" size="30">
 					</dd>';
 
 	echo '
@@ -367,8 +367,8 @@ function template_modify_user_subscription()
 
 		echo '
 					</select>
-					', $txt['hour'], ': <input type="text" name="hour" value="', $context['sub']['start']['hour'], '" size="2">
-					', $txt['minute'], ': <input type="text" name="minute" value="', $context['sub']['start']['min'], '" size="2">
+					', $txt['hour'], ': <input name="hour" value="', $context['sub']['start']['hour'], '" size="2">
+					', $txt['minute'], ': <input name="minute" value="', $context['sub']['start']['min'], '" size="2">
 				</fieldset>
 				<fieldset>
 					<legend>', $txt['end_date_and_time'], '</legend>
@@ -401,8 +401,8 @@ function template_modify_user_subscription()
 
 		echo '
 					</select>
-					', $txt['hour'], ': <input type="text" name="hourend" value="', $context['sub']['end']['hour'], '" size="2">
-					', $txt['minute'], ': <input type="text" name="minuteend" value="', $context['sub']['end']['min'], '" size="2">
+					', $txt['hour'], ': <input name="hourend" value="', $context['sub']['end']['hour'], '" size="2">
+					', $txt['minute'], ': <input name="minuteend" value="', $context['sub']['end']['min'], '" size="2">
 				</fieldset>';
 	}
 

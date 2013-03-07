@@ -126,7 +126,7 @@ function template_main()
 						<label for="theme_dir">', $txt['theme_install_dir'], '</label>:
 					</dt>
 					<dd>
-						<input type="text" name="theme_dir" id="theme_dir" value="', $context['new_theme_dir'], '" size="40" style="width: 70%">
+						<input name="theme_dir" id="theme_dir" value="', $context['new_theme_dir'], '" size="40" style="width: 70%">
 					</dd>';
 
 	if ($context['can_create_new'])
@@ -135,7 +135,7 @@ function template_main()
 						<label for="copy">', $txt['theme_install_new'], ':</label>
 					</dt>
 					<dd>
-						<input type="text" name="copy" id="copy" value="', $context['new_theme_name'], '" size="40">
+						<input name="copy" id="copy" value="', $context['new_theme_name'], '" size="40">
 					</dd>';
 
 	echo '
@@ -242,13 +242,13 @@ function template_list_themes()
 						<label for="reset_dir">', $txt['themeadmin_list_reset_dir'], '</label>:
 					</dt>
 					<dd>
-						<input type="text" name="reset_dir" id="reset_dir" value="', $context['reset_dir'], '" size="40" style="width: 80%">
+						<input name="reset_dir" id="reset_dir" value="', $context['reset_dir'], '" size="40" style="width: 80%">
 					</dd>
 					<dt>
 						<label for="reset_url">', $txt['themeadmin_list_reset_url'], '</label>:
 					</dt>
 					<dd>
-						<input type="text" name="reset_url" id="reset_url" value="', $context['reset_url'], '" size="40" style="width: 80%">
+						<input name="reset_url" id="reset_url" value="', $context['reset_url'], '" size="40" style="width: 80%">
 					</dd>
 				</dl>
 				<input type="submit" name="save" value="', $txt['themeadmin_list_reset_go'], '" class="submit">
@@ -297,25 +297,25 @@ function template_set_settings()
 						<label for="theme_name">', $txt['actual_theme_name'], '</label>
 					</dt>
 					<dd>
-						<input type="text" id="theme_name" name="options[name]" value="', $context['theme_settings']['name'], '" size="32">
+						<input id="theme_name" name="options[name]" value="', $context['theme_settings']['name'], '" size="32">
 					</dd>
 					<dt>
 						<label for="theme_url">', $txt['actual_theme_url'], '</label>
 					</dt>
 					<dd>
-						<input type="text" id="theme_url" name="options[theme_url]" value="', $context['theme_settings']['actual_theme_url'], '" size="50" style="max-width: 100%; width: 50ex">
+						<input id="theme_url" name="options[theme_url]" value="', $context['theme_settings']['actual_theme_url'], '" size="50" style="max-width: 100%; width: 50ex">
 					</dd>
 					<dt>
 						<label for="images_url">', $txt['actual_images_url'], '</label>
 					</dt>
 					<dd>
-						<input type="text" id="images_url" name="options[images_url]" value="', $context['theme_settings']['actual_images_url'], '" size="50" style="max-width: 100%; width: 50ex">
+						<input id="images_url" name="options[images_url]" value="', $context['theme_settings']['actual_images_url'], '" size="50" style="max-width: 100%; width: 50ex">
 					</dd>
 					<dt>
 						<label for="theme_dir">', $txt['actual_theme_dir'], '</label>
 					</dt>
 					<dd>
-						<input type="text" id="theme_dir" name="options[theme_dir]" value="', $context['theme_settings']['actual_theme_dir'], '" size="50" style="max-width: 100%; width: 50ex">
+						<input id="theme_dir" name="options[theme_dir]" value="', $context['theme_settings']['actual_theme_dir'], '" size="50" style="max-width: 100%; width: 50ex">
 					</dd>
 				</dl>
 			</div>
@@ -393,7 +393,7 @@ function template_set_settings()
 			echo '
 					</dt>
 					<dd>
-						<input type="text" name="', !empty($setting['default']) ? 'default_' : '', 'options[', $setting['id'], ']" id="', $setting['id'], '" value="', $setting['value'], '" size="', $setting['type'] == 'number' ? '5' : (empty($setting['size']) ? '40' : $setting['size']), '">
+						<input name="', !empty($setting['default']) ? 'default_' : '', 'options[', $setting['id'], ']" id="', $setting['id'], '" value="', $setting['value'], '" size="', $setting['type'] == 'number' ? '5' : (empty($setting['size']) ? '40' : $setting['size']), '">
 					</dd>';
 		}
 	}

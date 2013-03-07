@@ -19,7 +19,7 @@ function template_profile_top()
 	// Prevent Chrome from auto completing fields when viewing/editing other members' profiles
 	if (we::is('chrome') && !we::$user['is_owner'])
 		add_js('
-	$(\'input[type="text"], input[type="password"]\').attr("autocomplete", "off");');
+	$(\'input:not([type]), input[type="password"]\').attr("autocomplete", "off");'); //
 
 	// If an error occurred while trying to save previously, give the user a clue!
 	if (!empty($context['post_error']))
@@ -1174,7 +1174,7 @@ function template_edit_options()
 			// Maybe it's a text box - very likely!
 			elseif (in_array($field['type'], array('int', 'float', 'text', 'password', 'url', 'email')))
 				echo '
-						<input type="', $field['type'] == 'int' || $field['type'] == 'float' ? 'text' : $field['type'], '" name="', $key, '" id="', $key, '" size="', empty($field['size']) ? 30 : $field['size'], '" value="', $field['value'], '"', $field['input_attr'], '>';
+						<input', $field['type'] == 'text' || $field['type'] == 'int' || $field['type'] == 'float' ? '' : ' type="' . $field['type'] . '"', ' name="', $key, '" id="', $key, '" size="', empty($field['size']) ? 30 : $field['size'], '" value="', $field['value'], '"', $field['input_attr'], '>';
 
 			// You "checking" me out? ;)
 			elseif ($field['type'] == 'check')

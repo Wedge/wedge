@@ -25,7 +25,7 @@ function template_ask()
 			<div class="windowbg wrc">
 				<p class="split_topics">
 					<label><strong>', $txt['subject_new_topic'], ':</strong>
-					<input type="text" name="subname" id="subname" value="', $context['message']['subject'], '" size="25"></label>
+					<input name="subname" id="subname" value="', $context['message']['subject'], '" size="25"></label>
 				</p>
 				<ul class="reset split_topics">
 					<li>

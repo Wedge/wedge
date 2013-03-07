@@ -93,7 +93,7 @@ function template_registration_form()
 					<dl class="register_form">
 						<dt><strong><label for="we_autov_username">', $txt['username'], ':</label></strong></dt>
 						<dd>
-							<input type="text" name="user" id="we_autov_username" size="30" tabindex="', $context['tabindex']++, '" maxlength="25" value="', isset($context['username']) ? $context['username'] : '', '" required>
+							<input name="user" id="we_autov_username" size="30" tabindex="', $context['tabindex']++, '" maxlength="25" value="', isset($context['username']) ? $context['username'] : '', '" required>
 							<span id="we_autov_username_div" class="hide">
 								<a id="we_autov_username_link" href="#">
 									<img id="we_autov_username_img" src="', $theme['images_url'], '/icons/field_check.gif">
@@ -414,7 +414,7 @@ function template_admin_register()
 							<dfn>', $txt['admin_register_username_desc'], '</dfn>
 						</dt>
 						<dd>
-							<input type="text" name="user" id="user_input" tabindex="', $context['tabindex']++, '" size="30" maxlength="25" required>
+							<input name="user" id="user_input" tabindex="', $context['tabindex']++, '" size="30" maxlength="25" required>
 						</dd>
 						<dt>
 							<strong><label for="email_input">', $txt['admin_register_email'], ':</label></strong>

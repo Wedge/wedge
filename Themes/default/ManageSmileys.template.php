@@ -63,7 +63,7 @@ function template_modifyset()
 						<strong><label for="smiley_sets_name">', $txt['smiley_sets_name'], '</label>: </strong>
 					</dt>
 					<dd>
-						<input type="text" name="smiley_sets_name" id="smiley_sets_name" value="', $context['current_set']['name'], '">
+						<input name="smiley_sets_name" id="smiley_sets_name" value="', $context['current_set']['name'], '">
 					</dd>
 					<dt>
 						<strong><label for="smiley_sets_path">', $txt['smiley_sets_url'], '</label>: </strong>
@@ -76,7 +76,7 @@ function template_modifyset()
 
 		elseif (empty($context['smiley_set_dirs']))
 			echo '
-						<input type="text" name="smiley_sets_path" id="smiley_sets_path" value="', $context['current_set']['path'], '"> ';
+						<input name="smiley_sets_path" id="smiley_sets_path" value="', $context['current_set']['path'], '"> ';
 
 		else
 		{
@@ -149,7 +149,7 @@ function template_modifysmiley()
 						<strong><label for="smiley_code">', $txt['smileys_code'], '</label>: </strong>
 					</dt>
 					<dd>
-						<input type="text" name="smiley_code" id="smiley_code" value="', $context['current_smiley']['code'], '">
+						<input name="smiley_code" id="smiley_code" value="', $context['current_smiley']['code'], '">
 					</dd>
 					<dt>
 						<strong><label for="smiley_filename">', $txt['smileys_filename'], '</label>: </strong>
@@ -158,7 +158,7 @@ function template_modifysmiley()
 
 	if (empty($context['filenames']))
 		echo '
-						<input type="text" name="smiley_filename" id="smiley_filename" value="', $context['current_smiley']['filename'], '">';
+						<input name="smiley_filename" id="smiley_filename" value="', $context['current_smiley']['filename'], '">';
 	else
 	{
 		echo '
@@ -176,7 +176,7 @@ function template_modifysmiley()
 						<strong><label for="smiley_description">', $txt['smileys_description'], '</label>: </strong>
 					</dt>
 					<dd>
-						<input type="text" name="smiley_description" id="smiley_description" value="', $context['current_smiley']['description'], '">
+						<input name="smiley_description" id="smiley_description" value="', $context['current_smiley']['description'], '">
 					</dd>
 					<dt>
 						<strong><label for="smiley_location">', $txt['smileys_location'], '</label>: </strong>
@@ -271,7 +271,7 @@ function template_addsmiley()
 
 	if (empty($context['filenames']))
 		echo '
-							<input type="text" name="smiley_filename" id="smiley_filename" value="', $context['current_smiley']['filename'], '" onchange="selectMethod(\'existing\');">';
+							<input name="smiley_filename" id="smiley_filename" value="', $context['current_smiley']['filename'], '" onchange="selectMethod(\'existing\');">';
 	else
 	{
 		echo '
@@ -330,13 +330,13 @@ function template_addsmiley()
 						<strong><label for="smiley_code">', $txt['smileys_code'], '</label>: </strong>
 					</dt>
 					<dd>
-						<input type="text" name="smiley_code" id="smiley_code" value="">
+						<input name="smiley_code" id="smiley_code" value="">
 					</dd>
 					<dt>
 						<strong><label for="smiley_description">', $txt['smileys_description'], '</label>: </strong>
 					</dt>
 					<dd>
-						<input type="text" name="smiley_description" id="smiley_description" value="">
+						<input name="smiley_description" id="smiley_description" value="">
 					</dd>
 					<dt>
 						<strong><label for="smiley_location">', $txt['smileys_location'], '</label>: </strong>
@@ -448,13 +448,13 @@ function template_editicon()
 						<dfn>', $txt['icons_filename_all_gif'], '</dfn>
 					</dt>
 					<dd>
-						<input type="text" name="icon_filename" id="icon_filename" value="', !empty($context['icon']['filename']) ? $context['icon']['filename'] . '.gif' : '', '">
+						<input name="icon_filename" id="icon_filename" value="', !empty($context['icon']['filename']) ? $context['icon']['filename'] . '.gif' : '', '">
 					</dd>
 					<dt>
 						<strong><label for="icon_description">', $txt['smileys_description'], '</label>: </strong>
 					</dt>
 					<dd>
-						<input type="text" name="icon_description" id="icon_description" value="', !empty($context['icon']['title']) ? $context['icon']['title'] : '', '">
+						<input name="icon_description" id="icon_description" value="', !empty($context['icon']['title']) ? $context['icon']['title'] : '', '">
 					</dd>
 					<dt>
 						<strong><label for="icon_board_select">', $txt['icons_board'], '</label>: </strong>

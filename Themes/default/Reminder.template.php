@@ -26,7 +26,7 @@ function template_main()
 				<p class="smalltext center">', $txt['password_reminder_desc'], '</p>
 				<dl>
 					<dt>', $txt['user_email'], ':</dt>
-					<dd><input type="text" name="user" size="30"></dd>
+					<dd><input name="user" size="30"></dd>
 				</dl>
 				<p class="center"><input type="submit" value="', $txt['reminder_continue'], '" class="submit"></p>
 			</div>
@@ -137,7 +137,7 @@ function template_ask()
 					<dt>', $txt['secret_question'], ':</dt>
 					<dd>', $context['secret_question'], '</dd>
 					<dt>', $txt['secret_answer'], ':</dt>
-					<dd><input type="text" name="secret_answer" size="22"></dd>
+					<dd><input name="secret_answer" size="22"></dd>
 					<dt>', $txt['choose_pass'], ': </dt>
 					<dd>
 						<input type="password" name="passwrd1" id="we_autov_pwmain" size="22">

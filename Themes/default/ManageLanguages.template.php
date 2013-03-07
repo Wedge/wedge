@@ -25,7 +25,7 @@ function template_add_language()
 				<fieldset>
 					<legend>', $txt['add_language_wedge'], '</legend>
 					<label class="smalltext">', $txt['add_language_wedge_browse'], '</label>
-					<input type="text" name="we_add" size="40" value="', !empty($context['we_search_term']) ? $context['we_search_term'] : '', '">';
+					<input name="we_add" size="40" value="', !empty($context['we_search_term']) ? $context['we_search_term'] : '', '">';
 
 	if (!empty($context['wedge_error']))
 		echo '
@@ -34,7 +34,7 @@ function template_add_language()
 	echo '
 				</fieldset>
 				<div class="right">', we::is('ie') ? '
-					<input type="text" name="ie_fix" class="hide"> ' : '', '
+					<input name="ie_fix" class="hide"> ' : '', '
 					<input type="submit" name="we_add_sub" value="', $txt['search'], '" class="submit">
 				</div>
 			</div>';
@@ -194,15 +194,15 @@ function template_download_language()
 						<label for="ftp_server">', $txt['package_ftp_server'], ':</label>
 					</dt>
 					<dd>
-						<div class="floatright" style="margin-right: 1px"><label style="padding-top: 2px; padding-right: 2ex">', $txt['package_ftp_port'], ':&nbsp;<input type="text" size="3" name="ftp_port" value="', isset($context['package_ftp']['port']) ? $context['package_ftp']['port'] : (isset($settings['package_port']) ? $settings['package_port'] : '21'), '"></label></div>
-						<input type="text" size="30" name="ftp_server" id="ftp_server" value="', isset($context['package_ftp']['server']) ? $context['package_ftp']['server'] : (isset($settings['package_server']) ? $settings['package_server'] : 'localhost'), '" style="width: 70%">
+						<div class="floatright" style="margin-right: 1px"><label style="padding-top: 2px; padding-right: 2ex">', $txt['package_ftp_port'], ':&nbsp;<input size="3" name="ftp_port" value="', isset($context['package_ftp']['port']) ? $context['package_ftp']['port'] : (isset($settings['package_port']) ? $settings['package_port'] : '21'), '"></label></div>
+						<input size="30" name="ftp_server" id="ftp_server" value="', isset($context['package_ftp']['server']) ? $context['package_ftp']['server'] : (isset($settings['package_server']) ? $settings['package_server'] : 'localhost'), '" style="width: 70%">
 					</dd>
 
 					<dt>
 						<label for="ftp_username">', $txt['package_ftp_username'], ':</label>
 					</dt>
 					<dd>
-						<input type="text" size="42" name="ftp_username" id="ftp_username" value="', isset($context['package_ftp']['username']) ? $context['package_ftp']['username'] : (isset($settings['package_username']) ? $settings['package_username'] : ''), '" style="width: 99%">
+						<input size="42" name="ftp_username" id="ftp_username" value="', isset($context['package_ftp']['username']) ? $context['package_ftp']['username'] : (isset($settings['package_username']) ? $settings['package_username'] : ''), '" style="width: 99%">
 					</dd>
 
 					<dt>
@@ -216,7 +216,7 @@ function template_download_language()
 						<label for="ftp_path">', $txt['package_ftp_path'], ':</label>
 					</dt>
 					<dd>
-						<input type="text" size="42" name="ftp_path" id="ftp_path" value="', $context['package_ftp']['path'], '" style="width: 99%">
+						<input size="42" name="ftp_path" id="ftp_path" value="', $context['package_ftp']['path'], '" style="width: 99%">
 					</dd>
 				</dl>
 			</div>';

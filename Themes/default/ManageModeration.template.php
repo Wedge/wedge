@@ -525,7 +525,7 @@ function template_modfilter_warning()
 
 	echo '
 		</select>
-		<input type="text" size="5" name="warning" style="padding: 3px 5px 5px 5px" onchange="validateWarning();"> %
+		<input size="5" name="warning" style="padding: 3px 5px 5px 5px" onchange="validateWarning();"> %
 		<div class="pagesection ruleSave">
 			<div class="floatright">
 				<input class="new" type="submit" value="', $txt['modfilter_condition_done'], '" onclick="addWarning(e);">
@@ -589,7 +589,7 @@ function template_regex_modfilter($type)
 
 	echo '
 		</select>
-		<input type="text" size="20" name="criteria" style="padding: 3px 5px 5px 5px" onchange="validate' . $utype . '();"><br>
+		<input size="20" name="criteria" style="padding: 3px 5px 5px 5px" onchange="validate' . $utype . '();"><br>
 		<label><input type="checkbox" name="casesens"> ', $txt['modfilter_be_case_sensitive'], '</label>
 		<div class="pagesection ruleSave">
 			<div class="floatright">
@@ -646,7 +646,7 @@ function template_range_modfilter($type)
 
 	echo '
 		</select>
-		<input type="text" size="5" name="', $type, '" style="padding: 3px 5px 5px 5px" onchange="validate', $utype, '();">
+		<input size="5" name="', $type, '" style="padding: 3px 5px 5px 5px" onchange="validate', $utype, '();">
 		<div class="pagesection ruleSave">
 			<div class="floatright">
 				<input class="new" type="submit" value="', $txt['modfilter_condition_done'], '" onclick="add', $utype, '(e);">

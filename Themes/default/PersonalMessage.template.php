@@ -583,7 +583,7 @@ function template_search()
 			<fieldset id="advanced_search">
 				<dl id="search_options">
 					<dt>', $txt['by_user'], ':</dt>
-					<dd><input type="text" name="userspec" value="', empty($context['search_params']['userspec']) ? '*' : $context['search_params']['userspec'], '" size="40"></dd>
+					<dd><input name="userspec" value="', empty($context['search_params']['userspec']) ? '*' : $context['search_params']['userspec'], '" size="40"></dd>
 					<dt>', $txt['search_order'], ':</dt>
 					<dd>
 						<select name="sort">
@@ -823,7 +823,7 @@ function template_send()
 	// Autosuggest will be added by the JavaScript later on.
 	echo '
 				<dd id="pm_to" class="clear_right">
-					<input type="text" name="to" id="to_control" value="', $context['to_value'], '" tabindex="', $context['tabindex']++, '" size="40" style="width: 130px">';
+					<input name="to" id="to_control" value="', $context['to_value'], '" tabindex="', $context['tabindex']++, '" size="40" style="width: 130px">';
 
 	// A link to add BCC
 	echo '
@@ -836,7 +836,7 @@ function template_send()
 					<span', (isset($context['post_error']['no_to']) || isset($context['post_error']['bad_bcc']) ? ' class="error"' : ''), '>', $txt['pm_bcc'], ':</span>
 				</dt>
 				<dd id="bcc_div2">
-					<input type="text" name="bcc" id="bcc_control" value="', $context['bcc_value'], '" tabindex="', $context['tabindex']++, '" size="40" style="width: 130px">
+					<input name="bcc" id="bcc_control" value="', $context['bcc_value'], '" tabindex="', $context['tabindex']++, '" size="40" style="width: 130px">
 				</dd>';
 
 	// The subject of the PM.
@@ -845,7 +845,7 @@ function template_send()
 					<span', (isset($context['post_error']['no_subject']) ? ' class="error"' : ''), '>', $txt['subject'], ':</span>
 				</dt>
 				<dd id="pm_subject">
-					<input type="text" name="subject" value="', $context['subject'], '" tabindex="', $context['tabindex']++, '" size="60" maxlength="60">
+					<input name="subject" value="', $context['subject'], '" tabindex="', $context['tabindex']++, '" size="60" maxlength="60">
 				</dd>
 			</dl>
 			<hr class="clear">';
@@ -953,7 +953,7 @@ function template_prune()
 			', $txt['pm_prune'], '
 		</we:cat>
 		<div class="windowbg wrc">
-			<p>', $txt['pm_prune_desc1'], ' <input type="text" name="age" size="3" value="14"> ', $txt['pm_prune_desc2'], '</p>
+			<p>', $txt['pm_prune_desc1'], ' <input name="age" size="3" value="14"> ', $txt['pm_prune_desc2'], '</p>
 			<div class="right">
 				<input type="submit" value="', $txt['delete'], '" class="delete">
 			</div>
@@ -1010,7 +1010,7 @@ function template_labels()
 			echo '
 			<tr class="', $alternate ? 'windowbg2' : 'windowbg', '">
 				<td>
-					<input type="text" name="label_name[', $label['id'], ']" value="', $label['name'], '" size="30" maxlength="30">
+					<input name="label_name[', $label['id'], ']" value="', $label['name'], '" size="30" maxlength="30">
 				</td>
 				<td style="width: 4%" class="center"><input type="checkbox" name="delete_label[', $label['id'], ']"></td>
 			</tr>';
@@ -1043,7 +1043,7 @@ function template_labels()
 					<strong><label for="add_label">', $txt['pm_label_name'], '</label>:</strong>
 				</dt>
 				<dd>
-					<input type="text" id="add_label" name="label" value="" size="30" maxlength="30">
+					<input id="add_label" name="label" value="" size="30" maxlength="30">
 				</dd>
 			</dl>
 			<div class="right">
@@ -1228,7 +1228,7 @@ function template_add_rule()
 
 		criteriaNum++;
 
-		$("#criteriaAddHere").append(\'<br><select name="ruletype[\' + criteriaNum + \']" id="ruletype\' + criteriaNum + \'" onchange="updateRuleDef(\' + criteriaNum + \'); rebuildRuleDesc();"><option data-hide>', addslashes($txt['pm_rule_criteria_pick']), ':<\' + \'/option><option value="mid">', addslashes($txt['pm_rule_mid']), '<\' + \'/option><option value="gid">', addslashes($txt['pm_rule_gid']), '<\' + \'/option><option value="sub">', addslashes($txt['pm_rule_sub']), '<\' + \'/option><option value="msg">', addslashes($txt['pm_rule_msg']), '<\' + \'/option><option value="bud">', addslashes($txt['pm_rule_bud']), '<\' + \'/option><\' + \'/select>&nbsp;<span id="defdiv\' + criteriaNum + \'" class="hide"><input type="text" name="ruledef[\' + criteriaNum + \']" id="ruledef\' + criteriaNum + \'" onkeyup="rebuildRuleDesc();" value=""><\' + \'/span><span id="defseldiv\' + criteriaNum + \'" class="hide"><select name="ruledefgroup[\' + criteriaNum + \']" id="ruledefgroup\' + criteriaNum + \'" onchange="rebuildRuleDesc();"><option value="">', addslashes($txt['pm_rule_sel_group']), '<\' + \'/option>');
+		$("#criteriaAddHere").append(\'<br><select name="ruletype[\' + criteriaNum + \']" id="ruletype\' + criteriaNum + \'" onchange="updateRuleDef(\' + criteriaNum + \'); rebuildRuleDesc();"><option data-hide>', addslashes($txt['pm_rule_criteria_pick']), ':<\' + \'/option><option value="mid">', addslashes($txt['pm_rule_mid']), '<\' + \'/option><option value="gid">', addslashes($txt['pm_rule_gid']), '<\' + \'/option><option value="sub">', addslashes($txt['pm_rule_sub']), '<\' + \'/option><option value="msg">', addslashes($txt['pm_rule_msg']), '<\' + \'/option><option value="bud">', addslashes($txt['pm_rule_bud']), '<\' + \'/option><\' + \'/select>&nbsp;<span id="defdiv\' + criteriaNum + \'" class="hide"><input name="ruledef[\' + criteriaNum + \']" id="ruledef\' + criteriaNum + \'" onkeyup="rebuildRuleDesc();" value=""><\' + \'/span><span id="defseldiv\' + criteriaNum + \'" class="hide"><select name="ruledefgroup[\' + criteriaNum + \']" id="ruledefgroup\' + criteriaNum + \'" onchange="rebuildRuleDesc();"><option value="">', addslashes($txt['pm_rule_sel_group']), '<\' + \'/option>');
 
 	foreach ($context['groups'] as $id => $group)
 		add_js('<option value="' . $id . '">' . strtr($group, array("'" => "\'")) . '<\' + \'/option>');
@@ -1374,7 +1374,7 @@ function template_add_rule()
 					<dfn>', $txt['pm_rule_name_desc'], '</dfn>
 				</dt>
 				<dd class="floatleft">
-					<input type="text" name="rule_name" value="', empty($context['rule']['name']) ? $txt['pm_rule_name_default'] : $context['rule']['name'], '" size="50">
+					<input name="rule_name" value="', empty($context['rule']['name']) ? $txt['pm_rule_name_default'] : $context['rule']['name'], '" size="50">
 				</dd>
 			</dl>
 			<fieldset>
@@ -1402,7 +1402,7 @@ function template_add_rule()
 					<option value="bud"', $criteria['t'] == 'bud' ? ' selected' : '', '>', $txt['pm_rule_bud'], '</option>
 				</select>
 				<span id="defdiv', $k, '"', $criteria['t'] != 'gid' && $criteria['t'] != 'bud' ? '' : ' class="hide"', '>
-					<input type="text" name="ruledef[', $k, ']" id="ruledef', $k, '" onkeyup="rebuildRuleDesc();" value="', in_array($criteria['t'], array('mid', 'sub', 'msg')) ? $criteria['v'] : '', '">
+					<input name="ruledef[', $k, ']" id="ruledef', $k, '" onkeyup="rebuildRuleDesc();" value="', in_array($criteria['t'], array('mid', 'sub', 'msg')) ? $criteria['v'] : '', '">
 				</span>
 				<span id="defseldiv', $k, '"', $criteria['t'] == 'gid' ? '' : ' class="hide"', '>
 					<select name="ruledefgroup[', $k, ']" id="ruledefgroup', $k, '" onchange="rebuildRuleDesc();">

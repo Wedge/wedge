@@ -35,7 +35,7 @@ function template_new_group()
 						<label for="group_name_input"><strong>', $txt['membergroups_group_name'], ':</strong></label>
 					</dt>
 					<dd>
-						<input type="text" name="group_name" id="group_name_input" size="30">
+						<input name="group_name" id="group_name_input" size="30">
 					</dd>';
 
 	if ($context['undefined_group'])
@@ -67,7 +67,7 @@ function template_new_group()
 						<strong>', $txt['membergroups_min_posts'], ':</strong>
 					</dt>
 					<dd>
-						<input type="text" name="min_posts" id="min_posts_input" size="5">
+						<input name="min_posts" id="min_posts_input" size="5">
 					</dd>';
 
 	if (!$context['post_group'] || !empty($settings['permission_enable_postgroups']))
@@ -156,7 +156,7 @@ function template_edit_group()
 						<label for="group_name_input"><strong>', $txt['membergroups_edit_name'], ':</strong></label>
 					</dt>
 					<dd>
-						<input type="text" name="group_name" id="group_name_input" value="', $context['group']['editable_name'], '" size="30">
+						<input name="group_name" id="group_name_input" value="', $context['group']['editable_name'], '" size="30">
 					</dd>';
 
 	if ($context['group']['id'] != 3 && $context['group']['id'] != 4)
@@ -199,7 +199,7 @@ function template_edit_group()
 						<label for="group_moderators"><strong>', $txt['moderators'], ':</strong></label>
 					</dt>
 					<dd>
-						<input type="text" name="group_moderators" id="group_moderators" value="', $context['group']['moderator_list'], '" size="30">
+						<input name="group_moderators" id="group_moderators" value="', $context['group']['moderator_list'], '" size="30">
 					</dd>
 					<dt id="group_hidden_text">
 						<label for="group_hidden_input"><strong>', $txt['membergroups_edit_hidden'], ':</strong></label>
@@ -243,7 +243,7 @@ function template_edit_group()
 						<label for="min_posts_input"><strong>', $txt['membergroups_min_posts'], ':</strong></label>
 					</dt>
 					<dd>
-						<input type="text" name="min_posts" id="min_posts_input"', $context['group']['is_post_group'] ? ' value="' . $context['group']['min_posts'] . '"' : '', ' size="6">
+						<input name="min_posts" id="min_posts_input"', $context['group']['is_post_group'] ? ' value="' . $context['group']['min_posts'] . '"' : '', ' size="6">
 					</dd>';
 
 	echo '
@@ -252,14 +252,14 @@ function template_edit_group()
 						<dfn>', $txt['membergroups_online_color_desc'], '</dfn>
 					</dt>
 					<dd>
-						<input type="text" name="online_color" id="online_color_input" value="', $context['group']['color'], '" size="20">
+						<input name="online_color" id="online_color_input" value="', $context['group']['color'], '" size="20">
 					</dd>
 					<dt>
 						<label for="star_count_input"><strong>', $txt['membergroups_star_count'], ':</strong></label>
 						<dfn>', $txt['membergroups_star_count_note'], '</dfn>
 					</dt>
 					<dd>
-						<input type="text" name="star_count" id="star_count_input" value="', $context['group']['star_count'], '" size="4" onkeyup="if (this.value.length > 2) this.value = 99;" onkeydown="this.onkeyup();" onchange="if (this.value != 0) this.form.star_image.onchange();">
+						<input name="star_count" id="star_count_input" value="', $context['group']['star_count'], '" size="4" onkeyup="if (this.value.length > 2) this.value = 99;" onkeydown="this.onkeyup();" onchange="if (this.value != 0) this.form.star_image.onchange();">
 					</dd>
 					<dt>
 						<label for="star_image_input"><strong>', $txt['membergroups_star_image'], ':</strong></label>
@@ -267,7 +267,7 @@ function template_edit_group()
 					</dt>
 					<dd>
 						', $txt['membergroups_images_url'], '
-						<input type="text" name="star_image" id="star_image_input" value="', $context['group']['star_image'], '" onchange="if (this.value && this.form.star_count.value == 0) this.form.star_count.value = 1; else if (!this.value) this.form.star_count.value = 0; $(\'#star_preview\').attr(\'src\', we_theme_url + \'/images/\' + (this.value && this.form.star_count.value > 0 ? this.value.replace(/\$language/g, \'', we::$user['language'], '\') : \'blank.gif\'));" size="20">
+						<input name="star_image" id="star_image_input" value="', $context['group']['star_image'], '" onchange="if (this.value && this.form.star_count.value == 0) this.form.star_count.value = 1; else if (!this.value) this.form.star_count.value = 0; $(\'#star_preview\').attr(\'src\', we_theme_url + \'/images/\' + (this.value && this.form.star_count.value > 0 ? this.value.replace(/\$language/g, \'', we::$user['language'], '\') : \'blank.gif\'));" size="20">
 						<img id="star_preview" src="', $theme['images_url'], '/', $context['group']['star_image'] == '' ? 'blank.gif' : $context['group']['star_image'], '">
 					</dd>
 					<dt>
@@ -275,7 +275,7 @@ function template_edit_group()
 						<dfn>', $txt['membergroups_max_messages_note'], '</dfn>
 					</dt>
 					<dd>
-						<input type="text" name="max_messages" id="max_messages_input" value="', $context['group']['id'] == 1 ? 0 : $context['group']['max_messages'], '" size="6"', $context['group']['id'] == 1 ? ' disabled' : '', '>
+						<input name="max_messages" id="max_messages_input" value="', $context['group']['id'] == 1 ? 0 : $context['group']['max_messages'], '" size="6"', $context['group']['id'] == 1 ? ' disabled' : '', '>
 					</dd>';
 
 	if (!empty($context['boards']))
@@ -645,7 +645,7 @@ function template_group_members()
 			</we:cat>
 			<div class="windowbg wrc">
 				<strong>', $txt['membergroups_members_add_desc'], ':</strong><br>
-				<input type="text" name="toAdd" id="toAdd" value="">
+				<input name="toAdd" id="toAdd" value="">
 				<input type="submit" name="add" value="', $txt['membergroups_members_add'], '" class="new">
 			</div>';
 	}

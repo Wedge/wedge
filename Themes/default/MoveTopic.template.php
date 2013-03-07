@@ -53,7 +53,7 @@ function template_main()
 					<fieldset id="subjectArea" class="hide" style="padding: .7em 1em">
 						<dl class="settings">
 							<dt><strong>', $txt['moveTopic3'], ':</strong></dt>
-							<dd><input type="text" name="custom_subject" size="30" value="', $context['subject'], '"></dd>
+							<dd><input name="custom_subject" size="30" value="', $context['subject'], '"></dd>
 						</dl>
 						<label><input type="checkbox" name="enforce_subject"> ', $txt['moveTopic4'], '</label>
 					</fieldset>

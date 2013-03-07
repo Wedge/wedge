@@ -102,7 +102,7 @@ function template_merge()
 					<dd>
 						<form action="<URL>?action=mergetopics;sa=options" method="post" accept-charset="UTF-8">
 							<input type="hidden" name="topics[]" value="', $context['origin_topic'], '">
-							<input type="text" name="topics[]">
+							<input name="topics[]">
 							<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 							<input type="submit" value="', $txt['merge'], '" class="submit">
 						</form>
@@ -196,7 +196,7 @@ function template_merge_extra_options()
 	echo '
 						<option value="0">', $txt['merge_custom_subject'], ':</option>
 					</select>
-					<br><input type="text" name="custom_subject" size="60" id="custom_subject" class="custom_subject hide">
+					<br><input name="custom_subject" size="60" id="custom_subject" class="custom_subject hide">
 					<br>
 					<label><input type="checkbox" name="enforce_subject" id="enforce_subject" value="1"> ', $txt['merge_enforce_subject'], '</label>
 				</fieldset>';

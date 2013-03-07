@@ -370,7 +370,7 @@ function template_edit_profiles()
 
 		if (!empty($context['show_rename_boxes']) && $profile['can_edit'])
 			echo '
-							<input type="text" name="rename_profile[', $profile['id'], ']" value="', $profile['name'], '">';
+							<input name="rename_profile[', $profile['id'], ']" value="', $profile['name'], '">';
 		else
 			echo '
 							<a href="', $scripturl, '?action=admin;area=permissions;sa=index;pid=', $profile['id'], ';', $context['session_query'], '">', $profile['name'], '</a>';
@@ -412,7 +412,7 @@ function template_edit_profiles()
 						<strong>', $txt['permissions_profile_name'], ':</strong>
 					</dt>
 					<dd>
-						<input type="text" name="profile_name" value="">
+						<input name="profile_name" value="">
 					</dd>
 					<dt>
 						<strong>', $txt['permissions_profile_copy_from'], ':</strong>

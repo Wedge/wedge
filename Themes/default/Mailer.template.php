@@ -53,7 +53,7 @@ function template_main()
 							<label for="y_name"><strong>', $txt['sendtopic_sender_name'], ':</strong></label>
 						</dt>
 						<dd>
-							<input type="text" id="y_name" name="y_name" maxlength="40" value="', we::$user['name'], '" class="w50">
+							<input id="y_name" name="y_name" maxlength="40" value="', we::$user['name'], '" class="w50">
 						</dd>
 						<dt>
 							<label for="y_email"><strong>', $txt['sendtopic_sender_email'], ':</strong></label>
@@ -65,7 +65,7 @@ function template_main()
 							<label for="comment"><strong>', $txt['sendtopic_comment'], ':</strong></label>
 						</dt>
 						<dd>
-							<input type="text" id="comment" name="comment" maxlength="100" class="w75">
+							<input id="comment" name="comment" maxlength="100" class="w75">
 						</dd>
 					</dl>
 				</fieldset>
@@ -76,7 +76,7 @@ function template_main()
 							<label for="r_name"><strong>', $txt['sendtopic_receiver_name'], ':</strong></label>
 						</dt>
 						<dd>
-							<input type="text" id="r_name" name="r_name" maxlength="40" class="w50">
+							<input id="r_name" name="r_name" maxlength="40" class="w50">
 						</dd>
 						<dt>
 							<label for="r_email"><strong>', $txt['sendtopic_receiver_email'], ':</strong></label>
@@ -139,7 +139,7 @@ function template_custom_email()
 						<label for="email_subject"><strong>', $txt['send_email_subject'], ':</strong></label>
 					</dt>
 					<dd>
-						<input type="text" id="email_subject" name="email_subject" size="50" maxlength="100">
+						<input id="email_subject" name="email_subject" size="50" maxlength="100">
 					</dd>
 					<dt>
 						<label for="email_body"><strong>', $txt['message'], ':</strong></label>
@@ -208,7 +208,7 @@ function template_report()
 						<label for="report_comment">', $txt['enter_comment'], '</label>:
 					</dt>
 					<dd>
-						<input type="text" id="report_comment" name="comment" size="50" value="', $context['comment_body'], '" maxlength="255">
+						<input id="report_comment" name="comment" size="50" value="', $context['comment_body'], '" maxlength="255">
 					</dd>';
 
 	if ($context['require_verification'])

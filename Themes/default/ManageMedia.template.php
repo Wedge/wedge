@@ -199,19 +199,19 @@ function template_aeva_admin_maintenance_prune()
 								<td><dfn>', $txt['media_admin_maintenance_prune_item_help'], '</dfn></td>
 							</tr>
 							<tr class="windowbg2">
-								<td><input type="text" size="4" name="days" value="60"> ', $txt['media_admin_maintenance_prune_days'], '</td>
+								<td><input size="4" name="days" value="60"> ', $txt['media_admin_maintenance_prune_days'], '</td>
 							</tr>
 							<tr class="windowbg2">
 								<td><hr></td>
 							</tr>
 							<tr class="windowbg2">
-								<td>', $txt['media_admin_maintenance_prune_max_views'], ' <input type="text" size="4" name="max_views"></td>
+								<td>', $txt['media_admin_maintenance_prune_max_views'], ' <input size="4" name="max_views"></td>
 							</tr>
 							<tr class="windowbg2">
-								<td>', $txt['media_admin_maintenance_prune_max_coms'], ' <input type="text" size="4" name="max_coms"></td>
+								<td>', $txt['media_admin_maintenance_prune_max_coms'], ' <input size="4" name="max_coms"></td>
 							</tr>
 							<tr class="windowbg2">
-								<td>', $txt['media_admin_maintenance_prune_last_comment_age'], ' <input type="text" size="4" name="last_comment_age"> ', isset($txt['days_word']) ? $txt['days_word'] : $txt[579], '</td>
+								<td>', $txt['media_admin_maintenance_prune_last_comment_age'], ' <input size="4" name="last_comment_age"> ', isset($txt['days_word']) ? $txt['days_word'] : $txt[579], '</td>
 							</tr>
 						</table>
 					</td>
@@ -226,7 +226,7 @@ function template_aeva_admin_maintenance_prune()
 								<td><dfn>', $txt['media_admin_maintenance_prune_com_help'], '</dfn></td>
 							</tr>
 							<tr class="windowbg2">
-								<td><input type="text" size="4" name="days_com" value="60"> ', $txt['media_admin_maintenance_prune_days'], '</td>
+								<td><input size="4" name="days_com" value="60"> ', $txt['media_admin_maintenance_prune_days'], '</td>
 							</tr>
 						</table>
 					</td>
@@ -310,7 +310,7 @@ function template_aeva_admin_modlog()
 		<table class="w100 cp8 cs0">
 			<tr class="titlebg">
 				<td>
-					', $txt['media_admin_modlog_qsearch'], ': <input type="text" name="qsearch_mem" size="15"> <input type="submit" name="qsearch_go" value="', $txt['media_submit'], '">
+					', $txt['media_admin_modlog_qsearch'], ': <input name="qsearch_mem" size="15"> <input type="submit" name="qsearch_go" value="', $txt['media_submit'], '">
 				</td>
 			</tr>
 		</table>
@@ -461,7 +461,7 @@ function template_aeva_admin_perms()
 				<td>', $txt['media_admin_profile_add'], '</td>
 			</tr>
 			<tr class="windowbg2">
-				<td>', $txt['media_admin_prof_name'], ': <input type="text" name="name"></td>
+				<td>', $txt['media_admin_prof_name'], ': <input name="name"></td>
 			</tr>
 			<tr class="windowbg">
 				<td class="right"><input type="submit" name="submit_aeva" value="', $txt['media_admin_create_prof'], '"></td>
@@ -603,7 +603,7 @@ function template_aeva_admin_quotas()
 				<td>', $txt['media_admin_profile_add'], '</td>
 			</tr>
 			<tr class="windowbg2">
-				<td>', $txt['media_admin_prof_name'], ': <input type="text" name="name"></td>
+				<td>', $txt['media_admin_prof_name'], ': <input name="name"></td>
 			</tr>
 			<tr class="windowbg right">
 				<td><input type="submit" name="submit_aeva" value="', $txt['media_admin_create_prof'], '"></td>

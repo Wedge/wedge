@@ -47,14 +47,14 @@ function template_servers()
 						<label for="ftp_server">', $txt['package_ftp_server'], ':</label>
 					</dt>
 					<dd>
-						<input type="text" size="30" name="ftp_server" id="ftp_server" value="', $context['package_ftp']['server'], '">
-						<label>', $txt['package_ftp_port'], ':&nbsp;<input type="text" size="3" name="ftp_port" id="ftp_port" value="', $context['package_ftp']['port'], '"></label>
+						<input size="30" name="ftp_server" id="ftp_server" value="', $context['package_ftp']['server'], '">
+						<label>', $txt['package_ftp_port'], ':&nbsp;<input size="3" name="ftp_port" id="ftp_port" value="', $context['package_ftp']['port'], '"></label>
 					</dd>
 					<dt>
 						<label for="ftp_username">', $txt['package_ftp_username'], ':</label>
 					</dt>
 					<dd>
-						<input type="text" size="50" name="ftp_username" id="ftp_username" value="', $context['package_ftp']['username'], '" style="width: 99%">
+						<input size="50" name="ftp_username" id="ftp_username" value="', $context['package_ftp']['username'], '" style="width: 99%">
 					</dd>
 					<dt>
 						<label for="ftp_password">', $txt['package_ftp_password'], ':</label>
@@ -66,7 +66,7 @@ function template_servers()
 						<label for="ftp_path">', $txt['package_ftp_path'], ':</label>
 					</dt>
 					<dd>
-						<input type="text" size="50" name="ftp_path" id="ftp_path" value="', $context['package_ftp']['path'], '" style="width: 99%">
+						<input size="50" name="ftp_path" id="ftp_path" value="', $context['package_ftp']['path'], '" style="width: 99%">
 					</dd>
 				</dl>
 				<div class="right">
@@ -101,13 +101,13 @@ function template_servers()
 							<strong>' . $txt['server_name'] . ':</strong>
 						</dt>
 						<dd>
-							<input type="text" name="servername" size="44" value="Wedge">
+							<input name="servername" size="44" value="Wedge">
 						</dd>
 						<dt>
 							<strong>' . $txt['serverurl'] . ':</strong>
 						</dt>
 						<dd>
-							<input type="text" name="serverurl" size="44" value="http://">
+							<input name="serverurl" size="44" value="http://">
 						</dd>
 					</dl>
 					<div class="right">
@@ -124,13 +124,13 @@ function template_servers()
 							<strong>' . $txt['serverurl'] . ':</strong>
 						</dt>
 						<dd>
-							<input type="text" name="package" size="44" value="http://">
+							<input name="package" size="44" value="http://">
 						</dd>
 						<dt>
 							<strong>', $txt['package_download_filename'], ':</strong>
 						</dt>
 						<dd>
-							<input type="text" name="filename" size="44">
+							<input name="filename" size="44">
 							<dfn>', $txt['package_download_filename_info'], '</dfn>
 						</dd>
 					</dl>

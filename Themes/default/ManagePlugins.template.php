@@ -290,9 +290,9 @@ function template_edit_repo()
 					<legend>', $txt['plugins_repo_details'], '</legend>
 					<dl class="settings">
 						<dt>', $txt['plugins_repo_name'], '</dt>
-						<dd><input type="text" name="name" size="44" value="', $context['repository']['name'], '">
+						<dd><input name="name" size="44" value="', $context['repository']['name'], '">
 						<dt>', $txt['plugins_repo_address'], '</dt>
-						<dd><input type="text" name="url" size="44" value="', $context['repository']['url'], '">
+						<dd><input name="url" size="44" value="', $context['repository']['url'], '">
 						<dt><a href="<URL>?action=help;in=plugins_repo_active" onclick="return reqWin(this);" class="help"></a> ', $txt['plugins_repo_active'], '</dt>
 						<dd>
 							<input type="checkbox" name="active"', $context['repository']['status'] == REPO_ACTIVE ? ' checked="checked"' : '', '>', $context['repository']['status'] == REPO_ERROR ? '
@@ -305,7 +305,7 @@ function template_edit_repo()
 					<p>', $txt['plugins_repo_auth_desc'], '</p>
 					<dl class="settings">
 						<dt>', $txt['plugins_repo_username'], '</dt>
-						<dd><input type="text" name="username" size="44" value="', $context['repository']['username'], '">
+						<dd><input name="username" size="44" value="', $context['repository']['username'], '">
 						<dt>
 							', $txt['plugins_repo_password'], !empty($context['repository']['password']) ? '
 							<span class="smalltext">(<a href="<URL>?action=help;in=plugins_password_blank" onclick="return reqWin(this);">' . $txt['plugins_repo_password_blank'] . '</a>)' : '', '
@@ -402,12 +402,12 @@ function template_upload_connection_details()
 						<label for="ftp_server">', $txt['plugin_ftp_server'], '</label>
 					</dt>
 					<dd>
-						<input type="text" size="42" name="server" id="ftp_server" value="', /* Servalan? */ htmlspecialchars($context['ftp_details']['server'], ENT_QUOTES), '" style="width: 99%"><!-- We are not the 1% -->
+						<input size="42" name="server" id="ftp_server" value="', /* Servalan? */ htmlspecialchars($context['ftp_details']['server'], ENT_QUOTES), '" style="width: 99%"><!-- We are not the 1% -->
 					<dt>
 						<label for="ftp_username">', $txt['plugin_ftp_username'], '</label>
 					</dt>
 					<dd>
-						<input type="text" size="42" name="user" id="ftp_username" value="', htmlspecialchars($context['ftp_details']['user'], ENT_QUOTES), '" style="width: 99%">
+						<input size="42" name="user" id="ftp_username" value="', htmlspecialchars($context['ftp_details']['user'], ENT_QUOTES), '" style="width: 99%">
 					</dd>
 					<dt>
 						<label for="ftp_password">', $txt['plugin_ftp_password'], '</label>

@@ -1543,7 +1543,7 @@ function ManageAttachmentPaths()
 				),
 				'data' => array(
 					'function' => create_function('$rowData', '
-						return \'<input type="text" size="30" name="dirs[\' . $rowData[\'id\'] . \']" value="\' . $rowData[\'path\'] . \'" style="width: 100%">\';
+						return \'<input size="30" name="dirs[\' . $rowData[\'id\'] . \']" value="\' . $rowData[\'path\'] . \'" style="width: 100%">\';
 					'),
 					'style' => 'text-align: center; width: 30%;',
 				),

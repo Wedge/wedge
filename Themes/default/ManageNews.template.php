@@ -177,7 +177,7 @@ function template_email_members()
 						<dfn>', $txt['admin_news_select_members_desc'], '</dfn>
 					</dt>
 					<dd>
-						<input type="text" name="members" id="members" value="" size="30">
+						<input name="members" id="members" value="" size="30">
 					</dd>
 				</dl>
 				<hr>
@@ -201,7 +201,7 @@ function template_email_members()
 						<dfn>', $txt['admin_news_select_excluded_members_desc'], '</dfn>
 					</dt>
 					<dd>
-						<input type="text" name="exclude_members" id="exclude_members" value="" size="30">
+						<input name="exclude_members" id="exclude_members" value="" size="30">
 					</dd>
 				</dl>
 				<hr>
@@ -254,7 +254,7 @@ function template_email_members_compose()
 			</div>
 			<div class="windowbg wrc">
 				<p>
-					<input type="text" name="subject" size="60" value="', $context['default_subject'], '">
+					<input name="subject" size="60" value="', $context['default_subject'], '">
 				</p>
 				<p>
 					<textarea cols="70" rows="9" name="message" class="editor">', $context['default_message'], '</textarea>
