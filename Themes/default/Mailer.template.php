@@ -39,10 +39,10 @@
 // This is where we get information about who they want to send the topic to, etc.
 function template_main()
 {
-	global $context, $theme, $options, $txt, $scripturl;
+	global $context, $theme, $options, $txt;
 
 	echo '
-		<form action="', $scripturl, '?action=emailuser;sa=sendtopic;topic=', $context['current_topic'], '.', $context['start'], '" method="post" accept-charset="UTF-8">
+		<form action="<URL>?action=emailuser;sa=sendtopic;topic=', $context['current_topic'], '.', $context['start'], '" method="post" accept-charset="UTF-8">
 			<we:cat>
 				<img src="', $theme['images_url'], '/email_sm.gif">', $context['page_title'], '
 			</we:cat>
@@ -97,10 +97,10 @@ function template_main()
 // Send an email to a user!
 function template_custom_email()
 {
-	global $context, $theme, $options, $txt, $scripturl;
+	global $context, $theme, $options, $txt;
 
 	echo '
-		<form action="', $scripturl, '?action=emailuser;sa=email" method="post" accept-charset="UTF-8">
+		<form action="<URL>?action=emailuser;sa=email" method="post" accept-charset="UTF-8">
 			<we:cat>
 				<img src="', $theme['images_url'], '/email_sm.gif">', $context['page_title'], '
 			</we:cat>
@@ -164,10 +164,10 @@ function template_custom_email()
 
 function template_report()
 {
-	global $context, $theme, $options, $txt, $scripturl;
+	global $context, $theme, $options, $txt;
 
 	echo '
-		<form action="', $scripturl, '?action=report;topic=', $context['current_topic'], '.0" method="post" accept-charset="UTF-8">
+		<form action="<URL>?action=report;topic=', $context['current_topic'], '.0" method="post" accept-charset="UTF-8">
 			<input type="hidden" name="msg" value="' . $context['message_id'] . '">
 			<we:cat>
 				', $txt['report_to_mod'], '

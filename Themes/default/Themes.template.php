@@ -14,13 +14,13 @@
 // The main block - for theme administration.
 function template_main()
 {
-	global $context, $theme, $options, $scripturl, $txt, $settings;
+	global $context, $theme, $options, $txt, $settings;
 
 	echo '
-		<form action="', $scripturl, '?action=admin;area=theme;sa=admin" method="post" accept-charset="UTF-8">
+		<form action="<URL>?action=admin;area=theme;sa=admin" method="post" accept-charset="UTF-8">
 			<input type="hidden" value="0" name="options[theme_allow]">
 			<we:cat>
-				<a href="', $scripturl, '?action=help;in=themes" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
+				<a href="<URL>?action=help;in=themes" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
 				', $txt['themeadmin_title'], '
 			</we:cat>
 			<div class="information">
@@ -72,7 +72,7 @@ function template_main()
 
 	echo '
 						</select>
-						<span class="smalltext pick_theme"><a href="', $scripturl, '?action=theme;sa=pick;u=0;', $context['session_query'], '">', $txt['theme_select'], '</a></span>
+						<span class="smalltext pick_theme"><a href="<URL>?action=theme;sa=pick;u=0;', $context['session_query'], '">', $txt['theme_select'], '</a></span>
 					</dd>
 				</dl>
 				<div class="right">
@@ -86,7 +86,7 @@ function template_main()
 	echo '
 		<br>
 		<we:cat>
-			<a href="', $scripturl, '?action=help;in=latest_themes" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
+			<a href="<URL>?action=help;in=latest_themes" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
 			', $txt['theme_latest'], '
 		</we:cat>
 		<div class="windowbg wrc">
@@ -102,9 +102,9 @@ function template_main()
 		<div class="errorbox">', $txt['theme_install_writable'], '</div>';
 
 	echo '
-		<form action="', $scripturl, '?action=admin;area=theme;sa=install" method="post" accept-charset="UTF-8" enctype="multipart/form-data" onsubmit="return ask(', JavaScriptEscape($txt['theme_install_new_confirm']), ', e);">
+		<form action="<URL>?action=admin;area=theme;sa=install" method="post" accept-charset="UTF-8" enctype="multipart/form-data" onsubmit="return ask(', JavaScriptEscape($txt['theme_install_new_confirm']), ', e);">
 			<we:cat>
-				<a href="', $scripturl, '?action=help;in=theme_install" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
+				<a href="<URL>?action=help;in=theme_install" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
 				', $txt['theme_install'], '
 			</we:cat>
 			<div class="windowbg wrc">
@@ -152,7 +152,7 @@ function template_main()
 	window.weThemes_writable = ', $context['can_create_new'] ? 'true' : 'false', ';');
 
 	if (empty($settings['disable_wedge_js']))
-		add_js_file($scripturl . '?action=viewremote;filename=latest-themes.js', true);
+		add_js_file('<URL>?action=viewremote;filename=latest-themes.js', true);
 
 	add_js('
 	if (typeof window.weLatestThemes != "undefined")
@@ -195,7 +195,7 @@ function template_guest_selector($is_mobile = false)
 
 function template_list_themes()
 {
-	global $context, $theme, $options, $scripturl, $txt;
+	global $context, $theme, $options, $txt;
 
 	echo '
 		<we:cat>
@@ -214,10 +214,10 @@ function template_list_themes()
 		// You *cannot* delete the default theme. It's important!
 		if ($th['id'] != 1)
 			echo '
-			<span class="floatright"><a href="', $scripturl, '?action=admin;area=theme;sa=remove;th=', $th['id'], ';', $context['session_query'], '" onclick="return ask(', JavaScriptEscape($txt['theme_remove_confirm']), ', e);" class="remove_button">', $txt['delete'], '</a></span>';
+			<span class="floatright"><a href="<URL>?action=admin;area=theme;sa=remove;th=', $th['id'], ';', $context['session_query'], '" onclick="return ask(', JavaScriptEscape($txt['theme_remove_confirm']), ', e);" class="remove_button">', $txt['delete'], '</a></span>';
 
 		echo '
-			<strong><a href="', $scripturl, '?action=admin;area=theme;th=', $th['id'], ';', $context['session_query'], ';sa=settings">', $th['name'], '</a></strong>', !empty($th['version']) ? ' <em>(' . $th['version'] . ')</em>' : '', '
+			<strong><a href="<URL>?action=admin;area=theme;th=', $th['id'], ';', $context['session_query'], ';sa=settings">', $th['name'], '</a></strong>', !empty($th['version']) ? ' <em>(' . $th['version'] . ')</em>' : '', '
 		</we:title>
 		<div class="windowbg wrc">
 			<dl class="settings themes_list">
@@ -232,7 +232,7 @@ function template_list_themes()
 	}
 
 	echo '
-		<form action="', $scripturl, '?action=admin;area=theme;', $context['session_query'], ';sa=list" method="post" accept-charset="UTF-8">
+		<form action="<URL>?action=admin;area=theme;', $context['session_query'], ';sa=list" method="post" accept-charset="UTF-8">
 			<we:cat>
 				', $txt['themeadmin_list_reset'], '
 			</we:cat>
@@ -259,12 +259,12 @@ function template_list_themes()
 
 function template_set_settings()
 {
-	global $context, $theme, $options, $scripturl, $txt;
+	global $context, $theme, $options, $txt;
 
 	echo '
-		<form action="', $scripturl, '?action=admin;area=theme;sa=settings;th=', $context['theme_settings']['theme_id'], '" method="post" accept-charset="UTF-8">
+		<form action="<URL>?action=admin;area=theme;sa=settings;th=', $context['theme_settings']['theme_id'], '" method="post" accept-charset="UTF-8">
 			<we:title>
-				<a href="', $scripturl, '?action=help;in=theme_settings" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
+				<a href="<URL>?action=help;in=theme_settings" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
 				', $txt['theme_settings'], ' - ', $context['theme_settings']['name'], '
 			</we:title>';
 
@@ -278,10 +278,10 @@ function template_set_settings()
 			<div class="windowbg wrc">
 				<ul class="reset">
 					<li>
-						<a href="', $scripturl, '?action=admin;area=theme;th=', $context['theme_settings']['theme_id'], ';', $context['session_query'], ';sa=edit;filename=index.template.php">', $txt['theme_edit_index'], '</a>
+						<a href="<URL>?action=admin;area=theme;th=', $context['theme_settings']['theme_id'], ';', $context['session_query'], ';sa=edit;filename=index.template.php">', $txt['theme_edit_index'], '</a>
 					</li>
 					<li>
-						<a href="', $scripturl, '?action=admin;area=theme;th=', $context['theme_settings']['theme_id'], ';', $context['session_query'], ';sa=edit;directory=skins">', $txt['theme_edit_style'], '</a>
+						<a href="<URL>?action=admin;area=theme;th=', $context['theme_settings']['theme_id'], ';', $context['session_query'], ';sa=edit;directory=skins">', $txt['theme_edit_style'], '</a>
 					</li>
 				</ul>
 			</div>';
@@ -411,14 +411,14 @@ function template_set_settings()
 // This template allows for the selection of different themes ;)
 function template_pick()
 {
-	global $context, $theme, $options, $scripturl, $txt, $settings;
+	global $context, $theme, $options, $txt, $settings;
 
 	echo '
 	<div id="pick_theme">
 		<we:cat>
 			', $txt['change_skin'], '
 		</we:cat>
-		<form action="', $scripturl, '?action=skin', $context['specify_member'], ';', $context['session_query'], '" method="post" accept-charset="UTF-8">';
+		<form action="<URL>?action=skin', $context['specify_member'], ';', $context['session_query'], '" method="post" accept-charset="UTF-8">';
 
 	// Just go through each theme and show its information - thumbnail, etc.
 	foreach ($context['available_themes'] as $th)
@@ -430,12 +430,12 @@ function template_pick()
 		echo '
 			<div style="margin: 8px 0"></div>
 			<we:title>
-				', $context['current_theme'] == $th['id'] ? '<span style="font-family: sans-serif">&#10004;</span> ' : '', '<a href="', $scripturl, '?action=skin', $context['specify_member'], ';th=', $th['id'], $id_extra, ';', $context['session_query'], '">', $th['name'], '</a>', $context['current_theme'] == $th['id'] ? '
+				', $context['current_theme'] == $th['id'] ? '<span style="font-family: sans-serif">&#10004;</span> ' : '', '<a href="<URL>?action=skin', $context['specify_member'], ';th=', $th['id'], $id_extra, ';', $context['session_query'], '">', $th['name'], '</a>', $context['current_theme'] == $th['id'] ? '
 				(' . $txt['current_theme'] . ')' : '', '
 			</we:title>
 			<div class="', $th['selected'] ? 'windowbg' : 'windowbg2', ' wrc flow_hidden">', $thumbnail_href ? '
 				<div class="floatright">
-					<a href="' . $scripturl . '?action=skin' . $context['specify_member'] . ';theme=' . $th['id'] . $id_extra . ';' . $context['session_query'] . '" id="theme_thumb_preview_' . $th['id'] . '" title="' . $txt['theme_preview'] . '"><img src="' . $thumbnail_href . '" id="theme_thumb_' . $th['id'] . '" class="padding"></a>
+					<a href="<URL>?action=skin' . $context['specify_member'] . ';theme=' . $th['id'] . $id_extra . ';' . $context['session_query'] . '" id="theme_thumb_preview_' . $th['id'] . '" title="' . $txt['theme_preview'] . '"><img src="' . $thumbnail_href . '" id="theme_thumb_' . $th['id'] . '" class="padding"></a>
 				</div>' : '', '
 				<p>
 					', $th['description'], '
@@ -444,8 +444,8 @@ function template_pick()
 					<em class="smalltext">', number_context('theme_users', $th['num_users']), '</em>
 				</p>
 				<ul style="padding-left: 20px">
-					<li><a href="', $scripturl, '?action=skin', $context['specify_member'], ';th=', $th['id'], $id_extra, ';', $context['session_query'], '" id="theme_use_', $th['id'], '">', $txt['theme_set'], '</a></li>
-					<li><a href="', $scripturl, '?action=skin', $context['specify_member'], ';theme=', $th['id'], $id_extra, ';', $context['session_query'], '" id="theme_preview_', $th['id'], '">', $txt['theme_preview'], '</a></li>
+					<li><a href="<URL>?action=skin', $context['specify_member'], ';th=', $th['id'], $id_extra, ';', $context['session_query'], '" id="theme_use_', $th['id'], '">', $txt['theme_set'], '</a></li>
+					<li><a href="<URL>?action=skin', $context['specify_member'], ';theme=', $th['id'], $id_extra, ';', $context['session_query'], '" id="theme_preview_', $th['id'], '">', $txt['theme_preview'], '</a></li>
 				</ul>';
 
 		if ($th['id'] !== 0 && !empty($th['skins']))
@@ -471,7 +471,7 @@ function template_pick()
 
 function template_list_skins(&$th, $theme_id, $theme_url = '', $theme_dir = '', $is_child = false, $alt_level = '')
 {
-	global $txt, $context, $scripturl, $settings;
+	global $txt, $context, $settings;
 
 	if (empty($theme_url))
 	{
@@ -491,7 +491,7 @@ function template_list_skins(&$th, $theme_id, $theme_url = '', $theme_dir = '', 
 						', $is_current_skin ? '<span style="font-family: sans-serif">&#10004;</span> ' : '', $sty['name'], '
 					</legend>', $thumbnail_href ? '
 					<div class="floatright">
-						<a href="' . $scripturl . '?action=skin' . $context['specify_member'] . ';theme=' . $target . ';' . $context['session_query'] . '" id="theme_thumb_preview_' . $target . '" title="' . $txt['theme_preview'] . '"><img src="' . $thumbnail_href . '" id="theme_thumb_' . $target . '" class="padding"' . ($is_child ? ' style="max-width: 75px"' : '') . '></a>
+						<a href="<URL>?action=skin' . $context['specify_member'] . ';theme=' . $target . ';' . $context['session_query'] . '" id="theme_thumb_preview_' . $target . '" title="' . $txt['theme_preview'] . '"><img src="' . $thumbnail_href . '" id="theme_thumb_' . $target . '" class="padding"' . ($is_child ? ' style="max-width: 75px"' : '') . '></a>
 					</div>' : '', '
 					<p>', $sty['comment'], '</p>';
 
@@ -504,8 +504,8 @@ function template_list_skins(&$th, $theme_id, $theme_url = '', $theme_dir = '', 
 		if (!$is_current_skin)
 			echo '
 					<ul style="padding-left: 20px">
-						<li><a href="', $scripturl, '?action=skin', $context['specify_member'], ';th=', $target, ';', $context['session_query'], '" id="theme_use_', $target, '_', '">', $txt['theme_skin_set'], '</a></li>
-						<li><a href="', $scripturl, '?action=skin', $context['specify_member'], ';theme=', $target, ';', $context['session_query'], '" id="theme_preview_', $target, '_', '">', $txt['theme_skin_preview'], '</a></li>
+						<li><a href="<URL>?action=skin', $context['specify_member'], ';th=', $target, ';', $context['session_query'], '" id="theme_use_', $target, '_', '">', $txt['theme_skin_set'], '</a></li>
+						<li><a href="<URL>?action=skin', $context['specify_member'], ';theme=', $target, ';', $context['session_query'], '" id="theme_preview_', $target, '_', '">', $txt['theme_skin_preview'], '</a></li>
 					</ul>';
 
 		if (!empty($sty['skins']))
@@ -519,7 +519,7 @@ function template_list_skins(&$th, $theme_id, $theme_url = '', $theme_dir = '', 
 // Okay, that theme was installed successfully!
 function template_installed()
 {
-	global $context, $theme, $options, $scripturl, $txt;
+	global $context, $theme, $options, $txt;
 
 	// Not much to show except a link back...
 	echo '
@@ -528,17 +528,17 @@ function template_installed()
 		</we:cat>
 		<div class="windowbg wrc">
 			<p>
-				<a href="', $scripturl, '?action=admin;area=theme;sa=settings;th=', $context['installed_theme']['id'], ';', $context['session_query'], '">', $context['installed_theme']['name'], '</a> ', $txt['theme_installed_message'], '
+				<a href="<URL>?action=admin;area=theme;sa=settings;th=', $context['installed_theme']['id'], ';', $context['session_query'], '">', $context['installed_theme']['name'], '</a> ', $txt['theme_installed_message'], '
 			</p>
 			<p>
-				<a href="', $scripturl, '?action=admin;area=theme;sa=admin;', $context['session_query'], '">', $txt['back'], '</a>
+				<a href="<URL>?action=admin;area=theme;sa=admin;', $context['session_query'], '">', $txt['back'], '</a>
 			</p>
 		</div>';
 }
 
 function template_edit_list()
 {
-	global $context, $theme, $options, $scripturl, $txt;
+	global $context, $theme, $options, $txt;
 
 	echo '
 		<we:cat>
@@ -553,14 +553,14 @@ function template_edit_list()
 
 		echo '
 		<we:title>
-			<a href="', $scripturl, '?action=admin;area=theme;th=', $th['id'], ';', $context['session_query'], ';sa=edit">', $th['name'], '</a>', !empty($th['version']) ? '
+			<a href="<URL>?action=admin;area=theme;th=', $th['id'], ';', $context['session_query'], ';sa=edit">', $th['name'], '</a>', !empty($th['version']) ? '
 			<em>(' . $th['version'] . ')</em>' : '', '
 		</we:title>
 		<div class="windowbg', $alternate ? '' : '2', ' wrc">
 			<ul class="reset">
-				<li><a href="', $scripturl, '?action=admin;area=theme;th=', $th['id'], ';', $context['session_query'], ';sa=edit">', $txt['themeadmin_edit_browse'], '</a></li>', $th['can_edit_style'] ? '
-				<li><a href="' . $scripturl . '?action=admin;area=theme;th=' . $th['id'] . ';' . $context['session_query'] . ';sa=edit;directory=skins">' . $txt['themeadmin_edit_style'] . '</a></li>' : '', '
-				<li><a href="', $scripturl, '?action=admin;area=theme;th=', $th['id'], ';', $context['session_query'], ';sa=copy">', $txt['themeadmin_edit_copy_template'], '</a></li>
+				<li><a href="<URL>?action=admin;area=theme;th=', $th['id'], ';', $context['session_query'], ';sa=edit">', $txt['themeadmin_edit_browse'], '</a></li>', $th['can_edit_style'] ? '
+				<li><a href="<URL>?action=admin;area=theme;th=' . $th['id'] . ';' . $context['session_query'] . ';sa=edit;directory=skins">' . $txt['themeadmin_edit_style'] . '</a></li>' : '', '
+				<li><a href="<URL>?action=admin;area=theme;th=', $th['id'], ';', $context['session_query'], ';sa=copy">', $txt['themeadmin_edit_copy_template'], '</a></li>
 			</ul>
 		</div>';
 	}
@@ -568,7 +568,7 @@ function template_edit_list()
 
 function template_copy_template()
 {
-	global $context, $theme, $options, $scripturl, $txt;
+	global $context, $theme, $options, $txt;
 
 	echo '
 		<we:cat>
@@ -591,7 +591,7 @@ function template_copy_template()
 					<span class="floatright">';
 
 		if ($template['can_copy'])
-			echo '<a href="', $scripturl, '?action=admin;area=theme;th=', $context['theme_id'], ';', $context['session_query'], ';sa=copy;template=', $template['value'], '" onclick="return ask(', JavaScriptEscape($template['already_exists'] ? $txt['themeadmin_edit_overwrite_confirm'] : $txt['themeadmin_edit_copy_confirm']), ', e);">', $txt['themeadmin_edit_do_copy'], '</a>';
+			echo '<a href="<URL>?action=admin;area=theme;th=', $context['theme_id'], ';', $context['session_query'], ';sa=copy;template=', $template['value'], '" onclick="return ask(', JavaScriptEscape($template['already_exists'] ? $txt['themeadmin_edit_overwrite_confirm'] : $txt['themeadmin_edit_copy_confirm']), ', e);">', $txt['themeadmin_edit_do_copy'], '</a>';
 		else
 			echo $txt['themeadmin_edit_no_copy'];
 
@@ -607,7 +607,7 @@ function template_copy_template()
 
 function template_edit_browse()
 {
-	global $context, $theme, $options, $scripturl, $txt;
+	global $context, $theme, $options, $txt;
 
 	echo '
 		<table class="table_grid w100 cs0">
@@ -654,7 +654,7 @@ function template_edit_browse()
 // Wanna edit the stylesheet?
 function template_edit_style()
 {
-	global $context, $theme, $options, $scripturl, $txt;
+	global $context, $theme, $options, $txt;
 
 	if ($context['session_error'])
 		echo '
@@ -768,7 +768,7 @@ function template_edit_style()
 
 	// Just show a big box.... gray out the Save button if it's not saveable... (ie. not 777.)
 	echo '
-		<form action="', $scripturl, '?action=admin;area=theme;th=', $context['theme_id'], ';sa=edit" method="post" accept-charset="UTF-8" name="stylesheetForm" id="stylesheetForm">
+		<form action="<URL>?action=admin;area=theme;th=', $context['theme_id'], ';sa=edit" method="post" accept-charset="UTF-8" name="stylesheetForm" id="stylesheetForm">
 			<we:cat>
 				', $txt['theme_edit'], ' - ', $context['edit_filename'], '
 			</we:cat>
@@ -793,7 +793,7 @@ function template_edit_style()
 // This edits the template...
 function template_edit_template()
 {
-	global $context, $theme, $options, $scripturl, $txt;
+	global $context, $theme, $options, $txt;
 
 	if ($context['session_error'])
 		echo '
@@ -810,7 +810,7 @@ function template_edit_template()
 
 	// Just show a big box.... gray out the Save button if it's not saveable... (ie. not 777.)
 	echo '
-		<form action="', $scripturl, '?action=admin;area=theme;th=', $context['theme_id'], ';sa=edit" method="post" accept-charset="UTF-8">
+		<form action="<URL>?action=admin;area=theme;th=', $context['theme_id'], ';sa=edit" method="post" accept-charset="UTF-8">
 			<we:cat>
 				', $txt['theme_edit'], ' - ', $context['edit_filename'], '
 			</we:cat>
@@ -839,7 +839,7 @@ function template_edit_template()
 
 function template_edit_file()
 {
-	global $context, $theme, $options, $scripturl, $txt;
+	global $context, $theme, $options, $txt;
 
 	if ($context['session_error'])
 		echo '
@@ -856,7 +856,7 @@ function template_edit_file()
 
 	// Just show a big box.... gray out the Save button if it's not saveable... (ie. not 777.)
 	echo '
-		<form action="', $scripturl, '?action=admin;area=theme;th=', $context['theme_id'], ';sa=edit" method="post" accept-charset="UTF-8">
+		<form action="<URL>?action=admin;area=theme;th=', $context['theme_id'], ';sa=edit" method="post" accept-charset="UTF-8">
 			<we:cat>
 				', $txt['theme_edit'], ' - ', $context['edit_filename'], '
 			</we:cat>

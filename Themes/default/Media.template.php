@@ -14,7 +14,7 @@
 
 function template_aeva_header()
 {
-	global $context, $txt, $amSettings, $scripturl, $theme;
+	global $context, $txt, $amSettings, $theme;
 
 	// Show Media tabs, except if not inside the gallery itself or if uploading via a popup
 	if (empty($context['current_board']) && !isset($_REQUEST['noh']))
@@ -36,11 +36,11 @@ function template_aeva_header()
 		echo '
 	<div class="unapproved_notice">';
 		if (!empty($amSettings['num_unapproved_items']))
-			printf($txt['media_unapproved_items_notice'] . '<br>', $scripturl . '?action=media;area=moderate;sa=submissions;filter=items;' . $context['session_query'], $amSettings['num_unapproved_items']);
+			printf($txt['media_unapproved_items_notice'] . '<br>', '<URL>?action=media;area=moderate;sa=submissions;filter=items;' . $context['session_query'], $amSettings['num_unapproved_items']);
 		if (!empty($amSettings['num_unapproved_comments']))
-			printf($txt['media_unapproved_coms_notice'] . '<br>', $scripturl . '?action=media;area=moderate;sa=submissions;filter=coms;' . $context['session_query'], $amSettings['num_unapproved_comments']);
+			printf($txt['media_unapproved_coms_notice'] . '<br>', '<URL>?action=media;area=moderate;sa=submissions;filter=coms;' . $context['session_query'], $amSettings['num_unapproved_comments']);
 		if (!empty($amSettings['num_unapproved_albums']))
-			printf($txt['media_unapproved_albums_notice'], $scripturl . '?action=media;area=moderate;sa=submissions;filter=albums;' . $context['session_query'], $amSettings['num_unapproved_albums']);
+			printf($txt['media_unapproved_albums_notice'], '<URL>?action=media;area=moderate;sa=submissions;filter=albums;' . $context['session_query'], $amSettings['num_unapproved_albums']);
 		echo '</div>';
 	}
 
@@ -50,9 +50,9 @@ function template_aeva_header()
 		echo '
 	<div class="unapproved_notice">';
 		if (!empty($amSettings['num_reported_items']))
-			printf($txt['media_reported_items_notice'] . '<br>', $scripturl . '?action=media;area=moderate;sa=reports;items;' . $context['session_query'], $amSettings['num_reported_items']);
+			printf($txt['media_reported_items_notice'] . '<br>', '<URL>?action=media;area=moderate;sa=reports;items;' . $context['session_query'], $amSettings['num_reported_items']);
 		if (!empty($amSettings['num_reported_comments']))
-			printf($txt['media_reported_comments_notice'] . '<br>', $scripturl . '?action=media;area=moderate;sa=reports;comments;' . $context['session_query'], $amSettings['num_reported_comments']);
+			printf($txt['media_reported_comments_notice'] . '<br>', '<URL>?action=media;area=moderate;sa=reports;comments;' . $context['session_query'], $amSettings['num_reported_comments']);
 		echo '</div>';
 	}
 }
@@ -86,7 +86,7 @@ function template_aeva_tabs()
 
 function template_aeva_home()
 {
-	global $context, $amSettings, $txt, $galurl, $scripturl, $theme, $settings;
+	global $context, $amSettings, $txt, $galurl, $theme, $settings;
 
 	$has_albums = count($context['aeva_albums']) > 0;
 	$can_feed = !empty($settings['xmlnews_enable']);
@@ -186,8 +186,8 @@ function template_aeva_home()
 
 		foreach ($context['recent_albums'] as $i)
 			echo '
-			<div><a href="', $scripturl, '?action=media;sa=album;in=', $i['id'], '">', $i['name'], '</a> (',
-		$i['num_items'], ')', !empty($i['owner_id']) ? ' ' . $txt['media_by'] . ' <a href="' . $scripturl . '?action=profile;u=' . $i['owner_id'] . ';area=aeva">' . $i['owner_name'] . '</a>' : '', '</div>';
+			<div><a href="<URL>?action=media;sa=album;in=', $i['id'], '">', $i['name'], '</a> (',
+		$i['num_items'], ')', !empty($i['owner_id']) ? ' ' . $txt['media_by'] . ' <a href="<URL>?action=profile;u=' . $i['owner_id'] . ';area=aeva">' . $i['owner_name'] . '</a>' : '', '</div>';
 
 		echo '
 		</div>
@@ -325,7 +325,7 @@ function template_aeva_item_wrap_begin()
 
 function template_aeva_item_main()
 {
-	global $item, $galurl, $context, $txt, $scripturl, $theme, $boardurl, $options;
+	global $item, $galurl, $context, $txt, $theme, $boardurl, $options;
 
 	echo '
 		<div id="media-item">',
@@ -357,7 +357,7 @@ function template_aeva_item_main()
 
 function template_aeva_item_details()
 {
-	global $galurl, $context, $amSettings, $txt, $scripturl, $theme, $boardurl, $options;
+	global $galurl, $context, $amSettings, $txt, $theme, $boardurl, $options;
 
 	$item =& $context['item_data'];
 	$in_sidebar = wetem::parent('aeva_item_details') == 'sidebar';
@@ -437,7 +437,7 @@ function template_aeva_item_details()
 				<dt>', $txt['media_embed_bbc'], '</dt>
 				<dd>
 					<input id="bbc_embed" type="text" size="18" value="[media id=' . $item['id_media'] . ($item['type'] == 'image' ? '' : ' type=av') . ']" onclick="this.focus(); this.select();" readonly>
-					<a href="', $scripturl, '?action=help;in=mediatag" onclick="return reqWin(this, 800);" class="help"></a>
+					<a href="<URL>?action=help;in=mediatag" onclick="return reqWin(this, 800);" class="help"></a>
 				</dd>';
 
 		// Don't show html/direct links if the helper file was deleted.
@@ -512,7 +512,7 @@ function template_aeva_item_wrap_end()
 
 function template_aeva_item_actions()
 {
-	global $item, $galurl, $txt, $amSettings, $theme, $context, $scripturl;
+	global $item, $galurl, $txt, $amSettings, $theme, $context;
 
 	if (!$item['can_report'] && !$item['can_edit'] && !$item['can_approve'] && !$item['can_download'] && !$item['can_add_playlist'])
 		return;
@@ -642,7 +642,7 @@ function template_aeva_item_playlists()
 		<tr>' : '', '
 			<td>
 				<strong><a href="', $galurl, 'sa=playlists;in=', $p['id'], '">', $p['name'], '</a></strong>', empty($p['owner_id']) ? '' : '
-				' . $txt['media_by'] . ' <a href="' . $scripturl . '?action=profile;in=' . $p['owner_id'] . ';area=aeva">' . $p['owner_name'] . '</a>', '
+				' . $txt['media_by'] . ' <a href="<URL>?action=profile;in=' . $p['owner_id'] . ';area=aeva">' . $p['owner_name'] . '</a>', '
 				<br><span class="smalltext">', $txt['media_items'], ': ', $p['num_items'], $p['owner_id'] != we::$id && !we::$is_admin ? '' : '<br>
 				<a href="' . $galurl . 'sa=item;in=' . $id . ';premove=' . $p['id'] . ';' . $context['session_query'] . '" style="text-decoration: none"><img src="' . $theme['images_aeva'] . '/delete.png" style="vertical-align: bottom"> ' . $txt['media_delete_this_item'] . '</a>',
 				'</span>
@@ -659,7 +659,7 @@ function template_aeva_item_playlists()
 function template_aeva_item_comments()
 {
 	global $item, $galurl, $txt, $theme, $settings;
-	global $context, $scripturl, $options;
+	global $context, $options;
 
 	echo '
 		<we:cat>
@@ -726,7 +726,7 @@ function template_aeva_item_comments()
 					<a href="' . $galurl . 'sa=report;type=comment;in=' . $c['id_comment'] . '">
 						<img src="' . $theme['images_aeva'] . '/report.png"> ' . $txt['media_report_this_item'] . '
 					</a>' : '', !$c['approved'] && $c['can_delete'] ? '
-					<a href="' . $scripturl . '?action=media;area=moderate;sa=submissions;do=approve;in=' . $c['id_comment'] . ';type=coms;' . $context['session_query'] . '">
+					<a href="<URL>?action=media;area=moderate;sa=submissions;do=approve;in=' . $c['id_comment'] . ';type=coms;' . $context['session_query'] . '">
 						<img src="' . $theme['images_aeva'] . '/tick.png" title="' . $txt['media_admin_approve'] . '"> ' . $txt['media_admin_approve'] . '
 					</a>' : '', '
 				</div>';
@@ -970,7 +970,7 @@ function template_aeva_form()
 
 function template_aeva_viewAlbum()
 {
-	global $context, $txt, $galurl, $scripturl, $settings, $theme;
+	global $context, $txt, $galurl, $settings, $theme;
 
 	$album_data =& $context['album_data'];
 
@@ -1023,10 +1023,10 @@ function template_aeva_viewAlbum()
 				<li><a href="', $galurl, 'area=mya;sa=edit;in=', $album_data['id'], '"><span><img src="', $theme['images_aeva'], '/folder_edit.png"> ', $txt['media_edit_this_item'], '</span></a></li>';
 			if (we::$is_admin)
 				echo '
-				<li><a href="', $scripturl, '?action=admin;area=aeva_maintenance;sa=index;album=', $album_data['id'], ';', $context['session_query'], '"><span><img src="', $theme['images_aeva'], '/maintain.gif" title="', $txt['media_admin_labels_maintenance'], '"> ', $txt['media_admin_labels_maintenance'], '</span></a></li>';
+				<li><a href="<URL>?action=admin;area=aeva_maintenance;sa=index;album=', $album_data['id'], ';', $context['session_query'], '"><span><img src="', $theme['images_aeva'], '/maintain.gif" title="', $txt['media_admin_labels_maintenance'], '"> ', $txt['media_admin_labels_maintenance'], '</span></a></li>';
 			if (aeva_allowedTo('moderate') && $album_data['approved'] == 0)
 				echo '
-				<li><a href="', $scripturl, '?action=media;area=moderate;sa=submissions;do=approve;type=albums;in=', $album_data['id'], ';', $context['session_query'], '"><span><img src="', $theme['images_aeva'], '/tick.png" title="', $txt['media_admin_approve'], '"> ', $txt['media_admin_approve'], '</span></a></li>';
+				<li><a href="<URL>?action=media;area=moderate;sa=submissions;do=approve;type=albums;in=', $album_data['id'], ';', $context['session_query'], '"><span><img src="', $theme['images_aeva'], '/tick.png" title="', $txt['media_admin_approve'], '"> ', $txt['media_admin_approve'], '</span></a></li>';
 		}
 
 		if (aeva_allowedTo('multi_download') && !$context['no_items'] && !empty($context['aeva_items']))
@@ -1067,7 +1067,7 @@ function template_aeva_viewAlbum()
 	}
 
 	echo ($can_edit_items ? '
-	<form action="' . $scripturl . '?action=media;sa=quickmod;in=' . $album_data['id'] . '" method="post" enctype="multipart/form-data" id="aeva_form" name="aeva_form" onsubmit="submitonce(this);">' : '') . '
+	<form action="<URL>?action=media;sa=quickmod;in=' . $album_data['id'] . '" method="post" enctype="multipart/form-data" id="aeva_form" name="aeva_form" onsubmit="submitonce(this);">' : '') . '
 	<div class="pagesection">
 		<nav>', $txt['pages'], ': ', $context['aeva_page_index'], '</nav>
 	</div>
@@ -1158,7 +1158,7 @@ function template_aeva_sort_options($url, $is_fs = false, $is_ascdef = false)
 
 function template_aeva_unseen()
 {
-	global $context, $txt, $galurl, $scripturl;
+	global $context, $txt, $galurl;
 
 	echo '
 	<div class="pagesection">';
@@ -1185,7 +1185,7 @@ function template_aeva_unseen()
 
 function template_aeva_search_searching()
 {
-	global $txt, $galurl, $scripturl, $context, $theme;
+	global $txt, $galurl, $context, $theme;
 
 	echo '
 	<br>
@@ -1261,7 +1261,7 @@ function template_aeva_search_searching()
 
 function template_aeva_search_results()
 {
-	global $context, $txt, $scripturl;
+	global $context, $txt;
 
 	echo '
 	<div style="padding: 5px"><strong>', $context['aeva_total_results'], '</strong> ', $txt['media_search_results_for'], ' <strong>', $context['aeva_searching_for'], '</strong></div>';
@@ -1278,7 +1278,7 @@ function template_aeva_search_results()
 
 function template_aeva_viewUserAlbums()
 {
-	global $txt, $context, $scripturl, $galurl, $amSettings, $theme;
+	global $txt, $context, $galurl, $amSettings, $theme;
 
 	// The Albums!
 	echo '
@@ -1316,7 +1316,7 @@ function template_aeva_viewUserAlbums()
 
 function template_aeva_album_cp()
 {
-	global $txt, $scripturl, $galurl, $context, $theme, $alburl;
+	global $txt, $galurl, $context, $theme, $alburl;
 
 	echo '
 		<table class="bordercolor w100 cs1 cp8">
@@ -1390,7 +1390,7 @@ function template_aeva_album_cp()
 
 function template_aeva_stats()
 {
-	global $txt, $galurl, $context, $scripturl, $theme;
+	global $txt, $galurl, $context, $theme;
 
 	$stats = $context['aeva_stats'];
 
@@ -1721,7 +1721,7 @@ function template_aeva_multiUpload()
 // Profile summary template
 function template_aeva_profile_summary()
 {
-	global $txt, $galurl, $context, $theme, $scripturl, $galurl, $settings;
+	global $txt, $galurl, $context, $theme, $galurl, $settings;
 
 	$member =& $context['aeva_member'];
 	$can_feed = !empty($settings['xmlnews_enable']);
@@ -1739,8 +1739,8 @@ function template_aeva_profile_summary()
 			', $txt['media_profile_stats'], '
 		</we:title>
 		<div class="windowbg2 wrc">
-			', $can_feed ? '<a href="' . $galurl . 'sa=feed;user=' . $member['id'] . '"><div class="feed_icon" title="' . $txt['feed'] . '"></div></a>' : '', ' <a href="', $scripturl, '?action=profile;u=', $member['id'], ';area=aevaitems">', $txt['media_total_items'], '</a>: ', $member['items'], '<br>
-			', $can_feed ? '<a href="' . $galurl . 'sa=feed;user=' . $member['id'] . ';type=comments"><div class="feed_icon" title="' . $txt['feed'] . '"></div></a>' : '', ' <a href="', $scripturl, '?action=profile;u=', $member['id'], ';area=aevacoms">', $txt['media_total_comments'], '</a>: ', $member['coms'], '<br>
+			', $can_feed ? '<a href="' . $galurl . 'sa=feed;user=' . $member['id'] . '"><div class="feed_icon" title="' . $txt['feed'] . '"></div></a>' : '', ' <a href="<URL>?action=profile;u=', $member['id'], ';area=aevaitems">', $txt['media_total_items'], '</a>: ', $member['items'], '<br>
+			', $can_feed ? '<a href="' . $galurl . 'sa=feed;user=' . $member['id'] . ';type=comments"><div class="feed_icon" title="' . $txt['feed'] . '"></div></a>' : '', ' <a href="<URL>?action=profile;u=', $member['id'], ';area=aevacoms">', $txt['media_total_comments'], '</a>: ', $member['coms'], '<br>
 			', $txt['media_avg_items'], ': ', $member['avg_items'], '<br>
 			', $txt['media_avg_comments'], ': ', $member['avg_coms'], '<br>
 		</div>';
@@ -1858,7 +1858,7 @@ function template_aeva_profile_viewcoms()
 // Template for viewing all votes from a single member
 function template_aeva_profile_viewvotes()
 {
-	global $context, $txt, $theme, $scripturl;
+	global $context, $txt, $theme;
 
 	echo '
 		<we:cat>
@@ -1884,10 +1884,10 @@ function template_aeva_profile_viewvotes()
 		foreach ($context['aeva_ratingLogs'] as $log)
 		{
 			echo '
-			', aeva_showStars($log['star']), '&nbsp;&nbsp;<b><a href="' . $scripturl . '?action=media;sa=item;in=' . $log['id_media'] . '">' . $log['title'] . '</a></b>';
-			echo ' (<a href="' . $scripturl . '?action=media;sa=album;in=' . $log['album_id'] . '">' . $log['name'] . '</a>)';
+			', aeva_showStars($log['star']), '&nbsp;&nbsp;<b><a href="<URL>?action=media;sa=item;in=' . $log['id_media'] . '">' . $log['title'] . '</a></b>';
+			echo ' (<a href="<URL>?action=media;sa=album;in=' . $log['album_id'] . '">' . $log['name'] . '</a>)';
 			if (!empty($log['messages']))
-				echo ' (' . $log['messages'] . ' <a href="' . $scripturl . '?topic=' . $log['id_topic'] . '.0">' . $txt['media_post' . ($log['messages'] > 1 ? 's' : '') . '_noun'] . '</a>)';
+				echo ' (' . $log['messages'] . ' <a href="<URL>?topic=' . $log['id_topic'] . '.0">' . $txt['media_post' . ($log['messages'] > 1 ? 's' : '') . '_noun'] . '</a>)';
 			echo '<br>';
 		}
 		echo '<br>
@@ -1895,7 +1895,7 @@ function template_aeva_profile_viewvotes()
 				', $txt['media_voter_list'], '
 			</we:title>';
 		foreach ($context['aeva_otherVoters'] as $row)
-			echo '<br><a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . ';area=aevavotes">' . $row['real_name'] . '</a> (' . $row['co'] . ' ' . $txt['media_vote' . ($row['co'] > 1 ? 's' : '') . '_noun'] . ')';
+			echo '<br><a href="<URL>?action=profile;u=' . $row['id_member'] . ';area=aevavotes">' . $row['real_name'] . '</a> (' . $row['co'] . ' ' . $txt['media_vote' . ($row['co'] > 1 ? 's' : '') . '_noun'] . ')';
 	}
 
 	echo '
@@ -1940,7 +1940,7 @@ function template_aeva_whoRatedWhat()
 // Filestack view for gallery
 function aeva_listFiles($items, $can_moderate = false)
 {
-	global $galurl, $scripturl, $context, $txt, $theme;
+	global $galurl, $context, $txt, $theme;
 
 	$can_moderate_one = $can_moderate_here = aeva_allowedTo('moderate');
 	if (!$can_moderate_one)

@@ -14,10 +14,10 @@
 // Add a new language
 function template_add_language()
 {
-	global $context, $theme, $options, $txt, $scripturl;
+	global $context, $theme, $options, $txt;
 
 	echo '
-		<form action="', $scripturl, '?action=admin;area=languages;sa=add;', $context['session_query'], '" method="post" accept-charset="UTF-8">
+		<form action="<URL>?action=admin;area=languages;sa=add;', $context['session_query'], '" method="post" accept-charset="UTF-8">
 			<we:cat>
 				', $txt['add_language'], '
 			</we:cat>
@@ -77,7 +77,7 @@ function template_add_language()
 // Download a new language file?
 function template_download_language()
 {
-	global $context, $theme, $options, $txt, $scripturl, $settings;
+	global $context, $theme, $options, $txt, $settings;
 
 	// Actually finished?
 	if (!empty($context['install_complete']))
@@ -101,7 +101,7 @@ function template_download_language()
 
 	// Provide something of an introduction...
 	echo '
-		<form action="', $scripturl, '?action=admin;area=languages;sa=downloadlang;did=', $context['download_id'], ';', $context['session_query'], '" method="post" accept-charset="UTF-8">
+		<form action="<URL>?action=admin;area=languages;sa=downloadlang;did=', $context['download_id'], ';', $context['session_query'], '" method="post" accept-charset="UTF-8">
 			<we:cat>
 				', $txt['languages_download'], '
 			</we:cat>
@@ -256,7 +256,7 @@ function template_download_language()
 // Edit some language entries?
 function template_modify_language_list()
 {
-	global $context, $theme, $options, $txt, $scripturl;
+	global $context, $theme, $options, $txt;
 
 	echo '
 		<we:cat>
@@ -346,7 +346,7 @@ function template_modify_language_list()
 
 function template_modify_entries()
 {
-	global $context, $txt, $scripturl;
+	global $context, $txt;
 
 	echo '
 	<we:cat>
@@ -354,7 +354,7 @@ function template_modify_entries()
 	</we:cat>';
 
 	echo '
-	<form action="', $scripturl, '?action=admin;area=languages;sa=editlang;lid=', $context['lang_id'], '" id="entry_form" method="post" accept-charset="UTF-8">
+	<form action="<URL>?action=admin;area=languages;sa=editlang;lid=', $context['lang_id'], '" id="entry_form" method="post" accept-charset="UTF-8">
 		<input type="hidden" name="tfid" value="', $context['selected_file']['source_id'], '|', $context['selected_file']['lang_id'], '">
 		<div class="windowbg2 wrc">
 			<dl class="settings admin_permissions">';
@@ -396,7 +396,7 @@ function template_modify_entries()
 		echo '
 				</dd>';
 	}
-	
+
 	// Already have some?
 	if (!empty($context['file_entries']))
 	{

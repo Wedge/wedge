@@ -13,12 +13,12 @@
 
 function template_browse()
 {
-	global $context, $theme, $options, $scripturl, $txt;
+	global $context, $theme, $options, $txt;
 
 	// Showing the filtering.
 	$items = array();
 	foreach ($context['filter_plugins'] as $k => $v)
-		$items[] = $k != $context['current_filter'] ? '<a href="' . $scripturl . '?action=admin;area=plugins;filter=' . $k . '">' . sprintf($txt['plugin_filter_' . $k], $v) . '</a>' : '<strong>' . sprintf($txt['plugin_filter_' . $k], $v) . '</strong>';
+		$items[] = $k != $context['current_filter'] ? '<a href="<URL>?action=admin;area=plugins;filter=' . $k . '">' . sprintf($txt['plugin_filter_' . $k], $v) . '</a>' : '<strong>' . sprintf($txt['plugin_filter_' . $k], $v) . '</strong>';
 
 	echo '
 	<p class="description">', $txt['plugin_filter'], ' ', implode(' | ', $items), '</p>';
@@ -45,7 +45,7 @@ function template_browse()
 			$item = array(
 				array(
 					'icon' => 'switch_on.png',
-					'url' => $scripturl . '?action=admin;area=plugins;sa=disable;plugin=' . $plugin['folder'] . ';' . $context['session_query'],
+					'url' => '<URL>?action=admin;area=plugins;sa=disable;plugin=' . $plugin['folder'] . ';' . $context['session_query'],
 					'title' => $txt['disable_plugin']
 				)
 			);
@@ -53,7 +53,7 @@ function template_browse()
 			if (!empty($plugin['acp_url']))
 				$item[] = array(
 					'icon' => 'plugin_settings.png',
-					'url' => $scripturl . '?' . $plugin['acp_url'],
+					'url' => '<URL>?' . $plugin['acp_url'],
 					'title' => $txt['admin_plugin_settings'],
 				);
 
@@ -66,13 +66,13 @@ function template_browse()
 			if (empty($plugin['install_errors']))
 				$item[0] = array(
 					'icon' => 'switch_off.png',
-					'url' => $scripturl . '?action=admin;area=plugins;sa=enable;plugin=' . $plugin['folder'] . ';' . $context['session_query'],
+					'url' => '<URL>?action=admin;area=plugins;sa=enable;plugin=' . $plugin['folder'] . ';' . $context['session_query'],
 					'title' => $txt['enable_plugin'],
 				);
 
 			$item[1] = array(
 				'icon' => 'plugin_remove.png',
-				'url' => $scripturl . '?action=admin;area=plugins;sa=remove;plugin=' . $plugin['folder'],
+				'url' => '<URL>?action=admin;area=plugins;sa=remove;plugin=' . $plugin['folder'],
 				'title' => $txt['remove_plugin'],
 			);
 
@@ -136,7 +136,7 @@ function template_browse()
 		<div class="smalltext floatleft inline-block">', $txt['plugin_readmes'], ':';
 
 			foreach ($plugin['readmes'] as $readme => $state)
-				echo ' &nbsp;<a href="', $scripturl, '?action=admin;area=plugins;sa=readme;plugin=', rawurlencode($plugin['folder']), ';lang=', $readme, '" onclick="return reqWin(this);"><img src="', $theme['theme_url'], '/languages/Flag.', $readme, '.png"></a>';
+				echo ' &nbsp;<a href="<URL>?action=admin;area=plugins;sa=readme;plugin=', rawurlencode($plugin['folder']), ';lang=', $readme, '" onclick="return reqWin(this);"><img src="', $theme['theme_url'], '/languages/Flag.', $readme, '.png"></a>';
 
 			echo '
 		</div>';

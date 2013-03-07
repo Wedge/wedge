@@ -168,7 +168,7 @@ function template_aeva_admin_maintenance()
 // Prune page template
 function template_aeva_admin_maintenance_prune()
 {
-	global $context, $scripturl, $txt;
+	global $context, $txt;
 
 	add_js('
 	function prune_toggle(is_item)
@@ -178,7 +178,7 @@ function template_aeva_admin_maintenance_prune()
 	}');
 
 	echo '
-		<form action="', $scripturl, '?action=admin;area=aeva_maintenance;sa=prune;', $context['session_query'], '" method="post">
+		<form action="<URL>?action=admin;area=aeva_maintenance;sa=prune;', $context['session_query'], '" method="post">
 			<table class="w100 cp8 cs0">
 				<tr class="titlebg">
 					<td>', $txt['media_pruning'], '</td>
@@ -267,7 +267,7 @@ function template_aeva_admin_maintenance_prune()
 
 function template_aeva_admin_modlog()
 {
-	global $context, $scripturl, $galurl, $txt;
+	global $context, $galurl, $txt;
 
 	echo '
 	<form action="', $galurl, 'area=moderate;sa=modlog;', $context['session_query'], '" method="post">
@@ -320,7 +320,7 @@ function template_aeva_admin_modlog()
 function template_aeva_admin_reports()
 {
 	// Shows the reports page
-	global $galurl, $scripturl, $context, $txt, $theme, $amSettings;
+	global $galurl, $context, $txt, $theme, $amSettings;
 
 	echo '
 
@@ -344,8 +344,8 @@ function template_aeva_admin_reports()
 				<td><a href="', $galurl, 'sa=item;in=', $context['aeva_report_type'] == 'comment' ? $report['id2'] . '#com' . $report['id'] : $report['id'], '">', $report['title'], '</a></td>
 				<td>', aeva_profile($report['reported_by']['id'], $report['reported_by']['name']), '</td>
 				<td>', $report['reported_on'], '</td>
-				<td><a href="', $scripturl, '?action=media;area=moderate;sa=reports;do=delete;items;in=', $report['id_report'], ';', $context['session_query'], '">', $txt['media_admin_del_report'], '</a>
-				<br><a href="', $scripturl, '?action=media;area=moderate;sa=reports;items;do=deleteitem;in=', $report['id_report'], ';', $context['session_query'], '" onclick="return ask(we_confirm, e);">', $txt['media_admin_del_report_item'], '</a></td>
+				<td><a href="<URL>?action=media;area=moderate;sa=reports;do=delete;items;in=', $report['id_report'], ';', $context['session_query'], '">', $txt['media_admin_del_report'], '</a>
+				<br><a href="<URL>?action=media;area=moderate;sa=reports;items;do=deleteitem;in=', $report['id_report'], ';', $context['session_query'], '" onclick="return ask(we_confirm, e);">', $txt['media_admin_del_report_item'], '</a></td>
 			</tr>
 			<tr class="windowbg" id="tr_expand_', $report['id_report'], '" class="hide">
 				<td colspan="5">
@@ -363,7 +363,7 @@ function template_aeva_admin_reports()
 // The main ban page
 function template_aeva_admin_bans()
 {
-	global $txt, $scripturl, $context;
+	global $txt, $context;
 
 	echo '
 
@@ -387,7 +387,7 @@ function template_aeva_admin_bans()
 				<td>', $ban['banned_on'], '</td>
 				<td>', $ban['expires_on'], '</td>
 				<td>', $ban['type_txt'], '</td>
-				<td><a href="', $scripturl, '?action=admin;area=aeva_bans;sa=edit;in=', $ban['id'], ';', $context['session_query'], '">', $txt['media_admin_edit'], '</a>/<a href="', $scripturl, '?action=admin;area=aeva_bans;sa=delete;in=', $ban['id'], ';', $context['session_query'], '">', $txt['media_admin_delete'], '</a></td>
+				<td><a href="<URL>?action=admin;area=aeva_bans;sa=edit;in=', $ban['id'], ';', $context['session_query'], '">', $txt['media_admin_edit'], '</a>/<a href="<URL>?action=admin;area=aeva_bans;sa=delete;in=', $ban['id'], ';', $context['session_query'], '">', $txt['media_admin_delete'], '</a></td>
 			</tr>';
 	}
 
@@ -397,7 +397,7 @@ function template_aeva_admin_bans()
 
 function template_aeva_admin_perms()
 {
-	global $txt, $context, $scripturl, $theme;
+	global $txt, $context, $theme;
 
 	echo '
 	<we:cat>
@@ -411,7 +411,7 @@ function template_aeva_admin_perms()
 	<form method="post" action="', $context['base_url'], '">
 		<table class="w100 center cp4 cs1 tborder" style="margin-top: 2ex">
 			<tr class="windowbg2">
-				<td colspan="3">', sprintf($txt['media_admin_perms_warning'], $scripturl . '?action=admin;area=permissions;' . $context['session_query']), '</td>
+				<td colspan="3">', sprintf($txt['media_admin_perms_warning'], '<URL>?action=admin;area=permissions;' . $context['session_query']), '</td>
 			</tr>
 			<tr class="catbg">
 				<td class="w50">', $txt['media_admin_prof_name'], '</td>
@@ -472,7 +472,7 @@ function template_aeva_admin_perms()
 
 function template_aeva_admin_perms_view()
 {
-	global $txt, $context, $scripturl;
+	global $txt, $context;
 
 	echo '
 		<form action="', $context['base_url'], ';sa=quick;profile=', $context['aeva_profile']['id'], '" method="post">
@@ -496,7 +496,7 @@ function template_aeva_admin_perms_view()
 		echo '
 				<tr class="windowbg', $alt ? '2' : '', '">
 					<td>', $group['name'], '</td>
-					<td>', $id > 0 ? '<a href="' . $scripturl . '?action=moderate;area=viewgroups;sa=members;group=' . $id . '">' . $group['num_members'] . '</a>' : $group['num_members'], '</td>
+					<td>', $id > 0 ? '<a href="<URL>?action=moderate;area=viewgroups;sa=members;group=' . $id . '">' . $group['num_members'] . '</a>' : $group['num_members'], '</td>
 					<td>', isset($group['perms']) ? $group['perms'] : 0, '</td>
 					<td><a href="', $context['base_url'], ';sa=edit;in=', $context['aeva_profile']['id'], ';group=', $id, '">', $txt['media_edit_this_item'], '</a></td>
 					<td><input type="checkbox" name="groups[]" value="', $id, '" id="groups[]"></td>
@@ -539,7 +539,7 @@ function template_aeva_admin_perms_view()
 // Membergroup quota template
 function template_aeva_admin_quotas()
 {
-	global $txt, $context, $scripturl;
+	global $txt, $context;
 
 	echo '
 	<we:cat>
@@ -549,7 +549,7 @@ function template_aeva_admin_quotas()
 		', $txt['media_admin_quotas_desc'], '
 	</div>
 
-	<form method="post" action="', $scripturl, '?action=admin;area=aeva_quotas;', $context['session_query'], '">
+	<form method="post" action="<URL>?action=admin;area=aeva_quotas;', $context['session_query'], '">
 		<table class="w100 center cp4 cs1 tborder" style="margin-top: 2ex">
 			<tr class="catbg">
 				<td class="w50">', $txt['media_admin_prof_name'], '</td>
@@ -563,7 +563,7 @@ function template_aeva_admin_quotas()
 		$alt = !$alt;
 		echo '
 			<tr class="windowbg', $alt ? '2' : '', '">
-				<td><a href="', $scripturl, '?action=admin;area=aeva_quotas;sa=view;in=', $prof['id'], ';', $context['session_query'], '">', $prof['name'], '</a></td>
+				<td><a href="<URL>?action=admin;area=aeva_quotas;sa=view;in=', $prof['id'], ';', $context['session_query'], '">', $prof['name'], '</a></td>
 				<td><a href="#" onclick="return getPermAlbums(', $prof['id'], ', \';prof=', $prof['id'], '\');">', $prof['albums'], '</a></td>
 				<td><input name="delete_prof_', $prof['id'], '" type="checkbox" onclick="return permDelCheck(e, ', $prof['id'], ', this);"', !empty($prof['undeletable']) ? ' disabled' : '', '></td>
 			</tr>
@@ -597,7 +597,7 @@ function template_aeva_admin_quotas()
 	</form>';
 
 		echo '
-	<form method="post" action="', $scripturl, '?action=admin;area=aeva_quotas;sa=add;', $context['session_query'], '">
+	<form method="post" action="<URL>?action=admin;area=aeva_quotas;sa=add;', $context['session_query'], '">
 		<table class="w100 center cp4 cs1 tborder" style="margin-top: 2ex">
 			<tr class="titlebg">
 				<td>', $txt['media_admin_profile_add'], '</td>
@@ -615,7 +615,7 @@ function template_aeva_admin_quotas()
 // Viewing a profile
 function template_aeva_admin_quota_view()
 {
-	global $txt, $context, $scripturl;
+	global $txt, $context;
 
 	echo '
 		<table class="w100 center cp4 cs1 tborder" style="margin-top: 2ex">
@@ -634,8 +634,8 @@ function template_aeva_admin_quota_view()
 		echo '
 			<tr class="windowbg', $alt ? '2' : '', '">
 				<td>', $group['name'], '</td>
-				<td>', $id > 0 ? '<a href="' . $scripturl . '?action=moderate;area=viewgroups;sa=members;group=' . $id . '">' . $group['num_members'] . '</a>' : $group['num_members'], '</td>
-				<td><a href="', $scripturl, '?action=admin;area=aeva_quotas;sa=edit;in=', $context['aeva_profile']['id'], ';group=', $id, ';', $context['session_query'], '">', $txt['media_edit_this_item'], '</a></td>
+				<td>', $id > 0 ? '<a href="<URL>?action=moderate;area=viewgroups;sa=members;group=' . $id . '">' . $group['num_members'] . '</a>' : $group['num_members'], '</td>
+				<td><a href="<URL>?action=admin;area=aeva_quotas;sa=edit;in=', $context['aeva_profile']['id'], ';group=', $id, ';', $context['session_query'], '">', $txt['media_edit_this_item'], '</a></td>
 			</tr>';
 	}
 	echo '
@@ -645,7 +645,7 @@ function template_aeva_admin_quota_view()
 // Custom fields template
 function template_aeva_admin_fields()
 {
-	global $txt, $galurl, $scripturl, $context;
+	global $txt, $galurl, $context;
 
 	echo '
 		<table class="bordercolor w100 center cp4 cs1">
@@ -658,7 +658,7 @@ function template_aeva_admin_fields()
 				<td class="w25">', $txt['media_admin_moderation'], '</td>
 			</tr>
 			<tr class="windowbg2">
-				<td colspan="3"><a href="', $scripturl, '?action=admin;area=aeva_fields;sa=edit;', $context['session_query'], '">', $txt['media_cf_add'], '</a></td>
+				<td colspan="3"><a href="<URL>?action=admin;area=aeva_fields;sa=edit;', $context['session_query'], '">', $txt['media_cf_add'], '</a></td>
 			</tr>';
 	$alt = false;
 	foreach ($context['custom_fields'] as $field)
@@ -667,7 +667,7 @@ function template_aeva_admin_fields()
 			<tr class="windowbg', $alt ? '2' : '', '">
 				<td>', $field['name'], '</td>
 				<td>', $txt['media_cf_' . $field['type']], '</td>
-				<td><a href="', $scripturl, '?action=admin;area=aeva_fields;sa=edit;in=', $field['id'], ';', $context['session_query'], '">', $txt['media_edit_this_item'], '</a> / <a href="', $scripturl, '?action=admin;area=aeva_fields;delete=', $field['id'], ';', $context['session_query'], '" onclick="return ask(we_confirm, e);">', $txt['media_delete_this_item'], '</a></td>
+				<td><a href="<URL>?action=admin;area=aeva_fields;sa=edit;in=', $field['id'], ';', $context['session_query'], '">', $txt['media_edit_this_item'], '</a> / <a href="<URL>?action=admin;area=aeva_fields;delete=', $field['id'], ';', $context['session_query'], '" onclick="return ask(we_confirm, e);">', $txt['media_delete_this_item'], '</a></td>
 			</tr>';
 		$alt = !$alt;
 	}
@@ -678,7 +678,7 @@ function template_aeva_admin_fields()
 // FTP Import template
 function template_aeva_admin_ftpimport()
 {
-	global $context, $scripturl, $txt, $theme;
+	global $context, $txt, $theme;
 
 	$albumOpts_str = '
 	<option class="hr"></option>';
@@ -695,7 +695,7 @@ function template_aeva_admin_ftpimport()
 		', $txt['media_admin_ftp_desc'], '
 	</div>
 
-	<form action="', $scripturl, '?action=admin;area=aeva_ftp;', $context['session_query'], '" method="post">
+	<form action="<URL>?action=admin;area=aeva_ftp;', $context['session_query'], '" method="post">
 		<table class="w100 cp4 cs1">
 			<tr>
 				<td class="windowbg smalltext" style="padding: 10px">', $txt['media_admin_ftp_help'], '</td>

@@ -13,17 +13,17 @@
 
 function template_permission_index()
 {
-	global $context, $theme, $options, $scripturl, $txt, $settings;
+	global $context, $theme, $options, $txt, $settings;
 
 	// Not allowed to edit?
 	if (!$context['can_modify'])
 		echo '
 		<div class="errorbox">
-			', sprintf($txt['permission_cannot_edit'], $scripturl . '?action=admin;area=permissions;sa=profiles'), '
+			', sprintf($txt['permission_cannot_edit'], '<URL>?action=admin;area=permissions;sa=profiles'), '
 		</div>';
 
 	echo '
-		<form action="', $scripturl, '?action=admin;area=permissions;sa=quick" method="post" accept-charset="UTF-8" name="permissionForm" id="permissionForm">';
+		<form action="<URL>?action=admin;area=permissions;sa=quick" method="post" accept-charset="UTF-8" name="permissionForm" id="permissionForm">';
 
 	if (!empty($context['profile']))
 		echo '
@@ -64,16 +64,16 @@ function template_permission_index()
 						<td class="left">';
 		if ($group['id'] == -1)
 			echo '
-							<a href="' . $scripturl . '?action=help;in=membergroup_guests" onclick="return reqWin(this);" class="help"></a>';
+							<a href="<URL>?action=help;in=membergroup_guests" onclick="return reqWin(this);" class="help"></a>';
 		elseif ($group['id'] == 0)
 			echo '
-							<a href="' . $scripturl . '?action=help;in=membergroup_regular_members" onclick="return reqWin(this);" class="help"></a>';
+							<a href="<URL>?action=help;in=membergroup_regular_members" onclick="return reqWin(this);" class="help"></a>';
 		elseif ($group['id'] == 1)
 			echo '
-							<a href="' . $scripturl . '?action=help;in=membergroup_administrator" onclick="return reqWin(this);" class="help"></a>';
+							<a href="<URL>?action=help;in=membergroup_administrator" onclick="return reqWin(this);" class="help"></a>';
 		elseif ($group['id'] == 3)
 			echo '
-							<a href="' . $scripturl . '?action=help;in=membergroup_moderator" onclick="return reqWin(this);" class="help"></a>';
+							<a href="<URL>?action=help;in=membergroup_moderator" onclick="return reqWin(this);" class="help"></a>';
 		if ($group['color'])
 			echo '
 							<span style="color: ', $group['color'], '">', $group['name'], '</span>';
@@ -98,7 +98,7 @@ function template_permission_index()
 						<td style="width: 8%', $group['id'] == 1 || $group['id'] == -1 ? '; font-style: italic' : (!empty($group['num_permissions']['denied']) ? '; color: red' : ''), '">', $group['num_permissions']['denied'], '</td>';
 
 		echo '
-						<td>', $group['allow_modify'] ? '<a href="' . $scripturl . '?action=admin;area=permissions;sa=modify;group=' . $group['id'] . (empty($context['profile']) ? '' : ';pid=' . $context['profile']['id']) . '">' . ($context['can_modify'] ? $txt['permissions_modify'] : $txt['permissions_view']). '</a>' : '', '</td>
+						<td>', $group['allow_modify'] ? '<a href="<URL>?action=admin;area=permissions;sa=modify;group=' . $group['id'] . (empty($context['profile']) ? '' : ';pid=' . $context['profile']['id']) . '">' . ($context['can_modify'] ? $txt['permissions_modify'] : $txt['permissions_view']). '</a>' : '', '</td>
 						<td>', $group['allow_modify'] && $context['can_modify'] ? '<input type="checkbox" name="group[]" value="' . $group['id'] . '">' : '', '</td>
 					</tr>';
 	}
@@ -120,7 +120,7 @@ function template_permission_index()
 					<legend>', $txt['permissions_with_selection'], '</legend>
 					<dl class="settings admin_permissions">
 						<dt>
-							<a href="', $scripturl, '?action=help;in=permissions_quickgroups" onclick="return reqWin(this);" class="help"></a> ', $txt['permissions_apply_pre_defined'], '
+							<a href="<URL>?action=help;in=permissions_quickgroups" onclick="return reqWin(this);" class="help"></a> ', $txt['permissions_apply_pre_defined'], '
 						</dt>
 						<dd>
 							<select name="predefined">
@@ -250,10 +250,10 @@ function template_permission_index()
 
 function template_by_board()
 {
-	global $context, $theme, $options, $scripturl, $txt, $settings;
+	global $context, $theme, $options, $txt, $settings;
 
 	echo '
-		<form action="', $scripturl, '?action=admin;area=permissions;sa=board" method="post" accept-charset="UTF-8">
+		<form action="<URL>?action=admin;area=permissions;sa=board" method="post" accept-charset="UTF-8">
 			<we:cat>
 				', $txt['permissions_boards'], '
 			</we:cat>
@@ -270,7 +270,7 @@ function template_by_board()
 	if (!$context['edit_all'])
 		echo '
 			<div class="right">
-				<a href="', $scripturl, '?action=admin;area=permissions;sa=board;edit;', $context['session_query'], '">[', $txt['permissions_board_all'], ']</a>
+				<a href="<URL>?action=admin;area=permissions;sa=board;edit;', $context['session_query'], '">[', $txt['permissions_board_all'], ']</a>
 			</div>';
 
 	foreach ($context['categories'] as $category)
@@ -294,7 +294,7 @@ function template_by_board()
 			echo '
 					<li class="flow_hidden windowbg', $alternate ? '' : '2', '">
 						<span class="perm_board floatleft">
-							<a href="', $scripturl, '?action=admin;area=manageboards;sa=board;boardid=', $board['id'], ';rid=permissions;', $context['session_query'], '">', str_repeat('-', $board['child_level']), ' ', $board['name'], '</a>
+							<a href="<URL>?action=admin;area=manageboards;sa=board;boardid=', $board['id'], ';rid=permissions;', $context['session_query'], '">', str_repeat('-', $board['child_level']), ' ', $board['name'], '</a>
 						</span>
 						<span class="perm_boardprofile floatleft">';
 
@@ -312,7 +312,7 @@ function template_by_board()
 			}
 			else
 				echo '
-							<a href="', $scripturl, '?action=admin;area=permissions;sa=index;pid=', $board['profile'], ';', $context['session_query'], '"> [', $board['profile_name'], ']</a>';
+							<a href="<URL>?action=admin;area=permissions;sa=index;pid=', $board['profile'], ';', $context['session_query'], '"> [', $board['profile_name'], ']</a>';
 
 			echo '
 						</span>
@@ -333,7 +333,7 @@ function template_by_board()
 				<input type="submit" name="save_changes" value="', $txt['save'], '" class="save">';
 	else
 		echo '
-				<a href="', $scripturl, '?action=admin;area=permissions;sa=board;edit;', $context['session_query'], '">[', $txt['permissions_board_all'], ']</a>';
+				<a href="<URL>?action=admin;area=permissions;sa=board;edit;', $context['session_query'], '">[', $txt['permissions_board_all'], ']</a>';
 
 	echo '
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
@@ -344,10 +344,10 @@ function template_by_board()
 // Edit permission profiles (predefined).
 function template_edit_profiles()
 {
-	global $context, $theme, $options, $scripturl, $txt, $settings;
+	global $context, $theme, $options, $txt, $settings;
 
 	echo '
-		<form action="', $scripturl, '?action=admin;area=permissions;sa=profiles" method="post" accept-charset="UTF-8">
+		<form action="<URL>?action=admin;area=permissions;sa=profiles" method="post" accept-charset="UTF-8">
 			<we:title>
 				', $txt['permissions_profile_edit'], '
 			</we:title>
@@ -373,7 +373,7 @@ function template_edit_profiles()
 							<input name="rename_profile[', $profile['id'], ']" value="', $profile['name'], '">';
 		else
 			echo '
-							<a href="', $scripturl, '?action=admin;area=permissions;sa=index;pid=', $profile['id'], ';', $context['session_query'], '">', $profile['name'], '</a>';
+							<a href="<URL>?action=admin;area=permissions;sa=index;pid=', $profile['id'], ';', $context['session_query'], '">', $profile['name'], '</a>';
 
 		echo '
 						</td>
@@ -402,7 +402,7 @@ function template_edit_profiles()
 			</div>
 		</form>
 		<br>
-		<form action="', $scripturl, '?action=admin;area=permissions;sa=profiles" method="post" accept-charset="UTF-8">
+		<form action="<URL>?action=admin;area=permissions;sa=profiles" method="post" accept-charset="UTF-8">
 			<we:cat>
 				', $txt['permissions_profile_new'], '
 			</we:cat>
@@ -438,20 +438,20 @@ function template_edit_profiles()
 
 function template_modify_group()
 {
-	global $context, $theme, $options, $scripturl, $txt, $settings;
+	global $context, $theme, $options, $txt, $settings;
 
 	// Cannot be edited?
 	if (!$context['profile']['can_modify'])
 		echo '
 		<div class="errorbox">
-			', sprintf($txt['permission_cannot_edit'], $scripturl . '?action=admin;area=permissions;sa=profiles'), '
+			', sprintf($txt['permission_cannot_edit'], '<URL>?action=admin;area=permissions;sa=profiles'), '
 		</div>';
 	else
 		add_js('
 	window.weUsedDeny = false;');
 
 	echo '
-		<form action="', $scripturl, '?action=admin;area=permissions;sa=modify2;group=', $context['group']['id'], ';pid=', $context['profile']['id'],
+		<form action="<URL>?action=admin;area=permissions;sa=modify2;group=', $context['group']['id'], ';pid=', $context['profile']['id'],
 		'" method="post" accept-charset="UTF-8" name="permissionForm" id="permissionForm" onsubmit="return !window.weUsedDeny || ask(',
 		JavaScriptEscape($txt['permissions_deny_dangerous'], true), ', e);">';
 
@@ -473,8 +473,8 @@ function template_modify_group()
 	echo '
 			</we:cat>
 			<div class="windowbg wrc">
-				', $txt['permissions_change_view'], ': ', ($context['view_type'] == 'simple' ? '<img src="' . $theme['images_url'] . '/selected.gif">' : ''), '<a href="', $scripturl, '?action=admin;area=permissions;sa=modify;group=', $context['group']['id'], ($context['permission_type'] == 'board' ? ';pid=' . $context['profile']['id'] : ''), ';view=simple">', $txt['permissions_view_simple'], '</a> |
-				', ($context['view_type'] == 'classic' ? '<img src="' . $theme['images_url'] . '/selected.gif">' : ''), '<a href="', $scripturl, '?action=admin;area=permissions;sa=modify;group=', $context['group']['id'], ($context['permission_type'] == 'board' ? ';pid=' . $context['profile']['id'] : ''), ';view=classic">', $txt['permissions_view_classic'], '</a>
+				', $txt['permissions_change_view'], ': ', ($context['view_type'] == 'simple' ? '<img src="' . $theme['images_url'] . '/selected.gif">' : ''), '<a href="<URL>?action=admin;area=permissions;sa=modify;group=', $context['group']['id'], ($context['permission_type'] == 'board' ? ';pid=' . $context['profile']['id'] : ''), ';view=simple">', $txt['permissions_view_simple'], '</a> |
+				', ($context['view_type'] == 'classic' ? '<img src="' . $theme['images_url'] . '/selected.gif">' : ''), '<a href="<URL>?action=admin;area=permissions;sa=modify;group=', $context['group']['id'], ($context['permission_type'] == 'board' ? ';pid=' . $context['profile']['id'] : ''), ';view=classic">', $txt['permissions_view_classic'], '</a>
 			</div>
 			<div class="flow_hidden">';
 
@@ -522,7 +522,7 @@ function template_modify_group()
 // A JavaScript-enabled clean permissions view.
 function template_modify_group_simple($type)
 {
-	global $context, $theme, $options, $scripturl, $txt, $settings;
+	global $context, $theme, $options, $txt, $settings;
 
 	// Simple only has one column so we only need bother ourself with that one.
 	$permission_data =& $context['permissions'][$type]['columns'][0];
@@ -616,7 +616,7 @@ function template_modify_group_simple($type)
 				echo '
 					<tr id="perm_div_', $id_group, '_', $permission['id'], '" class="', $alternate ? 'windowbg' : 'windowbg2', '">
 						<td class="top" style="width: 10px; padding-right: 1ex">
-							', $permission['help_index'] ? '<a href="' . $scripturl . '?action=help;in=' . $permission['help_index'] . '" onclick="return reqWin(this);" class="help" title="' . $txt['help'] . '"></a>' : '', '
+							', $permission['help_index'] ? '<a href="<URL>?action=help;in=' . $permission['help_index'] . '" onclick="return reqWin(this);" class="help" title="' . $txt['help'] . '"></a>' : '', '
 						</td>
 						<td class="top w100 left" style="padding-bottom: 2px">', $permission['name'], '</td>';
 
@@ -785,7 +785,7 @@ function template_modify_group_simple($type)
 // The SMF 1.x way of looking at permissions.
 function template_modify_group_classic($type)
 {
-	global $context, $theme, $options, $scripturl, $txt, $settings;
+	global $context, $theme, $options, $txt, $settings;
 
 	$permission_type =& $context['permissions'][$type];
 	$disable_field = $context['profile']['can_modify'] ? '' : ' disabled';
@@ -861,7 +861,7 @@ function template_modify_group_classic($type)
 					echo '
 					<tr class="', $alternate ? 'windowbg' : 'windowbg2', '">
 						<td style="width: 10px">
-							', $permission['show_help'] ? '<a href="' . $scripturl . '?action=help;in=permissionhelp_' . $permission['id'] . '" onclick="return reqWin(this);" class="help" title="' . $txt['help'] . '"></a>' : '', '
+							', $permission['show_help'] ? '<a href="<URL>?action=help;in=permissionhelp_' . $permission['id'] . '" onclick="return reqWin(this);" class="help" title="' . $txt['help'] . '"></a>' : '', '
 						</td>';
 
 					if ($permission['has_own_any'])

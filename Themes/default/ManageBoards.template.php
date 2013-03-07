@@ -14,7 +14,7 @@
 // Template for listing all the current categories and boards.
 function template_main()
 {
-	global $context, $theme, $options, $scripturl, $txt, $settings, $language;
+	global $context, $theme, $options, $txt, $settings, $language;
 
 	// Table header.
 	echo '
@@ -43,12 +43,12 @@ function template_main()
 		// Link to modify the category.
 		echo '
 		<we:title>
-			<a href="' . $scripturl . '?action=admin;area=manageboards;sa=cat;cat=' . $category['id'] . '">', $category['name'], '</a> <a href="' . $scripturl . '?action=admin;area=manageboards;sa=cat;cat=' . $category['id'] . '">', $txt['catModify'], '</a>
+			<a href="<URL>?action=admin;area=manageboards;sa=cat;cat=' . $category['id'] . '">', $category['name'], '</a> <a href="<URL>?action=admin;area=manageboards;sa=cat;cat=' . $category['id'] . '">', $txt['catModify'], '</a>
 		</we:title>';
 
 		// Boards table header.
 		echo '
-		<form action="', $scripturl, '?action=admin;area=manageboards;sa=newboard;cat=', $category['id'], '" method="post" accept-charset="UTF-8">
+		<form action="<URL>?action=admin;area=manageboards;sa=newboard;cat=', $category['id'], '" method="post" accept-charset="UTF-8">
 			<div class="windowbg wrc">
 				<ul id="category_', $category['id'], '">';
 
@@ -64,10 +64,10 @@ function template_main()
 			$alternate = !$alternate;
 
 			echo '
-					<li', !empty($settings['recycle_board']) && !empty($settings['recycle_enable']) && $settings['recycle_board'] == $board['id'] ? ' id="recycle_board"' : '', ' class="windowbg', $alternate ? '' : '2', '" style="padding-', $context['right_to_left'] ? 'right' : 'left', ': ', 5 + 30 * $board['child_level'], 'px', $board['move'] ? '; color: red' : '', '"><span class="floatleft"><img src="', $theme['default_theme_url'] . '/languages/Flag.', empty($board['language']) ? $language : $board['language'], '.png"> <a href="', $scripturl, '?board=', $board['id'], '">', $board['name'], '</a>', !empty($settings['recycle_board']) && !empty($settings['recycle_enable']) && $settings['recycle_board'] == $board['id'] ? '<a href="' . $scripturl . '?action=admin;area=manageboards;sa=settings"> <img src="' . $theme['images_url'] . '/post/recycled.gif" alt="' . $txt['recycle_board'] . '"></a></span>' : '</span>', '
-						<span class="floatright">', $context['can_manage_permissions'] ? '<span class="modify_boards"><a href="' . $scripturl . '?action=admin;area=permissions;sa=index;pid=' . $board['permission_profile'] . ';' . $context['session_query'] . '">' . $txt['mboards_permissions'] . '</a></span>' : '', '
-						<span class="modify_boards"><a href="', $scripturl, '?action=admin;area=manageboards;move=', $board['id'], '">', $txt['mboards_move'], '</a></span>
-						<span class="modify_boards"><a href="', $scripturl, '?action=admin;area=manageboards;sa=board;boardid=', $board['id'], '">', $txt['mboards_modify'], '</a></span></span><br class="clear_right">
+					<li', !empty($settings['recycle_board']) && !empty($settings['recycle_enable']) && $settings['recycle_board'] == $board['id'] ? ' id="recycle_board"' : '', ' class="windowbg', $alternate ? '' : '2', '" style="padding-', $context['right_to_left'] ? 'right' : 'left', ': ', 5 + 30 * $board['child_level'], 'px', $board['move'] ? '; color: red' : '', '"><span class="floatleft"><img src="', $theme['default_theme_url'] . '/languages/Flag.', empty($board['language']) ? $language : $board['language'], '.png"> <a href="<URL>?board=', $board['id'], '">', $board['name'], '</a>', !empty($settings['recycle_board']) && !empty($settings['recycle_enable']) && $settings['recycle_board'] == $board['id'] ? '<a href="<URL>?action=admin;area=manageboards;sa=settings"> <img src="' . $theme['images_url'] . '/post/recycled.gif" alt="' . $txt['recycle_board'] . '"></a></span>' : '</span>', '
+						<span class="floatright">', $context['can_manage_permissions'] ? '<span class="modify_boards"><a href="<URL>?action=admin;area=permissions;sa=index;pid=' . $board['permission_profile'] . ';' . $context['session_query'] . '">' . $txt['mboards_permissions'] . '</a></span>' : '', '
+						<span class="modify_boards"><a href="<URL>?action=admin;area=manageboards;move=', $board['id'], '">', $txt['mboards_move'], '</a></span>
+						<span class="modify_boards"><a href="<URL>?action=admin;area=manageboards;sa=board;boardid=', $board['id'], '">', $txt['mboards_modify'], '</a></span></span><br class="clear_right">
 					</li>';
 
 			if (!empty($board['move_links']))
@@ -104,12 +104,12 @@ function template_main()
 // Template for editing/adding a category on the forum.
 function template_modify_category()
 {
-	global $context, $theme, $options, $scripturl, $txt;
+	global $context, $theme, $options, $txt;
 
 	// Print table header.
 	echo '
 	<div id="manage_boards">
-		<form action="', $scripturl, '?action=admin;area=manageboards;sa=cat2" method="post" accept-charset="UTF-8">
+		<form action="<URL>?action=admin;area=manageboards;sa=cat2" method="post" accept-charset="UTF-8">
 			<input type="hidden" name="cat" value="', $context['category']['id'], '">
 				<we:cat>
 					', isset($context['category']['is_new']) ? $txt['mboards_new_cat_name'] : $txt['catEdit'], '
@@ -181,12 +181,12 @@ function template_modify_category()
 // A template to confirm if a user wishes to delete a category - and whether they want to save the boards.
 function template_confirm_category_delete()
 {
-	global $context, $theme, $options, $scripturl, $txt;
+	global $context, $theme, $options, $txt;
 
 	// Print table header.
 	echo '
 	<div id="manage_boards">
-		<form action="', $scripturl, '?action=admin;area=manageboards;sa=cat2" method="post" accept-charset="UTF-8">
+		<form action="<URL>?action=admin;area=manageboards;sa=cat2" method="post" accept-charset="UTF-8">
 			<input type="hidden" name="cat" value="', $context['category']['id'], '">
 			<we:cat>
 				', $txt['mboards_delete_cat'], '
@@ -235,12 +235,12 @@ function template_confirm_category_delete()
 // Below is the template for adding/editing an board on the forum.
 function template_modify_board()
 {
-	global $context, $theme, $options, $scripturl, $txt, $settings, $language;
+	global $context, $theme, $options, $txt, $settings, $language;
 
 	// The main table header.
 	echo '
 	<div id="manage_boards">
-		<form action="', $scripturl, '?action=admin;area=manageboards;sa=board2" method="post" accept-charset="UTF-8">
+		<form action="<URL>?action=admin;area=manageboards;sa=board2" method="post" accept-charset="UTF-8">
 			<input type="hidden" name="boardid" value="', $context['board']['id'], '">
 			<we:cat>
 				', isset($context['board']['is_new']) ? $txt['mboards_new_board_name'] : $txt['boardsEdit'], '
@@ -342,7 +342,7 @@ function template_modify_board()
 					</dd>
 					<dt>
 						<strong>', $txt['permission_profile'], ':</strong>
-						<dfn>', $context['can_manage_permissions'] ? sprintf($txt['permission_profile_desc'], $scripturl . '?action=admin;area=permissions;sa=profiles;' . $context['session_query']) : strip_tags($txt['permission_profile_desc']), '</dfn>
+						<dfn>', $context['can_manage_permissions'] ? sprintf($txt['permission_profile_desc'], '<URL>?action=admin;area=permissions;sa=profiles;' . $context['session_query']) : strip_tags($txt['permission_profile_desc']), '</dfn>
 					</dt>
 					<dd>
 						<select name="profile">';
@@ -720,12 +720,12 @@ function template_modify_board()
 // A template used when a user is deleting a board with child boards in it - to see what they want to do with them.
 function template_confirm_board_delete()
 {
-	global $context, $theme, $options, $scripturl, $txt;
+	global $context, $theme, $options, $txt;
 
 	// Print table header.
 	echo '
 	<div id="manage_boards">
-		<form action="', $scripturl, '?action=admin;area=manageboards;sa=board2" method="post" accept-charset="UTF-8">
+		<form action="<URL>?action=admin;area=manageboards;sa=board2" method="post" accept-charset="UTF-8">
 			<input type="hidden" name="boardid" value="', $context['board']['id'], '">
 
 			<we:cat>

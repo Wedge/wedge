@@ -13,7 +13,7 @@
 
 function template_boards()
 {
-	global $context, $theme, $options, $txt, $scripturl, $settings, $language;
+	global $context, $theme, $options, $txt, $settings, $language;
 
 	echo '
 	<div id="boards_container">';
@@ -44,10 +44,10 @@ function template_boards()
 
 		if (!$is_guest && !empty($category['show_unread']))
 			echo '
-							<a class="unreadlink" href="', $scripturl, '?action=unread;c=', $category['id'], '">', $txt['view_unread_category'], '</a>';
+							<a class="unreadlink" href="<URL>?action=unread;c=', $category['id'], '">', $txt['view_unread_category'], '</a>';
 
 		echo '
-							<a class="catfeed" href="', $scripturl, '?action=feed;c=', $category['id'], '"><div class="feed_icon"></div></a>
+							<a class="catfeed" href="<URL>?action=feed;c=', $category['id'], '"><div class="feed_icon"></div></a>
 							', $category['link'], '
 						</we:cat>
 					</td>
@@ -72,7 +72,7 @@ function template_boards()
 				echo '
 				<tr id="board_', $board['id'], '" class="windowbg', $alt ? '2' : '', '">
 					<td class="icon"', !empty($board['children']) ? ' rowspan="2"' : '', '>
-						<a', $board['redirect_newtab'] ? ' target="_blank"' : '', ' href="', $board['is_redirect'] || $is_guest ? $board['href'] : $scripturl . '?action=unread;board=' . $board['id'] . '.0;children', '">';
+						<a', $board['redirect_newtab'] ? ' target="_blank"' : '', ' href="', $board['is_redirect'] || $is_guest ? $board['href'] : '<URL>?action=unread;board=' . $board['id'] . '.0;children', '">';
 
 				// If this board is told to have a custom icon, use it.
 				if (!empty($board['custom_class']))
@@ -100,7 +100,7 @@ function template_boards()
 				// Has it outstanding posts for approval?
 				if ($board['can_approve_posts'] && ($board['unapproved_posts'] || $board['unapproved_topics']))
 					echo '
-						<a href="', $scripturl, '?action=moderate;area=postmod;sa=', ($board['unapproved_topics'] > 0 ? 'topics' : 'posts'), ';brd=', $board['id'], ';', $context['session_query'], '" title="', sprintf($txt['unapproved_posts'], $board['unapproved_topics'], $board['unapproved_posts']), '" class="moderation_link">(!)</a>';
+						<a href="<URL>?action=moderate;area=postmod;sa=', ($board['unapproved_topics'] > 0 ? 'topics' : 'posts'), ';brd=', $board['id'], ';', $context['session_query'], '" title="', sprintf($txt['unapproved_posts'], $board['unapproved_topics'], $board['unapproved_posts']), '" class="moderation_link">(!)</a>';
 
 				if (!empty($board['description']))
 					echo '
@@ -154,14 +154,14 @@ function template_boards()
 						if (!$child['is_redirect'])
 						{
 							$child_title = ($child['new'] ? $txt['new_posts'] : $txt['old_posts']) . ' (' . number_context('num_topics', $child['topics']) . ', ' . number_context('num_posts', $child['posts']) . ')';
-							$child['link'] = '<a href="' . $child['href'] . '"' . ($child['new'] ? ' class="new_posts"' : '') . ' title="' . $child_title . '">' . $child['name'] . '</a>' . ($child['new'] ? ' <a href="' . $scripturl . '?action=unread;board=' . $child['id'] . '" title="' . $child_title . '" class="note new_posts">' . $txt['new_short'] . '</a>' : '');
+							$child['link'] = '<a href="' . $child['href'] . '"' . ($child['new'] ? ' class="new_posts"' : '') . ' title="' . $child_title . '">' . $child['name'] . '</a>' . ($child['new'] ? ' <a href="<URL>?action=unread;board=' . $child['id'] . '" title="' . $child_title . '" class="note new_posts">' . $txt['new_short'] . '</a>' : '');
 						}
 						else
 							$child['link'] = '<a href="' . $child['href'] . '" title="' . number_context('num_redirects', $child['posts']) . '">' . $child['name'] . '</a>';
 
 						// Has it posts awaiting approval?
 						if ($child['can_approve_posts'] && ($child['unapproved_posts'] || $child['unapproved_topics']))
-							$child['link'] .= ' <a href="' . $scripturl . '?action=moderate;area=postmod;sa=' . ($child['unapproved_topics'] > 0 ? 'topics' : 'posts') . ';brd=' . $child['id'] . ';' . $context['session_query'] . '" title="' . sprintf($txt['unapproved_posts'], $child['unapproved_topics'], $child['unapproved_posts']) . '" class="moderation_link">(!)</a>';
+							$child['link'] .= ' <a href="<URL>?action=moderate;area=postmod;sa=' . ($child['unapproved_topics'] > 0 ? 'topics' : 'posts') . ';brd=' . $child['id'] . ';' . $context['session_query'] . '" title="' . sprintf($txt['unapproved_posts'], $child['unapproved_topics'], $child['unapproved_posts']) . '" class="moderation_link">(!)</a>';
 
 						$children[] = $child['new'] ? '<strong>' . $child['link'] . '</strong>' : $child['link'];
 					}
@@ -200,7 +200,7 @@ function template_boards_ministats()
 function template_boards_newsfader()
 {
 	// Show the news fader?  (assuming there are things to show...)
-	global $context, $theme, $options, $txt, $scripturl, $settings;
+	global $context, $theme, $options, $txt, $settings;
 
 	if (!empty($settings['show_newsfader']) && !empty($context['fader_news_lines']))
 	{

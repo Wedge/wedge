@@ -13,7 +13,7 @@
 
 function template_main()
 {
-	global $context, $theme, $options, $scripturl, $txt;
+	global $context, $theme, $options, $txt;
 
 	template_show_list('regular_membergroups_list');
 	echo '<br><br>';
@@ -22,10 +22,10 @@ function template_main()
 
 function template_new_group()
 {
-	global $context, $theme, $options, $scripturl, $txt, $settings;
+	global $context, $theme, $options, $txt, $settings;
 
 	echo '
-		<form action="', $scripturl, '?action=admin;area=membergroups;sa=add" method="post" accept-charset="UTF-8" id="groupForm">
+		<form action="<URL>?action=admin;area=membergroups;sa=add" method="post" accept-charset="UTF-8" id="groupForm">
 			<we:cat>
 				', $txt['membergroups_new_group'], '
 			</we:cat>
@@ -143,10 +143,10 @@ function template_new_group()
 
 function template_edit_group()
 {
-	global $context, $theme, $options, $scripturl, $txt;
+	global $context, $theme, $options, $txt;
 
 	echo '
-		<form action="', $scripturl, '?action=admin;area=membergroups;sa=edit;group=', $context['group']['id'], '" method="post" accept-charset="UTF-8" name="groupForm" id="groupForm">
+		<form action="<URL>?action=admin;area=membergroups;sa=edit;group=', $context['group']['id'], '" method="post" accept-charset="UTF-8" name="groupForm" id="groupForm">
 			<we:cat>
 				', $txt['membergroups_edit_group'], ' - ', $context['group']['name'], '
 			</we:cat>
@@ -508,10 +508,10 @@ function template_group_board_selection()
 // Templating for viewing the members of a group.
 function template_group_members()
 {
-	global $context, $theme, $options, $scripturl, $txt;
+	global $context, $theme, $options, $txt;
 
 	echo '
-		<form action="', $scripturl, '?action=', $context['current_action'], isset($context['admin_area']) ? ';area=' . $context['admin_area'] : '', ';sa=members;group=', $context['group']['id'], '" method="post" accept-charset="UTF-8">
+		<form action="<URL>?action=', $context['current_action'], isset($context['admin_area']) ? ';area=' . $context['admin_area'] : '', ';sa=members;group=', $context['group']['id'], '" method="post" accept-charset="UTF-8">
 			<we:cat>
 				', $context['page_title'], '
 			</we:cat>
@@ -547,7 +547,7 @@ function template_group_members()
 	{
 		$moderators = array();
 		foreach ($context['group']['moderators'] as $moderator)
-			$moderators[] = '<a href="' . $scripturl . '?action=profile;u=' . $moderator['id'] . '">' . $moderator['name'] . '</a>';
+			$moderators[] = '<a href="<URL>?action=profile;u=' . $moderator['id'] . '">' . $moderator['name'] . '</a>';
 
 		echo '
 					<dt>
@@ -573,11 +573,11 @@ function template_group_members()
 			<table class="table_grid w100 cs0">
 				<thead>
 					<tr class="catbg">
-						<th><a href="', $scripturl, '?action=', $context['current_action'], (isset($context['admin_area']) ? ';area=' . $context['admin_area'] : ''), ';sa=members;start=', $context['start'], ';sort=name', $context['sort_by'] == 'name' && $context['sort_direction'] == 'up' ? ';desc' : '', ';group=', $context['group']['id'], '">', $txt['name'], $context['sort_by'] == 'name' ? ' <img src="' . $theme['images_url'] . '/sort_' . $context['sort_direction'] . '.gif">' : '', '</a></th>
-						<th><a href="', $scripturl, '?action=', $context['current_action'], (isset($context['admin_area']) ? ';area=' . $context['admin_area'] : ''), ';sa=members;start=', $context['start'], ';sort=email', $context['sort_by'] == 'email' && $context['sort_direction'] == 'up' ? ';desc' : '', ';group=', $context['group']['id'], '">', $txt['email'], $context['sort_by'] == 'email' ? ' <img src="' . $theme['images_url'] . '/sort_' . $context['sort_direction'] . '.gif">' : '', '</a></th>
-						<th><a href="', $scripturl, '?action=', $context['current_action'], (isset($context['admin_area']) ? ';area=' . $context['admin_area'] : ''), ';sa=members;start=', $context['start'], ';sort=active', $context['sort_by'] == 'active' && $context['sort_direction'] == 'up' ? ';desc' : '', ';group=', $context['group']['id'], '">', $txt['membergroups_members_last_active'], $context['sort_by'] == 'active' ? ' <img src="' . $theme['images_url'] . '/sort_' . $context['sort_direction'] . '.gif">' : '', '</a></th>
-						<th><a href="', $scripturl, '?action=', $context['current_action'], (isset($context['admin_area']) ? ';area=' . $context['admin_area'] : ''), ';sa=members;start=', $context['start'], ';sort=registered', $context['sort_by'] == 'registered' && $context['sort_direction'] == 'up' ? ';desc' : '', ';group=', $context['group']['id'], '">', $txt['date_registered'], $context['sort_by'] == 'registered' ? ' <img src="' . $theme['images_url'] . '/sort_' . $context['sort_direction'] . '.gif">' : '', '</a></th>
-						<th', empty($context['group']['assignable']) ? ' colspan="2"' : '', '><a href="', $scripturl, '?action=', $context['current_action'], (isset($context['admin_area']) ? ';area=' . $context['admin_area'] : ''), ';sa=members;start=', $context['start'], ';sort=posts', $context['sort_by'] == 'posts' && $context['sort_direction'] == 'up' ? ';desc' : '', ';group=', $context['group']['id'], '">', $txt['posts'], $context['sort_by'] == 'posts' ? ' <img src="' . $theme['images_url'] . '/sort_' . $context['sort_direction'] . '.gif">' : '', '</a></th>';
+						<th><a href="<URL>?action=', $context['current_action'], (isset($context['admin_area']) ? ';area=' . $context['admin_area'] : ''), ';sa=members;start=', $context['start'], ';sort=name', $context['sort_by'] == 'name' && $context['sort_direction'] == 'up' ? ';desc' : '', ';group=', $context['group']['id'], '">', $txt['name'], $context['sort_by'] == 'name' ? ' <img src="' . $theme['images_url'] . '/sort_' . $context['sort_direction'] . '.gif">' : '', '</a></th>
+						<th><a href="<URL>?action=', $context['current_action'], (isset($context['admin_area']) ? ';area=' . $context['admin_area'] : ''), ';sa=members;start=', $context['start'], ';sort=email', $context['sort_by'] == 'email' && $context['sort_direction'] == 'up' ? ';desc' : '', ';group=', $context['group']['id'], '">', $txt['email'], $context['sort_by'] == 'email' ? ' <img src="' . $theme['images_url'] . '/sort_' . $context['sort_direction'] . '.gif">' : '', '</a></th>
+						<th><a href="<URL>?action=', $context['current_action'], (isset($context['admin_area']) ? ';area=' . $context['admin_area'] : ''), ';sa=members;start=', $context['start'], ';sort=active', $context['sort_by'] == 'active' && $context['sort_direction'] == 'up' ? ';desc' : '', ';group=', $context['group']['id'], '">', $txt['membergroups_members_last_active'], $context['sort_by'] == 'active' ? ' <img src="' . $theme['images_url'] . '/sort_' . $context['sort_direction'] . '.gif">' : '', '</a></th>
+						<th><a href="<URL>?action=', $context['current_action'], (isset($context['admin_area']) ? ';area=' . $context['admin_area'] : ''), ';sa=members;start=', $context['start'], ';sort=registered', $context['sort_by'] == 'registered' && $context['sort_direction'] == 'up' ? ';desc' : '', ';group=', $context['group']['id'], '">', $txt['date_registered'], $context['sort_by'] == 'registered' ? ' <img src="' . $theme['images_url'] . '/sort_' . $context['sort_direction'] . '.gif">' : '', '</a></th>
+						<th', empty($context['group']['assignable']) ? ' colspan="2"' : '', '><a href="<URL>?action=', $context['current_action'], (isset($context['admin_area']) ? ';area=' . $context['admin_area'] : ''), ';sa=members;start=', $context['start'], ';sort=posts', $context['sort_by'] == 'posts' && $context['sort_direction'] == 'up' ? ';desc' : '', ';group=', $context['group']['id'], '">', $txt['posts'], $context['sort_by'] == 'posts' ? ' <img src="' . $theme['images_url'] . '/sort_' . $context['sort_direction'] . '.gif">' : '', '</a></th>';
 	if (!empty($context['group']['assignable']))
 		echo '
 						<td class="center" style="width: 4%"><input type="checkbox" onclick="invertAll(this, this.form);"></td>';
@@ -610,7 +610,7 @@ function template_group_members()
 		// ... otherwise it's visible - but only via an image?
 		elseif ($member['show_email'] == 'no_through_forum')
 			echo '
-							<a href="', $scripturl, '?action=emailuser;sa=email;uid=', $member['id'], '" rel="nofollow">', ($theme['use_image_buttons'] ? '<img src="' . $theme['images_url'] . '/email_sm.gif" alt="' . $txt['email'] . '" title="' . $txt['email'] . '">' : $txt['email']), '</a>';
+							<a href="<URL>?action=emailuser;sa=email;uid=', $member['id'], '" rel="nofollow">', ($theme['use_image_buttons'] ? '<img src="' . $theme['images_url'] . '/email_sm.gif" alt="' . $txt['email'] . '" title="' . $txt['email'] . '">' : $txt['email']), '</a>';
 
 		echo '
 						</td>
@@ -669,11 +669,11 @@ function template_group_members()
 // Allow the moderator to enter a reason to each user being rejected.
 function template_group_request_reason()
 {
-	global $theme, $options, $context, $txt, $scripturl;
+	global $theme, $options, $context, $txt;
 
 	// Show a welcome message to the user.
 	echo '
-		<form action="', $scripturl, '?action=groups;sa=requests" method="post" accept-charset="UTF-8">
+		<form action="<URL>?action=groups;sa=requests" method="post" accept-charset="UTF-8">
 			<we:cat>
 				', $txt['mc_groups_reason_title'], '
 			</we:cat>

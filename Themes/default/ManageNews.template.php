@@ -14,7 +14,7 @@
 // Form for editing current news on the site.
 function template_edit_news()
 {
-	global $context, $scripturl, $txt;
+	global $context, $txt;
 
 	echo '
 		<div class="windowbg2 wrc">
@@ -118,7 +118,7 @@ function template_edit_news_item()
 
 function template_email_members()
 {
-	global $context, $theme, $txt, $scripturl;
+	global $context, $theme, $txt;
 
 	// This is some javascript for the simple/advanced toggling stuff.
 	add_js('
@@ -129,7 +129,7 @@ function template_email_members()
 	}');
 
 	echo '
-		<form action="', $scripturl, '?action=admin;area=news;sa=mailingcompose" class="flow_hidden" method="post" accept-charset="UTF-8">
+		<form action="<URL>?action=admin;area=news;sa=mailingcompose" class="flow_hidden" method="post" accept-charset="UTF-8">
 			<we:cat>
 				', $txt['admin_newsletters'], '
 			</we:cat>
@@ -241,12 +241,12 @@ function template_email_members()
 
 function template_email_members_compose()
 {
-	global $context, $txt, $scripturl;
+	global $context, $txt;
 
 	echo '
-		<form action="', $scripturl, '?action=admin;area=news;sa=mailingsend" method="post" accept-charset="UTF-8">
+		<form action="<URL>?action=admin;area=news;sa=mailingsend" method="post" accept-charset="UTF-8">
 			<we:cat>
-				<a href="', $scripturl, '?action=help;in=email_members" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
+				<a href="<URL>?action=help;in=email_members" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
 				', $txt['admin_newsletters'], '
 			</we:cat>
 			<div class="information">
@@ -283,12 +283,12 @@ function template_email_members_compose()
 
 function template_email_members_send()
 {
-	global $context, $txt, $scripturl;
+	global $context, $txt;
 
 	echo '
-		<form action="', $scripturl, '?action=admin;area=news;sa=mailingsend" method="post" accept-charset="UTF-8" name="autoSubmit" id="autoSubmit">
+		<form action="<URL>?action=admin;area=news;sa=mailingsend" method="post" accept-charset="UTF-8" name="autoSubmit" id="autoSubmit">
 			<we:cat>
-				<a href="', $scripturl, '?action=help;in=email_members" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
+				<a href="<URL>?action=help;in=email_members" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
 				', $txt['admin_newsletters'], '
 			</we:cat>
 			<div class="windowbg wrc">

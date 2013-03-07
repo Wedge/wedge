@@ -14,7 +14,7 @@
 // The template for adding or editing a subscription.
 function template_modify_subscription()
 {
-	global $context, $theme, $options, $scripturl, $txt, $settings;
+	global $context, $theme, $options, $txt, $settings;
 
 	// JavaScript for the duration stuff.
 	add_js('
@@ -38,7 +38,7 @@ function template_modify_subscription()
 	}');
 
 	echo '
-		<form action="', $scripturl, '?action=admin;area=paidsubscribe;sa=modify;sid=', $context['sub_id'], '" method="post">
+		<form action="<URL>?action=admin;area=paidsubscribe;sa=modify;sid=', $context['sub_id'], '" method="post">
 			<we:cat>
 				', $txt['paid_' . $context['action_type'] . '_subscription'], '
 			</we:cat>';
@@ -256,10 +256,10 @@ function template_modify_subscription()
 
 function template_delete_subscription()
 {
-	global $context, $theme, $options, $scripturl, $txt, $settings;
+	global $context, $txt;
 
 	echo '
-		<form action="', $scripturl, '?action=admin;area=paidsubscribe;sa=modify;sid=', $context['sub_id'], ';delete" method="post">
+		<form action="<URL>?action=admin;area=paidsubscribe;sa=modify;sid=', $context['sub_id'], ';delete" method="post">
 			<we:cat>
 				', $txt['paid_delete_subscription'], '
 			</we:cat>
@@ -274,7 +274,7 @@ function template_delete_subscription()
 // Add or edit an existing subscriber.
 function template_modify_user_subscription()
 {
-	global $context, $theme, $options, $scripturl, $txt, $settings;
+	global $context, $theme, $options, $txt, $settings;
 
 	// Some quickly stolen javascript from Post, could do with being more efficient :)
 	if (!$context['current_subscription']['lifetime'])
@@ -302,7 +302,7 @@ function template_modify_user_subscription()
 	}');
 
 	echo '
-		<form action="', $scripturl, '?action=admin;area=paidsubscribe;sa=modifyuser;sid=', $context['sub_id'], ';lid=', $context['log_id'], '" method="post">
+		<form action="<URL>?action=admin;area=paidsubscribe;sa=modifyuser;sid=', $context['sub_id'], ';lid=', $context['log_id'], '" method="post">
 			<we:cat>
 				', $txt[$context['action_type'] . '_subscriber'], ' - ', $context['current_subscription']['name'], '
 				', empty($context['sub']['username']) ? '' : ' (' . $txt['user'] . ': ' . $context['sub']['username'] . ')', '
@@ -439,8 +439,8 @@ function template_modify_user_subscription()
 			echo '
 				<li class="reset">
 					', $payment['desc'], '
-					<span class="floatleft"><a href="', $scripturl, '?action=admin;area=paidsubscribe;sa=modifyuser;lid=', $context['log_id'], ';pending=', $id, ';accept">', $txt['pending_payments_accept'], '</a></span>
-					<span class="floatright"><a href="', $scripturl, '?action=admin;area=paidsubscribe;sa=modifyuser;lid=', $context['log_id'], ';pending=', $id, ';remove">', $txt['remove'], '</a></span>
+					<span class="floatleft"><a href="<URL>?action=admin;area=paidsubscribe;sa=modifyuser;lid=', $context['log_id'], ';pending=', $id, ';accept">', $txt['pending_payments_accept'], '</a></span>
+					<span class="floatright"><a href="<URL>?action=admin;area=paidsubscribe;sa=modifyuser;lid=', $context['log_id'], ';pending=', $id, ';remove">', $txt['remove'], '</a></span>
 				</li>';
 		}
 
@@ -453,10 +453,10 @@ function template_modify_user_subscription()
 // Template for a user to edit/pick their subscriptions.
 function template_user_subscription()
 {
-	global $context, $txt, $scripturl, $settings;
+	global $context, $txt, $settings;
 
 	echo '
-		<form action="', $scripturl, '?action=profile;u=', $context['id_member'], ';area=subscriptions;confirm" method="post">
+		<form action="<URL>?action=profile;u=', $context['id_member'], ';area=subscriptions;confirm" method="post">
 			<we:cat>
 				', $txt['subscriptions'], '
 			</we:cat>';
@@ -524,7 +524,7 @@ function template_user_subscription()
 			}
 			else
 				echo '
-				<a href="', $scripturl, '?action=admin;area=paidsubscribe;sa=modifyuser;sid=', $subscription['id'], ';uid=', $context['member']['id'], (empty($context['current'][$subscription['id']]) ? '' : ';lid=' . $context['current'][$subscription['id']]['id']), '">', empty($context['current'][$subscription['id']]) ? $txt['paid_admin_add'] : $txt['paid_edit_subscription'], '</a>', !empty($subscription['group_warning']) ? '
+				<a href="<URL>?action=admin;area=paidsubscribe;sa=modifyuser;sid=', $subscription['id'], ';uid=', $context['member']['id'], (empty($context['current'][$subscription['id']]) ? '' : ';lid=' . $context['current'][$subscription['id']]['id']), '">', empty($context['current'][$subscription['id']]) ? $txt['paid_admin_add'] : $txt['paid_edit_subscription'], '</a>', !empty($subscription['group_warning']) ? '
 				<br><br><div class="errorbox">' . $txt['paid_subs_admin_override'] . '</div>' : '';
 
 			echo '
@@ -569,7 +569,7 @@ function template_user_subscription()
 			echo '
 				<tr class="windowbg', $alternate ? '' : '2', '">
 					<td>
-						', (allowedTo('admin_forum') ? '<a href="' . $scripturl . '?action=admin;area=paidsubscribe;sa=modifyuser;lid=' . $sub['id'] . '">' . $sub['name'] . '</a>' : $sub['name']), '
+						', (allowedTo('admin_forum') ? '<a href="<URL>?action=admin;area=paidsubscribe;sa=modifyuser;lid=' . $sub['id'] . '">' . $sub['name'] . '</a>' : $sub['name']), '
 					</td><td>
 						<span style="color: ', ($sub['status'] == 2 ? 'green' : ($sub['status'] == 1 ? 'red' : 'orange')), '"><strong>', $sub['status_text'], '</strong></span>
 					</td><td>
@@ -587,7 +587,7 @@ function template_user_subscription()
 // The "choose payment" dialog.
 function template_choose_payment()
 {
-	global $context, $txt, $settings, $scripturl;
+	global $context, $txt, $settings;
 
 	echo '
 		<we:cat>
@@ -638,7 +638,7 @@ function template_choose_payment()
 // The "thank you" bit...
 function template_paid_done()
 {
-	global $context, $txt, $settings, $scripturl;
+	global $context, $txt;
 
 	echo '
 		<we:title>
@@ -647,6 +647,6 @@ function template_paid_done()
 		<div class="windowbg2 wrc">
 			<p>', $txt['paid_done_desc'], '</p>
 			<br>
-			<a href="', $scripturl, '?action=profile;u=', $context['member']['id'], ';area=subscriptions">', $txt['paid_sub_return'], '</a>
+			<a href="<URL>?action=profile;u=', $context['member']['id'], ';area=subscriptions">', $txt['paid_sub_return'], '</a>
 		</div>';
 }

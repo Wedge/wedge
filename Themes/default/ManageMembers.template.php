@@ -13,10 +13,10 @@
 
 function template_search_members()
 {
-	global $context, $theme, $options, $scripturl, $txt;
+	global $context, $theme, $options, $txt;
 
 	echo '
-		<form action="', $scripturl, '?action=admin;area=viewmembers" method="post" accept-charset="UTF-8">
+		<form action="<URL>?action=admin;area=viewmembers" method="post" accept-charset="UTF-8">
 			<we:cat>
 				<span class="smalltext floatright">', $txt['wild_cards_allowed'], '</span>
 				', $txt['search_for'], '
@@ -232,7 +232,7 @@ function template_search_members()
 
 function template_admin_browse()
 {
-	global $context, $theme, $options, $scripturl, $txt, $settings;
+	global $context, $theme, $options, $txt, $settings;
 
 	template_show_list('approve_list');
 
@@ -260,7 +260,7 @@ function template_admin_browse()
 
 		echo '
 		<br>
-		<form action="', $scripturl, '?action=admin;area=viewmembers" method="post" accept-charset="UTF-8" name="postFormOutstanding" id="postFormOutstanding" onsubmit="return onOutstandingSubmit(e);">
+		<form action="<URL>?action=admin;area=viewmembers" method="post" accept-charset="UTF-8" name="postFormOutstanding" id="postFormOutstanding" onsubmit="return onOutstandingSubmit(e);">
 			<we:cat>
 				', $txt['admin_browse_outstanding'], '
 			</we:cat>

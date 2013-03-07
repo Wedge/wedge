@@ -14,7 +14,7 @@
 // Template for the database maintenance tasks.
 function template_maintain_database()
 {
-	global $context, $theme, $options, $txt, $scripturl, $settings;
+	global $context, $theme, $options, $txt, $settings;
 
 	// If maintenance has finished tell the user.
 	if (!empty($context['maintenance_finished']))
@@ -29,7 +29,7 @@ function template_maintain_database()
 			', $txt['maintain_optimize'], '
 		</we:title>
 		<div class="windowbg wrc">
-			<form action="', $scripturl, '?action=admin;area=maintain;sa=database;activity=optimize" method="post" accept-charset="UTF-8">
+			<form action="<URL>?action=admin;area=maintain;sa=database;activity=optimize" method="post" accept-charset="UTF-8">
 				<p>', $txt['maintain_optimize_info'], '</p>
 				<span><input type="submit" value="', $txt['maintain_run_now'], '" class="submit"></span>
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
@@ -44,7 +44,7 @@ function template_maintain_database()
 // Template for the routine maintenance tasks.
 function template_maintain_routine()
 {
-	global $context, $theme, $options, $txt, $scripturl, $settings;
+	global $context, $theme, $options, $txt, $settings;
 
 	// If maintenance has finished tell the user.
 	if (!empty($context['maintenance_finished']))
@@ -65,7 +65,7 @@ function template_maintain_routine()
 			', $task[0], '
 		</we:title>
 		<div class="windowbg', $use_bg2 ? '2' : '', ' wrc" id="', $id, '">
-			<form action="', $scripturl, '?', $task[2], '" method="post" accept-charset="UTF-8">
+			<form action="<URL>?', $task[2], '" method="post" accept-charset="UTF-8">
 				<p>', $task[1], '</p>
 				<span><input type="submit" value="', $txt['maintain_run_now'], '"></span>
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
@@ -82,7 +82,7 @@ function template_maintain_routine()
 // Template for the member maintenance tasks.
 function template_maintain_members()
 {
-	global $context, $theme, $options, $txt, $scripturl;
+	global $context, $theme, $options, $txt;
 
 	// If maintenance has finished tell the user.
 	if (!empty($context['maintenance_finished']))
@@ -140,7 +140,7 @@ function template_maintain_members()
 			', $txt['maintain_reattribute_posts'], '
 		</we:title>
 		<div class="windowbg2 wrc">
-			<form action="', $scripturl, '?action=admin;area=maintain;sa=members;activity=reattribute" method="post" accept-charset="UTF-8">
+			<form action="<URL>?action=admin;area=maintain;sa=members;activity=reattribute" method="post" accept-charset="UTF-8">
 				<p><strong>', $txt['reattribute_guest_posts'], '</strong></p>
 				<dl class="settings">
 					<dt>
@@ -172,11 +172,11 @@ function template_maintain_members()
 			</form>
 		</div>
 		<we:title>
-			<a href="', $scripturl, '?action=help;in=maintenance_members" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
+			<a href="<URL>?action=help;in=maintenance_members" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
 			', $txt['maintain_members'], '
 		</we:title>
 		<div class="windowbg wrc">
-			<form action="', $scripturl, '?action=admin;area=maintain;sa=members;activity=purgeinactive" method="post" accept-charset="UTF-8" id="membersForm">
+			<form action="<URL>?action=admin;area=maintain;sa=members;activity=purgeinactive" method="post" accept-charset="UTF-8" id="membersForm">
 				<p><a id="membersLink"></a>', $txt['maintain_members_since1'], '
 				<select name="del_type">
 					<option value="activated" selected>', $txt['maintain_members_activated'], '</option>
@@ -201,7 +201,7 @@ function template_maintain_members()
 			', $txt['maintain_recountposts'], '
 		</we:title>
 		<div class="windowbg2 wrc">
-			<form action="', $scripturl, '?action=admin;area=maintain;sa=members;activity=recountposts" method="post" accept-charset="UTF-8">
+			<form action="<URL>?action=admin;area=maintain;sa=members;activity=recountposts" method="post" accept-charset="UTF-8">
 				<p>', $txt['maintain_recountposts_desc'], '</p>
 				<span><input type="submit" value="', $txt['maintain_run_now'], '"></span>
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
@@ -220,7 +220,7 @@ function template_maintain_members()
 // Template for the topic maintenance tasks.
 function template_maintain_topics()
 {
-	global $scripturl, $txt, $context, $theme, $settings;
+	global $txt, $context, $theme, $settings;
 
 	// If maintenance has finished tell the user.
 	if (!empty($context['maintenance_finished']))
@@ -249,7 +249,7 @@ function template_maintain_topics()
 		</we:title>
 		<div class="windowbg wrc">
 			<div class="flow_auto">
-				<form action="', $scripturl, '?action=admin;area=maintain;sa=topics;activity=pruneold" method="post" accept-charset="UTF-8">';
+				<form action="<URL>?action=admin;area=maintain;sa=topics;activity=pruneold" method="post" accept-charset="UTF-8">';
 
 	// The otherwise hidden "choose which boards to prune".
 	echo '
@@ -311,7 +311,7 @@ function template_maintain_topics()
 			', $txt['move_topics_maintenance'], '
 		</we:title>
 		<div class="windowbg2 wrc">
-			<form action="', $scripturl, '?action=admin;area=maintain;sa=topics;activity=massmove" method="post" accept-charset="UTF-8">
+			<form action="<URL>?action=admin;area=maintain;sa=topics;activity=massmove" method="post" accept-charset="UTF-8">
 				<p><label>', $txt['move_topics_from'], '
 				<select name="id_board_from" id="id_board_from">
 					<option data-hide>(', $txt['move_topics_select_board'], ')</option>';
@@ -370,7 +370,7 @@ function template_maintain_topics()
 // Simple template for showing results of our optimization...
 function template_optimize()
 {
-	global $context, $theme, $options, $txt, $scripturl;
+	global $context, $theme, $options, $txt;
 
 	echo '
 	<div id="manage_maintenance">
@@ -391,7 +391,7 @@ function template_optimize()
 	echo '
 				<br>', number_context('database_optimized', $context['num_tables_optimized']), '
 			</p>
-			<p><a href="', $scripturl, '?action=admin;area=maintain">', $txt['maintain_return'], '</a></p>
+			<p><a href="<URL>?action=admin;area=maintain">', $txt['maintain_return'], '</a></p>
 		</div>
 	</div>
 	<br class="clear">';
@@ -399,7 +399,7 @@ function template_optimize()
 
 function template_convert_utf8()
 {
-	global $context, $txt, $theme, $scripturl;
+	global $context, $txt, $theme;
 
 	echo '
 	<div id="manage_maintenance">
@@ -407,7 +407,7 @@ function template_convert_utf8()
 			', $txt['utf8_title'], '
 		</we:title>
 		<div class="windowbg wrc">
-			<form action="', $scripturl, '?action=admin;area=maintain;sa=database;activity=convertutf8" method="post" accept-charset="UTF-8">
+			<form action="<URL>?action=admin;area=maintain;sa=database;activity=convertutf8" method="post" accept-charset="UTF-8">
 				<p>', $txt['utf8_introduction'], '</p>
 				<div>', $txt['utf8_warning'], '</div>
 
@@ -439,7 +439,7 @@ function template_convert_utf8()
 
 function template_convert_entities()
 {
-	global $context, $txt, $theme, $scripturl;
+	global $context, $txt, $theme;
 
 	echo '
 	<div id="manage_maintenance">
@@ -448,7 +448,7 @@ function template_convert_entities()
 		</we:title>
 		<div class="windowbg wrc">
 			<p>', $txt['entity_convert_introduction'], '</p>
-			<form action="', $scripturl, '?action=admin;area=maintain;sa=database;activity=convertentities;start=0;', $context['session_query'], '" method="post" accept-charset="UTF-8">
+			<form action="<URL>?action=admin;area=maintain;sa=database;activity=convertentities;start=0;', $context['session_query'], '" method="post" accept-charset="UTF-8">
 				<input type="submit" value="', $txt['entity_convert_proceed'], '">
 			</form>
 		</div>

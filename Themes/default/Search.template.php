@@ -13,14 +13,14 @@
 
 function template_main()
 {
-	global $context, $theme, $options, $txt, $scripturl, $settings;
+	global $context, $theme, $options, $txt, $settings;
 
 	if (!empty($context['search_errors']))
 		echo '
 	<div class="errorbox">', implode('<br>', $context['search_errors']['messages']), '</div>';
 
 	echo '
-	<form action="', $scripturl, '?action=search2" method="post" accept-charset="UTF-8" name="searchform" id="searchform">
+	<form action="<URL>?action=search2" method="post" accept-charset="UTF-8" name="searchform" id="searchform">
 		<we:cat>
 			', !empty($theme['use_buttons']) ? '<img src="' . $theme['images_url'] . '/buttons/search.gif">' : '', $txt['search'], '
 		</we:cat>
@@ -236,7 +236,7 @@ function template_search_ajax()
 
 function template_results()
 {
-	global $context, $theme, $options, $txt, $scripturl, $message;
+	global $context, $theme, $options, $txt, $message;
 
 	if (isset($context['did_you_mean']) || empty($context['topics']))
 	{
@@ -250,10 +250,10 @@ function template_results()
 		// Did they make any typos or mistakes, perhaps?
 		if (isset($context['did_you_mean']))
 			echo '
-			<p>', $txt['search_did_you_mean'], ' <a href="', $scripturl, '?action=search2;params=', $context['did_you_mean_params'], '">', $context['did_you_mean'], '</a>.</p>';
+			<p>', $txt['search_did_you_mean'], ' <a href="<URL>?action=search2;params=', $context['did_you_mean_params'], '">', $context['did_you_mean'], '</a>.</p>';
 
 		echo '
-			<form action="', $scripturl, '?action=search2" method="post" accept-charset="UTF-8">
+			<form action="<URL>?action=search2" method="post" accept-charset="UTF-8">
 				<strong>', $txt['search_for'], ':</strong>
 				<input type="search" name="search"', !empty($context['search_params']['search']) ? ' value="' . $context['search_params']['search'] . '"' : '', ' maxlength="', $context['search_string_limit'], '" size="40" class="search">
 				<input type="submit" value="', $txt['search_adjust_submit'], '">
@@ -280,7 +280,7 @@ function template_results()
 	if ($context['compact'])
 	{
 		echo '
-	<form action="', $scripturl, '?action=quickmod" method="post" accept-charset="UTF-8" name="topicForm">';
+	<form action="<URL>?action=quickmod" method="post" accept-charset="UTF-8" name="topicForm">';
 
 		echo '
 		<we:cat>
@@ -308,7 +308,7 @@ function template_results()
 				echo '
 					<div class="topic_details floatleft" style="width: 94%">
 						<div class="counter">', $message['counter'], '</div>
-						<h5>', $topic['board']['link'], ' / <a href="', $scripturl, '?topic=', $topic['id'], '.msg', $message['id'], '#msg', $message['id'], '">', $message['subject_highlighted'], '</a></h5>
+						<h5>', $topic['board']['link'], ' / <a href="<URL>?topic=', $topic['id'], '.msg', $message['id'], '#msg', $message['id'], '">', $message['subject_highlighted'], '</a></h5>
 						<span class="smalltext">&#171;&nbsp;', $message['on_time'], ' ', $txt['by'], ' <strong>', $message['member']['link'], '</strong>&nbsp;&#187;</span>
 					</div>';
 
@@ -372,7 +372,7 @@ function template_results()
 				}
 
 				echo '
-				<input type="hidden" name="redirect_url" value="', $scripturl . '?action=search2;params=' . $context['params'], '">
+				<input type="hidden" name="redirect_url" value="<URL>?action=search2;params=' . $context['params'], '">
 				<input type="submit" style="font-size: 0.8em" value="', $txt['quick_mod_go'], '" onclick="return this.form.qaction.value != \'\' && ask(we_confirm, e);">
 			</div>
 			<br class="clear">
@@ -406,7 +406,7 @@ function template_results()
 			<div class="', $message['alternate'] == 0 ? 'windowbg' : 'windowbg2', ' wrc core_posts">
 				<div class="counter">', $message['counter'], '</div>
 				<div class="topic_details">
-					<h5>', $topic['board']['link'], ' / <a href="', $scripturl, '?topic=', $topic['id'], '.', $message['start'], ';seen#msg', $message['id'], '">', $message['subject_highlighted'], '</a></h5>
+					<h5>', $topic['board']['link'], ' / <a href="<URL>?topic=', $topic['id'], '.', $message['start'], ';seen#msg', $message['id'], '">', $message['subject_highlighted'], '</a></h5>
 					<span class="smalltext">&#171;&nbsp;', $message['on_time'], ' ', $txt['by'], ' <strong>', $message['member']['link'], '</strong>&nbsp;&#187;</span>
 				</div>
 				<div class="list_posts">', $message['body_highlighted'], '</div>';
@@ -419,17 +419,17 @@ function template_results()
 				// If they *can* reply?
 				if ($topic['can_reply'])
 					echo '
-						<li class="reply_button"><a href="', $scripturl . '?action=post;topic=' . $topic['id'] . '.' . $message['start'], '">', $txt['reply'], '</a></li>';
+						<li class="reply_button"><a href="<URL>?action=post;topic=' . $topic['id'] . '.' . $message['start'], '">', $txt['reply'], '</a></li>';
 
 				// If they *can* quote?
 				if ($topic['can_quote'])
 					echo '
-						<li class="quote_button"><a href="', $scripturl . '?action=post;topic=' . $topic['id'] . '.' . $message['start'] . ';quote=' . $message['id'] . '">', $txt['quote'], '</a></li>';
+						<li class="quote_button"><a href="<URL>?action=post;topic=' . $topic['id'] . '.' . $message['start'] . ';quote=' . $message['id'] . '">', $txt['quote'], '</a></li>';
 
 				// Can we request notification of topics?
 				if ($topic['can_mark_notify'])
 					echo '
-						<li class="notify_button"><a href="', $scripturl . '?action=notify;topic=' . $topic['id'] . '.' . $message['start'], '">', $txt['notify'], '</a></li>';
+						<li class="notify_button"><a href="<URL>?action=notify;topic=' . $topic['id'] . '.' . $message['start'], '">', $txt['notify'], '</a></li>';
 
 				if ($topic['can_reply'] || $topic['can_mark_notify'])
 					echo '

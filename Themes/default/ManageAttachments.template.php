@@ -31,7 +31,7 @@ function template_avatar_settings_after()
 
 function template_browse()
 {
-	global $context, $theme, $options, $scripturl, $txt;
+	global $context, $theme, $options, $txt;
 
 	echo '
 	<div id="manage_attachments">
@@ -39,9 +39,9 @@ function template_browse()
 			', $txt['attachment_manager_browse_files'], '
 		</we:cat>
 		<div class="windowbg2 wrc">
-			<a href="', $scripturl, '?action=admin;area=manageattachments;sa=browse">', $context['browse_type'] === 'attachments' ? '<img src="' . $theme['images_url'] . '/selected.gif" alt="&gt;"> ' : '', $txt['attachment_manager_attachments'], '</a> |
-			<a href="', $scripturl, '?action=admin;area=manageattachments;sa=browse;avatars">', $context['browse_type'] === 'avatars' ? '<img src="' . $theme['images_url'] . '/selected.gif" alt="&gt;"> ' : '', $txt['attachment_manager_avatars'], '</a> |
-			<a href="', $scripturl, '?action=admin;area=manageattachments;sa=browse;thumbs">', $context['browse_type'] === 'thumbs' ? '<img src="' . $theme['images_url'] . '/selected.gif" alt="&gt;"> ' : '', $txt['attachment_manager_thumbs'], '</a>
+			<a href="<URL>?action=admin;area=manageattachments;sa=browse">', $context['browse_type'] === 'attachments' ? '<img src="' . $theme['images_url'] . '/selected.gif" alt="&gt;"> ' : '', $txt['attachment_manager_attachments'], '</a> |
+			<a href="<URL>?action=admin;area=manageattachments;sa=browse;avatars">', $context['browse_type'] === 'avatars' ? '<img src="' . $theme['images_url'] . '/selected.gif" alt="&gt;"> ' : '', $txt['attachment_manager_avatars'], '</a> |
+			<a href="<URL>?action=admin;area=manageattachments;sa=browse;thumbs">', $context['browse_type'] === 'thumbs' ? '<img src="' . $theme['images_url'] . '/selected.gif" alt="&gt;"> ' : '', $txt['attachment_manager_thumbs'], '</a>
 		</div>
 	</div>';
 
@@ -53,7 +53,7 @@ function template_browse()
 
 function template_maintenance()
 {
-	global $context, $theme, $options, $scripturl, $txt;
+	global $context, $theme, $options, $txt;
 
 	$warning = JavaScriptEscape($txt['attachment_pruning_warning']);
 
@@ -74,7 +74,7 @@ function template_maintenance()
 			', $txt['attachment_integrity_check'], '
 		</we:cat>
 		<div class="windowbg wrc">
-			<form action="', $scripturl, '?action=admin;area=manageattachments;sa=repair;', $context['session_query'], '" method="post" accept-charset="UTF-8">
+			<form action="<URL>?action=admin;area=manageattachments;sa=repair;', $context['session_query'], '" method="post" accept-charset="UTF-8">
 				<p>', $txt['attachment_integrity_check_desc'], '</p>
 				<input type="submit" value="', $txt['attachment_check_now'], '" class="submit">
 			</form>
@@ -83,7 +83,7 @@ function template_maintenance()
 			', $txt['attachment_pruning'], '
 		</we:cat>
 		<div class="windowbg wrc">
-			<form action="', $scripturl, '?action=admin;area=manageattachments" method="post" accept-charset="UTF-8" onsubmit="return ask(', $warning, ', e);" style="margin: 0 0 2ex 0">
+			<form action="<URL>?action=admin;area=manageattachments" method="post" accept-charset="UTF-8" onsubmit="return ask(', $warning, ', e);" style="margin: 0 0 2ex 0">
 				', $txt['attachment_remove_old'], ' <input name="age" value="25" size="4"> ', $txt['days_word'], '<br>
 				', $txt['attachment_pruning_message'], ': <input name="notice" value="', $txt['attachment_delete_admin'], '" size="40"><br>
 				<input type="submit" value="', $txt['remove'], '" class="delete">
@@ -92,7 +92,7 @@ function template_maintenance()
 				<input type="hidden" name="sa" value="byAge">
 			</form>
 			<hr>
-			<form action="', $scripturl, '?action=admin;area=manageattachments" method="post" accept-charset="UTF-8" onsubmit="return ask(', $warning, ', e);" style="margin: 0 0 2ex 0">
+			<form action="<URL>?action=admin;area=manageattachments" method="post" accept-charset="UTF-8" onsubmit="return ask(', $warning, ', e);" style="margin: 0 0 2ex 0">
 				', $txt['attachment_remove_size'], ' <input name="size" id="size" value="100" size="4"> ', $txt['kilobyte'], '<br>
 				', $txt['attachment_pruning_message'], ': <input name="notice" value="', $txt['attachment_delete_admin'], '" size="40"><br>
 				<input type="submit" value="', $txt['remove'], '" class="delete">
@@ -101,7 +101,7 @@ function template_maintenance()
 				<input type="hidden" name="sa" value="bySize">
 			</form>
 			<hr>
-			<form action="', $scripturl, '?action=admin;area=manageattachments" method="post" accept-charset="UTF-8" onsubmit="return ask(', $warning, ', e);" style="margin: 0 0 2ex 0">
+			<form action="<URL>?action=admin;area=manageattachments" method="post" accept-charset="UTF-8" onsubmit="return ask(', $warning, ', e);" style="margin: 0 0 2ex 0">
 				', $txt['attachment_manager_avatars_older'], ' <input name="age" value="45" size="4"> ', $txt['days_word'], '<br>
 				<input type="submit" value="', $txt['remove'], '" class="delete">
 				<input type="hidden" name="type" value="avatars">
@@ -115,7 +115,7 @@ function template_maintenance()
 
 function template_attachment_repair()
 {
-	global $context, $txt, $scripturl, $theme;
+	global $context, $txt, $theme;
 
 	// If we've completed just let them know!
 	if ($context['completed'])
@@ -148,7 +148,7 @@ function template_attachment_repair()
 	{
 		echo '
 	<div id="manage_attachments">
-		<form action="', $scripturl, '?action=admin;area=manageattachments;sa=repair;fixErrors=1;step=0;substep=0;', $context['session_query'], '" method="post" accept-charset="UTF-8">
+		<form action="<URL>?action=admin;area=manageattachments;sa=repair;fixErrors=1;step=0;substep=0;', $context['session_query'], '" method="post" accept-charset="UTF-8">
 			<we:cat>
 				', $txt['repair_attachments'], '
 			</we:cat>

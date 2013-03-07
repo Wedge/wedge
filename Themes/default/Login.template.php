@@ -13,13 +13,13 @@
 
 function template_login()
 {
-	global $context, $theme, $options, $scripturl, $settings, $txt;
+	global $context, $theme, $options, $settings, $txt;
 
 	if (empty($context['disable_login_hashing']))
 		$context['main_js_files']['scripts/sha1.js'] = true;
 
 	echo '
-		<form action="', $scripturl, '?action=login2" name="frmLogin" id="frmLogin" method="post" accept-charset="UTF-8" ', empty($context['disable_login_hashing']) ? ' onsubmit="hashLoginPassword(this, \'' . $context['session_id'] . '\');"' : '', '>
+		<form action="<URL>?action=login2" name="frmLogin" id="frmLogin" method="post" accept-charset="UTF-8" ', empty($context['disable_login_hashing']) ? ' onsubmit="hashLoginPassword(this, \'' . $context['session_id'] . '\');"' : '', '>
 		<div class="login">
 			<we:cat>
 				<img src="', $theme['images_url'], '/icons/online.gif">
@@ -60,7 +60,7 @@ function template_login()
 	echo '
 				</dl>
 				<p><input type="submit" value="', $txt['login'], '" class="submit"></p>
-				<p class="smalltext"><a href="', $scripturl, '?action=reminder">', $txt['forgot_your_password'], '</a></p>
+				<p class="smalltext"><a href="<URL>?action=reminder">', $txt['forgot_your_password'], '</a></p>
 				<input type="hidden" name="hash_passwrd" value="">
 			</div>
 		</div></form>';
@@ -73,14 +73,14 @@ function template_login()
 // Tell a guest to get lost or login!
 function template_kick_guest()
 {
-	global $context, $theme, $options, $scripturl, $settings, $txt;
+	global $context, $theme, $options, $settings, $txt;
 
 	// This isn't that much... just like normal login but with a message at the top.
 	if (empty($context['disable_login_hashing']))
 		$context['main_js_files']['scripts/sha1.js'] = true;
 
 	echo '
-	<form action="', $scripturl, '?action=login2" method="post" accept-charset="UTF-8" name="frmLogin" id="frmLogin"', empty($context['disable_login_hashing']) ? ' onsubmit="hashLoginPassword(this, \'' . $context['session_id'] . '\');"' : '', '>
+	<form action="<URL>?action=login2" method="post" accept-charset="UTF-8" name="frmLogin" id="frmLogin"', empty($context['disable_login_hashing']) ? ' onsubmit="hashLoginPassword(this, \'' . $context['session_id'] . '\');"' : '', '>
 		<div class="login">
 			<we:cat>
 				', $txt['warning'], '
@@ -90,7 +90,7 @@ function template_kick_guest()
 	echo '
 			<p class="information center">
 				', empty($context['kick_message']) ? $txt['only_members_can_access'] : $context['kick_message'], '<br>
-				', (empty($settings['registration_method']) || $settings['registration_method'] != 3) ? sprintf($txt['login_below_register'], $scripturl . '?action=register', $context['forum_name_html_safe']) : sprintf($txt['login_below'], $context['forum_name_html_safe']), '
+				', (empty($settings['registration_method']) || $settings['registration_method'] != 3) ? sprintf($txt['login_below_register'], '<URL>?action=register', $context['forum_name_html_safe']) : sprintf($txt['login_below'], $context['forum_name_html_safe']), '
 			</p>';
 
 	// And now the login information.
@@ -111,7 +111,7 @@ function template_kick_guest()
 					<dd><input type="checkbox" name="cookieneverexp" onclick="this.form.cookielength.disabled = this.checked;"></dd>
 				</dl>
 				<p class="center"><input type="submit" value="', $txt['login'], '" class="submit"></p>
-				<p class="center smalltext"><a href="', $scripturl, '?action=reminder">', $txt['forgot_your_password'], '</a></p>
+				<p class="center smalltext"><a href="<URL>?action=reminder">', $txt['forgot_your_password'], '</a></p>
 			</div>
 			<input type="hidden" name="hash_passwrd" value="">
 		</div>
@@ -125,14 +125,14 @@ function template_kick_guest()
 // This is for maintenance mode.
 function template_maintenance()
 {
-	global $context, $theme, $options, $scripturl, $txt, $settings;
+	global $context, $theme, $options, $txt, $settings;
 
 	// Display the administrator's message at the top.
 	if (empty($context['disable_login_hashing']))
 		$context['main_js_files']['scripts/sha1.js'] = true;
 
 	echo '
-<form action="', $scripturl, '?action=login2" method="post" accept-charset="UTF-8"', empty($context['disable_login_hashing']) ? ' onsubmit="hashLoginPassword(this, \'' . $context['session_id'] . '\');"' : '', '>
+<form action="<URL>?action=login2" method="post" accept-charset="UTF-8"', empty($context['disable_login_hashing']) ? ' onsubmit="hashLoginPassword(this, \'' . $context['session_id'] . '\');"' : '', '>
 	<div class="login" id="maintenance_mode">
 		<we:cat>
 			', $context['title'], '
@@ -165,13 +165,13 @@ function template_maintenance()
 // This is for the security stuff - makes administrators login every so often.
 function template_admin_login()
 {
-	global $context, $theme, $options, $scripturl, $txt;
+	global $context, $theme, $options, $txt;
 
 	// Since this should redirect to whatever they were doing, send all the get data.
 	$context['main_js_files']['scripts/sha1.js'] = true;
 
 	echo '
-<form action="', $scripturl, $context['get_data'], '" method="post" accept-charset="UTF-8" name="frmLogin" id="frmLogin" onsubmit="hashAdminPassword(this, \'', we::$user['username'], '\', \'', $context['session_id'], '\');">
+<form action="<URL>', $context['get_data'], '" method="post" accept-charset="UTF-8" name="frmLogin" id="frmLogin" onsubmit="hashAdminPassword(this, \'', we::$user['username'], '\', \'', $context['session_id'], '\');">
 	<div class="login" id="admin_login">
 		<we:cat>
 			<img src="', $theme['images_url'], '/icons/online.gif">
@@ -186,7 +186,7 @@ function template_admin_login()
 	echo '
 			<strong>', $txt['password'], ':</strong>
 			<input type="password" name="admin_pass" size="24">
-			<a href="', $scripturl, '?action=help;in=securityDisable_why" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
+			<a href="<URL>?action=help;in=securityDisable_why" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
 			<br>
 			<input type="submit" style="margin-top: 1em" value="', $txt['login'], '" class="submit">';
 
@@ -205,11 +205,11 @@ function template_admin_login()
 // Activate your account manually?
 function template_retry_activate()
 {
-	global $context, $theme, $options, $txt, $scripturl;
+	global $context, $theme, $options, $txt;
 
 	// Just ask them for their code so they can try it again...
 	echo '
-		<form action="', $scripturl, '?action=activate;u=', $context['member_id'], '" method="post" accept-charset="UTF-8">
+		<form action="<URL>?action=activate;u=', $context['member_id'], '" method="post" accept-charset="UTF-8">
 			<we:title>
 				', $context['page_title'], '
 			</we:title>
@@ -234,11 +234,11 @@ function template_retry_activate()
 // Activate your account manually?
 function template_resend()
 {
-	global $context, $theme, $options, $txt, $scripturl;
+	global $context, $theme, $options, $txt;
 
 	// Just ask them for their code so they can try it again...
 	echo '
-		<form action="', $scripturl, '?action=activate;sa=resend" method="post" accept-charset="UTF-8">
+		<form action="<URL>?action=activate;sa=resend" method="post" accept-charset="UTF-8">
 			<we:title>
 				', $context['page_title'], '
 			</we:title>

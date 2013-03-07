@@ -13,17 +13,17 @@
 
 function template_modify_weights()
 {
-	global $context, $theme, $options, $scripturl, $txt, $settings;
+	global $context, $theme, $options, $txt, $settings;
 
 	echo '
-		<form action="', $scripturl, '?action=admin;area=managesearch;sa=weights" method="post" accept-charset="UTF-8">
+		<form action="<URL>?action=admin;area=managesearch;sa=weights" method="post" accept-charset="UTF-8">
 			<we:cat>
 				', $txt['search_weights'], '
 			</we:cat>
 			<div class="windowbg wrc">
 				<dl class="settings">
 					<dt class="large_caption">
-						<a href="', $scripturl, '?action=help;in=search_weight_frequency" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
+						<a href="<URL>?action=help;in=search_weight_frequency" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
 						', $txt['search_weight_frequency'], ':
 					</dt>
 					<dd class="large_caption">
@@ -31,7 +31,7 @@ function template_modify_weights()
 						<span id="weight1" class="search_weight">', $context['relative_weights']['search_weight_frequency'], '%</span>
 					</dd>
 					<dt class="large_caption">
-						<a href="', $scripturl, '?action=help;in=search_weight_age" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
+						<a href="<URL>?action=help;in=search_weight_age" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
 						', $txt['search_weight_age'], ':
 					</dt>
 					<dd class="large_caption">
@@ -39,7 +39,7 @@ function template_modify_weights()
 						<span id="weight2" class="search_weight">', $context['relative_weights']['search_weight_age'], '%</span>
 					</dd>
 					<dt class="large_caption">
-						<a href="', $scripturl, '?action=help;in=search_weight_length" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
+						<a href="<URL>?action=help;in=search_weight_length" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
 						', $txt['search_weight_length'], ':
 					</dt>
 					<dd class="large_caption">
@@ -47,7 +47,7 @@ function template_modify_weights()
 						<span id="weight3" class="search_weight">', $context['relative_weights']['search_weight_length'], '%</span>
 					</dd>
 					<dt class="large_caption">
-						<a href="', $scripturl, '?action=help;in=search_weight_subject" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
+						<a href="<URL>?action=help;in=search_weight_subject" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
 						', $txt['search_weight_subject'], ':
 					</dt>
 					<dd class="large_caption">
@@ -55,7 +55,7 @@ function template_modify_weights()
 						<span id="weight4" class="search_weight">', $context['relative_weights']['search_weight_subject'], '%</span>
 					</dd>
 					<dt class="large_caption">
-						<a href="', $scripturl, '?action=help;in=search_weight_first_message" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
+						<a href="<URL>?action=help;in=search_weight_first_message" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
 						', $txt['search_weight_first_message'], ':
 					</dt>
 					<dd class="large_caption">
@@ -63,7 +63,7 @@ function template_modify_weights()
 						<span id="weight5" class="search_weight">', $context['relative_weights']['search_weight_first_message'], '%</span>
 					</dd>
 					<dt class="large_caption">
-						<a href="', $scripturl, '?action=help;in=search_weight_frequency" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
+						<a href="<URL>?action=help;in=search_weight_frequency" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
 						', $txt['search_weight_pinned'], ':
 					</dt>
 					<dd class="large_caption">
@@ -97,15 +97,15 @@ function template_modify_weights()
 
 function template_select_search_method()
 {
-	global $context, $theme, $options, $scripturl, $txt, $settings;
+	global $context, $theme, $options, $txt, $settings;
 
 	echo '
-		<form action="', $scripturl, '?action=admin;area=managesearch;sa=method" method="post" accept-charset="UTF-8">
+		<form action="<URL>?action=admin;area=managesearch;sa=method" method="post" accept-charset="UTF-8">
 			<we:cat>
 				', $txt['search_method'], '
 			</we:cat>
 			<div class="information">
-				<div class="smalltext" style="font-weight: normal"><a href="', $scripturl, '?action=help;in=search_why_use_index" onclick="return reqWin(this);">', $txt['search_create_index_why'], '</a></div>
+				<div class="smalltext" style="font-weight: normal"><a href="<URL>?action=help;in=search_why_use_index" onclick="return reqWin(this);">', $txt['search_create_index_why'], '</a></div>
 			</div>
 			<div class="windowbg wrc">
 				<dl class="settings">';
@@ -147,15 +147,15 @@ function template_select_search_method()
 
 	if ($context['custom_index'])
 		echo '
-								<strong>', $txt['search_index_label'], ':</strong> ', $txt['search_method_index_already_exists'], ' [<a href="', $scripturl, '?action=admin;area=managesearch;sa=removecustom;', $context['session_query'], '">', $txt['search_index_custom_remove'], '</a>]<br>
+								<strong>', $txt['search_index_label'], ':</strong> ', $txt['search_method_index_already_exists'], ' [<a href="<URL>?action=admin;area=managesearch;sa=removecustom;', $context['session_query'], '">', $txt['search_index_custom_remove'], '</a>]<br>
 								<strong>', $txt['search_index_size'], ':</strong> ', $context['table_info']['custom_index_length'];
 	elseif ($context['partial_custom_index'])
 		echo '
-								<strong>', $txt['search_index_label'], ':</strong> ', $txt['search_method_index_partial'], ' [<a href="', $scripturl, '?action=admin;area=managesearch;sa=removecustom;', $context['session_query'], '">', $txt['search_index_custom_remove'], '</a>] [<a href="', $scripturl, '?action=admin;area=managesearch;sa=createmsgindex;resume;', $context['session_query'], '">', $txt['search_index_custom_resume'], '</a>]<br>
+								<strong>', $txt['search_index_label'], ':</strong> ', $txt['search_method_index_partial'], ' [<a href="<URL>?action=admin;area=managesearch;sa=removecustom;', $context['session_query'], '">', $txt['search_index_custom_remove'], '</a>] [<a href="<URL>?action=admin;area=managesearch;sa=createmsgindex;resume;', $context['session_query'], '">', $txt['search_index_custom_resume'], '</a>]<br>
 								<strong>', $txt['search_index_size'], ':</strong> ', $context['table_info']['custom_index_length'];
 	else
 		echo '
-								<strong>', $txt['search_index_label'], ':</strong> ', $txt['search_method_no_index_exists'], ' [<a href="', $scripturl, '?action=admin;area=managesearch;sa=createmsgindex">', $txt['search_index_create_custom'], '</a>]';
+								<strong>', $txt['search_index_label'], ':</strong> ', $txt['search_method_no_index_exists'], ' [<a href="<URL>?action=admin;area=managesearch;sa=createmsgindex">', $txt['search_index_create_custom'], '</a>]';
 
 	echo '
 							</span>
@@ -199,10 +199,10 @@ function template_select_search_method()
 
 function template_create_index()
 {
-	global $context, $theme, $options, $scripturl, $txt;
+	global $context, $theme, $options, $txt;
 
 	echo '
-		<form action="', $scripturl, '?action=admin;area=managesearch;sa=createmsgindex;step=1" method="post" accept-charset="UTF-8" name="create_index">
+		<form action="<URL>?action=admin;area=managesearch;sa=createmsgindex;step=1" method="post" accept-charset="UTF-8" name="create_index">
 			<we:cat>
 				', $txt['search_create_index'], '
 			</we:cat>
@@ -227,10 +227,10 @@ function template_create_index()
 
 function template_create_index_progress()
 {
-	global $context, $theme, $options, $scripturl, $txt;
+	global $context, $txt;
 
 	echo '
-		<form action="', $scripturl, '?action=admin;area=managesearch;sa=createmsgindex;step=1" name="autoSubmit" method="post" accept-charset="UTF-8">
+		<form action="<URL>?action=admin;area=managesearch;sa=createmsgindex;step=1" name="autoSubmit" method="post" accept-charset="UTF-8">
 			<we:cat>
 				', $txt['search_create_index'], '
 			</we:cat>
@@ -269,7 +269,8 @@ function template_create_index_progress()
 
 function template_create_index_done()
 {
-	global $context, $theme, $options, $scripturl, $txt;
+	global $txt;
+
 	echo '
 		<we:cat>
 			', $txt['search_create_index'], '
@@ -277,7 +278,7 @@ function template_create_index_done()
 		<div class="windowbg wrc">
 			<p>', $txt['search_create_index_done'], '</p>
 			<p>
-				<strong><a href="', $scripturl, '?action=admin;area=managesearch;sa=method">', $txt['search_create_index_done_link'], '</a></strong>
+				<strong><a href="<URL>?action=admin;area=managesearch;sa=method">', $txt['search_create_index_done_link'], '</a></strong>
 			</p>
 		</div>';
 }
@@ -285,9 +286,9 @@ function template_create_index_done()
 // Add or edit a search engine spider.
 function template_spider_edit()
 {
-	global $context, $theme, $options, $scripturl, $txt;
+	global $context, $txt;
 	echo '
-		<form action="', $scripturl, '?action=admin;area=sengines;sa=editspiders;sid=', $context['spider']['id'], '" method="post" accept-charset="UTF-8">
+		<form action="<URL>?action=admin;area=sengines;sa=editspiders;sid=', $context['spider']['id'], '" method="post" accept-charset="UTF-8">
 			<we:cat>
 				', $context['page_title'], '
 			</we:cat>
@@ -327,7 +328,7 @@ function template_spider_edit()
 // Show... spider... logs...
 function template_show_spider_log()
 {
-	global $context, $txt, $theme, $scripturl;
+	global $context, $txt, $theme;
 
 	// Standard fields.
 	template_show_list('spider_log');
@@ -337,7 +338,7 @@ function template_show_spider_log()
 		<we:cat>
 			', $txt['spider_log_delete'], '
 		</we:cat>
-		<form action="', $scripturl, '?action=admin;area=sengines;sa=logs;', $context['session_query'], '" method="post" accept-charset="UTF-8">
+		<form action="<URL>?action=admin;area=sengines;sa=logs;', $context['session_query'], '" method="post" accept-charset="UTF-8">
 			<div class="windowbg wrc">
 				<p>
 					', $txt['spider_log_delete_older'], '
@@ -352,7 +353,7 @@ function template_show_spider_log()
 
 function template_show_spider_stats()
 {
-	global $context, $txt, $theme, $scripturl;
+	global $context, $txt, $theme;
 
 	// Standard fields.
 	template_show_list('spider_stat_list');
@@ -362,7 +363,7 @@ function template_show_spider_stats()
 		<we:cat>
 			', $txt['spider_log_delete'], '
 		</we:cat>
-		<form action="', $scripturl, '?action=admin;area=sengines;sa=stats;', $context['session_query'], '" method="post" accept-charset="UTF-8">
+		<form action="<URL>?action=admin;area=sengines;sa=stats;', $context['session_query'], '" method="post" accept-charset="UTF-8">
 			<div class="windowbg wrc">
 				<p>
 					', $txt['spider_log_delete_older'], '

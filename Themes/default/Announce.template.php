@@ -13,11 +13,11 @@
 
 function template_announce()
 {
-	global $context, $theme, $options, $txt, $scripturl;
+	global $context, $theme, $options, $txt;
 
 	echo '
 	<div id="announcement">
-		<form action="', $scripturl, '?action=announce;sa=send" method="post" accept-charset="UTF-8">
+		<form action="<URL>?action=announce;sa=send" method="post" accept-charset="UTF-8">
 			<we:cat>
 				', $txt['announce_title'], '
 			</we:cat>
@@ -26,7 +26,7 @@ function template_announce()
 			</div>
 			<div class="windowbg2 wrc">
 				<p>
-					', $txt['announce_this_topic'], ' <a href="', $scripturl, '?topic=', $context['current_topic'], '.0">', $context['topic_subject'], '</a>
+					', $txt['announce_this_topic'], ' <a href="<URL>?topic=', $context['current_topic'], '.0">', $context['topic_subject'], '</a>
 				</p>
 				<ul class="reset">';
 
@@ -56,14 +56,14 @@ function template_announce()
 
 function template_announcement_send()
 {
-	global $context, $theme, $options, $txt, $scripturl;
+	global $context, $theme, $options, $txt;
 
 	echo '
 	<br>
 	<div id="announcement">
-		<form action="' . $scripturl . '?action=announce;sa=send" method="post" accept-charset="UTF-8" name="autoSubmit" id="autoSubmit">
+		<form action="<URL>?action=announce;sa=send" method="post" accept-charset="UTF-8" name="autoSubmit" id="autoSubmit">
 			<div class="windowbg2 wrc">
-				<p>', $txt['announce_sending'], ' <a href="', $scripturl, '?topic=', $context['current_topic'], '.0" target="_blank" class="new_win">', $context['topic_subject'], '</a></p>
+				<p>', $txt['announce_sending'], ' <a href="<URL>?topic=', $context['current_topic'], '.0" target="_blank" class="new_win">', $context['topic_subject'], '</a></p>
 				<p><strong>', $context['percentage_done'], '% ', $txt['announce_done'], '</strong></p>
 				<div id="confirm_buttons">
 					<input type="submit" name="b" value="', westr::htmlspecialchars($txt['announce_continue']), '" class="submit">

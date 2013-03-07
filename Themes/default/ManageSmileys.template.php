@@ -14,7 +14,7 @@
 // Editing the smiley sets.
 function template_editsets()
 {
-	global $context, $theme, $options, $scripturl, $txt, $settings;
+	global $context, $theme, $options, $txt, $settings;
 
 	template_show_list('smiley_set_list');
 
@@ -28,7 +28,7 @@ function template_editsets()
 		</div>';
 
 	if (empty($settings['disable_wedge_js']))
-		add_js_file($scripturl . '?action=viewremote;filename=latest-smileys.js', true);
+		add_js_file('<URL>?action=viewremote;filename=latest-smileys.js', true);
 
 	add_js('
 	if (typeof window.weLatestSmileys != "undefined")
@@ -39,10 +39,10 @@ function template_editsets()
 // Modifying a smiley set.
 function template_modifyset()
 {
-	global $context, $theme, $options, $scripturl, $txt, $settings;
+	global $context, $theme, $options, $txt, $settings;
 
 	echo '
-		<form action="', $scripturl, '?action=admin;area=smileys;sa=editsets" method="post" accept-charset="UTF-8">
+		<form action="<URL>?action=admin;area=smileys;sa=editsets" method="post" accept-charset="UTF-8">
 			<we:cat>
 				', $context['current_set']['is_new'] ? $txt['smiley_set_new'] : $txt['smiley_set_modify_existing'], '
 			</we:cat>';
@@ -52,7 +52,7 @@ function template_modifyset()
 		{
 			echo '
 			<div class="information">
-				', $context['current_set']['can_import'] == 1 ? $txt['smiley_set_import_single'] : $txt['smiley_set_import_multiple'], ' <a href="', $scripturl, '?action=admin;area=smileys;sa=import;set=', $context['current_set']['id'], ';', $context['session_query'], '">', $txt['here'], '</a> ', $context['current_set']['can_import'] == 1 ? $txt['smiley_set_to_import_single'] : $txt['smiley_set_to_import_multiple'], '
+				', $context['current_set']['can_import'] == 1 ? $txt['smiley_set_import_single'] : $txt['smiley_set_import_multiple'], ' <a href="<URL>?action=admin;area=smileys;sa=import;set=', $context['current_set']['id'], ';', $context['session_query'], '">', $txt['here'], '</a> ', $context['current_set']['can_import'] == 1 ? $txt['smiley_set_to_import_single'] : $txt['smiley_set_to_import_multiple'], '
 			</div>';
 		}
 
@@ -123,10 +123,10 @@ function template_modifyset()
 // Editing an individual smiley
 function template_modifysmiley()
 {
-	global $context, $theme, $options, $scripturl, $txt, $settings;
+	global $context, $theme, $options, $txt, $settings;
 
 	echo '
-		<form action="', $scripturl, '?action=admin;area=smileys;sa=editsmileys" method="post" accept-charset="UTF-8" name="smileyForm" id="smileyForm">
+		<form action="<URL>?action=admin;area=smileys;sa=editsmileys" method="post" accept-charset="UTF-8" name="smileyForm" id="smileyForm">
 			<we:cat>
 				', $txt['smiley_modify_existing'], '
 			</we:cat>
@@ -212,7 +212,7 @@ function template_modifysmiley()
 // Adding a new smiley.
 function template_addsmiley()
 {
-	global $context, $theme, $options, $scripturl, $txt, $settings;
+	global $context, $theme, $options, $txt, $settings;
 
 	add_js('
 	function switchType()
@@ -235,7 +235,7 @@ function template_addsmiley()
 	}');
 
 	echo '
-		<form action="', $scripturl, '?action=admin;area=smileys;sa=addsmiley" method="post" accept-charset="UTF-8" name="smileyForm" id="smileyForm" enctype="multipart/form-data">
+		<form action="<URL>?action=admin;area=smileys;sa=addsmiley" method="post" accept-charset="UTF-8" name="smileyForm" id="smileyForm" enctype="multipart/form-data">
 			<we:cat>
 				', $txt['smileys_add_method'], '
 			</we:cat>
@@ -370,12 +370,12 @@ function template_addsmiley()
 // Ordering smileys.
 function template_setorder()
 {
-	global $context, $theme, $options, $scripturl, $txt, $settings;
+	global $context, $theme, $options, $txt, $settings;
 
 	foreach ($context['smileys'] as $location)
 	{
 		echo '
-		<form action="', $scripturl, '?action=admin;area=smileys;sa=editsmileys" method="post" accept-charset="UTF-8">
+		<form action="<URL>?action=admin;area=smileys;sa=editsmileys" method="post" accept-charset="UTF-8">
 			<we:cat>
 				', $location['title'], '
 			</we:cat>
@@ -389,14 +389,14 @@ function template_setorder()
 		{
 			if (!empty($context['move_smiley']))
 				echo '
-				<a href="', $scripturl, '?action=admin;area=smileys;sa=setorder;location=', $location['id'], ';source=', $context['move_smiley'], ';row=', $row[0]['row'], ';reorder=1;', $context['session_query'], '"><img src="', $theme['images_url'], '/smiley_select_spot.gif" alt="', $txt['smileys_move_here'], '"></a>';
+				<a href="<URL>?action=admin;area=smileys;sa=setorder;location=', $location['id'], ';source=', $context['move_smiley'], ';row=', $row[0]['row'], ';reorder=1;', $context['session_query'], '"><img src="', $theme['images_url'], '/smiley_select_spot.gif" alt="', $txt['smileys_move_here'], '"></a>';
 
 			foreach ($row as $smiley)
 			{
 				if (empty($context['move_smiley']))
-					echo '<a href="', $scripturl, '?action=admin;area=smileys;sa=setorder;move=', $smiley['id'], '"><img src="', $settings['smileys_url'], '/', $settings['smiley_sets_default'], '/', $smiley['filename'], '" style="padding: 2px; border: 0 solid black" alt="', $smiley['description'], '"></a>';
+					echo '<a href="<URL>?action=admin;area=smileys;sa=setorder;move=', $smiley['id'], '"><img src="', $settings['smileys_url'], '/', $settings['smiley_sets_default'], '/', $smiley['filename'], '" style="padding: 2px; border: 0 solid black" alt="', $smiley['description'], '"></a>';
 				else
-					echo '<img src="', $settings['smileys_url'], '/', $settings['smiley_sets_default'], '/', $smiley['filename'], '" style="padding: 2px; border: ', $smiley['selected'] ? '2px solid red' : '0 solid black', '" alt="', $smiley['description'], '"><a href="', $scripturl, '?action=admin;area=smileys;sa=setorder;location=', $location['id'], ';source=', $context['move_smiley'], ';after=', $smiley['id'], ';reorder=1;', $context['session_query'], '" title="', $txt['smileys_move_here'], '"><img src="', $theme['images_url'], '/smiley_select_spot.gif" alt="', $txt['smileys_move_here'], '"></a>';
+					echo '<img src="', $settings['smileys_url'], '/', $settings['smiley_sets_default'], '/', $smiley['filename'], '" style="padding: 2px; border: ', $smiley['selected'] ? '2px solid red' : '0 solid black', '" alt="', $smiley['description'], '"><a href="<URL>?action=admin;area=smileys;sa=setorder;location=', $location['id'], ';source=', $context['move_smiley'], ';after=', $smiley['id'], ';reorder=1;', $context['session_query'], '" title="', $txt['smileys_move_here'], '"><img src="', $theme['images_url'], '/smiley_select_spot.gif" alt="', $txt['smileys_move_here'], '"></a>';
 			}
 
 			echo '
@@ -404,7 +404,7 @@ function template_setorder()
 		}
 		if (!empty($context['move_smiley']))
 			echo '
-				<a href="', $scripturl, '?action=admin;area=smileys;sa=setorder;location=', $location['id'], ';source=', $context['move_smiley'], ';row=', $location['last_row'], ';reorder=1;', $context['session_query'], '"><img src="', $theme['images_url'], '/smiley_select_spot.gif" alt="', $txt['smileys_move_here'], '"></a>';
+				<a href="<URL>?action=admin;area=smileys;sa=setorder;location=', $location['id'], ';source=', $context['move_smiley'], ';row=', $location['last_row'], ';reorder=1;', $context['session_query'], '"><img src="', $theme['images_url'], '/smiley_select_spot.gif" alt="', $txt['smileys_move_here'], '"></a>';
 		echo '
 			</div>
 			<input type="hidden" name="reorder" value="1">
@@ -415,18 +415,16 @@ function template_setorder()
 // Editing Message Icons
 function template_editicons()
 {
-	global $context, $theme, $options, $scripturl, $txt, $settings;
-
 	template_show_list('message_icon_list');
 }
 
 // Editing an individual message icon
 function template_editicon()
 {
-	global $context, $theme, $options, $scripturl, $txt, $settings;
+	global $context, $theme, $options, $txt, $settings;
 
 	echo '
-		<form action="', $scripturl, '?action=admin;area=smileys;sa=editicon;icon=', $context['new_icon'] ? '0' : $context['icon']['id'], '" method="post" accept-charset="UTF-8">
+		<form action="<URL>?action=admin;area=smileys;sa=editicon;icon=', $context['new_icon'] ? '0' : $context['icon']['id'], '" method="post" accept-charset="UTF-8">
 			<we:cat>
 				', $context['new_icon'] ? $txt['icons_new_icon'] : $txt['icons_edit_icon'], '
 			</we:cat>

@@ -13,7 +13,7 @@
 
 function template_moderation_center()
 {
-	global $context, $txt, $scripturl;
+	global $context, $txt;
 
 	// Show a welcome message to the user.
 	echo '
@@ -52,11 +52,11 @@ function template_moderation_center()
 
 function template_latest_news()
 {
-	global $context, $txt, $scripturl, $settings;
+	global $context, $txt, $settings;
 
 	echo '
 		<we:cat>
-			<a href="', $scripturl, '?action=help;in=live_news" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
+			<a href="<URL>?action=help;in=live_news" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
 			', $txt['mc_latest_news'], '
 		</we:cat>
 		<div class="windowbg wrc" style="padding: 5px 7px 5px 12px">
@@ -67,8 +67,8 @@ function template_latest_news()
 	// !! Put this in its own file!!
 	if (empty($settings['disable_wedge_js']))
 		add_js_file(array(
-			$scripturl . '?action=viewremote;filename=current-version.js',
-			$scripturl . '?action=viewremote;filename=latest-news.js'
+			'<URL>?action=viewremote;filename=current-version.js',
+			'<URL>?action=viewremote;filename=latest-news.js'
 		), true);
 	add_js_file('scripts/admin.js');
 
@@ -95,11 +95,11 @@ function template_latest_news()
 // Show all the group requests the user can see.
 function template_group_requests_block()
 {
-	global $context, $txt, $scripturl;
+	global $context, $txt;
 
 	echo '
 		<we:cat>
-			<a href="', $scripturl, '?action=groups;sa=requests">', $txt['mc_group_requests'], '</a>
+			<a href="<URL>?action=groups;sa=requests">', $txt['mc_group_requests'], '</a>
 		</we:cat>
 		<div class="windowbg wrc">
 			<div class="modbox">
@@ -127,11 +127,11 @@ function template_group_requests_block()
 // A block to show the current top reported posts.
 function template_reported_posts_block()
 {
-	global $context, $txt, $scripturl;
+	global $context, $txt;
 
 	echo '
 		<we:cat>
-			<a href="', $scripturl, '?action=moderate;area=reports">', $txt['mc_recent_reports'], '</a>
+			<a href="<URL>?action=moderate;area=reports">', $txt['mc_recent_reports'], '</a>
 		</we:cat>
 		<div class="windowbg wrc">
 			<div class="modbox">
@@ -158,11 +158,11 @@ function template_reported_posts_block()
 
 function template_watched_users()
 {
-	global $context, $txt, $scripturl;
+	global $context, $txt;
 
 	echo '
 		<we:cat>
-			<a href="', $scripturl, '?action=moderate;area=userwatch">', $txt['mc_watched_users'], '</a>
+			<a href="<URL>?action=moderate;area=userwatch">', $txt['mc_watched_users'], '</a>
 		</we:cat>
 		<div class="windowbg wrc">
 			<div class="modbox">
@@ -190,10 +190,10 @@ function template_watched_users()
 // Little section for making... notes.
 function template_notes()
 {
-	global $theme, $context, $txt, $scripturl;
+	global $theme, $context, $txt;
 
 	echo '
-		<form action="', $scripturl, '?action=moderate;area=index" method="post">
+		<form action="<URL>?action=moderate;area=index" method="post">
 			<we:cat>
 				', $txt['mc_notes'], '
 			</we:cat>
@@ -233,11 +233,11 @@ function template_notes()
 
 function template_reported_posts()
 {
-	global $context, $txt, $scripturl;
+	global $context, $txt;
 
 	echo '
 	<div id="modcenter">
-		<form action="', $scripturl, '?action=moderate;area=reports', $context['view_closed'] ? ';sa=closed' : '', ';start=', $context['start'], '" method="post" accept-charset="UTF-8">
+		<form action="<URL>?action=moderate;area=reports', $context['view_closed'] ? ';sa=closed' : '', ';start=', $context['start'], '" method="post" accept-charset="UTF-8">
 			<we:cat>
 				', $context['view_closed'] ? $txt['mc_reportedp_closed'] : $txt['mc_reportedp_active'], '
 			</we:cat>
@@ -258,8 +258,8 @@ function template_reported_posts()
 				<div>
 					<div class="floatright">
 						<a href="', $report['report_href'], '">', $details_button, '</a>
-						<a href="', $scripturl, '?action=moderate;area=reports', $context['view_closed'] ? ';sa=closed' : '', ';ignore=', (int) !$report['ignore'], ';rid=', $report['id'], ';start=', $context['start'], ';', $context['session_query'], '" ', !$report['ignore'] ? 'onclick="return ask(' . JavaScriptEscape($txt['mc_reportedp_ignore_confirm']) . ', e);"' : '', '>', $report['ignore'] ? $unignore_button : $ignore_button, '</a>
-						<a href="', $scripturl, '?action=moderate;area=reports', $context['view_closed'] ? ';sa=closed' : '', ';close=', (int) !$report['closed'], ';rid=', $report['id'], ';start=', $context['start'], ';', $context['session_query'], '">', $close_button, '</a>
+						<a href="<URL>?action=moderate;area=reports', $context['view_closed'] ? ';sa=closed' : '', ';ignore=', (int) !$report['ignore'], ';rid=', $report['id'], ';start=', $context['start'], ';', $context['session_query'], '" ', !$report['ignore'] ? 'onclick="return ask(' . JavaScriptEscape($txt['mc_reportedp_ignore_confirm']) . ', e);"' : '', '>', $report['ignore'] ? $unignore_button : $ignore_button, '</a>
+						<a href="<URL>?action=moderate;area=reports', $context['view_closed'] ? ';sa=closed' : '', ';close=', (int) !$report['closed'], ';rid=', $report['id'], ';start=', $context['start'], ';', $context['session_query'], '">', $close_button, '</a>
 						', !$context['view_closed'] ? '<input type="checkbox" name="close[]" value="' . $report['id'] . '">' : '', '
 					</div>
 					<strong><a href="', $report['topic_href'], '">', $report['subject'], '</a></strong> ', $txt['mc_reportedp_by'], ' <strong>', $report['author']['link'], '</strong>
@@ -303,12 +303,12 @@ function template_reported_posts()
 // Show a list of all the unapproved posts
 function template_unapproved_posts()
 {
-	global $context, $txt, $scripturl;
+	global $context, $txt;
 
 	// Just a big table of it all really...
 	echo '
 	<div id="modcenter">
-		<form action="', $scripturl, '?action=moderate;area=postmod;start=', $context['start'], ';sa=', $context['current_view'], '" method="post" accept-charset="UTF-8">
+		<form action="<URL>?action=moderate;area=postmod;start=', $context['start'], ';sa=', $context['current_view'], '" method="post" accept-charset="UTF-8">
 			<we:cat>
 				', $txt['mc_unapproved_posts'], '
 			</we:cat>';
@@ -330,18 +330,18 @@ function template_unapproved_posts()
 		echo '
 			<we:title>
 				<span class="smalltext floatleft">', $item['counter'], '&nbsp;</span>
-				<span class="smalltext floatleft"><a href="', $scripturl, '?category=', $item['category']['id'], '">', $item['category']['name'], '</a> / <a href="', $scripturl, '?board=', $item['board']['id'], '.0">', $item['board']['name'], '</a> / <a href="', $scripturl, '?topic=', $item['topic']['id'], '.msg', $item['id'], '#msg', $item['id'], '">', $item['subject'], '</a></span>
+				<span class="smalltext floatleft"><a href="<URL>?category=', $item['category']['id'], '">', $item['category']['name'], '</a> / <a href="<URL>?board=', $item['board']['id'], '.0">', $item['board']['name'], '</a> / <a href="<URL>?topic=', $item['topic']['id'], '.msg', $item['id'], '#msg', $item['id'], '">', $item['subject'], '</a></span>
 				<span class="smalltext floatright">', $txt['mc_unapproved_by'], ' ', $item['poster']['link'], ' ', $item['on_time'], '</span>
 			</we:title>
 			<div class="windowbg', $item['alternate'] ? '' : '2', ' wrc core_posts">
 				<div class="post">', $item['body'], '</div>
 				<span class="floatright">
-					<a href="', $scripturl, '?action=moderate;area=postmod;sa=', $context['current_view'], ';start=', $context['start'], ';', $context['session_query'], ';approve=', $item['id'], '" class="approve_button">', $txt['approve'], '</a>';
+					<a href="<URL>?action=moderate;area=postmod;sa=', $context['current_view'], ';start=', $context['start'], ';', $context['session_query'], ';approve=', $item['id'], '" class="approve_button">', $txt['approve'], '</a>';
 
 				if ($item['can_delete'])
 					echo '
 					', $context['menu_separator'], '
-					<a href="', $scripturl, '?action=moderate;area=postmod;sa=', $context['current_view'], ';start=', $context['start'], ';', $context['session_query'], ';delete=', $item['id'], '" class="remove_button">', $txt['remove_message'], '</a>';
+					<a href="<URL>?action=moderate;area=postmod;sa=', $context['current_view'], ';start=', $context['start'], ';', $context['session_query'], ';delete=', $item['id'], '" class="remove_button">', $txt['remove_message'], '</a>';
 
 				echo '
 					<input type="checkbox" name="item[]" value="', $item['id'], '" checked> ';
@@ -377,11 +377,11 @@ function template_unapproved_posts()
 
 function template_viewmodreport()
 {
-	global $context, $scripturl, $txt;
+	global $context, $txt;
 
 	echo '
 	<div id="modcenter">
-		<form action="', $scripturl, '?action=moderate;area=reports;report=', $context['report']['id'], '" method="post" accept-charset="UTF-8">
+		<form action="<URL>?action=moderate;area=reports;report=', $context['report']['id'], '" method="post" accept-charset="UTF-8">
 			<we:cat>
 				', sprintf($txt['mc_viewmodreport'], $context['report']['message_link'], $context['report']['author']['link']), '
 			</we:cat>
@@ -393,8 +393,8 @@ function template_viewmodreport()
 	$unignore_button = create_button('ignore.gif', 'mc_reportedp_unignore', 'mc_reportedp_unignore', 'class="middle"');
 
 	echo '
-				<span class="floatright"><a href="', $scripturl, '?action=moderate;area=reports;ignore=', (int) !$context['report']['ignore'], ';rid=', $context['report']['id'], ';', $context['session_query'], '"', !$context['report']['ignore'] ? ' onclick="return ask(' . JavaScriptEscape($txt['mc_reportedp_ignore_confirm']) . ', e);"' : '', '>', $context['report']['ignore'] ? $unignore_button : $ignore_button, '</a></span>
-				<span class="floatright"><a href="', $scripturl, '?action=moderate;area=reports;close=', (int) !$context['report']['closed'], ';rid=', $context['report']['id'], ';', $context['session_query'], '">', $close_button, '</a>&nbsp;&nbsp;</span>
+				<span class="floatright"><a href="<URL>?action=moderate;area=reports;ignore=', (int) !$context['report']['ignore'], ';rid=', $context['report']['id'], ';', $context['session_query'], '"', !$context['report']['ignore'] ? ' onclick="return ask(' . JavaScriptEscape($txt['mc_reportedp_ignore_confirm']) . ', e);"' : '', '>', $context['report']['ignore'] ? $unignore_button : $ignore_button, '</a></span>
+				<span class="floatright"><a href="<URL>?action=moderate;area=reports;close=', (int) !$context['report']['closed'], ';rid=', $context['report']['id'], ';', $context['session_query'], '">', $close_button, '</a>&nbsp;&nbsp;</span>
 				', sprintf($txt['mc_modreport_summary'], $context['report']['num_reports'], $context['report']['last_updated']), '
 			</div>
 			<div class="windowbg wrc">
@@ -492,18 +492,18 @@ function template_viewmodreport()
 // Callback function for showing a watched users post in the table.
 function template_user_watch_post_callback($post)
 {
-	global $scripturl, $context, $txt;
+	global $context, $txt;
 
 	$output_html = '
 					<div>
 						<div class="floatleft">
-							<strong><a href="' . $scripturl . '?topic=' . $post['id_topic'] . '.' . $post['id'] . '#msg' . $post['id'] . '">' . $post['subject'] . '</a></strong> ' . $txt['mc_reportedp_by'] . ' <strong>' . $post['author_link'] . '</strong>
+							<strong><a href="<URL>?topic=' . $post['id_topic'] . '.' . $post['id'] . '#msg' . $post['id'] . '">' . $post['subject'] . '</a></strong> ' . $txt['mc_reportedp_by'] . ' <strong>' . $post['author_link'] . '</strong>
 						</div>
 						<div class="floatright">';
 
 	if ($post['can_delete'])
 		$output_html .= '
-							<a href="' . $scripturl . '?action=moderate;area=userwatch;sa=post;delete=' . $post['id'] . ';start=' . $context['start'] . ';' . $context['session_query'] . '" onclick="return ask(' . JavaScriptEscape($txt['mc_watched_users_delete_post']) . ', e);" class="remove_button">' . $txt['remove_message'] . '</a>
+							<a href="<URL>?action=moderate;area=userwatch;sa=post;delete=' . $post['id'] . ';start=' . $context['start'] . ';' . $context['session_query'] . '" onclick="return ask(' . JavaScriptEscape($txt['mc_watched_users_delete_post']) . ', e);" class="remove_button">' . $txt['remove_message'] . '</a>
 							<input type="checkbox" name="delete[]" value="' . $post['id'] . '">';
 
 	$output_html .= '
@@ -522,11 +522,11 @@ function template_user_watch_post_callback($post)
 // Moderation settings
 function template_moderation_settings()
 {
-	global $context, $txt, $scripturl;
+	global $context, $txt;
 
 	echo '
 	<div id="modcenter">
-		<form action="', $scripturl, '?action=moderate;area=settings" method="post" accept-charset="UTF-8">
+		<form action="<URL>?action=moderate;area=settings" method="post" accept-charset="UTF-8">
 			<we:cat>
 				', $txt['mc_prefs_title'], '
 			</we:cat>
@@ -623,11 +623,11 @@ function template_show_notice()
 // Add or edit a warning template.
 function template_warn_template()
 {
-	global $context, $txt, $scripturl;
+	global $context, $txt;
 
 	echo '
 	<div id="modcenter">
-		<form action="', $scripturl, '?action=moderate;area=warnings;sa=templateedit;tid=', $context['id_template'], '" method="post" accept-charset="UTF-8">
+		<form action="<URL>?action=moderate;area=warnings;sa=templateedit;tid=', $context['id_template'], '" method="post" accept-charset="UTF-8">
 			<we:cat>
 				', $context['page_title'], '
 			</we:cat>
