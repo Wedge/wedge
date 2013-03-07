@@ -59,7 +59,7 @@ function template_main()
 							<label for="y_email"><strong>', $txt['sendtopic_sender_email'], ':</strong></label>
 						</dt>
 						<dd>
-							<input type="text" id="y_email" name="y_email" maxlength="50" value="', we::$user['email'], '" class="w50">
+							<input type="email" name="y_email" id="y_email" maxlength="50" value="', we::$user['email'], '" class="w50">
 						</dd>
 						<dt>
 							<label for="comment"><strong>', $txt['sendtopic_comment'], ':</strong></label>
@@ -82,7 +82,7 @@ function template_main()
 							<label for="r_email"><strong>', $txt['sendtopic_receiver_email'], ':</strong></label>
 						</dt>
 						<dd>
-							<input type="text" id="r_email" name="r_email" maxlength="50" class="w50">
+							<input type="email" name="r_email" id="r_email" maxlength="50" class="w50" required>
 						</dd>
 					</dl>
 				</fieldset>
@@ -200,7 +200,7 @@ function template_report()
 						<label for="email_address">', $txt['email'], '</label>:
 					</dt>
 					<dd>
-						<input type="text" id="email_address" name="email" value="', $context['email_address'], '" size="25" maxlength="255">
+						<input type="email" name="email" id="email_address" value="', $context['email_address'], '" size="25" maxlength="255">
 					</dd>';
 
 	echo '

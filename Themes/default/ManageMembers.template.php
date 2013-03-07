@@ -105,7 +105,7 @@ function template_search_members()
 								<strong>', $txt['email_address'], ':</strong>
 							</dt>
 							<dd>
-								<input type="text" name="email">
+								<input name="email">
 							</dd>
 							<dt class="right">
 								<strong>', $txt['website'], ':</strong>

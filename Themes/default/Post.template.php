@@ -97,7 +97,7 @@ function template_post_name_email()
 							<span', isset($context['post_error']['long_name']) || isset($context['post_error']['no_name']) || isset($context['post_error']['bad_name']) ? ' class="error"' : '', ' id="caption_guestname">', $txt['name'], ':</span>
 						</dt>
 						<dd>
-							<input type="text" name="guestname" value="', $context['name'], '" tabindex="', $context['tabindex']++, '" class="w50" required>
+							<input name="guestname" value="', $context['name'], '" tabindex="', $context['tabindex']++, '" class="w50" required>
 						</dd>';
 
 		if (empty($settings['guest_post_no_email']))
@@ -374,7 +374,7 @@ function template_post_subject()
 
 	echo '
 					</select>
-					<input type="text" name="subject"', $context['subject'] == '' ? '' : ' value="' . $context['subject'] . '"', ' tabindex="', $context['tabindex']++, '" maxlength="80" class="w75">';
+					<input name="subject"', $context['subject'] == '' ? '' : ' value="' . $context['subject'] . '"', ' tabindex="', $context['tabindex']++, '" maxlength="80" class="w75">';
 }
 
 function template_post_header_after()
@@ -391,13 +391,13 @@ function template_make_poll()
 
 	add_js('
 	var pollOptionTxt = ' . JavaScriptEscape($txt['option']) . ',
-		pollOptionTemplate = \'<li><label>%pollOptionTxt% %pollOptionNum%: <input type="text" name="options[%pollOptionNum%]" value="" maxlength="255" tabindex="%pollTabIndex%" class="w50"></label></li>\';');
+		pollOptionTemplate = \'<li><label>%pollOptionTxt% %pollOptionNum%: <input name="options[%pollOptionNum%]" value="" maxlength="255" tabindex="%pollTabIndex%" class="w50"></label></li>\';');
 
 	echo '
 				<div id="edit_poll">
 					<fieldset id="poll_main">
 						<legend><span ', (isset($context['poll_error']['no_question']) ? ' class="error"' : ''), '>', $txt['poll_question'], '</span></legend>
-						<input type="text" name="question" value="', isset($context['question']) ? $context['question'] : '', '" tabindex="', $context['tabindex']++, '" class="w75">
+						<input name="question" value="', isset($context['question']) ? $context['question'] : '', '" tabindex="', $context['tabindex']++, '" class="w75">
 						<ul class="poll_main" id="pollMoreOptions">';
 
 	// Loop through all the choices and print them out.
@@ -405,7 +405,7 @@ function template_make_poll()
 		echo '
 							<li>
 								<label>', $txt['option'], ' ', $choice['number'], ':
-								<input type="text" name="options[', $choice['id'], ']" id="options-', $choice['id'], '" value="', $choice['label'], '" tabindex="', $context['tabindex']++, '" maxlength="255" class="w50"></label>
+								<input name="options[', $choice['id'], ']" id="options-', $choice['id'], '" value="', $choice['label'], '" tabindex="', $context['tabindex']++, '" maxlength="255" class="w50"></label>
 							</li>';
 
 	echo '
@@ -419,14 +419,14 @@ function template_make_poll()
 								<label for="poll_max_votes">', $txt['poll_max_votes'], ':</label>
 							</dt>
 							<dd>
-								<input type="text" name="poll_max_votes" id="poll_max_votes" size="2" value="', $context['poll_options']['max_votes'], '">
+								<input name="poll_max_votes" id="poll_max_votes" size="2" value="', $context['poll_options']['max_votes'], '">
 							</dd>
 							<dt>
 								<label for="poll_expire">', $txt['poll_run'], ':</label><br>
 								<em class="smalltext">', $txt['poll_run_limit'], '</em>
 							</dt>
 							<dd>
-								<input type="text" name="poll_expire" id="poll_expire" size="2" value="', $context['poll_options']['expire'], '" onchange="pollOptions();" maxlength="4"> ', $txt['days_word'], '
+								<input name="poll_expire" id="poll_expire" size="2" value="', $context['poll_options']['expire'], '" onchange="pollOptions();" maxlength="4"> ', $txt['days_word'], '
 							</dd>
 							<dt>
 								<label for="poll_change_vote">', $txt['poll_do_change_vote'], ':</label>

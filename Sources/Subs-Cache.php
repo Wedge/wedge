@@ -27,7 +27,7 @@ function add_js()
 	{
 		$footer_coding = true;
 		$context['footer_js'] .= '
-<script><!-- // --><![CDATA[';
+<script>';
 	}
 	$args = func_get_args();
 	$context['footer_js'] .= implode('', $args);
@@ -87,7 +87,7 @@ function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow =
 		{
 			$footer_coding = false;
 			$context['footer_js'] .= '
-// ]]></script>';
+</script>';
 		}
 		$context['footer_js'] .= '
 <script src="' . implode('"></script>
@@ -142,7 +142,7 @@ function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow =
 	{
 		$footer_coding = false;
 		$context['footer_js'] .= '
-// ]]></script>';
+</script>';
 	}
 	$context['footer_js'] .= '
 <script src="' . $final_script . '"></script>';
@@ -223,7 +223,7 @@ function add_plugin_js_file($plugin_name, $files = array(), $is_direct_url = fal
 	{
 		$footer_coding = false;
 		$context['footer_js'] .= '
-// ]]></script>';
+</script>';
 	}
 	$context['footer_js'] .= '
 <script src="' . $final_script . '"></script>';

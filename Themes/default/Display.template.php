@@ -82,7 +82,7 @@ function template_display_posts()
 	if (!we::$is_guest)
 		add_js('
 	var oQuickModify = new QuickModify({
-		sSubject: ' . JavaScriptEscape('<input type="text" id="qm_subject" value="%subject%" size="80" maxlength="80" tabindex="' . $context['tabindex']++ . '">') . ',
+		sSubject: ' . JavaScriptEscape('<input id="qm_subject" value="%subject%" size="80" maxlength="80" tabindex="' . $context['tabindex']++ . '">') . ',
 		sBody: ' . JavaScriptEscape('
 			<div id="quick_edit_body_container">
 				<div id="error_box" class="error"></div>
@@ -281,7 +281,7 @@ function template_quick_reply()
 	// Guests just need more.
 	if (we::$is_guest)
 			echo '
-					<strong>', $txt['name'], ':</strong> <input type="text" name="guestname" value="', $context['name'], '" size="25" tabindex="', $context['tabindex']++, '" required>
+					<strong>', $txt['name'], ':</strong> <input name="guestname" value="', $context['name'], '" size="25" tabindex="', $context['tabindex']++, '" required>
 					<strong>', $txt['email'], ':</strong> <input type="email" name="email" value="', $context['email'], '" size="25" tabindex="', $context['tabindex']++, '" required><br>';
 
 	// Is visual verification enabled?

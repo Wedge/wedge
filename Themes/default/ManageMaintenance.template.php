@@ -147,13 +147,13 @@ function template_maintain_members()
 						<label><input type="radio" name="type" id="type_email" value="email" checked>', $txt['reattribute_email'], '</label>
 					</dt>
 					<dd>
-						<input type="text" name="from_email" id="from_email" value="" onclick="$(\'#type_email\').prop(\'checked\', true); $(\'#from_name\').val(\'\');">
+						<input type="email" name="from_email" id="from_email" value="" onclick="$(\'#type_email\').prop(\'checked\', true); $(\'#from_name\').val(\'\');">
 					</dd>
 					<dt>
 						<label><input type="radio" name="type" id="type_name" value="name">', $txt['reattribute_username'], '</label>
 					</dt>
 					<dd>
-						<input type="text" name="from_name" id="from_name" value="" onclick="$(\'#type_name\').prop(\'checked\', true); $(\'#from_email\').val(\'\');">
+						<input name="from_name" id="from_name" value="" onclick="$(\'#type_name\').prop(\'checked\', true); $(\'#from_email\').val(\'\');">
 					</dd>
 				</dl>
 				<dl class="settings">

@@ -68,7 +68,7 @@ function template_admin()
 			<br class="clear">
 			<hr>
 			<div class="right">
-				<form action="<URL>?action=admin" method="get">
+				<form action="<URL>?action=admin">
 					<input type="submit" class="delete" value="', $txt['hide_new_to_wedge'], '" onclick="hideAdminIntro(e);">
 				</form>
 			</div>
@@ -539,12 +539,12 @@ function template_edit_censored()
 	// Show text boxes for censoring [bad   ] => [good  ].
 	foreach ($context['censored_words'] as $vulgar => $proper)
 		echo '
-				<div style="margin-top: 1ex"><input type="text" name="censor_vulgar[]" value="', $vulgar, '" size="20"> => <input type="text" name="censor_proper[]" value="', $proper, '" size="20"></div>';
+				<div style="margin-top: 1ex"><input name="censor_vulgar[]" value="', $vulgar, '" size="20"> => <input name="censor_proper[]" value="', $proper, '" size="20"></div>';
 
 	// Now provide a way to censor more words.
 	echo '
 				<noscript>
-					<div style="margin-top: 1ex"><input type="text" name="censor_vulgar[]" size="20"> => <input type="text" name="censor_proper[]" size="20"></div>
+					<div style="margin-top: 1ex"><input name="censor_vulgar[]" size="20"> => <input name="censor_proper[]" size="20"></div>
 				</noscript>
 				<div id="moreCensoredWords"></div><div style="margin-top: 1ex; display: none" id="moreCensoredWords_link"><a href="#" onclick="addNewWord(); return false;">', $txt['censor_clickadd'], '</a></div>';
 
@@ -553,7 +553,7 @@ function template_edit_censored()
 
 	function addNewWord()
 	{
-		$("#moreCensoredWords").append(\'<div style="margin-top: 1ex"><input type="text" name="censor_vulgar[]" size="20"> =&gt; <input type="text" name="censor_proper[]" size="20"><\' + \'/div>\');
+		$("#moreCensoredWords").append(\'<div style="margin-top: 1ex"><input name="censor_vulgar[]" size="20"> =&gt; <input name="censor_proper[]" size="20"><\' + \'/div>\');
 	}');
 
 	echo '
@@ -588,7 +588,7 @@ function template_edit_censored()
 			</we:cat>
 			<div class="windowbg wrc">
 				<p class="center">
-					<input type="text" name="censortest" value="', empty($context['censor_test']) ? '' : $context['censor_test'], '">
+					<input name="censortest" value="', empty($context['censor_test']) ? '' : $context['censor_test'], '">
 					<input type="submit" value="', $txt['censor_test_save'], '" class="submit">
 				</p>
 			</div>
@@ -983,7 +983,7 @@ function template_show_settings()
 				// Assume it must be a text box.
 				else
 					echo '
-						<input type="text"', $javascript, $disabled, ' name="', $config_var['name'], '" id="', $config_var['name'], '" value="', $config_var['value'], '"', $config_var['size'] ? ' size="' . $config_var['size'] . '"' : '', '>';
+						<input', $javascript, $disabled, ' name="', $config_var['name'], '" id="', $config_var['name'], '" value="', $config_var['value'], '"', $config_var['size'] ? ' size="' . $config_var['size'] . '"' : '', '>';
 
 				echo !empty($config_var['postinput']) ? '
 						' . $config_var['postinput'] : '', '
@@ -1121,7 +1121,7 @@ function template_edit_profile_field()
 	var startOptID = ', count($context['field']['options']), ';
 	function addOption()
 	{
-		$("#addopt").append(\'<br><input type="radio" name="default_select" value="\' + startOptID + \'" id="\' + startOptID + \'"><input type="text" name="select_option[\' + startOptID + \']" value="">\');
+		$("#addopt").append(\'<br><input type="radio" name="default_select" value="\' + startOptID + \'" id="\' + startOptID + \'"><input name="select_option[\' + startOptID + \']" value="">\');
 		startOptID++;
 	}');
 
@@ -1214,7 +1214,7 @@ function template_edit_profile_field()
 							<strong>', $txt['custom_edit_name'], ':</strong>
 						</dt>
 						<dd>
-							<input type="text" name="field_name" value="', $context['field']['name'], '" size="20" maxlength="40">
+							<input name="field_name" value="', $context['field']['name'], '" size="20" maxlength="40">
 						</dd>
 						<dt>
 							<strong>', $txt['custom_edit_desc'], ':</strong>
@@ -1298,14 +1298,14 @@ function template_edit_profile_field()
 							<dfn>', $txt['custom_edit_max_length_desc'], '</dfn>
 						</dt>
 						<dd id="max_length_dd">
-							<input type="text" name="max_length" value="', $context['field']['max_length'], '" size="7" maxlength="6">
+							<input name="max_length" value="', $context['field']['max_length'], '" size="7" maxlength="6">
 						</dd>
 						<dt id="dimension_dt">
 							<strong>', $txt['custom_edit_dimension'], ':</strong>
 						</dt>
 						<dd id="dimension_dd">
-							<strong>', $txt['custom_edit_dimension_row'], ':</strong> <input type="text" name="rows" value="', $context['field']['rows'], '" size="5" maxlength="3">
-							<strong>', $txt['custom_edit_dimension_col'], ':</strong> <input type="text" name="cols" value="', $context['field']['cols'], '" size="5" maxlength="3">
+							<strong>', $txt['custom_edit_dimension_row'], ':</strong> <input name="rows" value="', $context['field']['rows'], '" size="5" maxlength="3">
+							<strong>', $txt['custom_edit_dimension_col'], ':</strong> <input name="cols" value="', $context['field']['cols'], '" size="5" maxlength="3">
 						</dd>
 						<dt id="bbc_dt">
 							<strong>', $txt['custom_edit_bbc'], '</strong>
@@ -1323,7 +1323,7 @@ function template_edit_profile_field()
 
 	foreach ($context['field']['options'] as $k => $option)
 		echo '
-								', $k == 0 ? '' : '<br>', '<input type="radio" name="default_select" value="', $k, '"', $context['field']['default_select'] == $option ? ' checked' : '', '><input type="text" name="select_option[', $k, ']" value="', $option, '">';
+								', $k == 0 ? '' : '<br>', '<input type="radio" name="default_select" value="', $k, '"', $context['field']['default_select'] == $option ? ' checked' : '', '><input name="select_option[', $k, ']" value="', $option, '">';
 
 	echo '
 								<span id="addopt"></span>
@@ -1354,7 +1354,7 @@ function template_edit_profile_field()
 								<option value="regex"', substr($context['field']['mask'], 0, 5) == 'regex' ? ' selected' : '', '>', $txt['custom_edit_mask_regex'], '</option>
 							</select>
 							<br>
-							<input type="text" name="regex" id="regex_div" value="', $context['field']['regex'], '" size="30">
+							<input name="regex" id="regex_div" value="', $context['field']['regex'], '" size="30">
 						</dd>
 						<dt>
 							<strong>', $txt['custom_edit_privacy'], ':</strong>
@@ -1515,11 +1515,11 @@ function template_callback_question_answer_list()
 			echo '
 							</select>
 						</td>
-						<td class="question"><input type="text" name="question[', $row, ']" value="', $question['question'], '" size="42"></td>
+						<td class="question"><input name="question[', $row, ']" value="', $question['question'], '" size="42"></td>
 						<td class="answer">';
 			$answers = array();
 			foreach ($question['answers'] as $answer)
-				$answers[] = '<input type="text" name="answer[' . $row . '][]" value="' . $answer . '" size="25">';
+				$answers[] = '<input name="answer[' . $row . '][]" value="' . $answer . '" size="25">';
 			echo '
 							', implode('<br>', $answers), '
 						</td>
@@ -1551,8 +1551,8 @@ function template_callback_question_answer_list()
 		lang_select += \'</select></td>\';
 		$(\'#\' + row_id).append(lang_select);
 
-		$(\'#\' + row_id).append(\'<td class="question"><input type="text" name="question[\' + nextrow + \']" size="42"></td>\');
-		$(\'#\' + row_id).append(\'<td class="answer"><input type="text" name="answer[\' + nextrow + \'][]" size="25"></td>\');
+		$(\'#\' + row_id).append(\'<td class="question"><input name="question[\' + nextrow + \']" size="42"></td>\');
+		$(\'#\' + row_id).append(\'<td class="answer"><input name="answer[\' + nextrow + \'][]" size="25"></td>\');
 		$(\'#\' + row_id).append(\'<td><input type="submit" class="new" value="\' + addans_str + \'" onclick="addAnswer(\' + nextrow + \'); return false;"></td>\');
 		$(\'#\' + row_id).append(\'<td><input type="submit" class="delete" value="\' + remove_str + \'" onclick="removeRow(\' + nextrow + \'); return false;"></td>\');
 		$(\'#\' + row_id + \' select\').sb();
@@ -1568,7 +1568,7 @@ function template_callback_question_answer_list()
 
 	function addAnswer(row)
 	{
-		$(\'#row\' + row + \' td.answer\').append(\'<br><input type="text" name="answer[\' + row + \'][]" size="25">\');
+		$(\'#row\' + row + \' td.answer\').append(\'<br><input name="answer[\' + row + \'][]" size="25">\');
 	};
 
 	addNewRow();');

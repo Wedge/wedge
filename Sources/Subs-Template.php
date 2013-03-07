@@ -545,7 +545,7 @@ function ob_sessrewrite($buffer)
 		$buffer = preg_replace('~<img\s((?:[^a>]|a(?!lt\b))+)>~', '<img alt $1>', $buffer);
 
 	// Return the changed buffer, and make a final optimization.
-	return preg_replace("~\n// ]]></script>\n*<script><!-- // --><!\[CDATA\[~", '', $buffer);
+	return preg_replace("~\s</script>\n*<script>~", '', $buffer);
 }
 
 // Move inline events to the end

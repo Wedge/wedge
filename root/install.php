@@ -2133,7 +2133,7 @@ function template_welcome_message()
 	{
 		echo '
 	<div>
-		<form action="', $installurl, '" method="get">
+		<form action="', $installurl, '">
 			<label>', $txt['installer_language'], ': <select name="lang_file" onchange="location.href = \'', $installurl, '?lang_file=\' + $(this).val();">';
 
 		foreach ($incontext['detected_languages'] as $lang => $name)
@@ -2249,14 +2249,14 @@ function template_chmod_files()
 				<tr>
 					<td style="width: 26%; vertical-align: top" class="textbox"><label for="ftp_server">', $txt['ftp_server'], ':</label></td>
 					<td>
-						<div style="float: ', empty($txt['lang_rtl']) ? 'right' : 'left', '; margin-', empty($txt['lang_rtl']) ? 'right' : 'left', ': 1px"><label class="textbox"><strong>', $txt['ftp_port'], ':&nbsp;</strong> <input type="text" size="3" name="ftp_port" value="', $incontext['ftp']['port'], '"></label></div>
-						<input type="text" size="30" name="ftp_server" id="ftp_server" value="', $incontext['ftp']['server'], '" style="width: 70%">
+						<div style="float: ', empty($txt['lang_rtl']) ? 'right' : 'left', '; margin-', empty($txt['lang_rtl']) ? 'right' : 'left', ': 1px"><label class="textbox"><strong>', $txt['ftp_port'], ':&nbsp;</strong> <input size="3" name="ftp_port" value="', $incontext['ftp']['port'], '"></label></div>
+						<input size="30" name="ftp_server" id="ftp_server" value="', $incontext['ftp']['server'], '" style="width: 70%">
 						<div class="install_details">', $txt['ftp_server_info'], '</div>
 					</td>
 				</tr><tr>
 					<td style="vertical-align: top" class="textbox"><label for="ftp_username">', $txt['ftp_username'], ':</label></td>
 					<td>
-						<input type="text" size="50" name="ftp_username" id="ftp_username" value="', $incontext['ftp']['username'], '" style="width: 99%">
+						<input size="50" name="ftp_username" id="ftp_username" value="', $incontext['ftp']['username'], '" style="width: 99%">
 						<div class="install_details">', $txt['ftp_username_info'], '</div>
 					</td>
 				</tr><tr>
@@ -2268,7 +2268,7 @@ function template_chmod_files()
 				</tr><tr>
 					<td style="vertical-align: top" class="textbox"><label for="ftp_path">', $txt['ftp_path'], ':</label></td>
 					<td style="padding-bottom: 1ex">
-						<input type="text" size="50" name="ftp_path" id="ftp_path" value="', $incontext['ftp']['path'], '" style="width: 99%">
+						<input size="50" name="ftp_path" id="ftp_path" value="', $incontext['ftp']['path'], '" style="width: 99%">
 						<div class="install_details">', $incontext['ftp']['path_msg'], '</div>
 					</td>
 				</tr>
@@ -2294,13 +2294,13 @@ function template_database_settings()
 			<tr id="db_server_contain">
 				<td style="width: 20%; vertical-align: top" class="textbox"><label for="db_server_input">', $txt['db_settings_server'], ':</label></td>
 				<td>
-					<input type="text" name="db_server" id="db_server_input" value="', $incontext['db']['server'], '" size="30"><br>
+					<input name="db_server" id="db_server_input" value="', $incontext['db']['server'], '" size="30"><br>
 					<div class="install_details">', $txt['db_settings_server_info'], '</div>
 				</td>
 			</tr><tr id="db_user_contain">
 				<td style="vertical-align: top" class="textbox"><label for="db_user_input">', $txt['db_settings_username'], ':</label></td>
 				<td>
-					<input type="text" name="db_user" id="db_user_input" value="', $incontext['db']['user'], '" size="30"><br>
+					<input name="db_user" id="db_user_input" value="', $incontext['db']['user'], '" size="30"><br>
 					<div class="install_details">', $txt['db_settings_username_info'], '</div>
 				</td>
 			</tr><tr id="db_passwd_contain">
@@ -2312,14 +2312,14 @@ function template_database_settings()
 			</tr><tr id="db_name_contain">
 				<td style="vertical-align: top" class="textbox"><label for="db_name_input">', $txt['db_settings_database'], ':</label></td>
 				<td>
-					<input type="text" name="db_name" id="db_name_input" value="', empty($incontext['db']['name']) ? 'wedge' : $incontext['db']['name'], '" size="30"><br>
+					<input name="db_name" id="db_name_input" value="', empty($incontext['db']['name']) ? 'wedge' : $incontext['db']['name'], '" size="30"><br>
 					<div class="install_details">', $txt['db_settings_database_info'], '
 					<span id="db_name_info_warning">', $txt['db_settings_database_info_note'], '</span></div>
 				</td>
 			</tr><tr>
 				<td style="vertical-align: top" class="textbox"><label for="db_prefix_input">', $txt['db_settings_prefix'], ':</label></td>
 				<td>
-					<input type="text" name="db_prefix" id="db_prefix_input" value="', $incontext['db']['prefix'], '" size="30"><br>
+					<input name="db_prefix" id="db_prefix_input" value="', $incontext['db']['prefix'], '" size="30"><br>
 					<div class="install_details">', $txt['db_settings_prefix_info'], '</div>
 				</td>
 			</tr>
@@ -2345,13 +2345,13 @@ function template_forum_settings()
 			<tr>
 				<td style="width: 20%; vertical-align: top" class="textbox"><label for="mbname_input">', $txt['install_settings_name'], ':</label></td>
 				<td>
-					<input type="text" name="mbname" id="mbname_input" value="', $default_name, '" size="65">
+					<input name="mbname" id="mbname_input" value="', $default_name, '" size="65">
 					<div class="install_details">', $txt['install_settings_name_info'], '</div>
 				</td>
 			</tr><tr>
 				<td style="vertical-align: top" class="textbox"><label for="boardurl_input">', $txt['install_settings_url'], ':</label></td>
 				<td>
-					<input type="text" name="boardurl" id="boardurl_input" value="', $incontext['detected_url'], '" size="65"><br>
+					<input name="boardurl" id="boardurl_input" value="', $incontext['detected_url'], '" size="65"><br>
 					<div class="install_details">', $txt['install_settings_url_info'], '</div>
 				</td>
 			</tr><tr>
@@ -2426,7 +2426,7 @@ function template_admin_account()
 			<tr>
 				<td style="width: 18%; vertical-align: top" class="textbox"><label for="username">', $txt['user_settings_username'], ':</label></td>
 				<td>
-					<input type="text" name="username" id="username" value="', $incontext['username'], '" size="40">
+					<input name="username" id="username" value="', $incontext['username'], '" size="40">
 					<div class="install_details">', $txt['user_settings_username_info'], '</div>
 				</td>
 			</tr><tr>
@@ -2444,7 +2444,7 @@ function template_admin_account()
 			</tr><tr>
 				<td style="vertical-align: top" class="textbox"><label for="email">', $txt['user_settings_email'], ':</label></td>
 				<td>
-					<input type="text" name="email" id="email" value="', $incontext['email'], '" size="40">
+					<input type="email" name="email" id="email" value="', $incontext['email'], '" size="40">
 					<div class="install_details">', $txt['user_settings_email_info'], '</div>
 				</td>
 			</tr>

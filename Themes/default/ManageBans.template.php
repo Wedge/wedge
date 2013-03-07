@@ -60,7 +60,7 @@ function template_ban_details()
 	echo '
 						<dt class="ban_criteria_id_member">', $txt['ban_type_id_member_type'], '</dt>
 						<dd class="ban_criteria_id_member">
-							<input type="text" value="', !empty($context['ban_details']['ban_member']) ? $context['ban_details']['ban_member'] : '', '" id="ban_id_member_content" name="ban_id_member_content" size="15" maxlength="100">
+							<input value="', !empty($context['ban_details']['ban_member']) ? $context['ban_details']['ban_member'] : '', '" id="ban_id_member_content" name="ban_id_member_content" size="15" maxlength="100">
 						</dd>';
 
 	// Banning types of names
@@ -75,7 +75,7 @@ function template_ban_details()
 								<option value="', $key, '"', !empty($context['ban_details']['name_type']) && $context['ban_details']['name_type'] == $value ? ' selected' : '', '>', $txt['ban_member_names_select_' . $value], '</option>';
 	echo '
 							</select>
-							<input type="text" name="ban_member_name_content" size="20" maxlength="100" value="', !empty($context['ban_details']['ban_name']) ? $context['ban_details']['ban_name'] : '', '">
+							<input name="ban_member_name_content" size="20" maxlength="100" value="', !empty($context['ban_details']['ban_name']) ? $context['ban_details']['ban_name'] : '', '">
 						</dd>
 						<dt class="ban_criteria_member_name">', $txt['ban_member_case_sensitive'], ' <dfn>', $txt['ban_member_case_sensitive_desc'], '</dfn></dt>
 						<dd class="ban_criteria_member_name">
@@ -99,7 +99,7 @@ function template_ban_details()
 						</dd>
 						<dt class="ban_criteria_email">', $txt['ban_type_email_content'], '</dt>
 						<dd class="ban_criteria_email">
-							<input type="text" name="ban_email_content" size="30" maxlength="100" value="', !empty($context['ban_details']['ban_email']) ? $context['ban_details']['ban_email'] : '', '">
+							<input name="ban_email_content" size="30" maxlength="100" value="', !empty($context['ban_details']['ban_email']) ? $context['ban_details']['ban_email'] : '', '">
 						</dd>
 						<dt class="ban_criteria_email"><a href="<URL>?action=help;in=ban_gmail_style" class="help" onclick="return reqWin(this);"></a> ', $txt['ban_email_gmail_style'], '</dt>
 						<dd class="ban_criteria_email">
@@ -140,7 +140,7 @@ function template_ban_details()
 		echo '
 								</span>
 								<span class="ipv6">
-									<input type="text" size="38" maxlength="39" name="ipv6_', $item, '" value="', !empty($context['ban_details']['ipv6'][$item]) ? $context['ban_details']['ipv6'][$item] : '', '">
+									<input size="38" maxlength="39" name="ipv6_', $item, '" value="', !empty($context['ban_details']['ipv6'][$item]) ? $context['ban_details']['ipv6'][$item] : '', '">
 								</span>
 							</div>';
 	}
@@ -152,7 +152,7 @@ function template_ban_details()
 	echo '
 					<dt class="ban_criteria_hostname">', $txt['ban_type_hostname'], ' <dfn>', $txt['ban_type_hostname_wildcard'], '</dfn></dt>
 					<dd class="ban_criteria_hostname">
-						<input type="text" name="ban_hostname_content" size="30" maxlength="100" value="', !empty($context['ban_details']['hostname']) ? $context['ban_details']['hostname'] : '', '">
+						<input name="ban_hostname_content" size="30" maxlength="100" value="', !empty($context['ban_details']['hostname']) ? $context['ban_details']['hostname'] : '', '">
 					</dd>';
 
 	// All done, back to the rest of the form fun

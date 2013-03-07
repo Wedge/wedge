@@ -1025,7 +1025,7 @@ function ssi_login($redirect_to = '', $output_method = 'echo')
 			<table class="ssi_table cs1 cp0">
 				<tr>
 					<td class="right"><label for="user">', $txt['username'], ':</label>&nbsp;</td>
-					<td><input type="text" id="user" name="user" size="9" value="', we::$user['username'], '"></td>
+					<td><input id="user" name="user" size="9" value="', we::$user['username'], '"></td>
 				</tr><tr>
 					<td class="right"><label for="passwrd">', $txt['password'], ':</label>&nbsp;</td>
 					<td><input type="password" name="passwrd" id="passwrd" size="9"></td>
@@ -1466,7 +1466,7 @@ function ssi_quickSearch($output_method = 'echo')
 
 	echo '
 		<form action="', $scripturl, '?action=search2" method="post" accept-charset="UTF-8">
-			<input type="text" name="search" size="30"> <input type="search" value="', $txt['search'], '" class="submit" />
+			<input name="search" size="30"> <input type="search" value="', $txt['search'], '" class="submit" />
 		</form>';
 }
 

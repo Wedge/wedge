@@ -122,7 +122,7 @@ function template_email_edit()
 				<dd>', $context['emailtemplate']['desc'], '</dd>
 				<dt>', $txt['template_email_subject'], '</dt>
 				<dd>
-					<input type="text" name="subject" id="subject" value="', $context['emailtemplate']['subject'], '" size="50">
+					<input name="subject" id="subject" value="', $context['emailtemplate']['subject'], '" size="50">
 				</dd>
 				<dt>', $txt['template_email_body'], '</dt>
 				<dd>

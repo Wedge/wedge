@@ -29,7 +29,7 @@ function template_main()
 		}
 		pollOptionNum++;
 
-		$("#pollMoreOptions").append(\'<li><label', (isset($context['poll_error']['no_question']) ? ' class="error"' : ''), '>', $txt['option'], ' \' + pollOptionNum + \': <input type="text" name="options[\' + (pollOptionNum - 1) + \']" id="options-\' + (pollOptionNum - 1) + \'" value="" size="70" maxlength="255"></label></li>\');
+		$("#pollMoreOptions").append(\'<li><label', (isset($context['poll_error']['no_question']) ? ' class="error"' : ''), '>', $txt['option'], ' \' + pollOptionNum + \': <input name="options[\' + (pollOptionNum - 1) + \']" id="options-\' + (pollOptionNum - 1) + \'" value="" size="70" maxlength="255"></label></li>\');
 		return false;
 	}');
 
@@ -60,7 +60,7 @@ function template_main()
 					<input type="hidden" name="poll" value="', $context['poll']['id'], '">
 					<fieldset id="poll_main">
 						<legend><span ', (isset($context['poll_error']['no_question']) ? ' class="error"' : ''), '>', $txt['poll_question'], ':</span></legend>
-						<input type="text" name="question" value="', $context['poll']['question'], '" size="80" maxlength="255">
+						<input name="question" value="', $context['poll']['question'], '" size="80" maxlength="255">
 						<ul class="poll_main" id="pollMoreOptions">';
 
 	foreach ($context['choices'] as $choice)
@@ -68,7 +68,7 @@ function template_main()
 		echo '
 							<li>
 								<label', (isset($context['poll_error']['poll_few']) ? ' class="error"' : ''), '>', $txt['option'], ' ', $choice['number'], ':
-								<input type="text" name="options[', $choice['id'], ']" id="options-', $choice['id'], '" value="', $choice['label'], '" size="70" maxlength="255"></label>';
+								<input name="options[', $choice['id'], ']" id="options-', $choice['id'], '" value="', $choice['label'], '" size="70" maxlength="255"></label>';
 
 		// Does this option have a vote count yet, or is it new?
 		if ($choice['votes'] != -1)
@@ -93,14 +93,14 @@ function template_main()
 								<label for="poll_max_votes">', $txt['poll_max_votes'], ':</label>
 							</dt>
 							<dd>
-								<input type="text" name="poll_max_votes" id="poll_max_votes" size="2" value="', $context['poll']['max_votes'], '">
+								<input name="poll_max_votes" id="poll_max_votes" size="2" value="', $context['poll']['max_votes'], '">
 							</dd>
 							<dt>
 								<label for="poll_expire">', $txt['poll_run'], ':</label><br>
 								<em class="smalltext">', $txt['poll_run_limit'], '</em>
 							</dt>
 							<dd>
-								<input type="text" name="poll_expire" id="poll_expire" size="2" value="', $context['poll']['expiration'], '" onchange="this.form.poll_hide[2].disabled = $.trim(this.value) == 0; if (this.form.poll_hide[2].checked) this.form.poll_hide[1].checked = true;" maxlength="4"> ', $txt['days_word'], '
+								<input name="poll_expire" id="poll_expire" size="2" value="', $context['poll']['expiration'], '" onchange="this.form.poll_hide[2].disabled = $.trim(this.value) == 0; if (this.form.poll_hide[2].checked) this.form.poll_hide[1].checked = true;" maxlength="4"> ', $txt['days_word'], '
 							</dd>
 							<dt>
 								<label for="poll_change_vote">', $txt['poll_do_change_vote'], ':</label>

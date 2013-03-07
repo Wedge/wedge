@@ -579,7 +579,7 @@ function template_editBuddies()
 			<div class="roundframe">
 				<label>
 					<strong>', $txt['who_member'], ':</strong>
-					<input type="text" name="new_buddy" id="new_buddy" size="25">
+					<input name="new_buddy" id="new_buddy" size="25">
 				</label>
 				<input type="submit" value="', $txt['buddy_add_button'], '" class="new">
 			</div>
@@ -646,7 +646,7 @@ function template_editIgnoreList()
 			<div class="roundframe">
 				<label>
 					<strong>', $txt['who_member'], ':</strong>
-					<input type="text" name="new_ignore" id="new_ignore" size="25">
+					<input name="new_ignore" id="new_ignore" size="25">
 				</label>
 				<input type="submit" value="', $txt['ignore_add_button'], '" class="new">
 			</div>
@@ -1947,7 +1947,7 @@ function template_issueWarning()
 						<input type="hidden" name="warning_level" id="warning_level" value="SAME">
 					</div>
 					<div id="warndiv2">
-						<input type="text" name="warning_level_nojs" size="6" maxlength="4" value="', $context['member']['warning'], '">&nbsp;', $txt['profile_warning_max'], '
+						<input name="warning_level_nojs" size="6" maxlength="4" value="', $context['member']['warning'], '">&nbsp;', $txt['profile_warning_max'], '
 						<div class="smalltext">', $txt['profile_warning_impact'], ':<br>';
 
 	add_js('
@@ -1973,7 +1973,7 @@ function template_issueWarning()
 					<dfn>', $txt['profile_warning_reason_desc'], '</dfn>
 				</dt>
 				<dd>
-					<input type="text" name="warn_reason" id="warn_reason" value="', $context['warning_data']['reason'], '" size="50" style="width: 80%">
+					<input name="warn_reason" id="warn_reason" value="', $context['warning_data']['reason'], '" size="50" style="width: 80%">
 				</dd>
 			</dl>
 			<hr>
@@ -1988,7 +1988,7 @@ function template_issueWarning()
 					<strong>', $txt['profile_warning_notify_subject'], ':</strong>
 				</dt>
 				<dd>
-					<input type="text" name="warn_sub" id="warn_sub" value="', empty($context['warning_data']['notify_subject']) ? $txt['profile_warning_notify_template_subject'] : $context['warning_data']['notify_subject'], '" size="50" style="width: 80%">
+					<input name="warn_sub" id="warn_sub" value="', empty($context['warning_data']['notify_subject']) ? $txt['profile_warning_notify_template_subject'] : $context['warning_data']['notify_subject'], '" size="50" style="width: 80%">
 				</dd>
 				<dt>
 					<strong>', $txt['profile_warning_notify_body'], ':</strong>
@@ -2273,9 +2273,9 @@ function template_profile_birthdate()
 						<dfn>', $txt['dob_year'], ' - ', $txt['dob_month'], ' - ', $txt['dob_day'], '</dfn>
 					</dt>
 					<dd>
-						<input type="text" name="bday3" size="4" maxlength="4" value="', $context['member']['birth_date']['year'], '"> -
-						<input type="text" name="bday1" size="2" maxlength="2" value="', $context['member']['birth_date']['month'], '"> -
-						<input type="text" name="bday2" size="2" maxlength="2" value="', $context['member']['birth_date']['day'], '">
+						<input name="bday3" size="4" maxlength="4" value="', $context['member']['birth_date']['year'], '"> -
+						<input name="bday1" size="2" maxlength="2" value="', $context['member']['birth_date']['month'], '"> -
+						<input name="bday2" size="2" maxlength="2" value="', $context['member']['birth_date']['day'], '">
 					</dd>';
 }
 
@@ -2471,7 +2471,7 @@ function template_profile_avatar_select()
 						<div id="avatar_external">
 							<div class="smalltext">', $txt['avatar_by_url'], '</div>
 							<br>
-							<input type="text" name="userpicpersonal" size="45" value="', $context['member']['avatar']['choice'] != 'gravatar' ? $context['member']['avatar']['external'] : 'http://', '" onchange="previewExternalAvatar(this.value);">';
+							<input name="userpicpersonal" size="45" value="', $context['member']['avatar']['choice'] != 'gravatar' ? $context['member']['avatar']['external'] : 'http://', '" onchange="previewExternalAvatar(this.value);">';
 
 		if (!empty($settings['avatar_max_width_external']) && !empty($settings['avatar_max_height_external']))
 			echo '
@@ -2571,7 +2571,7 @@ function template_profile_timeformat_modify()
 							<option value="', $time_format['format'], '"', $time_format['format'] == $context['member']['time_format'] ? ' selected' : '', '>', $time_format['title'], '</option>';
 	echo '
 						</select><br>
-						<input type="text" name="time_format" value="', $context['member']['time_format'], '" size="30">
+						<input name="time_format" value="', $context['member']['time_format'], '" size="30">
 					</dd>';
 }
 
@@ -2594,7 +2594,7 @@ function template_profile_timeoffset_modify()
 						<dfn>', $txt['personal_time_offset'], '</dfn>
 					</dt>
 					<dd>
-						<input type="text" name="time_offset" id="time_offset" size="5" maxlength="5" value="', $context['member']['time_offset'], '"> <a href="#" onclick="$(this).val(autoDetectTimeOffset(+new Date(', $context['current_forum_time_js'], '000))); return false;">', $txt['timeoffset_autodetect'], '</a><br>', $txt['current_time'], ': <em>', $context['current_forum_time'], '</em>
+						<input name="time_offset" id="time_offset" size="5" maxlength="5" value="', $context['member']['time_offset'], '"> <a href="#" onclick="$(this).val(autoDetectTimeOffset(+new Date(', $context['current_forum_time_js'], '000))); return false;">', $txt['timeoffset_autodetect'], '</a><br>', $txt['current_time'], ': <em>', $context['current_forum_time'], '</em>
 					</dd>';
 }
 
