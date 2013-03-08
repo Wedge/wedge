@@ -92,9 +92,9 @@ function JSModify()
 	}
 
 	$post_errors = array();
-	if (isset($_POST['subject']) && westr::htmltrim(westr::htmlspecialchars($_POST['subject'])) !== '')
+	if (isset($_POST['subject']) && westr::htmltrim(westr::safe($_POST['subject'])) !== '')
 	{
-		$_POST['subject'] = strtr(westr::htmlspecialchars($_POST['subject']), array("\r" => '', "\n" => '', "\t" => ''));
+		$_POST['subject'] = strtr(westr::safe($_POST['subject'], ENT_QUOTES), array("\r" => '', "\n" => '', "\t" => ''));
 
 		// Maximum number of characters.
 		if (westr::strlen($_POST['subject']) > 100)
@@ -121,7 +121,7 @@ function JSModify()
 		else
 		{
 			loadSource('media/Aeva-Embed');
-			$_POST['message'] = westr::htmlspecialchars(aeva_onposting($_POST['message'], ENT_QUOTES));
+			$_POST['message'] = westr::safe(aeva_onposting($_POST['message'], ENT_QUOTES));
 
 			wedit::preparsecode($_POST['message']);
 

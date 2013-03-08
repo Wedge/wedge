@@ -42,7 +42,17 @@
 
 <skeleton id="msg">
 	<msg_wrap>
-		<msg_author />
+		<msg_author>
+			<msg_author_title />
+			<msg_author_avatar />
+			<msg_author_group />
+			<msg_author_badge />
+			<msg_author_blurb />
+			<msg_author_postcount />
+			<msg_author_icons />
+			<msg_author_cf />
+			<msg_author_warning />
+		</msg_author>
 		<msg_area>
 			<msg_header />
 			<msg_ignored />

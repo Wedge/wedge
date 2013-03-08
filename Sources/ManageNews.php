@@ -63,7 +63,7 @@ if (!defined('WEDGE'))
 // The controller; doesn't do anything, just delegates.
 function ManageNews()
 {
-	global $context, $txt, $scripturl;
+	global $context, $txt;
 
 	// First, let's do a quick permissions check for the best error message possible.
 	isAllowedTo(array('edit_news', 'send_mail', 'admin_forum'));
@@ -807,7 +807,7 @@ function SendMailing($clean_only = false)
 
 function ModifyNewsSettings($return_config = false)
 {
-	global $context, $settings, $txt, $scripturl;
+	global $context, $settings, $txt;
 
 	loadLanguage('ManageSettings');
 
@@ -836,7 +836,7 @@ function ModifyNewsSettings($return_config = false)
 	loadSource(array('ManagePermissions', 'ManageServer'));
 
 	// Wrap it all up nice and warm...
-	$context['post_url'] = $scripturl . '?action=admin;area=news;save;sa=settings';
+	$context['post_url'] = '<URL>?action=admin;area=news;save;sa=settings';
 
 	// Add some JavaScript at the bottom...
 	add_js('

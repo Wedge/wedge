@@ -251,7 +251,7 @@ function uploadedPluginValidate()
 		@unlink($_FILES['plugin']['tmp_name']);
 		fatal_lang_error('plugins_invalid_plugin_no_info', false);
 	}
-	
+
 	// Check the list of requirements stated by the package in terms of PHP, MySQL, required functions.
 	if (!empty($manifest->{'min-versions'}))
 	{

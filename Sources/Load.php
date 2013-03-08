@@ -180,7 +180,7 @@ function can_shell_exec()
  */
 function loadBoard()
 {
-	global $txt, $scripturl, $context, $settings;
+	global $txt, $context, $settings;
 	global $board_info, $board, $topic, $user_settings;
 
 	// Start the linktree off empty..
@@ -346,8 +346,8 @@ function loadBoard()
 					$row['id_owner'] => array(
 						'id' => $row['id_owner'],
 						'name' => $row['owner_name'],
-						'href' => $scripturl . '?action=profile;u=' . $row['id_owner'],
-						'link' => '<a href="' . $scripturl . '?action=profile;u=' . $row['id_owner'] . '">' . $row['owner_name'] . '</a>'
+						'href' => '<URL>?action=profile;u=' . $row['id_owner'],
+						'link' => '<a href="<URL>?action=profile;u=' . $row['id_owner'] . '">' . $row['owner_name'] . '</a>'
 					)
 				);
 
@@ -357,8 +357,8 @@ function loadBoard()
 					$board_info['moderators'][$row['id_moderator']] = array(
 						'id' => $row['id_moderator'],
 						'name' => $row['real_name'],
-						'href' => $scripturl . '?action=profile;u=' . $row['id_moderator'],
-						'link' => '<a href="' . $scripturl . '?action=profile;u=' . $row['id_moderator'] . '">' . $row['real_name'] . '</a>'
+						'href' => '<URL>?action=profile;u=' . $row['id_moderator'],
+						'link' => '<a href="<URL>?action=profile;u=' . $row['id_moderator'] . '">' . $row['real_name'] . '</a>'
 					);
 			}
 			while ($row = wesql::fetch_assoc($request));
@@ -449,12 +449,12 @@ function loadBoard()
 		$context['linktree'] = array_merge(
 			$context['linktree'],
 			array(array(
-				'url' => $scripturl . '?category=' . $board_info['cat']['id'],
+				'url' => '<URL>?category=' . $board_info['cat']['id'],
 				'name' => $board_info['cat']['name']
 			)),
 			array_reverse($board_info['parent_boards']),
 			array(array(
-				'url' => $scripturl . '?board=' . $board . '.0',
+				'url' => '<URL>?board=' . $board . '.0',
 				'name' => $board_info['name']
 			))
 		);
@@ -485,7 +485,7 @@ function loadBoard()
 		// The linktree should not give the game away mate! However, it WILL be available to admins etc. for Who's Online so they can see what's going on.
 		$context['linktree'] = array(
 			array(
-				'url' => $scripturl,
+				'url' => '<URL>',
 				'name' => $context['forum_name_html_safe']
 			)
 		);
@@ -941,7 +941,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
  */
 function loadMemberContext($user, $full_profile = false)
 {
-	global $memberContext, $user_profile, $txt, $scripturl;
+	global $memberContext, $user_profile, $txt;
 	global $context, $settings, $board_info, $theme;
 	static $ban_threshold = null;
 	static $dataLoaded = array();
@@ -1001,8 +1001,8 @@ function loadMemberContext($user, $full_profile = false)
 		'is_reverse_buddy' => in_array(we::$id, $buddy_list),
 		'buddies' => $buddy_list,
 		'title' => !empty($settings['titlesEnable']) ? $profile['usertitle'] : '',
-		'href' => $scripturl . '?action=profile;u=' . $profile['id_member'],
-		'link' => '<a href="' . $scripturl . '?action=profile;u=' . $profile['id_member'] . '" title="' . $txt['view_profile'] . '">' . $profile['real_name'] . '</a>',
+		'href' => '<URL>?action=profile;u=' . $profile['id_member'],
+		'link' => '<a href="<URL>?action=profile;u=' . $profile['id_member'] . '" title="' . $txt['view_profile'] . '">' . $profile['real_name'] . '</a>',
 		'email' => $profile['email_address'],
 		'show_email' => showEmailAddress(!empty($profile['hide_email']), $profile['id_member']),
 		'registered' => empty($profile['date_registered']) ? $txt['not_applicable'] : timeformat($profile['date_registered']),
@@ -1025,8 +1025,8 @@ function loadMemberContext($user, $full_profile = false)
 		'online' => array(
 			'is_online' => $profile['is_online'],
 			'text' => $txt[$profile['is_online'] ? 'online' : 'offline'],
-			'href' => $scripturl . '?action=pm;sa=send;u=' . $profile['id_member'],
-			'link' => '<a href="' . $scripturl . '?action=pm;sa=send;u=' . $profile['id_member'] . '">' . $txt[$profile['is_online'] ? 'online' : 'offline'] . '</a>',
+			'href' => '<URL>?action=pm;sa=send;u=' . $profile['id_member'],
+			'link' => '<a href="<URL>?action=pm;sa=send;u=' . $profile['id_member'] . '">' . $txt[$profile['is_online'] ? 'online' : 'offline'] . '</a>',
 			'image_href' => $theme['images_url'] . '/' . ($profile['buddy'] ? 'buddy_' : '') . ($profile['is_online'] ? 'useron' : 'useroff') . '.gif',
 			'label' => $txt[$profile['is_online'] ? 'online' : 'offline']
 		),
@@ -1103,8 +1103,8 @@ function loadMemberContext($user, $full_profile = false)
 			}
 			$memberContext[$user]['avatar'] = array(
 				'name' => $profile['avatar'],
-				'image' => $profile['id_attach'] > 0 ? '<img class="' . ($profile['transparency'] == 'transparent' ? '' : 'opaque ') . 'avatar" src="' . (empty($profile['attachment_type']) ? $scripturl . '?action=dlattach;attach=' . $profile['id_attach'] . ';type=avatar' : $settings['custom_avatar_url'] . '/' . $profile['filename']) . '">' : '',
-				'href' => $profile['id_attach'] > 0 ? (empty($profile['attachment_type']) ? $scripturl . '?action=dlattach;attach=' . $profile['id_attach'] . ';type=avatar' : $settings['custom_avatar_url'] . '/' . $profile['filename']) : '',
+				'image' => $profile['id_attach'] > 0 ? '<img class="' . ($profile['transparency'] == 'transparent' ? '' : 'opaque ') . 'avatar" src="' . (empty($profile['attachment_type']) ? '<URL>?action=dlattach;attach=' . $profile['id_attach'] . ';type=avatar' : $settings['custom_avatar_url'] . '/' . $profile['filename']) . '">' : '',
+				'href' => $profile['id_attach'] > 0 ? (empty($profile['attachment_type']) ? '<URL>?action=dlattach;attach=' . $profile['id_attach'] . ';type=avatar' : $settings['custom_avatar_url'] . '/' . $profile['filename']) : '',
 				'url' => '',
 			);
 		}
@@ -1141,7 +1141,7 @@ function loadMemberContext($user, $full_profile = false)
 			// Enclosing the user input within some other text?
 			if (!empty($custom['enclose']))
 				$value = strtr($custom['enclose'], array(
-					'{SCRIPTURL}' => $scripturl,
+					'{SCRIPTURL}' => '<URL>',
 					'{IMAGES_URL}' => $theme['images_url'],
 					'{DEFAULT_IMAGES_URL}' => $theme['default_images_url'],
 					'{INPUT}' => $value,
@@ -1497,7 +1497,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 
 	// Set the top level linktree up
 	array_unshift($context['linktree'], array(
-		'url' => $scripturl,
+		'url' => '<URL>',
 		'name' => $context['forum_name_html_safe']
 	));
 
@@ -1896,7 +1896,7 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 				unset($loaded);
 				continue;
 			}
-			
+
 			// OK, this is messy. We need to load the file, grab any changes from the DB, but not touch the existing $txt state.
 			$oldhelptxt = !empty($helptxt) ? (array) $helptxt : array();
 			$oldtxt = $txt;
@@ -2045,8 +2045,6 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
  */
 function getBoardParents($id_parent)
 {
-	global $scripturl;
-
 	$boards = array();
 
 	// First check if we have this cached already.
@@ -2079,7 +2077,7 @@ function getBoardParents($id_parent)
 				{
 					$id_parent = $row['id_parent'];
 					$boards[$row['id_board']] = array(
-						'url' => $scripturl . '?board=' . $row['id_board'] . '.0',
+						'url' => '<URL>?board=' . $row['id_board'] . '.0',
 						'name' => $row['name'],
 						'level' => $row['child_level'],
 						'moderators' => array()
@@ -2092,8 +2090,8 @@ function getBoardParents($id_parent)
 						$boards[$id]['moderators'][$row['id_moderator']] = array(
 							'id' => $row['id_moderator'],
 							'name' => $row['real_name'],
-							'href' => $scripturl . '?action=profile;u=' . $row['id_moderator'],
-							'link' => '<a href="' . $scripturl . '?action=profile;u=' . $row['id_moderator'] . '">' . $row['real_name'] . '</a>'
+							'href' => '<URL>?action=profile;u=' . $row['id_moderator'],
+							'link' => '<a href="<URL>?action=profile;u=' . $row['id_moderator'] . '">' . $row['real_name'] . '</a>'
 						);
 					}
 			}

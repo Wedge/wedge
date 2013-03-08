@@ -44,7 +44,7 @@ if (!defined('WEDGE'))
 // The main admin handling function.
 function Admin()
 {
-	global $txt, $context, $scripturl, $settings;
+	global $txt, $context, $settings;
 	global $theme, $options, $boardurl, $admin_areas;
 
 	// Load the language strings for use in the menu...
@@ -101,7 +101,7 @@ function Admin()
 					'label' => $txt['theme_current_settings'],
 					'file' => 'Themes',
 					'function' => 'ThemesMain',
-					'custom_url' => $scripturl . '?action=admin;area=theme;sa=settings;th=' . $theme['theme_id'],
+					'custom_url' => '<URL>?action=admin;area=theme;sa=settings;th=' . $theme['theme_id'],
 					'icon' => 'current_theme.gif',
 					'bigicon' => 'current_theme.png',
 				),
@@ -618,7 +618,7 @@ function Admin()
 					'icon' => 'packages.gif',
 					'bigicon' => 'plugin_manager.png',
 					'subsections' => array(
-						'packageget' => array($txt['download_packages'], 'url' => $scripturl . '?action=admin;area=packages;sa=packageget;get'),
+						'packageget' => array($txt['download_packages'], 'url' => '<URL>?action=admin;area=packages;sa=packageget;get'),
 					),
 				),
 			),
@@ -711,17 +711,17 @@ function Admin()
 
 	// Build the link tree.
 	$context['linktree'][] = array(
-		'url' => $scripturl . '?action=admin',
+		'url' => '<URL>?action=admin',
 		'name' => $txt['admin_center'],
 	);
 	if (isset($admin_include_data['current_area']) && $admin_include_data['current_area'] != 'index')
 		$context['linktree'][] = array(
-			'url' => $scripturl . '?action=admin;area=' . $admin_include_data['current_area'] . ';' . $context['session_query'],
+			'url' => '<URL>?action=admin;area=' . $admin_include_data['current_area'] . ';' . $context['session_query'],
 			'name' => $admin_include_data['label'],
 		);
 	if (!empty($admin_include_data['current_subsection']) && $admin_include_data['current_area'] != 'index' && $admin_include_data['subsections'][$admin_include_data['current_subsection']][0] != $admin_include_data['label'])
 		$context['linktree'][] = array(
-			'url' => $scripturl . '?action=admin;area=' . $admin_include_data['current_area'] . ';sa=' . $admin_include_data['current_subsection'] . ';' . $context['session_query'],
+			'url' => '<URL>?action=admin;area=' . $admin_include_data['current_area'] . ';sa=' . $admin_include_data['current_subsection'] . ';' . $context['session_query'],
 			'name' => $admin_include_data['subsections'][$admin_include_data['current_subsection']][0],
 		);
 
@@ -759,7 +759,7 @@ function Admin()
 // The main administration section.
 function AdminHome()
 {
-	global $txt, $scripturl, $context, $boardurl, $settings;
+	global $txt, $context, $boardurl, $settings;
 
 	wetem::load('admin');
 	$context['page_title'] = $txt['admin_center'];
@@ -786,14 +786,14 @@ function AdminHome()
 // We have to do some stuff for the admin sidebar.
 function setupAdminSidebar()
 {
-	global $settings, $txt, $context, $scripturl;
+	global $settings, $txt, $context;
 
 	// Find all of this forum's administrators...
 	loadSource('Subs-Membergroups');
 
 	// Add a 'more' link if there are more than 32.
 	if (listMembergroupMembers_Href($context['administrators'], 1, 32) && allowedTo('manage_membergroups'))
-		$context['more_admins_link'] = '<a href="' . $scripturl . '?action=moderate;area=viewgroups;sa=members;group=1">' . $txt['more'] . '</a>';
+		$context['more_admins_link'] = '<a href="<URL>?action=moderate;area=viewgroups;sa=members;group=1">' . $txt['more'] . '</a>';
 
 	// Add the blocks into the sidebar.
 	wetem::add('sidebar', array('admin_live_news', 'admin_support_info'));
@@ -801,8 +801,8 @@ function setupAdminSidebar()
 	// The below functions include all the scripts needed from the wedge.org site. The language and format are passed for internationalization.
 	if (empty($settings['disable_wedge_js']))
 		add_js_file(array(
-			$scripturl . '?action=viewremote;filename=current-version.js',
-			$scripturl . '?action=viewremote;filename=latest-news.js'
+			'<URL>?action=viewremote;filename=current-version.js',
+			'<URL>?action=viewremote;filename=latest-news.js'
 		), true);
 
 	add_js_file('scripts/admin.js');
@@ -878,7 +878,7 @@ function AdminSearch()
 // A complicated but relatively quick internal search.
 function AdminSearchInternal()
 {
-	global $context, $txt, $helptxt, $scripturl, $settings_search, $settings;
+	global $context, $txt, $helptxt, $settings_search, $settings;
 
 	// Try to get some more memory.
 	ini_set('memory_limit', '128M');
@@ -1074,7 +1074,7 @@ function AdminSearchInternal()
 				$name = preg_replace('~<(?:dfn)>.+?</(?:dfn)>~', '', $name);
 
 				$context['search_results'][] = array(
-					'url' => (substr($item[1], 0, 4) == 'area' ? $scripturl . '?action=admin;' . $item[1] : $item[1]) . ';' . $context['session_query'] . ((substr($item[1], 0, 4) == 'area' && $section != 'sections' ? '#' . $item[0][0] : '')),
+					'url' => (substr($item[1], 0, 4) == 'area' ? '<URL>?action=admin;' . $item[1] : $item[1]) . ';' . $context['session_query'] . ((substr($item[1], 0, 4) == 'area' && $section != 'sections' ? '#' . $item[0][0] : '')),
 					'name' => $name,
 					'type' => $section,
 					'help' => shorten_subject(isset($item[2]) ? strip_tags($helptxt[$item[2]]) : (isset($helptxt[$found]) ? strip_tags($helptxt[$found]) : ''), 255),
@@ -1100,7 +1100,7 @@ function AdminSearchMember()
 // This function decides which log to load.
 function AdminLogs()
 {
-	global $context, $txt, $scripturl;
+	global $context, $txt;
 
 	// These are the logs they can load.
 	$log_functions = array(

@@ -71,7 +71,7 @@ function aeva_foxy_playlist()
 			WHERE id_playlist = {int:pl}',
 			array('pl' => $id)
 		);
-		redirectexit($scripturl . '?action=media;sa=playlists');
+		redirectexit('action=media;sa=playlists');
 	}
 
 	loadSource('Class-Editor');
@@ -259,7 +259,7 @@ function aeva_foxy_playlist()
 				array('name' => 'string', 'description' => 'string', 'id_member' => 'int'),
 				array($name, $desc, we::$id)
 			);
-		redirectexit($scripturl . '?action=media;sa=playlists' . ($id ? ';done=' . $id : ''));
+		redirectexit('action=media;sa=playlists' . ($id ? ';done=' . $id : ''));
 	}
 
 	wetem::load('aeva_form');
@@ -461,7 +461,7 @@ function aeva_foxy_my_playlists()
 
 function aeva_foxy_item_page_playlists($item)
 {
-	global $context, $txt, $scripturl, $theme, $galurl;
+	global $context, $txt, $theme, $galurl;
 
 	// Any playlist being deleted?
 	if (isset($_GET['premove']))

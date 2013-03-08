@@ -463,7 +463,7 @@ function Display()
 	$context['topic_starter_id'] = $topicinfo['id_member_started'];
 
 	// Set the topic's information for the template.
-	$context['subject'] = westr::safe($topicinfo['subject'], ENT_QUOTES);
+	$context['subject'] = $topicinfo['subject'];
 	$context['num_views'] = $topicinfo['num_views'];
 	$context['mark_unread_time'] = $topicinfo['new_from'];
 

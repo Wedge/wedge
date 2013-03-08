@@ -47,7 +47,7 @@ if (!defined('WEDGE'))
 // Entry point, permission checks, admin bars, etc.
 function Groups()
 {
-	global $context, $txt, $scripturl;
+	global $context, $txt;
 
 	// The sub-actions that we can do. Format "Function Name, Mod Bar Index if appropriate".
 	$subActions = array(
@@ -77,7 +77,7 @@ function Groups()
 		isAllowedTo('view_mlist');
 
 		$context['linktree'][] = array(
-			'url' => $scripturl . '?action=groups',
+			'url' => '<URL>?action=groups',
 			'name' => $txt['groups'],
 		);
 	}
@@ -89,7 +89,7 @@ function Groups()
 // This very simply lists the groups, nothing snazy.
 function GroupList()
 {
-	global $txt, $scripturl, $user_profile, $context, $theme, $settings;
+	global $txt, $user_profile, $context, $theme, $settings;
 
 	// Yep, find the groups...
 	$request = wesql::query('
@@ -194,9 +194,9 @@ function GroupList()
 				),
 				'data' => array(
 					'function' => create_function('$group', '
-						global $scripturl, $context;
+						global $context;
 
-						$output = \'<a href="\' . $scripturl . \'?action=\' . $context[\'current_action\'] . (isset($context[\'admin_area\']) ? \';area=\' . $context[\'admin_area\'] : \'\') . \';sa=members;group=\' . $group[\'id\'] . \'" \' . ($group[\'color\'] ? \'style="color: \' . $group[\'color\'] . \'"\' : \'\') . \'>\' . $group[\'name\'] . \'</a>\';
+						$output = \'<a href="\<URL>?action=\' . $context[\'current_action\'] . (isset($context[\'admin_area\']) ? \';area=\' . $context[\'admin_area\'] : \'\') . \';sa=members;group=\' . $group[\'id\'] . \'" \' . ($group[\'color\'] ? \'style="color: \' . $group[\'color\'] . \'"\' : \'\') . \'>\' . $group[\'name\'] . \'</a>\';
 
 						if ($group[\'desc\'])
 							$output .= \'<div class="smalltext">\' . $group[\'desc\'] . \'</div>\';
@@ -244,7 +244,7 @@ function GroupList()
 // Get the group information for the list.
 function list_getGroups($start, $items_per_page, $sort)
 {
-	global $txt, $scripturl, $theme;
+	global $txt, $theme;
 
 	// Yep, find the groups...
 	$request = wesql::query('
@@ -343,7 +343,7 @@ function list_getGroups($start, $items_per_page, $sort)
 			)
 		);
 		while ($row = wesql::fetch_assoc($query))
-			$groups[$row['id_group']]['moderators'][] = '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>';
+			$groups[$row['id_group']]['moderators'][] = '<a href="<URL>?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>';
 		wesql::free_result($query);
 	}
 
@@ -374,7 +374,7 @@ function list_getGroupCount()
 // Display members of a group, and allow adding of members to a group. Silly function name though ;)
 function MembergroupMembers()
 {
-	global $txt, $scripturl, $context, $settings, $theme;
+	global $txt, $context, $settings, $theme;
 
 	$_REQUEST['group'] = isset($_REQUEST['group']) ? (int) $_REQUEST['group'] : 0;
 
@@ -407,7 +407,7 @@ function MembergroupMembers()
 	$context['group']['can_moderate'] = allowedTo('manage_membergroups') && (allowedTo('admin_forum') || $context['group']['group_type'] != 1);
 
 	$context['linktree'][] = array(
-		'url' => $scripturl . '?action=groups;sa=members;group=' . $context['group']['id'],
+		'url' => '<URL>?action=groups;sa=members;group=' . $context['group']['id'],
 		'name' => $context['group']['name'],
 	);
 
@@ -570,7 +570,7 @@ function MembergroupMembers()
 	$context['total_members'] = comma_format($context['total_members']);
 
 	// Create the page index.
-	$context['page_index'] = template_page_index($scripturl . '?action=' . ($context['group']['can_moderate'] ? 'moderate;area=viewgroups' : 'groups') . ';sa=members;group=' . $_REQUEST['group'] . ';sort=' . $context['sort_by'] . (isset($_REQUEST['desc']) ? ';desc' : ''), $_REQUEST['start'], $context['total_members'], $settings['defaultMaxMembers']);
+	$context['page_index'] = template_page_index('<URL>?action=' . ($context['group']['can_moderate'] ? 'moderate;area=viewgroups' : 'groups') . ';sa=members;group=' . $_REQUEST['group'] . ';sort=' . $context['sort_by'] . (isset($_REQUEST['desc']) ? ';desc' : ''), $_REQUEST['start'], $context['total_members'], $settings['defaultMaxMembers']);
 	$context['start'] = $_REQUEST['start'];
 	$context['can_moderate_forum'] = allowedTo('moderate_forum');
 
@@ -589,6 +589,7 @@ function MembergroupMembers()
 	$context['members'] = array();
 	while ($row = wesql::fetch_assoc($request))
 	{
+		$row['member_ip'] = format_ip($row['member_ip']);
 		$last_online = empty($row['last_login']) ? $txt['never'] : timeformat($row['last_login']);
 
 		// Italicize the online note if they aren't activated.
@@ -597,10 +598,10 @@ function MembergroupMembers()
 
 		$context['members'][] = array(
 			'id' => $row['id_member'],
-			'name' => '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>',
+			'name' => '<a href="<URL>?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>',
 			'email' => $row['email_address'],
 			'show_email' => showEmailAddress(!empty($row['hide_email']), $row['id_member']),
-			'ip' => '<a href="' . $scripturl . '?action=trackip;searchip=' . $row['member_ip'] . '">' . $row['member_ip'] . '</a>',
+			'ip' => '<a href="<URL>?action=trackip;searchip=' . $row['member_ip'] . '">' . $row['member_ip'] . '</a>',
 			'registered' => timeformat($row['date_registered']),
 			'last_online' => $last_online,
 			'posts' => comma_format($row['posts']),
@@ -617,7 +618,7 @@ function MembergroupMembers()
 // Show and manage all group requests.
 function GroupRequests()
 {
-	global $txt, $context, $scripturl, $settings, $language;
+	global $txt, $context, $settings, $language;
 
 	// Set up the template stuff...
 	$context['page_title'] = $txt['mc_group_requests'];
@@ -814,7 +815,7 @@ function GroupRequests()
 		'width' => '100%',
 		'items_per_page' => $settings['defaultMaxMessages'],
 		'no_items_label' => $txt['mc_groupr_none_found'],
-		'base_href' => $scripturl . '?action=groups;sa=requests',
+		'base_href' => '<URL>?action=groups;sa=requests',
 		'default_sort_col' => 'member',
 		'get_items' => array(
 			'function' => 'list_getGroupRequests',
@@ -880,7 +881,7 @@ function GroupRequests()
 			),
 		),
 		'form' => array(
-			'href' => $scripturl . '?action=groups;sa=requests',
+			'href' => '<URL>?action=groups;sa=requests',
 			'include_sort' => true,
 			'include_start' => true,
 			'hidden_fields' => array(
@@ -926,7 +927,7 @@ function list_getGroupRequestCount($where, $where_parameters)
 
 function list_getGroupRequests($start, $items_per_page, $sort, $where, $where_parameters)
 {
-	global $txt, $scripturl;
+	global $txt;
 
 	$request = wesql::query('
 		SELECT lgr.id_request, lgr.id_member, lgr.id_group, lgr.time_applied, lgr.reason,
@@ -946,7 +947,7 @@ function list_getGroupRequests($start, $items_per_page, $sort, $where, $where_pa
 	{
 		$group_requests[] = array(
 			'id' => $row['id_request'],
-			'member_link' => '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>',
+			'member_link' => '<a href="<URL>?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>',
 			'group_link' => '<span style="color: ' . $row['online_color'] . '">' . $row['group_name'] . '</span>',
 			'reason' => censorText($row['reason']),
 			'time_submitted' => timeformat($row['time_applied']),

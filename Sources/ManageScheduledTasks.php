@@ -79,7 +79,7 @@ function ManageScheduledTasks()
 // List all the scheduled task in place on the forum.
 function ScheduledTasks()
 {
-	global $context, $txt, $settings, $scripturl;
+	global $context, $txt, $settings;
 
 	// Mama, setup the template first - cause it's like the most important bit, like pickle in a sandwich.
 	// ... ironically I don't like pickle. </grudge>
@@ -177,7 +177,7 @@ function ScheduledTasks()
 	$listOptions = array(
 		'id' => 'scheduled_tasks',
 		'title' => $txt['maintain_tasks'],
-		'base_href' => $scripturl . '?action=admin;area=scheduledtasks',
+		'base_href' => '<URL>?action=admin;area=scheduledtasks',
 		'get_items' => array(
 			'function' => 'list_getScheduledTasks',
 		),
@@ -190,7 +190,7 @@ function ScheduledTasks()
 				'data' => array(
 					'sprintf' => array(
 						'format' => '
-							<a href="' . $scripturl . '?action=admin;area=scheduledtasks;sa=taskedit;tid=%1$d">%2$s</a><div class="smalltext">%3$s</div>',
+							<a href="<URL>?action=admin;area=scheduledtasks;sa=taskedit;tid=%1$d">%2$s</a><div class="smalltext">%3$s</div>',
 						'params' => array(
 							'id' => false,
 							'name' => false,
@@ -252,7 +252,7 @@ function ScheduledTasks()
 			),
 		),
 		'form' => array(
-			'href' => $scripturl . '?action=admin;area=scheduledtasks',
+			'href' => '<URL>?action=admin;area=scheduledtasks',
 		),
 		'additional_rows' => array(
 			array(
@@ -281,7 +281,7 @@ function ScheduledTasks()
 
 function list_getScheduledTasks($start, $items_per_page, $sort)
 {
-	global $txt, $scripturl;
+	global $txt;
 
 	$request = wesql::query('
 		SELECT id_task, next_time, time_offset, time_regularity, time_unit, disabled, task
@@ -416,7 +416,7 @@ function EditTask()
 // Show the log of all tasks that have taken place.
 function TaskLog()
 {
-	global $scripturl, $context, $txt;
+	global $context, $txt;
 
 	// Let's load the language just in case we are outside the Scheduled area.
 	loadLanguage('ManageScheduledTasks');
@@ -439,7 +439,7 @@ function TaskLog()
 		'items_per_page' => 30,
 		'title' => $txt['scheduled_log'],
 		'no_items_label' => $txt['scheduled_log_empty'],
-		'base_href' => $context['admin_area'] == 'scheduledtasks' ? $scripturl . '?action=admin;area=scheduledtasks;sa=tasklog' : $scripturl . '?action=admin;area=logs;sa=tasklog',
+		'base_href' => $context['admin_area'] == 'scheduledtasks' ? '<URL>?action=admin;area=scheduledtasks;sa=tasklog' : '<URL>?action=admin;area=logs;sa=tasklog',
 		'default_sort_col' => 'date',
 		'get_items' => array(
 			'function' => 'list_getTaskLogEntries',
@@ -489,7 +489,7 @@ function TaskLog()
 			),
 		),
 		'form' => array(
-			'href' => $context['admin_area'] == 'scheduledtasks' ? $scripturl . '?action=admin;area=scheduledtasks;sa=tasklog' : $scripturl . '?action=admin;area=logs;sa=tasklog',
+			'href' => $context['admin_area'] == 'scheduledtasks' ? '<URL>?action=admin;area=scheduledtasks;sa=tasklog' : '<URL>?action=admin;area=logs;sa=tasklog',
 		),
 		'additional_rows' => array(
 			array(

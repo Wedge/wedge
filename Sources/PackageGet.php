@@ -38,7 +38,7 @@ if (!defined('WEDGE'))
 // Browse the list of package servers, add servers...
 function PackageGet()
 {
-	global $txt, $scripturl, $context, $boarddir, $settings;
+	global $txt, $context, $boarddir, $settings;
 
 	isAllowedTo('admin_forum');
 	loadSource('Subs-Package');
@@ -93,7 +93,7 @@ function PackageGet()
 
 function PackageServers()
 {
-	global $txt, $scripturl, $context, $boarddir, $settings;
+	global $txt, $context, $boarddir, $settings;
 
 	// Ensure we use the correct template, and page title.
 	wetem::load('servers');

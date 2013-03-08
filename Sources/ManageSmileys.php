@@ -45,7 +45,7 @@ if (!defined('WEDGE'))
 
 function ManageSmileys()
 {
-	global $context, $txt, $scripturl, $settings;
+	global $context, $txt, $settings;
 
 	isAllowedTo('manage_smileys');
 
@@ -116,7 +116,7 @@ function ManageSmileys()
 
 function EditSmileySettings($return_config = false)
 {
-	global $settings, $context, $theme, $txt, $boarddir, $scripturl;
+	global $settings, $context, $theme, $txt, $boarddir;
 
 	// The directories...
 	$context['smileys_dir'] = $settings['smileys_dir'];
@@ -154,7 +154,7 @@ function EditSmileySettings($return_config = false)
 	wetem::load('show_settings');
 
 	// Finish up the form...
-	$context['post_url'] = $scripturl . '?action=admin;area=smileys;save;sa=settings';
+	$context['post_url'] = '<URL>?action=admin;area=smileys;save;sa=settings';
 
 	// Saving the settings?
 	if (isset($_GET['save']))
@@ -180,7 +180,6 @@ function EditSmileySettings($return_config = false)
 function EditSmileySets()
 {
 	global $settings, $context, $theme, $txt, $boarddir;
-	global $scripturl;
 
 	// Set the right tab to be selected.
 	$context[$context['admin_menu_name']]['current_subsection'] = 'editsets';
@@ -351,7 +350,7 @@ function EditSmileySets()
 
 	$listOptions = array(
 		'id' => 'smiley_set_list',
-		'base_href' => $scripturl . '?action=admin;area=smileys;sa=editsets',
+		'base_href' => '<URL>?action=admin;area=smileys;sa=editsets',
 		'default_sort_col' => 'default',
 		'get_items' => array(
 			'function' => 'list_getSmileySets',
@@ -411,7 +410,7 @@ function EditSmileySets()
 				),
 				'data' => array(
 					'sprintf' => array(
-						'format' => '<a href="' . $scripturl . '?action=admin;area=smileys;sa=modifyset;set=%1$d">' . $txt['smiley_set_modify'] . '</a>',
+						'format' => '<a href="<URL>?action=admin;area=smileys;sa=modifyset;set=%1$d">' . $txt['smiley_set_modify'] . '</a>',
 						'params' => array(
 							'id' => true,
 						),
@@ -432,12 +431,12 @@ function EditSmileySets()
 			),
 		),
 		'form' => array(
-			'href' => $scripturl . '?action=admin;area=smileys;sa=editsets',
+			'href' => '<URL>?action=admin;area=smileys;sa=editsets',
 		),
 		'additional_rows' => array(
 			array(
 				'position' => 'below_table_data',
-				'value' => '<input type="submit" name="delete" value="' . $txt['smiley_sets_delete'] . '" onclick="return ask(' . JavaScriptEscape($txt['smiley_sets_confirm']) . ', e);" class="delete floatright"><span style="line-height: 25px">[<a href="' . $scripturl . '?action=admin;area=smileys;sa=modifyset">' . $txt['smiley_sets_add'] . '</a>]&nbsp;&nbsp;</span>',
+				'value' => '<input type="submit" name="delete" value="' . $txt['smiley_sets_delete'] . '" onclick="return ask(' . JavaScriptEscape($txt['smiley_sets_confirm']) . ', e);" class="delete floatright"><span style="line-height: 25px">[<a href="<URL>?action=admin;area=smileys;sa=modifyset">' . $txt['smiley_sets_add'] . '</a>]&nbsp;&nbsp;</span>',
 			),
 		),
 	);
@@ -740,7 +739,6 @@ function AddSmiley()
 function EditSmileys()
 {
 	global $settings, $context, $theme, $txt, $boarddir;
-	global $scripturl;
 
 	// Force the correct tab to be displayed.
 	$context[$context['admin_menu_name']]['current_subsection'] = 'editsmileys';
@@ -889,7 +887,7 @@ function EditSmileys()
 		$listOptions = array(
 			'id' => 'smiley_list',
 			'items_per_page' => 40,
-			'base_href' => $scripturl . '?action=admin;area=smileys;sa=editsmileys',
+			'base_href' => '<URL>?action=admin;area=smileys;sa=editsmileys',
 			'default_sort_col' => 'filename',
 			'get_items' => array(
 				'function' => 'list_getSmileys',
@@ -902,7 +900,7 @@ function EditSmileys()
 				'picture' => array(
 					'data' => array(
 						'sprintf' => array(
-							'format' => '<a href="' . $scripturl . '?action=admin;area=smileys;sa=modifysmiley;smiley=%1$d"><img src="' . $settings['smileys_url'] . '/' . $settings['smiley_sets_default'] . '/%2$s" alt="%3$s" style="padding: 2px" id="smiley%1$d"><input type="hidden" name="smileys[%1$d][filename]" value="%2$s"></a>',
+							'format' => '<a href="<URL>?action=admin;area=smileys;sa=modifysmiley;smiley=%1$d"><img src="' . $settings['smileys_url'] . '/' . $settings['smiley_sets_default'] . '/%2$s" alt="%3$s" style="padding: 2px" id="smiley%1$d"><input type="hidden" name="smileys[%1$d][filename]" value="%2$s"></a>',
 							'params' => array(
 								'id_smiley' => false,
 								'filename' => true,
@@ -992,7 +990,7 @@ function EditSmileys()
 					),
 					'data' => array(
 						'sprintf' => array(
-							'format' => '<a href="' . $scripturl . '?action=admin;area=smileys;sa=modifysmiley;smiley=%1$d">' . $txt['smileys_modify'] . '</a>',
+							'format' => '<a href="<URL>?action=admin;area=smileys;sa=modifysmiley;smiley=%1$d">' . $txt['smileys_modify'] . '</a>',
 							'params' => array(
 								'id_smiley' => false,
 							),
@@ -1016,7 +1014,7 @@ function EditSmileys()
 				),
 			),
 			'form' => array(
-				'href' => $scripturl . '?action=admin;area=smileys;sa=editsmileys',
+				'href' => '<URL>?action=admin;area=smileys;sa=editsmileys',
 				'name' => 'smileyForm',
 			),
 			'additional_rows' => array(
@@ -1423,8 +1421,7 @@ function ImportSmileys($smileyPath)
 
 function EditMessageIcons()
 {
-	global $settings, $context, $theme, $txt;
-	global $boarddir, $scripturl;
+	global $settings, $context, $theme, $txt, $boarddir;
 
 	// Get a list of icons.
 	$context['icons'] = array();
@@ -1551,7 +1548,7 @@ function EditMessageIcons()
 
 	$listOptions = array(
 		'id' => 'message_icon_list',
-		'base_href' => $scripturl . '?action=admin;area=smileys;sa=editicons',
+		'base_href' => '<URL>?action=admin;area=smileys;sa=editicons',
 		'get_items' => array(
 			'function' => 'list_getMessageIcons',
 		),
@@ -1608,7 +1605,7 @@ function EditMessageIcons()
 				),
 				'data' => array(
 					'sprintf' => array(
-						'format' => '<a href="' . $scripturl . '?action=admin;area=smileys;sa=editicon;icon=%1$s">' . $txt['smileys_modify'] . '</a>',
+						'format' => '<a href="<URL>?action=admin;area=smileys;sa=editicon;icon=%1$s">' . $txt['smileys_modify'] . '</a>',
 						'params' => array(
 							'id_icon' => false,
 						),
@@ -1632,12 +1629,12 @@ function EditMessageIcons()
 			),
 		),
 		'form' => array(
-			'href' => $scripturl . '?action=admin;area=smileys;sa=editicons',
+			'href' => '<URL>?action=admin;area=smileys;sa=editicons',
 		),
 		'additional_rows' => array(
 			array(
 				'position' => 'below_table_data',
-				'value' => '<input type="submit" name="delete" value="' . $txt['quickmod_delete_selected'] . '" class="delete floatright">[<a href="' . $scripturl . '?action=admin;area=smileys;sa=editicon">' . $txt['icons_add_new'] . '</a>]',
+				'value' => '<input type="submit" name="delete" value="' . $txt['quickmod_delete_selected'] . '" class="delete floatright">[<a href="<URL>?action=admin;area=smileys;sa=editicon">' . $txt['icons_add_new'] . '</a>]',
 			),
 		),
 	);

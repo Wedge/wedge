@@ -610,7 +610,7 @@ function check_banned_ip($ip)
 		cache_put_data('bans_ip', $ips, 300);
 		wesql::free_result($request);
 	}
-		
+
 	foreach ($ips as $ban)
 	{
 		if (isset($ban['ip']))

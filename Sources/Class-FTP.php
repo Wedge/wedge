@@ -455,7 +455,7 @@ class ftp_connection
 			$this->error = 'bad_response';
 			return false;
 		}
-		
+
 		$this->sendMsg('STOR ' . $remotefile);
 
 		// Now we connect to the data port and do what we gotta do.

@@ -403,8 +403,8 @@ function Post2()
 	}
 
 	// Check the subject and message.
-	$_POST['subject'] = isset($_POST['subject']) ? westr::safe($_POST['subject'], ENT_NOQUOTES, false) : '';
-	$_POST['message'] = isset($_POST['message']) ? westr::safe($_POST['message'], ENT_NOQUOTES, false) : '';
+	$_POST['subject'] = isset($_POST['subject']) ? westr::safe($_POST['subject'], ENT_QUOTES, false) : '';
+	$_POST['message'] = isset($_POST['message']) ? westr::safe($_POST['message'], ENT_QUOTES, false) : '';
 	if (empty($_POST['subject']) || westr::htmltrim($_POST['subject']) === '')
 		$post_errors[] = 'no_subject';
 	if (empty($_POST['message']) || westr::htmltrim($_POST['message']) === '')

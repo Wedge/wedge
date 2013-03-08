@@ -42,7 +42,7 @@ if (!defined('WEDGE'))
 // Move a topic.  Give the moderator a chance to post a reason.
 function MoveTopic()
 {
-	global $txt, $board, $topic, $context, $language, $scripturl, $theme, $settings;
+	global $txt, $board, $topic, $context, $language, $theme, $settings;
 
 	if (empty($topic))
 		fatal_lang_error('no_access', false);
@@ -117,7 +117,7 @@ function MoveTopic()
 	$context['page_title'] = $txt['move_topic'];
 
 	$context['linktree'][] = array(
-		'url' => $scripturl . '?topic=' . $topic . '.0',
+		'url' => '<URL>?topic=' . $topic . '.0',
 		'name' => $context['subject'],
 	);
 

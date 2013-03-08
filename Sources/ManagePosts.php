@@ -57,7 +57,7 @@ if (!defined('WEDGE'))
 
 function ManagePostSettings()
 {
-	global $context, $txt, $scripturl;
+	global $context, $txt;
 
 	// Make sure you can be here.
 	isAllowedTo('admin_forum');
@@ -188,7 +188,7 @@ function SetCensor()
 // Modify all settings related to posts and posting.
 function ModifyPostSettings($return_config = false)
 {
-	global $context, $txt, $settings, $scripturl, $db_prefix;
+	global $context, $txt, $settings, $db_prefix;
 
 	// All the settings...
 	$config_vars = array(
@@ -232,7 +232,7 @@ function ModifyPostSettings($return_config = false)
 	}
 
 	// Final settings...
-	$context['post_url'] = $scripturl . '?action=admin;area=postsettings;save;sa=posts';
+	$context['post_url'] = '<URL>?action=admin;area=postsettings;save;sa=posts';
 	$context['settings_title'] = $txt['manageposts_settings'];
 
 	// Prepare the settings...
@@ -242,7 +242,7 @@ function ModifyPostSettings($return_config = false)
 // Bulletin Board Code...a lot of Bulletin Board Code.
 function ModifyBBCSettings($return_config = false)
 {
-	global $context, $txt, $settings, $scripturl;
+	global $context, $txt, $settings;
 
 	$config_vars = array(
 			// Main tweaks
@@ -286,7 +286,7 @@ function ModifyBBCSettings($return_config = false)
 		redirectexit('action=admin;area=postsettings;sa=bbc');
 	}
 
-	$context['post_url'] = $scripturl . '?action=admin;area=postsettings;save;sa=bbc';
+	$context['post_url'] = '<URL>?action=admin;area=postsettings;save;sa=bbc';
 	$context['settings_title'] = $txt['manageposts_bbc_settings_title'];
 
 	prepareDBSettingContext($config_vars);
@@ -295,7 +295,7 @@ function ModifyBBCSettings($return_config = false)
 // Function for modifying topic settings. Not very exciting.
 function ModifyTopicSettings($return_config = false)
 {
-	global $context, $txt, $settings, $scripturl;
+	global $context, $txt, $settings;
 
 	// Here are all the topic settings.
 	$config_vars = array(
@@ -339,7 +339,7 @@ function ModifyTopicSettings($return_config = false)
 	}
 
 	// Final settings...
-	$context['post_url'] = $scripturl . '?action=admin;area=postsettings;save;sa=topics';
+	$context['post_url'] = '<URL>?action=admin;area=postsettings;save;sa=topics';
 	$context['settings_title'] = $txt['manageposts_topic_settings'];
 
 	// Prepare the settings...
@@ -349,7 +349,7 @@ function ModifyTopicSettings($return_config = false)
 // Function for modifying drafts settings. Not very exciting.
 function ModifyDraftSettings($return_config = false)
 {
-	global $context, $txt, $settings, $scripturl;
+	global $context, $txt, $settings;
 
 	// Here are all the topic settings.
 	$config_vars = array(
@@ -379,7 +379,7 @@ function ModifyDraftSettings($return_config = false)
 	}
 
 	// Final settings...
-	$context['post_url'] = $scripturl . '?action=admin;area=postsettings;save;sa=drafts';
+	$context['post_url'] = '<URL>?action=admin;area=postsettings;save;sa=drafts';
 	$context['settings_title'] = $txt['manageposts_draft_settings'];
 
 	// Prepare the settings...
@@ -388,7 +388,7 @@ function ModifyDraftSettings($return_config = false)
 
 function ModifyMergeSettings($return_config = false)
 {
-	global $txt, $scripturl, $context, $theme;
+	global $txt, $context, $theme;
 
 	$config_vars = array(
 			// Automatic merge options
@@ -428,7 +428,7 @@ function ModifyMergeSettings($return_config = false)
 		redirectexit('action=admin;area=postsettings;sa=merge');
 	}
 
-	$context['post_url'] = $scripturl . '?action=admin;area=postsettings;save;sa=merge';
+	$context['post_url'] = '<URL>?action=admin;area=postsettings;save;sa=merge';
 	$context['settings_title'] = $txt['merge_post_header'];
 
 	prepareDBSettingContext($config_vars);

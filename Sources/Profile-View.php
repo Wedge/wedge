@@ -71,7 +71,7 @@ if (!defined('WEDGE'))
 // View a summary.
 function summary($memID)
 {
-	global $context, $memberContext, $txt, $settings, $user_profile, $scripturl;
+	global $context, $memberContext, $txt, $settings, $user_profile;
 
 	// Attempt to load the member's profile data.
 	if (!loadMemberContext($memID) || !isset($memberContext[$memID]))
@@ -88,7 +88,7 @@ function summary($memID)
 	$context['can_view_warning'] = (allowedTo('issue_warning') && !we::$user['is_owner']) || (!empty($settings['warning_show']) && ($settings['warning_show'] > 1 || we::$user['is_owner']));
 
 	// Set a canonical URL for this page.
-	$context['canonical_url'] = $scripturl . '?action=profile;u=' . $memID;
+	$context['canonical_url'] = '<URL>?action=profile;u=' . $memID;
 
 	// Are there things we don't show?
 	$context['disabled_fields'] = isset($settings['disabled_profile_fields']) ? array_flip(explode(',', $settings['disabled_profile_fields'])) : array();
@@ -400,7 +400,7 @@ function showDrafts($memID)
 // Show all posts by the current user
 function showPosts($memID)
 {
-	global $txt, $scripturl, $settings;
+	global $txt, $settings;
 	global $context, $user_profile, $board;
 
 	$guest = '';
@@ -737,8 +737,7 @@ function showPosts($memID)
 // Show all the attachments of a user.
 function showAttachments($memID)
 {
-	global $txt, $scripturl, $settings, $board;
-	global $context, $user_profile;
+	global $txt, $settings, $board, $context, $user_profile;
 
 	// OBEY permissions!
 	$boardsAllowed = boardsAllowedTo('view_attachments');
@@ -787,7 +786,7 @@ function showAttachments($memID)
 	$sort = $sortTypes[$context['sort_order']];
 
 	// Let's get ourselves a lovely page index.
-	$context['page_index'] = template_page_index($scripturl . '?action=profile;u=' . $memID . ';area=showposts;sa=attach;sort=' . $context['sort_order'] . ($context['sort_direction'] == 'up' ? ';asc' : ''), $context['start'], $attachCount, $maxIndex);
+	$context['page_index'] = template_page_index('<URL>?action=profile;u=' . $memID . ';area=showposts;sa=attach;sort=' . $context['sort_order'] . ($context['sort_direction'] == 'up' ? ';asc' : ''), $context['start'], $attachCount, $maxIndex);
 
 	// Retrieve some attachments.
 	$request = wesql::query('
@@ -1018,7 +1017,7 @@ function statPanel($memID)
 
 function tracking($memID)
 {
-	global $context, $txt, $scripturl, $settings, $user_profile;
+	global $context, $txt, $settings, $user_profile;
 
 	$subActions = array(
 		'activity' => array('trackActivity', $txt['trackActivity']),
@@ -1295,7 +1294,7 @@ function list_getUserErrorCount($where, $where_vars = array())
 
 function list_getUserErrors($start, $items_per_page, $sort, $where, $where_vars = array())
 {
-	global $txt, $scripturl;
+	global $txt;
 
 	// Get a list of error messages from this ip (range).
 	$request = wesql::query('
@@ -1316,7 +1315,7 @@ function list_getUserErrors($start, $items_per_page, $sort, $where, $where_vars 
 	while ($row = wesql::fetch_assoc($request))
 		$error_messages[] = array(
 			'ip' => format_ip($row['member_ip']),
-			'member_link' => $row['id_member'] > 0 ? '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['display_name'] . '</a>' : $row['display_name'],
+			'member_link' => $row['id_member'] > 0 ? '<a href="<URL>?action=profile;u=' . $row['id_member'] . '">' . $row['display_name'] . '</a>' : $row['display_name'],
 			'message' => strtr($row['message'], array('&lt;span class=&quot;remove&quot;&gt;' => '', '&lt;/span&gt;' => '')),
 			'url' => $row['url'],
 			'time' => timeformat($row['log_time']),
@@ -1344,7 +1343,7 @@ function list_getIPMessageCount($where, $where_vars = array())
 
 function list_getIPMessages($start, $items_per_page, $sort, $where, $where_vars = array())
 {
-	global $txt, $scripturl;
+	global $txt;
 
 	// Get all the messages fitting this where clause.
 	// !!! SLOW This query is using a filesort.
@@ -1366,10 +1365,10 @@ function list_getIPMessages($start, $items_per_page, $sort, $where, $where_vars 
 	while ($row = wesql::fetch_assoc($request))
 		$messages[] = array(
 			'ip' => format_ip($row['member_ip']),
-			'member_link' => empty($row['id_member']) ? $row['display_name'] : '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['display_name'] . '</a>',
+			'member_link' => empty($row['id_member']) ? $row['display_name'] : '<a href="<URL>?action=profile;u=' . $row['id_member'] . '">' . $row['display_name'] . '</a>',
 			'board' => array(
 				'id' => $row['id_board'],
-				'href' => $scripturl . '?board=' . $row['id_board']
+				'href' => '<URL>?board=' . $row['id_board']
 			),
 			'topic' => $row['id_topic'],
 			'id' => $row['id_msg'],
@@ -1384,7 +1383,7 @@ function list_getIPMessages($start, $items_per_page, $sort, $where, $where_vars 
 
 function trackIP($memID = 0)
 {
-	global $user_profile, $scripturl, $txt, $settings, $context;
+	global $user_profile, $txt, $settings, $context;
 
 	// Can the user do this?
 	isAllowedTo('manage_bans');
@@ -1396,12 +1395,12 @@ function trackIP($memID = 0)
 		loadLanguage('Profile');
 		wetem::load('trackIP');
 		$context['page_title'] = $txt['profile'];
-		$context['base_url'] = $scripturl . '?action=trackip';
+		$context['base_url'] = '<URL>?action=trackip';
 	}
 	else
 	{
 		$context['ip'] = $user_profile[$memID]['member_ip'];
-		$context['base_url'] = $scripturl . '?action=profile;u=' . $memID . ';area=tracking;sa=ip';
+		$context['base_url'] = '<URL>?action=profile;u=' . $memID . ';area=tracking;sa=ip';
 	}
 
 	// Searching?
@@ -1506,7 +1505,7 @@ function trackIP($memID = 0)
 	);
 	$context['ips'] = array();
 	while ($row = wesql::fetch_assoc($request))
-		$context['ips'][$row['member_ip']][] = '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['display_name'] . '</a>';
+		$context['ips'][$row['member_ip']][] = '<a href="<URL>?action=profile;u=' . $row['id_member'] . '">' . $row['display_name'] . '</a>';
 	wesql::free_result($request);
 
 	ksort($context['ips']);
@@ -1569,7 +1568,7 @@ function trackIP($memID = 0)
 				),
 				'data' => array(
 					'sprintf' => array(
-						'format' => '<a href="' . $scripturl . '?topic=%1$s.msg%2$s#msg%2$s" rel="nofollow">%3$s</a>',
+						'format' => '<a href="<URL>?topic=%1$s.msg%2$s#msg%2$s" rel="nofollow">%3$s</a>',
 						'params' => array(
 							'topic' => false,
 							'id' => false,
@@ -1745,7 +1744,7 @@ function trackIP($memID = 0)
 
 function trackEdits($memID)
 {
-	global $scripturl, $txt, $settings, $context;
+	global $txt, $settings, $context;
 
 	loadSource('Subs-List');
 
@@ -1770,7 +1769,7 @@ function trackEdits($memID)
 		'title' => $txt['trackEdits'],
 		'items_per_page' => $settings['defaultMaxMessages'],
 		'no_items_label' => $txt['trackEdit_no_edits'],
-		'base_href' => $scripturl . '?action=profile;u=' . $memID . ';area=tracking;sa=edits',
+		'base_href' => '<URL>?action=profile;u=' . $memID . ';area=tracking;sa=edits',
 		'default_sort_col' => 'time',
 		'get_items' => array(
 			'function' => 'list_getProfileEdits',
@@ -1860,7 +1859,7 @@ function list_getProfileEditCount($memID)
 
 function list_getProfileEdits($start, $items_per_page, $sort, $memID)
 {
-	global $txt, $scripturl, $context;
+	global $txt, $context;
 
 	// Get a list of error messages from this ip (range).
 	$request = wesql::query('
@@ -1931,7 +1930,7 @@ function list_getProfileEdits($start, $items_per_page, $sort, $memID)
 
 		foreach ($edits as $key => $value)
 			if (isset($members[$value['id_member']]))
-				$edits[$key]['member_link'] = '<a href="' . $scripturl . '?action=profile;u=' . $value['id_member'] . '">' . $members[$value['id_member']] . '</a>';
+				$edits[$key]['member_link'] = '<a href="<URL>?action=profile;u=' . $value['id_member'] . '">' . $members[$value['id_member']] . '</a>';
 	}
 
 	return $edits;
@@ -1939,7 +1938,7 @@ function list_getProfileEdits($start, $items_per_page, $sort, $memID)
 
 function showPermissions($memID)
 {
-	global $scripturl, $txt, $board, $settings;
+	global $txt, $board, $settings;
 	global $user_profile, $context;
 
 	// Verify if the user has sufficient permissions.
@@ -2117,7 +2116,7 @@ function showPermissions($memID)
 // View a members warnings?
 function viewWarning($memID)
 {
-	global $settings, $context, $txt, $scripturl;
+	global $settings, $context, $txt;
 
 	// Firstly, can we actually even be here?
 	if (!allowedTo('issue_warning') && (empty($settings['warning_show']) || ($settings['warning_show'] == 1 && !we::$user['is_owner'])))
@@ -2136,7 +2135,7 @@ function viewWarning($memID)
 		'title' => $txt['profile_viewwarning_previous_warnings'],
 		'items_per_page' => $settings['defaultMaxMessages'],
 		'no_items_label' => $txt['profile_viewwarning_no_warnings'],
-		'base_href' => $scripturl . '?action=profile;u=' . $memID . ';area=viewwarning;sa=user',
+		'base_href' => '<URL>?action=profile;u=' . $memID . ';area=viewwarning;sa=user',
 		'default_sort_col' => 'log_time',
 		'get_items' => array(
 			'function' => 'list_getUserWarnings',

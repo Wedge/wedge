@@ -53,7 +53,7 @@ if (!defined('WEDGE'))
 // This is the main function for the language area.
 function ManageLanguages()
 {
-	global $context, $txt, $scripturl, $settings;
+	global $context, $txt, $settings;
 
 	loadLanguage('ManageSettings');
 
@@ -85,7 +85,7 @@ function ManageLanguages()
 // Interface for adding a new language
 function AddLanguage()
 {
-	global $context, $txt, $scripturl;
+	global $context, $txt;
 
 	loadTemplate('ManageLanguages');
 
@@ -122,7 +122,7 @@ function AddLanguage()
 					'name' => westr::ucwords($lang_name),
 					'version' => (string) $this_lang->version,
 					'description' => (string) $this_lang->description,
-					'link' => $scripturl . '?action=admin;area=languages;sa=downloadlang;did=' . (string) $this_lang->id . ';' . $context['session_query'],
+					'link' => '<URL>?action=admin;area=languages;sa=downloadlang;did=' . (string) $this_lang->id . ';' . $context['session_query'],
 				);
 			}
 
@@ -137,7 +137,7 @@ function AddLanguage()
 // Download a language file from the Wedge website.
 function DownloadLanguage()
 {
-	global $context, $boarddir, $txt, $scripturl, $settings;
+	global $context, $boarddir, $txt, $settings;
 
 	loadTemplate('ManageLanguages');
 	loadLanguage('ManageSettings');
@@ -177,7 +177,7 @@ function DownloadLanguage()
 			$archive_content = read_tgz_file('http://wedge.org/files/fetch_language.php?version=' . urlencode(WEDGE_VERSION) . ';fetch=' . urlencode($_GET['did']), $boarddir, false, true, $install_files);
 			// Make sure the files aren't stuck in the cache.
 			package_flush_cache();
-			$context['install_complete'] = sprintf($txt['languages_download_complete_desc'], $scripturl . '?action=admin;area=languages');
+			$context['install_complete'] = sprintf($txt['languages_download_complete_desc'], '<URL>?action=admin;area=languages');
 
 			return;
 		}
@@ -464,7 +464,7 @@ function DownloadLanguage()
 // This lists all the current languages and allows editing of them.
 function ModifyLanguages()
 {
-	global $txt, $context, $scripturl, $language, $boarddir;
+	global $txt, $context, $language, $boarddir;
 
 	// Setting a new default?
 	if (!empty($_POST['set_default']) && !empty($_POST['def_language']))
@@ -483,7 +483,7 @@ function ModifyLanguages()
 	$listOptions = array(
 		'id' => 'language_list',
 		'items_per_page' => 20,
-		'base_href' => $scripturl . '?action=admin;area=languages',
+		'base_href' => '<URL>?action=admin;area=languages',
 		'cat' => $txt['edit_languages'],
 		'get_items' => array(
 			'function' => 'list_getLanguages',
@@ -509,9 +509,9 @@ function ModifyLanguages()
 				),
 				'data' => array(
 					'function' => create_function('$rowData', '
-						global $scripturl, $context;
+						global $context;
 
-						return sprintf(\'<a href="%1$s?action=admin;area=languages;sa=editlang;lid=%2$s">%3$s</a>\', $scripturl, $rowData[\'id\'], $rowData[\'name\']);
+						return sprintf(\'<a href="<URL>?action=admin;area=languages;sa=editlang;lid=%1$s">%2$s</a>\', $rowData[\'id\'], $rowData[\'name\']);
 					'),
 				),
 			),
@@ -554,7 +554,7 @@ function ModifyLanguages()
 			),
 		),
 		'form' => array(
-			'href' => $scripturl . '?action=admin;area=languages',
+			'href' => '<URL>?action=admin;area=languages',
 		),
 		'additional_rows' => array(
 			array(
@@ -660,7 +660,7 @@ function list_getLanguages()
 // Edit language related settings.
 function ModifyLanguageSettings($return_config = false)
 {
-	global $scripturl, $context, $txt, $boarddir, $theme;
+	global $context, $txt, $boarddir, $theme;
 
 	loadSource('ManageServer');
 
@@ -684,7 +684,7 @@ function ModifyLanguageSettings($return_config = false)
 	// Get our languages. No cache.
 	getLanguages(false);
 	foreach ($context['languages'] as $lang)
-		$config_vars['language'][4][$lang['filename']] = array($lang['filename'], $lang['name']);
+		$config_vars['language'][4][$lang['filename']] = array($lang['filename'], '&lt;span class="flag_' . $lang['filename'] . '"&gt;&lt;/span&gt; ' . $lang['name']);
 
 	// Saving settings?
 	if (isset($_REQUEST['save']))
@@ -695,7 +695,7 @@ function ModifyLanguageSettings($return_config = false)
 	}
 
 	// Setup the template stuff.
-	$context['post_url'] = $scripturl . '?action=admin;area=languages;sa=settings;save';
+	$context['post_url'] = '<URL>?action=admin;area=languages;sa=settings;save';
 	$context['settings_title'] = $txt['language_settings'];
 	$context['save_disabled'] = $settings_not_writable;
 
@@ -845,7 +845,6 @@ function ModifyLanguage()
 				unset($lang_dirs[$plugin_id], $themes[$plugin_id], $context['language_files']['plugins'][$plugin_id]);
 		}
 	}
-
 
 	// Now for every theme get all the files and stick them in context!
 	$context['possible_files'] = array();
@@ -1003,6 +1002,11 @@ function ModifyLanguageEntries()
 	global $context, $txt, $helptxt;
 
 	wetem::load('modify_entries');
+
+	$context['linktree'][] = array(
+		'url' => '<URL>?action=admin;area=languages;sa=editlang;lid=' . $context['lang_id'] . ';tfid=' . urlencode($context['selected_file']['source_id'] . '|' . $context['selected_file']['lang_id']),
+		'name' => $context['selected_file']['name'],
+	);
 
 	$context['entries'] = array();
 

@@ -703,7 +703,7 @@ function aeva_admin_maintenance_finderrors()
 // Handles the pruning page
 function aeva_admin_maintenance_prune()
 {
-	global $context, $txt, $scripturl;
+	global $context, $txt;
 
 	// Load the albums
 	if (empty($context['aeva_maintain_album']))
@@ -1179,7 +1179,7 @@ function aeva_admin_maintenance_checkorphans()
 // Handles the ban homepage
 function aeva_admin_bans()
 {
-	global $context, $txt, $galurl, $scripturl;
+	global $context, $txt, $galurl;
 
 	// Sub-actions
 	$sa = array(
@@ -1236,7 +1236,7 @@ function aeva_admin_bans()
 
 	// Get the index
 	$_REQUEST['start'] = empty($_REQUEST['start']) ? 0 : (int) $_REQUEST['start'];
-	$context['aeva_page_index'] = template_page_index($scripturl . '?action=admin;area=aeva_bans;' . $context['session_query'], $_REQUEST['start'], $total_logs, 20);
+	$context['aeva_page_index'] = template_page_index('<URL>?action=admin;area=aeva_bans;' . $context['session_query'], $_REQUEST['start'], $total_logs, 20);
 
 	// Finish it off
 	wetem::load('aeva_admin_bans');
@@ -1245,7 +1245,7 @@ function aeva_admin_bans()
 // Adds a ban
 function aeva_admin_bans_add()
 {
-	global $context, $txt, $scripturl, $theme;
+	global $context, $txt, $theme;
 
 	// Any "u"s we are getting?
 	$context['aeva_curr_members'] = array();
@@ -1273,7 +1273,7 @@ function aeva_admin_bans_add()
 	});');
 
 	// Construct the form
-	$context['aeva_form_url'] = $scripturl . '?action=admin;area=aeva_bans;sa=add;' . $context['session_query'];
+	$context['aeva_form_url'] = '<URL>?action=admin;area=aeva_bans;sa=add;' . $context['session_query'];
 	$context['aeva_form'] = array(
 		'banning' => array(
 			'fieldname' => 'banning',
@@ -1382,7 +1382,7 @@ function aeva_admin_bans_add()
 		);
 		aeva_logModAction($opts);
 
-		redirectexit($scripturl . '?action=admin;area=aeva_bans;' . $context['session_query']);
+		redirectexit('action=admin;area=aeva_bans;' . $context['session_query']);
 	}
 }
 
@@ -1437,7 +1437,7 @@ function aeva_admin_bans_delete()
 // Edits a ban entry
 function aeva_admin_bans_edit()
 {
-	global $context, $txt, $scripturl, $theme;
+	global $context, $txt, $theme;
 
 	// Get this item's data
 	$request = wesql::query('
@@ -1456,7 +1456,7 @@ function aeva_admin_bans_edit()
 	wesql::free_result($request);
 
 	// Construct the form
-	$context['aeva_form_url'] = $scripturl . '?action=admin;area=aeva_bans;sa=edit;in=' . $_REQUEST['in'] . ';' . $context['session_query'];
+	$context['aeva_form_url'] = '<URL>?action=admin;area=aeva_bans;sa=edit;in=' . $_REQUEST['in'] . ';' . $context['session_query'];
 	$context['aeva_form'] = array(
 		'banning' => array(
 			'fieldname' => 'banning',
@@ -1536,6 +1536,6 @@ function aeva_admin_bans_edit()
 			)
 		);
 
-		redirectexit($scripturl . '?action=admin;area=aeva_bans;' . $context['session_query']);
+		redirectexit('action=admin;area=aeva_bans;' . $context['session_query']);
 	}
 }

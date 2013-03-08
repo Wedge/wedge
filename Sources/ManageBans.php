@@ -764,7 +764,7 @@ function BanListSettings($return_config = false)
 			$_POST['softban_delay_max'] = $_POST['softban_delay_min'];
 			$_POST['softban_delay_min'] = $temp;
 		}
-			
+
 		checkSession();
 		saveDBSettings($config_vars);
 		redirectexit('action=admin;area=ban;sa=settings');

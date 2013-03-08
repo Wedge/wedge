@@ -354,10 +354,8 @@ function template_modify_entries()
 	</we:cat>';
 
 	echo '
-	<form action="<URL>?action=admin;area=languages;sa=editlang;lid=', $context['lang_id'], '" id="entry_form" method="post" accept-charset="UTF-8">
-		<input type="hidden" name="tfid" value="', $context['selected_file']['source_id'], '|', $context['selected_file']['lang_id'], '">
-		<div class="windowbg2 wrc">
-			<dl class="settings admin_permissions">';
+	<div class="windowbg2 wrc">
+		<dl class="settings admin_permissions">';
 
 	foreach ($context['entries'] as $key => $entry)
 	{
@@ -365,18 +363,15 @@ function template_modify_entries()
 		list($lang_var, $actual_key) = explode('_', $key, 2);
 
 		echo '
-				<dt>', $actual_key, '</dt>
-				<dd>';
+			<dt>', $actual_key, '</dt>
+			<dd>';
 
 		if (isset($entry['master']))
 		{
 			if (!is_array($entry['master']))
 				echo sprintf($txt['language_edit_master_value'], westr::safe($entry['master'], ENT_QUOTES));
 			else
-			{
-				echo $txt['language_edit_master_value_array'];
-				template_array_langstring($entry['master']);
-			}
+				template_array_langstring($txt['language_edit_master_value_array'], $entry['master']);
 		}
 		else
 			echo sprintf($txt['language_edit_master_value'], $txt['not_applicable']);
@@ -387,91 +382,30 @@ function template_modify_entries()
 			if (!is_array($entry['current']))
 				echo sprintf($txt['language_edit_current_value'], westr::safe($entry['current'], ENT_QUOTES));
 			else
-			{
-				echo $txt['language_edit_current_value_array'];
-				template_array_langstring($entry['current']);
-			}
+				template_array_langstring($txt['language_edit_current_value_array'], $entry['current']);
 		}
 
 		echo '
-				</dd>';
-	}
-
-	// Already have some?
-	if (!empty($context['file_entries']))
-	{
-		echo '
-		<div class="windowbg2 wrc">
-			<dl class="settings">';
-
-		$cached = array();
-		foreach ($context['file_entries'] as $entry)
-		{
-			// Do it in two's!
-			if (empty($cached))
-			{
-				$cached = $entry;
-				continue;
-			}
-
-			echo '
-				<dt>
-					<span class="smalltext">', $cached['key'], '</span>
-				</dt>
-				<dd>
-					<span class="smalltext">', $entry['key'], '</span>
-				</dd>
-				<dt>
-					<input type="hidden" name="comp[', $cached['key'], ']" value="', $cached['value'], '">
-					<textarea name="entry[', $cached['key'], ']" cols="40" rows="', $cached['rows'] < 2 ? 2 : $cached['rows'], '" style="', we::is('ie8') ? 'width: 635px; max-width: 96%; min-width: 96%' : 'width: 96%', '">', $cached['value'], '</textarea>
-				</dt>
-				<dd>
-					<input type="hidden" name="comp[', $entry['key'], ']" value="', $entry['value'], '">
-					<textarea name="entry[', $entry['key'], ']" cols="40" rows="', $entry['rows'] < 2 ? 2 : $entry['rows'], '" style="', we::is('ie8') ? 'width: 635px; max-width: 96%; min-width: 96%' : 'width: 96%', '">', $entry['value'], '</textarea>
-				</dd>';
-			$cached = array();
-		}
-
-		// Odd number?
-		if (!empty($cached))
-			echo '
-				<dt>
-					<span class="smalltext">', $cached['key'], '</span>
-				</dt>
-				<dd>
-				</dd>
-				<dt>
-					<input type="hidden" name="comp[', $cached['key'], ']" value="', $cached['value'], '">
-					<textarea name="entry[', $cached['key'], ']" cols="40" rows="2" style="', we::is('ie8') ? 'width: 635px; max-width: 96%; min-width: 96%' : 'width: 96%', '">', $cached['value'], '</textarea>
-				</dt>
-				<dd>
-				</dd>';
-
-		echo '
-			</dl>
-			<input type="submit" name="save_entries" value="', $txt['save'], '" class="save">';
-
-		echo '
-		</div>';
+			</dd>';
 	}
 
 	echo '
-			</dl>
-			<input type="submit" name="save_entries" value="', $txt['save'], '" class="save">
-		</div>
-	</form>';
+		</dl>
+		<input type="submit" name="save_entries" value="', $txt['save'], '" class="save">
+	</div>';
 }
 
-function template_array_langstring($array)
+function template_array_langstring($title, $array)
 {
 	echo '
-					<dl>';
+				', $title, '
+				<dl>';
 
 	foreach ($array as $k => $v)
 		echo '
-						<dt>', westr::safe($k, ENT_QUOTES), '</dt>
-						<dd>', westr::safe($v, ENT_QUOTES), '</dd>';
+					<dt>', westr::safe($k, ENT_QUOTES), '</dt>
+					<dd>', westr::safe($v, ENT_QUOTES), '</dd>';
 
 	echo '
-					</dl>';
+				</dl>';
 }

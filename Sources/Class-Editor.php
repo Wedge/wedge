@@ -25,7 +25,7 @@ class wedit
 
 	public function __construct($editorOptions)
 	{
-		global $settings, $options, $context, $theme, $scripturl;
+		global $settings, $options, $context, $theme;
 
 		if (!is_array($editorOptions))
 			$editorOptions = array($editorOptions);
@@ -2399,7 +2399,7 @@ class wedit
 
 	public function outputEditor()
 	{
-		global $context, $theme, $options, $txt, $settings, $scripturl, $boarddir, $boardurl, $smiley_css_done;
+		global $context, $theme, $options, $txt, $settings, $boarddir, $boardurl, $smiley_css_done;
 
 		$smileycontainer = empty($this->editorOptions['custom_smiley_div']) ? 'smileyBox_' . $this->id : $this->editorOptions['custom_smiley_div'];
 		$bbccontainer = empty($this->editorOptions['custom_bbc_div']) ? 'bbcBox_' . $this->id : $this->editorOptions['custom_bbc_div'];

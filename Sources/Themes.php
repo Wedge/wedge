@@ -91,7 +91,7 @@ if (!defined('WEDGE'))
 // Subaction handler.
 function ThemesMain()
 {
-	global $txt, $context, $scripturl;
+	global $txt, $context;
 
 	// Load the important language files...
 	loadLanguage('Themes');
@@ -539,7 +539,7 @@ function RemoveTheme()
 // Choose a theme from a list.
 function PickTheme()
 {
-	global $txt, $context, $settings, $language, $theme, $scripturl;
+	global $txt, $context, $settings, $language, $theme;
 
 	loadLanguage('Themes');
 	loadTemplate('Themes');
@@ -548,7 +548,7 @@ function PickTheme()
 
 	// Build the link tree.
 	$context['linktree'][] = array(
-		'url' => $u === null ? $scripturl . '?action=skin' : ($scripturl . ($u > 0 ? '?action=skin;u=' : '?action=theme;sa=pick;u=') . (int) $u),
+		'url' => $u === null ? '<URL>?action=skin' : ('<URL>' . ($u > 0 ? '?action=skin;u=' : '?action=theme;sa=pick;u=') . (int) $u),
 		'name' => $txt['change_skin'],
 	);
 
@@ -978,7 +978,7 @@ function ThemeInstall()
 
 function EditTheme()
 {
-	global $context, $theme, $scripturl, $boarddir;
+	global $context, $theme, $boarddir;
 
 	// !!! Should this be removed?
 	if (isset($_REQUEST['preview']))
@@ -1095,7 +1095,7 @@ function EditTheme()
 				'is_template' => false,
 				'is_image' => false,
 				'is_editable' => false,
-				'href' => $scripturl . '?action=admin;area=theme;th=' . $_GET['th'] . ';' . $context['session_query'] . ';sa=edit;directory=' . $temp,
+				'href' => '<URL>?action=admin;area=theme;th=' . $_GET['th'] . ';' . $context['session_query'] . ';sa=edit;directory=' . $temp,
 				'size' => '',
 			));
 		}
@@ -1241,7 +1241,7 @@ function EditTheme()
 
 function get_file_listing($path, $relative)
 {
-	global $scripturl, $txt, $context;
+	global $txt, $context;
 
 	// Is it even a directory?
 	if (!is_dir($path))
@@ -1272,7 +1272,7 @@ function get_file_listing($path, $relative)
 				'is_template' => false,
 				'is_image' => false,
 				'is_editable' => false,
-				'href' => $scripturl . '?action=admin;area=theme;th=' . $_GET['th'] . ';' . $context['session_query'] . ';sa=edit;directory=' . $relative . $entry,
+				'href' => '<URL>?action=admin;area=theme;th=' . $_GET['th'] . ';' . $context['session_query'] . ';sa=edit;directory=' . $relative . $entry,
 				'size' => '',
 			);
 		else
@@ -1290,7 +1290,7 @@ function get_file_listing($path, $relative)
 				'is_template' => preg_match('~\.template\.php$~', $entry) != 0,
 				'is_image' => preg_match('~\.(jpg|jpeg|gif|bmp|png)$~', $entry) != 0,
 				'is_editable' => is_writable($path . '/' . $entry) && preg_match('~\.(php|pl|css|js|vbs|xml|xslt|txt|xsl|html|htm|shtm|shtml|asp|aspx|cgi|py)$~', $entry) != 0,
-				'href' => $scripturl . '?action=admin;area=theme;th=' . $_GET['th'] . ';' . $context['session_query'] . ';sa=edit;filename=' . $relative . $entry,
+				'href' => '<URL>?action=admin;area=theme;th=' . $_GET['th'] . ';' . $context['session_query'] . ';sa=edit;filename=' . $relative . $entry,
 				'size' => $size,
 				'last_modified' => timeformat(filemtime($path . '/' . $entry)),
 			);

@@ -69,7 +69,7 @@ if (!defined('WEDGE'))
 // The entrance point for all 'Manage Membergroup' actions.
 function ModifyMembergroups()
 {
-	global $context, $txt, $scripturl;
+	global $context, $txt;
 
 	$subActions = array(
 		'add' => array('AddMembergroup', 'manage_membergroups'),
@@ -108,7 +108,7 @@ function ModifyMembergroups()
 // An overview of the current membergroups.
 function MembergroupIndex()
 {
-	global $txt, $scripturl, $context, $theme;
+	global $txt, $context, $theme;
 
 	$context['page_title'] = $txt['membergroups_title'];
 
@@ -116,7 +116,7 @@ function MembergroupIndex()
 	$listOptions = array(
 		'id' => 'regular_membergroups_list',
 		'title' => $txt['membergroups_regular'],
-		'base_href' => $scripturl . '?action=admin;area=membergroups' . (isset($_REQUEST['sort2']) ? ';sort2=' . urlencode($_REQUEST['sort2']) : ''),
+		'base_href' => '<URL>?action=admin;area=membergroups' . (isset($_REQUEST['sort2']) ? ';sort2=' . urlencode($_REQUEST['sort2']) : ''),
 		'default_sort_col' => 'name',
 		'get_items' => array(
 			'file' => 'Subs-Membergroups',
@@ -132,22 +132,20 @@ function MembergroupIndex()
 				),
 				'data' => array(
 					'function' => create_function('$rowData', '
-						global $scripturl;
-
 						// Since the moderator group has no explicit members, no link is needed.
 						if ($rowData[\'id_group\'] == 3)
 							$group_name = $rowData[\'group_name\'];
 						else
 						{
 							$color_style = empty($rowData[\'online_color\']) ? \'\' : sprintf(\' style="color: %1$s"\', $rowData[\'online_color\']);
-							$group_name = sprintf(\'<a href="%1$s?action=admin;area=membergroups;sa=members;group=%2$d"%3$s>%4$s</a>\', $scripturl, $rowData[\'id_group\'], $color_style, $rowData[\'group_name\']);
+							$group_name = sprintf(\'<a href="<URL>?action=admin;area=membergroups;sa=members;group=%1$d"%2$s>%3$s</a>\', $rowData[\'id_group\'], $color_style, $rowData[\'group_name\']);
 						}
 
 						// Add a help option for moderator and administrator.
 						if ($rowData[\'id_group\'] == 1)
-							$group_name .= sprintf(\' (<a href="%1$s?action=help;in=membergroup_administrator" onclick="return reqWin(this);">?</a>)\', $scripturl);
+							$group_name .= \' (<a href="<URL>?action=help;in=membergroup_administrator" onclick="return reqWin(this);">?</a>)\';
 						elseif ($rowData[\'id_group\'] == 3)
-							$group_name .= sprintf(\' (<a href="%1$s?action=help;in=membergroup_moderator" onclick="return reqWin(this);">?</a>)\', $scripturl);
+							$group_name .= \' (<a href="<URL>?action=help;in=membergroup_moderator" onclick="return reqWin(this);">?</a>)\';
 
 						return $group_name;
 					'),
@@ -209,7 +207,7 @@ function MembergroupIndex()
 				),
 				'data' => array(
 					'sprintf' => array(
-						'format' => '<a href="' . $scripturl . '?action=admin;area=membergroups;sa=edit;group=%1$d">' . $txt['membergroups_modify'] . '</a>',
+						'format' => '<a href="<URL>?action=admin;area=membergroups;sa=edit;group=%1$d">' . $txt['membergroups_modify'] . '</a>',
 						'params' => array(
 							'id_group' => false,
 						),
@@ -233,7 +231,7 @@ function MembergroupIndex()
 	$listOptions = array(
 		'id' => 'post_count_membergroups_list',
 		'title' => $txt['membergroups_post'],
-		'base_href' => $scripturl . '?action=admin;area=membergroups' . (isset($_REQUEST['sort']) ? ';sort=' . urlencode($_REQUEST['sort']) : ''),
+		'base_href' => '<URL>?action=admin;area=membergroups' . (isset($_REQUEST['sort']) ? ';sort=' . urlencode($_REQUEST['sort']) : ''),
 		'default_sort_col' => 'required_posts',
 		'request_vars' => array(
 			'sort' => 'sort2',
@@ -253,10 +251,8 @@ function MembergroupIndex()
 				),
 				'data' => array(
 					'function' => create_function('$rowData', '
-						global $scripturl;
-
 						$colorStyle = empty($rowData[\'online_color\']) ? \'\' : sprintf(\' style="color: %1$s"\', $rowData[\'online_color\']);
-						return sprintf(\'<a href="%1$s?action=moderate;area=viewgroups;sa=members;group=%2$d"%3$s>%4$s</a>\', $scripturl, $rowData[\'id_group\'], $colorStyle, $rowData[\'group_name\']);
+						return sprintf(\'<a href="<URL>?action=moderate;area=viewgroups;sa=members;group=%1$d"%2$s>%3$s</a>\', $rowData[\'id_group\'], $colorStyle, $rowData[\'group_name\']);
 					'),
 				),
 				'sort' => array(
@@ -320,7 +316,7 @@ function MembergroupIndex()
 				),
 				'data' => array(
 					'sprintf' => array(
-						'format' => '<a href="' . $scripturl . '?action=admin;area=membergroups;sa=edit;group=%1$d">' . $txt['membergroups_modify'] . '</a>',
+						'format' => '<a href="<URL>?action=admin;area=membergroups;sa=edit;group=%1$d">' . $txt['membergroups_modify'] . '</a>',
 						'params' => array(
 							'id_group' => false,
 						),
@@ -1174,7 +1170,7 @@ function EditMembergroup()
 // Set general membergroup settings.
 function ModifyMembergroupSettings($return_config = false)
 {
-	global $context, $scripturl, $settings, $txt, $theme;
+	global $context, $settings, $txt, $theme;
 
 	// !! Show we add a hook for plugins to add to these options...?
 	$which_groups = array(
@@ -1278,7 +1274,7 @@ function ModifyMembergroupSettings($return_config = false)
 	}
 
 	// Some simple context.
-	$context['post_url'] = $scripturl . '?action=admin;area=membergroups;save;sa=settings';
+	$context['post_url'] = '<URL>?action=admin;area=membergroups;save;sa=settings';
 	$context['settings_title'] = $txt['membergroups_settings'];
 
 	prepareDBSettingContext($config_vars);

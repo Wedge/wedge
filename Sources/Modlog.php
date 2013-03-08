@@ -33,7 +33,7 @@ if (!defined('WEDGE'))
 // Show the moderation log
 function ViewModlog()
 {
-	global $txt, $settings, $context, $scripturl, $theme;
+	global $txt, $settings, $context, $theme;
 
 	// Are we looking at the moderation log or the administration log.
 	$context['log_type'] = isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'adminlog' ? 3 : 1;
@@ -160,11 +160,11 @@ function ViewModlog()
 	// This is all the information required for a watched user listing.
 	$listOptions = array(
 		'id' => 'moderation_log_list',
-		'title' => '<a href="' . $scripturl . '?action=help;in=' . ($context['log_type'] == 3 ? 'adminlog' : 'modlog') . '" onclick="return reqWin(this);" class="help" title="' . $txt['help'] . '"></a> ' . $txt['modlog_' . ($context['log_type'] == 3 ? 'admin' : 'moderation') . '_log'],
+		'title' => '<a href="<URL>?action=help;in=' . ($context['log_type'] == 3 ? 'adminlog' : 'modlog') . '" onclick="return reqWin(this);" class="help" title="' . $txt['help'] . '"></a> ' . $txt['modlog_' . ($context['log_type'] == 3 ? 'admin' : 'moderation') . '_log'],
 		'width' => '100%',
 		'items_per_page' => $context['displaypage'],
 		'no_items_label' => $txt['modlog_' . ($context['log_type'] == 3 ? 'admin_log_' : '') . 'no_entries_found'],
-		'base_href' => $scripturl . $context['url_start'] . (!empty($context['search_params']) ? ';params=' . $context['search_params'] : ''),
+		'base_href' => '<URL>' . $context['url_start'] . (!empty($context['search_params']) ? ';params=' . $context['search_params'] : ''),
 		'default_sort_col' => 'time',
 		'get_items' => array(
 			'function' => 'list_getModLogEntries',
@@ -267,7 +267,7 @@ function ViewModlog()
 			),
 		),
 		'form' => array(
-			'href' => $scripturl . $context['url_start'],
+			'href' => '<URL>' . $context['url_start'],
 			'include_sort' => true,
 			'include_start' => true,
 			'hidden_fields' => array(

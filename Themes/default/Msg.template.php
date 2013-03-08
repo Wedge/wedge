@@ -37,13 +37,10 @@ function template_msg_wrap_before()
 // Show information about the poster of this message.
 function template_msg_author_before()
 {
+	global $msg, $context, $settings, $txt, $theme, $options;
+
 	echo '
 					<div class="poster">';
-}
-
-function template_msg_author()
-{
-	global $msg, $context, $settings, $txt, $theme, $options;
 
 	$gts = !empty($settings['group_text_show']) ? $settings['group_text_show'] : 'cond';
 
@@ -77,33 +74,59 @@ function template_msg_author()
 							<a href="', $msg['member']['href'], '" data-id="', $msg['member']['id'], '" class="umme">', $msg['member']['name'], '</a>
 						</h4>
 						<ul class="info">';
+}
+
+function template_msg_author_title()
+{
+	global $msg, $context;
 
 	// Show the member's custom title, if they have one.
 	if (!empty($msg['member']['title']) && !$context['is_mobile'])
 		echo '
 							<li class="mtitle">', $msg['member']['title'], '</li>';
+}
+
+function template_msg_author_group()
+{
+	global $msg, $context, $settings, $txt, $theme, $options;
+
+	$gts = !empty($settings['group_text_show']) ? $settings['group_text_show'] : 'cond';
 
 	// Show the member's primary group (like 'Administrator') if they have one, and if allowed.
 	if (!empty($msg['member']['group']) && ($gts === 'all' || $gts === 'normal' || $gts === 'cond'))
 		echo '
 							<li class="membergroup">', $msg['member']['group'], '</li>';
 
-	// Don't show these things for guests or mobile skins.
 	if (!$msg['member']['is_guest'] && !$context['is_mobile'])
 	{
 		// Show the post-based group if allowed by $settings['group_text_show'].
 		if (!empty($msg['member']['post_group']) && ($gts === 'all' || $gts === 'post' || ($gts === 'cond' && empty($msg['member']['group']))))
 			echo '
 							<li class="postgroup">', $msg['member']['post_group'], '</li>';
+	}
+}
 
+function template_msg_author_badge()
+{
+	global $msg, $context, $settings, $txt, $theme, $options;
+
+	if (!$msg['member']['is_guest'] && !$context['is_mobile'])
+	{
 		if (!empty($msg['member']['group_badges']))
 			echo '
 							<li class="stars">
 								<div>', implode('</div>
 								<div>', $msg['member']['group_badges']), '</div>
 							</li>';
+	}
+}
 
-		// Show avatars, images, etc.?
+function template_msg_author_avatar()
+{
+	global $msg, $context, $settings, $txt, $theme, $options;
+	// Show avatars, images, etc.?
+	if (!$msg['member']['is_guest'] && !$context['is_mobile'])
+	{
 		if (!empty($theme['show_user_images']) && !empty($options['show_avatars']) && !empty($msg['member']['avatar']['image']))
 			echo '
 							<li class="avatar">
@@ -111,17 +134,41 @@ function template_msg_author()
 									', $msg['member']['avatar']['image'], '
 								</a>
 							</li>';
+	}
+}
 
-		// Show how many posts they have made.
-		if (!isset($context['disabled_fields']['posts']))
-			echo '
-							<li class="postcount">', $txt['member_postcount'], ': ', $msg['member']['posts'], '</li>';
+function template_msg_author_blurb()
+{
+	global $msg, $theme, $context;
 
+	if (!$msg['member']['is_guest'] && !$context['is_mobile'])
+	{
 		// Show their personal text?
 		if (!empty($theme['show_blurb']) && $msg['member']['blurb'] !== '')
 			echo '
 							<li class="blurb">', $msg['member']['blurb'], '</li>';
+	}
+}
 
+function template_msg_author_postcount()
+{
+	global $msg, $context, $settings, $txt, $theme, $options;
+
+	if (!$msg['member']['is_guest'] && !$context['is_mobile'])
+	{
+		// Show how many posts they have made.
+		if (!isset($context['disabled_fields']['posts']))
+			echo '
+							<li class="postcount">', $txt['member_postcount'], ': ', $msg['member']['posts'], '</li>';
+	}
+}
+
+function template_msg_author_icons()
+{
+	global $msg, $context, $settings, $txt, $theme, $options;
+
+	if (!$msg['member']['is_guest'] && !$context['is_mobile'])
+	{
 		// Any custom fields to show as icons?
 		if (!empty($msg['member']['custom_fields']))
 		{
@@ -145,31 +192,47 @@ function template_msg_author()
 								</ul>
 							</li>';
 		}
+	}
+}
 
+function template_msg_author_cf()
+{
+	global $msg, $context, $settings, $txt, $theme, $options;
+
+	if (!$msg['member']['is_guest'] && !$context['is_mobile'])
+	{
 		// Any custom fields for standard placement?
 		if (!empty($msg['member']['custom_fields']))
 			foreach ($msg['member']['custom_fields'] as $custom)
 				if (empty($custom['placement']) || empty($custom['value']))
 					echo '
 							<li class="custom">', $custom['title'], ': ', $custom['value'], '</li>';
+	}
+}
 
+function template_msg_author_warning()
+{
+	global $msg, $context, $settings, $txt, $theme, $options;
+
+	if (!$msg['member']['is_guest'] && !$context['is_mobile'])
+	{
 		// Are we showing the warning status?
 		if ($msg['member']['can_see_warning'])
 			echo '
 							<li class="warning">', $context['can_issue_warning'] && $msg['member']['warning_status'] != 'ban' ? '<a href="<URL>?action=profile;u=' . $msg['member']['id'] . ';area=issuewarning">' : '', '<img src="', $theme['images_url'], '/warning_', $msg['member']['warning_status'], '.gif" alt="', $txt['user_warn_' . $msg['member']['warning_status']], '">', $context['can_issue_warning'] && $msg['member']['warning_status'] != 'ban' ? '</a>' : '', ' <span class="warn_', $msg['member']['warning_status'], '">', $txt['warn_' . $msg['member']['warning_status']], '</span></li>';
 	}
-	// Otherwise, show the guest's email.
-	elseif (!$context['is_mobile'] && !empty($msg['member']['email']) && in_array($msg['member']['show_email'], array('yes_permission_override', 'no_through_forum')))
-		echo '
-							<li class="email"><a href="<URL>?action=emailuser;sa=email;msg=', $msg['id'], '" rel="nofollow">', $theme['use_image_buttons'] ? '<img src="' . $theme['images_url'] . '/email_sm.gif" alt="' . $txt['email'] . '" title="' . $txt['email'] . '">' : $txt['email'], '</a></li>';
-
-	echo '
-						</ul>';
 }
 
 function template_msg_author_after()
 {
+	global $msg, $context, $settings, $txt, $theme, $options;
+
+	if ($msg['member']['is_guest'] && !$context['is_mobile'] && !empty($msg['member']['email']) && in_array($msg['member']['show_email'], array('yes_permission_override', 'no_through_forum')))
+		echo '
+							<li class="email"><a href="<URL>?action=emailuser;sa=email;msg=', $msg['id'], '" rel="nofollow">', $theme['use_image_buttons'] ? '<img src="' . $theme['images_url'] . '/email_sm.gif" alt="' . $txt['email'] . '" title="' . $txt['email'] . '">' : $txt['email'], '</a></li>';
+
 	echo '
+						</ul>
 					</div>';
 }
 

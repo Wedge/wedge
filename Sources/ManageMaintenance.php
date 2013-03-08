@@ -105,7 +105,7 @@ if (!defined('WEDGE'))
 // The maintenance access point.
 function ManageMaintenance()
 {
-	global $txt, $settings, $scripturl, $context, $options;
+	global $txt, $settings, $context, $options;
 
 	// You absolutely must be an admin by here!
 	isAllowedTo('admin_forum');
@@ -344,7 +344,7 @@ function MaintainEmptyUnimportantLogs()
 // Convert both data and database tables to UTF-8 character set.
 function ConvertUtf8()
 {
-	global $scripturl, $context, $txt, $language;
+	global $context, $txt, $language;
 	global $settings, $db_prefix;
 
 	// Show me your badge!
@@ -879,7 +879,7 @@ function ConvertEntities()
 // Optimize the database's tables.
 function OptimizeTables()
 {
-	global $db_name, $db_prefix, $txt, $context, $scripturl;
+	global $db_name, $db_prefix, $txt, $context;
 
 	isAllowedTo('admin_forum');
 
@@ -932,7 +932,7 @@ function OptimizeTables()
 // Recount all the important board totals.
 function AdminBoardRecount()
 {
-	global $txt, $context, $scripturl, $settings;
+	global $txt, $context, $settings;
 	global $time_start;
 
 	isAllowedTo('admin_forum');
@@ -1605,7 +1605,7 @@ function MaintainPurgeInactiveMembers()
 
 function MaintainRecountPosts()
 {
-	global $txt, $context, $scripturl, $settings, $time_start;
+	global $txt, $context, $settings, $time_start;
 
 	isAllowedTo('admin_forum');
 	checkSession('request');

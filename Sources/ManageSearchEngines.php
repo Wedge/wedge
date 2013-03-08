@@ -17,7 +17,7 @@ if (!defined('WEDGE'))
 // Entry point for this section.
 function SearchEngines()
 {
-	global $context, $txt, $settings, $scripturl;
+	global $context, $txt, $settings;
 
 	isAllowedTo('admin_forum');
 
@@ -55,7 +55,7 @@ function SearchEngines()
 // This is really just the settings page.
 function ManageSearchEngineSettings($return_config = false)
 {
-	global $context, $txt, $settings, $scripturl;
+	global $context, $txt, $settings;
 
 	$config_vars = array(
 		// How much detail?
@@ -65,7 +65,7 @@ function ManageSearchEngineSettings($return_config = false)
 	);
 
 	// Set up a message.
-	$context['settings_message'] = '<span class="smalltext">' . sprintf($txt['spider_settings_desc'], $scripturl . '?action=admin;area=logs;sa=settings;' . $context['session_query']) . '</span>';
+	$context['settings_message'] = '<span class="smalltext">' . sprintf($txt['spider_settings_desc'], '<URL>?action=admin;area=logs;sa=settings;' . $context['session_query']) . '</span>';
 
 	// Do some javascript.
 	$javascript_function = '
@@ -122,7 +122,7 @@ function ManageSearchEngineSettings($return_config = false)
 	}
 
 	// Final settings...
-	$context['post_url'] = $scripturl . '?action=admin;area=sengines;save;sa=settings';
+	$context['post_url'] = '<URL>?action=admin;area=sengines;save;sa=settings';
 	$context['settings_title'] = $txt['settings'];
 	add_js($javascript_function);
 
@@ -133,7 +133,7 @@ function ManageSearchEngineSettings($return_config = false)
 // View a list of all the spiders we know about.
 function ViewSpiders()
 {
-	global $context, $txt, $scripturl;
+	global $context, $txt;
 
 	if (!isset($_SESSION['spider_stat']) || $_SESSION['spider_stat'] < time() - 60)
 	{
@@ -197,7 +197,7 @@ function ViewSpiders()
 	$listOptions = array(
 		'id' => 'spider_list',
 		'items_per_page' => 20,
-		'base_href' => $scripturl . '?action=admin;area=sengines;sa=spiders',
+		'base_href' => '<URL>?action=admin;area=sengines;sa=spiders',
 		'default_sort_col' => 'name',
 		'get_items' => array(
 			'function' => 'list_getSpiders',
@@ -213,9 +213,7 @@ function ViewSpiders()
 				),
 				'data' => array(
 					'function' => create_function('$rowData', '
-						global $scripturl;
-
-						return sprintf(\'<a href="%1$s?action=admin;area=sengines;sa=editspiders;sid=%2$d">%3$s</a>\', $scripturl, $rowData[\'id_spider\'], htmlspecialchars($rowData[\'spider_name\']));
+						return sprintf(\'<a href="<URL>?action=admin;area=sengines;sa=editspiders;sid=%1$d">%2$s</a>\', $rowData[\'id_spider\'], htmlspecialchars($rowData[\'spider_name\']));
 					'),
 				),
 				'sort' => array(
@@ -276,7 +274,7 @@ function ViewSpiders()
 			),
 		),
 		'form' => array(
-			'href' => $scripturl . '?action=admin;area=sengines;sa=spiders',
+			'href' => '<URL>?action=admin;area=sengines;sa=spiders',
 		),
 		'additional_rows' => array(
 			array(
@@ -622,7 +620,7 @@ function consolidateSpiderStats()
 // See what spiders have been up to.
 function SpiderLog()
 {
-	global $context, $txt, $scripturl, $settings;
+	global $context, $txt, $settings;
 
 	// Load the template and language just incase.
 	loadLanguage('Search');
@@ -650,7 +648,7 @@ function SpiderLog()
 		'items_per_page' => 20,
 		'title' => $txt['spider_log'],
 		'no_items_label' => $txt['spider_log_empty'],
-		'base_href' => $context['admin_area'] == 'sengines' ? $scripturl . '?action=admin;area=sengines;sa=logs' : $scripturl . '?action=admin;area=logs;sa=spiderlog',
+		'base_href' => $context['admin_area'] == 'sengines' ? '<URL>?action=admin;area=sengines;sa=logs' : '<URL>?action=admin;area=logs;sa=spiderlog',
 		'default_sort_col' => 'log_time',
 		'get_items' => array(
 			'function' => 'list_getSpiderLog',
@@ -768,7 +766,7 @@ function list_getNumSpiderLogs()
 // Show the spider statistics.
 function SpiderStats()
 {
-	global $context, $txt, $scripturl;
+	global $context, $txt;
 
 	loadLanguage('Search');
 	loadTemplate('ManageSearch');
@@ -868,7 +866,7 @@ function SpiderStats()
 	$listOptions = array(
 		'id' => 'spider_stat_list',
 		'items_per_page' => 20,
-		'base_href' => $scripturl . '?action=admin;area=sengines;sa=stats',
+		'base_href' => '<URL>?action=admin;area=sengines;sa=stats',
 		'default_sort_col' => 'stat_date',
 		'get_items' => array(
 			'function' => 'list_getSpiderStats',
@@ -916,7 +914,7 @@ function SpiderStats()
 			),
 		),
 		'form' => array(
-			'href' => $scripturl . '?action=admin;area=sengines;sa=stats',
+			'href' => '<URL>?action=admin;area=sengines;sa=stats',
 			'name' => 'spider_stat_list',
 		),
 		'additional_rows' => array(

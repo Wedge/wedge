@@ -63,7 +63,7 @@ function loadGeneralSettingParameters($subActions = array(), $defaultAction = ''
 // This function passes control through to the relevant tab.
 function ModifyFeatureSettings()
 {
-	global $context, $txt, $scripturl, $theme;
+	global $context, $txt, $theme;
 
 	$context['page_title'] = $txt['settings_title'];
 
@@ -78,7 +78,7 @@ function ModifyFeatureSettings()
 	$context[$context['admin_menu_name']]['tab_data'] = array(
 		'title' => $txt['settings_title'],
 		'help' => 'featuresettings',
-		'description' => sprintf($txt['settings_desc'], $theme['theme_id'], $context['session_query'], $scripturl),
+		'description' => sprintf($txt['settings_desc'], $theme['theme_id'], $context['session_query'], '<URL>'),
 		'tabs' => array(
 			'basic' => array(
 			),
@@ -94,7 +94,7 @@ function ModifyFeatureSettings()
 
 function ModifyBasicSettings($return_config = false)
 {
-	global $txt, $scripturl, $context;
+	global $txt, $context;
 
 	$config_vars = array(
 			array('mbname', $txt['setting_mbname'], 'file', 'text', 30),
@@ -129,7 +129,7 @@ function ModifyBasicSettings($return_config = false)
 		redirectexit('action=admin;area=featuresettings;sa=basic');
 	}
 
-	$context['post_url'] = $scripturl . '?action=admin;area=featuresettings;save;sa=basic';
+	$context['post_url'] = '<URL>?action=admin;area=featuresettings;save;sa=basic';
 	$context['settings_title'] = $txt['mods_cat_features'];
 
 	prepareServerSettingsContext($config_vars);
@@ -138,7 +138,7 @@ function ModifyBasicSettings($return_config = false)
 // Moderation type settings - although there are fewer than we have you believe ;)
 function ModifyWarningSettings($return_config = false)
 {
-	global $txt, $scripturl, $context, $settings;
+	global $txt, $context, $settings;
 
 	isAllowedTo('admin_forum');
 
@@ -189,7 +189,7 @@ function ModifyWarningSettings($return_config = false)
 	// We actually store lots of these together - for efficiency.
 	list ($settings['user_limit'], $settings['warning_decrement']) = explode(',', $settings['warning_settings']);
 
-	$context['post_url'] = $scripturl . '?action=admin;area=warnings;save';
+	$context['post_url'] = '<URL>?action=admin;area=warnings;save';
 	$context['page_title'] = $context['settings_title'] = $txt['warning_title'];
 
 	wetem::load('show_settings');
@@ -199,7 +199,7 @@ function ModifyWarningSettings($return_config = false)
 // Let's try keep the spam to a minimum ah Thantos?
 function ModifySpamSettings($return_config = false)
 {
-	global $txt, $scripturl, $context, $settings, $theme;
+	global $txt, $context, $settings, $theme;
 
 	isAllowedTo('admin_forum');
 
@@ -209,7 +209,7 @@ function ModifySpamSettings($return_config = false)
 	loadSource('ManageServer');
 
 	// Generate a sample registration image.
-	$context['verification_image_href'] = $scripturl . '?action=verificationcode;rand=' . md5(mt_rand());
+	$context['verification_image_href'] = '<URL>?action=verificationcode;rand=' . md5(mt_rand());
 
 	$config_vars = array(
 			array('desc', 'antispam_settings_desc'),
@@ -356,7 +356,7 @@ function ModifySpamSettings($return_config = false)
 		add_js('
 	$(\'#guests_require_captcha\').prop(\'disabled\', true);');
 
-	$context['post_url'] = $scripturl . '?action=admin;area=antispam;save';
+	$context['post_url'] = '<URL>?action=admin;area=antispam;save';
 	$context['page_title'] = $context['settings_title'] = $txt['antispam_settings'];
 
 	wetem::load('show_settings');
@@ -366,7 +366,7 @@ function ModifySpamSettings($return_config = false)
 
 function ModifyLogSettings($return_config = false)
 {
-	global $txt, $scripturl, $context, $settings;
+	global $txt, $context, $settings;
 
 	// Make sure we understand what's going on.
 	loadLanguage('ManageSettings');
@@ -436,7 +436,7 @@ function ModifyLogSettings($return_config = false)
 		redirectexit('action=admin;area=logs;sa=settings');
 	}
 
-	$context['post_url'] = $scripturl . '?action=admin;area=logs;save;sa=settings';
+	$context['post_url'] = '<URL>?action=admin;area=logs;save;sa=settings';
 	$context['settings_title'] = $txt['log_settings'];
 	wetem::load('show_settings');
 

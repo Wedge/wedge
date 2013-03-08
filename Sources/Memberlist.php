@@ -47,7 +47,7 @@ if (!defined('WEDGE'))
 // Show a listing of the registered members.
 function Memberlist()
 {
-	global $scripturl, $txt, $settings, $context, $theme, $settings;
+	global $txt, $settings, $context, $theme, $settings;
 
 	// Make sure they can view the memberlist.
 	isAllowedTo('view_mlist');
@@ -149,7 +149,7 @@ function Memberlist()
 	$context['columns'][key($context['columns'])]['class'] = 'last_th';
 
 	$context['linktree'][] = array(
-		'url' => $scripturl . '?action=mlist',
+		'url' => '<URL>?action=mlist',
 		'name' => $txt['members_list']
 	);
 
@@ -165,8 +165,7 @@ function Memberlist()
 // List all members, page by page.
 function MLAll()
 {
-	global $txt, $scripturl;
-	global $settings, $context;
+	global $txt, $settings, $context;
 
 	// The chunk size for the cached index.
 	$cache_step_size = 500;
@@ -263,7 +262,7 @@ function MLAll()
 
 	$context['letter_links'] = '';
 	for ($i = 97; $i < 123; $i++)
-		$context['letter_links'] .= '<a href="' . $scripturl . '?action=mlist;sa=all;start=' . chr($i) . '#letter' . chr($i) . '">' . strtoupper(chr($i)) . '</a> ';
+		$context['letter_links'] .= '<a href="<URL>?action=mlist;sa=all;start=' . chr($i) . '#letter' . chr($i) . '">' . strtoupper(chr($i)) . '</a> ';
 
 	// Sort out the column information.
 	foreach ($context['columns'] as $col => $column_details)
@@ -276,7 +275,7 @@ function MLAll()
 			continue;
 		}
 
-		$context['columns'][$col]['href'] = $scripturl . '?action=mlist;sort=' . $col . ';start=0';
+		$context['columns'][$col]['href'] = '<URL>?action=mlist;sort=' . $col . ';start=0';
 
 		if ((!isset($_REQUEST['desc']) && $col == $_REQUEST['sort']) || ($col != $_REQUEST['sort'] && !empty($column_details['default_sort_rev'])))
 			$context['columns'][$col]['href'] .= ';desc';
@@ -289,7 +288,7 @@ function MLAll()
 	$context['sort_direction'] = !isset($_REQUEST['desc']) ? 'up' : 'down';
 
 	// Construct the page index.
-	$context['page_index'] = template_page_index($scripturl . '?action=mlist;sort=' . $_REQUEST['sort'] . (isset($_REQUEST['desc']) ? ';desc' : ''), $_REQUEST['start'], $context['num_members'], $settings['defaultMaxMembers']);
+	$context['page_index'] = template_page_index('<URL>?action=mlist;sort=' . $_REQUEST['sort'] . (isset($_REQUEST['desc']) ? ';desc' : ''), $_REQUEST['start'], $context['num_members'], $settings['defaultMaxMembers']);
 
 	// Send the data to the template.
 	$context['start'] = $_REQUEST['start'] + 1;
@@ -298,7 +297,7 @@ function MLAll()
 	$context['can_moderate_forum'] = allowedTo('moderate_forum');
 	$context['page_title'] = sprintf($txt['viewing_members'], $context['start'], $context['end']);
 	$context['linktree'][] = array(
-		'url' => $scripturl . '?action=mlist;sort=' . $_REQUEST['sort'] . ';start=' . $_REQUEST['start'],
+		'url' => '<URL>?action=mlist;sort=' . $_REQUEST['sort'] . ';start=' . $_REQUEST['start'],
 		'name' => &$context['page_title'],
 		'extra_after' => ' (' . sprintf($txt['of_total_members'], $context['num_members']) . ')'
 	);
@@ -403,7 +402,7 @@ function MLAll()
 // Search for members...
 function MLSearch()
 {
-	global $txt, $scripturl, $context, $settings;
+	global $txt, $context, $settings;
 
 	$context['page_title'] = $txt['mlist_search'];
 	$context['can_moderate_forum'] = allowedTo('moderate_forum');
@@ -501,7 +500,7 @@ function MLSearch()
 		list ($numResults) = wesql::fetch_row($request);
 		wesql::free_result($request);
 
-		$context['page_index'] = template_page_index($scripturl . '?action=mlist;sa=search;search=' . $_POST['search'] . ';fields=' . implode(',', $_POST['fields']), $_REQUEST['start'], $numResults, $settings['defaultMaxMembers']);
+		$context['page_index'] = template_page_index('<URL>?action=mlist;sa=search;search=' . $_POST['search'] . ';fields=' . implode(',', $_POST['fields']), $_REQUEST['start'], $numResults, $settings['defaultMaxMembers']);
 
 		// Find the members from the database.
 		// !!! SLOW This query is slow.
@@ -541,15 +540,14 @@ function MLSearch()
 	}
 
 	$context['linktree'][] = array(
-		'url' => $scripturl . '?action=mlist;sa=search',
+		'url' => '<URL>?action=mlist;sa=search',
 		'name' => &$context['page_title']
 	);
 }
 
 function printMemberListRows($request)
 {
-	global $scripturl, $txt, $settings;
-	global $context, $theme, $memberContext;
+	global $txt, $settings, $context, $theme, $memberContext;
 
 	// Get the most posts.
 	$result = wesql::query('

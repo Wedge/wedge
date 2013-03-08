@@ -34,7 +34,7 @@ if (!defined('WEDGE'))
 // This function passes control through to the relevant section
 function ManageMail()
 {
-	global $context, $txt, $scripturl, $settings;
+	global $context, $txt, $settings;
 
 	// You need to be an admin to edit settings!
 	isAllowedTo('admin_forum');
@@ -84,7 +84,7 @@ function ManageMail()
 // Display the mail queue...
 function BrowseMailQueue()
 {
-	global $scripturl, $context, $settings, $txt;
+	global $context, $settings, $txt;
 
 	// First, are we deleting something from the queue?
 	if (isset($_REQUEST['delete']))
@@ -117,7 +117,7 @@ function BrowseMailQueue()
 		'id' => 'mail_queue',
 		'title' => $txt['mailqueue_browse'],
 		'items_per_page' => 20,
-		'base_href' => $scripturl . '?action=admin;area=mailqueue',
+		'base_href' => '<URL>?action=admin;area=mailqueue',
 		'default_sort_col' => 'age',
 		'no_items_label' => $txt['mailqueue_no_items'],
 		'get_items' => array(
@@ -209,7 +209,7 @@ function BrowseMailQueue()
 			),
 		),
 		'form' => array(
-			'href' => $scripturl . '?action=admin;area=mailqueue',
+			'href' => '<URL>?action=admin;area=mailqueue',
 			'include_start' => true,
 			'include_sort' => true,
 		),
@@ -275,7 +275,7 @@ function list_getMailQueueSize()
 
 function ModifyMailSettings($return_config = false)
 {
-	global $txt, $scripturl, $context, $settings;
+	global $txt, $context, $settings;
 
 	$config_vars = array(
 			// Master email settings
@@ -316,7 +316,7 @@ function ModifyMailSettings($return_config = false)
 		redirectexit('action=admin;area=mailqueue;sa=settings');
 	}
 
-	$context['post_url'] = $scripturl . '?action=admin;area=mailqueue;save;sa=settings';
+	$context['post_url'] = '<URL>?action=admin;area=mailqueue;save;sa=settings';
 	$context['settings_title'] = $txt['mailqueue_settings'];
 
 	// We need to use this instead of prepareDBSettingsContext because some of this stuff goes in Settings.php itself.

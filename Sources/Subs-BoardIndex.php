@@ -25,8 +25,7 @@ if (!defined('WEDGE'))
 
 function getBoardIndex($boardIndexOptions)
 {
-	global $scripturl, $settings, $txt;
-	global $theme, $context, $language;
+	global $settings, $txt, $theme, $context, $language;
 
 	// For performance, track the latest post while going through the boards.
 	if (!empty($boardIndexOptions['set_latest_post']))
@@ -92,9 +91,9 @@ function getBoardIndex($boardIndexOptions)
 					'name' => $row_board['cat_name'],
 					'is_collapsed' => isset($row_board['can_collapse']) && $row_board['can_collapse'] == 1 && $row_board['is_collapsed'] > 0,
 					'can_collapse' => (isset($row_board['can_collapse']) && $row_board['can_collapse'] == 1) && empty($_GET['category']),
-					'collapse_href' => isset($row_board['can_collapse']) ? $scripturl . '?action=collapse;c=' . $row_board['id_cat'] . ';sa=' . ($row_board['is_collapsed'] > 0 ? 'expand;' : 'collapse;') . $context['session_query'] . '#category_' . $row_board['id_cat'] : '',
+					'collapse_href' => isset($row_board['can_collapse']) ? '<URL>?action=collapse;c=' . $row_board['id_cat'] . ';sa=' . ($row_board['is_collapsed'] > 0 ? 'expand;' : 'collapse;') . $context['session_query'] . '#category_' . $row_board['id_cat'] : '',
 					'collapse_image' => isset($row_board['can_collapse']) ? '<div class="catfold' . ($row_board['is_collapsed'] > 0 ? '' : ' fold') . '"></div>' : '',
-					'href' => $scripturl . '?category=' . $row_board['id_cat'],
+					'href' => '<URL>?category=' . $row_board['id_cat'],
 					'boards' => array(),
 					'new' => false,
 				);
@@ -144,8 +143,8 @@ function getBoardIndex($boardIndexOptions)
 					'unapproved_topics' => $row_board['unapproved_topics'],
 					'unapproved_posts' => $row_board['unapproved_posts'] - $row_board['unapproved_topics'],
 					'can_approve_posts' => !empty(we::$user['mod_cache']['ap']) && (we::$user['mod_cache']['ap'] == array(0) || in_array($row_board['id_board'], we::$user['mod_cache']['ap'])),
-					'href' => $scripturl . '?board=' . $row_board['id_board'] . '.0',
-					'link' => '<a href="' . $scripturl . '?board=' . $row_board['id_board'] . '.0">' . $row_board['board_name'] . '</a>',
+					'href' => '<URL>?board=' . $row_board['id_board'] . '.0',
+					'link' => '<a href="<URL>?board=' . $row_board['id_board'] . '.0">' . $row_board['board_name'] . '</a>',
 					'language' => $row_board['language'],
 				);
 			}
@@ -154,10 +153,10 @@ function getBoardIndex($boardIndexOptions)
 				$this_category[$row_board['id_board']]['moderators'][$row_board['id_moderator']] = array(
 					'id' => $row_board['id_moderator'],
 					'name' => $row_board['mod_real_name'],
-					'href' => $scripturl . '?action=profile;u=' . $row_board['id_moderator'],
-					'link' => '<a href="' . $scripturl . '?action=profile;u=' . $row_board['id_moderator'] . '" title="' . $txt['board_moderator'] . '">' . $row_board['mod_real_name'] . '</a>'
+					'href' => '<URL>?action=profile;u=' . $row_board['id_moderator'],
+					'link' => '<a href="<URL>?action=profile;u=' . $row_board['id_moderator'] . '" title="' . $txt['board_moderator'] . '">' . $row_board['mod_real_name'] . '</a>'
 				);
-				$this_category[$row_board['id_board']]['link_moderators'][] = '<a href="' . $scripturl . '?action=profile;u=' . $row_board['id_moderator'] . '" title="' . $txt['board_moderator'] . '">' . $row_board['mod_real_name'] . '</a>';
+				$this_category[$row_board['id_board']]['link_moderators'][] = '<a href="<URL>?action=profile;u=' . $row_board['id_moderator'] . '" title="' . $txt['board_moderator'] . '">' . $row_board['mod_real_name'] . '</a>';
 			}
 		}
 		// Found a child board.... make sure we've found its parent and the child hasn't been set already.
@@ -177,8 +176,8 @@ function getBoardIndex($boardIndexOptions)
 				'unapproved_topics' => $row_board['unapproved_topics'],
 				'unapproved_posts' => $row_board['unapproved_posts'] - $row_board['unapproved_topics'],
 				'can_approve_posts' => !empty(we::$user['mod_cache']['ap']) && (we::$user['mod_cache']['ap'] == array(0) || in_array($row_board['id_board'], we::$user['mod_cache']['ap'])),
-				'href' => $scripturl . '?board=' . $row_board['id_board'] . '.0',
-				'link' => '<a href="' . $scripturl . '?board=' . $row_board['id_board'] . '.0">' . $row_board['board_name'] . '</a>'
+				'href' => '<URL>?board=' . $row_board['id_board'] . '.0',
+				'link' => '<a href="<URL>?board=' . $row_board['id_board'] . '.0">' . $row_board['board_name'] . '</a>'
 			);
 
 			// Counting child board posts is... slow :/.
@@ -240,8 +239,8 @@ function getBoardIndex($boardIndexOptions)
 				'id' => $row_board['id_member'],
 				'username' => $row_board['poster_name'] != '' ? $row_board['poster_name'] : $txt['not_applicable'],
 				'name' => $row_board['real_name'],
-				'href' => $row_board['poster_name'] != '' && !empty($row_board['id_member']) ? $scripturl . '?action=profile;u=' . $row_board['id_member'] : '',
-				'link' => $row_board['poster_name'] != '' ? (!empty($row_board['id_member']) ? '<a href="' . $scripturl . '?action=profile;u=' . $row_board['id_member'] . '">' . $row_board['real_name'] . '</a>' : $row_board['real_name']) : $txt['not_applicable'],
+				'href' => $row_board['poster_name'] != '' && !empty($row_board['id_member']) ? '<URL>?action=profile;u=' . $row_board['id_member'] : '',
+				'link' => $row_board['poster_name'] != '' ? (!empty($row_board['id_member']) ? '<a href="<URL>?action=profile;u=' . $row_board['id_member'] . '">' . $row_board['real_name'] . '</a>' : $row_board['real_name']) : $txt['not_applicable'],
 			),
 			'start' => 'msg' . $row_board['new_from'],
 			'topic' => $row_board['id_topic']
@@ -255,7 +254,7 @@ function getBoardIndex($boardIndexOptions)
 		}
 		elseif ($row_board['subject'] != '')
 		{
-			$this_last_post['href'] = $scripturl . '?topic=' . $row_board['id_topic'] . '.msg' . (we::$is_guest ? $row_board['id_msg'] : $row_board['new_from']) . (empty($row_board['is_read']) ? ';boardseen' : '') . '#new';
+			$this_last_post['href'] = '<URL>?topic=' . $row_board['id_topic'] . '.msg' . (we::$is_guest ? $row_board['id_msg'] : $row_board['new_from']) . (empty($row_board['is_read']) ? ';boardseen' : '') . '#new';
 			$this_last_post['link'] = '<a href="' . $this_last_post['href'] . '" title="' . $row_board['subject'] . '">' . $row_board['short_subject'] . '</a>';
 		}
 		else

@@ -124,7 +124,7 @@ if (!defined('WEDGE'))
 // This is the main pass through function, it creates tabs and the like.
 function ModifySettings()
 {
-	global $context, $txt, $scripturl, $boarddir;
+	global $context, $txt, $boarddir;
 
 	// This is just to keep the database password more secure.
 	isAllowedTo('admin_forum');
@@ -183,7 +183,7 @@ function ModifySettings()
 // General forum settings - forum name, maintenance mode, etc.
 function ModifyGeneralSettings($return_config = false)
 {
-	global $scripturl, $context, $txt, $settings;
+	global $context, $txt, $settings;
 
 	loadLanguage('ManageSettings');
 
@@ -247,7 +247,7 @@ function ModifyGeneralSettings($return_config = false)
 		return $config_vars;
 
 	// Setup the template stuff.
-	$context['post_url'] = $scripturl . '?action=admin;area=serversettings;sa=general;save';
+	$context['post_url'] = '<URL>?action=admin;area=serversettings;sa=general;save';
 	$context['settings_title'] = $txt['general_settings'];
 
 	// Saving settings?
@@ -280,7 +280,7 @@ function ModifyGeneralSettings($return_config = false)
 // Basic database and paths settings - database name, host, etc.
 function ModifyDatabaseSettings($return_config = false)
 {
-	global $scripturl, $context, $theme, $txt, $boarddir;
+	global $context, $theme, $txt, $boarddir;
 
 	/* If you're writing a mod, it's a bad idea to add things here....
 	For each option:
@@ -313,7 +313,7 @@ function ModifyDatabaseSettings($return_config = false)
 		return $config_vars;
 
 	// Setup the template stuff.
-	$context['post_url'] = $scripturl . '?action=admin;area=serversettings;sa=database;save';
+	$context['post_url'] = '<URL>?action=admin;area=serversettings;sa=database;save';
 	$context['settings_title'] = $txt['database_paths_settings'];
 	$context['save_disabled'] = $context['settings_not_writable'];
 
@@ -331,7 +331,7 @@ function ModifyDatabaseSettings($return_config = false)
 // This function basically edits anything which is configuration and stored in the database, except for caching.
 function ModifyCookieSettings($return_config = false)
 {
-	global $context, $scripturl, $txt, $settings, $cookiename, $user_settings;
+	global $context, $txt, $settings, $cookiename, $user_settings;
 
 	// Define the variables we want to edit.
 	$config_vars = array(
@@ -351,7 +351,7 @@ function ModifyCookieSettings($return_config = false)
 	if ($return_config)
 		return $config_vars;
 
-	$context['post_url'] = $scripturl . '?action=admin;area=serversettings;sa=cookie;save';
+	$context['post_url'] = '<URL>?action=admin;area=serversettings;sa=cookie;save';
 	$context['settings_title'] = $txt['cookies_sessions_settings'];
 
 	// Saving settings?
@@ -385,7 +385,7 @@ function ModifyCookieSettings($return_config = false)
 // Simply modifying cache functions
 function ModifyCacheSettings($return_config = false)
 {
-	global $context, $scripturl, $txt, $helptxt, $settings;
+	global $context, $txt, $helptxt, $settings;
 
 	// Define the variables we want to edit.
 	$config_vars = array(
@@ -409,7 +409,7 @@ function ModifyCacheSettings($return_config = false)
 		redirectexit('action=admin;area=serversettings;sa=cache;' . $context['session_query']);
 	}
 
-	$context['post_url'] = $scripturl . '?action=admin;area=serversettings;sa=cache;save';
+	$context['post_url'] = '<URL>?action=admin;area=serversettings;sa=cache;save';
 	$context['settings_title'] = $txt['caching_settings'];
 	$context['settings_message'] = $txt['caching_information'];
 
@@ -433,7 +433,7 @@ function ModifyCacheSettings($return_config = false)
 
 function ModifyLoadBalancingSettings($return_config = false)
 {
-	global $txt, $scripturl, $context, $theme, $settings;
+	global $txt, $context, $theme, $settings;
 
 	// Setup a warning message, but disabled by default.
 	$disabled = true;
@@ -479,7 +479,7 @@ function ModifyLoadBalancingSettings($return_config = false)
 	if ($return_config)
 		return $config_vars;
 
-	$context['post_url'] = $scripturl . '?action=admin;area=serversettings;sa=loads;save';
+	$context['post_url'] = '<URL>?action=admin;area=serversettings;sa=loads;save';
 	$context['settings_title'] = $txt['load_balancing_settings'];
 
 	// Saving?
@@ -507,7 +507,7 @@ function ModifyLoadBalancingSettings($return_config = false)
 
 function ModifyProxySettings($return_config = false)
 {
-	global $context, $scripturl, $txt, $helptxt, $settings;
+	global $context, $txt, $helptxt, $settings;
 
 	// Define the variables we want to edit.
 	$config_vars = array(
@@ -538,7 +538,7 @@ function ModifyProxySettings($return_config = false)
 		redirectexit('action=admin;area=serversettings;sa=proxy;' . $context['session_query']);
 	}
 
-	$context['post_url'] = $scripturl . '?action=admin;area=serversettings;sa=proxy;save';
+	$context['post_url'] = '<URL>?action=admin;area=serversettings;sa=proxy;save';
 	$context['settings_title'] = $txt['proxy_settings'];
 
 	// Prepare the template.
@@ -547,7 +547,7 @@ function ModifyProxySettings($return_config = false)
 
 function ModifyDebugSettings($return_config = false)
 {
-	global $scripturl, $context, $txt, $settings, $cachedir;
+	global $context, $txt, $settings, $cachedir;
 
 	$config_vars = array(
 		array('disableTemplateEval', $txt['disableTemplateEval'], 'db', 'check', null, 'disableTemplateEval'),
@@ -573,7 +573,7 @@ function ModifyDebugSettings($return_config = false)
 		return $config_vars;
 
 	// Setup the template stuff.
-	$context['post_url'] = $scripturl . '?action=admin;area=serversettings;sa=debug;save';
+	$context['post_url'] = '<URL>?action=admin;area=serversettings;sa=debug;save';
 	$context['settings_title'] = $txt['general_settings'];
 
 	// Saving settings?

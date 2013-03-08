@@ -65,7 +65,7 @@ if (!defined('WEDGE'))
 
 function ViewMembers()
 {
-	global $txt, $scripturl, $context, $settings;
+	global $txt, $context, $settings;
 
 	$subActions = array(
 		'all' => array('ViewMemberlist', 'moderate_forum'),
@@ -127,26 +127,26 @@ function ViewMembers()
 			'all' => array(
 				'label' => $txt['view_all_members'],
 				'description' => $txt['admin_members_list'],
-				'url' => $scripturl . '?action=admin;area=viewmembers;sa=all',
+				'url' => '<URL>?action=admin;area=viewmembers;sa=all',
 				'is_selected' => $_REQUEST['sa'] == 'all',
 			),
 			'search' => array(
 				'label' => $txt['mlist_search'],
 				'description' => $txt['admin_members_list'],
-				'url' => $scripturl . '?action=admin;area=viewmembers;sa=search',
+				'url' => '<URL>?action=admin;area=viewmembers;sa=search',
 				'is_selected' => $_REQUEST['sa'] == 'search' || $_REQUEST['sa'] == 'query',
 			),
 			'approve' => array(
 				'label' => $txt['admin_members_approve'] . (!empty($context['awaiting_approval']) ? '<span class="note">' . $context['awaiting_approval'] . '</span>' : ''),
 				'description' => $txt['admin_browse_approve_desc'],
-				'url' => $scripturl . '?action=admin;area=viewmembers;sa=browse;type=approve',
+				'url' => '<URL>?action=admin;area=viewmembers;sa=browse;type=approve',
 				'is_selected' => $_REQUEST['sa'] == 'browse' && !empty($_REQUEST['type']) && $_REQUEST['type'] == 'approve',
 				'disabled' => !$context['show_approve'],
 			),
 			'activate' => array(
 				'label' => $txt['admin_members_activate'] . (!empty($context['awaiting_activation']) ? '<span class="note">' . $context['awaiting_activation'] . '</span>' : ''),
 				'description' => $txt['admin_browse_activate_desc'],
-				'url' => $scripturl . '?action=admin;area=viewmembers;sa=browse;type=activate',
+				'url' => '<URL>?action=admin;area=viewmembers;sa=browse;type=activate',
 				'is_selected' => $_REQUEST['sa'] == 'browse' && !empty($_REQUEST['type']) && $_REQUEST['type'] == 'activate',
 				'disabled' => !$context['show_activate'],
 			),
@@ -159,7 +159,7 @@ function ViewMembers()
 // View all members.
 function ViewMemberlist()
 {
-	global $txt, $scripturl, $context, $settings;
+	global $txt, $context, $settings;
 
 	// Set the current sub action.
 	$context['sub_action'] = $_REQUEST['sa'];
@@ -426,12 +426,11 @@ function ViewMemberlist()
 
 	// Get the title and template block ready...
 	$context['page_title'] = $txt['admin_members'];
-	$percent_scripturl = strtr($scripturl, array('%' => '%%'));
 
 	$listOptions = array(
 		'id' => 'member_list',
 		'items_per_page' => $settings['defaultMaxMembers'],
-		'base_href' => $scripturl . '?action=admin;area=viewmembers' . $context['params_url'],
+		'base_href' => '<URL>?action=admin;area=viewmembers' . $context['params_url'],
 		'default_sort_col' => 'user_name',
 		'get_items' => array(
 			'file' => 'Subs-Members',
@@ -469,7 +468,7 @@ function ViewMemberlist()
 				),
 				'data' => array(
 					'sprintf' => array(
-						'format' => '<a href="' . $percent_scripturl . '?action=profile;u=%1$d">%2$s</a>',
+						'format' => '<a href="<URL>?action=profile;u=%1$d">%2$s</a>',
 						'params' => array(
 							'id_member' => false,
 							'member_name' => false,
@@ -598,7 +597,7 @@ function ViewMemberlist()
 			),
 		),
 		'form' => array(
-			'href' => $scripturl . '?action=admin;area=viewmembers' . $context['params_url'],
+			'href' => '<URL>?action=admin;area=viewmembers' . $context['params_url'],
 			'include_start' => true,
 			'include_sort' => true,
 		),
@@ -673,7 +672,7 @@ function SearchMembers()
 // List all members who are awaiting approval / activation
 function MembersAwaitingActivation()
 {
-	global $txt, $context, $scripturl, $settings;
+	global $txt, $context, $settings;
 
 	// Not a lot here!
 	$context['page_title'] = $txt['admin_members'];
@@ -791,12 +790,10 @@ function MembersAwaitingActivation()
 			document.forms.postForm.submit();
 	}';
 
-	$percent_scripturl = strtr($scripturl, array('%' => '%%'));
-
 	$listOptions = array(
 		'id' => 'approve_list',
 		'items_per_page' => $settings['defaultMaxMembers'],
-		'base_href' => $scripturl . '?action=admin;area=viewmembers;sa=browse;type=' . $context['browse_type'] . (!empty($context['show_filter']) ? ';filter=' . $context['current_filter'] : ''),
+		'base_href' => '<URL>?action=admin;area=viewmembers;sa=browse;type=' . $context['browse_type'] . (!empty($context['show_filter']) ? ';filter=' . $context['current_filter'] : ''),
 		'default_sort_col' => $context['current_filter'] == 4 ? 'last_login' : 'date_registered',
 		'get_items' => array(
 			'file' => 'Subs-Members',
@@ -835,7 +832,7 @@ function MembersAwaitingActivation()
 				),
 				'data' => array(
 					'sprintf' => array(
-						'format' => '<a href="' . $percent_scripturl . '?action=profile;u=%1$d">%2$s</a>',
+						'format' => '<a href="<URL>?action=profile;u=%1$d">%2$s</a>',
 						'params' => array(
 							'id_member' => false,
 							'member_name' => false,
@@ -930,13 +927,13 @@ function MembersAwaitingActivation()
 				),
 				'data' => array(
 					'function' => create_function('$rowData', '
-						global $scripturl, $txt;
+						global $txt;
 
 						$member_links = array();
 						foreach ($rowData[\'duplicate_members\'] as $member)
 						{
 							if ($member[\'id\'])
-								$member_links[] = \'<a href="\' . $scripturl . \'?action=profile;u=\' . $member[\'id\'] . \'" \' . (!empty($member[\'is_banned\']) ? \'style="color: red"\' : \'\') . \'>\' . $member[\'name\'] . \'</a>\';
+								$member_links[] = \'<a href="\'<URL>?action=profile;u=\' . $member[\'id\'] . \'" \' . (!empty($member[\'is_banned\']) ? \'style="color: red"\' : \'\') . \'>\' . $member[\'name\'] . \'</a>\';
 							else
 								$member_links[] = $member[\'name\'] . \' (\' . $txt[\'guest\'] . \')\';
 						}
@@ -962,7 +959,7 @@ function MembersAwaitingActivation()
 		),
 		'javascript' => $javascript,
 		'form' => array(
-			'href' => $scripturl . '?action=admin;area=viewmembers;sa=approve;type=' . $context['browse_type'],
+			'href' => '<URL>?action=admin;area=viewmembers;sa=approve;type=' . $context['browse_type'],
 			'name' => 'postForm',
 			'include_start' => true,
 			'include_sort' => true,
@@ -975,7 +972,7 @@ function MembersAwaitingActivation()
 				'position' => 'below_table_data',
 				'value' => '
 					<div class="floatleft">
-						[<a href="' . $scripturl . '?action=admin;area=viewmembers;sa=browse;showdupes=' . ($context['show_duplicates'] ? 0 : 1) . ';type=' . $context['browse_type'] . (!empty($context['show_filter']) ? ';filter=' . $context['current_filter'] : '') . ';' . $context['session_query'] . '">' . ($context['show_duplicates'] ? $txt['dont_check_for_duplicate'] : $txt['check_for_duplicate']) . '</a>]
+						[<a href="<URL>?action=admin;area=viewmembers;sa=browse;showdupes=' . ($context['show_duplicates'] ? 0 : 1) . ';type=' . $context['browse_type'] . (!empty($context['show_filter']) ? ';filter=' . $context['current_filter'] : '') . ';' . $context['session_query'] . '">' . ($context['show_duplicates'] ? $txt['dont_check_for_duplicate'] : $txt['check_for_duplicate']) . '</a>]
 					</div>
 					<div class="floatright">
 						<select name="todo" onchange="onSelectChange(e);">

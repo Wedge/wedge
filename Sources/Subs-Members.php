@@ -919,7 +919,6 @@ function isReservedName($name, $current_id_member = 0, $is_name = true, $fatal =
 	if (empty($settings['ban_membername_style']))
 		$settings['ban_membername_style'] = 'both';
 
-	// true if 
 	if (!empty($rules) && !allowedTo('moderate_forum') && ($settings['ban_membername_style'] == 'both' || ($is_name ? $settings['ban_membername_style'] == 'display' : $settings['ban_membername_style'] == 'user')))
 	{
 		foreach ($rules as $rule)

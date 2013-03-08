@@ -68,7 +68,7 @@ if (!defined('WEDGE'))
  */
 function Post($post_errors = array())
 {
-	global $txt, $scripturl, $topic, $topic_info, $settings, $board;
+	global $txt, $topic, $topic_info, $settings, $board;
 	global $board_info, $context, $theme, $options;
 
 	$context['form_fields'] = array(
@@ -955,7 +955,7 @@ function Post($post_errors = array())
 		);
 	else
 		$context['linktree'][] = array(
-			'url' => $scripturl . '?topic=' . $topic . '.' . $_REQUEST['start'],
+			'url' => '<URL>?topic=' . $topic . '.' . $_REQUEST['start'],
 			'name' => $form_subject,
 			'extra_before' => '<strong class="nav">' . $context['page_title'] . ' [</strong>',
 			'extra_after' => '<strong class="nav">]</strong>'

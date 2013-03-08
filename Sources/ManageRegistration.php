@@ -25,7 +25,7 @@ if (!defined('WEDGE'))
  */
 function RegCenter()
 {
-	global $settings, $context, $txt, $scripturl;
+	global $settings, $context, $txt;
 
 	// Old templates might still request this.
 	if (isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'browse')
@@ -80,7 +80,7 @@ function RegCenter()
  */
 function AdminRegister()
 {
-	global $txt, $context, $scripturl;
+	global $txt, $context;
 
 	if (!empty($_POST['regSubmit']))
 	{
@@ -111,8 +111,8 @@ function AdminRegister()
 			$context['new_member'] = array(
 				'id' => $memberID,
 				'name' => $_POST['user'],
-				'href' => $scripturl . '?action=profile;u=' . $memberID,
-				'link' => '<a href="' . $scripturl . '?action=profile;u=' . $memberID . '">' . $_POST['user'] . '</a>',
+				'href' => '<URL>?action=profile;u=' . $memberID,
+				'link' => '<a href="<URL>?action=profile;u=' . $memberID . '">' . $_POST['user'] . '</a>',
 			);
 			$context['registration_done'] = sprintf($txt['admin_register_done'], $context['new_member']['link']);
 		}
@@ -240,7 +240,7 @@ function EditAgreement()
  */
 function ModifyRegistrationSettings($return_config = false)
 {
-	global $txt, $context, $scripturl, $settings, $user_profile;
+	global $txt, $context, $settings, $user_profile;
 
 	// This is really quite wanting.
 	loadSource(array('ManageServer', 'Subs-Members'));
@@ -295,7 +295,7 @@ function ModifyRegistrationSettings($return_config = false)
 		redirectexit('action=admin;area=regcenter;sa=settings');
 	}
 
-	$context['post_url'] = $scripturl . '?action=admin;area=regcenter;save;sa=settings';
+	$context['post_url'] = '<URL>?action=admin;area=regcenter;save;sa=settings';
 	$context['settings_title'] = $txt['settings'];
 
 	// Define some javascript for COPPA.

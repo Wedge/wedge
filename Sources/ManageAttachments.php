@@ -104,7 +104,7 @@ if (!defined('WEDGE'))
 // The main attachment management function.
 function ManageAttachments()
 {
-	global $txt, $settings, $scripturl, $context, $options;
+	global $txt, $context;
 
 	// You have to be able to moderate the forum to do this.
 	isAllowedTo('manage_attachments');
@@ -149,7 +149,7 @@ function ManageAttachments()
 
 function ManageAttachmentSettings($return_config = false)
 {
-	global $txt, $settings, $scripturl, $context, $options;
+	global $txt, $settings, $context, $options;
 
 	$context['valid_upload_dir'] = is_dir($settings['attachmentUploadDir']) && is_writable($settings['attachmentUploadDir']);
 
@@ -200,7 +200,7 @@ function ManageAttachmentSettings($return_config = false)
 		redirectexit('action=admin;area=manageattachments;sa=attachments');
 	}
 
-	$context['post_url'] = $scripturl . '?action=admin;area=manageattachments;save;sa=attachments';
+	$context['post_url'] = '<URL>?action=admin;area=manageattachments;save;sa=attachments';
 	prepareDBSettingContext($config_vars);
 
 	wetem::load('show_settings');
@@ -208,7 +208,7 @@ function ManageAttachmentSettings($return_config = false)
 
 function ManageAvatarSettings($return_config = false)
 {
-	global $txt, $context, $settings, $scripturl;
+	global $txt, $context, $settings;
 
 	$context['valid_avatar_dir'] = is_dir($settings['avatar_directory']);
 	$context['valid_custom_avatar_dir'] = empty($settings['custom_avatar_enabled']) || (!empty($settings['custom_avatar_dir']) && is_dir($settings['custom_avatar_dir']) && is_writable($settings['custom_avatar_dir']));
@@ -281,7 +281,7 @@ function ManageAvatarSettings($return_config = false)
 	$context['settings_save_onclick'] = 'return $(\'#custom_avatar_enabled\').val() == 1 && ($(\'#custom_avatar_dir\').val() == \'\' || $(\'#custom_avatar_url\').val() == \'\') ? ask(' . JavaScriptEscape($txt['custom_avatar_check_empty']) . ', e) : true;';
 
 	// Prepare the context.
-	$context['post_url'] = $scripturl . '?action=admin;area=manageattachments;save;sa=avatars';
+	$context['post_url'] = '<URL>?action=admin;area=manageattachments;save;sa=avatars';
 	prepareDBSettingContext($config_vars);
 
 	// Add a layer for the javascript.
@@ -291,7 +291,7 @@ function ManageAvatarSettings($return_config = false)
 
 function BrowseFiles()
 {
-	global $context, $txt, $scripturl, $options, $settings;
+	global $context, $txt, $options, $settings;
 
 	wetem::load('browse');
 
@@ -303,7 +303,7 @@ function BrowseFiles()
 		'id' => 'file_list',
 		'title' => $txt['attachment_manager_' . ($context['browse_type'] === 'avatars' ? 'avatars' : ($context['browse_type'] === 'thumbs' ? 'thumbs' : 'attachments'))],
 		'items_per_page' => $settings['defaultMaxMessages'],
-		'base_href' => $scripturl . '?action=admin;area=manageattachments;sa=browse' . ($context['browse_type'] === 'avatars' ? ';avatars' : ($context['browse_type'] === 'thumbs' ? ';thumbs' : '')),
+		'base_href' => '<URL>?action=admin;area=manageattachments;sa=browse' . ($context['browse_type'] === 'avatars' ? ';avatars' : ($context['browse_type'] === 'thumbs' ? ';thumbs' : '')),
 		'default_sort_col' => 'name',
 		'no_items_label' => $txt['attachment_manager_' . ($context['browse_type'] === 'avatars' ? 'avatars' : ($context['browse_type'] === 'thumbs' ? 'thumbs' : 'attachments')) . '_no_entries'],
 		'get_items' => array(
@@ -325,7 +325,7 @@ function BrowseFiles()
 				),
 				'data' => array(
 					'function' => create_function('$rowData', '
-						global $settings, $context, $scripturl;
+						global $settings, $context;
 
 						$link = \'<a href="\';
 
@@ -335,11 +335,11 @@ function BrowseFiles()
 
 						// By default avatars are downloaded almost as attachments.
 						elseif ($context[\'browse_type\'] == \'avatars\')
-							$link .= sprintf(\'%1$s?action=dlattach;type=avatar;attach=%2$d\', $scripturl, $rowData[\'id_attach\']);
+							$link .= sprintf(\'<URL>?action=dlattach;type=avatar;attach=%1$d\', $rowData[\'id_attach\']);
 
 						// Normal attachments are always linked to a topic ID.
 						else
-							$link .= sprintf(\'%1$s?action=dlattach;topic=%2$d.0;attach=%3$d\', $scripturl, $rowData[\'id_topic\'], $rowData[\'id_attach\']);
+							$link .= sprintf(\'<URL>?action=dlattach;topic=%1$d.0;attach=%2$d\', $rowData[\'id_topic\'], $rowData[\'id_attach\']);
 
 						$link .= \'"\';
 
@@ -384,15 +384,13 @@ function BrowseFiles()
 				),
 				'data' => array(
 					'function' => create_function('$rowData', '
-						global $scripturl;
-
 						// In case of an attachment, return the poster of the attachment.
 						if (empty($rowData[\'id_member\']))
 							return htmlspecialchars($rowData[\'poster_name\']);
 
 						// Otherwise it must be an avatar, return the link to the owner of it.
 						else
-							return sprintf(\'<a href="%1$s?action=profile;u=%2$d">%3$s</a>\', $scripturl, $rowData[\'id_member\'], $rowData[\'poster_name\']);
+							return sprintf(\'<a href=<URL>?action=profile;u=%1$d">%2$s</a>\', $rowData[\'id_member\'], $rowData[\'poster_name\']);
 					'),
 				),
 				'sort' => array(
@@ -406,14 +404,14 @@ function BrowseFiles()
 				),
 				'data' => array(
 					'function' => create_function('$rowData', '
-						global $txt, $context, $scripturl;
+						global $txt, $context;
 
 						// The date the message containing the attachment was posted or the owner of the avatar was active.
 						$date = empty($rowData[\'poster_time\']) ? $txt[\'never\'] : timeformat($rowData[\'poster_time\']);
 
 						// Add a link to the topic in case of an attachment.
 						if ($context[\'browse_type\'] !== \'avatars\')
-							$date .= sprintf(\'<br>%1$s <a href="%2$s?topic=%3$d.0.msg%4$d#msg%4$d">%5$s</a>\', $txt[\'in\'], $scripturl, $rowData[\'id_topic\'], $rowData[\'id_msg\'], $rowData[\'subject\']);
+							$date .= sprintf(\'<br>%1$s <a href="%2$s?topic=%3$d.0.msg%4$d#msg%4$d">%5$s</a>\', $txt[\'in\'], \'<URL>\', $rowData[\'id_topic\'], $rowData[\'id_msg\'], $rowData[\'subject\']);
 
 						return $date;
 						'),
@@ -457,7 +455,7 @@ function BrowseFiles()
 			),
 		),
 		'form' => array(
-			'href' => $scripturl . '?action=admin;area=manageattachments;sa=remove' . ($context['browse_type'] === 'avatars' ? ';avatars' : ($context['browse_type'] === 'thumbs' ? ';thumbs' : '')),
+			'href' => '<URL>?action=admin;area=manageattachments;sa=remove' . ($context['browse_type'] === 'avatars' ? ';avatars' : ($context['browse_type'] === 'thumbs' ? ';thumbs' : '')),
 			'include_sort' => true,
 			'include_start' => true,
 			'hidden_fields' => array(
@@ -1433,7 +1431,7 @@ function pauseAttachmentMaintenance($to_fix, $max_substep = 0)
 
 function ManageAttachmentPaths()
 {
-	global $settings, $scripturl, $context, $txt;
+	global $settings, $context, $txt;
 
 	// Saving?
 	if (isset($_REQUEST['save']))
@@ -1520,7 +1518,7 @@ function ManageAttachmentPaths()
 
 	$listOptions = array(
 		'id' => 'attach_paths',
-		'base_href' => $scripturl . '?action=admin;area=manageattachments;sa=attachpaths;' . $context['session_query'],
+		'base_href' => '<URL>?action=admin;area=manageattachments;sa=attachpaths;' . $context['session_query'],
 		'title' => $txt['attach_paths'],
 		'get_items' => array(
 			'function' => 'list_getAttachDirs',
@@ -1577,7 +1575,7 @@ function ManageAttachmentPaths()
 			),
 		),
 		'form' => array(
-			'href' => $scripturl . '?action=admin;area=manageattachments;sa=attachpaths;' . $context['session_query'],
+			'href' => '<URL>?action=admin;area=manageattachments;sa=attachpaths;' . $context['session_query'],
 		),
 		'additional_rows' => array(
 			array(
@@ -1600,7 +1598,7 @@ function ManageAttachmentPaths()
 // Prepare the actual attachment directories to be displayed in the list.
 function list_getAttachDirs()
 {
-	global $settings, $context, $txt, $scripturl;
+	global $settings, $context, $txt;
 
 	// The dirs should already have been unserialized but just in case...
 	if (!is_array($settings['attachmentUploadDir']))
@@ -1637,7 +1635,7 @@ function list_getAttachDirs()
 			'path' => $dir,
 			'current_size' => $size,
 			'num_files' => $expected_files[$id],
-			'status' => ($error ? '<span class="error">' : '') . sprintf($status == 'ok' ? $txt['ok'] : $txt['attach_dir_' . $status], $scripturl, $context['session_query']) . ($error ? '</span>' : ''),
+			'status' => ($error ? '<span class="error">' : '') . sprintf($status == 'ok' ? $txt['ok'] : $txt['attach_dir_' . $status], '<URL>', $context['session_query']) . ($error ? '</span>' : ''),
 		);
 	}
 

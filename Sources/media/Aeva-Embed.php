@@ -1088,7 +1088,7 @@ function aeva_fetch($url, $test_connection = false)
 
 function aeva_embed_video($message, $id_media = 0, $id_preview = 0)
 {
-	global $context, $sites, $settings, $scripturl;
+	global $context, $sites, $settings;
 
 	$msg = '<a href="' . preg_replace(array('~\[url=([^]]*)][^[]*\[/url]~', '~\[url]([^[]*)\[/url]~'), '$1', $message) . '"></a>';
 
@@ -1098,7 +1098,7 @@ function aeva_embed_video($message, $id_media = 0, $id_preview = 0)
 
 	if (substr($msg, 0, 7) !== '<a href')
 		return $msg;
-	$where = $id_media && $id_preview ? $scripturl . '?action=media;sa=media;in=' . (int) $id_media . ';preview' : '$2';
+	$where = $id_media && $id_preview ? '<URL>?action=media;sa=media;in=' . (int) $id_media . ';preview' : '$2';
 	return preg_replace('~(<a href="([^"]+)".*?)>.*?(</a>)~', '$1 class="zoom is_embed"><img src="' . $where . '">$3', $msg);
 }
 

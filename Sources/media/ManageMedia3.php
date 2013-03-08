@@ -19,7 +19,7 @@ if (!defined('WEDGE'))
 // Handles the admin pages
 function aeva_admin_embed()
 {
-	global $context, $scripturl, $txt, $settings, $sourcedir;
+	global $context, $txt, $settings, $sourcedir;
 
 	wetem::load('aeva_form');
 	wetem::outer('aeva_admin_enclose_table');
@@ -250,7 +250,7 @@ function aeva_admin_embed()
 		);
 
 	// Render the form
-	$context['aeva_form_url'] = $scripturl.'?action=admin;area=aeva_embed;sa='.$context['current_area'].';'.$context['session_query'];
+	$context['aeva_form_url'] = '<URL>?action=admin;area=aeva_embed;sa='.$context['current_area'].';'.$context['session_query'];
 	if (!empty($warning_message))
 		$context['aeva_form']['warning'] = array('type' => 'info', 'label' => '', 'fieldname' => 'info', 'value' => $warning_message, 'options' => array(), 'multi' => false, 'next' => null, 'subtext' => '', 'skip_left' => true);
 

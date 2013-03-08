@@ -335,7 +335,7 @@ function construct_query_string($get)
 // Find members by email address, username, or real name.
 function findMembers($names, $use_wildcards = false, $buddies_only = false, $max = 500)
 {
-	global $scripturl, $settings;
+	global $settings;
 
 	// If it's not already an array, make it one.
 	if (!is_array($names))
@@ -399,8 +399,8 @@ function findMembers($names, $use_wildcards = false, $buddies_only = false, $max
 			'name' => $row['real_name'],
 			'username' => $row['member_name'],
 			'email' => showEmailAddress(!empty($row['hide_email']), $row['id_member']) === 'yes_permission_override' ? $row['email_address'] : '',
-			'href' => $scripturl . '?action=profile;u=' . $row['id_member'],
-			'link' => '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>'
+			'href' => '<URL>?action=profile;u=' . $row['id_member'],
+			'link' => '<a href="<URL>?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>'
 		);
 	}
 	wesql::free_result($request);
@@ -412,7 +412,7 @@ function findMembers($names, $use_wildcards = false, $buddies_only = false, $max
 // This function generates a random password for a user and emails it to them.
 function resetPassword($memID, $username = null)
 {
-	global $scripturl, $context, $txt, $settings, $language;
+	global $context, $txt, $settings, $language;
 
 	// Language... and a required file.
 	loadLanguage('Login');

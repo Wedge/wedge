@@ -1213,7 +1213,7 @@ function makeCustomFieldChanges($memID, $area, $sanitize = true)
 // Show all the users buddies, as well as a add/delete interface.
 function editBuddyIgnoreLists($memID)
 {
-	global $context, $txt, $scripturl, $settings, $user_profile;
+	global $context, $txt, $settings, $user_profile;
 
 	// Do a quick check to ensure people aren't getting here illegally!
 	if (!we::$user['is_owner'] || empty($settings['enable_buddylist']))
@@ -1248,7 +1248,7 @@ function editBuddyIgnoreLists($memID)
 // Show all the users buddies, as well as a add/delete interface.
 function editBuddies($memID)
 {
-	global $txt, $scripturl, $settings, $context, $user_profile, $memberContext;
+	global $txt, $settings, $context, $user_profile, $memberContext;
 
 	// For making changes!
 	$buddiesArray = explode(',', $user_profile[$memID]['buddy_list']);
@@ -1354,7 +1354,7 @@ function editBuddies($memID)
 // Allows the user to view their ignore list, as well as the option to manage members on it.
 function editIgnoreList($memID)
 {
-	global $txt, $scripturl, $settings, $context, $user_profile, $memberContext;
+	global $txt, $settings, $context, $user_profile, $memberContext;
 
 	// For making changes!
 	$ignoreArray = explode(',', $user_profile[$memID]['pm_ignore_list']);
@@ -1503,7 +1503,7 @@ function forumProfile($memID)
 // Allow the edit of *someone else's* personal message settings.
 function pmprefs($memID)
 {
-	global $context, $txt, $scripturl;
+	global $context, $txt;
 
 	loadThemeOptions($memID);
 	loadCustomFields($memID, 'pmprefs');
@@ -2913,7 +2913,7 @@ function profileSendActivation()
 // Function to allow the user to choose group membership etc...
 function groupMembership($memID)
 {
-	global $txt, $scripturl, $user_profile, $context, $settings;
+	global $txt, $user_profile, $context, $settings;
 
 	$curMember = $user_profile[$memID];
 	$context['primary_group'] = $curMember['id_group'];

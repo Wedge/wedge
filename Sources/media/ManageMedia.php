@@ -83,7 +83,7 @@ if (!defined('WEDGE'))
 // Gallery admin initializer
 function aeva_admin_init()
 {
-	global $context, $txt, $scripturl, $theme, $amSettings, $settings;
+	global $context, $txt, $theme, $amSettings, $settings;
 
 	// Let's call our friends
 	// Admin2 = maintenance & ban, Admin3 = embedder
@@ -140,7 +140,7 @@ function aeva_admin_init()
 // Handles the settings page
 function aeva_admin_settings()
 {
-	global $context, $scripturl, $amSettings, $settings, $txt;
+	global $context, $amSettings, $settings, $txt;
 
 	wetem::load('aeva_form');
 	wetem::outer('aeva_admin_enclose_table');
@@ -323,11 +323,11 @@ function aeva_admin_settings()
 
 		// If the Clear Thumbnails setting was changed, we redirect to the hidden maintenance area that renames all thumbnails.
 		if (!empty($update_thumbnames))
-			redirectexit($scripturl.'?action=admin;area=aeva_maintenance;sa=clear;'.$context['session_query']);
+			redirectexit('action=admin;area=aeva_maintenance;sa=clear;'.$context['session_query']);
 	}
 
 	// Render the form
-	$context['aeva_form_url'] = $scripturl.'?action=admin;area=aeva_settings;sa='.$context['current_area'].';'.$context['session_query'];
+	$context['aeva_form_url'] = '<URL>?action=admin;area=aeva_settings;sa='.$context['current_area'].';'.$context['session_query'];
 
 	foreach ($theme as $setting => $options)
 	{
@@ -555,9 +555,9 @@ function aeva_admin_FTPImport()
 // Handles the permission area...
 function aeva_admin_perms()
 {
-	global $context, $txt, $scripturl, $amSettings;
+	global $context, $txt, $amSettings;
 
-	$context['base_url'] = $scripturl . '?action=admin;area=aeva_perms;' . $context['session_query'];
+	$context['base_url'] = '<URL>?action=admin;area=aeva_perms;' . $context['session_query'];
 
 	// Sub-actions...
 	$sa = array(
@@ -665,7 +665,7 @@ function aeva_admin_perms()
 			'member' => array(
 				'id' => !empty($row['id_member']) ? $row['id_member'] : 0,
 				'name' => !empty($row['real_name']) ? $row['real_name'] : '',
-				'href' => !empty($row['id_member']) ? '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>' : '',
+				'href' => !empty($row['id_member']) ? '<a href="<URL>?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>' : '',
 			),
 		);
 	wesql::free_result($request);
@@ -690,7 +690,7 @@ function aeva_admin_perms()
 // Sets permissions quickly
 function aeva_admin_perms_quick()
 {
-	global $context, $scripturl, $txt;
+	global $context, $txt;
 
 	// Load the permission profle.
 	if ($_REQUEST['profile'] == 1)
@@ -823,7 +823,7 @@ function aeva_admin_perms_quick()
 // A not so hefty function to add permission profiles
 function aeva_admin_perms_add()
 {
-	global $context, $scripturl, $txt;
+	global $context, $txt;
 
 	if (empty($_POST['name']) || empty($_POST['submit_aeva']))
 		fatal_lang_error('media_name_empty');
@@ -840,7 +840,7 @@ function aeva_admin_perms_add()
 // Used for viewing membergroups in the permission area..
 function aeva_admin_perms_view()
 {
-	global $context, $txt, $scripturl, $settings;
+	global $context, $txt, $settings;
 
 	// Load the profile
 	if (!isset($_REQUEST['in']))
@@ -895,7 +895,7 @@ function aeva_admin_perms_view()
 // Editing one membergroup?
 function aeva_admin_perms_edit()
 {
-	global $context, $txt, $scripturl;
+	global $context, $txt;
 
 	// Load the profile
 	if (!isset($_REQUEST['in']))
@@ -1034,7 +1034,7 @@ function aeva_admin_perms_edit()
 
 function aeva_admin_perms_albums()
 {
-	global $context, $txt, $scripturl, $settings, $galurl;
+	global $context, $txt, $settings, $galurl;
 
 	clean_output();
 
@@ -1200,11 +1200,11 @@ function aeva_admin_quotas()
 // Adding a profile?
 function aeva_admin_quotas_add()
 {
-	global $context, $txt, $scripturl;
+	global $context, $txt;
 
 	// Name not being submitted?
 	if (empty($_POST['name']))
-		redirectexit($scripturl . '?action=admin;area=aeva_quotas;' . $context['session_query']);
+		redirectexit('action=admin;area=aeva_quotas;' . $context['session_query']);
 
 	// Insert it!
 	wesql::insert('',
@@ -1213,13 +1213,13 @@ function aeva_admin_quotas_add()
 		array('quota_prof', westr::htmlspecialchars($_POST['name']))
 	);
 
-	redirectexit($scripturl . '?action=admin;area=aeva_quotas;' . $context['session_query']);
+	redirectexit('action=admin;area=aeva_quotas;' . $context['session_query']);
 }
 
 // Viewing a single group?
 function aeva_admin_quotas_view()
 {
-	global $scripturl, $txt, $context;
+	global $txt, $context;
 
 	// Not set?
 	if (!isset($_REQUEST['in']))
@@ -1259,7 +1259,7 @@ function aeva_admin_quotas_view()
 // Editing a single membergroup?
 function aeva_admin_quotas_edit()
 {
-	global $context, $scripturl, $txt, $amSettings;
+	global $context, $txt, $amSettings;
 
 	// Not set?
 	if (!isset($_REQUEST['in']) || !isset($_REQUEST['group']))
@@ -1345,7 +1345,7 @@ function aeva_admin_quotas_edit()
 			$limits[$type] = $amSettings['max_file_size'];
 
 	// Set the form
-	$context['aeva_form_url'] = $scripturl . '?action=admin;area=aeva_quotas;sa=edit;in=' . $context['aeva_profile']['id'] . ';group=' . $context['aeva_group']['id'] . ';' . $context['session_query'];
+	$context['aeva_form_url'] = '<URL>?action=admin;area=aeva_quotas;sa=edit;in=' . $context['aeva_profile']['id'] . ';group=' . $context['aeva_group']['id'] . ';' . $context['session_query'];
 
 	$context['aeva_form'] = array(
 		'title' => array(
@@ -1392,13 +1392,13 @@ function aeva_admin_quotas_edit()
 			);
 		}
 
-		redirectexit($scripturl . '?action=admin;area=aeva_quotas;sa=view;in=' . $context['aeva_profile']['id'] . ';' . $context['session_query']);
+		redirectexit('action=admin;area=aeva_quotas;sa=view;in=' . $context['aeva_profile']['id'] . ';' . $context['session_query']);
 	}
 }
 
 function aeva_admin_quotas_albums()
 {
-	global $context, $txt, $scripturl, $galurl;
+	global $context, $txt, $galurl;
 
 	clean_output();
 
@@ -1451,7 +1451,7 @@ function aeva_admin_quotas_albums()
 // Custom fields main area
 function aeva_admin_fields()
 {
-	global $context, $txt, $scripturl;
+	global $context, $txt;
 
 	$sa = array(
 		'edit' => 'aeva_admin_fields_edit',
@@ -1484,7 +1484,7 @@ function aeva_admin_fields()
 // Editing/adding a field?
 function aeva_admin_fields_edit()
 {
-	global $context, $scripturl, $txt;
+	global $context, $txt;
 
 	loadSource('Class-Editor');
 
@@ -1586,7 +1586,7 @@ function aeva_admin_fields_edit()
 			'value' => $field['searchable'],
 		),
 	);
-	$context['aeva_form_url'] = $scripturl . '?action=admin;area=aeva_fields;sa=edit;in=' . $field['id'] . ';' . $context['session_query'];
+	$context['aeva_form_url'] = '<URL>?action=admin;area=aeva_fields;sa=edit;in=' . $field['id'] . ';' . $context['session_query'];
 
 	wetem::load('aeva_form');
 
@@ -1669,7 +1669,7 @@ function aeva_admin_fields_edit()
 				array($field_name, $field_desc, $albums, $options, $field_type, $field_bbc, $field_req, $field_searchable)
 			);
 
-		redirectexit($scripturl . '?action=admin;area=aeva_fields;' . $context['session_query']);
+		redirectexit('action=admin;area=aeva_fields;' . $context['session_query']);
 	}
 }
 

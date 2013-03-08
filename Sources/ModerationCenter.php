@@ -184,7 +184,7 @@ function ModerationMain($dont_call = false)
 // This function basically is the home page of the moderation center.
 function ModerationHome()
 {
-	global $txt, $context, $scripturl, $settings, $user_settings;
+	global $txt, $context, $settings, $user_settings;
 
 	loadTemplate('ModerationCenter');
 
@@ -677,7 +677,7 @@ function ReportedPosts()
 //!!! As for most things in this file, this needs to be moved somewhere appropriate.
 function ModerateGroups()
 {
-	global $txt, $context, $scripturl, $settings;
+	global $txt, $context, $settings;
 
 	// You need to be allowed to moderate groups...
 	if (we::$user['mod_cache']['gq'] == '0=1')
@@ -792,7 +792,7 @@ function ModReport()
 			);
 
 			// Redirect to prevent double submittion.
-			redirectexit($scripturl . '?action=moderate;area=reports;report=' . $_REQUEST['report']);
+			redirectexit('action=moderate;area=reports;report=' . $_REQUEST['report']);
 		}
 	}
 
@@ -1247,7 +1247,7 @@ function list_getWatchedUserCount($approve_query)
 
 function list_getWatchedUsers($start, $items_per_page, $sort, $approve_query, $dummy)
 {
-	global $txt, $scripturl, $settings, $context;
+	global $txt, $settings, $context;
 
 	$request = wesql::query('
 		SELECT id_member, real_name, last_login, posts, warning

@@ -74,7 +74,7 @@ if (!defined('WEDGE'))
 
 function aeva_initGallery($gal_url = null)
 {
-	global $amSettings, $settings, $galurl, $scripturl, $galurl2, $txt, $context, $theme;
+	global $amSettings, $settings, $galurl, $galurl2, $txt, $context, $theme;
 
 	// Call the all-important file
 	loadSource('media/Subs-Media');
@@ -90,7 +90,7 @@ function aeva_initGallery($gal_url = null)
 	if (empty($_REQUEST['sa']) || $_REQUEST['sa'] != 'media')
 	{
 		if (empty($settings['media_enabled']))
-			redirectexit($scripturl);
+			redirectexit();
 		elseif (!aeva_allowedTo('access'))
 			fatal_lang_error('media_accessDenied', !empty($amSettings['log_access_errors']));
 	}
@@ -401,7 +401,7 @@ function aeva_initGallery($gal_url = null)
 
 		// Start the linktree
 		$context['linktree'] = array();
-		add_linktree($scripturl, $context['forum_name']);
+		add_linktree('<URL>', $context['forum_name']);
 		if (empty($context['current_board']))
 			add_linktree($galurl2, $txt['media_gallery']);
 

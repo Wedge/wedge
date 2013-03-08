@@ -33,7 +33,7 @@ if (!defined('WEDGE'))
 // This function passes control through to the relevant tab.
 function ManageMemberOptions()
 {
-	global $context, $txt, $scripturl, $settings, $theme;
+	global $context, $txt, $settings, $theme;
 
 	// You need to be an admin to edit settings!
 	isAllowedTo('admin_forum');
@@ -89,7 +89,7 @@ function ManageMemberOptions()
 
 function ModifyMemberSettings($return_config = false)
 {
-	global $txt, $scripturl, $context, $theme, $settings;
+	global $txt, $context, $theme, $settings;
 
 	$config_vars = array(
 			// Basic stuff, titles, flash, permissions...
@@ -117,7 +117,7 @@ function ModifyMemberSettings($return_config = false)
 		redirectexit('action=admin;area=memberoptions;sa=options');
 	}
 
-	$context['post_url'] = $scripturl . '?action=admin;area=memberoptions;save;sa=options';
+	$context['post_url'] = '<URL>?action=admin;area=memberoptions;save;sa=options';
 	$context['settings_title'] = $txt['mods_cat_features'];
 
 	prepareDBSettingContext($config_vars);
@@ -126,7 +126,7 @@ function ModifyMemberSettings($return_config = false)
 // You'll never guess what this function does...
 function ModifySignatureSettings($return_config = false)
 {
-	global $context, $txt, $settings, $sig_start, $helptxt, $scripturl;
+	global $context, $txt, $settings, $sig_start, $helptxt;
 
 	$config_vars = array(
 			// Are signatures even enabled?
@@ -451,10 +451,10 @@ function ModifySignatureSettings($return_config = false)
 		redirectexit('action=admin;area=memberoptions;sa=sig');
 	}
 
-	$context['post_url'] = $scripturl . '?action=admin;area=memberoptions;save;sa=sig';
+	$context['post_url'] = '<URL>?action=admin;area=memberoptions;save;sa=sig';
 	$context['settings_title'] = $txt['signature_settings'];
 
-	$context['settings_message'] = '<p class="center">' . sprintf($txt['signature_settings_warning'], $scripturl, $context['session_query']) . '</p>';
+	$context['settings_message'] = '<p class="center">' . sprintf($txt['signature_settings_warning'], '<URL>', $context['session_query']) . '</p>';
 
 	prepareDBSettingContext($config_vars);
 }
@@ -494,7 +494,7 @@ function pauseSignatureApplySettings()
 // Show all the custom profile fields available to the user.
 function ShowCustomProfiles()
 {
-	global $txt, $scripturl, $context, $theme, $settings;
+	global $txt, $context, $theme, $settings;
 
 	$context['page_title'] = $txt['custom_profile_title'];
 	wetem::load('show_custom_profile');
@@ -540,7 +540,7 @@ function ShowCustomProfiles()
 	$listOptions = array(
 		'id' => 'standard_profile_fields',
 		'title' => $txt['standard_profile_title'],
-		'base_href' => $scripturl . '?action=admin;area=memberoptions;sa=profile',
+		'base_href' => '<URL>?action=admin;area=memberoptions;sa=profile',
 		'get_items' => array(
 			'function' => 'list_getProfileFields',
 		),
@@ -583,7 +583,7 @@ function ShowCustomProfiles()
 			),
 		),
 		'form' => array(
-			'href' => $scripturl . '?action=admin;area=memberoptions;sa=profile',
+			'href' => '<URL>?action=admin;area=memberoptions;sa=profile',
 			'name' => 'standardProfileFields',
 		),
 		'additional_rows' => array(
@@ -650,7 +650,7 @@ function list_getProfileFields($start, $items_per_page, $sort)
 // Edit some profile fields?
 function EditCustomProfiles()
 {
-	global $txt, $scripturl, $context, $theme;
+	global $txt, $context, $theme;
 
 	if (isset($_POST['saveorder'], $_POST['order']) && is_array($_POST['order']))
 	{
@@ -1221,7 +1221,7 @@ function updateProfileFieldsCache()
 
 function ModifyWhosOnline($return_config = false)
 {
-	global $txt, $scripturl, $context, $theme, $settings;
+	global $txt, $context, $theme, $settings;
 
 	$config_vars = array(
 			array('check', 'who_enabled'),
@@ -1246,7 +1246,7 @@ function ModifyWhosOnline($return_config = false)
 		redirectexit('action=admin;area=memberoptions;sa=whosonline');
 	}
 
-	$context['post_url'] = $scripturl . '?action=admin;area=memberoptions;save;sa=whosonline';
+	$context['post_url'] = '<URL>?action=admin;area=memberoptions;save;sa=whosonline';
 	$context['settings_title'] = $txt['mods_cat_features'];
 
 	prepareDBSettingContext($config_vars);

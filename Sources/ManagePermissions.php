@@ -88,7 +88,7 @@ if (!defined('WEDGE'))
 
 function ModifyPermissions()
 {
-	global $txt, $scripturl, $context;
+	global $txt, $context;
 
 	loadLanguage(array('ManagePermissions', 'ManageMembers'));
 	loadTemplate('ManagePermissions');
@@ -133,7 +133,7 @@ function ModifyPermissions()
 
 function PermissionIndex()
 {
-	global $txt, $scripturl, $context, $theme, $settings;
+	global $txt, $context, $theme, $settings;
 
 	$context['page_title'] = $txt['permissions_title'];
 
@@ -187,7 +187,7 @@ function PermissionIndex()
 			'allow_delete' => false,
 			'allow_modify' => true,
 			'can_search' => false,
-			'href' => $scripturl . '?action=moderate;area=viewgroups;sa=members;group=0',
+			'href' => '<URL>?action=moderate;area=viewgroups;sa=members;group=0',
 			'is_post_group' => false,
 			'color' => '',
 			'stars' => '',
@@ -233,7 +233,7 @@ function PermissionIndex()
 			'allow_delete' => $row['id_group'] > 4,
 			'allow_modify' => $row['id_group'] > 1,
 			'can_search' => $row['id_group'] != 3,
-			'href' => $scripturl . '?action=moderate;area=viewgroups;sa=members;group=' . $row['id_group'],
+			'href' => '<URL>?action=moderate;area=viewgroups;sa=members;group=' . $row['id_group'],
 			'is_post_group' => $row['min_posts'] != -1,
 			'color' => empty($row['online_color']) ? '' : $row['online_color'],
 			'stars' => !empty($row['stars'][0]) && !empty($row['stars'][1]) ? str_repeat('<img src="' . $theme['images_url'] . '/' . $row['stars'][1] . '">', $row['stars'][0]) : '',
@@ -994,13 +994,13 @@ function ModifyMembergroup2()
 // Screen for modifying general permission settings.
 function GeneralPermissionSettings($return_config = false)
 {
-	global $context, $settings, $txt, $scripturl;
+	global $context, $settings, $txt;
 
 	// All the setting variables
 	$config_vars = array(
 		array('title', 'settings'),
 			// Inline permissions.
-			array('permissions', 'manage_permissions', 'exclude' => array(-1, 0)),
+			array('permissions', 'manage_permissions', 'exclude' => array(-1, 0)), // Don't let guests have these permissions.
 		'',
 			// A few useful settings
 			array('check', 'permission_enable_deny', 0, $txt['permission_settings_enable_deny'], 'help' => 'permissions_deny'),
@@ -1016,8 +1016,7 @@ function GeneralPermissionSettings($return_config = false)
 	// Needed for the inline permission functions, and the settings template.
 	loadSource('ManageServer');
 
-	// Don't let guests have these permissions.
-	$context['post_url'] = $scripturl . '?action=admin;area=permissions;save;sa=settings';
+	$context['post_url'] = '<URL>?action=admin;area=permissions;save;sa=settings';
 
 	// Saving the settings?
 	if (isset($_GET['save']))

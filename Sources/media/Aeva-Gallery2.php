@@ -92,7 +92,7 @@ if (!defined('WEDGE'))
 function aeva_moveItems()
 {
 	// Handles moving of items from one album to another
-	global $context, $scripturl, $galurl, $txt, $amSettings;
+	global $context, $galurl, $txt, $amSettings;
 
 	// Load the item's data
 	$ids = !empty($_POST['ids']) ? $_POST['ids'] : (array) (!empty($_GET['in']) ? (int) $_GET['in'] : 0);
@@ -326,7 +326,7 @@ function aeva_moveItems()
 function aeva_unseen()
 {
 	// Handles the viewing of unseen files
-	global $galurl, $scripturl, $amSettings, $txt, $context;
+	global $galurl, $amSettings, $txt, $context;
 
 	is_not_guest();
 	$start = isset($_REQUEST['start']) ? (int) $_REQUEST['start'] : 0;
@@ -441,7 +441,7 @@ function aeva_unseen()
 // Handles searching of items
 function aeva_mgSearch()
 {
-	global $galurl, $txt, $amSettings, $context, $scripturl;
+	global $galurl, $txt, $amSettings, $context;
 
 	// Let's see what all albums they can search in
 	aeva_getAlbums();
@@ -595,7 +595,7 @@ function aeva_mgSearch()
 			)
 		);
 		list ($total_items) = wesql::fetch_row($request);
-		$pageindexURL = $scripturl . (!empty($context['current_board']) ? '?board=' . $context['current_board'] . '.0;' : '?') . 'action=media;sa=search;search=' . urlencode($_REQUEST['search']);
+		$pageindexURL = '<URL>' . (!empty($context['current_board']) ? '?board=' . $context['current_board'] . '.0;' : '?') . 'action=media;sa=search;search=' . urlencode($_REQUEST['search']);
 		if ($filters['album'])
 			$pageindexURL .= ';sch_album=' . $filters['album'];
 		if ($filters['title'])
@@ -648,7 +648,7 @@ function aeva_mgSearch()
 function aeva_listAlbums()
 {
 	// Handles viewing of all the albums out there
-	global $txt, $amSettings, $scripturl, $galurl, $context;
+	global $txt, $amSettings, $galurl, $context;
 
 	// Just load it!
 	$start = isset($_REQUEST['start']) ? (int) $_REQUEST['start'] : 0;
@@ -776,9 +776,9 @@ function aeva_mgStats()
 // Manages your albums' control panel
 function aeva_albumCP($is_admin = false)
 {
-	global $context, $txt, $galurl, $alburl, $scripturl, $theme;
+	global $context, $txt, $galurl, $alburl, $theme;
 
-	$alburl = $is_admin ? $scripturl . '?action=admin;area=aeva_albums;' . $context['session_query'] . ';' : $galurl . 'area=mya;';
+	$alburl = $is_admin ? '<URL>?action=admin;area=aeva_albums;' . $context['session_query'] . ';' : $galurl . 'area=mya;';
 	if (!$is_admin)
 	{
 		// This is needed for the toggle
@@ -872,7 +872,7 @@ function aeva_editAlbum()
 
 function aeva_addAlbum($is_admin = false, $is_add = true)
 {
-	global $context, $scripturl, $galurl, $amSettings, $txt, $theme;
+	global $context, $galurl, $amSettings, $txt, $theme;
 
 	$is_edit = !$is_add;
 
@@ -1100,7 +1100,7 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 	if (empty($_GET['action']) || $_GET['action'] != 'admin')
 		$context['aeva_form_url'] = $galurl . 'area=mya;sa=' . ($is_add ? 'add' : 'edit;in=' . $id_album);
 	else
-		$context['aeva_form_url'] = $scripturl . '?action=admin;area=aeva_albums;sa=' . ($is_add ? 'add' : 'edit;in=' . $id_album) . ';' . $context['session_query'];
+		$context['aeva_form_url'] = '<URL>?action=admin;area=aeva_albums;sa=' . ($is_add ? 'add' : 'edit;in=' . $id_album) . ';' . $context['session_query'];
 
 	add_js_file('scripts/suggest.js');
 
@@ -1235,7 +1235,7 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 			'label' => $txt['media_linked_topic'],
 			'type' => 'link',
 			'text' => $topic_subject,
-			'link' => $scripturl . '?topic=' . $id_topic . '.0',
+			'link' => '<URL>?topic=' . $id_topic . '.0',
 		),
 		'sort_order' => array(
 			'label' => $txt['media_default_sort_order'],
@@ -1830,7 +1830,7 @@ function aeva_moveAlbum()
 // Deletes an album and the items/comments in it
 function aeva_deleteAlbum($id = 0, $from_approval = false)
 {
-	global $context, $amSettings, $scripturl;
+	global $context, $amSettings;
 
 	$id = empty($id) ? (int) $_GET['in'] : $id;
 
@@ -2271,7 +2271,7 @@ function aeva_massUploadFinish()
 // Profile area for our gallery
 function aeva_profileSummary($memID)
 {
-	global $amSettings, $context, $txt, $theme, $scripturl;
+	global $amSettings, $context, $txt, $theme;
 
 	loadSource('media/Subs-Media');
 
@@ -2344,7 +2344,7 @@ function aeva_profileSummary($memID)
 // Viewing all items
 function aeva_profileItems($memID)
 {
-	global $amSettings, $context, $txt, $theme, $scripturl;
+	global $amSettings, $context, $txt, $theme;
 
 	loadSource('media/Subs-Media');
 
@@ -2356,7 +2356,7 @@ function aeva_profileItems($memID)
 
 	// The page index
 	$_REQUEST['start'] = empty($_REQUEST['start']) ? 0 : (int) $_REQUEST['start'];
-	$context['page_index'] = template_page_index($scripturl . '?action=profile;u=' . $memID . ';area=aevaitems', $_REQUEST['start'], $context['member']['media']['total_items'], 20);
+	$context['page_index'] = template_page_index('<URL>?action=profile;u=' . $memID . ';area=aevaitems', $_REQUEST['start'], $context['member']['media']['total_items'], 20);
 
 	// Load the items
 	$context['aeva_items'] = aeva_getMediaItems((int) $_REQUEST['start'], 20, 'm.id_media DESC', true, array(), 'm.id_member = ' . $memID);
@@ -2368,7 +2368,7 @@ function aeva_profileItems($memID)
 // Viewing all comments
 function aeva_profileComments($memID)
 {
-	global $amSettings, $context, $txt, $theme, $scripturl;
+	global $amSettings, $context, $txt, $theme;
 
 	loadSource('media/Subs-Media');
 
@@ -2379,7 +2379,7 @@ function aeva_profileComments($memID)
 
 	// The page index
 	$_REQUEST['start'] = empty($_REQUEST['start']) ? 0 : (int) $_REQUEST['start'];
-	$context['page_index'] = template_page_index($scripturl . '?action=profile;u=' . $memID . ';area=aevacoms', $_REQUEST['start'], $context['member']['media']['total_comments'], 20);
+	$context['page_index'] = template_page_index('<URL>?action=profile;u=' . $memID . ';area=aevacoms', $_REQUEST['start'], $context['member']['media']['total_comments'], 20);
 
 	// Load the items
 	$context['aeva_coms'] = aeva_getMediaComments((int) $_REQUEST['start'], 20, false, array(), 'com.id_member = ' . $memID);
@@ -2391,7 +2391,7 @@ function aeva_profileComments($memID)
 // Viewing all comments
 function aeva_profileVotes($memID)
 {
-	global $amSettings, $context, $txt, $theme, $scripturl;
+	global $amSettings, $context, $txt, $theme;
 
 	loadSource('media/Subs-Media');
 
@@ -2405,7 +2405,7 @@ function aeva_profileVotes($memID)
 	$request = wesql::query('SELECT COUNT(rating) FROM {db_prefix}media_log_ratings WHERE id_member = {int:member}', array('member' => $memID));
 	list ($co) = wesql::fetch_row($request);
 	wesql::free_result($request);
-	$context['page_index'] = template_page_index($scripturl . '?action=profile;u=' . $memID . ';area=aevavotes', $_REQUEST['start'], $co, 50);
+	$context['page_index'] = template_page_index('<URL>?action=profile;u=' . $memID . ';area=aevavotes', $_REQUEST['start'], $co, 50);
 
 	// Any messages in the associated topics?
 	$request = wesql::query('
@@ -2478,7 +2478,7 @@ function aeva_profileVotes($memID)
 // Who rated what?
 function aeva_whoRatedWhat()
 {
-	global $amSettings, $context, $scripturl, $galurl, $txt;
+	global $amSettings, $context, $galurl, $txt;
 
 	// Allowed to view or not?
 	if (!aeva_allowedTo('whoratedwhat'))
@@ -2508,7 +2508,7 @@ function aeva_whoRatedWhat()
 	while ($row = wesql::fetch_assoc($request))
 	{
 		$context['item']['rating_logs'][] = array(
-			'member_link' => $scripturl . '?action=profile;u=' . $row['id_member'] . ';area=aevavotes',
+			'member_link' => '<URL>?action=profile;u=' . $row['id_member'] . ';area=aevavotes',
 			'member_name' => $row['member_name'],
 			'rating' => $row['rating'],
 			'time' => timeformat($row['time']),
@@ -2530,7 +2530,7 @@ function aeva_whoRatedWhat()
 // Multi download
 function aeva_massDownload()
 {
-	global $txt, $context, $amSettings, $scripturl, $galurl;
+	global $txt, $context, $amSettings, $galurl;
 
 	// This function is for taking the user's input on what to download
 
@@ -2591,7 +2591,7 @@ function aeva_massDownload()
 // Creating an archive..the bad guy
 function aeva_massDownloadCreate()
 {
-	global $context, $scripturl, $txt, $galurl, $amSettings, $time_start;
+	global $context, $txt, $galurl, $amSettings, $time_start;
 
 	if (empty($context['aeva_album']))
 		fatal_lang_error('media_accessDenied', !empty($amSettings['log_access_errors']));

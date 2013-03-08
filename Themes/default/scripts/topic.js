@@ -146,7 +146,7 @@ function go_down()
 		});
 
 		show_ajax();
-		$.post(weUrl('action=quotefast;xml;modify'), { quote: first_msg_id }, function (XMLDoc) {
+		$.post(weUrl('action=quotefast;modify'), { quote: first_msg_id }, function (XMLDoc) {
 			hide_ajax();
 			cur_msg_id = $('message', XMLDoc).attr('id');
 
@@ -156,7 +156,7 @@ function go_down()
 			// Here we hide any other things they want hiding on edit.
 			set_hidden_topic_areas(false);
 
-			show_edit($('subject', XMLDoc).text());
+			show_edit($('subject', XMLDoc).text().php_unhtmlspecialchars().replace(/&#039;/g, "'"));
 		});
 	}
 @endif

@@ -111,7 +111,7 @@ function ViewErrorLog()
 	$context['sort_direction'] = isset($_REQUEST['asc']) ? 'up' : 'down';
 
 	// Set the page listing up.
-	$context['page_index'] = template_page_index($scripturl . '?action=admin;area=logs;sa=errorlog' . ($context['sort_direction'] == 'up' ? ';asc' : '') . (isset($filter) ? $filter['href'] : ''), $_GET['start'], $num_errors, $settings['defaultMaxMessages']);
+	$context['page_index'] = template_page_index('<URL>?action=admin;area=logs;sa=errorlog' . ($context['sort_direction'] == 'up' ? ';asc' : '') . (isset($filter) ? $filter['href'] : ''), $_GET['start'], $num_errors, $settings['defaultMaxMessages']);
 	$context['start'] = $_GET['start'];
 
 	// Find and sort out the errors. 10KB per message log should be enough. And help prevent page crashes.
@@ -171,8 +171,8 @@ function ViewErrorLog()
 			$context['errors'][$row['id_error']]['file'] = array(
 				'file' => $row['file'],
 				'line' => $row['line'],
-				'href' => $scripturl . '?action=admin;area=logs;sa=errorlog;file=' . base64_encode($row['file']) . ';line=' . $row['line'],
-				'link' => $linkfile ? '<a href="' . $scripturl . '?action=admin;area=logs;sa=errorlog;file=' . base64_encode($row['file']) . ';line=' . $row['line'] . '" onclick="return reqWin(this, 1280);">' . $row['file'] . '</a>' : $row['file'],
+				'href' => '<URL>?action=admin;area=logs;sa=errorlog;file=' . base64_encode($row['file']) . ';line=' . $row['line'],
+				'link' => $linkfile ? '<a href="<URL>?action=admin;area=logs;sa=errorlog;file=' . base64_encode($row['file']) . ';line=' . $row['line'] . '" onclick="return reqWin(this, 1280);">' . $row['file'] . '</a>' : $row['file'],
 				'search' => base64_encode($row['file']),
 			);
 		}
@@ -215,8 +215,8 @@ function ViewErrorLog()
 			$memID = $context['errors'][$id]['member']['id'];
 			$context['errors'][$id]['member']['username'] = $members[$memID]['member_name'];
 			$context['errors'][$id]['member']['name'] = $members[$memID]['real_name'];
-			$context['errors'][$id]['member']['href'] = empty($memID) ? '' : $scripturl . '?action=profile;u=' . $memID;
-			$context['errors'][$id]['member']['link'] = empty($memID) ? $txt['guest_title'] : '<a href="' . $scripturl . '?action=profile;u=' . $memID . '">' . $context['errors'][$id]['member']['name'] . '</a>';
+			$context['errors'][$id]['member']['href'] = empty($memID) ? '' : '<URL>?action=profile;u=' . $memID;
+			$context['errors'][$id]['member']['link'] = empty($memID) ? $txt['guest_title'] : '<a href="<URL>?action=profile;u=' . $memID . '">' . $context['errors'][$id]['member']['name'] . '</a>';
 		}
 	}
 
@@ -230,7 +230,7 @@ function ViewErrorLog()
 		{
 			$id = $filter['value']['sql'];
 			loadMemberData($id, false, 'minimal');
-			$context['filter']['value']['html'] = '<a href="' . $scripturl . '?action=profile;u=' . $id . '">' . $user_profile[$id]['real_name'] . '</a>';
+			$context['filter']['value']['html'] = '<a href="<URL>?action=profile;u=' . $id . '">' . $user_profile[$id]['real_name'] . '</a>';
 		}
 		elseif ($filter['variable'] == 'url')
 			$context['filter']['value']['html'] = '&quot;' . strtr(htmlspecialchars((substr($filter['value']['sql'], 0, 1) == '?' ? $scripturl : '') . $filter['value']['sql']), array('\_' => '_')) . '&quot;';
@@ -256,7 +256,7 @@ function ViewErrorLog()
 	$context['error_types']['all'] = array(
 		'label' => $txt['errortype_all'],
 		'description' => isset($txt['errortype_all_desc']) ? $txt['errortype_all_desc'] : '',
-		'url' => $scripturl . '?action=admin;area=logs;sa=errorlog' . ($context['sort_direction'] == 'up' ? ';asc' : ''),
+		'url' => '<URL>?action=admin;area=logs;sa=errorlog' . ($context['sort_direction'] == 'up' ? ';asc' : ''),
 		'is_selected' => empty($filter),
 	);
 
@@ -276,7 +276,7 @@ function ViewErrorLog()
 		$context['error_types'][$sum] = array(
 			'label' => (isset($txt['errortype_' . $row['error_type']]) ? $txt['errortype_' . $row['error_type']] : $row['error_type']) . ' (' . $row['num_errors'] . ')',
 			'description' => isset($txt['errortype_' . $row['error_type'] . '_desc']) ? $txt['errortype_' . $row['error_type'] . '_desc'] : '',
-			'url' => $scripturl . '?action=admin;area=logs;sa=errorlog' . ($context['sort_direction'] == 'up' ? ';asc' : '') . ';filter=error_type;value=' . $row['error_type'],
+			'url' => '<URL>?action=admin;area=logs;sa=errorlog' . ($context['sort_direction'] == 'up' ? ';asc' : '') . ';filter=error_type;value=' . $row['error_type'],
 			'is_selected' => isset($filter) && $filter['value']['sql'] == wesql::escape_wildcard_string($row['error_type']),
 		);
 	}
@@ -410,7 +410,7 @@ function ViewIntrusionLog()
 	$context['sort_direction'] = isset($_REQUEST['asc']) ? 'up' : 'down';
 
 	// Set the page listing up.
-	$context['page_index'] = template_page_index($scripturl . '?action=admin;area=logs;sa=intrusionlog' . ($context['sort_direction'] == 'up' ? ';asc' : '') . (isset($filter) ? $filter['href'] : ''), $_GET['start'], $num_errors, $settings['defaultMaxMessages']);
+	$context['page_index'] = template_page_index('<URL>?action=admin;area=logs;sa=intrusionlog' . ($context['sort_direction'] == 'up' ? ';asc' : '') . (isset($filter) ? $filter['href'] : ''), $_GET['start'], $num_errors, $settings['defaultMaxMessages']);
 	$context['start'] = $_GET['start'];
 
 	// Find and sort out the errors.
@@ -510,8 +510,8 @@ function ViewIntrusionLog()
 
 			$context['errors'][$id]['member']['username'] = $members[$memID]['member_name'];
 			$context['errors'][$id]['member']['name'] = $members[$memID]['real_name'];
-			$context['errors'][$id]['member']['href'] = empty($memID) ? '' : $scripturl . '?action=profile;u=' . $memID;
-			$context['errors'][$id]['member']['link'] = empty($memID) ? $txt['guest_title'] : '<a href="' . $scripturl . '?action=profile;u=' . $memID . '">' . $context['errors'][$id]['member']['name'] . '</a>';
+			$context['errors'][$id]['member']['href'] = empty($memID) ? '' : '<URL>?action=profile;u=' . $memID;
+			$context['errors'][$id]['member']['link'] = empty($memID) ? $txt['guest_title'] : '<a href="<URL>?action=profile;u=' . $memID . '">' . $context['errors'][$id]['member']['name'] . '</a>';
 		}
 	}
 
@@ -525,7 +525,7 @@ function ViewIntrusionLog()
 		{
 			$id = $filter['value']['sql'];
 			loadMemberData($id, false, 'minimal');
-			$context['filter']['value']['html'] = '<a href="' . $scripturl . '?action=profile;u=' . $id . '">' . $user_profile[$id]['real_name'] . '</a>';
+			$context['filter']['value']['html'] = '<a href="<URL>?action=profile;u=' . $id . '">' . $user_profile[$id]['real_name'] . '</a>';
 		}
 		elseif ($filter['variable'] == 'request_uri')
 			$context['filter']['value']['html'] = '&quot;' . strtr(htmlspecialchars((substr($filter['value']['sql'], 0, 1) == '?' ? $scripturl : '') . $filter['value']['sql']), array('\_' => '_')) . '&quot;';
@@ -541,7 +541,7 @@ function ViewIntrusionLog()
 
 	$context['error_types']['all'] = array(
 		'label' => $txt['errortype_all'],
-		'url' => $scripturl . '?action=admin;area=logs;sa=intrusionlog' . ($context['sort_direction'] == 'up' ? ';asc' : ''),
+		'url' => '<URL>?action=admin;area=logs;sa=intrusionlog' . ($context['sort_direction'] == 'up' ? ';asc' : ''),
 		'is_selected' => empty($filter),
 	);
 
@@ -560,7 +560,7 @@ function ViewIntrusionLog()
 
 		$context['error_types'][$sum] = array(
 			'label' => (isset($txt['behav_' . $row['error_type'] . '_log']) ? $txt['behav_' . $row['error_type'] . '_log'] : $row['error_type']) . ' (' . $row['num_errors'] . ')',
-			'url' => $scripturl . '?action=admin;area=logs;sa=intrusionlog' . ($context['sort_direction'] == 'up' ? ';asc' : '') . ';filter=error_type;value=' . $row['error_type'],
+			'url' => '<URL>?action=admin;area=logs;sa=intrusionlog' . ($context['sort_direction'] == 'up' ? ';asc' : '') . ';filter=error_type;value=' . $row['error_type'],
 			'is_selected' => isset($filter) && $filter['value']['sql'] == wesql::escape_wildcard_string($row['error_type']),
 		);
 	}

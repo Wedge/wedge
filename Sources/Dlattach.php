@@ -39,7 +39,7 @@ define('WEDGE_NO_LOG', 1);
  */
 function Dlattach()
 {
-	global $txt, $settings, $scripturl, $context, $topic;
+	global $txt, $settings, $context, $topic;
 
 	// Some defaults that we need.
 	$context['no_last_modified'] = true;

@@ -71,7 +71,7 @@ if (!defined('WEDGE'))
 
 function ManagePaidSubscriptions()
 {
-	global $context, $txt, $scripturl, $settings;
+	global $context, $txt, $settings;
 
 	// Load the required language and template.
 	loadLanguage('ManagePaid');
@@ -114,7 +114,7 @@ function ManagePaidSubscriptions()
 // Modify which payment methods are to be used.
 function ModifySubscriptionSettings($return_config = false)
 {
-	global $context, $txt, $settings, $scripturl, $boardurl;
+	global $context, $txt, $settings, $boardurl;
 
 	// If the currency is set to something different then we need to set it to other for this to work and set it back shortly.
 	$settings['paid_currency'] = !empty($settings['paid_currency_code']) ? $settings['paid_currency_code'] : '';
@@ -166,7 +166,7 @@ function ModifySubscriptionSettings($return_config = false)
 	$context[$context['admin_menu_name']]['current_subsection'] = 'settings';
 
 	// Get the final touches in place.
-	$context['post_url'] = $scripturl . '?action=admin;area=paidsubscribe;save;sa=settings';
+	$context['post_url'] = '<URL>?action=admin;area=paidsubscribe;save;sa=settings';
 	$context['settings_title'] = $txt['settings'];
 
 	// We want javascript for our currency options.
@@ -232,11 +232,11 @@ function ModifySubscriptionSettings($return_config = false)
 // Are we looking at viewing the subscriptions?
 function ViewSubscriptions()
 {
-	global $context, $txt, $settings, $scripturl;
+	global $context, $txt, $settings;
 
 	// Not made the settings yet?
 	if (empty($settings['paid_currency_symbol']))
-		fatal_lang_error('paid_not_set_currency', false, $scripturl . '?action=admin;area=paidsubscribe;sa=settings');
+		fatal_lang_error('paid_not_set_currency', false, '<URL>?action=admin;area=paidsubscribe;sa=settings');
 
 	// Some basic stuff.
 	$context['page_title'] = $txt['paid_subs_view'];
@@ -245,7 +245,7 @@ function ViewSubscriptions()
 	$listOptions = array(
 		'id' => 'subscription_list',
 		'items_per_page' => 20,
-		'base_href' => $scripturl . '?action=admin;area=paidsubscribe;sa=view',
+		'base_href' => '<URL>?action=admin;area=paidsubscribe;sa=view',
 		'get_items' => array(
 			'function' => create_function('', '
 				global $context;
@@ -267,9 +267,7 @@ function ViewSubscriptions()
 				),
 				'data' => array(
 					'function' => create_function('$rowData', '
-						global $scripturl;
-
-						return sprintf(\'<a href="%1$s?action=admin;area=paidsubscribe;sa=viewsub;sid=%2$s">%3$s</a>\', $scripturl, $rowData[\'id\'], $rowData[\'name\']);
+						return sprintf(\'<a href="<URL>?action=admin;area=paidsubscribe;sa=viewsub;sid=%1$s">%2$s</a>\', $rowData[\'id\'], $rowData[\'name\']);
 					'),
 				),
 			),
@@ -330,9 +328,9 @@ function ViewSubscriptions()
 			'modify' => array(
 				'data' => array(
 					'function' => create_function('$rowData', '
-						global $context, $txt, $scripturl;
+						global $txt;
 
-						return \'<a href="\' . $scripturl . \'?action=admin;area=paidsubscribe;sa=modify;sid=\' . $rowData[\'id\'] . \'">\' . $txt[\'modify\'] . \'</a>\';
+						return \'<a href="<URL>?action=admin;area=paidsubscribe;sa=modify;sid=\' . $rowData[\'id\'] . \'">\' . $txt[\'modify\'] . \'</a>\';
 					'),
 					'style' => 'text-align: center;',
 				),
@@ -340,16 +338,16 @@ function ViewSubscriptions()
 			'delete' => array(
 				'data' => array(
 					'function' => create_function('$rowData', '
-						global $context, $txt, $scripturl;
+						global $txt;
 
-						return \'<a href="\' . $scripturl . \'?action=admin;area=paidsubscribe;sa=modify;delete;sid=\' . $rowData[\'id\'] . \'">\' . $txt[\'delete\'] . \'</a>\';
+						return \'<a href="<URL>?action=admin;area=paidsubscribe;sa=modify;delete;sid=\' . $rowData[\'id\'] . \'">\' . $txt[\'delete\'] . \'</a>\';
 					'),
 					'style' => 'text-align: center;',
 				),
 			),
 		),
 		'form' => array(
-			'href' => $scripturl . '?action=admin;area=paidsubscribe;sa=modify',
+			'href' => '<URL>?action=admin;area=paidsubscribe;sa=modify',
 		),
 		'additional_rows' => array(
 			array(
@@ -679,7 +677,7 @@ function ModifySubscription()
 // View all the users subscribed to a particular subscription!
 function ViewSubscribedUsers()
 {
-	global $context, $txt, $settings, $scripturl, $options;
+	global $context, $txt, $settings, $options;
 
 	// Setup the template.
 	$context['page_title'] = $txt['viewing_users_subscribed'];
@@ -716,7 +714,7 @@ function ViewSubscribedUsers()
 	$listOptions = array(
 		'id' => 'subscribed_users_list',
 		'items_per_page' => 20,
-		'base_href' => $scripturl . '?action=admin;area=paidsubscribe;sa=viewsub;sid=' . $context['sub_id'],
+		'base_href' => '<URL>?action=admin;area=paidsubscribe;sa=viewsub;sid=' . $context['sub_id'],
 		'default_sort_col' => 'name',
 		'get_items' => array(
 			'function' => 'list_getSubscribedUsers',
@@ -743,9 +741,9 @@ function ViewSubscribedUsers()
 				),
 				'data' => array(
 					'function' => create_function('$rowData', '
-						global $context, $txt, $scripturl;
+						global $txt;
 
-						return $rowData[\'id_member\'] == 0 ? $txt[\'guest\'] : \'<a href="\' . $scripturl . \'?action=profile;u=\' . $rowData[\'id_member\'] . \'">\' . $rowData[\'name\'] . \'</a>\';
+						return $rowData[\'id_member\'] == 0 ? $txt[\'guest\'] : \'<a href="<URL>?action=profile;u=\' . $rowData[\'id_member\'] . \'">\' . $rowData[\'name\'] . \'</a>\';
 					'),
 				),
 				'sort' => array(
@@ -813,9 +811,9 @@ function ViewSubscribedUsers()
 				),
 				'data' => array(
 					'function' => create_function('$rowData', '
-						global $context, $txt, $scripturl;
+						global $txt;
 
-						return \'<a href="\' . $scripturl . \'?action=admin;area=paidsubscribe;sa=modifyuser;lid=\' . $rowData[\'id\'] . \'">\' . $txt[\'modify\'] . \'</a>\';
+						return \'<a href="<URL>?action=admin;area=paidsubscribe;sa=modifyuser;lid=\' . $rowData[\'id\'] . \'">\' . $txt[\'modify\'] . \'</a>\';
 					'),
 					'style' => 'text-align: center;',
 				),
@@ -826,8 +824,6 @@ function ViewSubscribedUsers()
 				),
 				'data' => array(
 					'function' => create_function('$rowData', '
-						global $context, $txt, $scripturl;
-
 						return \'<input type="checkbox" name="delsub[\' . $rowData[\'id\'] . \']">\';
 					'),
 					'style' => 'text-align: center;',
@@ -835,7 +831,7 @@ function ViewSubscribedUsers()
 			),
 		),
 		'form' => array(
-			'href' => $scripturl . '?action=admin;area=paidsubscribe;sa=modifyuser;sid=' . $context['sub_id'],
+			'href' => '<URL>?action=admin;area=paidsubscribe;sa=modifyuser;sid=' . $context['sub_id'],
 		),
 		'additional_rows' => array(
 			array(

@@ -83,7 +83,7 @@ function createMenu($menuData, $menuOptions = array())
 	$context['menu_data_' . $context['max_menu_id']] = array();
 	$menu_context =& $context['menu_data_' . $context['max_menu_id']];
 
-	// What is the general action of this menu (i.e. $scripturl?action=XXXX.
+	// What is the general action of this menu (i.e. <URL>?action=XXXX.
 	$menu_context['current_action'] = isset($menuOptions['action']) ? $menuOptions['action'] : $context['current_action'];
 
 	// What is the current area selected?

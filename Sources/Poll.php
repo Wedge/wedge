@@ -341,7 +341,7 @@ function LockVoting()
 // Ask what to change in a poll.
 function EditPoll()
 {
-	global $txt, $context, $topic, $board, $scripturl;
+	global $txt, $context, $topic, $board;
 
 	loadLanguage('Post');
 	loadTemplate('Poll');
@@ -604,7 +604,7 @@ function EditPoll()
 	// Build the link tree.
 	censorText($pollinfo['subject']);
 	$context['linktree'][] = array(
-		'url' => $scripturl . '?topic=' . $topic . '.0',
+		'url' => '<URL>?topic=' . $topic . '.0',
 		'name' => $pollinfo['subject'],
 	);
 	$context['linktree'][] = array(

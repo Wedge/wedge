@@ -20,7 +20,7 @@ if (!defined('WEDGE'))
  * Unlike most actions within the forum, this action is explicitly not listed within the action array in index.php, because it is the default action; if no known action, board or topic is specified, this function will be used.
  *
  * - Loads the Boards template.
- * - Defines the canonical URL of the page to be the principal forum URL (as $scripturl) in case we fell through to here (if action is one the forum is not aware of, and there is no topic or board, this action will be called)
+ * - Defines the canonical URL of the page to be the principal forum URL (from the meta reference <URL>) in case we fell through to here (if action is one the forum is not aware of, and there is no topic or board, this action will be called)
  * - Ordinarily, the board index page will be directed to be indexed, however this is turned off in the event that $_GET is non-empty.
  * - The board list is then loaded from {@link getBoardIndex()} in Subs-BoardIndex.php.
  * - The list of online members is then loaded from {@link getMembersOnlineStats()} in Subs-MembersOnline.php.
@@ -33,7 +33,7 @@ if (!defined('WEDGE'))
  */
 function Boards()
 {
-	global $txt, $settings, $context, $theme, $scripturl, $options;
+	global $txt, $settings, $context, $theme, $options;
 
 	loadTemplate('Boards');
 	loadTemplate('InfoCenter');
@@ -56,7 +56,7 @@ function Boards()
 	);
 
 	// Set a canonical URL for this page.
-	$context['canonical_url'] = $scripturl . (isset($_GET['action']) && $_GET['action'] === 'boards' ? '?action=boards' : (isset($_GET['category']) && (int) $_GET['category'] ? '?category=' . $_GET['category'] : ''));
+	$context['canonical_url'] = '<URL>' . (isset($_GET['action']) && $_GET['action'] === 'boards' ? '?action=boards' : (isset($_GET['category']) && (int) $_GET['category'] ? '?category=' . $_GET['category'] : ''));
 
 	// Do not let search engines index anything if there is a random thing in $_GET.
 	if (!empty($_GET))
@@ -77,13 +77,13 @@ function Boards()
 	// Set up the linktree.
 	$context['linktree'] = array(
 		array(
-			'url' => $scripturl,
+			'url' => '<URL>',
 			'name' => $context['forum_name_html_safe'],
 		),
 	);
 	if (!empty($boardIndexOptions['category']))
 		$context['linktree'][] = array(
-			'url' => $scripturl . '?category=' . $boardIndexOptions['category'],
+			'url' => '<URL>?category=' . $boardIndexOptions['category'],
 			'name' => $context['categories'][$boardIndexOptions['category']]['name'],
 		);
 

@@ -353,8 +353,6 @@ function list_getUserWarningCount($memID)
 // Get the data about a users warnings.
 function list_getUserWarnings($start, $items_per_page, $sort, $memID)
 {
-	global $scripturl;
-
 	$request = wesql::query('
 		SELECT IFNULL(mem.id_member, 0) AS id_member, IFNULL(mem.real_name, lc.member_name) AS member_name,
 			lc.log_time, lc.body, lc.counter, lc.id_notice
@@ -374,7 +372,7 @@ function list_getUserWarnings($start, $items_per_page, $sort, $memID)
 		$previous_warnings[] = array(
 			'issuer' => array(
 				'id' => $row['id_member'],
-				'link' => $row['id_member'] ? ('<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['member_name'] . '</a>') : $row['member_name'],
+				'link' => $row['id_member'] ? ('<a href="<URL>?action=profile;u=' . $row['id_member'] . '">' . $row['member_name'] . '</a>') : $row['member_name'],
 			),
 			'time' => timeformat($row['log_time']),
 			'reason' => $row['body'],

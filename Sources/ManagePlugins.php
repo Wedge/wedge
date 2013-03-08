@@ -16,7 +16,7 @@ if (!defined('WEDGE'))
 
 function PluginsHome()
 {
-	global $scripturl, $txt, $context;
+	global $txt, $context;
 
 	// General stuff
 	loadLanguage('ManagePlugins');
@@ -54,7 +54,7 @@ function PluginsHome()
 
 function ListPlugins()
 {
-	global $scripturl, $txt, $context, $pluginsdir, $maintenance;
+	global $txt, $context, $pluginsdir, $maintenance;
 
 	wetem::load('browse');
 	$context['page_title'] = $txt['plugin_manager'];
@@ -1187,7 +1187,7 @@ function DisablePlugin($manifest = null, $plugin = null)
 
 function RemovePlugin()
 {
-	global $scripturl, $txt, $context, $pluginsdir, $maintenance;
+	global $txt, $context, $pluginsdir, $maintenance;
 
 	// !! libxml_use_internal_errors(true); ??
 	if (!isViablePlugin())
@@ -1273,7 +1273,7 @@ function RemovePlugin()
 // This ugly function deals with actually removing a plugin.
 function commitRemovePlugin($fullclean, &$manifest, &$remote_class)
 {
-	global $scripturl, $txt, $context, $pluginsdir;
+	global $txt, $context, $pluginsdir;
 
 	// So, as far as we know, it's valid to remove, because RemovePlugin() should have checked all this for us, even writability.
 
