@@ -224,7 +224,7 @@ function summary($memID)
 // Show the user's drafts.
 function showDrafts($memID)
 {
-	global $context, $memberContext, $txt, $settings, $user_profile, $scripturl;
+	global $context, $memberContext, $txt, $settings, $user_profile;
 
 	// Attempt to load the member's profile data.
 	if (!loadMemberContext($memID) || !isset($memberContext[$memID]))
@@ -837,7 +837,7 @@ function showAttachments($memID)
 
 function statPanel($memID)
 {
-	global $txt, $scripturl, $context, $user_profile, $settings;
+	global $txt, $context, $user_profile, $settings;
 
 	$context['page_title'] = $txt['statPanel_showStats'] . ' ' . $user_profile[$memID]['real_name'];
 
@@ -917,7 +917,7 @@ function statPanel($memID)
 		$context['popular_boards'][$row['id_board']] = array(
 			'id' => $row['id_board'],
 			'posts' => $row['message_count'],
-			'href' => $scripturl . '?board=' . $row['id_board'] . '.0',
+			'href' => '<URL>?board=' . $row['id_board'] . '.0',
 			'link' => '<a href="<URL>?board=' . $row['id_board'] . '.0">' . $row['name'] . '</a>',
 			'posts_percent' => $user_profile[$memID]['posts'] == 0 ? 0 : ($row['message_count'] * 100) / $user_profile[$memID]['posts'],
 			'total_posts' => $row['num_posts'],
@@ -948,7 +948,7 @@ function statPanel($memID)
 		$context['board_activity'][$row['id_board']] = array(
 			'id' => $row['id_board'],
 			'posts' => $row['message_count'],
-			'href' => $scripturl . '?board=' . $row['id_board'] . '.0',
+			'href' => '<URL>?board=' . $row['id_board'] . '.0',
 			'link' => '<a href="<URL>?board=' . $row['id_board'] . '.0">' . $row['name'] . '</a>',
 			'percent' => comma_format((float) $row['percentage'], 2),
 			'posts_percent' => (float) $row['percentage'],
@@ -1057,8 +1057,7 @@ function tracking($memID)
 function trackActivity($memID)
 {
 	// !!! THIS IS VERY BROKEN RIGHT NOW! Stopped after trying to get my head round the complexity of changes for this.
-	global $scripturl, $txt, $settings;
-	global $user_profile, $context;
+	global $txt, $settings, $user_profile, $context;
 
 	// Verify if the user has sufficient permissions.
 	isAllowedTo('manage_bans');
@@ -1074,7 +1073,7 @@ function trackActivity($memID)
 		'title' => $txt['errors_by'] . ' ' . $context['member']['name'],
 		'items_per_page' => $settings['defaultMaxMessages'],
 		'no_items_label' => $txt['no_errors_from_user'],
-		'base_href' => $scripturl . '?action=profile;u=' . $memID . ';area=tracking;sa=user',
+		'base_href' => '<URL>?action=profile;u=' . $memID . ';area=tracking;sa=user',
 		'default_sort_col' => 'date',
 		'get_items' => array(
 			'function' => 'list_getUserErrors',

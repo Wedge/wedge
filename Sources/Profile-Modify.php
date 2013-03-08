@@ -118,7 +118,7 @@ if (!defined('WEDGE'))
 // This defines every profile field known to man.
 function loadProfileFields($force_reload = false)
 {
-	global $context, $profile_fields, $txt, $scripturl, $settings, $old_profile, $cur_profile, $language;
+	global $context, $profile_fields, $txt, $settings, $old_profile, $cur_profile, $language;
 
 	// Don't load this twice!
 	if (!empty($profile_fields) && !$force_reload)
@@ -1624,7 +1624,7 @@ function options($memID)
 // Display the notifications and settings for changes.
 function notification($memID)
 {
-	global $txt, $scripturl, $user_profile, $context, $settings, $theme;
+	global $txt, $user_profile, $context, $settings, $theme;
 
 	// Gonna want this for the list.
 	loadSource('Subs-List');
@@ -1635,7 +1635,7 @@ function notification($memID)
 		'width' => '100%',
 		'no_items_label' => $txt['notifications_boards_none'] . '<br><br>' . $txt['notifications_boards_howto'],
 		'no_items_align' => 'left',
-		'base_href' => $scripturl . '?action=profile;u=' . $memID . ';area=notification',
+		'base_href' => '<URL>?action=profile;u=' . $memID . ';area=notification',
 		'default_sort_col' => 'board_name',
 		'get_items' => array(
 			'function' => 'list_getBoardNotifications',
@@ -1683,7 +1683,7 @@ function notification($memID)
 			),
 		),
 		'form' => array(
-			'href' => $scripturl . '?action=profile;area=notification;save',
+			'href' => '<URL>?action=profile;area=notification;save',
 			'include_sort' => true,
 			'include_start' => true,
 			'hidden_fields' => array(
@@ -1711,7 +1711,7 @@ function notification($memID)
 		'items_per_page' => $settings['defaultMaxMessages'],
 		'no_items_label' => $txt['notifications_topics_none'] . '<br><br>' . $txt['notifications_topics_howto'],
 		'no_items_align' => 'left',
-		'base_href' => $scripturl . '?action=profile;u=' . $memID . ';area=notification',
+		'base_href' => '<URL>?action=profile;u=' . $memID . ';area=notification',
 		'default_sort_col' => 'last_post',
 		'get_items' => array(
 			'function' => 'list_getTopicNotifications',
@@ -1799,7 +1799,7 @@ function notification($memID)
 			),
 		),
 		'form' => array(
-			'href' => $scripturl . '?action=profile;area=notification;save',
+			'href' => '<URL>?action=profile;area=notification;save',
 			'include_sort' => true,
 			'include_start' => true,
 			'hidden_fields' => array(
@@ -1853,7 +1853,7 @@ function list_getTopicNotificationCount($memID)
 
 function list_getTopicNotifications($start, $items_per_page, $sort, $memID)
 {
-	global $txt, $scripturl, $context;
+	global $txt, $context;
 
 	// All the topics with notification on...
 	$request = wesql::query('
@@ -1892,12 +1892,12 @@ function list_getTopicNotifications($start, $items_per_page, $sort, $memID)
 			'poster_link' => empty($row['id_member']) ? $row['real_name_col'] : '<a href="<URL>?action=profile;u=' . $row['id_member'] . '">' . $row['real_name_col'] . '</a>',
 			'poster_updated_link' => empty($row['id_member_updated']) ? $row['last_real_name'] : '<a href="<URL>?action=profile;u=' . $row['id_member_updated'] . '">' . $row['last_real_name'] . '</a>',
 			'subject' => $row['subject'],
-			'href' => $scripturl . '?topic=' . $row['id_topic'] . '.0',
+			'href' => '<URL>?topic=' . $row['id_topic'] . '.0',
 			'link' => '<a href="<URL>?topic=' . $row['id_topic'] . '.0">' . $row['subject'] . '</a>',
 			'new' => $row['new_from'] <= $row['id_msg_modified'],
 			'new_from' => $row['new_from'],
 			'updated' => timeformat($row['poster_time']),
-			'new_href' => $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['new_from'] . '#new',
+			'new_href' => '<URL>?topic=' . $row['id_topic'] . '.msg' . $row['new_from'] . '#new',
 			'new_link' => '<a href="<URL>?topic=' . $row['id_topic'] . '.msg' . $row['new_from'] . '#new">' . $row['subject'] . '</a>',
 			'board_link' => '<a href="<URL>?board=' . $row['id_board'] . '.0">' . $row['name'] . '</a>',
 		);
@@ -1909,7 +1909,7 @@ function list_getTopicNotifications($start, $items_per_page, $sort, $memID)
 
 function list_getBoardNotifications($start, $items_per_page, $sort, $memID)
 {
-	global $txt, $scripturl;
+	global $txt;
 
 	$request = wesql::query('
 		SELECT b.id_board, b.name, IFNULL(lb.id_msg, 0) AS board_read, b.id_msg_updated
@@ -1929,7 +1929,7 @@ function list_getBoardNotifications($start, $items_per_page, $sort, $memID)
 		$notification_boards[] = array(
 			'id' => $row['id_board'],
 			'name' => $row['name'],
-			'href' => $scripturl . '?board=' . $row['id_board'] . '.0',
+			'href' => '<URL>?board=' . $row['id_board'] . '.0',
 			'link' => '<a href="<URL>?board=' . $row['id_board'] . '.0">' . $row['name'] . '</a>',
 			'new' => $row['board_read'] < $row['id_msg_updated']
 		);
@@ -2213,7 +2213,7 @@ function profileLoadSignatureData()
 // Load avatar context data.
 function profileLoadAvatarData()
 {
-	global $context, $cur_profile, $settings, $scripturl;
+	global $context, $cur_profile, $settings;
 
 	$context['avatar_url'] = $settings['avatar_url'];
 
@@ -2236,7 +2236,7 @@ function profileLoadAvatarData()
 			'server_pic' => 'blank.gif',
 			'external' => 'http://'
 		);
-		$context['member']['avatar']['href'] = empty($cur_profile['attachment_type']) ? $scripturl . '?action=dlattach;attach=' . $cur_profile['id_attach'] . ';type=avatar' : $settings['custom_avatar_url'] . '/' . $cur_profile['filename'];
+		$context['member']['avatar']['href'] = empty($cur_profile['attachment_type']) ? '<URL>?action=dlattach;attach=' . $cur_profile['id_attach'] . ';type=avatar' : $settings['custom_avatar_url'] . '/' . $cur_profile['filename'];
 	}
 	elseif (stristr($cur_profile['avatar'], 'http://') && $context['member']['avatar']['allow_external'])
 		$context['member']['avatar'] += array(

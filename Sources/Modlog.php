@@ -335,7 +335,7 @@ function list_getModLogEntryCount($query_string = '', $query_params = array(), $
 
 function list_getModLogEntries($start, $items_per_page, $sort, $query_string = '', $query_params = array(), $log_type = 1)
 {
-	global $context, $scripturl, $txt;
+	global $context, $txt;
 
 	$modlog_query = allowedTo('admin_forum') || we::$user['mod_cache']['bq'] == '1=1' ? '1=1' : (we::$user['mod_cache']['bq'] == '0=1' ? 'lm.id_board = 0 AND lm.id_topic = 0' : (strtr(we::$user['mod_cache']['bq'], array('id_board' => 'b.id_board')) . ' AND ' . strtr(we::$user['mod_cache']['bq'], array('id_board' => 't.id_board'))));
 	$see_IP = allowedTo('manage_bans');
@@ -508,7 +508,7 @@ function list_getModLogEntries($start, $items_per_page, $sort, $query_string = '
 				$this_action['topic'] = array(
 					'id' => $row['id_topic'],
 					'subject' => $row['subject'],
-					'href' => $scripturl . '?topic=' . $row['id_topic'] . '.0',
+					'href' => '<URL>?topic=' . $row['id_topic'] . '.0',
 					'link' => '<a href="<URL>?topic=' . $row['id_topic'] . '.0">' . $row['subject'] . '</a>'
 				);
 
@@ -543,7 +543,7 @@ function list_getModLogEntries($start, $items_per_page, $sort, $query_string = '
 				$this_action['message'] = array(
 					'id' => $row['id_msg'],
 					'subject' => $row['subject'],
-					'href' => $scripturl . '?msg=' . $row['id_msg'],
+					'href' => '<URL>?msg=' . $row['id_msg'],
 					'link' => '<a href="<URL>?msg=' . $row['id_msg'] . '">' . $row['subject'] . '</a>',
 				);
 
@@ -574,7 +574,7 @@ function list_getModLogEntries($start, $items_per_page, $sort, $query_string = '
 				$entries[$action]['member'] = array(
 					'id' => $row['id_member'],
 					'name' => $row['real_name'],
-					'href' => $scripturl . '?action=profile;u=' . $row['id_member'],
+					'href' => '<URL>?action=profile;u=' . $row['id_member'],
 					'link' => '<a href="<URL>?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>'
 				);
 				// Make the member number into a name.

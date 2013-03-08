@@ -59,7 +59,7 @@ if (!defined('WEDGE'))
 // Maintenance home page
 function aeva_admin_maintenance()
 {
-	global $txt, $scripturl, $context, $album;
+	global $txt, $context, $album;
 
 	$context['aeva_maintenance_done'] = false;
 	$context['aeva_maintenance_message'] = '';
@@ -89,20 +89,20 @@ function aeva_admin_maintenance()
 		if ($sa !== 'clear')
 			$context['aeva_dos']['tasks'][] = array(
 				'title' => $txt['media_admin_maintenance_' . $sa],
-				'href' => $scripturl . '?action=admin;area=aeva_maintenance;sa=' . $sa . $end_url,
+				'href' => '<URL>?action=admin;area=aeva_maintenance;sa=' . $sa . $end_url,
 				'subtext' => isset($txt['media_admin_maintenance_' . $sa . '_desc']) ? $txt['media_admin_maintenance_' . $sa . '_desc'] : '',
 			);
 
 	foreach (array('thumb', 'embed', 'preview', 'all') as $st)
 		$context['aeva_dos']['regen'][] = array(
 			'title' => $txt['media_admin_maintenance_regen_' . $st],
-			'href' => $scripturl . '?action=admin;area=aeva_maintenance;sa=regen;st=' . $st . $end_url,
+			'href' => '<URL>?action=admin;area=aeva_maintenance;sa=regen;st=' . $st . $end_url,
 			'subtext' => isset($txt['media_admin_maintenance_regen_' . $st . '_desc']) ? $txt['media_admin_maintenance_regen_' . $st . '_desc'] : '',
 		);
 
 	$context['aeva_dos']['utils'][] = array(
 		'title' => $txt['media_admin_maintenance_prune'],
-		'href' => $scripturl . '?action=admin;area=aeva_maintenance;sa=prune' . $end_url,
+		'href' => '<URL>?action=admin;area=aeva_maintenance;sa=prune' . $end_url,
 		'subtext' => $txt['media_admin_maintenance_prune_desc'],
 	);
 
@@ -136,7 +136,7 @@ function aeva_timeSpent()
 // Regenerates thumbnails and previews
 function aeva_admin_maintenance_regenerate()
 {
-	global $amSettings, $context, $txt, $scripturl;
+	global $amSettings, $context, $txt;
 
 	// This is needed for aeva_generate_embed_thumb()
 	loadSource('media/Aeva-Embed');
@@ -281,7 +281,7 @@ function aeva_admin_maintenance_regenerate()
 		$context['aeva_maintenance_done'] = 'pending';
 		$context['aeva_maintenance_message'] = sprintf($txt['media_admin_maintenance_operation_pending'], $total_done, $total_to_do);
 		// Send the header
-		aeva_refreshPage($scripturl . '?action=admin;area=aeva_maintenance;sa=regen' . ($album ? ';album=' . $album : '') . ';st=' . $_GET['st'] . ';start=' . $total_done . ';' . $context['session_query']);
+		aeva_refreshPage('<URL>?action=admin;area=aeva_maintenance;sa=regen' . ($album ? ';album=' . $album : '') . ';st=' . $_GET['st'] . ';start=' . $total_done . ';' . $context['session_query']);
 	}
 	// We are done! We are done!!!
 	else
@@ -524,7 +524,7 @@ function aeva_admin_maintenance_recount()
 // Finds some errors
 function aeva_admin_maintenance_finderrors()
 {
-	global $context, $txt, $scripturl, $amSettings, $galurl;
+	global $context, $txt, $amSettings, $galurl;
 
 	$per_load = 250;
 	$total = $amSettings['total_items'] + $amSettings['num_unapproved_items'];
@@ -615,7 +615,7 @@ function aeva_admin_maintenance_finderrors()
 	if ($total - ((int) $_REQUEST['start'] + $per_load) > 0)
 	{
 		$context['aeva_maintenance_done'] = 'pending';
-		$context['aeva_maintenance_message'] = sprintf($txt['media_admin_maintenance_finderror_pending'], (int) $_REQUEST['start'] + $per_load, $total, $scripturl . '?action=admin;area=aeva_maintenance;sa=finderrors;start=' . ((int) $_REQUEST['start'] + $per_load) . ';' . $context['session_query']);
+		$context['aeva_maintenance_message'] = sprintf($txt['media_admin_maintenance_finderror_pending'], (int) $_REQUEST['start'] + $per_load, $total, '<URL>?action=admin;area=aeva_maintenance;sa=finderrors;start=' . ((int) $_REQUEST['start'] + $per_load) . ';' . $context['session_query']);
 		$_SESSION['aeva_errors'] = $errors;
 		return;
 	}
@@ -856,7 +856,7 @@ function aeva_admin_maintenance_prune()
 // Rename all thumbnails (item & gallery icon)
 function aeva_admin_maintenance_clear()
 {
-	global $context, $txt, $amSettings, $scripturl;
+	global $context, $txt, $amSettings;
 
 	$start = isset($_REQUEST['start']) ? (int) $_REQUEST['start'] : 0;
 	$per_load = 300;
@@ -920,7 +920,7 @@ function aeva_admin_maintenance_clear()
 	if ($start + $per_load < $total)
 	{
 		$context['aeva_maintenance_done'] = 'pending';
-		$context['aeva_maintenance_message'] = sprintf($txt['media_admin_maintenance_clear_pending'], $start + $per_load, $total, $scripturl . '?action=admin;area=aeva_maintenance;sa=clear;start=' . ((int) $_REQUEST['start'] + $per_load) . ';total=' . $total . ';' . $context['session_query']);
+		$context['aeva_maintenance_message'] = sprintf($txt['media_admin_maintenance_clear_pending'], $start + $per_load, $total, '<URL>?action=admin;area=aeva_maintenance;sa=clear;start=' . ((int) $_REQUEST['start'] + $per_load) . ';total=' . $total . ';' . $context['session_query']);
 		return;
 	}
 
@@ -931,7 +931,7 @@ function aeva_admin_maintenance_clear()
 // Checks for extra/wasted files
 function aeva_admin_maintenance_checkfiles()
 {
-	global $context, $txt, $amSettings, $scripturl;
+	global $context, $txt, $amSettings;
 
 	// Empty the tmp folder no matter what...
 	aeva_emptyTmpFolder();
@@ -982,7 +982,7 @@ function aeva_admin_maintenance_checkfiles()
 		else
 		{
 			$context['aeva_maintenance_done'] = 'error';
-			$context['aeva_maintenance_message'] = sprintf($txt['media_admin_maintenance_checkfiles_found'], count($extra_items), round($extra_size/1024), $scripturl . '?action=admin;area=aeva_maintenance;sa=checkfiles;delete;' . $context['session_query']);
+			$context['aeva_maintenance_message'] = sprintf($txt['media_admin_maintenance_checkfiles_found'], count($extra_items), round($extra_size/1024), '<URL>?action=admin;area=aeva_maintenance;sa=checkfiles;delete;' . $context['session_query']);
 			$context['aeva_maintenance_message'] .= '<ul class="normallist margintop"><li class="largepadding">' . implode('</li><li class="largepadding">', $extra_items) . '</li></ul>';
 		}
 	}
@@ -1040,7 +1040,7 @@ function aeva_cleanTree($directory, $phase, $start_from = '')
 // Checks for orphans - files that are not used by the database, at all.
 function aeva_admin_maintenance_checkorphans()
 {
-	global $context, $txt, $amSettings, $scripturl, $orphans, $cancel_scan;
+	global $context, $txt, $amSettings, $orphans, $cancel_scan;
 
 	// Empty the tmp folder no matter what...
 	aeva_emptyTmpFolder();
@@ -1061,7 +1061,7 @@ function aeva_admin_maintenance_checkorphans()
 
 		aeva_updateSettings('total_files', $total_files, true);
 		$context['aeva_maintenance_message'] = 'Phase 1/3 - ' . sprintf($txt['media_admin_maintenance_operation_pending'], 0, $amSettings['total_files']);
-		aeva_refreshPage($scripturl . '?action=admin;area=aeva_maintenance;sa=checkorphans' . $url_album . ';phase=1;start=0;' . $context['session_query']);
+		aeva_refreshPage('<URL>?action=admin;area=aeva_maintenance;sa=checkorphans' . $url_album . ';phase=1;start=0;' . $context['session_query']);
 		return;
 	}
 
@@ -1121,7 +1121,7 @@ function aeva_admin_maintenance_checkorphans()
 		// Let the server breathe -- relaunch the script.
 		$context['aeva_maintenance_message'] = sprintf($txt['media_admin_maintenance_operation_phase'], 1, 3) . ' - ' . sprintf($txt['media_admin_maintenance_operation_pending'], $start + $items_done, $amSettings['total_files']);
 		// Send the header
-		aeva_refreshPage($scripturl . '?action=admin;area=aeva_maintenance;sa=checkorphans' . $url_album . ';phase=' . ($items_left < 500 && $items_done == $items_left ? '2' : '1;start=' . ($start + $items_done)) . ';' . $context['session_query']);
+		aeva_refreshPage('<URL>?action=admin;area=aeva_maintenance;sa=checkorphans' . $url_album . ';phase=' . ($items_left < 500 && $items_done == $items_left ? '2' : '1;start=' . ($start + $items_done)) . ';' . $context['session_query']);
 		return;
 	}
 
@@ -1139,7 +1139,7 @@ function aeva_admin_maintenance_checkorphans()
 		// Let the server breathe -- relaunch the script.
 		$context['aeva_maintenance_message'] = sprintf($txt['media_admin_maintenance_operation_phase'], 2, 3) . ' - ' . $txt['media_admin_maintenance_operation_pending_raw'];
 		// Send the header
-		aeva_refreshPage($scripturl . '?action=admin;area=aeva_maintenance;sa=checkorphans' . $url_album . ';phase=' . ($cancel_scan ? '2;start=' . base64_encode($cancel_scan) : '3') . ';' . $context['session_query']);
+		aeva_refreshPage('<URL>?action=admin;area=aeva_maintenance;sa=checkorphans' . $url_album . ';phase=' . ($cancel_scan ? '2;start=' . base64_encode($cancel_scan) : '3') . ';' . $context['session_query']);
 		return;
 	}
 
@@ -1155,7 +1155,7 @@ function aeva_admin_maintenance_checkorphans()
 		// Let the server breathe -- relaunch the script.
 		$context['aeva_maintenance_message'] = sprintf($txt['media_admin_maintenance_operation_phase'], 3, 3) . ' - ' . $txt['media_admin_maintenance_operation_pending_raw'];
 		// Send the header
-		aeva_refreshPage($scripturl . '?action=admin;area=aeva_maintenance;sa=checkorphans' . $url_album . ';phase=' . ($cancel_scan ? '3;start=' . base64_encode($cancel_scan) : 'done') . ';' . $context['session_query']);
+		aeva_refreshPage('<URL>?action=admin;area=aeva_maintenance;sa=checkorphans' . $url_album . ';phase=' . ($cancel_scan ? '3;start=' . base64_encode($cancel_scan) : 'done') . ';' . $context['session_query']);
 		return;
 	}
 

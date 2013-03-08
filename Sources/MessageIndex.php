@@ -16,7 +16,7 @@ if (!defined('WEDGE'))
 
 function MessageIndex()
 {
-	global $txt, $scripturl, $board, $settings, $context;
+	global $txt, $board, $settings, $context;
 	global $options, $theme, $board_info;
 
 	// If this is a redirection board head off.
@@ -79,7 +79,7 @@ function MessageIndex()
 	{
 		$untopics = $board_info['unapproved_topics'] ? '<a href="<URL>?action=moderate;area=postmod;sa=topics;brd=' . $board . '">' . $board_info['unapproved_topics'] . '</a>' : 0;
 		$unposts = $board_info['unapproved_posts'] ? '<a href="<URL>?action=moderate;area=postmod;sa=posts;brd=' . $board . '">' . ($board_info['unapproved_posts'] - $board_info['unapproved_topics']) . '</a>' : 0;
-		$context['unapproved_posts_message'] = sprintf($txt['there_are_unapproved_topics'], $untopics, $unposts, $scripturl . '?action=moderate;area=postmod;sa=' . ($board_info['unapproved_topics'] ? 'topics' : 'posts') . ';brd=' . $board);
+		$context['unapproved_posts_message'] = sprintf($txt['there_are_unapproved_topics'], $untopics, $unposts, '<URL>?action=moderate;area=postmod;sa=' . ($board_info['unapproved_topics'] ? 'topics' : 'posts') . ';brd=' . $board);
 	}
 
 	// Make sure the starting place makes sense and construct the page index.
@@ -87,11 +87,11 @@ function MessageIndex()
 	$context['page_index'] = template_page_index('<URL>?board=' . $board . '.%1$d' . (isset($_REQUEST['sort']) ? ';sort=' . $_REQUEST['sort'] : '') . (isset($_REQUEST['desc']) ? ';desc' : ''), $context['start'], $board_info['total_topics'], $maxindex, true);
 
 	// Set a canonical URL for this page.
-	$context['canonical_url'] = $scripturl . '?board=' . $board . '.' . $context['start'];
+	$context['canonical_url'] = '<URL>?board=' . $board . '.' . $context['start'];
 
 	$context['links'] = array(
-		'prev' => $context['start'] >= $context['topics_per_page'] ? $scripturl . '?board=' . $board . '.' . ($context['start'] - $context['topics_per_page']) : '',
-		'next' => $context['start'] + $context['topics_per_page'] < $board_info['total_topics'] ? $scripturl . '?board=' . $board . '.' . ($context['start'] + $context['topics_per_page']) : '',
+		'prev' => $context['start'] >= $context['topics_per_page'] ? '<URL>?board=' . $board . '.' . ($context['start'] - $context['topics_per_page']) : '',
+		'next' => $context['start'] + $context['topics_per_page'] < $board_info['total_topics'] ? '<URL>?board=' . $board . '.' . ($context['start'] + $context['topics_per_page']) : '',
 	);
 
 	if (isset($_REQUEST['all']) && !empty($settings['enableAllMessages']) && $maxindex > $settings['enableAllMessages'])
@@ -462,7 +462,7 @@ function MessageIndex()
 						'username' => $row['first_member_name'],
 						'name' => $row['first_display_name'],
 						'id' => $row['first_id_member'],
-						'href' => !empty($row['first_id_member']) ? $scripturl . '?action=profile;u=' . $row['first_id_member'] : '',
+						'href' => !empty($row['first_id_member']) ? '<URL>?action=profile;u=' . $row['first_id_member'] : '',
 						'link' => !empty($row['first_id_member']) ? '<a href="<URL>?action=profile;u=' . $row['first_id_member'] . '" title="' . $txt['view_profile'] . '">' . $row['first_display_name'] . '</a>' : $row['first_display_name']
 					),
 					// !!! The following two are never actually used. Waste time on timeformat()..?
@@ -472,7 +472,7 @@ function MessageIndex()
 					'preview' => $row['first_body'],
 					'icon' => $row['first_icon'],
 					'icon_url' => $theme[$context['icon_sources'][$row['first_icon']]] . '/post/' . $row['first_icon'] . '.gif',
-					'href' => $scripturl . '?topic=' . $row['id_topic'] . '.0',
+					'href' => '<URL>?topic=' . $row['id_topic'] . '.0',
 					'link' => '<a href="<URL>?topic=' . $row['id_topic'] . '.0">' . $row['first_subject'] . '</a>'
 				),
 				'last_post' => array(
@@ -481,7 +481,7 @@ function MessageIndex()
 						'username' => $row['last_member_name'],
 						'name' => $row['last_display_name'],
 						'id' => $row['last_id_member'],
-						'href' => !empty($row['last_id_member']) ? $scripturl . '?action=profile;u=' . $row['last_id_member'] : '',
+						'href' => !empty($row['last_id_member']) ? '<URL>?action=profile;u=' . $row['last_id_member'] : '',
 						'link' => !empty($row['last_id_member']) ? '<a href="<URL>?action=profile;u=' . $row['last_id_member'] . '">' . $row['last_display_name'] . '</a>' : $row['last_display_name']
 					),
 					'on_time' => on_timeformat($row['last_poster_time']),
@@ -490,7 +490,7 @@ function MessageIndex()
 					'preview' => $row['last_body'],
 					'icon' => $row['last_icon'],
 					'icon_url' => $theme[$context['icon_sources'][$row['last_icon']]] . '/post/' . $row['last_icon'] . '.gif',
-					'href' => $scripturl . '?topic=' . $row['id_topic'] . (we::$is_guest ? ('.' . (!empty($options['view_newest_first']) ? 0 : ((int) (($row['num_replies']) / $context['pageindex_multiplier'])) * $context['pageindex_multiplier']) . '#msg' . $row['id_last_msg']) : (($row['num_replies'] == 0 ? '.0' : '.msg' . $row['id_last_msg']) . '#new')),
+					'href' => '<URL>?topic=' . $row['id_topic'] . (we::$is_guest ? ('.' . (!empty($options['view_newest_first']) ? 0 : ((int) (($row['num_replies']) / $context['pageindex_multiplier'])) * $context['pageindex_multiplier']) . '#msg' . $row['id_last_msg']) : (($row['num_replies'] == 0 ? '.0' : '.msg' . $row['id_last_msg']) . '#new')),
 					'link' => '<a href="<URL>?topic=' . $row['id_topic'] . (we::$is_guest ? ('.' . (!empty($options['view_newest_first']) ? 0 : ((int) (($row['num_replies']) / $context['pageindex_multiplier'])) * $context['pageindex_multiplier']) . '#msg' . $row['id_last_msg']) : (($row['num_replies'] == 0 ? '.0' : '.msg' . $row['id_last_msg']) . '#new')) . '" ' . ($row['num_replies'] == 0 ? '' : 'rel="nofollow"') . '>' . $row['last_subject'] . '</a>'
 				),
 				'is_pinned' => !empty($row['is_pinned']),
@@ -503,7 +503,7 @@ function MessageIndex()
 				'new' => $row['new_from'] <= $row['id_msg_modified'],
 				'new_from' => $row['new_from'],
 				'newtime' => $row['new_from'],
-				'new_href' => $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['new_from'] . '#new',
+				'new_href' => '<URL>?topic=' . $row['id_topic'] . '.msg' . $row['new_from'] . '#new',
 				'new_link' => '<a href="<URL>?topic=' . $row['id_topic'] . '.msg' . $row['new_from'] . '#new">' . $row['first_subject'] . '</a>',
 				'pages' => $pages,
 				'replies' => $row['num_replies'],

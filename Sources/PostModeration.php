@@ -41,7 +41,7 @@ function PostModerationMain()
 // View all unapproved posts.
 function UnapprovedPosts()
 {
-	global $txt, $scripturl, $context;
+	global $txt, $context;
 
 	$context['current_view'] = isset($_GET['sa']) && $_GET['sa'] == 'topics' ? 'topics' : 'replies';
 	$context['page_title'] = $txt['mc_unapproved_posts'];
@@ -218,8 +218,8 @@ function UnapprovedPosts()
 	// If we are filtering some boards out then make sure to send that along with the links.
 	if (isset($_REQUEST['brd']))
 	{
-		$context['menu_data_' . $context['moderation_menu_id']]['sections']['posts']['areas']['postmod']['subsections']['posts']['url'] = $scripturl . '?action=moderate;area=postmod;sa=posts;brd=' . (int) $_REQUEST['brd'];
-		$context['menu_data_' . $context['moderation_menu_id']]['sections']['posts']['areas']['postmod']['subsections']['topics']['url'] = $scripturl . '?action=moderate;area=postmod;sa=topics;brd=' . (int) $_REQUEST['brd'];
+		$context['menu_data_' . $context['moderation_menu_id']]['sections']['posts']['areas']['postmod']['subsections']['posts']['url'] = '<URL>?action=moderate;area=postmod;sa=posts;brd=' . (int) $_REQUEST['brd'];
+		$context['menu_data_' . $context['moderation_menu_id']]['sections']['posts']['areas']['postmod']['subsections']['topics']['url'] = '<URL>?action=moderate;area=postmod;sa=topics;brd=' . (int) $_REQUEST['brd'];
 	}
 
 	// Get all unapproved posts.
@@ -260,7 +260,7 @@ function UnapprovedPosts()
 			'id' => $row['id_msg'],
 			'alternate' => $i % 2,
 			'counter' => $context['start'] + $i,
-			'href' => $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['id_msg'] . '#msg' . $row['id_msg'],
+			'href' => '<URL>?topic=' . $row['id_topic'] . '.msg' . $row['id_msg'] . '#msg' . $row['id_msg'],
 			'subject' => $row['subject'],
 			'body' => parse_bbc($row['body'], $row['smileys_enabled'], $row['id_msg']),
 			'on_time' => on_timeformat($row['poster_time']),
@@ -268,7 +268,7 @@ function UnapprovedPosts()
 				'id' => $row['id_member'],
 				'name' => $row['poster_name'],
 				'link' => $row['id_member'] ? '<a href="<URL>?action=profile;u=' . $row['id_member'] . '">' . $row['poster_name'] . '</a>' : $row['poster_name'],
-				'href' => $scripturl . '?action=profile;u=' . $row['id_member'],
+				'href' => '<URL>?action=profile;u=' . $row['id_member'],
 			),
 			'topic' => array(
 				'id' => $row['id_topic'],
