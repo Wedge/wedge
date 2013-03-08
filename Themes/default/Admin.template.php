@@ -1435,35 +1435,16 @@ function template_admin_search_results()
 		<ol class="search_results">';
 		foreach ($context['search_results'] as $result)
 		{
-			// Is it a result from the online manual?
-			if ($context['search_type'] == 'online')
-			{
-				echo '
-			<li>
-				<p>
-					<a href="', $context['doc_scripturl'], '?topic=', $result['topic_id'], '.0" target="_blank" class="new_win"><strong>', $result['messages'][0]['subject'], '</strong></a>
-					<div class="smalltext"><a href="', $result['category']['href'], '" target="_blank" class="new_win">', $result['category']['name'], '</a> &nbsp;/&nbsp;
-					<a href="', $result['board']['href'], '" target="_blank" class="new_win">', $result['board']['name'], '</a>&nbsp;/</div>
-				</p>
-				<p class="double_height">
-					', $result['messages'][0]['body'], '
-				</p>
-			</li>';
-			}
-			// Otherwise it's... not!
-			else
-			{
-				echo '
+			echo '
 			<li>
 				<a href="', $result['url'], '"><strong>', $result['name'], '</strong></a> [', isset($txt['admin_search_section_' . $result['type']]) ? $txt['admin_search_section_' . $result['type']] : $result['type'], ']';
 
-				if ($result['help'])
-					echo '
+			if ($result['help'])
+				echo '
 				<p class="double_height">', $result['help'], '</p>';
 
-				echo '
+			echo '
 			</li>';
-			}
 		}
 		echo '
 		</ol>';

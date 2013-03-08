@@ -17,7 +17,7 @@ if (!defined('WEDGE'))
 // Find the ten most recent posts.
 function Recent()
 {
-	global $txt, $scripturl, $context, $settings, $board;
+	global $txt, $context, $settings, $board;
 
 	loadTemplate('Recent');
 	$context['page_title'] = $txt['recent_posts'];
@@ -50,7 +50,7 @@ function Recent()
 				fatal_lang_error('no_access', false);
 
 			$context['linktree'][] = array(
-				'url' => $scripturl . '?category=' . (int) $_REQUEST['c'],
+				'url' => '<URL>?category=' . (int) $_REQUEST['c'],
 				'name' => $name
 			);
 		}
@@ -87,7 +87,7 @@ function Recent()
 			$query_parameters['max_id_msg'] = max(0, $settings['maxMsgID'] - 400 - $_REQUEST['start'] * 7);
 		}
 
-		$context['page_index'] = template_page_index($scripturl . '?action=recent;c=' . implode(',', $_REQUEST['c']), $_REQUEST['start'], min(100, $total_cat_posts), 10, false);
+		$context['page_index'] = template_page_index('<URL>?action=recent;c=' . implode(',', $_REQUEST['c']), $_REQUEST['start'], min(100, $total_cat_posts), 10, false);
 	}
 	elseif (!empty($_REQUEST['boards']))
 	{
@@ -129,7 +129,7 @@ function Recent()
 			$query_parameters['max_id_msg'] = max(0, $settings['maxMsgID'] - 500 - $_REQUEST['start'] * 9);
 		}
 
-		$context['page_index'] = template_page_index($scripturl . '?action=recent;boards=' . implode(',', $_REQUEST['boards']), $_REQUEST['start'], min(100, $total_posts), 10, false);
+		$context['page_index'] = template_page_index('<URL>?action=recent;boards=' . implode(',', $_REQUEST['boards']), $_REQUEST['start'], min(100, $total_posts), 10, false);
 	}
 	elseif (!empty($board))
 	{
@@ -156,7 +156,7 @@ function Recent()
 			$query_parameters['max_id_msg'] = max(0, $settings['maxMsgID'] - 600 - $_REQUEST['start'] * 10);
 		}
 
-		$context['page_index'] = template_page_index($scripturl . '?action=recent;board=' . $board . '.%1$d', $_REQUEST['start'], min(100, $total_posts), 10, true);
+		$context['page_index'] = template_page_index('<URL>?action=recent;board=' . $board . '.%1$d', $_REQUEST['start'], min(100, $total_posts), 10, true);
 	}
 	else
 	{
@@ -167,11 +167,11 @@ function Recent()
 		$query_parameters['recycle_board'] = $settings['recycle_board'];
 
 		// !!! This isn't accurate because we ignore the recycle bin.
-		$context['page_index'] = template_page_index($scripturl . '?action=recent', $_REQUEST['start'], min(100, $settings['totalMessages']), 10, false);
+		$context['page_index'] = template_page_index('<URL>?action=recent', $_REQUEST['start'], min(100, $settings['totalMessages']), 10, false);
 	}
 
 	$context['linktree'][] = array(
-		'url' => $scripturl . '?action=recent' . (empty($board) ? (empty($_REQUEST['c']) ? '' : ';c=' . (int) $_REQUEST['c']) : ';board=' . $board . '.0'),
+		'url' => '<URL>?action=recent' . (empty($board) ? (empty($_REQUEST['c']) ? '' : ';c=' . (int) $_REQUEST['c']) : ';board=' . $board . '.0'),
 		'name' => $context['page_title']
 	);
 
@@ -264,18 +264,18 @@ function Recent()
 			'category' => array(
 				'id' => $row['id_cat'],
 				'name' => $row['cname'],
-				'href' => $scripturl . '?category=' . $row['id_cat'],
-				'link' => '<a href="' . $scripturl . '?category=' . $row['id_cat'] . '">' . $row['cname'] . '</a>'
+				'href' => '<URL>?category=' . $row['id_cat'],
+				'link' => '<a href="<URL>?category=' . $row['id_cat'] . '">' . $row['cname'] . '</a>'
 			),
 			'board' => array(
 				'id' => $row['id_board'],
 				'name' => $row['bname'],
-				'href' => $scripturl . '?board=' . $row['id_board'] . '.0',
-				'link' => '<a href="' . $scripturl . '?board=' . $row['id_board'] . '.0">' . $row['bname'] . '</a>'
+				'href' => '<URL>?board=' . $row['id_board'] . '.0',
+				'link' => '<a href="<URL>?board=' . $row['id_board'] . '.0">' . $row['bname'] . '</a>'
 			),
 			'topic' => $row['id_topic'],
-			'href' => $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['id_msg'] . '#msg' . $row['id_msg'],
-			'link' => '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['id_msg'] . '#msg' . $row['id_msg'] . '" rel="nofollow">' . $row['subject'] . '</a>',
+			'href' => '<URL>?topic=' . $row['id_topic'] . '.msg' . $row['id_msg'] . '#msg' . $row['id_msg'],
+			'link' => '<a href="<URL>?topic=' . $row['id_topic'] . '.msg' . $row['id_msg'] . '#msg' . $row['id_msg'] . '" rel="nofollow">' . $row['subject'] . '</a>',
 			'start' => $row['num_replies'],
 			'subject' => $row['subject'],
 			'on_time' => on_timeformat($row['poster_time']),
@@ -283,14 +283,14 @@ function Recent()
 			'first_poster' => array(
 				'id' => $row['id_first_member'],
 				'name' => $row['first_poster_name'],
-				'href' => empty($row['id_first_member']) ? '' : $scripturl . '?action=profile;u=' . $row['id_first_member'],
-				'link' => empty($row['id_first_member']) ? $row['first_poster_name'] : '<a href="' . $scripturl . '?action=profile;u=' . $row['id_first_member'] . '">' . $row['first_poster_name'] . '</a>'
+				'href' => empty($row['id_first_member']) ? '' : '<URL>?action=profile;u=' . $row['id_first_member'],
+				'link' => empty($row['id_first_member']) ? $row['first_poster_name'] : '<a href="<URL>?action=profile;u=' . $row['id_first_member'] . '">' . $row['first_poster_name'] . '</a>'
 			),
 			'poster' => array(
 				'id' => $row['id_member'],
 				'name' => $row['poster_name'],
-				'href' => empty($row['id_member']) ? '' : $scripturl . '?action=profile;u=' . $row['id_member'],
-				'link' => empty($row['id_member']) ? $row['poster_name'] : '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['poster_name'] . '</a>'
+				'href' => empty($row['id_member']) ? '' : '<URL>?action=profile;u=' . $row['id_member'],
+				'link' => empty($row['id_member']) ? $row['poster_name'] : '<a href="<URL>?action=profile;u=' . $row['id_member'] . '">' . $row['poster_name'] . '</a>'
 			),
 			'message' => $row['body'],
 			'can_reply' => false,

@@ -486,7 +486,7 @@ function ViewMemberlist()
 				),
 				'data' => array(
 					'sprintf' => array(
-						'format' => '<a href="' . $percent_scripturl . '?action=profile;u=%1$d">%2$s</a>',
+						'format' => '<a href="<URL>?action=profile;u=%1$d">%2$s</a>',
 						'params' => array(
 							'id_member' => false,
 							'real_name' => false,
@@ -521,7 +521,7 @@ function ViewMemberlist()
 				),
 				'data' => array(
 					'sprintf' => array(
-						'format' => '<a href="' . $percent_scripturl . '?action=trackip;searchip=%1$s">%1$s</a>',
+						'format' => '<a href="<URL>?action=trackip;searchip=%1$s">%1$s</a>',
 						'params' => array(
 							'member_ip' => false,
 						),
@@ -867,7 +867,7 @@ function MembersAwaitingActivation()
 				),
 				'data' => array(
 					'sprintf' => array(
-						'format' => '<a href="' . $percent_scripturl . '?action=trackip;searchip=%1$s">%1$s</a>',
+						'format' => '<a href="<URL>?action=trackip;searchip=%1$s">%1$s</a>',
 						'params' => array(
 							'member_ip' => false,
 						),
@@ -933,7 +933,7 @@ function MembersAwaitingActivation()
 						foreach ($rowData[\'duplicate_members\'] as $member)
 						{
 							if ($member[\'id\'])
-								$member_links[] = \'<a href="\'<URL>?action=profile;u=\' . $member[\'id\'] . \'" \' . (!empty($member[\'is_banned\']) ? \'style="color: red"\' : \'\') . \'>\' . $member[\'name\'] . \'</a>\';
+								$member_links[] = \'<a href="<URL>?action=profile;u=\' . $member[\'id\'] . \'" \' . (!empty($member[\'is_banned\']) ? \'style="color: red"\' : \'\') . \'>\' . $member[\'name\'] . \'</a>\';
 							else
 								$member_links[] = $member[\'name\'] . \' (\' . $txt[\'guest\'] . \')\';
 						}

@@ -75,12 +75,12 @@ function Boards()
 	$context['categories'] = getBoardIndex($boardIndexOptions);
 
 	// Set up the linktree.
-	$context['linktree'] = array(
-		array(
-			'url' => '<URL>',
-			'name' => $context['forum_name_html_safe'],
-		),
-	);
+	if (isset($_GET['action']) && $_GET['action'] === 'boards')
+		$context['linktree'][] = array(
+			'url' => '<URL>?action=boards',
+			'name' => $txt['board_index'],
+		);
+
 	if (!empty($boardIndexOptions['category']))
 		$context['linktree'][] = array(
 			'url' => '<URL>?category=' . $boardIndexOptions['category'],

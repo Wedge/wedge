@@ -157,7 +157,7 @@ function ModerationMain($dont_call = false)
 
 	// Build the link tree.
 	$context['linktree'][] = array(
-		'url' => $scripturl . '?action=moderate',
+		'url' => '<URL>?action=moderate',
 		'name' => $txt['moderation_center'],
 	);
 	if (isset($mod_include_data['current_area']) && $mod_include_data['current_area'] != 'index')

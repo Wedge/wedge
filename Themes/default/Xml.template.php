@@ -183,7 +183,7 @@ function template_check_username()
 
 function template_thought()
 {
-	global $context, $theme, $scripturl;
+	global $context, $theme;
 
 	$th =& $context['return_thought'];
 	$thought = $th['thought'];
@@ -216,7 +216,7 @@ function template_thought()
 
 	if ($uid)
 		echo '
-	<date><![CDATA[<a href="', $scripturl, '?action=thoughts;in=', $mid, '#t', $id, '"><img src="', $theme['images_url'], '/icons/last_post.gif" class="middle"></a> ', timeformat(time()), ']]></date>';
+	<date><![CDATA[<a href="<URL>?action=thoughts;in=', $mid, '#t', $id, '"><img src="', $theme['images_url'], '/icons/last_post.gif" class="middle"></a> ', timeformat(time()), ']]></date>';
 
 	echo '
 </we>';

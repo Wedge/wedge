@@ -16,8 +16,7 @@ if (!defined('WEDGE'))
 
 function Unread()
 {
-	global $board, $txt, $scripturl;
-	global $context, $theme, $settings, $options;
+	global $board, $txt, $context, $theme, $settings, $options;
 
 	// Guests can't have unread things, we don't know anything about them.
 	is_not_guest();
@@ -208,13 +207,13 @@ function Unread()
 		wesql::free_result($request);
 
 		$context['linktree'][] = array(
-			'url' => $scripturl . '?category=' . (int) $_REQUEST['c'][0],
+			'url' => '<URL>?category=' . (int) $_REQUEST['c'][0],
 			'name' => $name,
 		);
 	}
 
 	$context['linktree'][] = array(
-		'url' => $scripturl . '?action=unread' . sprintf($context['querystring_board_limits'], 0) . $context['querystring_sort_limits'],
+		'url' => '<URL>?action=unread' . sprintf($context['querystring_board_limits'], 0) . $context['querystring_sort_limits'],
 		'name' => $txt['unread_topics'],
 	);
 
@@ -351,12 +350,12 @@ function Unread()
 		wesql::free_result($request);
 
 		// Make sure the starting place makes sense and construct the page index.
-		$context['page_index'] = template_page_index($scripturl . '?action=' . $_REQUEST['action'] . $context['querystring_board_limits'] . $context['querystring_sort_limits'], $_REQUEST['start'], $num_topics, $context['topics_per_page'], true);
+		$context['page_index'] = template_page_index('<URL>?action=' . $_REQUEST['action'] . $context['querystring_board_limits'] . $context['querystring_sort_limits'], $_REQUEST['start'], $num_topics, $context['topics_per_page'], true);
 		$context['current_page'] = (int) $_REQUEST['start'] / $context['topics_per_page'];
 
 		$context['links'] = array(
-			'prev' => $_REQUEST['start'] >= $context['topics_per_page'] ? $scripturl . '?action=' . $_REQUEST['action'] . sprintf($context['querystring_board_limits'], $_REQUEST['start'] - $context['topics_per_page']) . $context['querystring_sort_limits'] : '',
-			'next' => $_REQUEST['start'] + $context['topics_per_page'] < $num_topics ? $scripturl . '?action=' . $_REQUEST['action'] . sprintf($context['querystring_board_limits'], $_REQUEST['start'] + $context['topics_per_page']) . $context['querystring_sort_limits'] : '',
+			'prev' => $_REQUEST['start'] >= $context['topics_per_page'] ? '<URL>?action=' . $_REQUEST['action'] . sprintf($context['querystring_board_limits'], $_REQUEST['start'] - $context['topics_per_page']) . $context['querystring_sort_limits'] : '',
+			'next' => $_REQUEST['start'] + $context['topics_per_page'] < $num_topics ? '<URL>?action=' . $_REQUEST['action'] . sprintf($context['querystring_board_limits'], $_REQUEST['start'] + $context['topics_per_page']) . $context['querystring_sort_limits'] : '',
 		);
 
 		if ($num_topics == 0)
@@ -423,12 +422,12 @@ function Unread()
 		wesql::free_result($request);
 
 		// Make sure the starting place makes sense and construct the page index.
-		$context['page_index'] = template_page_index($scripturl . '?action=' . $_REQUEST['action'] . $context['querystring_board_limits'] . $context['querystring_sort_limits'], $_REQUEST['start'], $num_topics, $context['topics_per_page'], true);
+		$context['page_index'] = template_page_index('<URL>?action=' . $_REQUEST['action'] . $context['querystring_board_limits'] . $context['querystring_sort_limits'], $_REQUEST['start'], $num_topics, $context['topics_per_page'], true);
 		$context['current_page'] = (int) $_REQUEST['start'] / $context['topics_per_page'];
 
 		$context['links'] = array(
-			'prev' => $_REQUEST['start'] >= $context['topics_per_page'] ? $scripturl . '?action=' . $_REQUEST['action'] . sprintf($context['querystring_board_limits'], $_REQUEST['start'] - $context['topics_per_page']) . $context['querystring_sort_limits'] : '',
-			'next' => $_REQUEST['start'] + $context['topics_per_page'] < $num_topics ? $scripturl . '?action=' . $_REQUEST['action'] . sprintf($context['querystring_board_limits'], $_REQUEST['start'] + $context['topics_per_page']) . $context['querystring_sort_limits'] : '',
+			'prev' => $_REQUEST['start'] >= $context['topics_per_page'] ? '<URL>?action=' . $_REQUEST['action'] . sprintf($context['querystring_board_limits'], $_REQUEST['start'] - $context['topics_per_page']) . $context['querystring_sort_limits'] : '',
+			'next' => $_REQUEST['start'] + $context['topics_per_page'] < $num_topics ? '<URL>?action=' . $_REQUEST['action'] . sprintf($context['querystring_board_limits'], $_REQUEST['start'] + $context['topics_per_page']) . $context['querystring_sort_limits'] : '',
 		);
 
 		if ($num_topics == 0)
@@ -533,7 +532,7 @@ function Unread()
 			$tmpa = 1;
 			for ($tmpb = 0; $tmpb < $topic_length; $tmpb += $messages_per_page)
 			{
-				$tmppages[] = '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.' . $tmpb . ';seen">' . $tmpa . '</a>';
+				$tmppages[] = '<a href="<URL>?topic=' . $row['id_topic'] . '.' . $tmpb . ';seen">' . $tmpa . '</a>';
 				$tmpa++;
 			}
 			// Show links to all the pages?
@@ -544,7 +543,7 @@ function Unread()
 				$pages = '&#171; ' . $tmppages[0] . ' ' . $tmppages[1] . ' ... ' . $tmppages[count($tmppages) - 2] . ' ' . $tmppages[count($tmppages) - 1];
 
 			if (!empty($settings['enableAllMessages']) && $topic_length < $settings['enableAllMessages'])
-				$pages .= ' &nbsp;<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.0;all">' . $txt['all_pages'] . '</a>';
+				$pages .= ' &nbsp;<a href="<URL>?topic=' . $row['id_topic'] . '.0;all">' . $txt['all_pages'] . '</a>';
 			$pages .= ' &#187;';
 		}
 		else
@@ -569,8 +568,8 @@ function Unread()
 				'member' => array(
 					'name' => $row['first_poster_name'],
 					'id' => $row['id_first_member'],
-					'href' => $scripturl . '?action=profile;u=' . $row['id_first_member'],
-					'link' => !empty($row['id_first_member']) ? '<a href="' . $scripturl . '?action=profile;u=' . $row['id_first_member'] . '" title="' . $txt['view_profile'] . '">' . $row['first_poster_name'] . '</a>' : $row['first_poster_name']
+					'href' => '<URL>?action=profile;u=' . $row['id_first_member'],
+					'link' => !empty($row['id_first_member']) ? '<a href="<URL>?action=profile;u=' . $row['id_first_member'] . '" title="' . $txt['view_profile'] . '">' . $row['first_poster_name'] . '</a>' : $row['first_poster_name']
 				),
 				'time' => timeformat($row['first_poster_time']),
 				'timestamp' => forum_time(true, $row['first_poster_time']),
@@ -578,16 +577,16 @@ function Unread()
 				'preview' => $row['first_body'],
 				'icon' => $row['first_icon'],
 				'icon_url' => $theme[$context['icon_sources'][$row['first_icon']]] . '/post/' . $row['first_icon'] . '.gif',
-				'href' => $scripturl . '?topic=' . $row['id_topic'] . '.0;seen',
-				'link' => '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.0;seen">' . $row['first_subject'] . '</a>'
+				'href' => '<URL>?topic=' . $row['id_topic'] . '.0;seen',
+				'link' => '<a href="<URL>?topic=' . $row['id_topic'] . '.0;seen">' . $row['first_subject'] . '</a>'
 			),
 			'last_post' => array(
 				'id' => $row['id_last_msg'],
 				'member' => array(
 					'name' => $row['last_poster_name'],
 					'id' => $row['id_last_member'],
-					'href' => $scripturl . '?action=profile;u=' . $row['id_last_member'],
-					'link' => !empty($row['id_last_member']) ? '<a href="' . $scripturl . '?action=profile;u=' . $row['id_last_member'] . '">' . $row['last_poster_name'] . '</a>' : $row['last_poster_name']
+					'href' => '<URL>?action=profile;u=' . $row['id_last_member'],
+					'link' => !empty($row['id_last_member']) ? '<a href="<URL>?action=profile;u=' . $row['id_last_member'] . '">' . $row['last_poster_name'] . '</a>' : $row['last_poster_name']
 				),
 				'time' => timeformat($row['last_poster_time']),
 				'timestamp' => forum_time(true, $row['last_poster_time']),
@@ -595,14 +594,14 @@ function Unread()
 				'preview' => $row['last_body'],
 				'icon' => $row['last_icon'],
 				'icon_url' => $theme[$context['icon_sources'][$row['last_icon']]] . '/post/' . $row['last_icon'] . '.gif',
-				'href' => $scripturl . '?topic=' . $row['id_topic'] . ($row['num_replies'] == 0 ? '.0' : '.msg' . $row['id_last_msg']) . ';seen#msg' . $row['id_last_msg'],
-				'link' => '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . ($row['num_replies'] == 0 ? '.0' : '.msg' . $row['id_last_msg']) . ';seen#msg' . $row['id_last_msg'] . '" rel="nofollow">' . $row['last_subject'] . '</a>'
+				'href' => '<URL>?topic=' . $row['id_topic'] . ($row['num_replies'] == 0 ? '.0' : '.msg' . $row['id_last_msg']) . ';seen#msg' . $row['id_last_msg'],
+				'link' => '<a href="<URL>?topic=' . $row['id_topic'] . ($row['num_replies'] == 0 ? '.0' : '.msg' . $row['id_last_msg']) . ';seen#msg' . $row['id_last_msg'] . '" rel="nofollow">' . $row['last_subject'] . '</a>'
 			),
 			'new_from' => $row['new_from'],
-			'new_href' => $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['new_from'] . ';seen#new',
-			'new_link' => '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['new_from'] . ';seen#new">' . $row['first_subject'] . '</a>',
-			'href' => $scripturl . '?topic=' . $row['id_topic'] . ($row['num_replies'] == 0 ? '.0' : '.msg' . $row['new_from']) . ';seen' . ($row['num_replies'] == 0 ? '' : '#new'),
-			'link' => '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . ($row['num_replies'] == 0 ? '.0' : '.msg' . $row['new_from']) . ';seen#msg' . $row['new_from'] . '" rel="nofollow">' . $row['first_subject'] . '</a>',
+			'new_href' => '<URL>?topic=' . $row['id_topic'] . '.msg' . $row['new_from'] . ';seen#new',
+			'new_link' => '<a href="<URL>?topic=' . $row['id_topic'] . '.msg' . $row['new_from'] . ';seen#new">' . $row['first_subject'] . '</a>',
+			'href' => '<URL>?topic=' . $row['id_topic'] . ($row['num_replies'] == 0 ? '.0' : '.msg' . $row['new_from']) . ';seen' . ($row['num_replies'] == 0 ? '' : '#new'),
+			'link' => '<a href="<URL>?topic=' . $row['id_topic'] . ($row['num_replies'] == 0 ? '.0' : '.msg' . $row['new_from']) . ';seen#msg' . $row['new_from'] . '" rel="nofollow">' . $row['first_subject'] . '</a>',
 			'is_pinned' => !empty($row['is_pinned']),
 			'is_locked' => !empty($row['locked']),
 			'is_poll' => $row['id_poll'] > 0,
@@ -616,8 +615,8 @@ function Unread()
 			'board' => array(
 				'id' => $row['id_board'],
 				'name' => $row['bname'],
-				'href' => $scripturl . '?board=' . $row['id_board'] . '.0',
-				'link' => '<a href="' . $scripturl . '?board=' . $row['id_board'] . '.0">' . $row['bname'] . '</a>'
+				'href' => '<URL>?board=' . $row['id_board'] . '.0',
+				'link' => '<a href="<URL>?board=' . $row['id_board'] . '.0">' . $row['bname'] . '</a>'
 			)
 		);
 	}
