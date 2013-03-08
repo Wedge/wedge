@@ -115,7 +115,7 @@ function MergeIndex()
 
 	// Make the page list.
 	$_REQUEST['page'] = empty($_REQUEST['page']) ? 0 : (int) $_REQUEST['page'];
-	$context['page_index'] = template_page_index($scripturl . '?action=mergetopics;topic=' . $topic . ';targetboard=' . $_REQUEST['targetboard'] . ';page=%1$d', $_REQUEST['page'], $topiccount, $settings['defaultMaxTopics'], true);
+	$context['page_index'] = template_page_index('<URL>?action=mergetopics;topic=' . $topic . ';targetboard=' . $_REQUEST['targetboard'] . ';page=%1$d', $_REQUEST['page'], $topiccount, $settings['defaultMaxTopics'], true);
 
 	// Get the topic's subject.
 	$request = wesql::query('
@@ -208,7 +208,7 @@ function MergeIndex()
 				'id' => $row['id_member'],
 				'name' => $row['poster_name'],
 				'href' => empty($row['id_member']) ? '' : $scripturl . '?action=profile;u=' . $row['id_member'],
-				'link' => empty($row['id_member']) ? $row['poster_name'] : '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '" target="_blank" class="new_win">' . $row['poster_name'] . '</a>'
+				'link' => empty($row['id_member']) ? $row['poster_name'] : '<a href="<URL>?action=profile;u=' . $row['id_member'] . '" target="_blank" class="new_win">' . $row['poster_name'] . '</a>'
 			),
 			'subject' => $row['subject'],
 			'js_subject' => addcslashes(addslashes($row['subject']), '/')
@@ -310,13 +310,13 @@ function MergeExecute($topics = array())
 				'time' => timeformat($row['time_started']),
 				'timestamp' => forum_time(true, $row['time_started']),
 				'href' => empty($row['id_member_started']) ? '' : $scripturl . '?action=profile;u=' . $row['id_member_started'],
-				'link' => empty($row['id_member_started']) ? $row['name_started'] : '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member_started'] . '">' . $row['name_started'] . '</a>'
+				'link' => empty($row['id_member_started']) ? $row['name_started'] : '<a href="<URL>?action=profile;u=' . $row['id_member_started'] . '">' . $row['name_started'] . '</a>'
 			),
 			'updated' => array(
 				'time' => timeformat($row['time_updated']),
 				'timestamp' => forum_time(true, $row['time_updated']),
 				'href' => empty($row['id_member_updated']) ? '' : $scripturl . '?action=profile;u=' . $row['id_member_updated'],
-				'link' => empty($row['id_member_updated']) ? $row['name_updated'] : '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member_updated'] . '">' . $row['name_updated'] . '</a>'
+				'link' => empty($row['id_member_updated']) ? $row['name_updated'] : '<a href="<URL>?action=profile;u=' . $row['id_member_updated'] . '">' . $row['name_updated'] . '</a>'
 			)
 		);
 		$num_views += $row['num_views'];

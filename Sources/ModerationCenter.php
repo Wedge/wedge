@@ -17,7 +17,7 @@ if (!defined('WEDGE'))
 // Entry point for the moderation center.
 function ModerationMain($dont_call = false)
 {
-	global $txt, $context, $scripturl, $settings, $theme, $options;
+	global $txt, $context, $settings, $theme, $options;
 
 	// Don't run this twice... and don't conflict with the admin bar.
 	if (isset($context['admin_area']))
@@ -90,7 +90,7 @@ function ModerationMain($dont_call = false)
 					'enabled' => $context['can_moderate_approvals'],
 					'file' => 'PostModeration',
 					'function' => 'PostModerationMain',
-					'custom_url' => $scripturl . '?action=moderate;area=postmod',
+					'custom_url' => '<URL>?action=moderate;area=postmod',
 					'subsections' => array(
 						'posts' => array($txt['mc_unapproved_replies']),
 						'topics' => array($txt['mc_unapproved_topics']),
@@ -116,7 +116,7 @@ function ModerationMain($dont_call = false)
 					'label' => $txt['mc_group_requests'],
 					'file' => 'Groups',
 					'function' => 'Groups',
-					'custom_url' => $scripturl . '?action=moderate;area=groups;sa=requests',
+					'custom_url' => '<URL>?action=moderate;area=groups;sa=requests',
 				),
 				'viewgroups' => array(
 					'label' => $txt['mc_view_groups'],
@@ -162,12 +162,12 @@ function ModerationMain($dont_call = false)
 	);
 	if (isset($mod_include_data['current_area']) && $mod_include_data['current_area'] != 'index')
 		$context['linktree'][] = array(
-			'url' => $scripturl . '?action=moderate;area=' . $mod_include_data['current_area'],
+			'url' => '<URL>?action=moderate;area=' . $mod_include_data['current_area'],
 			'name' => $mod_include_data['label'],
 		);
 	if (!empty($mod_include_data['current_subsection']) && $mod_include_data['subsections'][$mod_include_data['current_subsection']][0] != $mod_include_data['label'])
 		$context['linktree'][] = array(
-			'url' => $scripturl . '?action=moderate;area=' . $mod_include_data['current_area'] . ';sa=' . $mod_include_data['current_subsection'],
+			'url' => '<URL>?action=moderate;area=' . $mod_include_data['current_area'] . ';sa=' . $mod_include_data['current_subsection'],
 			'name' => $mod_include_data['subsections'][$mod_include_data['current_subsection']][0],
 		);
 
@@ -237,7 +237,7 @@ function ModBlockLatestNews()
 // Show a list of the most active watched users.
 function ModBlockWatchedUsers()
 {
-	global $context, $scripturl, $settings;
+	global $context, $settings;
 
 	if (($watched_users = cache_get_data('recent_user_watches', 240)) === null)
 	{
@@ -266,8 +266,8 @@ function ModBlockWatchedUsers()
 		$context['watched_users'][] = array(
 			'id' => $user['id_member'],
 			'name' => $user['real_name'],
-			'link' => '<a href="' . $scripturl . '?action=profile;u=' . $user['id_member'] . '">' . $user['real_name'] . '</a>',
-			'href' => $scripturl . '?action=profile;u=' . $user['id_member'],
+			'link' => '<a href="<URL>?action=profile;u=' . $user['id_member'] . '">' . $user['real_name'] . '</a>',
+			'href' => '<URL>?action=profile;u=' . $user['id_member'],
 			'last_login' => !empty($user['last_login']) ? timeformat($user['last_login']) : '',
 		);
 	}
@@ -278,7 +278,7 @@ function ModBlockWatchedUsers()
 // Show an area for the moderator to type into.
 function ModBlockNotes()
 {
-	global $context, $scripturl, $txt;
+	global $context, $txt;
 
 	// Are we saving a note?
 	if (isset($_POST['makenote'], $_POST['new_note']))
@@ -374,7 +374,7 @@ function ModBlockNotes()
 	}
 
 	// Let's construct a page index.
-	$context['page_index'] = template_page_index($scripturl . '?action=moderate;area=index;notes', $_GET['start'], $moderator_notes_total, 10);
+	$context['page_index'] = template_page_index('<URL>?action=moderate;area=index;notes', $_GET['start'], $moderator_notes_total, 10);
 	$context['start'] = $_GET['start'];
 
 	$context['notes'] = array();
@@ -383,11 +383,11 @@ function ModBlockNotes()
 		$context['notes'][] = array(
 			'author' => array(
 				'id' => $note['id_member'],
-				'link' => $note['id_member'] ? ('<a href="' . $scripturl . '?action=profile;u=' . $note['id_member'] . '" title="' . strip_tags(on_timeformat($note['log_time'])) . '">' . $note['member_name'] . '</a>') : $note['member_name'],
+				'link' => $note['id_member'] ? ('<a href="<URL>?action=profile;u=' . $note['id_member'] . '" title="' . strip_tags(on_timeformat($note['log_time'])) . '">' . $note['member_name'] . '</a>') : $note['member_name'],
 			),
 			'time' => timeformat($note['log_time']),
 			'text' => parse_bbc($note['body']),
-			'delete_href' => $scripturl . '?action=moderate;area=index;notes;delete=' . $note['id_note'] . ';' . $context['session_query'],
+			'delete_href' => '<URL>?action=moderate;area=index;notes;delete=' . $note['id_note'] . ';' . $context['session_query'],
 		);
 	}
 
@@ -397,7 +397,7 @@ function ModBlockNotes()
 // Show a list of the most recent reported posts.
 function ModBlockReportedPosts()
 {
-	global $context, $scripturl;
+	global $context;
 
 	// Got the info already?
 	$cachekey = md5(serialize(we::$user['mod_cache']['bq']));
@@ -439,13 +439,13 @@ function ModBlockReportedPosts()
 		$context['reported_posts'][] = array(
 			'id' => $row['id_report'],
 			'alternate' => $i % 2,
-			'topic_href' => $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['id_msg'] . '#msg' . $row['id_msg'],
-			'report_href' => $scripturl . '?action=moderate;area=reports;report=' . $row['id_report'],
+			'topic_href' => '<URL>?topic=' . $row['id_topic'] . '.msg' . $row['id_msg'] . '#msg' . $row['id_msg'],
+			'report_href' => '<URL>?action=moderate;area=reports;report=' . $row['id_report'],
 			'author' => array(
 				'id' => $row['id_author'],
 				'name' => $row['author_name'],
-				'link' => $row['id_author'] ? '<a href="' . $scripturl . '?action=profile;u=' . $row['id_author'] . '">' . $row['author_name'] . '</a>' : $row['author_name'],
-				'href' => $scripturl . '?action=profile;u=' . $row['id_author'],
+				'link' => $row['id_author'] ? '<a href="<URL>?action=profile;u=' . $row['id_author'] . '">' . $row['author_name'] . '</a>' : $row['author_name'],
+				'href' => '<URL>?action=profile;u=' . $row['id_author'],
 			),
 			'comments' => array(),
 			'subject' => $row['subject'],
@@ -459,7 +459,7 @@ function ModBlockReportedPosts()
 // Show a list of all the group requests they can see.
 function ModBlockGroupRequests()
 {
-	global $context, $scripturl;
+	global $context;
 
 	$context['group_requests'] = array();
 	// Make sure they can even moderate someone!
@@ -483,12 +483,12 @@ function ModBlockGroupRequests()
 		$context['group_requests'][] = array(
 			'id' => $row['id_request'],
 			'alternate' => $i % 2,
-			'request_href' => $scripturl . '?action=groups;sa=requests;gid=' . $row['id_group'],
+			'request_href' => '<URL>?action=groups;sa=requests;gid=' . $row['id_group'],
 			'member' => array(
 				'id' => $row['id_member'],
 				'name' => $row['real_name'],
-				'link' => '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>',
-				'href' => $scripturl . '?action=profile;u=' . $row['id_member'],
+				'link' => '<a href="<URL>?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>',
+				'href' => '<URL>?action=profile;u=' . $row['id_member'],
 			),
 			'group' => array(
 				'id' => $row['id_group'],
@@ -506,7 +506,7 @@ function ModBlockGroupRequests()
 // Browse all the reported posts...
 function ReportedPosts()
 {
-	global $txt, $context, $scripturl, $settings;
+	global $txt, $context, $settings;
 
 	loadTemplate('ModerationCenter');
 
@@ -596,7 +596,7 @@ function ReportedPosts()
 	wesql::free_result($request);
 
 	// So, that means we can page index, yes?
-	$context['page_index'] = template_page_index($scripturl . '?action=moderate;area=reports' . ($context['view_closed'] ? ';sa=closed' : ''), $_GET['start'], $context['total_reports'], 10);
+	$context['page_index'] = template_page_index('<URL>?action=moderate;area=reports' . ($context['view_closed'] ? ';sa=closed' : ''), $_GET['start'], $context['total_reports'], 10);
 	$context['start'] = $_GET['start'];
 
 	// By George, that means we in a position to get the reports, golly good.
@@ -622,13 +622,13 @@ function ReportedPosts()
 		$context['reports'][$row['id_report']] = array(
 			'id' => $row['id_report'],
 			'alternate' => $i % 2,
-			'topic_href' => $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['id_msg'] . '#msg' . $row['id_msg'],
-			'report_href' => $scripturl . '?action=moderate;area=reports;report=' . $row['id_report'],
+			'topic_href' => '<URL>?topic=' . $row['id_topic'] . '.msg' . $row['id_msg'] . '#msg' . $row['id_msg'],
+			'report_href' => '<URL>?action=moderate;area=reports;report=' . $row['id_report'],
 			'author' => array(
 				'id' => $row['id_author'],
 				'name' => $row['author_name'],
-				'link' => $row['id_author'] ? '<a href="' . $scripturl . '?action=profile;u=' . $row['id_author'] . '">' . $row['author_name'] . '</a>' : $row['author_name'],
-				'href' => $scripturl . '?action=profile;u=' . $row['id_author'],
+				'link' => $row['id_author'] ? '<a href="<URL>?action=profile;u=' . $row['id_author'] . '">' . $row['author_name'] . '</a>' : $row['author_name'],
+				'href' => '<URL>?action=profile;u=' . $row['id_author'],
 			),
 			'comments' => array(),
 			'time_started' => timeformat($row['time_started']),
@@ -664,8 +664,8 @@ function ReportedPosts()
 				'member' => array(
 					'id' => $row['id_member'],
 					'name' => empty($row['reporter']) ? $txt['guest'] : $row['reporter'],
-					'link' => $row['id_member'] ? '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['reporter'] . '</a>' : (empty($row['reporter']) ? $txt['guest'] : $row['reporter']),
-					'href' => $row['id_member'] ? $scripturl . '?action=profile;u=' . $row['id_member'] : '',
+					'link' => $row['id_member'] ? '<a href="<URL>?action=profile;u=' . $row['id_member'] . '">' . $row['reporter'] . '</a>' : (empty($row['reporter']) ? $txt['guest'] : $row['reporter']),
+					'href' => $row['id_member'] ? '<URL>?action=profile;u=' . $row['id_member'] : '',
 				),
 			);
 		}
@@ -736,7 +736,7 @@ function recountOpenReports()
 
 function ModReport()
 {
-	global $context, $scripturl, $txt;
+	global $context, $txt;
 
 	// Have to at least give us something
 	if (empty($_REQUEST['report']))
@@ -801,14 +801,14 @@ function ModReport()
 		'topic_id' => $row['id_topic'],
 		'board_id' => $row['id_board'],
 		'message_id' => $row['id_msg'],
-		'message_href' => $scripturl . '?msg=' . $row['id_msg'],
-		'message_link' => '<a href="' . $scripturl . '?msg=' . $row['id_msg'] . '">' . $row['subject'] . '</a>',
-		'report_href' => $scripturl . '?action=moderate;area=reports;report=' . $row['id_report'],
+		'message_href' => '<URL>?msg=' . $row['id_msg'],
+		'message_link' => '<a href="<URL>?msg=' . $row['id_msg'] . '">' . $row['subject'] . '</a>',
+		'report_href' => '<URL>?action=moderate;area=reports;report=' . $row['id_report'],
 		'author' => array(
 			'id' => $row['id_author'],
 			'name' => $row['author_name'],
-			'link' => $row['id_author'] ? '<a href="' . $scripturl . '?action=profile;u=' . $row['id_author'] . '">' . $row['author_name'] . '</a>' : $row['author_name'],
-			'href' => $scripturl . '?action=profile;u=' . $row['id_author'],
+			'link' => $row['id_author'] ? '<a href="<URL>?action=profile;u=' . $row['id_author'] . '">' . $row['author_name'] . '</a>' : $row['author_name'],
+			'href' => '<URL>?action=profile;u=' . $row['id_author'],
 		),
 		'comments' => array(),
 		'mod_comments' => array(),
@@ -842,9 +842,9 @@ function ModReport()
 			'member' => array(
 				'id' => $row['id_member'],
 				'name' => empty($row['reporter']) ? $txt['guest'] : $row['reporter'],
-				'link' => $row['id_member'] ? '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['reporter'] . '</a>' : (empty($row['reporter']) ? $txt['guest'] : $row['reporter']),
-				'href' => $row['id_member'] ? $scripturl . '?action=profile;u=' . $row['id_member'] : '',
-				'ip' => !empty($row['member_ip']) && allowedTo('moderate_forum') ? '<a href="' . $scripturl . '?action=trackip;searchip=' . format_ip($row['member_ip']) . '">' . format_ip($row['member_ip']) . '</a>' : '',
+				'link' => $row['id_member'] ? '<a href="<URL>?action=profile;u=' . $row['id_member'] . '">' . $row['reporter'] . '</a>' : (empty($row['reporter']) ? $txt['guest'] : $row['reporter']),
+				'href' => $row['id_member'] ? '<URL>?action=profile;u=' . $row['id_member'] : '',
+				'ip' => !empty($row['member_ip']) && allowedTo('moderate_forum') ? '<a href="<URL>?action=trackip;searchip=' . format_ip($row['member_ip']) . '">' . format_ip($row['member_ip']) . '</a>' : '',
 			),
 		);
 	}
@@ -871,8 +871,8 @@ function ModReport()
 			'member' => array(
 				'id' => $row['id_member'],
 				'name' => $row['moderator'],
-				'link' => $row['id_member'] ? '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['moderator'] . '</a>' : $row['moderator'],
-				'href' => $scripturl . '?action=profile;u=' . $row['id_member'],
+				'link' => $row['id_member'] ? '<a href="<URL>?action=profile;u=' . $row['id_member'] . '">' . $row['moderator'] . '</a>' : $row['moderator'],
+				'href' => '<URL>?action=profile;u=' . $row['id_member'],
 			),
 		);
 	}
@@ -888,7 +888,7 @@ function ModReport()
 		'title' => $txt['mc_modreport_modactions'],
 		'items_per_page' => 15,
 		'no_items_label' => $txt['modlog_no_entries_found'],
-		'base_href' => $scripturl . '?action=moderate;area=reports;report=' . $context['report']['id'],
+		'base_href' => '<URL>?action=moderate;area=reports;report=' . $context['report']['id'],
 		'default_sort_col' => 'time',
 		'get_items' => array(
 			'function' => 'list_getModLogEntries',
@@ -1021,7 +1021,7 @@ function ShowNotice()
 // View watched users.
 function ViewWatchedUsers()
 {
-	global $settings, $context, $txt, $scripturl;
+	global $settings, $context, $txt;
 
 	// Some important context!
 	$context['page_title'] = $txt['mc_watched_users_title'];
@@ -1090,7 +1090,7 @@ function ViewWatchedUsers()
 		'width' => '100%',
 		'items_per_page' => $settings['defaultMaxMessages'],
 		'no_items_label' => $context['view_posts'] ? $txt['mc_watched_users_no_posts'] : $txt['mc_watched_users_none'],
-		'base_href' => $scripturl . '?action=moderate;area=userwatch;sa=' . ($context['view_posts'] ? 'post' : 'member'),
+		'base_href' => '<URL>?action=moderate;area=userwatch;sa=' . ($context['view_posts'] ? 'post' : 'member'),
 		'default_sort_col' => $context['view_posts'] ? '' : 'member',
 		'get_items' => array(
 			'function' => $context['view_posts'] ? 'list_getWatchedUserPosts' : 'list_getWatchedUsers',
@@ -1113,7 +1113,7 @@ function ViewWatchedUsers()
 				),
 				'data' => array(
 					'sprintf' => array(
-						'format' => '<a href="' . $scripturl . '?action=profile;u=%1$d">%2$s</a>',
+						'format' => '<a href="<URL>?action=profile;u=%1$d">%2$s</a>',
 						'params' => array(
 							'id' => false,
 							'name' => false,
@@ -1131,9 +1131,7 @@ function ViewWatchedUsers()
 				),
 				'data' => array(
 					'function' => create_function('$member', '
-						global $scripturl;
-
-						return allowedTo(\'issue_warning\') ? \'<a href="\' . $scripturl . \'?action=profile;u=\' . $member[\'id\'] . \';area=issuewarning">\' . $member[\'warning\'] . \'%</a>\' : $member[\'warning\'] . \'%\';
+						return allowedTo(\'issue_warning\') ? \'<a href="<URL>?action=profile;u=\' . $member[\'id\'] . \';area=issuewarning">\' . $member[\'warning\'] . \'%</a>\' : $member[\'warning\'] . \'%\';
 					'),
 				),
 				'sort' => array(
@@ -1147,7 +1145,7 @@ function ViewWatchedUsers()
 				),
 				'data' => array(
 					'sprintf' => array(
-						'format' => '<a href="' . $scripturl . '?action=profile;u=%1$d;area=showposts;sa=messages">%2$s</a>',
+						'format' => '<a href="<URL>?action=profile;u=%1$d;area=showposts;sa=messages">%2$s</a>',
 						'params' => array(
 							'id' => false,
 							'posts' => false,
@@ -1177,10 +1175,8 @@ function ViewWatchedUsers()
 				),
 				'data' => array(
 					'function' => create_function('$member', '
-						global $scripturl;
-
 						if ($member[\'last_post_id\'])
-							return \'<a href="\' . $scripturl . \'?msg=\' . $member[\'last_post_id\'] . \'">\' . $member[\'last_post\'] . \'</a>\';
+							return \'<a href="<URL>?msg=\' . $member[\'last_post_id\'] . \'">\' . $member[\'last_post\'] . \'</a>\';
 						else
 							return $member[\'last_post\'];
 					'),
@@ -1188,7 +1184,7 @@ function ViewWatchedUsers()
 			),
 		),
 		'form' => array(
-			'href' => $scripturl . '?action=moderate;area=userwatch;sa=post',
+			'href' => '<URL>?action=moderate;area=userwatch;sa=post',
 			'include_sort' => true,
 			'include_start' => true,
 			'hidden_fields' => array(
@@ -1363,7 +1359,7 @@ function list_getWatchedUserPostsCount($approve_query)
 
 function list_getWatchedUserPosts($start, $items_per_page, $sort, $approve_query, $delete_boards)
 {
-	global $txt, $scripturl, $settings;
+	global $txt, $settings;
 
 	$request = wesql::query('
 		SELECT m.id_msg, m.id_topic, m.id_board, m.id_member, m.subject, m.body, m.poster_time,
@@ -1389,7 +1385,7 @@ function list_getWatchedUserPosts($start, $items_per_page, $sort, $approve_query
 		$member_posts[$row['id_msg']] = array(
 			'id' => $row['id_msg'],
 			'id_topic' => $row['id_topic'],
-			'author_link' => '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>',
+			'author_link' => '<a href="<URL>?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>',
 			'subject' => $row['subject'],
 			'body' => parse_bbc($row['body'], $row['smileys_enabled'], $row['id_msg']),
 			'poster_time' => timeformat($row['poster_time']),
@@ -1432,7 +1428,7 @@ function ViewWarnings()
 // Simply put, look at the warning log!
 function ViewWarningLog()
 {
-	global $settings, $context, $txt, $scripturl;
+	global $settings, $context, $txt;
 
 	// Setup context as always.
 	$context['page_title'] = $txt['mc_warning_log_title'];
@@ -1445,7 +1441,7 @@ function ViewWarningLog()
 		'title' => $txt['mc_warning_log_title'],
 		'items_per_page' => $settings['defaultMaxMessages'],
 		'no_items_label' => $txt['mc_warnings_none'],
-		'base_href' => $scripturl . '?action=moderate;area=warnings;sa=log;' . $context['session_query'],
+		'base_href' => '<URL>?action=moderate;area=warnings;sa=log;' . $context['session_query'],
 		'default_sort_col' => 'time',
 		'get_items' => array(
 			'function' => 'list_getWarnings',
@@ -1497,7 +1493,7 @@ function ViewWarningLog()
 				),
 				'data' => array(
 					'function' => create_function('$warning', '
-						global $scripturl, $theme, $txt;
+						global $theme, $txt;
 
 						$output = \'
 							<div class="floatleft">
@@ -1507,7 +1503,7 @@ function ViewWarningLog()
 						if (!empty($warning[\'id_notice\']))
 							$output .= \'
 							<div class="floatright">
-								<a href="\' . $scripturl . \'?action=moderate;area=notice;nid=\' . $warning[\'id_notice\'] . \'" onclick="window.open(this.href, \\\'\\\', \\\'scrollbars=yes,resizable=yes,width=400,height=250\\\'); return false;" target="_blank" class="new_win" title="\' . $txt[\'profile_warning_previous_notice\'] . \'"><img src="\' . $theme[\'default_images_url\'] . \'/filter.gif" alt="\' . $txt[\'profile_warning_previous_notice\'] . \'"></a>
+								<a href="<URL>?action=moderate;area=notice;nid=\' . $warning[\'id_notice\'] . \'" onclick="window.open(this.href, \\\'\\\', \\\'scrollbars=yes,resizable=yes,width=400,height=250\\\'); return false;" target="_blank" class="new_win" title="\' . $txt[\'profile_warning_previous_notice\'] . \'"><img src="\' . $theme[\'default_images_url\'] . \'/filter.gif" alt="\' . $txt[\'profile_warning_previous_notice\'] . \'"></a>
 							</div>\';
 
 						return $output;
@@ -1549,7 +1545,7 @@ function list_getWarningCount()
 
 function list_getWarnings($start, $items_per_page, $sort)
 {
-	global $txt, $scripturl, $settings;
+	global $txt, $settings;
 
 	$request = wesql::query('
 		SELECT IFNULL(mem.id_member, 0) AS id_member, IFNULL(mem.real_name, lc.member_name) AS member_name_col,
@@ -1566,8 +1562,8 @@ function list_getWarnings($start, $items_per_page, $sort)
 	while ($row = wesql::fetch_assoc($request))
 	{
 		$warnings[] = array(
-			'issuer_link' => $row['id_member'] ? ('<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['member_name_col'] . '</a>') : $row['member_name_col'],
-			'recipient_link' => $row['id_recipient'] ? ('<a href="' . $scripturl . '?action=profile;u=' . $row['id_recipient'] . '">' . $row['recipient_name'] . '</a>') : $row['recipient_name'],
+			'issuer_link' => $row['id_member'] ? ('<a href="<URL>?action=profile;u=' . $row['id_member'] . '">' . $row['member_name_col'] . '</a>') : $row['member_name_col'],
+			'recipient_link' => $row['id_recipient'] ? ('<a href="<URL>?action=profile;u=' . $row['id_recipient'] . '">' . $row['recipient_name'] . '</a>') : $row['recipient_name'],
 			'time' => timeformat($row['log_time']),
 			'reason' => $row['body'],
 			'counter' => $row['counter'] > 0 ? '+' . $row['counter'] : $row['counter'],
@@ -1582,7 +1578,7 @@ function list_getWarnings($start, $items_per_page, $sort)
 // Load all the warning templates.
 function ViewWarningTemplates()
 {
-	global $settings, $context, $txt, $scripturl;
+	global $settings, $context, $txt;
 
 	// Submitting a new one?
 	if (isset($_POST['add']))
@@ -1633,7 +1629,7 @@ function ViewWarningTemplates()
 		'title' => $txt['mc_warning_templates_title'],
 		'items_per_page' => $settings['defaultMaxMessages'],
 		'no_items_label' => $txt['mc_warning_templates_none'],
-		'base_href' => $scripturl . '?action=moderate;area=warnings;sa=templates;' . $context['session_query'],
+		'base_href' => '<URL>?action=moderate;area=warnings;sa=templates;' . $context['session_query'],
 		'default_sort_col' => 'title',
 		'get_items' => array(
 			'function' => 'list_getWarningTemplates',
@@ -1649,7 +1645,7 @@ function ViewWarningTemplates()
 				),
 				'data' => array(
 					'sprintf' => array(
-						'format' => '<a href="' . $scripturl . '?action=moderate;area=warnings;sa=templateedit;tid=%1$d">%2$s</a>',
+						'format' => '<a href="<URL>?action=moderate;area=warnings;sa=templateedit;tid=%1$d">%2$s</a>',
 						'params' => array(
 							'id_comment' => false,
 							'title' => false,
@@ -1692,7 +1688,7 @@ function ViewWarningTemplates()
 				),
 				'data' => array(
 					'function' => create_function('$rowData', '
-						global $context, $txt, $scripturl;
+						global $context, $txt;
 
 						return \'<input type="checkbox" name="deltpl[]" value="\' . $rowData[\'id_comment\'] . \'">\';
 					'),
@@ -1701,7 +1697,7 @@ function ViewWarningTemplates()
 			),
 		),
 		'form' => array(
-			'href' => $scripturl . '?action=moderate;area=warnings;sa=templates',
+			'href' => '<URL>?action=moderate;area=warnings;sa=templates',
 		),
 		'additional_rows' => array(
 			array(
@@ -1743,7 +1739,7 @@ function list_getWarningTemplateCount()
 
 function list_getWarningTemplates($start, $items_per_page, $sort)
 {
-	global $txt, $scripturl, $settings;
+	global $txt, $settings;
 
 	$request = wesql::query('
 		SELECT lc.id_comment, IFNULL(mem.id_member, 0) AS id_member,
@@ -1765,7 +1761,7 @@ function list_getWarningTemplates($start, $items_per_page, $sort)
 	{
 		$templates[] = array(
 			'id_comment' => $row['id_comment'],
-			'creator' => $row['id_member'] ? ('<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['creator_name'] . '</a>') : $row['creator_name'],
+			'creator' => $row['id_member'] ? ('<a href="<URL>?action=profile;u=' . $row['id_member'] . '">' . $row['creator_name'] . '</a>') : $row['creator_name'],
 			'time' => timeformat($row['log_time']),
 			'title' => $row['template_title'],
 			'body' => westr::htmlspecialchars($row['body']),
@@ -1908,7 +1904,7 @@ function ModifyWarningTemplate()
 // Change moderation preferences.
 function ModerationSettings()
 {
-	global $context, $txt, $scripturl, $user_settings;
+	global $context, $txt, $user_settings;
 
 	// Some useful context stuff.
 	loadTemplate('ModerationCenter');

@@ -259,7 +259,7 @@ function issueWarning($memID)
 	// Make the page index.
 	$context['start'] = (int) $_REQUEST['start'];
 	$perPage = (int) $settings['defaultMaxMessages'];
-	$context['page_index'] = template_page_index($scripturl . '?action=profile;u=' . $memID . ';area=issuewarning', $context['start'], $context['total_warnings'], $perPage);
+	$context['page_index'] = template_page_index('<URL>?action=profile;u=' . $memID . ';area=issuewarning', $context['start'], $context['total_warnings'], $perPage);
 
 	// Now do the data itself.
 	$context['previous_warnings'] = list_getUserWarnings($context['start'], $perPage, 'log_time DESC', $memID);

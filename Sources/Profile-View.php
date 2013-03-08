@@ -295,7 +295,7 @@ function showDrafts($memID)
 	$maxIndex = (int) $settings['defaultMaxMessages'];
 
 	// Make sure the starting place makes sense and construct our friend the page index.
-	$context['page_index'] = template_page_index($scripturl . '?action=profile;u=' . $memID . ';area=showdrafts', $context['start'], $msgCount, $maxIndex);
+	$context['page_index'] = template_page_index('<URL>?action=profile;u=' . $memID . ';area=showdrafts', $context['start'], $msgCount, $maxIndex);
 	$context['current_page'] = $context['start'] / $maxIndex;
 
 	// Reverse the query if we're past 50% of the pages for better performance.
@@ -357,12 +357,12 @@ function showDrafts($memID)
 			'board' => array(
 				'id' => $row['id_board'],
 				'name' => empty($row['bname']) ? $txt['drafts_noboard'] : $row['bname'],
-				'link' => empty($row['bname']) ? $txt['drafts_noboard'] : '<a href="' . $scripturl . '?board=' . $row['id_board'] . '.0">' . $row['bname'] . '</a>',
+				'link' => empty($row['bname']) ? $txt['drafts_noboard'] : '<a href="<URL>?board=' . $row['id_board'] . '.0">' . $row['bname'] . '</a>',
 			),
 			'topic' => array(
 				'id' => $row['id_context'],
 				'original_topic' => $row['id_topic'],
-				'link' => empty($row['id_topic']) ? $row['subject'] : '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.0">' . $row['subject'] . '</a>',
+				'link' => empty($row['id_topic']) ? $row['subject'] : '<a href="<URL>?topic=' . $row['id_topic'] . '.0">' . $row['subject'] . '</a>',
 				'locked' => !empty($row['locked']),
 				'no_edit' => !empty($row['id_context']) && empty($row['id_topic']),
 			),
@@ -918,7 +918,7 @@ function statPanel($memID)
 			'id' => $row['id_board'],
 			'posts' => $row['message_count'],
 			'href' => $scripturl . '?board=' . $row['id_board'] . '.0',
-			'link' => '<a href="' . $scripturl . '?board=' . $row['id_board'] . '.0">' . $row['name'] . '</a>',
+			'link' => '<a href="<URL>?board=' . $row['id_board'] . '.0">' . $row['name'] . '</a>',
 			'posts_percent' => $user_profile[$memID]['posts'] == 0 ? 0 : ($row['message_count'] * 100) / $user_profile[$memID]['posts'],
 			'total_posts' => $row['num_posts'],
 			'total_posts_member' => $user_profile[$memID]['posts'],
@@ -949,7 +949,7 @@ function statPanel($memID)
 			'id' => $row['id_board'],
 			'posts' => $row['message_count'],
 			'href' => $scripturl . '?board=' . $row['id_board'] . '.0',
-			'link' => '<a href="' . $scripturl . '?board=' . $row['id_board'] . '.0">' . $row['name'] . '</a>',
+			'link' => '<a href="<URL>?board=' . $row['id_board'] . '.0">' . $row['name'] . '</a>',
 			'percent' => comma_format((float) $row['percentage'], 2),
 			'posts_percent' => (float) $row['percentage'],
 			'total_posts' => $row['num_posts'],
@@ -1097,7 +1097,7 @@ function trackActivity($memID)
 				),
 				'data' => array(
 					'sprintf' => array(
-						'format' => '<a href="' . $scripturl . '?action=profile;u=' . $memID. ';area=tracking;sa=ip;searchip=%1$s">%1$s</a>',
+						'format' => '<a href="<URL>?action=profile;u=' . $memID. ';area=tracking;sa=ip;searchip=%1$s">%1$s</a>',
 						'params' => array(
 							'ip' => false,
 						),
@@ -1196,7 +1196,7 @@ function trackActivity($memID)
 		if (empty($format_ip))
 			continue;
 
-		$context['ips'][] = '<a href="' . $scripturl . '?action=profile;u=' . $memID . ';area=tracking;sa=ip;searchip=' . $format_ip . '">' . $format_ip . '</a>';
+		$context['ips'][] = '<a href="<URL>?action=profile;u=' . $memID . ';area=tracking;sa=ip;searchip=' . $format_ip . '">' . $format_ip . '</a>';
 		$ips[] = $row['poster_ip'];
 	}
 	wesql::free_result($request);
@@ -1217,7 +1217,7 @@ function trackActivity($memID)
 	while ($row = wesql::fetch_assoc($request))
 	{
 		$row['ip'] = format_ip($row['member_ip']);
-		$context['error_ips'][] = '<a href="' . $scripturl . '?action=profile;u=' . $memID . ';area=tracking;sa=ip;searchip=' . $row['ip'] . '">' . $row['ip'] . '</a>';
+		$context['error_ips'][] = '<a href="<URL>?action=profile;u=' . $memID . ';area=tracking;sa=ip;searchip=' . $row['ip'] . '">' . $row['ip'] . '</a>';
 		$ips[] = $row['ip'];
 	}
 	wesql::free_result($request);
@@ -1258,7 +1258,7 @@ function trackActivity($memID)
 				)
 			);
 			while ($row = wesql::fetch_assoc($request))
-				$context['members_in_range'][$row['id_member']] = '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>';
+				$context['members_in_range'][$row['id_member']] = '<a href="<URL>?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>';
 			wesql::free_result($request);
 		}
 
@@ -1273,7 +1273,7 @@ function trackActivity($memID)
 			)
 		);
 		while ($row = wesql::fetch_assoc($request))
-			$context['members_in_range'][$row['id_member']] = '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>';
+			$context['members_in_range'][$row['id_member']] = '<a href="<URL>?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>';
 		wesql::free_result($request);
 	}
 }

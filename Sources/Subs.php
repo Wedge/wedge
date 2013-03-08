@@ -1467,7 +1467,7 @@ function url_image_size($url)
  */
 function setupThemeContext($forceload = false)
 {
-	global $settings, $scripturl, $context, $options, $txt, $maintenance, $user_settings;
+	global $settings, $context, $options, $txt, $maintenance, $user_settings;
 	static $loaded = false;
 
 	// Under SSI this function can be called more then once. That can cause some problems.
@@ -1537,7 +1537,7 @@ function setupThemeContext($forceload = false)
 
 		// Figure out the avatar... uploaded?
 		if (we::$user['avatar']['url'] == '' && !empty(we::$user['avatar']['id_attach']))
-			we::$user['avatar']['href'] = we::$user['avatar']['custom_dir'] ? $settings['custom_avatar_url'] . '/' . we::$user['avatar']['filename'] : $scripturl . '?action=dlattach;attach=' . we::$user['avatar']['id_attach'] . ';type=avatar';
+			we::$user['avatar']['href'] = we::$user['avatar']['custom_dir'] ? $settings['custom_avatar_url'] . '/' . we::$user['avatar']['filename'] : '<URL>?action=dlattach;attach=' . we::$user['avatar']['id_attach'] . ';type=avatar';
 		// Full URL?
 		elseif (strpos(we::$user['avatar']['url'], 'http://') === 0)
 		{
@@ -1620,8 +1620,8 @@ function setupThemeContext($forceload = false)
 	$context['common_stats']['latest_member'] = array(
 		'id' => $settings['latestMember'],
 		'name' => $settings['latestRealName'],
-		'href' => $scripturl . '?action=profile;u=' . $settings['latestMember'],
-		'link' => '<a href="' . $scripturl . '?action=profile;u=' . $settings['latestMember'] . '">' . $settings['latestRealName'] . '</a>',
+		'href' => '<URL>?action=profile;u=' . $settings['latestMember'],
+		'link' => '<a href="<URL>?action=profile;u=' . $settings['latestMember'] . '">' . $settings['latestRealName'] . '</a>',
 	);
 	$context['common_stats'] = array(
 		'total_posts' => comma_format($settings['totalMessages']),
@@ -2003,7 +2003,7 @@ function text2words($text, $max_chars = 20, $encrypt = false)
  */
 function setupMenuContext()
 {
-	global $context, $settings, $board_info, $txt, $scripturl;
+	global $context, $settings, $board_info, $txt;
 
 	// Set up the menu privileges.
 	$context['allow_search'] = allowedTo('search_posts');
@@ -2039,72 +2039,72 @@ function setupMenuContext()
 			),
 			'home' => array(
 				'title' => !empty($settings['home_url']) ? $txt['community'] : $txt['home'],
-				'href' => $scripturl,
+				'href' => '<URL>',
 				'show' => true,
 				'sub_items' => array(
 					'root' => array(
 						'title' => $context['forum_name'],
-						'href' => $scripturl,
+						'href' => '<URL>',
 						'show' => $is_b,
 					),
 					'board' => array(
 						'title' => $is_b ? $board_info['name'] : '',
-						'href' => $is_b ? $scripturl . '?board=' . $board_info['id'] . '.0' : '',
+						'href' => $is_b ? '<URL>?board=' . $board_info['id'] . '.0' : '',
 						'show' => $is_b,
 					),
 				),
 			),
 			'admin' => array(
 				'title' => $txt['admin'],
-				'href' => $scripturl . ($context['allow_admin'] ? '?action=admin' : '?action=moderate'),
+				'href' => '<URL>?action=' . ($context['allow_admin'] ? 'admin' : 'moderate'),
 				'show' => $context['allow_admin'] || $context['allow_moderation_center'],
 				'sub_items' => array(
 					'featuresettings' => array(
 						'title' => $txt['settings_title'],
-						'href' => $scripturl . '?action=admin;area=featuresettings',
+						'href' => '<URL>?action=admin;area=featuresettings',
 						'show' => allowedTo('admin_forum'),
 					),
 					'errorlog' => array(
 						'title' => $txt['errlog'],
 						'notice' => $error_count,
-						'href' => $scripturl . '?action=admin;area=logs;sa=errorlog',
+						'href' => '<URL>?action=admin;area=logs;sa=errorlog',
 						'show' => allowedTo('admin_forum') && !empty($settings['enableErrorLogging']),
 					),
 					'permissions' => array(
 						'title' => $txt['edit_permissions'],
-						'href' => $scripturl . '?action=admin;area=permissions',
+						'href' => '<URL>?action=admin;area=permissions',
 						'show' => allowedTo('manage_permissions'),
 					),
 					'plugins' => array(
 						'title' => $txt['plugin_manager'],
-						'href' => $scripturl . '?action=admin;area=plugins',
+						'href' => '<URL>?action=admin;area=plugins',
 						'show' => allowedTo('admin_forum'),
 					),
 					'',
 					'modcenter' => array(
 						'title' => $txt['moderate'],
-						'href' => $scripturl . '?action=moderate',
+						'href' => '<URL>?action=moderate',
 						'show' => $context['allow_admin'],
 					),
 					'modlog' => array(
 						'title' => $txt['modlog_view'],
-						'href' => $scripturl . '?action=moderate;area=modlog',
+						'href' => '<URL>?action=moderate;area=modlog',
 						'show' => !empty($settings['log_enabled_moderate']) && !empty(we::$user['mod_cache']) && we::$user['mod_cache']['bq'] != '0=1',
 					),
 					'reports' => array(
 						'title' => $txt['mc_reported_posts'],
-						'href' => $scripturl . '?action=moderate;area=reports',
+						'href' => '<URL>?action=moderate;area=reports',
 						'show' => !empty(we::$user['mod_cache']) && we::$user['mod_cache']['bq'] != '0=1',
 						'notice' => $context['open_mod_reports'],
 					),
 					'poststopics' => array(
 						'title' => $txt['mc_unapproved_poststopics'],
-						'href' => $scripturl . '?action=moderate;area=postmod;sa=posts',
+						'href' => '<URL>?action=moderate;area=postmod;sa=posts',
 						'show' => $settings['postmod_active'] && !empty(we::$user['mod_cache']['ap']),
 					),
 					'unappmembers' => array(
 						'title' => $txt['unapproved_members'],
-						'href' => $scripturl . '?action=admin;area=viewmembers;sa=browse;type=approve',
+						'href' => '<URL>?action=admin;area=viewmembers;sa=browse;type=approve',
 						'show' => $context['unapproved_members'],
 						'notice' => $context['unapproved_members'],
 					),
@@ -2112,33 +2112,33 @@ function setupMenuContext()
 			),
 			'profile' => array(
 				'title' => $txt['profile'],
-				'href' => $scripturl . '?action=profile',
+				'href' => '<URL>?action=profile',
 				'show' => $context['allow_edit_profile'],
 				'sub_items' => array(
 					'summary' => array(
 						'title' => $txt['summary'],
-						'href' => $scripturl . '?action=profile',
+						'href' => '<URL>?action=profile',
 						'show' => true,
 					),
 					'showdrafts' => array(
 						'title' => $txt['draft_posts'],
-						'href' => $scripturl . '?action=profile;area=showdrafts',
+						'href' => '<URL>?action=profile;area=showdrafts',
 						'show' => allowedTo('save_post_draft') && !empty($settings['masterSavePostDrafts']),
 					),
 					'account' => array(
 						'title' => $txt['account'],
-						'href' => $scripturl . '?action=profile;area=account',
+						'href' => '<URL>?action=profile;area=account',
 						'show' => allowedTo(array('profile_identity_any', 'profile_identity_own', 'manage_membergroups')),
 					),
 					'profile' => array(
 						'title' => $txt['forumprofile'],
-						'href' => $scripturl . '?action=profile;area=forumprofile',
+						'href' => '<URL>?action=profile;area=forumprofile',
 						'show' => allowedTo(array('profile_extra_any', 'profile_extra_own')),
 					),
 					'',
 					'skin' => array(
 						'title' => $txt['change_skin'],
-						'href' => $scripturl . '?action=skin',
+						'href' => '<URL>?action=skin',
 						'show' => allowedTo(array('profile_extra_any', 'profile_extra_own')),
 					),
 				),
@@ -2146,24 +2146,24 @@ function setupMenuContext()
 			'pm' => array(
 				'title' => $txt['pm_short'],
 				'notice' => $has_new_pm ? we::$user['unread_messages'] : '',
-				'href' => $scripturl . '?action=pm',
+				'href' => '<URL>?action=pm',
 				'show' => $context['allow_pm'],
 				'sub_items' => array(
 					'pm_read' => array(
 						'title' => $txt['pm_menu_read'],
 						'notice' => $has_new_pm ? we::$user['unread_messages'] : '',
-						'href' => $scripturl . '?action=pm',
+						'href' => '<URL>?action=pm',
 						'show' => allowedTo('pm_read'),
 					),
 					'',
 					'pm_send' => array(
 						'title' => $txt['pm_menu_send'],
-						'href' => $scripturl . '?action=pm;sa=send',
+						'href' => '<URL>?action=pm;sa=send',
 						'show' => allowedTo('pm_send'),
 					),
 					'pm_draft' => array(
 						'title' => $txt['pm_menu_drafts'],
-						'href' => $scripturl . '?action=pm;sa=showdrafts',
+						'href' => '<URL>?action=pm;sa=showdrafts',
 						'show' => allowedTo('pm_send') && allowedTo('save_pm_draft') && !empty($settings['masterSavePmDrafts']),
 					),
 				),
@@ -2171,54 +2171,54 @@ function setupMenuContext()
 			'media' => array(
 				'title' => isset($txt['media_gallery']) ? $txt['media_gallery'] : 'Media',
 				'notice' => $can_view_unseen ? we::$user['media_unseen'] : '',
-				'href' => $scripturl . '?action=media',
+				'href' => '<URL>?action=media',
 				'show' => !empty($settings['media_enabled']) && allowedTo('media_access'),
 				'sub_items' => array(
 					'home' => array(
 						'title' => $txt['media_home'],
-						'href' => $scripturl . '?action=media',
+						'href' => '<URL>?action=media',
 						'show' => $can_view_unseen,
 					),
 					'unseen' => array(
 						'title' => $txt['media_unseen'],
 						'notice' => $can_view_unseen ? we::$user['media_unseen'] : '',
-						'href' => $scripturl . '?action=media;sa=unseen',
+						'href' => '<URL>?action=media;sa=unseen',
 						'show' => $can_view_unseen,
 					),
 				),
 			),
 			'mlist' => array(
 				'title' => $txt['members_title'],
-				'href' => $scripturl . '?action=mlist',
+				'href' => '<URL>?action=mlist',
 				'show' => $context['allow_memberlist'],
 				'sub_items' => array(
 					'mlist_view' => array(
 						'title' => $txt['mlist_menu_view'],
-						'href' => $scripturl . '?action=mlist',
+						'href' => '<URL>?action=mlist',
 						'show' => true,
 					),
 					'mlist_search' => array(
 						'title' => $txt['mlist_search'],
-						'href' => $scripturl . '?action=mlist;sa=search',
+						'href' => '<URL>?action=mlist;sa=search',
 						'show' => true,
 					),
 				),
 			),
 			'login' => array(
 				'title' => $txt['login'],
-				'href' => $scripturl . '?action=login',
+				'href' => '<URL>?action=login',
 				'show' => we::$is_guest,
 				'nofollow' => !empty(we::$user['possibly_robot']),
 			),
 			'register' => array(
 				'title' => $txt['register'],
-				'href' => $scripturl . '?action=register',
+				'href' => '<URL>?action=register',
 				'show' => we::$is_guest && (empty($settings['registration_method']) || $settings['registration_method'] != 3),
 				'nofollow' => !empty(we::$user['possibly_robot']),
 			),
 			'logout' => array(
 				'title' => $txt['logout'],
-				'href' => $scripturl . '?action=logout;' . $context['session_query'],
+				'href' => '<URL>?action=logout;' . $context['session_query'],
 				'show' => !we::$is_guest,
 			),
 		);

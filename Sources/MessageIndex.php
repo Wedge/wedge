@@ -77,14 +77,14 @@ function MessageIndex()
 	// If we can view unapproved messages and there are some build up a list.
 	if (allowedTo('approve_posts') && ($board_info['unapproved_topics'] || $board_info['unapproved_posts']))
 	{
-		$untopics = $board_info['unapproved_topics'] ? '<a href="' . $scripturl . '?action=moderate;area=postmod;sa=topics;brd=' . $board . '">' . $board_info['unapproved_topics'] . '</a>' : 0;
-		$unposts = $board_info['unapproved_posts'] ? '<a href="' . $scripturl . '?action=moderate;area=postmod;sa=posts;brd=' . $board . '">' . ($board_info['unapproved_posts'] - $board_info['unapproved_topics']) . '</a>' : 0;
+		$untopics = $board_info['unapproved_topics'] ? '<a href="<URL>?action=moderate;area=postmod;sa=topics;brd=' . $board . '">' . $board_info['unapproved_topics'] . '</a>' : 0;
+		$unposts = $board_info['unapproved_posts'] ? '<a href="<URL>?action=moderate;area=postmod;sa=posts;brd=' . $board . '">' . ($board_info['unapproved_posts'] - $board_info['unapproved_topics']) . '</a>' : 0;
 		$context['unapproved_posts_message'] = sprintf($txt['there_are_unapproved_topics'], $untopics, $unposts, $scripturl . '?action=moderate;area=postmod;sa=' . ($board_info['unapproved_topics'] ? 'topics' : 'posts') . ';brd=' . $board);
 	}
 
 	// Make sure the starting place makes sense and construct the page index.
 	$context['start'] = (int) $_REQUEST['start'];
-	$context['page_index'] = template_page_index($scripturl . '?board=' . $board . '.%1$d' . (isset($_REQUEST['sort']) ? ';sort=' . $_REQUEST['sort'] : '') . (isset($_REQUEST['desc']) ? ';desc' : ''), $context['start'], $board_info['total_topics'], $maxindex, true);
+	$context['page_index'] = template_page_index('<URL>?board=' . $board . '.%1$d' . (isset($_REQUEST['sort']) ? ';sort=' . $_REQUEST['sort'] : '') . (isset($_REQUEST['desc']) ? ';desc' : ''), $context['start'], $board_info['total_topics'], $maxindex, true);
 
 	// Set a canonical URL for this page.
 	$context['canonical_url'] = $scripturl . '?board=' . $board . '.' . $context['start'];
@@ -107,7 +107,7 @@ function MessageIndex()
 	{
 		wetem::add('sidebar', 'messageindex_staff');
 		foreach ($board_info['moderators'] as $mod)
-			$context['link_moderators'][] = '<a href="' . $scripturl . '?action=profile;u=' . $mod['id'] . '" title="' . $txt['board_moderator'] . '">' . $mod['name'] . '</a>';
+			$context['link_moderators'][] = '<a href="<URL>?action=profile;u=' . $mod['id'] . '" title="' . $txt['board_moderator'] . '">' . $mod['name'] . '</a>';
 	}
 
 	// Mark current and parent boards as seen.
@@ -416,11 +416,11 @@ function MessageIndex()
 
 				// We can't pass start by reference.
 				$start = -1;
-				$pages .= template_page_index($scripturl . '?topic=' . $row['id_topic'] . '.%1$d', $start, $row['num_replies'] + 1, $context['messages_per_page'], true, false);
+				$pages .= template_page_index('<URL>?topic=' . $row['id_topic'] . '.%1$d', $start, $row['num_replies'] + 1, $context['messages_per_page'], true, false);
 
 				// If we can use all, show all.
 				if (!empty($settings['enableAllMessages']) && $row['num_replies'] + 1 < $settings['enableAllMessages'])
-					$pages .= ' &nbsp;<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.0;all">' . $txt['all_pages'] . '</a>';
+					$pages .= ' &nbsp;<a href="<URL>?topic=' . $row['id_topic'] . '.0;all">' . $txt['all_pages'] . '</a>';
 				$pages .= ' &#187;';
 			}
 			else
@@ -463,7 +463,7 @@ function MessageIndex()
 						'name' => $row['first_display_name'],
 						'id' => $row['first_id_member'],
 						'href' => !empty($row['first_id_member']) ? $scripturl . '?action=profile;u=' . $row['first_id_member'] : '',
-						'link' => !empty($row['first_id_member']) ? '<a href="' . $scripturl . '?action=profile;u=' . $row['first_id_member'] . '" title="' . $txt['view_profile'] . '">' . $row['first_display_name'] . '</a>' : $row['first_display_name']
+						'link' => !empty($row['first_id_member']) ? '<a href="<URL>?action=profile;u=' . $row['first_id_member'] . '" title="' . $txt['view_profile'] . '">' . $row['first_display_name'] . '</a>' : $row['first_display_name']
 					),
 					// !!! The following two are never actually used. Waste time on timeformat()..?
 					'time' => timeformat($row['first_poster_time']),
@@ -473,7 +473,7 @@ function MessageIndex()
 					'icon' => $row['first_icon'],
 					'icon_url' => $theme[$context['icon_sources'][$row['first_icon']]] . '/post/' . $row['first_icon'] . '.gif',
 					'href' => $scripturl . '?topic=' . $row['id_topic'] . '.0',
-					'link' => '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.0">' . $row['first_subject'] . '</a>'
+					'link' => '<a href="<URL>?topic=' . $row['id_topic'] . '.0">' . $row['first_subject'] . '</a>'
 				),
 				'last_post' => array(
 					'id' => $row['id_last_msg'],
@@ -482,7 +482,7 @@ function MessageIndex()
 						'name' => $row['last_display_name'],
 						'id' => $row['last_id_member'],
 						'href' => !empty($row['last_id_member']) ? $scripturl . '?action=profile;u=' . $row['last_id_member'] : '',
-						'link' => !empty($row['last_id_member']) ? '<a href="' . $scripturl . '?action=profile;u=' . $row['last_id_member'] . '">' . $row['last_display_name'] . '</a>' : $row['last_display_name']
+						'link' => !empty($row['last_id_member']) ? '<a href="<URL>?action=profile;u=' . $row['last_id_member'] . '">' . $row['last_display_name'] . '</a>' : $row['last_display_name']
 					),
 					'on_time' => on_timeformat($row['last_poster_time']),
 					'timestamp' => forum_time(true, $row['last_poster_time']),
@@ -491,7 +491,7 @@ function MessageIndex()
 					'icon' => $row['last_icon'],
 					'icon_url' => $theme[$context['icon_sources'][$row['last_icon']]] . '/post/' . $row['last_icon'] . '.gif',
 					'href' => $scripturl . '?topic=' . $row['id_topic'] . (we::$is_guest ? ('.' . (!empty($options['view_newest_first']) ? 0 : ((int) (($row['num_replies']) / $context['pageindex_multiplier'])) * $context['pageindex_multiplier']) . '#msg' . $row['id_last_msg']) : (($row['num_replies'] == 0 ? '.0' : '.msg' . $row['id_last_msg']) . '#new')),
-					'link' => '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . (we::$is_guest ? ('.' . (!empty($options['view_newest_first']) ? 0 : ((int) (($row['num_replies']) / $context['pageindex_multiplier'])) * $context['pageindex_multiplier']) . '#msg' . $row['id_last_msg']) : (($row['num_replies'] == 0 ? '.0' : '.msg' . $row['id_last_msg']) . '#new')) . '" ' . ($row['num_replies'] == 0 ? '' : 'rel="nofollow"') . '>' . $row['last_subject'] . '</a>'
+					'link' => '<a href="<URL>?topic=' . $row['id_topic'] . (we::$is_guest ? ('.' . (!empty($options['view_newest_first']) ? 0 : ((int) (($row['num_replies']) / $context['pageindex_multiplier'])) * $context['pageindex_multiplier']) . '#msg' . $row['id_last_msg']) : (($row['num_replies'] == 0 ? '.0' : '.msg' . $row['id_last_msg']) . '#new')) . '" ' . ($row['num_replies'] == 0 ? '' : 'rel="nofollow"') . '>' . $row['last_subject'] . '</a>'
 				),
 				'is_pinned' => !empty($row['is_pinned']),
 				'is_locked' => !empty($row['locked']),
@@ -504,7 +504,7 @@ function MessageIndex()
 				'new_from' => $row['new_from'],
 				'newtime' => $row['new_from'],
 				'new_href' => $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['new_from'] . '#new',
-				'new_link' => '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['new_from'] . '#new">' . $row['first_subject'] . '</a>',
+				'new_link' => '<a href="<URL>?topic=' . $row['id_topic'] . '.msg' . $row['new_from'] . '#new">' . $row['first_subject'] . '</a>',
 				'pages' => $pages,
 				'replies' => $row['num_replies'],
 				'views' => $row['num_views'],

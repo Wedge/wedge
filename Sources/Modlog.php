@@ -428,7 +428,7 @@ function list_getModLogEntries($start, $items_per_page, $sort, $query_string = '
 
 		// IP Info?
 		if (isset($row['extra']['ip_range']))
-			$row['extra']['ip_range'] = '<a href="' . $scripturl . '?action=trackip;searchip=' . $row['extra']['ip_range'] . '">' . $row['extra']['ip_range'] . '</a>';
+			$row['extra']['ip_range'] = '<a href="<URL>?action=trackip;searchip=' . $row['extra']['ip_range'] . '">' . $row['extra']['ip_range'] . '</a>';
 
 		// Email?
 		if (isset($row['extra']['email']))
@@ -448,7 +448,7 @@ function list_getModLogEntries($start, $items_per_page, $sort, $query_string = '
 			'id' => $row['id_action'],
 			'ip' => $see_IP ? format_ip($row['ip']) : $txt['logged'],
 			'position' => empty($row['real_name']) && empty($row['group_name']) ? $txt['guest'] : $row['group_name'],
-			'moderator_link' => $row['id_member'] ? '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>' : (empty($row['real_name']) ? ($txt['guest'] . (!empty($row['extra']['member_acted']) ? ' (' . $row['extra']['member_acted'] . ')' : '')) : $row['real_name']),
+			'moderator_link' => $row['id_member'] ? '<a href="<URL>?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>' : (empty($row['real_name']) ? ($txt['guest'] . (!empty($row['extra']['member_acted']) ? ' (' . $row['extra']['member_acted'] . ')' : '')) : $row['real_name']),
 			'time' => timeformat($row['log_time']),
 			'timestamp' => forum_time(true, $row['log_time']),
 			'editable' => time() > $row['log_time'] + $context['hoursdisable'] * 3600,
@@ -476,11 +476,11 @@ function list_getModLogEntries($start, $items_per_page, $sort, $query_string = '
 			{
 				// Make the board number into a link - dealing with moving too.
 				if (isset($entries[$action]['extra']['board_to']) && $entries[$action]['extra']['board_to'] == $row['id_board'])
-					$entries[$action]['extra']['board_to'] = '<a href="' . $scripturl . '?board=' . $row['id_board'] . '.0">' . $row['name'] . '</a>';
+					$entries[$action]['extra']['board_to'] = '<a href="<URL>?board=' . $row['id_board'] . '.0">' . $row['name'] . '</a>';
 				elseif (isset($entries[$action]['extra']['board_from']) && $entries[$action]['extra']['board_from'] == $row['id_board'])
-					$entries[$action]['extra']['board_from'] = '<a href="' . $scripturl . '?board=' . $row['id_board'] . '.0">' . $row['name'] . '</a>';
+					$entries[$action]['extra']['board_from'] = '<a href="<URL>?board=' . $row['id_board'] . '.0">' . $row['name'] . '</a>';
 				elseif (isset($entries[$action]['extra']['board']) && $entries[$action]['extra']['board'] == $row['id_board'])
-					$entries[$action]['extra']['board'] = '<a href="' . $scripturl . '?board=' . $row['id_board'] . '.0">' . $row['name'] . '</a>';
+					$entries[$action]['extra']['board'] = '<a href="<URL>?board=' . $row['id_board'] . '.0">' . $row['name'] . '</a>';
 			}
 		}
 		wesql::free_result($request);
@@ -509,14 +509,14 @@ function list_getModLogEntries($start, $items_per_page, $sort, $query_string = '
 					'id' => $row['id_topic'],
 					'subject' => $row['subject'],
 					'href' => $scripturl . '?topic=' . $row['id_topic'] . '.0',
-					'link' => '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.0">' . $row['subject'] . '</a>'
+					'link' => '<a href="<URL>?topic=' . $row['id_topic'] . '.0">' . $row['subject'] . '</a>'
 				);
 
 				// Make the topic number into a link - dealing with splitting too.
 				if (isset($this_action['extra']['topic']) && $this_action['extra']['topic'] == $row['id_topic'])
-					$this_action['extra']['topic'] = '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.' . (isset($this_action['extra']['message']) ? 'msg' . $this_action['extra']['message'] . '#msg' . $this_action['extra']['message'] : '0') . '">' . $row['subject'] . '</a>';
+					$this_action['extra']['topic'] = '<a href="<URL>?topic=' . $row['id_topic'] . '.' . (isset($this_action['extra']['message']) ? 'msg' . $this_action['extra']['message'] . '#msg' . $this_action['extra']['message'] : '0') . '">' . $row['subject'] . '</a>';
 				elseif (isset($this_action['extra']['new_topic']) && $this_action['extra']['new_topic'] == $row['id_topic'])
-					$this_action['extra']['new_topic'] = '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.' . (isset($this_action['extra']['message']) ? 'msg' . $this_action['extra']['message'] . '#msg' . $this_action['extra']['message'] : '0') . '">' . $row['subject'] . '</a>';
+					$this_action['extra']['new_topic'] = '<a href="<URL>?topic=' . $row['id_topic'] . '.' . (isset($this_action['extra']['message']) ? 'msg' . $this_action['extra']['message'] . '#msg' . $this_action['extra']['message'] : '0') . '">' . $row['subject'] . '</a>';
 			}
 		}
 		wesql::free_result($request);
@@ -544,12 +544,12 @@ function list_getModLogEntries($start, $items_per_page, $sort, $query_string = '
 					'id' => $row['id_msg'],
 					'subject' => $row['subject'],
 					'href' => $scripturl . '?msg=' . $row['id_msg'],
-					'link' => '<a href="' . $scripturl . '?msg=' . $row['id_msg'] . '">' . $row['subject'] . '</a>',
+					'link' => '<a href="<URL>?msg=' . $row['id_msg'] . '">' . $row['subject'] . '</a>',
 				);
 
 				// Make the message number into a link.
 				if (isset($this_action['extra']['message']) && $this_action['extra']['message'] == $row['id_msg'])
-					$this_action['extra']['message'] = '<a href="' . $scripturl . '?msg=' . $row['id_msg'] . '">' . $row['subject'] . '</a>';
+					$this_action['extra']['message'] = '<a href="<URL>?msg=' . $row['id_msg'] . '">' . $row['subject'] . '</a>';
 			}
 		}
 		wesql::free_result($request);
@@ -575,10 +575,10 @@ function list_getModLogEntries($start, $items_per_page, $sort, $query_string = '
 					'id' => $row['id_member'],
 					'name' => $row['real_name'],
 					'href' => $scripturl . '?action=profile;u=' . $row['id_member'],
-					'link' => '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>'
+					'link' => '<a href="<URL>?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>'
 				);
 				// Make the member number into a name.
-				$entries[$action]['extra']['member'] = '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>';
+				$entries[$action]['extra']['member'] = '<a href="<URL>?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>';
 			}
 		}
 		wesql::free_result($request);
@@ -589,7 +589,7 @@ function list_getModLogEntries($start, $items_per_page, $sort, $query_string = '
 	{
 		// Make any message info links so it's easier to go find that message.
 		if (isset($entry['extra']['message']) && (empty($entry['message']) || empty($entry['message']['id'])))
-			$entries[$k]['extra']['message'] = '<a href="' . $scripturl . '?msg=' . $entry['extra']['message'] . '">' . $entry['extra']['message'] . '</a>';
+			$entries[$k]['extra']['message'] = '<a href="<URL>?msg=' . $entry['extra']['message'] . '">' . $entry['extra']['message'] . '</a>';
 
 		// Mark up any deleted members, topics and boards.
 		foreach (array('board', 'board_from', 'board_to', 'member', 'topic', 'new_topic') as $type)

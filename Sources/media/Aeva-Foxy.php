@@ -418,7 +418,7 @@ function aeva_foxy_playlists()
 			$o .= '
 	<div class="aeva_playlist_list">
 		<strong><a href="' . $galurl . 'sa=playlists;in=' . $p['id'] . '">' . $p['name'] . '</a></strong> (' . sprintf($txt['media_items_from_album' . ($p['num_albums'] == 1 ? '' : 's')], $p['num_items'], $p['num_albums']) . ') ' . (empty($p['owner_id']) ? '' : '
-		' . $txt['media_by'] . ' <a href="' . $scripturl . '?action=profile;u=' . $p['owner_id'] . ';area=aeva">' . $p['owner_name'] . '</a>') . (empty($p['description']) ? '' : '
+		' . $txt['media_by'] . ' <a href="<URL>?action=profile;u=' . $p['owner_id'] . ';area=aeva">' . $p['owner_name'] . '</a>') . (empty($p['description']) ? '' : '
 		<div class="mg_desc" style="padding-left: 16px">' . $p['description'] . '</div>') . '
 	</div>';
 		$o .= '</div>';
@@ -905,7 +905,7 @@ function aeva_foxy_feed()
 <rss version="2.0" xml:lang="', strtr($txt['lang_locale'], '_', '-'), '">
 	<channel>
 		<title><![CDATA[', $feed_title, ']]></title>
-		<link>', $scripturl . '?action=media</link>
+		<link><URL>?action=media</link>
 		<description><![CDATA[', !empty($txt['media_feed_desc']) ? $txt['media_feed_desc'] : '', ']]></description>';
 
 	// Output all of the associative array, start indenting with 2 tabs, and name everything "item".
@@ -921,7 +921,7 @@ function aeva_foxy_feed()
 
 function aeva_foxy_get_xml_items()
 {
-	global $scripturl, $settings, $galurl, $amSettings;
+	global $settings, $galurl, $amSettings;
 	global $query_this, $theme, $context, $txt;
 
 	$postmod = isset($settings['postmod_active']) ? $settings['postmod_active'] : false;
@@ -949,16 +949,16 @@ function aeva_foxy_get_xml_items()
 	{
 		$thumb_url = isset($row['directory']) && !empty($amSettings['clear_thumbnames']) ? $clearurl . '/' . str_replace('%2F', '/', urlencode($row['directory'])) . '/' . aeva_getEncryptedFilename($row['filename'], $row['id_thumb'], true) : $galurl . 'sa=media;in=' . $row['id_media'] . ';thumb';
 		$item = '<p><a href="' . $galurl . 'sa=item;in=' . $row['id_media'] . '"><img src="' . $thumb_url . '" style="padding: 3px; margin: 3px"></a></p>'
-			. "\n" . '<p>' . $txt['media_by'] . ' <a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . ';area=aeva">' . $row['member_name'] . '</a>'
+			. "\n" . '<p>' . $txt['media_by'] . ' <a href="<URL>?action=profile;u=' . $row['id_member'] . ';area=aeva">' . $row['member_name'] . '</a>'
 			. ($row['hidden'] ? '' : ' ' . $txt['media_in_album'] . ' <a href="' . $galurl . 'sa=album;in=' . $row['album_id'] . '">' . $row['name'] . '</a>') . '</p>';
 		$data[] = array(
 			'title' => cdata_parse($row['title']),
-			'link' => $scripturl . '?action=media;sa=item;in=' . $row['id_media'],
+			'link' => '<URL>?action=media;sa=item;in=' . $row['id_media'],
 			'description' => cdata_parse($item),
 			'author' => cdata_parse($row['member_name']),
 			'category' => cdata_parse($row['name']),
 			'pubDate' => gmdate('D, d M Y H:i:s \G\M\T', $row['time_added']),
-			'guid' => $scripturl . '?action=media;sa=item;in=' . $row['id_media'],
+			'guid' => '<URL>?action=media;sa=item;in=' . $row['id_media'],
 		);
 	}
 
@@ -969,7 +969,7 @@ function aeva_foxy_get_xml_items()
 
 function aeva_foxy_get_xml_comments()
 {
-	global $scripturl, $settings, $galurl, $amSettings;
+	global $settings, $galurl, $amSettings;
 	global $query_this, $theme, $context, $txt;
 
 	$postmod = isset($settings['postmod_active']) ? $settings['postmod_active'] : false;
@@ -997,17 +997,17 @@ function aeva_foxy_get_xml_comments()
 	while ($row = wesql::fetch_assoc($request))
 	{
 		$item = '<p>' . ($row['hidden'] ? '' : $txt['media_comment_in'] . ' <a href="' . $galurl . 'sa=album;in=' . $row['id_album'] . '">' . $row['name'] . '</a> ') . $txt['media_by']
-			. ' <a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . ';area=aeva">' . $row['member_name'] . '</a></p>' . "\n" . '<p>'
+			. ' <a href="<URL>?action=profile;u=' . $row['id_member'] . ';area=aeva">' . $row['member_name'] . '</a></p>' . "\n" . '<p>'
 			. westr::cut($row['message'], 300, true, false, true, true) . '</p>';
 
 		$data[] = array(
 			'title' => cdata_parse($row['title']),
-			'link' => $scripturl . '?action=media;sa=item;in=' . $row['id_media'] . '#com' . $row['id_comment'],
+			'link' => '<URL>?action=media;sa=item;in=' . $row['id_media'] . '#com' . $row['id_comment'],
 			'description' => cdata_parse($item),
 			'author' => cdata_parse($row['member_name']),
 			'category' => cdata_parse($row['name']),
 			'pubDate' => gmdate('D, d M Y H:i:s \G\M\T', $row['posted_on']),
-			'guid' => $scripturl . '?action=media;sa=item;in=' . $row['id_media'] . '#com' . $row['id_comment'],
+			'guid' => '<URL>?action=media;sa=item;in=' . $row['id_media'] . '#com' . $row['id_comment'],
 		);
 	}
 
@@ -1244,7 +1244,7 @@ function aeva_foxy_album($id, $type, $wid = 0, $details = '', $sort = 'm.id_medi
 			if (!empty($p['playlists']))
 			{
 				foreach ($p['playlists'] as $pp)
-					$gn .= $type == 'playl' && $pp['id_playlist'] == $id ? $pp['name'] . ', ' : '<a href="' . $scripturl . '?' . (!empty($context['current_board']) ?
+					$gn .= $type == 'playl' && $pp['id_playlist'] == $id ? $pp['name'] . ', ' : '<a href="<URL>?' . (!empty($context['current_board']) ?
 						'board=' . $context['current_board'] . ';' : '') . 'action=media;sa=playlists;in=' . $pp['id_playlist'] . '" onclick="lnFlag=1;">' . $pp['name'] . '</a>, ';
 				$playlist[$myp]['plists'] = substr($gn, 0, -2);
 			}
@@ -1279,7 +1279,7 @@ function aeva_foxy_album($id, $type, $wid = 0, $details = '', $sort = 'm.id_medi
 		}
 
 		$box .= '<tr>' . ($album_id > 0 ? '<td class="top">
-	<img class="aep' . ($first_p['icon_transparent'] ? ' ping' : '') . '" src="' . $scripturl . '?action=media;sa=media;in=' . $album_id . ';bigicon"></td>' : '');
+	<img class="aep' . ($first_p['icon_transparent'] ? ' ping' : '') . '" src="<URL>?action=media;sa=media;in=' . $album_id . ';bigicon"></td>' : '');
 
 		if ($nvotes != 0 && in_array('votes', $details))
 		{
@@ -1296,7 +1296,7 @@ function aeva_foxy_album($id, $type, $wid = 0, $details = '', $sort = 'm.id_medi
 
 			$request = wesql::query($req, array('id' => array_keys($playlist)));
 			while ($row = wesql::fetch_assoc($request))
-				$box .= aeva_showStars($row['rating']) . ' ' . $txt['by'] . ' <a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . ';area=aevavotes">' . $row['real_name'] . '</a><br>';
+				$box .= aeva_showStars($row['rating']) . ' ' . $txt['by'] . ' <a href="<URL>?action=profile;u=' . $row['id_member'] . ';area=aevavotes">' . $row['real_name'] . '</a><br>';
 			$box .= '</div></div></td>';
 			wesql::free_result($request);
 		}
@@ -1320,7 +1320,7 @@ function aeva_foxy_album($id, $type, $wid = 0, $details = '', $sort = 'm.id_medi
 			. ($has_type['video'] ? $has_type['video'] . ' ' . $txt['media_foxy_stats_video' . ($has_type['video'] > 1 ? 's' : '')] . ($has_type['image'] ? ' ' . $txt['media_and'] . ' ' : ', ') : '')
 			. ($has_type['image'] ? $has_type['image'] . ' ' . $txt['media_foxy_stats_image' . ($has_type['image'] > 1 ? 's' : '')] . ', ' : '');
 		$box = substr($box, 0, -2) . ' ' . sprintf($txt['media_from_album' . (count($has_album) > 1 ? 's' : '')], count($has_album))
-			. ($type == 'playl' && (we::$is_admin || ($playlist_owner_id == we::$id && aeva_allowedTo('add_playlists'))) ? ' - <a href="' . $scripturl . '?action=media;sa=playlists;in=' . $id . ';edit;' . $context['session_query'] . '"><img src="' . $theme['images_aeva'] . '/camera_edit.png" class="bottom"> ' . $txt['media_edit_this_item'] . '</a>' : '') . '</div>';
+			. ($type == 'playl' && (we::$is_admin || ($playlist_owner_id == we::$id && aeva_allowedTo('add_playlists'))) ? ' - <a href="<URL>?action=media;sa=playlists;in=' . $id . ';edit;' . $context['session_query'] . '"><img src="' . $theme['images_aeva'] . '/camera_edit.png" class="bottom"> ' . $txt['media_edit_this_item'] . '</a>' : '') . '</div>';
 
 		$box .= !empty($playlist_description) && in_array('description', $details) ? parse_bbc($playlist_description) : '';
 
@@ -1328,7 +1328,7 @@ function aeva_foxy_album($id, $type, $wid = 0, $details = '', $sort = 'm.id_medi
 		{
 			$box .= '<br><br>' . $txt['media_related_playlists'] . ': ';
 			foreach ($all_playlists as $idi => $list)
-				$box .= '<a href="' . $scripturl . '?' . (!empty($context['current_board']) ? 'board=' . $context['current_board'] . ';' : '') . 'action=media;sa=playlists;in=' . $idi . '">' . $list['name'] . '</a>, ';
+				$box .= '<a href="<URL>?' . (!empty($context['current_board']) ? 'board=' . $context['current_board'] . ';' : '') . 'action=media;sa=playlists;in=' . $idi . '">' . $list['name'] . '</a>, ';
 			$box = substr($box, 0, -2);
 		}
 	}
@@ -1377,18 +1377,18 @@ function aeva_foxy_fill_player(&$playlist, $type = 'audio', &$details, $play = 0
 		$tx .= '<tr><td class="top" style="width: 55px"><img src="' . $i['thumb'] . '" width="55" height="55" title="Click to Play"></td>';
 		$tx .= '<td class="playlistlo middle" onmouseover="mover(this, ' . $idi . ');" onmouseout="mout(this, ' . $idi . ');" style="padding: 4px">';
 
-		$tx .= $i['title'] . ' <a href="' . $scripturl . '?action=media;sa=item;in=' . $i['id'] . '" target="_blank" title="" onclick="lnFlag=1;"><img src="' . $theme['images_aeva'] . '/magnifier.png" width="16" height="16" style="vertical-align: text-bottom"></a>';
+		$tx .= $i['title'] . ' <a href="<URL>?action=media;sa=item;in=' . $i['id'] . '" target="_blank" title="" onclick="lnFlag=1;"><img src="' . $theme['images_aeva'] . '/magnifier.png" width="16" height="16" style="vertical-align: text-bottom"></a>';
 		$tx .= ' (' . floor($i['duration'] / 60) . ':' . ($i['duration'] % 60 < 10 ? '0' : '') . ($i['duration'] % 60) . ')';
 
 		$tx .= '<div style="float: right; text-align: right">';
 		if (aeva_allowedTo('moderate') || we::$id == $i['owner'])
-			$tx .= '<a href="' . $scripturl . '?action=media;sa=post;in=' . $i['id'] . '" onclick="lnFlag=1;">' . $txt['modify'] . '</a><div class="foxy_small">';
+			$tx .= '<a href="<URL>?action=media;sa=post;in=' . $i['id'] . '" onclick="lnFlag=1;">' . $txt['modify'] . '</a><div class="foxy_small">';
 		$tx .= (in_array('votes', $details) || in_array('none', $details) ? aeva_showStars($i['voters'] > 0 ? $i['rating'] / $i['voters'] : 0)
 			. ($i['voters'] > 0 ? '<br>' . ($i['voters'] == 0 ? 0 : sprintf('%.2f', $i['rating'] / $i['voters'])) . '/5 (' . $i['voters']
 			. ' ' . $txt['media_vote' . ($i['voters'] > 1 ? 's' : '') . '_noun'] . ')' : '') : '') . '</div></div>';
 
 		$tx .= '<br>';
-		$tx .= $i['album_hidden'] ? '<b>' . $i['album'] . '</b>' : '<b><a href="' . $scripturl . '?action=media;sa=album;in=' . $i['album_id'] . '" target="_blank" onclick="lnFlag=1;">' . $i['album'] . '</a></b>' ;
+		$tx .= $i['album_hidden'] ? '<b>' . $i['album'] . '</b>' : '<b><a href="<URL>?action=media;sa=album;in=' . $i['album_id'] . '" target="_blank" onclick="lnFlag=1;">' . $i['album'] . '</a></b>' ;
 
 		if (!empty($i['custom_fields']))
 		{
@@ -1398,7 +1398,7 @@ function aeva_foxy_fill_player(&$playlist, $type = 'audio', &$details, $play = 0
 				if (substr($field['value'], 0, 7) == 'http://')
 					$tx .= '<a href="' . $field['value'] . '" target="_blank" onclick="lnFlag=1;">' . $field['value'] . '</a>';
 				else
-					$tx .= '<a href="' . $scripturl . '?' . (!empty($context['current_board']) ? 'board=' . $context['current_board'] . ';' : '')
+					$tx .= '<a href="<URL>?' . (!empty($context['current_board']) ? 'board=' . $context['current_board'] . ';' : '')
 					. 'action=media;sa=search;search=' . urlencode($field['value']) . ';fields[]=' . $field['id_field'] . '" onclick="lnFlag=1;">' . $field['value'] . '</a>';
 			}
 		}

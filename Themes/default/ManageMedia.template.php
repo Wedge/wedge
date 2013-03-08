@@ -39,7 +39,7 @@ function template_aeva_admin_enclose_table_after()
 
 function template_aeva_admin_submissions()
 {
-	global $context, $txt, $scripturl, $galurl, $theme, $amSettings;
+	global $context, $txt, $galurl, $theme, $amSettings;
 
 	$filter = $context['aeva_filter'];
 
@@ -79,7 +79,7 @@ function template_aeva_admin_submissions()
 					<td><a href="', $item['item_link'], '">', $item['title'], '</a></td>
 					<td>', $item['poster'], '</td>
 					<td>
-						<img src="', $theme['images_aeva'], '/tick.png" title="', $txt['media_admin_approve'], '"> <a href="#" onclick="return doSubAction(\'', $scripturl, '?action=media;area=moderate;sa=submissions;do=approve;in=', $item['id'], ';type=', $filter, ';', $context['session_query'], '\');">', $txt['media_admin_approve'], '</a>
+						<img src="', $theme['images_aeva'], '/tick.png" title="', $txt['media_admin_approve'], '"> <a href="#" onclick="return doSubAction(\'<URL>?action=media;area=moderate;sa=submissions;do=approve;in=', $item['id'], ';type=', $filter, ';', $context['session_query'], '\');">', $txt['media_admin_approve'], '</a>
 						<img src="', $theme['images_aeva'], '/folder_edit.png" title="', $txt['media_admin_edit'], '"> <a href="', $item['edit_link'], '">', $txt['media_admin_edit'], '</a>
 						<img src="', $theme['images_aeva'], '/folder_delete.png" title="', $txt['media_admin_delete'], '"> <a href="#" onclick="return ask(we_confirm, e) && doSubAction(\'', $item['del_link'], '\');">', $txt['media_admin_delete'], '</a>', $filter == 'items' ? '
 						<a href="' . $galurl . 'sa=media;in=' . $item['id'] . ';preview"' . ($amSettings['use_zoom'] ? ' class="zoom"' : '') . '><img src="' . $theme['images_aeva'] . '/magnifier.png"> ' . $txt['media_admin_view_image'] . '</a>' : '', '

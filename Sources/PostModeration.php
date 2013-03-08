@@ -201,7 +201,7 @@ function UnapprovedPosts()
 	list ($context['total_unapproved_topics']) = wesql::fetch_row($request);
 	wesql::free_result($request);
 
-	$context['page_index'] = template_page_index($scripturl . '?action=moderate;area=postmod;sa=' . $context['current_view'] . (isset($_REQUEST['brd']) ? ';brd=' . (int) $_REQUEST['brd'] : ''), $_GET['start'], $context['current_view'] == 'topics' ? $context['total_unapproved_topics'] : $context['total_unapproved_posts'], 10);
+	$context['page_index'] = template_page_index('<URL>?action=moderate;area=postmod;sa=' . $context['current_view'] . (isset($_REQUEST['brd']) ? ';brd=' . (int) $_REQUEST['brd'] : ''), $_GET['start'], $context['current_view'] == 'topics' ? $context['total_unapproved_topics'] : $context['total_unapproved_posts'], 10);
 	$context['start'] = $_GET['start'];
 
 	// We have enough to make some pretty tabs!
@@ -267,7 +267,7 @@ function UnapprovedPosts()
 			'poster' => array(
 				'id' => $row['id_member'],
 				'name' => $row['poster_name'],
-				'link' => $row['id_member'] ? '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['poster_name'] . '</a>' : $row['poster_name'],
+				'link' => $row['id_member'] ? '<a href="<URL>?action=profile;u=' . $row['id_member'] . '">' . $row['poster_name'] . '</a>' : $row['poster_name'],
 				'href' => $scripturl . '?action=profile;u=' . $row['id_member'],
 			),
 			'topic' => array(

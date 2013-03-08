@@ -346,7 +346,7 @@ function loadProfileFields($force_reload = false)
 		'member_name' => array(
 			'type' => allowedTo('admin_forum') && isset($_GET['changeusername']) ? 'text' : 'label',
 			'label' => $txt['username'],
-			'subtext' => allowedTo('admin_forum') && !isset($_GET['changeusername']) ? '(<a href="' . $scripturl . '?action=profile;u=' . $context['id_member'] . ';area=account;changeusername" style="font-style: italic">' . $txt['username_change'] . '</a>)' : '',
+			'subtext' => allowedTo('admin_forum') && !isset($_GET['changeusername']) ? '(<a href="<URL>?action=profile;u=' . $context['id_member'] . ';area=account;changeusername" style="font-style: italic">' . $txt['username_change'] . '</a>)' : '',
 			'log_change' => true,
 			'permission' => 'profile_identity',
 			'prehtml' => allowedTo('admin_forum') && isset($_GET['changeusername']) ? '<div class="alert">' . $txt['username_warning'] . '</div>' : '',
@@ -508,7 +508,7 @@ function loadProfileFields($force_reload = false)
 			'label' => $txt['secret_answer'],
 			'subtext' => $txt['secret_desc2'],
 			'size' => 20,
-			'postinput' => '<dfn>(<a href="' . $scripturl . '?action=help;in=secret_why_blank" onclick="return reqWin(this);">' . $txt['secret_why_blank'] . '</a>)</dfn>',
+			'postinput' => '<dfn>(<a href="<URL>?action=help;in=secret_why_blank" onclick="return reqWin(this);">' . $txt['secret_why_blank'] . '</a>)</dfn>',
 			'value' => '',
 			'permission' => 'profile_identity',
 			'input_validate' => create_function('&$value', '
@@ -1889,17 +1889,17 @@ function list_getTopicNotifications($start, $items_per_page, $sort, $memID)
 
 		$notification_topics[] = array(
 			'id' => $row['id_topic'],
-			'poster_link' => empty($row['id_member']) ? $row['real_name_col'] : '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['real_name_col'] . '</a>',
-			'poster_updated_link' => empty($row['id_member_updated']) ? $row['last_real_name'] : '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member_updated'] . '">' . $row['last_real_name'] . '</a>',
+			'poster_link' => empty($row['id_member']) ? $row['real_name_col'] : '<a href="<URL>?action=profile;u=' . $row['id_member'] . '">' . $row['real_name_col'] . '</a>',
+			'poster_updated_link' => empty($row['id_member_updated']) ? $row['last_real_name'] : '<a href="<URL>?action=profile;u=' . $row['id_member_updated'] . '">' . $row['last_real_name'] . '</a>',
 			'subject' => $row['subject'],
 			'href' => $scripturl . '?topic=' . $row['id_topic'] . '.0',
-			'link' => '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.0">' . $row['subject'] . '</a>',
+			'link' => '<a href="<URL>?topic=' . $row['id_topic'] . '.0">' . $row['subject'] . '</a>',
 			'new' => $row['new_from'] <= $row['id_msg_modified'],
 			'new_from' => $row['new_from'],
 			'updated' => timeformat($row['poster_time']),
 			'new_href' => $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['new_from'] . '#new',
-			'new_link' => '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['new_from'] . '#new">' . $row['subject'] . '</a>',
-			'board_link' => '<a href="' . $scripturl . '?board=' . $row['id_board'] . '.0">' . $row['name'] . '</a>',
+			'new_link' => '<a href="<URL>?topic=' . $row['id_topic'] . '.msg' . $row['new_from'] . '#new">' . $row['subject'] . '</a>',
+			'board_link' => '<a href="<URL>?board=' . $row['id_board'] . '.0">' . $row['name'] . '</a>',
 		);
 	}
 	wesql::free_result($request);
@@ -1930,7 +1930,7 @@ function list_getBoardNotifications($start, $items_per_page, $sort, $memID)
 			'id' => $row['id_board'],
 			'name' => $row['name'],
 			'href' => $scripturl . '?board=' . $row['id_board'] . '.0',
-			'link' => '<a href="' . $scripturl . '?board=' . $row['id_board'] . '.0">' . $row['name'] . '</a>',
+			'link' => '<a href="<URL>?board=' . $row['id_board'] . '.0">' . $row['name'] . '</a>',
 			'new' => $row['board_read'] < $row['id_msg_updated']
 		);
 	wesql::free_result($request);

@@ -53,7 +53,7 @@ function Ajax()
  */
 function GetJumpTo()
 {
-	global $context, $settings, $scripturl;
+	global $context, $settings;
 
 	// Find the boards/cateogories they can see.
 	// Note: you can set $context['current_category'] if you have too many boards and it kills performance.
@@ -63,7 +63,7 @@ function GetJumpTo()
 		'selected_board' => isset($context['current_board']) ? $context['current_board'] : 0,
 		'current_category' => isset($context['current_category']) ? $context['current_category'] : null, // null to list all categories
 	);
-	$url = !empty($settings['pretty_enable_filters']) ? $scripturl . '?board=' : '';
+	$url = !empty($settings['pretty_enable_filters']) ? '<URL>?board=' : '';
 	$jump_to = getBoardList($boardListOptions);
 	$skip_this = isset($_REQUEST['board']) ? $_REQUEST['board'] : 0;
 	$json = array();
