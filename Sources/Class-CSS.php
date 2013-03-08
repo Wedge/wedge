@@ -342,7 +342,7 @@ class wess_var extends wess
 
 		/*
 			Double quotes are only required for empty strings.
-			Authors can specific conditions for the variable to be set,
+			Authors can specify conditions for the variable to be set,
 			depending on the browser, rtl, guest or member, i.e. anything
 			set in $context['css_suffixes']. Like this:
 
@@ -352,10 +352,9 @@ class wess_var extends wess
 			The only reason we're not accepting ":" in declarations is that
 			we want to be able to do this: (Check the last line carefully)
 
-			(index.css)		$border-pos = right
-			(index.rtl.css)	$border-pos = left
-			(index.css)		.class
-								border-$border-pos: 1px solid $border-col
+			(common.css)	$left = @is (rtl, right, left)
+			(anything.css)	.class
+								border-$left: 1px solid $border-col
 		*/
 		if (preg_match_all('~^\h*(\$[\w-]+)\h*(?:{([^}]+)}\h*)?=\h*("?)(.*)\\3;?\s*$~m', $css, $matches))
 		{
@@ -462,7 +461,7 @@ class wess_if extends wess
 				$css = preg_replace('~\bcan_flex\b~', '(firefox[20-], chrome[21-], opera[12.1-])', $css);
 
 			// List of browsers that support the previous/TWEEN flexbox model (i.e. display: flexbox)
-			// Really, it's just IE10... Or any browser, if you use the Flexie polyfill. All require a prefix.
+			// Really, it's just IE10... And it requires a prefix.
 			if (strpos($css, 'can_flex_flexbox') !== false)
 				$css = preg_replace('~\bcan_flex_flexbox\b~', 'ie10', $css);
 
@@ -1450,12 +1449,12 @@ class wess_prefixes extends wess
 			return $unchanged;
 		}
 
-		// Only newer Chrome and Safari versions support border-image without a prefix.
+		// Only newer Firefox, Chrome and Safari versions support border-image without a prefix.
 		if ($matches[1] === 'border-image')
 		{
 			if ($ie)
 				return '';
-			if ($chrome || ($safari && $v >= 6))
+			if ($chrome || ($safari && $v >= 6) || ($firefox && $v >= 15))
 				return $unchanged;
 			return $prefixed;
 		}
@@ -1498,12 +1497,12 @@ class wess_prefixes extends wess
 			return $prefixed;
 		}
 
-		// IE6/7/8/9 don't support transitions, IE10, Firefox 16+ and Opera 12.10+ support them unprefixed, other browsers require a prefix.
+		// IE6/7/8/9 don't support transitions. IE10, Chrome 26+, Firefox 16+ and Opera 12.10+ support them unprefixed, other browsers require a prefix.
 		if ($matches[1] === 'transition')
 		{
 			if ($ie8down || $ie9 || ($firefox && $v < 4))
 				return '';
-			if (($opera && $v < 12.1) || ($firefox && $v < 16) || $webkit)
+			if (($opera && $v < 12.1) || ($firefox && $v < 16) || ($chrome && $v < 26) || $safari)
 				return $prefixed;
 			return $unchanged;
 		}
@@ -1575,9 +1574,21 @@ class wess_prefixes extends wess
 		if ($b['is_chrome'] && $v >= 21 && strpos($matches[1], 'flex') !== false)
 			return str_replace(array('inline-flex', 'flex'), array($this->prefix . 'inline-flex', $this->prefix . 'flex'), $unchanged);
 
-		// All browsers support device-pixel-ratio only with prefixes, but Firefox screwed it up.
-		if (strpos($matches[1], 'pixel-ratio') !== false)
-			return $b['is_firefox'] ? $matches[2] . '-moz' . substr($unchanged, 3) : $this->prefix . $unchanged;
+		// There's a need for min/max-resolution to be rewritten for some browsers.
+		if (strpos($matches[1], 'resolution') !== false)
+		{
+			// CSS 'dpi' really are 'dots-per-CSS-inch', not physical inches. Thus, default is always 96dpi (= 1dppx), even on iOS.
+			$dpi = $matches[4] == 'dpi' ? $matches[3] : $matches[3] * 96;
+			// Firefox 3.5 (?) to 15: min--moz-device-pixel-ratio: 2
+			// Firefox 16+: directly accepts min-resolution: 2dppx (or 192dpi)
+			if ($b['is_firefox'])
+				return $v < 16 ? $matches[2] . '-moz-device-pixel-ratio:' . ($dpi / 96) : $matches[1];
+			// WebKit: -webkit-min-device-pixel-ratio: 2 -- Chrome added support for resolution, but as of March 2013 it's still unclear.
+			if ($b['is_webkit'])
+				return $this->prefix . $matches[2] . '-device-pixel-ratio:' . ($dpi / 96);
+			// IE9+ and Opera should be fine with a dpi unit. Opera 12.1+ supports dppx, but who cares.
+			return $matches[2] . 'resolution:' . $dpi . 'dpi';
+		}
 
 		// Nothing bad was found? Just ignore.
 		return $unchanged;
@@ -1585,7 +1596,7 @@ class wess_prefixes extends wess
 
 	// Note: the old flexbox model is taken into account, but not the new one. This is because it has too many related properties and would
 	// take to long to support, especially when Opera already implemented it prefix-free. Meaning that Firefox and Chrome will probably do
-	// the same soon enough. (As of Firefox 18 and Chrome 24, they need prefixes everywhere, and Firefox requires a setting to be enabled.)
+	// the same soon enough. (As of Firefox 21 and Chrome 26, they need prefixes everywhere, and Firefox requires a setting to be enabled.)
 	function process(&$css)
 	{
 		// Some prominent CSS3 may or may not need a prefix. Wedge will take care of that for you.
@@ -1612,7 +1623,7 @@ class wess_prefixes extends wess
 
 			'background(?:-image)?:([^\n;]*?(?<!-o-)(?:linear|radial)-gradient\([^)]+\)[^\n;]*)',	// Gradients (linear, radial, repeating...)
 			'display:\h*(inline-flex|flex(?:box)?|box)\b',	// Flexbox model declarations (all 3)
-			'(min|max)-device-pixel-ratio',					// Useful for responsive design
+			'\b(min|max)-resolution:\h*([\d.]+)(dppx|dpi)',	// Useful for responsive design
 			'\bcalc\h*\(',									// calc() function
 
 		);
