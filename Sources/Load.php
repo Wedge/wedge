@@ -1517,6 +1517,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 		if (AJAX)
 			loadTemplate('Xml');
 		loadLanguage('index');
+		$context['right_to_left'] = !empty($txt['lang_rtl']);
 	}
 	else
 	{
@@ -1538,6 +1539,8 @@ function loadTheme($id_theme = 0, $initialize = true)
 		// ...and attempt to load their associated language files.
 		$required_files = implode('+', $templates);
 		loadLanguage($required_files, '', false);
+		if ($context['right_to_left'] = !empty($txt['lang_rtl']))
+			we::$user['is_rtl'] = true; // May be needed in we::is tests.
 
 		// Initialize our JS files to cache right before we run template_init().
 		weInitJS();
@@ -1586,9 +1589,6 @@ function loadTheme($id_theme = 0, $initialize = true)
 	// Make a special URL for the language.
 	// !!! $txt['image_lang'] isn't defined anywhere...
 	$theme['lang_images_url'] = $theme['images_url'] . '/' . (!empty($txt['image_lang']) ? $txt['image_lang'] : we::$user['language']);
-
-	// Set the character set from the template.
-	$context['right_to_left'] = !empty($txt['lang_rtl']);
 
 	// CSS suffixes are used for cached CSS filenames.
 	// Add Webkit fixes -- there are so many popular browsers based on it.

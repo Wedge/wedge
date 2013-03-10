@@ -1238,14 +1238,14 @@ function aeva_viewItem()
 		'aeva_item_init',
 		'aeva_item_prevnext',
 		'aeva_item_wrap_begin',
-		we::is('ie6,ie7,ios') || SKIN_SIDEBAR !== 'right') ? '' : 'aeva_item_details',
+		we::is('ie6,ie7,mobile') || SKIN_SIDEBAR !== 'right' ? '' : 'aeva_item_details',
 		'aeva_item_main',
-		we::is('ie6,ie7,ios') || SKIN_SIDEBAR === 'right' ? '' : 'aeva_item_details',
+		we::is('ie6,ie7,mobile') || SKIN_SIDEBAR === 'right' ? '' : 'aeva_item_details',
 		'aeva_item_wrap_end',
 		'aeva_item_actions',
 		'aeva_item_comments',
 	));
-	if (we::is('ie6,ie7,ios'))
+	if (we::is('ie6,ie7,mobile'))
 		wetem::add('sidebar', 'aeva_item_details');
 }
 

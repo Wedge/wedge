@@ -54,7 +54,7 @@ class we
 	 */
 	protected static function init_user()
 	{
-		global $settings, $user_settings, $cookiename, $language, $db_prefix, $boardurl;
+		global $settings, $user_settings, $cookiename, $language, $db_prefix, $boardurl, $board, $txt;
 
 		$id_member = 0;
 
@@ -257,6 +257,8 @@ class we
 			'passwd' => isset($user_settings['passwd']) ? $user_settings['passwd'] : '',
 			'language' => empty($user_settings['lngfile']) || empty($settings['userLanguage']) ? $language : $user_settings['lngfile'],
 			'is_guest' => $id_member == 0,
+			'is_member' => $id_member > 0,
+			'is_m' . $id_member => true,
 			'is_admin' => in_array(1, $user['groups']),
 			'is_mod' => false,
 			'is_mobile' => $_SESSION['is_mobile'],
@@ -287,6 +289,15 @@ class we
 			'warning' => isset($user_settings['warning']) ? $user_settings['warning'] : 0,
 			'permissions' => array(),
 		);
+
+		// Some more data for we::is test flexibility...
+		if (!empty($board_info))
+		{
+			$user['is_b' . $board_info['id']] = true;
+			$user['is_c' . $board_info['cat']['id']] = true;
+		}
+		elseif (!empty($_GET['category']) && (int) $_GET['category'])
+			$user['is_c' . (int) $_GET['category']] = true;
 
 		// Fill in the server URL for the current user. This is user-specific, as they may be using a different URL than the script's default URL (Pretty URL, secure access...)
 		// Note that HTTP_X_FORWARDED_SERVER is mostly used by proxy servers. If the client doesn't provide anything, it's probably a bot.
@@ -461,8 +472,6 @@ class we
 	 */
 	protected static function init_browser()
 	{
-		global $context;
-
 		// The following determines the user agent (browser) as best it can.
 		$ua = self::$ua;
 		$browser['is_opera'] = strpos($ua, 'Opera') !== false;

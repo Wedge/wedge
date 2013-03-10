@@ -431,7 +431,9 @@ function setupThoughtMenu()
 		{
 			$menu[] = 'mo/' . $tho['id_master'];
 			$menu[] = 'de';
-			$menu[] = 'bl';
+			// Admins can only select their own thoughts for posterity...
+			if ($tho['id_member'] == we::$id)
+				$menu[] = 'bl';
 		}
 
 		// If we can't do anything, it's not even worth recording the last message ID...
