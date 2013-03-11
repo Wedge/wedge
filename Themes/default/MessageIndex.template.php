@@ -479,9 +479,9 @@ function template_messageindex_sortlink($sort, $caption)
 	global $context, $theme;
 
 	if (empty($context['can_reorder']))
-		echo $caption; // !!! If we want the direction indicator: , $context['sort_by'] == $sort ? ' <img src="' . $theme['images_url'] . '/sort_' . $context['sort_direction'] . '.gif">' : '';
+		echo $caption; // !!! If we want the direction indicator: , $context['sort_by'] == $sort ? ' <span class="sort_' . $context['sort_direction'] . '></span>' : '';
 	else
-		echo '<a href="<URL>?board=', $context['current_board'], '.', $context['start'], ';sort=', $sort, $context['sort_by'] == $sort && $context['sort_direction'] == 'up' ? ';desc' : '', '">', $caption, $context['sort_by'] == $sort ? ' <img src="' . $theme['images_url'] . '/sort_' . $context['sort_direction'] . '.gif">' : '', '</a>';
+		echo '<a href="<URL>?board=', $context['current_board'], '.', $context['start'], ';sort=', $sort, $context['sort_by'] == $sort && $context['sort_direction'] == 'up' ? ';desc' : '', '">', $caption, $context['sort_by'] == $sort ? ' <span class="sort_' . $context['sort_direction'] . '"></span>' : '', '</a>';
 }
 
 function template_messageindex_whoviewing()

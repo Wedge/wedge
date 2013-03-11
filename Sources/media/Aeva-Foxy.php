@@ -200,8 +200,8 @@ function aeva_foxy_playlist()
 					<input type="submit" value="' . $txt['media_submit'] . '">
 				</form>
 			</div></td><td class="center">' .
-			(empty($prev) ? '' : '<a href="' . $galurl . 'sa=playlists;in=' . $id . ';from=' . $m['play_order'] . ';to=' . $prev . ';' . $context['session_query'] . '"><img src="' . $theme['default_images_url'] . '/sort_up.gif"></a>') . '</td><td class="center">' .
-			(empty($next) ? '' : '<a href="' . $galurl . 'sa=playlists;in=' . $id . ';from=' . $m['play_order'] . ';to=' . $next . ';' . $context['session_query'] . '"><img src="' . $theme['default_images_url'] . '/sort_down.gif"></a>') . '</td><td class="center">' .
+			(empty($prev) ? '' : '<a href="' . $galurl . 'sa=playlists;in=' . $id . ';from=' . $m['play_order'] . ';to=' . $prev . ';' . $context['session_query'] . '"><span class="sort_up"></span></a>') . '</td><td class="center">' .
+			(empty($next) ? '' : '<a href="' . $galurl . 'sa=playlists;in=' . $id . ';from=' . $m['play_order'] . ';to=' . $next . ';' . $context['session_query'] . '"><span class="sort_down"></span></a>') . '</td><td class="center">' .
 			'<a href="' . $galurl . 'sa=item;in=' . $m['id'] . ';premove=' . $id . ';redirpl;' . $context['session_query'] . '" style="text-decoration: none"><img src="' . $theme['images_aeva'] . '/delete.png" style="vertical-align: bottom"> ' . $txt['media_delete_this_item'] . '</a>' .
 			'</td></tr>';
 			$prev = $curpos > 0 ? $pos[$curpos-1] : 0;

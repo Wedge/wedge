@@ -113,7 +113,7 @@ function template_permission_index()
 	{
 		echo '
 			<we:cat>
-				<div class="sortselect', empty($context['show_advanced_options']) ? ' fold' : '', '" id="permissions_panel_toggle"></div> ', $txt['permissions_advanced_options'], '
+				<div class="foldable', empty($context['show_advanced_options']) ? ' fold' : '', '" id="permissions_panel_toggle"></div> ', $txt['permissions_advanced_options'], '
 			</we:cat>
 			<div id="permissions_panel_advanced" class="windowbg wrc">
 				<fieldset>
@@ -566,7 +566,7 @@ function template_modify_group_simple($type)
 					<tr class="windowbg">
 						<td colspan="2" class="w100 left">
 							<a href="#" onclick="return toggleBreakdown(\'', $id_group, '\');">
-								<div class="sortselect" id="group_toggle_img_', $id_group, '"></div>&nbsp;<strong>', $permissionGroup['name'], '</strong>
+								<div class="foldable fold" id="group_toggle_img_', $id_group, '"></div>&nbsp;<strong>', $permissionGroup['name'], '</strong>
 							</a>
 						</td>';
 				if (empty($settings['permission_enable_deny']) || $context['group']['id'] == -1)
@@ -660,7 +660,7 @@ function template_modify_group_simple($type)
 				$("#perm_div_" + id_group + "_" + groupPermissions[id_group][i]).toggle(displayType == "");
 
 		$("#group_hr_div_" + id_group).toggle(displayType == "");
-		$("#group_toggle_img_" + id_group).toggleClass("fold", displayType != "");
+		$("#group_toggle_img_" + id_group).toggleClass("fold", displayType != "none");
 
 		return false;
 	}');

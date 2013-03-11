@@ -148,7 +148,7 @@ function template_download_language()
 		echo '
 				<tr class="titlebg">
 					<td colspan="4">
-						<div class="sortselect" id="toggle_image_', $th, '"></div>&nbsp;', isset($context['theme_names'][$th]) ? $context['theme_names'][$th] : $th, '
+						<div class="foldable fold" id="toggle_image_', $th, '"></div>&nbsp;', isset($context['theme_names'][$th]) ? $context['theme_names'][$th] : $th, '
 					</td>
 				</tr>';
 

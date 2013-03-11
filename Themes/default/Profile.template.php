@@ -465,25 +465,25 @@ function template_showPosts()
 					<th class="first_th left w25" scope="col">
 						<a href="<URL>?action=profile;u=', $context['current_member'], ';area=showposts;sa=attach;sort=filename', ($context['sort_direction'] == 'down' && $context['sort_order'] == 'filename' ? ';asc' : ''), '">
 							', $txt['show_attach_filename'], '
-							', ($context['sort_order'] == 'filename' ? '<img src="' . $theme['images_url'] . '/sort_' . ($context['sort_direction'] == 'down' ? 'down' : 'up') . '.gif">' : ''), '
+							', ($context['sort_order'] == 'filename' ? '<span class="sort_' . ($context['sort_direction'] == 'down' ? 'down' : 'up') . '"></span>' : ''), '
 						</a>
 					</th>
 					<th scope="col" style="width: 12%">
 						<a href="<URL>?action=profile;u=', $context['current_member'], ';area=showposts;sa=attach;sort=downloads', ($context['sort_direction'] == 'down' && $context['sort_order'] == 'downloads' ? ';asc' : ''), '">
 							', $txt['show_attach_downloads'], '
-							', ($context['sort_order'] == 'downloads' ? '<img src="' . $theme['images_url'] . '/sort_' . ($context['sort_direction'] == 'down' ? 'down' : 'up') . '.gif">' : ''), '
+							', ($context['sort_order'] == 'downloads' ? '<span class="sort_' . ($context['sort_direction'] == 'down' ? 'down' : 'up') . '"></span>' : ''), '
 						</a>
 					</th>
 					<th class="left" scope="col" style="width: 30%">
 						<a href="<URL>?action=profile;u=', $context['current_member'], ';area=showposts;sa=attach;sort=subject', ($context['sort_direction'] == 'down' && $context['sort_order'] == 'subject' ? ';asc' : ''), '">
 							', $txt['message'], '
-							', ($context['sort_order'] == 'subject' ? '<img src="' . $theme['images_url'] . '/sort_' . ($context['sort_direction'] == 'down' ? 'down' : 'up') . '.gif">' : ''), '
+							', ($context['sort_order'] == 'subject' ? '<span class="sort_' . ($context['sort_direction'] == 'down' ? 'down' : 'up') . '"></span>' : ''), '
 						</a>
 					</th>
 					<th class="last_th left" scope="col">
 						<a href="<URL>?action=profile;u=', $context['current_member'], ';area=showposts;sa=attach;sort=posted', ($context['sort_direction'] == 'down' && $context['sort_order'] == 'posted' ? ';asc' : ''), '">
 						', $txt['show_attach_posted'], '
-						', ($context['sort_order'] == 'posted' ? '<img src="' . $theme['images_url'] . '/sort_' . ($context['sort_direction'] == 'down' ? 'down' : 'up') . '.gif">' : ''), '
+						', ($context['sort_order'] == 'posted' ? '<span class="sort_' . ($context['sort_direction'] == 'down' ? 'down' : 'up') . '"></span>' : ''), '
 						</a>
 					</th>
 				</tr>

@@ -1353,13 +1353,6 @@ div.top_row dd
 	.fold&
 		background-position: 0 -20px
 
-// Only seen in the admin area, so don't bother preloading its graphics...
-.sortselect extends .upshrinks
-	width, height: 12px
-	background: url-no-base64($images/sortselect.gif)
-	.fold&
-		background-position: 0 -12px
-
 .catfold extends .foldable
 
 // The upshrink image needs some tweaking

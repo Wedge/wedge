@@ -124,7 +124,9 @@ function template_email_members()
 	add_js('
 	function toggleAdvanced()
 	{
-		$("#advanced_settings_div, #gosimple, #goadvanced").toggle();
+		var $opt = $("#goadvanced div")
+		$opt.toggleClass("fold");
+		$opt.hasClass("fold") ? $("#advanced_settings_div").slideDown(150) : $("#advanced_settings_div").slideUp(200);
 		return false;
 	}');
 
@@ -158,8 +160,7 @@ function template_email_members()
 
 			<div class="hide" id="advanced_select_div">
 				<we:cat>
-					<a href="#" onclick="return toggleAdvanced();" id="goadvanced"><img src="', $theme['images_url'], '/selected.gif" alt="', $txt['advanced'], '" style="vertical-align: 0">&nbsp;', $txt['advanced'], '</a>
-					<a href="#" onclick="return toggleAdvanced();" id="gosimple" class="hide"><img src="', $theme['images_url'], '/sort_down.gif" alt="', $txt['simple'], '" style="vertical-align: 0">&nbsp;<strong>', $txt['simple'], '</strong></a>
+					<a href="#" onclick="return toggleAdvanced();" id="goadvanced"><div class="foldable"></div> ', $txt['advanced'], '</a>
 				</we:cat>
 			</div>
 

@@ -439,6 +439,15 @@ em
 .hide
 	display: none
 
+// The sort direction indicator. A small but potentially important detail.
+.sort_up extends .inline-block
+	background: url($images/sort.gif) 0 0 no-repeat
+	width, height: 12px
+	vertical-align: baseline
+
+.sort_down extends .sort_up
+	background-position: 0 -12px
+
 /* Custom Select box styles
 --------------------------------------------------------- */
 

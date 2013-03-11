@@ -115,7 +115,7 @@ function template_error_log()
 				</td>
 				<td class="w50">
 					<a href="<URL>?action=admin;area=logs;sa=errorlog', $context['sort_direction'] == 'down' ? '' : ';desc', $context['has_filter'] ? $context['filter']['href'] : '', '" title="', $txt['reverse_direction'], '">
-						<img src="', $theme['images_url'], '/sort_', $context['sort_direction'], '.gif" alt="', $txt['reverse_direction'], '">
+						<span class="sort_', $context['sort_direction'], '" title="', $txt['reverse_direction'], '"></span>
 					</a>
 					', $error['time'], '<br>
 					<a href="<URL>?action=admin;area=logs;sa=errorlog', $context['sort_direction'] == 'down' ? ';desc' : '', ';filter=error_type;value=', $error['error_type']['type'], '" title="', $txt['apply_filter'], ': ', $txt['filter_only_type'], '"><img src="', $theme['images_url'], '/filter.gif" alt="', $txt['apply_filter'], ': ', $txt['filter_only_type'], '"></a>
@@ -235,7 +235,7 @@ function template_intrusion_log()
 				</td>
 				<td class="w50">
 					<a href="<URL>?action=admin;area=logs;sa=intrusionlog', $context['sort_direction'] == 'down' ? '' : ';desc', $context['has_filter'] ? $context['filter']['href'] : '', '" title="', $txt['reverse_direction'], '">
-						<img src="', $theme['images_url'], '/sort_', $context['sort_direction'], '.gif" alt="', $txt['reverse_direction'], '">
+						<span class="sort_', $context['sort_direction'], '" title="', $txt['reverse_direction'], '"></span>
 					</a>
 					', $error['time'], '<br>
 					<a href="<URL>?action=admin;area=logs;sa=intrusionlog', $context['sort_direction'] == 'down' ? ';desc' : '', ';filter=protocol;value=', $error['protocol']['href'], '" title="', $txt['apply_filter'], ': ', $txt['filter_only_type'], '"><img src="', $theme['images_url'], '/filter.gif" alt="', $txt['apply_filter'], ': ', $txt['filter_only_type'], '"></a> ', $txt['request_protocol'], ': ', $error['protocol']['html'], '
