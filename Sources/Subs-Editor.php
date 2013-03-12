@@ -31,64 +31,34 @@ function getMessageIcons($board_id)
 {
 	global $settings, $context, $txt, $theme;
 
-	if (empty($settings['messageIcons_enable']))
+	if (($temp = cache_get_data('posting_icons-' . $board_id, 480)) == null)
 	{
-		loadLanguage('Post');
-
-		$icons = array(
-			array('value' => 'xx', 'name' => $txt['standard']),
-			array('value' => 'thumbup', 'name' => $txt['thumbs_up']),
-			array('value' => 'thumbdown', 'name' => $txt['thumbs_down']),
-			array('value' => 'exclamation', 'name' => $txt['excamation_point']),
-			array('value' => 'question', 'name' => $txt['question_mark']),
-			array('value' => 'lamp', 'name' => $txt['lamp']),
-			array('value' => 'smiley', 'name' => $txt['icon_smiley']),
-			array('value' => 'angry', 'name' => $txt['icon_angry']),
-			array('value' => 'cheesy', 'name' => $txt['icon_cheesy']),
-			array('value' => 'grin', 'name' => $txt['icon_grin']),
-			array('value' => 'sad', 'name' => $txt['icon_sad']),
-			array('value' => 'wink', 'name' => $txt['icon_wink'])
+		$request = wesql::query('
+			SELECT title, filename
+			FROM {db_prefix}message_icons
+			WHERE id_board IN (0, {int:board_id})',
+			array(
+				'board_id' => $board_id,
+			)
 		);
+		$icon_data = array();
+		while ($row = wesql::fetch_assoc($request))
+			$icon_data[] = $row;
+		wesql::free_result($request);
 
-		foreach ($icons as $k => $dummy)
-		{
-			$icons[$k]['url'] = $theme['images_url'] . '/post/' . $dummy['value'] . '.gif';
-			$icons[$k]['is_last'] = false;
-		}
+		cache_put_data('posting_icons-' . $board_id, $icon_data, 480);
 	}
-	// Otherwise load the icons, and check we give the right image too...
 	else
+		$icon_data = $temp;
+
+	$icons = array();
+	foreach ($icon_data as $icon)
 	{
-		if (($temp = cache_get_data('posting_icons-' . $board_id, 480)) == null)
-		{
-			$request = wesql::query('
-				SELECT title, filename
-				FROM {db_prefix}message_icons
-				WHERE id_board IN (0, {int:board_id})',
-				array(
-					'board_id' => $board_id,
-				)
-			);
-			$icon_data = array();
-			while ($row = wesql::fetch_assoc($request))
-				$icon_data[] = $row;
-			wesql::free_result($request);
-
-			cache_put_data('posting_icons-' . $board_id, $icon_data, 480);
-		}
-		else
-			$icon_data = $temp;
-
-		$icons = array();
-		foreach ($icon_data as $icon)
-		{
-			$icons[$icon['filename']] = array(
-				'value' => $icon['filename'],
-				'name' => $icon['title'],
-				'url' => $theme[file_exists($theme['theme_dir'] . '/images/post/' . $icon['filename'] . '.gif') ? 'images_url' : 'default_images_url'] . '/post/' . $icon['filename'] . '.gif',
-				'is_last' => false,
-			);
-		}
+		$icons[$icon['filename']] = array(
+			'value' => $icon['filename'],
+			'name' => $icon['title'],
+			'url' => $theme[file_exists($theme['theme_dir'] . '/images/post/' . $icon['filename'] . '.gif') ? 'images_url' : 'default_images_url'] . '/post/' . $icon['filename'] . '.gif',
+		);
 	}
 
 	return array_values($icons);

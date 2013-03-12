@@ -815,7 +815,7 @@ function EditCustomProfiles()
 				'profile_area' => 'forumprofile',
 				'display' => true,
 				'placement' => '1', // with icons
-				'enclose' => '<a class="twitter" href="http://twitter.com/#!/{INPUT}" target="_blank" title="Twitter - {INPUT}"><img src="{IMAGES_URL}/fields/twitter.png" alt="Twitter - {INPUT}"></a>',
+				'enclose' => '<a class="twitter" href="https://twitter.com/{INPUT}" target="_blank" title="Twitter - {INPUT}"><img src="{IMAGES_URL}/fields/twitter.png" alt="Twitter - {INPUT}"></a>',
 				'field_type' => 'text',
 				'max_length' => '16',
 				'bbc' => false,

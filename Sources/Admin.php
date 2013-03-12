@@ -202,7 +202,7 @@ function Admin()
 						'addsmiley' => array($txt['smileys_add'], 'enabled' => !empty($settings['smiley_enable'])),
 						'editsmileys' => array($txt['smileys_edit'], 'enabled' => !empty($settings['smiley_enable'])),
 						'setorder' => array($txt['smileys_set_order'], 'enabled' => !empty($settings['smiley_enable'])),
-						'editicons' => array($txt['icons_edit_message_icons'], 'enabled' => !empty($settings['messageIcons_enable'])),
+						'editicons' => array($txt['icons_edit_message_icons']),
 						'',
 						'settings' => array($txt['settings']),
 					),

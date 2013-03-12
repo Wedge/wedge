@@ -101,8 +101,6 @@ function ManageSmileys()
 	);
 
 	// Some settings may not be enabled, disallow these from the tabs as appropriate.
-	if (empty($settings['messageIcons_enable']))
-		$context[$context['admin_menu_name']]['tab_data']['tabs']['editicons']['disabled'] = true;
 	if (empty($settings['smiley_enable']))
 	{
 		$context[$context['admin_menu_name']]['tab_data']['tabs']['addsmiley']['disabled'] = true;
@@ -141,9 +139,6 @@ function EditSmileySettings($return_config = false)
 			array('check', 'smiley_sets_enable'),
 			array('text', 'smileys_url'),
 			array('text', 'smileys_dir', 'invalid' => !$context['smileys_dir_found']),
-		'',
-			// Message icons.
-			array('check', 'messageIcons_enable', 'subtext' => $txt['setting_messageIcons_enable_subtext']),
 	);
 
 	if ($return_config)
@@ -1452,83 +1447,22 @@ function EditMessageIcons()
 	}
 	wesql::free_result($request);
 
-	// Submitting a form?
-	if (isset($_POST['save_smiley']))
+	// Deleting icons?
+	if (isset($_POST['delete']) && !empty($_POST['checked_icons']))
 	{
 		checkSession();
+		$deleteIcons = array();
+		foreach ($_POST['checked_icons'] as $icon)
+			$deleteIcons[] = (int) $icon;
 
-		// Deleting icons?
-		if (isset($_POST['delete']) && !empty($_POST['checked_icons']))
-		{
-			$deleteIcons = array();
-			foreach ($_POST['checked_icons'] as $icon)
-				$deleteIcons[] = (int) $icon;
-
-			// Do the actual delete!
-			wesql::query('
-				DELETE FROM {db_prefix}message_icons
-				WHERE id_icon IN ({array_int:icon_list})',
-				array(
-					'icon_list' => $deleteIcons,
-				)
-			);
-		}
-		// Editing/Adding an icon?
-		elseif ($context['sub_action'] == 'editicon' && isset($_GET['icon']))
-		{
-			$_GET['icon'] = (int) $_GET['icon'];
-
-			// Do some preperation with the data... like check the icon exists *somewhere*
-			if (strpos($_POST['icon_filename'], '.gif') !== false)
-				$_POST['icon_filename'] = substr($_POST['icon_filename'], 0, -4);
-			if (!file_exists($theme['default_theme_dir'] . '/images/post/' . $_POST['icon_filename'] . '.gif'))
-				fatal_lang_error('icon_not_found');
-			// There is a 16 character limit on message icons...
-			elseif (strlen($_POST['icon_filename']) > 16)
-				fatal_lang_error('icon_name_too_long');
-			elseif ($_POST['icon_location'] == $_GET['icon'] && !empty($_GET['icon']))
-				fatal_lang_error('icon_after_itself');
-
-			// First do the sorting... if this is an edit reduce the order of everything after it by one ;)
-			if ($_GET['icon'] != 0)
-			{
-				$oldOrder = $context['icons'][$_GET['icon']]['true_order'];
-				foreach ($context['icons'] as $id => $data)
-					if ($data['true_order'] > $oldOrder)
-						$context['icons'][$id]['true_order']--;
-			}
-
-			// If there are no existing icons and this is a new one, set the id to 1
-			if (empty($_GET['icon']) && empty($context['icons']))
-				$_GET['icon'] = 1;
-
-			// Get the new order.
-			$newOrder = $_POST['icon_location'] == 0 ? 0 : $context['icons'][$_POST['icon_location']]['true_order'] + 1;
-			// Do the same, but with the one that used to be after this icon, done to avoid conflict.
-			foreach ($context['icons'] as $id => $data)
-				if ($data['true_order'] >= $newOrder)
-					$context['icons'][$id]['true_order']++;
-
-			// Finally set the current icon's position!
-			$context['icons'][$_GET['icon']]['true_order'] = $newOrder;
-
-			// Simply replace the existing data for the other bits.
-			$context['icons'][$_GET['icon']]['title'] = $_POST['icon_description'];
-			$context['icons'][$_GET['icon']]['filename'] = $_POST['icon_filename'];
-			$context['icons'][$_GET['icon']]['board_id'] = (int) $_POST['icon_board'];
-
-			// Do a huge replace ;)
-			$iconInsert = array();
-			foreach ($context['icons'] as $id => $icon)
-				$iconInsert[] = array($id, $icon['board_id'], $icon['title'], $icon['filename'], $icon['true_order']);
-
-			wesql::insert('replace',
-				'{db_prefix}message_icons',
-				array('id_icon' => 'int', 'id_board' => 'int', 'title' => 'string-80', 'filename' => 'string-80', 'icon_order' => 'int'),
-				$iconInsert,
-				array('id_icon')
-			);
-		}
+		// Do the actual delete!
+		wesql::query('
+			DELETE FROM {db_prefix}message_icons
+			WHERE id_icon IN ({array_int:icon_list})',
+			array(
+				'icon_list' => $deleteIcons,
+			)
+		);
 
 		// Sort by order, so it is quicker :)
 		wesql::query('
@@ -1539,9 +1473,74 @@ function EditMessageIcons()
 			)
 		);
 
-		// Unless we're adding a new thing, we'll escape
-		if (!isset($_POST['add']))
-			redirectexit('action=admin;area=smileys;sa=editicons');
+		redirectexit('action=admin;area=smileys;sa=editicons');
+	}
+	elseif ($context['sub_action'] == 'editicon' && isset($_GET['icon']))
+	{
+		checkSession();
+		$_GET['icon'] = (int) $_GET['icon'];
+
+		// Do some preperation with the data... like check the icon exists *somewhere*
+		if (strpos($_POST['icon_filename'], '.gif') !== false)
+			$_POST['icon_filename'] = substr($_POST['icon_filename'], 0, -4);
+		if (!file_exists($theme['default_theme_dir'] . '/images/post/' . $_POST['icon_filename'] . '.gif'))
+			fatal_lang_error('icon_not_found');
+		// There is a 16 character limit on message icons...
+		elseif (strlen($_POST['icon_filename']) > 16)
+			fatal_lang_error('icon_name_too_long');
+		elseif ($_POST['icon_location'] == $_GET['icon'] && !empty($_GET['icon']))
+			fatal_lang_error('icon_after_itself');
+
+		// First do the sorting... if this is an edit reduce the order of everything after it by one ;)
+		if ($_GET['icon'] != 0)
+		{
+			$oldOrder = $context['icons'][$_GET['icon']]['true_order'];
+			foreach ($context['icons'] as $id => $data)
+				if ($data['true_order'] > $oldOrder)
+					$context['icons'][$id]['true_order']--;
+		}
+
+		// If there are no existing icons and this is a new one, set the id to 1
+		if (empty($_GET['icon']) && empty($context['icons']))
+			$_GET['icon'] = 1;
+
+		// Get the new order.
+		$newOrder = $_POST['icon_location'] == 0 ? 0 : $context['icons'][$_POST['icon_location']]['true_order'] + 1;
+		// Do the same, but with the one that used to be after this icon, done to avoid conflict.
+		foreach ($context['icons'] as $id => $data)
+			if ($data['true_order'] >= $newOrder)
+				$context['icons'][$id]['true_order']++;
+
+		// Finally set the current icon's position!
+		$context['icons'][$_GET['icon']]['true_order'] = $newOrder;
+
+		// Simply replace the existing data for the other bits.
+		$context['icons'][$_GET['icon']]['title'] = $_POST['icon_description'];
+		$context['icons'][$_GET['icon']]['filename'] = $_POST['icon_filename'];
+		$context['icons'][$_GET['icon']]['board_id'] = (int) $_POST['icon_board'];
+
+		// Do a huge replace ;)
+		$iconInsert = array();
+		foreach ($context['icons'] as $id => $icon)
+			$iconInsert[] = array($id, $icon['board_id'], $icon['title'], $icon['filename'], $icon['true_order']);
+
+		wesql::insert('replace',
+			'{db_prefix}message_icons',
+			array('id_icon' => 'int', 'id_board' => 'int', 'title' => 'string-80', 'filename' => 'string-80', 'icon_order' => 'int'),
+			$iconInsert,
+			array('id_icon')
+		);
+
+		// Sort by order, so it is quicker :)
+		wesql::query('
+			ALTER TABLE {db_prefix}message_icons
+			ORDER BY icon_order',
+			array(
+				'db_error_skip' => true,
+			)
+		);
+
+		redirectexit('action=admin;area=smileys;sa=editicons');
 	}
 
 	$context[$context['admin_menu_name']]['current_subsection'] = 'editicons';
@@ -1584,7 +1583,6 @@ function EditMessageIcons()
 				),
 				'data' => array(
 					'db_htmlsafe' => 'title',
-					'class' => 'windowbg',
 				),
 			),
 			'board' => array(
@@ -1634,7 +1632,7 @@ function EditMessageIcons()
 		'additional_rows' => array(
 			array(
 				'position' => 'below_table_data',
-				'value' => '<input type="submit" name="delete" value="' . $txt['quickmod_delete_selected'] . '" class="delete floatright">[<a href="<URL>?action=admin;area=smileys;sa=editicon">' . $txt['icons_add_new'] . '</a>]',
+				'value' => '<input type="submit" name="delete" value="' . $txt['quickmod_delete_selected'] . '" class="delete floatright"> <input type="submit" name="add" class="new" value="' . $txt['icons_add_new'] . '">&nbsp;',
 			),
 		),
 	);

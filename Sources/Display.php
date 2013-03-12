@@ -141,6 +141,10 @@ function Display()
 	$topicinfo = wesql::fetch_assoc($request);
 	wesql::free_result($request);
 
+	// If the first message's icon is 'moved', it's a moved notice. This should not, in itself, be indexed.
+	if ($topicinfo['icon'] == 'moved')
+		$context['robot_no_index'] = true;
+
 	$context['real_num_replies'] = $context['num_replies'] = $topicinfo['num_replies'];
 	$context['topic_first_message'] = $topicinfo['id_first_msg'];
 	$context['topic_last_message'] = $topicinfo['id_last_msg'];
