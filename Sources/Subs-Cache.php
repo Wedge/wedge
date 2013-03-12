@@ -1196,11 +1196,14 @@ function wedge_get_skeleton_operations($set, $op, $required_vars = array())
 // Allow for <if> tests inside skins and skeletons.
 function wedge_skin_conditions(&$str)
 {
-	if (strpos($str, '<if') === false || !preg_match_all('~(?<=\n)(\t*)<if\s*([^>]+)>(.*?)</if>~s', $str, $ifs, PREG_SET_ORDER))
+	if (strpos($str, '<if') === false || !preg_match_all('~(?<=\n)(\t*)<if\b([^>]+)>(.*?)</if>~s', $str, $ifs, PREG_SET_ORDER))
 		return;
 
 	foreach ($ifs as $if)
-		$str = str_replace($if[0], we::is(trim($if[2])) ? str_replace("\n" . $if[1], "\n" . substr($if[1], 0, -1), $if[3]) : '', $str);
+	{
+		$exe = array_merge(explode('<else>', $if[3]), array(''));
+		$str = str_replace($if[0], str_replace("\n" . $if[1], "\n" . substr($if[1], 0, -1), $exe[(int) !we::is(trim($if[2]))]), $str);
+	}
 }
 
 /**
@@ -1249,27 +1252,9 @@ function wedge_get_skin_options()
 
 	$context['skin_uses_default_theme'] = $is_default_theme;
 
-	if (!empty($skeleton))
-	{
-		// Maybe some mini-skeletons are targeted only to some specific users..?
-		wedge_skin_conditions($skeleton);
-
-		// Now, find skeletons and feed them to the $context['skeleton'] array for later parsing.
-		if (strpos($skeleton, '</skeleton>') !== false && preg_match_all('~<skeleton(?:\s*id="([^"]+)"\s*)?>(.*?)</skeleton>~s', $skeleton, $matches, PREG_SET_ORDER))
-			foreach ($matches as $match)
-				$context['skeleton'][empty($match[1]) ? 'main' : $match[1]] = $match[2];
-	}
-
 	// The deepest skin gets CSS/JavaScript attention.
 	if (!empty($set))
 	{
-		wedge_skin_conditions($set);
-
-		// Did we ask to do post-loading operations on blocks/layers of the skeleton?
-		wedge_get_skeleton_operations($skeleton, 'move', array('block', 'to', 'where'));
-		wedge_get_skeleton_operations($skeleton, 'rename', array('block', 'to'));
-		wedge_get_skeleton_operations($skeleton, 'remove', array('block'));
-
 		// Skin options, such as <sidebar> position.
 		if (strpos($set, '</options>') !== false && preg_match('~<options>(.*?)</options>~s', $set, $match))
 		{
@@ -1339,11 +1324,36 @@ function wedge_get_skin_options()
 			$context['skin_available_languages'] = array_map('trim', preg_split('~[\s,]+~', $match[1]));
 	}
 
-	define('SKIN_MOBILE', !empty($skin_options['mobile']));
-	define('SKIN_SIDEBAR', isset($skin_options['sidebar']) ? $skin_options['sidebar'] : 'right');
-	unset($skin_options['mobile'], $skin_options['sidebar']);
+	// Skin variables can be accessed either through PHP or Wess code with a test on the SKIN_* constant.
+	define('SKIN_SIDEBAR_RIGHT', we::$user['is_SKIN_SIDEBAR_RIGHT'] = empty($skin_options['sidebar']) || $skin_options['sidebar'] == 'right');
+	define('SKIN_SIDEBAR_LEFT', we::$user['is_SKIN_SIDEBAR_LEFT'] = isset($skin_options['sidebar']) && $skin_options['sidebar'] == 'left');
+	unset($skin_options['sidebar']);
+	if (!isset($skin_options['mobile']))
+		$skin_options['mobile'] = 0;
+
+	// Any other variables, maybe..? e.g. SKIN_MOBILE
 	foreach ($skin_options as $key => $val)
-		define('SKIN_' . strtoupper($key), $val);
+		define('SKIN_' . strtoupper($key), we::$user['is_SKIN_' . strtoupper($key)] = !empty($val));
+
+	if (!empty($skeleton))
+	{
+		// Maybe some mini-skeletons are targeted only to some specific users..?
+		wedge_skin_conditions($skeleton);
+		if (!empty($set))
+		{
+			wedge_skin_conditions($set);
+
+			// Did we ask to do post-loading operations on blocks/layers of the skeleton?
+			wedge_get_skeleton_operations($skeleton, 'move', array('block', 'to', 'where'));
+			wedge_get_skeleton_operations($skeleton, 'rename', array('block', 'to'));
+			wedge_get_skeleton_operations($skeleton, 'remove', array('block'));
+		}
+
+		// Now, find skeletons and feed them to the $context['skeleton'] array for later parsing.
+		if (strpos($skeleton, '</skeleton>') !== false && preg_match_all('~<skeleton(?:\s*id="([^"]+)"\s*)?>(.*?)</skeleton>~s', $skeleton, $matches, PREG_SET_ORDER))
+			foreach ($matches as $match)
+				$context['skeleton'][empty($match[1]) ? 'main' : $match[1]] = $match[2];
+	}
 }
 
 /**

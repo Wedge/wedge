@@ -48,14 +48,13 @@
 	<!--
 		Skin options. Wedge's default theme only offers two options for skins:
 
-		<mobile> (meaning the skin is optimized for mobile devices.)
-		<sidebar> (sidebar position)
+		<mobile> (meaning the skin is optimized for mobile devices; default is '0')
+		<sidebar> (sidebar position; default is 'right')
 
-		Possible values for <mobile> are '0' (false, also default) and '1' (true).
-		Using boolean digits makes it possible to just test for !empty() on the variable.
+		You should only use 0 or 1 values for skin variables (such as <mobile>), except for <sidebar>.
 
-		Possible values for <sidebar> are 'right' (default) and 'left'. If you want
-		to add more values or even more options, you can do it by creating a new theme.
+		Possible values for <sidebar> are 'right' and 'left'. If you want to add
+		more values or even more options, you can do it by creating a new theme.
 		Of course, you'll have to account for these new values in your own design.
 		For instance, if you have a sidebar-like block in your default layer, try to make
 		sure it's shown opposite the sidebar, or at least make sure that having both

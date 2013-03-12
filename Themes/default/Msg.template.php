@@ -28,23 +28,23 @@ function template_msg_wrap_before()
 				$msg['alternate'] == 0 ? ' postbg' : ' postbg2',
 				$msg['approved'] ? '' : ' approve',
 				$msg['can_modify'] ? ' can-mod' : '',
-				$context['is_mobile'] ? ' mobile' : '',
+				SKIN_MOBILE ? ' mobile' : '',
 				$msg['id'] !== $context['first_message'] ? '' : ' first-post',
-				SKIN_SIDEBAR === 'right' ? '' : ' right-side', '">
+				SKIN_SIDEBAR_RIGHT ? '' : ' right-side', '">
 				<div class="post_wrapper">';
 }
 
 // Show information about the poster of this message.
 function template_msg_author_before()
 {
-	global $msg, $context, $settings, $txt, $theme, $options;
+	global $msg, $context, $settings, $theme, $options;
 
 	echo '
 					<div class="poster">';
 
 	$gts = !empty($settings['group_text_show']) ? $settings['group_text_show'] : 'cond';
 
-	if ($context['is_mobile'])
+	if (SKIN_MOBILE)
 	{
 		if (!empty($context['mini_menu']['action'][$msg['id']]))
 			echo '
@@ -78,17 +78,17 @@ function template_msg_author_before()
 
 function template_msg_author_title()
 {
-	global $msg, $context;
+	global $msg;
 
 	// Show the member's custom title, if they have one.
-	if (!empty($msg['member']['title']) && !$context['is_mobile'])
+	if (!empty($msg['member']['title']))
 		echo '
 							<li class="mtitle">', $msg['member']['title'], '</li>';
 }
 
 function template_msg_author_group()
 {
-	global $msg, $context, $settings, $txt, $theme, $options;
+	global $msg, $settings;
 
 	$gts = !empty($settings['group_text_show']) ? $settings['group_text_show'] : 'cond';
 
@@ -97,7 +97,7 @@ function template_msg_author_group()
 		echo '
 							<li class="membergroup">', $msg['member']['group'], '</li>';
 
-	if (!$msg['member']['is_guest'] && !$context['is_mobile'])
+	if (!$msg['member']['is_guest'])
 	{
 		// Show the post-based group if allowed by $settings['group_text_show'].
 		if (!empty($msg['member']['post_group']) && ($gts === 'all' || $gts === 'post' || ($gts === 'cond' && empty($msg['member']['group']))))
@@ -106,128 +106,119 @@ function template_msg_author_group()
 	}
 }
 
+function template_msg_author_group_mobile()
+{
+	global $msg, $settings;
+
+	$gts = !empty($settings['group_text_show']) ? $settings['group_text_show'] : 'cond';
+
+	if (!empty($msg['member']['group']) && ($gts === 'all' || $gts === 'normal' || $gts === 'cond'))
+		echo '
+							<li class="membergroup">', $msg['member']['group'], '</li>';
+}
+
 function template_msg_author_badge()
 {
-	global $msg, $context, $settings, $txt, $theme, $options;
+	global $msg;
 
-	if (!$msg['member']['is_guest'] && !$context['is_mobile'])
-	{
-		if (!empty($msg['member']['group_badges']))
-			echo '
+	if (!$msg['member']['is_guest'] && !empty($msg['member']['group_badges']))
+		echo '
 							<li class="stars">
 								<div>', implode('</div>
 								<div>', $msg['member']['group_badges']), '</div>
 							</li>';
-	}
 }
 
 function template_msg_author_avatar()
 {
-	global $msg, $context, $settings, $txt, $theme, $options;
+	global $msg, $theme, $options;
+
 	// Show avatars, images, etc.?
-	if (!$msg['member']['is_guest'] && !$context['is_mobile'])
-	{
-		if (!empty($theme['show_user_images']) && !empty($options['show_avatars']) && !empty($msg['member']['avatar']['image']))
-			echo '
+	if (!$msg['member']['is_guest'] && !empty($theme['show_user_images']) && !empty($options['show_avatars']) && !empty($msg['member']['avatar']['image']))
+		echo '
 							<li class="avatar">
 								<a href="<URL>?action=profile;u=', $msg['member']['id'], '">
 									', $msg['member']['avatar']['image'], '
 								</a>
 							</li>';
-	}
 }
 
 function template_msg_author_blurb()
 {
-	global $msg, $theme, $context;
+	global $msg, $theme;
 
-	if (!$msg['member']['is_guest'] && !$context['is_mobile'])
-	{
-		// Show their personal text?
-		if (!empty($theme['show_blurb']) && $msg['member']['blurb'] !== '')
-			echo '
+	// Show their personal text?
+	if (!$msg['member']['is_guest'] && !empty($theme['show_blurb']) && $msg['member']['blurb'] !== '')
+		echo '
 							<li class="blurb">', $msg['member']['blurb'], '</li>';
-	}
 }
 
 function template_msg_author_postcount()
 {
-	global $msg, $context, $settings, $txt, $theme, $options;
+	global $msg, $context, $txt;
 
-	if (!$msg['member']['is_guest'] && !$context['is_mobile'])
-	{
-		// Show how many posts they have made.
-		if (!isset($context['disabled_fields']['posts']))
-			echo '
+	// Show how many posts they have made.
+	if (!$msg['member']['is_guest'] && !isset($context['disabled_fields']['posts']))
+		echo '
 							<li class="postcount">', $txt['member_postcount'], ': ', $msg['member']['posts'], '</li>';
-	}
 }
 
 function template_msg_author_icons()
 {
-	global $msg, $context, $settings, $txt, $theme, $options;
+	global $msg;
 
-	if (!$msg['member']['is_guest'] && !$context['is_mobile'])
+	// Any custom fields to show as icons?
+	if (!$msg['member']['is_guest'] && !empty($msg['member']['custom_fields']))
 	{
-		// Any custom fields to show as icons?
-		if (!empty($msg['member']['custom_fields']))
+		$shown = false;
+		foreach ($msg['member']['custom_fields'] as $custom)
 		{
-			$shown = false;
-			foreach ($msg['member']['custom_fields'] as $custom)
+			if ($custom['placement'] != 1 || empty($custom['value']))
+				continue;
+			if (empty($shown))
 			{
-				if ($custom['placement'] != 1 || empty($custom['value']))
-					continue;
-				if (empty($shown))
-				{
-					$shown = true;
-					echo '
+				$shown = true;
+				echo '
 							<li class="im_icons">
 								<ul>';
-				}
-				echo '
-									<li>', $custom['value'], '</li>';
 			}
-			if ($shown)
-				echo '
+			echo '
+									<li>', $custom['value'], '</li>';
+		}
+		if ($shown)
+			echo '
 								</ul>
 							</li>';
-		}
 	}
 }
 
 function template_msg_author_cf()
 {
-	global $msg, $context, $settings, $txt, $theme, $options;
+	global $msg;
 
-	if (!$msg['member']['is_guest'] && !$context['is_mobile'])
-	{
-		// Any custom fields for standard placement?
-		if (!empty($msg['member']['custom_fields']))
-			foreach ($msg['member']['custom_fields'] as $custom)
-				if (empty($custom['placement']) || empty($custom['value']))
-					echo '
+	// Any custom fields for standard placement?
+	if (!$msg['member']['is_guest'] && !empty($msg['member']['custom_fields']))
+		foreach ($msg['member']['custom_fields'] as $custom)
+			if (empty($custom['placement']) || empty($custom['value']))
+				echo '
 							<li class="custom">', $custom['title'], ': ', $custom['value'], '</li>';
-	}
 }
 
 function template_msg_author_warning()
 {
-	global $msg, $context, $settings, $txt, $theme, $options;
+	global $msg, $context, $txt, $theme;
 
-	if (!$msg['member']['is_guest'] && !$context['is_mobile'])
-	{
-		// Are we showing the warning status?
-		if ($msg['member']['can_see_warning'])
-			echo '
+	// Are we showing the warning status?
+	if (!$msg['member']['is_guest'] && $msg['member']['can_see_warning'])
+		echo '
 							<li class="warning">', $context['can_issue_warning'] && $msg['member']['warning_status'] != 'ban' ? '<a href="<URL>?action=profile;u=' . $msg['member']['id'] . ';area=issuewarning">' : '', '<img src="', $theme['images_url'], '/warning_', $msg['member']['warning_status'], '.gif" alt="', $txt['user_warn_' . $msg['member']['warning_status']], '">', $context['can_issue_warning'] && $msg['member']['warning_status'] != 'ban' ? '</a>' : '', ' <span class="warn_', $msg['member']['warning_status'], '">', $txt['warn_' . $msg['member']['warning_status']], '</span></li>';
-	}
 }
 
 function template_msg_author_after()
 {
-	global $msg, $context, $settings, $txt, $theme, $options;
+	global $msg, $txt, $theme;
 
-	if ($msg['member']['is_guest'] && !$context['is_mobile'] && !empty($msg['member']['email']) && in_array($msg['member']['show_email'], array('yes_permission_override', 'no_through_forum')))
+	if ($msg['member']['is_guest'] && !SKIN_MOBILE && !empty($msg['member']['email']) && in_array($msg['member']['show_email'], array('yes_permission_override', 'no_through_forum')))
 		echo '
 							<li class="email"><a href="<URL>?action=emailuser;sa=email;msg=', $msg['id'], '" rel="nofollow">', $theme['use_image_buttons'] ? '<img src="' . $theme['images_url'] . '/email_sm.gif" alt="' . $txt['email'] . '" title="' . $txt['email'] . '">' : $txt['email'], '</a></li>';
 
@@ -251,15 +242,7 @@ function template_msg_area_after()
 
 function template_msg_header()
 {
-	global $msg, $context, $theme, $txt;
-
-	// !!! REMOVE THIS!!!
-	if ($context['is_mobile'])
-	{
-		echo '
-						<h5></h5>';
-		return;
-	}
+	global $msg, $theme, $txt;
 
 	echo '
 						<div class="postheader">';
@@ -288,6 +271,12 @@ function template_msg_header()
 								'</span>
 							</div>
 						</div>';
+}
+
+function template_msg_header_mobile()
+{
+		echo '
+						<h5></h5>';
 }
 
 function template_msg_ignored()
@@ -359,23 +348,23 @@ function template_msg_actionbar()
 							<ul class="actions">';
 
 		// Can they reply? Have they turned on quick reply?
-		if ($context['can_quote'] && !empty($options['display_quick_reply']) && !$context['is_mobile'])
+		if ($context['can_quote'] && !empty($options['display_quick_reply']) && !SKIN_MOBILE)
 			echo '
 								<li><a href="<URL>?action=post;quote=', $msg['id'], ';topic=', $context['current_topic'], '.', $context['start'], ';last=', $context['topic_last_message'], '" class="quote_button" onclick="return window.oQuickReply && oQuickReply.quote(this);">', $txt['quote'], '</a></li>';
 
 		// So... quick reply is off, but they *can* reply?
-		elseif ($context['can_quote'] && !$context['is_mobile'])
+		elseif ($context['can_quote'] && !SKIN_MOBILE)
 			echo '
 								<li><a href="<URL>?action=post;quote=', $msg['id'], ';topic=', $context['current_topic'], '.', $context['start'], ';last=', $context['topic_last_message'], '" class="quote_button">', $txt['quote'], '</a></li>';
 
 		// Can the user modify the contents of this post?
-		if ($msg['can_modify'] && !$context['is_mobile'])
+		if ($msg['can_modify'] && !SKIN_MOBILE)
 			echo '
 								<li><a href="<URL>?action=post;msg=', $msg['id'], ';topic=', $context['current_topic'], '.', $context['start'], '" class="edit_button">', $txt['modify'], '</a></li>';
 
 		if (!empty($context['mini_menu']['action'][$msg['id']]))
 			echo '
-								<li><a class="acme more_button">', $txt[$context['is_mobile'] ? 'actions_button' : 'more_actions'], '</a></li>';
+								<li><a class="acme more_button">', $txt[SKIN_MOBILE ? 'actions_button' : 'more_actions'], '</a></li>';
 
 		echo '
 							</ul>';
@@ -415,10 +404,10 @@ function template_msg_attachments()
 								<a href="', $attachment['href'], ';image" id="link_', $attachment['id'], '" class="zoom"><img src="', $attachment['thumbnail']['href'], '" id="thumb_', $attachment['id'], '"></a><br>';
 			else
 				echo '
-								<img src="', $attachment['href'], ';image" width="' . $attachment['width'] . '" height="' . $attachment['height'] . '"><br>';
+								<img src="', $attachment['href'], ';image" width="', $attachment['width'], '" height="', $attachment['height'], '"><br>';
 		}
 		echo '
-								<a href="', $attachment['href'], '"><img src="' . $theme['images_url'] . '/icons/clip.gif" class="middle">&nbsp;' . $attachment['name'] . '</a>
+								<a href="', $attachment['href'], '"><img src="', $theme['images_url'], '/icons/clip.gif" class="middle">&nbsp;', $attachment['name'], '</a>
 								(', $attachment['size'], $attachment['is_image'] ? ', ' . $attachment['real_width'] . 'x' . $attachment['real_height'] : '', ' - ', number_context($attachment['is_image'] ? 'attach_viewed' : 'attach_downloaded', $attachment['downloads']), ')<br>';
 	}
 
