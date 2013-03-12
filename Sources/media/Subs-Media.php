@@ -2453,9 +2453,9 @@ Those functions return an array with the requested information. They are also us
 
 function aeva_protect_bbc(&$message)
 {
-	global $settings;
+	global $settings, $context;
 
-	if (!empty($settings['enableBBC']) && (!isset($_REQUEST, $_REQUEST['action']) || $_REQUEST['action'] != 'jseditor') || stripos($message, '[code]') !== false || stripos($message, '[noembed]') !== false || stripos($message, '[html]') !== false)
+	if (!empty($settings['enableBBC']) && $context['action'] !== 'jseditor' || stripos($message, '[code]') !== false || stripos($message, '[noembed]') !== false || stripos($message, '[html]') !== false)
 		$message = preg_replace('~\[(code|noembed|html)]((?>[^[]|\[(?!/?\\1])|(?R))+?)\[/\\1]~ie',
 			"'[$1]' . str_ireplace('[media', '&#91;media', '$2') . '[/$1]'", $message);
 }
@@ -2467,7 +2467,7 @@ function aeva_parse_bbc(&$message, $cache_id = -1)
 	if ((int) $cache_id >= 0)
 		$context['aeva_id_msg'] = $cache_id;
 
-	if (empty($settings['enableBBC']) || (isset($_REQUEST, $_REQUEST['action']) && $_REQUEST['action'] == 'jseditor'))
+	if (empty($settings['enableBBC']) || $context['action'] === 'jseditor')
 		return;
 
 	preg_match_all('~\[media\s+((?:&quot;.*?&quot;|[^]])+?)](?:<br>)?[\r\n]?~i', $message, $aeva_stuff);
@@ -2542,7 +2542,7 @@ function aeva_showThumbnail($data)
 		return '';
 
 	$is_playlist = in_array($type, array('media_album', 'audio_album', 'video_album', 'photo_album', 'playlist'));
-	$no_zoom = empty($amSettings['use_zoom']) || AJAX || (isset($_REQUEST['action']) && $_REQUEST['action'] == 'feed');
+	$no_zoom = empty($amSettings['use_zoom']) || AJAX || $context['action'] === 'feed';
 
 	aeva_addHeaders(true, !$no_zoom);
 	$box = '';
@@ -2821,7 +2821,7 @@ function aeva_listItems($items, $in_album = false, $align = '', $can_moderate = 
 
 	aeva_addHeaders();
 	$urlmore = empty($context['aeva_urlmore']) ? '' : $context['aeva_urlmore'];
-	$user_is_known = !empty($context['current_action']) && $context['current_action'] == 'profile';
+	$user_is_known = $context['action'] === 'profile';
 	$main_user = $in_album && !empty($context['aeva_album']['owner']['id']) ? (int) $context['aeva_album']['owner']['id'] : 0;
 	$mtl = !empty($amSettings['max_title_length']) && is_numeric($amSettings['max_title_length']) ? $amSettings['max_title_length'] : 30;
 	$icourl = '
@@ -2829,7 +2829,7 @@ function aeva_listItems($items, $in_album = false, $align = '', $can_moderate = 
 	$new_icon = '<div class="note">' . $txt['new'] . '</div>';
 	// If we're in an external embed, we might not have all the space we would like...
 	$ico = !empty($amSettings['icons_only']);
-	$can_moderate &= isset($_REQUEST['action']) && $_REQUEST['action'] == 'media';
+	$can_moderate &= $context['action'] === 'media';
 	$can_moderate_here = aeva_allowedTo('moderate');
 	$re = '
 		<div class="pics smalltext ' . (!empty($align) ? $align : 'center') . '">';
@@ -3524,10 +3524,10 @@ function aeva_addHeaders($autosize = true, $use_zoomedia = true)
 
 	aeva_loadLanguage('media_move');
 
-	if (empty($_GET['action']) || $_GET['action'] != 'media')
+	if ($context['action'] !== 'media')
 		add_css_file('media', true);
 
-	if ((empty($_GET['action']) || $_GET['action'] != 'media') && ((we::is('firefox') && $pfx = 'moz') || (we::is('safari') && $pfx = 'webkit')))
+	if ($context['action'] !== 'media' && ((we::is('firefox') && $pfx = 'moz') || (we::is('safari') && $pfx = 'webkit')))
 		add_css('
 		.pics td { -' . $pfx . '-border-radius: 5px; }
 		.aeva_rounded { -' . $pfx . '-border-radius: 5px; }');

@@ -991,7 +991,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 	}
 
 	// Deal with footnotes... They're more complex, so can't be parsed like other bbcodes.
-	if (stripos($message, '[nb]') !== false && (!isset($_REQUEST['action']) || $_REQUEST['action'] != 'jseditor') && (empty($parse_tags) || in_array('nb', $parse_tags)))
+	if (stripos($message, '[nb]') !== false && $context['action'] !== 'jseditor' && (empty($parse_tags) || in_array('nb', $parse_tags)))
 	{
 		preg_match_all('~\[nb]((?>[^[]|\[(?!/?nb])|(?R))+?)\[/nb\]~i', $message, $matches, PREG_SET_ORDER);
 

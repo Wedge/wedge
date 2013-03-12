@@ -235,7 +235,7 @@ function aeva_embedObject($obj, $id_file, $cur_width = 0, $cur_height = 0, $desc
 	$bcol = !empty($context['aeva_override_bcolor']) ? $context['aeva_override_bcolor'] : (!empty($amSettings['player_bcolor']) ? ($amSettings['player_bcolor'][0] == '#' ? substr($amSettings['player_bcolor'], 1) : $amSettings['player_bcolor']) : '');
 	$pwid = !empty($context['aeva_override_player_width']) ? $context['aeva_override_player_width'] : (!empty($amSettings['audio_player_width']) ? min($amSettings['max_preview_width'], max(100, (int) $amSettings['audio_player_width'])) : 400);
 	$preview_image = $galurl . 'sa=media;in=' . $id_file . (!empty($context['aeva_has_preview']) || $type == 'image' ? ';preview' : ';thumb');
-	$show_audio_preview = $type == 'audio' && !empty($_REQUEST['action']) && $_REQUEST['action'] == 'media';
+	$show_audio_preview = $type == 'audio' && $context['action'] === 'media';
 	$increm = $show_audio_preview && !empty($context['aeva_has_preview']) ? '' : ';v';
 
 	if ($show_audio_preview)
@@ -281,7 +281,7 @@ function aeva_embedObject($obj, $id_file, $cur_width = 0, $cur_height = 0, $desc
 			case 'video/mp4':
 			case 'video/3gpp':
 
-				if (AJAX || WEDGE == 'SSI' || (isset($_REQUEST['action']) && $_REQUEST['action'] == 'feed'))
+				if (AJAX || WEDGE == 'SSI' || $context['action'] === 'feed')
 				{
 					$output .= '
 		<embed src="' . aeva_theme_url('player.swf') . '" flashvars="file=' . $galurl . 'sa=media;in=' . $id_file . $increm

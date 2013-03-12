@@ -215,13 +215,16 @@ if (!empty($context['app_error_count']))
 // The main controlling function.
 function wedge_main()
 {
-	global $settings, $theme, $board, $topic, $board_info, $maintenance, $sourcedir, $action_list;
+	global $context, $settings, $theme, $board, $topic, $board_info, $maintenance, $sourcedir, $action_list;
 
-	$action = isset($_REQUEST['action']) ? $_REQUEST['action'] : '';
+	$action = isset($_GET['action']) ? $_GET['action'] : '';
 
 	// Special case: session keep-alive, do nothing.
 	if ($action === 'keepalive')
 		exit;
+
+	$context['action'] = $action = isset($action_list[$action]) ? $action : (isset($settings['default_action'], $action_list[$settings['default_action']]) ? $settings['default_action'] : '');
+	$context['subaction'] = isset($_REQUEST['sa']) ? $_REQUEST['sa'] : null;
 
 	// Load the user's cookie (or set as guest) and load their settings.
 	we::getInstance();
@@ -253,9 +256,8 @@ function wedge_main()
 	{
 		if (isset($_GET['category']) && is_numeric($_GET['category']))
 			$action = 'boards';
-		elseif (isset($settings['default_index']))
-			if (strpos($settings['default_index'], 'board') === 0)
-				$board = (int) substr($settings['default_index'], 5);
+		elseif (isset($settings['default_index']) && strpos($settings['default_index'], 'board') === 0)
+			$board = (int) substr($settings['default_index'], 5);
 	}
 
 	// Load the current board's information.
@@ -331,7 +333,7 @@ function wedge_main()
 	call_hook('action_list');
 
 	// Get the function and file to include - if it's not there, do the board index.
-	if (empty($action) || !isset($action_list[$action]))
+	if (!isset($action_list[$action]))
 		return index_action('fallback_action');
 
 	// Otherwise, it was set - so let's go to that action.

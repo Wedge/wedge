@@ -187,7 +187,7 @@ function loadBoard()
 	$context['linktree'] = array();
 
 	// Have they by chance specified a message id but nothing else?
-	if (empty($_REQUEST['action']) && empty($topic) && empty($board) && !empty($_REQUEST['msg']))
+	if (!$context['action'] && empty($topic) && empty($board) && !empty($_REQUEST['msg']))
 	{
 		// Make sure the message id is really an int.
 		$_REQUEST['msg'] = (int) $_REQUEST['msg'];
@@ -236,7 +236,7 @@ function loadBoard()
 		return;
 	}
 	// Is this a XML feed requesting a topic?
-	elseif (empty($board) && !empty($topic) && isset($_REQUEST['action']) && $_REQUEST['action'] === 'feed')
+	elseif (empty($board) && !empty($topic) && $context['action'] === 'feed')
 		return;
 
 	if (!empty($settings['cache_enable']) && (empty($topic) || $settings['cache_enable'] >= 3))
@@ -491,7 +491,7 @@ function loadBoard()
 		);
 
 		// If it's a prefetching agent or we're requesting an attachment.
-		preventPrefetch(!empty($_REQUEST['action']) && $_REQUEST['action'] === 'dlattach');
+		preventPrefetch($context['action'] === 'dlattach');
 
 		if (we::$is_guest)
 		{
@@ -1469,8 +1469,6 @@ function loadTheme($id_theme = 0, $initialize = true)
 	$context['header_logo_url_html_safe'] = empty($theme['header_logo_url']) ? $context['forum_name_html_safe']
 		: 'htmlsafe::' . westr::htmlspecialchars('<img src="' . westr::htmlspecialchars($theme['header_logo_url']) . '" alt="' . $context['forum_name'] . '">');
 	$context['site_slogan'] = empty($theme['site_slogan']) ? '<div id="wedgelogo"></div>' : '<div id="siteslogan">' . $theme['site_slogan'] . '</div>';
-	$context['current_action'] = isset($_REQUEST['action']) ? $_REQUEST['action'] : null;
-	$context['current_subaction'] = isset($_REQUEST['sa']) ? $_REQUEST['sa'] : null;
 	if (isset($settings['load_average']))
 		$context['load_average'] = $settings['load_average'];
 
@@ -1491,10 +1489,6 @@ function loadTheme($id_theme = 0, $initialize = true)
 	// A bug in some versions of IIS under CGI (older ones) makes cookie setting not work with Location: headers.
 	$context['server']['needs_login_fix'] = $context['server']['is_cgi'] && $context['server']['is_iis'];
 
-	// Add support for media queries to IE 6-8. Don't wanna waste time on other browsers.
-	if (we::is('ie8down'))
-		add_js_file('scripts/respond.js');
-
 	// Set the top level linktree up
 	array_unshift($context['linktree'], array(
 		'url' => '<URL>',
@@ -1512,7 +1506,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 	// If output is an Ajax request, or printer-friendly
 	// page, skip the index template entirely, and don't load skeletons.
 	// Don't use macros in their templates!
-	if (AJAX || (!empty($_REQUEST['action']) && ($_REQUEST['action'] == 'feed' || $_REQUEST['action'] == 'printpage')))
+	if (AJAX || $context['action'] === 'feed' || $context['action'] === 'printpage')
 	{
 		if (AJAX)
 			loadTemplate('Xml');
@@ -1521,6 +1515,10 @@ function loadTheme($id_theme = 0, $initialize = true)
 	}
 	else
 	{
+		// Add support for media queries to IE 6-8. Don't wanna waste time on other browsers.
+		if (we::is('ie8down'))
+			add_js_file('scripts/respond.js');
+
 		// Custom templates to load, or just default?
 		if (isset($theme['theme_templates']))
 			$templates = explode(',', $theme['theme_templates']);

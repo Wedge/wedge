@@ -238,7 +238,7 @@ function Feed()
 		$_GET['sa'] = 'recent';
 
 	// We only want some information, not all of it.
-	$cachekey = array($xml_format, $_GET['action'], $_GET['limit'], $_GET['sa']);
+	$cachekey = array($xml_format, $context['action'], $_GET['limit'], $_GET['sa']);
 	foreach (array('board', 'boards', 'c') as $var)
 		if (isset($_REQUEST[$var]))
 			$cachekey[] = $_REQUEST[$var];

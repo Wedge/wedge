@@ -111,7 +111,7 @@ function template_thoughts()
 	if (empty($context['thoughts']))
 		return;
 
-	if (empty($_REQUEST['action'])) // homepage?
+	if (!$context['action']) // homepage?
 		echo '
 		<we:cat style="margin-top: 16px">
 			<span class="floatright"><a href="<URL>?action=thoughts">', $txt['all_pages'], '</a></span>

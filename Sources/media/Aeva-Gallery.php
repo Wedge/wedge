@@ -99,8 +99,8 @@ function aeva_initGallery($gal_url = null)
 	media_is_not_banned();
 
 	// For compatibility with earlier URLs...
-	if ($_REQUEST['action'] == 'mgallery')
-		$_REQUEST['action'] = 'media';
+	if ($context['action'] === 'mgallery')
+		$context['action'] = 'media';
 
 	// Load album before calling the function
 	// !!! Temp stuff... Need a better way to do this
@@ -265,7 +265,7 @@ function aeva_initGallery($gal_url = null)
 	}
 
 	$area = $sa = '';
-	if (isset($_GET['action']) && $_GET['action'] == 'media')
+	if ($context['action'] === 'media')
 	{
 		$area = isset($_GET['area']) ? $_GET['area'] : 'home';
 		$sa = isset($_GET['sa']) ? $_GET['sa'] : '';

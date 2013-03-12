@@ -452,8 +452,8 @@ function template_content_wrap_before()
 {
 	global $context;
 
-	if (!empty($context['current_action']))
-		$id = $context['current_action'];
+	if ($context['action'])
+		$id = $context['action'];
 	elseif (!empty($context['current_topic']))
 		$id = 'topic';
 	elseif (!empty($context['current_board']))

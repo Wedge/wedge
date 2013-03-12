@@ -54,7 +54,7 @@ class we
 	 */
 	protected static function init_user()
 	{
-		global $settings, $user_settings, $cookiename, $language, $db_prefix, $boardurl, $board, $txt;
+		global $context, $settings, $user_settings, $cookiename, $language, $db_prefix, $boardurl, $board, $txt;
 
 		$id_member = 0;
 
@@ -149,7 +149,7 @@ class we
 			// 2. XML feeds and Ajax requests don't count either.
 			// 3. If it was set within this session, no need to set it again.
 			// 4. New session, yet updated < five hours ago? Maybe cache can help.
-			if (WEDGE != 'SSI' && !AJAX && (!isset($_REQUEST['action']) || $_REQUEST['action'] != 'feed') && empty($_SESSION['id_msg_last_visit']) && (empty($settings['cache_enable']) || ($_SESSION['id_msg_last_visit'] = cache_get_data('user_last_visit-' . $id_member, 5 * 3600)) === null))
+			if (WEDGE != 'SSI' && !AJAX && ($context['action'] !== 'feed') && empty($_SESSION['id_msg_last_visit']) && (empty($settings['cache_enable']) || ($_SESSION['id_msg_last_visit'] = cache_get_data('user_last_visit-' . $id_member, 5 * 3600)) === null))
 			{
 				// Do a quick query to make sure this isn't a mistake.
 				$result = wesql::query('
@@ -566,7 +566,7 @@ class we
 		$browser['possibly_robot'] = !empty(self::$user['possibly_robot']);
 
 		// Robots shouldn't be logging in or registering. So, they aren't a bot. Better to be wrong than sorry (or people won't be able to log in!), anyway.
-		if ((isset($_REQUEST['action']) && in_array($_REQUEST['action'], array('login', 'login2', 'register'))) || !self::$is_guest)
+		if (!self::$is_guest || in_array($context['action'], array('login', 'login2', 'register')))
 			$browser['possibly_robot'] = false;
 
 		// Save the results...

@@ -29,7 +29,7 @@ function aeva_main($message)
 		loadSource('media/Aeva-Sites');
 
 	// Are we checking a link in the media gallery? We'd best avoid JavaScript then.
-	if (isset($_REQUEST, $_REQUEST['action'], $_REQUEST['sa']) && $_REQUEST['action'] == 'media' && $_REQUEST['sa'] == 'post')
+	if ($context['action'] === 'media' && isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'post')
 		$context['embed_mg_hack'] = true;
 
 	// If we can't use generated version (either just after install, OR permissions meant generated version
@@ -286,7 +286,7 @@ function aeva_build_object($input)
 		return str_replace(array('<aeva href="http://', '</aeva>'), array('<a href="noae://', '</a>'), preg_replace('`#[\w/.~-]*`', '', $input[0], 1)) . ' ' . $txt['media_too_many_embeds'];
 
 	$arr =& $sites[$upto];
-	$use_object_init = AJAX || WEDGE == 'SSI' || (isset($_REQUEST['action']) && $_REQUEST['action'] == 'feed') || !empty($settings['embed_noscript']) || !empty($context['embed_mg_hack']);
+	$use_object_init = AJAX || WEDGE == 'SSI' || $context['action'] === 'feed' || !empty($settings['embed_noscript']) || !empty($context['embed_mg_hack']);
 	$use_object = $use_object_init || (!empty($arr['plugin']) && $arr['plugin'] != 'flash') || !empty($arr['allow-script']) || ($arr['id'] == 'yav' && we::is('firefox'));
 
 	$object = $extra_js = '';

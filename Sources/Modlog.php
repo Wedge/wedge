@@ -41,7 +41,7 @@ function ViewModlog()
 		isAllowedTo('admin_forum');
 
 	// These change depending on whether we are viewing the moderation or admin log.
-	if ($context['log_type'] == 3 || $_REQUEST['action'] == 'admin')
+	if ($context['log_type'] == 3 || $context['action'] === 'admin')
 		$context['url_start'] = '?action=admin;area=logs;sa=' . ($context['log_type'] == 3 ? 'adminlog' : 'modlog') . ';type=' . $context['log_type'];
 	else
 		$context['url_start'] = '?action=moderate;area=modlog;type=' . $context['log_type'];

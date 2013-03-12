@@ -56,7 +56,7 @@ function Boards()
 	);
 
 	// Set a canonical URL for this page.
-	$context['canonical_url'] = '<URL>' . (isset($_GET['action']) && $_GET['action'] === 'boards' ? '?action=boards' : (isset($_GET['category']) && (int) $_GET['category'] ? '?category=' . $_GET['category'] : ''));
+	$context['canonical_url'] = '<URL>' . ($context['action'] === 'boards' ? '?action=boards' : (isset($_GET['category']) && (int) $_GET['category'] ? '?category=' . $_GET['category'] : ''));
 
 	// Do not let search engines index anything if there is a random thing in $_GET.
 	if (!empty($_GET))
@@ -75,7 +75,7 @@ function Boards()
 	$context['categories'] = getBoardIndex($boardIndexOptions);
 
 	// Set up the linktree.
-	if (isset($_GET['action']) && $_GET['action'] === 'boards')
+	if ($context['action'] === 'boards')
 		$context['linktree'][] = array(
 			'url' => '<URL>?action=boards',
 			'name' => $txt['board_index'],

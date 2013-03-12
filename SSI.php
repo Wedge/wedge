@@ -65,9 +65,11 @@ require_once($sourcedir . '/Class-System.php');
 // Initate the database connection and define some database functions to use.
 loadDatabase();
 
-// Unserialize the array of pretty board URLs
+// Initialize pretty URLs debug code and current actions.
 $context = array(
-	'pretty' => array('db_count' => 0)
+	'pretty' => array('db_count' => 0),
+	'action' => '',
+	'subaction' => '',
 );
 
 // Load installed 'Mods' settings.

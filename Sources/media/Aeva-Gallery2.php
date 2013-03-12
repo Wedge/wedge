@@ -1097,7 +1097,7 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 	$topic_boards = aeva_foxy_get_board_list($ex_board);
 
 	// Build the form
-	if (empty($_GET['action']) || $_GET['action'] != 'admin')
+	if ($context['action'] !== 'admin')
 		$context['aeva_form_url'] = $galurl . 'area=mya;sa=' . ($is_add ? 'add' : 'edit;in=' . $id_album);
 	else
 		$context['aeva_form_url'] = '<URL>?action=admin;area=aeva_albums;sa=' . ($is_add ? 'add' : 'edit;in=' . $id_album) . ';' . $context['session_query'];

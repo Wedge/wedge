@@ -1479,7 +1479,6 @@ function setupThemeContext($forceload = false)
 
 	$context['in_maintenance'] = !empty($maintenance);
 	$context['current_time'] = timeformat(time(), false);
-	$context['current_action'] = isset($_GET['action']) ? $_GET['action'] : '';
 
 	// Get some news...
 	$context['news_lines'] = cache_quick_get('news_lines', 'ManageNews', 'cache_getNews', array());
@@ -1600,7 +1599,7 @@ function setupThemeContext($forceload = false)
 	setupMenuContext();
 
 	// This is done to allow theme authors to customize it as they want.
-	$context['show_pm_popup'] = we::$user['popup_messages'] && !empty($options['popup_messages']) && (!isset($_REQUEST['action']) || $_REQUEST['action'] != 'pm');
+	$context['show_pm_popup'] = we::$user['popup_messages'] && !empty($options['popup_messages']) && $context['action'] !== 'pm';
 
 	// Resize avatars the fancy, but non-GD requiring way.
 	if ($settings['avatar_action_too_large'] == 'option_js_resize' && (!empty($settings['avatar_max_width_external']) || !empty($settings['avatar_max_height_external'])))
@@ -2269,15 +2268,15 @@ function setupMenuContext()
 	// Default to home.
 	$current_action = 'home';
 
-	if (isset($menu_items[$context['current_action']]))
-		$current_action = $context['current_action'];
-	elseif ($context['current_action'] == 'theme')
+	if (isset($menu_items[$context['action']]))
+		$current_action = $context['action'];
+	elseif ($context['action'] == 'theme')
 		$current_action = isset($_REQUEST['u']) && $_REQUEST['u'] > 0 ? 'profile' : 'admin';
-	elseif ($context['current_action'] == 'register2')
+	elseif ($context['action'] == 'register2')
 		$current_action = 'register';
-	elseif ($context['current_action'] == 'login2' || (we::$is_guest && $context['current_action'] == 'reminder'))
+	elseif ($context['action'] == 'login2' || (we::$is_guest && $context['action'] == 'reminder'))
 		$current_action = 'login';
-	elseif ($context['current_action'] == 'groups' && $context['allow_moderation_center'])
+	elseif ($context['action'] == 'groups' && $context['allow_moderation_center'])
 		$current_action = 'admin';
 
 	$menu_items[$current_action]['active_item'] = true;

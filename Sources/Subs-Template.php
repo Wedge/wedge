@@ -816,7 +816,7 @@ function db_debug_junk()
 	global $db_cache, $db_count, $db_show_debug, $cache_count, $cache_hits;
 
 	// Is debugging on? (i.e. it is set, and it is true, and we're not on action=viewquery or an help popup.
-	$show_debug = isset($db_show_debug) && $db_show_debug === true && (!isset($_GET['action']) || ($_GET['action'] != 'viewquery' && $_GET['action'] != 'help'));
+	$show_debug = isset($db_show_debug) && $db_show_debug === true && $context['action'] !== 'viewquery' && $context['action'] !== 'help';
 
 	// Check groups
 	if (empty($settings['db_show_debug_who']) || $settings['db_show_debug_who'] == 'admin')
@@ -958,7 +958,7 @@ function db_debug_junk()
  */
 function template_include($filename, $once = false)
 {
-	global $context, $theme, $txt, $helptxt, $settings;
+	global $context, $theme, $txt, $helptxt, $settings, $scripturl;
 	global $boardurl, $boarddir, $maintenance, $mtitle, $mmessage;
 	static $templates = array();
 
@@ -1004,7 +1004,7 @@ function template_include($filename, $once = false)
 		{
 			$txt['template_parse_error'] = 'Template Parse Error!';
 			$txt['template_parse_error_message'] = 'It seems something has gone sour on the forum with the template system. This problem should only be temporary, so please come back later and try again. If you continue to see this message, please contact the administrator.<br><br>You can also try <a href="javascript:location.reload();">refreshing this page</a>.';
-			$txt['template_parse_error_details'] = 'There was a problem loading the <tt><strong>%1$s</strong></tt> template or language file. Please check the syntax and try again - remember, single quotes (<tt>\'</tt>) often have to be escaped with a slash (<tt>\\</tt>). To see more specific error information from PHP, try <a href="{board_url}%1$s" class="extern">accessing the file directly</a>.<br><br>You may want to try to <a href="javascript:location.reload();">refresh this page</a> or <a href="<URL>?theme=1">use the default theme</a>.';
+			$txt['template_parse_error_details'] = 'There was a problem loading the <tt><strong>%1$s</strong></tt> template or language file. Please check the syntax and try again - remember, single quotes (<tt>\'</tt>) often have to be escaped with a slash (<tt>\\</tt>). To see more specific error information from PHP, try <a href="{board_url}%1$s" class="extern">accessing the file directly</a>.<br><br>You may want to try to <a href="javascript:location.reload();">refresh this page</a> or <a href="' . $scripturl . '?theme=1">use the default theme</a>.';
 		}
 
 		$txt['template_parse_error_details'] = str_replace('{board_url}', $boardurl, $txt['template_parse_error_details']);

@@ -810,7 +810,7 @@ function Post($post_errors = array())
 
 		if (!empty($_SESSION['temp_attachments']))
 		{
-			if ($context['current_action'] != 'post2' || !empty($_POST['from_qr']))
+			if ($context['action'] !== 'post2' || !empty($_POST['from_qr']))
 			{
 				$context['post_error']['messages'][] = $txt['error_temp_attachments'];
 				$context['error_type'] = 'minor';
