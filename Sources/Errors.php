@@ -18,6 +18,7 @@ if (!defined('WEDGE'))
  * Log an error in the error log (in the database), assuming error logging is on.
  *
  * Logging is disabled if $settings['enableErrorLogging'] is unset or 0.
+ * To always force logging of fatal errors, you can manually set its value to 2.
  *
  * @param string $error_message The final error message (not, for example, a key in $txt) to be logged, prior to any entity encoding.
  * @param mixed $error_type A string denoting the type of error being logged for the purposes of filtering: 'general', 'critical', 'database', 'undefined_vars', 'mail', 'user', 'template', 'debug'. Alternatively can be specified as boolean false to override the error message being logged.
@@ -226,7 +227,7 @@ function fatal_lang_error($error, $log = 'general', $sprintf = array(), $header 
 		exit($error);
 
 	$reload_lang_file = true;
-	// Log the error in the forum's language, but don't waste the time if we aren't logging
+	// Log the error in the forum's language, but don't waste the time if we aren't logging.
 	if ($log || (!empty($settings['enableErrorLogging']) && $settings['enableErrorLogging'] == 2))
 	{
 		loadLanguage('Errors', $language);
@@ -235,7 +236,7 @@ function fatal_lang_error($error, $log = 'general', $sprintf = array(), $header 
 		log_error($error_message, $log);
 	}
 
-	// Load the language file, only if it needs to be reloaded
+	// Load the language file, only if it needs to be reloaded.
 	if ($reload_lang_file)
 	{
 		loadLanguage('Errors');
@@ -261,8 +262,8 @@ function error_handler($error_level, $error_string, $file, $line)
 {
 	global $theme, $settings, $db_show_debug;
 
-	// Ignore errors if we're ignoring them or they are strict notices from PHP 5 (which cannot be solved without breaking PHP 4.)
-	if (error_reporting() == 0 || (defined('E_STRICT') && $error_level == E_STRICT && (empty($settings['enableErrorLogging']) || $settings['enableErrorLogging'] != 2)))
+	// Ignore errors if default reporting behavior was overridden (e.g. through SSI.)
+	if (error_reporting() == 0)
 		return;
 
 	if (strpos($file, 'eval()') !== false && !empty($theme['current_include_filename']))

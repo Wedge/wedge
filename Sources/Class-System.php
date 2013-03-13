@@ -472,6 +472,8 @@ class we
 	 */
 	protected static function init_browser()
 	{
+		global $context;
+
 		// The following determines the user agent (browser) as best it can.
 		$ua = self::$ua;
 		$browser['is_opera'] = strpos($ua, 'Opera') !== false;
