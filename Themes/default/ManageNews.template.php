@@ -124,9 +124,7 @@ function template_email_members()
 	add_js('
 	function toggleAdvanced()
 	{
-		var $opt = $("#goadvanced div")
-		$opt.toggleClass("fold");
-		$opt.hasClass("fold") ? $("#advanced_settings_div").slideDown(150) : $("#advanced_settings_div").slideUp(200);
+		$("#goadvanced div").toggleClass("fold").hasClass("fold") ? $("#advanced_settings_div").slideDown(150) : $("#advanced_settings_div").slideUp(200);
 		return false;
 	}');
 

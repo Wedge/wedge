@@ -279,7 +279,7 @@ function expandPages(spanNode, firstPage, lastPage, perPage)
 function show_ajax()
 {
 	$('body').append(
-		$('<div id="ajax_in_progress">')
+		$('<div id="ajax">')
 			.html('<a href="#" onclick="hide_ajax();" title="' + (we_cancel || '') + '"></a>' + we_loading)
 			.css(is_ie6 ? { position: 'absolute', top: $(window).scrollTop() } : {})
 	);
@@ -287,7 +287,7 @@ function show_ajax()
 
 function hide_ajax()
 {
-	$('#ajax_in_progress').remove();
+	$('#ajax').remove();
 }
 
 // Rating boxes in Media area.

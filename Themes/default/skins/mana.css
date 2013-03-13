@@ -25,7 +25,7 @@ ol.search_results
 #version_details
 	margin: 1em 0
 
-.admin_item extends .inline-block
+.admin_item mixes .inline-block
 	width: 100px
 	font-size: 85%
 	text-align: center
@@ -82,14 +82,14 @@ ol.search_results
 	max-width: 40%
 	margin-left: 0.5em
 
-.plugin_auth extends .inline-block
+.plugin_auth mixes .inline-block
 	margin-left: 2px
 	margin-top: 1px
 	width: 16px
 	height: 16px
 	background: url($images/admin/members.gif) no-repeat
 
-.plugin_from extends .inline-block
+.plugin_from mixes .inline-block
 	float: left
 	vertical-align: bottom
 	font-size: .9em
@@ -508,7 +508,7 @@ div.percent
 	width, height: 16px
 	margin: 0 auto
 
-.ban_selector extends .inline-block
+.ban_selector mixes .inline-block
 	margin-right: 3px
 	vertical-align: -3px
 
@@ -544,7 +544,7 @@ textarea.ban
 
 /* Styles for custom fields.
 ------------------------------------------------- */
-.cf_items extends .inline-block
+.cf_items mixes .inline-block
 	background: url($images/admin/field_types.png) no-repeat
 	width, height: 16px
 	margin: 0 3px 0 0
@@ -569,7 +569,7 @@ textarea.ban
 	color: green
 
 .cf_active, .cf_inactive
-	.icon extends .inline-block
+	.icon mixes .inline-block
 		background: url($images/admin/active.png)
 		background-position: 0 0
 		width, height: 16px

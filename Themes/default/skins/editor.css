@@ -140,7 +140,7 @@ ul.post_options
 		margin: 0 2px
 
 .bbc_divider, .bbc_button, .bbc_button div
-	base: .inline-block
+	mixin: .inline-block
 	width: 23px
 	height: 22px
 
@@ -162,7 +162,7 @@ ul.post_options
 	input
 		margin-bottom: 5px
 
-#draft_lastautosave extends .inline-block
+#draft_lastautosave mixes .inline-block
 	margin-left: 3px
 	font-size: .9em
 	line-height: 1.7em

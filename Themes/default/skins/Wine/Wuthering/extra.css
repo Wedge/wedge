@@ -246,7 +246,7 @@ $window_bg2 = #e8ebee
 .title
 	background-color: #e3e9ef
 	border: 1px solid rgba(0,0,0, .15)
-	&.blog extends .inline-block
+	&.blog mixes .inline-block
 		border: 0
 		background, box-shadow: none
 		vertical-align: baseline

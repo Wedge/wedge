@@ -11,7 +11,7 @@
 -------------------------------------------------------------------------- */
 
 // A common inline-block hack (for old IE/Firefox compatibility.)
-.inline-block virtual
+@mixin .inline-block
 
 	// Firefox 2.x doesn't support inline-block.
 	@if firefox[-2]
@@ -26,9 +26,10 @@
 		margin-right: 6px
 		zoom: 1
 
-	// ...And they also need inline-block to be reset to inline separately... How annoying.
-	.inline-block
-		display: inline
+		// ...And they also need inline-block to be reset to inline separately... How annoying.
+		// (The & trick forces the selector to be closed and reopened.)
+		&
+			display: inline
 	@endif
 
 // A descriptive style

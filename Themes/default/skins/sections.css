@@ -111,21 +111,28 @@ img.new_posts
 // Topic title and Quick access
 .posthead
 	width: 100%
-	display: table
 	box-sizing: border-box
 	padding: 8px
 	margin: 4px
 	border-radius: 12px
 	background: rgba(0,0,0, .015)
+	@if ie[-7]
+		div mixes .inline-block
+	@else
+		> div
+			text-align: center
+			display: table-cell
+			vertical-align: middle
+	@endif
 
-#top_subject extends .cell
+#top_subject
 	padding: 4px 8px
 	font: 100 1.6em/1.2em $head_font
 	color: gray
 	letter-spacing: -1px
 
 // Previous/next topic links inside .posthead
-.prevnext_prev extends .cell
+.prevnext_prev
 	font: 400 1em/1.3em Arial
 	text-align: left
 	width: 20%
@@ -314,11 +321,11 @@ img.new_posts
 
 // These squares will show up next to the author name in a post. They quickly tell you
 // whether a user is online, has a website, is male/female or is a contact of yours.
-.pixelicons extends .inline-block
+.pixelicons mixes .inline-block
 	width: 15px
 	overflow: hidden
 	margin: -1px -4px 0 0
-	i extends .inline-block
+	i mixes .inline-block
 		float: left
 		margin: 0 1px 1px 0
 		width, height: 5px
@@ -417,7 +424,7 @@ img.new_posts
 	padding: 0 3% 0 0
 	margin: 0
 	vertical-align: bottom
-	li extends .inline-block
+	li mixes .inline-block
 		padding: 0
 		margin: 0 0 0 5px
 	img
@@ -506,7 +513,7 @@ img.new_posts
 .inner
 	padding: 0 .7em
 
-.smiley extends .inline-block
+.smiley mixes .inline-block
 	text-indent: -999em
 	font: 0/0 Arial
 	overflow: hidden
@@ -559,7 +566,7 @@ ul.buttonlist extends "ul.reset, .clearfix"
 ---------------------------------------------------- */
 
 // Wrapper span that will contain the menu...
-.mime extends .inline-block
+.mime mixes .inline-block
 	position: relative
 
 	// Styling for the parent link when the menu is open.
@@ -1371,7 +1378,7 @@ div.top_row dd
 
 /* Board status icons.
 ------------------------------------------------- */
-.boardstate_on extends .inline-block
+.boardstate_on mixes .inline-block
 	background: url($images/boardicon.png) 0 0 no-repeat
 	width: 37px
 	height: 42px
@@ -1384,7 +1391,7 @@ div.top_row dd
 
 /* More icons.
 ------------------------------------------------- */
-.feed_icon extends .inline-block
+.feed_icon mixes .inline-block
 	background: url($images/icons/feed.gif) no-repeat
 	width: width($images_dir/icons/feed.gif)px
 	height: height($images_dir/icons/feed.gif)px
@@ -1392,7 +1399,7 @@ div.top_row dd
 	.catfeed &
 		margin-left: -4px
 
-.arrow_left extends .inline-block
+.arrow_left mixes .inline-block
 	base: .arrows
 	background-position: 0 -28px
 	width, height: 9px
@@ -1403,7 +1410,8 @@ div.top_row dd
 
 // If you don't like the icon, you can for instance replace the background
 // property with an :after pseudo-class with content: "\203b"
-.help extends ".helpc, .inline-block"
+.help mixes .inline-block
+	base: .helpc
 	background: url($images/helptopics.gif) no-repeat
 	width, height: 16px
 	vertical-align: -3px
@@ -1444,8 +1452,7 @@ div.top_row dd
 			background: $window_bg
 			border-top: 1px solid #bdb5b5
 			margin: 0 -30px 0
-			// We can't inherit anything inside a @media query,
-			// so we have to reproduce (mix) .inline-block directly here.
+			// Never inherit something into a @media query, use mixins.
 			section mixes .inline-block
 				width: $sidebar-width
 				vertical-align: top

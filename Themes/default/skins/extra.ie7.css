@@ -44,15 +44,12 @@ li.separator
 ------------------------------------------------------- */
 .prevnext_prev
 	padding: 0 8px 0
-	float: left
 	width: 20%
 
 .prevnext_next extends .prevnext_prev
-	float: right
 
 #top_subject
-	float: left
-	width: 55%
+	width: 50%
 
 .post
 	padding-top: 1em

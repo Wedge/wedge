@@ -178,7 +178,7 @@ class wess_mixin extends wess
 		$mix = $def = array();
 
 		// Find mixin declarations, capture their tab level and stop at the first empty or unindented line.
-		if (preg_match_all('~@mixin\h+(?:{([^}]+)}\h*)?([\w-]+)(?:\(([^()]+)\))?[^\n]*\n(\h+)([^\n]*\n)((?:\4\h*[^\n]*\n)*)~i', $css, $mixins, PREG_SET_ORDER))
+		if (preg_match_all('~@mixin\h+(?:{([^}]+)}\h*)?([\w.-]+)(?:\(([^()]+)\))?[^\v]*\v+(\h+)([^\v]*\n+)((?:\4\h*[^\v]*\v+)*)~i', $css, $mixins, PREG_SET_ORDER))
 		{
 			// We start by building an array of mixins...
 			foreach ($mixins as $mixin)
@@ -229,7 +229,7 @@ class wess_mixin extends wess
 					if (!empty($def[$tg]))
 						$rep = preg_replace('~\$%(\d+)%~e', '$def[$tg][(int) \'$1\']', $rep);
 				}
-				// Or is this a simple non-mixin selector we want to mix with? (Child selector aren't allowed.)
+				// Or is this a simple non-mixin selector we want to mix with? (Child selectors aren't allowed for these.)
 				elseif (preg_match_all('~(?<=\n)' . preg_quote($tg, '~') . '\h*(?:[a-zA-Z]+\h*)?\v+(\h+)([^\v]*\v+)((?:\1[^\v]*\v+)*)~', $css, $selectors, PREG_SET_ORDER))
 					foreach ($selectors as $sel)
 						$rep .= "\n" . rtrim(str_replace("\n" . $sel[1], "\n", $sel[2] . $sel[3]));
@@ -261,7 +261,7 @@ class wess_mixin extends wess
 					if (!empty($def[$tg]))
 						$rep = preg_replace('~\$%(\d+)%~e', '$def[$tg][(int) \'$1\']', $rep);
 				}
-				// Or is this a simple non-mixin selector we want to mix with? (Child selector aren't allowed.)
+				// Or is this a simple non-mixin selector we want to mix with? (Child selectors aren't allowed for these.)
 				elseif (preg_match_all('~(?<=\n)' . preg_quote($tg, '~') . '\h*(?:[a-zA-Z]+\h*)?\v+(\h+)([^\v]*\v+)((?:\1[^\v]*\v+)*)~', $css, $selectors, PREG_SET_ORDER))
 					foreach ($selectors as $sel)
 						$rep .= "\n" . rtrim(str_replace("\n" . $sel[1], "\n", $sel[2] . $sel[3]));

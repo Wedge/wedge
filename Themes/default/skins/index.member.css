@@ -167,7 +167,7 @@ ul.buttonlist
 .my.thought
 	font: italic 12px Georgia, "Trebuchet MS", Arial, sans-serif
 
-.thought_icon extends .inline-block
+.thought_icon mixes .inline-block
 	text-decoration: none
 	background: url($images/icons/thought.gif) no-repeat
 	width: width($images_dir/icons/thought.gif)px
@@ -176,7 +176,7 @@ ul.buttonlist
 #new_thought
 	display: none
 
-.privacy_default extends .inline-block
+.privacy_default mixes .inline-block
 	background: url($images/icons/privacy.png) 0 0 no-repeat
 	margin-right: 4px
 	width: 10px

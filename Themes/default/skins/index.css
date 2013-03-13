@@ -91,12 +91,7 @@ header, footer, aside, section, article, nav
 .windowbg3 extends .windowbg
 	background-color: $window_bg3
 
-.cell
-	text-align: center
-	display: table-cell
-	vertical-align: middle
-
-.two-columns extends .inline-block
+.two-columns mixes .inline-block
 	box-sizing: border-box
 	vertical-align: top
 	width: 48.8%
@@ -154,8 +149,7 @@ header, footer, aside, section, article, nav
 		section
 			margin: 0 0 15px
 
-#userbox
-	overflow: hidden
+#userbox extends .clearfix
 	margin: 1em 0
 	img.avatar
 		float: right
@@ -167,12 +161,9 @@ header, footer, aside, section, article, nav
 	p.now
 		margin: 0
 	ul
+		margin: 0 0 4px 2px
 		padding: 0
-		margin: 0 0 0 12px
-		list-style-type: disc
-	li
-		margin: 0 0 2px 0
-		padding: 0
+		list-style: disc inside
 
 img.opaque
 	box-shadow: #766 1px 1px 3px
@@ -204,7 +195,7 @@ ul#noava
 	padding: 8px 30px
 	.frame
 		p, h2
-			base: .inline-block
+			mixin: .inline-block
 			margin: .4em 1em 0 0
 			padding: 0
 		h2 extends .horizontal-arrow
@@ -229,6 +220,7 @@ ul#noava
 	float: right
 	.mimenu
 		width: 100%
+		left: 0
 
 #siteslogan
 	float: left
@@ -398,12 +390,12 @@ em
 	background-repeat: no-repeat
 
 // Fold/unfold icon
-.upshrinks extends .inline-block
+.upshrinks mixes .inline-block
 	background: url($images/upshrinks.png) no-repeat
 	text-decoration: none
 
 // The 'New' icon, generally speaking.
-.note extends .inline-block
+.note mixes .inline-block
 	border-radius: 7px
 	@if ie[-9]
 		background-color: #eb8c66
@@ -440,7 +432,7 @@ em
 	display: none
 
 // The sort direction indicator. A small but potentially important detail.
-.sort_up extends .inline-block
+.sort_up mixes .inline-block
 	background: url($images/sort.gif) 0 0 no-repeat
 	width, height: 12px
 	vertical-align: baseline
@@ -462,12 +454,12 @@ select.sb
 	position: absolute
 	left, text-indent: -999999em
 
-.sbox extends .inline-block
+.sbox mixes .inline-block
 	font-weight: 400
 	text-align: left
 	margin: 1px
 
-	.text extends .inline-block
+	.text mixes .inline-block
 		vertical-align: baseline
 		white-space: nowrap
 
@@ -1399,7 +1391,7 @@ a.moderation_link
 /* AJAX notification bar
 ------------------------------------------------------- */
 
-#ajax_in_progress
+#ajax
 	background: #fff
 	border-bottom: 3px solid #f96f00
 	box-shadow: 0 0 8px #000

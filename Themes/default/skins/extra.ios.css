@@ -53,5 +53,5 @@
 h4 .mime
 	position: absolute
 
-#ajax_in_progress, #popup
+#ajax, #popup
 	position: absolute
