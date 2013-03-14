@@ -426,11 +426,10 @@ function ob_sessrewrite($buffer)
 				if ($use_cache)
 				{
 					$match = str_replace(SID ? array(SID, $session_var) : $session_var, '', $match);
-					$match = preg_replace(array('~=?;+~', '~\?&amp;~', '~[?;=]+$~'), array(';', '?', ''), $match);
+					$match = preg_replace(array('~=?;+~', '~\?&amp;~'), array(';', '?'), rtrim($match, '&?;'));
 				}
 				else
-					// !!! This can easily be optimized into a simple str_replace by adding placeholders for ^ and $.
-					$match = preg_replace(array('~=?;+~', '~[?;=]+$~'), array(';', ''), $match);
+					$match = preg_replace('~=?;+~', ';', rtrim($match, '&?;'));
 				$match = str_replace(array('"', '?;'), array('%22', '?'), $match);
 				$url_id = $match;
 				$urls_query[] = $url_id;
@@ -488,7 +487,7 @@ function ob_sessrewrite($buffer)
 					if (!isset($url['replacement']))
 						$url['replacement'] = $url['url'];
 					$url['replacement'] = str_replace(chr(18), "'", $url['replacement']);
-					$url['replacement'] = preg_replace(array('~"~', '~=?;+~', '~\?;~', '~[?;=]+$~'), array('%22', ';', '?', ''), $url['replacement']);
+					$url['replacement'] = preg_replace(array('~"~', '~=?;+~', '~\?;~'), array('%22', ';', '?'), rtrim($url['replacement'], '&?;'));
 					$cached_urls[$url_id] = $url['replacement'];
 					if ($use_cache && strlen($url_id) < 256)
 						$cache_data[] = '(\'' . $url_id . '\', \'' . addslashes($url['replacement']) . '\')';
@@ -605,17 +604,14 @@ function pretty_buffer_callback($matches)
 		// Store the parts of the URL that won't be cached so they can be inserted later
 		$has_sid = SID && strpos($matches[1], SID) !== false;
 		$has_sesc = strpos($matches[1], $session_var) !== false;
-		$url_id = rtrim(
-			preg_replace(
-				'~=?;+~',
-				';',
-				str_replace(
-					array('"', '?;', SID, $session_var),
-					array('%22', '?', '', ''),
-					$matches[1]
-				)
-			),
-			'&?;='
+		$url_id = preg_replace(
+			'~=?;+~',
+			';',
+			str_replace(
+				array('"', '?;', SID, $session_var),
+				array('%22', '?', '', ''),
+				rtrim($matches[1], '&?;')
+			)
 		);
 		// Stitch everything back together
 		$replacement = isset($cached_urls[$url_id]) ? $cached_urls[$url_id] : $url_id;
@@ -627,7 +623,7 @@ function pretty_buffer_callback($matches)
 	else
 	{
 		// Rip out everything that won't have been cached
-		$url_id = rtrim(str_replace(array('"', '?;'), array('%22', '?'), preg_replace('~=?;+~', ';', $matches[1])), '&?;=');
+		$url_id = str_replace(array('"', '?;'), array('%22', '?'), preg_replace('~=?;+~', ';', rtrim($matches[1], '&?;')));
 		// Stitch everything back together
 		$replacement = isset($cached_urls[$url_id]) ? $cached_urls[$url_id] : $url_id;
 	}
