@@ -96,7 +96,7 @@ function go_down()
 
 			show_ajax();
 			$.post(
-				weUrl('action=jsmodify;xml;' + we_sessvar + '=' + we_sessid),
+				weUrl('action=jsmodify;' + we_sessvar + '=' + we_sessid),
 				{
 					topic: $('#qm_subject').data('id'),
 					subject: $('#qm_subject').val().replace(/&#/g, '&#38;#'),
@@ -174,7 +174,7 @@ function QuickReply(opt)
 		{
 			show_ajax();
 			$.post(
-				weUrl('action=quotefast;xml'),
+				weUrl('action=quotefast'),
 				{
 					quote: iMessageId,
 					mode: +oEditorHandle_message.isWysiwyg
@@ -187,7 +187,7 @@ function QuickReply(opt)
 			);
 
 			// Move the view to the quick reply box.
-			location.hash = (is_ie ? '' : '#') + opt.sJumpAnchor;
+			location.hash = '#' + opt.sJumpAnchor;
 		}
 		return bCollapsed;
 	};
@@ -271,7 +271,7 @@ function QuickReply(opt)
 			// Send out the Ajax request to get more info
 			show_ajax();
 
-			$.post(weUrl('action=quotefast;xml;modify'), { quote: iMessageId }, function (XMLDoc)
+			$.post(weUrl('action=quotefast;modify'), { quote: iMessageId }, function (XMLDoc)
 			{
 				// The callback function used for the Ajax request retrieving the message.
 				hide_ajax();
@@ -318,7 +318,7 @@ function QuickReply(opt)
 			// Send in the Ajax request and let's hope for the best.
 			show_ajax();
 			$.post(
-				weUrl('action=jsmodify;xml;' + we_sessvar + '=' + we_sessid),
+				weUrl('action=jsmodify;' + we_sessvar + '=' + we_sessid),
 				{
 					topic: we_topic,
 					subject: $('#qm_subject').val().replace(/&#/g, '&#38;#'),
@@ -350,8 +350,7 @@ function QuickReply(opt)
 						$('#msg' + sCurMessageId + ' .modified').html($('modified', XMLDoc).text());
 
 						// Finally, we can safely declare we're up and running...
-						sCurMessageId = 0;
-						sSubjectBuffer = 0;
+						sCurMessageId = sSubjectBuffer = 0;
 					}
 					else if ($('error', XMLDoc).length)
 					{
@@ -454,13 +453,12 @@ function QuickReply(opt)
 	// *** IconList object.
 	function IconList()
 	{
-		var oContainerDiv, oCurDiv, iCurMessageId,
+		var oContainerDiv,
 
 		// Show the list of icons after the user clicked the original icon.
 		openPopup = function (oDiv, iMessageId)
 		{
-			iCurMessageId = iMessageId;
-			oCurDiv = oDiv;
+			var iCurMessageId = iMessageId, oCurDiv = oDiv;
 
 			if (!oContainerDiv)
 			{
@@ -469,14 +467,13 @@ function QuickReply(opt)
 
 				// Start to fetch its contents.
 				show_ajax();
-				$.post(weUrl('action=ajax;sa=messageicons;xml'), { board: we_board }, function (XMLDoc)
+				$.post(weUrl('action=ajax;sa=messageicons'), { board: we_board }, function (XMLDoc)
 				{
 					hide_ajax();
 					$('icon', XMLDoc).each(function (key, iconxml)
 					{
 						oContainerDiv.append(
 							$('<div class="item"></div>')
-								.hover(function () { $(this).toggleClass('hover'); })
 								.mousedown(function ()
 								{
 									// Event handler for clicking on one of the icons.
@@ -484,7 +481,7 @@ function QuickReply(opt)
 									show_ajax();
 
 									$.post(
-										weUrl('action=jsmodify;xml;' + we_sessvar + '=' + we_sessid),
+										weUrl('action=jsmodify;' + we_sessvar + '=' + we_sessid),
 										{
 											topic: we_topic,
 											msg: iCurMessageId,
@@ -501,9 +498,6 @@ function QuickReply(opt)
 								.append($(iconxml).text())
 						);
 					});
-
-					if (is_ie)
-						oContainerDiv.css('width', oContainerDiv.clientWidth);
 				});
 			}
 
@@ -527,7 +521,6 @@ function QuickReply(opt)
 			$(this)
 				.find('.messageicon')
 				.addClass('iconbox')
-				.hover(function () { $(this).toggleClass('hover'); })
 				.click(function () { openPopup(this, id); });
 		});
 	}

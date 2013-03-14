@@ -185,7 +185,7 @@ function weRegister(formID, passwordDifficultyLevel)
 			show_ajax();
 
 		// Request a search on that username.
-		$.get(weUrl('action=register;sa=usernamecheck;xml;username=' + encodeURIComponent(curUsername)), function (XMLDoc)
+		$.get(weUrl('action=register;sa=usernamecheck;username=' + encodeURIComponent(curUsername)), function (XMLDoc)
 		{
 			var isValid = $('username', XMLDoc).attr('valid') == 1;
 

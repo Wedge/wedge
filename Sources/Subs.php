@@ -1022,9 +1022,7 @@ function redirectexit($setLocation = '', $refresh = false, $permanent = false)
 	if (!empty($context['flush_mail']))
 		AddMailQueue(true);
 
-	$add = preg_match('~^(ftp|http)[s]?://~', $setLocation) == 0 && substr($setLocation, 0, 6) != 'about:';
-
-	if ($add)
+	if (!preg_match('~^(?:ftps?://|https?://|<URL>)~', $setLocation))
 		$setLocation = $scripturl . ($setLocation != '' ? '?' . $setLocation : '');
 
 	// Put the session ID in.

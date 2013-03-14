@@ -772,12 +772,8 @@ function loadMediaSettings($gal_url = null, $load_template = false, $load_langua
 	}
 	$theme['images_aeva'] = file_exists($theme['theme_dir'] . '/images/aeva') ? $theme['images_url'] . '/aeva' : $theme['default_images_url'] . '/aeva';
 
-	// $galurl got the URL to gallery for subactions, and $galurl2 got URL for gallery for main page
-	if ($gal_url == null || empty($gal_url) || $gal_url == false)
-		$galurl = '<URL>?action=media;';
-	else
-		$galurl = $gal_url;
-
+	// $galurl holds the URL to gallery for subactions, and $galurl2 is the URL for its home page.
+	$galurl = empty($gal_url) ? '<URL>?action=media;' : $gal_url;
 	$galurl2 = rtrim($galurl, ';?&');
 
 	// Recalculate number of unseen items

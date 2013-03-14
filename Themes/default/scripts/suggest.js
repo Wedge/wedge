@@ -467,7 +467,7 @@ weAutoSuggest.prototype.autoSuggestUpdate = function ()
 
 	// Get the document.
 	this.oXmlRequestHandle = $.ajax(
-		weUrl('action=suggest;xml'),
+		weUrl('action=suggest'),
 		{
 			context: this,
 			data: data,

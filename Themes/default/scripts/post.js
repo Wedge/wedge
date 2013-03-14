@@ -39,7 +39,7 @@ function previewPost()
 	});
 	show_ajax();
 
-	$.post(weUrl('action=post2' + (we_board ? ';board=' + we_board : '') + (make_poll ? ';poll' : '') + ';preview;xml'), params, function (XMLDoc)
+	$.post(weUrl('action=post2' + (we_board ? ';board=' + we_board : '') + (make_poll ? ';poll' : '') + ';preview'), params, function (XMLDoc)
 	{
 		if (!XMLDoc)
 			$(postmod.preview).click(function () { return true; }).click();
@@ -138,7 +138,7 @@ function previewPost()
 function insertQuoteFast(msg)
 {
 	$.get(
-		weUrl('action=quotefast;quote=' + msg + ';xml;mode=' + +posthandle.isWysiwyg),
+		weUrl('action=quotefast;quote=' + msg + ';mode=' + +posthandle.isWysiwyg),
 		function (XMLDoc) {
 			posthandle.insertText($('quote', XMLDoc).text(), false, true);
 		}
