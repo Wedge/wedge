@@ -362,7 +362,7 @@ function template_postlist_before()
 	echo '
 		<div class="pagesection">',
 			template_button_strip($context['nav_buttons']['normal']), '
-			<nav>', $txt['pages'], ': ', $context['page_index'], $context['menu_separator'], ' &nbsp;&nbsp;<a href="#" onclick="return go_down();"><strong>', $txt['go_down'], '</strong></a></nav>
+			<nav>', $txt['pages'], ': ', $context['page_index'], $context['menu_separator'], '&nbsp;&nbsp;<a href="#" onclick="return go_down();"><strong>', $txt['go_down'], '</strong></a></nav>
 		</div>', we::is('ie6') ? '
 		<div class="clear"></div>' : '';
 }
@@ -374,7 +374,7 @@ function template_postlist_after()
 	echo '
 		<div class="pagesection">',
 			template_button_strip($context['nav_buttons']['normal']), '
-			<nav>', $txt['pages'], ': ', $context['page_index'], $context['menu_separator'], ' &nbsp;&nbsp;<a href="#" onclick="return go_up();"><strong>', $txt['go_up'], '</strong></a></nav>
+			<nav>', $txt['pages'], ': ', $context['page_index'], $context['menu_separator'], '&nbsp;&nbsp;<a href="#" onclick="return go_up();"><strong>', $txt['go_up'], '</strong></a></nav>
 		</div>';
 }
 

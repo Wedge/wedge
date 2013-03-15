@@ -79,7 +79,7 @@ class captcha_ledicons
 		return $this->image;
 	}
 
-	protected function create_led($id, $background, $lowlight_col, $highlight_col)
+	protected function create_led($id, $background = false, $lowlight_col = '', $highlight_col = '')
 	{
 		if (isset($this->leds[$id]))
 			return false;
@@ -107,7 +107,7 @@ class captcha_ledicons
 		return true;
 	}
 
-	protected function paint_led($id, $x, $y)
+	protected function paint_led($id, $x, $y, $image = null)
 	{
 		imagecopy ($this->image, $this->leds[$id], $x, $y, 0, 0, 4, 4);
 	}

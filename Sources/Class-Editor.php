@@ -92,7 +92,7 @@ class wedit
 		return null;
 	}
 
-	public static function add_button($name, $button_text, $onclick = '', $access_key = '', $class = '')
+	public function add_button($name, $button_text, $onclick = '', $access_key = '', $class = '')
 	{
 		// This allows us to add buttons to it from code side since we don't let users manipulate this array directly otherwise.
 		$this->editorOptions['buttons'][] = array(

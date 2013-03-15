@@ -837,7 +837,7 @@ function template_page_index($base_url, &$start, $max_value, $num_per_page, $fle
 			$pageindex .= ' <div class="note next_page">' . $txt['new_short'] . '</div> ';
 	}
 
-	return $pageindex;
+	return rtrim($pageindex, ' ');
 }
 
 // Generate a strip of buttons.

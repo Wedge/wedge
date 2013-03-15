@@ -698,7 +698,7 @@ function template_search_results()
 				if (!$message['member']['is_guest'])
 					echo '
 						<a href="<URL>?action=pm;sa=send;f=', $context['folder'], $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';pmsg=', $message['id'], ';quote;u=', $context['folder'] == 'sent' ? '' : $message['member']['id'], '" class="quote_button">', $txt['quote'], '</a>', $context['menu_separator'], '
-						<a href="<URL>?action=pm;sa=send;f=', $context['folder'], $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';pmsg=', $message['id'], ';u=', $message['member']['id'], '" class="reply_button">', $txt['reply'], '</a> ', $context['menu_separator'];
+						<a href="<URL>?action=pm;sa=send;f=', $context['folder'], $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';pmsg=', $message['id'], ';u=', $message['member']['id'], '" class="reply_button">', $txt['reply'], '</a>', $context['menu_separator'];
 				// This is for "forwarding" - even if the member is gone.
 				else
 					echo '

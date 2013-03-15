@@ -76,9 +76,9 @@ class captcha_ledicons_anim extends captcha_ledicons
 			foreach ($frame as $ypos => $row)
 				foreach ($row as $xpos => $value)
 					if ($value == 0)
-						$this->paint_led($image, 'dull', 2 + 5 * $xpos, ($this->pointheight - $ypos - 1) * 6 + 2);
+						$this->paint_led('dull', 2 + 5 * $xpos, ($this->pointheight - $ypos - 1) * 6 + 2, $image);
 					elseif ($value == 1)
-						$this->paint_led($image, 'lit', 2 + 5 * $xpos, ($this->pointheight - $ypos - 1) * 6 + 2);
+						$this->paint_led('lit', 2 + 5 * $xpos, ($this->pointheight - $ypos - 1) * 6 + 2, $image);
 
 			$this->anim->AddFrame($image, mt_rand(5,8), $colours['purple']);
 			imagedestroy($image);
@@ -122,7 +122,7 @@ class captcha_ledicons_anim extends captcha_ledicons
 		return array($image, $colours);
 	}
 
-	protected function create_led($id)
+	protected function create_led($id, $background = false, $lowlight_col = '', $highlight_col = '')
 	{
 		if (isset($this->leds[$id]))
 			return false;
@@ -139,7 +139,7 @@ class captcha_ledicons_anim extends captcha_ledicons
 		return true;
 	}
 
-	protected function paint_led($image, $id, $x, $y)
+	protected function paint_led($id, $x, $y, $image = null)
 	{
 		imagecopy ($image, $this->leds[$id], $x, $y, 0, 0, 4, 4);
 	}

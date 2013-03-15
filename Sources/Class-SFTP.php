@@ -21,36 +21,36 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  *
- * @category   Net
- * @package    Net_SFTP
- * @author     Jim Wigginton <terrafrost@php.net>
- * @copyright  MMIX Jim Wigginton
- * @license    http://www.opensource.org/licenses/mit-license.html  MIT License
- * @link       http://phpseclib.sourceforge.net
- * @link       http://pear.php.net/package/Math_BigInteger
+ * @category	Net
+ * @package		Net_SFTP
+ * @author		Jim Wigginton <terrafrost@php.net>
+ * @copyright	MMIX Jim Wigginton
+ * @license		http://www.opensource.org/licenses/mit-license.html  MIT License
+ * @link		http://phpseclib.sourceforge.net
+ * @link		http://pear.php.net/package/Math_BigInteger
  */
 
 // Constants used by the different classes.
-define('NET_SSH2_MASK_CONSTRUCTOR', 0x00000001);
-define('NET_SSH2_MASK_LOGIN',       0x00000002);
-define('NET_SSH2_MASK_SHELL',       0x00000004);
+define('NET_SSH2_MASK_CONSTRUCTOR',	0x00000001);
+define('NET_SSH2_MASK_LOGIN',		0x00000002);
+define('NET_SSH2_MASK_SHELL',		0x00000004);
 
 define('NET_SSH2_CHANNEL_EXEC', 0);
 define('NET_SSH2_CHANNEL_SHELL',1);
 
-define('NET_SSH2_LOG_SIMPLE',  1);
+define('NET_SSH2_LOG_SIMPLE', 1);
 define('NET_SSH2_LOG_COMPLEX', 2);
 
-define('NET_SSH2_READ_SIMPLE',  1);
+define('NET_SSH2_READ_SIMPLE', 1);
 define('NET_SSH2_READ_REGEX', 2);
 
-define('NET_SFTP_LOG_SIMPLE',  NET_SSH2_LOG_SIMPLE);
+define('NET_SFTP_LOG_SIMPLE', NET_SSH2_LOG_SIMPLE);
 define('NET_SFTP_LOG_COMPLEX', NET_SSH2_LOG_COMPLEX);
 
 define('NET_SFTP_CHANNEL', 2);
 
 define('NET_SFTP_LOCAL_FILE', 1);
-define('NET_SFTP_STRING',  2);
+define('NET_SFTP_STRING', 2);
 
 define('MATH_BIGINTEGER_MONTGOMERY', 0);
 define('MATH_BIGINTEGER_BARRETT', 1);
@@ -72,8 +72,8 @@ define('MATH_BIGINTEGER_MAX_DIGIT52', pow(2, 52));
 define('MATH_BIGINTEGER_KARATSUBA_CUTOFF', 25);
 
 define('CRYPT_HASH_MODE_INTERNAL', 1);
-define('CRYPT_HASH_MODE_MHASH',    2);
-define('CRYPT_HASH_MODE_HASH',     3);
+define('CRYPT_HASH_MODE_MHASH', 2);
+define('CRYPT_HASH_MODE_HASH', 3);
 
 define('CRYPT_RIJNDAEL_MODE_CTR', -1);
 define('CRYPT_RIJNDAEL_MODE_ECB', 1);
@@ -105,13 +105,13 @@ define('CRYPT_DES_MODE_MCRYPT', 2);
 define('CRYPT_DES_MODE_3CBC', -2);
 define('CRYPT_DES_MODE_CBC3', CRYPT_DES_MODE_CBC);
 
-define('CRYPT_RSA_ENCRYPTION_OAEP',  1);
+define('CRYPT_RSA_ENCRYPTION_OAEP', 1);
 define('CRYPT_RSA_ENCRYPTION_PKCS1', 2);
 
-define('CRYPT_RSA_SIGNATURE_PSS',  1);
+define('CRYPT_RSA_SIGNATURE_PSS', 1);
 define('CRYPT_RSA_SIGNATURE_PKCS1', 2);
 
-define('CRYPT_RSA_ASN1_INTEGER',   2);
+define('CRYPT_RSA_ASN1_INTEGER', 2);
 define('CRYPT_RSA_ASN1_SEQUENCE', 48);
 
 define('CRYPT_RSA_MODE_INTERNAL', 1);
@@ -259,7 +259,6 @@ class Net_SSH2
 			return;
 		}
 
-
 		$temp = '';
 		$extra = '';
 		while (!feof($this->fsock) && !preg_match('#^SSH-(\d\.\d+)#', $temp, $matches)) {
@@ -332,29 +331,45 @@ class Net_SSH2
 	function _key_exchange($kexinit_payload_server)
 	{
 		static $kex_algorithms = array(
-			'diffie-hellman-group1-sha1',             'diffie-hellman-group14-sha1'         );
+			'diffie-hellman-group1-sha1',
+			'diffie-hellman-group14-sha1'
+		);
 
 		static $server_host_key_algorithms = array(
-			'ssh-rsa',             'ssh-dss'          );
+			'ssh-rsa',
+			'ssh-dss'
+		);
 
 		static $encryption_algorithms = array(
-						'arcfour256',
+			'arcfour256',
 			'arcfour128',
-
 			'arcfour',
-			'aes128-cbc',             'aes192-cbc',             'aes256-cbc',
-						'aes128-ctr',             'aes192-ctr',             'aes256-ctr',             '3des-ctr',
-			'3des-cbc',               'none'                );
+			'aes128-cbc',
+			'aes192-cbc',
+			'aes256-cbc',
+			'aes128-ctr',
+			'aes192-ctr',
+			'aes256-ctr',
+			'3des-ctr',
+			'3des-cbc',
+			'none'
+		);
 
 		static $mac_algorithms = array(
-			'hmac-sha1-96',             'hmac-sha1',                'hmac-md5-96',              'hmac-md5',                 'none'                  );
+			'hmac-sha1-96',
+			'hmac-sha1',
+			'hmac-md5-96',
+			'hmac-md5',
+			'none'
+		);
 
 		static $compression_algorithms = array(
-			'none'                       );
+			'none'
+		);
 
 		static $str_kex_algorithms, $str_server_host_key_algorithms,
-			   $encryption_algorithms_server_to_client, $mac_algorithms_server_to_client, $compression_algorithms_server_to_client,
-			   $encryption_algorithms_client_to_server, $mac_algorithms_client_to_server, $compression_algorithms_client_to_server;
+			$encryption_algorithms_server_to_client, $mac_algorithms_server_to_client, $compression_algorithms_server_to_client,
+			$encryption_algorithms_client_to_server, $mac_algorithms_client_to_server, $compression_algorithms_client_to_server;
 
 		if (empty($str_kex_algorithms)) {
 			$str_kex_algorithms = implode(',', $kex_algorithms);
@@ -370,7 +385,8 @@ class Net_SSH2
 		}
 
 		$response = $kexinit_payload_server;
-		$this->_string_shift($response, 1);         $server_cookie = $this->_string_shift($response, 16);
+		$this->_string_shift($response, 1);
+		$server_cookie = $this->_string_shift($response, 16);
 
 		$temp = unpack('Nlength', $this->_string_shift($response, 4));
 		$this->kex_algorithms = explode(',', $this->_string_shift($response, $temp['length']));
@@ -405,7 +421,7 @@ class Net_SSH2
 		extract(unpack('Cfirst_kex_packet_follows', $this->_string_shift($response, 1)));
 		$first_kex_packet_follows = $first_kex_packet_follows != 0;
 
-				$kexinit_payload_client = pack('Ca*Na*Na*Na*Na*Na*Na*Na*Na*Na*Na*CN',
+		$kexinit_payload_client = pack('Ca*Na*Na*Na*Na*Na*Na*Na*Na*Na*Na*CN',
 			NET_SSH2_MSG_KEXINIT, $client_cookie, strlen($str_kex_algorithms), $str_kex_algorithms,
 			strlen($str_server_host_key_algorithms), $str_server_host_key_algorithms, strlen($encryption_algorithms_client_to_server),
 			$encryption_algorithms_client_to_server, strlen($encryption_algorithms_server_to_client), $encryption_algorithms_server_to_client,
@@ -491,14 +507,14 @@ class Net_SSH2
 
 		$keyLength = $decryptKeyLength > $encryptKeyLength ? $decryptKeyLength : $encryptKeyLength;
 
-				for ($i = 0; $i < count($kex_algorithms) && !in_array($kex_algorithms[$i], $this->kex_algorithms); $i++);
+		for ($i = 0; $i < count($kex_algorithms) && !in_array($kex_algorithms[$i], $this->kex_algorithms); $i++);
 		if ($i == count($kex_algorithms)) {
 			user_error('No compatible key exchange algorithms found', E_USER_NOTICE);
 			return $this->_disconnect(NET_SSH2_DISCONNECT_KEY_EXCHANGE_FAILED);
 		}
 
 		switch ($kex_algorithms[$i]) {
-									case 'diffie-hellman-group1-sha1':
+			case 'diffie-hellman-group1-sha1':
 				$p = pack('H256', 'FFFFFFFFFFFFFFFFC90FDAA22168C234C4C6628B80DC1CD129024E088A67CC74' .
 								  '020BBEA63B139B22514A08798E3404DDEF9519B3CD3A431B302B0A6DF25F1437' .
 								  '4FE1356D6D51C245E485B576625E7EC6F44C42E9A637ED6B0BFF5CB6F406B7ED' .
@@ -506,7 +522,7 @@ class Net_SSH2
 				$keyLength = $keyLength < 160 ? $keyLength : 160;
 				$hash = 'sha1';
 				break;
-						case 'diffie-hellman-group14-sha1':
+			case 'diffie-hellman-group14-sha1':
 				$p = pack('H512', 'FFFFFFFFFFFFFFFFC90FDAA22168C234C4C6628B80DC1CD129024E088A67CC74' .
 								  '020BBEA63B139B22514A08798E3404DDEF9519B3CD3A431B302B0A6DF25F1437' .
 								  '4FE1356D6D51C245E485B576625E7EC6F44C42E9A637ED6B0BFF5CB6F406B7ED' .
@@ -520,7 +536,6 @@ class Net_SSH2
 		}
 
 		$p = new Math_BigInteger($p, 256);
-
 
 		$q = new Math_BigInteger(1);
 		$q = $q->bitwise_leftShift(2 * $keyLength);
@@ -620,27 +635,29 @@ class Net_SSH2
 		switch ($encrypt) {
 			case '3des-cbc':
 				$this->encrypt = new Crypt_TripleDES();
-								break;
+				break;
 			case '3des-ctr':
 				$this->encrypt = new Crypt_TripleDES(CRYPT_DES_MODE_CTR);
-								break;
+				break;
 			case 'aes256-cbc':
 			case 'aes192-cbc':
 			case 'aes128-cbc':
 				$this->encrypt = new Crypt_AES();
-				$this->encrypt_block_size = 16;                 break;
+				$this->encrypt_block_size = 16;
+				break;
 			case 'aes256-ctr':
 			case 'aes192-ctr':
 			case 'aes128-ctr':
 				$this->encrypt = new Crypt_AES(CRYPT_AES_MODE_CTR);
-				$this->encrypt_block_size = 16;                 break;
+				$this->encrypt_block_size = 16;
+				break;
 			case 'arcfour':
 			case 'arcfour128':
 			case 'arcfour256':
 				$this->encrypt = new Crypt_RC4();
 				break;
 			case 'none';
-						}
+		}
 
 		switch ($decrypt) {
 			case '3des-cbc':
@@ -667,7 +684,7 @@ class Net_SSH2
 				$this->decrypt = new Crypt_RC4();
 				break;
 			case 'none';
-						}
+		}
 
 		$keyBytes = pack('Na*', strlen($keyBytes), $keyBytes);
 
@@ -705,7 +722,6 @@ class Net_SSH2
 			$this->decrypt->setKey(substr($key, 0, $decryptKeyLength));
 		}
 
-
 		if ($encrypt == 'arcfour128' || $encrypt == 'arcfour256') {
 			$this->encrypt->encrypt(str_repeat("\0", 1536));
 		}
@@ -719,7 +735,8 @@ class Net_SSH2
 			return $this->_disconnect(NET_SSH2_DISCONNECT_KEY_EXCHANGE_FAILED);
 		}
 
-		$createKeyLength = 0;         switch ($mac_algorithms[$i]) {
+		$createKeyLength = 0;
+		switch ($mac_algorithms[$i]) {
 			case 'hmac-sha1':
 				$this->hmac_create = new Crypt_Hash('sha1');
 				$createKeyLength = 20;
@@ -837,7 +854,7 @@ class Net_SSH2
 			return false;
 		}
 
-				if (defined('NET_SSH2_LOGGING') && NET_SSH2_LOGGING == NET_SSH2_LOG_COMPLEX) {
+		if (defined('NET_SSH2_LOGGING') && NET_SSH2_LOGGING == NET_SSH2_LOG_COMPLEX) {
 			$packet = pack('CNa*Na*Na*CNa*',
 				NET_SSH2_MSG_USERAUTH_REQUEST, strlen('username'), 'username', strlen('ssh-connection'), 'ssh-connection',
 				strlen('password'), 'password', 0, strlen('password'), 'password'
@@ -854,14 +871,15 @@ class Net_SSH2
 		extract(unpack('Ctype', $this->_string_shift($response, 1)));
 
 		switch ($type) {
-			case NET_SSH2_MSG_USERAUTH_PASSWD_CHANGEREQ:                 if (defined('NET_SSH2_LOGGING')) {
+			case NET_SSH2_MSG_USERAUTH_PASSWD_CHANGEREQ:
+				if (defined('NET_SSH2_LOGGING')) {
 					$this->message_number_log[count($this->message_number_log) - 1] = 'NET_SSH2_MSG_USERAUTH_PASSWD_CHANGEREQ';
 				}
 				extract(unpack('Nlength', $this->_string_shift($response, 4)));
 				$this->errors[] = 'SSH_MSG_USERAUTH_PASSWD_CHANGEREQ: ' . utf8_decode($this->_string_shift($response, $length));
 				return $this->_disconnect(NET_SSH2_DISCONNECT_AUTH_CANCELLED_BY_USER);
 			case NET_SSH2_MSG_USERAUTH_FAILURE:
-												extract(unpack('Nlength', $this->_string_shift($response, 4)));
+				extract(unpack('Nlength', $this->_string_shift($response, 4)));
 				$auth_methods = explode(',', $this->_string_shift($response, $length));
 				if (in_array('keyboard-interactive', $auth_methods)) {
 					if ($this->_keyboard_interactive_login($username, $password)) {
@@ -907,7 +925,7 @@ class Net_SSH2
 
 		switch ($type) {
 			case NET_SSH2_MSG_USERAUTH_INFO_REQUEST:
-								if (defined('NET_SSH2_LOGGING')) {
+				if (defined('NET_SSH2_LOGGING')) {
 					$this->message_number_log[count($this->message_number_log) - 1] = str_replace(
 						'UNKNOWN',
 						'NET_SSH2_MSG_USERAUTH_INFO_REQUEST',
@@ -916,13 +934,14 @@ class Net_SSH2
 				}
 
 				extract(unpack('Nlength', $this->_string_shift($response, 4)));
-				$this->_string_shift($response, $length);                 extract(unpack('Nlength', $this->_string_shift($response, 4)));
-				$this->_string_shift($response, $length);                 extract(unpack('Nlength', $this->_string_shift($response, 4)));
-				$this->_string_shift($response, $length);                 extract(unpack('Nnum_prompts', $this->_string_shift($response, 4)));
+				$this->_string_shift($response, $length);
+				extract(unpack('Nlength', $this->_string_shift($response, 4)));
+				$this->_string_shift($response, $length);
+				extract(unpack('Nlength', $this->_string_shift($response, 4)));
+				$this->_string_shift($response, $length);
+				extract(unpack('Nnum_prompts', $this->_string_shift($response, 4)));
 
-
-
-								$packet = $logged = pack('CN', NET_SSH2_MSG_USERAUTH_INFO_RESPONSE, count($responses));
+				$packet = $logged = pack('CN', NET_SSH2_MSG_USERAUTH_INFO_RESPONSE, count($responses));
 				for ($i = 0; $i < count($responses); $i++) {
 					$packet.= pack('Na*', strlen($responses[$i]), $responses[$i]);
 					$logged.= pack('Na*', strlen('dummy-answer'), 'dummy-answer');
@@ -940,9 +959,7 @@ class Net_SSH2
 					);
 					$this->message_log[count($this->message_log) - 1] = $logged;
 				}
-
-
-												return $this->_keyboard_interactive_process();
+				return $this->_keyboard_interactive_process();
 			case NET_SSH2_MSG_USERAUTH_SUCCESS:
 				return true;
 			case NET_SSH2_MSG_USERAUTH_FAILURE:
@@ -992,7 +1009,7 @@ class Net_SSH2
 				$this->errors[] = 'SSH_MSG_USERAUTH_FAILURE: ' . $this->_string_shift($response, $length);
 				return $this->_disconnect(NET_SSH2_DISCONNECT_AUTH_CANCELLED_BY_USER);
 			case NET_SSH2_MSG_USERAUTH_PK_OK:
-												if (defined('NET_SSH2_LOGGING')) {
+				if (defined('NET_SSH2_LOGGING')) {
 					$this->message_number_log[count($this->message_number_log) - 1] = str_replace(
 						'UNKNOWN',
 						'NET_SSH2_MSG_USERAUTH_PK_OK',
@@ -1021,7 +1038,7 @@ class Net_SSH2
 
 		switch ($type) {
 			case NET_SSH2_MSG_USERAUTH_FAILURE:
-								return false;
+				return false;
 			case NET_SSH2_MSG_USERAUTH_SUCCESS:
 				$this->bitmap |= NET_SSH2_MASK_LOGIN;
 				return true;
@@ -1036,8 +1053,8 @@ class Net_SSH2
 			return false;
 		}
 
-										$this->window_size_client_to_server[NET_SSH2_CHANNEL_EXEC] = 0x7FFFFFFF;
-						$packet_size = 0x4000;
+		$this->window_size_client_to_server[NET_SSH2_CHANNEL_EXEC] = 0x7FFFFFFF;
+		$packet_size = 0x4000;
 
 		$packet = pack('CNa*N3',
 			NET_SSH2_MSG_CHANNEL_OPEN, strlen('session'), 'session', NET_SSH2_CHANNEL_EXEC, $this->window_size_client_to_server[NET_SSH2_CHANNEL_EXEC], $packet_size);
@@ -1053,8 +1070,7 @@ class Net_SSH2
 			return false;
 		}
 
-
-								$packet = pack('CNNa*CNa*',
+		$packet = pack('CNNa*CNa*',
 			NET_SSH2_MSG_CHANNEL_REQUEST, $this->server_channels[NET_SSH2_CHANNEL_EXEC], strlen('exec'), 'exec', 1, strlen($command), $command);
 		if (!$this->_send_binary_packet($packet)) {
 			return false;
@@ -1114,7 +1130,6 @@ class Net_SSH2
 		if (!$this->_send_binary_packet($packet)) {
 			return false;
 		}
-
 
 		$response = $this->_get_binary_packet();
 		if ($response === false) {
@@ -1213,7 +1228,8 @@ class Net_SSH2
 			return false;
 		}
 
-		$start = strtok(microtime(), ' ') + strtok('');         $raw = fread($this->fsock, $this->decrypt_block_size);
+		$start = strtok(microtime(), ' ') + strtok('');
+		$raw = fread($this->fsock, $this->decrypt_block_size);
 		$stop = strtok(microtime(), ' ') + strtok('');
 
 		if (empty($raw)) {
@@ -1248,13 +1264,11 @@ class Net_SSH2
 			}
 		}
 
-
 		$this->get_seq_no++;
 
 		if (defined('NET_SSH2_LOGGING')) {
 			$temp = isset($this->message_numbers[ord($payload[0])]) ? $this->message_numbers[ord($payload[0])] : 'UNKNOWN (' . ord($payload[0]) . ')';
-			$this->message_number_log[] = '<- ' . $temp .
-										  ' (' . round($stop - $start, 4) . 's)';
+			$this->message_number_log[] = '<- ' . $temp . ' (' . round($stop - $start, 4) . 's)';
 			if (NET_SSH2_LOGGING == NET_SSH2_LOG_COMPLEX) {
 				$this->message_log[] = substr($payload, 1);
 			}
@@ -1293,16 +1307,17 @@ class Net_SSH2
 				}
 		}
 
-				if (($this->bitmap & NET_SSH2_MASK_CONSTRUCTOR) && !($this->bitmap & NET_SSH2_MASK_LOGIN) && ord($payload[0]) == NET_SSH2_MSG_USERAUTH_BANNER) {
+		if (($this->bitmap & NET_SSH2_MASK_CONSTRUCTOR) && !($this->bitmap & NET_SSH2_MASK_LOGIN) && ord($payload[0]) == NET_SSH2_MSG_USERAUTH_BANNER) {
 			$this->_string_shift($payload, 1);
 			extract(unpack('Nlength', $this->_string_shift($payload, 4)));
 			$this->errors[] = 'SSH_MSG_USERAUTH_BANNER: ' . utf8_decode($this->_string_shift($payload, $length));
 			$payload = $this->_get_binary_packet();
 		}
 
-				if (($this->bitmap & NET_SSH2_MASK_CONSTRUCTOR) && ($this->bitmap & NET_SSH2_MASK_LOGIN)) {
+		if (($this->bitmap & NET_SSH2_MASK_CONSTRUCTOR) && ($this->bitmap & NET_SSH2_MASK_LOGIN)) {
 			switch (ord($payload[0])) {
-				case NET_SSH2_MSG_GLOBAL_REQUEST:                     $this->_string_shift($payload, 1);
+				case NET_SSH2_MSG_GLOBAL_REQUEST:
+					$this->_string_shift($payload, 1);
 					extract(unpack('Nlength', $this->_string_shift($payload)));
 					$this->errors[] = 'SSH_MSG_GLOBAL_REQUEST: ' . utf8_decode($this->_string_shift($payload, $length));
 
@@ -1312,11 +1327,13 @@ class Net_SSH2
 
 					$payload = $this->_get_binary_packet();
 					break;
-				case NET_SSH2_MSG_CHANNEL_OPEN:                     $this->_string_shift($payload, 1);
+				case NET_SSH2_MSG_CHANNEL_OPEN:
+					$this->_string_shift($payload, 1);
 					extract(unpack('N', $this->_string_shift($payload, 4)));
 					$this->errors[] = 'SSH_MSG_CHANNEL_OPEN: ' . utf8_decode($this->_string_shift($payload, $length));
 
-					$this->_string_shift($payload, 4);                     extract(unpack('Nserver_channel', $this->_string_shift($payload, 4)));
+					$this->_string_shift($payload, 4);
+					extract(unpack('Nserver_channel', $this->_string_shift($payload, 4)));
 
 					$packet = pack('CN3a*Na*',
 						NET_SSH2_MSG_REQUEST_FAILURE, $server_channel, NET_SSH2_OPEN_ADMINISTRATIVELY_PROHIBITED, 0, '', 0, '');
@@ -1360,10 +1377,11 @@ class Net_SSH2
 						case NET_SSH2_MSG_CHANNEL_OPEN_CONFIRMATION:
 							extract(unpack('Nserver_channel', $this->_string_shift($response, 4)));
 							$this->server_channels[$client_channel] = $server_channel;
-							$this->_string_shift($response, 4);                             $temp = unpack('Npacket_size_client_to_server', $this->_string_shift($response, 4));
+							$this->_string_shift($response, 4);
+							$temp = unpack('Npacket_size_client_to_server', $this->_string_shift($response, 4));
 							$this->packet_size_client_to_server[$client_channel] = $temp['packet_size_client_to_server'];
 							return true;
-												default:
+						default:
 							user_error('Unable to open channel', E_USER_NOTICE);
 							return $this->_disconnect(NET_SSH2_DISCONNECT_BY_APPLICATION);
 					}
@@ -1372,7 +1390,7 @@ class Net_SSH2
 					switch ($type) {
 						case NET_SSH2_MSG_CHANNEL_SUCCESS:
 							return true;
-												default:
+						default:
 							user_error('Unable to request pseudo-terminal', E_USER_NOTICE);
 							return $this->_disconnect(NET_SSH2_DISCONNECT_BY_APPLICATION);
 					}
@@ -1397,7 +1415,7 @@ class Net_SSH2
 						break;
 					}
 
-										extract(unpack('Ndata_type_code/Nlength', $this->_string_shift($response, 8)));
+					extract(unpack('Ndata_type_code/Nlength', $this->_string_shift($response, 8)));
 					$data = $this->_string_shift($response, $length);
 					if ($client_channel == $channel) {
 						return $data;
@@ -1443,17 +1461,16 @@ class Net_SSH2
 			return false;
 		}
 
-
-				$packet_length = strlen($data) + 9;
-				$packet_length+= (($this->encrypt_block_size - 1) * $packet_length) % $this->encrypt_block_size;
-				$padding_length = $packet_length - strlen($data) - 5;
+		$packet_length = strlen($data) + 9;
+		$packet_length+= (($this->encrypt_block_size - 1) * $packet_length) % $this->encrypt_block_size;
+		$padding_length = $packet_length - strlen($data) - 5;
 
 		$padding = '';
 		for ($i = 0; $i < $padding_length; $i++) {
 			$padding.= chr(crypt_random(0, 255));
 		}
 
-				$packet = pack('NCa*', $packet_length - 4, $padding_length, $data . $padding);
+		$packet = pack('NCa*', $packet_length - 4, $padding_length, $data . $padding);
 
 		$hmac = $this->hmac_create !== false ? $this->hmac_create->hash(pack('Na*', $this->send_seq_no, $packet)) : '';
 		$this->send_seq_no++;
@@ -1464,13 +1481,13 @@ class Net_SSH2
 
 		$packet.= $hmac;
 
-		$start = strtok(microtime(), ' ') + strtok('');         $result = strlen($packet) == fputs($this->fsock, $packet);
+		$start = strtok(microtime(), ' ') + strtok('');
+		$result = strlen($packet) == fputs($this->fsock, $packet);
 		$stop = strtok(microtime(), ' ') + strtok('');
 
 		if (defined('NET_SSH2_LOGGING')) {
 			$temp = isset($this->message_numbers[ord($data[0])]) ? $this->message_numbers[ord($data[0])] : 'UNKNOWN (' . ord($data[0]) . ')';
-			$this->message_number_log[] = '-> ' . $temp .
-										  ' (' . round($stop - $start, 4) . 's)';
+			$this->message_number_log[] = '-> ' . $temp . ' (' . round($stop - $start, 4) . 's)';
 			if (NET_SSH2_LOGGING == NET_SSH2_LOG_COMPLEX) {
 				$this->message_log[] = substr($data, 1);
 			}
@@ -1482,7 +1499,7 @@ class Net_SSH2
 	function _send_channel_packet($client_channel, $data)
 	{
 		while (strlen($data) > $this->packet_size_client_to_server[$client_channel]) {
-						$this->window_size_client_to_server[$client_channel]-= $this->packet_size_client_to_server[$client_channel];
+			$this->window_size_client_to_server[$client_channel]-= $this->packet_size_client_to_server[$client_channel];
 			if ($this->window_size_client_to_server[$client_channel] < 0) {
 				$packet = pack('CNN', NET_SSH2_MSG_CHANNEL_WINDOW_ADJUST, $this->server_channels[$client_channel], $this->window_size);
 				if (!$this->_send_binary_packet($packet)) {
@@ -1503,7 +1520,7 @@ class Net_SSH2
 			}
 		}
 
-				$this->window_size_client_to_server[$client_channel]-= strlen($data);
+		$this->window_size_client_to_server[$client_channel]-= strlen($data);
 		if ($this->window_size_client_to_server[$client_channel] < 0) {
 			$packet = pack('CNN', NET_SSH2_MSG_CHANNEL_WINDOW_ADJUST, $this->server_channels[$client_channel], $this->window_size);
 			if (!$this->_send_binary_packet($packet)) {
@@ -1596,13 +1613,14 @@ class Net_SSH2
 				}
 				$fragment = $this->_string_shift($current_log, $short_width);
 				$hex = substr(
-						   preg_replace(
-							   '#(.)#es',
-							   '"' . $boundary . '" . str_pad(dechex(ord(substr("\\1", -1))), 2, "0", STR_PAD_LEFT)',
-							   $fragment),
-						   strlen($boundary)
-					   );
-																$raw = preg_replace('#[^\x20-\x7E]|<#', '.', $fragment);
+					preg_replace(
+						'#(.)#es',
+						'"' . $boundary . '" . str_pad(dechex(ord(substr("\\1", -1))), 2, "0", STR_PAD_LEFT)',
+						$fragment
+					),
+					strlen($boundary)
+				);
+				$raw = preg_replace('#[^\x20-\x7E]|<#', '.', $fragment);
 				$output.= str_pad($hex, $long_width - $short_width, ' ') . $raw . "\r\n";
 				$j++;
 			} while (!empty($current_log));
@@ -1672,7 +1690,6 @@ class Net_SSH2
 		return $this->languages_server_to_client;
 	}
 
-
 	function getLanguagesClient2Server()
 	{
 		return $this->languages_client_to_server;
@@ -1699,7 +1716,6 @@ class Net_SSH2
 
 				$temp = unpack('Nlength', $this->_string_shift($server_public_host_key, 4));
 				$y = new Math_BigInteger($this->_string_shift($server_public_host_key, $temp['length']), -256);
-
 
 				$temp = unpack('Nlength', $this->_string_shift($signature, 4));
 				if ($temp['length'] != 40) {
@@ -1744,12 +1760,8 @@ class Net_SSH2
 				$n = new Math_BigInteger($this->_string_shift($server_public_host_key, $temp['length']), -256);
 				$nLength = $temp['length'];
 
-
-
 				$temp = unpack('Nlength', $this->_string_shift($signature, 4));
 				$s = new Math_BigInteger($this->_string_shift($signature, $temp['length']), 256);
-
-
 
 				if ($s->compare(new Math_BigInteger()) < 0 || $s->compare($n->subtract(new Math_BigInteger(1))) > 0) {
 					user_error('Invalid signature', E_USER_NOTICE);
@@ -1791,15 +1803,15 @@ class Net_SFTP extends Net_SSH2
 	{
 		parent::Net_SSH2($host, $port, $timeout);
 		$this->packet_types = array(
-			1  => 'NET_SFTP_INIT',
-			2  => 'NET_SFTP_VERSION',
+			1 => 'NET_SFTP_INIT',
+			2 => 'NET_SFTP_VERSION',
 
-			3  => 'NET_SFTP_OPEN',
-			4  => 'NET_SFTP_CLOSE',
-			5  => 'NET_SFTP_READ',
-			6  => 'NET_SFTP_WRITE',
-			7  => 'NET_SFTP_LSTAT',
-			9  => 'NET_SFTP_SETSTAT',
+			3 => 'NET_SFTP_OPEN',
+			4 => 'NET_SFTP_CLOSE',
+			5 => 'NET_SFTP_READ',
+			6 => 'NET_SFTP_WRITE',
+			7 => 'NET_SFTP_LSTAT',
+			9 => 'NET_SFTP_SETSTAT',
 			11 => 'NET_SFTP_OPENDIR',
 			12 => 'NET_SFTP_READDIR',
 			13 => 'NET_SFTP_REMOVE',
@@ -1810,12 +1822,12 @@ class Net_SFTP extends Net_SSH2
 
 			18 => 'NET_SFTP_RENAME',
 
-			101=> 'NET_SFTP_STATUS',
-			102=> 'NET_SFTP_HANDLE',
+			101 => 'NET_SFTP_STATUS',
+			102 => 'NET_SFTP_HANDLE',
 
-			103=> 'NET_SFTP_DATA',
-			104=> 'NET_SFTP_NAME',
-			105=> 'NET_SFTP_ATTRS',
+			103 => 'NET_SFTP_DATA',
+			104 => 'NET_SFTP_NAME',
+			105 => 'NET_SFTP_ATTRS',
 
 			200=> 'NET_SFTP_EXTENDED'
 		);
@@ -1832,9 +1844,10 @@ class Net_SFTP extends Net_SSH2
 		);
 		$this->attributes = array(
 			0x00000001 => 'NET_SFTP_ATTR_SIZE',
-			0x00000002 => 'NET_SFTP_ATTR_UIDGID',             0x00000004 => 'NET_SFTP_ATTR_PERMISSIONS',
+			0x00000002 => 'NET_SFTP_ATTR_UIDGID',
+			0x00000004 => 'NET_SFTP_ATTR_PERMISSIONS',
 			0x00000008 => 'NET_SFTP_ATTR_ACCESSTIME',
-															  -1 << 31 => 'NET_SFTP_ATTR_EXTENDED'
+			-1 << 31 => 'NET_SFTP_ATTR_EXTENDED'
 		);
 		$this->open_flags = array(
 			0x00000001 => 'NET_SFTP_OPEN_READ',
@@ -1935,7 +1948,7 @@ class Net_SFTP extends Net_SSH2
 
 		$file = '';
 		if ($this->pwd !== false) {
-												if ($dir[strlen($dir) - 1] != '/') {
+			if ($dir[strlen($dir) - 1] != '/') {
 				$file = basename($dir);
 				$dir = dirname($dir);
 			}
@@ -1947,19 +1960,19 @@ class Net_SFTP extends Net_SSH2
 			if ($dir[0] != '/') {
 				$dir = $this->pwd . '/' . $dir;
 			}
-											}
+		}
 
-
-				if (!$this->_send_sftp_packet(NET_SFTP_REALPATH, pack('Na*', strlen($dir), $dir))) {
+		if (!$this->_send_sftp_packet(NET_SFTP_REALPATH, pack('Na*', strlen($dir), $dir))) {
 			return false;
 		}
 
 		$response = $this->_get_sftp_packet();
 		switch ($this->packet_type) {
 			case NET_SFTP_NAME:
-																$this->_string_shift($response, 4);                 extract(unpack('Nlength', $this->_string_shift($response, 4)));
+				$this->_string_shift($response, 4);
+				extract(unpack('Nlength', $this->_string_shift($response, 4)));
 				$realpath = $this->_string_shift($response, $length);
-																extract(unpack('Nlength', $this->_string_shift($response, 4)));
+				extract(unpack('Nlength', $this->_string_shift($response, 4)));
 				$this->fileType = $this->_parseLongname($this->_string_shift($response, $length));
 				break;
 			case NET_SFTP_STATUS:
@@ -1971,7 +1984,7 @@ class Net_SFTP extends Net_SSH2
 				return false;
 		}
 
-						return $realpath . '/' . $file;
+		return $realpath . '/' . $file;
 	}
 
 	function chdir($dir)
@@ -1985,11 +1998,11 @@ class Net_SFTP extends Net_SSH2
 		}
 		$dir = $this->_realpath($dir);
 
-				if (!$this->_send_sftp_packet(NET_SFTP_OPENDIR, pack('Na*', strlen($dir), $dir))) {
+		if (!$this->_send_sftp_packet(NET_SFTP_OPENDIR, pack('Na*', strlen($dir), $dir))) {
 			return false;
 		}
 
-				$response = $this->_get_sftp_packet();
+		$response = $this->_get_sftp_packet();
 		switch ($this->packet_type) {
 			case NET_SFTP_HANDLE:
 				$handle = substr($response, 4);
@@ -2045,17 +2058,17 @@ class Net_SFTP extends Net_SSH2
 			return false;
 		}
 
-				if (!$this->_send_sftp_packet(NET_SFTP_OPENDIR, pack('Na*', strlen($dir), $dir))) {
+		if (!$this->_send_sftp_packet(NET_SFTP_OPENDIR, pack('Na*', strlen($dir), $dir))) {
 			return false;
 		}
 
 		$response = $this->_get_sftp_packet();
 		switch ($this->packet_type) {
 			case NET_SFTP_HANDLE:
-																$handle = substr($response, 4);
+				$handle = substr($response, 4);
 				break;
 			case NET_SFTP_STATUS:
-								extract(unpack('Nstatus/Nlength', $this->_string_shift($response, 8)));
+				extract(unpack('Nstatus/Nlength', $this->_string_shift($response, 8)));
 				$this->sftp_errors[] = $this->status_codes[$status] . ': ' . $this->_string_shift($response, $length);
 				return false;
 			default:
@@ -2065,7 +2078,7 @@ class Net_SFTP extends Net_SSH2
 
 		$contents = array();
 		while (true) {
-												if (!$this->_send_sftp_packet(NET_SFTP_READDIR, pack('Na*', strlen($handle), $handle))) {
+			if (!$this->_send_sftp_packet(NET_SFTP_READDIR, pack('Na*', strlen($handle), $handle))) {
 				return false;
 			}
 
@@ -2078,7 +2091,8 @@ class Net_SFTP extends Net_SSH2
 						$shortname = $this->_string_shift($response, $length);
 						extract(unpack('Nlength', $this->_string_shift($response, 4)));
 						$longname = $this->_string_shift($response, $length);
-						$attributes = $this->_parseAttributes($response);                         if (!$raw) {
+						$attributes = $this->_parseAttributes($response);
+						if (!$raw) {
 							$contents[] = $shortname;
 						} else {
 							$contents[$shortname] = $attributes;
@@ -2087,7 +2101,7 @@ class Net_SFTP extends Net_SSH2
 								$contents[$shortname]['type'] = $fileType;
 							}
 						}
-																	}
+					}
 					break;
 				case NET_SFTP_STATUS:
 					extract(unpack('Nstatus', $this->_string_shift($response, 4)));
@@ -2107,7 +2121,7 @@ class Net_SFTP extends Net_SSH2
 			return false;
 		}
 
-						$response = $this->_get_sftp_packet();
+		$response = $this->_get_sftp_packet();
 		if ($this->packet_type != NET_SFTP_STATUS) {
 			user_error('Expected SSH_FXP_STATUS', E_USER_NOTICE);
 			return false;
@@ -2150,7 +2164,6 @@ class Net_SFTP extends Net_SSH2
 
 		return $this->_stat($filename, NET_SFTP_STAT);
 	}
-
 
 	function lstat($filename)
 	{
@@ -2452,7 +2465,8 @@ class Net_SFTP extends Net_SSH2
 			case NET_SFTP_HANDLE:
 				$handle = substr($response, 4);
 				break;
-			case NET_SFTP_STATUS:                 extract(unpack('Nstatus/Nlength', $this->_string_shift($response, 8)));
+			case NET_SFTP_STATUS:
+				extract(unpack('Nstatus/Nlength', $this->_string_shift($response, 8)));
 				$this->sftp_errors[] = $this->status_codes[$status] . ': ' . $this->_string_shift($response, $length);
 				return false;
 			default:
@@ -2510,7 +2524,7 @@ class Net_SFTP extends Net_SSH2
 		extract(unpack('Nstatus/Nlength', $this->_string_shift($response, 8)));
 		$this->sftp_errors[] = $this->status_codes[$status] . ': ' . $this->_string_shift($response, $length);
 
-				if ($status != NET_SFTP_STATUS_OK) {
+		if ($status != NET_SFTP_STATUS_OK) {
 			return false;
 		}
 
@@ -2540,7 +2554,7 @@ class Net_SFTP extends Net_SSH2
 			return false;
 		}
 
-				if (!$this->_send_sftp_packet(NET_SFTP_REMOVE, pack('Na*', strlen($path), $path))) {
+		if (!$this->_send_sftp_packet(NET_SFTP_REMOVE, pack('Na*', strlen($path), $path))) {
 			return false;
 		}
 
@@ -2550,7 +2564,7 @@ class Net_SFTP extends Net_SSH2
 			return false;
 		}
 
-				extract(unpack('Nstatus', $this->_string_shift($response, 4)));
+		extract(unpack('Nstatus', $this->_string_shift($response, 4)));
 		if ($status != NET_SFTP_STATUS_OK) {
 			extract(unpack('Nlength', $this->_string_shift($response, 4)));
 			$this->sftp_errors[] = $this->status_codes[$status] . ': ' . $this->_string_shift($response, $length);
@@ -2572,7 +2586,7 @@ class Net_SFTP extends Net_SSH2
 			return false;
 		}
 
-				$packet = pack('Na*Na*', strlen($oldname), $oldname, strlen($newname), $newname);
+		$packet = pack('Na*Na*', strlen($oldname), $oldname, strlen($newname), $newname);
 		if (!$this->_send_sftp_packet(NET_SFTP_RENAME, $packet)) {
 			return false;
 		}
@@ -2583,7 +2597,7 @@ class Net_SFTP extends Net_SSH2
 			return false;
 		}
 
-				extract(unpack('Nstatus', $this->_string_shift($response, 4)));
+		extract(unpack('Nstatus', $this->_string_shift($response, 4)));
 		if ($status != NET_SFTP_STATUS_OK) {
 			extract(unpack('Nlength', $this->_string_shift($response, 4)));
 			$this->sftp_errors[] = $this->status_codes[$status] . ': ' . $this->_string_shift($response, $length);
@@ -2599,20 +2613,25 @@ class Net_SFTP extends Net_SSH2
 		extract(unpack('Nflags', $this->_string_shift($response, 4)));
 				foreach ($this->attributes as $key => $value) {
 			switch ($flags & $key) {
-				case NET_SFTP_ATTR_SIZE:                                                                                                                         extract(unpack('Nupper/Nsize', $this->_string_shift($response, 8)));
+				case NET_SFTP_ATTR_SIZE:
+					extract(unpack('Nupper/Nsize', $this->_string_shift($response, 8)));
 					if ($upper) {
 						$attr['size'] = 0xFFFFFFFF;
 					} else {
 						$attr['size'] = $size < 0 ? ($size & 0x7FFFFFFF) + 0x80000000 : $size;
 					}
 					break;
-				case NET_SFTP_ATTR_UIDGID:                     $attr+= unpack('Nuid/Ngid', $this->_string_shift($response, 8));
+				case NET_SFTP_ATTR_UIDGID:
+					$attr+= unpack('Nuid/Ngid', $this->_string_shift($response, 8));
 					break;
-				case NET_SFTP_ATTR_PERMISSIONS:                     $attr+= unpack('Npermissions', $this->_string_shift($response, 4));
+				case NET_SFTP_ATTR_PERMISSIONS:
+					$attr+= unpack('Npermissions', $this->_string_shift($response, 4));
 					break;
-				case NET_SFTP_ATTR_ACCESSTIME:                     $attr+= unpack('Natime/Nmtime', $this->_string_shift($response, 8));
+				case NET_SFTP_ATTR_ACCESSTIME:
+					$attr+= unpack('Natime/Nmtime', $this->_string_shift($response, 8));
 					break;
-				case NET_SFTP_ATTR_EXTENDED:                     extract(unpack('Ncount', $this->_string_shift($response, 4)));
+				case NET_SFTP_ATTR_EXTENDED:
+					extract(unpack('Ncount', $this->_string_shift($response, 4)));
 					for ($i = 0; $i < $count; $i++) {
 						extract(unpack('Nlength', $this->_string_shift($response, 4)));
 						$key = $this->_string_shift($response, $length);
@@ -2646,14 +2665,14 @@ class Net_SFTP extends Net_SSH2
 	{
 		$packet = $this->request_id !== false ?
 			pack('NCNa*', strlen($data) + 5, $type, $this->request_id, $data) :
-			pack('NCa*',  strlen($data) + 1, $type, $data);
+			pack('NCa*', strlen($data) + 1, $type, $data);
 
-		$start = strtok(microtime(), ' ') + strtok('');         $result = $this->_send_channel_packet(NET_SFTP_CHANNEL, $packet);
+		$start = strtok(microtime(), ' ') + strtok('');
+		$result = $this->_send_channel_packet(NET_SFTP_CHANNEL, $packet);
 		$stop = strtok(microtime(), ' ') + strtok('');
 
 		if (defined('NET_SFTP_LOGGING')) {
-			$this->packet_type_log[] = '-> ' . $this->packet_types[$type] .
-									   ' (' . round($stop - $start, 4) . 's)';
+			$this->packet_type_log[] = '-> ' . $this->packet_types[$type] . ' (' . round($stop - $start, 4) . 's)';
 			if (NET_SFTP_LOGGING == NET_SFTP_LOG_COMPLEX) {
 				$this->packet_log[] = $data;
 			}
@@ -2694,14 +2713,16 @@ class Net_SFTP extends Net_SSH2
 		$this->packet_type = ord($this->_string_shift($this->packet_buffer));
 
 		if ($this->request_id !== false) {
-			$this->_string_shift($this->packet_buffer, 4);             $length-= 5;         } else {
-			$length-= 1;         }
+			$this->_string_shift($this->packet_buffer, 4);
+			$length-= 5;
+		} else {
+			$length-= 1;
+		}
 
 		$packet = $this->_string_shift($this->packet_buffer, $length);
 
 		if (defined('NET_SFTP_LOGGING')) {
-			$this->packet_type_log[] = '<- ' . $this->packet_types[$this->packet_type] .
-									   ' (' . round($stop - $start, 4) . 's)';
+			$this->packet_type_log[] = '<- ' . $this->packet_types[$this->packet_type] . ' (' . round($stop - $start, 4) . 's)';
 			if (NET_SFTP_LOGGING == NET_SFTP_LOG_COMPLEX) {
 				$this->packet_log[] = $packet;
 			}
@@ -2720,7 +2741,7 @@ class Net_SFTP extends Net_SSH2
 			case NET_SFTP_LOG_COMPLEX:
 				return $this->_format_log($this->packet_log, $this->packet_type_log);
 				break;
-						default:
+			default:
 				return $this->packet_type_log;
 		}
 	}
@@ -2800,7 +2821,7 @@ class Math_BigInteger {
 					$x = ~$x;
 					$this->is_negative = true;
 				}
-			case  256:
+			case 256:
 				switch ( MATH_BIGINTEGER_MODE ) {
 					case MATH_BIGINTEGER_MODE_GMP:
 						$sign = $this->is_negative ? '-' : '';
@@ -2835,7 +2856,7 @@ class Math_BigInteger {
 					$this->value = $temp->value;
 				}
 				break;
-			case  16:
+			case 16:
 			case -16:
 				if ($base > 0 && $x[0] == '-') {
 					$this->is_negative = true;
@@ -2873,7 +2894,7 @@ class Math_BigInteger {
 					$this->value = $temp->value;
 				}
 				break;
-			case  10:
+			case 10:
 			case -10:
 				$x = preg_replace('#^(-?[0-9]*).*#', '$1', $x);
 
@@ -2906,7 +2927,7 @@ class Math_BigInteger {
 						$this->value = $temp->value;
 				}
 				break;
-			case  2:
+			case 2:
 			case -2:
 				if ($base > 0 && $x[0] == '-') {
 					$this->is_negative = true;
@@ -3011,12 +3032,10 @@ class Math_BigInteger {
 			$result;
 	}
 
-
 	function toHex($twos_compliment = false)
 	{
 		return bin2hex($this->toBytes($twos_compliment));
 	}
-
 
 	function toBits($twos_compliment = false)
 	{
@@ -3030,7 +3049,6 @@ class Math_BigInteger {
 		}
 		return $this->precision > 0 ? substr($bits, -$this->precision) : ltrim($bits, '0');
 	}
-
 
 	function toString()
 	{
@@ -3071,7 +3089,6 @@ class Math_BigInteger {
 		return $result;
 	}
 
-
 	function copy()
 	{
 		$temp = new Math_BigInteger();
@@ -3083,18 +3100,15 @@ class Math_BigInteger {
 		return $temp;
 	}
 
-
 	function __toString()
 	{
 		return $this->toString();
 	}
 
-
 	function __clone()
 	{
 		return $this->copy();
 	}
-
 
 	function __sleep()
 	{
@@ -3110,7 +3124,6 @@ class Math_BigInteger {
 
 	}
 
-
 	function __wakeup()
 	{
 		$temp = new Math_BigInteger($this->hex, -16);
@@ -3118,10 +3131,9 @@ class Math_BigInteger {
 		$this->is_negative = $temp->is_negative;
 		$this->setRandomGenerator($this->generator);
 		if ($this->precision > 0) {
-						$this->setPrecision($this->precision);
+			$this->setPrecision($this->precision);
 		}
 	}
-
 
 	function add($y)
 	{
@@ -3147,7 +3159,6 @@ class Math_BigInteger {
 		return $this->_normalize($result);
 	}
 
-
 	function _add($x_value, $x_negative, $y_value, $y_negative)
 	{
 		$x_size = count($x_value);
@@ -3165,7 +3176,7 @@ class Math_BigInteger {
 			);
 		}
 
-				if ( $x_negative != $y_negative ) {
+		if ( $x_negative != $y_negative ) {
 			if ( $x_value == $y_value ) {
 				return array(
 					MATH_BIGINTEGER_VALUE => array(),
@@ -3220,7 +3231,6 @@ class Math_BigInteger {
 		);
 	}
 
-
 	function subtract($y)
 	{
 		switch ( MATH_BIGINTEGER_MODE ) {
@@ -3245,7 +3255,6 @@ class Math_BigInteger {
 		return $this->_normalize($result);
 	}
 
-
 	function _subtract($x_value, $x_negative, $y_value, $y_negative)
 	{
 		$x_size = count($x_value);
@@ -3263,7 +3272,7 @@ class Math_BigInteger {
 			);
 		}
 
-				if ( $x_negative != $y_negative ) {
+		if ( $x_negative != $y_negative ) {
 			$temp = $this->_add($x_value, false, $y_value, false);
 			$temp[MATH_BIGINTEGER_SIGN] = $x_negative;
 
@@ -3279,7 +3288,7 @@ class Math_BigInteger {
 			);
 		}
 
-				if ( (!$x_negative && $diff < 0) || ($x_negative && $diff > 0) ) {
+		if ( (!$x_negative && $diff < 0) || ($x_negative && $diff > 0) ) {
 			$temp = $x_value;
 			$x_value = $y_value;
 			$y_value = $temp;
@@ -3289,7 +3298,6 @@ class Math_BigInteger {
 			$x_size = count($x_value);
 			$y_size = count($y_value);
 		}
-
 
 		$carry = 0;
 		for ($i = 0, $j = 1; $j < $y_size; $i+=2, $j+=2) {
@@ -3323,7 +3331,6 @@ class Math_BigInteger {
 		);
 	}
 
-
 	function multiply($x)
 	{
 		switch ( MATH_BIGINTEGER_MODE ) {
@@ -3348,7 +3355,6 @@ class Math_BigInteger {
 		return $this->_normalize($product);
 	}
 
-
 	function _multiply($x_value, $x_negative, $y_value, $y_negative)
 	{
 
@@ -3370,7 +3376,6 @@ class Math_BigInteger {
 		);
 	}
 
-
 	function _regularMultiply($x_value, $y_value)
 	{
 		$x_length = count($x_value);
@@ -3391,7 +3396,6 @@ class Math_BigInteger {
 
 		$product_value = $this->_array_repeat(0, $x_length + $y_length);
 
-
 		$carry = 0;
 
 		for ($j = 0; $j < $x_length; ++$j) {
@@ -3402,7 +3406,7 @@ class Math_BigInteger {
 
 		$product_value[$j] = $carry;
 
-						for ($i = 1; $i < $y_length; ++$i) {
+		for ($i = 1; $i < $y_length; ++$i) {
 			$carry = 0;
 
 			for ($j = 0, $k = $i; $j < $x_length; ++$j, ++$k) {
@@ -3416,7 +3420,6 @@ class Math_BigInteger {
 
 		return $product_value;
 	}
-
 
 	function _karatsuba($x_value, $y_value)
 	{
@@ -3449,14 +3452,12 @@ class Math_BigInteger {
 		return $xy[MATH_BIGINTEGER_VALUE];
 	}
 
-
 	function _square($x = false)
 	{
 		return count($x) < 2 * MATH_BIGINTEGER_KARATSUBA_CUTOFF ?
 			$this->_trim($this->_baseSquare($x)) :
 			$this->_trim($this->_karatsubaSquare($x));
 	}
-
 
 	function _baseSquare($value)
 	{
@@ -3472,18 +3473,17 @@ class Math_BigInteger {
 			$carry = (int) ($temp / 0x4000000);
 			$square_value[$i2] = (int) ($temp - 0x4000000 * $carry);
 
-						for ($j = $i + 1, $k = $i2 + 1; $j <= $max_index; ++$j, ++$k) {
+			for ($j = $i + 1, $k = $i2 + 1; $j <= $max_index; ++$j, ++$k) {
 				$temp = $square_value[$k] + 2 * $value[$j] * $value[$i] + $carry;
 				$carry = (int) ($temp / 0x4000000);
 				$square_value[$k] = (int) ($temp - 0x4000000 * $carry);
 			}
 
-									$square_value[$i + $max_index + 1] = $carry;
+			$square_value[$i + $max_index + 1] = $carry;
 		}
 
 		return $square_value;
 	}
-
 
 	function _karatsubaSquare($value)
 	{
@@ -3512,7 +3512,6 @@ class Math_BigInteger {
 
 		return $xx[MATH_BIGINTEGER_VALUE];
 	}
-
 
 	function divide($y)
 	{
@@ -3575,13 +3574,13 @@ class Math_BigInteger {
 		}
 
 		if ( $diff < 0 ) {
-						if ( $x_sign ) {
+			if ( $x_sign ) {
 				$x = $y->subtract($x);
 			}
 			return array($this->_normalize(new Math_BigInteger()), $this->_normalize($x));
 		}
 
-				$msb = $y->value[count($y->value) - 1];
+		$msb = $y->value[count($y->value) - 1];
 		for ($shift = 0; !($msb & 0x2000000); ++$shift) {
 			$msb <<= 1;
 		}
@@ -3599,16 +3598,16 @@ class Math_BigInteger {
 		static $temp, $lhs, $rhs;
 		if (!isset($temp)) {
 			$temp = new Math_BigInteger();
-			$lhs =  new Math_BigInteger();
-			$rhs =  new Math_BigInteger();
+			$lhs = new Math_BigInteger();
+			$rhs = new Math_BigInteger();
 		}
 		$temp_value = &$temp->value;
-		$rhs_value =  &$rhs->value;
+		$rhs_value = &$rhs->value;
 
-				$temp_value = array_merge($this->_array_repeat(0, $x_max - $y_max), $y_value);
+		$temp_value = array_merge($this->_array_repeat(0, $x_max - $y_max), $y_value);
 
 		while ( $x->compare($temp) >= 0 ) {
-						++$quotient_value[$x_max - $y_max];
+			++$quotient_value[$x_max - $y_max];
 			$x = $x->subtract($temp);
 			$x_max = count($x->value) - 1;
 		}
@@ -3668,18 +3667,17 @@ class Math_BigInteger {
 			$x_max = count($x_value) - 1;
 		}
 
-				$x->_rshift($shift);
+		$x->_rshift($shift);
 
 		$quotient->is_negative = $x_sign != $y_sign;
 
-				if ( $x_sign ) {
+		if ( $x_sign ) {
 			$y->_rshift($shift);
 			$x = $y->subtract($x);
 		}
 
 		return array($this->_normalize($quotient), $this->_normalize($x));
 	}
-
 
 	function _divide_digit($dividend, $divisor)
 	{
@@ -3694,7 +3692,6 @@ class Math_BigInteger {
 
 		return array($result, $carry);
 	}
-
 
 	function modPow($e, $n)
 	{
@@ -3744,11 +3741,11 @@ class Math_BigInteger {
 
 		return $this->_normalize($this->_slidingWindow($e, $n, MATH_BIGINTEGER_BARRETT));
 
-				if ( $n->value[0] & 1 ) {
+		if ( $n->value[0] & 1 ) {
 			return $this->_normalize($this->_slidingWindow($e, $n, MATH_BIGINTEGER_MONTGOMERY));
 		}
 
-				for ($i = 0; $i < count($n->value); ++$i) {
+		for ($i = 0; $i < count($n->value); ++$i) {
 			if ( $n->value[$i] ) {
 				$temp = decbin($n->value[$i]);
 				$j = strlen($temp) - strrpos($temp, '1') - 1;
@@ -3781,12 +3778,10 @@ class Math_BigInteger {
 		return $this->_normalize($result);
 	}
 
-
 	function powMod($e, $n)
 	{
 		return $this->modPow($e, $n);
 	}
-
 
 	function _slidingWindow($e, $n, $mode)
 	{
@@ -3800,15 +3795,15 @@ class Math_BigInteger {
 
 		$e_length = strlen($e_bits);
 
-						for ($i = 0, $window_size = 1; $e_length > $window_ranges[$i] && $i < count($window_ranges); ++$window_size, ++$i);
+		for ($i = 0, $window_size = 1; $e_length > $window_ranges[$i] && $i < count($window_ranges); ++$window_size, ++$i);
 
 		$n_value = $n->value;
 
-				$powers = array();
+		$powers = array();
 		$powers[1] = $this->_prepareReduce($this->value, $n_value, $mode);
 		$powers[2] = $this->_squareReduce($powers[1], $n_value, $mode);
 
-						$temp = 1 << ($window_size - 1);
+		$temp = 1 << ($window_size - 1);
 		for ($i = 1; $i < $temp; ++$i) {
 			$i2 = $i << 1;
 			$powers[$i2 + 1] = $this->_multiplyReduce($powers[$i2 - 1], $powers[2], $n_value, $mode);
@@ -3844,7 +3839,6 @@ class Math_BigInteger {
 		return $temp;
 	}
 
-
 	function _reduce($x, $n, $mode)
 	{
 		switch ($mode) {
@@ -3868,9 +3862,8 @@ class Math_BigInteger {
 			case MATH_BIGINTEGER_NONE:
 				return $x;
 			default:
-						}
+		}
 	}
-
 
 	function _prepareReduce($x, $n, $mode)
 	{
@@ -3879,7 +3872,6 @@ class Math_BigInteger {
 		}
 		return $this->_reduce($x, $n, $mode);
 	}
-
 
 	function _multiplyReduce($x, $y, $n, $mode)
 	{
@@ -3890,7 +3882,6 @@ class Math_BigInteger {
 		return $this->_reduce($temp[MATH_BIGINTEGER_VALUE], $n, $mode);
 	}
 
-
 	function _squareReduce($x, $n, $mode)
 	{
 		if ($mode == MATH_BIGINTEGER_MONTGOMERY) {
@@ -3899,14 +3890,12 @@ class Math_BigInteger {
 		return $this->_reduce($this->_square($x), $n, $mode);
 	}
 
-
 	function _mod2($n)
 	{
 		$temp = new Math_BigInteger();
 		$temp->value = array(1);
 		return $this->bitwise_and($n->subtract($temp));
 	}
-
 
 	function _barrett($n, $m)
 	{
@@ -3917,7 +3906,7 @@ class Math_BigInteger {
 
 		$m_length = count($m);
 
-				if (count($n) > 2 * $m_length) {
+		if (count($n) > 2 * $m_length) {
 			$lhs = new Math_BigInteger();
 			$rhs = new Math_BigInteger();
 			$lhs->value = $n;
@@ -3926,10 +3915,9 @@ class Math_BigInteger {
 			return $temp->value;
 		}
 
-				if ($m_length < 5) {
+		if ($m_length < 5) {
 			return $this->_regularBarrett($n, $m);
 		}
-
 
 		if ( ($key = array_search($m, $cache[MATH_BIGINTEGER_VARIABLE])) === false ) {
 			$key = count($cache[MATH_BIGINTEGER_VARIABLE]);
@@ -3964,11 +3952,10 @@ class Math_BigInteger {
 			return $this->_regularBarrett($n[MATH_BIGINTEGER_VALUE], $m);
 		}
 
-				$temp = array_slice($n[MATH_BIGINTEGER_VALUE], $m_length - 1);
-						$temp = $this->_multiply($temp, false, $u, false);
-						$temp = array_slice($temp[MATH_BIGINTEGER_VALUE], ($m_length >> 1) + 1);
-						$temp = $this->_multiply($temp, false, $m, false);
-
+		$temp = array_slice($n[MATH_BIGINTEGER_VALUE], $m_length - 1);
+		$temp = $this->_multiply($temp, false, $u, false);
+		$temp = array_slice($temp[MATH_BIGINTEGER_VALUE], ($m_length >> 1) + 1);
+		$temp = $this->_multiply($temp, false, $m, false);
 
 		$result = $this->_subtract($n[MATH_BIGINTEGER_VALUE], false, $temp[MATH_BIGINTEGER_VALUE], false);
 
@@ -3978,7 +3965,6 @@ class Math_BigInteger {
 
 		return $result[MATH_BIGINTEGER_VALUE];
 	}
-
 
 	function _regularBarrett($x, $n)
 	{
@@ -4011,12 +3997,12 @@ class Math_BigInteger {
 			$cache[MATH_BIGINTEGER_DATA][] = $temp->value;
 		}
 
-				$temp = array_slice($x, $n_length - 1);
-				$temp = $this->_multiply($temp, false, $cache[MATH_BIGINTEGER_DATA][$key], false);
-				$temp = array_slice($temp[MATH_BIGINTEGER_VALUE], $n_length + 1);
+		$temp = array_slice($x, $n_length - 1);
+		$temp = $this->_multiply($temp, false, $cache[MATH_BIGINTEGER_DATA][$key], false);
+		$temp = array_slice($temp[MATH_BIGINTEGER_VALUE], $n_length + 1);
 
-				$result = array_slice($x, 0, $n_length + 1);
-				$temp = $this->_multiplyLower($temp, false, $n, false, $n_length + 1);
+		$result = array_slice($x, 0, $n_length + 1);
+		$temp = $this->_multiplyLower($temp, false, $n, false, $n_length + 1);
 
 		if ($this->_compare($result, false, $temp[MATH_BIGINTEGER_VALUE], $temp[MATH_BIGINTEGER_SIGN]) < 0) {
 			$corrector_value = $this->_array_repeat(0, $n_length + 1);
@@ -4025,14 +4011,13 @@ class Math_BigInteger {
 			$result = $result[MATH_BIGINTEGER_VALUE];
 		}
 
-				$result = $this->_subtract($result, false, $temp[MATH_BIGINTEGER_VALUE], $temp[MATH_BIGINTEGER_SIGN]);
+		$result = $this->_subtract($result, false, $temp[MATH_BIGINTEGER_VALUE], $temp[MATH_BIGINTEGER_SIGN]);
 		while ($this->_compare($result[MATH_BIGINTEGER_VALUE], $result[MATH_BIGINTEGER_SIGN], $n, false) > 0) {
 			$result = $this->_subtract($result[MATH_BIGINTEGER_VALUE], $result[MATH_BIGINTEGER_SIGN], $n, false);
 		}
 
 		return $result[MATH_BIGINTEGER_VALUE];
 	}
-
 
 	function _multiplyLower($x_value, $x_negative, $y_value, $y_negative, $stop)
 	{
@@ -4057,7 +4042,6 @@ class Math_BigInteger {
 
 		$product_value = $this->_array_repeat(0, $x_length + $y_length);
 
-
 		$carry = 0;
 
 		for ($j = 0; $j < $x_length; ++$j) {
@@ -4069,7 +4053,6 @@ class Math_BigInteger {
 		if ($j < $stop) {
 			$product_value[$j] = $carry;
 		}
-
 
 		for ($i = 1; $i < $y_length; ++$i) {
 			$carry = 0;
@@ -4090,7 +4073,6 @@ class Math_BigInteger {
 			MATH_BIGINTEGER_SIGN => $x_negative != $y_negative
 		);
 	}
-
 
 	function _montgomery($x, $n)
 	{
@@ -4125,7 +4107,6 @@ class Math_BigInteger {
 
 		return $result[MATH_BIGINTEGER_VALUE];
 	}
-
 
 	function _montgomeryMultiply($x, $y, $m)
 	{
@@ -4163,7 +4144,6 @@ class Math_BigInteger {
 		return $a[MATH_BIGINTEGER_VALUE];
 	}
 
-
 	function _prepMontgomery($x, $n)
 	{
 		$lhs = new Math_BigInteger();
@@ -4175,7 +4155,6 @@ class Math_BigInteger {
 		return $temp->value;
 	}
 
-
 	function _modInverse67108864($x)
 	{
 		$x = -$x[0];
@@ -4186,7 +4165,6 @@ class Math_BigInteger {
 		$result = fmod($result * (2 - fmod($x * $result, 0x4000000)), 0x4000000);
 		return $result & 0x3FFFFFF;
 	}
-
 
 	function modInverse($n)
 	{
@@ -4204,7 +4182,7 @@ class Math_BigInteger {
 			$one = new Math_BigInteger(1);
 		}
 
-				$n = $n->abs();
+		$n = $n->abs();
 
 		if ($this->compare($zero) < 0) {
 			$temp = $this->abs();
@@ -4223,7 +4201,6 @@ class Math_BigInteger {
 		return $this->compare($zero) < 0 ? $this->_normalize($n->subtract($x)) : $this->_normalize($x);
 	}
 
-
 	function extendedGCD($n)
 	{
 		switch ( MATH_BIGINTEGER_MODE ) {
@@ -4231,9 +4208,9 @@ class Math_BigInteger {
 				extract(gmp_gcdext($this->value, $n->value));
 
 				return array(
-					'gcd' => $this->_normalize(new Math_BigInteger($g)),
-					'x'   => $this->_normalize(new Math_BigInteger($s)),
-					'y'   => $this->_normalize(new Math_BigInteger($t))
+					'gcd'	=> $this->_normalize(new Math_BigInteger($g)),
+					'x'		=> $this->_normalize(new Math_BigInteger($s)),
+					'y'		=> $this->_normalize(new Math_BigInteger($t))
 				);
 			case MATH_BIGINTEGER_MODE_BCMATH:
 
@@ -4262,9 +4239,9 @@ class Math_BigInteger {
 				}
 
 				return array(
-					'gcd' => $this->_normalize(new Math_BigInteger($u)),
-					'x'   => $this->_normalize(new Math_BigInteger($a)),
-					'y'   => $this->_normalize(new Math_BigInteger($b))
+					'gcd'	=> $this->_normalize(new Math_BigInteger($u)),
+					'x'		=> $this->_normalize(new Math_BigInteger($a)),
+					'y'		=> $this->_normalize(new Math_BigInteger($b))
 				);
 		}
 
@@ -4323,19 +4300,17 @@ class Math_BigInteger {
 		}
 
 		return array(
-			'gcd' => $this->_normalize($g->multiply($v)),
-			'x'   => $this->_normalize($c),
-			'y'   => $this->_normalize($d)
+			'gcd'	=> $this->_normalize($g->multiply($v)),
+			'x'		=> $this->_normalize($c),
+			'y'		=> $this->_normalize($d)
 		);
 	}
-
 
 	function gcd($n)
 	{
 		extract($this->extendedGCD($n));
 		return $gcd;
 	}
-
 
 	function abs()
 	{
@@ -4355,7 +4330,6 @@ class Math_BigInteger {
 		return $temp;
 	}
 
-
 	function compare($y)
 	{
 		switch ( MATH_BIGINTEGER_MODE ) {
@@ -4367,7 +4341,6 @@ class Math_BigInteger {
 
 		return $this->_compare($this->value, $this->is_negative, $y->value, $y->is_negative);
 	}
-
 
 	function _compare($x_value, $x_negative, $y_value, $y_negative)
 	{
@@ -4394,7 +4367,6 @@ class Math_BigInteger {
 		return 0;
 	}
 
-
 	function equals($x)
 	{
 		switch ( MATH_BIGINTEGER_MODE ) {
@@ -4404,7 +4376,6 @@ class Math_BigInteger {
 				return $this->value === $x->value && $this->is_negative == $x->is_negative;
 		}
 	}
-
 
 	function setPrecision($bits)
 	{
@@ -4418,7 +4389,6 @@ class Math_BigInteger {
 		$temp = $this->_normalize($this);
 		$this->value = $temp->value;
 	}
-
 
 	function bitwise_and($x)
 	{
@@ -4453,7 +4423,6 @@ class Math_BigInteger {
 		return $this->_normalize($result);
 	}
 
-
 	function bitwise_or($x)
 	{
 		switch ( MATH_BIGINTEGER_MODE ) {
@@ -4485,7 +4454,6 @@ class Math_BigInteger {
 
 		return $this->_normalize($result);
 	}
-
 
 	function bitwise_xor($x)
 	{
@@ -4519,10 +4487,9 @@ class Math_BigInteger {
 		return $this->_normalize($result);
 	}
 
-
 	function bitwise_not()
 	{
-						$temp = $this->toBytes();
+		$temp = $this->toBytes();
 		$pre_msb = decbin(ord($temp[0]));
 		$temp = ~$temp;
 		$msb = decbin(ord($temp[0]));
@@ -4537,14 +4504,13 @@ class Math_BigInteger {
 			return $this->_normalize(new Math_BigInteger($temp, 256));
 		}
 
-				$leading_ones = chr((1 << ($new_bits & 0x7)) - 1) . str_repeat(chr(0xFF), $new_bits >> 3);
+		$leading_ones = chr((1 << ($new_bits & 0x7)) - 1) . str_repeat(chr(0xFF), $new_bits >> 3);
 		$this->_base256_lshift($leading_ones, $current_bits);
 
 		$temp = str_pad($temp, ceil($this->bits / 8), chr(0), STR_PAD_LEFT);
 
 		return $this->_normalize(new Math_BigInteger($leading_ones | $temp, 256));
 	}
-
 
 	function bitwise_rightShift($shift)
 	{
@@ -4573,7 +4539,6 @@ class Math_BigInteger {
 		return $this->_normalize($temp);
 	}
 
-
 	function bitwise_leftShift($shift)
 	{
 		$temp = new Math_BigInteger();
@@ -4600,7 +4565,6 @@ class Math_BigInteger {
 
 		return $this->_normalize($temp);
 	}
-
 
 	function bitwise_leftRotate($shift)
 	{
@@ -4637,18 +4601,15 @@ class Math_BigInteger {
 		return $this->_normalize($result);
 	}
 
-
 	function bitwise_rightRotate($shift)
 	{
 		return $this->bitwise_leftRotate(-$shift);
 	}
 
-
 	function setRandomGenerator($generator)
 	{
 		$this->generator = $generator;
 	}
-
 
 	function random($min = false, $max = false)
 	{
@@ -4665,7 +4626,7 @@ class Math_BigInteger {
 		if (!$compare) {
 			return $this->_normalize($min);
 		} else if ($compare < 0) {
-						$temp = $max;
+			$temp = $max;
 			$max = $min;
 			$min = $temp;
 		}
@@ -4684,21 +4645,20 @@ class Math_BigInteger {
 
 		$blocks = $size >> 1;
 		for ($i = 0; $i < $blocks; ++$i) {
-						$random.= pack('n', $generator(0, 0xFFFF));
+			$random.= pack('n', $generator(0, 0xFFFF));
 		}
 
 		$temp = new Math_BigInteger($random, 256);
 		if ($temp->compare(new Math_BigInteger(substr($max, 1), 256)) > 0) {
 			$random = chr($generator(0, ord($max[0]) - 1)) . $random;
 		} else {
-			$random = chr($generator(0, ord($max[0])    )) . $random;
+			$random = chr($generator(0, ord($max[0]))) . $random;
 		}
 
 		$random = new Math_BigInteger($random, 256);
 
 		return $this->_normalize($random->add($min));
 	}
-
 
 	function randomPrime($min = false, $max = false, $timeout = false)
 	{
@@ -4707,13 +4667,13 @@ class Math_BigInteger {
 		if (!$compare) {
 			return $min;
 		} else if ($compare < 0) {
-						$temp = $max;
+			$temp = $max;
 			$max = $min;
 			$min = $temp;
 		}
 
-				if ( MATH_BIGINTEGER_MODE == MATH_BIGINTEGER_MODE_GMP && function_exists('gmp_nextprime') ) {
-												if ($min === false) {
+		if ( MATH_BIGINTEGER_MODE == MATH_BIGINTEGER_MODE_GMP && function_exists('gmp_nextprime') ) {
+			if ($min === false) {
 				$min = new Math_BigInteger(0);
 			}
 
@@ -4753,7 +4713,7 @@ class Math_BigInteger {
 
 		$x->_make_odd();
 		if ($x->compare($max) > 0) {
-						if ($min->equals($max)) {
+			if ($min->equals($max)) {
 				return false;
 			}
 			$x = $min->copy();
@@ -4787,7 +4747,6 @@ class Math_BigInteger {
 		}
 	}
 
-
 	function _make_odd()
 	{
 		switch ( MATH_BIGINTEGER_MODE ) {
@@ -4804,35 +4763,34 @@ class Math_BigInteger {
 		}
 	}
 
-
 	function isPrime($t = false)
 	{
 		$length = strlen($this->toBytes());
 
 		if (!$t) {
 			if ($length >= 163) {
-				$t =  2;
+				$t = 2;
 			} else if ($length >= 106) {
 				$t = 3;
 			} else if ($length >= 81 ) {
-				$t =  4;
+				$t = 4;
 			} else if ($length >= 68 ) {
-				$t =  5;
+				$t = 5;
 			} else if ($length >= 56 ) {
-				$t =  6;
+				$t = 6;
 			} else if ($length >= 50 ) {
-				$t =  7;
+				$t = 7;
 			} else if ($length >= 43 ) {
-				$t =  8;
+				$t = 8;
 			} else if ($length >= 37 ) {
-				$t =  9;
+				$t = 9;
 			} else if ($length >= 31 ) {
 				$t = 12;
 			} else if ($length >= 25 ) {
 				$t = 15;
 			} else if ($length >= 18 ) {
 				$t = 18;
-			} else                     {
+			} else {
 				$t = 27;
 			}
 		}
@@ -4906,7 +4864,7 @@ class Math_BigInteger {
 			}
 		}
 
-		$n   = $this->copy();
+		$n = $this->copy();
 		$n_1 = $n->subtract($one);
 		$n_2 = $n->subtract($two);
 
@@ -4914,7 +4872,7 @@ class Math_BigInteger {
 		$r_value = $r->value;
 				if ( MATH_BIGINTEGER_MODE == MATH_BIGINTEGER_MODE_BCMATH ) {
 			$s = 0;
-						while ($r->value[strlen($r->value) - 1] % 2 == 0) {
+			while ($r->value[strlen($r->value) - 1] % 2 == 0) {
 				$r->value = bcdiv($r->value, '2', 0);
 				++$s;
 			}
@@ -4950,7 +4908,6 @@ class Math_BigInteger {
 		return true;
 	}
 
-
 	function _lshift($shift)
 	{
 		if ( $shift == 0 ) {
@@ -4978,7 +4935,6 @@ class Math_BigInteger {
 		}
 	}
 
-
 	function _rshift($shift)
 	{
 		if ($shift == 0) {
@@ -5004,7 +4960,6 @@ class Math_BigInteger {
 
 		$this->value = $this->_trim($this->value);
 	}
-
 
 	function _normalize($result)
 	{
@@ -5046,7 +5001,6 @@ class Math_BigInteger {
 		return $result;
 	}
 
-
 	function _trim($value)
 	{
 		for ($i = count($value) - 1; $i >= 0; --$i) {
@@ -5059,12 +5013,10 @@ class Math_BigInteger {
 		return $value;
 	}
 
-
 	function _array_repeat($input, $multiplier)
 	{
 		return ($multiplier) ? array_fill(0, $multiplier, $input) : array();
 	}
-
 
 	function _base256_lshift(&$x, $shift)
 	{
@@ -5083,7 +5035,6 @@ class Math_BigInteger {
 		$carry = ($carry != 0) ? chr($carry) : '';
 		$x = $carry . $x . str_repeat(chr(0), $num_bytes);
 	}
-
 
 	function _base256_rshift(&$x, $shift)
 	{
@@ -5115,13 +5066,10 @@ class Math_BigInteger {
 		return ltrim($remainder, chr(0));
 	}
 
-
-
 	function _int2bytes($x)
 	{
 		return ltrim(pack('N', $x), chr(0));
 	}
-
 
 	function _bytes2int($x)
 	{
@@ -5296,28 +5244,28 @@ class Crypt_Hash
 
 		switch ($hash) {
 			case 'md2':
-				 $this->b = 16;
-				 $this->hash = array($this, '_md2');
-				 break;
+				$this->b = 16;
+				$this->hash = array($this, '_md2');
+				break;
 			case 'md5':
 			case 'md5-96':
-				 $this->b = 64;
-				 $this->hash = array($this, '_md5');
-				 break;
+				$this->b = 64;
+				$this->hash = array($this, '_md5');
+				break;
 			case 'sha256':
-				 $this->b = 64;
-				 $this->hash = array($this, '_sha256');
-				 break;
+				$this->b = 64;
+				$this->hash = array($this, '_sha256');
+				break;
 			case 'sha384':
 			case 'sha512':
-				 $this->b = 128;
-				 $this->hash = array($this, '_sha512');
-				 break;
+				$this->b = 128;
+				$this->hash = array($this, '_sha512');
+				break;
 			case 'sha1':
 			case 'sha1-96':
 			default:
-				 $this->b = 64;
-				 $this->hash = array($this, '_sha1');
+				$this->b = 64;
+				$this->hash = array($this, '_sha1');
 		}
 
 		$this->ipad = str_repeat(chr(0x36), $this->b);
@@ -5429,7 +5377,7 @@ class Crypt_Hash
 			for ($j = 0; $j < 18; $j++) {
 				for ($k = 0; $k < 48; $k++) {
 					$x[$k] = $t = $x[$k] ^ chr($s[ord($t)]);
-									}
+				}
 				$t = chr(ord($t) + $j);
 			}
 		}
@@ -5471,9 +5419,9 @@ class Crypt_Hash
 			}
 
 			for ($i = 16; $i < 64; $i++) {
-				$s0 = $this->_rightRotate($w[$i - 15],  7) ^
+				$s0 = $this->_rightRotate($w[$i - 15], 7) ^
 					  $this->_rightRotate($w[$i - 15], 18) ^
-					  $this->_rightShift( $w[$i - 15],  3);
+					  $this->_rightShift( $w[$i - 15], 3);
 				$s1 = $this->_rightRotate($w[$i - 2], 17) ^
 					  $this->_rightRotate($w[$i - 2], 19) ^
 					  $this->_rightShift( $w[$i - 2], 10);
@@ -5484,19 +5432,16 @@ class Crypt_Hash
 			list ($a, $b, $c, $d, $e, $f, $g, $h) = $hash;
 
 			for ($i = 0; $i < 64; $i++) {
-				$s0 = $this->_rightRotate($a,  2) ^
+				$s0 = $this->_rightRotate($a, 2) ^
 					  $this->_rightRotate($a, 13) ^
 					  $this->_rightRotate($a, 22);
-				$maj = ($a & $b) ^
-					   ($a & $c) ^
-					   ($b & $c);
+				$maj = ($a & $b) ^ ($a & $c) ^ ($b & $c);
 				$t2 = $this->_add($s0, $maj);
 
-				$s1 = $this->_rightRotate($e,  6) ^
+				$s1 = $this->_rightRotate($e, 6) ^
 					  $this->_rightRotate($e, 11) ^
 					  $this->_rightRotate($e, 25);
-				$ch = ($e & $f) ^
-					  ($this->_not($e) & $g);
+				$ch = ($e & $f) ^ ($this->_not($e) & $g);
 				$t1 = $this->_add($h, $s1, $ch, $k[$i], $w[$i]);
 
 				$h = $g;
@@ -5785,7 +5730,7 @@ class Crypt_Rijndael
 		$dt1 = &$this->dt1;
 		$dt0 = &$this->dt0;
 
-								$t3 = array(
+		$t3 = array(
 			0x6363A5C6, 0x7C7C84F8, 0x777799EE, 0x7B7B8DF6, 0xF2F20DFF, 0x6B6BBDD6, 0x6F6FB1DE, 0xC5C55491,
 			0x30305060, 0x01010302, 0x6767A9CE, 0x2B2B7D56, 0xFEFE19E7, 0xD7D762B5, 0xABABE64D, 0x76769AEC,
 			0xCACA458F, 0x82829D1F, 0xC9C94089, 0x7D7D87FA, 0xFAFA15EF, 0x5959EBB2, 0x4747C98E, 0xF0F00BFB,
@@ -6033,7 +5978,7 @@ class Crypt_Rijndael
 				if ($this->continuousBuffer) {
 					$this->encryptIV = $xor;
 					if ($start = strlen($plaintext) % $block_size) {
-						 $buffer = substr($key, $start) . $buffer;
+						$buffer = substr($key, $start) . $buffer;
 					}
 				}
 		}
@@ -6046,7 +5991,7 @@ class Crypt_Rijndael
 		$this->_setup();
 
 		if ($this->paddable) {
-									$ciphertext = str_pad($ciphertext, strlen($ciphertext) + ($this->block_size - strlen($ciphertext) % $this->block_size) % $this->block_size, chr(0));
+			$ciphertext = str_pad($ciphertext, strlen($ciphertext) + ($this->block_size - strlen($ciphertext) % $this->block_size) % $this->block_size, chr(0));
 		}
 
 		$block_size = $this->block_size;
@@ -6142,7 +6087,7 @@ class Crypt_Rijndael
 				if ($this->continuousBuffer) {
 					$this->decryptIV = $xor;
 					if ($start = strlen($ciphertext) % $block_size) {
-						 $buffer = substr($key, $start) . $buffer;
+						$buffer = substr($key, $start) . $buffer;
 					}
 				}
 		}
@@ -6164,15 +6109,15 @@ class Crypt_Rijndael
 		$Nr = $this->Nr;
 		$c = $this->c;
 
-				$i = 0;
+		$i = 0;
 		foreach ($words as $word) {
 			$state[] = $word ^ $w[0][$i++];
 		}
 
-
-				$temp = array();
+		$temp = array();
 		for ($round = 1; $round < $Nr; $round++) {
-			$i = 0;             $j = $c[1];
+			$i = 0;
+			$j = $c[1];
 			$k = $c[2];
 			$l = $c[3];
 
@@ -6193,11 +6138,12 @@ class Crypt_Rijndael
 			}
 		}
 
-				for ($i = 0; $i < $Nb; $i++) {
+		for ($i = 0; $i < $Nb; $i++) {
 			$state[$i] = $this->_subWord($state[$i]);
 		}
 
-				$i = 0;         $j = $c[1];
+		$i = 0;
+		$j = $c[1];
 		$k = $c[2];
 		$l = $c[3];
 		while ($i < $this->Nb) {
@@ -6205,7 +6151,7 @@ class Crypt_Rijndael
 						($state[$j] & 0x00FF0000) ^
 						($state[$k] & 0x0000FF00) ^
 						($state[$l] & 0x000000FF) ^
-						 $w[$Nr][$i];
+						$w[$Nr][$i];
 			$i++;
 			$j = ($j + 1) % $Nb;
 			$k = ($k + 1) % $Nb;
@@ -6240,7 +6186,8 @@ class Crypt_Rijndael
 
 		$temp = array();
 		for ($round = $Nr - 1; $round > 0; $round--) {
-			$i = 0;             $j = $Nb - $c[1];
+			$i = 0;
+			$j = $Nb - $c[1];
 			$k = $Nb - $c[2];
 			$l = $Nb - $c[3];
 
@@ -6261,16 +6208,17 @@ class Crypt_Rijndael
 			}
 		}
 
-				$i = 0;         $j = $Nb - $c[1];
+		$i = 0;
+		$j = $Nb - $c[1];
 		$k = $Nb - $c[2];
 		$l = $Nb - $c[3];
 
 		while ($i < $Nb) {
 			$temp[$i] = $dw[0][$i] ^
-						$this->_invSubWord(($state[$i] & 0xFF000000) |
-										   ($state[$j] & 0x00FF0000) |
-										   ($state[$k] & 0x0000FF00) |
-										   ($state[$l] & 0x000000FF));
+						$this->_invSubWord(	($state[$i] & 0xFF000000) |
+											($state[$j] & 0x00FF0000) |
+											($state[$k] & 0x0000FF00) |
+											($state[$l] & 0x000000FF));
 			$i++;
 			$j = ($j + 1) % $Nb;
 			$k = ($k + 1) % $Nb;
@@ -6286,7 +6234,7 @@ class Crypt_Rijndael
 
 	function _setup()
 	{
-						static $rcon = array(0,
+		static $rcon = array(0,
 			0x01000000, 0x02000000, 0x04000000, 0x08000000, 0x10000000,
 			0x20000000, 0x40000000, 0x80000000, 0x1B000000, 0x36000000,
 			0x6C000000, 0xD8000000, 0xAB000000, 0x4D000000, 0x9A000000,
@@ -6300,7 +6248,7 @@ class Crypt_Rijndael
 		}
 
 		if (!$this->explicit_key_length) {
-						$length = strlen($this->key) >> 2;
+			$length = strlen($this->key) >> 2;
 			if ($length > 8) {
 				$length = 8;
 			} else if ($length < 4) {
@@ -6313,9 +6261,9 @@ class Crypt_Rijndael
 		$this->key = str_pad(substr($this->key, 0, $this->key_size), $this->key_size, chr(0));
 		$this->encryptIV = $this->decryptIV = $this->iv = str_pad(substr($this->iv, 0, $this->block_size), $this->block_size, chr(0));
 
-				$this->Nr = max($this->Nk, $this->Nb) + 6;
+		$this->Nr = max($this->Nk, $this->Nb) + 6;
 
-										switch ($this->Nb) {
+		switch ($this->Nb) {
 			case 4:
 			case 5:
 			case 6:
@@ -6336,20 +6284,21 @@ class Crypt_Rijndael
 		for ($i = $this->Nk; $i < $length; $i++) {
 			$temp = $w[$i - 1];
 			if ($i % $this->Nk == 0) {
-				$temp = (($temp << 8) & 0xFFFFFF00) | (($temp >> 24) & 0x000000FF);                 $temp = $this->_subWord($temp) ^ $rcon[$i / $this->Nk];
+				$temp = (($temp << 8) & 0xFFFFFF00) | (($temp >> 24) & 0x000000FF);
+				$temp = $this->_subWord($temp) ^ $rcon[$i / $this->Nk];
 			} else if ($this->Nk > 6 && $i % $this->Nk == 4) {
 				$temp = $this->_subWord($temp);
 			}
 			$w[$i] = $w[$i - $this->Nk] ^ $temp;
 		}
 
-																$temp = array();
+		$temp = array();
 		for ($i = $row = $col = 0; $i < $length; $i++, $col++) {
 			if ($col == $this->Nb) {
 				if ($row == 0) {
 					$this->dw[0] = $this->w[0];
 				} else {
-										$j = 0;
+					$j = 0;
 					while ($j < $this->Nb) {
 						$dw = $this->_subWord($this->w[$row][$j]);
 						$temp[$j] = $this->dt0[$dw & 0xFF000000] ^
@@ -6407,10 +6356,11 @@ class Crypt_Rijndael
 			}
 		}
 
-		return $sbox0[$word & 0x000000FF] |
-			   $sbox1[$word & 0x0000FF00] |
-			   $sbox2[$word & 0x00FF0000] |
-			   $sbox3[$word & 0xFF000000];
+		return
+			$sbox0[$word & 0x000000FF] |
+			$sbox1[$word & 0x0000FF00] |
+			$sbox2[$word & 0x00FF0000] |
+			$sbox3[$word & 0xFF000000];
 	}
 
 	function _invSubWord($word)
@@ -6448,10 +6398,11 @@ class Crypt_Rijndael
 			}
 		}
 
-		return $sbox0[$word & 0x000000FF] |
-			   $sbox1[$word & 0x0000FF00] |
-			   $sbox2[$word & 0x00FF0000] |
-			   $sbox3[$word & 0xFF000000];
+		return
+			$sbox0[$word & 0x000000FF] |
+			$sbox1[$word & 0x0000FF00] |
+			$sbox2[$word & 0x00FF0000] |
+			$sbox3[$word & 0xFF000000];
 	}
 
 	function enablePadding()
@@ -6753,7 +6704,7 @@ class Crypt_DES
 						break;
 					case CRYPT_DES_MODE_CTR:
 						$this->mode = 'ctr';
-												break;
+						break;
 					case CRYPT_DES_MODE_CFB:
 						$this->mode = 'ncfb';
 						break;
@@ -6980,7 +6931,7 @@ class Crypt_DES
 				if ($this->continuousBuffer) {
 					$this->encryptIV = $xor;
 					if ($start = strlen($plaintext) & 7) {
-						 $buffer = substr($key, $start) . $buffer;
+						$buffer = substr($key, $start) . $buffer;
 					}
 				}
 		}
@@ -7146,7 +7097,7 @@ class Crypt_DES
 				if ($this->continuousBuffer) {
 					$this->decryptIV = $xor;
 					if ($start = strlen($ciphertext) % 8) {
-						 $buffer = substr($key, $start) . $buffer;
+						$buffer = substr($key, $start) . $buffer;
 					}
 				}
 		}
@@ -7524,7 +7475,7 @@ class Crypt_TripleDES
 				new Crypt_DES(CRYPT_DES_MODE_CBC)
 			);
 
-						$this->des[0]->disablePadding();
+			$this->des[0]->disablePadding();
 			$this->des[1]->disablePadding();
 			$this->des[2]->disablePadding();
 
@@ -7561,7 +7512,7 @@ class Crypt_TripleDES
 					new Crypt_DES(CRYPT_DES_MODE_ECB)
 				);
 
-								$this->des[0]->disablePadding();
+				$this->des[0]->disablePadding();
 				$this->des[1]->disablePadding();
 				$this->des[2]->disablePadding();
 
@@ -7588,15 +7539,15 @@ class Crypt_TripleDES
 		$length = strlen($key);
 		if ($length > 8) {
 			$key = str_pad($key, 24, chr(0));
-											} else {
+		} else {
 			$key = str_pad($key, 8, chr(0));
 		}
 		$this->key = $key;
 		switch (true) {
 			case CRYPT_DES_MODE == CRYPT_DES_MODE_INTERNAL:
 			case $this->mode == CRYPT_DES_MODE_3CBC:
-				$this->des[0]->setKey(substr($key,  0, 8));
-				$this->des[1]->setKey(substr($key,  8, 8));
+				$this->des[0]->setKey(substr($key, 0, 8));
+				$this->des[1]->setKey(substr($key, 8, 8));
 				$this->des[2]->setKey(substr($key, 16, 8));
 		}
 		$this->enchanged = $this->dechanged = true;
@@ -7825,7 +7776,7 @@ class Crypt_TripleDES
 				if ($this->continuousBuffer) {
 					$this->encryptIV = $xor;
 					if ($start = strlen($plaintext) & 7) {
-						 $buffer = substr($key, $start) . $buffer;
+						$buffer = substr($key, $start) . $buffer;
 					}
 				}
 		}
@@ -7842,7 +7793,7 @@ class Crypt_TripleDES
 		}
 
 		if ($this->paddable) {
-									$ciphertext = str_pad($ciphertext, (strlen($ciphertext) + 7) & 0xFFFFFFF8, chr(0));
+			$ciphertext = str_pad($ciphertext, (strlen($ciphertext) + 7) & 0xFFFFFFF8, chr(0));
 		}
 
 		if ( CRYPT_DES_MODE == CRYPT_DES_MODE_MCRYPT ) {
@@ -8025,7 +7976,7 @@ class Crypt_TripleDES
 				if ($this->continuousBuffer) {
 					$this->decryptIV = $xor;
 					if ($start = strlen($ciphertext) & 7) {
-						 $buffer = substr($key, $start) . $buffer;
+						$buffer = substr($key, $start) . $buffer;
 					}
 				}
 		}
@@ -8226,7 +8177,7 @@ class Crypt_RSA
 					if ($timeout <= 0) {
 						return array(
 							'privatekey' => '',
-							'publickey'  => '',
+							'publickey' => '',
 							'partialkey' => serialize(array(
 								'primes' => $primes,
 								'coefficients' => $coefficients,
@@ -8240,13 +8191,15 @@ class Crypt_RSA
 				if ($i == $num_primes) {
 					list ($min, $temp) = $absoluteMin->divide($n);
 					if (!$temp->equals($this->zero)) {
-						$min = $min->add($this->one);                     }
+						$min = $min->add($this->one);
+					}
 					$primes[$i] = $generator->randomPrime($min, $finalMax, $timeout);
 				} else {
 					$primes[$i] = $generator->randomPrime($min, $max, $timeout);
 				}
 
-				if ($primes[$i] === false) {                     if (count($primes) > 1) {
+				if ($primes[$i] === false) {
+					if (count($primes) > 1) {
 						$partialkey = '';
 					} else {
 						array_pop($primes);
@@ -8260,7 +8213,7 @@ class Crypt_RSA
 
 					return array(
 						'privatekey' => '',
-						'publickey'  => '',
+						'publickey' => '',
 						'partialkey' => $partialkey
 					);
 				}
@@ -8290,7 +8243,7 @@ class Crypt_RSA
 
 		return array(
 			'privatekey' => $this->_convertPrivateKey($n, $e, $d, $primes, $exponents, $coefficients),
-			'publickey'  => $this->_convertPublicKey($n, $e),
+			'publickey' => $this->_convertPublicKey($n, $e),
 			'partialkey' => false
 		);
 	}
@@ -8299,7 +8252,8 @@ class Crypt_RSA
 	{
 		$num_primes = count($primes);
 		$raw = array(
-			'version' => $num_primes == 2 ? chr(0) : chr(1),             'modulus' => $n->toBytes(true),
+			'version' => $num_primes == 2 ? chr(0) : chr(1),
+			'modulus' => $n->toBytes(true),
 			'publicExponent' => $e->toBytes(true),
 			'privateExponent' => $d->toBytes(true),
 			'prime1' => $primes[1]->toBytes(true),
@@ -8426,7 +8380,8 @@ class Crypt_RSA
 			case CRYPT_RSA_PUBLIC_FORMAT_PKCS1:
 				if (preg_match('#DEK-Info: (.+),(.+)#', $key, $matches)) {
 					$iv = pack('H*', trim($matches[2]));
-					$symkey = pack('H*', md5($this->password . substr($iv, 0, 8)));                     $symkey.= substr(pack('H*', md5($symkey . $this->password . $iv)), 0, 8);
+					$symkey = pack('H*', md5($this->password . substr($iv, 0, 8)));
+					$symkey.= substr(pack('H*', md5($symkey . $this->password . $iv)), 0, 8);
 					$ciphertext = preg_replace('#.+(\r|\n|\r\n)\1|[\r\n]|-.+-#s', '', $key);
 					$ciphertext = preg_match('#^[a-zA-Z\d/+]*={0,2}$#', $ciphertext) ? base64_decode($ciphertext) : false;
 					if ($ciphertext === false) {
@@ -8493,7 +8448,8 @@ class Crypt_RSA
 				$temp = $this->_string_shift($key, $length);
 				if (strlen($temp) != 1 || ord($temp) > 2) {
 					$components['modulus'] = new Math_BigInteger($temp, -256);
-					$this->_string_shift($key);                     $length = $this->_decodeLength($key);
+					$this->_string_shift($key);
+					$length = $this->_decodeLength($key);
 					$components[$type == CRYPT_RSA_PUBLIC_FORMAT_PKCS1 ? 'publicExponent' : 'privateExponent'] = new Math_BigInteger($this->_string_shift($key, $length), -256);
 
 					return $components;
@@ -8573,7 +8529,7 @@ class Crypt_RSA
 						'publicExponent' => $publicExponent
 					);
 				}
-									case CRYPT_RSA_PRIVATE_FORMAT_XML:
+			case CRYPT_RSA_PRIVATE_FORMAT_XML:
 			case CRYPT_RSA_PUBLIC_FORMAT_XML:
 				$this->components = array();
 
@@ -8586,7 +8542,7 @@ class Crypt_RSA
 				}
 
 				return $this->components;
-						case CRYPT_RSA_PRIVATE_FORMAT_PUTTY:
+			case CRYPT_RSA_PRIVATE_FORMAT_PUTTY:
 				$components = array();
 				$key = preg_split('#\r\n|\r|\n#', $key);
 				$type = trim(preg_replace('#PuTTY-User-Key-File-2: (.+)#', '$1', $key[0]));
@@ -8748,7 +8704,7 @@ class Crypt_RSA
 		$components = $this->_parseKey($key, $type);
 
 		if (empty($this->modulus) || !$this->modulus->equals($components['modulus'])) {
-			user_error('Trying to load a public key?  Use loadKey() instead.  It\'s called loadKey() and not loadPrivateKey() for a reason.', E_USER_NOTICE);
+			user_error('Trying to load a public key? Use loadKey() instead. It\'s called loadKey() and not loadPrivateKey() for a reason.', E_USER_NOTICE);
 			return false;
 		}
 
@@ -8792,7 +8748,8 @@ class Crypt_RSA
 	function _decodeLength(&$string)
 	{
 		$length = ord($this->_string_shift($string));
-		if ( $length & 0x80 ) {             $length&= 0x7F;
+		if ( $length & 0x80 ) {
+			$length&= 0x7F;
 			$temp = $this->_string_shift($string, $length);
 			list (, $length) = unpack('N', substr(str_pad($temp, 4, chr(0), STR_PAD_LEFT), -4));
 		}
@@ -9171,7 +9128,7 @@ class Crypt_RSA
 	function _emsa_pss_verify($m, $em, $emBits)
 	{
 		$emLen = ($emBits + 1) >> 3;
-        $sLen = $this->sLen == false ? $this->hLen : $this->sLen;
+		$sLen = $this->sLen == false ? $this->hLen : $this->sLen;
 
 		$mHash = $this->hash->hash($m);
 		if ($emLen < $this->hLen + $sLen + 2) {
@@ -9345,7 +9302,7 @@ class Crypt_RSA
 					$ciphertext.= $this->_rsaes_pkcs1_v1_5_encrypt($m);
 				}
 				return $ciphertext;
-						default:
+			default:
 				$length = $this->k - 2 * $this->hLen - 2;
 				if ($length <= 0) {
 					return false;
@@ -9373,7 +9330,7 @@ class Crypt_RSA
 			case CRYPT_RSA_ENCRYPTION_PKCS1:
 				$decrypt = '_rsaes_pkcs1_v1_5_decrypt';
 				break;
-						default:
+			default:
 				$decrypt = '_rsaes_oaep_decrypt';
 		}
 
@@ -9397,7 +9354,7 @@ class Crypt_RSA
 		switch ($this->signatureMode) {
 			case CRYPT_RSA_SIGNATURE_PKCS1:
 				return $this->_rsassa_pkcs1_v1_5_sign($message);
-						default:
+			default:
 				return $this->_rsassa_pss_sign($message);
 		}
 	}
@@ -9411,7 +9368,7 @@ class Crypt_RSA
 		switch ($this->signatureMode) {
 			case CRYPT_RSA_SIGNATURE_PKCS1:
 				return $this->_rsassa_pkcs1_v1_5_verify($message, $signature);
-						default:
+			default:
 				return $this->_rsassa_pss_verify($message, $signature);
 		}
 	}
@@ -9499,7 +9456,7 @@ class Crypt_AES extends Crypt_Rijndael
 			$changed = $this->changed;
 			$this->_mcryptSetup();
 
-												if ($this->mode == 'ncfb') {
+			if ($this->mode == 'ncfb') {
 				if ($changed) {
 					$this->ecb = mcrypt_module_open(MCRYPT_RIJNDAEL_128, '', MCRYPT_MODE_ECB, '');
 					mcrypt_generic_init($this->ecb, $this->key, "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0");
@@ -9591,7 +9548,7 @@ class Crypt_AES extends Crypt_Rijndael
 			}
 
 			if ($this->paddable) {
-												$ciphertext = str_pad($ciphertext, (strlen($ciphertext) + 15) & 0xFFFFFFF0, chr(0));
+				$ciphertext = str_pad($ciphertext, (strlen($ciphertext) + 15) & 0xFFFFFFF0, chr(0));
 			}
 
 			$plaintext = mdecrypt_generic($this->demcrypt, $ciphertext);
@@ -9613,7 +9570,7 @@ class Crypt_AES extends Crypt_Rijndael
 		}
 
 		if (!$this->explicit_key_length) {
-						$length = strlen($this->key) >> 2;
+			$length = strlen($this->key) >> 2;
 			if ($length > 8) {
 				$length = 8;
 			} else if ($length < 4) {
@@ -9624,11 +9581,16 @@ class Crypt_AES extends Crypt_Rijndael
 		}
 
 		switch ($this->Nk) {
-			case 4:                 $this->key_size = 16;
+			case 4:
+				$this->key_size = 16;
 				break;
-			case 5:             case 6:                 $this->key_size = 24;
+			case 5:
+			case 6:
+				$this->key_size = 24;
 				break;
-			case 7:             case 8:                 $this->key_size = 32;
+			case 7:
+			case 8:
+				$this->key_size = 32;
 		}
 
 		$this->key = str_pad(substr($this->key, 0, $this->key_size), $this->key_size, chr(0));
@@ -9664,17 +9626,16 @@ class Crypt_AES extends Crypt_Rijndael
 			$state['word4'] ^ $w[0][3]
 		);
 
-								for ($round = 1; $round < $this->Nr; $round++) {
+		for ($round = 1; $round < $this->Nr; $round++) {
 			$state = array(
 				$t0[$state[0] & 0xFF000000] ^ $t1[$state[1] & 0x00FF0000] ^ $t2[$state[2] & 0x0000FF00] ^ $t3[$state[3] & 0x000000FF] ^ $w[$round][0],
 				$t0[$state[1] & 0xFF000000] ^ $t1[$state[2] & 0x00FF0000] ^ $t2[$state[3] & 0x0000FF00] ^ $t3[$state[0] & 0x000000FF] ^ $w[$round][1],
 				$t0[$state[2] & 0xFF000000] ^ $t1[$state[3] & 0x00FF0000] ^ $t2[$state[0] & 0x0000FF00] ^ $t3[$state[1] & 0x000000FF] ^ $w[$round][2],
 				$t0[$state[3] & 0xFF000000] ^ $t1[$state[0] & 0x00FF0000] ^ $t2[$state[1] & 0x0000FF00] ^ $t3[$state[2] & 0x000000FF] ^ $w[$round][3]
 			);
-
 		}
 
-				$state = array(
+		$state = array(
 			$this->_subWord($state[0]),
 			$this->_subWord($state[1]),
 			$this->_subWord($state[2]),
@@ -9702,15 +9663,14 @@ class Crypt_AES extends Crypt_Rijndael
 		$dt2 = $this->dt2;
 		$dt3 = $this->dt3;
 
-				$state = array(
+		$state = array(
 			$state['word1'] ^ $dw[$this->Nr][0],
 			$state['word2'] ^ $dw[$this->Nr][1],
 			$state['word3'] ^ $dw[$this->Nr][2],
 			$state['word4'] ^ $dw[$this->Nr][3]
 		);
 
-
-				for ($round = $this->Nr - 1; $round > 0; $round--) {
+		for ($round = $this->Nr - 1; $round > 0; $round--) {
 			$state = array(
 				$dt0[$state[0] & 0xFF000000] ^ $dt1[$state[3] & 0x00FF0000] ^ $dt2[$state[2] & 0x0000FF00] ^ $dt3[$state[1] & 0x000000FF] ^ $dw[$round][0],
 				$dt0[$state[1] & 0xFF000000] ^ $dt1[$state[0] & 0x00FF0000] ^ $dt2[$state[3] & 0x0000FF00] ^ $dt3[$state[2] & 0x000000FF] ^ $dw[$round][1],
@@ -9719,7 +9679,7 @@ class Crypt_AES extends Crypt_Rijndael
 			);
 		}
 
-				$state = array(
+		$state = array(
 			$this->_invSubWord(($state[0] & 0xFF000000) ^ ($state[3] & 0x00FF0000) ^ ($state[2] & 0x0000FF00) ^ ($state[1] & 0x000000FF)) ^ $dw[0][0],
 			$this->_invSubWord(($state[1] & 0xFF000000) ^ ($state[0] & 0x00FF0000) ^ ($state[3] & 0x0000FF00) ^ ($state[2] & 0x000000FF)) ^ $dw[0][1],
 			$this->_invSubWord(($state[2] & 0xFF000000) ^ ($state[1] & 0x00FF0000) ^ ($state[0] & 0x0000FF00) ^ ($state[3] & 0x000000FF)) ^ $dw[0][2],
