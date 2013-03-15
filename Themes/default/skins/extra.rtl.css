@@ -179,14 +179,6 @@ th.last_th
 span.percent
 	float: left
 
-// Author and topic information
-#forumposts
-	#author
-		margin: 0 0 0 7.7em
-	h3 img
-		float: right
-		margin: 0 0 0 0.5em
-
 // Poster and postarea + moderation area underneath
 .poster
 	float: right

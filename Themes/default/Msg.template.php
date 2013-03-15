@@ -466,10 +466,12 @@ function template_msg_bottom_after()
 
 function template_msg_wrap_after()
 {
+	global $msg, $context;
+
 	echo '
 				</div>
-			</div>
-			<hr class="post_separator">';
+			</div>', $context['topic_last_message'] === $msg['id'] ? '' : '
+			<hr class="separator">';
 }
 
 function template_user_status(&$member)

@@ -218,26 +218,30 @@ img.new_posts
 /* Post styling (Msg template)
 ---------------------------------------------------- */
 
+.root
+	@if !can_flex
+		display: table
+		// Without this, wide code blocks will break layout.
+		table-layout: fixed
+	@endif
+	width: 100%
+
 // Alternating backgrounds for posts
 .postbg extends .windowbg
 	background: $post_bg
-	display: table
-	// Without this, wide code blocks will break layout.
-	table-layout: fixed
-	width: 100%
 
-.postbg2 extends ".windowbg2, .postbg"
+.postbg2 extends .windowbg2
 	background: $post_bg2
-	margin: 3px 0
 
-#forumposts
-	// Author and topic information
-	#author
-		margin: 0 7.7em 0 10px
-
-	// A post separator, useful when printing.
-	.post_separator
-		display: none
+// A post separator, useful when printing.
+hr.separator
+	visibility: hidden
+	@if ie[-7]
+		display: block
+		margin: -6px 0
+	@else
+		margin: 1px 0
+	@endif
 
 // Like #forumposts, but for blogs only.
 .blog
@@ -324,7 +328,11 @@ img.new_posts
 .pixelicons mixes .inline-block
 	width: 15px
 	overflow: hidden
-	margin: -1px -4px 0 0
+	@if ie[-7]
+		margin: 4px 2px 0 0
+	@else
+		margin: 2px -4px 0 0
+	@endif
 	i mixes .inline-block
 		float: left
 		margin: 0 1px 1px 0

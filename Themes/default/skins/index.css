@@ -320,10 +320,9 @@ table
 
 // Standard horizontal rule.. ([hr], etc.)
 hr
-	height: 1px
+	color, background-color: #ccc
 	border: 0
-	color: #ccc
-	background-color: #ccc
+	height: 1px
 
 // By default set the color on these tags to #000.
 h1, h2, h3, h4, h5, h6
@@ -988,8 +987,6 @@ li.separator
 
 .flow_hidden
 	overflow: hidden
-	.windowbg
-		margin-top: 2px
 
 .clear
 	clear: both
