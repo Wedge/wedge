@@ -507,13 +507,13 @@ function template_aeva_admin_perms_view()
 
 	echo '
 				<tr class="windowbg', $alt ? '' : '2', '">
-					<td colspan="4" class="right" style="margin-top: 2px">
+					<td colspan="5" class="right" style="margin-top: 2px">
 						<div style="margin-bottom: 1ex">', $txt['media_admin_wselected'], '</div>
 						', $txt['media_admin_set_mg_perms'], ':
 						<select name="copy_membergroup">
 							<option data-hide></option>', $membergroup_string, '
 						</select>
-						<div style="margin: 1ex 0">', $txt['media_admin_select_or'], '</div>
+						', $txt['media_admin_select_or'], '
 						<select name="with_selected">
 							<option value="apply">', $txt['media_admin_apply_perm'], '</option>
 							<option value="clear">', $txt['media_admin_clear_perm'], '</option>
@@ -527,8 +527,7 @@ function template_aeva_admin_perms_view()
 
 	echo '
 						</select>
-					</td>
-					<td style="width: 16%" class="bottom">
+						&nbsp;
 						<input type="submit" value="', $txt['media_submit'], '">
 					</td>
 				</tr>

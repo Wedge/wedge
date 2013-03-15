@@ -790,7 +790,7 @@ function dynamic_admin_menu_icons()
 		$is_abs = isset($val[1]) && ($val[1][0] == '/' || strpos($val[1], '://') !== false);
 		$icon = $is_abs ? $val[1] : '/images/admin/' . $val[1];
 		$rep .= '
-.admenu_icon_' . $val[0] . ' extends .inline-block
+.admenu_icon_' . $val[0] . ' mixes .inline-block
 	background: url('. ($is_abs ? $icon : '$theme' . $icon) . ') no-repeat
 	width: width('. ($is_abs ? $icon : '$theme_dir' . $icon) . ')px
 	height: height('. ($is_abs ? $icon : '$theme_dir' . $icon) . ')px';

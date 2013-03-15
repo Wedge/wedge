@@ -47,7 +47,7 @@
 		loadSB = function ()
 		{
 			// Create the new sb
-			$sb = $('<div class="sbox ' + $orig.attr('class') + '" id="sb' + ($orig.attr('id') || ++unique) + '" role="listbox">')
+			$sb = $('<div class="sbox ' + ($orig.attr('class') || '') + '" id="sb' + ($orig.attr('id') || ++unique) + '" role="listbox">')
 				.attr('aria-haspopup', true);
 
 			$display = $('<div class="display" id="sbd' + ++unique + '">')
@@ -249,10 +249,6 @@
 				// Otherwise, show a drop-up, but only if there's enough size, or the space above is more comfortable.
 				showDown = (ddMaxHeight <= bottomSpace) || ((ddMaxHeight >= topSpace) && (bottomSpace + 50 >= topSpace));
 
-			// Modify dropdown css for display
-			$dd.css('marginTop', showDown ? 0 : -ddMaxHeight - $display.outerHeight())
-				.toggleClass('above', !showDown);
-
 			// Create a custom scrollbar for our select box?
 			if (ddMaxHeight < ddHeight)
 			{
@@ -267,12 +263,21 @@
 
 			$selected.addClass('selected');
 
-			$dd.hide().css({ visibility: 'visible' })
-				.attr('aria-hidden', false);
+			// Modify dropdown css for display, and ensure it doesn't go out of bounds.
+			$dd
+				.attr('aria-hidden', false)
+				.toggleClass('above', !showDown)
+				.css({
+					visibility: 'visible',
+					marginTop: showDown ? 0 : -ddMaxHeight - $display.outerHeight(),
+					marginLeft: Math.min(0, $(window).width() - $dd.outerWidth() - $sb.offset().left)
+				})
+				.hide();
 
 			// If opening via a key stroke, simulate a click.
 			if (via_keyboard)
 				$orig.triggerHandler('click');
+
 			// Animate height, except for Opera where issues with the inline-block status may lead to glitches.
 			$dd.animate(!showDown || is_opera ? { opacity: 'toggle' } : { opacity: 'toggle', height: 'toggle' }, instantOpen ? 0 : 150);
 			$sb.addClass('open');
