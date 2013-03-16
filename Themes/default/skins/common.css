@@ -111,7 +111,7 @@ $blog_font_size = 100%/140%
 $blog_font = $post_font
 
 $main_bg = #fff
-$head_bg = darken(#e3e0da, 3%)
+$head_bg = darker(#e3e0da, 3%)
 $reddish = #c60
 $menu_border = rgba(220, 224, 220, .95)
 $menu_gradient =	@is (ie[-8], "average", "linear-gradient")(rgba(232, 236, 232, .96), rgba(255, 255, 255, .96))
@@ -119,8 +119,8 @@ $sidebar-width =	@is (webkit, "262px", "260px") // Webkit screws up on padding/b
 $max-width =		@is (ie6, "width", "max-width")
 
 /* .windowbg classes are used to alternate colors between general blocks. */
-$window_bg = darken($window_bg2, 3%) // lighten(#e3e0d0, 13%) // #f2f3ea // #f9f6f0
-$window_bg2 = #f8faf8 // lighten(#e3e0d0, 11%) // darken(hue($main_bg, -20), .5%) // #f3f7f3 // transparent
+$window_bg = darker($window_bg2, 3%) // lighter(#e3e0d0, 13%) // #f2f3ea // #f9f6f0
+$window_bg2 = #f8faf8 // lighter(#e3e0d0, 11%) // darker(hue($main_bg, -20), .5%) // #f3f7f3 // transparent
 $window_bg3 = #f0f0f0
 $board_col = #d97b33
 

@@ -2041,9 +2041,9 @@ function template_install_above()
 		<title>', $txt['wedge_installer'], '</title>
 		<link rel="stylesheet" href="',
 		add_css_file(
-			array('common', 'index', 'sections', 'install'),
+			array('index', 'sections', 'install'),
 			false, false,
-			array('common', 'index', 'sections')
+			array('index', 'sections')
 		), '">
 		<script src="http://code.jquery.com/jquery-1.5.2.min.js"></script>
 		<script src="',

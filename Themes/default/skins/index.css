@@ -122,7 +122,7 @@ header, footer, aside, section, article, nav
 
 #header, #navi, #footer
 	background-color: #e3e0da
-	gradient: lighten($head_bg, 6%), $head_bg
+	gradient: lighter($head_bg, 6%), $head_bg
 	color: #553
 
 #navi
@@ -415,7 +415,7 @@ em
 	@if ie[-9]
 		background-color: #d55a61
 	@else
-		gradient: lighten(#d55a61, 10%), lighten(#b63c47, 10%)
+		gradient: lighter(#d55a61, 10%), lighter(#b63c47, 10%)
 	@endif
 
 // Same, but positive.

@@ -676,7 +676,7 @@ function Admin()
 
 	// Load the template, and build the CSS file (we need the admin menu to be filled at this point.)
 	loadTemplate('Admin');
-	add_css_file(array('common', 'mana', 'admenu'), true);
+	add_css_file(array('mana', 'admenu'), true);
 
 	// Actually create the menu!
 	$admin_include_data = createMenu($admin_areas, $menuOptions);

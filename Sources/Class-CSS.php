@@ -599,7 +599,7 @@ class wess_color extends wess
 		$nodupes = array();
 
 		// No need for a recursive regex, as we shouldn't have more than one level of nested brackets...
-		while (preg_match_all('~(darken|lighten|desaturize|saturize|hue|complement|average|alpha|channels)\(((?:(?:rgb|hsl)a?\([^()]+\)|[^()])+)\)~i', $css, $matches))
+		while (preg_match_all('~(darker|lighter|stronger|desaturated|saturated|hue|complement|average|alpha|channels)\(((?:(?:rgb|hsl)a?\([^()]+\)|[^()])+)\)~i', $css, $matches))
 		{
 			foreach ($matches[0] as $i => $dec)
 			{
@@ -659,19 +659,19 @@ class wess_color extends wess
 					$hsl['a'] += $parg[0] ? $hsl['a'] * $parg[0] : $arg[0];
 
 				// Darken the color (brightness down)
-				elseif ($code === 'darken')
+				elseif ($code === 'darker' || ($code === 'stronger' && $hsl['l'] < 0.5))
 					$hsl['l'] -= $parg[0] ? $hsl['l'] * $parg[0] : $arg[0];
 
 				// Lighten the color (brightness up)
-				elseif ($code === 'lighten')
+				elseif ($code === 'lighter' || ($code === 'stronger' && $hsl['l'] >= 0.5))
 					$hsl['l'] += $parg[0] ? $hsl['l'] * $parg[0] : $arg[0];
 
 				// Desaturize the color (saturation down, gets color closer to grayscale)
-				elseif ($code === 'desaturize')
+				elseif ($code === 'desaturated')
 					$hsl['s'] -= $parg[0] ? $hsl['s'] * $parg[0] : $arg[0];
 
 				// Saturize the color (saturation up, gets color further away from grayscale)
-				elseif ($code === 'saturize')
+				elseif ($code === 'saturated')
 					$hsl['s'] += $parg[0] ? $hsl['s'] * $parg[0] : $arg[0];
 
 				// Change color hue (moves it over the virtual color wheel by X degrees)

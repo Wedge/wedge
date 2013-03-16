@@ -1282,8 +1282,8 @@ function loadTheme($id_theme = 0, $initialize = true)
 	// Then, we need to list the CSS files that will be part of our main CSS file.
 	// false indicates that we don't want their names to show up in the final filename.
 	// For the main file, we'll be happy with just the suffix list in the name :)
+	// Note that common.css is prepended to all files, including this one.
 	$context['main_css_files'] = array(
-		'common' => false,
 		'index' => false,
 		'sections' => false
 	);

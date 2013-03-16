@@ -152,7 +152,7 @@ img.new_posts
 // A generic bar, for use in polls and stats.
 .bar
 	float: left
-	gradient: lighten(#6294ce, 20%), hue(darken(#6294ce, 20%), -10)
+	gradient: lighter(#6294ce, 20%), hue(darker(#6294ce, 20%), -10)
 	border-radius: 4px
 	margin: 0 4px
 	height: 16px
@@ -509,7 +509,7 @@ hr.separator
 	.actions
 		float: right
 		a
-			color: darken(#47a, 80%)
+			color: darker(#47a, 80%)
 			opacity: .6
 			transition: opacity .3s ease
 			:hover

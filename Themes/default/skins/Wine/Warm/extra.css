@@ -81,7 +81,7 @@ h4, h5
 	border-top: 0
 
 #top_section, #upper_section
-	border-bottom: 3px solid lighten($reddish, 3%)
+	border-bottom: 3px solid lighter($reddish, 3%)
 
 #main
 	display: block
@@ -89,7 +89,7 @@ h4, h5
 
 #footer
 	border-top: 1px solid #c3d0de
-	gradient: darken($body_bg, 0%), darken($body_bg, 10%), 200deg
+	gradient: darker($body_bg, 0%), darker($body_bg, 10%), 200deg
 	color: #333
 	ul li a
 		color: #679
@@ -156,9 +156,9 @@ dl#feed
 			border-left: 15px solid $main_bg
 			z-index: 1
 		:nth-last-child(even)
-			background: darken($main_bg, 6%)
+			background: desaturated(darker($main_bg, 5%), 50%)
 			:after
-				border-left: 15px solid darken($main_bg, 6%)
+				border-left: 15px solid desaturated(darker($main_bg, 5%), 50%)
 		:first-child
 			padding-left: 8px
 			border-radius: 8px 0 0 8px
@@ -182,7 +182,7 @@ dl#feed
 	h4, h4 a
 		color: #000
 	li.chosen h4
-		background-color: lighten($reddish, 3%) !important
+		background-color: lighter($reddish, 3%) !important
 		color: #fff
 		a
 			color: #fff
@@ -235,7 +235,7 @@ tr.titlebg th, tr.catbg th
 
 .cat a
 	font-family: inherit
-	color: lighten(gray, 10%)
+	color: lighter(gray, 10%)
 	:hover
 		color: $board_col
 
@@ -244,7 +244,7 @@ tr.titlebg th, tr.catbg th
 	background: none
 	color: channels(gray, 30%)
 	a
-		color: lighten(channels(gray, 30%), 10%) !important
+		color: lighter(channels(gray, 30%), 10%) !important
 
 .cat final
 	color: gray
@@ -274,16 +274,20 @@ tr.titlebg th, tr.catbg th
 	margin-top: -2px
 
 #search_form
+	float: none
 	input.search
-		width: 100px
+		width: 133px
 		margin-right: 4px
 		color: #000
-	input[type=submit]
+	> input[type=submit]
 		background: #d3dad3
 		border-color: #eee #bbb #bbb #eee
 		color: #000
 		:hover
 			background: #e3eae3
+
+#userspec
+	max-width: 190px // Less room in the sidebar...
 
 @if ie[-9]
 	.catbase, header, #upper_section h1, #footer
@@ -297,7 +301,7 @@ $main_bg   = rgb(246,248,239)
 $head_bg   = rgba(233,235,186,.66)
 $body_bg   = #f6f8ef
 $side_bg   = #e8e3cb
-$footer_bg = lighten($side_bg, 5%)
+$footer_bg = lighter($side_bg, 70%)
 $main_font = "Open Sans", Verdana, Arial, sans-serif
 $post_font = "Open Sans", Verdana, Arial, sans-serif
 $main_font_size = 88%/140%

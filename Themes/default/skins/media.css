@@ -461,9 +461,7 @@ table.aelista
 .pics
 	margin: auto
 
-.indpic
-	display: @is (ie[-7], inline, inline-block)
-	vertical-align: middle
+.indpic mixes .inline-block
 	text-align: center
 	margin: 5px 10px 0
 	@if opera

@@ -133,9 +133,9 @@ $darkgrad = #f3f2f0
 			border-radius: 0 50% 50% 0
 			z-index: 1
 		:nth-last-child(even)
-			background: linear-gradient(0deg, darken(#fdfdfd, 5%), darken(#ededed, 5%))
+			background: linear-gradient(0deg, darker(#fdfdfd, 5%), darker(#ededed, 5%))
 			:after
-				background: linear-gradient(0deg, darken(#fdfdfd, 5%), darken(#ededed, 5%))
+				background: linear-gradient(0deg, darker(#fdfdfd, 5%), darker(#ededed, 5%))
 		:first-child
 			padding-left: 8px
 			border-radius: 8px 0 0 8px

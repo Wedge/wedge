@@ -67,7 +67,7 @@ class wedit
 			self::$editorLoaded = true;
 
 			loadLanguage('Post');
-			add_css_file(array('common', 'editor'), true);
+			add_css_file('editor', true);
 
 			$theme['smileys_url'] = $settings['smileys_url'] . '/' . we::$user['smiley_set'];
 
