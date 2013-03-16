@@ -130,10 +130,6 @@ table.aextbox
 	overflow: visible
 
 #viewitem
-	.actions
-		padding: 3px 8px
-		text-align: center
-		vertical-align: middle
 	.comment_sort_options
 		float: right
 		font-size: .9em
@@ -152,6 +148,10 @@ table.aextbox
 	overflow: visible
 	box-sizing: border-box
 	padding: 16px 0
+	.actionbar
+		margin: 0 20px
+		line-height: 1.5em
+		text-align: right
 
 #media-details
 	display: @is (ie[-7], block, table-cell)
@@ -192,15 +192,6 @@ table.aextbox
 
 .selected a
 	color: inherit !important
-
-#viewitem .images
-	a
-		margin-right: 4px
-		font-weight: 700
-		text-decoration: none
-		line-height: 18px
-	img
-		vertical-align: -2px
 
 .album_moderation
 	white-space: nowrap

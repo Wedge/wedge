@@ -2,7 +2,7 @@
 <!--
 	Layout skeleton. Overrides the theme's $context['skeleton'] variable.
 	This file can be ommitted from your skin, in which case it will use
-	the equivalent skeleton from the parent skin (or $context['skeleton'] if none is found.)
+	the equivalent skeleton from the parent skin (and so on until the root skin.)
 
 	The following uses pseudo-HTML to represent the final array.
 
@@ -63,7 +63,7 @@
 							</main_wrap>
 						</content_wrap>
 
-						<!-- The bottom linktree. -->
+						<!-- The bottom linktree. Note that we pass a 'bottom' variable to the function, so it knows where it is. -->
 						<linktree:bottom />
 
 						<!-- Credits, validation links... -->

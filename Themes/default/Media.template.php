@@ -323,13 +323,17 @@ function template_aeva_item_wrap_begin()
 		<div id="itembox">';
 }
 
-function template_aeva_item_main()
+function template_aeva_item_main_before()
+{
+	echo '
+		<div id="media-item">';
+}
+
+function template_aeva_item_main_item()
 {
 	global $item, $galurl, $context, $txt, $theme, $boardurl, $options;
 
-	echo '
-		<div id="media-item">',
-			$item['embed_object'], $item['is_resized'] ? '
+	echo $item['embed_object'], $item['is_resized'] ? '
 			<dfn style="padding-top: 6px">' . $txt['media_resized'] . '</dfn>' : '', '<br>';
 
 	if (!empty($item['description']))
@@ -350,7 +354,10 @@ function template_aeva_item_main()
 	if (!$item['approved'] && $item['can_approve'])
 		echo '
 			<div class="unapproved_yet">', $txt['media_approve_this'], '</div>';
+}
 
+function template_aeva_item_main_after()
+{
 	echo '
 		</div>';
 }
@@ -436,7 +443,7 @@ function template_aeva_item_details()
 		echo '
 				<dt>', $txt['media_embed_bbc'], '</dt>
 				<dd>
-					<input id="bbc_embed" type="text" size="18" value="[media id=' . $item['id_media'] . ($item['type'] == 'image' ? '' : ' type=av') . ']" onclick="this.focus(); this.select();" readonly>
+					<input id="bbc_embed" size="18" value="[media id=' . $item['id_media'] . ($item['type'] == 'image' ? '' : ' type=av') . ']" onclick="this.focus(); this.select();" readonly>
 					<a href="<URL>?action=help;in=mediatag" onclick="return reqWin(this, 800);" class="help"></a>
 				</dd>';
 
@@ -447,7 +454,7 @@ function template_aeva_item_details()
 				echo '
 				<dt>', $txt['media_embed_html'], '</dt>
 				<dd>
-					<input id="html_embed" type="text" size="24" value="', $item['type'] == 'image' ?
+					<input id="html_embed" size="24" value="', $item['type'] == 'image' ?
 						westr::htmlspecialchars('<img src="' . $boardurl . '/MGalleryItem.php?id=' . $item['id_media'] . '">') :
 						westr::htmlspecialchars(trim(preg_replace('/[\t\r\n]+/', ' ', $item['embed_object']))), '" onclick="this.focus(); this.select();" readonly>
 				</dd>';
@@ -455,7 +462,7 @@ function template_aeva_item_details()
 				echo '
 				<dt>', $txt['media_direct_link'], '</td>
 				<dd>
-					<input id="direct_link" type="text" size="24" value="' . $boardurl . '/MGalleryItem.php?id=' . $item['id_media'] . '" onclick="this.focus(); this.select();" readonly>
+					<input id="direct_link" size="24" value="' . $boardurl . '/MGalleryItem.php?id=' . $item['id_media'] . '" onclick="this.focus(); this.select();" readonly>
 				</dd>';
 		}
 	}
@@ -518,104 +525,126 @@ function template_aeva_item_actions()
 		return;
 
 	echo '
-		<we:block class="windowbg actions images" style="line-height: 16px; vertical-align: text-bottom">';
+		<div class="actionbar"><ul class="actions">';
 
 	if ($item['can_report'])
+	{
 		echo '
-			<a href="', $galurl, 'sa=report;type=item;in=', $item['id_media'] . '"', $amSettings['use_zoom'] ? ' class="zoom is_html"' : '', '>
-				<img src="', $theme['images_aeva'], '/report.png">&nbsp;', $txt['media_report_this_item'], '
-			</a>';
+			<li>
+				<a href="', $galurl, 'sa=report;type=item;in=', $item['id_media'] . '"', $amSettings['use_zoom'] ? ' class="zoom is_html"' : '', '>
+					<img src="', $theme['images_aeva'], '/report.png">&nbsp;', $txt['media_report_this_item'], '
+				</a>';
 
-	if ($item['can_report'] && $amSettings['use_zoom'])
+		if ($amSettings['use_zoom'])
+			echo '
+				<div class="zoom-html">
+					<form action="', $galurl, 'sa=report;type=item;in=', $item['id_media'], '" method="post">
+						<h3>', $txt['media_reporting_this_item'], '</h3>
+						<hr>', $txt['media_reason'], '<br>
+						<textarea rows="8" style="width: 98%" name="reason"></textarea>
+						<p class="mgra">
+							<input type="submit" value="', $txt['media_submit'], '" class="submit" name="submit_aeva">
+							<input type="button" onclick="return hs.close(this);" value="', $txt['media_close'], '" class="cancel">
+						</p>
+					</form>
+				</div>';
+
 		echo '
-			<div class="zoom-html">
-				<form action="', $galurl, 'sa=report;type=item;in=', $item['id_media'], '" method="post">
-					<h3>', $txt['media_reporting_this_item'], '</h3>
-					<hr>', $txt['media_reason'], '<br>
-					<textarea rows="8" style="width: 98%" name="reason"></textarea>
-					<p class="mgra">
-						<input type="submit" value="', $txt['media_submit'], '" class="submit" name="submit_aeva">
-						<input type="button" onclick="return hs.close(this);" value="', $txt['media_close'], '" class="cancel">
-					</p>
-				</form>
-			</div>';
+			</li>';
+	}
 
 	if ($item['can_edit'])
 		echo '
-			<a href="', $galurl, 'sa=post;in=', $item['id_media'], '"><img src="', $theme['images_aeva'], '/camera_edit.png">&nbsp;', $txt['media_edit_this_item'], '</a>
-			<a href="', $galurl, 'sa=delete;in=', $item['id_media'], '" onclick="return ask(we_confirm, e);"><img src="', $theme['images_aeva'], '/delete.png">&nbsp;', $txt['media_delete_this_item'], '</a>';
+			<li>
+				<a href="', $galurl, 'sa=post;in=', $item['id_media'], '"><img src="', $theme['images_aeva'], '/camera_edit.png">&nbsp;', $txt['media_edit_this_item'], '</a>
+			</li>
+			<li>
+				<a href="', $galurl, 'sa=delete;in=', $item['id_media'], '" onclick="return ask(we_confirm, e);"><img src="', $theme['images_aeva'], '/delete.png">&nbsp;', $txt['media_delete_this_item'], '</a>
+			</li>';
 
 	if ($item['can_download'])
 		echo '
-			<a href="', $galurl, 'sa=media;in=', $item['id_media'], ';dl"><img src="', $theme['images_aeva'], '/download.png">&nbsp;', $txt['media_download_this_item'], '</a>';
+			<li>
+				<a href="', $galurl, 'sa=media;in=', $item['id_media'], ';dl"><img src="', $theme['images_aeva'], '/download.png">&nbsp;', $txt['media_download_this_item'], '</a>
+			</li>';
 
 	if ($item['can_edit'] && !empty($context['aeva_move_albums']))
-		echo '
-			<a href="', $galurl, 'sa=move;in=', $item['id_media'], '"', $amSettings['use_zoom'] ? ' class="zoom is_html"' : '', '><img src="', $theme['images_aeva'], '/arrow_out.png">&nbsp;', $txt['media_move_item'], '</a>';
-
-	if ($item['can_edit'] && $amSettings['use_zoom'])
 	{
 		echo '
-			<div class="zoom-html">
-				<h3>', $txt['media_moving_this_item'], '</h3>
-				<h2>', sprintf($txt['media_album_is'], $item['album_name']), '</h2>
-				<hr>
-				<form action="', $galurl, 'sa=move;in=', $item['id_media'], '" method="post">
-					', $txt['media_album_to_move'], ':
-					<select name="album">';
+			<li>
+				<a href="', $galurl, 'sa=move;in=', $item['id_media'], '"', $amSettings['use_zoom'] ? ' class="zoom is_html"' : '', '><img src="', $theme['images_aeva'], '/arrow_out.png">&nbsp;', $txt['media_move_item'], '</a>';
 
-			foreach ($context['aeva_move_albums'] as $album => $name)
-			{
-				if ($name[2] === '')
-					echo '
-						</optgroup>';
-				elseif ($name[2] == 'begin')
-					echo '
-						<optgroup label="', $name[0], '">';
-				else
-					echo '
-							<option value="', $album, '"', $name[1] ? ' disabled' : '', '>', $name[0], '</option>';
-			}
-
+		if ($amSettings['use_zoom'])
+		{
 			echo '
-					</select>
-					<p class="mgra">
-						<input type="submit" value="', $txt['media_submit'], '" class="submit" name="submit_aeva">
-						<input type="button" onclick="return $(\'#zoom-close\').click();" value="', $txt['media_close'], '" class="cancel">
-					</p>
-				</form>
-			</div>';
+				<div class="zoom-html">
+					<h3>', $txt['media_moving_this_item'], '</h3>
+					<h2>', sprintf($txt['media_album_is'], $item['album_name']), '</h2>
+					<hr>
+					<form action="', $galurl, 'sa=move;in=', $item['id_media'], '" method="post">
+						', $txt['media_album_to_move'], ':
+						<select name="album">';
+
+				foreach ($context['aeva_move_albums'] as $album => $name)
+				{
+					if ($name[2] === '')
+						echo '
+							</optgroup>';
+					elseif ($name[2] == 'begin')
+						echo '
+							<optgroup label="', $name[0], '">';
+					else
+						echo '
+								<option value="', $album, '"', $name[1] ? ' disabled' : '', '>', $name[0], '</option>';
+				}
+
+				echo '
+						</select>
+						<p class="mgra">
+							<input type="submit" value="', $txt['media_submit'], '" class="submit" name="submit_aeva">
+							<input type="button" onclick="return $(\'#zoom-close\').click();" value="', $txt['media_close'], '" class="cancel">
+						</p>
+					</form>
+				</div>';
+		}
+
+		echo '
+			</li>';
 	}
 
 	$un = $item['approved'] ? 'un' : '';
 	if ($item['can_approve'])
 		echo '
-			<a href="', $galurl, 'sa=', $un, 'approve;in=', $item['id_media'], '"><img src="', $theme['images_aeva'], '/', $un, 'tick.png">&nbsp;', $txt['media_admin_' . $un . 'approve'], '</a>';
+			<li>
+				<a href="', $galurl, 'sa=', $un, 'approve;in=', $item['id_media'], '"><img src="', $theme['images_aeva'], '/', $un, 'tick.png">&nbsp;', $txt['media_admin_' . $un . 'approve'], '</a>
+			</li>';
 
 	if ($item['can_add_playlist'])
 	{
 		echo '
-			<a href="#" class="zoom is_html"><img src="', $theme['images_aeva'], '/playlist.png">&nbsp;', $txt['media_add_to_playlist'], '</a>
+			<li>
+				<a href="#" class="zoom is_html"><img src="', $theme['images_aeva'], '/playlist.png">&nbsp;', $txt['media_add_to_playlist'], '</a>
 
-			<div class="zoom-html">
-				<form action="', $galurl, 'sa=item;in=', $item['id_media'], '" method="post" style="line-height: 2.2em">
-				<span style="float: left">', $txt['media_playlists'], '</span>
-				<span style="float: right">', $txt['media_add_to_playlist'], '&nbsp;
-					<select name="add_to_playlist">';
+				<div class="zoom-html">
+					<form action="', $galurl, 'sa=item;in=', $item['id_media'], '" method="post" style="line-height: 2.2em">
+					<span style="float: left">', $txt['media_playlists'], '</span>
+					<span style="float: right">', $txt['media_add_to_playlist'], '&nbsp;
+						<select name="add_to_playlist">';
 
 		foreach ($item['playlists']['mine'] as $p)
 			echo '<option value="', $p['id'], '">', $p['name'], '</option>';
 
 		echo '
-					</select>
-					<input type="submit" value="', $txt['media_submit'], '" name="submit_playlist">
-				</span>
-				</form>
-			</div>';
+						</select>
+						<input type="submit" value="', $txt['media_submit'], '" name="submit_playlist">
+					</span>
+					</form>
+				</div>
+			</li>';
 	}
 
 	echo '
-		</we:block>';
+		</ul></div>';
 }
 
 function template_aeva_item_playlists()
@@ -658,12 +687,10 @@ function template_aeva_item_playlists()
 
 function template_aeva_item_comments()
 {
-	global $item, $galurl, $txt, $theme, $settings;
-	global $context, $options;
+	global $item, $galurl, $txt, $theme, $settings, $context, $options;
 
 	echo '
-		<we:cat>
-			', !empty($settings['xmlnews_enable']) ? '
+		<we:cat>', !empty($settings['xmlnews_enable']) ? '
 			<a href="' . $galurl . 'sa=feed;item=' . $item['id_media'] . ';type=comments"><span class="feed_icon"></span></a>
 			<a href="' . $galurl . 'sa=feed;item=' . $item['id_media'] . ';type=comments">
 				' . $txt['media_comments'] . '
@@ -681,7 +708,7 @@ function template_aeva_item_comments()
 		echo '
 		<div class="comment_sort_options">
 			', $txt['media_sort_order_com'], ':
-			<select onchange="window.location = $(this).val();">
+			<select onchange="location = $(this).val();">
 				<option value="', $galurl, 'sa=item;in=', $item['id_media'], !empty($_REQUEST['start']) ? ';start=' . (int) $_REQUEST['start'] : '', '"', $context['aeva_asc'] ? ' selected' : '', '>', $txt['media_sort_order_asc'], '</option>
 				<option value="', $galurl, 'sa=item;in=', $item['id_media'], ';com_desc', !empty($_REQUEST['start']) ? ';start=' . (int) $_REQUEST['start'] : '', '"', $context['aeva_asc'] ? '' : ' selected', '>', $txt['media_sort_order_desc'], '</option>
 			</select>
@@ -861,7 +888,7 @@ function template_aeva_form()
 				switch ($e['type'])
 				{
 					case 'text';
-						echo '<input type="text"', isset($e['value']) ? ' value="' . $e['value'] . '"' : '', ' name="', $e['fieldname'], '" tabindex="', $context['tabindex']++, '" size="', !empty($e['size']) ? $e['size'] : 50, '"', isset($e['custom']) ? ' ' . $e['custom'] : '', '>';
+						echo '<input', isset($e['value']) ? ' value="' . $e['value'] . '"' : '', ' name="', $e['fieldname'], '" tabindex="', $context['tabindex']++, '" size="', !empty($e['size']) ? $e['size'] : 50, '"', isset($e['custom']) ? ' ' . $e['custom'] : '', '>';
 					break;
 					case 'textbox';
 						if (isset($context['postbox']) && $context['postbox']->id == $e['fieldname'])
@@ -879,7 +906,7 @@ function template_aeva_form()
 						echo '<input type="hidden" name="', $e['fieldname'], '" value="', $e['value'], '"', isset($e['custom']) ? ' ' . $e['custom'] : '', '>';
 					break;
 					case 'small_text';
-						echo '<input type="text"', isset($e['value']) ? ' value="' . $e['value'] . '"' : '', ' name="', $e['fieldname'], '" tabindex="', $context['tabindex']++, '" size="10"', isset($e['custom']) ? ' ' . $e['custom'] : '', '>';
+						echo '<input', isset($e['value']) ? ' value="' . $e['value'] . '"' : '', ' name="', $e['fieldname'], '" tabindex="', $context['tabindex']++, '" size="10"', isset($e['custom']) ? ' ' . $e['custom'] : '', '>';
 					break;
 					case 'select';
 						echo '<select name="', $e['fieldname'], isset($e['multi']) && $e['multi'] === true ? '[]' : '', '" tabindex="', $context['tabindex']++, '"',
@@ -1191,7 +1218,7 @@ function template_aeva_search_searching()
 	<br>
 	<form action="', $galurl, 'sa=search" method="post">
 		<div class="windowbg2 wrc center">
-			', $txt['media_search_for'], ': <input type="text" name="search" size="50">
+			', $txt['media_search_for'], ': <input name="search" size="50">
 		</div>
 		<div class="windowbg wrc">
 			<table class="w100 cs1 cp8">
@@ -1239,7 +1266,7 @@ function template_aeva_search_searching()
 					', $txt['media_search_by_mem'], '<dfn>', $txt['media_search_by_mem_desc'], '</dfn>
 				</td>
 				<td class="w50 left">
-					<input name="sch_mem" id="sch_mem" type="text" size="25">
+					<input name="sch_mem" id="sch_mem" size="25">
 				</td>
 			</tr>
 			<tr>

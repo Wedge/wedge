@@ -577,7 +577,7 @@ $(function ()
 			.addClass('mimenu')
 			.load(weUrl('action=search' + (window.we_topic ? ';topic=' + we_topic : '') + (window.we_board ? ';board=' + we_board : '')), function () {
 				// The simpler $('#advanced_search') seems to cause problems when closing and reopening. jQuery bug..?
-				$pop.find('#advanced_search').width($pop.find('#advanced_search').width());
+				$pop.find('#search_popup').width($pop.find('#search_popup').width());
 				$pop.hide().show(300).find('select').sb();
 			});
 		opened = true;

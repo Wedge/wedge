@@ -354,7 +354,6 @@ function template_sidebar_before()
 	}
 	// Otherwise they're a guest - this time ask them to either register or login - lazy bums...
 	elseif (!empty($context['show_login_bar']))
-	{
 		echo '
 			<form id="guest_form" action="<URL>?action=login2" method="post" accept-charset="UTF-8" ', empty($context['disable_login_hashing']) ? ' onsubmit="hashLoginPassword(this, \'' . $context['session_id'] . '\');"' : '', '>
 				<div class="info">', (empty($settings['registration_method']) || $settings['registration_method'] != 3) ? $txt['login_or_register'] : $txt['please_login'], '</div>
@@ -368,14 +367,11 @@ function template_sidebar_before()
 					<option value="-1" selected>', $txt['forever'], '</option>
 				</select>
 				<input type="submit" value="', $txt['login'], '" class="submit"><br>
-				<div class="info">', $txt['quick_login_desc'], '</div>';
-
-		echo '
+				<div class="info">', $txt['quick_login_desc'], '</div>
 				<input type="hidden" name="hash_passwrd" value="">
 			</form>
 		</div>
 	</section>';
-	}
 }
 
 // Show the Quick Access (JumpTo) select box.

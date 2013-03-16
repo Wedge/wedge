@@ -347,12 +347,12 @@ $radius = 20px
 @remove #siteslogan
 	color: #000
 
-@remove #search_form input[type=submit]
+@remove #search_form > input[type=submit]
 	background: #938983
 	border-color: #bbb #888 #888 #bbb
 	color: white
 
-@remove #search_form input[type=submit]:hover
+@remove #search_form > input[type=submit]:hover
 	background: #a39993
 
 @remove

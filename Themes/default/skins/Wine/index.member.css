@@ -3,5 +3,5 @@
 ---------------------------------------------------- */
 
 ul.buttonlist
-	a.lock, a.pin, a.add_poll
-		background-position: 6px 5px
+	a.lock, a.pin, a.add_poll, a.merge
+		background-position: 6px 6px

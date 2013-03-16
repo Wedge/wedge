@@ -131,7 +131,7 @@ table.cs0 final tr.windowbg:last-child td
 		color: white
 		border-color: #777 #aaa #aaa #777
 		background-color: rgba(0,0,0,.1)
-	input[type=submit]
+	> input[type=submit]
 		background: #938983
 		border-color: #bbb #888 #888 #bbb
 		color: white

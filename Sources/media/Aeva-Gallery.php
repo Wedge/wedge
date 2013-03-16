@@ -1239,10 +1239,12 @@ function aeva_viewItem()
 		'aeva_item_prevnext',
 		'aeva_item_wrap_begin',
 		we::is('ie6,ie7,mobile') || !SKIN_SIDEBAR_RIGHT ? '' : 'aeva_item_details',
-		'aeva_item_main',
+		'aeva_item_main' => array(
+			'aeva_item_main_item',
+			'aeva_item_actions',
+		),
 		we::is('ie6,ie7,mobile') || SKIN_SIDEBAR_RIGHT ? '' : 'aeva_item_details',
 		'aeva_item_wrap_end',
-		'aeva_item_actions',
 		'aeva_item_comments',
 	));
 	if (we::is('ie6,ie7,mobile'))
