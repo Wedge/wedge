@@ -356,7 +356,7 @@ class wesql
 			// Check for errors like 145... only fix it once every three days, and send an email. (can't use empty because it might not be set yet...)
 			if (!empty($fix_tables))
 			{
-				// Subs-Admin.php for updateSettingsFile(), Subs-Post.php for sendmail().
+				// Subs-Post.php for sendmail().
 				loadSource('Subs-Post');
 
 				// Make a note of the REPAIR...

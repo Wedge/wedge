@@ -673,9 +673,10 @@ function ModifyLanguageSettings($return_config = false)
 		variable name, description, type (constant), size/possible values, helptext.
 	OR	an empty string for a horizontal rule.
 	OR	a string for a titled section. */
+
 	$config_vars = array(
-		'language' => array('language', $txt['setting_language'], 'file', 'select', array(), null, 'disabled' => $settings_not_writable),
-		array('userLanguage', $txt['userLanguage'], 'db', 'check', null, 'userLanguage'),
+		'language' => array('select', 'language', array()),
+		array('check', 'userLanguage'),
 	);
 
 	if ($return_config)
@@ -684,13 +685,13 @@ function ModifyLanguageSettings($return_config = false)
 	// Get our languages. No cache.
 	getLanguages(false);
 	foreach ($context['languages'] as $lang)
-		$config_vars['language'][4][$lang['filename']] = array($lang['filename'], '&lt;span class="flag_' . $lang['filename'] . '"&gt;&lt;/span&gt; ' . $lang['name']);
+		$config_vars['language'][2][$lang['filename']] = '&lt;span class="flag_' . $lang['filename'] . '"&gt;&lt;/span&gt; ' . $lang['name'];
 
 	// Saving settings?
 	if (isset($_REQUEST['save']))
 	{
 		checkSession();
-		saveSettings($config_vars);
+		saveDBSettings($config_vars);
 		redirectexit('action=admin;area=languages;sa=settings');
 	}
 
@@ -705,7 +706,7 @@ function ModifyLanguageSettings($return_config = false)
 		$context['settings_message'] = '<p class="center"><strong>' . $txt['admin_backup_fail'] . '</strong></p><br>';
 
 	// Fill the config array.
-	prepareServerSettingsContext($config_vars);
+	prepareDBSettingContext($config_vars);
 }
 
 // Edit a particular set of language entries.

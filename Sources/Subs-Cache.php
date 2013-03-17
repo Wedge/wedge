@@ -753,7 +753,7 @@ function dynamic_language_flags()
 	{
 		$icon = '/languages/Flag.' . $language['filename'] . '.png';
 		$rep .= '
-.flag_' . $language['filename'] . ' extends .inline-block
+.flag_' . $language['filename'] . ' mixes .inline-block
 	background: url($theme'. $icon . ') no-repeat
 	width: width($theme_dir'. $icon . ')px
 	height: height($theme_dir'. $icon . ')px';
