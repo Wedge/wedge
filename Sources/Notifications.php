@@ -130,7 +130,7 @@ class WeNotif
 			$notifications = Notification::get(null, we::$id, self::$quick_count, true);
 
 			// Cache it
-			cache_put_data('quick_notification_' . we::$id, $context['quick_notifications'], 86400);
+			cache_put_data('quick_notification_' . we::$id, $notifications, 86400);
 		}
 
 		$notifs = array();

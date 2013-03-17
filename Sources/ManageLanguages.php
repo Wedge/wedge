@@ -464,7 +464,15 @@ function DownloadLanguage()
 // This lists all the current languages and allows editing of them.
 function ModifyLanguages()
 {
-	global $txt, $context, $language, $boarddir;
+	global $txt, $context, $language, $boarddir, $cachedir;
+
+	if (isset($_GET['cleancache']))
+	{
+		checkSession();
+		foreach (glob($cachedir . '/lang_*.php') as $filename)
+			@unlink($filename);
+		$context['cache_cleared'] = true;
+	}
 
 	// Setting a new default?
 	if (!empty($_POST['set_default']) && !empty($_POST['def_language']))
@@ -585,8 +593,9 @@ function ModifyLanguages()
 	loadSource('Subs-List');
 	createList($listOptions);
 
-	wetem::load('show_list');
-	$context['default_list'] = 'language_list';
+	loadTemplate('ManageLanguages');
+
+	wetem::load('language_home');
 }
 
 // How many languages?

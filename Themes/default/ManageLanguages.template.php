@@ -11,6 +11,34 @@
  * @version 0.1
  */
 
+// Display the list of languages, as well as the clear-cache button.
+function template_language_home()
+{
+	global $context, $txt;
+
+	template_show_list('language_list');
+
+	echo '
+	<we:cat>', $txt['language_clear_cache'], '</we:cat>';
+
+	if (!empty($context['cache_cleared']))
+		echo '
+		<div class="windowbg" id="profile_success">
+			', $txt['language_cache_cleared'], '
+		</div>';
+
+	echo '
+	<div class="windowbg wrc">
+		<form action="<URL>?action=admin;area=languages;cleancache" method="post" accept-charset="UTF-8">
+			<p>', $txt['language_clear_cache_desc'], '</p>
+			<input type="submit" value="', $txt['language_clear_cache_btn'], '" class="floatright">
+			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
+			<br class="clear">
+		</form>
+	</div>
+	<br>';
+}
+
 // Add a new language
 function template_add_language()
 {

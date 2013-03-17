@@ -1617,7 +1617,7 @@ CREATE TABLE {$db_prefix}members (
   email_notifiers varchar(255) NOT NULL default '',
   notify_email_period tinyint(3) NOT NULL default 7,
   notify_email_last_sent int(10) NOT NULL default 0,
-  notifier_prefs text NOT NULL default '',
+  notifier_prefs text NOT NULL,
   PRIMARY KEY (id_member),
   KEY member_name (member_name),
   KEY real_name (real_name),
