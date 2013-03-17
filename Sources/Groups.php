@@ -618,7 +618,7 @@ function MembergroupMembers()
 // Show and manage all group requests.
 function GroupRequests()
 {
-	global $txt, $context, $settings, $language;
+	global $txt, $context, $settings;
 
 	// Set up the template stuff...
 	$context['page_title'] = $txt['mc_group_requests'];
@@ -677,7 +677,7 @@ function GroupRequests()
 			$group_changes = array();
 			while ($row = wesql::fetch_assoc($request))
 			{
-				$row['lngfile'] = empty($row['lngfile']) || empty($settings['userLanguage']) ? $language : $row['lngfile'];
+				$row['lngfile'] = empty($row['lngfile']) || empty($settings['userLanguage']) ? $settings['language'] : $row['lngfile'];
 
 				// If we are approving work out what their new group is.
 				if ($_POST['req_action'] == 'approve')

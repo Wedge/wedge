@@ -2076,6 +2076,7 @@ INSERT INTO {$db_prefix}settings
 	(variable, value)
 VALUES
 	('weVersion', '{$wedge_version}'),
+	('language', '{$language}'),
 	('news', 'e{$default_news}'),
 	('todayMod', '2'),
 	('enablePreviousNext', '1'),
@@ -2271,7 +2272,7 @@ VALUES
 	('newsfader_time', '5000'),
 	('additional_options_collapsable', '1'),
 	('likes_enable', '1'),
-	('notifications_prune_days', '7'),
+	('notifications_prune_days', '7');
 # --------------------------------------------------------
 
 #

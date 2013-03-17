@@ -146,8 +146,7 @@ function AnnouncementSelectMembergroup()
  */
 function AnnouncementSend()
 {
-	global $topic, $board, $board_info, $context, $settings;
-	global $language, $scripturl, $txt;
+	global $topic, $board, $board_info, $context, $settings, $scripturl, $txt;
 
 	checkSession();
 
@@ -224,7 +223,7 @@ function AnnouncementSend()
 	// Loop through all members that'll receive an announcement in this batch.
 	while ($row = wesql::fetch_assoc($request))
 	{
-		$cur_language = empty($row['lngfile']) || empty($settings['userLanguage']) ? $language : $row['lngfile'];
+		$cur_language = empty($row['lngfile']) || empty($settings['userLanguage']) ? $settings['language'] : $row['lngfile'];
 
 		// If the language wasn't defined yet, load it and compose a notification message.
 		if (!isset($announcements[$cur_language]))

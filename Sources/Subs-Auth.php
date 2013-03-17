@@ -412,7 +412,7 @@ function findMembers($names, $use_wildcards = false, $buddies_only = false, $max
 // This function generates a random password for a user and emails it to them.
 function resetPassword($memID, $username = null)
 {
-	global $context, $txt, $settings, $language;
+	global $context, $txt, $settings;
 
 	// Language... and a required file.
 	loadLanguage('Login');
@@ -459,7 +459,7 @@ function resetPassword($memID, $username = null)
 		'PASSWORD' => $newPassword,
 	);
 
-	$emaildata = loadEmailTemplate('change_password', $replacements, empty($lngfile) || empty($settings['userLanguage']) ? $language : $lngfile);
+	$emaildata = loadEmailTemplate('change_password', $replacements, empty($lngfile) || empty($settings['userLanguage']) ? $settings['language'] : $lngfile);
 
 	// Send them the email informing them of the change - then we're done!
 	sendmail($email, $emaildata['subject'], $emaildata['body'], null, null, false, 0);

@@ -444,7 +444,7 @@ function updateAdminPreferences()
 // Send all the administrators a lovely email.
 function emailAdmins($template, $replacements = array(), $additional_recipients = array())
 {
-	global $language, $settings;
+	global $settings;
 
 	// We certainly want this.
 	loadSource('Subs-Post');
@@ -487,7 +487,7 @@ function emailAdmins($template, $replacements = array(), $additional_recipients 
 		$replacements['USERNAME'] = $row['member_name'];
 
 		// Load the data from the template.
-		$emaildata = loadEmailTemplate($template, $replacements, empty($row['lngfile']) || empty($settings['userLanguage']) ? $language : $row['lngfile']);
+		$emaildata = loadEmailTemplate($template, $replacements, empty($row['lngfile']) || empty($settings['userLanguage']) ? $settings['language'] : $row['lngfile']);
 
 		// Then send the actual email.
 		sendmail($row['email_address'], $emaildata['subject'], $emaildata['body'], null, null, false, 1);
@@ -509,7 +509,7 @@ function emailAdmins($template, $replacements = array(), $additional_recipients 
 			$replacements['USERNAME'] = $recipient['name'];
 
 			// Load the template again.
-			$emaildata = loadEmailTemplate($template, $replacements, empty($recipient['lang']) || empty($settings['userLanguage']) ? $language : $recipient['lang']);
+			$emaildata = loadEmailTemplate($template, $replacements, empty($recipient['lang']) || empty($settings['userLanguage']) ? $settings['language'] : $recipient['lang']);
 
 			// Send off the email.
 			sendmail($recipient['email'], $emaildata['subject'], $emaildata['body'], null, null, false, 1);

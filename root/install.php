@@ -884,7 +884,6 @@ function ForumSettings()
 			'pluginsdir' => addslashes(dirname(__FILE__)) . '/Plugins',
 			'pluginsurl' => $_POST['boardurl'] . '/Plugins',
 			'mbname' => strtr($_POST['mbname'], array('\"' => '"')),
-			'language' => substr($_SESSION['installer_temp_lang'], 8, -4),
 		);
 
 		// Must save!
@@ -963,6 +962,7 @@ function DatabasePopulation()
 		'{$wedge_version}' => $GLOBALS['current_wedge_version'],
 		'{$current_time}' => time(),
 		'{$sched_task_offset}' => 82800 + mt_rand(0, 86399),
+		'{$language}' => substr($_SESSION['installer_temp_lang'], 8, -4),
 	);
 
 	foreach ($txt as $key => $value)

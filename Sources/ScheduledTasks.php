@@ -1257,7 +1257,7 @@ function loadEssentialThemeData()
 
 function scheduled_fetchRemoteFiles()
 {
-	global $txt, $language, $theme, $settings;
+	global $txt, $theme, $settings;
 
 	// What files do we want to get
 	$request = wesql::query('
@@ -1275,7 +1275,7 @@ function scheduled_fetchRemoteFiles()
 		$js_files[$row['id_file']] = array(
 			'filename' => $row['filename'],
 			'path' => $row['path'],
-			'parameters' => sprintf($row['parameters'], $language, urlencode($txt['time_format']), urlencode(WEDGE_VERSION)),
+			'parameters' => sprintf($row['parameters'], $settings['language'], urlencode($txt['time_format']), urlencode(WEDGE_VERSION)),
 		);
 
 	wesql::free_result($request);
@@ -1285,7 +1285,7 @@ function scheduled_fetchRemoteFiles()
 	$weget = new weget('http://wedge.org/');
 
 	// Just in case we run into a problem.
-	loadLanguage('Errors', $language, false);
+	loadLanguage('Errors', $settings['language'], false);
 
 	foreach ($js_files as $id_file => $file)
 	{
@@ -1475,7 +1475,7 @@ function scheduled_weekly_maintenance()
 // Perform the standard checks on expiring/near expiring subscriptions.
 function scheduled_paid_subscriptions()
 {
-	global $txt, $scripturl, $settings, $language;
+	global $txt, $scripturl, $settings;
 
 	// Start off by checking for removed subscriptions.
 	$request = wesql::query('
@@ -1537,7 +1537,7 @@ function scheduled_paid_subscriptions()
 			'END_DATE' => strip_tags(timeformat($row['end_time'])),
 		);
 
-		$emaildata = loadEmailTemplate('paid_subscription_reminder', $replacements, empty($row['lngfile']) || empty($settings['userLanguage']) ? $language : $row['lngfile']);
+		$emaildata = loadEmailTemplate('paid_subscription_reminder', $replacements, empty($row['lngfile']) || empty($settings['userLanguage']) ? $settings['language'] : $row['lngfile']);
 
 		// Send the actual email.
 		sendmail($row['email_address'], $emaildata['subject'], $emaildata['body'], null, null, false, 2);

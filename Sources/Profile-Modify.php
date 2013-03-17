@@ -118,7 +118,7 @@ if (!defined('WEDGE'))
 // This defines every profile field known to man.
 function loadProfileFields($force_reload = false)
 {
-	global $context, $profile_fields, $txt, $settings, $old_profile, $cur_profile, $language;
+	global $context, $profile_fields, $txt, $settings, $old_profile, $cur_profile;
 
 	// Don't load this twice!
 	if (!empty($profile_fields) && !$force_reload)
@@ -315,7 +315,7 @@ function loadProfileFields($force_reload = false)
 			'permission' => 'profile_identity',
 			'preload' => 'profileLoadLanguages',
 			'enabled' => !empty($settings['userLanguage']),
-			'value' => empty($cur_profile['lngfile']) ? $language : $cur_profile['lngfile'],
+			'value' => empty($cur_profile['lngfile']) ? $settings['language'] : $cur_profile['lngfile'],
 			'input_validate' => create_function('&$value', '
 				global $context, $cur_profile;
 
@@ -2090,7 +2090,7 @@ function processMemberPrefs($type)
 // Load all the languages for the profile.
 function profileLoadLanguages()
 {
-	global $context, $settings, $theme, $cur_profile, $language;
+	global $context, $settings, $theme, $cur_profile;
 
 	$context['profile_languages'] = array();
 
@@ -2862,7 +2862,7 @@ function profileReloadUser()
 // Send the user a new activation email if they need to reactivate!
 function profileSendActivation()
 {
-	global $profile_vars, $txt, $context, $scripturl, $cookiename, $cur_profile, $language, $settings;
+	global $profile_vars, $txt, $context, $scripturl, $cookiename, $cur_profile, $settings;
 
 	loadSource('Subs-Post');
 
@@ -2877,7 +2877,7 @@ function profileSendActivation()
 	);
 
 	// Send off the email.
-	$emaildata = loadEmailTemplate('activate_reactivate', $replacements, empty($cur_profile['lngfile']) || empty($settings['userLanguage']) ? $language : $cur_profile['lngfile']);
+	$emaildata = loadEmailTemplate('activate_reactivate', $replacements, empty($cur_profile['lngfile']) || empty($settings['userLanguage']) ? $settings['language'] : $cur_profile['lngfile']);
 	sendmail($profile_vars['email_address'], $emaildata['subject'], $emaildata['body'], null, null, false, 0);
 
 	// Log the user out.
@@ -3007,7 +3007,7 @@ function groupMembership($memID)
 // This function actually makes all the group changes...
 function groupMembership2($profile_vars, $post_errors, $memID)
 {
-	global $context, $user_profile, $settings, $txt, $scripturl, $language;
+	global $context, $user_profile, $settings, $txt, $scripturl;
 
 	// Let's be extra cautious...
 	if (!we::$user['is_owner'] || empty($settings['show_group_membership']))
@@ -3209,7 +3209,7 @@ function groupMembership2($profile_vars, $post_errors, $memID)
 					'MODLINK' => $scripturl . '?action=moderate;area=groups;sa=requests',
 				);
 
-				$emaildata = loadEmailTemplate('request_membership', $replacements, empty($row['lngfile']) || empty($settings['userLanguage']) ? $language : $row['lngfile']);
+				$emaildata = loadEmailTemplate('request_membership', $replacements, empty($row['lngfile']) || empty($settings['userLanguage']) ? $settings['language'] : $row['lngfile']);
 				sendmail($row['email_address'], $emaildata['subject'], $emaildata['body'], null, null, false, 2);
 			}
 			wesql::free_result($request);

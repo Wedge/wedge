@@ -995,8 +995,7 @@ function Post2()
  */
 function notifyMembersBoard(&$topicData)
 {
-	global $txt, $scripturl, $language;
-	global $settings, $board, $context;
+	global $txt, $scripturl, $settings, $board, $context;
 
 	loadSource('Subs-Post');
 
@@ -1079,7 +1078,7 @@ function notifyMembersBoard(&$topicData)
 				continue;
 		}
 
-		$langloaded = loadLanguage('EmailTemplates', empty($rowmember['lngfile']) || empty($settings['userLanguage']) ? $language : $rowmember['lngfile'], false);
+		$langloaded = loadLanguage('EmailTemplates', empty($rowmember['lngfile']) || empty($settings['userLanguage']) ? $settings['language'] : $rowmember['lngfile'], false);
 
 		// Now loop through all the notifications to send for this board.
 		if (empty($boards[$rowmember['id_board']]))
@@ -1143,7 +1142,7 @@ function notifyMembersBoard(&$topicData)
 
 function fetchFilterMessages($details)
 {
-	global $language;
+	global $settings;
 
 	// We need to go and see if we can find some messages for this.
 	$messages = array();
@@ -1192,8 +1191,8 @@ function fetchFilterMessages($details)
 				$messages[] = $langs[$_SESSION['language']];
 			elseif (isset($langs[we::$user['language']]))
 				$messages[] = $langs[we::$user['language']];
-			elseif (isset($qa[$language]))
-				$messages[] = $langs[$language];
+			elseif (isset($qa[$settings['language']]))
+				$messages[] = $langs[$settings['language']];
 		}
 
 	return $messages;

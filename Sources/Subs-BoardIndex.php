@@ -25,7 +25,7 @@ if (!defined('WEDGE'))
 
 function getBoardIndex($boardIndexOptions)
 {
-	global $settings, $txt, $theme, $context, $language;
+	global $settings, $txt, $theme, $context;
 
 	// For performance, track the latest post while going through the boards.
 	if (!empty($boardIndexOptions['set_latest_post']))

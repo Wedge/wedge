@@ -69,7 +69,7 @@ function add_js_inline()
  */
 function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow = false, $ignore_files = array())
 {
-	global $context, $settings, $theme, $jsdir, $boardurl, $footer_coding, $language;
+	global $context, $settings, $theme, $jsdir, $boardurl, $footer_coding;
 	static $done_files = array();
 
 	if (!is_array($files))
@@ -125,7 +125,7 @@ function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow =
 	$id = !empty($settings['obfuscate_filenames']) ? md5(substr($id, 0, -1)) . '-' : $id;
 	$latest_date %= 1000000;
 
-	$lang_name = !empty($settings['js_lang'][$id]) && !empty(we::$user['language']) && we::$user['language'] != $language ? we::$user['language'] . '-' : '';
+	$lang_name = !empty($settings['js_lang'][$id]) && !empty(we::$user['language']) && we::$user['language'] != $settings['language'] ? we::$user['language'] . '-' : '';
 	$can_gzip = !empty($settings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
 	$ext = $can_gzip ? (we::is('safari') ? '.jgz' : '.js.gz') : '.js';
 
@@ -159,7 +159,7 @@ function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow =
  */
 function add_plugin_js_file($plugin_name, $files = array(), $is_direct_url = false, $is_out_of_flow = false)
 {
-	global $context, $pluginsdir, $jsdir, $boardurl, $settings, $footer_coding, $language;
+	global $context, $pluginsdir, $jsdir, $boardurl, $settings, $footer_coding;
 	static $done_files = array();
 
 	if (empty($context['plugins_dir'][$plugin_name]))
@@ -206,7 +206,7 @@ function add_plugin_js_file($plugin_name, $files = array(), $is_direct_url = fal
 	$id = !empty($settings['obfuscate_filenames']) ? md5(substr($id, 0, -1)) . '-' : $id;
 	$latest_date %= 1000000;
 
-	$lang_name = !empty($settings['js_lang'][$id]) && !empty(we::$user['language']) && we::$user['language'] != $language ? we::$user['language'] . '-' : '';
+	$lang_name = !empty($settings['js_lang'][$id]) && !empty(we::$user['language']) && we::$user['language'] != $settings['language'] ? we::$user['language'] . '-' : '';
 	$can_gzip = !empty($settings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
 	$ext = $can_gzip ? (we::is('safari') ? '.jgz' : '.js.gz') : '.js';
 
@@ -819,7 +819,7 @@ function wedge_js_replace_ifs($match)
  */
 function wedge_cache_js($id, &$lang_name, $latest_date, $ext, $js, $gzip = false, $full_path = false)
 {
-	global $theme, $settings, $comments, $jsdir, $txt, $language;
+	global $theme, $settings, $comments, $jsdir, $txt;
 	static $closure_failed = false;
 
 	$final = '';
@@ -892,7 +892,7 @@ function wedge_cache_js($id, &$lang_name, $latest_date, $ext, $js, $gzip = false
 			updateSettings(array('js_lang' => serialize($settings['js_lang'])), $use_update);
 			$settings['js_lang'] = $save;
 			// We need to fix the language string for first time use. $lang_name is passed by reference.
-			$lang_name = !empty(we::$user['language']) && we::$user['language'] != $language ? we::$user['language'] . '-' : '';
+			$lang_name = !empty(we::$user['language']) && we::$user['language'] != $settings['language'] ? we::$user['language'] . '-' : '';
 		}
 
 		if (preg_match_all('~\$txt\[([\'"])(.*?)\1]~i', $final, $strings, PREG_SET_ORDER))

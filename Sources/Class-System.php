@@ -54,7 +54,7 @@ class we
 	 */
 	protected static function init_user()
 	{
-		global $context, $settings, $user_settings, $cookiename, $language, $db_prefix, $boardurl, $board, $txt;
+		global $context, $settings, $user_settings, $cookiename, $db_prefix, $boardurl, $board, $txt;
 
 		$id_member = 0;
 
@@ -255,7 +255,7 @@ class we
 			'email' => isset($user_settings['email_address']) ? $user_settings['email_address'] : '',
 			'activated' => !empty($user_settings['is_activated']) ? $user_settings['is_activated'] : 0,
 			'passwd' => isset($user_settings['passwd']) ? $user_settings['passwd'] : '',
-			'language' => empty($user_settings['lngfile']) || empty($settings['userLanguage']) ? $language : $user_settings['lngfile'],
+			'language' => empty($user_settings['lngfile']) || empty($settings['userLanguage']) ? $settings['language'] : $user_settings['lngfile'],
 			'is_guest' => $id_member == 0,
 			'is_member' => $id_member > 0,
 			'is_m' . $id_member => true,

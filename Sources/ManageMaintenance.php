@@ -344,8 +344,7 @@ function MaintainEmptyUnimportantLogs()
 // Convert both data and database tables to UTF-8 character set.
 function ConvertUtf8()
 {
-	global $context, $txt, $language;
-	global $settings, $db_prefix;
+	global $context, $txt, $settings, $db_prefix;
 
 	// Show me your badge!
 	isAllowedTo('admin_forum');
@@ -414,9 +413,9 @@ function ConvertUtf8()
 			fatal_lang_error('utf8_already_utf8');
 
 		// Grab the character set from the default language file.
-		loadLanguage('index', $language, true);
+		loadLanguage('index', $settings['language'], true);
 		$context['charset_detected'] = $txt['lang_character_set'];
-		$context['charset_about_detected'] = sprintf($txt['utf8_detected_charset'], $language, $context['charset_detected']);
+		$context['charset_about_detected'] = sprintf($txt['utf8_detected_charset'], $settings['language'], $context['charset_detected']);
 
 		// Go back to your own language.
 		loadLanguage('index', we::$user['language'], true);

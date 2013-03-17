@@ -3093,7 +3093,7 @@ function MessageSettings()
 // Allows a user to report a personal message they receive to the administrator.
 function ReportMessage()
 {
-	global $txt, $context, $scripturl, $language, $settings;
+	global $txt, $context, $scripturl, $settings;
 
 	// Check that this feature is even enabled!
 	if (empty($_REQUEST['pmsg']))
@@ -3214,7 +3214,7 @@ function ReportMessage()
 		while ($row = wesql::fetch_assoc($request))
 		{
 			// Need to send in the correct language!
-			$cur_language = empty($row['lngfile']) || empty($settings['userLanguage']) ? $language : $row['lngfile'];
+			$cur_language = empty($row['lngfile']) || empty($settings['userLanguage']) ? $settings['language'] : $row['lngfile'];
 
 			if (!isset($messagesToSend[$cur_language]))
 			{

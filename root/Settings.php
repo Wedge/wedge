@@ -17,7 +17,6 @@ $mmessage = 'We are currently working on website maintenance. Please bear with u
 
 ########## Forum Info ##########
 $mbname = 'My Community';						# The name of your forum.
-$language = 'english';							# The default language file set for the forum.
 $boardurl = 'http://127.0.0.1/wedge';			# URL to your forum's folder. (without the trailing /!)
 $webmaster_email = 'noreply@myserver.com';		# Email address to send emails from. (like noreply@yourdomain.com.)
 $cookiename = 'WedgeCookie01';					# Name of the cookie to set for authentication.

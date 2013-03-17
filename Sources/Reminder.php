@@ -61,7 +61,7 @@ function RemindMe()
 // Pick a reminder type.
 function RemindPick()
 {
-	global $context, $txt, $scripturl, $webmaster_email, $language, $settings;
+	global $context, $txt, $scripturl, $webmaster_email, $settings;
 
 	checkSession();
 
@@ -146,7 +146,7 @@ function RemindPick()
 			'USERNAME' => $row['member_name'],
 		);
 
-		$emaildata = loadEmailTemplate('forgot_password', $replacements, empty($row['lngfile']) || empty($settings['userLanguage']) ? $language : $row['lngfile']);
+		$emaildata = loadEmailTemplate('forgot_password', $replacements, empty($row['lngfile']) || empty($settings['userLanguage']) ? $settings['language'] : $row['lngfile']);
 		$context['description'] = $txt['reminder_sent'];
 
 		sendmail($row['email_address'], $emaildata['subject'], $emaildata['body'], null, null, false, 0);

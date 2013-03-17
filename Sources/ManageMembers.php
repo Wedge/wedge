@@ -1039,7 +1039,7 @@ function MembersAwaitingActivation()
 // Do the approve/activate/delete stuff
 function AdminApprove()
 {
-	global $txt, $context, $scripturl, $settings, $language;
+	global $txt, $context, $scripturl, $settings;
 
 	// First, check our session.
 	checkSession();
@@ -1108,7 +1108,7 @@ function AdminApprove()
 			'username' => $row['member_name'],
 			'name' => $row['real_name'],
 			'email' => $row['email_address'],
-			'language' => empty($row['lngfile']) || empty($settings['userLanguage']) ? $language : $row['lngfile'],
+			'language' => empty($row['lngfile']) || empty($settings['userLanguage']) ? $settings['language'] : $row['lngfile'],
 			'code' => $row['validation_code']
 		);
 	}

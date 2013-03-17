@@ -18,7 +18,7 @@ if (defined('WEDGE'))
 define('WEDGE', 'SSI');
 
 // We're going to want a few globals... these are all set later.
-global $time_start, $maintenance, $msubject, $mmessage, $mbname, $language;
+global $time_start, $maintenance, $msubject, $mmessage, $mbname;
 global $boardurl, $boarddir, $sourcedir, $webmaster_email, $cookiename;
 global $db_server, $db_name, $db_user, $db_prefix, $db_persist, $db_error_send, $db_last_error;
 global $db_connection, $settings, $context, $sc, $topic, $board, $txt;

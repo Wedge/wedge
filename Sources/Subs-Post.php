@@ -385,7 +385,7 @@ function AddMailQueue($flush = false, $to_array = array(), $subject = '', $messa
 // Send off a personal message.
 function sendpm($recipients, $subject, $message, $store_outbox = true, $from = null, $pm_head = 0)
 {
-	global $context, $scripturl, $txt, $language, $settings;
+	global $context, $scripturl, $txt, $settings['language'], $settings;
 
 	// Make sure the PM language file is loaded, we might need something out of it.
 	loadLanguage('PersonalMessage');
@@ -615,7 +615,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = true, $from = n
 
 		// Send a notification, if enabled - taking the buddy list into account.
 		if (!empty($row['email_address']) && ($row['pm_email_notify'] == 1 || ($row['pm_email_notify'] > 1 && (!empty($settings['enable_buddylist']) && $row['is_buddy']))) && $row['is_activated'] == 1)
-			$notifications[empty($row['lngfile']) || empty($settings['userLanguage']) ? $language : $row['lngfile']][] = $row['email_address'];
+			$notifications[empty($row['lngfile']) || empty($settings['userLanguage']) ? $settings['language'] : $row['lngfile']][] = $row['email_address'];
 
 		$log['sent'][$row['id_member']] = sprintf(isset($txt['pm_successfully_sent']) ? $txt['pm_successfully_sent'] : '', $row['real_name']);
 	}
@@ -906,7 +906,7 @@ function server_parse($message, $socket, $response)
 // Notify members that something has happened to a topic they marked!
 function sendNotifications($topics, $type, $exclude = array(), $members_only = array())
 {
-	global $txt, $scripturl, $language;
+	global $txt, $scripturl, $settings['language'];
 	global $settings, $context;
 
 	// Can't do it if there's no topics.
@@ -1025,7 +1025,7 @@ function sendNotifications($topics, $type, $exclude = array(), $members_only = a
 				continue;
 		}
 
-		$needed_language = empty($row['lngfile']) || empty($settings['userLanguage']) ? $language : $row['lngfile'];
+		$needed_language = empty($row['lngfile']) || empty($settings['userLanguage']) ? $settings['language'] : $row['lngfile'];
 		if (empty($current_language) || $current_language != $needed_language)
 			$current_language = loadLanguage('Post', $needed_language, false);
 
@@ -2197,7 +2197,7 @@ function approveTopics($topics, $approve = true)
 // A special function for handling the hell which is sending approval notifications.
 function sendApprovalNotifications(&$topicData)
 {
-	global $txt, $scripturl, $language;
+	global $txt, $scripturl, $settings['language'];
 	global $settings, $context;
 
 	// Clean up the data...
@@ -2265,7 +2265,7 @@ function sendApprovalNotifications(&$topicData)
 				continue;
 		}
 
-		$needed_language = empty($row['lngfile']) || empty($settings['userLanguage']) ? $language : $row['lngfile'];
+		$needed_language = empty($row['lngfile']) || empty($settings['userLanguage']) ? $settings['language'] : $row['lngfile'];
 		if (empty($current_language) || $current_language != $needed_language)
 			$current_language = loadLanguage('Post', $needed_language, false);
 
@@ -2452,7 +2452,7 @@ function updateLastMessages($setboards, $id_msg = 0)
 // This simple function gets a list of all administrators and sends them an email to let them know a new member has joined.
 function adminNotify($type, $memberID, $member_name = null)
 {
-	global $txt, $settings, $language, $scripturl, $context;
+	global $txt, $settings, $settings['language'], $scripturl, $context;
 
 	// If the setting isn't enabled then just exit.
 	$notify_list = !empty($settings['notify_new_registration']) ? unserialize($settings['notify_new_registration']) : array();
@@ -2506,7 +2506,7 @@ function adminNotify($type, $memberID, $member_name = null)
 			$emailtype .= '_approval';
 		}
 
-		$emaildata = loadEmailTemplate($emailtype, $replacements, empty($row['lngfile']) || empty($settings['userLanguage']) ? $language : $row['lngfile']);
+		$emaildata = loadEmailTemplate($emailtype, $replacements, empty($row['lngfile']) || empty($settings['userLanguage']) ? $settings['language'] : $row['lngfile']);
 
 		// And do the actual sending...
 		sendmail($row['email_address'], $emaildata['subject'], $emaildata['body'], null, null, false, 0);

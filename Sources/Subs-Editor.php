@@ -67,7 +67,7 @@ function getMessageIcons($board_id)
 // Create a anti-bot verification control?
 function create_control_verification(&$verificationOptions, $do_test = false)
 {
-	global $txt, $settings, $options, $context, $language;
+	global $txt, $settings, $options, $context;
 
 	// First verification means we need to set up some bits...
 	if (empty($context['controls']['verification']))
@@ -247,8 +247,8 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 				$lang = $_SESSION['language'];
 			elseif (isset($qa[we::$user['language']]))
 				$lang = we::$user['language'];
-			elseif (isset($qa[$language]))
-				$lang = $language;
+			elseif (isset($qa[$settings['language']]))
+				$lang = $settings['language'];
 			else
 			{
 				$items = array_keys($qa);

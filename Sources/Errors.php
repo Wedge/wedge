@@ -210,7 +210,7 @@ function fatal_error($error, $log = 'general', $header = 403)
  */
 function fatal_lang_error($error, $log = 'general', $sprintf = array(), $header = 403)
 {
-	global $txt, $language, $settings, $context;
+	global $txt, $settings, $context;
 	static $fatal_error_called = false;
 
 	issue_http_header($header);
@@ -230,8 +230,8 @@ function fatal_lang_error($error, $log = 'general', $sprintf = array(), $header 
 	// Log the error in the forum's language, but don't waste the time if we aren't logging.
 	if ($log || (!empty($settings['enableErrorLogging']) && $settings['enableErrorLogging'] == 2))
 	{
-		loadLanguage('Errors', $language);
-		$reload_lang_file = !empty(we::$user['language']) && $language != we::$user['language'];
+		loadLanguage('Errors', $settings['language']);
+		$reload_lang_file = !empty(we::$user['language']) && $settings['language'] != we::$user['language'];
 		$error_message = empty($sprintf) ? $txt[$error] : vsprintf($txt[$error], $sprintf);
 		log_error($error_message, $log);
 	}

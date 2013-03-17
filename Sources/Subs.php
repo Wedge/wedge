@@ -1319,15 +1319,15 @@ function preventPrefetch($always = false)
  */
 function getRePrefix()
 {
-	global $context, $language, $txt;
+	global $context, $txt;
 
 	if (!isset($context['response_prefix']) && !($context['response_prefix'] = cache_get_data('response_prefix', 600)))
 	{
-		if ($language === we::$user['language'])
+		if ($settings['language'] === we::$user['language'])
 			$context['response_prefix'] = $txt['response_prefix'];
 		else
 		{
-			loadLanguage('index', $language, false);
+			loadLanguage('index', $settings['language'], false);
 			$context['response_prefix'] = $txt['response_prefix'];
 			loadLanguage('index');
 		}
@@ -2342,14 +2342,14 @@ function call_hook($hook, $parameters = array())
 
 function call_lang_hook($hook)
 {
-	global $settings, $language, $txt, $helptxt;
+	global $settings, $txt, $helptxt;
 
 	if (empty($settings['hooks'][$hook]))
 		return false;
 
 	static $lang = null;
 	if ($lang === null)
-		$lang = isset(we::$user['language']) ? we::$user['language'] : $language;
+		$lang = isset(we::$user['language']) ? we::$user['language'] : $settings['language'];
 
 	foreach ($settings['hooks'][$hook] as $function)
 	{
@@ -2369,7 +2369,7 @@ function call_lang_hook($hook)
 
 			// Then go with user preference, followed by forum default (assuming it isn't already one of the previous)
 			$attempts[$lang] = false;
-			$attempts[$language] = false;
+			$attempts[$settings['language']] = false;
 
 			foreach ($attempts as $load_lang => $continue)
 			{

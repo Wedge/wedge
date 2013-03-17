@@ -495,7 +495,7 @@ function getPackageInfo($gzfilename)
 // Parses a plugin-info.xml file - method can be 'install', 'upgrade', or 'uninstall'.
 function parsePackageInfo(&$packageXML, $testing_only = true, $method = 'install', $previous_version = '')
 {
-	global $boarddir, $context, $temp_path, $language;
+	global $boarddir, $context, $temp_path, $settings;
 
 	// Mayday! That action doesn't exist!!
 	if (empty($packageXML) || !$packageXML->exists($method))
@@ -561,7 +561,7 @@ function parsePackageInfo(&$packageXML, $testing_only = true, $method = 'install
 				if ($action->exists('@lang'))
 				{
 					// Auto-select a readme language based on either request variable or current language.
-					if ((isset($_REQUEST['readme']) && $action->fetch('@lang') == $_REQUEST['readme']) || (!isset($_REQUEST['readme']) && $action->fetch('@lang') == $language))
+					if ((isset($_REQUEST['readme']) && $action->fetch('@lang') == $_REQUEST['readme']) || (!isset($_REQUEST['readme']) && $action->fetch('@lang') == $settings['language']))
 					{
 						// In case the user put the readme blocks in the wrong order.
 						if (isset($context['readmes']['selected']) && $context['readmes']['selected'] == 'default')
@@ -609,7 +609,7 @@ function parsePackageInfo(&$packageXML, $testing_only = true, $method = 'install
 				'redirect_url' => $action->exists('@url') ? $action->fetch('@url') : '',
 				'redirect_timeout' => $action->exists('@timeout') ? (int) $action->fetch('@timeout') : '',
 				'parse_bbc' => $action->exists('@parsebbc') && $action->fetch('@parsebbc') == 'true',
-				'language' => $actionType == 'readme' && $action->exists('@lang') && $action->fetch('@lang') == $language ? $language : '',
+				'language' => $actionType == 'readme' && $action->exists('@lang') && $action->fetch('@lang') == $settings['language'] ? $settings['language'] : '',
 			);
 
 			if ($actionType == 'add-hook' || $actionType == 'remove-hook')

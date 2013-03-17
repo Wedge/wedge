@@ -96,7 +96,7 @@ function Report()
  */
 function ReportToModerator2()
 {
-	global $txt, $scripturl, $topic, $board, $settings, $language, $context;
+	global $txt, $scripturl, $topic, $board, $settings, $context;
 
 	// Make sure they aren't spamming.
 	spamProtection('report');
@@ -305,7 +305,7 @@ function ReportToModerator2()
 			'COMMENT' => $_POST['comment'],
 		);
 
-		$emaildata = loadEmailTemplate('report_to_moderator', $replacements, empty($row['lngfile']) || empty($settings['userLanguage']) ? $language : $row['lngfile']);
+		$emaildata = loadEmailTemplate('report_to_moderator', $replacements, empty($row['lngfile']) || empty($settings['userLanguage']) ? $settings['language'] : $row['lngfile']);
 
 		// Send it to the moderator.
 		sendmail($row['email_address'], $emaildata['subject'], $emaildata['body'], we::$user['email'], null, false, 2);

@@ -14,7 +14,7 @@
 // Template for listing all the current categories and boards.
 function template_main()
 {
-	global $context, $theme, $options, $txt, $settings, $language;
+	global $context, $theme, $options, $txt, $settings;
 
 	// Table header.
 	echo '
@@ -64,7 +64,7 @@ function template_main()
 			$alternate = !$alternate;
 
 			echo '
-					<li', !empty($settings['recycle_board']) && !empty($settings['recycle_enable']) && $settings['recycle_board'] == $board['id'] ? ' id="recycle_board"' : '', ' class="windowbg', $alternate ? '' : '2', '" style="padding-', $context['right_to_left'] ? 'right' : 'left', ': ', 5 + 30 * $board['child_level'], 'px', $board['move'] ? '; color: red' : '', '"><span class="floatleft"><img src="', $theme['default_theme_url'] . '/languages/Flag.', empty($board['language']) ? $language : $board['language'], '.png"> <a href="<URL>?board=', $board['id'], '">', $board['name'], '</a>', !empty($settings['recycle_board']) && !empty($settings['recycle_enable']) && $settings['recycle_board'] == $board['id'] ? '<a href="<URL>?action=admin;area=manageboards;sa=settings"> <img src="' . $theme['images_url'] . '/post/recycled.gif" alt="' . $txt['recycle_board'] . '"></a></span>' : '</span>', '
+					<li', !empty($settings['recycle_board']) && !empty($settings['recycle_enable']) && $settings['recycle_board'] == $board['id'] ? ' id="recycle_board"' : '', ' class="windowbg', $alternate ? '' : '2', '" style="padding-', $context['right_to_left'] ? 'right' : 'left', ': ', 5 + 30 * $board['child_level'], 'px', $board['move'] ? '; color: red' : '', '"><span class="floatleft"><img src="', $theme['default_theme_url'] . '/languages/Flag.', empty($board['language']) ? $settings['language'] : $board['language'], '.png"> <a href="<URL>?board=', $board['id'], '">', $board['name'], '</a>', !empty($settings['recycle_board']) && !empty($settings['recycle_enable']) && $settings['recycle_board'] == $board['id'] ? '<a href="<URL>?action=admin;area=manageboards;sa=settings"> <img src="' . $theme['images_url'] . '/post/recycled.gif" alt="' . $txt['recycle_board'] . '"></a></span>' : '</span>', '
 						<span class="floatright">', $context['can_manage_permissions'] ? '<span class="modify_boards"><a href="<URL>?action=admin;area=permissions;sa=index;pid=' . $board['permission_profile'] . ';' . $context['session_query'] . '">' . $txt['mboards_permissions'] . '</a></span>' : '', '
 						<span class="modify_boards"><a href="<URL>?action=admin;area=manageboards;move=', $board['id'], '">', $txt['mboards_move'], '</a></span>
 						<span class="modify_boards"><a href="<URL>?action=admin;area=manageboards;sa=board;boardid=', $board['id'], '">', $txt['mboards_modify'], '</a></span></span><br class="clear_right">
@@ -235,7 +235,7 @@ function template_confirm_category_delete()
 // Below is the template for adding/editing an board on the forum.
 function template_modify_board()
 {
-	global $context, $theme, $options, $txt, $settings, $language;
+	global $context, $theme, $options, $txt, $settings;
 
 	// The main table header.
 	echo '
@@ -611,14 +611,14 @@ function template_modify_board()
 		$langset = array_merge(
 			array(
 				'' => array(
-					'name' => $context['languages'][$language]['name'] . ' ' . $txt['mboards_theme_default'],
+					'name' => $context['languages'][$settings['language']]['name'] . ' ' . $txt['mboards_theme_default'],
 				)
 			),
 			$context['languages']
 		);
 		foreach ($langset as $lang_id => $lang)
 		{
-			if ($lang_id == $language)
+			if ($lang_id == $settings['language'])
 				continue;
 
 			echo '

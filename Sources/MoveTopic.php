@@ -42,7 +42,7 @@ if (!defined('WEDGE'))
 // Move a topic.  Give the moderator a chance to post a reason.
 function MoveTopic()
 {
-	global $txt, $board, $topic, $context, $language, $theme, $settings;
+	global $txt, $board, $topic, $context, $theme, $settings;
 
 	if (empty($topic))
 		fatal_lang_error('no_access', false);
@@ -127,9 +127,9 @@ function MoveTopic()
 
 	$context['back_to_topic'] = isset($_REQUEST['goback']);
 
-	if (we::$user['language'] != $language)
+	if (we::$user['language'] != $settings['language'])
 	{
-		loadLanguage('ManageTopics', $language);
+		loadLanguage('ManageTopics', $settings['language']);
 		$temp1 = str_replace(array('{auto_board}', '{auto_topic}'), array($txt['movetopic_auto_board'], $txt['movetopic_auto_topic']), $txt['movetopic_default']);
 		$temp2 = str_replace(array('{auto_board}', '{auto_topic}'), array($txt['movetopic_auto_board'], $txt['movetopic_auto_topic']), $txt['movetopic_default_pm']);
 		loadLanguage('ManageTopics');
@@ -153,7 +153,7 @@ function MoveTopic()
 // Execute the move.
 function MoveTopic2()
 {
-	global $txt, $board, $topic, $scripturl, $settings, $context, $board, $language;
+	global $txt, $board, $topic, $scripturl, $settings, $context, $board;
 
 	if (empty($topic))
 		fatal_lang_error('no_access', false);
@@ -281,8 +281,8 @@ function MoveTopic2()
 	if (isset($_POST['postRedirect']))
 	{
 		// Should be in the boardwide language.
-		if (we::$user['language'] != $language)
-			loadLanguage('ManageTopics', $language);
+		if (we::$user['language'] != $settings['language'])
+			loadLanguage('ManageTopics', $settings['language']);
 
 		$_POST['reason'] = westr::htmlspecialchars($_POST['reason'], ENT_QUOTES);
 		wedit::preparsecode($_POST['reason']);
@@ -334,8 +334,8 @@ function MoveTopic2()
 	if (isset($_POST['sendPm']))
 	{
 		// Should be in the boardwide language.
-		if (we::$user['language'] != $language)
-			loadLanguage('ManageTopics', $language);
+		if (we::$user['language'] != $settings['language'])
+			loadLanguage('ManageTopics', $settings['language']);
 
 		// Make it basically safe but DO NOT preparse it! The PM system does that itself, not here.
 		$_POST['pm'] = westr::htmlspecialchars($_POST['pm'], ENT_QUOTES);

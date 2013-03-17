@@ -27,8 +27,7 @@ if (!defined('WEDGE'))
 // Begin the registration process.
 function Register($reg_errors = array())
 {
-	global $txt, $boarddir, $context, $theme, $settings;
-	global $language, $cur_profile;
+	global $txt, $boarddir, $context, $theme, $settings, $cur_profile;
 
 	if (isset($_GET['reagree']) && we::$user['activated'] == 6)
 	{
@@ -122,7 +121,7 @@ function Register($reg_errors = array())
 
 	if (!empty($settings['userLanguage']))
 	{
-		$selectedLanguage = empty($_SESSION['language']) ? $language : $_SESSION['language'];
+		$selectedLanguage = empty($_SESSION['language']) ? $settings['language'] : $_SESSION['language'];
 		getLanguages();
 
 		// Try to find our selected language.

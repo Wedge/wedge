@@ -28,7 +28,7 @@ if (!defined('WEDGE'))
 
 function Activate()
 {
-	global $context, $txt, $settings, $scripturl, $language;
+	global $context, $txt, $settings, $scripturl;
 
 	loadLanguage('Login');
 	loadTemplate('Login');
@@ -144,7 +144,7 @@ function Activate()
 			'FORGOTPASSWORDLINK' => $scripturl . '?action=reminder',
 		);
 
-		$emaildata = loadEmailTemplate('resend_activate_message', $replacements, empty($row['lngfile']) || empty($settings['userLanguage']) ? $language : $row['lngfile']);
+		$emaildata = loadEmailTemplate('resend_activate_message', $replacements, empty($row['lngfile']) || empty($settings['userLanguage']) ? $settings['language'] : $row['lngfile']);
 
 		sendmail($row['email_address'], $emaildata['subject'], $emaildata['body'], null, null, false, 0);
 

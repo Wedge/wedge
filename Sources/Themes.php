@@ -539,7 +539,7 @@ function RemoveTheme()
 // Choose a theme from a list.
 function PickTheme()
 {
-	global $txt, $context, $settings, $language, $theme;
+	global $txt, $context, $settings, $theme;
 
 	loadLanguage('Themes');
 	loadTemplate('Themes');
@@ -728,8 +728,8 @@ function PickTheme()
 
 		if (file_exists($theme_data['theme_dir'] . '/languages/Settings.' . we::$user['language'] . '.php'))
 			include($theme_data['theme_dir'] . '/languages/Settings.' . we::$user['language'] . '.php');
-		elseif (file_exists($theme_data['theme_dir'] . '/languages/Settings.' . $language . '.php'))
-			include($theme_data['theme_dir'] . '/languages/Settings.' . $language . '.php');
+		elseif (file_exists($theme_data['theme_dir'] . '/languages/Settings.' . $settings['language'] . '.php'))
+			include($theme_data['theme_dir'] . '/languages/Settings.' . $settings['language'] . '.php');
 		else
 			$txt['theme_description'] = '';
 

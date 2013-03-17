@@ -52,6 +52,9 @@ function reloadSettings()
 			$settings[$row[0]] = $row[1];
 		wesql::free_result($request);
 
+		if (empty($settings['language']))
+			$settings['language'] = 'english';
+
 		// Do a few things to protect against missing settings or settings with invalid values...
 		if (empty($settings['defaultMaxTopics']) || $settings['defaultMaxTopics'] <= 0 || $settings['defaultMaxTopics'] > 999)
 			$settings['defaultMaxTopics'] = 20;
@@ -1201,7 +1204,7 @@ function we_resetTransparency($id_attach, $path, $real_name)
 function loadTheme($id_theme = 0, $initialize = true)
 {
 	global $user_settings, $board_info, $boarddir, $footer_coding;
-	global $txt, $boardurl, $scripturl, $mbname, $settings, $language;
+	global $txt, $boardurl, $scripturl, $mbname, $settings;
 	global $context, $theme, $options, $ssi_theme;
 
 	// The theme was specified by parameter.
@@ -1756,7 +1759,7 @@ function loadPluginTemplate($plugin_name, $template_name, $fatal = true)
 
 function loadPluginLanguage($plugin_name, $template_name, $lang = '', $fatal = true, $force_reload = false)
 {
-	global $context, $settings, $language, $txt, $db_show_debug;
+	global $context, $settings, $txt, $db_show_debug;
 	static $already_loaded = array();
 
 	if (empty($context['plugins_dir'][$plugin_name]))
@@ -1764,7 +1767,7 @@ function loadPluginLanguage($plugin_name, $template_name, $lang = '', $fatal = t
 
 	// Default to the user's language.
 	if ($lang == '')
-		$lang = isset(we::$user['language']) ? we::$user['language'] : $language;
+		$lang = isset(we::$user['language']) ? we::$user['language'] : $settings['language'];
 
 	if (!$force_reload && isset($already_loaded[$template_name]) && $already_loaded[$template_name] == $lang)
 		return $lang;
@@ -1776,8 +1779,8 @@ function loadPluginLanguage($plugin_name, $template_name, $lang = '', $fatal = t
 
 	// Then go with user preference, followed by forum default (assuming it isn't already one of the previous)
 	$attempts[$lang] = false;
-	if ($language !== 'english')
-		$attempts[$language] = false;
+	if ($settings['language'] !== 'english')
+		$attempts[$settings['language']] = false;
 
 	$found = false;
 	foreach ($attempts as $load_lang => $continue)
@@ -1842,12 +1845,12 @@ function loadSource($source_name)
  */
 function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload = false, $fallback = false)
 {
-	global $language, $theme, $context, $settings, $boarddir, $db_show_debug, $txt, $helptxt, $cachedir;
+	global $theme, $context, $settings, $boarddir, $db_show_debug, $txt, $helptxt, $cachedir;
 	static $already_loaded = array(), $folder_date = array();
 
 	// Default to the user's language.
 	if ($lang == '')
-		$lang = isset(we::$user['language']) ? we::$user['language'] : $language;
+		$lang = isset(we::$user['language']) ? we::$user['language'] : $settings['language'];
 
 	// Do we want the English version of language file as fallback?
 	if (empty($settings['disable_language_fallback']) && $lang !== 'english')
@@ -1908,15 +1911,15 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 		// Obviously, the current theme is most important to check.
 		$attempts = array(
 			array($theme['theme_dir'], $template, $lang, $theme['theme_url']),
-			array($theme['theme_dir'], $template, $language, $theme['theme_url']),
+			array($theme['theme_dir'], $template, $settings['language'], $theme['theme_url']),
 		);
 
 		// Fall back on the default theme if necessary.
 		$attempts[] = array($theme['default_theme_dir'], $template, $lang, $theme['default_theme_url']);
-		$attempts[] = array($theme['default_theme_dir'], $template, $language, $theme['default_theme_url']);
+		$attempts[] = array($theme['default_theme_dir'], $template, $settings['language'], $theme['default_theme_url']);
 
 		// Fall back on the English language if none of the preferred languages can be found.
-		if (!in_array('english', array($lang, $language)))
+		if (!in_array('english', array($lang, $settings['language'])))
 		{
 			$attempts[] = array($theme['theme_dir'], $template, 'english', $theme['theme_url']);
 			$attempts[] = array($theme['default_theme_dir'], $template, 'english', $theme['default_theme_url']);

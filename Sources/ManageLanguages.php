@@ -464,7 +464,7 @@ function DownloadLanguage()
 // This lists all the current languages and allows editing of them.
 function ModifyLanguages()
 {
-	global $txt, $context, $language, $boarddir, $cachedir;
+	global $txt, $context, $settings, $boarddir, $cachedir;
 
 	if (isset($_GET['cleancache']))
 	{
@@ -480,11 +480,10 @@ function ModifyLanguages()
 		checkSession();
 
 		$languages = getLanguages();
-		if ($_POST['def_language'] != $language && isset($languages[$_POST['def_language']]))
+		if ($_POST['def_language'] != $settings['language'] && isset($languages[$_POST['def_language']]))
 		{
-			loadSource('Subs-Admin');
-			updateSettingsFile(array('language' => '\'' . $_POST['def_language'] . '\''));
-			$language = $_POST['def_language'];
+			updateSettings(array('language' => $_POST['def_language']));
+			$settings['language'] = $_POST['def_language'];
 		}
 	}
 
@@ -579,16 +578,8 @@ function ModifyLanguages()
 		$(prevDiv).removeClass("highlight");
 		prevDiv = $(box).addClass("highlight");
 	}
-	highlightSelected("#list_language_list_' . ($language == '' ? 'english' : $language). '");',
+	highlightSelected("#list_language_list_' . ($settings['language'] == '' ? 'english' : $settings['language']). '");',
 	);
-
-	// Display a warning if we cannot edit the default setting.
-	if (!is_writable($boarddir . '/Settings.php'))
-		$listOptions['additional_rows'][] = array(
-				'position' => 'after_title',
-				'value' => $txt['language_settings_writable'],
-				'class' => 'smalltext alert',
-			);
 
 	loadSource('Subs-List');
 	createList($listOptions);
@@ -607,7 +598,7 @@ function list_getNumLanguages()
 // Fetch the actual language information.
 function list_getLanguages()
 {
-	global $theme, $language, $context, $txt;
+	global $theme, $context, $txt, $settings;
 
 	$languages = array();
 	// Keep our old entries.
@@ -630,7 +621,7 @@ function list_getLanguages()
 		$languages[$lang['filename']] = array(
 			'id' => $lang['filename'],
 			'count' => 0,
-			'default' => $language == $lang['filename'] || ($language == '' && $lang['filename'] == 'english'),
+			'default' => $settings['language'] == $lang['filename'] || ($settings['language'] == '' && $lang['filename'] == 'english'),
 			'locale' => $txt['lang_locale'],
 			'name' => '<span class="flag_' . $lang['filename'] . '"></span> ' . $txt['lang_name'],
 			'dictionary' => $txt['lang_dictionary'] . ' (' . $txt['lang_spelling'] . ')',
@@ -650,7 +641,7 @@ function list_getLanguages()
 	{
 		// Default?
 		if (empty($row['lngfile']) || !isset($languages[$row['lngfile']]))
-			$row['lngfile'] = $language;
+			$row['lngfile'] = $settings['language'];
 
 		if (!isset($languages[$row['lngfile']]) && isset($languages['english']))
 			$languages['english']['count'] += $row['num_users'];
@@ -720,7 +711,7 @@ function ModifyLanguageSettings($return_config = false)
 // Edit a particular set of language entries.
 function ModifyLanguage()
 {
-	global $theme, $context, $txt, $settings, $boarddir, $language;
+	global $theme, $context, $txt, $settings, $boarddir;
 
 	// First up, validate the language selected.
 	getLanguages(false);
@@ -983,11 +974,9 @@ function ModifyLanguage()
 		}
 
 		// Seventh, if we deleted the default language, set us back to English?
-		if ($context['lang_id'] == $language)
+		if ($context['lang_id'] == $settings['language'])
 		{
-			loadSource('Subs-Admin');
-			$language = 'english';
-			updateSettingsFile(array('language' => '\'' . $language . '\''));
+			updateSettings(array('language' => 'english'));
 		}
 
 		// Eighth, get out of here.

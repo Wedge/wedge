@@ -1490,7 +1490,7 @@ function findForumErrors($do_fix = false)
 // Create a salvage area for repair purposes.
 function createSalvageArea()
 {
-	global $txt, $language, $salvageBoardID, $salvageCatID;
+	global $txt, $salvageBoardID, $salvageCatID, $settings;
 	static $createOnce = false;
 
 	// Have we already created it?
@@ -1500,7 +1500,7 @@ function createSalvageArea()
 		$createOnce = true;
 
 	// Back to the forum's default language.
-	loadLanguage('Admin', $language);
+	loadLanguage('Admin', $settings['language']);
 
 	// Check to see if a 'Salvage Category' exists, if not => insert one.
 	$result = wesql::query('
