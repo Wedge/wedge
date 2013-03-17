@@ -105,7 +105,6 @@ function reloadSettings()
 			else
 				$reset_plugins = true;
 		}
-
 		if (isset($reset_plugins))
 			updateSettings(array('enabled_plugins' => implode(',', $context['enabled_plugins'])));
 
@@ -1685,6 +1684,10 @@ function loadTheme($id_theme = 0, $initialize = true)
 				require_once($include);
 		}
 	}
+
+	// Load the notifications system
+	loadSource('Notifications');
+	WeNotif::initialise();
 
 	// Call load theme hook.
 	call_hook('load_theme');

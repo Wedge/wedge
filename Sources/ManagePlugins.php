@@ -1816,6 +1816,9 @@ function knownHooks()
 			'thought',
 			'select_quickmod',
 			'apply_quickmod',
+			// Notifications
+			'notification_callback',
+			'notification_new',
 		),
 	);
 }

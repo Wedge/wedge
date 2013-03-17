@@ -1612,6 +1612,12 @@ CREATE TABLE {$db_prefix}members (
   media_comments mediumint(8) unsigned NOT NULL default 0,
   media_unseen mediumint(8) NOT NULL default '-1',
   data text NOT NULL,
+  unread_notifications smallint(5) unsigned NOT NULL default 0,
+  disabled_notifiers varchar(255) NOT NULL default '',
+  email_notifiers varchar(255) NOT NULL default '',
+  notify_email_period tinyint(3) NOT NULL default 7,
+  notify_email_last_sent int(10) NOT NULL default 0,
+  notifier_prefs text NOT NULL default '',
   PRIMARY KEY (id_member),
   KEY member_name (member_name),
   KEY real_name (real_name),
@@ -1729,6 +1735,20 @@ CREATE TABLE {$db_prefix}mod_filter_msg (
   lang varchar(255) NOT NULL default '',
   msg text NOT NULL,
   PRIMARY KEY (id_rule, rule_type, lang)
+) ENGINE=MyISAM;
+
+#
+# Table structure for the table `notifications`
+#
+CREATE TABLE {$db_prefix}notifications (
+  id_notification int(10) NOT NULL AUTO_INCREMENT,
+  id_member int(10) NOT NULL default 0,
+  notifier varchar(50) NOT NULL default '',
+  id_object int(10) NOT NULL default 0,
+  time int(10) NOT NULL default 0,
+  unread tinyint(1) unsigned NOT NULL default 0,
+  data text NOT NULL default '',
+  PRIMARY KEY (id_notification)
 ) ENGINE=MyISAM;
 
 #
@@ -2022,7 +2042,9 @@ VALUES
 	(6, 0, 0, 1, 'w', 0, 'weekly_digest', ''),
 	(7, 0, {$sched_task_offset}, 1, 'd', 0, 'fetchRemoteFiles', ''),
 	(8, 0, 0, 1, 'w', 0, 'weekly_maintenance', ''),
-	(9, 0, 120, 1, 'd', 1, 'paid_subscriptions', '');
+	(9, 0, 120, 1, 'd', 1, 'paid_subscriptions', ''),
+	(10, 0, 0, 1, 'd', 0, 'notification_prune', ''),
+	(11, 0, 0, 6, 'h', 0, 'notification_periodical', '');
 # --------------------------------------------------------
 
 #
@@ -2248,7 +2270,8 @@ VALUES
 	('show_newsfader', '0'),
 	('newsfader_time', '5000'),
 	('additional_options_collapsable', '1'),
-	('likes_enable', '1');
+	('likes_enable', '1'),
+	('notifications_prune_days', '7'),
 # --------------------------------------------------------
 
 #

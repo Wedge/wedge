@@ -98,6 +98,7 @@ $action_list = array(
 	'movetopic2' => array('MoveTopic.php', 'MoveTopic2'),
 	'notify' => array('Notify.php', 'Notify'),
 	'notifyboard' => array('Notify.php', 'BoardNotify'),
+	'notification' => array('Notifications.php', 'WeNotif::action'),
 	'pin' => array('Pin.php', 'Pin'),
 	'pm' => array('PersonalMessage.php', 'MessageMain'),
 	'poll' => array('Poll.php', 'Poll'),

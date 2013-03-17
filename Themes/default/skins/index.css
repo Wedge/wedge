@@ -1718,6 +1718,55 @@ th.first_th
 th.last_th
 	border-radius: 0 8px 0 0
 
+/* A few styles for notifications
+------------------------------------------------------- */
+.notification_trigger
+	cursor: pointer
+
+.notification_count
+	font-size: 0.9em
+
+#notification_shade extends .mimenu
+	max-width: 250px
+	padding: 0!important
+	background: none
+	ul.actions
+		white-space: normal
+
+.notification_trigger a
+	display: inline!important
+	padding: 0
+	padding-left: 0!important
+	font-size: 0.6em
+
+.notification_container
+	max-height: 24em
+	overflow: auto
+	hr
+		margin: 0
+
+.notification
+	cursor: pointer
+
+.notification_text
+	color: #444
+	padding-left: 10px
+	padding-top: 10px
+
+.notification_markread
+	float: left
+	width: 10px
+	padding: 0 10px 0px 10px
+	display: none
+	:parent
+		width: 100%
+		padding-bottom: 10px
+
+.notification_time
+	float: right
+	width: 70%
+	text-align: right
+
 /* Don't touch this -- this hack dynamically adds language flags.
 ------------------------------------------------------------------ */
 

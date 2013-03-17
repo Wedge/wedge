@@ -297,6 +297,14 @@ function ModifyProfile($post_errors = array())
 						'any' => array('manage_membergroups'),
 					),
 				),
+				'notification' => array(
+					'label' => $txt['notifications'],
+					'enabled' => true,
+					'function' => 'WeNotif_profile',
+					'permission' => array(
+						'own' => array('profile_extra_own'),
+					),
+				),
 			),
 		),
 		'aeva' => array(
