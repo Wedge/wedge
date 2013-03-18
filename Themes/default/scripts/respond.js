@@ -3,7 +3,9 @@
 	(c) Scott Jehl. MIT/GPLv2 Lic. j.mp/respondjs
 	Simplified for IE targets by Nao for Wedge.
 */
+
 (function( win ){
+
 	//exposed namespace
 	win.respond		= {};
 
@@ -69,7 +71,7 @@
 
 		//find media blocks in css text, convert to style blocks
 		translate			= function( styles, href, media ){
-			var qs			= styles.match(  /@media[^\{]+\{([^\{\}]*\{[^\}\{]*\})+/gi ),
+			var qs			= styles.match( /@media[^\{]+\{([^\{\}]*\{[^\}\{]*\})+/gi ),
 				ql			= qs && qs.length || 0,
 				//try to get CSS path
 				href		= href.slice( 0, href.lastIndexOf( "/" )),
@@ -215,8 +217,8 @@
 				head.insertBefore( ss, lastLink.nextSibling );
 
 				if ( ss.styleSheet )
-		        	ss.styleSheet.cssText = css;
-		        else
+					ss.styleSheet.cssText = css;
+				else
 					ss.appendChild( doc.createTextNode( css ) );
 
 				//push to appendedEls to track for later removal
@@ -251,4 +253,5 @@
 		applyMedia( true );
 	}
 	win.attachEvent( "onresize", callMedia );
+
 })(this);

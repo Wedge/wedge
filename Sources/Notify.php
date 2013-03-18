@@ -46,7 +46,7 @@ function Notify()
 	if (empty($topic))
 		fatal_lang_error('not_a_topic', false);
 
-	// What do we do?  Better ask if they didn't say..
+	// What do we do? Better ask if they didn't say..
 	if (empty($_GET['sa']))
 	{
 		// Load the template, but only if it is needed.
@@ -152,7 +152,7 @@ function BoardNotify()
 	{
 		checkSession('get');
 
-		// Turn notification on.  (note this just blows smoke if it's already on.)
+		// Turn notification on. (Note this just blows smoke if it's already on.)
 		wesql::insert('ignore',
 			'{db_prefix}log_notify',
 			array('id_member' => 'int', 'id_board' => 'int'),

@@ -13,56 +13,53 @@
 
 function template_notifications_block()
 {
-	global $txt, $context, $settings, $scripturl;
+	global $txt, $context, $settings;
 
 	echo '
 	<section>
 		<header class="title notification_trigger">
 			<span class="notification_count note', $context['unread_notifications'] ? 'nice' : '', '">
-			', $context['unread_notifications'], '
+				', $context['unread_notifications'], '
 			</span>
 			', $txt['notifications'], '
 		</header>
-        <div id="notification_shade">
-            <ul class="actions">
-                <li>
-                	<header class="title notification_trigger">
+		<div id="notification_shade">
+			<ul class="actions">
+				<li>
+					<header class="title notification_trigger">
 						<span class="notification_count note', $context['unread_notifications'] ? 'nice' : '', '" >
-						', $context['unread_notifications'], '
+							', $context['unread_notifications'], '
 						</span>
 						', $txt['notifications'], '
-                		<a href="<URL>?action=notification">(', $txt['view_all'], ')</a>
-                	</header>
-                	<div class="notification_container">
-	                   	<div class="notification template">
-	                    	<div class="notification_text">
-	                    	</div>
-	                    	<div>
-	                    		<div class="notification_markread">x</div>
-	                    		<div class="notification_time">
-	                    		</div>
-	                    		<br style="clear: both;" />
-	                    	</div>
-	                    	<hr />
-	                    </div>
-	                </div>
-                </li>
-            </ul>
-        </div>
+						<a href="<URL>?action=notification">(', $txt['view_all'], ')</a>
+					</header>
+					<div class="notification_container">
+						<div class="notification template">
+							<div class="notification_text"></div>
+							<div class="clearfix">
+								<div class="notification_markread">x</div>
+								<div class="notification_time"></div>
+							</div>
+							<hr />
+						</div>
+					</div>
+				</li>
+			</ul>
+		</div>
 	</section>';
 }
 
 function template_notifications_list()
 {
-	global $txt, $context, $settings, $scripturl;
+	global $txt, $context, $settings;
 
 	echo '
 		<we:title>', $txt['notifications'], '</we:title>';
 	foreach ($context['notifications'] as $notification)
 	{
 		echo '
-			<p class="', $notification->getUnread() ? 'description' : 'wrc windowbg', '  " style="font-size: 1em; cursor: pointer;"
-				onclick="document.location = \'', $scripturl, '?action=notification;area=redirect;id=', $notification->getID(), '\'">
+			<p class="', $notification->getUnread() ? 'description' : 'wrc windowbg',
+			'" style="font-size: 1em; cursor: pointer" onclick="location = \'<URL>?action=notification;area=redirect;id=', $notification->getID(), '\'">
 				', $notification->getText(), '<br />
 				<span class="smalltext">', timeformat($notification->getTime()), '</span>
 			</p>';
@@ -77,7 +74,7 @@ function template_notification_email($notifications)
 
 	foreach ($notifications as $notifier => $notifs)
 	{
-		$profile = WeNotif::getNotifie($notifier)->getProfile();
+		$profile = weNotif::getNotifie($notifier)->getProfile();
 
 		$text .= '
 			<h3>' . $profile[0] . '</h3>

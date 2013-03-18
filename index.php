@@ -5,7 +5,7 @@
  * Bootstrap for Wedge, where all forum access will begin and all go through the same setup and security.
  * This also lists the master set of actions. Just add your custom entries to the $action_list array:
  *
- *    'action-in-url' => array('Source-File.php', 'FunctionToCall'),
+ *	'action-in-url' => array('Source-File.php', 'FunctionToCall'),
  *
  * Then, you can access the FunctionToCall() function from Source-File.php with the URL index.php?action=action-in-url.
  *
@@ -98,7 +98,7 @@ $action_list = array(
 	'movetopic2' => array('MoveTopic.php', 'MoveTopic2'),
 	'notify' => array('Notify.php', 'Notify'),
 	'notifyboard' => array('Notify.php', 'BoardNotify'),
-	'notification' => array('Notifications.php', 'WeNotif::action'),
+	'notification' => array('Notifications.php', 'weNotif::action'),
 	'pin' => array('Pin.php', 'Pin'),
 	'pm' => array('PersonalMessage.php', 'MessageMain'),
 	'poll' => array('Poll.php', 'Poll'),

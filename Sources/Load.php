@@ -1195,7 +1195,7 @@ function we_resetTransparency($id_attach, $path, $real_name)
  * - Initialize $context['header'] and $context['footer'] for later use, as well as some $theme paths, some global $context values, $txt initially.
  * - Set up common server-side settings for later reference (in case of server configuration specific tweaks)
  * - Ensure the forum name is the first item in the link tree.
- * - Load the XML template if that is what we are going to use, otherwise load the index template (plus any templates the theme has specified it uses), and do not initialise template layers if we are using a 'simple' action that does not need them.
+ * - Load the XML template if that is what we are going to use, otherwise load the index template (plus any templates the theme has specified it uses), and do not initialize template layers if we are using a 'simple' action that does not need them.
  * - Initialize the theme by calling the init block.
  * - Load any theme specific language files.
  * - See if scheduled tasks need to be loaded, if so add the call into the HTML header so they will be triggered next page load.
@@ -1690,7 +1690,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 
 	// Load the notifications system
 	loadSource('Notifications');
-	WeNotif::initialise();
+	weNotif::initialize();
 
 	// Call load theme hook.
 	call_hook('load_theme');

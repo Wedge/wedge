@@ -984,7 +984,7 @@ function template_aeva_form()
 	echo '
 			<tr>
 				<td class="windowbg', empty($alt) ? '2' : '', ' right" colspan="2">', $show_at_end, !empty($context['aeva_form']['silent']) ? '
-					<input type="submit" value="' . $txt['media_silent_update'] .  '" name="silent_update" tabindex="' . $context['tabindex']++ . '">' : '', '
+					<input type="submit" value="' . $txt['media_silent_update'] . '" name="silent_update" tabindex="' . $context['tabindex']++ . '">' : '', '
 					<input type="submit" value="', $txt['media_submit'], '" name="submit_aeva" tabindex="', $context['tabindex']++, '" class="submit">
 				</td>
 			</tr>
@@ -1282,7 +1282,7 @@ function template_aeva_search_searching()
 	new weAutoSuggest({
 		bItemList: true,
 		sControlId: \'sch_mem\',
-		sPostName:  \'sch_mem_list\'
+		sPostName: \'sch_mem_list\'
 	});');
 }
 

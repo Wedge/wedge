@@ -12,12 +12,12 @@
  */
 
 if (!defined('WEDGE'))
-	die('File cannot be requested directly');
+	die('File cannot be requested directly.');
 
 /**
  * Class for handling notification hooks and actions
  */
-class WeNotif
+class weNotif
 {
 	protected static $notifiers = array();
 	protected static $quick_count = 25;
@@ -58,7 +58,7 @@ class WeNotif
 	 * @access public
 	 * @return void
 	 */
-	public static function initialise()
+	public static function initialize()
 	{
 		global $context, $scripturl, $txt;
 
@@ -105,11 +105,10 @@ class WeNotif
 			wetem::before('sidebar', 'notifications_block');
 
 			add_js_inline('
-				var $notifications = ', json_encode(array(
-					'count' => $context['unread_notifications'],
-					'notifications' => $quick_notifications,
-				)), ';
-			');
+	we_notifs = ', json_encode(array(
+		'count' => $context['unread_notifications'],
+		'notifs' => $quick_notifications,
+	)), ';');
 			add_js_file('scripts/notifications.js');
 		}
 	}
@@ -449,7 +448,7 @@ class WeNotif
 		{
 			$valid_notifiers = array();
 			foreach (json_decode($row['email_notifiers'], true) as $notifier => $status)
-				if ($status < 2 && !in_array($notifier, explode(',', $row['disabled_notifiers'])) && WeNotif::getNotifiers($notifier) !== null)
+				if ($status < 2 && !in_array($notifier, explode(',', $row['disabled_notifiers'])) && weNotif::getNotifiers($notifier) !== null)
 					$valid_notifiers[] = $notifier;
 
 			if (empty($valid_notifiers))
@@ -491,7 +490,7 @@ class WeNotif
 				if (empty($member['notifications'][$row['notifier']]))
 					$member['notifications'][$row['notifier']] = array();
 
-				$member['notifications'][$row['notifier']][] = new Notification($row, WeNotif::getNotifiers($row['notifier']));
+				$member['notifications'][$row['notifier']][] = new Notification($row, weNotif::getNotifiers($row['notifier']));
 			}
 
 		wesql::free_result($request);
@@ -516,18 +515,18 @@ class WeNotif
 	}
 }
 
-function WeNotif_profile($memID)
+function weNotif_profile($memID)
 {
-	return WeNotif::profile($memID);
+	return weNotif::profile($memID);
 }
 
 function scheduled_notification_prune()
 {
-	return WeNotif::scheduled_prune();
+	return weNotif::scheduled_prune();
 }
 
 function scheduled_notification_periodical()
 {
-	return WeNotif::scheduled_periodical();
+	return weNotif::scheduled_periodical();
 }
 ?>

@@ -93,7 +93,7 @@ function template_init()
 		// The main header of the website. Feel free to redefine it in your skins and themes.
 		'banner'	=> '
 			<if:logo><h1>
-				<a href="' . (!empty($settings['home_url']) && !empty($settings['home_link']) ? $settings['home_url']  : '<URL>') . '">{logo}</a>
+				<a href="' . (!empty($settings['home_url']) && !empty($settings['home_link']) ? $settings['home_url'] : '<URL>') . '">{logo}</a>
 			</h1></if:logo>
 			{body}',
 

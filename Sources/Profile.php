@@ -300,7 +300,7 @@ function ModifyProfile($post_errors = array())
 				'notification' => array(
 					'label' => $txt['notifications'],
 					'enabled' => true,
-					'function' => 'WeNotif_profile',
+					'function' => 'weNotif_profile',
 					'permission' => array(
 						'own' => array('profile_extra_own'),
 					),

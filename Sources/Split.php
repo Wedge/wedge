@@ -39,9 +39,9 @@ if (!defined('WEDGE'))
 		- is accessed with ?action=splittopics;sa=execute.
 		- uses the main block in the Split template.
 		- supports three ways of splitting:
-		   (1) only one message is split off.
-		   (2) all messages after and including a given message are split off.
-		   (3) select topics to split (redirects to SplitSelectTopics()).
+			(1) only one message is split off.
+			(2) all messages after and including a given message are split off.
+			(3) select topics to split (redirects to SplitSelectTopics()).
 		- uses splitTopic function to do the actual splitting.
 
 	void SplitSelectTopics()

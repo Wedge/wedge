@@ -662,7 +662,7 @@ function ssi_topTopics($type = 'replies', $num_topics = 10, $output_method = 'ec
 			FROM {db_prefix}topics AS t
 			WHERE {query_wanna_see_board}
 				AND {query_see_topic}
-				AND num_' . ($type != 'replies' ? 'views' : 'replies') . ' != 0' . '
+				AND num_' . ($type != 'replies' ? 'views' : 'replies') . ' != 0
 			ORDER BY num_' . ($type != 'replies' ? 'views' : 'replies') . ' DESC
 			LIMIT {int:limit}',
 			array(

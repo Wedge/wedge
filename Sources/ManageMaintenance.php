@@ -197,7 +197,7 @@ function ManageMaintenance()
 
 // Supporting function for the database maintenance area.
 // !!! We don't do anything here any more; there's no logic for this function any longer because the only branches it used to make are to do with
-//     setting up for the conversions (non-UTF-8 to UTF-8 and entities to UTF-8 chars) which are no longer relevant. Leaving this here for now though!
+//	setting up for the conversions (non-UTF-8 to UTF-8 and entities to UTF-8 chars) which are no longer relevant. Leaving this here for now though!
 function MaintainDatabase()
 {
 	global $context, $settings, $txt;

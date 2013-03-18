@@ -54,14 +54,14 @@ if (!defined('WEDGE'))
 
 class weJSON
 {
-   /**
-    * You may set weJSON::$suppress_errors to true.
-	* Values which can't be encoded (e.g. resources)
-	* appear as NULL instead of throwing errors.
-	* By default, a deeply-nested resource will
-	* bubble up with an error, so all return values
-	* from encode() should be checked with isError()
-	*/
+	/**
+	 * You may set weJSON::$suppress_errors to true.
+	 * Values which can't be encoded (e.g. resources)
+	 * appear as NULL instead of throwing errors.
+	 * By default, a deeply-nested resource will
+	 * bubble up with an error, so all return values
+	 * from encode() should be checked with isError()
+	 */
 	static $suppress_errors = false;
 
 	static function utf82utf16($utf8)

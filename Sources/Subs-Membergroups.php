@@ -447,14 +447,14 @@ function removeMembersFromGroups($members, $groups = null, $permissionCheckDone 
 
 // Add one or more members to a membergroup.
 /* Supported types:
-	- only_primary      - Assigns a membergroup as primary membergroup, but only
+	- only_primary		- Assigns a membergroup as primary membergroup, but only
 						  if a member has not yet a primary membergroup assigned,
 						  unless the member is already part of the membergroup.
-	- only_additional   - Assigns a membergroup to the additional membergroups,
+	- only_additional	- Assigns a membergroup to the additional membergroups,
 						  unless the member is already part of the membergroup.
-	- force_primary     - Assigns a membergroup as primary membergroup no matter
+	- force_primary		- Assigns a membergroup as primary membergroup no matter
 						  what the previous primary membergroup was.
-	- auto              - Assigns a membergroup to the primary group if it's still
+	- auto				- Assigns a membergroup to the primary group if it's still
 						  available. If not, assign it to the additional group. */
 function addMembersToGroup($members, $group, $type = 'auto', $permissionCheckDone = false)
 {
