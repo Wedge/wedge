@@ -586,8 +586,8 @@ function wedge_profile_colors($match)
 function wedge_indenazi($match)
 {
 	if ($match[2] < 0)
-		return preg_replace('~(\n\t*)' . str_repeat("\t", -$match[2]) . '(?=<)~', '$1', $match[3]);
-	return preg_replace('~(\n\t*)(?=<)~', '$1' . str_repeat("\t", $match[2]), $match[3]);
+		return preg_replace('~(\n\t*)' . str_repeat("\t", -$match[2]) . '(?=[<a-zA-Z0-9])~', '$1', $match[3]);
+	return preg_replace('~(\n\t*)(?=[<a-zA-Z0-9])~', '$1' . str_repeat("\t", $match[2]), $match[3]);
 }
 
 // A callback function to replace the buffer's URLs with their cached URLs

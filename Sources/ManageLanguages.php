@@ -1083,7 +1083,8 @@ function ModifyLanguageEntries()
 					)
 				);
 
-				// Figure out what we're flushing. We don't need to do the *entire* cache, but we do need to do anything that could have been affected by this file. There are some awesome potential cross-contamination possibilities, so be safe.
+				// Figure out what we're flushing. We don't need to do the *entire* cache, but we do need to do anything that could
+				// have been affected by this file. There are some awesome potential cross-contamination possibilities, so be safe.
 				foreach (glob($cachedir . '/lang_*_*_' . $context['selected_file']['lang_id'] . '.php') as $filename)
 					@unlink($filename);
 
@@ -1111,7 +1112,7 @@ function ModifyLanguageEntries()
 
 			if (!empty($_POST['entry']))
 			{
-				$lang_string = $_POST['entry']; // I only wish I could sanitise this, but there's a ton of strings that can't be sanitised. :(
+				$lang_string = $_POST['entry']; // I only wish I could sanitize this, but there's a ton of strings that can't be sanitized. :(
 				$serial = 0;
 			}
 			elseif (!empty($_POST['entry_key']) && !empty($_POST['entry_value']) && is_array($_POST['entry_key']) && is_array($_POST['entry_value']))

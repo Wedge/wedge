@@ -114,9 +114,9 @@ function reqWin(from, desired_width, string, modal_type, callback, e)
 {
 	var
 		help_page = from && from.href ? from.href : from,
-		title = $(from).text(),
+		title = from && from.href ? $(from).text() : 0,
 		viewport_width = $(window).width(),
-		viewport_height = window.innerHeight || $(window).height(), // innerHeight is an iOS hack (fixed in jQuery 1.8)
+		viewport_height = $(window).height(),
 		previous_target = $('#helf').data('src'),
 		close_window = function ()
 		{
@@ -401,63 +401,6 @@ $.fn.ds = function ()
 
 
 /**
- * Mini-menu (mime) plugin. Yay.
- * Supposed to be generic, but good luck using it in plugins...
- */
-
-$.fn.mime = function (oList, oStrings)
-{
-	this.each(function ()
-	{
-		var
-			$mime = $(this),
-			id = $mime.data('id') || $mime.closest('.root').attr('id').slice(3), // Extract the context id from the parent message
-			$men = $('<div class="mimenu"><ul class="actions"></ul></div>').hide(),
-			pms;
-
-		$.each(oList[id], function ()
-		{
-			pms = oStrings[this.slice(0, 2)];
-
-			$('<a>')
-				.html(pms[0].wereplace({ 1: id, 2: this.slice(3) }))
-				.attr('title', pms[1])
-				.attr('class', pms[3])
-				.attr('href', pms[2] ? (pms[2][0] == '?' ? $mime.attr('href') || '' : '') + pms[2].wereplace({ 1: id, 2: this.slice(3) }) : $mime.attr('href') || '')
-				.click(new Function('e', pms[4] ? pms[4].wereplace({ 1: id, 2: this.slice(3) }) : '')) // eval, bad! No user input, good!
-				.wrap('<li>').parent()
-				.appendTo($men.find('ul'));
-		});
-
-		$mime.wrap('<span class="mime"></span>').after($men).parent().hover(
-			function () { $men.stop(true).show().animate(visiblePosition, 300, function () { $men.css('overflow', 'visible') }); },
-			function () { $men.stop(true).animate(hiddenPosition, 200, function () { $men.hide(); }); }
-		);
-
-		var
-			wi = $men.width(),
-			he = $men.height(),
-
-			// If we start from halfway into it, the animation looks nicer.
-			hiddenPosition = {
-				opacity: 0,
-				width:  wi / 2,
-				height: he / 2,
-				paddingTop: 0
-			},
-			visiblePosition = {
-				opacity: 1,
-				width: wi,
-				height: he,
-				paddingTop: $men.css('paddingTop')
-			};
-
-		$men.css(hiddenPosition).toggleClass('right', $mime.offset().left > $(window).width() / 2);
-	});
-};
-
-
-/**
  * Dropdown menu in JS with CSS fallback, Nao style.
  * May not show, but it took years to refine it.
  */
@@ -534,6 +477,64 @@ $.fn.mm = function ()
 
 
 /**
+ * Mini-menu (mime) plugin. Yay.
+ * Supposed to be generic, but good luck using it in plugins...
+ */
+
+$.fn.mime = function (oList, oStrings)
+{
+	this.each(function ()
+	{
+		var
+			$mime = $(this),
+			id = $mime.data('id') || $mime.closest('.root').attr('id').slice(3), // Extract the context id from the parent message
+			$men = $('<div class="mimenu"><ul class="actions"></ul></div>').hide(),
+			pms;
+
+		$.each(oList[id], function ()
+		{
+			pms = oStrings[this.slice(0, 2)];
+
+			$('<a>')
+				.html(pms[0].wereplace({ 1: id, 2: this.slice(3) }))
+				.attr('title', pms[1])
+				.attr('class', pms[3])
+				.attr('href', pms[2] ? (pms[2][0] == '?' ? $mime.attr('href') || '' : '') + pms[2].wereplace({ 1: id, 2: this.slice(3) }) : $mime.attr('href') || '')
+				.click(new Function('e', pms[4] ? pms[4].wereplace({ 1: id, 2: this.slice(3) }) : '')) // eval, bad! No user input, good!
+				.click(function () { $men.stop(true).animate(hiddenPosition, 200, function () { $men.hide(); }); }) // Close menu if clicked.
+				.wrap('<li>').parent()
+				.appendTo($men.find('ul'));
+		});
+
+		$mime.wrap('<span class="mime"></span>').after($men).parent().hover(
+			function () { $men.stop(true).show().animate(visiblePosition, 300, function () { $men.css('overflow', 'visible') }); },
+			function () { $men.stop(true).animate(hiddenPosition, 200, function () { $men.hide(); }); }
+		);
+
+		var
+			wi = $men.width(),
+			he = $men.height(),
+
+			// If we start from halfway into it, the animation looks nicer.
+			hiddenPosition = {
+				opacity: 0,
+				width:  wi / 2,
+				height: he / 2,
+				paddingTop: 0
+			},
+			visiblePosition = {
+				opacity: 1,
+				width: wi,
+				height: he,
+				paddingTop: $men.css('paddingTop')
+			};
+
+		$men.css(hiddenPosition).toggleClass('right', $mime.offset().left > $(window).width() / 2);
+	});
+};
+
+
+/**
  * ready()
  * This function is important. It loads as soon as the DOM is built, i.e. after everything's loaded.
  */
@@ -576,8 +577,7 @@ $(function ()
 			.find('div').last()
 			.addClass('mimenu')
 			.load(weUrl('action=search' + (window.we_topic ? ';topic=' + we_topic : '') + (window.we_board ? ';board=' + we_board : '')), function () {
-				// The simpler $('#advanced_search') seems to cause problems when closing and reopening. jQuery bug..?
-				$pop.find('#search_popup').width($pop.find('#search_popup').width());
+				$('#search_popup').width($('#search_popup').width());
 				$pop.hide().show(300).find('select').sb();
 			});
 		opened = true;

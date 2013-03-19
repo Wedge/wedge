@@ -385,7 +385,7 @@ function AddMailQueue($flush = false, $to_array = array(), $subject = '', $messa
 // Send off a personal message.
 function sendpm($recipients, $subject, $message, $store_outbox = true, $from = null, $pm_head = 0)
 {
-	global $context, $scripturl, $txt, $settings['language'], $settings;
+	global $context, $scripturl, $txt, $settings;
 
 	// Make sure the PM language file is loaded, we might need something out of it.
 	loadLanguage('PersonalMessage');
@@ -906,8 +906,7 @@ function server_parse($message, $socket, $response)
 // Notify members that something has happened to a topic they marked!
 function sendNotifications($topics, $type, $exclude = array(), $members_only = array())
 {
-	global $txt, $scripturl, $settings['language'];
-	global $settings, $context;
+	global $txt, $scripturl, $settings, $context;
 
 	// Can't do it if there's no topics.
 	if (empty($topics))
@@ -2197,8 +2196,7 @@ function approveTopics($topics, $approve = true)
 // A special function for handling the hell which is sending approval notifications.
 function sendApprovalNotifications(&$topicData)
 {
-	global $txt, $scripturl, $settings['language'];
-	global $settings, $context;
+	global $txt, $scripturl, $settings, $context;
 
 	// Clean up the data...
 	if (!is_array($topicData) || empty($topicData))
@@ -2452,7 +2450,7 @@ function updateLastMessages($setboards, $id_msg = 0)
 // This simple function gets a list of all administrators and sends them an email to let them know a new member has joined.
 function adminNotify($type, $memberID, $member_name = null)
 {
-	global $txt, $settings, $settings['language'], $scripturl, $context;
+	global $txt, $settings, $scripturl, $context;
 
 	// If the setting isn't enabled then just exit.
 	$notify_list = !empty($settings['notify_new_registration']) ? unserialize($settings['notify_new_registration']) : array();

@@ -56,7 +56,7 @@ function QuickModeration()
 	else
 		$redirect_url = isset($_POST['redirect_url']) ? $_POST['redirect_url'] : (isset($_SESSION['old_url']) ? $_SESSION['old_url'] : '');
 
-	if (!isset($_REQUEST['qaction'], $quickMod[$_REQUEST['qaction']]) || !is_array($_REQUEST['topics']) || we::$is_guest)
+	if (we::$is_guest || !isset($_REQUEST['topics'], $_REQUEST['qaction'], $quickMod[$_REQUEST['qaction']]) || !is_array($_REQUEST['topics']))
 		redirectexit($redirect_url);
 
 	// Now we know that we're at least trying to perform a valid action, can we actually do it?
