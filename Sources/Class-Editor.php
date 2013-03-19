@@ -847,7 +847,7 @@ class wedit
 		// Fix up entities.
 		$text = preg_replace('~&#38;~i', '&#38;#38;', $text);
 
-		$text = wedit::legalise_bbc($text);
+		$text = wedit::legalize_bbc($text);
 
 		return $text;
 	}
@@ -906,7 +906,7 @@ class wedit
 	}
 
 	// This is an important yet frustrating function - it attempts to clean up illegal BBC caused by browsers like Opera which don't obey the rules!!!
-	public static function legalise_bbc($text)
+	public static function legalize_bbc($text)
 	{
 		global $settings;
 

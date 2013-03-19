@@ -39,7 +39,7 @@ class captcha_simpleanim
 			$image = imagecreate($width, $height);
 			$black = imagecolorallocate($image, 0, 0, 0);
 			$white = imagecolorallocate($image, 255, 255, 255);
-			$purple = imagecolorallocate($image, 255, 0, 255); // this will, shortly, be our transparent colour.
+			$purple = imagecolorallocate($image, 255, 0, 255); // this will, shortly, be our transparent color.
 
 			if ($i == 0)
 			{

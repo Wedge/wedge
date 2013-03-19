@@ -223,7 +223,7 @@ function quickMod_move($topic_data, $boards_can)
 		}
 	}
 
-	// Sanitise the destination.
+	// Sanitize the destination.
 	$_REQUEST['move_to'] = isset($_REQUEST['move_to']) ? (int) $_REQUEST['move_to'] : 0;
 	if (empty($_REQUEST['move_to']) || empty($topic_data))
 		return;

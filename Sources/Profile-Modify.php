@@ -1422,7 +1422,7 @@ function editIgnoreList($memID)
 		redirectexit('action=profile;u=' . $memID . ';area=lists;sa=ignore');
 	}
 
-	// Initialise the list of members we're ignoring.
+	// Initialize the list of members we're ignoring.
 	$ignored = array();
 
 	if (!empty($ignoreArray))

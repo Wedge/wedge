@@ -27,8 +27,8 @@ class captcha_stripes
 		$height = 100;
 		$this->image = imagecreate($width, $height);
 
-		// The 'foreground' colour must be declared first, so that when the 'background' colour is reapplied with text,
-		// it has a colour index > 0 so turning antialiasing off actually works
+		// The 'foreground' color must be declared first, so that when the 'background' color is reapplied with text,
+		// it has a color index > 0 so turning antialiasing off actually works.
 		if (mt_rand(1, 100) % 2 == 0)
 		{
 			$fg = imagecolorallocate($this->image, 255, 255, 255);

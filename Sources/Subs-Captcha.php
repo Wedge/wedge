@@ -84,7 +84,7 @@ function loadCaptchaTypes()
 	}
 
 	// Maybe a plugin wants to add some CAPTCHA types? If they're doing that, here's a hook. The plugin sources attached to this hook
-	// probably should be individual files containing the receiver for this hook, plus the class itself, to minimise loading effort.
+	// probably should be individual files containing the receiver for this hook, plus the class itself, to minimize loading effort.
 	call_hook('add_captcha', array(&$captcha_types));
 
 	return $captcha_types;

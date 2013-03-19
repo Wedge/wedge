@@ -48,7 +48,7 @@ class we
 	 * - Store the member data in $user_settings, ensure it is cached and verify the password is right.
 	 * - Check whether the user is attempting to flood the login with requests, and deal with it as appropriate.
 	 * - Assuming the member is correct, check and update the last-visit information if appropriate.
-	 * - Ensure the user groups are sanitised; or if not a logged in user, perform 'is this a spider' checks.
+	 * - Ensure the user groups are sanitized; or if not a logged in user, perform 'is this a spider' checks.
 	 * - Populate we::$user with lots of useful information (id, username, email, password, language, whether the user is a guest or admin, theme information, post count, IP address, time format/offset, avatar, smileys, PM counts, buddy list, ignore user/board preferences, warning level, URL and user groups)
 	 * - Establish board access rights based as an SQL clause (based on user groups) in we::$user['query_see_board'], and a subset of this to include ignore boards preferences into we::$user['query_wanna_see_board'].
 	 */

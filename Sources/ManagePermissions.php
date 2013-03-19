@@ -59,7 +59,7 @@ if (!defined('WEDGE'))
 		// !!!
 
 	void init_inline_permissions(array permissions)
-		- internal function to initialise the inline permission settings.
+		- internal function to initialize the inline permission settings.
 		- loads the ManagePermissions language and template.
 		- loads a context variables for each permission.
 		- used by several settings screens to set specific permissions.

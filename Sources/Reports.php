@@ -854,7 +854,7 @@ function addData($inc_data, $custom_table = null)
 	else
 		$table = $context['current_table'];
 
-	// If we have keys, sanitise the data...
+	// If we have keys, sanitize the data...
 	if (!empty($context['keys']))
 	{
 		// Basically, check every key exists!

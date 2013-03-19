@@ -65,7 +65,7 @@ if (!defined('WEDGE'))
 
 */
 
-/*	Most of the admin panel pages use this standardised setup.
+/*	Most of the admin panel pages use this standardized setup.
 	If you're building a plugin, very often you just need to use <settings-page> in your plugin-info.xml
 	file. You only need to worry about this if you have a reason to do any of it manually, and if you
 	do, this is how it works.

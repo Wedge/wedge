@@ -168,7 +168,7 @@ class media_handler
 
 		$this->thumb_run++;
 
-		// Re-initialise... Just in case...
+		// Re-initialize... Just in case...
 		if ($this->thumb_run > 1)
 		{
 			$this->close();

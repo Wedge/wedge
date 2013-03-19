@@ -726,7 +726,7 @@ function template_footer()
 /**
  * This function is used to construct the page lists used throughout the application, e.g. 1 ... 6 7 [8] 9 10 ... 15.
  *
- * - The function accepts a start position, for calculating the page out of the list of possible pages, however if the value is not the start of an actual page, the function will sanitise the value so that it will be the actual start of the 'page' of content. It also will sanitise where the start is beyond the last item.
+ * - The function accepts a start position, for calculating the page out of the list of possible pages, however if the value is not the start of an actual page, the function will sanitize the value so that it will be the actual start of the 'page' of content. It also will sanitize where the start is beyond the last item.
  * - Many URLs in the application are in the form of item=x.y format, e.g. index.php?topic=1.20 to denote topic 1, 20 items in. This can be achieved by specifying $flexible_start as true, and %1$d in the basic URL component, e.g. passing the base URL as index.php?topic=1.%1$d
  * - Only the first and last pages are linked to, and the display will consist of 5 contiguous items centered on the current page, so displaying the current page and 2 page-links either side)
  *

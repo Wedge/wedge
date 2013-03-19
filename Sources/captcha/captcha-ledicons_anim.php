@@ -54,8 +54,8 @@ class captcha_ledicons_anim extends captcha_ledicons
 			for ($draw_width = 0; $draw_width < $frameno; $draw_width++)
 				for ($ypos = 0; $ypos < $this->pointheight; $ypos++)
 				{
-					// Iterate back through the frames until we hit a colour.
-					// We're guaranteed to hit a colour eventually since frame 0 has a colour for every point.
+					// Iterate back through the frames until we hit a color.
+					// We're guaranteed to hit a color eventually since frame 0 has a color for every point.
 					$prev_col = -1;
 					$fpos = $frameno;
 					while ($prev_col == -1)
@@ -69,9 +69,9 @@ class captcha_ledicons_anim extends captcha_ledicons
 		// Now, I guess, we can draw the frames.
 		foreach ($framestore as $frameno => $frame)
 		{
-			list ($image, $colours) = $this->create_image($this->width, $this->height);
-			imagefilledrectangle($image, 0, 0, $this->width, $this->height, $frameno == 0 ? $colours['black'] : $colours['purple']);
-			imagecolortransparent($image, $colours['purple']);
+			list ($image, $colors) = $this->create_image($this->width, $this->height);
+			imagefilledrectangle($image, 0, 0, $this->width, $this->height, $frameno == 0 ? $colors['black'] : $colors['purple']);
+			imagecolortransparent($image, $colors['purple']);
 
 			foreach ($frame as $ypos => $row)
 				foreach ($row as $xpos => $value)
@@ -80,7 +80,7 @@ class captcha_ledicons_anim extends captcha_ledicons
 					elseif ($value == 1)
 						$this->paint_led('lit', 2 + 5 * $xpos, ($this->pointheight - $ypos - 1) * 6 + 2, $image);
 
-			$this->anim->AddFrame($image, mt_rand(5,8), $colours['purple']);
+			$this->anim->AddFrame($image, mt_rand(5,8), $colors['purple']);
 			imagedestroy($image);
 		}
 
@@ -118,8 +118,8 @@ class captcha_ledicons_anim extends captcha_ledicons
 	protected function create_image($width, $height)
 	{
 		$image = imagecreate($width, $height);
-		$colours = $this->assign_colours($image);
-		return array($image, $colours);
+		$colors = $this->assign_colors($image);
+		return array($image, $colors);
 	}
 
 	protected function create_led($id, $background = false, $lowlight_col = '', $highlight_col = '')
@@ -127,15 +127,15 @@ class captcha_ledicons_anim extends captcha_ledicons
 		if (isset($this->leds[$id]))
 			return false;
 
-		list ($this->leds[$id], $colours) = $this->create_image(4, 4);
+		list ($this->leds[$id], $colors) = $this->create_image(4, 4);
 
-		imagefilledrectangle($this->leds[$id], 0, 0, 3, 3, $colours[$id . '_lo']);
-		imagesetpixel($this->leds[$id], 0, 0, $colours['purple']); // transparent corners
-		imagesetpixel($this->leds[$id], 0, 3, $colours['purple']);
-		imagesetpixel($this->leds[$id], 3, 0, $colours['purple']);
-		imagesetpixel($this->leds[$id], 3, 3, $colours['purple']);
-		imagesetpixel($this->leds[$id], 1, 1, $colours[$id . '_hi']); // highlight
-		imagecolortransparent($this->leds[$id], $colours['purple']);
+		imagefilledrectangle($this->leds[$id], 0, 0, 3, 3, $colors[$id . '_lo']);
+		imagesetpixel($this->leds[$id], 0, 0, $colors['purple']); // transparent corners
+		imagesetpixel($this->leds[$id], 0, 3, $colors['purple']);
+		imagesetpixel($this->leds[$id], 3, 0, $colors['purple']);
+		imagesetpixel($this->leds[$id], 3, 3, $colors['purple']);
+		imagesetpixel($this->leds[$id], 1, 1, $colors[$id . '_hi']); // highlight
+		imagecolortransparent($this->leds[$id], $colors['purple']);
 		return true;
 	}
 
@@ -144,18 +144,18 @@ class captcha_ledicons_anim extends captcha_ledicons
 		imagecopy ($image, $this->leds[$id], $x, $y, 0, 0, 4, 4);
 	}
 
-	protected function assign_colours($image)
+	protected function assign_colors($image)
 	{
-		static $lit_colour = null, $colours;
+		static $lit_color = null, $colors;
 
-		if ($lit_colour === null)
-			$lit_colour = array_rand($this->colours);
+		if ($lit_color === null)
+			$lit_color = array_rand($this->colors);
 
 		return array(
 			'black' => imagecolorallocate($image, 0, 0, 0),
 			'purple' => imagecolorallocate($image, 255, 0, 255),
-			'lit_lo' => imagecolorallocate($image, $this->colours[$lit_colour][0][0], $this->colours[$lit_colour][0][1], $this->colours[$lit_colour][0][2]),
-			'lit_hi' => imagecolorallocate($image, $this->colours[$lit_colour][1][0], $this->colours[$lit_colour][1][1], $this->colours[$lit_colour][1][2]),
+			'lit_lo' => imagecolorallocate($image, $this->colors[$lit_color][0][0], $this->colors[$lit_color][0][1], $this->colors[$lit_color][0][2]),
+			'lit_hi' => imagecolorallocate($image, $this->colors[$lit_color][1][0], $this->colors[$lit_color][1][1], $this->colors[$lit_color][1][2]),
 			'dull_lo' => imagecolorallocate($image, 63, 63, 63),
 			'dull_hi' => imagecolorallocate($image, 100, 100, 100),
 		);

@@ -292,7 +292,7 @@ function template_modfilter_edit()
 		<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 	</form>';
 
-	// Just to summarise the code.
+	// Just to summarize the code.
 	// updateForm is used to work out where the user is in workflow, and only show them the right parts of the form
 	// setRuleContent takes the selection of what type of criteria the user wants to add and puts it into the container to work with; note that it clones the existing markup rather naively, so it has to rebind events, remove duplicate markup of selectbox and then create a new selectbox
 	// addRow adds a row to the table of rules, which deals with appending to the table, making sure the input is created etc.

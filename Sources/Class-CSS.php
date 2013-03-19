@@ -1268,15 +1268,15 @@ class wess_nesting extends wess
 	private function split_selectors($selector)
 	{
 		// Does this selector have commas in it? We'll have to protect it first...
-		// Basically, (..,..) [..,..] "..,.." and '..,..' will be base64-encoded before the split.
+		// Basically, (..,..) [..,..] "..,.." and '..,..' will be protected before the split.
 		if (strpos($selector, ',') !== false)
 			while (preg_match('~\([^(]*,[^(]*\)|\[[^[]*,[^[]*]|"[^"]*,[^"]*"|\'[^\']*,[^\']*\'~', $selector, $match))
-				$selector = str_replace($match[0], '#we-protect#' . base64_encode($match[0]) . '#we-protect#', $selector);
+				$selector = str_replace($match[0], str_replace(',', chr(20), $match[0]), $selector);
 
 		$arr = array_map('trim', explode(',', $selector));
 		foreach ($arr as $key => $val)
 			if (strpos($val, '#we-protect#') !== false)
-				$arr[$key] = preg_replace('~#we-protect#(.*?)#we-protect#~e', 'base64_decode(\'$1\')', $val);
+				$arr[$key] = str_replace(chr(20), ',', $val);
 
 		return $arr;
 	}

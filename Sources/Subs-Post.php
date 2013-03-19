@@ -2590,7 +2590,7 @@ function user_info_callback($matches)
  *
  * This function deals with all the saving of post drafts, regardless of anything else.
  * - Verify that the user did actually press save draft (or that it came from auto save), that they're not a guest, that they're allowed and draft saving is on.
- * - Sanitise it, just as we would for a post normally.
+ * - Sanitize it, just as we would for a post normally.
  * - Kick the user back if the draft is empty.
  * - If the draft id was supplied and it already exists, update it. Otherwise create a new one.
  *
@@ -2617,7 +2617,7 @@ function saveDraft($is_pm, $id_context = 0)
 	$is_pm = (bool) $is_pm;
 	$id_context = (int) $id_context;
 
-	// Sanitise what we do have
+	// Sanitize what we do have
 	$subject = westr::htmltrim(westr::htmlspecialchars($subject));
 	$message = westr::htmlspecialchars($message, ENT_QUOTES);
 	loadSource('Class-Editor'); // just in case

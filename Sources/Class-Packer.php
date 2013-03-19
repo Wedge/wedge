@@ -160,7 +160,7 @@ class Collection extends Map {
 		assert($this->isValidIndex($index));
 		assert(!$this->has($key));
 
-		array_splice($this->values, $index, 1, null); // placeholder
+		array_splice($this->values, $index, 1, null); // Placeholder
 		$this->put($key, $item);
 	}
 
@@ -259,7 +259,7 @@ class RegGrp extends Collection {
 	}
 
 	public function test($string) {
-		// not implemented
+		// Not implemented
 	}
 
 	private function _item_toString($item) {
@@ -280,7 +280,7 @@ class RegGrp extends Collection {
 		// Loop through the RegGrp items.
 		foreach ($this->values as $item) {
 			$next = $offset + $item->length + 1;
-			if (!empty($arguments[$offset])) { // do we have a result?
+			if (!empty($arguments[$offset])) { // Do we have a result?
 				$replacement = isset($this->_override) ? $this->_override : $item->replacement;
 				if (is_callable($replacement))
 					return call_user_func_array($replacement, array_slice($arguments, $offset, $item->length + 1));
@@ -320,14 +320,14 @@ class RegGrpItem {
 	public function __construct($expression, $replacement = RegGrp::IGNORE) {
 		if ($replacement instanceof RegGrpItem) $replacement = $replacement->replacement;
 
-		// does the pattern use sub-expressions?
+		// Does the pattern use sub-expressions?
 		if (!is_callable($replacement) && preg_match(self::$LOOKUP, $replacement)) {
-			// a simple lookup? (e.g. "$2")
+			// A simple lookup? (e.g. "$2")
 			if (preg_match(self::$LOOKUP_SIMPLE, $replacement)) {
-				// store the index (used for fast retrieval of matched strings)
+				// Store the index (used for fast retrieval of matched strings)
 				$replacement = (int)substr($replacement, 1);
-			} else { // a complicated lookup (e.g. "Hello $2 $1")
-				// build a function to do the lookup
+			} else { // A complicated lookup (e.g. "Hello $2 $1")
+				// Build a function to do the lookup
 				// Improved version by Alexei Gorkov:
 				$replacement = preg_replace(array_keys(self::$FUNCTION_PARSER), array_values(self::$FUNCTION_PARSER), $replacement);
 				$replacement = preg_replace('/([\'"])\\1\\.(.*)\\.\\1\\1$/', '$1', $replacement);
@@ -476,7 +476,7 @@ class Packer {
 	public static $data = array(
 		'STRING1' => RegGrp::IGNORE,
 		'STRING2' => RegGrp::IGNORE,
-		'CONDITIONAL' => RegGrp::IGNORE, // conditional comments
+		'CONDITIONAL' => RegGrp::IGNORE, // Conditional comments
 		'(OPERATOR)\\s*(REGEXP)' => '$1$2'
 	);
 
@@ -523,7 +523,7 @@ class Packer {
 	}
 }
 
-// initialise static object properties
+// Initialze static object properties
 
 Packer::$data = new Parser(Packer::$data);
 
@@ -546,8 +546,8 @@ class Minifier {
 	}
 
 	public static $clean = array(
-		'\\(\\s*([^;)]*)\\s*;\\s*([^;)]*)\\s*;\\s*([^;)]*)\\)' => '($1;$2;$3)', // for (;;) loops
-		'throw[^};]+[};]' => RegGrp::IGNORE, // a safari 1.3 bug
+		'\\(\\s*([^;)]*)\\s*;\\s*([^;)]*)\\s*;\\s*([^;)]*)\\)' => '($1;$2;$3)', // For (;;) loops
+		'throw[^};]+[};]' => RegGrp::IGNORE, // A safari 1.3 bug
 		';+\\s*([};])' => '$1'
 	);
 
@@ -579,7 +579,7 @@ class Minifier {
 
 	public static $whitespace = array(
 		'\\/\\/@[^\\n]*\\n' => RegGrp::IGNORE,
-		'@\\s+\\b' => '@ ', // protect conditional comments
+		'@\\s+\\b' => '@ ', // Protect conditional comments
 		'\\b\\s+@' => ' @',
 		'(\\d)\\s+(\\.\\s*[a-z\\$_\\[(])' => '$1 $2', // http://dean.edwards.name/weblog/2007/04/packer3/#comment84066
 		'([+-])\\s+([+-])' => '$1 $2', // c = a++ +b;
@@ -593,7 +593,7 @@ class Minifier {
 	);
 }
 
-// initialise static object properties
+// Initialize static object properties
 
 //eval("var e=this.encode62=" + this.ENCODE62);
 Minifier::$clean = Packer::$data->union(new Parser(Minifier::$clean));
@@ -603,7 +603,7 @@ Minifier::$comments = Packer::$data->union(new Parser(Minifier::$comments));
 Minifier::$conditionalComments = Minifier::$comments->copy();
 Minifier::$conditionalComments->putAt(-1, ' $3');
 Minifier::$whitespace = Packer::$data->union(new Parser(Minifier::$whitespace));
-Minifier::$whitespace->removeAt(2); // conditional comments
+Minifier::$whitespace->removeAt(2); // Conditional comments
 Minifier::$comments->removeAt(2);
 
 /****************************************************************
@@ -620,7 +620,7 @@ class Shrinker {
 		return preg_replace(self::$ESCAPE, '\\\\$1', $string);
 	}
 
-	// identify blocks, particularly identify function blocks (which define scope)
+	// Identify blocks, particularly identify function blocks (which define scope)
 	private $BLOCK			= '/((catch|do|if|while|with|function)\\b[^~{};]*(\\(\\s*[^{};]*\\s*\\))\\s*)?(\\{[^{}]*\\})/';
 	private $BRACKETS		= '/\\{[^{}]*\\}|\\[[^\\[\\]]*\\]|\\([^\\(\\)]*\\)|~[^~]+~/';
 	private $ENCODED_BLOCK	= '/~#?(\\d+)~/';
@@ -633,9 +633,9 @@ class Shrinker {
 	private $VAR_TIDY		= '/\\b(const|let|var|function|catch\\s*\\()\\b|\\s+in\\b[^;]*/';
 	private $VAR_EQUAL		= '/\\s*=[^,;]*/';
 
-	private $count = 0; // number of variables
-	private $blocks; // store program blocks (anything between braces {})
-	private $data;	 // store program data (strings and regexps)
+	private $count = 0; // Number of variables
+	private $blocks; // Store program blocks (anything between braces {})
+	private $data;	 // Store program data (strings and regexps)
 	private $script;
 
 	public function shrink($script = '') {
@@ -655,7 +655,7 @@ class Shrinker {
 	}
 
 	private function decodeBlocks($script, $encoded) {
-		// put the blocks back
+		// Put the blocks back
 		while (preg_match($encoded, $script)) {
 			$script = preg_replace_callback($encoded, array(&$this, '_blockDecoder'), $script);
 		}
@@ -663,7 +663,7 @@ class Shrinker {
 	}
 
 	private function encodeBlocks($script) {
-		// encode blocks, as we encode we replace variable and argument names
+		// Encode blocks, as we encode we replace variable and argument names
 		while (preg_match($this->BLOCK, $script)) {
 			$script = preg_replace_callback($this->BLOCK, array(&$this, '_blockEncoder'), $script);
 		}
@@ -671,19 +671,19 @@ class Shrinker {
 	}
 
 	private function decodeData($script) {
-		// put strings and regular expressions back
+		// Put strings and regular expressions back
 		$script = preg_replace_callback($this->ENCODED_DATA, array(&$this, '_dataDecoder'), $script);
 		unset($this->data);
 		return $script;
 	}
 
 	private function encodeData($script) {
-		$this->data = array(); // encoded strings and regular expressions
-		// encode strings and regular expressions
+		$this->data = array(); // Encoded strings and regular expressions
+		// Encode strings and regular expressions
 		return Packer::$data->exec($script, array(&$this, '_dataEncoder'));
 	}
 
-	/* clallback functions (public because of php's crappy scoping) */
+	/* Callback functions (public because of php's crappy scoping) */
 
 	public function _blockDecoder($matches) {
 		return $this->blocks[$matches[1]];
@@ -693,13 +693,13 @@ class Shrinker {
 		$prefix = $match[1]; $blockType = $match[2]; $args = $match[3]; $block = $match[4];
 		if (!$prefix) $prefix = '';
 		if ($blockType == 'function') {
-			// decode the function block (THIS IS THE IMPORTANT BIT)
+			// Decode the function block (THIS IS THE IMPORTANT BIT)
 			// We are retrieving all sub-blocks and will re-parse them in light
 			// of newly shrunk variables
 			$block = $args.$this->decodeBlocks($block, $this->SCOPED);
 			$prefix = preg_replace($this->BRACKETS, '', $prefix);
 
-			// create the list of variable and argument names
+			// Create the list of variable and argument names
 			$args = substr($args, 1, -1);
 
 			if ($args != '_no_shrink_') {
@@ -712,7 +712,7 @@ class Shrinker {
 			}
 			$block = $this->decodeBlocks($block, $this->ENCODED_BLOCK);
 
-			// process each identifier
+			// Process each identifier
 			if ($args != '_no_shrink_') {
 				$count = 0;
 				preg_match_all($this->IDENTIFIER, $args.','.$vars, $matches);
@@ -721,7 +721,7 @@ class Shrinker {
 					if (empty($processed[$id])) {
 						$processed[$id] = true;
 						$id = self::rescape($id);
-						// encode variable names
+						// Encode variable names
 						while (preg_match('/'.Shrinker::PREFIX.$count.'\\b/', $block)) $count++;
 						$reg = '/([^\\w$.])'.$id.'([^\\w$:])/';
 						while (preg_match($reg, $block)) {
@@ -757,7 +757,7 @@ class Shrinker {
 	}
 
 	public function _varEncoder() {
-		// find the next free short name
+		// Find the next free short name
 		do $shortId = Packer::encode52($this->count++);
 		while (preg_match('/[^\\w$.]'.$shortId.'[^\\w$:]/', $this->script));
 		return $shortId;

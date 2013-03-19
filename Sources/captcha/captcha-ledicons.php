@@ -17,7 +17,7 @@ class captcha_ledicons
 {
 	public $is_available = true;
 	protected $font; // the font data will be in here
-	protected $colours; // the hi/lo colour pairs for LEDs
+	protected $colors; // the hi/lo color pairs for LEDs
 	protected $image; // the internal image reference
 	protected $leds = array(); // where we internally store the leds
 	protected $pointwidth; // how wide the image is in LEDs
@@ -29,7 +29,7 @@ class captcha_ledicons
 	protected function init()
 	{
 		$this->load_font();
-		$this->load_colours();
+		$this->load_colors();
 
 		// Figure out how big this is going to be. Start by getting the height we're using.
 		$this->pointwidth = 0;
@@ -54,10 +54,10 @@ class captcha_ledicons
 		imagefilledrectangle($this->image, 0, 0, $this->width - 1, $this->height - 1, $grey);
 		imagefilledrectangle($this->image, 1, 1, $this->width - 2, $this->height - 2, $black);
 
-		// Now pick the colours. There aren't that many combinations that really work well though.
-		$lit_colour = array_rand($this->colours);
+		// Now pick the colors. There aren't that many combinations that really work well though.
+		$lit_color = array_rand($this->colors);
 
-		$this->create_led('lit', false, $this->colours[$lit_colour][0], $this->colours[$lit_colour][1]);
+		$this->create_led('lit', false, $this->colors[$lit_color][0], $this->colors[$lit_color][1]);
 		$this->create_led('dull', false, array(63, 63, 63), array(100, 100, 100));
 
 		// Now go do :)
@@ -89,7 +89,7 @@ class captcha_ledicons
 
 		$this->leds[$id] = imagecreate(4, 4); // indexed
 		$ledbg = imagecolorallocate($this->leds[$id], $background[0], $background[1], $background[2]); // corners
-		$ledlo = imagecolorallocate($this->leds[$id], $lowlight_col[0], $lowlight_col[1], $lowlight_col[2]); // background (main colour)
+		$ledlo = imagecolorallocate($this->leds[$id], $lowlight_col[0], $lowlight_col[1], $lowlight_col[2]); // background (main color)
 		$ledhi = imagecolorallocate($this->leds[$id], $highlight_col[0], $highlight_col[1], $highlight_col[2]); // highlight
 
 		imagefilledrectangle($this->leds[$id], 0, 0, 3, 3, $ledlo);
@@ -99,9 +99,9 @@ class captcha_ledicons
 		imagesetpixel($this->leds[$id], 3, 3, $ledbg);
 		imagesetpixel($this->leds[$id], 1, 1, $ledhi); // highlight
 
-		// Transfer colour palette to master image too
+		// Transfer color palette to master image too
 		$ledbg2 = imagecolorallocate($this->image, $background[0], $background[1], $background[2]); // corners
-		$ledlo2 = imagecolorallocate($this->image, $lowlight_col[0], $lowlight_col[1], $lowlight_col[2]); // background (main colour)
+		$ledlo2 = imagecolorallocate($this->image, $lowlight_col[0], $lowlight_col[1], $lowlight_col[2]); // background (main color)
 		$ledhi2 = imagecolorallocate($this->image, $highlight_col[0], $highlight_col[1], $highlight_col[2]); // highlight
 
 		return true;
@@ -112,9 +112,9 @@ class captcha_ledicons
 		imagecopy ($this->image, $this->leds[$id], $x, $y, 0, 0, 4, 4);
 	}
 
-	protected function load_colours()
+	protected function load_colors()
 	{
-		$this->colours = array(
+		$this->colors = array(
 			'blue' => array(
 				array(145, 145, 200),
 				array(170, 170, 255),

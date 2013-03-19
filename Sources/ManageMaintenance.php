@@ -923,7 +923,7 @@ function OptimizeTables()
 	$txt['database_numb_tables'] = sprintf($txt['database_numb_tables'], $context['num_tables']);
 	$context['num_tables_optimized'] = count($context['optimized_tables']);
 
-	// Check that we don't auto optimise again too soon!
+	// Check that we don't auto-optimize again too soon!
 	loadSource('ScheduledTasks');
 	CalculateNextTrigger('auto_optimize', true);
 }

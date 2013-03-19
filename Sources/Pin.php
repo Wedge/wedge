@@ -28,7 +28,7 @@ function Pin()
 {
 	global $settings, $topic, $board;
 
-	// Maybe we want to reorganise the pinned topics in a board?
+	// Maybe we want to reorganize the pinned topics in a board?
 	if (isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'order')
 		return OrderPin();
 

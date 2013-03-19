@@ -1319,7 +1319,7 @@ function preventPrefetch($always = false)
  */
 function getRePrefix()
 {
-	global $context, $txt;
+	global $context, $settings, $txt;
 
 	if (!isset($context['response_prefix']) && !($context['response_prefix'] = cache_get_data('response_prefix', 600)))
 	{

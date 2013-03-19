@@ -56,7 +56,7 @@ function getWritableObject()
 		if (!empty($context['connect_details']['type']) && $context['connect_details']['type'] != 'ftp' && $context['connect_details']['type'] != 'sftp')
 			unset($context['connect_details']);
 
-		// FTP often features 'virtualised' paths of sorts, relative to the user's home directory.
+		// FTP often features 'virtualized' paths of sorts, relative to the user's home directory.
 		if ($context['connect_details']['type'] == 'ftp' && !empty($_POST['connect_path']))
 		{
 			loadSource('Class-FTP');

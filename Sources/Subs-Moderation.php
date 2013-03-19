@@ -243,7 +243,7 @@ function count_links_post($subject, $body)
 {
 	$body = strtolower($body); // We don't care about case, and we can use this to make things faster.
 
-	// We need to normalise links. We have to cope with bare URLs, urls written as [url]http://blah[/url] and [url=http://blah]some text[/url]
+	// We need to normalize links. We have to cope with bare URLs, urls written as [url]http://blah[/url] and [url=http://blah]some text[/url]
 	// To do this, we start by converting [url=...] form to [url]
 	$body = preg_replace('~\[url.*?]~', '[url]', $body);
 

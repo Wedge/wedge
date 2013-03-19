@@ -174,7 +174,7 @@ function ManageModHome()
 
 	if (!empty($load['userid']))
 	{
-		// We could use loadMemberData but we really only need names - the buffer will deal with colouring, etc, separately for us.
+		// We could use loadMemberData but we really only need names - the buffer will deal with coloring, etc, separately for us.
 		$context['users'] = array();
 		$query = wesql::query('
 			SELECT id_member, member_name
