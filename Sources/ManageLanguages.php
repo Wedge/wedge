@@ -998,9 +998,7 @@ function ModifyLanguage()
 
 function ModifyLanguageEntries()
 {
-	global $context, $txt, $helptxt;
-
-	wetem::load('modify_entries');
+	global $context, $txt, $helptxt, $cachedir;
 
 	$context['linktree'][] = array(
 		'url' => '<URL>?action=admin;area=languages;sa=editlang;lid=' . $context['lang_id'] . ';tfid=' . urlencode($context['selected_file']['source_id'] . '|' . $context['selected_file']['lang_id']),
@@ -1058,4 +1056,118 @@ function ModifyLanguageEntries()
 	$restricted_entries = array('txt_lang_name', 'txt_lang_locale', 'txt_lang_dictionary', 'txt_lang_spelling', 'txt_lang_rtl');
 	foreach ($restricted_entries as $item)
 		unset($context['entries'][$item]);
+
+	if (isset($_GET['eid'], $context['entries'][$_GET['eid']]))
+	{
+		// So either we're displaying what we're doing, or we're making some changes.
+		if (isset($_POST['delete']))
+		{
+			checkSession();
+			if (!isset($context['plugins_dir'][$context['selected_file']['source_id']]))
+			{
+				$context['selected_file']['source_id'] = (int) $context['selected_file']['source_id'];
+				list($lang_var, $actual_key) = explode('_', $_GET['eid'], 2);
+				$request = wesql::query('
+					DELETE FROM {db_prefix}language_changes
+					WHERE id_theme = {int:id_theme}
+						AND id_lang = {string:lang}
+						AND lang_file = {string:lang_file}
+						AND lang_var = {string:lang_var}
+						AND lang_key = {string:lang_key}',
+					array(
+						'id_theme' => $context['selected_file']['source_id'],
+						'lang' => $context['lang_id'],
+						'lang_file' => $context['selected_file']['lang_id'],
+						'lang_var' => $lang_var,
+						'lang_key' => $actual_key,
+					)
+				);
+
+				// Figure out what we're flushing. We don't need to do the *entire* cache, but we do need to do anything that could have been affected by this file. There are some awesome potential cross-contamination possibilities, so be safe.
+				foreach (glob($cachedir . '/lang_*_*_' . $context['selected_file']['lang_id'] . '.php') as $filename)
+					@unlink($filename);
+
+				// Sorry in advance. This is not a fun process.
+				clean_cache('js');
+
+				// OK, so we've removed this one, we can clear the current entry of it then let it fall back to original procedure.
+				unset ($context['entries'][$_GET['eid']]['current']);
+				wetem::load('modify_entries');
+				return;
+			}
+			else
+			{
+				// !!! We still don't know how to handle plugins yet! :'(
+			}
+		}
+		elseif (isset($_POST['save']))
+		{
+			checkSession();
+
+			$id_theme = (int) $context['selected_file']['source_id'];
+			$id_lang = $context['lang_id'];
+			$lang_file = $context['selected_file']['lang_id'];
+			list($lang_var, $lang_key) = explode('_', $_GET['eid'], 2);
+
+			if (!empty($_POST['entry']))
+			{
+				$lang_string = $_POST['entry']; // I only wish I could sanitise this, but there's a ton of strings that can't be sanitised. :(
+				$serial = 0;
+			}
+			elseif (!empty($_POST['entry_key']) && !empty($_POST['entry_value']) && is_array($_POST['entry_key']) && is_array($_POST['entry_value']))
+			{
+				$entry = array();
+				foreach ($_POST['entry_key'] as $k => $v)
+				{
+					if (empty($v) || empty($_POST['entry_value'][$k]))
+						continue;
+					$entry[$v] = $_POST['entry_value'][$k];
+				}
+
+				$serial = 1;
+
+				if (!empty($entry))
+					$lang_string = serialize($entry);
+			}
+
+			if (!isset($lang_string))
+			{
+				wetem::load('modify_entries');
+				return;
+			}
+
+			$context['entries'][$_GET['eid']]['current'] = $serial ? unserialize($lang_string) : $lang_string;
+
+			wesql::insert('replace',
+				'{db_prefix}language_changes',
+				array('id_theme' => 'int', 'id_lang' => 'string', 'lang_file' => 'string', 'lang_var' => 'string', 'lang_key' => 'string', 'lang_string' => 'string', 'serial' => 'int'),
+				array($id_theme, $id_lang, $lang_file, $lang_var, $lang_key, $lang_string, $serial),
+				array('id_theme', 'id_lang', 'lang_file', 'lang_var', 'lang_key')
+			);
+
+			// Figure out what we're flushing. We don't need to do the *entire* cache, but we do need to do anything that could have been affected by this file. There are some awesome potential cross-contamination possibilities, so be safe.
+			foreach (glob($cachedir . '/lang_*_*_' . $context['selected_file']['lang_id'] . '.php') as $filename)
+				@unlink($filename);
+
+			// Sorry in advance. This is not a fun process.
+			clean_cache('js');
+
+			// Just in case it makes any difference.
+			if ($lang_var == 'txt')
+				$txt[$lang_key] = $context['entries'][$_GET['eid']]['current'];
+			elseif ($lang_var == 'helptxt')
+				$helptxt[$lang_key] = $context['entries'][$_GET['eid']]['current'];
+
+			wetem::load('modify_entries');
+			return;
+		}
+
+		$context['entry'] = $context['entries'][$_GET['eid']];
+		$context['entry']['id'] = $_GET['eid'];
+
+		unset ($context['entries']);
+		wetem::load('modify_individual_entry');
+	}
+	else
+		wetem::load('modify_entries');
 }

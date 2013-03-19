@@ -385,13 +385,15 @@ function template_modify_entries()
 	<div class="windowbg2 wrc">
 		<dl class="settings admin_permissions">';
 
+	$lang_url = 'lid=' . $context['lang_id'] . ';tfid=' . urlencode($context['selected_file']['source_id'] . '|' . $context['selected_file']['lang_id']);
+
 	foreach ($context['entries'] as $key => $entry)
 	{
 		// OK, so we squished two things into one to make the $key earlier.
 		list($lang_var, $actual_key) = explode('_', $key, 2);
 
 		echo '
-			<dt>', $actual_key, '</dt>
+			<dt><a href="<URL>?action=admin;area=languages;sa=editlang;', $lang_url, ';eid=', $key, '">', $actual_key, '</a></dt>
 			<dd>';
 
 		if (isset($entry['master']))
@@ -419,8 +421,113 @@ function template_modify_entries()
 
 	echo '
 		</dl>
-		<input type="submit" name="save_entries" value="', $txt['save'], '" class="save">
 	</div>';
+}
+
+function template_modify_individual_entry()
+{
+	global $context, $txt;
+
+	echo '
+	<we:cat>
+		', sprintf($txt['edit_languages_specific'], $context['selected_file']['name'] . ' (' . $context['languages'][$context['lang_id']]['name'] . ')'), '
+	</we:cat>';
+
+	$lang_url = 'lid=' . $context['lang_id'] . ';tfid=' . urlencode($context['selected_file']['source_id'] . '|' . $context['selected_file']['lang_id']);
+
+	// OK, so we squished two things into one to make the $key earlier.
+	list($lang_var, $actual_key) = explode('_', $context['entry']['id'], 2);
+
+	echo '
+	<form action="<URL>?action=admin;area=languages;sa=editlang;', $lang_url, ';eid=', $context['entry']['id'], '" method="post" accept-charset="UTF-8">
+		<div class="windowbg2 wrc">
+			<dl class="settings admin_permissions">';
+
+	echo '
+				<dt>', $actual_key, '</dt>
+				<dd>';
+
+	if (isset($context['entry']['master']))
+	{
+		if (!is_array($context['entry']['master']))
+			echo sprintf($txt['language_edit_master_value'], westr::safe($context['entry']['master'], ENT_QUOTES));
+		else
+			template_array_langstring($txt['language_edit_master_value_array'], $context['entry']['master']);
+	}
+	else
+		echo sprintf($txt['language_edit_master_value'], $txt['not_applicable']);
+
+	echo '
+				</dd>
+				<dt></dt>
+				<dd>';
+
+	$editing_value = isset($context['entry']['current']) ? $context['entry']['current'] : $context['entry']['master'];
+	if (!is_array($editing_value))
+	{
+		$rows = (int) (strlen($editing_value) / 48) + substr_count($editing_value, "\n") + 1;
+		echo '
+					', $txt['language_edit_new_value'], '
+					<textarea name="entry" cols="50" rows="', $rows, '" class="w100">', westr::safe($editing_value, ENT_QUOTES), '</textarea>';
+	}
+	else
+	{
+		echo '
+					', $txt['language_edit_new_value_array'], '
+					<dl id="multilang">';
+		foreach ($editing_value as $k => $v)
+		{
+			$rows = (int) (strlen($v) / 48) + substr_count($v, "\n") + 1;
+			echo '
+						<dt>
+							<input type="submit" value="', $txt['delete'], '" class="delete" onclick="return removeRow(this);">
+							&nbsp; <input name="entry_key[]" value="', westr::safe($k, ENT_QUOTES), '" class="w25">
+						</dt>
+						<dd>
+							<textarea name="entry_value[]" cols="30" rows="', $rows, '">', westr::safe($v, ENT_QUOTES), '</textarea>
+						</dd>';
+		}
+		echo '
+					</dl>';
+
+		add_js('
+	function addRow()
+	{
+		$(\'<dt><input type="submit" value="\' + we_delete + \'" class="delete" onclick="return removeRow(this);"> &nbsp; <input name="entry_key[]" value="" class="w25"></textarea></dt><dd><textarea name="entry_value[]" cols="30" rows="1"></textarea></dd>\').appendTo(\'#multilang\');
+		return false;
+	};
+
+	function removeRow(obj)
+	{
+		$(obj).parent().next(\'dd\').remove();
+		$(obj).parent().remove();
+		return false;
+	};');
+	}
+	
+	echo '
+				</dd>
+			</dl>
+			<br class="clear">
+			<div class="floatright">';
+
+	if (is_array($editing_value))
+		echo '
+				<input type="submit" value="', $txt['language_edit_add_entry'], '" onclick="return addRow();" class="new">';
+
+	echo '
+				<input type="submit" name="save" value="', $txt['save'], '" class="save">';
+
+	if (isset($context['entry']['current']))
+		echo '
+				&nbsp; <input type="submit" name="delete" value="', isset($context['entry']['master']) ? $txt['language_revert_value'] : $txt['language_delete_value'], '" onclick="return ask(we_confirm, e);" class="delete">';
+
+	echo '
+			</div>
+			<br class="clear">
+		</div>
+		<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
+	</form>';
 }
 
 function template_array_langstring($title, $array)
