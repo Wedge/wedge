@@ -1852,10 +1852,6 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 	if ($lang == '')
 		$lang = isset(we::$user['language']) ? we::$user['language'] : $settings['language'];
 
-	// Do we want the English version of language file as fallback?
-	if (empty($settings['disable_language_fallback']) && $lang !== 'english')
-		loadLanguage($template_name, 'english', false, false, true);
-
 	// Make sure we have $theme - if not we're in trouble and need to find it!
 	if (empty($theme['default_theme_dir']))
 	{
@@ -1918,14 +1914,16 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 		$attempts[] = array($theme['default_theme_dir'], $template, $lang, $theme['default_theme_url']);
 		$attempts[] = array($theme['default_theme_dir'], $template, $settings['language'], $theme['default_theme_url']);
 
-		// Fall back on the English language if none of the preferred languages can be found.
-		if (!in_array('english', array($lang, $settings['language'])))
-		{
-			$attempts[] = array($theme['theme_dir'], $template, 'english', $theme['theme_url']);
-			$attempts[] = array($theme['default_theme_dir'], $template, 'english', $theme['default_theme_url']);
-		}
+		// First, try to ensure we have the English US version loaded first. We do not need to record whether we succeeded or not though.
+		$fallbacks = array(
+			array($theme['theme_dir'], $template),
+			array($theme['default_theme_dir'], $template),
+		);
+		foreach ($fallbacks as $file)
+			if (file_exists($file[0] . '/languages/' . $file[1] . '.english.php'))
+				template_include($file[0] . '/languages/' . $file[1] . '.english.php');
 
-		// Try to find the language file.
+		// Now try to find the actual language file.
 		$found = false;
 		foreach ($attempts as $k => $file)
 		{
