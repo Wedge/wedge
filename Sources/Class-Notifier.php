@@ -160,13 +160,13 @@ abstract class Notifier
 	}
 
 	/**
-	 * This hook is called after a notification has been issued
+	 * This hook is called after notifications have been issued
 	 *
 	 * @access public
-	 * @param Notification $notification
+	 * @param array $notifications
 	 * @return void
 	 */
-	public function afterNotify(Notification $notification)
+	public function afterNotify(array $notifications)
 	{
 	}
 }

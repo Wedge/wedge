@@ -2134,7 +2134,7 @@ function template_welcome_message()
 		echo '
 	<div>
 		<form action="', $installurl, '">
-			<label>', $txt['installer_language'], ': <select name="lang_file" onchange="location.href = \'', $installurl, '?lang_file=\' + $(this).val();">';
+			<label>', $txt['installer_language'], ': <select name="lang_file" onchange="location = \'', $installurl, '?lang_file=\' + $(this).val();">';
 
 		foreach ($incontext['detected_languages'] as $lang => $name)
 			echo '

@@ -264,7 +264,7 @@ class Notification
 					'data' => serialize((array) $data),
 				), $notifier);
 
-				call_hook('notification_new', array($notification));
+				call_hook('notification_new', array($notifications));
 
 				// Send the e-mail?
 				if (!empty($pref['email_notifiers'][$notifier->getName()])

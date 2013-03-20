@@ -207,12 +207,12 @@ class weNotif
 		if (we::$user['is_guest'])
 			fatal_lang_error('access_denied');
 
-		$area = !empty($_REQUEST['area']) ? $_REQUEST['area'] : '';
+		$sa = !empty($_REQUEST['sa']) ? $_REQUEST['sa'] : '';
 
-		if ($area == 'redirect')
+		if ($sa == 'redirect' && isset($_REQUEST['in']))
 		{
 			// We are accessing a notification and redirecting to it's target
-			list ($notification) = Notification::get((int) $_REQUEST['id'], we::$id);
+			list ($notification) = Notification::get((int) $_REQUEST['in'], we::$id);
 
 			// Not found?
 			if (empty($notification))
@@ -224,7 +224,7 @@ class weNotif
 			// Redirect to the target
 			redirectexit($notification->getURL());
 		}
-		elseif ($area == 'getunread')
+		elseif ($sa == 'unread')
 		{
 			header('Content-type: application/json; charset=utf-8');
 
@@ -249,17 +249,17 @@ class weNotif
 
 			exit;
 		}
-		elseif ($area == 'markread' && !empty($_REQUEST['id']))
+		elseif ($sa == 'markread' && isset($_REQUEST['in']))
 		{
-			$notifications = Notification::get($_REQUEST['id'], we::$id);
+			$notifications = Notification::get($_REQUEST['in'], we::$id);
 
 			if (!empty($notifications[0]))
 				$notifications[0]->markAsRead();
 
 			redirectexit();
 		}
-		elseif (!empty($area) && !empty(self::$notifiers[$area]) && is_callable(self::$notifiers[$area], 'action'))
-			return self::$notifiers[$area]->action();
+		elseif (!empty($sa) && !empty(self::$notifiers[$sa]) && is_callable(self::$notifiers[$sa], 'action'))
+			return self::$notifiers[$sa]->action();
 
 		// Otherwise we're displaying all the notifications this user has
 		$context['notifications'] = Notification::get(null, we::$id, 0);
