@@ -133,7 +133,8 @@ function template_html_before()
 	<link rel="canonical" href="', $context['canonical_url'], '">';
 
 	// Show all the relative links, such as search.
-	echo '
+	if (!empty($context['allow_search']))
+		echo '
 	<link rel="search" href="<URL>?action=search">';
 
 	// If feeds are enabled, advertise the presence of one.

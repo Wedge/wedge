@@ -1258,7 +1258,7 @@ function prepareDisplayContext($reset = false)
 	global $theme, $txt, $settings, $options, $board_info;
 	global $memberContext, $context, $messages_request, $topic, $attachments, $topicinfo;
 
-	static $counter = null, $can_pm = null, $profile_own = null, $profile_any = null, $buddy = null, $is_new = false;
+	static $counter = null, $can_pm = null, $profile_own = null, $profile_any = null, $buddy = null, $ignore = null, $is_new = false;
 
 	// If the query returned false, bail.
 	if ($messages_request == false)

@@ -661,7 +661,7 @@ function number_context($string, $number, $format_comma = true)
 /**
  * Formats a given timestamp, optionally applying the forum and user offsets, for display including 'Today' and 'Yesterday' prefixes.
  *
- * This function also applies the date/time format string the admin can specify in the admin panel (Features and Options / General) user can specify in their Look and Layout Preferences through strftime.
+ * This function also applies the date/time format string the admin can specify in the admin panel (General Options / General) user can specify in their Look and Layout Preferences through strftime.
  *
  * @param int $log_time Timestamp to use. No default is given, will often be derived from stored content.
  * @param mixed $show_today When calling from outside this function, it is whether to use 'Today' format at all, or override the forum settings and not use it (use it is default). This function also makes use of this function to call itself for formatting the time part of 'Today' dates, and uses this to pass the time-only format back.

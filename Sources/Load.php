@@ -1907,13 +1907,16 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 		// Obviously, the current theme is most important to check.
 		$attempts = array(
 			array($theme['theme_dir'], $template, $lang, $theme['theme_url']),
-			array($theme['theme_dir'], $template, $settings['language'], $theme['theme_url']),
+			array($theme['default_theme_dir'], $template, $lang, $theme['default_theme_url']),
 		);
 
-		// Fall back on the default theme if necessary.
-		$attempts[] = array($theme['default_theme_dir'], $template, $lang, $theme['default_theme_url']);
-		$attempts[] = array($theme['default_theme_dir'], $template, $settings['language'], $theme['default_theme_url']);
-
+		// Fall back on the default language if necessary.
+		if ($settings['language'] != 'english')
+		{
+			$attempts[] = array($theme['theme_dir'], $template, $settings['language'], $theme['theme_url']);
+			$attempts[] = array($theme['default_theme_dir'], $template, $settings['language'], $theme['default_theme_url']);
+		}
+		
 		// First, try to ensure we have the English US version loaded first. We do not need to record whether we succeeded or not though.
 		$fallbacks = array(
 			array($theme['theme_dir'], $template),
@@ -1942,15 +1945,16 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 		// That couldn't be found! Log the error, but *try* to continue normally.
 		if (!$found)
 		{
+			// Put stuff back and if we did scrape a fallback together, add it to the current strings so that - hopefully, we won't get an error, even if there's a missing language file.
 			if (isset($txt))
 			{
-				$txt = $oldtxt;
-				$helptxt = $oldhelptxt;
+				$txt = !empty($txt) ? array_merge($oldtxt, $txt) : $oldtxt;
+				$helptxt = !empty($helptxt) ? array_merge($oldhelptxt, $helptxt) : $oldhelptxt;
 			}
 
 			if ($fatal)
 			{
-				log_error(sprintf($txt['theme_language_error'], $template . '.' . $lang, 'template'));
+				log_error(sprintf($txt['theme_language_error'], $template . '.' . $lang), 'template');
 				break;
 			}
 		}

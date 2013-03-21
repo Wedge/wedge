@@ -279,6 +279,8 @@ function Post($post_errors = array())
 
 			if (!empty($context['new_replies']))
 			{
+				$txt['error_new_replies'] = number_context(isset($_GET['last']) ? 'error_new_reply_reading' : 'error_new_reply', $context['new_replies']);
+
 				if ($context['new_replies'] == 1)
 					$txt['error_new_reply'] = isset($_GET['last']) ? $txt['error_new_reply_reading'] : $txt['error_new_reply'];
 				else
@@ -288,7 +290,7 @@ function Post($post_errors = array())
 				if (isset($_GET['last']))
 					$newRepliesError = $context['new_replies'];
 				else
-					$post_errors[] = $context['new_replies'] == 1 ? 'new_reply' : 'new_replies';
+					$post_errors[] = 'new_replies';
 
 				$settings['topicSummaryPosts'] = $context['new_replies'] > $settings['topicSummaryPosts'] ? max($settings['topicSummaryPosts'], 5) : $settings['topicSummaryPosts'];
 			}
@@ -926,7 +928,8 @@ function Post($post_errors = array())
 	// If we are coming here to make a reply, and someone has already replied... make a special warning message.
 	if (isset($newRepliesError))
 	{
-		$context['post_error']['messages'][] = $newRepliesError == 1 ? $txt['error_new_reply'] : $txt['error_new_replies'];
+		// The value of this was worked out earlier, when $newRepliesError was.
+		$context['post_error']['messages'][] = $txt['error_new_replies'];
 		$context['error_type'] = 'minor';
 	}
 

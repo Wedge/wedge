@@ -748,7 +748,7 @@ function loadCustomFields($memID, $area = 'summary')
 	$request = wesql::query('
 		SELECT
 			col_name, field_name, field_desc, field_type, field_length, field_options,
-			default_value, bbc, enclose, placement
+			default_value, bbc, enclose, placement, show_reg
 		FROM {db_prefix}custom_fields
 		WHERE ' . $where . '
 		ORDER BY position',
@@ -808,7 +808,7 @@ function loadCustomFields($memID, $area = 'summary')
 		}
 		elseif ($row['field_type'] == 'text')
 		{
-			$input_html = '<input name="customfield[' . $row['col_name'] . ']" ' . ($row['field_length'] != 0 ? 'maxlength="' . $row['field_length'] . '"' : '') . ' size="' . ($row['field_length'] == 0 || $row['field_length'] >= 50 ? 50 : ($row['field_length'] > 30 ? 30 : ($row['field_length'] > 10 ? 20 : 10))) . '" value="' . $value . '">';
+			$input_html = '<input name="customfield[' . $row['col_name'] . ']" ' . ($row['field_length'] != 0 ? 'maxlength="' . $row['field_length'] . '"' : '') . ' size="' . ($row['field_length'] == 0 || $row['field_length'] >= 50 ? 50 : ($row['field_length'] > 30 ? 30 : ($row['field_length'] > 10 ? 20 : 10))) . '" value="' . $value . '"' . ($area == 'register' && $row['show_reg'] > 1 ? ' required' : '') . '>';
 		}
 		else
 		{
