@@ -190,27 +190,39 @@ function initialize_inputs()
 // Load the list of language files, and the current language file.
 function load_lang_file()
 {
-	global $txt, $incontext;
+	global $txt, $incontext, $settings;
 
 	$incontext['detected_languages'] = array();
 
+	// Set up a default language before we go any further.
+	$settings['language'] = 'english';
+
+	$original_txt = $txt;
 	// Make sure the languages directory actually exists.
-	if (file_exists(dirname(__FILE__) . '/Themes/default/languages'))
+	$folder = dirname(__FILE__) . '/Themes/default/languages';
+	if (file_exists($folder))
 	{
 		// Find all the "Install" language files in the directory.
 		// Don't use scandir(), as we're not sure about PHP 5 support for now.
-		$dir = dir(dirname(__FILE__) . '/Themes/default/languages');
+		$dir = dir($folder);
 		while ($entry = $dir->read())
 			if (substr($entry, 0, 8) == 'Install.' && substr($entry, -4) == '.php')
-				$incontext['detected_languages'][$entry] = ucfirst(substr($entry, 8, strlen($entry) - 12));
+			{
+				$txt = array();
+				require_once($folder . '/index.' . substr($entry, 8));
+				if (!empty($txt['lang_name']))
+					$incontext['detected_languages'][$entry] = '&lt;img src="Themes/default/languages/Flag.' . substr($entry, 8, strlen($entry) - 12) . '.png"&gt; ' . $txt['lang_name'];
+			}
 		$dir->close();
 	}
+
+	$txt = $original_txt;
 
 	// Didn't find any, show an error message!
 	if (empty($incontext['detected_languages']))
 	{
 		// Let's not cache this message, eh?
-		header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+		header('Expires: Wed, 25 Aug 2010 17:00:00 GMT');
 		header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
 		header('Cache-Control: no-cache');
 
@@ -248,7 +260,6 @@ function load_lang_file()
 		{
 			// break up string into pieces (languages and q factors)
 			preg_match_all('/([a-z]{1,8}(-[a-z]{1,8})?)\s*(;\s*q\s*=\s*(1|0\.[0-9]+))?/i', strtolower($_SERVER['HTTP_ACCEPT_LANGUAGE']), $lang_parse);
-
 			if (count($lang_parse[1]))
 			{
 				// create a list like "en" => 0.8
@@ -263,60 +274,19 @@ function load_lang_file()
 				arsort($preferred, SORT_NUMERIC);
 			}
 
-			// This is the list of known SMF language packs as of March 2012.
-			// Obviously they'll need to go through a conversion for Wedge...
+			// This is the list of known Wedge language packs/mappings as of March 2013.
 			$langs = array(
-				'sq' => 'Albanian',
-				'ar' => 'Arabic',
-				'bg' => 'Bulgarian',
-				'ca' => 'Catalan',
-				'zh' => 'Chinese_simplified',
-				'zh-tw' => 'Chinese_traditional',
-				'hr' => 'Croatian',
-				'cs' => 'Czech',
-				'da' => 'Danish',
-				'nl' => 'Dutch',
-				'en' => 'English',
-				'en-gb' => 'English_british',
-				'fi' => 'Finnish',
-				'fr' => 'French',
-				'gl-es' => 'Galician',
-				'de' => 'German',
-				'el' => 'Greek',
-				'he' => 'Hebrew',
-				'hu' => 'Hungarian',
-				'id' => 'Indonesian',
-				'it' => 'Italian',
-				'ja' => 'Japanese',
-				'lt' => 'Lithuanian',
-				'mk' => 'Macedonian',
-				'ms' => 'Malay',
-				'no' => 'Norwegian',
-				'fa' => 'Persian',
-				'pl' => 'Polish',
-				'pt' => 'Portuguese_pt',
-				'pt-br' => 'Portuguese_brazilian',
-				'ro' => 'Romanian',
-				'ru' => 'Russian',
-				'sr-rs' => 'Serbian_cyrillic',
-				'sr-yu' => 'Serbian_latin',
-				'sk' => 'Slovak',
-				'es' => 'Spanish_es',
-				'es-ar' => 'Spanish_latin',
-				'sv' => 'Swedish',
-				'th' => 'Thai',
-				'tr' => 'Turkish',
-				'uk' => 'Ukrainian',
-				'ur' => 'Urdu',
-				'vi' => 'Vietnamese',
+				'en' => 'Install.english.php',
+				'en-gb' => 'Install.english-uk.php',
+				'fr' => 'Install.french.php',
 			);
 
 			foreach ($preferred as $key => $value)
 			{
 				$lang = isset($langs[$key]) ? $langs[$key] : (isset($langs[substr($key, 0, 2)]) ? $langs[substr($key, 0, 2)] : '');
-				if (!empty($lang) && in_array($lang, $incontext['detected_languages']))
+				if (!empty($lang) && isset($incontext['detected_languages'][$lang]))
 				{
-					$_SESSION['installer_temp_lang'] = array_search($lang, $incontext['detected_languages']);
+					$_SESSION['installer_temp_lang'] = $lang;
 					break;
 				}
 			}
@@ -328,7 +298,9 @@ function load_lang_file()
 	}
 
 	// And now include the actual language file itself.
-	require_once(dirname(__FILE__) . '/Themes/default/languages/' . $_SESSION['installer_temp_lang']);
+	require_once(dirname(__FILE__) . '/Themes/default/languages/Install.english.php');
+	if ($_SESSION['installer_temp_lang'] != 'Install.english.php')
+		require_once(dirname(__FILE__) . '/Themes/default/languages/' . $_SESSION['installer_temp_lang']);
 }
 
 // This handy function loads some settings and the like.
@@ -2045,7 +2017,7 @@ function template_install_above()
 			false, false,
 			array('index', 'sections')
 		), '">
-		<script src="http://code.jquery.com/jquery-1.5.2.min.js"></script>
+		<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
 		<script src="',
 		add_js_file(
 			array('scripts/script.js', 'scripts/sbox.js'),

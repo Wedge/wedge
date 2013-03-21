@@ -682,7 +682,7 @@ function start_output()
 	// Print stuff to prevent caching of pages (except on attachment errors, etc.)
 	if (empty($context['no_last_modified']))
 	{
-		header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+		header('Expires: Wed, 25 Aug 2010 17:00:00 GMT');
 		header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
 
 		if (!AJAX)
@@ -989,7 +989,7 @@ function template_include($filename, $once = false)
 		clean_output();
 
 		// Don't cache error pages!!
-		header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+		header('Expires: Wed, 25 Aug 2010 17:00:00 GMT');
 		header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
 		header('Cache-Control: no-cache');
 

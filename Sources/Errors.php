@@ -407,7 +407,7 @@ function show_db_error($loadavg = false)
 	while (@ob_end_clean());
 
 	// Don't cache this page!
-	header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+	header('Expires: Wed, 25 Aug 2010 17:00:00 GMT');
 	header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
 	header('Cache-Control: no-cache');
 
