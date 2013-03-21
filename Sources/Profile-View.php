@@ -482,11 +482,13 @@ function showPosts($memID)
 	if (empty($_REQUEST['viewscount']) || !is_numeric($_REQUEST['viewscount']))
 		$_REQUEST['viewscount'] = '10';
 
+	// We want users to be able to see their own posts, regardless, and admins can see everything.
+	$ignore_perms = we::$user['is_owner'] || we::$user['is_admin'];
 	if ($context['is_topics'])
 		$request = wesql::query('
 			SELECT COUNT(t.id_topic)
 			FROM {db_prefix}topics AS t
-				INNER JOIN {db_prefix}messages AS m ON (m.id_msg = t.id_first_msg)' . (we::$user['query_see_board'] == '1=1' ? '' : '
+				INNER JOIN {db_prefix}messages AS m ON (m.id_msg = t.id_first_msg)' . ($ignore_perms ? '' : '
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board AND {query_see_board})') . '
 			WHERE t.id_member_started = {int:current_member}' . $specGuest . (!empty($board) ? '
 				AND t.id_board = {int:board}' : '') . (we::$user['is_owner'] ? '' : '
@@ -503,7 +505,7 @@ function showPosts($memID)
 			FROM {db_prefix}messages AS m' . (we::$user['query_see_board'] == '1=1' ? '' : '
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = m.id_board AND {query_see_board})') . '
 			WHERE m.id_member = {int:current_member}' . $specGuest . (!empty($board) ? '
-				AND m.id_board = {int:board}' : '') . (!$settings['postmod_active'] || we::$user['is_owner'] ? '' : '
+				AND m.id_board = {int:board}' : '') . (!$settings['postmod_active'] || $ignore_perms ? '' : '
 				AND m.approved = {int:is_approved}'),
 			array(
 				'current_member' => $memID,
@@ -520,8 +522,8 @@ function showPosts($memID)
 		FROM {db_prefix}messages AS m
 		INNER JOIN {db_prefix}topics AS t ON (m.id_topic = t.id_topic)
 		WHERE m.id_member = {int:current_member}' . (!empty($board) ? '
-			AND m.id_board = {int:board}' : '') . (we::$user['is_owner'] ? '' : '
-			AND {query_see_topic}') . (!$settings['postmod_active'] || we::$user['is_owner'] ? '' : '
+			AND m.id_board = {int:board}' : '') . ($ignore_perms ? '' : '
+			AND {query_see_topic}') . (!$settings['postmod_active'] || $ignore_perms ? '' : '
 			AND m.approved = {int:is_approved}'),
 		array(
 			'current_member' => $memID,
@@ -579,8 +581,8 @@ function showPosts($memID)
 					INNER JOIN {db_prefix}messages AS m ON (m.id_msg = t.id_first_msg)
 				WHERE t.id_member_started = {int:current_member}' . $specGuest . (!empty($board) ? '
 					AND t.id_board = {int:board}' : '') . (empty($range_limit) ? '' : '
-					AND ' . $range_limit) . '
-					AND {query_see_board}' . (we::$user['is_owner'] ? '' : '
+					AND ' . $range_limit) . ($ignore_perms ? '' : '
+					AND {query_see_board}
 					AND {query_see_topic}' . (!$settings['postmod_active'] ? '' : ' AND m.approved = {int:is_approved}')) . '
 				ORDER BY t.id_first_msg ' . ($reverse ? 'ASC' : 'DESC') . '
 				LIMIT ' . $start . ', ' . $maxIndex,
@@ -605,8 +607,8 @@ function showPosts($memID)
 					LEFT JOIN {db_prefix}categories AS c ON (c.id_cat = b.id_cat)
 				WHERE m.id_member = {int:current_member}' . $specGuest . (!empty($board) ? '
 					AND b.id_board = {int:board}' : '') . (empty($range_limit) ? '' : '
-					AND ' . $range_limit) . '
-					AND {query_see_board}' . (we::$user['is_owner'] ? '' : '
+					AND ' . $range_limit) . ($ignore_perms ? '' : '
+					AND {query_see_board}
 					AND {query_see_topic}' . (!$settings['postmod_active'] ? '' : ' AND m.approved = {int:is_approved}')) . '
 				ORDER BY m.id_msg ' . ($reverse ? 'ASC' : 'DESC') . '
 				LIMIT ' . $start . ', ' . $maxIndex,
@@ -641,6 +643,7 @@ function showPosts($memID)
 
 		// And the array...
 		$context['posts'][$counter += $reverse ? -1 : 1] = array(
+			'can_see' => $ignore_perms ? (we::$is_admin || in_array($row['id_board'], we::$user['qsb_boards'])) : true,
 			'body' => $row['body'],
 			'counter' => $counter,
 			'alternate' => $counter % 2,
@@ -731,6 +734,17 @@ function showPosts($memID)
 	{
 		$context['posts'][$counter]['can_delete'] &= $context['posts'][$counter]['delete_possible'];
 		$context['posts'][$counter]['can_quote'] = $context['posts'][$counter]['can_reply'] && $quote_enabled;
+	}
+
+	// Just quickly, get the likes.
+	$msgs = array();
+	foreach ($context['posts'] as $counter => $row)
+		$msgs[] = $row['id'];
+	if (!empty($msgs))
+	{
+		loadSource('Display');
+		loadTemplate('Msg');
+		prepareLikeContext($msgs);
 	}
 }
 

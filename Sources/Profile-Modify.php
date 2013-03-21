@@ -1362,21 +1362,46 @@ function editIgnoreList($memID)
 		if ($dummy == '')
 			unset($ignoreArray[$k]);
 
-	// Removing a member from the ignore list?
-	if (isset($_GET['remove']))
+	// Adding a member to, or removing from the ignore list?
+	if ((isset($_GET['add']) && ((int) $_GET['add'] > 0)) || (isset($_GET['remove']) && ((int) $_GET['remove'] > 0)))
 	{
 		checkSession('get');
 
-		// Heh, I'm lazy, do it the easy way...
-		foreach ($ignoreArray as $key => $id_remove)
-			if ($id_remove == (int) $_GET['remove'])
-				unset($ignoreArray[$key]);
+		if (isset($_GET['add']))
+		{
+			if ($_GET['add'] != $memID && !in_array($_GET['add'], $ignoreArray))
+				$ignoreArray[] = $_GET['add'];
+		}
+		elseif (isset($_GET['remove']))
+		{
+			// Heh, I'm lazy, do it the easy way...
+			foreach ($ignoreArray as $key => $id_remove)
+				if ($id_remove == (int) $_GET['remove'])
+					unset($ignoreArray[$key]);
+		}
 
 		// Make the changes.
 		$user_profile[$memID]['pm_ignore_list'] = implode(',', $ignoreArray);
 		updateMemberData($memID, array('pm_ignore_list' => $user_profile[$memID]['pm_ignore_list']));
 
-		// Redirect off the page because we don't like all this ugly query stuff to stick in the history.
+		if (isset($_GET['msg']) && ((int) $_GET['msg'] > 0))
+		{
+			$request = wesql::query('
+				SELECT id_topic
+				FROM {db_prefix}messages
+				WHERE id_msg = {int:msg}',
+				array(
+					'msg' => (int) $_GET['msg'],
+				)
+			);
+			if (wesql::num_rows($request) == 1)
+			{
+				list ($topic) = wesql::fetch_row($request);
+				redirectexit('topic=' . $topic . '.msg' . $_GET['msg'] . '#msg' . $_GET['msg']);
+			}
+			wesql::free_result($request);
+		}
+
 		redirectexit('action=profile;u=' . $memID . ';area=lists;sa=ignore');
 	}
 	elseif (isset($_POST['new_ignore']))

@@ -1213,6 +1213,16 @@ function Display()
 			'action' => '<URL>?action=profile;u=%2%;area=issuewarning;msg=%1%',
 			'class' => 'warn_button',
 		),
+		'ai' => array(
+			'caption' => 'usermenu_ignore',
+			'action' => '<URL>?action=profile;area=lists;sa=ignore;add=%2%;msg=%1%;' . $context['session_query'],
+			'class' => 'unlike_button',
+		),
+		'ri' => array(
+			'caption' => 'usermenu_unignore',
+			'action' => '<URL>?action=profile;area=lists;sa=ignore;remove=%2%;msg=%1%;' . $context['session_query'],
+			'class' => 'like_button',
+		),
 	);
 
 	// Lastly, set up the navigation items that we're going to be using.
@@ -1426,6 +1436,7 @@ function prepareDisplayContext($reset = false)
 			$profile_own = allowedTo('profile_view_own');
 			$profile_any = allowedTo('profile_view_any');
 			$buddy = allowedTo('profile_identity_own') && !empty($settings['enable_buddylist']);
+			$ignore = allowedTo('profile_identity_own') && !empty($settings['enable_buddylist']);
 		}
 
 		// 2. Figure out that user's menu to the stack. It may be different if it's our menu.
@@ -1490,6 +1501,9 @@ function prepareDisplayContext($reset = false)
 
 		if ($context['can_issue_warning'] && !$is_me && !$output['member']['is_guest'])
 			$menu[] = 'wa/' . $output['member']['id'];
+
+		if ($ignore && !$is_me)
+			$menu[] = ($output['is_ignored'] ? 'ri' : 'ai') . '/' . $output['member']['id'];
 
 		// If we can't do anything, it's not even worth recording the last message ID...
 		if (!empty($menu))

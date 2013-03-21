@@ -1026,6 +1026,63 @@ function template_show_settings()
 		</form>';
 }
 
+// For showing PHP info
+function template_phpinfo()
+{
+	global $context;
+
+	if (!empty($context['phpinfo_version']))
+	{
+		echo '
+	<div class="windowbg wrc">';
+
+		if (!empty($context['php_header_icons']))
+			echo '
+			<div class="floatright">', implode(' ', $context['php_header_icons']), '</div>';
+
+		echo '
+		', $context['phpinfo_version'], '
+		<br class="clear">
+	</div>';
+	}
+
+	$columns = array();
+	$length = ceil(count($context['toc']) / 2);
+	$count = 0;
+
+	$in_column = false;
+
+	foreach ($context['toc'] as $k => $v)
+	{
+		if (!$in_column)
+		{
+			echo '
+	<div class="two-columns">
+		<ul>';
+			$in_column = true;
+		}
+
+		echo '
+		<li><a href="#', $k, '">', $v, '</a></li>';
+
+		$count++;
+		if ($count >= $length)
+		{
+			$count = 0;
+			$in_column = false;
+			echo '
+		</ul>
+	</div>';
+		}
+	}
+
+	if ($in_column)
+		echo '
+		</ul>
+	</div>';
+	echo $context['phpinfo'];
+}
+
 // Template for showing custom profile fields.
 function template_show_custom_profile()
 {

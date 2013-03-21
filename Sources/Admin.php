@@ -494,7 +494,9 @@ function Admin()
 						'cache' => array($txt['caching_settings']),
 						'loads' => array($txt['load_balancing_settings'], 'enabled' => strpos(strtolower(PHP_OS), 'win') !== 0),
 						'proxy' => array($txt['proxy_settings']),
+						'',
 						'debug' => array($txt['debug_settings']),
+						'phpinfo' => array($txt['phpinfo']),
 					),
 				),
 				'mailqueue' => array(

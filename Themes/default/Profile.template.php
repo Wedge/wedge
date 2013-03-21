@@ -381,7 +381,7 @@ function template_showDrafts()
 // Template for showing all the posts of the user, in chronological order.
 function template_showPosts()
 {
-	global $context, $theme, $txt;
+	global $context, $theme, $txt, $settings;
 
 	echo '
 		<we:cat>
@@ -404,8 +404,16 @@ function template_showPosts()
 		<div class="topic">
 			<div class="windowbg', $post['alternate'] == 0 ? '2' : '', ' wrc core_posts">
 				<div class="counter">', $post['counter'], '</div>
-				<div class="topic_details">
-					<h5><strong><a href="<URL>?board=', $post['board']['id'], '.0">', $post['board']['name'], '</a> / <a href="<URL>?topic=', $post['topic'], '.', $post['start'], '#msg', $post['id'], '">', $post['subject'], '</a></strong></h5>
+				<div class="topic_details">';
+
+			if ($post['can_see'])
+				echo '
+					<h5><strong><a href="<URL>?board=', $post['board']['id'], '.0">', $post['board']['name'], '</a> / <a href="<URL>?topic=', $post['topic'], '.', $post['start'], '#msg', $post['id'], '">', $post['subject'], '</a></strong></h5>';
+			else
+				echo '
+					<h5 title="', $txt['board_off_limits'], '"><strong>', $post['board']['name'], ' / ', $post['subject'], '</strong></h5>';
+
+			echo '
 					<span class="smalltext">&#171;&nbsp;', $post['on_time'], '&nbsp;&#187;</span>
 				</div>
 				<div class="list_posts">';
@@ -420,7 +428,7 @@ function template_showPosts()
 					', $post['body'], '
 				</div>';
 
-			if ($post['can_reply'] || $post['can_quote'] || $post['can_mark_notify'] || $post['can_delete'])
+			if ($post['can_reply'] || $post['can_quote'] || $post['can_mark_notify'] || $post['can_delete'] || (!empty($settings['likes_enabled']) && !empty($context['liked_posts'][$post['id']])))
 			{
 				echo '
 				<div class="actionbar">
@@ -447,7 +455,12 @@ function template_showPosts()
 						<li><a href="<URL>?action=deletemsg;msg=', $post['id'], ';topic=', $post['topic'], ';profile;u=', $context['member']['id'], ';start=', $context['start'], ';', $context['session_query'], '" class="remove_button" onclick="return ask(', $remove_confirm, ', e);">', $txt['remove'], '</a></li>';
 
 				echo '
-					</ul>
+					</ul>';
+
+				if (!empty($settings['likes_enabled']) && !empty($context['liked_posts'][$post['id']]))
+					template_show_likes($post['id'], false);
+
+				echo '
 				</div>';
 			}
 

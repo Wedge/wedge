@@ -40,6 +40,9 @@ function cleanRequest()
 	// While we're here cleaning the request, try and clean the headers that we'll send back.
 	header('X-Powered-By: ');
 	header('Server: ');
+	// Additionally, when not in SSI, try and enforce we don't get included in a frame that we're not in control of.
+	if (WEDGE != 'SSI')
+		header('X-Frame-Options: SAMEORIGIN');
 
 	define('INVALID_IP', '00000000000000000000000000000000');
 

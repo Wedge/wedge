@@ -152,6 +152,7 @@ function ModifySettings()
 		'loads' => 'ModifyLoadBalancingSettings',
 		'proxy' => 'ModifyProxySettings',
 		'debug' => 'ModifyDebugSettings',
+		'phpinfo' => 'FetchPHPInfo',
 	);
 
 	if (strpos(strtolower(PHP_OS), 'win') === 0)
@@ -162,7 +163,7 @@ function ModifySettings()
 	$context['sub_action'] = $_REQUEST['sa'];
 
 	// Warn the user if there's any relevant information regarding Settings.php.
-	if ($_REQUEST['sa'] != 'cache')
+	if ($_REQUEST['sa'] != 'cache' && $_REQUEST['sa'] != 'phpinfo')
 	{
 		// Warn the user if the backup of Settings.php failed.
 		$settings_not_writable = !is_writable($boarddir . '/Settings.php');
@@ -585,6 +586,78 @@ function ModifyDebugSettings($return_config = false)
 
 	// Fill the config array.
 	prepareServerSettingsContext($config_vars);
+}
+
+function FetchPHPInfo($return_config = false)
+{
+	global $context, $txt;
+
+	if ($return_config)
+		return array();
+
+	$context['page_title'] = $txt['phpinfo'];
+	$context[$context['admin_menu_name']]['tab_data'] = array(
+		'title' => $txt['phpinfo'],
+		'description' => $txt['phpinfo_desc'],
+	);
+
+	ob_start();
+	phpinfo(INFO_ALL & ~INFO_CREDITS & ~INFO_LICENSE);
+	$context['phpinfo'] = ob_get_clean();
+
+	// We've stripped some stuff, it's time to fix the markup.
+	$context['phpinfo'] = substr($context['phpinfo'], stripos($context['phpinfo'], '<table') - 1);
+	$context['phpinfo'] = substr($context['phpinfo'], 0, strrpos($context['phpinfo'], '</div>'));
+
+	$context['phpinfo'] = strtr($context['phpinfo'], array('class="e">' => 'class="windowbg2">', 'class="v">' => 'class="windowbg">'));
+	$context['phpinfo'] = preg_replace('~<h1>.*?</h1>~i', '', $context['phpinfo']);
+
+	// Now fix me some headers.
+	$context['phpinfo'] = strtr($context['phpinfo'], array('<h2><a' => '<we:cat><a', '</a></h2>' => '</a></we:cat>', '<h2>' => '<we:title>', '</h2>' => '</we:title>'));
+	$context['phpinfo'] = str_replace('<hr />', '', $context['phpinfo']);
+
+	// Now make a nice menu out of the headers.
+	preg_match_all('~<a name="([^"]+)">([^<]+)</a>~i', $context['phpinfo'], $matches);
+	$context['toc'] = array_combine($matches[1], $matches[2]);
+
+	// Time to do some judicious header editing. First, the PHP logo and stuff.
+	$context['php_header_icons'] = array();
+	$context['phpinfo_version'] = '';
+	if (preg_match('~<table.+?www\.php\.net.+?</table>~is', $context['phpinfo'], $matches))
+	{
+		$context['phpinfo'] = str_replace($matches[0], '', $context['phpinfo']);
+		$php_icon = $matches[0];
+
+		if (preg_match('~<img.+?>~i', $php_icon, $matches))
+			$context['php_header_icons'][] = $matches[0];
+
+		$context['phpinfo_version'] .= '<strong>' . trim(strip_tags($php_icon)) . '</strong>';
+	}
+
+	// Now we match the Zend logo - some occasional debug info here. I'm not a regexp guru enough to be able to get this to point at the table nearest the link, so instead have it skip to a point where it should be hitting the right table anyway.
+	if (preg_match('~<table.+?www\.zend\.com.+?</table>~is', $context['phpinfo'], $matches, 0, strpos($context['phpinfo'], 'Build Date')))
+	{
+		$context['phpinfo'] = str_replace($matches[0], '', $context['phpinfo']);
+		$zend_icon = $matches[0];
+
+		if (preg_match('~<img.+?>~i', $zend_icon, $matches))
+			$context['php_header_icons'][] = $matches[0];
+
+		$context['phpinfo_version'] .= (empty($context['phpinfo_version']) ? '' : '<br>') . westr::nl2br(trim(strip_tags(strtr($zend_icon, array('<br />' => "\n", '<br>' => "\n")))));
+	}
+
+	// Time to fix those tables into something a bit more sane.
+	$context['phpinfo'] = str_replace('<table border="0" cellpadding="3" width="600">', '<table class="w100 phpinfo">', $context['phpinfo']);
+
+	// And maybe some CSS to make it slightly less ugly.
+	add_css('
+	table.phpinfo { table-layout: fixed }
+	.phpinfo td { font-size: 85% }
+	.phpinfo .windowbg2 { width: 20% }
+	.phpinfo .windowbg { word-wrap: break-word }');
+
+	// And we're done.
+	wetem::load('phpinfo');
 }
 
 // Helper function, it sets up the context for the manage server settings.
