@@ -13,7 +13,7 @@
 
 function template_main()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $theme, $options, $txt, $settings;
 
 	echo '
 	<div id="recent" class="main_section">
@@ -38,35 +38,42 @@ function template_main()
 			</div>
 			<div class="list_posts">', $post['message'], '</div>';
 
-		if ($post['can_reply'] || $post['can_mark_notify'] || $post['can_delete'])
+		if ($post['can_reply'] || $post['can_mark_notify'] || $post['can_delete'] || (!empty($settings['likes_enabled']) && !empty($context['liked_posts'][$post['id']])))
+		{
 			echo '
 			<div class="actionbar">
 				<ul class="actions">';
 
-		// If they *can* reply?
-		if ($post['can_reply'])
-			echo '
+			// If they *can* reply?
+			if ($post['can_reply'])
+				echo '
 					<li><a href="<URL>?action=post;topic=', $post['topic'], '.', $post['start'], '" class="reply_button">', $txt['reply'], '</a></li>';
 
-		// If they *can* quote?
-		if ($post['can_quote'])
-			echo '
+			// If they *can* quote?
+			if ($post['can_quote'])
+				echo '
 					<li><a href="<URL>?action=post;topic=', $post['topic'], '.', $post['start'], ';quote=', $post['id'], '" class="quote_button">', $txt['quote'], '</a></li>';
 
-		// Can we request notification of topics?
-		if ($post['can_mark_notify'])
-			echo '
+			// Can we request notification of topics?
+			if ($post['can_mark_notify'])
+				echo '
 					<li><a href="<URL>?action=notify;topic=', $post['topic'], '.', $post['start'], '" class="notify_button">', $txt['notify'], '</a></li>';
 
-		// How about... even... remove it entirely?!
-		if ($post['can_delete'])
-			echo '
+			// How about... even... remove it entirely?!
+			if ($post['can_delete'])
+				echo '
 					<li><a href="<URL>?action=deletemsg;msg=', $post['id'], ';topic=', $post['topic'], ';recent;', $context['session_query'], '" class="remove_button" onclick="return ask(', $remove_confirm, ', e);">', $txt['remove'], '</a></li>';
 
-		if ($post['can_reply'] || $post['can_mark_notify'] || $post['can_delete'])
+			if ($post['can_reply'] || $post['can_mark_notify'] || $post['can_delete'])
+				echo '
+				</ul>';
+
+			if (!empty($settings['likes_enabled']) && !empty($context['liked_posts'][$post['id']]))
+				template_show_likes($post['id'], false);
+
 			echo '
-				</ul>
 			</div>';
+		}
 
 		echo '
 		</div>';

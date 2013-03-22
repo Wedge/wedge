@@ -92,10 +92,10 @@ function template_browse()
 		{
 			if (!isset($icons[$id][$i]))
 				echo '
-			<div class="plugin_item inline_block floatright">&nbsp;</div>';
+			<div class="plugin_item floatright">&nbsp;</div>';
 			else
 				echo '
-			<div class="plugin_item inline_block floatright">
+			<div class="plugin_item floatright">
 				<a href="', $icons[$id][$i]['url'], '">
 					<img src="', $theme['images_url'], '/admin/', $icons[$id][$i]['icon'], '"', !empty($icons[$id][$i]['title']) ? ' title="' . $icons[$id][$i]['title'] . '"' : '', '>
 				</a>

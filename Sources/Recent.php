@@ -354,4 +354,9 @@ function Recent()
 		// And some cannot be quoted...
 		$context['posts'][$counter]['can_quote'] = $context['posts'][$counter]['can_reply'] && $quote_enabled;
 	}
+
+	// And were some of these liked?
+	loadSource('Display');
+	loadTemplate('Msg');
+	prepareLikeContext($messages);
 }

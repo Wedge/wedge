@@ -86,7 +86,7 @@ function template_main()
 					<div>', strftime('%d/%m %H:%M', $post['timestamp']), '<br>', $post['poster']['link'], '</div>
 				</td>
 				<td class="latestp2">
-					', $post['board']['name'], ' &gt; ';
+					', $post['board']['link'], ' &gt; ';
 
 		if ($post['is_new'] && !we::$is_guest)
 			echo isset($nb_new[$post['topic']]) ? '<a href="' . $post['href'] . '" class="note">' . $nb_new[$post['topic']] . '</a> ' : '';
