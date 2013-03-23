@@ -148,10 +148,7 @@ function Memberlist()
 	end($context['columns']);
 	$context['columns'][key($context['columns'])]['class'] = 'last_th';
 
-	$context['linktree'][] = array(
-		'url' => '<URL>?action=mlist',
-		'name' => $txt['members_list']
-	);
+	add_linktree($txt['members_list'], '<URL>?action=mlist');
 
 	$context['can_send_pm'] = allowedTo('pm_send');
 
@@ -296,11 +293,7 @@ function MLAll()
 
 	$context['can_moderate_forum'] = allowedTo('moderate_forum');
 	$context['page_title'] = sprintf($txt['viewing_members'], $context['start'], $context['end']);
-	$context['linktree'][] = array(
-		'url' => '<URL>?action=mlist;sort=' . $_REQUEST['sort'] . ';start=' . $_REQUEST['start'],
-		'name' => &$context['page_title'],
-		'extra_after' => ' (' . sprintf($txt['of_total_members'], $context['num_members']) . ')'
-	);
+	add_linktree($context['page_title'], '<URL>?action=mlist;sort=' . $_REQUEST['sort'] . ';start=' . $_REQUEST['start'], null, ' (' . sprintf($txt['of_total_members'], $context['num_members']) . ')');
 
 	// List out the different sorting methods...
 	$sort_methods = array(
@@ -539,10 +532,7 @@ function MLSearch()
 		$context['old_search'] = isset($_GET['search']) ? $_GET['search'] : (isset($_POST['search']) ? htmlspecialchars($_POST['search']) : '');
 	}
 
-	$context['linktree'][] = array(
-		'url' => '<URL>?action=mlist;sa=search',
-		'name' => &$context['page_title']
-	);
+	add_linktree($context['page_title'], '<URL>?action=mlist;sa=search');
 }
 
 function printMemberListRows($request)

@@ -485,12 +485,8 @@ function loadBoard()
 		$_GET['topic'] = '';
 
 		// The linktree should not give the game away mate! However, it WILL be available to admins etc. for Who's Online so they can see what's going on.
-		$context['linktree'] = array(
-			array(
-				'url' => '<URL>',
-				'name' => $context['forum_name_html_safe']
-			)
-		);
+		$context['linktree'] = array();
+		add_linktree($context['forum_name_html_safe'], '<URL>');
 
 		// If it's a prefetching agent or we're requesting an attachment.
 		preventPrefetch($context['action'] === 'dlattach');
@@ -1492,10 +1488,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 	$context['server']['needs_login_fix'] = $context['server']['is_cgi'] && $context['server']['is_iis'];
 
 	// Set the top level linktree up
-	array_unshift($context['linktree'], array(
-		'url' => '<URL>',
-		'name' => $context['forum_name_html_safe']
-	));
+	add_linktree($context['forum_name_html_safe'], '<URL>', null, null, true);
 
 	if (!isset($txt))
 		$txt = array();

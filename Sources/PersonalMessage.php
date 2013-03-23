@@ -261,10 +261,7 @@ function MessageMain()
 	$context['can_issue_warning'] = allowedTo('issue_warning');
 
 	// Build the linktree for all the actions...
-	$context['linktree'][] = array(
-		'url' => '<URL>?action=pm',
-		'name' => $txt['personal_messages']
-	);
+	add_linktree($txt['personal_messages'], '<URL>?action=pm');
 
 	// Preferences...
 	$context['display_mode'] = $user_settings['pm_prefs'] & 3;
@@ -523,17 +520,11 @@ function MessageFolder()
 
 	// Now, build the link tree!
 	if ($context['current_label_id'] == -1)
-		$context['linktree'][] = array(
-			'url' => '<URL>?action=pm;f=' . $context['folder'],
-			'name' => $pmbox
-		);
+		add_linktree($pmbox, '<URL>?action=pm;f=' . $context['folder']);
 
 	// Build it further for a label.
 	if ($context['current_label_id'] != -1)
-		$context['linktree'][] = array(
-			'url' => '<URL>?action=pm;f=' . $context['folder'] . ';l=' . $context['current_label_id'],
-			'name' => $txt['pm_current_label'] . ': ' . $context['current_label']
-		);
+		add_linktree($txt['pm_current_label'] . ': ' . $context['current_label'], '<URL>?action=pm;f=' . $context['folder'] . ';l=' . $context['current_label_id']);
 
 	// Figure out how many messages there are.
 	if ($context['folder'] == 'sent')
@@ -1126,10 +1117,7 @@ function MessageSearch()
 
 	$context['page_title'] = $txt['pm_search_title'];
 	wetem::load('search');
-	$context['linktree'][] = array(
-		'url' => '<URL>?action=pm;sa=search',
-		'name' => $txt['pm_search_bar_title'],
-	);
+	add_linktree($txt['pm_search_bar_title'], '<URL>?action=pm;sa=search');
 }
 
 function MessageSearch2()
@@ -1580,10 +1568,7 @@ function MessageSearch2()
 	$context['page_title'] = $txt['pm_search_title'];
 	wetem::load('search_results');
 	$context['menu_data_' . $context['pm_menu_id']]['current_area'] = 'search';
-	$context['linktree'][] = array(
-		'url' => '<URL>?action=pm;sa=search',
-		'name' => $txt['pm_search_bar_title'],
-	);
+	add_linktree($txt['pm_search_bar_title'], '<URL>?action=pm;sa=search');
 }
 
 // Send a new message?
@@ -1871,10 +1856,7 @@ function MessagePost()
 	$context['post_error'] = array();
 
 	// And build the link tree.
-	$context['linktree'][] = array(
-		'url' => '<URL>?action=pm;sa=send',
-		'name' => $txt['new_message']
-	);
+	add_linktree($txt['new_message'], '<URL>?action=pm;sa=send');
 
 	// Now create the editor.
 	$context['postbox'] = new wedit(
@@ -2010,10 +1992,7 @@ function messagePostError($error_types, $named_recipients, $recipient_ids = arra
 	}
 
 	// Build the link tree....
-	$context['linktree'][] = array(
-		'url' => '<URL>?action=pm;sa=send',
-		'name' => $txt['new_message']
-	);
+	add_linktree($txt['new_message'], '<URL>?action=pm;sa=send');
 
 	// Set each of the errors for the template.
 	loadLanguage('Errors');
@@ -2624,10 +2603,7 @@ function MessagePrune()
 	}
 
 	// Build the link tree elements.
-	$context['linktree'][] = array(
-		'url' => '<URL>?action=pm;sa=prune',
-		'name' => $txt['pm_prune']
-	);
+	add_linktree($txt['pm_prune'], '<URL>?action=pm;sa=prune');
 
 	wetem::load('prune');
 	$context['page_title'] = $txt['pm_prune'];
@@ -3065,10 +3041,7 @@ function MessageSettings()
 	$context['profile_header_text'] = $txt['personal_messages'];
 
 	// Add our position to the linktree.
-	$context['linktree'][] = array(
-		'url' => '<URL>?action=pm;sa=settings',
-		'name' => $txt['pm_settings']
-	);
+	add_linktree($txt['pm_settings'], '<URL>?action=pm;sa=settings');
 
 	// Are they saving?
 	if (isset($_REQUEST['save']))
@@ -3262,10 +3235,7 @@ function ManageRules()
 	global $txt, $context;
 
 	// The link tree - gotta have this :o
-	$context['linktree'][] = array(
-		'url' => '<URL>?action=pm;sa=manrules',
-		'name' => $txt['pm_manage_rules']
-	);
+	add_linktree($txt['pm_manage_rules'], '<URL>?action=pm;sa=manrules');
 
 	$context['page_title'] = $txt['pm_manage_rules'];
 	wetem::load('rules');

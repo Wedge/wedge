@@ -206,16 +206,10 @@ function UnreadReplies()
 		list ($name) = wesql::fetch_row($request);
 		wesql::free_result($request);
 
-		$context['linktree'][] = array(
-			'url' => '<URL>?category=' . (int) $_REQUEST['c'][0],
-			'name' => $name,
-		);
+		add_linktree($name, '<URL>?category=' . (int) $_REQUEST['c'][0]);
 	}
 
-	$context['linktree'][] = array(
-		'url' => '<URL>?action=unreadreplies' . sprintf($context['querystring_board_limits'], 0) . $context['querystring_sort_limits'],
-		'name' => $txt['unread_replies'],
-	);
+	add_linktree($txt['unread_replies'], '<URL>?action=unreadreplies' . sprintf($context['querystring_board_limits'], 0) . $context['querystring_sort_limits']);
 
 	loadTemplate('Recent');
 	wetem::load('replies');

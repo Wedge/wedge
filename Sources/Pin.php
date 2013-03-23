@@ -194,10 +194,8 @@ function OrderPin()
 		$context['this_url'] = '<URL>?action=pin;sa=order;board=' . $board . '.0';
 
 		$context['page_title'] = $txt['order_pinned_topics'];
-		$context['linktree'][] = array(
-			'url' => $context['this_url'],
-			'name' => $txt['order_pinned_topics'],
-		);
+		add_linktree($txt['order_pinned_topics'], $context['this_url']);
+
 		wetem::load('order_pinned');
 	}
 }

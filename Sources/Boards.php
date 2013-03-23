@@ -76,16 +76,10 @@ function Boards()
 
 	// Set up the linktree.
 	if ($context['action'] === 'boards')
-		$context['linktree'][] = array(
-			'url' => '<URL>?action=boards',
-			'name' => $txt['board_index'],
-		);
+		add_linktree($txt['board_index'], '<URL>?action=boards');
 
 	if (!empty($boardIndexOptions['category']))
-		$context['linktree'][] = array(
-			'url' => '<URL>?category=' . $boardIndexOptions['category'],
-			'name' => $context['categories'][$boardIndexOptions['category']]['name'],
-		);
+		add_linktree($context['categories'][$boardIndexOptions['category']]['name'], '<URL>?category=' . $boardIndexOptions['category']);
 
 	// Get the user online list.
 	loadSource('Subs-MembersOnline');

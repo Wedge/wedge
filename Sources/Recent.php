@@ -49,10 +49,7 @@ function Recent()
 			if (empty($name))
 				fatal_lang_error('no_access', false);
 
-			$context['linktree'][] = array(
-				'url' => '<URL>?category=' . (int) $_REQUEST['c'],
-				'name' => $name
-			);
+			add_linktree($name, '<URL>?category=' . (int) $_REQUEST['c']);
 		}
 
 		$request = wesql::query('
@@ -170,10 +167,7 @@ function Recent()
 		$context['page_index'] = template_page_index('<URL>?action=recent', $_REQUEST['start'], min(100, $settings['totalMessages']), 10, false);
 	}
 
-	$context['linktree'][] = array(
-		'url' => '<URL>?action=recent' . (empty($board) ? (empty($_REQUEST['c']) ? '' : ';c=' . (int) $_REQUEST['c']) : ';board=' . $board . '.0'),
-		'name' => $context['page_title']
-	);
+	add_linktree($context['page_title'], '<URL>?action=recent' . (empty($board) ? (empty($_REQUEST['c']) ? '' : ';c=' . (int) $_REQUEST['c']) : ';board=' . $board . '.0'));
 
 	$key = 'recent-' . we::$id . '-' . md5(serialize(array_diff_key($query_parameters, array('max_id_msg' => 0)))) . '-' . (int) $_REQUEST['start'];
 	if (empty($settings['cache_enable']) || ($messages = cache_get_data($key, 120)) == null)

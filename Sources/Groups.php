@@ -76,10 +76,7 @@ function Groups()
 	{
 		isAllowedTo('view_mlist');
 
-		$context['linktree'][] = array(
-			'url' => '<URL>?action=groups',
-			'name' => $txt['groups'],
-		);
+		add_linktree($txt['groups'], '<URL>?action=groups');
 	}
 
 	// Call the actual function.
@@ -406,10 +403,7 @@ function MembergroupMembers()
 	$context['group']['stars'] = !empty($context['group']['stars'][0]) && !empty($context['group']['stars'][1]) ? str_repeat('<img src="' . $theme['images_url'] . '/' . $context['group']['stars'][1] . '">', $context['group']['stars'][0]) : '';
 	$context['group']['can_moderate'] = allowedTo('manage_membergroups') && (allowedTo('admin_forum') || $context['group']['group_type'] != 1);
 
-	$context['linktree'][] = array(
-		'url' => '<URL>?action=groups;sa=members;group=' . $context['group']['id'],
-		'name' => $context['group']['name'],
-	);
+	add_linktree($context['group']['name'], '<URL>?action=groups;sa=members;group=' . $context['group']['id']);
 
 	// Load all the group moderators, for fun.
 	$request = wesql::query('

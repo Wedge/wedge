@@ -103,10 +103,7 @@ function Login2()
 	$context['page_title'] = $txt['login'];
 
 	// Add the login chain to the link tree.
-	$context['linktree'][] = array(
-		'url' => '<URL>?action=login',
-		'name' => $txt['login'],
-	);
+	add_linktree($txt['login'], '<URL>?action=login');
 
 	// You forgot to type your username, dummy!
 	if (!isset($_POST['user']) || $_POST['user'] == '')

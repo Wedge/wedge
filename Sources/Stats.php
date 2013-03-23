@@ -78,10 +78,7 @@ function Stats()
 		fatal_lang_error('stats_not_available', false);
 
 	// Build the link tree......
-	$context['linktree'][] = array(
-		'url' => '<URL>?action=stats',
-		'name' => $txt['stats_center']
-	);
+	add_linktree($txt['stats_center'], '<URL>?action=stats');
 	$context['page_title'] = $context['forum_name'] . ' - ' . $txt['stats_center'];
 
 	$context['show_member_list'] = allowedTo('view_mlist');

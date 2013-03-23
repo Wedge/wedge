@@ -98,10 +98,7 @@ function Register($reg_errors = array())
 		loadLanguage('Profile');
 
 	// Add the register chain to the link tree.
-	$context['linktree'][] = array(
-		'url' => '<URL>?action=register',
-		'name' => $txt['register'],
-	);
+	add_linktree($txt['register'], '<URL>?action=register');
 
 	// If you have to agree to the agreement, it needs to be fetched from the file.
 	if ($context['require_agreement'])

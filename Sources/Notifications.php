@@ -202,7 +202,7 @@ class weNotif
 	 */
 	public static function action()
 	{
-		global $context;
+		global $context, $txt;
 
 		if (we::$user['is_guest'])
 			fatal_lang_error('access_denied');
@@ -262,6 +262,7 @@ class weNotif
 			return self::$notifiers[$sa]->action();
 
 		// Otherwise we're displaying all the notifications this user has
+		$context['page_title'] = $txt['notifications'];
 		$context['notifications'] = Notification::get(null, we::$id, 0);
 
 		wetem::load('notifications_list');

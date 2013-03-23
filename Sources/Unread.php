@@ -206,16 +206,10 @@ function Unread()
 		list ($name) = wesql::fetch_row($request);
 		wesql::free_result($request);
 
-		$context['linktree'][] = array(
-			'url' => '<URL>?category=' . (int) $_REQUEST['c'][0],
-			'name' => $name,
-		);
+		add_linktree($name, '<URL>?category=' . (int) $_REQUEST['c'][0]);
 	}
 
-	$context['linktree'][] = array(
-		'url' => '<URL>?action=unread' . sprintf($context['querystring_board_limits'], 0) . $context['querystring_sort_limits'],
-		'name' => $txt['unread_topics'],
-	);
+	add_linktree($txt['unread_topics'], '<URL>?action=unread' . sprintf($context['querystring_board_limits'], 0) . $context['querystring_sort_limits']);
 
 	loadTemplate('Recent');
 	wetem::load('unread');

@@ -713,14 +713,8 @@ function Search2()
 	}
 
 	// ... and add the links to the link tree.
-	$context['linktree'][] = array(
-		'url' => '<URL>?action=search;params=' . $context['params'],
-		'name' => $txt['search']
-	);
-	$context['linktree'][] = array(
-		'url' => '<URL>?action=search2;params=' . $context['params'],
-		'name' => $txt['search_results']
-	);
+	add_linktree($txt['search'], '<URL>?action=search;params=' . $context['params']);
+	add_linktree($txt['search_results'], '<URL>?action=search2;params=' . $context['params']);
 
 	// *** A last error check
 

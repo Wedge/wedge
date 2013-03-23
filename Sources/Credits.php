@@ -32,10 +32,7 @@ function Credits($in_admin = false)
 	// Don't blink. Don't even blink. Blink and you're dead.
 	loadLanguage('Who');
 
-	$context['linktree'][] = array(
-		'url' => '<URL>?action=credits',
-		'name' => $txt['site_credits']
-	);
+	add_linktree($txt['site_credits'], '<URL>?action=credits');
 
 	$context['site_credits'] = array();
 	$query = wesql::query('

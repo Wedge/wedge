@@ -953,16 +953,9 @@ function Post($post_errors = array())
 
 	// Build the link tree.
 	if (empty($topic))
-		$context['linktree'][] = array(
-			'name' => '<em>' . $txt['start_new_topic'] . '</em>'
-		);
+		add_linktree('<em>' . $txt['start_new_topic'] . '</em>');
 	else
-		$context['linktree'][] = array(
-			'url' => '<URL>?topic=' . $topic . '.' . $_REQUEST['start'],
-			'name' => $form_subject,
-			'extra_before' => '<strong class="nav">' . $context['page_title'] . ' [</strong>',
-			'extra_after' => '<strong class="nav">]</strong>'
-		);
+		add_linktree($form_subject, '<URL>?topic=' . $topic . '.' . $_REQUEST['start'], '<strong class="nav">' . $context['page_title'] . ' [</strong>', '<strong class="nav">]</strong>');
 
 	// We need to check permissions, and also send the maximum allowed attachments through to the front end - it's dealt with there.
 	// !!! This won't work if you're posting an event.

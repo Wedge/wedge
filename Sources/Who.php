@@ -243,10 +243,7 @@ function Who()
 
 	// Setup the linktree and page title (do it down here because the language files are now loaded..)
 	$context['page_title'] = $txt['who_title'];
-	$context['linktree'][] = array(
-		'url' => '<URL>?action=who',
-		'name' => $txt['who_title']
-	);
+	add_linktree($txt['who_title'], '<URL>?action=who');
 
 	// Put it in the context variables.
 	foreach ($context['members'] as $i => $member)

@@ -401,9 +401,9 @@ function aeva_initGallery($gal_url = null)
 
 		// Start the linktree
 		$context['linktree'] = array();
-		add_linktree('<URL>', $context['forum_name']);
+		add_linktree($context['forum_name'], '<URL>');
 		if (empty($context['current_board']))
-			add_linktree($galurl2, $txt['media_gallery']);
+			add_linktree($txt['media_gallery'], $galurl2);
 
 		// Some CSS and JS we'll be using
 		add_css_file(isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'mass' ? array('media', 'up') : 'media', true);
@@ -707,13 +707,13 @@ function aeva_viewAlbum()
 	$context['aeva_items'] = aeva_getMediaItems($start, $per_page, $sort, false);
 
 	// Make the linktree
-	add_linktree($galurl . 'sa=vua', $txt['media_albums']);
+	add_linktree($txt['media_albums'], $galurl . 'sa=vua');
 	if (!empty($master_album['owner']['id']))
-		add_linktree('<URL>?action=profile;u=' . $master_album['owner']['id'] . ';area=aeva', $master_album['owner']['name']);
+		add_linktree($master_album['owner']['name'], '<URL>?action=profile;u=' . $master_album['owner']['id'] . ';area=aeva');
 
 	$parents = array_reverse(aeva_getAlbumParents($current_album['id'], $current_album['master']));
 	foreach ($parents as $p)
-		add_linktree($galurl . 'sa=album;in=' . $p['id'], $p['name']);
+		add_linktree($p['name'], $galurl . 'sa=album;in=' . $p['id']);
 
 	// Finish this by loading the template and page title
 	$context['album_data'] = $current_album;
@@ -1173,9 +1173,9 @@ function aeva_viewItem()
 		$parents = array_reverse($item_data['album_parents']);
 		foreach ($parents as $p)
 			if (!$p['hidden'] || $p['owner'] == we::$id)
-				add_linktree($galurl . 'sa=album;in=' . $p['id'], $p['name']);
+				add_linktree($p['name'], $galurl . 'sa=album;in=' . $p['id']);
 	}
-	add_linktree($galurl . 'sa=item;in=' . $item_data['id_media'], $item_data['title']);
+	add_linktree($item_data['title'], $galurl . 'sa=item;in=' . $item_data['id_media']);
 	$context['canonical_url'] = $galurl . 'sa=item;in=' . $item_data['id_media'];
 
 	// Page headers
@@ -1339,10 +1339,10 @@ function aeva_mgComment()
 	{
 		$parents = array_reverse($parents);
 		foreach ($parents as $p)
-			add_linktree($galurl . 'sa=album;in=' . $p['id'], $p['name']);
+			add_linktree($p['name'], $galurl . 'sa=album;in=' . $p['id']);
 	}
-	add_linktree($galurl . 'sa=item;in=' . $item_data['id_media'], $item_data['title']);
-	add_linktree($galurl . 'sa=comment;in=' . $item_data['id_media'], $txt['media_commenting']);
+	add_linktree($item_data['title'], $galurl . 'sa=item;in=' . $item_data['id_media']);
+	add_linktree($txt['media_commenting'], $galurl . 'sa=comment;in=' . $item_data['id_media']);
 
 	// End it up!
 	$context['item_data'] = $item_data;
@@ -1433,8 +1433,8 @@ function aeva_mgReport()
 	// Linktree
 	$parents = array_reverse(aeva_getAlbumParents($dat['id_album'], $dat['master']));
 	foreach ($parents as $p)
-		add_linktree($galurl . 'sa=album;in=' . $p['id'], $p['name']);
-	add_linktree($galurl . 'sa=item;in=' . $dat['id_media'], $dat['title']);
+		add_linktree($p['name'], $galurl . 'sa=album;in=' . $p['id']);
+	add_linktree($dat['title'], $galurl . 'sa=item;in=' . $dat['id_media']);
 
 	$context['page_title'] = $txt['media_reporting'];
 }
@@ -2191,10 +2191,10 @@ function aeva_mgEditCom()
 	{
 		$parents = array_reverse($parents);
 		foreach ($parents as $p)
-			add_linktree($galurl . 'sa=album;in=' . $p['id'], $p['name']);
+			add_linktree($p['name'], $galurl . 'sa=album;in=' . $p['id']);
 	}
-	add_linktree($galurl . 'sa=item;in=' . $com_data['id_media'], $com_data['title']);
-	add_linktree($galurl . 'sa=comment;in=' . $com_data['id_media'], $txt['media_editing_com']);
+	add_linktree($com_data['title'], $galurl . 'sa=item;in=' . $com_data['id_media']);
+	add_linktree($txt['media_editing_com'], $galurl . 'sa=comment;in=' . $com_data['id_media']);
 }
 
 // A common function to delete comments and items

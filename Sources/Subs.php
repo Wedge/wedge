@@ -2474,11 +2474,24 @@ function remove_hook($hook, $function, $file = '')
 /**
  * Add a link (URL and title) to the linktree. Self-explained.
  */
-function add_linktree($url, $name)
+function add_linktree($name, $url = null, $before = null, $after = null, $first = false)
 {
 	global $context;
 
-	$context['linktree'][] = array('url' => $url, 'name' => $name);
+	$item = array(
+		'name' => $name,
+	);
+	if ($url !== null)
+		$item['url'] = $url;
+	if ($before !== null)
+		$item['extra_before'] = $before;
+	if ($after !== null)
+		$item['extra_after'] = $before;
+
+	if ($first)
+		array_unshift($context['linktree'], $item);
+	else
+		$context['linktree'][] = $item;
 }
 
 /**

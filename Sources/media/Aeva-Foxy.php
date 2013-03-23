@@ -1230,8 +1230,8 @@ function aeva_foxy_album($id, $type, $wid = 0, $details = '', $sort = 'm.id_medi
 			$playlist_owner_id = empty($row['id_member']) ? 0 : $row['id_member'];
 			$playlist_owner_name = empty($row['real_name']) ? '' : $row['real_name'];
 			$current_url = $scripturl . '?' . (!empty($context['current_board']) ? 'board=' . $context['current_board'] . ';' : '') . 'action=media;sa=playlists;in=' . $id; // $_SERVER['REQUEST_URL']
-			add_linktree($scripturl . '?action=media;sa=playlists', $txt['media_playlists']);
-			add_linktree($current_url, $playlist_name);
+			add_linktree($txt['media_playlists'], '<URL>?action=media;sa=playlists');
+			add_linktree($playlist_name, $current_url);
 		}
 	}
 	wesql::free_result($request);

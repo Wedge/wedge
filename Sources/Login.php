@@ -43,10 +43,7 @@ function Login()
 	$context['robot_no_index'] = true;
 
 	// Add the login chain to the link tree.
-	$context['linktree'][] = array(
-		'url' => '<URL>?action=login',
-		'name' => $txt['login'],
-	);
+	add_linktree($txt['login'], '<URL>?action=login');
 
 	// Set the login URL - will be used when the login process is done (but careful not to send us to an attachment).
 	if (isset($_SESSION['old_url']) && strpos($_SESSION['old_url'], 'dlattach') === false && preg_match('~(board|topic)[=,]~', $_SESSION['old_url']) != 0)

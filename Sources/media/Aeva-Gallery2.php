@@ -316,9 +316,9 @@ function aeva_moveItems()
 	// Linktree
 	$albums = array_reverse(aeva_getAlbumParents($items[0]['id_album'], $items[0]['master']));
 	foreach ($albums as $a)
-		add_linktree($galurl . 'sa=album;in=' . $a['id'], $a['name']);
-	add_linktree($galurl . 'sa=item;in=' . $items[0]['id_media'], $items[0]['title']);
-	add_linktree($galurl . 'sa=move;in=' . $items[0]['id_media'], $txt['media_moving']);
+		add_linktree($a['name'], $galurl . 'sa=album;in=' . $a['id']);
+	add_linktree($items[0]['title'], $galurl . 'sa=item;in=' . $items[0]['id_media']);
+	add_linktree($txt['media_moving'], $galurl . 'sa=move;in=' . $items[0]['id_media']);
 
 	wetem::load('aeva_form');
 }
@@ -435,7 +435,7 @@ function aeva_unseen()
 
 	$context['page_title'] = $txt['media_viewing_unseen'];
 	wetem::load('aeva_unseen');
-	add_linktree($galurl . 'sa=unseen', $txt['media_viewing_unseen']);
+	add_linktree($txt['media_viewing_unseen'], $galurl . 'sa=unseen');
 }
 
 // Handles searching of items
@@ -642,7 +642,7 @@ function aeva_mgSearch()
 	$context['page_title'] = $txt['media_search'];
 
 	// Search linktree
-	add_linktree($galurl . 'sa=search', $txt['media_search']);
+	add_linktree($txt['media_search'], $galurl . 'sa=search');
 }
 
 function aeva_listAlbums()
@@ -688,7 +688,7 @@ function aeva_listAlbums()
 
 	// End this
 	wetem::load('aeva_viewUserAlbums');
-	add_linktree($galurl . 'sa=vua', $txt['media_albums']);
+	add_linktree($txt['media_albums'], $galurl . 'sa=vua');
 	$context['page_title'] = $txt['media_albums'];
 }
 
@@ -770,7 +770,7 @@ function aeva_mgStats()
 
 	wetem::load('aeva_stats');
 	$context['page_title'] = $txt['media_stats'];
-	add_linktree($galurl . 'sa=stats', $txt['media_stats']);
+	add_linktree($txt['media_stats'], $galurl . 'sa=stats');
 }
 
 // Manages your albums' control panel
@@ -785,7 +785,7 @@ function aeva_albumCP($is_admin = false)
 		add_js_file('scripts/mediadmin.js');
 
 		$context['page_title'] = $txt['media_my_user_albums'];
-		add_linktree($galurl . 'area=mya', $txt['media_my_user_albums']);
+		add_linktree($txt['media_my_user_albums'], $galurl . 'area=mya');
 	}
 
 	$sa = array(
@@ -2522,8 +2522,8 @@ function aeva_whoRatedWhat()
 
 	wetem::load('aeva_whoRatedWhat');
 
-	add_linktree($galurl . 'sa=item;in=' . $context['item']['id_media'], $context['item']['title']);
-	add_linktree($galurl . 'sa=whoratedwhat;in=' . $context['item']['id_media'], $txt['media_who_rated_what']);
+	add_linktree($context['item']['title'], $galurl . 'sa=item;in=' . $context['item']['id_media']);
+	add_linktree($txt['media_who_rated_what'], $galurl . 'sa=whoratedwhat;in=' . $context['item']['id_media']);
 	$context['page_title'] = $txt['media_who_rated_what'];
 }
 
@@ -2579,12 +2579,12 @@ function aeva_massDownload()
 	wetem::load('aeva_form');
 	$context['page_title'] = $txt['media_multi_download'];
 	add_linktree(
-		$galurl . 'sa=album;in=' . $context['aeva_album']['id'],
-		$context['aeva_album']['name']
+		$context['aeva_album']['name'],
+		$galurl . 'sa=album;in=' . $context['aeva_album']['id']
 	);
 	add_linktree(
-		$galurl . 'sa=massdown;album=' . $context['aeva_album']['id'],
-		$txt['media_multi_download']
+		$txt['media_multi_download'],
+		$galurl . 'sa=massdown;album=' . $context['aeva_album']['id']
 	);
 }
 

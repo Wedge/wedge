@@ -52,10 +52,8 @@ function Search()
 	isAllowedTo('search_posts');
 
 	// Link tree....
-	$context['linktree'][] = array(
-		'url' => '<URL>?action=search',
-		'name' => $txt['search']
-	);
+	// !!! If we've come back here because of an error, we're going to have: Site > Search > Search Results > Search in the linktree. Is this what we want?
+	add_linktree($txt['search'], '<URL>?action=search');
 
 	// This is hard coded maximum string length.
 	$context['search_string_limit'] = 100;

@@ -711,20 +711,13 @@ function Admin()
 	}
 
 	// Build the link tree.
-	$context['linktree'][] = array(
-		'url' => '<URL>?action=admin',
-		'name' => $txt['admin_center'],
-	);
+	add_linktree($txt['admin_center'], '<URL>?action=admin');
+
 	if (isset($admin_include_data['current_area']) && $admin_include_data['current_area'] != 'index')
-		$context['linktree'][] = array(
-			'url' => '<URL>?action=admin;area=' . $admin_include_data['current_area'] . ';' . $context['session_query'],
-			'name' => $admin_include_data['label'],
-		);
+		add_linktree($admin_include_data['label'], '<URL>?action=admin;area=' . $admin_include_data['current_area'] . ';' . $context['session_query']);
+
 	if (!empty($admin_include_data['current_subsection']) && $admin_include_data['current_area'] != 'index' && $admin_include_data['subsections'][$admin_include_data['current_subsection']][0] != $admin_include_data['label'])
-		$context['linktree'][] = array(
-			'url' => '<URL>?action=admin;area=' . $admin_include_data['current_area'] . ';sa=' . $admin_include_data['current_subsection'] . ';' . $context['session_query'],
-			'name' => $admin_include_data['subsections'][$admin_include_data['current_subsection']][0],
-		);
+		add_linktree($admin_include_data['subsections'][$admin_include_data['current_subsection']][0], '<URL>?action=admin;area=' . $admin_include_data['current_area'] . ';sa=' . $admin_include_data['current_subsection'] . ';' . $context['session_query']);
 
 	// Make a note of the Unique ID for this menu.
 	$context['admin_menu_id'] = $context['max_menu_id'];

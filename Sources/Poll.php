@@ -603,13 +603,8 @@ function EditPoll()
 
 	// Build the link tree.
 	censorText($pollinfo['subject']);
-	$context['linktree'][] = array(
-		'url' => '<URL>?topic=' . $topic . '.0',
-		'name' => $pollinfo['subject'],
-	);
-	$context['linktree'][] = array(
-		'name' => $context['page_title'],
-	);
+	add_linktree($pollinfo['subject'], '<URL>?topic=' . $topic . '.0');
+	add_linktree($context['page_title']);
 
 	// Register this form in the session variables.
 	checkSubmitOnce('register');

@@ -547,10 +547,7 @@ function PickTheme()
 	$u = isset($_REQUEST['u']) ? $_REQUEST['u'] : null;
 
 	// Build the link tree.
-	$context['linktree'][] = array(
-		'url' => $u === null ? '<URL>?action=skin' : ('<URL>' . ($u > 0 ? '?action=skin;u=' : '?action=theme;sa=pick;u=') . (int) $u),
-		'name' => $txt['change_skin'],
-	);
+	add_linktree($txt['change_skin'], $u === null ? '<URL>?action=skin' : ('<URL>' . ($u > 0 ? '?action=skin;u=' : '?action=theme;sa=pick;u=') . (int) $u));
 
 	$_SESSION['id_theme'] = 0;
 	$_SESSION['skin'] = '';

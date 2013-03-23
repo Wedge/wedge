@@ -68,56 +68,8 @@ class paypal_display
 		$return_data['hidden']['src'] = 1;
 		$return_data['hidden']['notify_url'] = $boardurl . '/subscriptions.php';
 
-		// Now then, what language should we use? These are best-match from language packs through to PayPal region codes (which are basically by country)
-		$langs = array(
-			'albanian' => 'AL',
-			'arabic' => 'EG', // http://en.wikipedia.org/wiki/Arabic puts Egypt's dialect at 80m users and thus the most prevalent.
-			'bangla' => 'BD',
-			'bulgarian' => 'BG',
-			'catalan' => 'AD',
-			'chinese_simplified' => 'CN',
-			'chinese_traditional' => 'CN',
-			'croatian' => 'HR',
-			'czech' => 'CZ',
-			'danish' => 'DK',
-			'dutch' => 'NL',
-			'english' => 'US',
-			'english_british' => 'GB',
-			'finnish' => 'FI',
-			'french' => 'FR',
-			'galician' => 'ES', // Could just as easily have been PT though
-			'german' => 'DE',
-			'hebrew' => 'IL',
-			'hindi' => 'IN',
-			'hungarian' => 'HU',
-			'indonesian' => 'ID',
-			'italian' => 'IT',
-			'japanese' => 'JP',
-			'kurdish_kurmanji',
-			'kurdish_sorani',
-			'macedonian' => 'MK',
-			'malay' => 'MY',
-			'norwegian' => 'NO',
-			'persian' => 'IR', // Best guess
-			'polish' => 'PL',
-			'portuguese_brazilian' => 'BR',
-			'portuguese_pt' => 'PT',
-			'romanian' => 'RO',
-			'russian' => 'RU',
-			'serbian_cyrillic' => 'CS',
-			'serbian_latin' => 'CS',
-			'slovak' => 'SK',
-			'spanish_es' => 'ES',
-			'spanish_latin' => 'MX', // There's a whole variety this could be, Mexico is the dominant however.
-			'swedish' => 'SE',
-			'thai' => 'TH',
-			'turkish' => 'TR',
-			'ukrainian' => 'UA',
-			'urdu' => 'PK',
-			'uzbek_latin' => 'UZ',
-			'vietnamese' => 'VN',
-		);
-		$return_data['hidden']['lc'] = isset($langs[we::$user['language']]) ? $langs[we::$user['language']] : 'US';
+		// Now then, what language should we use? A language pack should indicate the language PayPal should use.
+		$return_data['hidden']['lc'] = isset($txt['lang_paypal']) ? $txt['lang_paypal'] : 'US';
 
 		// Now stuff that depends on what we're doing.
 		if ($sub_data['flexible'])

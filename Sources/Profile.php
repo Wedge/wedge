@@ -544,22 +544,13 @@ function ModifyProfile($post_errors = array())
 	}
 
 	// Build the link tree.
-	$context['linktree'][] = array(
-		'url' => '<URL>?action=profile' . ($memID != we::$id ? ';u=' . $memID : ''),
-		'name' => sprintf($txt['profile_of_username'], $context['member']['name']),
-	);
+	add_linktree(sprintf($txt['profile_of_username'], $context['member']['name']), '<URL>?action=profile' . ($memID != we::$id ? ';u=' . $memID : ''));
 
 	if (!empty($profile_include_data['label']))
-		$context['linktree'][] = array(
-			'url' => '<URL>?action=profile' . ($memID != we::$id ? ';u=' . $memID : '') . ';area=' . $profile_include_data['current_area'],
-			'name' => $profile_include_data['label'],
-		);
+		add_linktree($profile_include_data['label'], '<URL>?action=profile' . ($memID != we::$id ? ';u=' . $memID : '') . ';area=' . $profile_include_data['current_area']);
 
 	if (!empty($profile_include_data['current_subsection']) && $profile_include_data['subsections'][$profile_include_data['current_subsection']][0] != $profile_include_data['label'])
-		$context['linktree'][] = array(
-			'url' => '<URL>?action=profile' . ($memID != we::$id ? ';u=' . $memID : '') . ';area=' . $profile_include_data['current_area'] . ';sa=' . $profile_include_data['current_subsection'],
-			'name' => $profile_include_data['subsections'][$profile_include_data['current_subsection']][0],
-		);
+		add_linktree($profile_include_data['subsections'][$profile_include_data['current_subsection']][0], '<URL>?action=profile' . ($memID != we::$id ? ';u=' . $memID : '') . ';area=' . $profile_include_data['current_area'] . ';sa=' . $profile_include_data['current_subsection']);
 
 	// Set the template for this area and add the profile layer.
 	wetem::load($profile_include_data['function']);

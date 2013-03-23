@@ -437,10 +437,7 @@ function Display()
 	}
 
 	// Build the link tree.
-	$context['linktree'][] = array(
-		'url' => '<URL>?topic=' . $topic . '.0',
-		'name' => $topicinfo['subject'],
-	);
+	add_linktree($topicinfo['subject'], '<URL>?topic=' . $topic . '.0');
 
 	// Build a list of this board's moderators.
 	$context['moderators'] =& $board_info['moderators'];

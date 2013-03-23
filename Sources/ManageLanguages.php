@@ -729,10 +729,7 @@ function ModifyLanguage()
 	$context['page_title'] = $txt['edit_languages'];
 	$context[$context['admin_menu_name']]['tab_data']['tabs']['edit']['description'] = $txt['languages_area_edit_desc'];
 
-	$context['linktree'][] = array(
-		'name' => $context['languages'][$context['lang_id']]['name'],
-		'url' => '<URL>?action=admin;area=languages;sa=editlang;lid=' . $context['lang_id'],
-	);
+	add_linktree($context['languages'][$context['lang_id']]['name'], '<URL>?action=admin;area=languages;sa=editlang;lid=' . $context['lang_id']);
 
 	$context['lang_id'] = $_GET['lid'];
 
@@ -1000,10 +997,7 @@ function ModifyLanguageEntries()
 {
 	global $context, $txt, $helptxt, $cachedir;
 
-	$context['linktree'][] = array(
-		'url' => '<URL>?action=admin;area=languages;sa=editlang;lid=' . $context['lang_id'] . ';tfid=' . urlencode($context['selected_file']['source_id'] . '|' . $context['selected_file']['lang_id']),
-		'name' => $context['selected_file']['name'],
-	);
+	add_linktree($context['selected_file']['name'], '<URL>?action=admin;area=languages;sa=editlang;lid=' . $context['lang_id'] . ';tfid=' . urlencode($context['selected_file']['source_id'] . '|' . $context['selected_file']['lang_id']));
 
 	$context['entries'] = array();
 
@@ -1053,7 +1047,7 @@ function ModifyLanguageEntries()
 	}
 
 	// There are certain entries we do not allow touching from here. Declared once, but restricted on both loading and saving.
-	$restricted_entries = array('txt_lang_name', 'txt_lang_locale', 'txt_lang_dictionary', 'txt_lang_spelling', 'txt_lang_rtl');
+	$restricted_entries = array('txt_lang_name', 'txt_lang_locale', 'txt_lang_dictionary', 'txt_lang_spelling', 'txt_lang_rtl', 'txt_lang_paypal');
 	foreach ($restricted_entries as $item)
 		unset($context['entries'][$item]);
 

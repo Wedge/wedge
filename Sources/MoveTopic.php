@@ -116,14 +116,8 @@ function MoveTopic()
 
 	$context['page_title'] = $txt['move_topic'];
 
-	$context['linktree'][] = array(
-		'url' => '<URL>?topic=' . $topic . '.0',
-		'name' => $context['subject'],
-	);
-
-	$context['linktree'][] = array(
-		'name' => $txt['move_topic'],
-	);
+	add_linktree($context['subject'], '<URL>?topic=' . $topic . '.0');
+	add_linktree($txt['move_topic']);
 
 	$context['back_to_topic'] = isset($_REQUEST['goback']);
 

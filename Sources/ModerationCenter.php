@@ -156,20 +156,12 @@ function ModerationMain($dont_call = false)
 	$context['admin_area'] = $mod_include_data['current_area'];
 
 	// Build the link tree.
-	$context['linktree'][] = array(
-		'url' => '<URL>?action=moderate',
-		'name' => $txt['moderation_center'],
-	);
+	add_linktree($txt['moderation_center'], '<URL>?action=moderate');
+
 	if (isset($mod_include_data['current_area']) && $mod_include_data['current_area'] != 'index')
-		$context['linktree'][] = array(
-			'url' => '<URL>?action=moderate;area=' . $mod_include_data['current_area'],
-			'name' => $mod_include_data['label'],
-		);
+		add_linktree($mod_include_data['label'], '<URL>?action=moderate;area=' . $mod_include_data['current_area']);
 	if (!empty($mod_include_data['current_subsection']) && $mod_include_data['subsections'][$mod_include_data['current_subsection']][0] != $mod_include_data['label'])
-		$context['linktree'][] = array(
-			'url' => '<URL>?action=moderate;area=' . $mod_include_data['current_area'] . ';sa=' . $mod_include_data['current_subsection'],
-			'name' => $mod_include_data['subsections'][$mod_include_data['current_subsection']][0],
-		);
+		add_linktree($mod_include_data['subsections'][$mod_include_data['current_subsection']][0], '<URL>?action=moderate;area=' . $mod_include_data['current_area'] . ';sa=' . $mod_include_data['current_subsection']);
 
 	// Now - finally - the bit before the encore - the main performance of course!
 	if (!$dont_call)

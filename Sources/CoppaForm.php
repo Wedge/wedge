@@ -66,7 +66,7 @@ function CoppaForm()
 			wetem::hide();
 			wetem::load('coppa_form');
 			$context['page_title'] = str_replace('{forum_name_safe}', $context['forum_name_html_safe'], $txt['coppa_form_title']);
-			$context['coppa_body'] = str_replace(array('{PARENT_NAME}', '{CHILD_NAME}', '{USER_NAME}', '{forum_name_safe}'), array($context['ul'], $context['ul'], $username, $context['forum_name_html_safe'])), $txt['coppa_form_body']);
+			$context['coppa_body'] = str_replace(array('{PARENT_NAME}', '{CHILD_NAME}', '{USER_NAME}', '{forum_name_safe}'), array($context['ul'], $context['ul'], $username, $context['forum_name_html_safe']), $txt['coppa_form_body']);
 		}
 		// Downloading.
 		else
