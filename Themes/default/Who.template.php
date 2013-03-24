@@ -125,8 +125,8 @@ function template_credits()
 	global $context, $txt;
 
 	// The most important part - the credits :P
- 	if (!empty($context['site_credits']))
- 	{
+	if (!empty($context['site_credits']))
+	{
 		echo '
 		<we:cat>
 			', $txt['credits_site'], '

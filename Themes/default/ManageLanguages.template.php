@@ -504,7 +504,7 @@ function template_modify_individual_entry()
 		return false;
 	};');
 	}
-	
+
 	echo '
 				</dd>
 			</dl>

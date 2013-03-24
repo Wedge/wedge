@@ -281,6 +281,7 @@ class we
 			'smiley_set' => isset($user_settings['smiley_set']) ? $user_settings['smiley_set'] : '',
 			'messages' => empty($settings['pm_enabled']) || empty($user_settings['instant_messages']) ? 0 : $user_settings['instant_messages'],
 			'unread_messages' => empty($settings['pm_enabled']) || empty($user_settings['unread_messages']) ? 0 : $user_settings['unread_messages'],
+			'unread_notifications' => !empty($user_settings['unread_notifications']) ? $user_settings['unread_notifications'] : 0,
 			'media_unseen' => empty($user_settings['media_unseen']) ? 0 : $user_settings['media_unseen'],
 			'total_time_logged_in' => empty($user_settings['total_time_logged_in']) ? 0 : $user_settings['total_time_logged_in'],
 			'buddies' => !empty($settings['enable_buddylist']) && !empty($user_settings['buddy_list']) ? explode(',', $user_settings['buddy_list']) : array(),

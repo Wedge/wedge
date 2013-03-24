@@ -10,22 +10,22 @@
 	win.respond		= {};
 
 	//define vars
-	var doc 			= win.document,
-		docElem 		= doc.documentElement,
+	var doc				= win.document,
+		docElem			= doc.documentElement,
 		mediastyles		= [],
 		rules			= [],
-		appendedEls 	= [],
-		parsedSheets 	= {},
+		appendedEls		= [],
+		parsedSheets	= {},
 		resizeThrottle	= 30,
-		head 			= doc.getElementsByTagName( "head" )[0] || docElem,
+		head			= doc.getElementsByTagName( "head" )[0] || docElem,
 		base			= doc.getElementsByTagName( "base" )[0],
 		links			= head.getElementsByTagName( "link" ),
 		requestQueue	= [],
 
 		//loop stylesheets, send text content to translate
 		ripCSS			= function(){
-			var sheets 	= links,
-				sl 		= sheets.length,
+			var sheets	= links,
+				sl		= sheets.length,
 				i		= 0,
 				//vars for loop:
 				sheet, href, media, isCSS;
@@ -164,10 +164,10 @@
 		applyMedia			= function( fromResize ){
 			var name		= "clientWidth",
 				docElemProp	= docElem[ name ],
-				currWidth 	= doc.compatMode === "CSS1Compat" && docElemProp || doc.body[ name ] || docElemProp,
+				currWidth	= doc.compatMode === "CSS1Compat" && docElemProp || doc.body[ name ] || docElemProp,
 				styleBlocks	= {},
 				lastLink	= links[ links.length-1 ],
-				now 		= (new Date()).getTime();
+				now			= (new Date()).getTime();
 
 			//throttle resize calls
 			if( fromResize && lastCall && now - lastCall < resizeThrottle ){

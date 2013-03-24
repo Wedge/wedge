@@ -360,23 +360,21 @@ weAutoSuggest.prototype.itemMouseLeave = function (oCurElement)
 
 weAutoSuggest.prototype.onSuggestionReceived = function (XMLDoc)
 {
-	var aItems = $('item', XMLDoc), i, ac = [];
+	var i, ac = [];
 
-	aItems.each(function (i) {
+	$('item', XMLDoc).each(function (i) {
 		ac[i] = { sItemId: $(this).attr('id'), sItemName: $(this).text() };
 	});
 
 	// If we're doing auto add and we find the exact person, then add them!
 	if (this.bDoAutoAdd)
 		for (i in ac)
-		{
 			if (this.sLastSearch == ac[i].sItemName)
 			{
 				var sItemId = ac[i].sItemId, sItemName = ac[i].sItemName;
 				this.aCache = ac = [];
 				return this.addItemLink(sItemId, sItemName, true);
 			}
-		}
 
 	// Check we don't try to keep auto-updating!
 	this.bDoAutoAdd = false;

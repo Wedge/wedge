@@ -87,7 +87,7 @@ class Notification
 			// Make sure the notifier for this exists
 			if (!isset($notifiers[$row['notifier']]))
 				continue;
-					
+
 			$notifications[] = new Notification($row, $notifiers[$row['notifier']]);
 		}
 
@@ -159,11 +159,11 @@ class Notification
 	public static function issue($id_member, Notifier $notifier, $id_object, $data = array(), $email_data = array())
 	{
 		loadSource('Subs-Post');
-		
+
 		$id_object = (int) $id_object;
 		if (empty($id_object))
 			throw new Exception('Object cannot be empty for notification');
- 
+
 		$members = (array) $id_member;
 		$return_single = !is_array($id_member);
 
@@ -217,7 +217,7 @@ class Notification
 			$notification = new Notification($row, $notifier);
 
 			// If the notifier returns false, we drop this notification
-			if (!$notifier->handleMultiple($notification, $data, $email_data) 
+			if (!$notifier->handleMultiple($notification, $data, $email_data)
 				&& !in_array($notifier->getName(), $members[$row['id_member']]['disabled_notifiers']))
 			{
 				$notification->updateTime();
@@ -246,7 +246,7 @@ class Notification
 				continue;
 
 			// Create the row
-			wesql::insert('', '{db_prefix}notifications', 
+			wesql::insert('', '{db_prefix}notifications',
 				array('id_member' => 'int', 'notifier' => 'string-50', 'id_object' => 'int', 'time' => 'int', 'unread' => 'int', 'data' => 'string'),
 				array($id_member, $notifier->getName(), $id_object, $time, 1, serialize((array) $data)),
 				array('id_notification')
@@ -328,7 +328,7 @@ class Notification
 	{
 		if ($this->unread == 0)
 			return;
-		
+
 		$this->unread = 0;
 		$this->updateCol('unread', 0);
 
@@ -343,7 +343,7 @@ class Notification
 		);
 
 		// Flush the cache
-		cache_put_data('quick_notification_' . $id_member, array(), 0);
+		cache_put_data('quick_notification_' . $this->getMember(), array(), 0);
 	}
 
 	/**

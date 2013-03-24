@@ -81,24 +81,15 @@ class weNotif
 		if (!empty(we::$id))
 		{
 			$quick_notifications = self::get_quick_notifications();
-			
-			// Get the unread count and load the disabled notifiers along with it
-			$request = wesql::query('
-				SELECT unread_notifications, disabled_notifiers, notifier_prefs
-				FROM {db_prefix}members
-				WHERE id_member = {int:member}
-				LIMIT 1',
-				array(
-					'member' => we::$id,
-				)
-			);
-			list ($context['unread_notifications'], $disabled_notifiers, $prefs) = wesql::fetch_row($request);
-			wesql::free_result($request);
 
-			// Automatically cache the current member's notifier preferences, save us some queries
-			self::$pref_cache[we::$id] = json_decode($prefs, true);
+			$context['unread_notifications'] = we::$user['unread_notifications'];
+			$disabled_notifiers = !empty(we::$user['data']['disabled_notifiers']) ? we::$user['data']['disabled_notifiers'] : array();
+			$prefs = !empty(we::$user['data']['notifier_prefs']) ? we::$user['data']['notifier_prefs'] : array();
 
-			self::$disabled = explode(',', $disabled_notifiers);
+			// Automatically cache the current member's notifier preferences, save us some queries.
+			self::$pref_cache[we::$id] = $prefs;
+
+			self::$disabled = $disabled_notifiers;
 
 			loadTemplate('Notifications');
 
@@ -114,7 +105,7 @@ class weNotif
 	}
 
 	/**
-	 * Caches and loads quick notifications, also serializes them into array for quick access
+	 * Caches and loads quick notifications, also serializes them into an array for quick access.
 	 *
 	 * @static
 	 * @access protected
@@ -160,7 +151,7 @@ class weNotif
 			return self::$pref_cache[$id_member];
 
 		$request = wesql::query('
-			SELECT notifier_prefs
+			SELECT data
 			FROM {db_prefix}members
 			WHERE id_member = {int:member}
 			LIMIT 1',
@@ -168,10 +159,11 @@ class weNotif
 				'member' => $id_member,
 			)
 		);
-		list($pref) = wesql::fetch_assoc($request);
+		list ($data) = wesql::fetch_assoc($request);
 		wesql::free_result($request);
 
-		self::$pref_cache[$id_member] = json_decode($pref, true);
+		$data = unserialize($data);
+		self::$pref_cache[$id_member] = !empty($data['notifier_prefs']) ? $data['notifier_prefs'] : array();
 
 		return self::$pref_cache[$id_member];
 	}
@@ -190,7 +182,21 @@ class weNotif
 	{
 		unset(self::$pref_cache[$id_member]);
 
-		updateMemberData($id_member, array('notifier_prefs' => json_encode($prefs)));
+		$request = wesql::query('
+			SELECT data
+			FROM {db_prefix}members
+			WHERE id_member = {int:member}
+			LIMIT 1',
+			array(
+				'member' => $id_member,
+			)
+		);
+		list($data) = wesql::fetch_assoc($request);
+		wesql::free_result($request);
+
+		$data = unserialize($data);
+		$data['notifier_prefs'] = $prefs;
+		updateMemberData($id_member, array('data' => serialize($data)));
 	}
 
 	/**
@@ -226,8 +232,6 @@ class weNotif
 		}
 		elseif ($sa == 'unread')
 		{
-			header('Content-type: application/json; charset=utf-8');
-
 			$notifications = self::get_quick_notifications();
 
 			$request = wesql::query('
@@ -242,12 +246,12 @@ class weNotif
 			list ($unread_count) = wesql::fetch_row($request);
 			wesql::free_result($request);
 
-			echo json_encode(array(
-				'count' => $unread_count,
-				'notifications' => $notifications,
-			));
-
-			exit;
+			returnAjax(
+				array(
+					'count' => $unread_count,
+					'notifications' => $notifications,
+				)
+			);
 		}
 		elseif ($sa == 'markread' && isset($_REQUEST['in']))
 		{
@@ -283,23 +287,24 @@ class weNotif
 		// Not the same user? hell no
 		if ($memID != we::$id)
 			fatal_lang_error('access_denied');
-		
+
 		$notifiers = self::getNotifiers();
 
- 		$request = wesql::query('
- 			SELECT disabled_notifiers, email_notifiers, notify_email_period
- 			FROM {db_prefix}members
- 			WHERE id_member = {int:member}
- 			LIMIT 1',
- 			array(
-	 			'member' => we::$id,
-	 		)
-	 	);
-	 	list ($disabled_notifiers, $email_notifiers, $period) = wesql::fetch_row($request);
-	 	wesql::free_result($request);
+		$request = wesql::query('
+			SELECT data, notify_email_period
+			FROM {db_prefix}members
+			WHERE id_member = {int:member}
+			LIMIT 1',
+			array(
+				'member' => we::$id,
+			)
+		);
+		list ($data, $period) = wesql::fetch_row($request);
+		wesql::free_result($request);
 
-		$disabled_notifiers = explode(',', $disabled_notifiers);
-		$email_notifiers = json_decode($email_notifiers, true);
+		$data = unserialize($data);
+		$disabled_notifiers = !empty($data['disabled_notifiers']) ? $data['disabled_notifiers'] : array();
+		$email_notifiers = !empty($data['email_notifiers']) ? $data['email_notifiers'] : array();
 
 		// Store which settings belong to which notifier
 		$settings_map = array();
@@ -349,7 +354,7 @@ class weNotif
 			foreach ($notifier_config as $config)
 				if (!empty($config) && !empty($config[1]) && !in_array($config[0], array('message', 'warning', 'title', 'desc')))
 					$settings_map[$config[1]] = $notifier->getName();
-			
+
 			$config_vars[] = '';
 		}
 
@@ -368,9 +373,11 @@ class weNotif
 					$email[$notifier->getName()] = (int) $_POST['email_' . $notifier->getName()];
 			}
 
+			$data['disabled_notifiers'] = $disabled;
+			$data['email_notifiers'] = $email;
+
 			updateMemberData(we::$id, array(
-				'disabled_notifiers' => implode(',', $disabled),
-				'email_notifiers' => json_encode($email),
+				'data' => serialize($data),
 				'notify_email_period' => max(1, (int) $_POST['notify_period']),
 			));
 
@@ -380,7 +387,7 @@ class weNotif
 			{
 				if (empty($notifier_settings[$notifier]))
 					$notifier_settings[$notifier] = array();
-				
+
 				if (!empty($_POST[$setting]))
 					$notifier_settings[$notifier][$setting] = $_POST[$setting];
 			}
@@ -437,7 +444,7 @@ class weNotif
 	{
 		// Fetch all the members which have pending e-mails
 		$request = wesql::query('
-			SELECT id_member, real_name, email_address email_notifiers, disabled_notifiers, unread_notifications
+			SELECT id_member, real_name, email_address, data, unread_notifications
 			FROM {db_prefix}members
 			WHERE unread_notifications > 0
 				AND UNIX_TIMESTAMP() > notify_email_last_sent + (notify_email_period * 86400)',
@@ -447,9 +454,14 @@ class weNotif
 		$members = array();
 		while ($row = wesql::fetch_assoc($request))
 		{
+			$data = unserialize($row['data']);
+			if (empty($data['email_notifiers']))
+				continue;
+
 			$valid_notifiers = array();
-			foreach (json_decode($row['email_notifiers'], true) as $notifier => $status)
-				if ($status < 2 && !in_array($notifier, explode(',', $row['disabled_notifiers'])) && weNotif::getNotifiers($notifier) !== null)
+
+			foreach ($data['email_notifiers'] as $notifier => $status)
+				if ($status < 2 && (empty($data['disabled_notifiers']) || !in_array($notifier, $data['disabled_notifiers'])) && weNotif::getNotifiers($notifier) !== null)
 					$valid_notifiers[] = $notifier;
 
 			if (empty($valid_notifiers))
@@ -463,16 +475,15 @@ class weNotif
 				'notifications' => array(),
 				'unread' => $row['unread_notifications'],
 			);
-
 		}
-	
+
 		wesql::free_result($request);
 
 		if (empty($members))
 			return true;
 
-		// It's cheaper to check for the notifier for the members in a PHP if
-		// rather than checking in a MySQL query of huge IF/ELSE clauses
+		// It's cheaper to check for the notifier for the members in a PHP if()
+		// rather than checking in a MySQL query of huge IF/ELSE clauses.
 		$request = wesql::query('
 			SELECT *
 			FROM {db_prefi}notifications

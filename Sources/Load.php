@@ -1495,7 +1495,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 
 	// Initializing the Wedge templating magic.
 	$context['macros'] = array();
-	$context['skeleton'] = '';
+	$context['skeleton'] = array();
 	$context['skeleton_ops'] = array();
 
 	// If output is an Ajax request, or printer-friendly
@@ -1909,7 +1909,7 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 			$attempts[] = array($theme['theme_dir'], $template, $settings['language'], $theme['theme_url']);
 			$attempts[] = array($theme['default_theme_dir'], $template, $settings['language'], $theme['default_theme_url']);
 		}
-		
+
 		// First, try to ensure we have the English US version loaded first. We do not need to record whether we succeeded or not though.
 		$fallbacks = array(
 			array($theme['theme_dir'], $template),

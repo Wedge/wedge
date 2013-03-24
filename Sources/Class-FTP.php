@@ -331,7 +331,7 @@ class ftp_connection
 		$size = -1;
 		if ($this->check_response(213))
 		{
-			list(, $size) = explode(' ', $this->last_message);
+			list (, $size) = explode(' ', $this->last_message);
 			if ($this->debug)
 				echo 'Expected size ' . $size . ' bytes';
 		}
