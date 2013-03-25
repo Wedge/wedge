@@ -709,14 +709,14 @@ function isBannedEmail($email, $error, $return = false)
 			);
 
 			// So, split up the user and domain parts of the email, and lower-case everything. The specification actually spells out case insensitivity.
-			list($user, $domain) = explode('@', strtolower($row['ban_content']));
+			list ($user, $domain) = explode('@', strtolower($row['ban_content']));
 
 			// GMail style ignores dots and +labels
 			if (!empty($extra['gmail_style']))
 			{
 				$ban['gmail'] = true;
 				if (strpos($user, '+') !== false)
-					list($user, $label) = explode('+', $user);
+					list ($user, $label) = explode('+', $user);
 				if ($domain == 'gmail.com' || $domain == 'googlemail.com')
 					$user = str_replace('.', '', $user);
 			}
@@ -727,7 +727,7 @@ function isBannedEmail($email, $error, $return = false)
 				$ban['tld'] = '~' . preg_quote(ltrim($domain, '*'), '~') . '$~';
 			elseif (strpos($user, '*') !== false)
 			{
-				list($b, $a) = explode('*', $user);
+				list ($b, $a) = explode('*', $user);
 				$ban['match'] = '~' . preg_quote($b, '~') . '.*' . preg_quote($a, '~') . '~';
 			}
 			else

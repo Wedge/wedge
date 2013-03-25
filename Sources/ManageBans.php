@@ -173,9 +173,9 @@ function createBanList()
 								{
 									if (!empty($extra[\'gmail_style\']))
 									{
-										list($user, $domain) = explode(\'@\', $rowData[\'ban_content\']);
+										list ($user, $domain) = explode(\'@\', $rowData[\'ban_content\']);
 										if (strpos($user, \'+\') !== false)
-											list($user, $label) = explode(\'+\', $user);
+											list ($user, $label) = explode(\'+\', $user);
 
 										$user = str_replace(\'.\', \'\', $user);
 										return sprintf($txt[\'ban_gmail_style_email\'], $user, $domain) . \' <a href="<URL>?action=help;in=ban_gmail_style" onclick="return reqWin(this);" class="help"></a>\';
@@ -190,7 +190,7 @@ function createBanList()
 									case 32: // single address
 										return format_ip($rowData[\'ban_content\']);
 									case 65: // range
-										list($start, $end) = explode(\'-\', $rowData[\'ban_content\']);
+										list ($start, $end) = explode(\'-\', $rowData[\'ban_content\']);
 										return format_ip($start) . \' - \' . format_ip($end);
 								}
 								return $row[\'ban_content\'];
@@ -624,9 +624,9 @@ function BanListEdit()
 				$context['ban_details']['email_type'] = 'specific';
 				if (!empty($context['ban_details']['extra']['gmail_style']))
 				{
-					list($user, $domain) = explode('@', $context['ban_details']['ban_content']);
+					list ($user, $domain) = explode('@', $context['ban_details']['ban_content']);
 					if (strpos($user, '+') !== false)
-						list($user, $label) = explode('+', $user);
+						list ($user, $label) = explode('+', $user);
 					$user = str_replace('.', '', $user);
 					$context['ban_details']['ban_email'] = $user . '@' . $domain;
 				}

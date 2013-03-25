@@ -1060,7 +1060,7 @@ function ModifyLanguageEntries()
 			if (!isset($context['plugins_dir'][$context['selected_file']['source_id']]))
 			{
 				$context['selected_file']['source_id'] = (int) $context['selected_file']['source_id'];
-				list($lang_var, $actual_key) = explode('_', $_GET['eid'], 2);
+				list ($lang_var, $actual_key) = explode('_', $_GET['eid'], 2);
 				$request = wesql::query('
 					DELETE FROM {db_prefix}language_changes
 					WHERE id_theme = {int:id_theme}
@@ -1102,7 +1102,7 @@ function ModifyLanguageEntries()
 			$id_theme = (int) $context['selected_file']['source_id'];
 			$id_lang = $context['lang_id'];
 			$lang_file = $context['selected_file']['lang_id'];
-			list($lang_var, $lang_key) = explode('_', $_GET['eid'], 2);
+			list ($lang_var, $lang_key) = explode('_', $_GET['eid'], 2);
 
 			if (!empty($_POST['entry']))
 			{

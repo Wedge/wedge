@@ -167,10 +167,9 @@ class Notification
 		$members = (array) $id_member;
 		$return_single = !is_array($id_member);
 
-		// Load the pending member's preferences for checking email notification and
-		// disabled notifiers
+		// Load the pending member's preferences for checking email notification and disabled notifiers
 		$request = wesql::query('
-			SELECT disabled_notifiers, email_notifiers, email_address, id_member
+			SELECT data, email_address, id_member
 			FROM {db_prefix}members
 			WHERE id_member IN ({array_int:member})
 			LIMIT {int:limit}',
@@ -182,10 +181,11 @@ class Notification
 		$members = array();
 		while ($row = wesql::fetch_assoc($request))
 		{
+			$data = empty($row['data']) ? array() : unserialize($row['data']);
 			$members[$row['id_member']] = array(
 				'id' => $row['id_member'],
-				'disabled_notifiers' => explode(',', $row['disabled_notifiers']),
-				'email_notifiers' => json_decode($row['email_notifiers'], true),
+				'disabled_notifiers' => empty($data['disabled_notifiers']) ? array() : $data['disabled_notifiers'],
+				'email_notifiers' => empty($data['email_notifiers']) ? array() : $data['email_notifiers'],
 				'email' => $row['email_address'],
 			);
 		}

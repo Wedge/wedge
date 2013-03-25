@@ -120,7 +120,7 @@ function AutoTask()
 			{
 				if (strpos($row['sourcefile'], 'plugin;') === 0)
 				{
-					list(, $plugin_id, $filename) = explode(';', $row['sourcefile']);
+					list (, $plugin_id, $filename) = explode(';', $row['sourcefile']);
 					if (!empty($filename) && !empty($context['plugins_dir'][$plugin_id]))
 						loadPluginSource($plugin_id, $filename);
 				}

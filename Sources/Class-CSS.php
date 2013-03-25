@@ -1590,6 +1590,17 @@ class wess_prefixes extends wess
 			return $matches[2] . 'resolution:' . $dpi . 'dpi';
 		}
 
+		// IE9+/Firefox 16+/Chrome 26+ support this unprefixed, Safari 6 needs a prefix.
+		if (strpos($matches[1], 'calc') !== false)
+		{
+			if (($b['is_ie'] && $v >= 9) || ($b['is_chrome'] && $v >= 26) || ($b['is_firefox'] && $v >= 16))
+				return $matches[1];
+			if (($b['is_chrome'] && $v >= 19) || ($b['is_firefox'] && $v >= 4) || ($b['is_safari'] && $v >= 6))
+				return $this->prefix . $matches[1];
+			// Keep it even if not supported. CSS may provide a prior fallback anyway..?
+			return $matches[1];
+		}
+
 		// Nothing bad was found? Just ignore.
 		return $unchanged;
 	}
@@ -1627,7 +1638,7 @@ class wess_prefixes extends wess
 			'\bcalc\h*\(',									// calc() function
 
 		);
-		$css = preg_replace_callback('~(?<!-)(' . implode('|', $values) . ')[\n;]~', array($this, 'fix_values'), $css);
+		$css = preg_replace_callback('~(?<!-)(' . implode('|', $values) . ')~', array($this, 'fix_values'), $css);
 
 		// And now for some 'easy' rules that don't need our regex machine.
 		$b = we::$browser;

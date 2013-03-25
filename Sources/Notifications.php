@@ -191,7 +191,7 @@ class weNotif
 				'member' => $id_member,
 			)
 		);
-		list($data) = wesql::fetch_assoc($request);
+		list ($data) = wesql::fetch_assoc($request);
 		wesql::free_result($request);
 
 		$data = unserialize($data);

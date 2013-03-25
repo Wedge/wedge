@@ -390,7 +390,7 @@ function template_modify_entries()
 	foreach ($context['entries'] as $key => $entry)
 	{
 		// OK, so we squished two things into one to make the $key earlier.
-		list($lang_var, $actual_key) = explode('_', $key, 2);
+		list ($lang_var, $actual_key) = explode('_', $key, 2);
 
 		echo '
 			<dt><a href="<URL>?action=admin;area=languages;sa=editlang;', $lang_url, ';eid=', $key, '">', $actual_key, '</a></dt>
@@ -436,7 +436,7 @@ function template_modify_individual_entry()
 	$lang_url = 'lid=' . $context['lang_id'] . ';tfid=' . urlencode($context['selected_file']['source_id'] . '|' . $context['selected_file']['lang_id']);
 
 	// OK, so we squished two things into one to make the $key earlier.
-	list($lang_var, $actual_key) = explode('_', $context['entry']['id'], 2);
+	list ($lang_var, $actual_key) = explode('_', $context['entry']['id'], 2);
 
 	echo '
 	<form action="<URL>?action=admin;area=languages;sa=editlang;', $lang_url, ';eid=', $context['entry']['id'], '" method="post" accept-charset="UTF-8">
