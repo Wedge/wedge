@@ -59,7 +59,7 @@ function template_notifications_list()
 	{
 		echo '
 			<p class="', $notification->getUnread() ? 'description' : 'wrc windowbg',
-			'" style="font-size: 1em; cursor: pointer" onclick="location = \'<URL>?action=notification;area=redirect;id=', $notification->getID(), '\'">
+			'" style="font-size: 1em; cursor: pointer" onclick="location = \'<URL>?action=notification;area=redirect;in=', $notification->getID(), '\'">
 				', $notification->getText(), '<br />
 				<span class="smalltext">', timeformat($notification->getTime()), '</span>
 			</p>';
@@ -70,23 +70,23 @@ function template_notification_email($notifications)
 {
 	global $txt;
 
-	$text = $txt['notification_email_periodical_body'] . '<br /><br />';
+	$str = $txt['notification_email_periodical_body'] . '<br><br>';
 
 	foreach ($notifications as $notifier => $notifs)
 	{
-		$profile = weNotif::getNotifie($notifier)->getProfile();
+		list ($title) = weNotif::getNotifiers($notifier)->getProfile();
 
-		$text .= '
-			<h3>' . $profile[0] . '</h3>
-			<hr />
-			<div style="margin-left: 15px;">';
+		$str .= '
+			<h3>' . $title . '</h3>
+			<hr>
+			<div style="margin-left: 15px">';
 
 		foreach ($notifs as $n)
-			$text .= '<div>' . $n->getText() . '</div>';
+			$str .= '<div>' . $n->getText() . '</div>';
 
-		$text .='
+		$str .='
 			</div>';
 	}
 
-	return $text;
+	return $str;
 }

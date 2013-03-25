@@ -181,11 +181,11 @@ class Notification
 		$members = array();
 		while ($row = wesql::fetch_assoc($request))
 		{
-			$data = empty($row['data']) ? array() : unserialize($row['data']);
+			$member_data = empty($row['data']) ? array() : unserialize($row['data']);
 			$members[$row['id_member']] = array(
 				'id' => $row['id_member'],
-				'disabled_notifiers' => empty($data['disabled_notifiers']) ? array() : $data['disabled_notifiers'],
-				'email_notifiers' => empty($data['email_notifiers']) ? array() : $data['email_notifiers'],
+				'disabled_notifiers' => empty($member_data['disabled_notifiers']) ? array() : $member_data['disabled_notifiers'],
+				'email_notifiers' => empty($member_data['email_notifiers']) ? array() : $member_data['email_notifiers'],
 				'email' => $row['email_address'],
 			);
 		}
@@ -299,7 +299,7 @@ class Notification
 	}
 
 	/**
-	 * Constructor, just initialises the member variables...
+	 * Constructor, just initializes the member variables...
 	 *
 	 * @access public
 	 * @param array $row The DB row of this notification (Entirely done in order to prevent typing...)
@@ -427,7 +427,7 @@ class Notification
 	}
 
 	/**
-	 * Returns the notifier's object
+	 * Returns the object's notifier
 	 *
 	 * @access public
 	 * @return object

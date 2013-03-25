@@ -60,10 +60,12 @@ class weNotif
 	 */
 	public static function initialize()
 	{
-		global $context, $scripturl, $txt;
+		global $context, $txt;
 
-		loadSource('Class-Notification');
-		loadSource('Class-Notifier');
+		loadSource(array(
+			'Class-Notification',
+			'Class-Notifier',
+		));
 
 		// Register the notifiers
 		call_hook('notification_callback', array(&self::$notifiers));
@@ -282,7 +284,7 @@ class weNotif
 	 */
 	public static function profile($memID)
 	{
-		global $context, $txt, $scripturl;
+		global $context, $txt;
 
 		// Not the same user? hell no
 		if ($memID != we::$id)
@@ -407,7 +409,7 @@ class weNotif
 
 		$context['settings_title'] = $txt['notifications'];
 		$context['settings_message'] = $txt['notification_profile_desc'];
-		$context['post_url'] = $scripturl . '?action=profile;area=notification;save';
+		$context['post_url'] = '<URL>?action=profile;area=notification;save';
 
 		wetem::load('show_settings');
 	}
@@ -461,7 +463,7 @@ class weNotif
 			$valid_notifiers = array();
 
 			foreach ($data['email_notifiers'] as $notifier => $status)
-				if ($status < 2 && (empty($data['disabled_notifiers']) || !in_array($notifier, $data['disabled_notifiers'])) && weNotif::getNotifiers($notifier) !== null)
+				if ($status < 2 && (empty($data['disabled_notifiers']) || !in_array($notifier, $data['disabled_notifiers'])) && self::getNotifiers($notifier) !== null)
 					$valid_notifiers[] = $notifier;
 
 			if (empty($valid_notifiers))
@@ -497,28 +499,28 @@ class weNotif
 		while ($row = wesql::fetch_assoc($request))
 			if (in_array($row['notifier'], $members[$row['id_member']]['valid_notifiers']))
 			{
-				$member = &$member[$row['id_member']];
+				$mem =& $members[$row['id_member']];
 
-				if (empty($member['notifications'][$row['notifier']]))
-					$member['notifications'][$row['notifier']] = array();
+				if (empty($mem['notifications'][$row['notifier']]))
+					$mem['notifications'][$row['notifier']] = array();
 
-				$member['notifications'][$row['notifier']][] = new Notification($row, weNotif::getNotifiers($row['notifier']));
+				$mem['notifications'][$row['notifier']][] = new Notification($row, self::getNotifiers($row['notifier']));
 			}
 
 		wesql::free_result($request);
 
 		loadTemplate('Notifications');
 
-		foreach ($members as $member)
+		foreach ($members as $m)
 		{
-			if (empty($member['notifications']))
+			if (empty($m['notifications']))
 				continue;
 
 			// Assemble the notifications into one huge text
-			$email = template_notification_email($member['notifications']);
-			$subject = sprintf($txt['notification_email_periodical_subject'], $member['name'], $member['unread']);
+			$body = template_notification_email($m['notifications']);
+			$subject = sprintf($txt['notification_email_periodical_subject'], $m['name'], $m['unread']);
 
-			sendmail($member['email'], $subject, $email, null, null, true);
+			sendmail($m['email'], $subject, $body, null, null, true);
 		}
 
 		updateMemberData(array_keys($members), array(
@@ -541,4 +543,3 @@ function scheduled_notification_periodical()
 {
 	return weNotif::scheduled_periodical();
 }
-?>
