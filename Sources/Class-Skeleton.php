@@ -80,7 +80,7 @@ final class weSkeleton
 	// Does the skeleton hold a specific layer or block?
 	function has($item)
 	{
-		return (bool) $this->parent($item);
+		return isset($this->layers[$item]) || (bool) $this->parent($item);
 	}
 
 	// Does the skeleton hold a specific block?
@@ -503,40 +503,18 @@ final class weSkeleton
 	 */
 	private function find($targets = '', $where = '')
 	{
-		// Find the first target layer that isn't wishful thinking.
-		foreach ((array) $targets as $layer)
+		// Plugins should provide a 'default' fallback if they consider it vital to show the block, e.g. array('sidebar', 'default').
+		// Find the first target that isn't wishful thinking.
+		foreach ((array) $targets as $target)
 		{
-			if (empty($layer))
-				$layer = 'default';
-			if (isset($this->layers[$layer]))
-			{
-				$to = $layer;
-				break;
-			}
+			if (empty($target))
+				$target = 'target';
+			if (isset($this->layers[$target]) || $this->has_block($target)) // The generic has() is a few % slower.
+				return $target;
 		}
 
-		// No valid layer found.
-		if (empty($to))
-		{
-			// If we try to insert a sideback block in XML or minimal mode (hide_chrome), it will fail.
-			// Plugins should provide a 'default' fallback if they consider it vital to show the block, e.g. array('sidebar', 'default').
-			if (!empty($where) && $where !== 'before' && $where !== 'after')
-				return false;
-
-			// Or maybe we're looking for a block..?
-			$to = false;
-			$all_blocks = iterator_to_array(new RecursiveIteratorIterator(new RecursiveArrayIterator($this->skeleton)));
-			foreach ((array) $targets as $block)
-			{
-				if (isset($all_blocks[$block]))
-				{
-					$to = $block;
-					break;
-				}
-			}
-			unset($all_blocks);
-		}
-		return $to;
+		// No valid target found.
+		return false;
 	}
 
 	private function list_blocks($items)
