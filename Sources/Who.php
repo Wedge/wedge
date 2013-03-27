@@ -314,6 +314,7 @@ function determineActions($urls, $preferred_prefix = false)
 	// These are done to later query these in large chunks. (instead of one by one.)
 	$topic_ids = array();
 	$profile_ids = array();
+	$profile_names = array();
 	$board_ids = array();
 
 	$data = array();
@@ -361,11 +362,19 @@ function determineActions($urls, $preferred_prefix = false)
 			// Viewing/editing a profile.
 			if ($actions['action'] == 'profile')
 			{
+				$data[$k] = $txt['who_hidden'];
+
+				// Pretty URL?
+				if (!empty($actions['user']))
+				{
+					$profile_names[$actions['user']][$k] = $actions['action'] == 'profile' ? $txt['who_viewprofile'] : $txt['who_profile'];
+					continue;
+				}
+
 				// Whose? Their own?
 				if (empty($actions['u']))
 					$actions['u'] = $url[1];
 
-				$data[$k] = $txt['who_hidden'];
 				$profile_ids[(int) $actions['u']][$k] = $actions['action'] == 'profile' ? $txt['who_viewprofile'] : $txt['who_profile'];
 			}
 			elseif (($actions['action'] == 'post' || $actions['action'] == 'post2') && empty($actions['topic']) && isset($actions['board']))
@@ -479,7 +488,7 @@ function determineActions($urls, $preferred_prefix = false)
 			if (isset($actions['who_error_raw']))
 				$error_message = str_replace('"', '&quot;', $actions['who_error_raw']);
 			elseif (isset($actions['who_error_lang'], $txt[$actions['who_error_lang']]))
-				$error_message = str_replace('"', '&quot;', empty($action['who_error_params']) ? $txt[$actions['who_error_lang']] : vsprintf($txt[$actions['who_error_lang']], $action['who_error_params']));
+				$error_message = str_replace('"', '&quot;', empty($actions['who_error_params']) ? $txt[$actions['who_error_lang']] : vsprintf($txt[$actions['who_error_lang']], $action['who_error_params']));
 			elseif (isset($actions['who_warn']))
 				$error_message = str_replace('"', '&quot;', $txt['who_guest_login']);
 
@@ -567,6 +576,29 @@ function determineActions($urls, $preferred_prefix = false)
 				$data[$k] = sprintf($session_text, $row['id_member'], $row['real_name']);
 		}
 		wesql::free_result($result);
+	}
+
+	if (!empty($profile_names) && (allowedTo('profile_view_any') || allowedTo('profile_view_own')))
+	{
+		$result = wesql::query('
+			SELECT id_member, member_name, real_name
+			FROM {db_prefix}members
+			WHERE member_name IN ({array_string:members})
+			LIMIT ' . count($profile_names),
+			array(
+				'members' => array_keys($profile_names),
+			)
+		);
+		while ($row = wesql::fetch_assoc($result))
+		{
+			// If they aren't allowed to view this person's profile, skip it.
+			if (!allowedTo('profile_view_any') && we::$id != $row['id_member'])
+				continue;
+
+			// Set their action on each - session/text to sprintf.
+			foreach ($profile_names[$row['member_name']] as $k => $session_text)
+				$data[$k] = sprintf($session_text, $row['id_member'], $row['real_name']);
+		}
 	}
 
 	// While the above whos_online hook is good for more complex cases than action=x;sa=y, it's not particularly efficient if you're dealing with multiple lookups and so on. Thus the bulk hook too.
