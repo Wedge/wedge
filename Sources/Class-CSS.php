@@ -456,14 +456,14 @@ class wess_if extends wess
 		if (!$this->test_vars)
 		{
 			// List of browsers that support the STANDARD flexbox model (i.e. display: flex)
-			// Chrome supports it with a prefix.
+			// Chrome supports it with a prefix. Opera 12.1+ supports it, but in a broken way. Maybe not worth bothering..?
 			if (strpos($css, 'can_flex') !== false)
-				$css = preg_replace('~\bcan_flex\b~', '(firefox[20-], chrome[21-], opera[12.1-])', $css);
+				$css = preg_replace('~\bcan_flex\b~', '(firefox[20-], chrome[21-])', $css);
 
 			// List of browsers that support the previous/TWEEN flexbox model (i.e. display: flexbox)
 			// Really, it's just IE10... And it requires a prefix.
 			if (strpos($css, 'can_flex_flexbox') !== false)
-				$css = preg_replace('~\bcan_flex_flexbox\b~', 'ie10', $css);
+				$css = preg_replace('~\bcan_flex_flexbox\b~', '(ie10)', $css);
 
 			// List of browsers that support the OLD flexbox model (i.e. display: box)
 			// All require a prefix.
@@ -511,7 +511,11 @@ class wess_if extends wess
 		// This one is cleaner, but more demanding in terms of structure. @endif is required,
 		// and all three commands need to be on the same tab level. Respect this or crash Wess.
 		// You can nest commands inside @if and @else as well.
-		while (preg_match_all('~(?<=\n)(\h*)@if\h+([^\n' . ($this->test_vars ? '' : '$') . ']+)(\n(?:[^@]|@(?!if\h))*?)\n\1@endif~i', $css, $matches, PREG_SET_ORDER))
+
+		// PHP has too high a regex recursion limit, especially in Windows.
+		// ini_set('pcre.recursion_limit', '524');
+
+		while (preg_match_all('~(?<=\n)(\h*)@if\h+([^\n' . ($this->test_vars ? '' : '$') . ']+)(\n(?>[^@]|@(?!if\h))*?)\n\1@endif~i', $css, $matches, PREG_SET_ORDER))
 		{
 			foreach ($matches as $m)
 			{
