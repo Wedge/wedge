@@ -15,8 +15,8 @@
 // Split a quote (or any unclosed tag) if we press Shift+Enter inside it.
 function splitQuote(e)
 {
-	// Did we just press Shift+Enter or Ctrl+Enter?
-	if (e.which != 13 || (!e.shiftKey && !e.ctrlKey))
+	// Did we just press Shift+Enter or Ctrl+Enter? (Mobile devices get the feature for free. No Shift/Ctrl keys...)
+	if (e.which != 13 || (!is_touch && !e.shiftKey && !e.ctrlKey))
 		return true;
 
 	// Where are we, already?
