@@ -73,7 +73,7 @@ function Post($post_errors = array())
 
 	$context['form_fields'] = array(
 		'text' => array('subject', 'icon', 'guestname', 'email', 'evtitle', 'question', 'topic'),
-		'numeric' => array('board', 'topic', 'last_msg', 'poll_max_votes', 'poll_expire', 'poll_change_vote', 'poll_hide'),
+		'numeric' => array('board', 'topic', 'last', 'poll_max_votes', 'poll_expire', 'poll_change_vote', 'poll_hide'),
 		'checkbox' => array('ns'),
 	);
 

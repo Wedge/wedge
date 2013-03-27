@@ -291,7 +291,7 @@ function template_main_blog()
 				{
 					// If quick reply is open, point directly to it, otherwise use the regular reply page
 					if (empty($options['display_quick_reply']) || $options['display_quick_reply'] != 2)
-						$reply_url = '<URL>?action=post;topic=' . $topic['id'] . '.0;last_msg=' . $topic['last_post']['id'];
+						$reply_url = '<URL>?action=post;topic=' . $topic['id'] . '.0;last=' . $topic['last_post']['id'];
 					else
 						$reply_url = substr($topic['last_post']['href'], 0, strpos($topic['last_post']['href'], '#')) . '#quickreply';
 

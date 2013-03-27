@@ -79,8 +79,8 @@ function previewPost()
 			$postbox.css('border', 0);
 
 		// Set the new last message id.
-		if ('last_msg' in postmod)
-			postmod.last_msg.value = $('last_msg', XMLDoc).text();
+		if ('last' in postmod)
+			postmod.last.value = $('last', XMLDoc).text();
 
 		// Remove the new image from old-new replies!
 		for (i = 0; i < new_replies.length; i++)

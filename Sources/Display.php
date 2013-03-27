@@ -1225,7 +1225,7 @@ function Display()
 	// Lastly, set up the navigation items that we're going to be using.
 	$context['nav_buttons'] = array(
 		'normal' => array(
-			'reply' => array('test' => 'can_reply', 'text' => 'reply', 'url' => '<URL>?action=post;topic=' . $context['current_topic'] . '.' . $context['start'] . ';last_msg=' . $context['topic_last_message'], 'class' => 'active'),
+			'reply' => array('test' => 'can_reply', 'text' => 'reply', 'url' => '<URL>?action=post;topic=' . $context['current_topic'] . '.' . $context['start'] . ';last=' . $context['topic_last_message'], 'class' => 'active'),
 			($context['is_marked_notify'] ? 'unnotify' : 'notify') => array('test' => 'can_mark_notify', 'text' => $context['is_marked_notify'] ? 'unnotify' : 'notify', 'custom' => 'onclick="return ask(' . JavaScriptEscape($txt['notification_' . ($context['is_marked_notify'] ? 'disable_topic' : 'enable_topic')]) . ', e);"', 'url' => '<URL>?action=notify;sa=' . ($context['is_marked_notify'] ? 'off' : 'on') . ';topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_query']),
 			'mark_unread' => array('test' => 'can_mark_unread', 'text' => 'mark_unread', 'url' => '<URL>?action=markasread;sa=topic;t=' . $context['mark_unread_time'] . ';topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_query']),
 			'send' => array('test' => 'can_send_topic', 'text' => 'send_topic', 'url' => '<URL>?action=emailuser;sa=sendtopic;topic=' . $context['current_topic'] . '.0'),

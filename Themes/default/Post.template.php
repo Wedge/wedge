@@ -289,7 +289,7 @@ function template_postform_after()
 
 	if (isset($context['topic_last_message']))
 		echo '
-			<input type="hidden" name="last_msg" value="', $context['topic_last_message'], '">';
+			<input type="hidden" name="last" value="', $context['topic_last_message'], '">';
 
 	// We always need this stuff.
 	echo '
