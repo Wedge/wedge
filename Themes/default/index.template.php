@@ -242,7 +242,7 @@ function template_language_selector()
 	$qmark = strpos(we::$user['url'], '?');
 	$lng = $qmark === false ? substr(strrchr(we::$user['url'], '/'), 1) . '?' : substr(we::$user['url'], strrpos(substr(we::$user['url'], 0, $qmark), '/') + 1) . ';';
 	if (strpos($lng, 'language=') !== false)
-		$lng = preg_replace('~([;&?])language=[a-z]+[;&]~i', '$1', $lng);
+		$lng = preg_replace('~([;&?])language=[a-z-]+[;&]~i', '$1', $lng);
 
 	echo '
 			<p>';
@@ -278,9 +278,9 @@ function template_logo_toggler()
 	add_js('
 	new weToggle({', empty($options['collapse_header']) ? '' : '
 		isCollapsed: true,', '
-		aSwapContainers: [\'upper_section\'],
-		aSwapImages: [\'upshrink\'],
-		sOption: \'collapse_header\'
+		aSwapContainers: ["upper_section"],
+		aSwapImages: ["upshrink"],
+		sOption: "collapse_header"
 	});');
 }
 

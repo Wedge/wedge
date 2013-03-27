@@ -419,7 +419,7 @@ function deleteAccount2($profile_vars, $post_errors, $memID)
 
 	checkSession();
 
-	$old_profile = &$cur_profile;
+	$old_profile =& $cur_profile;
 
 	// Too often, people remove/delete their own only account.
 	if (in_array(1, explode(',', $old_profile['additional_groups'])) || $old_profile['id_group'] == 1)

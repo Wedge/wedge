@@ -725,7 +725,7 @@ function uploadedPluginFiles()
 			{
 				$file_id = array_shift($_SESSION['uploadplugin']['flist']);
 				$files = $zip->extractByIndex(array($file_id));
-				$file = &$files[$file_id];
+				$file =& $files[$file_id];
 				$ftp->put_string($file['content'], $base_folder . '/' . $file['filename']);
 			}
 			$ftp->close();

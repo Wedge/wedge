@@ -39,7 +39,7 @@ class Notification
 	 * @access public
 	 * @param int $id If specified, then fetches the notification of this ID
 	 * @param int $id_member If specified, then fetches the notification of this member
-	 * @param int $count 0 for no limiit
+	 * @param int $count 0 for no limit
 	 * @param bool $unread (Optional) Whether to fetch only unread notifications or not
 	 * @param int $object (Optional) If specified, limits it down to one object
 	 * @param string $notifier (Optional) If specified, limits it down to the notifier
@@ -58,7 +58,7 @@ class Notification
 				AND unread = 1' : '') . (!empty($object) ? '
 				AND id_object = {int:object}' : '') . (!empty($notifier) ? '
 				AND notifier = {string:notifier}' : '') . '
-			ORDER BY time DESC' . (!empty($count) ? '
+			ORDER BY time DESC' . ($count ? '
 			LIMIT {int:count}' : ''),
 			array(
 				'id' => (int) $id,
