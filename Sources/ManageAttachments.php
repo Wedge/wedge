@@ -701,7 +701,7 @@ function RemoveAttachmentByAge()
 		if (!empty($messages))
 			wesql::query('
 				UPDATE {db_prefix}messages
-				SET body = CONCAT(body, ' . (!empty($_POST['notice']) ? '{string:notice}' : '') . ')
+				SET body = CONCAT(body, {string:notice})
 				WHERE id_msg IN ({array_int:messages})',
 				array(
 					'messages' => $messages,
@@ -730,7 +730,7 @@ function RemoveAttachmentBySize()
 	if (!empty($messages))
 		wesql::query('
 			UPDATE {db_prefix}messages
-			SET body = CONCAT(body, ' . (!empty($_POST['notice']) ? '{string:notice}' : '') . ')
+			SET body = CONCAT(body, {string:notice})
 			WHERE id_msg IN ({array_int:messages})',
 			array(
 				'messages' => $messages,

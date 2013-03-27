@@ -1362,11 +1362,10 @@ function wedge_get_skin_options()
  * @param string $extensions Optional, a comma-separated list of file extensions that should be pruned. Leave empty to clear the regular data cache (data sub-folder.)
  * @param string $filter Optional, designates a filter to match the files either again a name mask, or a modification date, before they can be cleared from the cache folder.
  * @param string $force_folder Optional, used internally for recursivity.
- * @todo Figure out a better way of doing this and get rid of $sourcedir being globalled again.
  */
 function clean_cache($extensions = 'php', $filter = '', $force_folder = '')
 {
-	global $cachedir, $cssdir, $jsdir, $sourcedir;
+	global $cachedir, $cssdir, $jsdir;
 
 	$folder = $cachedir;
 	$is_recursive = false;

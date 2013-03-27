@@ -539,13 +539,11 @@ function template_edit_censored()
 	// Show text boxes for censoring [bad   ] => [good  ].
 	foreach ($context['censored_words'] as $vulgar => $proper)
 		echo '
-				<div style="margin-top: 1ex"><input name="censor_vulgar[]" value="', $vulgar, '" size="20"> => <input name="censor_proper[]" value="', $proper, '" size="20"></div>';
+				<div style="margin-top: 1ex"><input name="censor_vulgar[]" value="', $vulgar, '" size="20"> =&gt; <input name="censor_proper[]" value="', $proper, '" size="20"></div>';
 
 	// Now provide a way to censor more words.
 	echo '
-				<noscript>
-					<div style="margin-top: 1ex"><input name="censor_vulgar[]" size="20"> => <input name="censor_proper[]" size="20"></div>
-				</noscript>
+				<div style="margin-top: 1ex"><input name="censor_vulgar[]" size="20"> =&gt; <input name="censor_proper[]" size="20"></div>
 				<div id="moreCensoredWords"></div><div style="margin-top: 1ex; display: none" id="moreCensoredWords_link"><a href="#" onclick="addNewWord(); return false;">', $txt['censor_clickadd'], '</a></div>';
 
 	add_js('

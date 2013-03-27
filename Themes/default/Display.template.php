@@ -409,7 +409,7 @@ function template_display_whoviewing()
 		<we:title>
 			<img src="', $theme['images_url'], '/icons/online.gif" alt="', $txt['online_users'], '">', $txt['who_title'], '
 		</we:title>
-		<p>';
+		<p class="onlineinfo">';
 
 	// Show just numbers...?
 	if ($settings['display_who_viewing'] == 1)

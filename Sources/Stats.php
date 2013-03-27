@@ -36,6 +36,9 @@ function Stats()
 
 	isAllowedTo('view_stats');
 
+	if (empty($settings['trackStats']))
+		fatal_lang_error('cannot_view_stats', false);
+
 	if (!empty($_REQUEST['expand']))
 	{
 		$context['robot_no_index'] = true;

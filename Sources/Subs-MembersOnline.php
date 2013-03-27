@@ -105,7 +105,7 @@ function getMembersOnlineStats($membersOnlineOptions)
 		if ($is_buddy)
 		{
 			$membersOnlineStats['num_buddies']++;
-			$link = '<strong>' . $link . '</strong>';
+			$link .= ' <span class="contact"></span>';
 		}
 
 		// A lot of useful information for each member.
@@ -122,7 +122,7 @@ function getMembersOnlineStats($membersOnlineOptions)
 		);
 
 		// This is the compact version, simply implode it to show.
-		$membersOnlineStats['list_users_online'][$row[$membersOnlineOptions['sort']] . $row['member_name']] = empty($row['show_online']) ? '<em>' . $link . '</em>' : $link;
+		$membersOnlineStats['list_users_online'][$row[$membersOnlineOptions['sort']] . $row['member_name']] = empty($row['show_online']) ? $link . ' <span class="notonline" title="' . $txt['hidden'] . '"></span>' : $link;
 
 		// Store all distinct (primary) membergroups that are shown.
 		if (!isset($membersOnlineStats['online_groups'][$row['id_group']]))
@@ -138,7 +138,7 @@ function getMembersOnlineStats($membersOnlineOptions)
 		foreach ($spider_finds as $id => $count)
 		{
 			$link = $spiders[$id] . ($count > 1 ? ' (' . $count . ')' : '');
-			$sort = $membersOnlineOptions['sort'] = 'log_time' && $membersOnlineOptions['reverse_sort'] ? 0 : 'zzz_';
+			$sort = $membersOnlineOptions['sort'] === 'log_time' && $membersOnlineOptions['reverse_sort'] ? 0 : 'zzz_';
 			$membersOnlineStats['users_online'][$sort . $spiders[$id]] = array(
 				'id' => 0,
 				'username' => $spiders[$id],
@@ -246,7 +246,7 @@ function trackStatsUsersOnline($total_users_online)
 // Get the list of users viewing a board/topic
 function getMembersOnlineDetails($type = 'board')
 {
-	global $context, $board, $topic;
+	global $context, $board, $topic, $txt;
 
 	if ($type !== 'board' && $type !== 'topic')
 		return;
@@ -278,11 +278,11 @@ function getMembersOnlineDetails($type = 'board')
 
 		$is_buddy = in_array($row['id_member'], we::$user['buddies']);
 		if ($is_buddy)
-			$link = '<strong>' . $link . '</strong>';
+			$link .= ' <span class="contact"></span>';
 
 		// Add them both to the list and to the more detailed list.
 		if (!empty($row['show_online']) || allowedTo('moderate_forum'))
-			$context['view_members_list'][$row['log_time'] . $row['member_name']] = empty($row['show_online']) ? '<em>' . $link . '</em>' : $link;
+			$context['view_members_list'][$row['log_time'] . $row['member_name']] = empty($row['show_online']) ? $link . ' <span class="notonline" title="' . $txt['hidden'] . '"></span>' : $link;
 		$context['view_members'][$row['log_time'] . $row['member_name']] = array(
 			'id' => $row['id_member'],
 			'username' => $row['member_name'],

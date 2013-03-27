@@ -1080,6 +1080,15 @@ function EnablePlugin()
 		)
 	);
 
+	logAction(
+		'enable_plugin',
+		array(
+			'plugin' => westr::htmlspecialchars((string) $manifest->name),
+			'version' => westr::htmlspecialchars((string) $manifest->version),
+		),
+		'admin'
+	);
+
 	redirectexit('action=admin;area=plugins');
 }
 
@@ -1179,6 +1188,15 @@ function DisablePlugin($manifest = null, $plugin = null)
 			'settings_updated' => time(),
 			'plugins_admin' => $admin_cache,
 		)
+	);
+
+	logAction(
+		'disable_plugin',
+		array(
+			'plugin' => westr::htmlspecialchars((string) $manifest->name),
+			'version' => westr::htmlspecialchars((string) $manifest->version),
+		),
+		'admin'
 	);
 
 	if (empty($plugin))

@@ -493,7 +493,7 @@ function template_messageindex_whoviewing()
 		<we:title>
 			<img src="', $theme['images_url'], '/icons/online.gif" alt="', $txt['online_users'], '">', $txt['who_title'], '
 		</we:title>
-		<p>';
+		<p class="onlineinfo">';
 
 	if ($settings['display_who_viewing'] == 1)
 		echo count($context['view_members']), ' ', count($context['view_members']) === 1 ? $txt['who_member'] : $txt['members'];

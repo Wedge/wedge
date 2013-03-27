@@ -79,6 +79,14 @@ section.ic
 .ic + .ic .title final
 	margin-top: 0
 
+.onlineinfo
+	.contact mixes .inline-block
+		width, height: 16px
+		background-image: url-no-base64($images/icons/online.gif) // this doesn't get much use
+	.notonline mixes .inline-block
+		width, height: 16px
+		background-image: url-no-base64($images/hidden.png) // nor this
+
 // The small stats
 #index_common_stats
 	display: block

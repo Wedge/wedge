@@ -28,7 +28,10 @@ loadLanguage('ManagePaid');
 
 // If there's literally nothing coming in, let's take flight!
 if (empty($_POST))
+{
+	header('Content-Type: text/html; charset=UTF-8');
 	exit($txt['paid_no_data']);
+}
 
 // I assume we're even active?
 if (empty($settings['paid_enabled']))
