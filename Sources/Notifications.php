@@ -68,6 +68,12 @@ class weNotif
 		));
 
 		// Register the notifiers
+		if (!empty(we::$id))
+		{
+			loadSource('Class-NotifierLikes');
+			self::$notifiers['likes'] = new Likes_Notifier();
+		}
+
 		call_hook('notification_callback', array(&self::$notifiers));
 
 		foreach (self::$notifiers as $notifier => $object)

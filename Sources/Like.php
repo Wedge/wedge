@@ -83,7 +83,7 @@ function Like()
 
 			// Validate this message is in this topic.
 			$request = wesql::query('
-				SELECT id_topic, id_member
+				SELECT id_topic, id_member, subject
 				FROM {db_prefix}messages
 				WHERE id_msg = {int:msg}',
 				array(
@@ -93,7 +93,7 @@ function Like()
 			$in_topic = false;
 			if (wesql::num_rows($request) != 0)
 			{
-				list ($id_topic, $id_author) = wesql::fetch_row($request);
+				list ($id_topic, $id_author, $subject) = wesql::fetch_row($request);
 				$in_topic = $id_topic == $topic;
 			}
 			wesql::free_result($request);
@@ -148,6 +148,17 @@ function Like()
 			array('id_content', 'content_type', 'id_member')
 		);
 		$now_liked = true;
+
+		// Send notifications. Just posts for now.
+		if (!empty($id_author) && !empty($subject))
+			Notification::issue($id_author, WeNotif::getNotifiers('likes'), $_REQUEST['msg'], array(
+				'topic' => $topic,
+				'subject' => $subject,
+				'member' => array(
+					'id' => we::$id,
+					'name' => we::$user['name'],
+				),
+			));
 	}
 
 	wesql::free_result($request);

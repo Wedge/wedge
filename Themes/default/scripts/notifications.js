@@ -86,7 +86,7 @@ $(function ()
 				)
 				.click(function(e)
 				{
-					location = weUrl('action=notification;area=redirect;id=' + item.id);
+					location = weUrl('action=notification;sa=redirect;in=' + item.id);
 				});
 
 			$template.find('.notification_markread')
@@ -96,7 +96,7 @@ $(function ()
 					var count = parseInt($('.notification_count:first').text()) - 1;
 					$('.notification_count').attr('class', 'notification_count ' + (count > 0 ? 'notenice' : 'note')).text(count);
 
-					$.get(weUrl('?action=notification;area=markread;id=' + item.id));
+					$.get(weUrl('?action=notification;sa=markread;in=' + item.id));
 
 					e.stopImmediatePropagation();
 					return false;

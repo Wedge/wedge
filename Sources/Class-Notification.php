@@ -283,14 +283,15 @@ class Notification
 		}
 
 		// Update the unread notification count
-		wesql::query('
-			UPDATE {db_prefix}members
-			SET unread_notifications = unread_notifications + 1
-			WHERE id_member IN ({array_int:member})',
-			array(
-				'member' => array_keys($notifications),
-			)
-		);
+		if (!empty($notifications))
+			wesql::query('
+				UPDATE {db_prefix}members
+				SET unread_notifications = unread_notifications + 1
+				WHERE id_member IN ({array_int:member})',
+				array(
+					'member' => array_keys($notifications),
+				)
+			);
 
 		// Run the post notify hook
 		$notifier->afterNotify($notifications);

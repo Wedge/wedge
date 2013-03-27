@@ -59,7 +59,7 @@ function template_notifications_list()
 	{
 		echo '
 			<p class="', $notification->getUnread() ? 'description' : 'wrc windowbg',
-			'" style="font-size: 1em; cursor: pointer" onclick="location = \'<URL>?action=notification;area=redirect;in=', $notification->getID(), '\'">
+			'" style="font-size: 1em; cursor: pointer" onclick="location = \'<URL>?action=notification;sa=redirect;in=', $notification->getID(), '\'">
 				', $notification->getText(), '<br />
 				<span class="smalltext">', timeformat($notification->getTime()), '</span>
 			</p>';
