@@ -34,6 +34,9 @@ ul.buttonlist
 #error_box
 	padding: 4px
 
+#quick_edit_body_container
+	margin: 4px 0 12px // top section already has #error_box padding to compensate.
+
 #qm_subject
 	width: 80%
 

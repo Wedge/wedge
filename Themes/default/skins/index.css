@@ -972,6 +972,48 @@ li.separator
 		background-position: 85% 5px
 		background-position: calc(100% - 15px) 5px
 
+/* Styles for the mini-menus.
+---------------------------------------------------- */
+
+// Wrapper span that will contain the menu...
+.mime mixes .inline-block
+	position: relative
+
+	// Styling for the parent link when the menu is open.
+	:hover > a
+		text-decoration: underline
+
+// Styling for the mini-menu container below the parent link...
+.mimenu
+	z-index: 42
+	position: absolute
+	padding: 10px 0 0
+	font: 400 14px/20px $main_font
+	top: 100%
+	left: -10px
+	&.right
+		left: auto
+		right: -10px
+
+	// ...And for the mini-menu itself (phew.)
+	ul
+		white-space: nowrap
+		background: #fbfbf8 // rgba(255,255,255, .5)
+		margin: 0
+		padding: 4px
+		border: 1px solid rgba(0,0,0, .2)
+		border-radius: 5px
+		box-shadow: 1px 1px 6px rgba(0,0,0, .25)
+
+		li
+			background-color: $window_bg
+			display: block
+			margin: 0
+			padding: 1px 2px
+			text-align: left
+			a
+				padding-left: 25px
+
 /* Common positioning/sizing classes to ease styling.
 ------------------------------------------------------- */
 
@@ -1720,55 +1762,66 @@ th.last_th
 
 /* A few styles for notifications
 ------------------------------------------------------- */
-.notification_trigger
-	cursor: pointer
+@if member
+	.notifs
+		-prefix-user-select: none
+		height, line-height: 25px
+		cursor: pointer
+		overflow: visible
+		position: relative
+		#top_section .frame &
+			margin-top: .2em
 
-.notification_count
-	font-size: 0.9em
+	.n_count
+		font-size: 0.9em
 
-#notification_shade extends .mimenu
-	max-width: 250px
-	padding: 0!important
-	background: none
-	ul.actions
-		white-space: normal
+	.notifs .mimenu
+		max-width: 500px
+		display: none
+		ul.actions
+			white-space: normal
+		ul li
+			padding: 0
 
-.notification_trigger a
-	display: inline!important
-	padding: 0
-	padding-left: 0!important
-	font-size: 0.6em
+	.notification_container
+		max-height: 24em
+		overflow: auto
+		hr
+			margin: 0
+			:last-child
+				visibility: hidden
 
-.notification_container
-	max-height: 24em
-	overflow: auto
-	hr
-		margin: 0
+	.notification
+		padding: 6px 8px
 
-.notification
-	cursor: pointer
+	.notification_text
+		cursor: pointer
+		font-size: .9em
+		color: #444
+		img
+			float: left
+			padding: 0
+			margin-right: 10px
+			max-width: 50px
 
-.notification_text
-	color: #444
-	padding-left: 10px
-	padding-top: 10px
+	.notification_markread
+		float: left
+		margin: 0 0 0 -8px
+		padding: 0 8px 0
+		display: none
 
-.notification_markread
-	float: left
-	width: 10px
-	padding: 0 10px 0px 10px
-	display: none
-	:parent
-		width: 100%
-		padding-bottom: 10px
+	.notification_time
+		float: right
+		width: 70%
+		text-align: right
 
-.notification_time
-	float: right
-	width: 70%
-	text-align: right
+	h6
+		font-size: 12pt
+		text-align: center
+@endif
 
-/* Don't touch this -- this hack dynamically adds language flags.
------------------------------------------------------------------- */
+/* Don't touch this -- these are placeholders for CSS added by Wess.
+-------------------------------------------------------------------- */
 
 @dynamic language_flags
 

@@ -647,7 +647,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 		return false;
 
 	// Make sure it's an array.
-	$users = !is_array($users) ? array($users) : array_unique($users);
+	$users = !is_array($users) ? array($users) : array_flip(array_flip($users));
 	$loaded_ids = array();
 
 	if (!$is_name && !empty($settings['cache_enable']) && $settings['cache_enable'] >= 3)
@@ -978,18 +978,6 @@ function loadMemberContext($user, $full_profile = false)
 	$profile['buddy'] = in_array($profile['id_member'], we::$user['buddies']);
 	$buddy_list = !empty($profile['buddy_list']) ? explode(',', $profile['buddy_list']) : array();
 
-	// If we're always html resizing, assume it's too large.
-	if ($settings['avatar_action_too_large'] == 'option_html_resize' || $settings['avatar_action_too_large'] == 'option_js_resize')
-	{
-		$avatar_width = !empty($settings['avatar_max_width_external']) ? ' width="' . $settings['avatar_max_width_external'] . '"' : '';
-		$avatar_height = !empty($settings['avatar_max_height_external']) ? ' height="' . $settings['avatar_max_height_external'] . '"' : '';
-	}
-	else
-	{
-		$avatar_width = '';
-		$avatar_height = '';
-	}
-
 	// What a monstrous array...
 	$memberContext[$user] = array(
 		'username' => $profile['member_name'],
@@ -1063,55 +1051,8 @@ function loadMemberContext($user, $full_profile = false)
 	}
 
 	// Avatars are tricky, so let's do them next.
-	// So, they're not banned, or if they are, we're not hiding their avatar.
-	if (!$memberContext[$user]['is_banned'] || empty($settings['avatar_banned_hide']))
-	{
-		// So it's stored in members/avatar?
-		if (!empty($profile['avatar']))
-		{
-			if (stristr($profile['avatar'], 'gravatar://'))
-			{
-				if ($profile['avatar'] === 'gravatar://' || empty($settings['gravatarAllowExtraEmail']))
-					$image = get_gravatar_url($profile['email_address']);
-				else
-					$image = get_gravatar_url(substr($profile['avatar'], 11));
-
-				$memberContext[$user]['avatar'] = array(
-					'name' => $profile['avatar'],
-					'image' => '<img class="avatar" src="' . $image . '"' . $avatar_width . $avatar_height . '>',
-					'href' => $image,
-					'url' => $image,
-				);
-			}
-			else
-				$memberContext[$user]['avatar'] = array(
-					'name' => $profile['avatar'],
-					'image' => stristr($profile['avatar'], 'http://') ? '<img class="avatar" src="' . $profile['avatar'] . '"' . $avatar_width . $avatar_height . '>' : '<img class="avatar" src="' . $settings['avatar_url'] . '/' . htmlspecialchars($profile['avatar']) . '">',
-					'href' => stristr($profile['avatar'], 'http://') ? $profile['avatar'] : $settings['avatar_url'] . '/' . $profile['avatar'],
-					'url' => stristr($profile['avatar'], 'http://') ? $profile['avatar'] : $settings['avatar_url'] . '/' . $profile['avatar'],
-				);
-		}
-		// It's an attachment?
-		elseif (!empty($profile['id_attach']))
-		{
-			if (!$profile['transparency'])
-			{
-				$filename = getAttachmentFilename($profile['filename'], $profile['id_attach'], $profile['id_folder']);
-				$profile['transparency'] = we_resetTransparency($profile['id_attach'], $filename, $profile['filename']) ? 'transparent' : 'opaque';
-			}
-			$memberContext[$user]['avatar'] = array(
-				'name' => $profile['avatar'],
-				'image' => $profile['id_attach'] > 0 ? '<img class="' . ($profile['transparency'] == 'transparent' ? '' : 'opaque ') . 'avatar" src="' . (empty($profile['attachment_type']) ? '<URL>?action=dlattach;attach=' . $profile['id_attach'] . ';type=avatar' : $settings['custom_avatar_url'] . '/' . $profile['filename']) . '">' : '',
-				'href' => $profile['id_attach'] > 0 ? (empty($profile['attachment_type']) ? '<URL>?action=dlattach;attach=' . $profile['id_attach'] . ';type=avatar' : $settings['custom_avatar_url'] . '/' . $profile['filename']) : '',
-				'url' => '',
-			);
-		}
-		// Default avatar?
-		elseif (false)
-		{
-			// !!! @todo: Finish this.
-		}
-	}
+	if (!empty($profile['avatar']))
+		loadMemberAvatar($user);
 
 	// Are we also loading the members custom fields into context?
 	if ($full_profile && !empty($settings['displayFields']))
@@ -1155,6 +1096,84 @@ function loadMemberContext($user, $full_profile = false)
 	}
 
 	return true;
+}
+
+/**
+ * Load avatar data into $memberContext[$user]
+ */
+function loadMemberAvatar($user)
+{
+	global $settings, $memberContext, $user_profile;
+	static $dataLoaded = array();
+
+	// If this person's avatar is already loaded, skip it.
+	if (isset($dataLoaded[$user]))
+		return true;
+
+	$dataLoaded[$user] = true;
+	$profile = $user_profile[$user];
+
+	// So, they're not banned, or if they are, we're not hiding their avatar.
+	if (isset($memberContext[$user]) && $memberContext[$user]['is_banned'] && !empty($settings['avatar_banned_hide']))
+		return;
+
+	// If we're always html resizing, assume it's too large.
+	if ($settings['avatar_action_too_large'] == 'option_html_resize' || $settings['avatar_action_too_large'] == 'option_js_resize')
+	{
+		$avatar_width = !empty($settings['avatar_max_width_external']) ? ' width="' . $settings['avatar_max_width_external'] . '"' : '';
+		$avatar_height = !empty($settings['avatar_max_height_external']) ? ' height="' . $settings['avatar_max_height_external'] . '"' : '';
+	}
+	else
+	{
+		$avatar_width = '';
+		$avatar_height = '';
+	}
+
+	// So it's stored in members/avatar?
+	if (!empty($profile['avatar']))
+	{
+		if (stristr($profile['avatar'], 'gravatar://'))
+		{
+			if ($profile['avatar'] === 'gravatar://' || empty($settings['gravatarAllowExtraEmail']))
+				$image = get_gravatar_url($profile['email_address']);
+			else
+				$image = get_gravatar_url(substr($profile['avatar'], 11));
+
+			$memberContext[$user]['avatar'] = array(
+				'name' => $profile['avatar'],
+				'image' => '<img class="avatar" src="' . $image . '"' . $avatar_width . $avatar_height . '>',
+				'href' => $image,
+				'url' => $image,
+			);
+		}
+		else
+			$memberContext[$user]['avatar'] = array(
+				'name' => $profile['avatar'],
+				'image' => stristr($profile['avatar'], 'http://') ? '<img class="avatar" src="' . $profile['avatar'] . '"' . $avatar_width . $avatar_height . '>' : '<img class="avatar" src="' . $settings['avatar_url'] . '/' . htmlspecialchars($profile['avatar']) . '">',
+				'href' => stristr($profile['avatar'], 'http://') ? $profile['avatar'] : $settings['avatar_url'] . '/' . $profile['avatar'],
+				'url' => stristr($profile['avatar'], 'http://') ? $profile['avatar'] : $settings['avatar_url'] . '/' . $profile['avatar'],
+			);
+	}
+	// It's an attachment?
+	elseif (!empty($profile['id_attach']))
+	{
+		if (!$profile['transparency'])
+		{
+			$filename = getAttachmentFilename($profile['filename'], $profile['id_attach'], $profile['id_folder']);
+			$profile['transparency'] = we_resetTransparency($profile['id_attach'], $filename, $profile['filename']) ? 'transparent' : 'opaque';
+		}
+		$memberContext[$user]['avatar'] = array(
+			'name' => $profile['avatar'],
+			'image' => $profile['id_attach'] > 0 ? '<img class="' . ($profile['transparency'] == 'transparent' ? '' : 'opaque ') . 'avatar" src="' . (empty($profile['attachment_type']) ? '<URL>?action=dlattach;attach=' . $profile['id_attach'] . ';type=avatar' : $settings['custom_avatar_url'] . '/' . $profile['filename']) . '">' : '',
+			'href' => $profile['id_attach'] > 0 ? (empty($profile['attachment_type']) ? '<URL>?action=dlattach;attach=' . $profile['id_attach'] . ';type=avatar' : $settings['custom_avatar_url'] . '/' . $profile['filename']) : '',
+			'url' => '',
+		);
+	}
+	// Default avatar?
+	elseif (false)
+	{
+		// !!! @todo: Finish this.
+	}
 }
 
 /**

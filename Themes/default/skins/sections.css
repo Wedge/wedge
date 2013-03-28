@@ -381,12 +381,15 @@ hr.separator
 	clear: right
 
 .post
-	padding: 0
-	margin: 1.2em 0
+	margin, padding: 0
 	@if can_flex
 		.root &
 			flex: 1
 	@endif
+
+// Setting a margin here helps take advantage of margin collapsing. (e.g. when a post starts with a quote.)
+.inner
+	margin: 1.2em .7em
 
 // All the signatures used in the forum. You might want to add max-height here ;)
 .signature, .attachments
@@ -502,9 +505,6 @@ hr.separator
  * End of list.
  */
 
-.inner
-	padding: 0 .7em
-
 .smiley mixes .inline-block
 	text-indent: -999em
 	font: 0/0 Arial
@@ -553,48 +553,6 @@ ul.buttonlist extends "ul.reset, .clearfix"
 			font-weight: 700
 		:hover
 			color: #a54
-
-/* Styles for the mini-menus.
----------------------------------------------------- */
-
-// Wrapper span that will contain the menu...
-.mime mixes .inline-block
-	position: relative
-
-	// Styling for the parent link when the menu is open.
-	:hover > a
-		text-decoration: underline
-
-// Styling for the mini-menu container below the parent link...
-.mimenu
-	z-index: 42
-	position: absolute
-	padding: 10px 0 0
-	font: 400 14px/20px $main_font
-	top: 100%
-	left: -10px
-	&.right
-		left: auto
-		right: -10px
-
-	// ...And for the mini-menu itself (phew.)
-	ul
-		white-space: nowrap
-		background: #fbfbf8 // rgba(255,255,255, .5)
-		margin: 0
-		padding: 4px
-		border: 1px solid rgba(0,0,0, .2)
-		border-radius: 5px
-		box-shadow: 1px 1px 6px rgba(0,0,0, .25)
-
-		li
-			background-color: $window_bg
-			display: block
-			margin: 0
-			padding: 1px 2px
-			text-align: left
-			a
-				padding-left: 25px
 
 /* Styles for the quick reply area.
 ---------------------------------------------------- */
@@ -1201,7 +1159,7 @@ tr.windowbg td
 		background: #f0fff0
 	@if member
 		// Make life easier for members...
-		.mimenu
+		.mimenu final
 			top: 80%
 	@endif
 

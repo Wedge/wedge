@@ -11,59 +11,55 @@
  * @version 0.1
  */
 
-function template_notifications_block()
+function template_notifications()
 {
-	global $txt, $context, $settings;
+	global $txt, $context;
 
 	echo '
-	<section>
-		<header class="title notification_trigger">
-			<span class="notification_count note', $context['unread_notifications'] ? 'nice' : '', '">
-				', $context['unread_notifications'], '
-			</span>
-			', $txt['notifications'], '
-		</header>
+	<p class="notifs">
+		<span class="n_count note', $context['unread_notifications'] ? 'nice' : '', '">
+			', $context['unread_notifications'], '
+		</span>
+		', $txt['notifications'], '
 		<div id="notification_shade">
 			<ul class="actions">
 				<li>
-					<header class="title notification_trigger">
-						<span class="notification_count note', $context['unread_notifications'] ? 'nice' : '', '" >
-							', $context['unread_notifications'], '
-						</span>
-						', $txt['notifications'], '
-						<a href="<URL>?action=notification">(', $txt['view_all'], ')</a>
-					</header>
+					<h6><a href="<URL>?action=notification">(', $txt['view_all'], ')</a></h6>
 					<div class="notification_container">
 						<div class="notification template">
 							<div class="notification_text"></div>
-							<div class="clearfix">
+							<div>
 								<div class="notification_markread">x</div>
 								<div class="notification_time"></div>
 							</div>
-							<hr />
+							<hr class="clear" />
 						</div>
 					</div>
 				</li>
 			</ul>
 		</div>
-	</section>';
+	</p>';
 }
 
 function template_notifications_list()
 {
-	global $txt, $context, $settings;
+	global $txt, $context;
 
 	echo '
-		<we:title>', $txt['notifications'], '</we:title>';
+		<we:title>', $txt['notifications'], '</we:title>
+		<div class="notification_container">';
+
 	foreach ($context['notifications'] as $notification)
-	{
 		echo '
-			<p class="', $notification->getUnread() ? 'description' : 'wrc windowbg',
-			'" style="font-size: 1em; cursor: pointer" onclick="location = \'<URL>?action=notification;sa=redirect;in=', $notification->getID(), '\'">
-				', $notification->getText(), '<br />
-				<span class="smalltext">', timeformat($notification->getTime()), '</span>
-			</p>';
-	}
+			<div class="notification">
+				<div class="notification_text', $notification->getUnread() ? ' wrc windowbg' : '', '">
+					', $notification->getText(), '<br />
+					<span class="smalltext">', timeformat($notification->getTime()), '</span>
+				</div>
+			</div>';
+
+	echo '
+		</div>';
 }
 
 function template_notification_email($notifications)

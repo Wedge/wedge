@@ -12,60 +12,40 @@
 
 $(function ()
 {
-	var $shade = $("#notification_shade").remove().appendTo(document.body).hide();
+	var $shade = $('#notification_shade').remove().appendTo('.notifs').hide();
 	$shade.find('.template').hide();
 
-	var hovering = false,
-		timer = 0,
+	var
+		hovering = false,
 		is_open = false,
+		timer = 0,
 		original_title = $('title').text();
 
-	$shade.hover(
-		function () { hovering = true; },
-		function () { hovering = false; }
-	);
+	$shade.hover(function () { hovering = !hovering; });
 
 	$(document.body).click(function ()
 	{
-		if (!hovering && is_open && $.now() - timer > 200)
+		if (is_open && !hovering && $.now() - timer > 200)
 		{
 			$shade.fadeOut('fast');
 			is_open = false;
-			hovering = false;
 		}
 	});
 
-	$('.notification_trigger').click(function ()
+	$('.notifs').click(function ()
 	{
+		$shade.fadeToggle('fast');
+		is_open = !is_open;
+
 		if (is_open)
-		{
-			is_open = false;
-
-			$shade.fadeOut('fast');
-		}
-		else
-		{
-			is_open = true;
-			var $offset = $(this).parent().offset();
-			$offset.top -= 6;
-			$offset.left -= 15;
 			timer = $.now();
-
-			// Yeah I know I didn't need to set top and left CSS manually
-			// but it was adding it to the current offset instead of overwriting it
-			// hence on second or third viewing things would get weird
-			$shade
-				.css('top', $offset.top)
-				.css('left', $offset.left)
-				.fadeIn('fast');
-		}
 	});
 
-	var updateNotification = function(data)
+	var updateNotification = function (data)
 	{
 		$shade.find('.notification_container > .notification:not(.template)').remove();
 
-		$.each(data.notifs, function(index, item)
+		$.each(data.notifs, function (index, item)
 		{
 			var $template = $shade.find('.template').clone().show();
 			$template.removeClass('template');
@@ -74,43 +54,28 @@ $(function ()
 			$template.find('.notification_time').html(item.time);
 
 			$template
-				.hover(
-					function () {
-						$(this).addClass('windowbg2');
-						$(this).find('.notification_markread').show();
-					},
-					function () {
-						$(this).removeClass('windowbg2');
-						$(this).find('.notification_markread').hide();
-					}
-				)
-				.click(function(e)
+				.hover(function () { $(this).toggleClass('windowbg2').find('.notification_markread').toggle(); })
+				.click(function (e) { location = weUrl('action=notification;sa=redirect;in=' + item.id); })
+
+				.find('.notification_markread')
+				.hover(function () { $(this).toggleClass('windowbg'); })
+				.click(function (e)
 				{
-					location = weUrl('action=notification;sa=redirect;in=' + item.id);
-				});
+					$template.hide(300, function () { $(this).remove(); });
+					var count = parseInt($('.n_count:first').text()) - 1;
+					$('.n_count').attr('class', 'n_count ' + (count > 0 ? 'notenice' : 'note')).text(count);
 
-			$template.find('.notification_markread')
-				.click(function(e)
-				{
-					$template.remove();
-					var count = parseInt($('.notification_count:first').text()) - 1;
-					$('.notification_count').attr('class', 'notification_count ' + (count > 0 ? 'notenice' : 'note')).text(count);
+					$.post(weUrl('action=notification;sa=markread;in=' + item.id));
 
-					$.get(weUrl('?action=notification;sa=markread;in=' + item.id));
-
+					// Cancel the implied clink on the parent.
 					e.stopImmediatePropagation();
 					return false;
-				})
-				.hover(
-					function () { $(this).addClass('windowbg'); },
-					function () { $(this).removeClass('windowbg'); }
-				);
+				});
 
 			$template.appendTo($shade.find('.template').parent());
 		});
 
-		$('.notification_count').attr('class', 'notification_count ' + (data.count > 0 ? 'notenice' : 'note')).text(data.count);
-
+		$('.n_count').attr('class', 'n_count ' + (data.count > 0 ? 'notenice' : 'note')).text(data.count);
 		$('title').text((data.count > 0 ? '(' + data.count + ') ' : '') + original_title);
 	};
 
@@ -119,15 +84,11 @@ $(function ()
 	// Update the notification every 3 minutes
 	var auto_update = function ()
 	{
-		$.ajax({
-			url: weUrl('action=notification;area=getunread'),
-			success: function(data)
-			{
-				updateNotification(data);
-				setTimeout(auto_update, 1000 * 60 * 3);
-			}
+		$.post(weUrl('action=notification;sa=unread'), function (data) {
+			updateNotification(data);
+			setTimeout(auto_update, 180000); // 1000 * 60 * 3
 		});
 	};
 
-	setTimeout(auto_update, 1000 * 60 * 3);
+	setTimeout(auto_update, 180000);
 });

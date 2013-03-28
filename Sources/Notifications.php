@@ -101,7 +101,7 @@ class weNotif
 
 			loadTemplate('Notifications');
 
-			wetem::before('sidebar', 'notifications_block');
+			wetem::add(array('header', 'sidebar', 'default'), 'notifications');
 
 			add_js_inline('
 	we_notifs = ', json_encode(array(
@@ -121,26 +121,33 @@ class weNotif
 	 */
 	protected static function get_quick_notifications()
 	{
+		global $context;
+
 		$notifications = cache_get_data('quick_notification_' . we::$id, 86400);
 
-		if ($notifications == null)
+		// Nothing in cache? Build it.
+		if ($notifications === null)
 		{
-			$notifications = Notification::get(null, we::$id, self::$quick_count, true);
-
-			// Cache it
+			$notifications = Notification::get(null, we::$id, self::$quick_count);
 			cache_put_data('quick_notification_' . we::$id, $notifications, 86400);
 		}
 
-		$notifs = array();
+		$notifs = $notification_members = array();
 		foreach ($notifications as $notification)
 		{
+			$data = $notification->getData();
+			if (isset($data['member'], $data['member']['id']))
+				$notification_members[] = $data['member']['id'];
+		}
+		loadMemberData($notification_members);
+
+		foreach ($notifications as $notification)
 			$notifs[] = array(
 				'id' => $notification->getID(),
 				'text' => $notification->getText(),
 				'url' => $notification->getURL(),
 				'time' => timeformat($notification->getTime()),
 			);
-		}
 
 		return $notifs;
 	}
@@ -273,9 +280,16 @@ class weNotif
 		elseif (!empty($sa) && !empty(self::$notifiers[$sa]) && is_callable(self::$notifiers[$sa], 'action'))
 			return self::$notifiers[$sa]->action();
 
-		// Otherwise we're displaying all the notifications this user has
+		// Otherwise we're displaying all the notifications this user has.
 		$context['page_title'] = $txt['notifications'];
-		$context['notifications'] = Notification::get(null, we::$id, 0);
+		$context['notifications'] = (array) Notification::get(null, we::$id, 0);
+		$notification_members = array();
+		foreach ($context['notifications'] as $notif)
+		{
+			$data = $notif->getData();
+			$notification_members[] = $data['member']['id'];
+		}
+		loadMemberData($notification_members);
 
 		wetem::load('notifications_list');
 	}
