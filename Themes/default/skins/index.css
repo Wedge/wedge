@@ -1775,8 +1775,8 @@ th.last_th
 	.n_count
 		font-size: 0.9em
 
-	.notifs .mimenu
-		max-width: 500px
+	#notification_shade extends .mimenu
+		min-width: 300px
 		display: none
 		ul.actions
 			white-space: normal

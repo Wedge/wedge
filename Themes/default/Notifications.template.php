@@ -23,8 +23,8 @@ function template_notifications()
 		', $txt['notifications'], '
 		<div id="notification_shade">
 			<ul class="actions">
-				<li>
-					<h6><a href="<URL>?action=notification">(', $txt['view_all'], ')</a></h6>
+				<li class="windowbg" style="m-width: 300px">
+					<h6><a href="<URL>?action=notification" style="color: #888">(', $txt['view_all'], ')</a></h6>
 					<div class="notification_container">
 						<div class="notification template">
 							<div class="notification_text"></div>

@@ -1051,8 +1051,7 @@ function loadMemberContext($user, $full_profile = false)
 	}
 
 	// Avatars are tricky, so let's do them next.
-	if (!empty($profile['avatar']))
-		loadMemberAvatar($user);
+	loadMemberAvatar($user, true);
 
 	// Are we also loading the members custom fields into context?
 	if ($full_profile && !empty($settings['displayFields']))
@@ -1101,13 +1100,13 @@ function loadMemberContext($user, $full_profile = false)
 /**
  * Load avatar data into $memberContext[$user]
  */
-function loadMemberAvatar($user)
+function loadMemberAvatar($user, $force = false)
 {
 	global $settings, $memberContext, $user_profile;
-	static $dataLoaded = array();
+	static $dataLoaded = array(), $avatar_width = null, $avatar_height = null;
 
 	// If this person's avatar is already loaded, skip it.
-	if (isset($dataLoaded[$user]))
+	if (isset($dataLoaded[$user]) && !$force)
 		return true;
 
 	$dataLoaded[$user] = true;
@@ -1118,15 +1117,11 @@ function loadMemberAvatar($user)
 		return;
 
 	// If we're always html resizing, assume it's too large.
-	if ($settings['avatar_action_too_large'] == 'option_html_resize' || $settings['avatar_action_too_large'] == 'option_js_resize')
+	if ($avatar_width === null)
 	{
-		$avatar_width = !empty($settings['avatar_max_width_external']) ? ' width="' . $settings['avatar_max_width_external'] . '"' : '';
-		$avatar_height = !empty($settings['avatar_max_height_external']) ? ' height="' . $settings['avatar_max_height_external'] . '"' : '';
-	}
-	else
-	{
-		$avatar_width = '';
-		$avatar_height = '';
+		$set_size = $settings['avatar_action_too_large'] == 'option_html_resize' || $settings['avatar_action_too_large'] == 'option_js_resize';
+		$avatar_width = $set_size && !empty($settings['avatar_max_width_external']) ? ' width="' . $settings['avatar_max_width_external'] . '"' : '';
+		$avatar_height = $set_size && !empty($settings['avatar_max_height_external']) ? ' height="' . $settings['avatar_max_height_external'] . '"' : '';
 	}
 
 	// So it's stored in members/avatar?

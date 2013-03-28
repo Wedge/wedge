@@ -264,7 +264,7 @@ class weNotif
 			returnAjax(
 				array(
 					'count' => $unread_count,
-					'notifications' => $notifications,
+					'notifs' => $notifications,
 				)
 			);
 		}
