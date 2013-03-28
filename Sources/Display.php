@@ -74,7 +74,6 @@ function Display()
 			'report_success',
 			'display_draft',
 			'title_upper',
-			'topic_poll',
 			'postlist' => array(
 				'display_posts',
 			),
@@ -681,6 +680,10 @@ function Display()
 				'vote_button' => '<input type="' . ($pollinfo['max_votes'] > 1 ? 'checkbox' : 'radio') . '" name="options[]" value="' . $i . '">'
 			);
 		}
+
+		// Now to add it to the list
+		$sublayer = $context['poll']['show_results'] || !$context['allow_vote'] ? 'topic_poll_results' : 'topic_poll_vote';
+		wetem::before('postlist', array('topic_poll' => array($sublayer)));
 	}
 
 	// Calculate the fastest way to get the messages!
@@ -1240,6 +1243,16 @@ function Display()
 			'add_poll' => array('test' => 'can_add_poll', 'text' => 'add_poll', 'url' => '<URL>?action=poll;sa=editpoll;add;topic=' . $context['current_topic'] . '.' . $context['start']),
 		),
 	);
+
+	if ($context['is_poll'])
+		$context['nav_buttons']['poll'] = array(
+			'vote' => array('test' => 'allow_return_vote', 'text' => 'poll_return_vote', 'url' => '<URL>?topic=' . $context['current_topic'] . '.' . $context['start']),
+			'results' => array('test' => 'show_view_results_button', 'text' => 'poll_results', 'url' => '<URL>?topic=' . $context['current_topic'] . '.' . $context['start'] . ';viewresults'),
+			'change_vote' => array('test' => 'allow_change_vote', 'text' => 'poll_change_vote', 'url' => '<URL>?action=poll;sa=vote;topic=' . $context['current_topic'] . '.' . $context['start'] . ';poll=' . $context['poll']['id'] . ';' . $context['session_query']),
+			'lock' => array('test' => 'allow_lock_poll', 'text' => (!$context['poll']['is_locked'] ? 'poll_lock' : 'poll_unlock'), 'url' => '<URL>?action=poll;sa=lockvoting;topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_query']),
+			'edit' => array('test' => 'allow_edit_poll', 'text' => 'poll_edit', 'url' => '<URL>?action=poll;sa=editpoll;topic=' . $context['current_topic'] . '.' . $context['start']),
+			'remove_poll' => array('test' => 'can_remove_poll', 'text' => 'poll_remove', 'custom' => 'onclick="return ask(' . JavaScriptEscape($txt['poll_remove_warn']) . ', e);"', 'url' => '<URL>?action=poll;sa=removepoll;topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_query']),
+		);
 
 	// Restore topic. Eh? No monkey business.
 	if ($context['can_restore_topic'])

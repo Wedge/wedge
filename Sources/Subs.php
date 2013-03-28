@@ -2486,7 +2486,7 @@ function add_linktree($name, $url = null, $before = null, $after = null, $first 
 	if ($before !== null)
 		$item['extra_before'] = $before;
 	if ($after !== null)
-		$item['extra_after'] = $before;
+		$item['extra_after'] = $after;
 
 	if ($first)
 		array_unshift($context['linktree'], $item);

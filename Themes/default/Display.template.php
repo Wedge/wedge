@@ -115,26 +115,13 @@ function template_display_posts()
 	template_mini_menu('action', 'acme');
 }
 
-function template_topic_poll()
+function template_topic_poll_before()
 {
-	global $theme, $options, $context, $txt, $settings;
-
-	if (empty($context['is_poll']))
-		return;
-
-	// Build the poll moderation button array.
-	$poll_buttons = array(
-		'vote' => array('test' => 'allow_return_vote', 'text' => 'poll_return_vote', 'url' => '<URL>?topic=' . $context['current_topic'] . '.' . $context['start']),
-		'results' => array('test' => 'show_view_results_button', 'text' => 'poll_results', 'url' => '<URL>?topic=' . $context['current_topic'] . '.' . $context['start'] . ';viewresults'),
-		'change_vote' => array('test' => 'allow_change_vote', 'text' => 'poll_change_vote', 'url' => '<URL>?action=poll;sa=vote;topic=' . $context['current_topic'] . '.' . $context['start'] . ';poll=' . $context['poll']['id'] . ';' . $context['session_query']),
-		'lock' => array('test' => 'allow_lock_poll', 'text' => (!$context['poll']['is_locked'] ? 'poll_lock' : 'poll_unlock'), 'url' => '<URL>?action=poll;sa=lockvoting;topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_query']),
-		'edit' => array('test' => 'allow_edit_poll', 'text' => 'poll_edit', 'url' => '<URL>?action=poll;sa=editpoll;topic=' . $context['current_topic'] . '.' . $context['start']),
-		'remove_poll' => array('test' => 'can_remove_poll', 'text' => 'poll_remove', 'custom' => 'onclick="return ask(' . JavaScriptEscape($txt['poll_remove_warn']) . ', e);"', 'url' => '<URL>?action=poll;sa=removepoll;topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_query']),
-	);
+	global $theme, $context, $txt;
 
 	$show_voters = ($context['poll']['show_results'] || !$context['allow_vote']) && $context['allow_poll_view'];
 	echo '
-		<div class="poll_moderation">', template_button_strip($poll_buttons), '
+		<div class="poll_moderation">', template_button_strip($context['nav_buttons']['poll']), '
 		</div>
 		<we:block class="poll windowbg" header="', $txt['poll'], '" footer="', empty($context['poll']['expire_time']) ? '' :
 			($context['poll']['is_expired'] ? $txt['poll_expired_on'] : $txt['poll_expires_on']) . ': ' . $context['poll']['expire_time'] . ($show_voters ? ' - ' : ''),
@@ -143,79 +130,83 @@ function template_topic_poll()
 				<img src="', $theme['images_url'], '/topic/', $context['poll']['is_locked'] ? 'normal_poll_locked' : 'normal_poll', '.png" style="vertical-align: -4px">
 				', $context['poll']['question'], '
 			</h4>';
+}
 
-	// Are they not allowed to vote but allowed to view the options?
-	if ($context['poll']['show_results'] || !$context['allow_vote'])
-	{
-		$bar_num = 1;
-		echo '
+function template_topic_poll_results()
+{
+	global $theme, $options, $context, $txt, $settings;
+
+	$bar_num = 1;
+	echo '
 			<dl>';
 
-		// Show each option with its corresponding percentage bar.
-		foreach ($context['poll']['options'] as $option)
-		{
-			echo '
+	// Show each option with its corresponding percentage bar.
+	foreach ($context['poll']['options'] as $option)
+	{
+		echo '
 				<dt', $option['voted_this'] ? ' class="voted"' : '', '>', $option['option'], '</dt>
 				<dd class="bar', $bar_num++, $bar_num % 2 ? ' alt' : '', '">';
 
-			if ($context['allow_poll_view'])
-			{
-				echo '
-					', $option['bar_ndt'], '
+		if ($context['allow_poll_view'])
+		{
+			echo '
+				', $option['bar_ndt'], '
 					<span class="percentage', $option['voted_this'] ? ' voted' : '', '">', $option['votes'], ' (', $option['percent'], '%)</span>';
 
-				// Showing votes to users? Means we must have some votes!
-				if ($context['poll']['showing_voters'] && !empty($option['votes']))
-				{
-					$voters = '
+			// Showing votes to users? Means we must have some votes!
+			if ($context['poll']['showing_voters'] && !empty($option['votes']))
+			{
+				$voters = '
 					<br class="clear">';
 
-					// There are some names to show
-					if (!empty($option['voters']))
-					{
-						foreach ($option['voters'] as $k => $v)
-							$voters .= '<a href="<URL>?action=profile;u=' . $k . '">' . $v . '</a>, ';
-						$voters = substr($voters, 0, -2);
+				// There are some names to show
+				if (!empty($option['voters']))
+				{
+					foreach ($option['voters'] as $k => $v)
+						$voters .= '<a href="<URL>?action=profile;u=' . $k . '">' . $v . '</a>, ';
+					$voters = substr($voters, 0, -2);
 
-						// Any votes that we didn't count?
-						if (count($option['voters']) < $option['votes'])
-							$voters .= ' ' . number_context('poll_voters', $option['votes'] - count($option['voters']));
+					// Any votes that we didn't count?
+					if (count($option['voters']) < $option['votes'])
+						$voters .= ' ' . number_context('poll_voters', $option['votes'] - count($option['voters']));
 
-						echo $voters;
-					}
-					// No names but some votes? Gotta be guests
-					elseif (!empty($option['votes']))
-						echo number_context('poll_voters_guests_only', $option['votes']);
+					echo $voters;
 				}
+				// No names but some votes? Gotta be guests
+				elseif (!empty($option['votes']))
+					echo number_context('poll_voters_guests_only', $option['votes']);
 			}
-
-			echo '
-				</dd>';
 		}
 
 		echo '
-			</dl>';
+				</dd>';
 	}
-	// They are allowed to vote! Go to it!
-	else
-	{
-		echo '
+
+	echo '
+			</dl>';
+}
+
+function template_topic_poll_vote()
+{
+	global $theme, $options, $context, $txt, $settings;
+
+	echo '
 			<form action="<URL>?action=poll;sa=vote;topic=', $context['current_topic'], '.', $context['start'], ';poll=', $context['poll']['id'], '" method="post" accept-charset="UTF-8">';
 
-		// Show a warning if they are allowed more than one option.
-		if ($context['poll']['allowed_warning'])
-			echo '
+	// Show a warning if they are allowed more than one option.
+	if ($context['poll']['allowed_warning'])
+		echo '
 				<p class="smallpadding">', $context['poll']['allowed_warning'], '</p>';
 
-		echo '
+	echo '
 				<ul class="reset">';
 
-		// Show each option with its button - a radio likely.
-		foreach ($context['poll']['options'] as $option)
-			echo '
+	// Show each option with its button - a radio likely.
+	foreach ($context['poll']['options'] as $option)
+		echo '
 					<li><label>', $option['vote_button'], ' ', $option['option'], '</label></li>';
 
-		echo '
+	echo '
 				</ul>
 				<div class="sendpoll">
 					<input type="submit" value="', $txt['poll_vote'], '">
@@ -223,11 +214,13 @@ function template_topic_poll()
 				</div>
 			</form>';
 
-		$values = array('admin', 'creator', 'members', 'anyone');
-		echo '
+	$values = array('admin', 'creator', 'members', 'anyone');
+	echo '
 			', $txt['poll_visibility_' . $values[$context['poll']['voters_visible']]];
-	}
+}
 
+function template_topic_poll_after()
+{
 	echo '
 		</we:block>';
 }

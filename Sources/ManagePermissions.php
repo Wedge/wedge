@@ -1554,7 +1554,7 @@ function loadAllPermissions()
 			if (!empty($manifest->newperms->groups))
 				foreach ($manifest->newperms->groups->group as $group)
 				{
-					if (empty($group['name']) || empty($group['type']) || empty($group['name']))
+					if (empty($group['name']) || empty($group['type']))
 						continue;
 					$type = (string) $group['type'];
 					if (!isset($permissionGroups[$type]))
