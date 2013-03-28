@@ -220,6 +220,10 @@ function deleteMembergroups($groups)
 	// Recalculate the post groups, as they likely changed.
 	updateStats('postgroups');
 
+	// There are several things that might need dumping at this point.
+	cache_put_data('member-groups', null);
+	clean_cache('css');
+
 	// Make a note of the fact that the cache may be wrong.
 	$settings_update = array('settings_updated' => time());
 	// Have we deleted the spider group?
@@ -429,6 +433,9 @@ function removeMembersFromGroups($members, $groups = null, $permissionCheckDone 
 	// Their post groups may have changed now...
 	updateStats('postgroups', $members);
 
+	// Make sure we fix their group color.
+	cache_put_data('member-groups', null);
+
 	// Do the log.
 	if (!empty($log_inserts) && !empty($settings['log_enabled_admin']))
 		wesql::insert('',
@@ -583,6 +590,9 @@ function addMembersToGroup($members, $group, $type = 'auto', $permissionCheckDon
 	// Update their postgroup statistics.
 	updateStats('postgroups', $members);
 
+	// Make sure we fix their group color.
+	cache_put_data('member-groups', null);
+
 	// Log the data.
 	$log_inserts = array();
 	foreach ($members as $member)
@@ -635,7 +645,7 @@ function listMembergroupMembers_Href(&$members, $membergroup, $limit = null)
 function cache_getMembergroupList()
 {
 	$request = wesql::query('
-		SELECT id_group, group_name, online_color
+		SELECT id_group, group_name
 		FROM {db_prefix}membergroups
 		WHERE hidden = {int:not_hidden}
 			AND id_group != {int:mod_group}
@@ -649,7 +659,7 @@ function cache_getMembergroupList()
 	);
 	$groupCache = array();
 	while ($row = wesql::fetch_assoc($request))
-		$groupCache[] = '<a href="<URL>?action=groups;sa=members;group=' . $row['id_group'] . '" ' . ($row['online_color'] ? 'style="color: ' . $row['online_color'] . '"' : '') . '>' . $row['group_name'] . '</a>';
+		$groupCache[] = '<a href="<URL>?action=groups;sa=members;group=' . $row['id_group'] . '" class="group' . $row['id_group'] . '">' . $row['group_name'] . '</a>';
 	wesql::free_result($request);
 
 	return array(
@@ -667,7 +677,7 @@ function list_getMembergroups($start, $items_per_page, $sort, $membergroup_type)
 
 	// Get the basic group data.
 	$request = wesql::query('
-		SELECT id_group, group_name, min_posts, online_color, stars, 0 AS num_members
+		SELECT id_group, group_name, min_posts, stars, 0 AS num_members
 		FROM {db_prefix}membergroups
 		WHERE min_posts ' . ($membergroup_type === 'post_count' ? '!=' : '=') . ' -1' . (allowedTo('admin_forum') ? '' : '
 			AND group_type != {int:is_protected}') . '
@@ -682,7 +692,6 @@ function list_getMembergroups($start, $items_per_page, $sort, $membergroup_type)
 			'id_group' => $row['id_group'],
 			'group_name' => $row['group_name'],
 			'min_posts' => $row['min_posts'],
-			'online_color' => $row['online_color'],
 			'stars' => $row['stars'],
 			'num_members' => $row['num_members'],
 		);

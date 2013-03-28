@@ -136,10 +136,7 @@ function MembergroupIndex()
 						if ($rowData[\'id_group\'] == 3)
 							$group_name = $rowData[\'group_name\'];
 						else
-						{
-							$color_style = empty($rowData[\'online_color\']) ? \'\' : sprintf(\' style="color: %1$s"\', $rowData[\'online_color\']);
-							$group_name = sprintf(\'<a href="<URL>?action=admin;area=membergroups;sa=members;group=%1$d"%2$s>%3$s</a>\', $rowData[\'id_group\'], $color_style, $rowData[\'group_name\']);
-						}
+							$group_name = sprintf(\'<a href="<URL>?action=admin;area=membergroups;sa=members;group=%1$d" class="group%1$s">%2$s</a>\', $rowData[\'id_group\'], $rowData[\'group_name\']);
 
 						// Add a help option for moderator and administrator.
 						if ($rowData[\'id_group\'] == 1)
@@ -251,8 +248,7 @@ function MembergroupIndex()
 				),
 				'data' => array(
 					'function' => create_function('$rowData', '
-						$colorStyle = empty($rowData[\'online_color\']) ? \'\' : sprintf(\' style="color: %1$s"\', $rowData[\'online_color\']);
-						return sprintf(\'<a href="<URL>?action=moderate;area=viewgroups;sa=members;group=%1$d"%2$s>%3$s</a>\', $rowData[\'id_group\'], $colorStyle, $rowData[\'group_name\']);
+						return sprintf(\'<a href="<URL>?action=moderate;area=viewgroups;sa=members;group=%1$d" class="group%1$d">%2$s</a>\', $rowData[\'id_group\'], $rowData[\'group_name\']);
 					'),
 				),
 				'sort' => array(
@@ -691,6 +687,10 @@ function EditMembergroup()
 		loadSource('Subs-Membergroups');
 		deleteMembergroups($_REQUEST['group']);
 
+		// There are several things that might need dumping at this point.
+		cache_put_data('member-groups', null);
+		clean_cache('css');
+
 		redirectexit('action=admin;area=membergroups;');
 	}
 	// A form was submitted with the new membergroup settings.
@@ -1033,6 +1033,10 @@ function EditMembergroup()
 				);
 			}
 		}
+
+		// There are several things that might need dumping at this point.
+		cache_put_data('member-groups', null);
+		clean_cache('css');
 
 		// There might have been some post group changes.
 		updateStats('postgroups');

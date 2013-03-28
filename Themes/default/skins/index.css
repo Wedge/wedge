@@ -1772,6 +1772,8 @@ th.last_th
 
 @dynamic language_flags
 
+@dynamic group_colors
+
 // Unused, but I like to keep these around...
 $other_bg = #e7e9b8
 

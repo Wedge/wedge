@@ -2386,6 +2386,9 @@ function profileSaveGroups(&$value)
 		}
 	}
 
+	// We've updated a member's groups. We should update this in case their color changes.
+	cache_put_data('member-groups', null);
+
 	// If we are changing group status, update permission cache as necessary.
 	if ($value != $old_profile['id_group'] || isset($profile_vars['additional_groups']))
 	{

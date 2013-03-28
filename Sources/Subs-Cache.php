@@ -761,6 +761,33 @@ function dynamic_language_flags()
 	return $rep;
 }
 
+// Dynamic function to cache group colors into index.css
+function dynamic_group_colors()
+{
+	global $context, $settings;
+
+	$rep = '';
+	$request = wesql::query('
+		SELECT id_group, online_color
+		FROM {db_prefix}membergroups AS g 
+		WHERE g.online_color != {string:blank}',
+		array(
+			'blank' => '',
+		)
+	);
+	while ($row = wesql::fetch_assoc($request))
+	{
+		if (empty($row['online_color']))
+			continue;
+
+		$rep .= '
+.group' . $row['id_group'] . '
+	color: ' . $row['online_color'];
+	}
+
+	return $rep;
+}
+
 // Dynamic function to cache admin menu icons into admenu.css
 function dynamic_admin_menu_icons()
 {

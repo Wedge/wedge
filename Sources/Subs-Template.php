@@ -140,7 +140,7 @@ function obExit($start = null, $do_finish = null, $from_index = false, $from_fat
 function ob_sessrewrite($buffer)
 {
 	global $scripturl, $settings, $context, $db_prefix, $session_var;
-	global $txt, $time_start, $db_count, $db_show_debug, $cached_urls, $use_cache, $member_colors;
+	global $txt, $time_start, $db_count, $db_show_debug, $cached_urls, $use_cache, $members_groups;
 
 	// Just quit if $scripturl is set to nothing, or the SID is not defined. (SSI?)
 	if ($scripturl == '' || !defined('SID'))
@@ -346,10 +346,10 @@ function ob_sessrewrite($buffer)
 	if (isset($context['ob_replacements']))
 		$buffer = str_replace(array_keys($context['ob_replacements']), array_values($context['ob_replacements']), $buffer);
 
-	// Load cached membergroup colors.
-	if (($member_colors = cache_get_data('member-colors', 5000)) === null)
+	// Load cached membergroup ids.
+	if (($members_groups = cache_get_data('member-groups', 5000)) === null)
 	{
-		$member_colors = array('group' => array(), 'color' => array());
+		$members_groups = array();
 		$request = wesql::query('
 			SELECT m.id_member, m.id_post_group, g.id_group, g.online_color
 			FROM {db_prefix}members AS m
@@ -363,12 +363,11 @@ function ob_sessrewrite($buffer)
 		{
 			if (empty($row['online_color']))
 				continue;
-			if (empty($member_colors['group'][$row['id_member']]) || $row['id_group'] !== $row['id_post_group'])
-				$member_colors['group'][$row['id_member']] = $row['id_group'];
-			$member_colors['color'][$row['id_group']] = $row['online_color'];
+			if (empty($members_groups[$row['id_member']]) || $row['id_group'] !== $row['id_post_group'])
+				$members_groups[$row['id_member']] = $row['id_group'];
 		}
 		wesql::free_result($request);
-		cache_put_data('member-colors', $member_colors, 5000);
+		cache_put_data('member-groups', $members_groups, 5000);
 	}
 
 	// If guests/users can't view user profiles, we might as well unlink them!
@@ -576,11 +575,16 @@ function wedge_event_delayer($match)
 
 function wedge_profile_colors($match)
 {
-	global $member_colors;
+	global $members_groups;
 
-	if (!isset($member_colors['group'][$match[2]]) || strpos($match[1], 'bbc_link') !== false)
+	if (!isset($members_groups[$match[2]]) || strpos($match[1], 'bbc_link') !== false)
 		return '<a' . $match[1] . '>' . $match[3] . '</a>';
-	return '<a' . $match[1] . ' style="color: ' . $member_colors['color'][$member_colors['group'][$match[2]]] . '">' . $match[3] . '</a>';
+
+	$pos = strpos($match[1], 'class="');
+	if ($pos > 0)
+		return '<a' . substr($match[1], 0, $pos + 7) . 'group' . $members_groups[$match[2]] . ' ' . substr($match[1], $pos + 7) . '>' . $match[3] . '</a>';
+	else
+		return '<a' . $match[1] . ' class="group' . $members_groups[$match[2]] . '">' . $match[3] . '</a>';
 }
 
 function wedge_indenazi($match)
