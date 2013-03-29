@@ -281,11 +281,6 @@ function Post($post_errors = array())
 			{
 				$txt['error_new_replies'] = number_context(isset($_GET['last']) ? 'error_new_reply_reading' : 'error_new_reply', $context['new_replies']);
 
-				if ($context['new_replies'] == 1)
-					$txt['error_new_reply'] = isset($_GET['last']) ? $txt['error_new_reply_reading'] : $txt['error_new_reply'];
-				else
-					$txt['error_new_replies'] = sprintf(isset($_GET['last']) ? $txt['error_new_replies_reading'] : $txt['error_new_replies'], $context['new_replies']);
-
 				// If they've come from the display page then we treat the error differently....
 				if (isset($_GET['last']))
 					$newRepliesError = $context['new_replies'];

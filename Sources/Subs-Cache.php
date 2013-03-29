@@ -462,7 +462,7 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 
 function add_plugin_css_file($plugin_name, $original_files = array(), $add_link = false)
 {
-	global $context, $settings, $theme, $boardurl, $pluginsdir;
+	global $context, $settings, $theme, $boardurl, $pluginsdir, $board_info;
 
 	if (empty($context['plugins_dir'][$plugin_name]))
 		return;
@@ -474,6 +474,18 @@ function add_plugin_css_file($plugin_name, $original_files = array(), $add_link 
 	$files = array_keys(array_flip($original_files));
 	$basefiles = array();
 
+	// Some of these keywords aren't of any use in uni-dimensional plugin folders anyway.
+	$context['css_suffixes'] = array_diff($context['css_suffixes'], array('local', 'global', 'replace', 'admin', 'mod', 'm' . we::$id));
+	if (isset($board_info['id']))
+		$context['css_suffixes'] = array_diff($context['css_suffixes'], array('b' . $board_info['id'], 'c' . $board_info['cat']['id']));
+	elseif (!empty($_GET['category']) && (int) $_GET['category'])
+		$context['css_suffixes'] = array_diff($context['css_suffixes'], array('c' . (int) $_GET['category']));
+
+	// Make sure to only keep 'webkit' if we have no other browser name on record.
+	if (we::is('webkit') && we::$browser['agent'] != 'webkit')
+		$context['css_suffixes'] = array_diff($context['css_suffixes'], array('webkit'));
+
+	// Plugin CSS files only support a single suffix per file. Deal with it...
 	foreach ($files as $file)
 	{
 		if (substr($file, -4) === '.css')
@@ -506,7 +518,7 @@ function add_plugin_css_file($plugin_name, $original_files = array(), $add_link 
 	$id = array_filter(array_merge(
 		array($context['enabled_plugins'][$plugin_name]),
 		$basefiles,
-		array_diff($context['css_suffixes'], array(we::is('webkit') && we::$browser['agent'] != 'webkit' ? 'webkit' : '')),
+		$context['css_suffixes'],
 		we::$user['language'] !== 'english' ? (array) we::$user['language'] : array()
 	));
 	$latest_date %= 1000000;

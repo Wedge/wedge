@@ -793,7 +793,10 @@ tr.windowbg td
 /* Styles for the board index's topic table.
 ------------------------------------------------------- */
 .topic_table
-	.icon, .stats
+	.icon
+		padding: 0 8px
+		text-align: center
+	.stats
 		text-align: center
 	table
 		width: 100%

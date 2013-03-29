@@ -28,21 +28,21 @@ if (!defined('WEDGE'))
  * $skeleton->replace()	- same, but deletes existing sub-layers in the process
  * $skeleton->add()		- same, but adds data to given layer
  * $skeleton->first()	- same, but prepends data to given layer
- * $skeleton->before()	- same, but inserts data *before* given layer or block
- * $skeleton->after()	- same, but inserts data *after* given layer or block
- * $skeleton->move()	- moves an existing block or layer to another position in the skeleton
+ * $skeleton->before()	- same, but inserts data *before* given layer/block
+ * $skeleton->after()	- same, but inserts data *after* given layer/block
+ * $skeleton->move()	- moves an existing layer/block to another position in the skeleton
  *
  * $skeleton->layer()	- various layer creation functions (see documentation for the function)
- * $skeleton->rename()	- rename an existing layer
+ * $skeleton->rename()	- rename an existing layer/block
  * $skeleton->outer()	- wrap a new outer layer around the given layer
  * $skeleton->inner()	- inject a new inner layer directly below the given layer
- * $skeleton->remove()	- remove a block or layer from the skeleton
+ * $skeleton->remove()	- remove a layer/block from the skeleton
  *
  * $skeleton->hide()	- erase the skeleton and replace it with a simple structure (template-less pages)
  *
- * $skeleton->parent()	- return the name of the block/layer's parent layer
+ * $skeleton->parent()	- return the name of the layer/block's parent layer
  * $skeleton->get()		- see weSkeletonItem description. If you only have one action to apply, avoid using it.
- * $skeleton->has()		- does the skeleton have this block or layer in it?
+ * $skeleton->has()		- does the skeleton have this layer/block in it?
  *						- ->has_block($block) forces a test for blocks only
  *						- ->has_layer($layer) forces a test for layers only
  *
@@ -154,6 +154,26 @@ final class weSkeleton
 	}
 
 	/**
+	 * Rename the current layer/block to $new_name.
+	 */
+	function rename($target, $new_name)
+	{
+		if (empty($target) || empty($new_name) || $target == 'default' || !$this->has($target))
+			return false;
+		if (isset($this->layers[$target]))
+		{
+			$result = $this->insert_layer($new_name, $target, 'rename');
+			$result &= $this->remove_layer($target);
+		}
+		else
+		{
+			$result = $this->before($target, $new_name);
+			$result &= $this->remove($target);
+		}print_r($this->skeleton);
+		return $result ? $new_name : false;
+	}
+
+	/**
 	 * Remove a block or layer from the skeleton.
 	 * If done on a layer, it will only be removed if it doesn't contain the default layer.
 	 * @todo: add option to remove only the layer, not its contents.
@@ -242,16 +262,6 @@ final class weSkeleton
 	function replace($target, $contents = '')
 	{
 		return $this->op($contents, $target, 'replace');
-	}
-
-	// Rename the current layer to $target.
-	function rename($target, $new_name)
-	{
-		if (empty($target) || empty($new_name) || $target == 'default' || !isset($this->layers[$target]))
-			return false;
-		$result = $this->insert_layer($new_name, $target, 'rename');
-		$result &= $this->remove_layer($target);
-		return $result ? $new_name : false;
 	}
 
 	// Wrap a new layer around the current one. (Equivalent to jQuery's wrap)
