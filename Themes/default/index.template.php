@@ -838,12 +838,9 @@ function template_page_index($base_url, &$start, $max_value, $num_per_page, $fle
 }
 
 // Generate a strip of buttons.
-function template_button_strip($button_strip, $direction = 'right', $strip_options = array())
+function template_button_strip($button_strip, $direction = 'right', $extra = '')
 {
 	global $context, $txt;
-
-	if (!is_array($strip_options))
-		$strip_options = array();
 
 	// List the buttons in reverse order for RTL languages.
 	if ($context['right_to_left'])
@@ -864,7 +861,7 @@ function template_button_strip($button_strip, $direction = 'right', $strip_optio
 	$buttons[count($buttons) - 1] = str_replace('<li>', '<li class="last">', $buttons[count($buttons) - 1]);
 
 	echo '
-			<ul class="buttonlist', !empty($direction) ? ' float' . $direction : '', empty($buttons) ? ' hide' : '', '"', !empty($strip_options['id']) ? ' id="' . $strip_options['id'] . '"': '', '>',
+			<ul class="buttonlist', !empty($direction) ? ' float' . $direction : '', empty($buttons) ? ' hide' : '', '"', $extra ? ' ' . ltrim($extra) : '', '>',
 				implode('', $buttons), '
 			</ul>';
 }

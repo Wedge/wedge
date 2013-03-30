@@ -157,11 +157,9 @@ img.new_posts
 .prevnext_next extends .prevnext_prev
 	text-align: right
 
-#moderationbuttons extends .clearfix
-	margin-bottom: 6px
-
-#moderationbuttons_strip
-	margin: 4px 0 0
+#modbuttons extends .clearfix
+	li
+		margin: 4px 2px 0
 
 // A generic bar, for use in polls and stats.
 .bar

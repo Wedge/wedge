@@ -72,7 +72,7 @@ function template_display_posts()
 		add_js('
 	new InTopicModeration({
 		sClass: \'inline_mod_check\',
-		sStrip: \'moderationbuttons\',
+		sStrip: \'modbuttons\',
 		sFormId: \'quickModForm\'' . ($context['can_restore_msg'] ? ',
 		bRestore: 1' : '') . ($context['can_remove_post'] ? ',
 		bRemove: 1' : '') . '
@@ -389,7 +389,7 @@ function template_mod_buttons()
 	global $context;
 
 	echo '
-		<div id="moderationbuttons">', template_button_strip($context['nav_buttons']['mod'], 'left', array('id' => 'moderationbuttons_strip')), '
+		<div id="modbuttons">', template_button_strip($context['nav_buttons']['mod'], 'left'), '
 		</div>';
 }
 

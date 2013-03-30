@@ -324,6 +324,10 @@ tr.titlebg
 dfn
 	line-height: 140%
 
+@if member
+	#modbuttons a
+		background-position: 6px 7px
+@endif
 
 /* These are our CSS variable and mixin definitions.
 ------------------------------------------------------- */

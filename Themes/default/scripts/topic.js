@@ -35,19 +35,21 @@ function expandThumb(thumbID)
 	return false;
 }
 
-function likePost(obj)
-{
-	var iMessageId = $(obj).closest('.root').attr('id').slice(3);
-
-	show_ajax();
-	$.post(obj.href, function (response)
+@if member
+	function likePost(obj)
 	{
-		hide_ajax();
-		$('#msg' + iMessageId + ' .post_like').replaceWith(response);
-	});
+		var iMessageId = $(obj).closest('.root').attr('id').slice(3);
 
-	return false;
-}
+		show_ajax();
+		$.post(obj.href, function (response)
+		{
+			hide_ajax();
+			$('#msg' + iMessageId + ' .post_like').replaceWith(response);
+		});
+
+		return false;
+	}
+@endif
 
 function go_up()
 {
@@ -388,7 +390,7 @@ function QuickReply(opt)
 		handleClick = function ()
 		{
 			var
-				display = opt.sStrip + '_strip',
+				display = opt.sStrip + ' ul',
 				addButton = function (sClass)
 				{
 					// Adds a button to the button strip.
