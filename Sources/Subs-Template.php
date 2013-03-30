@@ -519,9 +519,21 @@ function ob_sessrewrite($buffer)
 	}
 
 	// Have we got any indentation adjustments to do...?
-	$max_loops = 100;
-	while (strpos($buffer, '<inden@zi=') !== false && $max_loops-- > 0)
-		$buffer = preg_replace_callback('~<inden@zi=([^=>]+)=(-?\d+)>(.*?)</inden@zi=\\1>~s', 'wedge_indenazi', $buffer);
+	if (strpos($buffer, '<inden@zi=') !== false)
+	{
+		// We'll need to protect textareas and pre tags first, as these don't like inden@zi changes.
+		preg_match_all('~(?:<textarea\b.*?</textarea>|<pre\b.*?</pre>)~s', $buffer, $protect);
+		if (!empty($protect))
+			$buffer = str_replace($protect[0], chr(24), $buffer);
+
+		$max_loops = 100;
+		while (strpos($buffer, '<inden@zi=') !== false && $max_loops-- > 0)
+			$buffer = preg_replace_callback('~<inden@zi=([^=>]+)=(-?\d+)>(.*?)</inden@zi=\\1>~s', 'wedge_indenazi', $buffer);
+
+		if (!empty($protect))
+			foreach ($protect[0] as $item)
+				$buffer = preg_replace('~' . chr(24) . '~', $item, $buffer, 1);
+	}
 
 	// The following hidden variable, 'minify_html', will remove tabs and thus please Google PageSpeed. Whatever.
 	if (!empty($settings['minify_html']))

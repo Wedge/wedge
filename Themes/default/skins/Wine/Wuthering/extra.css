@@ -351,6 +351,9 @@ $radius = 20px
 @remove #siteslogan
 	color: #000
 
+@remove #linktree_bt ul
+	border-width: 1px 0 0 0
+
 @remove #search_form > input[type=submit]
 	background: #938983
 	border-color: #bbb #888 #888 #bbb

@@ -50,6 +50,8 @@ h4, h5
 		padding: 20px 25px 10px 15px
 	ul
 		list-style-type: none
+	p
+		clear: both
 
 #top_section
 	display: none
@@ -123,7 +125,8 @@ dl#feed
 
 // !! That one's pretty much a hack...
 #siteslogan
-	margin-top: 60px
+	margin-top: 54px
+	color: #777
 
 .keyinfo .modified
 	font-style: normal
@@ -165,6 +168,9 @@ dl#feed
 
 #linktree_bt ul
 	margin: 0 20px 0
+
+@remove #linktree_bt ul
+	border-width: 1px 0 0 0
 
 /* Styles for the dropdown menus.
 ------------------------------------------------------- */
