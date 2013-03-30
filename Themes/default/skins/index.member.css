@@ -7,7 +7,7 @@
 
 // These may be seen by guests, but it's unlikely, and they won't bother if the icons don't show up anyway.
 ul.buttonlist
-	a.lock, a.pin, a.add_poll, a.merge
+	a.lock, a.pin, a.add_poll, a.merge, a.delete, a.move
 		padding-left: 22px
 		background-image: url($images/small_lock.gif)
 		background-position: 6px 2px
@@ -20,6 +20,10 @@ ul.buttonlist
 	a.merge
 		background-image: url($images/small_merge.gif)
 		padding-left: 21px
+	a.delete
+		background-image: url($images/small_delete.gif)
+	a.move
+		background-image: url($images/small_move.gif)
 
 .table_list a.unreadlink
 	font-size: .9em

@@ -488,7 +488,7 @@ function determineActions($urls, $preferred_prefix = false)
 			if (isset($actions['who_error_raw']))
 				$error_message = str_replace('"', '&quot;', $actions['who_error_raw']);
 			elseif (isset($actions['who_error_lang'], $txt[$actions['who_error_lang']]))
-				$error_message = str_replace('"', '&quot;', empty($actions['who_error_params']) ? $txt[$actions['who_error_lang']] : vsprintf($txt[$actions['who_error_lang']], $action['who_error_params']));
+				$error_message = str_replace('"', '&quot;', empty($actions['who_error_params']) ? $txt[$actions['who_error_lang']] : vsprintf($txt[$actions['who_error_lang']], $actions['who_error_params']));
 			elseif (isset($actions['who_warn']))
 				$error_message = str_replace('"', '&quot;', $txt['who_guest_login']);
 

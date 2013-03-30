@@ -473,6 +473,7 @@ function getXmlNews($xml_format)
 			WHERE ' . $query_this . (empty($optimize_msg) ? '' : '
 				AND {raw:optimize_msg}') . '
 				AND {query_see_topic}
+				AND m.icon != {literal:moved}
 			ORDER BY t.id_first_msg DESC
 			LIMIT {int:limit}',
 			array(
@@ -569,6 +570,7 @@ function getXmlRecent($xml_format)
 			WHERE ' . $query_this . (empty($optimize_msg) ? '' : '
 				AND {raw:optimize_msg}') . ($settings['postmod_active'] ? '
 				AND m.approved = {int:is_approved}' : '') . '
+				AND m.icon != {literal:moved}
 			ORDER BY m.id_msg DESC
 			LIMIT {int:limit}',
 			array(
