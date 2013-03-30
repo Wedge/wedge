@@ -1097,26 +1097,25 @@ function wedge_cache_js($id, &$lang_name, $latest_date, $ext, $js, $gzip = false
  *
  * @param string $set The current smiley folder
  * @param array $smileys The list of smileys to cache
+ * @param string $extra '-ie', if using oldIE, which doesn't support base64 encoding.
  */
-function wedge_cache_smileys($set, $smileys)
+function wedge_cache_smileys($set, $smileys, $extra)
 {
 	global $cssdir, $context, $settings, $boardurl;
 
 	$final = '';
 	$path = $settings['smileys_dir'] . '/' . $set . '/';
 	$url  = '..' . str_replace($boardurl, '', $settings['smileys_url']) . '/' . $set . '/';
-	$extra = we::is('ie6,ie7') ? '-ie' : '';
-	updateSettings(array('smiley_cache-' . str_replace('.', '', $context['smiley_ext']) . $extra . '-' . $set => $context['smiley_now']));
 
-	// Delete all remaining cached versions, if any (e.g. *.cgz for Safari.)
-	clean_cache('css', 'smileys' . $extra);
+	// Delete other cached versions, if they exist.
+	clean_cache($context['smiley_ext'], 'smileys' . $extra, $cssdir);
 
 	foreach ($smileys as $name => $smiley)
 	{
 		$filename = $path . $smiley['file'];
 		if (!file_exists($filename))
 			continue;
-		// Only small files should be embedded, really. We're saving on hits, not bandwidth.
+		// Only small files should be embedded, really. 4KB should have a fair bandwidth/hit ratio.
 		if ($extra || ($smiley['embed'] && filesize($filename) > 4096) || !$context['smiley_gzip'])
 			$smiley['embed'] = false;
 		list ($width, $height) = getimagesize($filename);
@@ -1420,6 +1419,8 @@ function clean_cache($extensions = 'php', $filter = '', $force_folder = '')
 		$folder = $jsdir;
 		$extensions = array('js', 'jgz', 'js.gz');
 	}
+	elseif (!is_array($extensions))
+		$extensions = ltrim($extensions, '.');
 
 	if ($force_folder)
 		$folder = $force_folder;

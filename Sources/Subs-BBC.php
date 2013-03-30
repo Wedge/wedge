@@ -1144,8 +1144,10 @@ function parsesmileys(&$message)
 		$context['smiley_gzip'] = $can_gzip;
 		$context['smiley_ext'] = $can_gzip ? (we::is('safari') ? '.cgz' : '.css.gz') : '.css';
 		$extra = we::is('ie6,ie7') ? '-ie' : '';
-		$var_name = 'smiley_cache-' . str_replace('.', '', $context['smiley_ext']) . $extra . '-' . we::$user['smiley_set'];
-		$context['smiley_now'] = empty($settings[$var_name]) ? time() : $settings[$var_name];
+		$var_name = 'smiley-cache-' . $extra . '-' . we::$user['smiley_set'];
+		if (!isset($settings[$var_name]))
+			updateSettings(array($var_name => time() % 1000));
+		$context['smiley_now'] = $settings[$var_name];
 
 		if (!file_exists($cssdir . '/smileys' . $extra . '-' . we::$user['smiley_set'] . '-' . $context['smiley_now'] . $context['smiley_ext']))
 		{
@@ -1157,7 +1159,7 @@ function parsesmileys(&$message)
 			if (!empty($cache))
 			{
 				loadSource('Subs-Cache');
-				wedge_cache_smileys(we::$user['smiley_set'], $cache);
+				wedge_cache_smileys(we::$user['smiley_set'], $cache, $extra);
 			}
 		}
 

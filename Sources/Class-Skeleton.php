@@ -169,7 +169,7 @@ final class weSkeleton
 		{
 			$result = $this->before($target, $new_name);
 			$result &= $this->remove($target);
-		}print_r($this->skeleton);
+		}
 		return $result ? $new_name : false;
 	}
 
