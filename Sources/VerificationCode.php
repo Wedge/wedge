@@ -14,8 +14,6 @@
 if (!defined('WEDGE'))
 	die('Hacking attempt...');
 
-define('WEDGE_NO_LOG', 1);
-
 // Show the verification code or let it hear.
 function VerificationCode()
 {

@@ -14,8 +14,6 @@
 if (!defined('WEDGE'))
 	die('Hacking attempt...');
 
-define('WEDGE_NO_LOG', 1);
-
 /*	This file concerns itself almost completely with theme administration.
 	Its tasks include changing theme settings, installing and removing
 	themes, choosing the current theme, and editing themes.  This is done in:

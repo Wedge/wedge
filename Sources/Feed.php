@@ -14,8 +14,6 @@
 if (!defined('WEDGE'))
 	die('Hacking attempt...');
 
-define('WEDGE_NO_LOG', 1);
-
 /*	void Feed()
 		- is called to output xml information.
 		- can be passed four subactions which decide what is output: 'recent'

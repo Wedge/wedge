@@ -133,12 +133,18 @@ $action_list = array(
 	'viewremote' => array('ViewRemote.php', 'ViewRemote'),
 	'who' => array('Who.php', 'Who'),
 );
+// If an action should not influence the who's online list, please add it here. (Hookable as global)
+$action_no_log = array(
+	'ajax', 'dlattach', 'feed', 'jseditor', 'jsoption', 'notification', 'verificationcode', 'viewquery', 'viewremote',
+);
 
 if (empty($settings['pm_enabled']))
 	unset($action_list['pm']);
 
 if (!empty($context['extra_actions']))
 	$action_list = array_merge($action_list, $context['extra_actions']);
+if (!empty($context['nolog_actions']))
+	$action_no_log = array_merge($action_no_log, $context['nolog_actions']);
 
 // Clean the request variables, add slashes, etc.
 cleanRequest();
@@ -182,7 +188,7 @@ loadSession();
 $function = wedge_main();
 
 // Do some logging, unless this is an attachment, avatar, toggle of editor buttons, theme option, XML feed etc.
-if (empty($_REQUEST['action']) || !defined('WEDGE_NO_LOG'))
+if (empty($_REQUEST['action']) || !in_array($_REQUEST['action'], $action_no_log))
 {
 	// Log this user as online.
 	writeLog();

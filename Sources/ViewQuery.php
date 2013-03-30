@@ -14,8 +14,6 @@
 if (!defined('WEDGE'))
 	die('Hacking attempt...');
 
-define('WEDGE_NO_LOG', 1);
-
 /**
  * Displays queries we have previously logged through execution and allows for some analysis.
  *

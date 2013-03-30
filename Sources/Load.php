@@ -74,6 +74,7 @@ function reloadSettings()
 	// Deal with loading plugins.
 	$context['enabled_plugins'] = array();
 	$context['extra_actions'] = array();
+	$context['nolog_actions'] = array();
 	if (!empty($settings['enabled_plugins']))
 	{
 		// Step through the list we think we have enabled.
@@ -95,6 +96,8 @@ function reloadSettings()
 							$action['function'] = explode('::', $action['function']);
 
 						$context['extra_actions'][$action['action']] = array($action['filename'], $action['function'], $plugin_details['id']);
+						if (!empty($action['nolog']))
+							$context['nolog_actions'][] = $action['action'];
 					}
 				unset($plugin_details['id'], $plugin_details['provides'], $plugin_details['actions']);
 

@@ -14,8 +14,6 @@
 if (!defined('WEDGE'))
 	die('Hacking attempt...');
 
-define('WEDGE_NO_LOG', 1);
-
 /**
  * This file handles serving attachments, attachment image previews and avatars.
  *

@@ -14,8 +14,6 @@
 if (!defined('WEDGE'))
 	die('Hacking attempt...');
 
-define('WEDGE_NO_LOG', 1);
-
 // Get one of the admin information files from Wedge.org.
 function ViewRemote()
 {

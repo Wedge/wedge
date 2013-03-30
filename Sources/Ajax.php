@@ -14,8 +14,6 @@
 if (!defined('WEDGE'))
 	die('Hacking attempt...');
 
-define('WEDGE_NO_LOG', 1);
-
 /**
  * This function handles the initial interaction from action=ajax, loading the template then directing process to the appropriate handler.
  *

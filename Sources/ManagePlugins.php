@@ -1029,6 +1029,9 @@ function EnablePlugin()
 				'function' => (string) $action['function'],
 				'filename' => (string) $action['filename'],
 			);
+			if (!empty($action['nolog']) && (string) $action['nolog'] == 'yes')
+				$this['nolog'] = true;
+
 			if (!empty($this_action['action']) && !empty($this_action['function']) && !empty($this_action['filename']))
 				$new_actions[] = $this_action;
 		}
