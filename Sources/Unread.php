@@ -75,7 +75,7 @@ function Unread()
 
 		$query_this_board = 'id_board IN ({array_int:boards})';
 		$query_parameters['boards'] = $boards;
-		$context['querystring_board_limits'] = ';boards=' . implode(',', $boards) . ';start=%d';
+		$context['querystring_board_limits'] = ';boards=' . implode(',', $boards) . ';start=%1$d';
 	}
 	elseif (!empty($board))
 	{
@@ -431,7 +431,7 @@ function Unread()
 			markBoardsRead(empty($boards) ? $board : $boards);
 
 			$context['topics'] = array();
-			if ($context['querystring_board_limits'] == ';start=%d')
+			if ($context['querystring_board_limits'] == ';start=%1$d')
 				$context['querystring_board_limits'] = '';
 			else
 				$context['querystring_board_limits'] = sprintf($context['querystring_board_limits'], $_REQUEST['start']);
@@ -656,10 +656,8 @@ function Unread()
 			)
 		);
 		while ($row = wesql::fetch_assoc($result))
-		{
 			if (empty($context['topics'][$row['id_topic']]['is_posted_in']))
 				$context['topics'][$row['id_topic']]['is_posted_in'] = true;
-		}
 		wesql::free_result($result);
 	}
 

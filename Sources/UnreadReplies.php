@@ -75,7 +75,7 @@ function UnreadReplies()
 
 		$query_this_board = 'id_board IN ({array_int:boards})';
 		$query_parameters['boards'] = $boards;
-		$context['querystring_board_limits'] = ';boards=' . implode(',', $boards) . ';start=%d';
+		$context['querystring_board_limits'] = ';boards=' . implode(',', $boards) . ';start=%1$d';
 	}
 	elseif (!empty($board))
 	{
@@ -340,7 +340,7 @@ function UnreadReplies()
 	if ($num_topics == 0)
 	{
 		$context['topics'] = array();
-		if ($context['querystring_board_limits'] == ';start=%d')
+		if ($context['querystring_board_limits'] == ';start=%1$d')
 			$context['querystring_board_limits'] = '';
 		else
 			$context['querystring_board_limits'] = sprintf($context['querystring_board_limits'], $_REQUEST['start']);
@@ -396,7 +396,7 @@ function UnreadReplies()
 	if (empty($topics))
 	{
 		$context['topics'] = array();
-		if ($context['querystring_board_limits'] == ';start=%d')
+		if ($context['querystring_board_limits'] == ';start=%1$d')
 			$context['querystring_board_limits'] = '';
 		else
 			$context['querystring_board_limits'] = sprintf($context['querystring_board_limits'], $_REQUEST['start']);
@@ -553,7 +553,7 @@ function UnreadReplies()
 			'is_pinned' => !empty($row['is_pinned']),
 			'is_locked' => !empty($row['locked']),
 			'is_poll' => $row['id_poll'] > 0,
-			'is_posted_in' => false,
+			'is_posted_in' => true,
 			'icon' => $row['first_icon'],
 			'icon_url' => $theme[$context['icon_sources'][$row['first_icon']]] . '/post/' . $row['first_icon'] . '.gif',
 			'subject' => $row['first_subject'],

@@ -12,6 +12,14 @@
 
 @language index;
 
+$(function () {
+	$.each('.locked .pinned .poll .my'.split(' '), function (key, val) {
+		$('.subject' + val).each(function () {
+			$('<span/>').addClass('floatright icon_' + val.slice(1)).prependTo(this);
+		});
+	});
+});
+
 var hide_prefixes = [];
 
 // Expand an attached thumbnail

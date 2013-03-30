@@ -452,6 +452,9 @@ function MessageIndex()
 			// Locked topics get special treatment as well.
 			if (!empty($row['locked']))
 				$color_class .= ' locked';
+			// Does it have a poll..?
+			if ($row['id_poll'] > 0)
+				$color_class .= ' poll';
 
 			// 'Print' the topic info.
 			$context['topics'][$row['id_topic']] = array(
@@ -535,7 +538,10 @@ function MessageIndex()
 				)
 			);
 			while ($row = wesql::fetch_assoc($result))
+			{
 				$context['topics'][$row['id_topic']]['is_posted_in'] = true;
+				$context['topics'][$row['id_topic']]['style'] .= ' my';
+			}
 			wesql::free_result($result);
 		}
 	}

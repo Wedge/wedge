@@ -110,6 +110,12 @@ img.new_posts
 	thead
 		display: none
 
+.legend
+	line-height: 1.8
+	span
+		vertical-align: -3px
+		margin: 0
+
 .lastpost img
 	float: right
 	padding: 4px 0 0 4px
@@ -610,10 +616,6 @@ dl.poll_options
 
 /* Styles for the recent messages section.
 ---------------------------------------------------- */
-#readbuttons nav
-	padding-top: 1em
-	width: 60%
-
 #recent
 	clear: both
 
@@ -793,11 +795,13 @@ tr.windowbg td
 /* Styles for the board index's topic table.
 ------------------------------------------------------- */
 .topic_table
-	.icon
-		padding: 0 8px
-		text-align: center
 	.stats
 		text-align: center
+	.icon
+		text-align: center
+		padding: 0 8px
+	.subject
+		padding: 5px 8px
 	table
 		width: 100%
 		thead
@@ -805,34 +809,30 @@ tr.windowbg td
 		td
 			font-size: 1em
 
-	// The subject column
-	.subject
-		padding: 5px 8px
-		background-image: none
-		background-repeat: no-repeat
-		background-position: 99% .5em
-		&.pinned
-			background-image: url($images/icons/quick_pin.gif)
-		&.locked
-			background-image: url($images/icons/quick_lock.gif)
-		&.pinned.locked
-			background-image: url($images/icons/quick_pin_lock.gif)
-		&.my
-			background-image: url($images/icons/quick_my.gif)
-			background-repeat: no-repeat
-			background-position: 99% .5em
-		&.pinned.my
-			background-image: url($images/icons/quick_pin_my.gif)
-		&.locked.my
-			background-image: url($images/icons/quick_lock_my.gif)
-		&.pinned.locked.my
-			background-image: url($images/icons/quick_pin_lock_my.gif)
 	.stats,
 	.subject p,
 	.lastpost p
 		font-size: .85em
-		margin: 0
 		padding: 0 6px
+		margin: 0
+
+// Topic status icons
+.icon_pinned mixes .inline-block
+	padding: 8px
+	margin: 0 -4px 0 4px
+	background: url($images/icons/quick_pin.gif) center no-repeat
+.icon_locked mixes .inline-block
+	padding: 8px
+	margin: 0 -4px 0 4px
+	background: url($images/icons/quick_lock.gif) center no-repeat
+.icon_poll mixes .inline-block
+	padding: 8px
+	margin: 0 -4px 0 4px
+	background: url($images/icons/quick_poll.gif) center no-repeat
+.icon_my mixes .inline-block
+	padding: 8px
+	margin: 0 -4px 0 4px
+	background: url($images/icons/quick_my.gif) center no-repeat
 
 /* Styles for (fatal) errors.
 ------------------------------------------------- */
@@ -988,6 +988,11 @@ tr.windowbg td
 	border-color: green
 	color: green
 	background: #efe
+
+// Profile > Show Permissions.
+#permissions table.table_grid td
+	padding: .4em .8em
+	cursor: default
 
 // Profile statistics
 #generalstats
@@ -1228,6 +1233,9 @@ div.top_row dd
 	span
 		padding: 8px
 
+#mlist table tbody td.windowbg2
+	text-align: center
+
 /* Styles for the search section.
 ------------------------------------------------- */
 #searchform, #simple_search p
@@ -1371,15 +1379,11 @@ div.top_row dd
 	.cat & final
 		vertical-align: -1px
 
-/* More hacks.
+/* Any hacks that may need higher precedence.
 ------------------------------------------------- */
-// table_grid styles for Profile > Show Permissions.
-#permissions table.table_grid td
-	padding: .4em .8em
-	cursor: default
-
-#mlist table tbody td.windowbg2
-	text-align: center
+// We worship his shadow.
+.hide
+	display: none
 
 /* Media queries. Responsive design, i.e.
    mobile-friendly rules, is done here.

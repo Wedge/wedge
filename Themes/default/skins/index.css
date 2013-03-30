@@ -426,10 +426,6 @@ em
 		gradient: rgb(100, 175, 100), rgb(100, 190, 100)
 	@endif
 
-// We worship his shadow.
-.hide
-	display: none
-
 // The sort direction indicator. A small but potentially important detail.
 .sort_up mixes .inline-block
 	background: url($images/sort.gif) 0 0 no-repeat
@@ -1769,8 +1765,13 @@ th.last_th
 		cursor: pointer
 		overflow: visible
 		position: relative
+
 		#top_section .frame &
 			margin-top: .2em
+
+		h6
+			font-size: 12pt
+			text-align: center
 
 	.n_count
 		font-size: 0.9em
@@ -1814,10 +1815,6 @@ th.last_th
 		float: right
 		width: 70%
 		text-align: right
-
-	h6
-		font-size: 12pt
-		text-align: center
 @endif
 
 /* Don't touch this -- these are placeholders for CSS added by Wess.

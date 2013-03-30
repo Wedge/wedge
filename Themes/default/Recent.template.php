@@ -90,6 +90,9 @@ function template_unread()
 {
 	global $context, $theme, $options, $txt;
 
+	// JavaScript for generating topic status icons.
+	add_js_file('scripts/topic.js');
+
 	echo '
 	<div id="recent">
 		<we:cat>
@@ -154,6 +157,10 @@ function template_unread()
 				$color_class .= ' pinned';
 			if ($topic['is_locked'])
 				$color_class .= ' locked';
+			if ($topic['is_poll'])
+				$color_class .= ' poll';
+			if ($topic['is_posted_in'])
+				$color_class .= ' my';
 
 			// Some columns require a different shade of the color class.
 			$alternate_class = 'windowbg2' . $color_class;
@@ -161,10 +168,10 @@ function template_unread()
 
 			echo '
 						<tr>
-							<td class="', $color_class, ' icon">
+							<td class="icon ', $color_class, '">
 								<img src="', $topic['first_post']['icon_url'], '">
 							</td>
-							<td class="subject ', $alternate_class, $topic['is_posted_in'] ? ' my' : '', '">
+							<td class="subject ', $alternate_class, '">
 								<div>
 									', $topic['is_pinned'] ? '<strong>' : '', '<span id="msg_', $topic['first_post']['id'], '">', $topic['new_link'], '</span>', $topic['is_pinned'] ? '</strong>' : '', '
 									<a href="', $topic['new_href'], '" class="note" title="', $txt['new_posts'], '">', $context['nb_new'][$topic['id']], '</a>
@@ -175,30 +182,28 @@ function template_unread()
 									</p>
 								</div>
 							</td>
-							<td class="', $color_class, ' stats">
+							<td class="stats ', $color_class, '">
 								', $topic['replies'], ' ', $txt['replies'], '
 								<br>
 								', $topic['views'], ' ', $txt['views'], '
 							</td>
-							<td class="', $alternate_class, ' lastpost">
-								<a href="', $topic['last_post']['href'], '"><img src="', $theme['images_url'], '/icons/last_post.gif" alt="', $txt['last_post'], '" title="', $txt['last_post'], '" class="right"></a>
+							<td class="lastpost ', $alternate_class, '">
+								<p><a href="', $topic['last_post']['href'], '"><img src="', $theme['images_url'], '/icons/last_post.gif" alt="', $txt['last_post'], '" title="', $txt['last_post'], '" class="right"></a>
 								', strtr($txt['last_post_time_author'], array(
 									'{time}' => $topic['last_post']['time'],
 									'{author}' => $topic['last_post']['member']['link']
-								)), '
+								)), '</p>
 							</td>';
 
 			echo '
-							<td class="windowbg2 middle center">
+							<td class="', $color_class, ' middle center">
 								<input type="checkbox" name="topics[]" value="', $topic['id'], '">
 							</td>';
 			echo '
 						</tr>';
 		}
 
-		if (!empty($context['topics']))
-			$mark_read['readall'] = array('text' => 'unread_topics', 'url' => '<URL>?action=unread' . $context['querystring_board_limits'], 'class' => 'active');
-		else
+		if (empty($context['topics']))
 			echo '
 					<tr class="hide"><td></td></tr>';
 
@@ -206,12 +211,8 @@ function template_unread()
 					</tbody>
 				</table>
 			</div>
-			<div class="pagesection" id="readbuttons">';
-
-		if (!empty($mark_read))
-			template_button_strip($mark_read);
-
-		echo '
+			<div class="pagesection">', !empty($mark_read) ?
+				template_button_strip($mark_read) : '', '
 				<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>
 			</div>';
 	}
@@ -229,6 +230,9 @@ function template_unread()
 function template_replies()
 {
 	global $context, $theme, $options, $txt;
+
+	// JavaScript for generating topic status icons.
+	add_js_file('scripts/topic.js');
 
 	echo '
 	<div id="recent">
@@ -297,6 +301,10 @@ function template_replies()
 				$color_class .= ' pinned';
 			if ($topic['is_locked'])
 				$color_class .= ' locked';
+			if ($topic['is_poll'])
+				$color_class .= ' poll';
+			if ($topic['is_posted_in'])
+				$color_class .= ' my';
 
 			// Some columns require a different shade of the color class.
 			$alternate_class = 'windowbg2' . $color_class;
@@ -304,7 +312,7 @@ function template_replies()
 
 			echo '
 						<tr>
-							<td class="', $color_class, ' icon">
+							<td class="icon ', $color_class, '">
 								<img src="', $topic['first_post']['icon_url'], '">
 							</td>
 							<td class="subject ', $alternate_class, '">
@@ -318,21 +326,21 @@ function template_replies()
 									</p>
 								</div>
 							</td>
-							<td class="', $color_class, ' stats">
+							<td class="stats ', $color_class, '">
 								', $topic['replies'], ' ', $txt['replies'], '
 								<br>
 								', $topic['views'], ' ', $txt['views'], '
 							</td>
-							<td class="', $alternate_class, ' lastpost">
-								<a href="', $topic['last_post']['href'], '"><img src="', $theme['images_url'], '/icons/last_post.gif" alt="', $txt['last_post'], '" title="', $txt['last_post'], '" class="right"></a>
+							<td class="lastpost ', $alternate_class, '">
+								<p><a href="', $topic['last_post']['href'], '"><img src="', $theme['images_url'], '/icons/last_post.gif" alt="', $txt['last_post'], '" title="', $txt['last_post'], '" class="right"></a>
 								', strtr($txt['last_post_time_author'], array(
 									'{time}' => $topic['last_post']['time'],
 									'{author}' => $topic['last_post']['member']['link']
-								)), '
+								)), '</p>
 							</td>';
 
 			echo '
-							<td class="windowbg2 middle center">
+							<td class="', $color_class, ' middle center">
 								<input type="checkbox" name="topics[]" value="', $topic['id'], '">
 							</td>';
 			echo '
