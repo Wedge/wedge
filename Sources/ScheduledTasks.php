@@ -1469,7 +1469,7 @@ function scheduled_weekly_maintenance()
 		)
 	);
 
-	// Check the cache folders etc. have what they're supposed to have. Just remember that we have mask things from occasional silly hosts.
+	// Check the cache folders etc. have what they're supposed to have. Just remember that we have to mask things from occasional silly hosts.
 	if (!file_exists($cachedir . '/index.php'))
 		@file_put_contents($cachedir . '/index.php', '<' . '?' . 'ph' . "p\n\n// Redirect to the upper level.\nheader('Location: ../');\n");
 

@@ -86,6 +86,22 @@
 		opacity: 1
 		transition: opacity .5s
 
+.loading virtual
+	mixin: .inline-block
+	// All the cool kids get CSS animation.
+	@if chrome, firefox[5-], opera[12-], safari[4-], ie[10-]
+		width, height: 10px
+		border-radius: 100%
+		border: 1px solid rgba(0,0,0,0.5)
+		border-top-color: transparent
+		box-shadow: 1px 1px 7px #777
+		animation: spin 1s infinite linear
+	@else
+		width, height: 14px
+		background-image: url($images/wheel.gif)
+		background-repeat: no-repeat
+	@endif
+
 /* Common and helper variable.
 ------------------------------------------------------- */
 

@@ -205,79 +205,87 @@ class wess_mixin extends wess
 		}
 
 		// ...And then we apply them to the CSS file.
-		$repa = array();
-		$selector_regex = '([abipqsu]|[!+>&#*@:.a-z0-9][^{};,\n"()]+)';
-		if (preg_match_all('~(?<=\n)(\h*)mixin\h*:\h*' . $selector_regex . '\h*(?:\(([^\n]+)\))?~i', $css, $targets, PREG_SET_ORDER))
+		// We'll repeat the process as long as there are mixin calls left, allowing for nested mixins.
+		for ($loop = 0; $loop < 10; $loop++)
 		{
-			foreach ($targets as $mixin)
+			$repa = array();
+			$selector_regex = '([abipqsu]|[!+>&#*@:.a-z0-9][^{};,\n"()]+)';
+
+			// Search for 'mixin: .otherclass' rules.
+			if (preg_match_all('~(?<=\n)(\h*)mixin\h*:\h*' . $selector_regex . '\h*(?:\(([^\n]+)\))?~i', $css, $targets, PREG_SET_ORDER))
 			{
-				$rep = '';
-				$tg = $mixin[2];
-				if (isset($mix[$tg]))
+				foreach ($targets as $mixin)
 				{
-					$rep = $mix[$tg];
-					if (!empty($mixin[3]))
+					$rep = '';
+					$tg = $mixin[2];
+					if (isset($mix[$tg]))
 					{
-						$variables = explode(',', $mixin[3]);
-						$i = 0;
-						foreach ($variables as $i => $var)
-							if (!empty($var))
-								$rep = str_replace('$%' . $i . '%', trim($var, '" '), $rep);
+						$rep = $mix[$tg];
+						if (!empty($mixin[3]))
+						{
+							$variables = explode(',', $mixin[3]);
+							$i = 0;
+							foreach ($variables as $i => $var)
+								if (!empty($var))
+									$rep = str_replace('$%' . $i . '%', trim($var, '" '), $rep);
+						}
+
+						// Replace all missing variables with their default value.
+						if (!empty($def[$tg]))
+							$rep = preg_replace('~\$%(\d+)%~e', '$def[$tg][(int) \'$1\']', $rep);
 					}
+					// Or is this a simple non-mixin selector we want to mix with? (Child selectors aren't allowed for these.)
+					elseif (preg_match_all('~(?<=\n)' . preg_quote($tg, '~') . '\h*(?:[a-zA-Z]+\h*)?\v+(\h+)([^\v]*\v+)((?:\1[^\v]*\v+)*)~', $css, $selectors, PREG_SET_ORDER))
+						foreach ($selectors as $sel)
+							$rep .= "\n" . rtrim(str_replace("\n" . $sel[1], "\n", $sel[2] . $sel[3]));
 
-					// Replace all missing variables with their default value.
-					if (!empty($def[$tg]))
-						$rep = preg_replace('~\$%(\d+)%~e', '$def[$tg][(int) \'$1\']', $rep);
+					$repa[$mixin[0]] = $mixin[1] . str_replace("\n", "\n" . $mixin[1], $rep);
 				}
-				// Or is this a simple non-mixin selector we want to mix with? (Child selectors aren't allowed for these.)
-				elseif (preg_match_all('~(?<=\n)' . preg_quote($tg, '~') . '\h*(?:[a-zA-Z]+\h*)?\v+(\h+)([^\v]*\v+)((?:\1[^\v]*\v+)*)~', $css, $selectors, PREG_SET_ORDER))
-					foreach ($selectors as $sel)
-						$rep .= "\n" . rtrim(str_replace("\n" . $sel[1], "\n", $sel[2] . $sel[3]));
-
-				$repa[$mixin[0]] = $mixin[1] . str_replace("\n", "\n" . $mixin[1], $rep);
 			}
-		}
 
-		// ...We should also do '.class mixes .otherclass' here.
-		if (preg_match_all('~(?<=\n)(\h*)(.*?)\h+mixes\h*' . $selector_regex . '(?:\(([^\n]+)\))?~i', $css, $targets, PREG_SET_ORDER))
-		{
-			foreach ($targets as $mixin)
+			// ...We should also do '.class mixes .otherclass' here.
+			if (preg_match_all('~(?<=\n)(\h*)(.*?)\h+mixes\h*' . $selector_regex . '(?:\(([^\n]+)\))?~i', $css, $targets, PREG_SET_ORDER))
 			{
-				$rep = '';
-				$tg = trim($mixin[3]);
-				if (isset($mix[$tg]))
+				foreach ($targets as $mixin)
 				{
-					$rep = $mix[$tg];
-					if (!empty($mixin[4]))
+					$rep = '';
+					$tg = trim($mixin[3]);
+					if (isset($mix[$tg]))
 					{
-						$variables = explode(',', $mixin[4]);
-						$i = 0;
-						foreach ($variables as $i => $var)
-							if (!empty($var))
-								$rep = str_replace('$%' . $i . '%', trim($var, '" '), $rep);
+						$rep = $mix[$tg];
+						if (!empty($mixin[4]))
+						{
+							$variables = explode(',', $mixin[4]);
+							$i = 0;
+							foreach ($variables as $i => $var)
+								if (!empty($var))
+									$rep = str_replace('$%' . $i . '%', trim($var, '" '), $rep);
+						}
+
+						// Replace all missing variables with their default value.
+						if (!empty($def[$tg]))
+							$rep = preg_replace('~\$%(\d+)%~e', '$def[$tg][(int) \'$1\']', $rep);
 					}
+					// Or is this a simple non-mixin selector we want to mix with? (Child selectors aren't allowed for these.)
+					elseif (preg_match_all('~(?<=\n)' . preg_quote($tg, '~') . '\h*(?:[a-zA-Z]+\h*)?\v+(\h+)([^\v]*\v+)((?:\1[^\v]*\v+)*)~', $css, $selectors, PREG_SET_ORDER))
+						foreach ($selectors as $sel)
+							$rep .= "\n" . rtrim(str_replace("\n" . $sel[1], "\n", $sel[2] . $sel[3]));
 
-					// Replace all missing variables with their default value.
-					if (!empty($def[$tg]))
-						$rep = preg_replace('~\$%(\d+)%~e', '$def[$tg][(int) \'$1\']', $rep);
+					$newline = "\n" . $mixin[1] . (isset($mixin[1][0]) ? $mixin[1][0] : "\t");
+					$repa[$mixin[0]] = $mixin[1] . $mixin[2] . $newline . str_replace("\n", $newline, $rep);
 				}
-				// Or is this a simple non-mixin selector we want to mix with? (Child selectors aren't allowed for these.)
-				elseif (preg_match_all('~(?<=\n)' . preg_quote($tg, '~') . '\h*(?:[a-zA-Z]+\h*)?\v+(\h+)([^\v]*\v+)((?:\1[^\v]*\v+)*)~', $css, $selectors, PREG_SET_ORDER))
-					foreach ($selectors as $sel)
-						$rep .= "\n" . rtrim(str_replace("\n" . $sel[1], "\n", $sel[2] . $sel[3]));
-
-				$newline = "\n" . $mixin[1] . (isset($mixin[1][0]) ? $mixin[1][0] : "\t");
-				$repa[$mixin[0]] = $mixin[1] . $mixin[2] . $newline . str_replace("\n", $newline, $rep);
 			}
-		}
 
-		if (!empty($repa))
-		{
-			// Sort the array by key length, to avoid conflicts.
-			$keys = array_map('strlen', array_keys($repa));
-			array_multisort($keys, SORT_DESC, $repa);
+			if (!empty($repa))
+			{
+				// Sort the array by key length, to avoid conflicts.
+				$keys = array_map('strlen', array_keys($repa));
+				array_multisort($keys, SORT_DESC, $repa);
 
-			$css = str_replace(array_keys($repa), array_values($repa), $css);
+				$css = str_replace(array_keys($repa), array_values($repa), $css);
+			}
+			else
+				break;
 		}
 	}
 }

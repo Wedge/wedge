@@ -383,10 +383,6 @@ em
 	border-radius: 0 0 12px 12px
 	margin-top: 0
 
-// Can't use an extends on .zoom-loading, because it's in a different file.
-.loading, .zoom-loading
-	background-image: url($images/loader.gif)
-	background-repeat: no-repeat
 
 // Fold/unfold icon
 .upshrinks mixes .inline-block
@@ -1432,6 +1428,7 @@ a.moderation_link
 	box-shadow: 0 0 8px #000
 	color: #f96f00
 	text-align: center
+	box-sizing: border-box
 	font-size: 16pt
 	padding: 16px
 	width: 100%
@@ -1440,9 +1437,7 @@ a.moderation_link
 	top, left: 0
 	a extends .loading
 		float: right
-		margin: 8px 25px 0 0
-		display: inline-block
-		width, height: 12px
+		margin: 8px 8px 0
 
 /* Definition lists
 ------------------------------------------------------- */
@@ -1815,6 +1810,13 @@ th.last_th
 		float: right
 		width: 70%
 		text-align: right
+@endif
+
+// Used by the Ajax loader.
+@if chrome, firefox[5-], opera[12-], safari[4-], ie[10-]
+	@keyframes spin
+		to
+			transform: rotate(360deg)
 @endif
 
 /* Don't touch this -- these are placeholders for CSS added by Wess.

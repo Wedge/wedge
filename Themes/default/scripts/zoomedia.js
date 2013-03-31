@@ -241,7 +241,7 @@
 		{
 			show_loading = setTimeout(function ()
 			{
-				var loa = $('<div class="zoom-loading">' + (lang.loading || '') + '</div>').click(function () {
+				var loa = $('<div class="zoom-loading"><span />' + (lang.loading || '') + '</div>').click(function () {
 					zooming = false;
 					$('img').off('load.zoom');
 					$(this).remove();
