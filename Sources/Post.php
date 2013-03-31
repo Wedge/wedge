@@ -398,7 +398,7 @@ function Post($post_errors = array())
 				}
 
 				// If it's not a minor error flag it as such.
-				if (!in_array($error_id, array('new_reply', 'not_approved', 'new_replies', 'old_topic', 'need_qr_verification')))
+				if (!in_array($error_id, array('not_approved', 'new_replies', 'old_topic', 'need_qr_verification')))
 					$context['error_type'] = 'serious';
 			}
 		}
