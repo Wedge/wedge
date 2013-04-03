@@ -89,7 +89,7 @@
 .loading virtual
 	mixin: .inline-block
 	// All the cool kids get CSS animation.
-	@if chrome, firefox[5-], opera[12-], safari[4-], ie[10-]
+	@if can_animate
 		width, height: 10px
 		border-radius: 100%
 		border: 1px solid rgba(0,0,0,0.5)

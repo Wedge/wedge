@@ -232,21 +232,17 @@ function ViewErrorLog()
 			loadMemberData($id, false, 'minimal');
 			$context['filter']['value']['html'] = '<a href="<URL>?action=profile;u=' . $id . '">' . $user_profile[$id]['real_name'] . '</a>';
 		}
-		elseif ($filter['variable'] == 'url')
-			$context['filter']['value']['html'] = '&quot;' . strtr(htmlspecialchars((substr($filter['value']['sql'], 0, 1) == '?' ? $scripturl : '') . $filter['value']['sql']), array('\_' => '_')) . '&quot;';
 		elseif ($filter['variable'] == 'message')
 		{
-			$context['filter']['value']['html'] = '&quot;' . strtr(htmlspecialchars($filter['value']['sql']), array("\n" => '<br>', '&lt;br&gt;' => '<br>', "\t" => '&nbsp;&nbsp;&nbsp;', '\_' => '_', '\\%' => '%', '\\\\' => '\\')) . '&quot;';
+			$context['filter']['value']['html'] = '&quot;' . strtr(westr::safe($filter['value']['sql']), array("\n" => '<br>', '&lt;br&gt;' => '<br>', "\t" => '&nbsp;&nbsp;&nbsp;', '\_' => '_', '\\%' => '%', '\\\\' => '\\')) . '&quot;';
 			$context['filter']['value']['html'] = preg_replace('~&amp;lt;span class=&amp;quot;remove&amp;quot;&amp;gt;(.+?)&amp;lt;/span&amp;gt;~', '$1', $context['filter']['value']['html']);
 		}
 		elseif ($filter['variable'] == 'error_type')
-		{
-			$context['filter']['value']['html'] = '&quot;' . strtr(htmlspecialchars($filter['value']['sql']), array("\n" => '<br>', '&lt;br&gt;' => '<br>', "\t" => '&nbsp;&nbsp;&nbsp;', '\_' => '_', '\\%' => '%', '\\\\' => '\\')) . '&quot;';
-		}
+			$context['filter']['value']['html'] = '&quot;' . strtr(westr::safe($filter['value']['sql']), array("\n" => '<br>', '&lt;br&gt;' => '<br>', "\t" => '&nbsp;&nbsp;&nbsp;', '\_' => '_', '\\%' => '%', '\\\\' => '\\')) . '&quot;';
+		elseif ($filter['variable'] == 'url')
+			$context['filter']['value']['html'] = '&quot;' . strtr(westr::safe((substr($filter['value']['sql'], 0, 1) == '?' ? $scripturl : '') . $filter['value']['sql']), array('\_' => '_')) . '&quot;';
 		elseif ($filter['variable'] == 'ip')
-		{
 			$context['filter']['value']['html'] = $context['filtering_ip']; // we already stored this earlier!
-		}
 		else
 			$context['filter']['value']['html'] =& $filter['value']['sql'];
 	}
@@ -528,7 +524,7 @@ function ViewIntrusionLog()
 			$context['filter']['value']['html'] = '<a href="<URL>?action=profile;u=' . $id . '">' . $user_profile[$id]['real_name'] . '</a>';
 		}
 		elseif ($filter['variable'] == 'request_uri')
-			$context['filter']['value']['html'] = '&quot;' . strtr(htmlspecialchars((substr($filter['value']['sql'], 0, 1) == '?' ? $scripturl : '') . $filter['value']['sql']), array('\_' => '_')) . '&quot;';
+			$context['filter']['value']['html'] = '&quot;' . strtr(westr::safe((substr($filter['value']['sql'], 0, 1) == '?' ? $scripturl : '') . $filter['value']['sql']), array('\_' => '_')) . '&quot;';
 		elseif ($filter['variable'] == 'error_type')
 			$context['filter']['value']['html'] = '&quot;' . (isset($txt['behav_' . $_GET['value'] . '_log']) ? $txt['behav_' . $_GET['value'] . '_log'] : $_GET['value']) . '&quot;';
 		elseif ($filter['variable'] == 'ip')

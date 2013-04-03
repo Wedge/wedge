@@ -477,6 +477,10 @@ class wess_if extends wess
 			// All require a prefix.
 			if (strpos($css, 'can_flex_box') !== false)
 				$css = preg_replace('~\bcan_flex_box\b~', '(firefox[2-], chrome[4-], safari[3.1-] && !ios, ios[3.2-])', $css);
+
+			// List browsers that support CSS3 animations (Wedge adds prefixes automatically.)
+			if (strpos($css, 'can_animate') !== false)
+				$css = preg_replace('~\bcan_animate\b~', '(chrome, firefox[5-], opera[12-], ie[10-], safari[4-] && !ios, ios[3.2-], android[2.1-])', $css);
 		}
 
 		// @is (condition, if_true[, if_false])
@@ -1522,7 +1526,7 @@ class wess_prefixes extends wess
 		// IE6/7/8/9 don't support animations, IE10, Firefox 16+ and Opera 12.10+ support them unprefixed, other browsers require a prefix.
 		if (strpos($matches[1], 'animation') === 0)
 		{
-			if ($ie8down || $ie9 || ($firefox && $v < 4))
+			if ($ie8down || $ie9 || ($firefox && $v < 5) || ($opera && $v < 12) || ($safari && $v < 4))
 				return '';
 			if (($opera && $v < 12.1) || ($firefox && $v < 16) || $webkit)
 				return $prefixed;
