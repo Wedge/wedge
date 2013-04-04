@@ -231,7 +231,7 @@ function wedge_main()
 		exit;
 
 	$context['action'] = $action = isset($action_list[$action]) ? $action : (isset($settings['default_action'], $action_list[$settings['default_action']]) ? $settings['default_action'] : '');
-	$context['subaction'] = isset($_REQUEST['sa']) ? $_REQUEST['sa'] : null;
+	$context['subaction'] = isset($_GET['sa']) ? $_GET['sa'] : null;
 
 	// Load the user's cookie (or set as guest) and load their settings.
 	we::getInstance();

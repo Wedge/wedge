@@ -27,7 +27,7 @@ if (!defined('WEDGE'))
  */
 function log_error($error_message, $error_type = 'general', $file = null, $line = null, $referrer = null)
 {
-	global $txt, $settings, $scripturl, $last_error, $context, $full_request, $pluginsdir;
+	global $txt, $settings, $scripturl, $last_error, $context, $pluginsdir;
 	static $plugin_dir = null;
 
 	// Check if error logging is actually on.

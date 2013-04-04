@@ -98,10 +98,6 @@ function aeva_initGallery($gal_url = null)
 	// Is the user banned?
 	media_is_not_banned();
 
-	// For compatibility with earlier URLs...
-	if ($context['action'] === 'mgallery')
-		$context['action'] = 'media';
-
 	// Load album before calling the function
 	// !!! Temp stuff... Need a better way to do this
 	$context['aeva_act'] = isset($_REQUEST['area']) ? $_REQUEST['area'] : (isset($_REQUEST['sa']) ? $_REQUEST['sa'] : '');

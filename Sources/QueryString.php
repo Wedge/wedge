@@ -35,7 +35,7 @@ if (!defined('WEDGE'))
  */
 function cleanRequest()
 {
-	global $board, $topic, $boardurl, $scripturl, $settings, $context, $full_request, $full_board, $action_list;
+	global $board, $topic, $boardurl, $scripturl, $settings, $context, $action_list;
 
 	// While we're here cleaning the request, try and clean the headers that we'll send back.
 	header('X-Powered-By: ');
@@ -142,6 +142,7 @@ function cleanRequest()
 		$_GET += $temp;
 	}
 
+	$full_board = array();
 	$full_request = $_SERVER['HTTP_HOST'] . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '/');
 	if (isset($_GET['board']) && is_numeric($_GET['board']))
 		$board = (int) $_GET['board'];
@@ -165,7 +166,6 @@ function cleanRequest()
 
 		if (wesql::num_rows($query) == 0)
 		{
-			$full_board = array();
 			$board = 0;
 			unset($_GET['board']);
 
@@ -232,10 +232,10 @@ function cleanRequest()
 		// If URL has the form domain.com/wahetever/do/action, it's an action. Really.
 		if (preg_match('~/' . (isset($settings['pretty_prefix_action']) ? $settings['pretty_prefix_action'] : 'do/') . '([a-zA-Z0-9]+)~', $query_string, $m) && isset($action_list[$m[1]]))
 			$_GET['action'] = $m[1];
-
-		// Plug-ins may want to play with their own URL system.
-		call_hook('determine_location', array($full_request, $full_board));
 	}
+
+	// Plug-ins may want to play with their own URL system, or even just modify $_GET on the fly.
+	call_hook('determine_location', array(&$full_request, $full_board));
 
 	// Don't bother going further if we've come here from a *REAL* 404.
 	// Reject anything with a query string or unusual extensions.
@@ -299,10 +299,6 @@ function cleanRequest()
 
 	// Add entities to GET. This is kinda like the slashes on everything else.
 	$_GET = htmlspecialchars__recursive($_GET);
-
-	// Compatibility with SMF feeds
-	if (isset($_GET['action']) && $_GET['action'] === '.xml')
-		$_GET['action'] = 'feed';
 
 	// Let's not depend on the ini settings... why even have COOKIE in there, anyway?
 	$_REQUEST = $_POST + $_GET;

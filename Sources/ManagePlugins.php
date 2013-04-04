@@ -1725,12 +1725,15 @@ function uploadPlugin()
 function knownHooks()
 {
 	return array(
+
 		'language' => array(
 			'lang_help',
 			'lang_who',
 			'lang_modlog',
 		),
+
 		'function' => array(
+
 			// Cornerstone items
 			'pre_load',
 			'determine_location',
@@ -1739,6 +1742,7 @@ function knownHooks()
 			'menu_items',
 			'action_list',
 			'behavior',
+
 			// Threads and posts display
 			'post_bbc_parse',
 			'display_prepare_post',
@@ -1746,6 +1750,7 @@ function knownHooks()
 			'messageindex_buttons',
 			'display_message_list',
 			'display_main',
+
 			// Admin
 			'admin_areas',
 			'admin_search',
@@ -1760,6 +1765,7 @@ function knownHooks()
 			'theme_settings',
 			'member_prefs',
 			'maintenance_routine',
+
 			// User related
 			'login',
 			'validate_login',
@@ -1776,11 +1782,13 @@ function knownHooks()
 			'delete_member',
 			'delete_member_multiple',
 			'track_ip',
+
 			// User permissions
 			'load_permissions',
 			'illegal_perms',
 			'illegal_guest_perms',
 			'banned_perms',
+
 			// Content creation
 			'outgoing_email',
 			'personal_message',
@@ -1799,13 +1807,16 @@ function knownHooks()
 			'post_post_validate',
 			'save_post_draft',
 			'save_pm_draft',
+
 			// Likes
 			'like_handler',
 			'liked_content',
+
 			// Thoughts
 			'thought_add',
 			'thought_update',
 			'thought_delete',
+
 			// Process flow and execution
 			'default_action',
 			'fallback_action',
@@ -1813,33 +1824,39 @@ function knownHooks()
 			'redirect',
 			'exit',
 			'dynamic_rewrite',
+
 			// Verification/CAPTCHA points
 			'add_captcha',
 			'verification_setup',
 			'verification_test',
 			'verification_refresh',
 			'verification_display',
+
 			// Who's Online
 			'who_allowed',
 			'whos_online',
 			'whos_online_complete',
+
 			// Miscellaneous
-			'css_color',
+			'ssi',
+			'feed',
 			'buddy',
+			'css_color',
 			'bbc_buttons',
 			'place_credit',
 			'get_boardindex',
 			'info_center',
 			'media_areas',
 			'profile_areas',
-			'ssi',
 			'suggest',
 			'thought',
 			'select_quickmod',
 			'apply_quickmod',
+
 			// Notifications
 			'notification_callback',
 			'notification_new',
+
 		),
 	);
 }

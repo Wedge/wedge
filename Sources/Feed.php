@@ -66,6 +66,15 @@ function Feed()
 	if (empty($settings['xmlnews_enable']))
 		obExit(false);
 
+	if ($context['subaction'] === 'media')
+	{
+		// Sorry for the (hopefully temp) ugly redirect... Better here than in index.php?
+		$context['action'] = $_REQUEST['action'] = $_GET['action'] = 'media';
+		$context['subaction'] = $_REQUEST['sa'] = $_GET['sa'] = 'feed';
+		loadSource('media/Aeva-Gallery');
+		aeva_initGallery();
+	}
+
 	loadLanguage('Stats');
 
 	// Get rid of session IDs!
@@ -227,11 +236,15 @@ function Feed()
 
 	// List all the different types of data they can pull.
 	$subActions = array(
-		'recent' => array('getXmlRecent', 'recent-post'),
-		'news' => array('getXmlNews', 'article'),
-		'members' => array('getXmlMembers', 'member'),
-		'profile' => array('getXmlProfile', null),
+		'members' => 'getXmlMembers',
+		'news' => 'getXmlNews',
+		'profile' => 'getXmlProfile',
+		'recent' => 'getXmlRecent',
 	);
+
+	// You can plug into this, too!
+	add_hook('feed', array(&$subActions, &$query_this));
+
 	if (empty($_GET['sa']) || !isset($subActions[$_GET['sa']]))
 		$_GET['sa'] = 'recent';
 
@@ -257,14 +270,14 @@ function Feed()
 			if (empty($settings['feed_date']))
 				updateSettings(array('feed_date' => date('Y-m-d')));
 		}
-		$xml = $subActions[$_GET['sa']][0]($xml_format);
+		$xml = $subActions[$_GET['sa']]($xml_format);
 
 		if (!empty($settings['cache_enable']) && ((we::$is_guest && $settings['cache_enable'] >= 3)
 		|| (!we::$is_guest && microtime(true) - $cache_t > 0.2)))
 			cache_put_data('xmlfeed-' . $xml_format . ':' . (we::$is_guest ? '' : we::$id . '-') . $cachekey, $xml, 240);
 	}
 
-	$feed_title = htmlspecialchars(strip_tags($context['forum_name'])) . (isset($feed_title) ? $feed_title : '');
+	$feed_title = westr::safe(strip_tags($context['forum_name'])) . (isset($feed_title) ? $feed_title : '');
 
 	// This is an xml file....
 	clean_output();
