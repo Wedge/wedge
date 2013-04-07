@@ -2080,7 +2080,7 @@ VALUES
 	('password_strength', '1'),
 	('pollMode', '1'),
 	('enableCompressedOutput', '{$enableCompressedOutput}'),
-	('enableCompressedData', '{$enableCompressedOutput}'),
+	('enableCompressedData', '{$enableCompressedData}'),
 	('attachmentSizeLimit', '128'),
 	('attachmentPostLimit', '192'),
 	('attachmentNumPerPostLimit', '4'),

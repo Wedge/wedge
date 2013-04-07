@@ -235,7 +235,7 @@ function cleanRequest()
 	}
 
 	// Plug-ins may want to play with their own URL system, or even just modify $_GET on the fly.
-	call_hook('determine_location', array(&$full_request, $full_board));
+	call_hook('determine_location', array(&$full_request, &$full_board));
 
 	// Don't bother going further if we've come here from a *REAL* 404.
 	// Reject anything with a query string or unusual extensions.

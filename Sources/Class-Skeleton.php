@@ -30,12 +30,14 @@ if (!defined('WEDGE'))
  * $skeleton->first()	- same, but prepends data to given layer
  * $skeleton->before()	- same, but inserts data *before* given layer/block
  * $skeleton->after()	- same, but inserts data *after* given layer/block
- * $skeleton->move()	- moves an existing layer/block to another position in the skeleton
+ * $skeleton->insert()	- shortcut to do a combination of the above based on the preferred target.
  *
  * $skeleton->layer()	- various layer creation functions (see documentation for the function)
  * $skeleton->rename()	- rename an existing layer/block
  * $skeleton->outer()	- wrap a new outer layer around the given layer
  * $skeleton->inner()	- inject a new inner layer directly below the given layer
+ *
+ * $skeleton->move()	- moves an existing layer/block to another position in the skeleton
  * $skeleton->remove()	- remove a layer/block from the skeleton
  *
  * $skeleton->hide()	- erase the skeleton and replace it with a simple structure (template-less pages)
@@ -141,6 +143,12 @@ final class weSkeleton
 	function after($target, $contents = '')
 	{
 		return $this->op($contents, $target, 'after');
+	}
+
+	// Add contents with fine-tuning of position depending on target.
+	function insert($target, $contents = '')
+	{
+		return $this->op($contents, $target, 'generic');
 	}
 
 	/**
@@ -654,8 +662,18 @@ final class weSkeleton
 		if (!$force)
 			$blocks = $this->list_blocks((array) $blocks);
 		$has_layer = (bool) count(array_filter($blocks, 'is_array'));
-		$to = $this->find($target, $where);
+		$to = $this->find($where === 'generic' ? array_keys($target) : $target, $where);
+
 		if (empty($to))
+			return false;
+
+		// If working on a flexible array, choose the action requested for our final target.
+		if ($where === 'generic')
+			$where = $target[$to];
+
+		// If we're using a fallback, ensure we're not in a special state where
+		// the chrome is hidden, as we're not sure we can accept new content.
+		if ($to === 'default' && $this->hidden && is_array($target) && reset($target) !== 'default')
 			return false;
 
 		// If a mod requests to replace the contents of the sidebar, just smile politely.
@@ -767,6 +785,7 @@ final class weSkeletonItem
 	function first($items)		{ $this->skeleton->first($this->target, $items); return $this; }
 	function before($items)		{ $this->skeleton->before($this->target, $items); return $this; }
 	function after($items)		{ $this->skeleton->after($this->target, $items); return $this; }
+	function insert($items)		{ $this->skeleton->insert($this->target, $items); return $this; }
 	function move($layer, $p)	{ $this->skeleton->move($this->target, $layer, $p); return $this; }
 	function rename($layer)		{ $this->skeleton->rename($this->target, $layer); return $this; }
 	function outer($layer)		{ $this->skeleton->outer($this->target, $layer); return $this; }
@@ -777,7 +796,7 @@ final class weSkeletonItem
 
 /*************
  *
- * This is the main skeleton object.
+ * This is the singleton object for the main skeleton.
  *
  * To facilitate calling it without adding a global variable, it is enclosed in
  * a static class called wetem that redirects all calls to the regular dynamic class.
@@ -816,6 +835,7 @@ final class wetem
 	static function get($targets = '')							{ return self::$main->get($targets); }
 	static function before($target, $contents = '')				{ return self::$main->before($target, $contents); }
 	static function after($target, $contents = '')				{ return self::$main->after($target, $contents); }
+	static function insert($target, $contents = '')				{ return self::$main->insert($target, $contents); }
 	static function skip($target)								{ return self::$main->skip($target); }
 	static function remove($target)								{		 self::$main->remove($target); }
 	static function move($item, $target, $where)				{ return self::$main->move($item, $target, $where); }

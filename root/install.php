@@ -930,6 +930,7 @@ function DatabasePopulation()
 		'{$boardurl}' => $boardurl,
 		'{$boarddomain}' => substr($boardurl, strpos($boardurl, '://') !== false ? strpos($boardurl, '://') + 3 : 0),
 		'{$enableCompressedOutput}' => isset($_POST['compress']) ? '1' : '0',
+		'{$enableCompressedData}' => isset($_POST['compress']) && isset($_SERVER['SERVER_SOFTWARE']) && strpos($_SERVER['SERVER_SOFTWARE'], 'Apache') !== false ? '1' : '0',
 		'{$databaseSession_enable}' => isset($_POST['dbsession']) ? '1' : '0',
 		'{$wedge_version}' => $GLOBALS['current_wedge_version'],
 		'{$current_time}' => time(),
