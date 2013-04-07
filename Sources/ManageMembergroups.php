@@ -699,6 +699,8 @@ function EditMembergroup()
 		// Validate the session.
 		checkSession();
 
+		$_REQUEST['group'] = (int) $_REQUEST['group'];
+
 		// Can they really inherit from this group?
 		if (isset($_POST['group_inherit']) && $_POST['group_inherit'] != -2 && !allowedTo('admin_forum'))
 		{
@@ -741,7 +743,7 @@ function EditMembergroup()
 				'group_type' => $_POST['group_type'],
 				'group_hidden' => $_POST['group_hidden'],
 				'group_inherit' => $_POST['group_inherit'],
-				'current_group' => (int) $_REQUEST['group'],
+				'current_group' => $_REQUEST['group'],
 				'group_name' => $_POST['group_name'],
 				'online_color' => $_POST['online_color'],
 				'stars' => $_POST['stars'],
@@ -808,7 +810,7 @@ function EditMembergroup()
 				elseif (empty($access['enter_perm']))
 					$access['enter_perm'] = $access['view_perm'];
 
-				$insert_rows[] = array($id_board, $id_group, $access['view_perm'], $access['enter_perm']);
+				$insert_rows[] = array($id_board, $_REQUEST['group'], $access['view_perm'], $access['enter_perm']);
 			}
 			if (!empty($insert_rows))
 				wesql::insert('replace',

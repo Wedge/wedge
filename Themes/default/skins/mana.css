@@ -1,4 +1,11 @@
 
+/* General
+------------------------------------------------------- */
+
+input, textarea
+	:disabled
+		background: #eee
+
 /* Styles for the admin quick search.
 ------------------------------------------------------- */
 #quick_search

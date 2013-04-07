@@ -813,7 +813,7 @@ function template_show_settings()
 				{
 					echo '
 						<fieldset id="fs_', $config_var['name'], '">
-							<legend><a href="#" onclick="$(\'#fs_', $config_var['name'], '\').hide(); $(\'#fs_', $config_var['name'], '_groups_link\').show(); return false;">', $txt['select_from_list'], '</a></legend>
+							<legend><div class="foldable fold"></div> <a href="#" onclick="$(\'#fs_', $config_var['name'], '\').hide(); $(\'#fs_', $config_var['name'], '_link\').show(); return false;">', $txt['select_from_list'], '</a></legend>
 							<ul class="permission_groups">';
 					foreach ($config_var['data'] as $option)
 						echo '
@@ -824,7 +824,7 @@ function template_show_settings()
 					echo '
 							</ul>
 						</fieldset>
-						<a href="#" onclick="$(\'#fs_', $config_var['name'], '\').show(); $(\'#fs_', $config_var['name'], '_link\').hide(); return false;" id="fs_', $config_var['name'], '_link" class="hide">[ ', $txt['click_to_see_more'], ' ]</a>';
+						<div id="fs_', $config_var['name'], '_link" class="hide"><div class="foldable"></div> <a href="#" onclick="$(\'#fs_', $config_var['name'], '\').show(); $(\'#fs_', $config_var['name'], '_link\').hide(); return false;">', $txt['click_to_see_more'], '</a></div>';
 
 					add_js('$("#fs_', $config_var['name'], '").hide(); $("#fs_', $config_var['name'], '_link").show();');
 				}

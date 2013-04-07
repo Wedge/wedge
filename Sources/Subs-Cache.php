@@ -781,7 +781,7 @@ function dynamic_group_colors()
 	$rep = '';
 	$request = wesql::query('
 		SELECT id_group, online_color
-		FROM {db_prefix}membergroups AS g 
+		FROM {db_prefix}membergroups AS g
 		WHERE g.online_color != {string:blank}',
 		array(
 			'blank' => '',

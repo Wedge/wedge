@@ -675,7 +675,7 @@ function template_inline_permissions()
 
 	echo '
 		<fieldset id="', $context['current_permission'], '">
-			<legend><a href="#" onclick="$(\'#', $context['current_permission'], '\').hide(); $(\'#', $context['current_permission'], '_groups_link\').show(); return false;">', $txt['avatar_select_permission'], '</a></legend>';
+			<legend><div class="foldable fold"></div> <a href="#" onclick="$(\'#', $context['current_permission'], '\').hide(); $(\'#', $context['current_permission'], '_groups_link\').show(); return false;">', $txt['avatar_select_permission'], '</a></legend>';
 	if (empty($settings['permission_enable_deny']))
 		echo '
 			<ul class="permission_groups">';
@@ -730,7 +730,7 @@ function template_inline_permissions()
 	echo '
 		</fieldset>
 
-		<a href="#" onclick="$(\'#', $context['current_permission'], '\').show(); $(\'#', $context['current_permission'], '_groups_link\').hide(); return false;" id="', $context['current_permission'], '_groups_link" class="hide">[ ', $txt['avatar_select_permission'], ' ]</a>';
+		<div id="', $context['current_permission'], '_groups_link" class="hide"><div class="foldable"></div> <a href="#" onclick="$(\'#', $context['current_permission'], '\').show(); $(\'#', $context['current_permission'], '_groups_link\').hide(); return false;">', $txt['avatar_select_permission'], '</a></div>';
 
 	add_js('
 	$("#', $context['current_permission'], '").hide();
