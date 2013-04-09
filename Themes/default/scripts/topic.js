@@ -13,6 +13,7 @@
 @language index;
 
 $(function () {
+	// Fix icons in MessageIndex
 	$.each('.locked .pinned .poll .my'.split(' '), function (key, val) {
 		$('.subject' + val).each(function () {
 			$('<span/>').addClass('floatright icon_' + val.slice(1)).prependTo(this);
@@ -116,14 +117,19 @@ function go_down()
 				{
 					hide_ajax();
 
-					// Any problems?
-					if (!XMLDoc || !$('subject', XMLDoc).length)
-						return false;
+					// Any problems? Ignore the rest...
+					if (!XMLDoc);
 
-					restore_subject();
+					else if ($('error', XMLDoc).length)
+						$('#qm_subject').after($('error', XMLDoc).text());
 
-					// Re-template the subject!
-					cur_subject_div.find('a').html($('subject', XMLDoc).text());
+					else if ($('subject', XMLDoc).length)
+					{
+						restore_subject();
+
+						// Re-template the subject!
+						cur_subject_div.find('a').html($('subject', XMLDoc).text());
+					}
 
 					return false;
 				}

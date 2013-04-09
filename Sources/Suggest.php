@@ -18,11 +18,6 @@ function Suggest($checkRegistered = null)
 {
 	global $context;
 
-	// These are all registered types.
-	$searchTypes = array(
-		'member' => 'Member',
-	);
-
 	call_hook('suggest');
 
 	if (!isset($_REQUEST['search']))
@@ -30,7 +25,7 @@ function Suggest($checkRegistered = null)
 
 	// If we're just checking the callback function is registered return true or false.
 	if ($checkRegistered != null)
-		return is_callable('Suggest_Search_' . $checkRegistered);
+		return is_callable('suggest_search_' . $checkRegistered);
 
 	checkSession('get');
 	loadTemplate('Xml');
@@ -38,16 +33,19 @@ function Suggest($checkRegistered = null)
 	// Any parameters?
 	$context['search_param'] = isset($_REQUEST['search_param']) ? unserialize(base64_decode($_REQUEST['search_param'])) : array();
 
-	if (!isset($_REQUEST['suggest_type'], $searchTypes[$_REQUEST['suggest_type']]))
+	if (!isset($_REQUEST['suggest_type']))
 		$_REQUEST['suggest_type'] = 'member';
 
-	$function = 'Suggest_Search_' . $searchTypes[$_REQUEST['suggest_type']];
+	$function = 'suggest_search_' . $_REQUEST['suggest_type'];
+	if (!is_callable($function))
+		return;
+
 	wetem::load('generic_xml');
 	$context['xml_data'] = $function();
 }
 
 // Search for a member - by real_name or member_name by default.
-function Suggest_Search_Member()
+function suggest_search_member()
 {
 	global $txt, $context;
 

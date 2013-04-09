@@ -577,23 +577,18 @@ function we_json_encode($str)
  * Other protections include dealing with newlines, carriage returns (through suppression), single quotes, links, inline script tags, and $scripturl. (Probably to prevent search bots from indexing JS-only URLs.)
  *
  * @param string $string A string whose contents to be quoted.
- * @param string $surround The quote character to use around the string. Defaults to '. Can be useful to switch to " for gzip compression in HTML files.
+ * @param string $q The quote character to use around the string. Defaults to ". Can be useful to switch to ' for gzip compression in JS files.
  * @return string A transformed string with contents suitably single quoted for use in JavaScript.
  */
-function JavaScriptEscape($string, $surround = '\'')
+function JavaScriptEscape($string, $q = "'")
 {
 	global $scripturl;
 
-	return $surround . strtr($string, array(
-		"\n" => "\\\n",
-		'\\' => '\\\\',
-		'"' => chr(16),
-		$surround => '\\' . $surround,
-		'script' => 'scr\\ipt',
-		'href=' => 'hr\\ef=',
-		'"' . $scripturl => '"' . $scripturl . '"+"',
-		'\'' . $scripturl => '\'' . $scripturl . '\'+\''
-	)) . $surround;
+	return chr($q == '"' ? 15 : 16) . str_replace(
+		array("\n",   '\\',   'script',   'href=',   '"' . $scripturl,         "'" . $scripturl,         $q == '"' ? "'" : '"',    $q),
+		array("\\\n", '\\\\', 'scr\\ipt', 'hr\\ef=', '"' . $scripturl . '"+"', "'" . $scripturl . "'+'", chr($q == '"' ? 16 : 15), '\\' . chr($q == '"' ? 15 : 16)),
+		$string
+	) . chr($q == '"' ? 15 : 16);
 }
 
 /**
