@@ -572,30 +572,28 @@ function we_json_encode($str)
 /**
  * Sanitizes strings that might be passed through to JavaScript.
  *
- * Multiple instances of scripts will need to be adjusted through the codebase if passed to JavaScript through the template. This function will handle quoting of the string's contents, including providing the encapsulating quotes (so no need to echo '"', JavaScriptEscape($var), '"'; but simply echo JavaScriptEscape($var); instead)
+ * Multiple instances of scripts will need to be adjusted through the codebase if passed to JavaScript through the template. This function will handle quoting of the string's contents, including providing the encapsulating quotes (so no need to echo '"', JavaScriptEscape($var), '"'; but simply echo JavaScriptEscape($var); instead.)
  *
  * Other protections include dealing with newlines, carriage returns (through suppression), single quotes, links, inline script tags, and $scripturl. (Probably to prevent search bots from indexing JS-only URLs.)
  *
  * @param string $string A string whose contents to be quoted.
+ * @param string $surround The quote character to use around the string. Defaults to '. Can be useful to switch to " for gzip compression in HTML files.
  * @return string A transformed string with contents suitably single quoted for use in JavaScript.
  */
-function JavaScriptEscape($string, $escape_double_quotes = false)
+function JavaScriptEscape($string, $surround = '\'')
 {
 	global $scripturl;
 
-	$str = '\'' . strtr($string, array(
+	return $surround . strtr($string, array(
 		"\n" => "\\\n",
 		'\\' => '\\\\',
-		'\'' => '\\\'',
+		'"' => chr(16),
+		$surround => '\\' . $surround,
 		'script' => 'scr\\ipt',
 		'href=' => 'hr\\ef=',
 		'"' . $scripturl => '"' . $scripturl . '"+"',
 		'\'' . $scripturl => '\'' . $scripturl . '\'+\''
-	)) . '\'';
-
-	if ($escape_double_quotes)
-		return str_replace('"', '&quot;', $str);
-	return $str;
+	)) . $surround;
 }
 
 /**

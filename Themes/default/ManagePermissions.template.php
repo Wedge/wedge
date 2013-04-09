@@ -453,7 +453,7 @@ function template_modify_group()
 	echo '
 		<form action="<URL>?action=admin;area=permissions;sa=modify2;group=', $context['group']['id'], ';pid=', $context['profile']['id'],
 		'" method="post" accept-charset="UTF-8" name="permissionForm" id="permissionForm" onsubmit="return !window.weUsedDeny || ask(',
-		JavaScriptEscape($txt['permissions_deny_dangerous'], true), ', e);">';
+		JavaScriptEscape($txt['permissions_deny_dangerous']), ', e);">';
 
 	if (!empty($settings['permission_enable_deny']) && $context['group']['id'] != -1)
 		echo '

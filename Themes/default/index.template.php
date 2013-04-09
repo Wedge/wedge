@@ -536,7 +536,7 @@ function template_body_after()
 	we_topic = ' . $context['current_topic'] . ';', empty($context['current_board']) ? '' : '
 	we_board = ' . $context['current_board'] . ';', $context['show_pm_popup'] ? '
 
-	ask(' . JavaScriptEscape($txt['show_personal_messages']) . ', function (yes) { yes && window.open(weUrl("action=pm")); });' : '';
+	ask(' . JavaScriptEscape($txt['show_personal_messages'], '"') . ', function (yes) { yes && window.open(weUrl("action=pm")); });' : '';
 
 	// Output any postponed JavaScript added by templates
 	// and mods, and close all outstanding tags. We're done!
@@ -684,9 +684,10 @@ function template_mini_menu($menu, $class)
 		' . $key . ': [';
 		foreach ($pmi as $type => $item)
 			if ($type === 'caption')
-				$js .= (isset($txt[$item]) ? JavaScriptEscape($txt[$item]) : "''") . ', ' . (isset($txt[$item . '_desc']) ? JavaScriptEscape($txt[$item . '_desc']) : "''") . ', ';
+				$js .= (isset($txt[$item]) ? JavaScriptEscape($txt[$item], '"') : '""') . ', '
+					. (isset($txt[$item . '_desc']) ? JavaScriptEscape($txt[$item . '_desc'], '"') : '""') . ', ';
 			else
-				$js .= "'$item', ";
+				$js .= '"' . $item . '", ';
 		$js = substr($js, 0, -2) . '],';
 	}
 	add_js(substr($js, 0, -1) . '

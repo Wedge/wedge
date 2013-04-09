@@ -298,7 +298,7 @@ function Feed()
 		header('Content-Type: application/atom+xml; charset=UTF-8');
 
 	// First, output the xml header.
-	echo '<?xml version="1.0" encoding="UTF-8"?' . '>';
+	echo '<?xml version="1.0" encoding="UTF-8"?', '>';
 
 	// Are we outputting an RSS feed or one with more information?
 	if ($xml_format == 'rss' || $xml_format == 'rss2')

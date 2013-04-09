@@ -937,7 +937,11 @@ function wedge_cache_js($id, &$lang_name, $latest_date, $ext, $js, $gzip = false
 		if (preg_match_all('~\$txt\[([\'"])(.*?)\1]~i', $final, $strings, PREG_SET_ORDER))
 			foreach ($strings as $str)
 				if (isset($txt[$str[2]]))
-					$final = str_replace($str[0], westr::entity_to_js_code(westr::utf8_to_entity(JavaScriptEscape($txt[$str[2]]))), $final);
+					$final = str_replace(
+						$str[0],
+						str_replace(chr(16), '"', westr::entity_to_js_code(westr::utf8_to_entity(JavaScriptEscape($txt[$str[2]])))),
+						$final
+					);
 	}
 	// Did we remove all language files from the list? Clean it up...
 	elseif (!empty($settings['js_lang'][$id]))
