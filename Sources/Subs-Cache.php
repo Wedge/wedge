@@ -939,7 +939,11 @@ function wedge_cache_js($id, &$lang_name, $latest_date, $ext, $js, $gzip = false
 				if (isset($txt[$str[2]]))
 					$final = str_replace(
 						$str[0],
-						str_replace(chr(16), '"', westr::entity_to_js_code(westr::utf8_to_entity(JavaScriptEscape($txt[$str[2]])))),
+						str_replace(
+							array(chr(15), chr(16)),
+							array("'", "'"),
+							westr::entity_to_js_code(westr::utf8_to_entity(JavaScriptEscape($txt[$str[2]])))
+						),
 						$final
 					);
 	}

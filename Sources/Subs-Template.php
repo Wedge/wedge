@@ -181,8 +181,6 @@ function ob_sessrewrite($buffer)
 	if (!empty($cut[1]))
 		$buffer = preg_replace_callback('~<[^>]+?\son[a-z]+="[^"]*"[^>]*>~i', 'wedge_event_delayer', $cut[0]) . $cut[1];
 
-	$buffer = str_replace(chr(16), '"', $buffer);
-
 	$this_pos = strpos($buffer, empty($settings['minify_html']) ? '<!-- insert inline events here -->' : '<!--insert inline events here-->');
 	if ($this_pos !== false)
 	{
@@ -200,6 +198,8 @@ function ob_sessrewrite($buffer)
 
 		$buffer = substr_replace($buffer, $thing, $this_pos, empty($settings['minify_html']) ? 34 : 32);
 	}
+
+	$buffer = str_replace(array(chr(15), chr(16)), array('"', "'"), $buffer);
 
 	// Nerd alert -- the first few lines (tag search process) can be done in a simple regex.
 	//	while (preg_match_all('~<we:([^>\s]+)\s*([a-z][^>]+)?\>((?' . '>[^<]+|<(?!/?we:\\1))*?)</we:\\1>~i', $buffer, $matches, PREG_SET_ORDER))

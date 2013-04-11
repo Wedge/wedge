@@ -49,7 +49,7 @@ function template_generic_menu_sidebar()
 			if (empty($area['label']))
 			{
 				if (empty($area))
-					echo '<li class="separator"><a><hr></a></li>';
+					echo '<li class="sep"><a><hr></a></li>';
 				continue;
 			}
 
@@ -108,7 +108,7 @@ function template_generic_menu_dropdown()
 			if (empty($area['label']))
 			{
 				if (empty($area))
-					echo '<li class="separator"><a><hr></a></li>';
+					echo '<li class="sep"><a><hr></a></li>';
 				continue;
 			}
 
@@ -128,7 +128,7 @@ function template_generic_menu_dropdown()
 					if (empty($sub))
 					{
 						if (is_numeric($sa))
-							echo '<li class="separator"><a><hr></a></li>';
+							echo '<li class="sep"><a><hr></a></li>';
 						continue;
 					}
 

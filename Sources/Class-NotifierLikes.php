@@ -36,22 +36,38 @@ class Likes_Notifier extends Notifier
 		return sprintf($txt['welikes_notification'], $data['member']['name'], $data['subject']);
 	}
 
-    public function handleMultiple(Notification $notification, array &$data, array &$email_data)
-    {
-        return false;
-    }
+	public function handleMultiple(Notification $notification, array &$data, array &$email_data)
+	{
+		return false;
+	}
 
-    public function getProfile($id_member)
-    {
-        global $txt;
+	public function getProfile($id_member)
+	{
+		global $txt;
 
-        return array($txt['welikes_title'], $txt['welikes_desc'], array());
-    }
+		return array($txt['welikes_title'], $txt['welikes_desc'], array());
+	}
 
-    public function getEmail(Notification $notification, array $email_data)
-    {
-        global $txt;
+	public function getIcon(Notification $notification)
+	{
+		global $txt, $memberContext;
 
-        return array($txt['welikes_subject'], $this->getText($notification));
-    }
+		$data = $notification->getData();
+		if (empty($data['member']['id']))
+			return '';
+		if (empty($memberContext[$data['member']['id']]['avatar']))
+		{
+			loadMemberAvatar($data['member']['id'], true);
+			if (empty($memberContext[$data['member']['id']]['avatar']))
+				return '';
+		}
+		return $memberContext[$data['member']['id']]['avatar']['image'];
+	}
+
+	public function getEmail(Notification $notification, array $email_data)
+	{
+		global $txt;
+
+		return array($txt['welikes_subject'], $this->getText($notification));
+	}
 }

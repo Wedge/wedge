@@ -1505,6 +1505,14 @@ class wess_prefixes extends wess
 			return $opera || $ie10 ? $unchanged : $prefixed;
 		}
 
+		// As of April 2013, IE10+, Firefox and WebKit support this prefixed. Opera<14 and IE<10 don't.
+		if ($matches[1] === 'user-select')
+		{
+			if ($firefox || $webkit || (ie && $v >= 10))
+				return $prefixed;
+			return '';
+		}
+
 		// As of October 2012, IE10 supports this unprefixed, and Firefox and Chrome need a prefix.
 		if ($matches[1] === 'font-feature-settings')
 		{
@@ -1633,6 +1641,7 @@ class wess_prefixes extends wess
 			'box-shadow',					// Rectangular drop shadows
 			'box-sizing',					// Determines whether a container's width includes padding and border
 			'border-image',					// Border images
+			'user-select',					// Prevents from selecting custom controls
 			'font-feature-settings',		// Ligatures and other things
 			'hyphens',						// Automatic hyphens on long words
 			'column-[a-z-]+',				// Multi-column layout

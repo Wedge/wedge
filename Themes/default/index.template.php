@@ -646,7 +646,7 @@ function template_menu()
 			{
 				if (empty($sub_item))
 				{
-					echo '<li class="separator"><a><hr></a></li>';
+					echo '<li class="sep"><a><hr></a></li>';
 					continue;
 				}
 				echo '<li><a href="', $sub_item['href'], '">',

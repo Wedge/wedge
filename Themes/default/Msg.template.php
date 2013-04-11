@@ -471,7 +471,7 @@ function template_msg_wrap_after()
 	echo '
 				</div>
 			</div>', $context['topic_last_message'] === $msg['id'] ? '' : '
-			<hr class="separator">';
+			<hr class="sep">';
 }
 
 function template_user_status(&$member)
