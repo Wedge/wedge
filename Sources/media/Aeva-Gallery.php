@@ -787,7 +787,7 @@ function aeva_viewItem()
 		if (!aeva_allowedTo('rate_items'))
 		{
 			if (AJAX)
-				returnAjax($txt['media_rate_denied']);
+				return_raw($txt['media_rate_denied']);
 
 			fatal_lang_error('media_rate_denied');
 		}
@@ -803,7 +803,7 @@ function aeva_viewItem()
 			if ($amSettings['enable_re-rating'] == '0')
 			{
 				if (AJAX)
-					returnAjax($txt['media_re-rating_denied']);
+					return_raw($txt['media_re-rating_denied']);
 
 				fatal_lang_error('media_re-rating_denied');
 			}
@@ -879,7 +879,7 @@ function aeva_viewItem()
 
 	// Ajax rating?
 	if (AJAX && isset($_POST['rating']))
-		returnAjax(template_aeva_rating_object($item_data));
+		return_raw(template_aeva_rating_object($item_data));
 
 	// If we got so far, the user can see this item, so mark it as seen if it's new!
 	if ($item_data['is_new'] && media_markSeen($item_data['id_media']))

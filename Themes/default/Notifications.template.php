@@ -11,54 +11,43 @@
  * @version 0.1
  */
 
-function template_notifications()
-{
-	global $txt, $context;
-
-	echo '
-	<p class="notifs">
-		<span class="n_count note', $context['unread_notifications'] ? 'nice' : '', '">
-			', $context['unread_notifications'], '
-		</span>
-		', $txt['notifications'], '
-		<div id="notification_shade">
-			<ul class="actions">
-				<li class="windowbg" style="m-width: 300px">
-					<h6><a href="<URL>?action=notification" style="color: #888">(', $txt['view_all'], ')</a></h6>
-					<div class="notification_container">
-						<div class="notification template">
-							<div class="notification_text"></div>
-							<div>
-								<div class="notification_markread">x</div>
-								<div class="notification_time"></div>
-							</div>
-							<hr class="clear" />
-						</div>
-					</div>
-				</li>
-			</ul>
-		</div>
-	</p>';
-}
-
 function template_notifications_list()
 {
 	global $txt, $context;
 
-	echo '
-		<we:title>', $txt['notifications'], '</we:title>
-		<div class="notification_container">';
-
-	foreach ($context['notifications'] as $notification)
+	if (AJAX)
 		echo '
-			<div class="notification">
-				<div class="notification_text', $notification->getUnread() ? ' wrc windowbg' : '', '">
-					', $notification->getText(), '<br />
-					<span class="smalltext">', timeformat($notification->getTime()), '</span>
-				</div>
+		<ul id="notlist"><li>
+			<h6>
+				<a href="<URL>?action=notification;sa=unread">', $txt['notifications_short_unread'], '</a> -
+				<a href="<URL>?action=notification;sa=latest" style="color: #888">', $txt['notifications_short_latest'], '</a> -
+				<a href="<URL>?action=notification" style="color: #888">', $txt['notifications_short_all'], '</a>
+			</h6>
+			<div class="n_container">';
+	else
+		echo '
+		<we:title>', $txt['notifications'], '</we:title>
+		<div>';
+
+	if (empty($context['notifications']))
+		echo '
+			<div class="center padding">', $txt['notification_none'], '</div>';
+	else
+		foreach ($context['notifications'] as $notification)
+			echo '
+			<div class="n_item', $notification->getUnread() ? ' n_new' : '', AJAX ? '' : ' wrc', '" id="nti', $notification->getID(), '">
+				<div class="n_read">x</div>
+				<div class="n_time">', timeformat($notification->getTime()), '</div>
+				<div class="n_icon">', $notification->getIcon(), '</div>
+				<div class="n_text">', $notification->getText(), '</div>
 			</div>';
 
-	echo '
+	if (AJAX)
+		echo '
+			</div>
+		</li></ul>';
+	else
+		echo '
 		</div>';
 }
 

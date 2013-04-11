@@ -218,58 +218,62 @@ function JSModify()
 			logAction('modify', array('topic' => $topic, 'message' => $row['id_msg'], 'member' => $row['id_member'], 'board' => $board));
 	}
 
-	if (AJAX)
+	if (!AJAX)
+		obExit(false);
+
+	if (empty($post_errors) && isset($msgOptions['subject'], $msgOptions['body']))
 	{
-		wetem::load('modifydone');
-		if (empty($post_errors) && isset($msgOptions['subject'], $msgOptions['body']))
-		{
-			$context['message'] = array(
-				'id' => $row['id_msg'],
-				'modified' => array(
-					'time' => isset($msgOptions['modify_time']) ? timeformat($msgOptions['modify_time']) : '',
-					'timestamp' => isset($msgOptions['modify_time']) ? forum_time(true, $msgOptions['modify_time']) : 0,
-					'name' => isset($msgOptions['modify_time']) ? '<a href="<URL>?action=profile;u=' . $msgOptions['modify_member'] . '">' . $msgOptions['modify_name'] . '</a>' : '',
-				),
-				'subject' => $msgOptions['subject'],
-				'first_in_topic' => $row['id_msg'] == $row['id_first_msg'],
-				'body' => strtr($msgOptions['body'], array(']]>' => ']]]]><![CDATA[>')),
-			);
+		$message = array(
+			'id' => $row['id_msg'],
+			'modified' => array(
+				'time' => isset($msgOptions['modify_time']) ? timeformat($msgOptions['modify_time']) : '',
+				'timestamp' => isset($msgOptions['modify_time']) ? forum_time(true, $msgOptions['modify_time']) : 0,
+				'name' => isset($msgOptions['modify_time']) ? '<a href="<URL>?action=profile;u=' . $msgOptions['modify_member'] . '">' . $msgOptions['modify_name'] . '</a>' : '',
+			),
+			'subject' => $msgOptions['subject'],
+			'first_in_topic' => $row['id_msg'] == $row['id_first_msg'],
+			'body' => strtr($msgOptions['body'], array(']]>' => ']]]]><![CDATA[>')),
+		);
 
-			censorText($context['message']['subject']);
-			censorText($context['message']['body']);
+		censorText($message['subject']);
+		censorText($message['body']);
 
-			$context['message']['body'] = parse_bbc($context['message']['body'], $row['smileys_enabled'], $row['id_msg']);
-		}
-		// Topic?
-		elseif (empty($post_errors))
-		{
-			wetem::load('modifytopicdone');
-			$context['message'] = array(
-				'id' => $row['id_msg'],
-				'modified' => array(
-					'time' => isset($msgOptions['modify_time']) ? timeformat($msgOptions['modify_time']) : '',
-					'timestamp' => isset($msgOptions['modify_time']) ? forum_time(true, $msgOptions['modify_time']) : 0,
-					'name' => isset($msgOptions['modify_time']) ? $msgOptions['modify_name'] : '',
-				),
-				'subject' => isset($msgOptions['subject']) ? $msgOptions['subject'] : '',
-			);
+		$message['body'] = parse_bbc($message['body'], $row['smileys_enabled'], $row['id_msg']);
+	}
+	// Topic?
+	elseif (empty($post_errors))
+	{
+		$message = array(
+			'id' => $row['id_msg'],
+			'modified' => array(
+				'time' => isset($msgOptions['modify_time']) ? timeformat($msgOptions['modify_time']) : '',
+				'timestamp' => isset($msgOptions['modify_time']) ? forum_time(true, $msgOptions['modify_time']) : 0,
+				'name' => isset($msgOptions['modify_time']) ? $msgOptions['modify_name'] : '',
+			),
+			'subject' => isset($msgOptions['subject']) ? $msgOptions['subject'] : '',
+		);
 
-			censorText($context['message']['subject']);
-		}
-		else
-		{
-			$context['message'] = array(
-				'id' => $row['id_msg'],
-				'errors' => array(),
-				'error_in_subject' => in_array('no_subject', $post_errors),
-				'error_in_body' => in_array('no_message', $post_errors) || in_array(array('long_message', $settings['max_messageLength']), $post_errors),
-			);
+		censorText($message['subject']);
 
-			loadLanguage('Errors');
-			foreach ($post_errors as $post_error)
-				$context['message']['errors'][] = is_array($post_error) ? sprintf($txt['error_' . $post_error[0]], $post_error[1]) : $txt['error_' . $post_error];
-		}
+		return_xml('<we>
+	<modified><![CDATA[', empty($message['modified']['time']) ? '' : cleanXml($txt['last_edit'] . ' ' . $message['modified']['time']
+	. ' ' . $txt['by'] . ' ' . $message['modified']['name']), ']]></modified>', empty($message['subject']) ? '' : '
+	<subject><![CDATA[' . cleanXml($message['subject']) . ']]></subject>', '</we>');
 	}
 	else
-		obExit(false);
+	{
+		loadLanguage('Errors');
+		$errors = array();
+		foreach ($post_errors as $post_error)
+			$errors[] = is_array($post_error) ? sprintf($txt['error_' . $post_error[0]], $post_error[1]) : $txt['error_' . $post_error];
+
+		return_xml('<we>
+	<error where="#qm_', in_array('no_subject', $post_errors) ? 'subject' : (in_array('no_message', $post_errors) ||
+		in_array(array('long_message', $settings['max_messageLength']), $post_errors) ? 'post' : ''), '"><![CDATA[', implode('<br>', $errors), ']]></error></we>');
+	}
+
+	return_xml('<we>
+	<modified><![CDATA[', empty($message['modified']['time']) ? '' : cleanXml(sprintf($txt['last_edit'], $message['modified']['time'], $message['modified']['name'])), ']]></modified>
+	<subject', $message['first_in_topic'] ? ' is_first="1"' : '', '><![CDATA[', cleanXml($message['subject']), ']]></subject>
+	<body><![CDATA[', $message['body'], ']]></body></we>');
 }

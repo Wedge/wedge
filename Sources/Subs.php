@@ -542,20 +542,31 @@ function cleanXml($string)
 }
 
 /**
- * Helper function to return an Ajax request, either xml, JS object or plain text, bypassing the skeleton system.
+ * Helper functions to return an Ajax request, either xml, JS object or plain text, bypassing the skeleton system.
  */
-function returnAjax($output, $type = '')
+function return_raw()
 {
-	$mime = array(
-		'xml' => 'text/xml',
-		'json' => 'application/json',
-	);
-	if (is_array($output))
-		$type = 'json';
-
 	clean_output();
-	header('Content-Type: ' . (isset($mime[$type]) ? $mime[$type] : 'text/plain') . '; charset=UTF-8');
-	echo $type == 'json' ? str_replace('\\/', '/', we_json_encode($output)) : $output;
+	header('Content-Type: text/plain; charset=UTF-8');
+	$args = func_get_args();
+	echo implode('', $args);
+	obExit(false);
+}
+
+function return_xml()
+{
+	clean_output();
+	header('Content-Type: text/xml; charset=UTF-8');
+	$args = func_get_args();
+	echo '<?xml version="1.0" encoding="UTF-8"?', '>', implode('', $args);
+	obExit(false);
+}
+
+function return_json($json)
+{
+	clean_output();
+	header('Content-Type: application/json; charset=UTF-8');
+	echo str_replace('\\/', '/', we_json_encode($json));
 	obExit(false);
 }
 
@@ -577,7 +588,7 @@ function we_json_encode($str)
  * Other protections include dealing with newlines, carriage returns (through suppression), single quotes, links, inline script tags, and $scripturl. (Probably to prevent search bots from indexing JS-only URLs.)
  *
  * @param string $string A string whose contents to be quoted.
- * @param string $q The quote character to use around the string. Defaults to ". Can be useful to switch to ' for gzip compression in JS files.
+ * @param string $q (for quote) The quote character to use around the string. Defaults to ". Can be useful to switch to ' for gzip compression in JS files.
  * @return string A transformed string with contents suitably single quoted for use in JavaScript.
  */
 function JavaScriptEscape($string, $q = "'")
@@ -585,8 +596,8 @@ function JavaScriptEscape($string, $q = "'")
 	global $scripturl;
 
 	return chr($q == '"' ? 15 : 16) . str_replace(
-		array("\n",   '\\',   'script',   'href=',   '"' . $scripturl,         "'" . $scripturl,         $q == '"' ? "'" : '"',    $q),
-		array("\\\n", '\\\\', 'scr\\ipt', 'hr\\ef=', '"' . $scripturl . '"+"', "'" . $scripturl . "'+'", chr($q == '"' ? 16 : 15), '\\' . chr($q == '"' ? 15 : 16)),
+		array('\\',   "\n",   'script',   'href=',   '"' . $scripturl,         "'" . $scripturl,         $q == '"' ? "'" : '"',    $q),
+		array('\\\\', "\\\n", 'scr\\ipt', 'hr\\ef=', '"' . $scripturl . '"+"', "'" . $scripturl . "'+'", chr($q == '"' ? 16 : 15), '\\' . chr($q == '"' ? 15 : 16)),
 		$string
 	) . chr($q == '"' ? 15 : 16);
 }

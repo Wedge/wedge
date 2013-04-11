@@ -55,7 +55,6 @@ function QuoteFast()
 	$row = wesql::fetch_assoc($request);
 	wesql::free_result($request);
 
-	wetem::load('quotefast');
 	if (!empty($row))
 		$can_view_post = $row['approved'] || ($row['id_member'] != 0 && $row['id_member'] == we::$id) || allowedTo('approve_posts', $row['id_board']);
 
@@ -74,14 +73,9 @@ function QuoteFast()
 		{
 			censorText($row['subject']);
 
-			wetem::load('modifyfast');
-			$context['message'] = array(
-				'id' => $_REQUEST['quote'],
-				'body' => $row['body'],
-				'subject' => addcslashes($row['subject'], '"'),
-			);
-
-			return;
+			return_xml('<we>
+	<subject><![CDATA[', cleanXml(addcslashes($row['subject'], '"')), ']]></subject>
+	<message id="', (int) $_REQUEST['quote'], '"><![CDATA[', cleanXml($row['body']), ']]></message></we>');
 		}
 
 		// Remove any nested quotes.
@@ -99,20 +93,19 @@ function QuoteFast()
 			$lb = "\n";
 
 		// Add a quote string on the front and end.
-		$context['quote']['xml'] = '[quote author=' . $row['poster_name'] . ' link=msg=' . (int) $_REQUEST['quote'] . ' date=' . $row['poster_time'] . ']' . $lb . $row['body'] . $lb . '[/quote]';
-		$context['quote']['xml'] = strtr($context['quote']['xml'], array('&nbsp;' => '&#160;', '<' => '&lt;', '>' => '&gt;'));
+		$xml = '[quote author=' . $row['poster_name'] . ' link=msg=' . (int) $_REQUEST['quote'] . ' date=' . $row['poster_time'] . ']' . $lb . $row['body'] . $lb . '[/quote]';
+		$xml = strtr($xml, array('&nbsp;' => '&#160;', '<' => '&lt;', '>' => '&gt;'));
 	}
+
 	// !!! Needs a nicer interface.
 	// In case our message has been removed in the meantime.
 	elseif (isset($_REQUEST['modify']))
-	{
-		wetem::load('modifyfast');
-		$context['message'] = array(
-			'id' => 0,
-			'body' => '',
-			'subject' => '',
-		);
-	}
+		return_xml('<we>
+	<subject></subject>
+	<message id="0"></message></we>');
+
 	else
-		$context['quote']['xml'] = '';
+		$xml = '';
+
+	return_xml('<we><quote>', cleanXml($xml), '</quote></we>');
 }

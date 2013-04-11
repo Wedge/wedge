@@ -38,10 +38,39 @@ function Suggest($checkRegistered = null)
 
 	$function = 'suggest_search_' . $_REQUEST['suggest_type'];
 	if (!is_callable($function))
-		return;
+		return_raw();
 
-	wetem::load('generic_xml');
 	$context['xml_data'] = $function();
+
+	return_xml(suggest_xml_recursive($context['xml_data'], 'we', '', -1));
+}
+
+// Recursive function for displaying generic XML data.
+function suggest_xml_recursive($xml_data, $parent_ident, $child_ident, $level)
+{
+	// This is simply for neat indentation.
+	$level++;
+
+	$str = "\n" . str_repeat("\t", $level) . '<' . $parent_ident . '>';
+
+	foreach ($xml_data as $key => $data)
+	{
+		// A group?
+		if (is_array($data) && isset($data['identifier']))
+			$str .= suggest_xml_recursive($data['children'], $key, $data['identifier'], $level);
+		// An item...
+		elseif (is_array($data) && isset($data['value']))
+		{
+			$str .= "\n" . str_repeat("\t", $level) . '<' . $child_ident;
+
+			if (!empty($data['attributes']))
+				foreach ($data['attributes'] as $k => $v)
+					$str .= ' ' . $k . '="' . $v . '"';
+			$str .= '><![CDATA[' . cleanXml($data['value']) . ']]></' . $child_ident . '>';
+		}
+	}
+
+	return $str . "\n" . str_repeat("\t", $level) . '</' . $parent_ident . '>';
 }
 
 // Search for a member - by real_name or member_name by default.

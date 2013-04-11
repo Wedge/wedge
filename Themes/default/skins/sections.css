@@ -133,7 +133,7 @@ img.new_posts
 	@if ie[-7]
 		div mixes .inline-block
 	@else
-		// !! Looks like display: table is unneeded in the parent.
+		display: table
 		> div
 			display: table-cell
 			vertical-align: middle
@@ -431,6 +431,7 @@ hr.separator
 	a
 		word-wrap: normal
 		display: block
+		padding-left: 25px
 		:hover
 			color: #a70
 

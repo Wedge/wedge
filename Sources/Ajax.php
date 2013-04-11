@@ -80,7 +80,7 @@ function GetJumpTo()
 	}
 
 	// This will be returned as JSON, saving bytes and processing time.
-	returnAjax($json);
+	return_json($json);
 }
 
 /**

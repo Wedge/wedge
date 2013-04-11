@@ -88,8 +88,6 @@ class weNotif
 		// Load quick notifications
 		if (!empty(we::$id))
 		{
-			$quick_notifications = self::get_quick_notifications();
-
 			$context['unread_notifications'] = we::$user['unread_notifications'];
 			$disabled_notifiers = !empty(we::$user['data']['disabled_notifiers']) ? we::$user['data']['disabled_notifiers'] : array();
 			$prefs = !empty(we::$user['data']['notifier_prefs']) ? we::$user['data']['notifier_prefs'] : array();
@@ -99,16 +97,17 @@ class weNotif
 
 			self::$disabled = $disabled_notifiers;
 
-			loadTemplate('Notifications');
-
-			wetem::add(array('header', 'sidebar', 'default'), 'notifications');
+			wetem::insert(
+				array(
+					'search_box' => 'after',
+					'sidebar' => 'add',
+					'default' => 'first'
+				),
+				'notifications'
+			);
 
 			add_js_inline('
-	we_notifs = ', json_encode(array(
-		'count' => $context['unread_notifications'],
-		'notifs' => $quick_notifications,
-	)), ';');
-			add_js_file('scripts/notifications.js');
+	we_notifs = ', (int) $context['unread_notifications'], ';');
 		}
 	}
 
@@ -144,7 +143,9 @@ class weNotif
 		foreach ($notifications as $notification)
 			$notifs[] = array(
 				'id' => $notification->getID(),
+				'unread' => $notification->getUnread(),
 				'text' => $notification->getText(),
+				'icon' => $notification->getIcon(),
 				'url' => $notification->getURL(),
 				'time' => timeformat($notification->getTime()),
 			);
@@ -226,13 +227,13 @@ class weNotif
 		global $context, $txt;
 
 		if (we::$user['is_guest'])
-			fatal_lang_error('access_denied');
+			fatal_lang_error('no_access');
 
 		$sa = !empty($_REQUEST['sa']) ? $_REQUEST['sa'] : '';
 
 		if ($sa == 'redirect' && isset($_REQUEST['in']))
 		{
-			// We are accessing a notification and redirecting to it's target
+			// We are accessing a notification and redirecting to its target
 			list ($notification) = Notification::get((int) $_REQUEST['in'], we::$id);
 
 			// Not found?
@@ -247,8 +248,6 @@ class weNotif
 		}
 		elseif ($sa == 'unread')
 		{
-			$notifications = self::get_quick_notifications();
-
 			$request = wesql::query('
 				SELECT unread_notifications
 				FROM {db_prefix}members
@@ -261,12 +260,7 @@ class weNotif
 			list ($unread_count) = wesql::fetch_row($request);
 			wesql::free_result($request);
 
-			returnAjax(
-				array(
-					'count' => $unread_count,
-					'notifs' => $notifications,
-				)
-			);
+			return_raw($unread_count);
 		}
 		elseif ($sa == 'markread' && isset($_REQUEST['in']))
 		{
@@ -281,8 +275,11 @@ class weNotif
 			return self::$notifiers[$sa]->action();
 
 		// Otherwise we're displaying all the notifications this user has.
+		loadTemplate('Notifications');
+		wetem::load('notifications_list');
+
 		$context['page_title'] = $txt['notifications'];
-		$context['notifications'] = (array) Notification::get(null, we::$id, 0);
+		$context['notifications'] = (array) Notification::get(null, we::$id, 0, AJAX);
 		$notification_members = array();
 		foreach ($context['notifications'] as $notif)
 		{
@@ -291,7 +288,17 @@ class weNotif
 		}
 		loadMemberData($notification_members);
 
-		wetem::load('notifications_list');
+		$request = wesql::query('
+			SELECT unread_notifications
+			FROM {db_prefix}members
+			WHERE id_member = {int:member}
+			LIMIT 1',
+			array(
+				'member' => we::$id,
+			)
+		);
+		list ($context['unread_count']) = wesql::fetch_row($request);
+		wesql::free_result($request);
 	}
 
 	/**
@@ -306,9 +313,9 @@ class weNotif
 	{
 		global $context, $txt;
 
-		// Not the same user? hell no
+		// Not the same user? Hell no.
 		if ($memID != we::$id)
-			fatal_lang_error('access_denied');
+			fatal_lang_error('no_access');
 
 		$notifiers = self::getNotifiers();
 

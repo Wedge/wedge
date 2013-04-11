@@ -11,73 +11,6 @@
  * @version 0.1
  */
 
-function template_sendbody()
-{
-	global $context;
-
-	echo '<', '?xml version="1.0" encoding="UTF-8"?', '>
-<we>
-	<message view="', $context['view'], '">', cleanXml($context['message']), '</message>
-</we>';
-}
-
-function template_quotefast()
-{
-	global $context;
-
-	echo '<', '?xml version="1.0" encoding="UTF-8"?', '>
-<we>
-	<quote>', cleanXml($context['quote']['xml']), '</quote>
-</we>';
-}
-
-function template_modifyfast()
-{
-	global $context;
-
-	echo '<', '?xml version="1.0" encoding="UTF-8"?', '>
-<we>
-	<subject><![CDATA[', cleanXml($context['message']['subject']), ']]></subject>
-	<message id="', $context['message']['id'], '"><![CDATA[', cleanXml($context['message']['body']), ']]></message>
-</we>';
-}
-
-function template_modifydone()
-{
-	global $context, $txt;
-
-	echo '<', '?xml version="1.0" encoding="UTF-8"?', '>
-<we>';
-	if (empty($context['message']['errors']))
-	{
-		echo '
-	<modified><![CDATA[', empty($context['message']['modified']['time']) ? '' : cleanXml(sprintf($txt['last_edit'], $context['message']['modified']['time'], $context['message']['modified']['name'])), ']]></modified>
-	<subject', $context['message']['first_in_topic'] ? ' is_first="1"' : '', '><![CDATA[', cleanXml($context['message']['subject']), ']]></subject>
-	<body><![CDATA[', $context['message']['body'], ']]></body>';
-	}
-	else
-		echo '
-	<error where="#qm_', $context['message']['error_in_subject'] ? 'subject' : ($context['message']['error_in_body'] ? 'post' : ''), '"><![CDATA[', implode('<br>', $context['message']['errors']), ']]></error>';
-	echo '
-</we>';
-}
-
-function template_modifytopicdone()
-{
-	global $context, $txt;
-
-	echo '<', '?xml version="1.0" encoding="UTF-8"?', '>
-<we>
-	<modified><![CDATA[', empty($context['message']['modified']['time']) ? '' : cleanXml($txt['last_edit'] . ' ' . $context['message']['modified']['time'] . ' ' . $txt['by'] . ' ' . $context['message']['modified']['name']), ']]></modified>';
-
-	if (!empty($context['message']['subject']))
-		echo '
-	<subject><![CDATA[', cleanXml($context['message']['subject']), ']]></subject>';
-
-	echo '
-</we>';
-}
-
 function template_post()
 {
 	global $context;
@@ -220,43 +153,4 @@ function template_thought()
 
 	echo '
 </we>';
-}
-
-// This prints XML in it's most generic form.
-function template_generic_xml()
-{
-	global $context;
-
-	echo '<', '?xml version="1.0" encoding="UTF-8"?', '>';
-
-	// Show the data.
-	template_generic_xml_recursive($context['xml_data'], 'we', '', -1);
-}
-
-// Recursive function for displaying generic XML data.
-function template_generic_xml_recursive($xml_data, $parent_ident, $child_ident, $level)
-{
-	// This is simply for neat indentation.
-	$level++;
-
-	echo "\n" . str_repeat("\t", $level), '<', $parent_ident, '>';
-
-	foreach ($xml_data as $key => $data)
-	{
-		// A group?
-		if (is_array($data) && isset($data['identifier']))
-			template_generic_xml_recursive($data['children'], $key, $data['identifier'], $level);
-		// An item...
-		elseif (is_array($data) && isset($data['value']))
-		{
-			echo "\n", str_repeat("\t", $level), '<', $child_ident;
-
-			if (!empty($data['attributes']))
-				foreach ($data['attributes'] as $k => $v)
-					echo ' ' . $k . '="' . $v . '"';
-			echo '><![CDATA[', cleanXml($data['value']), ']]></', $child_ident, '>';
-		}
-	}
-
-	echo "\n", str_repeat("\t", $level), '</', $parent_ident, '>';
 }

@@ -41,7 +41,7 @@ var
 	is_opera = ua('opera'),
 
 	// IE gets versioned, too. Do you have to ask why..?
-	is_ie = ua('msie'),
+	is_ie = ua('msie'), // ua('msie') || ua('(ie') should also detect IE 11+
 	is_ie6 = is_ie && ua('msie 6'),
 	is_ie7 = is_ie && ua('msie 7'),
 	is_ie8 = is_ie && ua('msie 8'),
@@ -538,6 +538,7 @@ $.fn.mime = function (oList, oStrings)
  * ready()
  * This function is important. It loads as soon as the DOM is built, i.e. after everything's loaded.
  */
+
 $(function ()
 {
 	// Shorten all raw URLs in user content. The spans allow for the actual link to be retained when copying/pasting the page content.
@@ -568,7 +569,8 @@ $(function ()
 
 	// Show a pop-up with more options when focusing the quick search box.
 	var opened;
-	$('#search_form .search').focus(function () {
+	$('#search_form .search').focus(function ()
+	{
 		if (opened)
 			return;
 		var $pop = $('#search_form')
@@ -597,6 +599,101 @@ $(function ()
 		});
 	});
 });
+
+
+/**
+ * UI for notifications.
+ * Rewritten from original code by Dragooon. Thanks!
+ */
+
+@if member
+	$(function ()
+	{
+		var
+			is_up_to_date = false,
+			is_opened = false,
+			original_title = $('title').text(),
+			$shade = $('<div/>').addClass('mimenu').appendTo('#notifs'),
+
+			toggle_me = function ()
+			{
+				is_opened = !is_opened;
+				$shade.toggleClass('open'); // should work, otherwise use $shade[is_opened ? 'show' : 'hide']('fast');
+
+				// Hide popup when clicking elsewhere.
+				$(document).off('click.no');
+				if (!is_opened) // skipping the 'return' compresses badly. sigh.
+					return;
+				$(document).on('click.no', function (e) {
+					if ($(e.target).closest('#notifs').length)
+						return;
+					is_opened = !is_opened;
+					$shade.toggleClass('open');
+					$(document).off('click.no');
+				});
+			};
+
+		$('#notifs').click(function (e)
+		{
+			if (e.target != this)
+				return false;
+			if (!is_up_to_date)
+			{
+				$shade.load(weUrl('action=notification #notlist'), function (data)
+				{
+					$(this).find('.n_item').each(function ()
+					{
+						var id = $(this).attr('id').slice(3);
+						$(this)
+							.hover(function () { $(this).toggleClass('windowbg3').find('.n_read').toggle(); })
+							.click(function (e) { location = weUrl('action=notification;sa=redirect;in=' + id); })
+
+							.find('.n_read')
+							.hover(function () { $(this).toggleClass('windowbg'); })
+							.click(function (e)
+							{
+								$(this).parent().hide(300, function () { $(this).remove(); });
+								we_notifs--;
+								$shade.find('.notenice,.note').attr('class', we_notifs > 0 ? 'notenice' : 'note').text(we_notifs);
+								$('title').text((we_notifs > 0 ? '(' + we_notifs + ') ' : '') + original_title);
+
+								$.post(weUrl('action=notification;sa=markread;in=' + id));
+
+								// Cancel the implied clink on the parent.
+								e.stopImmediatePropagation();
+								return false;
+							});
+					});
+
+					toggle_me();
+				});
+				is_up_to_date = true;
+			}
+			else
+				toggle_me();
+		});
+
+		// Update the notification count...
+		var auto_update = function ()
+		{
+			$.post(weUrl('action=notification;sa=unread'), function (count)
+			{
+				if (count != we_notifs)
+				{
+					we_notifs = count;
+					$shade.find('.notenice,.note').attr('class', we_notifs > 0 ? 'notenice' : 'note').text(we_notifs);
+					$('title').text((we_notifs > 0 ? '(' + we_notifs + ') ' : '') + original_title);
+					is_up_to_date = false;
+				}
+			});
+
+			setTimeout(auto_update, document.hidden || document.webkitHidden || document.mozHidden || document.msHidden || is_ie8down ? 600000 : 60000);
+		};
+
+		// Call this every minute or 10 minutes, depending on page visibility. Note that old browsers will call every minute on every tab... Not good :-/
+		setTimeout(auto_update, document.hidden || document.webkitHidden || document.mozHidden || document.msHidden || is_ie8down ? 600000 : 60000);
+	});
+@endif
 
 
 // *** weToggle class.
@@ -715,8 +812,8 @@ function JumpTo(control)
 }
 
 
+// *** Thought class.
 @if member
-	// *** Thought class.
 	function Thought(privacies)
 	{
 		var

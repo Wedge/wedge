@@ -16,8 +16,6 @@ if (!defined('WEDGE'))
 
 function JSEditor()
 {
-	global $context;
-
 	checkSession('get');
 
 	if (!isset($_REQUEST['view']) || !isset($_REQUEST['message']))
@@ -25,22 +23,18 @@ function JSEditor()
 
 	loadSource('Class-Editor');
 
-	wetem::load('sendbody');
-
-	$context['view'] = (int) $_REQUEST['view'];
-
 	// Return the right thing for the mode.
-	if ($context['view'])
+	if ((int) $_REQUEST['view'])
 	{
 		$_REQUEST['message'] = strtr($_REQUEST['message'], array('#wecol#' => ';', '#welt#' => '&lt;', '#wegt#' => '&gt;', '#weamp#' => '&amp;'));
-		$context['message'] = wedit::bbc_to_html($_REQUEST['message']);
+		$message = wedit::bbc_to_html($_REQUEST['message']);
 	}
 	else
 	{
 		$_REQUEST['message'] = un_htmlspecialchars($_REQUEST['message']);
 		$_REQUEST['message'] = strtr($_REQUEST['message'], array('#wecol#' => ';', '#welt#' => '&lt;', '#wegt#' => '&gt;', '#weamp#' => '&amp;'));
-		$context['message'] = wedit::html_to_bbc($_REQUEST['message']);
+		$message = wedit::html_to_bbc($_REQUEST['message']);
 	}
 
-	$context['message'] = westr::htmlspecialchars($context['message']);
+	return_xml('<we><message view="', (int) $_REQUEST['view'], '">', cleanXml(westr::htmlspecialchars($message)), '</message></we>');
 }

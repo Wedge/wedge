@@ -193,17 +193,16 @@ ul#noava
 // Top header
 #top_section
 	padding: 8px 30px
-	.frame
-		p, h2
-			mixin: .inline-block
-			margin: .4em 1em 0 0
-			padding: 0
-		h2 extends .horizontal-arrow
-			margin-right: 0
+	p, h2
+		mixin: .inline-block
+		margin: 6px 1em 0 0
+		padding: 0
+	p a
+		margin-top: -3px
+	h2 extends .horizontal-arrow
+		margin-right: 0
 
 #header
-	a
-		color: #fff
 	h2
 		color: #939380
 	// The main title
@@ -382,7 +381,6 @@ em
 .wrc_bottom // !! Set border-top to 0 if you add a border to .wrc
 	border-radius: 0 0 12px 12px
 	margin-top: 0
-
 
 // Fold/unfold icon
 .upshrinks mixes .inline-block
@@ -1003,8 +1001,6 @@ li.separator
 			margin: 0
 			padding: 1px 2px
 			text-align: left
-			a
-				padding-left: 25px
 
 /* Common positioning/sizing classes to ease styling.
 ------------------------------------------------------- */
@@ -1754,62 +1750,74 @@ th.last_th
 /* A few styles for notifications
 ------------------------------------------------------- */
 @if member
-	.notifs
-		-prefix-user-select: none
+	#notifs mixes .inline-block
+		user-select: none
 		height, line-height: 25px
 		cursor: pointer
 		overflow: visible
 		position: relative
-
-		#top_section .frame &
-			margin-top: .2em
+		padding: 5px 1em 0 0
 
 		h6
-			font-size: 12pt
 			text-align: center
 
-	.n_count
-		font-size: 0.9em
+		> span
+			font-size: 0.9em
 
-	#notification_shade extends .mimenu
-		min-width: 300px
-		display: none
-		ul.actions
-			white-space: normal
+		.mimenu final
+			top: 0
+			opacity: 0
+			visibility: hidden
+			transform: scaleY(0) perspective(500px) rotateZ(90)
+			transform-origin: 50% 0
+			width: 420px
+			min-width: 200px
+			transition: all 1s ease
+
+		.open
+			top: 100%
+			opacity: 1
+			visibility: visible
+			transform: scaleY(1)
+			transition: all 1s ease
+
 		ul li
-			padding: 0
+			padding: 4px 0 0
 
-	.notification_container
+	.n_container
+		white-space: normal
 		max-height: 24em
 		overflow: auto
-		hr
-			margin: 0
-			:last-child
-				visibility: hidden
 
-	.notification
+	.n_item extends .clearfix
 		padding: 6px 8px
-
-	.notification_text
+		position: relative
+		border-bottom: 1px solid #ccc
+		border-right: 3px solid transparent
 		cursor: pointer
 		font-size: .9em
-		color: #444
+		color: #888
+		overflow: hidden // prevent floated avatars from bleeding out.
+
+	.n_icon
+		float: left
 		img
-			float: left
 			padding: 0
 			margin-right: 10px
 			max-width: 50px
 
-	.notification_markread
-		float: left
-		margin: 0 0 0 -8px
-		padding: 0 8px 0
+	.n_new
+		border-right: 3px solid #d76
+		color: #000
+
+	.n_read
+		padding: 4px
+		position: absolute
+		bottom, right: 0
 		display: none
 
-	.notification_time
+	.n_time
 		float: right
-		width: 70%
-		text-align: right
 @endif
 
 // Used by the Ajax loader.

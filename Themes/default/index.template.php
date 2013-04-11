@@ -232,6 +232,19 @@ function template_search_box()
 			</form>';
 }
 
+function template_notifications()
+{
+	global $txt, $context;
+
+	echo '
+			<div id="notifs">
+				<span class="note', $context['unread_notifications'] ? 'nice' : '', '">
+					', $context['unread_notifications'], '
+				</span>
+				', $txt['notifications'], '
+			</div>';
+}
+
 function template_language_selector()
 {
 	global $context;

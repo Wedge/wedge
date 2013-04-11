@@ -267,8 +267,8 @@ class Notification
 				call_hook('notification_new', array($notifications));
 
 				// Send the e-mail?
-				if (!empty($pref['email_notifiers'][$notifier->getName()])
-					&& $pref['email_notifiers'][$notifier->getName()] === 1)
+				$notifier_name = $notifier->getName();
+				if (!empty($pref['email_notifiers'][$notifier_name]) && $pref['email_notifiers'][$notifier_name] === 1)
 				{
 					list ($subject, $body) = $notifier->getEmail($notifications[$id_member], $email_data);
 
@@ -283,15 +283,14 @@ class Notification
 		}
 
 		// Update the unread notification count
-		if (!empty($notifications))
-			wesql::query('
-				UPDATE {db_prefix}members
-				SET unread_notifications = unread_notifications + 1
-				WHERE id_member IN ({array_int:member})',
-				array(
-					'member' => array_keys($notifications),
-				)
-			);
+		wesql::query('
+			UPDATE {db_prefix}members
+			SET unread_notifications = unread_notifications + 1
+			WHERE id_member IN ({array_int:member})',
+			array(
+				'member' => array_keys($notifications),
+			)
+		);
 
 		// Run the post notify hook
 		$notifier->afterNotify($notifications);
@@ -414,6 +413,17 @@ class Notification
 	public function getText()
 	{
 		return $this->notifier->getText($this);
+	}
+
+	/**
+	 * Returns the icon for this notification, usually an avatar.
+	 *
+	 * @access public
+	 * @return string
+	 */
+	public function getIcon()
+	{
+		return $this->notifier->getIcon($this);
 	}
 
 	/**
