@@ -248,6 +248,14 @@ function ModifyProfile($post_errors = array())
 						'any' => array('profile_extra_any'),
 					),
 				),
+				'notifications' => array(
+					'label' => $txt['notifications'],
+					'enabled' => true,
+					'function' => 'weNotif_profile',
+					'permission' => array(
+						'own' => array('profile_extra_any', 'profile_extra_own'),
+					),
+				),
 				// Without profile_extra_own, settings are accessible from the PM section.
 				'pmprefs' => array(
 					'label' => $txt['pmprefs'],
@@ -295,14 +303,6 @@ function ModifyProfile($post_errors = array())
 					'permission' => array(
 						'own' => array('profile_view_own'),
 						'any' => array('manage_membergroups'),
-					),
-				),
-				'notification' => array(
-					'label' => $txt['notifications'],
-					'enabled' => true,
-					'function' => 'weNotif_profile',
-					'permission' => array(
-						'own' => array('profile_extra_own'),
 					),
 				),
 			),

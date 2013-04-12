@@ -1508,7 +1508,7 @@ class wess_prefixes extends wess
 		// As of April 2013, IE10+, Firefox and WebKit support this prefixed. Opera<14 and IE<10 don't.
 		if ($matches[1] === 'user-select')
 		{
-			if ($firefox || $webkit || (ie && $v >= 10))
+			if ($firefox || $webkit || ($ie && $v >= 10))
 				return $prefixed;
 			return '';
 		}

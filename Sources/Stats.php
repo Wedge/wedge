@@ -65,13 +65,27 @@ function Stats()
 		if (!empty($_REQUEST['collapse']))
 			obExit(false);
 
-		wetem::load('stats');
 		getDailyStats('YEAR(date) = {int:year} AND MONTH(date) = {int:month}', array('year' => $year, 'month' => $month));
 		$context['yearly'][$year]['months'][$month]['date'] = array(
 			'month' => sprintf('%02d', $month),
 			'year' => $year,
 		);
-		return;
+
+		$stats = '';
+		foreach ($context['yearly'] as $year)
+			foreach ($year['months'] as $month)
+			{
+				$stats .= '<month id="' . $month['date']['year'] . $month['date']['month'] . '">';
+
+				foreach ($month['days'] as $day)
+					$stats .= '<day date="' . $day['year'] . '-' . $day['month'] . '-' . $day['day'] . '" new_topics="' . $day['new_topics'] . '" new_posts="'
+							. $day['new_posts'] . '" new_members="' . $day['new_members'] . '" most_members_online="' . $day['most_members_online'] . '"'
+							. (empty($settings['hitStats']) ? '' : ' hits="' . $day['hits'] . '"') . ' />';
+
+				$stats .= '</month>';
+			}
+
+		return_xml('<we>', $stats, '</we>');
 	}
 
 	loadLanguage('Stats');

@@ -22,13 +22,13 @@ if (!defined('WEDGE'))
  * - This should be written with performance in mind, i.e. use regular expressions for most tags.
  *
  * @param mixed $message The original text, transmitted to parse_bbc()
+ * @param bool $short_list A boolean, true by default, specifying whether to disable the parsing of inline bbcode that is scarcely used, or that could slightly disrupt layout, such as colors, sub and sup.
  * @param mixed $smileys Whether smileys should be parsed too, transmitted to parse_bbc()
  * @param string $cache_id If specified, a quasi-unique key for the item being parsed, transmitted to parse_bbc()
- * @param bool $short_list A boolean, true by default, specifying whether to disable the parsing of inline bbcode that is scarcely used, or that could slightly disrupt layout, such as colors, sub and sup.
  * @param int $owner The user id of the owner, if applicable and appropriate.
  * @return mixed See parse_bbc()
  */
-function parse_bbc_inline($message, $smileys = true, $cache_id = '', $short_list = true, $owner = 0)
+function parse_bbc_inline($message, $short_list = true, $smileys = true, $cache_id = '', $owner = 0)
 {
 	return parse_bbc($message, $smileys, $cache_id, $short_list ?
 		array(
@@ -36,9 +36,10 @@ function parse_bbc_inline($message, $smileys = true, $cache_id = '', $short_list
 			'email', 'ftp', 'iurl', 'url', 'nobbc',
 		) :
 		array(
-			'b', 'u', 'i', 's',
+			'b', 'u', 'i', 's', 'tt',
 			'email', 'ftp', 'iurl', 'url', 'nobbc',
 			'abbr', 'me', 'sub', 'sup', 'time', 'color',
+			// !! 'size', 'font' -- should we add these..?
 		), $owner
 	);
 }

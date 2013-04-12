@@ -491,29 +491,29 @@ function RegisterCheckUsername()
 {
 	global $context, $txt;
 
-	// This is XML!
-	loadTemplate('Xml');
-	wetem::load('check_username');
-	$context['checked_username'] = isset($_GET['username']) ? $_GET['username'] : '';
-	$context['valid_username'] = true;
+	$checked_username = isset($_GET['username']) ? $_GET['username'] : '';
+	$valid_username = true;
 
 	// Clean it up like mother would.
-	$context['checked_username'] = preg_replace('~[\t\n\r\x0B\0\x{A0}]+~u', ' ', $context['checked_username']);
-	if (westr::strlen($context['checked_username']) > 25)
-		$context['checked_username'] = westr::htmltrim(westr::substr($context['checked_username'], 0, 25));
+	$checked_username = preg_replace('~[\t\n\r\x0B\0\x{A0}]+~u', ' ', $checked_username);
+	if (westr::strlen($checked_username) > 25)
+		$checked_username = westr::htmltrim(westr::substr($checked_username, 0, 25));
 
 	// Only these characters are permitted.
-	if (preg_match('~[<>&"\'=\\\]~', preg_replace('~&#(?:\d{1,7}|x[0-9a-fA-F]{1,6});~', '', $context['checked_username'])) != 0 || $context['checked_username'] == '_' || $context['checked_username'] == '|' || stripos($context['checked_username'], '[code') !== false || stripos($context['checked_username'], '[/code') !== false)
-		$context['valid_username'] = false;
+	if (preg_match('~[<>&"\'=\\\]~', preg_replace('~&#(?:\d{1,7}|x[0-9a-fA-F]{1,6});~', '', $checked_username)) != 0 || $checked_username == '_' || $checked_username == '|' || stripos($checked_username, '[code') !== false || stripos($checked_username, '[/code') !== false)
+		$valid_username = false;
 
-	if (stristr($context['checked_username'], $txt['guest_title']) !== false)
-		$context['valid_username'] = false;
+	if (stristr($checked_username, $txt['guest_title']) !== false)
+		$valid_username = false;
 
-	if (trim($context['checked_username']) == '')
-		$context['valid_username'] = false;
+	if (trim($checked_username) == '')
+		$valid_username = false;
 	else
 	{
 		loadSource('Subs-Members');
-		$context['valid_username'] &= isReservedName($context['checked_username'], 0, false, false) ? 0 : 1;
+		$valid_username &= isReservedName($checked_username, 0, false, false) ? 0 : 1;
 	}
+
+	// This is XML!
+	return_xml('<we><username valid="', $valid_username ? 1 : 0, '">', cleanXml($checked_username), '</username></we>');
 }

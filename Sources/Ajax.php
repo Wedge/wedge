@@ -92,12 +92,17 @@ function GetJumpTo()
  */
 function ListMessageIcons()
 {
-	global $context, $board;
+	global $board;
 
 	loadSource('Subs-Editor');
-	$context['icons'] = getMessageIcons($board);
+	$icons = getMessageIcons($board);
 
-	wetem::load('message_icons');
+	$str = '';
+	foreach ($icons as $icon)
+		$str .= '
+	<icon value="' . $icon['value'] . '" url="' . $icon['url'] . '"><![CDATA[' . cleanXml('<img src="' . $icon['url'] . '" alt="' . $icon['value'] . '" title="' . $icon['name'] . '">') . ']]></icon>';
+
+	return_xml('<we>', $str, '</we>');
 }
 
 function Thought()

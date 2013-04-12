@@ -56,64 +56,6 @@ function template_post()
 </we>';
 }
 
-function template_stats()
-{
-	global $context, $settings;
-
-	echo '<', '?xml version="1.0" encoding="UTF-8"?', '>
-<we>';
-	foreach ($context['yearly'] as $year)
-		foreach ($year['months'] as $month)
-		{
-			echo '
-	<month id="', $month['date']['year'], $month['date']['month'], '">';
-			foreach ($month['days'] as $day)
-				echo '
-		<day date="', $day['year'], '-', $day['month'], '-', $day['day'], '" new_topics="', $day['new_topics'], '" new_posts="', $day['new_posts'], '" new_members="', $day['new_members'], '" most_members_online="', $day['most_members_online'], '"', empty($settings['hitStats']) ? '' : ' hits="' . $day['hits'] . '"', ' />';
-			echo '
-	</month>';
-		}
-		echo '
-</we>';
-}
-
-// This is just to hold off some errors if people are stupid.
-if (!function_exists('template_button_strip'))
-{
-	function template_button_strip($button_strip, $direction = 'right', $strip_options = array())
-	{
-	}
-	function template_menu()
-	{
-	}
-	function template_linktree()
-	{
-	}
-}
-
-function template_message_icons()
-{
-	global $context;
-
-	echo '<', '?xml version="1.0" encoding="UTF-8"?', '>
-<we>';
-	foreach ($context['icons'] as $icon)
-		echo '
-	<icon value="', $icon['value'], '" url="', $icon['url'], '"><![CDATA[', cleanXml('<img src="' . $icon['url'] . '" alt="' . $icon['value'] . '" title="' . $icon['name'] . '">'), ']]></icon>';
-	echo '
-</we>';
-}
-
-function template_check_username()
-{
-	global $context;
-
-	echo '<', '?xml version="1.0" encoding="UTF-8"?', '>
-<we>
-	<username valid="', $context['valid_username'] ? 1 : 0, '">', cleanXml($context['checked_username']), '</username>
-</we>';
-}
-
 function template_thought()
 {
 	global $context, $theme;
