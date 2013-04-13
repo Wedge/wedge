@@ -21,7 +21,8 @@ function template_notifications_list()
 			<h6>
 				<a href="<URL>?action=notification;sa=unread">', $txt['notifications_short_unread'], '</a> -
 				<a href="<URL>?action=notification;sa=latest" style="color: #888">', $txt['notifications_short_latest'], '</a> -
-				<a href="<URL>?action=notification" style="color: #888">', $txt['notifications_short_all'], '</a>
+				<a href="<URL>?action=notification" style="color: #888">', $txt['notifications_short_all'], '</a> -
+				<a href="<URL>?action=profile;area=notifications" style="color: #666"><span style="display: inline-block"><span id="m_admin" style="margin-top: 0"></span> ', $txt['notifications_short_settings'], '</span></a>
 			</h6>
 			<div class="n_container">';
 	else

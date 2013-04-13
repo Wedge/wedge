@@ -636,7 +636,7 @@ $(function ()
 		$('#notifs').click(function (e)
 		{
 			if (e.target != this)
-				return false;
+				return true;
 			if (!is_up_to_date)
 			{
 				$shade.load(weUrl('action=notification #notlist'), function (data)

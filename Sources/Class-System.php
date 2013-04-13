@@ -503,7 +503,16 @@ class we
 				'applewebkit/')))
 			) . '([\d.]+)~i', $ua, $ver)
 		|| preg_match('~(?:version|opera)[/ ]([\d.]+)~i', $ua, $ver);
+
 		$ver = isset($ver[1]) ? (float) $ver[1] : 0;
+
+		// A WebKit thing, with no version...? Set the equivalent Safari version.
+		if ($browser['is_safari'] && !$ver)
+		{
+			preg_match('~applewebkit/([\d.]+)~i', $ua, $ver);
+			$ver = isset($ver[1]) ? (float) $ver[1] : 0;
+			$ver = $ver >= 536 ? 6 : ($ver >= 534.48 ? 5.1 : ($ver >= 533.16 ? 5 : 4));
+		}
 
 		// No need to store version numbers for outdated versions.
 		if ($browser['is_opera'])		$ver = max(11, $ver);
