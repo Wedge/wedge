@@ -112,7 +112,7 @@ function template_ban_details()
 
 	// Banning an IP address. Don't need lang strings for IPv4 and IPv6, they're the same in every language.
 	echo '
-						<dt class="ban_criteria_ip_address">', $txt['ban_type_ip_address'], '</dt>
+						<dt class="ban_criteria_ip_address">', $txt['ban_type_ip_address_type'], '</dt>
 						<dd class="ban_criteria_ip_address">
 							<select name="ban_type_ip" id="ban_type_ip" onchange="updateIP_form();">
 								<option value="ipv4"', !empty($context['ban_details']['ip_type']) && $context['ban_details']['ip_type'] == 'ipv4' ? ' selected' : '', '>IPv4 (xxx.yyy.zzz.aaa)</option>
