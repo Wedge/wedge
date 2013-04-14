@@ -316,18 +316,6 @@ function Thought()
 		call_hook('thought_add', array(&$privacy, &$text, &$pid, &$mid, &$last_thought, &$user_id, &$user_name));
 	}
 
-	// This is for use in the XML template.
-	$context['return_thought'] = array(
-		'id_thought' => $last_thought,
-		'thought' => parse_bbc_inline($text),
-		'privacy' => $privacy,
-		'user_id' => empty($user_id) ? 0 : $user_id,
-		'user_name' => empty($user_name) ? '' : $user_name,
-		'mid' => $mid,
-		'parent_id' => empty($parent_id) ? 0 : $parent_id,
-		'parent_name' => empty($parent_name) ? 0 : $parent_name,
-	);
-
 	// Only update the thought area if it's a public comment, and isn't a comment on another thought...
 	if (!$pid && !empty($last_thought))
 		updateMyData(array(
@@ -335,6 +323,30 @@ function Thought()
 			'thought' => $text,
 			'thought_privacy' => $privacy,
 		));
+
+	$text = parse_bbc_inline($text);
+
+	// Is this a reply to another thought...? Then we should try and style it as well.
+	if (!empty($user_id))
+	{
+		// @worg!!
+		$privacy_icon = array(
+			-3 => 'everyone',
+			0 => 'members',
+			5 => 'justme',
+			20 => 'friends',
+		);
+
+		$text = '<div>' . ($privacy != -3 ? '<div class="privacy_' . @$privacy_icon[$privacy] . '"></div>' : '') . '<a id="t' . $last_thought . '"></a>'
+			. '<a href="<URL>?action=profile;u=' . $user_id . '">' . (empty($user_name) ? '' : $user_name) . '</a> &raquo;'
+			. ' @<a href="<URL>?action=profile;u=' . (empty($parent_id) ? 0 : $parent_id) . '">' . (empty($parent_name) ? 0 : $parent_name) . '</a>&gt;'
+			. ' <span class="thought" id="thought_update' . $last_thought . '" data-oid="' . $last_thought
+			. '" data-prv="' . $privacy . '"><span>' . $text . '</span></span></div>';
+	}
+
+	$date = !empty($user_id) ? '<date><![CDATA[<a href="<URL>?action=thoughts;in=' . $mid . '#t' . $last_thought . '"><img src="' . $theme['images_url'] . '/icons/last_post.gif" class="middle"></a> ' . timeformat(time()) . ']]></date>' : '';
+
+	return_xml('<we><text id="', $last_thought, '"><![CDATA[', cleanXml($text), ']]></text>', $date, '</we>');
 }
 
 function ThoughtPersonal()

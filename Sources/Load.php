@@ -1520,8 +1520,6 @@ function loadTheme($id_theme = 0, $initialize = true)
 	// Don't use macros in their templates!
 	if (AJAX || $context['action'] === 'feed' || $context['action'] === 'printpage')
 	{
-		if (AJAX)
-			loadTemplate('Xml');
 		loadLanguage('index');
 		$context['right_to_left'] = !empty($txt['lang_rtl']);
 	}

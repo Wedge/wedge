@@ -28,7 +28,6 @@ function Suggest($checkRegistered = null)
 		return is_callable('suggest_search_' . $checkRegistered);
 
 	checkSession('get');
-	loadTemplate('Xml');
 
 	// Any parameters?
 	$context['search_param'] = isset($_REQUEST['search_param']) ? unserialize(base64_decode($_REQUEST['search_param'])) : array();

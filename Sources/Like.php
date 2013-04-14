@@ -213,12 +213,8 @@ function Like()
 
 		loadTemplate('Msg');
 
-		// Now the AJAXish data.
-		clean_output();
-
-		header('Content-Type: text/plain; charset=UTF-8');
-		template_show_likes($id_content, true); // We must be able to like it otherwise we wouldn't be here!
-		obExit(false);
+		// Now the AJAXish data. We must be able to like it, otherwise we wouldn't be here!
+		return_raw(template_show_likes($id_content, true));
 	}
 	else
 		redirectexit($context['redirect_from_like']);

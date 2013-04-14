@@ -1036,8 +1036,6 @@ function aeva_admin_perms_albums()
 {
 	global $context, $txt, $settings, $galurl;
 
-	clean_output();
-
 	// Ensure we can access this profile...
 	if ($_POST['prof'] != 1)
 	{
@@ -1074,14 +1072,11 @@ function aeva_admin_perms_albums()
 	if (empty($string_parts))
 		$string_parts[] = '<span style="font-style: italic">None</span>';
 
-	header('Content-Type: text/xml; charset=UTF-8');
-	echo '<?xml version="1.0" encoding="UTF-8"?', '>
+	return_xml('
 <albums>
-	<id_profile>', $row['id'], '</id_profile>
-	<album_string><![CDATA[', $txt['media_albums'], ' : ', implode(', ', $string_parts), ']]></album_string>
-</albums>';
-
-	obExit(false);
+	<id_profile>' . $row['id'] . '</id_profile>
+	<album_string><![CDATA[' . $txt['media_albums'] . ': ' . implode(', ', $string_parts) . ']]></album_string>
+</albums>');
 }
 
 // Membergroup quota's main function. This is soooo similar to permission profiles...
@@ -1400,8 +1395,6 @@ function aeva_admin_quotas_albums()
 {
 	global $context, $txt, $galurl;
 
-	clean_output();
-
 	// Ensure we can access this profile...
 	if ($_POST['prof'] != 1)
 	{
@@ -1438,14 +1431,11 @@ function aeva_admin_quotas_albums()
 	if (empty($string_parts))
 		$string_parts[] = '<span style="font-style: italic">None</span>';
 
-	header('Content-Type: text/xml; charset=UTF-8');
-	echo '<?xml version="1.0" encoding="UTF-8"?', '>
+	return_xml('
 <albums>
-	<id_profile>', $row['id'], '</id_profile>
-	<album_string><![CDATA[', $txt['media_albums'], ' : ', implode(', ', $string_parts), ']]></album_string>
-</albums>';
-
-	obExit(false);
+	<id_profile>' . $row['id'] . '</id_profile>
+	<album_string><![CDATA[' . $txt['media_albums'] . ': ' . implode(', ', $string_parts) . ']]></album_string>
+</albums>');
 }
 
 // Custom fields main area

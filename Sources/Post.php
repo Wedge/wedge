@@ -96,11 +96,9 @@ function Post($post_errors = array())
 
 	loadSource('Subs-Post');
 
+	// Just in case of an earlier error...
 	if (AJAX)
 	{
-		wetem::load('post');
-
-		// Just in case of an earlier error...
 		$context['preview_message'] = '';
 		$context['preview_subject'] = '';
 	}
@@ -1141,10 +1139,55 @@ function Post($post_errors = array())
 		// Now, we add some things dynamically.
 		if ($context['make_poll'])
 			wetem::before('postbox', 'make_poll');
+
+		// Add in any last minute changes.
+		call_hook('post_form');
+
+		return;
 	}
 
-	// Add in any last minute changes.
-	call_hook('post_form');
+	// And now for the AJAX-powered preview...
+	$str = '
+	<preview>
+		<subject><![CDATA[' . $context['preview_subject'] . ']]></subject>
+		<body><![CDATA[' . $context['preview_message'] . ']]></body>
+	</preview>
+	<errors serious="' . (empty($context['error_type']) || $context['error_type'] != 'serious' ? '0' : '1') . '" topic_locked="' . ($context['locked'] ? '1' : '0') . '">';
+
+	if (!empty($context['post_error']['messages']))
+		foreach ($context['post_error']['messages'] as $message)
+			$str .= '
+		<error><![CDATA[' . cleanXml($message) . ']]></error>';
+
+	$str .= '
+		<caption name="guestname" class="' . (isset($context['post_error']['long_name']) || isset($context['post_error']['no_name']) || isset($context['post_error']['bad_name']) ? 'error' : '') . '" />
+		<caption name="email" class="' . (isset($context['post_error']['no_email']) || isset($context['post_error']['bad_email']) ? 'error' : '') . '" />
+		<caption name="evtitle" class="' . (isset($context['post_error']['no_event']) ? 'error' : '') . '" />
+		<caption name="subject" class="' . (isset($context['post_error']['no_subject']) ? 'error' : '') . '" />
+		<caption name="question" class="' . (isset($context['post_error']['no_question']) ? 'error' : '') . '" />' . (isset($context['post_error']['no_message']) || isset($context['post_error']['long_message']) ? '
+		<post_error />' : '') . '
+	</errors>
+	<last>' . (isset($context['topic_last_message']) ? $context['topic_last_message'] : '0') . '</last>';
+
+	if (!empty($context['previous_posts']))
+	{
+		$str .= '
+	<new_posts>';
+
+		foreach ($context['previous_posts'] as $post)
+			$str .= '
+		<post id="' . $post['id'] . '">
+			<time><![CDATA[' . $post['on_time'] . ']]></time>
+			<poster><![CDATA[' . cleanXml($post['poster']) . ']]></poster>
+			<message><![CDATA[' . cleanXml($post['message']) . ']]></message>
+			<is_ignored>' . ($post['is_ignored'] ? '1' : '0') . '</is_ignored>
+		</post>';
+
+		$str .= '
+	</new_posts>';
+	}
+
+	return_xml('<we>', $str, '</we>');
 }
 
 /**
