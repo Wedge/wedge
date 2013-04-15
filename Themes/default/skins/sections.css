@@ -148,7 +148,7 @@ img.new_posts
 
 // Previous/next topic links inside .posthead
 .prevnext_prev
-	font: 400 1em/1.3em Arial
+	font: 400 1em/1.3em $main_font
 	text-align: left
 	width: 20%
 	a
@@ -532,7 +532,11 @@ hr.sep
 			vertical-align: -3px
 
 .attachments
-	clear: both
+
+// Webkit needs this otherwise the post goes off to the right.
+// But it causes issues in IE, and breaks cached search engines pages.
+.attachments
+	clear: @is (webkit, right, both)
 	padding: 1em 0 2em
 	hr
 		margin: 1em 0

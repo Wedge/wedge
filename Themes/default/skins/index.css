@@ -691,14 +691,15 @@ textarea
 // No need to style input[type=reset], not using it.
 input[type=submit], input[type=button], .ie_button
 	background: #eee
+	transition: all .3s ease
 	box-shadow: inset 1px 1px #fff, inset 25px 0 25px rgba(0,0,0, .1), 0 1px 2px rgba(0,0,0, .1)
-	margin: 0
 	outline: none
 	cursor: pointer
 	font-size: 13.5px
 	line-height: 1.2
 	border-width: 1px
 	border-radius: 6px
+	margin: 0
 	@if firefox
 		padding: 1px 2px 2px
 	@elseif ie9
@@ -712,42 +713,28 @@ input[type=submit], input[type=button], .ie_button
 		overflow: visible
 	@endif
 	:hover
-		background-color: #f3f3f3
+		transition: all .3s ease
+		box-shadow: inset 1px 1px #fff, inset 25px 0 25px rgba(0,0,0, .04), 0 0 3px rgba(0,0,0, .3)
 
-input.submit
-	background: url($images/buttons/submit.png) no-repeat
+input.submit mixes .button-padding
+	background: url($images/buttons/submit.png) 5px center no-repeat
 	background-color: #e2f3ea
-	padding-left: @is (firefox, 21px, 23px)
-	:hover final
-		background-color: #e8f9f0
 
-input.save extends input.submit
-	background: url($images/buttons/save.png) no-repeat
+input.save mixes .button-padding
+	background: url($images/buttons/save.png) 5px center no-repeat
 	background-color: #dff3e8
-	:hover
-		background-color: #e5f9ed
 
-input.delete extends input.submit
-	background: url($images/buttons/delete.png) no-repeat
+input.delete mixes .button-padding
+	background: url($images/buttons/delete.png) 5px center no-repeat
 	background-color: #f5efe9
-	:hover
-		background-color: #fbf5ef
 
-input.new extends input.submit
-	background: url($images/buttons/new.png) no-repeat
+input.new mixes .button-padding
+	background: url($images/buttons/new.png) 5px center no-repeat
 	background-color: #e0eaf6
-	:hover
-		background-color: #e6f0fc
 
 input.cancel
 	background-color: #fff0e3
 	padding-left: 5px
-	:hover
-		background-color: #fff5e8
-
-// Declare position only here, so that inherited classes can also set it.
-input.submit
-	background-position: 5px center
 
 input.search extends #m_home
 	background-color: rgba(255,255,235,.32)
@@ -771,6 +758,12 @@ input[type=text][disabled]
 
 input[type=file]
 	width: 300px
+
+@if webkit
+	// Thank you Apple, we like your iPod but we don't want iTunes search boxes in our browsers.
+	input[type=search]
+		-webkit-appearance: textfield
+@endif
 
 /* Styles for the dropdown menus.
 ------------------------------------------------------- */
@@ -1773,6 +1766,7 @@ th.last_th
 			width: 420px
 			min-width: 200px
 			transition: all 1s ease
+			cursor: auto
 
 		.open
 			top: 100%

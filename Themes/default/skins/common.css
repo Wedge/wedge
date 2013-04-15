@@ -86,6 +86,10 @@
 		opacity: 1
 		transition: opacity .5s
 
+// Mix this with your buttons if you provide an icon for them.
+.button-padding virtual
+	padding-left: @is (firefox, 21px, 23px)
+
 .loading virtual
 	mixin: .inline-block
 	// All the cool kids get CSS animation.
