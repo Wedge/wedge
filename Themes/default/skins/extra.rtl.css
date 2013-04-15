@@ -30,10 +30,7 @@
 	margin-right: 1em
 
 // All the signatures used in the forum. You might want to add max-height here ;)
-.signature, .attachments
-	clear: left
-
-.custom_fields_above_signature
+.signature, .attachments, .custom_fields
 	clear: left
 
 

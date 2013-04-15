@@ -16,7 +16,7 @@ function template_main()
 	global $context, $theme, $options, $txt, $settings;
 
 	echo '
-	<div id="recent" class="main_section">
+	<div class="main_section">
 		<we:cat>
 			<img src="', $theme['images_url'], '/post/xx.gif" class="middle">
 			', $txt['recent_posts'], '
@@ -41,7 +41,10 @@ function template_main()
 		if ($post['can_reply'] || $post['can_mark_notify'] || $post['can_delete'] || (!empty($settings['likes_enabled']) && !empty($context['liked_posts'][$post['id']])))
 		{
 			echo '
-			<div class="actionbar">
+			<div class="actionbar">';
+
+			if ($post['can_reply'] || $post['can_mark_notify'] || $post['can_delete'])
+				echo '
 				<ul class="actions">';
 
 			// If they *can* reply?
@@ -94,14 +97,13 @@ function template_unread()
 	add_js_file('scripts/topic.js');
 
 	echo '
-	<div id="recent">
-		<we:cat>
-			', $txt['show_unread'], '
-		</we:cat>
-		<form action="<URL>?action=quickmod" method="post" accept-charset="UTF-8" name="quickModForm" id="quickModForm" style="margin: 0">
-			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-			<input type="hidden" name="qaction" value="markread">
-			<input type="hidden" name="redirect_url" value="action=unread', $context['querystring_board_limits'], '">';
+	<we:cat>
+		', $txt['show_unread'], '
+	</we:cat>
+	<form action="<URL>?action=quickmod" method="post" accept-charset="UTF-8" name="quickModForm" id="quickModForm" style="margin: 0">
+		<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
+		<input type="hidden" name="qaction" value="markread">
+		<input type="hidden" name="redirect_url" value="action=unread', $context['querystring_board_limits'], '">';
 
 	// Generate the button strip.
 	$mark_read = array(
@@ -113,41 +115,41 @@ function template_unread()
 	if (!empty($context['topics']))
 	{
 		echo '
-			<div class="pagesection">';
+		<div class="pagesection">';
 
 		if (!empty($mark_read))
 			template_button_strip($mark_read);
 
 		echo '
-				<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>
-			</div>';
+			<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>
+		</div>';
 
 		echo '
-			<div class="topic_table" id="unread">
-				<table class="table_grid cs0">
-					<thead>
-						<tr class="catbg">
-							<th scope="col" class="first_th" style="width: 4%">&nbsp;</th>
-							<th scope="col">
-								<a href="<URL>?action=unread', $context['querystring_board_limits'], ';sort=subject', $context['sort_by'] == 'subject' && $context['sort_direction'] == 'up' ? ';desc' : '', '">', $txt['subject'], $context['sort_by'] == 'subject' ? ' <span class="sort_' . $context['sort_direction'] . '"></span>' : '', '</a>
-							</th>
-							<th scope="col" style="width: 14%" class="center">
-								<a href="<URL>?action=unread', $context['querystring_board_limits'], ';sort=replies', $context['sort_by'] == 'replies' && $context['sort_direction'] == 'up' ? ';desc' : '', '">', $txt['replies'], $context['sort_by'] == 'replies' ? ' <span class="sort_' . $context['sort_direction'] . '"></span>' : '', '</a>
-							</th>';
+		<div class="topic_table" id="unread">
+			<table class="table_grid cs0">
+				<thead>
+					<tr class="catbg">
+						<th scope="col" class="first_th" style="width: 4%">&nbsp;</th>
+						<th scope="col">
+							<a href="<URL>?action=unread', $context['querystring_board_limits'], ';sort=subject', $context['sort_by'] == 'subject' && $context['sort_direction'] == 'up' ? ';desc' : '', '">', $txt['subject'], $context['sort_by'] == 'subject' ? ' <span class="sort_' . $context['sort_direction'] . '"></span>' : '', '</a>
+						</th>
+						<th scope="col" style="width: 14%" class="center">
+							<a href="<URL>?action=unread', $context['querystring_board_limits'], ';sort=replies', $context['sort_by'] == 'replies' && $context['sort_direction'] == 'up' ? ';desc' : '', '">', $txt['replies'], $context['sort_by'] == 'replies' ? ' <span class="sort_' . $context['sort_direction'] . '"></span>' : '', '</a>
+						</th>';
 
 		// Show a "select all" box for quick moderation?
 		echo '
-							<th scope="col" style="width: 22%">
-								<a href="<URL>?action=unread', $context['querystring_board_limits'], ';sort=last_post', $context['sort_by'] == 'last_post' && $context['sort_direction'] == 'up' ? ';desc' : '', '">', $txt['last_post'], $context['sort_by'] == 'last_post' ? ' <span class="sort_' . $context['sort_direction'] . '"></span>' : '', '</a>
-							</th>
-							<th class="last_th">
-								<input type="checkbox" onclick="invertAll(this, this.form, \'topics[]\');">
-							</th>';
+						<th scope="col" style="width: 22%">
+							<a href="<URL>?action=unread', $context['querystring_board_limits'], ';sort=last_post', $context['sort_by'] == 'last_post' && $context['sort_direction'] == 'up' ? ';desc' : '', '">', $txt['last_post'], $context['sort_by'] == 'last_post' ? ' <span class="sort_' . $context['sort_direction'] . '"></span>' : '', '</a>
+						</th>
+						<th class="last_th">
+							<input type="checkbox" onclick="invertAll(this, this.form, \'topics[]\');">
+						</th>';
 
 		echo '
-						</tr>
-					</thead>
-					<tbody>';
+					</tr>
+				</thead>
+				<tbody>';
 
 		foreach ($context['topics'] as $topic)
 		{
@@ -167,40 +169,40 @@ function template_unread()
 			$color_class = 'windowbg' . $color_class;
 
 			echo '
-						<tr>
-							<td class="icon ', $color_class, '">
-								<img src="', $topic['first_post']['icon_url'], '">
-							</td>
-							<td class="subject ', $alternate_class, '">
-								<div>
-									', $topic['is_pinned'] ? '<strong>' : '', '<span id="msg_', $topic['first_post']['id'], '">', $topic['new_link'], '</span>', $topic['is_pinned'] ? '</strong>' : '', '
-									<a href="', $topic['new_href'], '" class="note" title="', $txt['new_posts'], '">', $context['nb_new'][$topic['id']], '</a>
-									<p>
-										', $txt['started_by'], ' <strong>', $topic['first_post']['member']['link'], '</strong>
-										', $txt['in'], ' <em>', $topic['board']['link'], '</em>
-										<small id="pages', $topic['first_post']['id'], '">', $topic['pages'], '</small>
-									</p>
-								</div>
-							</td>
-							<td class="stats ', $color_class, '">
-								', $topic['replies'], ' ', $txt['replies'], '
-								<br>
-								', $topic['views'], ' ', $txt['views'], '
-							</td>
-							<td class="lastpost ', $alternate_class, '">
-								<p><a href="', $topic['last_post']['href'], '"><img src="', $theme['images_url'], '/icons/last_post.gif" alt="', $txt['last_post'], '" title="', $txt['last_post'], '" class="right"></a>
-								', strtr($txt['last_post_time_author'], array(
-									'{time}' => $topic['last_post']['time'],
-									'{author}' => $topic['last_post']['member']['link']
-								)), '</p>
-							</td>';
+					<tr>
+						<td class="icon ', $color_class, '">
+							<img src="', $topic['first_post']['icon_url'], '">
+						</td>
+						<td class="subject ', $alternate_class, '">
+							<div>
+								', $topic['is_pinned'] ? '<strong>' : '', '<span id="msg_', $topic['first_post']['id'], '">', $topic['new_link'], '</span>', $topic['is_pinned'] ? '</strong>' : '', '
+								<a href="', $topic['new_href'], '" class="note" title="', $txt['new_posts'], '">', $context['nb_new'][$topic['id']], '</a>
+								<p>
+									', $txt['started_by'], ' <strong>', $topic['first_post']['member']['link'], '</strong>
+									', $txt['in'], ' <em>', $topic['board']['link'], '</em>
+									<small id="pages', $topic['first_post']['id'], '">', $topic['pages'], '</small>
+								</p>
+							</div>
+						</td>
+						<td class="stats ', $color_class, '">
+							', $topic['replies'], ' ', $txt['replies'], '
+							<br>
+							', $topic['views'], ' ', $txt['views'], '
+						</td>
+						<td class="lastpost ', $alternate_class, '">
+							<p><a href="', $topic['last_post']['href'], '"><img src="', $theme['images_url'], '/icons/last_post.gif" alt="', $txt['last_post'], '" title="', $txt['last_post'], '" class="right"></a>
+							', strtr($txt['last_post_time_author'], array(
+								'{time}' => $topic['last_post']['time'],
+								'{author}' => $topic['last_post']['member']['link']
+							)), '</p>
+						</td>';
 
 			echo '
-							<td class="', $color_class, ' middle center">
-								<input type="checkbox" name="topics[]" value="', $topic['id'], '">
-							</td>';
+						<td class="', $color_class, ' middle center">
+							<input type="checkbox" name="topics[]" value="', $topic['id'], '">
+						</td>';
 			echo '
-						</tr>';
+					</tr>';
 		}
 
 		if (empty($context['topics']))
@@ -208,23 +210,22 @@ function template_unread()
 					<tr class="hide"><td></td></tr>';
 
 		echo '
-					</tbody>
-				</table>
-			</div>
-			<div class="pagesection">', !empty($mark_read) ?
-				template_button_strip($mark_read) : '', '
-				<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>
-			</div>';
+				</tbody>
+			</table>
+		</div>
+		<div class="pagesection">', !empty($mark_read) ?
+			template_button_strip($mark_read) : '', '
+			<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>
+		</div>';
 	}
 	else
 		echo '
-			<div class="center padding">
-				', $txt['msg_alert_none'], '
-			</div>';
+		<div class="center padding">
+			', $txt['msg_alert_none'], '
+		</div>';
 
 	echo '
-		</form>
-	</div>';
+	</form>';
 }
 
 function template_replies()
@@ -235,14 +236,13 @@ function template_replies()
 	add_js_file('scripts/topic.js');
 
 	echo '
-	<div id="recent">
-		<we:cat>
-			', $txt['show_unread_replies'], '
-		</we:cat>
-		<form action="<URL>?action=quickmod" method="post" accept-charset="UTF-8" name="quickModForm" id="quickModForm" style="margin: 0">
-			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-			<input type="hidden" name="qaction" value="markread">
-			<input type="hidden" name="redirect_url" value="action=unreadreplies', $context['querystring_board_limits'], '">';
+	<we:cat>
+		', $txt['show_unread_replies'], '
+	</we:cat>
+	<form action="<URL>?action=quickmod" method="post" accept-charset="UTF-8" name="quickModForm" id="quickModForm" style="margin: 0">
+		<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
+		<input type="hidden" name="qaction" value="markread">
+		<input type="hidden" name="redirect_url" value="action=unreadreplies', $context['querystring_board_limits'], '">';
 
 	if (isset($context['topics_to_mark']))
 	{
@@ -257,41 +257,41 @@ function template_replies()
 	if (!empty($context['topics']))
 	{
 		echo '
-			<div class="pagesection">';
+		<div class="pagesection">';
 
 		if (!empty($mark_read))
 			template_button_strip($mark_read);
 
 		echo '
-				<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>
-			</div>';
+			<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>
+		</div>';
 
 		echo '
-			<div class="topic_table" id="unreadreplies">
-				<table class="table_grid cs0">
-					<thead>
-						<tr class="catbg">
-							<th scope="col" class="first_th" style="width: 4%">&nbsp;</th>
-							<th scope="col">
-								<a href="<URL>?action=unreadreplies', $context['querystring_board_limits'], ';sort=subject', $context['sort_by'] === 'subject' && $context['sort_direction'] === 'up' ? ';desc' : '', '">', $txt['subject'], $context['sort_by'] === 'subject' ? ' <span class="sort_' . $context['sort_direction'] . '"></span>' : '', '</a>
-							</th>
-							<th scope="col" style="width: 14%" class="center">
-								<a href="<URL>?action=unreadreplies', $context['querystring_board_limits'], ';sort=replies', $context['sort_by'] === 'replies' && $context['sort_direction'] === 'up' ? ';desc' : '', '">', $txt['replies'], $context['sort_by'] === 'replies' ? ' <span class="sort_' . $context['sort_direction'] . '"></span>' : '', '</a>
-							</th>';
+		<div class="topic_table" id="unreadreplies">
+			<table class="table_grid cs0">
+				<thead>
+					<tr class="catbg">
+						<th scope="col" class="first_th" style="width: 4%">&nbsp;</th>
+						<th scope="col">
+							<a href="<URL>?action=unreadreplies', $context['querystring_board_limits'], ';sort=subject', $context['sort_by'] === 'subject' && $context['sort_direction'] === 'up' ? ';desc' : '', '">', $txt['subject'], $context['sort_by'] === 'subject' ? ' <span class="sort_' . $context['sort_direction'] . '"></span>' : '', '</a>
+						</th>
+						<th scope="col" style="width: 14%" class="center">
+							<a href="<URL>?action=unreadreplies', $context['querystring_board_limits'], ';sort=replies', $context['sort_by'] === 'replies' && $context['sort_direction'] === 'up' ? ';desc' : '', '">', $txt['replies'], $context['sort_by'] === 'replies' ? ' <span class="sort_' . $context['sort_direction'] . '"></span>' : '', '</a>
+						</th>';
 
 		// Show a "select all" box for quick moderation?
 		echo '
-							<th scope="col" style="width: 22%">
-								<a href="<URL>?action=unreadreplies', $context['querystring_board_limits'], ';sort=last_post', $context['sort_by'] === 'last_post' && $context['sort_direction'] === 'up' ? ';desc' : '', '">', $txt['last_post'], $context['sort_by'] === 'last_post' ? ' <span class="sort_' . $context['sort_direction'] . '"></span>' : '', '</a>
-							</th>
-							<th class="last_th">
-								<input type="checkbox" onclick="invertAll(this, this.form, \'topics[]\');">
-							</th>';
+						<th scope="col" style="width: 22%">
+							<a href="<URL>?action=unreadreplies', $context['querystring_board_limits'], ';sort=last_post', $context['sort_by'] === 'last_post' && $context['sort_direction'] === 'up' ? ';desc' : '', '">', $txt['last_post'], $context['sort_by'] === 'last_post' ? ' <span class="sort_' . $context['sort_direction'] . '"></span>' : '', '</a>
+						</th>
+						<th class="last_th">
+							<input type="checkbox" onclick="invertAll(this, this.form, \'topics[]\');">
+						</th>';
 
 		echo '
-						</tr>
-					</thead>
-					<tbody>';
+					</tr>
+				</thead>
+				<tbody>';
 
 		foreach ($context['topics'] as $topic)
 		{
@@ -311,58 +311,56 @@ function template_replies()
 			$color_class = 'windowbg' . $color_class;
 
 			echo '
-						<tr>
-							<td class="icon ', $color_class, '">
-								<img src="', $topic['first_post']['icon_url'], '">
-							</td>
-							<td class="subject ', $alternate_class, '">
-								<div>
-									', $topic['is_pinned'] ? '<strong>' : '', '<span id="msg_' . $topic['first_post']['id'] . '">', $topic['new_link'], '</span>', $topic['is_pinned'] ? '</strong>' : '', '
-									<a href="', $topic['new_href'], '" class="note" title="', $txt['new_posts'], '">', $context['nb_new'][$topic['id']], '</a>
-									<p>
-										', $txt['started_by'], ' <strong>', $topic['first_post']['member']['link'], '</strong>
-										', $txt['in'], ' <em>', $topic['board']['link'], '</em>
-										<small id="pages', $topic['first_post']['id'], '">', $topic['pages'], '</small>
-									</p>
-								</div>
-							</td>
-							<td class="stats ', $color_class, '">
-								', $topic['replies'], ' ', $txt['replies'], '
-								<br>
-								', $topic['views'], ' ', $txt['views'], '
-							</td>
-							<td class="lastpost ', $alternate_class, '">
-								<p><a href="', $topic['last_post']['href'], '"><img src="', $theme['images_url'], '/icons/last_post.gif" alt="', $txt['last_post'], '" title="', $txt['last_post'], '" class="right"></a>
-								', strtr($txt['last_post_time_author'], array(
-									'{time}' => $topic['last_post']['time'],
-									'{author}' => $topic['last_post']['member']['link']
-								)), '</p>
-							</td>';
+					<tr>
+						<td class="icon ', $color_class, '">
+							<img src="', $topic['first_post']['icon_url'], '">
+						</td>
+						<td class="subject ', $alternate_class, '">
+							<div>
+								', $topic['is_pinned'] ? '<strong>' : '', '<span id="msg_' . $topic['first_post']['id'] . '">', $topic['new_link'], '</span>', $topic['is_pinned'] ? '</strong>' : '', '
+								<a href="', $topic['new_href'], '" class="note" title="', $txt['new_posts'], '">', $context['nb_new'][$topic['id']], '</a>
+								<p>
+									', $txt['started_by'], ' <strong>', $topic['first_post']['member']['link'], '</strong>
+									', $txt['in'], ' <em>', $topic['board']['link'], '</em>
+									<small id="pages', $topic['first_post']['id'], '">', $topic['pages'], '</small>
+								</p>
+							</div>
+						</td>
+						<td class="stats ', $color_class, '">
+							', $topic['replies'], ' ', $txt['replies'], '
+							<br>
+							', $topic['views'], ' ', $txt['views'], '
+						</td>
+						<td class="lastpost ', $alternate_class, '">
+							<p><a href="', $topic['last_post']['href'], '"><img src="', $theme['images_url'], '/icons/last_post.gif" alt="', $txt['last_post'], '" title="', $txt['last_post'], '" class="right"></a>
+							', strtr($txt['last_post_time_author'], array(
+								'{time}' => $topic['last_post']['time'],
+								'{author}' => $topic['last_post']['member']['link']
+							)), '</p>
+						</td>';
 
 			echo '
-							<td class="', $color_class, ' middle center">
-								<input type="checkbox" name="topics[]" value="', $topic['id'], '">
-							</td>';
-			echo '
-						</tr>';
+						<td class="', $color_class, ' middle center">
+							<input type="checkbox" name="topics[]" value="', $topic['id'], '">
+						</td>
+					</tr>';
 		}
 
 		echo '
-					</tbody>
-				</table>
-			</div>
-			<div class="pagesection">', !empty($mark_read) ?
-				template_button_strip($mark_read) : '', '
-				<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>
-			</div>';
+				</tbody>
+			</table>
+		</div>
+		<div class="pagesection">', !empty($mark_read) ?
+			template_button_strip($mark_read) : '', '
+			<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>
+		</div>';
 	}
 	else
 		echo '
-			<div class="center padding">
-				', $txt['msg_alert_none'], '
-			</div>';
+		<div class="center padding">
+			', $txt['msg_alert_none'], '
+		</div>';
 
 	echo '
-		</form>
-	</div>';
+	</form>';
 }

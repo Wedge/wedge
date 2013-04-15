@@ -400,15 +400,15 @@ hr.sep
 	overflow: auto
 	clear: both
 	padding: 1em 0 8px
-	border-top: 1px solid #aaa
+	border-top: 1px solid #ccc
 	line-height: 1.4em
 	font-size: .9em
 	color: #888
 
-.custom_fields_above_signature
+.custom_fields
 	clear: right
 	padding: 1em 0 3px
-	border-top: 1px solid #aaa
+	border-top: 1px solid #ccc
 	line-height: 1.4em
 	font-size: .85em
 
@@ -531,8 +531,6 @@ hr.sep
 		img
 			vertical-align: -3px
 
-.attachments
-
 // Webkit needs this otherwise the post goes off to the right.
 // But it causes issues in IE, and breaks cached search engines pages.
 .attachments
@@ -614,11 +612,6 @@ dl.poll_options
 		width: 60%
 		input
 			margin-left: 0
-
-/* Styles for the recent messages section.
----------------------------------------------------- */
-#recent
-	clear: both
 
 /* Styles for the move topic section.
 ---------------------------------------------------- */
@@ -935,9 +928,6 @@ tr.windowbg td
 		border-bottom: 0
 	dt.clear
 		width: 100%
-
-.signature, .custom_fields_above_signature
-	border-top: 1px #ccc solid
 
 // Signature header
 .signature h5

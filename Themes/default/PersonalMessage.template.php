@@ -345,7 +345,7 @@ function template_folder()
 					{
 						$shown = true;
 						echo '
-				<div class="custom_fields_above_signature">
+				<div class="custom_fields">
 					<ul class="reset nolist">';
 					}
 					echo '
