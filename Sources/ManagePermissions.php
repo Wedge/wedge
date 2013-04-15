@@ -1465,8 +1465,6 @@ function loadAllPermissions()
 			'moderate_board' => array(false, 'general_board'),
 			'approve_posts' => array(false, 'general_board'),
 			'post_new' => array(false, 'topic'),
-			'post_unapproved_topics' => array(false, 'topic'),
-			'post_unapproved_replies' => array(true, 'topic'),
 			'post_reply' => array(true, 'topic'),
 			'save_post_draft' => array(false, 'topic'),
 			'auto_save_post_draft' => array(false, 'topic'),
@@ -1513,25 +1511,11 @@ function loadAllPermissions()
 
 	// Some permissions are hidden if features are off.
 	$hiddenPermissions = array();
-	$relabelPermissions = array(); // Permissions to apply a different label to.
 	$relabelGroups = array(); // As above but for groups.
 
 	// Post moderation?
 	if (!$settings['postmod_active'])
-	{
 		$hiddenPermissions[] = 'approve_posts';
-		$hiddenPermissions[] = 'post_unapproved_topics';
-		$hiddenPermissions[] = 'post_unapproved_replies';
-	}
-	// If we show them on classic view we change the name.
-	else
-	{
-		// Relabel the topics permissions
-		$relabelPermissions['post_new'] = 'auto_approve_topics';
-
-		// Relabel the reply permissions
-		$relabelPermissions['post_reply'] = 'auto_approve_replies';
-	}
 
 	if (empty($settings['pm_enabled']))
 	{
@@ -1579,7 +1563,7 @@ function loadAllPermissions()
 		}
 
 	// Provide a not quite so practical way to modify permissions.
-	call_hook('load_permissions', array(&$permissionGroups, &$permissionList, &$leftPermissionGroups, &$hiddenPermissions, &$relabelPermissions));
+	call_hook('load_permissions', array(&$permissionGroups, &$permissionList, &$leftPermissionGroups, &$hiddenPermissions));
 
 	$context['permissions'] = array();
 	$context['hidden_permissions'] = array();
@@ -1620,7 +1604,7 @@ function loadAllPermissions()
 			// This is where we set up the permission dependent on the view.
 			$context['permissions'][$permissionType]['columns'][$position][$own_group]['permissions'][$permission] = array(
 				'id' => $permission,
-				'name' => !isset($relabelPermissions[$permission]) ? $txt['permissionname_' . $permission] : $txt[$relabelPermissions[$permission]],
+				'name' => $txt['permissionname_' . $permission],
 				'show_help' => isset($txt['permissionhelp_' . $permission]),
 				'note' => isset($txt['permissionnote_' . $permission]) ? $txt['permissionnote_' . $permission] : '',
 				'has_own_any' => $permissionArray[0],

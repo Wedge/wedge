@@ -279,7 +279,8 @@ function aeva_initGallery($gal_url = null)
 					'icon' => 'album.png',
 				),
 				'unseen' => array(
-					'label' => $txt['media_unseen'] . (empty(we::$user['media_unseen']) || we::$user['media_unseen'] == -1 ? '' : ' [<b>' . we::$user['media_unseen'] . '</b>]'),
+					'label' => $txt['media_unseen'],
+					'notice' => empty(we::$user['media_unseen']) || we::$user['media_unseen'] == -1 ? '' : we::$user['media_unseen'],
 					'icon' => 'eye.png',
 					'enabled' => aeva_allowedTo('access_unseen'),
 				),

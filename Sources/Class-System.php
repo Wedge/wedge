@@ -289,6 +289,8 @@ class we
 			'ignoreusers' => !empty($user_settings['pm_ignore_list']) ? explode(',', $user_settings['pm_ignore_list']) : array(),
 			'warning' => isset($user_settings['warning']) ? $user_settings['warning'] : 0,
 			'permissions' => array(),
+			'post_moderated' => false,
+			'sanctions' => !empty($user_settings['data']['sanctions']) ? $user_settings['data']['sanctions'] : array(),
 		);
 
 		// Some more data for we::is test flexibility...

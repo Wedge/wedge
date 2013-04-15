@@ -1392,14 +1392,15 @@ tr.titlebg
 // Post error notices, general alert notices, and mute/ban warnings
 .error,
 .alert,
+.warn_hard_ban
 .warn_mute,
-.warn_ban
 	color: red
 
+.warn_soft_ban
 .warn_moderate
 	color: orange
 
-.warn_watch,
+.warn_warned,
 .success
 	color: green
 

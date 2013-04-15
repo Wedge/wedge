@@ -500,9 +500,9 @@ function ShowCustomProfiles()
 	wetem::load('show_custom_profile');
 
 	// What about standard fields they can tweak?
-	$standard_fields = array('location', 'gender', 'website', 'posts', 'warning_status');
+	$standard_fields = array('location', 'gender', 'website', 'posts');
 	// What fields can't you put on the registration page?
-	$context['fields_no_registration'] = array('posts', 'warning_status');
+	$context['fields_no_registration'] = array('posts');
 
 	// Are we saving any standard field changes?
 	if (isset($_POST['save']))
@@ -630,8 +630,8 @@ function list_getProfileFields($start, $items_per_page, $sort)
 
 	$list = array();
 
-	$standard_fields = array('location', 'gender', 'website', 'posts', 'warning_status');
-	$fields_no_registration = array('posts', 'warning_status');
+	$standard_fields = array('location', 'gender', 'website', 'posts');
+	$fields_no_registration = array('posts');
 	$disabled_fields = isset($settings['disabled_profile_fields']) ? explode(',', $settings['disabled_profile_fields']) : array();
 	$registration_fields = isset($settings['registration_fields']) ? explode(',', $settings['registration_fields']) : array();
 

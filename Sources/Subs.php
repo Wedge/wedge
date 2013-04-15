@@ -2261,9 +2261,6 @@ function setupMenuContext()
 				$menu_items[$act] = $item;
 			}
 		}
-
-		if (!empty($settings['cache_enable']) && $settings['cache_enable'] >= 2)
-			cache_put_data('menu_items-' . implode('_', we::$user['groups']) . '-' . we::$user['language'], $menu_items, $cacheTime);
 	}
 
 	$context['menu_items'] =& $menu_items;

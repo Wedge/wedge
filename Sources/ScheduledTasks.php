@@ -411,65 +411,6 @@ function scheduled_daily_maintenance()
 	// First clean out the data cache.
 	clean_cache();
 
-	// If warning decrement is enabled and we have people who have not had a new warning in 24 hours, lower their warning level.
-	list (, $settings['warning_decrement']) = explode(',', $settings['warning_settings']);
-	if ($settings['warning_decrement'])
-	{
-		// Find every member who has a warning level...
-		$request = wesql::query('
-			SELECT id_member, warning
-			FROM {db_prefix}members
-			WHERE warning > {int:no_warning}',
-			array(
-				'no_warning' => 0,
-			)
-		);
-		$members = array();
-		while ($row = wesql::fetch_assoc($request))
-			$members[$row['id_member']] = $row['warning'];
-		wesql::free_result($request);
-
-		// Have some members to check?
-		if (!empty($members))
-		{
-			// Find out when they were last warned.
-			$request = wesql::query('
-				SELECT id_recipient, MAX(log_time) AS last_warning
-				FROM {db_prefix}log_comments
-				WHERE id_recipient IN ({array_int:member_list})
-					AND comment_type = {literal:warning}
-				GROUP BY id_recipient',
-				array(
-					'member_list' => array_keys($members),
-				)
-			);
-			$member_changes = array();
-			while ($row = wesql::fetch_assoc($request))
-			{
-				// More than 24 hours ago?
-				if ($row['last_warning'] <= time() - 86400)
-					$member_changes[] = array(
-						'id' => $row['id_recipient'],
-						'warning' => $members[$row['id_recipient']] >= $settings['warning_decrement'] ? $members[$row['id_recipient']] - $settings['warning_decrement'] : 0,
-					);
-			}
-			wesql::free_result($request);
-
-			// Have some members to change?
-			if (!empty($member_changes))
-				foreach ($member_changes as $change)
-					wesql::query('
-						UPDATE {db_prefix}members
-						SET warning = {int:warning}
-						WHERE id_member = {int:id_member}',
-						array(
-							'warning' => $change['warning'],
-							'id_member' => $change['id'],
-						)
-					);
-		}
-	}
-
 	// Do any spider stuff.
 	if (!empty($settings['spider_mode']) && $settings['spider_mode'] > 1)
 	{
@@ -1323,7 +1264,7 @@ function scheduled_weekly_maintenance()
 
 	// Delete some settings that needn't be set if they are otherwise empty.
 	$emptySettings = array(
-		'warning_mute', 'warning_moderate', 'warning_watch', 'warning_show', 'disableCustomPerPage', 'spider_mode', 'spider_group',
+		'warning_show', 'disableCustomPerPage', 'spider_mode', 'spider_group',
 		'paid_currency_code', 'paid_currency_symbol', 'paid_email_to', 'paid_email', 'paid_enabled', 'paypal_email',
 		'search_enable_captcha', 'search_floodcontrol_time', 'show_spider_online',
 	);

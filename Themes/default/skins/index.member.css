@@ -228,3 +228,23 @@
 		:hover
 			border: 1px dotted gray
 			background: #e0e0f0
+
+/* And for the infraction history. Guests cannot see it.
+------------------------------------------------- */
+$inf_active = #cfc
+$inf_expired = #f8faf8
+$inf_revoked = #ffc
+
+.windowbg.inf_active
+	background-color: darker($inf_active, 3%)
+.windowbg.inf_expired
+	background-color: darker($inf_expired, 3%)
+.windowbg.inf_revoked
+	background-color: darker($inf_revoked, 3%)
+
+.windowbg2.inf_active
+	background-color: $inf_active
+.windowbg2.inf_expired
+	background-color: $inf_expired
+.windowbg2.inf_revoked
+	background-color: $inf_revoked
