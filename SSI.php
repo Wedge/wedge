@@ -98,6 +98,8 @@ if (isset($ssi_gzip) && $ssi_gzip === true && (int) ini_get('zlib.output_compres
 else
 	$settings['enableCompressedOutput'] = '0';
 
+ob_start('ob_sessrewrite');
+
 // Start the session... known to scramble SSI includes in cases...
 if (!headers_sent())
 	loadSession();
@@ -1468,7 +1470,7 @@ function ssi_quickSearch($output_method = 'echo')
 
 	echo '
 		<form action="', $scripturl, '?action=search2" method="post" accept-charset="UTF-8">
-			<input name="search" size="30"> <input type="search" value="', $txt['search'], '" class="submit" />
+			<input type="search" class="search" name="search" size="30" /> <input type="submit" class="submit" value="', $txt['search'], '" />
 		</form>';
 }
 

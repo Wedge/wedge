@@ -22,8 +22,6 @@ if (!defined('WEDGE'))
  */
 function Ajax()
 {
-	loadTemplate('Xml');
-
 	$sub_actions = array(
 		'jumpto' => array(
 			'function' => 'GetJumpTo',
@@ -47,7 +45,6 @@ function Ajax()
  * - Uses the {@link getBoardList()} function in Subs-MessageIndex.php.
  * - Only displays boards the user has permissions to see (does not honor ignored boards preferences)
  * - The current board (if there is a current board) is indicated, and so will be in the dataset returned via the template.
- * - Passes control to the jump_to block in the main Xml template.
  */
 function GetJumpTo()
 {
@@ -88,7 +85,6 @@ function GetJumpTo()
  *
  * - Uses the {@link getMessageIcons()} function in Subs-Editor.php to achieve this.
  * - Uses the current board (from $board) to ensure that the correct iconset is loaded, as icons can be per-board.
- * - Passes control to the message_icons block in the main Xml template.
  */
 function ListMessageIcons()
 {

@@ -86,12 +86,6 @@ function Search2()
 
 	loadLanguage('Search');
 
-	if (!AJAX)
-		loadTemplate('Search');
-	// If we're doing Ajax we need to use the XML template's results block.
-	else
-		wetem::load('results');
-
 	// Are you allowed?
 	isAllowedTo('search_posts');
 
@@ -1481,6 +1475,7 @@ function Search2()
 	foreach ($stable_icons as $icon)
 		$context['icon_sources'][$icon] = 'images_url';
 
+	loadTemplate('Search');
 	wetem::load('results');
 	$context['page_title'] = $txt['search_results'];
 	$context['get_topics'] = 'prepareSearchContext';

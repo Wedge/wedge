@@ -36,7 +36,7 @@ template_ssi_above();
 	<div class="bbc_code"><header>Code: <a href="#" onclick="return weSelectText(this);" class="codeoperation">[Select]</a></header><code>&lt;?php require(&quot;<?php echo addslashes(we::$is_admin ? realpath($boarddir . '/SSI.php') : 'SSI.php'); ?>&quot;); ?&gt;</code></div>
 
 	<h2>Some notes on usage</h2>
-	<p>All the functions have an output method parameter.  This can either be &quot;echo&quot; (the default) or &quot;array&quot;</p>
+	<p>All the functions have an output method parameter.  This can either be &quot;echo&quot; (the default) or &quot;array&quot;.</p>
 	<p>If it is &quot;echo&quot;, the function will act normally - otherwise, it will return an array containing information about the requested task. For example, it might return a list of topics for ssi_recentTopics.</p>
 	<p>This functionality can be used to allow you to present the information in any way you wish.</p>
 
@@ -78,7 +78,7 @@ template_ssi_above();
 			<li><a href="#" onclick="return showSSIBlock('ssi_recentAttachments');">Recent Attachments</a></li>
 		</ul>
 		<?php if (we::$is_admin) { ?>
-		<h3>Advanced Functions <span class="help" title="Functions that require additional tweaking, not just copy and paste."></span></h3>
+		<h3><span class="help" title="Functions that require additional tweaking, not just copy and paste."></span> Advanced Functions</h3>
 		<ul>
 			<li><a href="#" onclick="return showSSIBlock('ssi_showPoll');">Show Single Poll</a></li>
 			<li><a href="#" onclick="return showSSIBlock('ssi_fetchPosts');">Show Single Post</a></li>
@@ -261,7 +261,7 @@ template_ssi_above();
 
 		<div class="ssi_preview" id="ssi_boardNews">
 			<h2>Board News Function</h2>
-			<p>Shows the latest posts from read only boards, or a specific board.</p>
+			<p>Shows the latest posts from read-only boards, or a specific board.</p>
 
 			<h3>Code</h3>
 			<div class="bbc_code"><header>Code: <a href="#" onclick="return weSelectText(this);" class="codeoperation">[Select]</a></header><code>&lt;?php ssi_boardNews(); ?&gt;</code></div>
@@ -362,28 +362,37 @@ function template_ssi_above()
 	echo '<!DOCTYPE html>
 <html>
 <head>
-	<meta charset="utf-8" />
+	<meta charset="utf-8">
 	<title>Wedge SSI.php Examples</title>',
 	theme_base_css(), '
 	<style>
 		h1.forumtitle
 		{
 			letter-spacing: -1px;
-			color: #fdc;
+			color: #905800;
 			font-size: 2em;
 			margin: 0 !important;
 			padding: 16px;
+		}
+		#wedgelogo {
+			float: right;
+			margin-top: 8px;
+		}
+		#main {
+			display: block !important;
 		}
 		#main h2 {
 			font-size: 1.5em;
 			border-bottom: solid 1px #d05800;
 			line-height: 1.5em;
-			margin: 0.5em 0;
+			padding-top: .5em;
+			margin-bottom: .5em;
 			color: #d05800;
 		}
 		#liftup {
 			padding: 0 2em 1em 1em;
 			line-height: 1.6em;
+			overflow: auto;
 		}
 		#sidenav {
 			width: 180px;
@@ -405,7 +414,7 @@ function template_ssi_above()
 			margin-bottom: 1.5em;
 		}
 		.ssi_preview h3 {
-			margin: 1em 0 0.5em 0;
+			margin: 1em 0 .5em 0;
 		}
 		.ssi_result {
 			background: #fff;
@@ -436,14 +445,14 @@ function template_ssi_above()
 <body>
 	<div id="header"><div class="frame">
 		<div id="top_section">
+			<img id="wedgelogo" src="Themes/default/images/wefoot2.png" alt="Wedge" title="Wedge">
 			<h1 class="forumtitle">Wedge SSI.php Examples</h1>
+			<br class="clear">
 		</div>
 	</div></div>
 	<div id="content"><div class="frame">
 		<div id="main">
-			<div id="liftup" class="flow_auto">
-				<img id="wedgelogo" src="Themes/default/images/wedgelogo.png" alt="Wedge" title="Wedge" style="float: right" />
-				<br class="clear" />';
+			<div id="liftup">';
 }
 
 function template_ssi_below()
@@ -469,7 +478,7 @@ function template_homepage_sample1($method = 'source')
 	$header = '<!DOCTYPE html>
 <html>
 <head>
-	<meta charset="utf-8" />
+	<meta charset="utf-8">
 	<title>SSI.php example for home page</title>
 	<style>
 		body { font-family: Arial, Tahoma, sans-serif; font-size: 80%; background: #DFDFDF; color: #FFFFFF; margin: 0 }
@@ -503,7 +512,7 @@ function template_homepage_sample1($method = 'source')
 
 	$footer = '
 	<div id="footer">
-		<a target="_blank" rel="license" href="http://creativecommons.org/licenses/publicdomain/"><img alt="Creative Commons License" style="border-width: 0" src="http://i.creativecommons.org/l/publicdomain/88x31.png" /></a>
+		<a target="_blank" rel="license" href="http://creativecommons.org/licenses/publicdomain/"><img alt="Creative Commons License" style="border-width: 0" src="http://i.creativecommons.org/l/publicdomain/88x31.png"></a>
 		This sample website layout is dedicated to the <a target="_blank" rel="license" href="http://creativecommons.org/licenses/publicdomain/">Public Domain</a>.
 	</div>
 </div>
@@ -538,7 +547,7 @@ function template_homepage_sample1_php()
 
 	echo '
 
-		</ul><br />
+		</ul><br>
 
 		<h3>Online Users</h3>';
 		ssi_logOnline();
@@ -550,7 +559,7 @@ function template_homepage_sample1_php()
 
 		ssi_welcome();
 		echo '
-		<br /><br />
+		<br><br>
 
 		<h2>News</h2>';
 
@@ -579,12 +588,12 @@ foreach ($topics as $topic)
 
 unset($topics);
 ?' . '>
-		</ul><br />
+		</ul><br>
 		<h3>Online Users</h3>
 		<' . '?php ssi_logOnline(); ?' . '>
 	</div>
 	<div id="content">
-		<' . '?php ssi_welcome(); ?' . '><br /><br />
+		<' . '?php ssi_welcome(); ?' . '><br><br>
 		<h2>News</h2>
 		<' . '?php ssi_boardNews(); ?' . '>
 	</div>';
