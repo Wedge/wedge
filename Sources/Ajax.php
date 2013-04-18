@@ -103,7 +103,7 @@ function ListMessageIcons()
 
 function Thought()
 {
-	global $context;
+	global $context, $theme;
 
 	if (isset($_REQUEST['personal']))
 		ThoughtPersonal();

@@ -235,16 +235,16 @@ $inf_active = #cfc
 $inf_expired = #f8faf8
 $inf_revoked = #ffc
 
-.windowbg.inf_active
+.windowbg.inf_active final
 	background-color: darker($inf_active, 3%)
-.windowbg.inf_expired
+.windowbg.inf_expired final
 	background-color: darker($inf_expired, 3%)
-.windowbg.inf_revoked
+.windowbg.inf_revoked final
 	background-color: darker($inf_revoked, 3%)
 
-.windowbg2.inf_active
+.windowbg2.inf_active final
 	background-color: $inf_active
-.windowbg2.inf_expired
+.windowbg2.inf_expired final
 	background-color: $inf_expired
-.windowbg2.inf_revoked
+.windowbg2.inf_revoked final
 	background-color: $inf_revoked

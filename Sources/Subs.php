@@ -1331,9 +1331,10 @@ function getRePrefix()
 			$context['response_prefix'] = $txt['response_prefix'];
 		else
 		{
+			$realtxt = $txt;
 			loadLanguage('index', $settings['language'], false);
 			$context['response_prefix'] = $txt['response_prefix'];
-			loadLanguage('index');
+			$txt = $realtxt;
 		}
 		cache_put_data('response_prefix', $context['response_prefix'], 600);
 	}

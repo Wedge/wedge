@@ -880,15 +880,15 @@ function template_aeva_form()
 
 			echo '
 			<tr>', !empty($e['skip_left']) || --$colspan > 0 ? '' : '
-				<td style="width: ' . (isset($context['postbox']) ? ($context['postbox']->id == 'desc' ? '35' : '10') : '50') . '%" class="windowbg' . $alt .
-				($valign ? ' top' : '') . '"' . (!empty($e['colspan']) && ($colspan = $e['colspan']) ? ' rowspan="2"' : '') . '>' . $e['label'] . (!empty($e['subtext']) ? '<dfn>' . $e['subtext'] . '</dfn>' : '') . '</td>', '
+				<td' . (isset($context['postbox']) ? ' style="width: ' . ($context['postbox']->id == 'desc' ? '35' : '10') . '%"' : '') . ' class="windowbg' . $alt .
+				($valign ? ' top' : '') . (isset($context['postbox']) ? '' : ' w50') . '"' . (!empty($e['colspan']) && ($colspan = $e['colspan']) ? ' rowspan="2"' : '') . '>' . $e['label'] . (!empty($e['subtext']) ? '<dfn>' . $e['subtext'] . '</dfn>' : '') . '</td>', '
 				<td class="windowbg' . $alt . '"' . (!empty($e['skip_left']) ? ' colspan="2"' : '') . '>';
 
 			if ($e['type'] != 'title')
 				switch ($e['type'])
 				{
 					case 'text';
-						echo '<input', isset($e['value']) ? ' value="' . $e['value'] . '"' : '', ' name="', $e['fieldname'], '" tabindex="', $context['tabindex']++, '" size="', !empty($e['size']) ? $e['size'] : 50, '"', isset($e['custom']) ? ' ' . $e['custom'] : '', '>';
+						echo '<input', isset($e['value']) ? ' value="' . $e['value'] . '"' : '', ' name="', $e['fieldname'], '" tabindex="', $context['tabindex']++, '"', !empty($e['size']) ? ' size="' . $e['size'] . '"' : '', isset($e['custom']) ? ' ' . $e['custom'] : '', '>';
 					break;
 					case 'textbox';
 						if (isset($context['postbox']) && $context['postbox']->id == $e['fieldname'])

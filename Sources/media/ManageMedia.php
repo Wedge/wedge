@@ -240,16 +240,18 @@ function aeva_admin_settings()
 	elseif (empty($amSettings['ftp_file']))
 		$amSettings['ftp_file'] = dirname(dirname(__FILE__)) . '/MGallerySafeMode.php';
 
-	if (media_handler::testGD2() === true)
+	$test = new media_handler;
+	if ($test->testGD2() === true)
 		$theme['image_handler'][2][1] = $txt['media_gd2'];
-	if (media_handler::testIMagick() === true)
+	if ($test->testIMagick() === true)
 		$theme['image_handler'][2][2] = $txt['media_imagick'];
-	if (media_handler::testMW() === true)
+	if ($test->testMW() === true)
 		$theme['image_handler'][2][3] = $txt['media_MW'];
-	if (media_handler::testImageMagick() !== false)
+	if ($test->testImageMagick() !== false)
 		$theme['image_handler'][2][4] = $txt['media_imagemagick'];
-	if (media_handler::testFFmpeg() === true)
+	if ($test->testFFmpeg() === true)
 		$context['aeva_extra_data'] = '<div style="padding: 8px 8px 0 8px">' . $txt['media_admin_settings_ffmpeg_installed'] . '</div>';
+	unset($test);
 
 	if (count($theme['image_handler'][2]) < 2)
 		unset($theme['image_handler']);
@@ -323,11 +325,11 @@ function aeva_admin_settings()
 
 		// If the Clear Thumbnails setting was changed, we redirect to the hidden maintenance area that renames all thumbnails.
 		if (!empty($update_thumbnames))
-			redirectexit('action=admin;area=aeva_maintenance;sa=clear;'.$context['session_query']);
+			redirectexit('action=admin;area=aeva_maintenance;sa=clear;' . $context['session_query']);
 	}
 
 	// Render the form
-	$context['aeva_form_url'] = '<URL>?action=admin;area=aeva_settings;sa='.$context['current_area'].';'.$context['session_query'];
+	$context['aeva_form_url'] = '<URL>?action=admin;area=aeva_settings;sa=' . $context['current_area'] . ';' . $context['session_query'];
 
 	foreach ($theme as $setting => $options)
 	{
@@ -353,7 +355,7 @@ function aeva_admin_settings()
 			'subtext' => isset($txt['media_admin_settings_' . $setting . '_desc']) ? $txt['media_admin_settings_' . $setting . '_desc'] : '',
 		);
 		if ($options[0] == 'textbox')
-			$context['aeva_form'][$setting]['custom'] = 'rows="6" cols="60"';
+			$context['aeva_form'][$setting]['custom'] = 'rows="6" class="w100"';
 		if ($setting == 'max_file_size')
 		{
 			$context['aeva_form']['php_ini'] = array(
