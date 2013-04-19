@@ -2018,249 +2018,243 @@ function setupMenuContext()
 	$context['allow_pm'] = !empty($settings['pm_enabled']) && allowedTo('pm_read');
 	$context['unapproved_members'] = !empty($context['unapproved_members']) ? $context['unapproved_members'] : 0;
 
-	$cacheTime = $settings['lastActive'] * 60;
-
-	// All the items we can possible want and then some, try pulling the final list of items from cache first.
-	if (($menu_items = cache_get_data('menu_items-' . implode('_', we::$user['groups']) . '-' . we::$user['language'], $cacheTime)) === null || time() - $cacheTime <= $settings['settings_updated'])
+	// Recalculate the number of unseen media items
+	if (!empty(we::$user['media_unseen']) && we::$user['media_unseen'] == -1)
 	{
-		// Recalculate the number of unseen media items
-		if (!empty(we::$user['media_unseen']) && we::$user['media_unseen'] == -1)
+		loadSource('media/Subs-Media');
+		loadMediaSettings();
+	}
+
+	$error_count = allowedTo('admin_forum') ? (!empty($settings['app_error_count']) ? $settings['app_error_count'] : '') : '';
+	$can_view_unseen = allowedTo('media_access_unseen') && isset(we::$user['media_unseen']) && we::$user['media_unseen'] > 0;
+	$has_new_pm = !we::$is_guest && !empty(we::$user['unread_messages']);
+	$is_b = !empty($board_info['id']);
+
+	$items = array(
+		'site_home' => array(
+			'title' => $txt['home'],
+			'href' => !empty($settings['home_url']) ? $settings['home_url'] : '',
+			'show' => !empty($settings['home_url']),
+		),
+		'home' => array(
+			'title' => !empty($settings['home_url']) ? $txt['community'] : $txt['home'],
+			'href' => '<URL>',
+			'show' => true,
+			'sub_items' => array(
+				'root' => array(
+					'title' => $context['forum_name'],
+					'href' => '<URL>',
+					'show' => $is_b,
+				),
+				'board' => array(
+					'title' => $is_b ? $board_info['name'] : '',
+					'href' => $is_b ? '<URL>?board=' . $board_info['id'] . '.0' : '',
+					'show' => $is_b,
+				),
+			),
+		),
+		'admin' => array(
+			'title' => $txt['admin'],
+			'href' => '<URL>?action=' . ($context['allow_admin'] ? 'admin' : 'moderate'),
+			'show' => $context['allow_admin'] || $context['allow_moderation_center'],
+			'sub_items' => array(
+				'featuresettings' => array(
+					'title' => $txt['settings_title'],
+					'href' => '<URL>?action=admin;area=featuresettings',
+					'show' => allowedTo('admin_forum'),
+				),
+				'errorlog' => array(
+					'title' => $txt['errlog'],
+					'notice' => $error_count,
+					'href' => '<URL>?action=admin;area=logs;sa=errorlog',
+					'show' => allowedTo('admin_forum') && !empty($settings['enableErrorLogging']),
+				),
+				'permissions' => array(
+					'title' => $txt['edit_permissions'],
+					'href' => '<URL>?action=admin;area=permissions',
+					'show' => allowedTo('manage_permissions'),
+				),
+				'plugins' => array(
+					'title' => $txt['plugin_manager'],
+					'href' => '<URL>?action=admin;area=plugins',
+					'show' => allowedTo('admin_forum'),
+				),
+				'',
+				'modcenter' => array(
+					'title' => $txt['moderate'],
+					'href' => '<URL>?action=moderate',
+					'show' => $context['allow_admin'],
+				),
+				'modlog' => array(
+					'title' => $txt['modlog_view'],
+					'href' => '<URL>?action=moderate;area=modlog',
+					'show' => !empty($settings['log_enabled_moderate']) && !empty(we::$user['mod_cache']) && we::$user['mod_cache']['bq'] != '0=1',
+				),
+				'reports' => array(
+					'title' => $txt['mc_reported_posts'],
+					'href' => '<URL>?action=moderate;area=reports',
+					'show' => !empty(we::$user['mod_cache']) && we::$user['mod_cache']['bq'] != '0=1',
+					'notice' => $context['open_mod_reports'],
+				),
+				'poststopics' => array(
+					'title' => $txt['mc_unapproved_poststopics'],
+					'href' => '<URL>?action=moderate;area=postmod;sa=posts',
+					'show' => $settings['postmod_active'] && !empty(we::$user['mod_cache']['ap']),
+				),
+				'unappmembers' => array(
+					'title' => $txt['unapproved_members'],
+					'href' => '<URL>?action=admin;area=viewmembers;sa=browse;type=approve',
+					'show' => $context['unapproved_members'],
+					'notice' => $context['unapproved_members'],
+				),
+			),
+		),
+		'profile' => array(
+			'title' => $txt['profile'],
+			'href' => '<URL>?action=profile',
+			'show' => $context['allow_edit_profile'],
+			'sub_items' => array(
+				'summary' => array(
+					'title' => $txt['summary'],
+					'href' => '<URL>?action=profile',
+					'show' => true,
+				),
+				'showdrafts' => array(
+					'title' => $txt['draft_posts'],
+					'href' => '<URL>?action=profile;area=showdrafts',
+					'show' => allowedTo('save_post_draft') && !empty($settings['masterSavePostDrafts']),
+				),
+				'account' => array(
+					'title' => $txt['account'],
+					'href' => '<URL>?action=profile;area=account',
+					'show' => allowedTo(array('profile_identity_any', 'profile_identity_own', 'manage_membergroups')),
+				),
+				'profile' => array(
+					'title' => $txt['forumprofile'],
+					'href' => '<URL>?action=profile;area=forumprofile',
+					'show' => allowedTo(array('profile_extra_any', 'profile_extra_own')),
+				),
+				'',
+				'skin' => array(
+					'title' => $txt['change_skin'],
+					'href' => '<URL>?action=skin',
+					'show' => allowedTo(array('profile_extra_any', 'profile_extra_own')),
+				),
+			),
+		),
+		'pm' => array(
+			'title' => $txt['pm_short'],
+			'notice' => $has_new_pm ? we::$user['unread_messages'] : '',
+			'href' => '<URL>?action=pm',
+			'show' => $context['allow_pm'],
+			'sub_items' => array(
+				'pm_read' => array(
+					'title' => $txt['pm_menu_read'],
+					'notice' => $has_new_pm ? we::$user['unread_messages'] : '',
+					'href' => '<URL>?action=pm',
+					'show' => allowedTo('pm_read'),
+				),
+				'',
+				'pm_send' => array(
+					'title' => $txt['pm_menu_send'],
+					'href' => '<URL>?action=pm;sa=send',
+					'show' => allowedTo('pm_send'),
+				),
+				'pm_draft' => array(
+					'title' => $txt['pm_menu_drafts'],
+					'href' => '<URL>?action=pm;sa=showdrafts',
+					'show' => allowedTo('pm_send') && allowedTo('save_pm_draft') && !empty($settings['masterSavePmDrafts']),
+				),
+			),
+		),
+		'media' => array(
+			'title' => isset($txt['media_gallery']) ? $txt['media_gallery'] : 'Media',
+			'notice' => $can_view_unseen ? we::$user['media_unseen'] : '',
+			'href' => '<URL>?action=media',
+			'show' => !empty($settings['media_enabled']) && allowedTo('media_access'),
+			'sub_items' => array(
+				'home' => array(
+					'title' => $txt['media_home'],
+					'href' => '<URL>?action=media',
+					'show' => $can_view_unseen,
+				),
+				'unseen' => array(
+					'title' => $txt['media_unseen'],
+					'notice' => $can_view_unseen ? we::$user['media_unseen'] : '',
+					'href' => '<URL>?action=media;sa=unseen',
+					'show' => $can_view_unseen,
+				),
+			),
+		),
+		'mlist' => array(
+			'title' => $txt['members_title'],
+			'href' => '<URL>?action=mlist',
+			'show' => $context['allow_memberlist'],
+			'sub_items' => array(
+				'mlist_view' => array(
+					'title' => $txt['mlist_menu_view'],
+					'href' => '<URL>?action=mlist',
+					'show' => true,
+				),
+				'mlist_search' => array(
+					'title' => $txt['mlist_search'],
+					'href' => '<URL>?action=mlist;sa=search',
+					'show' => true,
+				),
+			),
+		),
+		'login' => array(
+			'title' => $txt['login'],
+			'href' => '<URL>?action=login',
+			'show' => we::$is_guest,
+			'nofollow' => !empty(we::$user['possibly_robot']),
+		),
+		'register' => array(
+			'title' => $txt['register'],
+			'href' => '<URL>?action=register',
+			'show' => we::$is_guest && (empty($settings['registration_method']) || $settings['registration_method'] != 3),
+			'nofollow' => !empty(we::$user['possibly_robot']),
+		),
+		'logout' => array(
+			'title' => $txt['logout'],
+			'href' => '<URL>?action=logout;' . $context['session_query'],
+			'show' => !we::$is_guest,
+		),
+	);
+
+	// Amalgamate the items in the admin menu.
+	if (!empty($error_count) || !empty($items['admin']['sub_items']['reports']['notice']) || !empty($context['unapproved_members']))
+		$items['admin']['notice'] = $error_count + (int) $items['admin']['sub_items']['reports']['notice'] + (int) $context['unapproved_members'];
+
+	// Allow editing menu items easily.
+	// Use PHP's array_splice to add entries at a specific position.
+	call_hook('menu_items', array(&$items));
+
+	// Now we put the items in the context so the theme can use them.
+	$menu_items = array();
+	foreach ($items as $act => $item)
+	{
+		if (!empty($item['show']))
 		{
-			loadSource('media/Subs-Media');
-			loadMediaSettings();
-		}
+			$item['active_item'] = false;
 
-		$error_count = allowedTo('admin_forum') ? (!empty($settings['app_error_count']) ? $settings['app_error_count'] : '') : '';
-		$can_view_unseen = allowedTo('media_access_unseen') && isset(we::$user['media_unseen']) && we::$user['media_unseen'] > 0;
-		$has_new_pm = !we::$is_guest && !empty(we::$user['unread_messages']);
-		$is_b = !empty($board_info['id']);
-
-		$items = array(
-			'site_home' => array(
-				'title' => $txt['home'],
-				'href' => !empty($settings['home_url']) ? $settings['home_url'] : '',
-				'show' => !empty($settings['home_url']),
-			),
-			'home' => array(
-				'title' => !empty($settings['home_url']) ? $txt['community'] : $txt['home'],
-				'href' => '<URL>',
-				'show' => true,
-				'sub_items' => array(
-					'root' => array(
-						'title' => $context['forum_name'],
-						'href' => '<URL>',
-						'show' => $is_b,
-					),
-					'board' => array(
-						'title' => $is_b ? $board_info['name'] : '',
-						'href' => $is_b ? '<URL>?board=' . $board_info['id'] . '.0' : '',
-						'show' => $is_b,
-					),
-				),
-			),
-			'admin' => array(
-				'title' => $txt['admin'],
-				'href' => '<URL>?action=' . ($context['allow_admin'] ? 'admin' : 'moderate'),
-				'show' => $context['allow_admin'] || $context['allow_moderation_center'],
-				'sub_items' => array(
-					'featuresettings' => array(
-						'title' => $txt['settings_title'],
-						'href' => '<URL>?action=admin;area=featuresettings',
-						'show' => allowedTo('admin_forum'),
-					),
-					'errorlog' => array(
-						'title' => $txt['errlog'],
-						'notice' => $error_count,
-						'href' => '<URL>?action=admin;area=logs;sa=errorlog',
-						'show' => allowedTo('admin_forum') && !empty($settings['enableErrorLogging']),
-					),
-					'permissions' => array(
-						'title' => $txt['edit_permissions'],
-						'href' => '<URL>?action=admin;area=permissions',
-						'show' => allowedTo('manage_permissions'),
-					),
-					'plugins' => array(
-						'title' => $txt['plugin_manager'],
-						'href' => '<URL>?action=admin;area=plugins',
-						'show' => allowedTo('admin_forum'),
-					),
-					'',
-					'modcenter' => array(
-						'title' => $txt['moderate'],
-						'href' => '<URL>?action=moderate',
-						'show' => $context['allow_admin'],
-					),
-					'modlog' => array(
-						'title' => $txt['modlog_view'],
-						'href' => '<URL>?action=moderate;area=modlog',
-						'show' => !empty($settings['log_enabled_moderate']) && !empty(we::$user['mod_cache']) && we::$user['mod_cache']['bq'] != '0=1',
-					),
-					'reports' => array(
-						'title' => $txt['mc_reported_posts'],
-						'href' => '<URL>?action=moderate;area=reports',
-						'show' => !empty(we::$user['mod_cache']) && we::$user['mod_cache']['bq'] != '0=1',
-						'notice' => $context['open_mod_reports'],
-					),
-					'poststopics' => array(
-						'title' => $txt['mc_unapproved_poststopics'],
-						'href' => '<URL>?action=moderate;area=postmod;sa=posts',
-						'show' => $settings['postmod_active'] && !empty(we::$user['mod_cache']['ap']),
-					),
-					'unappmembers' => array(
-						'title' => $txt['unapproved_members'],
-						'href' => '<URL>?action=admin;area=viewmembers;sa=browse;type=approve',
-						'show' => $context['unapproved_members'],
-						'notice' => $context['unapproved_members'],
-					),
-				),
-			),
-			'profile' => array(
-				'title' => $txt['profile'],
-				'href' => '<URL>?action=profile',
-				'show' => $context['allow_edit_profile'],
-				'sub_items' => array(
-					'summary' => array(
-						'title' => $txt['summary'],
-						'href' => '<URL>?action=profile',
-						'show' => true,
-					),
-					'showdrafts' => array(
-						'title' => $txt['draft_posts'],
-						'href' => '<URL>?action=profile;area=showdrafts',
-						'show' => allowedTo('save_post_draft') && !empty($settings['masterSavePostDrafts']),
-					),
-					'account' => array(
-						'title' => $txt['account'],
-						'href' => '<URL>?action=profile;area=account',
-						'show' => allowedTo(array('profile_identity_any', 'profile_identity_own', 'manage_membergroups')),
-					),
-					'profile' => array(
-						'title' => $txt['forumprofile'],
-						'href' => '<URL>?action=profile;area=forumprofile',
-						'show' => allowedTo(array('profile_extra_any', 'profile_extra_own')),
-					),
-					'',
-					'skin' => array(
-						'title' => $txt['change_skin'],
-						'href' => '<URL>?action=skin',
-						'show' => allowedTo(array('profile_extra_any', 'profile_extra_own')),
-					),
-				),
-			),
-			'pm' => array(
-				'title' => $txt['pm_short'],
-				'notice' => $has_new_pm ? we::$user['unread_messages'] : '',
-				'href' => '<URL>?action=pm',
-				'show' => $context['allow_pm'],
-				'sub_items' => array(
-					'pm_read' => array(
-						'title' => $txt['pm_menu_read'],
-						'notice' => $has_new_pm ? we::$user['unread_messages'] : '',
-						'href' => '<URL>?action=pm',
-						'show' => allowedTo('pm_read'),
-					),
-					'',
-					'pm_send' => array(
-						'title' => $txt['pm_menu_send'],
-						'href' => '<URL>?action=pm;sa=send',
-						'show' => allowedTo('pm_send'),
-					),
-					'pm_draft' => array(
-						'title' => $txt['pm_menu_drafts'],
-						'href' => '<URL>?action=pm;sa=showdrafts',
-						'show' => allowedTo('pm_send') && allowedTo('save_pm_draft') && !empty($settings['masterSavePmDrafts']),
-					),
-				),
-			),
-			'media' => array(
-				'title' => isset($txt['media_gallery']) ? $txt['media_gallery'] : 'Media',
-				'notice' => $can_view_unseen ? we::$user['media_unseen'] : '',
-				'href' => '<URL>?action=media',
-				'show' => !empty($settings['media_enabled']) && allowedTo('media_access'),
-				'sub_items' => array(
-					'home' => array(
-						'title' => $txt['media_home'],
-						'href' => '<URL>?action=media',
-						'show' => $can_view_unseen,
-					),
-					'unseen' => array(
-						'title' => $txt['media_unseen'],
-						'notice' => $can_view_unseen ? we::$user['media_unseen'] : '',
-						'href' => '<URL>?action=media;sa=unseen',
-						'show' => $can_view_unseen,
-					),
-				),
-			),
-			'mlist' => array(
-				'title' => $txt['members_title'],
-				'href' => '<URL>?action=mlist',
-				'show' => $context['allow_memberlist'],
-				'sub_items' => array(
-					'mlist_view' => array(
-						'title' => $txt['mlist_menu_view'],
-						'href' => '<URL>?action=mlist',
-						'show' => true,
-					),
-					'mlist_search' => array(
-						'title' => $txt['mlist_search'],
-						'href' => '<URL>?action=mlist;sa=search',
-						'show' => true,
-					),
-				),
-			),
-			'login' => array(
-				'title' => $txt['login'],
-				'href' => '<URL>?action=login',
-				'show' => we::$is_guest,
-				'nofollow' => !empty(we::$user['possibly_robot']),
-			),
-			'register' => array(
-				'title' => $txt['register'],
-				'href' => '<URL>?action=register',
-				'show' => we::$is_guest && (empty($settings['registration_method']) || $settings['registration_method'] != 3),
-				'nofollow' => !empty(we::$user['possibly_robot']),
-			),
-			'logout' => array(
-				'title' => $txt['logout'],
-				'href' => '<URL>?action=logout;' . $context['session_query'],
-				'show' => !we::$is_guest,
-			),
-		);
-
-		// Amalgamate the items in the admin menu.
-		if (!empty($error_count) || !empty($items['admin']['sub_items']['reports']['notice']) || !empty($context['unapproved_members']))
-			$items['admin']['notice'] = $error_count + (int) $items['admin']['sub_items']['reports']['notice'] + (int) $context['unapproved_members'];
-
-		// Allow editing menu items easily.
-		// Use PHP's array_splice to add entries at a specific position.
-		call_hook('menu_items', array(&$items));
-
-		// Now we put the items in the context so the theme can use them.
-		$menu_items = array();
-		foreach ($items as $act => $item)
-		{
-			if (!empty($item['show']))
+			// Go through the sub items if there are any.
+			if (!empty($item['sub_items']))
 			{
-				$item['active_item'] = false;
-
-				// Go through the sub items if there are any.
-				if (!empty($item['sub_items']))
+				foreach ($item['sub_items'] as $key => $subitem)
 				{
-					foreach ($item['sub_items'] as $key => $subitem)
-					{
-						if (empty($subitem['show']) && !empty($subitem))
-							unset($item['sub_items'][$key]);
+					if (empty($subitem['show']) && !empty($subitem))
+						unset($item['sub_items'][$key]);
 
-						// 2nd level sub items next...
-						if (!empty($subitem['sub_items']))
-							foreach ($subitem['sub_items'] as $key2 => $subitem2)
-								if (empty($subitem2['show']) && !empty($subitem2))
-									unset($item['sub_items'][$key]['sub_items'][$key2]);
-					}
+					// 2nd level sub items next...
+					if (!empty($subitem['sub_items']))
+						foreach ($subitem['sub_items'] as $key2 => $subitem2)
+							if (empty($subitem2['show']) && !empty($subitem2))
+								unset($item['sub_items'][$key]['sub_items'][$key2]);
 				}
-
-				$menu_items[$act] = $item;
 			}
+
+			$menu_items[$act] = $item;
 		}
 	}
 

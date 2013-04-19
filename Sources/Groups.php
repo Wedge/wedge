@@ -193,7 +193,7 @@ function GroupList()
 					'function' => create_function('$group', '
 						global $context;
 
-						$output = \'<a href="<URL>?action=\' . $context[\'current_action\'] . (isset($context[\'admin_area\']) ? \';area=\' . $context[\'admin_area\'] : \'\') . \';sa=members;group=\' . $group[\'id\'] . \'" \' . ($group[\'color\'] ? \'style="color: \' . $group[\'color\'] . \'"\' : \'\') . \'>\' . $group[\'name\'] . \'</a>\';
+						$output = \'<a href="<URL>?action=\' . $context[\'action\'] . (isset($context[\'admin_area\']) ? \';area=\' . $context[\'admin_area\'] : \'\') . \';sa=members;group=\' . $group[\'id\'] . \'" \' . ($group[\'color\'] ? \'style="color: \' . $group[\'color\'] . \'"\' : \'\') . \'>\' . $group[\'name\'] . \'</a>\';
 
 						if ($group[\'desc\'])
 							$output .= \'<div class="smalltext">\' . $group[\'desc\'] . \'</div>\';

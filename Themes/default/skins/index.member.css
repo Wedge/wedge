@@ -248,3 +248,8 @@ $inf_revoked = #ffc
 	background-color: $inf_expired
 .windowbg2.inf_revoked final
 	background-color: $inf_revoked
+
+dd.with-list
+	ul
+		margin: 0
+		padding-left: 1em

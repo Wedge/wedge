@@ -1788,6 +1788,7 @@ function knownHooks()
 			'illegal_perms',
 			'illegal_guest_perms',
 			'banned_perms',
+			'settings_infraction_levels',
 
 			// Content creation
 			'outgoing_email',
