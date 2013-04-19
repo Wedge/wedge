@@ -262,7 +262,7 @@ function template_language_selector()
 
 	foreach ($context['languages'] as $language)
 		echo '
-				<a href="' . $lng . 'language=' . $language['filename'] . '"' . (empty($language['code']) ? '' : ' rel="alternate" hreflang="' . $language['code'] . '"') . ' class="flag_' . $language['filename'] . '" title="' . westr::htmlspecialchars($language['name']) . '"></a>';
+				<a href="', $lng, 'language=', $language['filename'], '"', $language['code'] ? ' rel="alternate" hreflang="' . $language['code'] . '"' : '', ' class="flag_', $language['filename'], '" title="', westr::htmlspecialchars($language['name']), '"></a>';
 
 	echo '
 			</p>';
