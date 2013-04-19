@@ -253,6 +253,16 @@ function invertAll(oInvertCheckbox, oForm, sMask)
 	});
 }
 
+// Shorten all raw URLs in user content. The spans allow for the actual link to be retained when copying/pasting the page content.
+function breakLinks()
+{
+	$('.bbc_link').each(function () {
+		var link = $(this).text();
+		if (link == this.href && link.length > 50)
+			$(this).html(link.slice(0, 25) + '<span><span>' + link.slice(25, -25) + '</span></span><wbr>' + link.slice(-25));
+	});
+}
+
 // Shows the page numbers by clicking the dots.
 function expandPages(spanNode, firstPage, lastPage, perPage)
 {
@@ -541,12 +551,7 @@ $.fn.mime = function (oList, oStrings)
 
 $(function ()
 {
-	// Shorten all raw URLs in user content. The spans allow for the actual link to be retained when copying/pasting the page content.
-	$('.bbc_link').each(function () {
-		var link = $(this).text();
-		if (link == this.href && link.length > 50)
-			$(this).html(link.slice(0, 25) + '<span><span>' + link.slice(25, -25) + '</span></span><wbr>' + link.slice(-25));
-	});
+	breakLinks();
 
 	// Transform existing select boxes into our super boxes.
 	$('select').sb();
@@ -678,7 +683,7 @@ $(function ()
 		{
 			$.post(weUrl('action=notification;sa=unread'), function (count)
 			{
-				if (count != we_notifs)
+				if (count != window.we_notifs)
 				{
 					we_notifs = count;
 					$shade.find('.notenice,.note').attr('class', we_notifs > 0 ? 'notenice' : 'note').text(we_notifs);
@@ -883,37 +888,24 @@ function JumpTo(control)
 		// Event handler for clicking submit.
 		this.submit = function (tid, mid)
 		{
+			var $thought_table = $('#thought_update' + tid).closest('.thoughts');
 			show_ajax();
 
 			$.post(
 				ajaxUrl,
 				{
+					// Context array: thought table type (latest, thread, profile),
+					// type-related context variable, and page number.
+					cx: $thought_table.data('cx'),
 					parent: tid,
 					master: mid,
 					oid: $('#noid').val(),
 					privacy: $('#npriv').val(),
 					text: $('#ntho').val()
 				},
-				function (XMLDoc)
+				function (response)
 				{
-					var
-						$text = $('text', XMLDoc),
-						$new_thought = $('#new_thought'),
-						new_id = '#thought_update' + (tid ? $text.attr('id') : '');
-
-					// Is this a thought reply?
-					if (!$(new_id).length)
-					{
-						$new_thought.after($('<tr>').addClass($new_thought.attr('class')).html(
-							$new_thought.html().wereplace({
-								date: $('date', XMLDoc).text(),
-								text: $text.text()
-							})
-						));
-					}
-					// If not, it's food for thought -- either new, or an edit.
-					else
-						$(new_id).find('span').html($text.text());
+					$thought_table.html(response);
 					cancel();
 					hide_ajax();
 				}

@@ -13,14 +13,14 @@
 
 function template_showThoughts()
 {
-	global $context, $theme, $txt;
+	global $context, $txt;
 
 	echo '
 		<we:cat>
 			<div class="thought_icon"></div>
 			', $txt['thoughts'], '
 		</we:cat>
-		<table class="windowbg wrc w100 cp8 cs0 thought_list" id="thought_thread">';
+		<table class="windowbg wrc w100 cp8 cs0 thoughts" id="thought_thread" data-cx="thread ', $context['thought_context'], ' ', $_REQUEST['start'], '">';
 
 	$col = 2;
 	foreach ($context['thoughts'] as $thought)
@@ -62,42 +62,20 @@ function template_sub_thoughts(&$thought)
 
 function template_showLatestThoughts()
 {
-	global $context, $theme, $txt;
+	global $context, $txt;
 
 	if (empty($context['thoughts']))
 		return;
+
+	// !! @todo: allow editing & replying to thoughts directly from within the Profile area...?
+	// onclick="oThought.edit(', $thought['id'], !empty($thought['id_master']) && $thought['id'] != $thought['id_master'] ? ', ' . $thought['id_master'] : '', ');"
 
 	echo '
 		<div class="pagesection">
 			', $context['page_index'], '
 		</div>
-		<table class="windowbg wrc w100 cp8 cs0 thought_list" id="profile_thoughts">';
-
-	// !! @todo: allow editing & replying to thoughts directly from within the Profile area...?
-	// onclick="oThought.edit(', $thought['id'], !empty($thought['id_master']) && $thought['id'] != $thought['id_master'] ? ', ' . $thought['id_master'] : '', ');"
-
-	// @worg!!
-	$privacy_icon = array(
-		-3 => 'everyone',
-		0 => 'members',
-		5 => 'justme',
-		20 => 'friends',
-	);
-
-	$col = 2;
-	foreach ($context['thoughts'] as $thought)
-	{
-		$col = empty($col) ? 2 : '';
-		$id = $thought['id'];
-		echo '
-			<tr class="windowbg', $col, '">
-				<td class="bc">', $thought['updated'], '</td>
-				<td><a class="more_button thome" data-id="', $id, '">', $txt['actions_button'], '</a>',
-				$thought['privacy'] != -3 ? '<div class="privacy_' . @$privacy_icon[$thought['privacy']] . '"></div>' : '', '<a href="<URL>?action=profile;u=', $thought['id_member'], '" id="t', $id, '">',
-				$thought['owner_name'], '</a> &raquo; ', $thought['text'], template_thought_likes($id), '</td>
-			</tr>';
-	}
-	echo '
+		<table class="windowbg wrc w100 cp8 cs0 thoughts" data-cx="profile ', $context['thought_context'], ' ', $_REQUEST['start'], '">',
+			template_thoughts_table(), '
 		</table>
 		<div class="pagesection">
 			', $context['page_index'], '
@@ -127,7 +105,15 @@ function template_thoughts()
 
 	echo '
 		<div class="tborder" style="margin: 5px 0 15px; padding: 2px; border: 1px solid #dcc; border-radius: 5px">
-		<table class="w100 cp4 cs0 thought_list">';
+		<table class="w100 cp4 cs0 thoughts" data-cx="latest ', $context['thought_context'], ' 0">',
+			template_thoughts_table(), '
+		</table>
+		</div>';
+}
+
+function template_thoughts_table()
+{
+	global $context, $txt;
 
 	// @worg!!
 	$privacy_icon = array(
@@ -139,12 +125,6 @@ function template_thoughts()
 
 	if (!SKIN_MOBILE)
 	{
-		if (!we::$is_guest)
-			echo '
-			<tr id="new_thought" class="windowbg">
-				<td class="bc">%date%</td><td>%text%</td>
-			</tr>';
-
 		foreach ($context['thoughts'] as $id => $thought)
 		{
 			$col = empty($col) ? 2 : '';
@@ -159,12 +139,6 @@ function template_thoughts()
 	}
 	else
 	{
-		if (!we::$is_guest)
-			echo '
-			<tr id="new_thought" class="windowbg">
-				<td>%date%<br>%text%</td>
-			</tr>';
-
 		foreach ($context['thoughts'] as $id => $thought)
 		{
 			$col = empty($col) ? 2 : '';
@@ -177,10 +151,6 @@ function template_thoughts()
 			</tr>';
 		}
 	}
-
-	echo '
-		</table>
-		</div>';
 }
 
 function template_thought_likes($id_thought)

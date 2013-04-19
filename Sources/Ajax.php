@@ -320,29 +320,35 @@ function Thought()
 			'thought_privacy' => $privacy,
 		));
 
-	$text = parse_bbc_inline($text);
+	// Welcome to the world of rule-bending dirty hacks.
+	// What you're going to see isn't for the faint-hearted...
+	// We're going to emulate Wedge building a thought page.
 
-	// Is this a reply to another thought...? Then we should try and style it as well.
-	if (!empty($user_id))
-	{
-		// @worg!!
-		$privacy_icon = array(
-			-3 => 'everyone',
-			0 => 'members',
-			5 => 'justme',
-			20 => 'friends',
-		);
+	list ($type, $ctx, $page) = explode(' ', isset($_POST['cx']) ? $_POST['cx'] : 'latest 0 0');
+	$_REQUEST['in'] = $ctx; // Only used in Thread mode.
+	$_REQUEST['start'] = $page;
 
-		$text = '<div>' . ($privacy != -3 ? '<div class="privacy_' . @$privacy_icon[$privacy] . '"></div>' : '') . '<a id="t' . $last_thought . '"></a>'
-			. '<a href="<URL>?action=profile;u=' . $user_id . '">' . (empty($user_name) ? '' : $user_name) . '</a> &raquo;'
-			. ' @<a href="<URL>?action=profile;u=' . (empty($parent_id) ? 0 : $parent_id) . '">' . (empty($parent_name) ? 0 : $parent_name) . '</a>&gt;'
-			. ' <span class="thought" id="thought_update' . $last_thought . '" data-oid="' . $last_thought
-			. '" data-prv="' . $privacy . '"><span>' . $text . '</span></span></div>';
-	}
+	loadSource(array('Thoughts', 'Subs-Cache'));
+	loadTemplate('index'); // We need template_mini_menu
+	wedge_get_skin_options(); // Yay, another rule broken!
+	if ($type == 'profile')
+		loadLanguage('Profile');
 
-	$date = !empty($user_id) ? '<date><![CDATA[<a href="<URL>?action=thoughts;in=' . $mid . '#t' . $last_thought . '"><img src="' . $theme['images_url'] . '/icons/last_post.gif" class="middle"></a> ' . timeformat(time()) . ']]></date>' : '';
+	// This is basically return_xml, but with a series of echo's in-between...
+	clean_output();
+	header('Content-Type: text/html; charset=UTF-8');
 
-	return_xml('<we><text id="', $last_thought, '"><![CDATA[', cleanXml($text), ']]></text>', $date, '</we>');
+	$context['footer_js'] = '';
+	if ($type == 'latest')
+		embedThoughts($ctx);
+	elseif ($type == 'thread')
+		Thoughts();
+	elseif ($type == 'profile')
+		latestThoughts($ctx);
+
+	template_thoughts_table();
+	echo '<script>breakLinks();', $context['footer_js'], '</script>'; // Yayz!
+	obExit(false); // And finally, we skip the actual templating process.
 }
 
 function ThoughtPersonal()

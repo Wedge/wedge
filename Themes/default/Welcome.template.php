@@ -91,12 +91,6 @@ function template_thoughts($limit = 18)
 		echo '
 			<tr><td colspan="2" class="titlebg" style="padding: 4px">', $txt['pages'], ': ', $context['page_index'], '</td></tr>';
 
-	if (!we::$is_guest)
-		echo '
-			<tr id="new_thought">
-				<td class="bc">%date%</td><td class="windowbg thought">%uname% &raquo; %text%</td>
-			</tr>';
-
 	foreach ($context['thoughts'] as $id => $thought)
 	{
 		$col = empty($col) ? 2 : '';

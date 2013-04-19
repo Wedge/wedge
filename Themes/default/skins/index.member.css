@@ -180,9 +180,6 @@
 	width: width($images_dir/icons/thought.gif)px
 	height: height($images_dir/icons/thought.gif)px
 
-#new_thought
-	display: none
-
 .privacy_default mixes .inline-block
 	background: url($images/icons/privacy.png) 0 0 no-repeat
 	margin-right: 4px

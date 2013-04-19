@@ -351,6 +351,9 @@ hr.sep
 		margin: 0 1px 1px 0
 		width, height: 5px
 		background: gray
+		@if ie6
+			overflow: hidden
+		@endif
 		:only-child
 			width, height: 11px
 	.online
@@ -1150,7 +1153,7 @@ tr.windowbg td
 	width: 80%
 	font-size: .9em
 
-.thought_list
+.thoughts
 	li:target > div
 		padding: 4px 8px
 		margin: 4px 0
@@ -1159,7 +1162,12 @@ tr.windowbg td
 	@if member
 		// Make life easier for members...
 		.mimenu final
-			top: 80%
+			@if ie[-7]
+				left: 100%
+				top: -1em
+			@else
+				top: 80%
+			@endif
 	@endif
 
 /* Styles for the statistics center.

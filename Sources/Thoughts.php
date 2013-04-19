@@ -20,16 +20,17 @@ function Thoughts()
 {
 	global $context, $txt;
 
+	// If we're not in a specific thought thread, we're asking for the latest thoughts.
+	$master = isset($_REQUEST['in']) ? (int) $_REQUEST['in'] : 0;
+	if (!$master)
+		return latestThoughts();
+
 	// Some initial context.
 	loadTemplate('Thoughts');
 	loadLanguage('Profile');
 	wetem::load('showThoughts');
 	$context['page_title'] = $txt['showThoughts'];
-	$master = isset($_REQUEST['in']) ? (int) $_REQUEST['in'] : 0;
-
-	// If we're not in a specific thought thread, we're asking for the latest thoughts.
-	if (!$master)
-		return latestThoughts();
+	$context['thought_context'] = $master;
 
 	$context['thoughts'] = $thoughts = array();
 	$request = wesql::query('
@@ -156,6 +157,7 @@ function embedThoughts($to_show = 10)
 	// Some initial context.
 	loadTemplate('Thoughts');
 	wetem::add('thoughts');
+	$context['thought_context'] = $to_show;
 
 	$request = wesql::query('
 		SELECT
@@ -226,6 +228,7 @@ function latestThoughts($memID = 0)
 	loadTemplate('Thoughts');
 	wetem::load('showLatestThoughts');
 	$context['start'] = isset($_REQUEST['start']) ? (int) $_REQUEST['start'] : 0;
+	$context['thought_context'] = $memID;
 	$thoughts_per_page = 20;
 
 	$request = wesql::query('

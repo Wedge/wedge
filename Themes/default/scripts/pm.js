@@ -20,6 +20,8 @@ function wePersonalMessageSend(opt)
 		{
 			// No longer hide it, show it to the world!
 			$('#' + opt.sBccDivId + ', #' + opt.sBccDivId2).show();
+
+			return false;
 		},
 
 		// Prevent items to be added twice or to both the 'To' and 'Bcc'.
