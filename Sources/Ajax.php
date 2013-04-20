@@ -202,8 +202,6 @@ function Thought()
 	// Overwrite previous thought if it's just an edit.
 	if (!empty($last_thought))
 	{
-		similar_text($last_text, $text, $percent);
-
 		// Think before you think!
 		if (isset($_REQUEST['remove']))
 		{
@@ -276,6 +274,7 @@ function Thought()
 		// If it's similar to the earlier version, don't update the time.
 		else
 		{
+			similar_text($last_text, $text, $percent);
 			$update = $percent >= 90 ? 'updated' : time();
 			wesql::query('
 				UPDATE {db_prefix}thoughts
@@ -325,14 +324,11 @@ function Thought()
 	// We're going to emulate Wedge building a thought page.
 
 	list ($type, $ctx, $page) = explode(' ', isset($_POST['cx']) ? $_POST['cx'] : 'latest 0 0');
-	$_REQUEST['in'] = $ctx; // Only used in Thread mode.
 	$_REQUEST['start'] = $page;
 
 	loadSource(array('Thoughts', 'Subs-Cache'));
 	loadTemplate('index'); // We need template_mini_menu
 	wedge_get_skin_options(); // Yay, another rule broken!
-	if ($type == 'profile')
-		loadLanguage('Profile');
 
 	// This is basically return_xml, but with a series of echo's in-between...
 	clean_output();
@@ -340,13 +336,23 @@ function Thought()
 
 	$context['footer_js'] = '';
 	if ($type == 'latest')
+	{
 		embedThoughts($ctx);
+		template_thoughts_table();
+	}
 	elseif ($type == 'thread')
+	{
+		$_REQUEST['in'] = $ctx;
 		Thoughts();
+		template_thoughts_thread();
+	}
 	elseif ($type == 'profile')
+	{
+		loadLanguage('Profile');
 		latestThoughts($ctx);
+		template_thoughts_table();
+	}
 
-	template_thoughts_table();
 	echo '<script>breakLinks();', $context['footer_js'], '</script>'; // Yayz!
 	obExit(false); // And finally, we skip the actual templating process.
 }

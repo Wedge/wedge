@@ -471,7 +471,7 @@ hr.sep
 	background-position: 4px -242px
 .like_button extends .vbtn
 	background-position: 2px -270px
-.unlike_button extends ".vbtn, .like_button"
+.unlike_button extends .vbtn
 	background-position: 2px -300px
 
 .report_button extends .vbtn
@@ -1153,6 +1153,28 @@ tr.windowbg td
 	width: 80%
 	font-size: .9em
 
+.list-thoughts
+	margin: 5px 0 15px
+	padding: 2px
+	border: 1px solid #dcc
+	border-radius: 5px
+	@if ie6
+		ul
+			margin, padding: 0 0 0 8px
+		& .mimenu ul
+			margin: 0
+			padding: 4px
+	@else
+		ul:not(.actions)
+			margin, padding: 0 0 0 8px
+	@endif
+	li
+		padding: 5px 0
+	td > ul
+		margin-left: 20px
+	#thoughts &
+		margin: 5px 0
+
 .thoughts
 	li:target > div
 		padding: 4px 8px
@@ -1169,6 +1191,15 @@ tr.windowbg td
 				top: 80%
 			@endif
 	@endif
+
+#thought_thread
+	.date
+		color: #999
+
+@if !ie6
+	.my.thought
+		font: italic 12px Georgia, "Trebuchet MS", Arial, sans-serif
+@endif
 
 /* Styles for the statistics center.
 ------------------------------------------------- */

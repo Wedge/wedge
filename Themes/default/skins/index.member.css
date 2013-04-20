@@ -165,15 +165,6 @@
 #thought_update
 	cursor: pointer
 
-.thought
-	ul
-		margin, padding: 0 0 0 8px
-	li
-		margin, padding: 0
-
-.my.thought
-	font: italic 12px Georgia, "Trebuchet MS", Arial, sans-serif
-
 .thought_icon mixes .inline-block
 	text-decoration: none
 	background: url($images/icons/thought.gif) no-repeat

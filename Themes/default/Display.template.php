@@ -95,6 +95,10 @@ function template_display_posts()
 	});
 	new IconList;');
 
+	// Show mini-menus.
+	template_mini_menu('user', 'umme');
+	template_mini_menu('action', 'acme');
+
 	// Collapse any ignored messages. If a message has a 'like', at least show the action bar, in case the user
 	// would like to read it anyway. (Maybe they're ignoring someone only because of their signal/noise ratio?)
 	if (!empty($ignoredMsgs))
@@ -109,10 +113,6 @@ function template_display_posts()
 		],
 		aSwapLinks: ["msg' . $msgid . ' .ignored"]
 	});');
-
-	// Show mini-menus.
-	template_mini_menu('user', 'umme');
-	template_mini_menu('action', 'acme');
 }
 
 function template_topic_poll_before()

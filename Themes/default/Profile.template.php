@@ -86,20 +86,20 @@ function template_summary()
 					<br><a href="<URL>?action=buddy;u=', $context['id_member'], ';', $context['session_query'], '">[', $txt['buddy_' . ($context['member']['is_buddy'] ? 'remove' : 'add')], ']</a>';
 
 	echo '
-				</span>';
-
-	echo '
+				</span>
 				<p id="infolinks">';
 
 	if (!we::$user['is_owner'] && $context['can_send_pm'])
 		echo '
 					<a href="<URL>?action=pm;sa=send;u=', $context['id_member'], '">', $txt['profile_sendpm_short'], '</a><br>';
-	echo '
-					<a href="<URL>?action=profile;u=', $context['id_member'], ';area=showposts">', $txt['showPosts'], '</a><br>
-					<a href="<URL>?action=profile;u=', $context['id_member'], ';area=statistics">', $txt['statPanel'], '</a>
-				</p>';
+
+	if (!empty($context['member']['real_posts']))
+		echo '
+					<a href="<URL>?action=profile;u=', $context['id_member'], ';area=showposts">', $txt['showPosts'], '</a><br>';
 
 	echo '
+					<a href="<URL>?action=profile;u=', $context['id_member'], ';area=statistics">', $txt['statPanel'], '</a>
+				</p>
 			</div>
 		</div>
 	</div>

@@ -26,8 +26,8 @@ function Thoughts()
 		return latestThoughts();
 
 	// Some initial context.
-	loadTemplate('Thoughts');
 	loadLanguage('Profile');
+	loadTemplate('Thoughts');
 	wetem::load('showThoughts');
 	$context['page_title'] = $txt['showThoughts'];
 	$context['thought_context'] = $master;
@@ -52,7 +52,7 @@ function Thoughts()
 		$request = wesql::query('
 			SELECT
 				h.updated, h.thought, h.id_thought, h.id_parent, h.id_member,
-				h.id_master, h2.id_member AS id_parent_owner,
+				h.privacy, h.id_master, h2.id_member AS id_parent_owner,
 				m.real_name AS owner_name, m2.real_name AS parent_name
 			FROM
 				{db_prefix}thoughts AS h
@@ -92,6 +92,7 @@ function Thoughts()
 				'id_parent_owner' => $row['id_parent_owner'],
 				'owner_name' => $row['owner_name'],
 				'updated' => timeformat($row['updated']),
+				'privacy' => $row['privacy'],
 				'text' => $row['thought'],
 			);
 
@@ -108,10 +109,13 @@ function Thoughts()
 					'id_parent_owner' => $thoughts[$row['id_master']]['id_member'],
 					'owner_name' => '',
 					'updated' => timeformat($row['updated']),
+					'privacy' => -3,
 					'text' => $txt['deleted_thought'],
 				);
 			}
 
+			$thought['text'] = '<span class="thought" id="thought_update' . $row['id_thought'] . '" data-oid="' . $row['id_thought'] . '" data-prv="' . $row['privacy'] . '"><span>' . $thought['text'] . '</span></span>';
+			$context['thoughts'][$thought['id']] = $thought; // Mini-menus need a flat version of the thought list.
 			if (empty($thought['id_master'])) // !! Alternatively, add: || $row['id_master'] != $row['id_member']
 				$thoughts[$thought['id']] = $thought;
 			else
@@ -131,11 +135,12 @@ function Thoughts()
 		}
 		wesql::free_result($request);
 
-		foreach (array_reverse(array_keys($thoughts)) as $nb)
-			$context['thoughts'][$nb] = $thoughts[$nb];
-
 		// Mini-menu.
 		setupThoughtMenu();
+
+		$context['thoughts'] = array();
+		foreach (array_reverse(array_keys($thoughts)) as $nb)
+			$context['thoughts'][$nb] = $thoughts[$nb];
 	}
 }
 
@@ -202,7 +207,7 @@ function embedThoughts($to_show = 10)
 		);
 
 		$thought =& $thoughts[$row['id_thought']];
-		$thought['text'] = '<span class="thought" id="thought_update' . $id . '" data-oid="' . $id . '" data-prv="' . $thought['privacy'] . '"><span>' . $thought['text'] . '</span></span>';
+		$thought['text'] = '<span class="thought" id="thought_update' . $id . '" data-oid="' . $id . '" data-prv="' . $row['privacy'] . '"><span>' . $thought['text'] . '</span></span>';
 
 		if (!empty($row['id_parent_owner']))
 		{
@@ -225,6 +230,7 @@ function latestThoughts($memID = 0)
 	global $context, $txt, $settings;
 
 	// Some initial context.
+	loadLanguage('Profile');
 	loadTemplate('Thoughts');
 	wetem::load('showLatestThoughts');
 	$context['start'] = isset($_REQUEST['start']) ? (int) $_REQUEST['start'] : 0;
@@ -341,7 +347,7 @@ function latestThoughts($memID = 0)
 				'can_like' => !we::$is_guest && !empty($settings['likes_enabled']) && (!empty($settings['likes_own_posts']) || $row['id_member'] != we::$id),
 			);
 
-			$thought['text'] = '<span class="thought" id="thought_update' . $row['id_thought'] . '" data-oid="' . $row['id_thought'] . '" data-prv="' . $thought['privacy'] . '"><span>' . $thought['text'] . '</span></span>';
+			$thought['text'] = '<span class="thought" id="thought_update' . $row['id_thought'] . '" data-oid="' . $row['id_thought'] . '" data-prv="' . $row['privacy'] . '"><span>' . $thought['text'] . '</span></span>';
 
 			if (!empty($thought['id_master']))
 			{

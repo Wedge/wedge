@@ -20,44 +20,11 @@ function template_showThoughts()
 			<div class="thought_icon"></div>
 			', $txt['thoughts'], '
 		</we:cat>
-		<table class="windowbg wrc w100 cp8 cs0 thoughts" id="thought_thread" data-cx="thread ', $context['thought_context'], ' ', $_REQUEST['start'], '">';
-
-	$col = 2;
-	foreach ($context['thoughts'] as $thought)
-	{
-		$col = empty($col) ? 2 : '';
-		echo '
-			<tr><td class="windowbg', $col, ' thought"><ul><li id="t', $thought['id'], '">
-				<div><a href="<URL>?action=profile;u=', $thought['id_member'], '">', $thought['owner_name'], '</a> <span class="date">(', $thought['updated'], ')</span> &raquo; ', $thought['text'], '</div>';
-
-		if (!empty($thought['sub']))
-			template_sub_thoughts($thought);
-
-		echo '
-			</li></ul></td></tr>';
-	}
-	echo '
-		</table>';
-}
-
-function template_sub_thoughts(&$thought)
-{
-	if (empty($thought['sub']))
-		return;
-
-	// !! @todo: see above...
-	echo '<ul>';
-	foreach ($thought['sub'] as $tho)
-	{
-		echo '<li id="t', $tho['id'], '"><div>', empty($tho['owner_name']) ? '' : '<a href="<URL>?action=profile;u=' . $tho['id_member'] . '">' .
-			$tho['owner_name'] . '</a> <span class="date">(' . $tho['updated'] . ')</span> &raquo; ', parse_bbc($tho['text']), '</div>';
-
-		if (!empty($tho['sub']))
-			template_sub_thoughts($tho);
-
-		echo '</li>';
-	}
-	echo '</ul>';
+		<div class="list-thoughts">
+		<table class="w100 cs0 thoughts" id="thought_thread" data-cx="thread ', $context['thought_context'], ' ', $_REQUEST['start'], '">',
+			template_thoughts_thread(), '
+		</table>
+		</div>';
 }
 
 function template_showLatestThoughts()
@@ -71,12 +38,18 @@ function template_showLatestThoughts()
 	// onclick="oThought.edit(', $thought['id'], !empty($thought['id_master']) && $thought['id'] != $thought['id_master'] ? ', ' . $thought['id_master'] : '', ');"
 
 	echo '
+		<we:cat>
+			<div class="thought_icon"></div>
+			', $txt['thoughts'], ' (', $context['total_thoughts'], ')
+		</we:cat>
 		<div class="pagesection">
 			', $context['page_index'], '
 		</div>
-		<table class="windowbg wrc w100 cp8 cs0 thoughts" data-cx="profile ', $context['thought_context'], ' ', $_REQUEST['start'], '">',
+		<div class="list-thoughts">
+		<table class="w100 cs0 thoughts" data-cx="profile ', $context['thought_context'], ' ', $_REQUEST['start'], '">',
 			template_thoughts_table(), '
 		</table>
+		</div>
 		<div class="pagesection">
 			', $context['page_index'], '
 		</div>';
@@ -89,7 +62,7 @@ function template_thoughts()
 	if (empty($context['thoughts']))
 		return;
 
-	if (!$context['action']) // homepage?
+	if (!$context['action']) // Homepage..?
 		echo '
 		<we:cat style="margin-top: 16px">
 			<span class="floatright"><a href="<URL>?action=thoughts">', $txt['all_pages'], '</a></span>
@@ -104,11 +77,67 @@ function template_thoughts()
 		</we:cat>';
 
 	echo '
-		<div class="tborder" style="margin: 5px 0 15px; padding: 2px; border: 1px solid #dcc; border-radius: 5px">
-		<table class="w100 cp4 cs0 thoughts" data-cx="latest ', $context['thought_context'], ' 0">',
+		<div class="list-thoughts">
+		<table class="w100 cs0 thoughts" data-cx="latest ', $context['thought_context'], ' 0">',
 			template_thoughts_table(), '
 		</table>
 		</div>';
+}
+
+function template_thoughts_thread()
+{
+	global $context, $txt, $privacy_icon;
+
+	$privacy_icon = array(
+		-3 => 'everyone',
+		0 => 'members',
+		5 => 'justme',
+		20 => 'friends',
+	);
+
+	$col = 2;
+	foreach ($context['thoughts'] as $thought)
+	{
+		$col = empty($col) ? 2 : '';
+		echo '
+			<tr><td class="windowbg', $col, ' thought"><ul><li id="t', $thought['id'], '">
+				<div>
+					<a class="more_button thome" data-id="', $thought['id'], '">', $txt['actions_button'], '</a>',
+					$thought['privacy'] != -3 ? '<div class="privacy_' . @$privacy_icon[$thought['privacy']] . '"></div>' : '', '
+					<a href="<URL>?action=profile;u=', $thought['id_member'], '">', $thought['owner_name'], '</a>
+					<span class="date">(', $thought['updated'], ')</span> &raquo; ', $thought['text'], '
+				</div>';
+
+		if (!empty($thought['sub']))
+			template_sub_thoughts($thought);
+
+		echo '
+			</li></ul></td></tr>';
+	}
+}
+
+function template_sub_thoughts(&$thought)
+{
+	global $txt, $privacy_icon;
+
+	if (empty($thought['sub']))
+		return;
+
+	// !! @todo: see above...
+	echo '<ul>';
+	foreach ($thought['sub'] as $tho)
+	{
+		echo '<li id="t', $tho['id'], '"><div><a class="more_button thome" data-id="', $tho['id'], '">', $txt['actions_button'], '</a>',
+			$tho['privacy'] != -3 ? '<div class="privacy_' . @$privacy_icon[$tho['privacy']] . '"></div>' : '',
+			empty($tho['owner_name']) ? '' : '<a href="<URL>?action=profile;u=' . $tho['id_member'] . '">' .
+			$tho['owner_name'] . '</a> <span class="date">(' . $tho['updated'] . ')</span> &raquo; ', parse_bbc($tho['text']), '</div>';
+
+		if (!empty($tho['sub']))
+			template_sub_thoughts($tho);
+
+		echo '</li>';
+	}
+	echo '</ul>';
 }
 
 function template_thoughts_table()
