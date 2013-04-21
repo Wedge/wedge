@@ -1642,6 +1642,9 @@ function MaintainRecountPosts()
 			$boards[] = (int) $row[0];
 		wesql::free_result($request);
 
+		if (!empty($settings['recycle_enable']))
+			$boards = array_diff($boards, (array) $settings['recycle_board']);
+
 		$request = wesql::query('
 			SELECT COUNT(DISTINCT id_member)
 			FROM {db_prefix}messages
@@ -1672,7 +1675,7 @@ function MaintainRecountPosts()
 	// Get the people we want. No sense calling upon the entire posts table every single time, eh?
 	// If we were to select member+post count from messages, we'd be making much bigger queries.
 	$request = wesql::query('
-		SELECT id_member
+		SELECT id_member, posts
 		FROM {db_prefix}members
 		ORDER BY id_member
 		LIMIT {int:start}, {int:max}',
@@ -1681,9 +1684,9 @@ function MaintainRecountPosts()
 			'max' => $items_per_request,
 		));
 
-	$members = array();
+	$old = array();
 	while ($row = wesql::fetch_row($request))
-		$members[] = (int) $row[0];
+		$old[(int) $row[0]] = (int) $row[1];
 	wesql::free_result($request);
 
 	$request = wesql::query('
@@ -1691,25 +1694,38 @@ function MaintainRecountPosts()
 		FROM {db_prefix}messages
 		WHERE id_member IN ({array_int:members})
 			AND id_board IN ({array_int:boards})
-			AND icon != {literal:moved}',
+			AND icon != {literal:moved}
+		GROUP BY id_member',
 		array(
-			'members' => $members,
+			'members' => array_keys($old),
 			'boards' => $boards,
 		)
 	);
 
+	$new = array();
 	while ($row = wesql::fetch_assoc($request))
+		$new[$row['id_member']] = $row['posts'];
+
+	foreach ($old as $id => $postcount)
 	{
-		// Update the post count.
-		wesql::query('
-			UPDATE {db_prefix}members
-			SET posts = {int:posts}
-			WHERE id_member = {int:id_member}',
-			array(
-				'posts' => $row['posts'],
-				'id_member' => $row['id_member'],
-			)
-		);
+		// Has the member disappeared from the messages table..? Reset their post count...
+		if (!isset($new[$id]))
+			$new[$id] = 0;
+
+		// Was the original number incorrect..?
+		if ($new[$id] !== $postcount)
+		{
+			// Update the post count.
+			wesql::query('
+				UPDATE {db_prefix}members
+				SET posts = {int:posts}
+				WHERE id_member = {int:id_member}',
+				array(
+					'posts' => $new[$id],
+					'id_member' => $id,
+				)
+			);
+		}
 	}
 	wesql::free_result($request);
 
