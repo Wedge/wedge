@@ -428,7 +428,7 @@ function template_showPosts()
 					', $post['body'], '
 				</div>';
 
-			if ($post['can_reply'] || $post['can_quote'] || $post['can_mark_notify'] || $post['can_delete'] || (!empty($settings['likes_enabled']) && !empty($context['liked_posts'][$post['id']])))
+			if ($post['can_reply'] || $post['can_quote'] || $post['can_delete'] || (!empty($settings['likes_enabled']) && !empty($context['liked_posts'][$post['id']])))
 			{
 				echo '
 				<div class="actionbar">
@@ -443,11 +443,6 @@ function template_showPosts()
 				if ($post['can_quote'])
 					echo '
 						<li><a href="<URL>?action=post;topic=', $post['topic'], '.', $post['start'], ';quote=', $post['id'], '" class="quote_button">', $txt['quote'], '</a></li>';
-
-				// Can we request notification of topics?
-				if ($post['can_mark_notify'])
-					echo '
-						<li><a href="<URL>?action=notify;topic=', $post['topic'], '.', $post['start'], '" class="notify_button">', $txt['notify'], '</a></li>';
 
 				// How about... even... remove it entirely?!
 				if ($post['can_delete'])

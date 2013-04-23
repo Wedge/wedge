@@ -38,12 +38,12 @@ function template_main()
 			</div>
 			<div class="list_posts">', $post['message'], '</div>';
 
-		if ($post['can_reply'] || $post['can_mark_notify'] || $post['can_delete'] || (!empty($settings['likes_enabled']) && !empty($context['liked_posts'][$post['id']])))
+		if ($post['can_reply'] || $post['can_delete'] || (!empty($settings['likes_enabled']) && !empty($context['liked_posts'][$post['id']])))
 		{
 			echo '
 			<div class="actionbar">';
 
-			if ($post['can_reply'] || $post['can_mark_notify'] || $post['can_delete'])
+			if ($post['can_reply'] || $post['can_delete'])
 				echo '
 				<ul class="actions">';
 
@@ -57,17 +57,12 @@ function template_main()
 				echo '
 					<li><a href="<URL>?action=post;topic=', $post['topic'], '.', $post['start'], ';quote=', $post['id'], '" class="quote_button">', $txt['quote'], '</a></li>';
 
-			// Can we request notification of topics?
-			if ($post['can_mark_notify'])
-				echo '
-					<li><a href="<URL>?action=notify;topic=', $post['topic'], '.', $post['start'], '" class="notify_button">', $txt['notify'], '</a></li>';
-
 			// How about... even... remove it entirely?!
 			if ($post['can_delete'])
 				echo '
 					<li><a href="<URL>?action=deletemsg;msg=', $post['id'], ';topic=', $post['topic'], ';recent;', $context['session_query'], '" class="remove_button" onclick="return ask(', $remove_confirm, ', e);">', $txt['remove'], '</a></li>';
 
-			if ($post['can_reply'] || $post['can_mark_notify'] || $post['can_delete'])
+			if ($post['can_reply'] || $post['can_delete'])
 				echo '
 				</ul>';
 

@@ -232,11 +232,9 @@ img.new_posts
 ---------------------------------------------------- */
 
 .root
-	@if !can_flex
-		display: table
-		// Without this, wide code blocks will break layout.
-		table-layout: fixed
-	@endif
+	display: table
+	// Without this, wide code blocks will break layout.
+	table-layout: fixed
 	width: 100%
 
 // Alternating backgrounds for posts
@@ -265,20 +263,14 @@ hr.sep
 
 // Poster and postarea + moderation area underneath
 .post_wrapper
-	@if can_flex
-		display: flex
-	@else
-		display: table-row
-		overflow: auto
-		width: 100%
-	@endif
+	display: table-row
+	overflow: auto
+	width: 100%
 
 // Post title, date and action list
 .postheader extends .flow_hidden
-	@if !can_flex
-		display: table
-		table-layout: fixed
-	@endif
+	display: table
+	table-layout: fixed
 	width: 100%
 	padding: 10px 0 5px
 	border-bottom: 1px solid #ccc
@@ -299,9 +291,7 @@ hr.sep
 // Poster details and list of items
 .poster
 	width: 14em
-	@if !can_flex
-		display: table-cell
-	@endif
+	display: table-cell
 	background: rgba(0,0,0, .025)
 	padding: 10px 12px 12px 0
 	vertical-align: top
@@ -369,15 +359,7 @@ hr.sep
 
 .postarea
 	padding: 0 15px
-	@if can_flex
-		display: flex
-		flex-direction: column
-		align-items: stretch
-		min-width: 0
-		width: 100%
-	@else
-		display: table-cell
-	@endif
+	display: table-cell
 	.errorbox
 		margin-bottom: 10px
 
@@ -389,10 +371,6 @@ hr.sep
 
 .post
 	margin, padding: 0
-	@if can_flex
-		.root &
-			flex: 1
-	@endif
 
 // Setting a margin here helps take advantage of margin collapsing. (e.g. when a post starts with a quote.)
 .inner
@@ -453,33 +431,28 @@ hr.sep
 
 .quote_button extends .vbtn
 	background-position: 3px 0
-.edit_button extends .vbtn
-	background-position: 0 -61px
-.remove_button extends .vbtn
-	background-position: 0 -30px
-.approve_button extends .vbtn
-	background-position: 3px -90px
-.restore_button extends .vbtn
-	background-position: 0 -120px
-.reply_button extends .vbtn
-	background-position: 0 -180px
-.notify_button extends .vbtn // !! Is this worth having sprited..?
-	background-position: 0 -210px
-.split_button extends .vbtn
-	background-position: 4px -150px
-.mergepost_button extends .vbtn
-	background-position: 4px -242px
-.like_button extends .vbtn
-	background-position: 2px -270px
-.unlike_button extends .vbtn
-	background-position: 2px -300px
 
-.report_button extends .vbtn
-	background-image: url-no-base64($images/report.png)
-	background-position: 2px 0
-.warn_button extends .vbtn
-	background-image: url-no-base64($images/warn.gif)
-	background-position: 2px 0
+@if member
+	.remove_button extends .vbtn
+		background-position: 0 -30px
+	.edit_button extends .vbtn
+		background-position: 0 -60px
+	.split_button extends .vbtn
+		background-position: 4px -90px
+	.mergepost_button extends .vbtn
+		background-position: 4px -150px
+@endif
+
+.reply_button extends .vbtn
+	background-position: 0 -120px
+
+.context_button extends .vbtn
+	background-position: 3px -180px
+.like_button extends .vbtn
+	background-position: 2px -210px
+.unlike_button extends .vbtn
+	background-position: 2px -240px
+
 .profile_button extends .vbtn
 	background-image: url-no-base64($images/icons/profile_sm.gif)
 .email_button extends .vbtn
@@ -489,21 +462,36 @@ hr.sep
 .www_button extends .vbtn
 	background-image: url-no-base64($images/www_sm.gif)
 
-// !!! While waiting for better icons... Here's a temp.
+// !!! While waiting for a better icon... Here's a temp.
 .post_button extends .vbtn
 	background-image: url-no-base64($images/new_some.png)
-.context_button extends .vbtn
-	background-image: url-no-base64($images/icons/last_post.gif)
-	background-position: 4px 3px
+
+.report_button extends .vbtn
+	background-image: url-no-base64($images/report.png)
+	background-position: 2px 0
+
+@if member
+	.approve_button extends .vbtn
+		background-image: url-no-base64($images/buttons/approve.gif)
+		background-position: 3px 0
+
+	.restore_button extends .vbtn
+		background-image: url-no-base64($images/buttons/restore.gif)
+		background-position: 0 -30px
+
+	.warn_button extends .vbtn
+		background-image: url-no-base64($images/warn.gif)
+		background-position: 2px 0
+@endif
 
 // These user menu options definitely aren't available to guests.
 @if member
 	.contact_button extends .vbtn
-		background-image: url($images/icons/online.gif)
+		background-image: url-no-base64($images/icons/online.gif)
 		background-position: 0 0
 		padding-left: 26px
 	.pm_button extends .vbtn
-		background-image: url($images/im_on.gif)
+		background-image: url-no-base64($images/im_on.gif)
 		background-position: 0 0
 @endif
 
@@ -1167,11 +1155,11 @@ tr.windowbg td
 	@else
 		ul:not(.actions)
 			margin, padding: 0 0 0 8px
+		td > ul:not(.actions)
+			margin-left: 20px
 	@endif
 	li
-		padding: 5px 0
-	td > ul
-		margin-left: 20px
+		margin: 5px 0
 	#thoughts &
 		margin: 5px 0
 

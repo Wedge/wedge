@@ -466,7 +466,7 @@ class wess_if extends wess
 			// List of browsers that support the STANDARD flexbox model (i.e. display: flex)
 			// Chrome supports it with a prefix. Opera 12.1+ supports it, but in a broken way. Maybe not worth bothering..?
 			if (strpos($css, 'can_flex') !== false)
-				$css = preg_replace('~\bcan_flex\b~', '(firefox[20-], chrome[21-])', $css);
+				$css = preg_replace('~\bcan_flex\b~', '(firefox[22-], chrome[26-], opera[12.1-])', $css);
 
 			// List of browsers that support the previous/TWEEN flexbox model (i.e. display: flexbox)
 			// Really, it's just IE10... And it requires a prefix.

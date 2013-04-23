@@ -227,17 +227,15 @@ span.percent
 .edit_button
 	background-position: 100% -60px
 .approve_button
-	background-position: 100% -90px
+	background-position: 100% 0
 .restore_button
-	background-position: 100% -120px
+	background-position: 100% -30px
 .split_button
-	background-position: 100% -150px
+	background-position: 100% -90px
 .reply_button
-	background-position: 100% -180px
-.notify_button
-	background-position: 100% -210px
+	background-position: 100% -120px
 .mergepost_button
-	background-position: 100% -242px
+	background-position: 100% -150px
 
 .post
 	clear: left

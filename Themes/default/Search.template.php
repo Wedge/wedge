@@ -411,30 +411,26 @@ function template_results()
 				</div>
 				<div class="list_posts">', $message['body_highlighted'], '</div>';
 
-				if ($topic['can_reply'] || $topic['can_mark_notify'])
+				if ($topic['can_reply'] || $topic['can_quote'])
+				{
 					echo '
 				<div class="actionbar">
 					<ul class="actions">';
 
-				// If they *can* reply?
-				if ($topic['can_reply'])
-					echo '
+					// If they *can* reply?
+					if ($topic['can_reply'])
+						echo '
 						<li class="reply_button"><a href="<URL>?action=post;topic=' . $topic['id'] . '.' . $message['start'], '">', $txt['reply'], '</a></li>';
 
-				// If they *can* quote?
-				if ($topic['can_quote'])
-					echo '
+					// If they *can* quote?
+					if ($topic['can_quote'])
+						echo '
 						<li class="quote_button"><a href="<URL>?action=post;topic=' . $topic['id'] . '.' . $message['start'] . ';quote=' . $message['id'] . '">', $txt['quote'], '</a></li>';
 
-				// Can we request notification of topics?
-				if ($topic['can_mark_notify'])
-					echo '
-						<li class="notify_button"><a href="<URL>?action=notify;topic=' . $topic['id'] . '.' . $message['start'], '">', $txt['notify'], '</a></li>';
-
-				if ($topic['can_reply'] || $topic['can_mark_notify'])
 					echo '
 					</ul>
 				</div>';
+				}
 
 				echo '
 			</div>

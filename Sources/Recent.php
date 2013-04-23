@@ -288,7 +288,6 @@ function Recent()
 			),
 			'message' => $row['body'],
 			'can_reply' => false,
-			'can_mark_notify' => false,
 			'can_delete' => false,
 			'delete_possible' => ($row['id_first_msg'] != $row['id_msg'] || $row['id_last_msg'] == $row['id_msg']) && (empty($settings['edit_disable_time']) || $row['poster_time'] + $settings['edit_disable_time'] * 60 >= time()),
 		);
@@ -307,7 +306,6 @@ function Recent()
 		),
 		'any' => array(
 			'post_reply_any' => 'can_reply',
-			'mark_any_notify' => 'can_mark_notify',
 			'delete_any' => 'can_delete',
 		)
 	);

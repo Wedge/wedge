@@ -1365,7 +1365,7 @@ function Search2()
 
 	if (!empty($context['topics']))
 	{
-		$boards_can = boardsAllowedTo(array('post_reply_own', 'post_reply_any', 'mark_any_notify', 'lock_any', 'lock_own', 'pin_topic', 'move_any', 'move_own', 'remove_any', 'remove_own', 'merge_any'));
+		$boards_can = boardsAllowedTo(array('post_reply_own', 'post_reply_any', 'lock_any', 'lock_own', 'pin_topic', 'move_any', 'move_own', 'remove_any', 'remove_own', 'merge_any'));
 
 		$quickmod = array();
 		$context['can_lock'] = in_array(0, $boards_can['lock_any']);
@@ -1625,7 +1625,6 @@ function prepareSearchContext($reset = false)
 		'replies' => $message['num_replies'],
 		'can_reply' => in_array($id_board, $boards_can['post_reply_any']) || in_array(0, $boards_can['post_reply_any']),
 		'can_quote' => (in_array($id_board, $boards_can['post_reply_any']) || in_array(0, $boards_can['post_reply_any'])) && $quote_enabled,
-		'can_mark_notify' => in_array($id_board, $boards_can['mark_any_notify']) || in_array(0, $boards_can['mark_any_notify']) && !we::$is_guest,
 		'board' => array(
 			'id' => $id_board,
 			'name' => $message['board_name'],

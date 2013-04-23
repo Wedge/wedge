@@ -662,7 +662,6 @@ function showPosts($memID)
 			'timestamp' => forum_time(true, $row['poster_time']),
 			'id' => $row['id_msg'],
 			'can_reply' => false,
-			'can_mark_notify' => false,
 			'can_delete' => false,
 			'delete_possible' => ($row['id_first_msg'] != $row['id_msg'] || $row['id_last_msg'] == $row['id_msg']) && (empty($settings['edit_disable_time']) || $row['poster_time'] + $settings['edit_disable_time'] * 60 >= time()),
 			'approved' => $row['approved'],
@@ -678,7 +677,7 @@ function showPosts($memID)
 	if ($reverse)
 		$context['posts'] = array_reverse($context['posts'], true);
 
-	// These are all the permissions that are different from board to board..
+	// These are all the permissions that are different from board to board...
 	if ($context['is_topics'])
 		$permissions = array(
 			'own' => array(
@@ -686,7 +685,6 @@ function showPosts($memID)
 			),
 			'any' => array(
 				'post_reply_any' => 'can_reply',
-				'mark_any_notify' => 'can_mark_notify',
 			)
 		);
 	else
@@ -697,7 +695,6 @@ function showPosts($memID)
 			),
 			'any' => array(
 				'post_reply_any' => 'can_reply',
-				'mark_any_notify' => 'can_mark_notify',
 				'delete_any' => 'can_delete',
 			)
 		);
