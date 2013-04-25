@@ -638,40 +638,47 @@ $(function ()
 				});
 			};
 
+		notload = function (url, toggle)
+		{
+			$shade.load(url, function (data)
+			{
+				$(this).find('.n_item').each(function ()
+				{
+					var id = $(this).attr('id').slice(3);
+					$(this)
+						.hover(function () { $(this).toggleClass('windowbg3').find('.n_read').toggle(); })
+						.click(function (e) { location = weUrl('action=notification;sa=redirect;in=' + id); })
+
+						.find('.n_read')
+						.hover(function () { $(this).toggleClass('windowbg'); })
+						.click(function (e)
+						{
+							$(this).parent().hide(300, function () { $(this).remove(); });
+							we_notifs--;
+							$shade.find('.notenice,.note').attr('class', we_notifs > 0 ? 'notenice' : 'note').text(we_notifs);
+							$('title').text((we_notifs > 0 ? '(' + we_notifs + ') ' : '') + original_title);
+
+							$.post(weUrl('action=notification;sa=markread;in=' + id));
+
+							// Cancel the implied clink on the parent.
+							e.stopImmediatePropagation();
+							return false;
+						});
+				});
+
+				if (toggle)
+					toggle_me();
+			});
+		};
+
 		$('#notifs').click(function (e)
 		{
 			if (e.target != this)
 				return true;
+
 			if (!is_up_to_date)
 			{
-				$shade.load(weUrl('action=notification #notlist'), function (data)
-				{
-					$(this).find('.n_item').each(function ()
-					{
-						var id = $(this).attr('id').slice(3);
-						$(this)
-							.hover(function () { $(this).toggleClass('windowbg3').find('.n_read').toggle(); })
-							.click(function (e) { location = weUrl('action=notification;sa=redirect;in=' + id); })
-
-							.find('.n_read')
-							.hover(function () { $(this).toggleClass('windowbg'); })
-							.click(function (e)
-							{
-								$(this).parent().hide(300, function () { $(this).remove(); });
-								we_notifs--;
-								$shade.find('.notenice,.note').attr('class', we_notifs > 0 ? 'notenice' : 'note').text(we_notifs);
-								$('title').text((we_notifs > 0 ? '(' + we_notifs + ') ' : '') + original_title);
-
-								$.post(weUrl('action=notification;sa=markread;in=' + id));
-
-								// Cancel the implied clink on the parent.
-								e.stopImmediatePropagation();
-								return false;
-							});
-					});
-
-					toggle_me();
-				});
+				notload(weUrl('action=notification'), true);
 				is_up_to_date = true;
 			}
 			else

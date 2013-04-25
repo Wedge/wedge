@@ -226,10 +226,10 @@ class weNotif
 	{
 		global $context, $txt;
 
-		if (we::$user['is_guest'])
-			fatal_lang_error('no_access');
-
 		$sa = !empty($_REQUEST['sa']) ? $_REQUEST['sa'] : '';
+
+		if (we::$user['is_guest'])
+			fatal_lang_error('no_access', $sa == 'unread' ? false : 'general');
 
 		if ($sa == 'redirect' && isset($_REQUEST['in']))
 		{
@@ -277,9 +277,16 @@ class weNotif
 		// Otherwise we're displaying all the notifications this user has.
 		loadTemplate('Notifications');
 		wetem::load('notifications_list');
+		if (AJAX)
+			wetem::hide();
+		else
+			$context['page_title'] = $txt['notifications'];
 
-		$context['page_title'] = $txt['notifications'];
-		$context['notifications'] = (array) Notification::get(null, we::$id, 0, AJAX);
+		if (isset($_GET['show']))
+			updateMyData(array('n_all' => $_GET['show'] == 'latest'));
+
+		// Show read & unread notifications, unless we're calling from AJAX and the user didn't specify they wanted all of them.
+		$context['notifications'] = (array) Notification::get(null, we::$id, 0, AJAX && empty(we::$user['data']['n_all']));
 		$notification_members = array();
 		foreach ($context['notifications'] as $notif)
 		{

@@ -17,14 +17,16 @@ function template_notifications_list()
 
 	if (AJAX)
 		echo '
-		<ul id="notlist"><li>
-			<h6>
-				<a href="<URL>?action=notification;sa=unread">', $txt['notifications_short_unread'], '</a> -
-				<a href="<URL>?action=notification;sa=latest" style="color: #888">', $txt['notifications_short_latest'], '</a> -
-				<a href="<URL>?action=notification" style="color: #888">', $txt['notifications_short_all'], '</a> -
-				<a href="<URL>?action=profile;area=notifications" style="color: #666"><span style="display: inline-block"><span id="m_admin" style="margin-top: 0"></span> ', $txt['notifications_short_settings'], '</span></a>
-			</h6>
-			<div class="n_container">';
+		<ul id="notlist"><li style="background: #fbfbf8">
+			<span class="floatright">
+				<a href="<URL>?action=notification" style="color: #888">', $txt['notifications_short_all'], '</a> |
+				<span style="display: inline-block"><a href="<URL>?action=profile;area=notifications" style="color: #666"><span id="m_admin" style="margin-top: 1px"></span> ', $txt['notifications_short_settings'], '</a></span>&nbsp;
+			</span>
+			<span class="floatleft" style="margin-bottom: 4px">
+				&nbsp;', !empty(we::$user['data']['n_all']) ? '<a href="<URL>?action=notification;show=unread" onclick="notload(this.href); return false;">' . $txt['notifications_short_unread'] . '</a>' : '<strong>' . $txt['notifications_short_unread'] . '</strong>', ' |
+				', empty(we::$user['data']['n_all']) ? '<a href="<URL>?action=notification;show=latest" onclick="notload(this.href); return false;">' . $txt['notifications_short_latest'] . '</a>' : '<strong>' . $txt['notifications_short_latest'] . '</strong>', '
+			</span>
+			<div class="n_container clear">';
 	else
 		echo '
 		<we:title>', $txt['notifications'], '</we:title>

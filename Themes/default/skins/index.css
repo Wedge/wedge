@@ -1096,11 +1096,11 @@ table
 	&.cs0
 		border-collapse: separate
 		border-spacing: 0
-	&.cs1 extends &.cs0
+	&.cs1 mixes &.cs0
 		border-spacing: 1px
-	&.cs3 extends &.cs0
+	&.cs3 mixes &.cs0
 		border-spacing: 3px
-	&.cs8 extends &.cs0
+	&.cs8 mixes &.cs0
 		border-spacing: 8px
 	&.cp0
 		th, td
@@ -1392,16 +1392,16 @@ tr.titlebg
 // Post error notices, general alert notices, and mute/ban warnings
 .error,
 .alert,
-.warn_hard_ban
 .warn_mute,
+.warn_hard_ban
 	color: red
 
+.warn_moderate,
 .warn_soft_ban
-.warn_moderate
 	color: orange
 
-.warn_warned,
-.success
+.success,
+.warn_warned
 	color: green
 
 a.moderation_link
@@ -1759,22 +1759,21 @@ th.last_th
 			font-size: 0.9em
 
 		.mimenu final
-			top: 0
-			opacity: 0
+			top, opacity: 0
 			visibility: hidden
-			transform: scaleY(0) perspective(500px) rotateZ(90)
+			transform: perspective(500px) translateY(75px) rotateX(-45deg)
 			transform-origin: 50% 0
 			width: 420px
 			min-width: 200px
-			transition: all 1s ease
+			transition: all .3s ease
 			cursor: auto
 
 		.open
 			top: 100%
 			opacity: 1
 			visibility: visible
-			transform: scaleY(1)
-			transition: all 1s ease
+			transform: perspective(500px) rotateX(0)
+			transition: all .6s ease
 
 		ul li
 			padding: 4px 0 0
@@ -1783,6 +1782,7 @@ th.last_th
 		white-space: normal
 		max-height: 24em
 		overflow: auto
+		border-top: 1px solid #ccc
 
 	.n_item extends .clearfix
 		padding: 6px 8px
@@ -1813,6 +1813,10 @@ th.last_th
 
 	.n_time
 		float: right
+		margin-right: -8px
+		border-radius: 3px
+		padding: 1px 4px
+		background-color: rgba(0,0,0, .02)
 @endif
 
 // Used by the Ajax loader.
