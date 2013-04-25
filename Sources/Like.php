@@ -75,7 +75,7 @@ function Like()
 			if (!$valid || (empty($settings['likes_own_posts']) && $id_author == we::$id))
 				fatal_lang_error('no_access', false);
 
-			$context['redirect_from_like'] = '#thought_update' . $id_content;
+			$context['redirect_from_like'] = '#thought' . $id_content;
 		}
 		else
 		{

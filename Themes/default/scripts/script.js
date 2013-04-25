@@ -822,8 +822,7 @@ function JumpTo(control)
 	function Thought(privacies)
 	{
 		var
-			ajaxUrl = weUrl('action=ajax;sa=thought'),
-			sNoText = $txt['no_thought_yet'],
+			oid,
 
 			// Make that personal text editable (again)!
 			cancel = function () {
@@ -836,23 +835,23 @@ function JumpTo(control)
 			cancel();
 
 			var
-				thought = $('#thought_update' + tid), was_personal = thought.find('span').first().html(),
+				thought = $('#thought' + tid), edited_thought = thought.find('span').first().html(),
 				pr = '', privacy = (thought.data('prv') + '').split(','),
 
-				cur_text = is_new || was_personal == sNoText ? '' : (was_personal.indexOf('<') == -1 ?
-					was_personal.php_unhtmlspecialchars() : $.ajax(ajaxUrl + ';in=' + tid, { async: false }).responseText), p;
+				cur_text = is_new ? '' : (edited_thought.indexOf('<') == -1 ?
+					edited_thought.php_unhtmlspecialchars() : $.ajax(weUrl('action=ajax;sa=thought') + ';in=' + tid, { async: false }).responseText), p;
+
+			oid = is_new ? 0 : thought.data('oid') || 0;
 
 			for (p in privacies)
 				pr += '<option value="' + privacies[p][0] + '"' + (in_array(privacies[p][0] + '', privacy) ? ' selected' : '') + '>&lt;div class="privacy_' + privacies[p][1] + '"&gt;&lt;/div&gt;' + privacies[p][2] + '</option>';
 
 			// Hide current thought, and add tools to write new thought.
-			thought
-				.toggle(tid && is_new)
-				.after('<form id="thought_form"><input type="text" maxlength="255" id="ntho"><select id="npriv">' + pr
-					+ '</select><input type="hidden" id="noid"><input type="submit" class="save"><input type="button" class="cancel"></form>');
-			$('#noid').val(is_new ? 0 : thought.data('oid'))
-				.next().val(we_submit).click(function () { oThought.submit(tid, mid || tid); return false; })	// Save button
-				.next().val(we_cancel).click(function () { oThought.cancel(); });								// Cancel button
+			thought.hide().after('<form id="thought_form"><input type="text" maxlength="255" id="ntho"><select id="npriv">'
+				+ pr + '</select><input type="submit" class="save"><input type="button" class="cancel"></form>');
+			$('#npriv')
+				.next().val(we_submit).click(function () { return oThought.submit(tid, mid || tid); })	// Save button
+				.next().val(we_cancel).click(cancel);													// Cancel button
 			$('#ntho').focus().val(cur_text);
 			$('#npriv').sb();
 
@@ -862,15 +861,22 @@ function JumpTo(control)
 		// Event handler for removal requests.
 		this.remove = function (tid)
 		{
-			var toDelete = $('#thought_update' + tid);
+			var $thoughts = $('#thought' + tid).closest('.thoughts');
+			show_ajax();
 
 			$.post(
-				ajaxUrl + ';remove',
-				{ oid: toDelete.data('oid') }
+				weUrl('action=ajax;sa=thought'),
+				{
+					cx: $thoughts.data('cx'),
+					oid: $('#thought' + tid).data('oid')
+				},
+				function (response)
+				{
+					$thoughts.html(response);
+					cancel();
+					hide_ajax();
+				}
 			);
-
-			// We'll be assuming Wedge uses table tags to show thought lists.
-			toDelete.closest('tr').remove();
 
 			return false;
 		};
@@ -879,7 +885,7 @@ function JumpTo(control)
 		this.personal = function (tid)
 		{
 			$.post(
-				ajaxUrl + ';in=' + tid + ';personal'
+				weUrl('action=ajax;sa=thought') + ';in=' + tid + ';personal'
 			);
 
 			return false;
@@ -888,36 +894,35 @@ function JumpTo(control)
 		// Event handler for clicking submit.
 		this.submit = function (tid, mid)
 		{
-			var $thought_table = $('#thought_update' + tid).closest('.thoughts');
+			var $thoughts = $('#thought' + tid).closest('.thoughts');
 			show_ajax();
 
 			$.post(
-				ajaxUrl,
+				weUrl('action=ajax;sa=thought'),
 				{
 					// Context array: thought table type (latest, thread, profile),
 					// type-related context variable, and page number.
-					cx: $thought_table.data('cx'),
+					cx: $thoughts.data('cx'),
+					oid: oid,
 					parent: tid,
 					master: mid,
-					oid: $('#noid').val(),
 					privacy: $('#npriv').val(),
 					text: $('#ntho').val()
 				},
 				function (response)
 				{
-					$thought_table.html(response);
+					$thoughts.html(response);
 					cancel();
 					hide_ajax();
 				}
 			);
+
+			return false;
 		};
 
-		this.cancel = cancel;
-
-		$('#thought_update span').html($('#thought_update span').html() || sNoText);
-		$('#thought_update')
-			.attr('title', $txt['thought'])
-			.click(function () { oThought.edit(''); });
+		$('#thought0')
+			.click(function () { oThought.edit(0, 0, true); })
+			.find('span').html($txt['no_thought_yet']);
 	}
 @endif
 

@@ -133,10 +133,9 @@
 
 #thought_form
 	display: inline-block
-	margin-left: 8px
 	input
-		margin: 0 1px 0 2px
-		padding: 2px 4px
+		margin: 0 2px
+		padding: 3px 4px
 	input.save
 		background-image: none
 	.sbox
@@ -147,23 +146,24 @@
 		.sbox
 			max-width: 85px
 
-#thought_update input
-	margin: 0 0 8px
-
-#thought_form input[type="text"], #thought_update
+#thought_form input[type="text"], #thought0
 	font-size: 9.5pt
-	padding: 3px
+	margin-left: 8px
 	border: 1px solid transparent
-	width: 208px
-	margin: 8px 0
+	width: 230px
+	outline: 0
 
-#thought_form input[type="text"], #thought_update:hover
+#thought_form input[type="text"], #thought0:hover
 	border: 1px solid #999
+	border-radius: 5px
 	background: #fff
 	color: #000
 
-#thought_update
+#thought0
+	display: block
 	cursor: pointer
+	box-sizing: border-box
+	padding: 4px
 
 .thought_icon mixes .inline-block
 	text-decoration: none

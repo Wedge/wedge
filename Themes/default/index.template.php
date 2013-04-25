@@ -113,7 +113,7 @@ function template_html_before()
 <head>', empty($topic) ? '' : '
 	<meta charset="utf-8">';
 
-	// Our alltime favorites don't really like HTML5...
+	// Our all-time favorites don't really like HTML5...
 	if (we::is('ie8down'))
 		echo '
 	<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>';
@@ -306,8 +306,10 @@ function template_sidebar_before()
 {
 	global $txt, $context, $settings;
 
-	if (!we::$is_guest || !empty($context['show_login_bar']))
-		echo '
+	if (we::$is_guest || empty($context['show_login_bar']))
+		return;
+
+	echo '
 	<section>
 		<we:title>
 			<span class="greeting">', sprintf($txt['hello_member_ndt'], we::$user['name']), '</span>
@@ -341,30 +343,6 @@ function template_sidebar_before()
 	<section>
 		<p class="notice">', $txt['maintain_mode_on'], '</p>
 	</section>';
-
-		// This is where we'll show the Thought postbox.
-		if (allowedTo('post_thought'))
-		{
-			$thought		= isset(we::$user['data']['thought']) ?			we::$user['data']['thought'] : '';
-			$thought_id		= isset(we::$user['data']['id_thought']) ?		we::$user['data']['id_thought'] : 0;
-			$thought_prv	= isset(we::$user['data']['thought_privacy']) ?	we::$user['data']['thought_privacy'] : 1;
-
-			echo '
-	<section>
-		<we:title>
-			<div class="thought_icon"></div>
-			', $txt['thought'], '
-		</we:title>
-		<a href="#" onclick="return oThought.edit(\'\', \'\', true);">', $txt['add_thought'], '</a> |
-		<a href="#" onclick="return oThought.edit(\'\');">', $txt['thome_edit'], '</a>
-		<div class="my thought" id="thought_update" data-oid="', $thought_id, '" data-prv="', $thought_prv, '"><span>', $thought, '</span></div>
-	</section>';
-
-			add_js('
-	oThought = new Thought([[-3, "everyone", "', $txt['privacy_public'], '"], [0, "members", "', $txt['privacy_members'], '"], ',
-		// !! @worg This is temporary code for use on Wedge.org. Clean this up!!
-		in_array(20, we::$user['groups']) ? '[20, "friends", "Friends"], ' : '', '[5, "justme", "', $txt['privacy_self'], '"]]);');
-		}
 	}
 	// Otherwise they're a guest - this time ask them to either register or login - lazy bums...
 	elseif (!empty($context['show_login_bar']))

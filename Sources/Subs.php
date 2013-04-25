@@ -543,8 +543,17 @@ function cleanXml($string)
 
 /**
  * Helper functions to return an Ajax request, either xml, JS object or plain text, bypassing the skeleton system.
+ * return_raw() is a special case; as it's meant to return short strings, it bypasses gzipping and ob_sessrewrite.
  */
 function return_raw()
+{
+	while (@ob_end_clean());
+	header('Content-Type: text/plain; charset=UTF-8');
+	$args = func_get_args();
+	exit(implode('', $args));
+}
+
+function return_text()
 {
 	clean_output();
 	header('Content-Type: text/plain; charset=UTF-8');

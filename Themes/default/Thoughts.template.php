@@ -35,7 +35,7 @@ function template_showLatestThoughts()
 		return;
 
 	// !! @todo: allow editing & replying to thoughts directly from within the Profile area...?
-	// onclick="oThought.edit(', $thought['id'], !empty($thought['id_master']) && $thought['id'] != $thought['id_master'] ? ', ' . $thought['id_master'] : '', ');"
+	// onclick="oThought.edit(', $thought['id'], !empty($thought['id_master']) && $thought['id'] != $thought['id_master'] ? ', ' . $thought['id_master'] : '0', ');"
 
 	echo '
 		<we:cat>
@@ -67,16 +67,15 @@ function template_thoughts()
 		<we:cat style="margin-top: 16px">
 			<span class="floatright"><a href="<URL>?action=thoughts">', $txt['all_pages'], '</a></span>
 			<div class="thought_icon"></div>
-			', $txt['thoughts'], '...
-		</we:cat>';
+			', $txt['thoughts'], '...';
 	else
 		echo '
 		<we:cat>
 			<img src="', $theme['images_url'], '/icons/profile_sm.gif">
-			', $txt['thoughts'], empty($context['member']) ? '' : ' - ' . $context['member']['name'], ' (', $context['total_thoughts'], ')
-		</we:cat>';
+			', $txt['thoughts'], empty($context['member']) ? '' : ' - ' . $context['member']['name'], ' (', $context['total_thoughts'], ')';
 
 	echo '
+		</we:cat>
 		<div class="list-thoughts">
 		<table class="w100 cs0 thoughts" data-cx="latest ', $context['thought_context'], ' 0">',
 			template_thoughts_table(), '
@@ -152,6 +151,22 @@ function template_thoughts_table()
 		20 => 'friends',
 	);
 
+	// This is where we'll show the Thought postbox.
+	if (allowedTo('post_thought'))
+	{
+		echo '
+			<tr class="windowbg2">
+				<td class="bc">', $txt['date'], '</td>
+				<td><span class="my thought" id="thought0"><span></span></span></td>
+			</tr>';
+
+		add_js('
+	oThought = new Thought([[-3, "everyone", "', $txt['privacy_public'], '"], [0, "members", "', $txt['privacy_members'], '"], ',
+	// !! @worg This is temporary code for use on Wedge.org. Clean this up!!
+	in_array(20, we::$user['groups']) ? '[20, "friends", "Friends"], ' : '', '[5, "justme", "', $txt['privacy_self'], '"]]);');
+	}
+
+	$col = 2;
 	if (!SKIN_MOBILE)
 	{
 		foreach ($context['thoughts'] as $id => $thought)

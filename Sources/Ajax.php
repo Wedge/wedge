@@ -114,15 +114,12 @@ function Thought()
 
 	// !! Should we use censorText at store time, or display time...? we::$user (Load.php:1696) begs to differ.
 	$text = isset($_POST['text']) ? westr::htmlspecialchars(trim($_POST['text']), ENT_QUOTES) : '';
-	if (empty($text) && empty($_GET['in']) && !isset($_REQUEST['remove']))
-		exit;
 
 	if (!empty($text))
 	{
 		loadSource('Class-Editor');
 		wedit::preparsecode($text);
 	}
-	wetem::load('thought');
 
 	// Original thought ID (in case of an edit.)
 	$oid = isset($_POST['oid']) ? (int) $_POST['oid'] : 0;
@@ -176,9 +173,7 @@ function Thought()
 		list ($thought) = wesql::fetch_row($request);
 		wesql::free_result($request);
 
-		// Cheating a little... Just return plain text. This bypasses a bug in jQuery 1.9.
-		echo un_htmlspecialchars($thought);
-		exit;
+		return_raw(un_htmlspecialchars($thought));
 	}
 
 	// Is it an edit?
@@ -203,73 +198,16 @@ function Thought()
 	if (!empty($last_thought))
 	{
 		// Think before you think!
-		if (isset($_REQUEST['remove']))
+		if (empty($text) && empty($_GET['in']))
 		{
-			// Does the author actually use this thought?
-			$old_thought = 's:10:"id_thought";s:' . strlen($last_thought) . ':"' . $last_thought . '"';
-			$request = wesql::query('
-				SELECT id_member, data
-				FROM {db_prefix}members
-				WHERE data LIKE {string:data}',
-				array(
-					'data' => $old_thought,
-				)
-			);
-			list ($member, $data) = wesql::fetch_row($request);
-			wesql::free_result($request);
-
-			// Okay, time to delete it...
+			// Okay, so we want to delete it... Allow plugins to have a last peek.
+			call_hook('thought_delete', array(&$last_thought, &$last_text));
 			wesql::query('
 				DELETE FROM {db_prefix}thoughts
 				WHERE id_thought = {int:id_thought}', array(
 					'id_thought' => $last_thought,
 				)
 			);
-
-			// If anyone was using it, then update to their last valid thought.
-			if (!empty($member))
-			{
-				$request = wesql::query('
-					SELECT id_thought, thought, privacy
-					FROM {db_prefix}thoughts
-					WHERE id_member = {int:member}
-					AND id_master = {int:not_a_reply}
-					ORDER BY id_thought DESC
-					LIMIT 1',
-					array(
-						'member' => $member,
-						'not_a_reply' => 0,
-					)
-				);
-				list ($id_thought, $thought, $privacy) = wesql::fetch_row($request);
-				wesql::free_result($request);
-
-				// Update their user data to use the new valid thought.
-				if (!empty($id_thought))
-				{
-					// A complete hack, not ashamed of it :)
-					if ($member !== we::$id)
-					{
-						$real_user = we::$user;
-						$real_id = we::$id;
-						we::$id = $member;
-						we::$user['data'] = $data;
-					}
-					updateMyData(array(
-						'id_thought' => $id_thought,
-						'thought' => $thought,
-						'thought_privacy' => $privacy,
-					));
-					if (!empty($real_user))
-					{
-						we::$user = $real_user;
-						we::$id = $real_id;
-					}
-				}
-			}
-
-			call_hook('thought_delete', array(&$last_thought, &$last_text));
-			exit;
 		}
 		// If it's similar to the earlier version, don't update the time.
 		else
@@ -311,24 +249,17 @@ function Thought()
 		call_hook('thought_add', array(&$privacy, &$text, &$pid, &$mid, &$last_thought, &$user_id, &$user_name));
 	}
 
-	// Only update the thought area if it's a public comment, and isn't a comment on another thought...
-	if (!$pid && !empty($last_thought))
-		updateMyData(array(
-			'id_thought' => $last_thought,
-			'thought' => $text,
-			'thought_privacy' => $privacy,
-		));
-
 	// Welcome to the world of rule-bending dirty hacks.
 	// What you're going to see isn't for the faint-hearted...
 	// We're going to emulate Wedge building a thought page.
 
-	list ($type, $ctx, $page) = explode(' ', isset($_POST['cx']) ? $_POST['cx'] : 'latest 0 0');
+	list ($type, $ctx, $page) = explode(' ', $_POST['cx']);
 	$_REQUEST['start'] = $page;
 
 	loadSource(array('Thoughts', 'Subs-Cache'));
 	loadTemplate('index'); // We need template_mini_menu
-	wedge_get_skin_options(); // Yay, another rule broken!
+	if (!defined('SKIN_SIDEBAR_RIGHT'))
+		wedge_get_skin_options(); // Yay, another rule broken!
 
 	// This is basically return_xml, but with a series of echo's in-between...
 	clean_output();

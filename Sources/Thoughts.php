@@ -114,7 +114,7 @@ function Thoughts()
 				);
 			}
 
-			$thought['text'] = '<span class="thought" id="thought_update' . $row['id_thought'] . '" data-oid="' . $row['id_thought'] . '" data-prv="' . $row['privacy'] . '"><span>' . $thought['text'] . '</span></span>';
+			$thought['text'] = '<span class="thought" id="thought' . $row['id_thought'] . '" data-oid="' . $row['id_thought'] . '" data-prv="' . $row['privacy'] . '"><span>' . $thought['text'] . '</span></span>';
 			$context['thoughts'][$thought['id']] = $thought; // Mini-menus need a flat version of the thought list.
 			if (empty($thought['id_master'])) // !! Alternatively, add: || $row['id_master'] != $row['id_member']
 				$thoughts[$thought['id']] = $thought;
@@ -207,7 +207,7 @@ function embedThoughts($to_show = 10)
 		);
 
 		$thought =& $thoughts[$row['id_thought']];
-		$thought['text'] = '<span class="thought" id="thought_update' . $id . '" data-oid="' . $id . '" data-prv="' . $row['privacy'] . '"><span>' . $thought['text'] . '</span></span>';
+		$thought['text'] = '<span class="thought" id="thought' . $id . '" data-oid="' . $id . '" data-prv="' . $row['privacy'] . '"><span>' . $thought['text'] . '</span></span>';
 
 		if (!empty($row['id_parent_owner']))
 		{
@@ -347,7 +347,7 @@ function latestThoughts($memID = 0)
 				'can_like' => !we::$is_guest && !empty($settings['likes_enabled']) && (!empty($settings['likes_own_posts']) || $row['id_member'] != we::$id),
 			);
 
-			$thought['text'] = '<span class="thought" id="thought_update' . $row['id_thought'] . '" data-oid="' . $row['id_thought'] . '" data-prv="' . $row['privacy'] . '"><span>' . $thought['text'] . '</span></span>';
+			$thought['text'] = '<span class="thought" id="thought' . $row['id_thought'] . '" data-oid="' . $row['id_thought'] . '" data-prv="' . $row['privacy'] . '"><span>' . $thought['text'] . '</span></span>';
 
 			if (!empty($thought['id_master']))
 			{
