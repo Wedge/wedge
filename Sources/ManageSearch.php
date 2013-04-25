@@ -111,6 +111,8 @@ function EditSearchSettings($return_config = false)
 
 	loadLanguage('ManageSettings');
 
+	$context['page_title'] = $txt['search_settings_title'];
+
 	// What are we editing anyway?
 	$config_vars = array(
 			// Permission...
@@ -138,7 +140,6 @@ function EditSearchSettings($return_config = false)
 	if ($return_config)
 		return $config_vars;
 
-	$context['page_title'] = $txt['search_settings_title'];
 	wetem::load('show_settings');
 
 	// We'll need this for the settings.

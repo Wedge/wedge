@@ -57,6 +57,8 @@ function ManageSearchEngineSettings($return_config = false)
 {
 	global $context, $txt, $settings;
 
+	$context['page_title'] = $txt['search_engines'] . ' - ' . $txt['settings'];
+
 	$config_vars = array(
 		// How much detail?
 		array('select', 'spider_mode', array($txt['spider_mode_off'], $txt['spider_mode_standard'], $txt['spider_mode_high'], $txt['spider_mode_vhigh']), 'onchange' => 'disableFields();', 'subtext' => $txt['spider_mode_subtext']),
@@ -108,7 +110,6 @@ function ManageSearchEngineSettings($return_config = false)
 	loadSource('ManageServer');
 
 	// Setup the template.
-	$context['page_title'] = $txt['settings'];
 	wetem::load('show_settings');
 
 	// Are we saving them - are we??

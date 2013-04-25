@@ -91,6 +91,8 @@ function ModifyMemberSettings($return_config = false)
 {
 	global $txt, $context, $theme, $settings;
 
+	$context['page_title'] = $txt['member_options_title'] . ' - ' . $txt['mods_cat_features'];
+
 	$config_vars = array(
 			// Basic stuff, titles, flash, permissions...
 			array('check', 'allow_guestAccess'),
@@ -128,6 +130,8 @@ function ModifySignatureSettings($return_config = false)
 {
 	global $context, $txt, $settings, $sig_start, $helptxt;
 
+	$context['page_title'] = $txt['signature_settings'];
+
 	$config_vars = array(
 			// Are signatures even enabled?
 			array('check', 'signature_enable'),
@@ -153,7 +157,6 @@ function ModifySignatureSettings($return_config = false)
 		return $config_vars;
 
 	// Setup the template.
-	$context['page_title'] = $txt['signature_settings'];
 	wetem::load('show_settings');
 
 	// Disable the max smileys option if we don't allow smileys at all!
@@ -1222,6 +1225,8 @@ function updateProfileFieldsCache()
 function ModifyWhosOnline($return_config = false)
 {
 	global $txt, $context, $theme, $settings;
+
+	$context['page_title'] = $txt['member_options_title'] . ' - ' . $txt['admin_whos_online'];
 
 	$config_vars = array(
 			array('check', 'who_enabled'),

@@ -254,6 +254,8 @@ function ModifyRegistrationSettings($return_config = false)
 			$members_approve[$id] = '<a href="<URL>?action=profile;u=' . $id . '">' . $user_profile[$id]['real_name'] . '</a>';
 	asort($members_approve);
 
+	$context['page_title'] = $txt['registration_center'];
+
 	$config_vars = array(
 			array('select', 'registration_method', array(0 => $txt['setting_registration_standard'], 1 => $txt['setting_registration_activate'], 2 => $txt['setting_registration_approval'], 4 => $txt['setting_registration_both'], 3=> $txt['setting_registration_disabled'])),
 			array('int', 'purge_unactivated_days', 'max' => 30, 'subtext' => $txt['purge_unactivated_days_subtext'], 'postinput' => $txt['purge_unactivated_days_postinput']),
@@ -277,7 +279,6 @@ function ModifyRegistrationSettings($return_config = false)
 
 	// Setup the template
 	wetem::load('show_settings');
-	$context['page_title'] = $txt['registration_center'];
 
 	if (isset($_GET['save']))
 	{

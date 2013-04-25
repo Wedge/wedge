@@ -1257,7 +1257,7 @@ function template_edit_profile_field()
 			$fields = array_merge($fields, $field_list);
 
 		add_js ('
-	insertTemplate.templates = ', json_encode($fields), ';');
+	insertTemplate.templates = ', we_json_encode($fields), ';');
 	}
 
 	echo '
@@ -1492,7 +1492,7 @@ function template_admin_search_results()
 		{
 			echo '
 			<li>
-				<a href="', $result['url'], '"><strong>', $result['name'], '</strong></a> [', isset($txt['admin_search_section_' . $result['type']]) ? $txt['admin_search_section_' . $result['type']] : $result['type'], ']';
+				', !empty($result['parent_name']) ? $result['parent_name'] . ' &#187; ' : '', '<a href="', $result['url'], '"><strong>', $result['name'], '</strong></a> [', isset($txt['admin_search_section_' . $result['type']]) ? $txt['admin_search_section_' . $result['type']] : $result['type'], ']';
 
 			if ($result['help'])
 				echo '

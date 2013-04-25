@@ -153,6 +153,9 @@ function ManageAttachmentSettings($return_config = false)
 
 	$context['valid_upload_dir'] = is_dir($settings['attachmentUploadDir']) && is_writable($settings['attachmentUploadDir']);
 
+	// Just for admin search.
+	$context['page_title'] = $txt['attachments_avatars'];
+
 	$config_vars = array(
 		array('title', 'attachment_manager_settings'),
 			// Are attachments enabled?
@@ -209,6 +212,9 @@ function ManageAttachmentSettings($return_config = false)
 function ManageAvatarSettings($return_config = false)
 {
 	global $txt, $context, $settings;
+
+	// Just for admin search.
+	$context['page_title'] = $txt['attachments_avatars'];
 
 	$context['valid_avatar_dir'] = is_dir($settings['avatar_directory']);
 	$context['valid_custom_avatar_dir'] = empty($settings['custom_avatar_enabled']) || (!empty($settings['custom_avatar_dir']) && is_dir($settings['custom_avatar_dir']) && is_writable($settings['custom_avatar_dir']));

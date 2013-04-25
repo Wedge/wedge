@@ -128,6 +128,8 @@ function EditSmileySettings($return_config = false)
 	foreach ($smiley_sets as $i => $set)
 		$smiley_context[$set] = $set_names[$i];
 
+	$context['page_title'] = $txt['smileys_manage'];
+
 	// All the settings for the page...
 	$config_vars = array(
 		array('title', 'settings'),

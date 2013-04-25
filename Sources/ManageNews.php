@@ -811,6 +811,8 @@ function ModifyNewsSettings($return_config = false)
 
 	loadLanguage('ManageSettings');
 
+	$context['page_title'] = $txt['admin_edit_news'] . ' - ' . $txt['settings'];
+
 	$config_vars = array(
 		array('title', 'settings'),
 			// Inline permissions.
@@ -829,7 +831,6 @@ function ModifyNewsSettings($return_config = false)
 	if ($return_config)
 		return $config_vars;
 
-	$context['page_title'] = $txt['admin_edit_news'] . ' - ' . $txt['settings'];
 	wetem::load('show_settings');
 
 	// Needed for the inline permission functions, and the settings template.

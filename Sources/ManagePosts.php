@@ -190,6 +190,8 @@ function ModifyPostSettings($return_config = false)
 {
 	global $context, $txt, $settings, $db_prefix;
 
+	$context['page_title'] = $context['settings_title'] = $txt['manageposts_settings'];
+
 	// All the settings...
 	$config_vars = array(
 			// Simple post options...
@@ -219,7 +221,6 @@ function ModifyPostSettings($return_config = false)
 	loadSource('ManageServer');
 
 	// Setup the template.
-	$context['page_title'] = $txt['manageposts_settings'];
 	wetem::load('show_settings');
 
 	// Are we saving them - are we??
@@ -233,7 +234,6 @@ function ModifyPostSettings($return_config = false)
 
 	// Final settings...
 	$context['post_url'] = '<URL>?action=admin;area=postsettings;save;sa=posts';
-	$context['settings_title'] = $txt['manageposts_settings'];
 
 	// Prepare the settings...
 	prepareDBSettingContext($config_vars);
@@ -297,6 +297,8 @@ function ModifyTopicSettings($return_config = false)
 {
 	global $context, $txt, $settings;
 
+	$context['page_title'] = $context['settings_title'] = $txt['manageposts_topic_settings'];
+
 	// Here are all the topic settings.
 	$config_vars = array(
 			// Some simple bools...
@@ -326,7 +328,6 @@ function ModifyTopicSettings($return_config = false)
 	loadSource('ManageServer');
 
 	// Setup the template.
-	$context['page_title'] = $txt['manageposts_topic_settings'];
 	wetem::load('show_settings');
 
 	// Are we saving them - are we??
@@ -340,7 +341,6 @@ function ModifyTopicSettings($return_config = false)
 
 	// Final settings...
 	$context['post_url'] = '<URL>?action=admin;area=postsettings;save;sa=topics';
-	$context['settings_title'] = $txt['manageposts_topic_settings'];
 
 	// Prepare the settings...
 	prepareDBSettingContext($config_vars);
@@ -350,6 +350,8 @@ function ModifyTopicSettings($return_config = false)
 function ModifyDraftSettings($return_config = false)
 {
 	global $context, $txt, $settings;
+
+	$context['page_title'] = $context['settings_title'] = $txt['manageposts_draft_settings'];
 
 	// Here are all the topic settings.
 	$config_vars = array(
@@ -366,7 +368,6 @@ function ModifyDraftSettings($return_config = false)
 	loadSource('ManageServer');
 
 	// Setup the template.
-	$context['page_title'] = $txt['manageposts_draft_settings'];
 	wetem::load('show_settings');
 
 	// Are we saving them - are we??
@@ -380,7 +381,6 @@ function ModifyDraftSettings($return_config = false)
 
 	// Final settings...
 	$context['post_url'] = '<URL>?action=admin;area=postsettings;save;sa=drafts';
-	$context['settings_title'] = $txt['manageposts_draft_settings'];
 
 	// Prepare the settings...
 	prepareDBSettingContext($config_vars);
@@ -389,6 +389,8 @@ function ModifyDraftSettings($return_config = false)
 function ModifyMergeSettings($return_config = false)
 {
 	global $txt, $context, $theme;
+
+	$context['page_title'] = $context['settings_title'] = $txt['merge_post_header'];
 
 	$config_vars = array(
 			// Automatic merge options
@@ -429,7 +431,6 @@ function ModifyMergeSettings($return_config = false)
 	}
 
 	$context['post_url'] = '<URL>?action=admin;area=postsettings;save;sa=merge';
-	$context['settings_title'] = $txt['merge_post_header'];
 
 	prepareDBSettingContext($config_vars);
 }
