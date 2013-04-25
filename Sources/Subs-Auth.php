@@ -565,7 +565,7 @@ function rebuildModCache()
 
 	// What boards are they the moderator of?
 	$boards_mod = array();
-	if (!we::$is_guest)
+	if (we::$is_member)
 	{
 		$request = wesql::query('
 			SELECT id_board

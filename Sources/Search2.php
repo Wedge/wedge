@@ -1440,7 +1440,7 @@ function Search2()
 			$context['topics'] = array();
 
 		// If we want to know who participated in what then load this now.
-		if (!empty($settings['enableParticipation']) && !we::$is_guest)
+		if (!empty($settings['enableParticipation']) && we::$is_member)
 		{
 			$result = wesql::query('
 				SELECT id_topic

@@ -659,7 +659,7 @@ dl.merge_topic
 	dt
 		width: 25%
 	dd
-		width: 74%
+		width: 72%
 
 fieldset.merge_options
 	clear: both
@@ -1300,8 +1300,7 @@ div.top_row dd
 	padding: .8em
 	color: #444
 	dt, dd
-		max-width: 100%
-		max-width: calc(100% - 1em)
+		max-width: @is ("ie[9-],firefox[4-],chrome[19-],safari[6-]", "calc(100% - 1em)", 100%)
 		width: auto
 		clear: both
 	#advanced_search

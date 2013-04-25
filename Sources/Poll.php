@@ -161,10 +161,10 @@ function Vote()
 		fatal_lang_error('poll_error', false);
 
 	// If they have already voted and aren't allowed to change their vote - hence they are outta here!
-	if (!we::$is_guest && $row['selected'] != -1 && empty($row['change_vote']))
+	if (we::$is_member && $row['selected'] != -1 && empty($row['change_vote']))
 		fatal_lang_error('poll_error', false);
 	// Otherwise if they can change their vote yet they haven't sent any options... remove their vote and redirect.
-	elseif (!empty($row['change_vote']) && !we::$is_guest)
+	elseif (!empty($row['change_vote']) && we::$is_member)
 	{
 		checkSession('request');
 		$pollOptions = array();

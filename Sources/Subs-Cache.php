@@ -1111,7 +1111,7 @@ function wedge_cache_smileys($set, $smileys, $extra)
 {
 	global $cssdir, $context, $settings, $boardurl;
 
-	$final = '';
+	$final_gzip = $final_raw = '';
 	$path = $settings['smileys_dir'] . '/' . $set . '/';
 	$url  = '..' . str_replace($boardurl, '', $settings['smileys_url']) . '/' . $set . '/';
 
@@ -1128,10 +1128,13 @@ function wedge_cache_smileys($set, $smileys, $extra)
 			$smiley['embed'] = false;
 		list ($width, $height) = getimagesize($filename);
 		$ext = strtolower(substr($filename, strrpos($filename, '.') + 1));
-		$final .= '.' . $name . '{width:' . $width . 'px;height:' . $height . 'px;background:url('
+		$stream = 'final_' . ($smiley['embed'] ? 'gzip' : 'raw');
+		$$stream .= '.' . $name . '{width:' . $width . 'px;height:' . $height . 'px;background:url('
 				. ($smiley['embed'] ? 'data:image/' . $ext . ';base64,' . base64_encode(file_get_contents($filename)) : $url . $smiley['file']) . ')}';
 	}
 
+	$final = $final_raw . $final_gzip;
+	unset($final_raw, $final_gzip);
 	if ($context['smiley_gzip'])
 		$final = gzencode($final, 9);
 

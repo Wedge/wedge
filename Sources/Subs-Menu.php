@@ -20,7 +20,7 @@ function createMenu($menuData, $menuOptions = array())
 	global $context, $theme, $options, $txt, $settings, $options;
 
 	// First are we toggling use of the side bar generally?
-	if (isset($_GET['togglebar']) && !we::$is_guest)
+	if (isset($_GET['togglebar']) && we::$is_member)
 	{
 		// Save the new dropdown menu state.
 		wesql::insert('replace',
@@ -274,7 +274,7 @@ function createMenu($menuData, $menuOptions = array())
 	if (empty($menuOptions['menu_type']))
 	{
 		$menuOptions['menu_type'] = '_' . (empty($options['use_sidebar_menu']) ? 'dropdown' : 'sidebar');
-		$menu_context['can_toggle_drop_down'] = !we::$is_guest;
+		$menu_context['can_toggle_drop_down'] = we::$is_member;
 	}
 	else
 		$menu_context['can_toggle_drop_down'] = !empty($menuOptions['can_toggle_drop_down']);

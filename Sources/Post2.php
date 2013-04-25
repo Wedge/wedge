@@ -840,7 +840,7 @@ function Post2()
 		'id' => we::$id,
 		'name' => $_POST['guestname'],
 		'email' => $_POST['email'],
-		'update_post_count' => !we::$is_guest && !isset($_REQUEST['msg']) && $board_info['posts_count'],
+		'update_post_count' => we::$is_member && !isset($_REQUEST['msg']) && $board_info['posts_count'],
 	);
 
 	// This is an already existing message. Edit it.
@@ -875,7 +875,7 @@ function Post2()
 
 	// Marking read should be done even for editing messages....
 	// Mark all the parents read, since you just posted and they will be unread.
-	if (!we::$is_guest && !empty($board_info['parent_boards']))
+	if (we::$is_member && !empty($board_info['parent_boards']))
 	{
 		wesql::query('
 			UPDATE {db_prefix}log_boards

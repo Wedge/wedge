@@ -44,7 +44,7 @@ function Register($reg_errors = array())
 		fatal_lang_error('registration_disabled', false);
 
 	// If this user is an admin - redirect them to the admin registration page.
-	if (allowedTo('moderate_forum') && !we::$is_guest)
+	if (allowedTo('moderate_forum') && we::$is_member)
 		redirectexit('action=admin;area=regcenter;sa=register');
 	// You are not a guest, so you are a member - and members don't get to register twice!
 	elseif (empty(we::$is_guest))

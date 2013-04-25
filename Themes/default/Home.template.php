@@ -47,7 +47,7 @@ function template_main()
 	$naoboards = ssi_recentTopicTitles($n, we::$is_admin || ($boardurl != 'http://wedge.org') ? null : array(136), null, 'naos');
 
 	$new_stuff = array();
-	if (!we::$is_guest)
+	if (we::$is_member)
 		foreach ($naoboards as $post)
 			if ($post['is_new'])
 				$new_stuff[] = $post['topic'];
@@ -88,7 +88,7 @@ function template_main()
 				<td class="latestp2">
 					', $post['board']['link'], ' &gt; ';
 
-		if ($post['is_new'] && !we::$is_guest)
+		if ($post['is_new'] && we::$is_member)
 			echo isset($nb_new[$post['topic']]) ? '<a href="' . $post['href'] . '" class="note">' . $nb_new[$post['topic']] . '</a> ' : '';
 
 		echo '<a href="', $post['href'], $safe ? '" style="color: ' . ($blo ? '#a62' : 'green') : '', '">', $post['subject'], '</a>

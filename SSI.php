@@ -314,7 +314,7 @@ function ssi_queryPosts($query_where = '', $query_where_params = array(), $query
 			IFNULL(lt.id_msg, IFNULL(lmr.id_msg, -1)) + 1 AS new_from') . ', ' . ($limit_body ? 'SUBSTRING(m.body, 1, 384) AS body' : 'm.body') . ', m.smileys_enabled
 		FROM {db_prefix}messages AS m
 			INNER JOIN {db_prefix}boards AS b ON (b.id_board = m.id_board)
-			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = m.id_member)' . (!we::$is_guest ? '
+			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = m.id_member)' . (we::$is_member ? '
 			LEFT JOIN {db_prefix}log_topics AS lt ON (lt.id_topic = m.id_topic AND lt.id_member = {int:current_member})
 			LEFT JOIN {db_prefix}log_mark_read AS lmr ON (lmr.id_board = m.id_board AND lmr.id_member = {int:current_member})' : '') . '
 		' . (empty($query_where) ? 'WHERE {query_wanna_see_board}' : 'WHERE ' . $query_where) . '
@@ -457,7 +457,7 @@ function ssi_recentTopics($num_recent = 8, $exclude_boards = null, $include_boar
 		FROM {db_prefix}topics AS t
 			INNER JOIN {db_prefix}messages AS ml ON (ml.id_msg = t.id_last_msg)
 			INNER JOIN {db_prefix}messages AS mf ON (mf.id_msg = t.id_first_msg)
-			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = ml.id_member)' . (!we::$is_guest ? '
+			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = ml.id_member)' . (we::$is_member ? '
 			LEFT JOIN {db_prefix}log_topics AS lt ON (lt.id_topic = t.id_topic AND lt.id_member = {int:current_member})
 			LEFT JOIN {db_prefix}log_mark_read AS lmr ON (lmr.id_board = t.id_board AND lmr.id_member = {int:current_member})' : '') . '
 		WHERE t.id_topic IN ({array_int:topic_list})
@@ -601,7 +601,7 @@ function ssi_topBoards($num_top = 10, $output_method = 'echo')
 	// Find boards with lots of posts.
 	$request = wesql::query('
 		SELECT
-			b.name, b.num_topics, b.num_posts, b.id_board,' . (!we::$is_guest ? ' 1 AS is_read' : '
+			b.name, b.num_topics, b.num_posts, b.id_board,' . (we::$is_member ? ' 1 AS is_read' : '
 			(IFNULL(lb.id_msg, 0) >= b.id_last_msg) AS is_read') . '
 		FROM {db_prefix}boards AS b
 			LEFT JOIN {db_prefix}log_boards AS lb ON (lb.id_board = b.id_board AND lb.id_member = {int:current_member})
@@ -1021,7 +1021,7 @@ function ssi_login($redirect_to = '', $output_method = 'echo')
 	if ($redirect_to != '')
 		$_SESSION['login_url'] = $redirect_to;
 
-	if ($output_method != 'echo' || !we::$is_guest)
+	if ($output_method != 'echo' || we::$is_member)
 		return we::$is_guest;
 
 	echo '
@@ -1398,7 +1398,7 @@ function ssi_pollVote()
 	$row = wesql::fetch_assoc($request);
 	wesql::free_result($request);
 
-	if (!empty($row['voting_locked']) || ($row['selected'] != -1 && !we::$is_guest) || (!empty($row['expire_time']) && time() > $row['expire_time']))
+	if (!empty($row['voting_locked']) || ($row['selected'] != -1 && we::$is_member) || (!empty($row['expire_time']) && time() > $row['expire_time']))
 		redirectexit('topic=' . $row['id_topic'] . '.0');
 
 	// Too many options checked?

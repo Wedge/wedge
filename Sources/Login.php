@@ -27,7 +27,7 @@ function Login()
 	global $txt, $context;
 
 	// You're not a guest, why are you here?
-	if (!we::$is_guest)
+	if (we::$is_member)
 		redirectexit();
 
 	// We need to load the Login template/language file.

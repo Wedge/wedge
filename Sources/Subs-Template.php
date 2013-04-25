@@ -375,7 +375,7 @@ function ob_sessrewrite($buffer)
 	// If guests/users can't view user profiles, we might as well unlink them!
 	if (!allowedTo('profile_view_any'))
 		$buffer = preg_replace(
-			'~<a\b[^>]+href="' . $preg_scripturl . '\?(?:[^"]+)?\baction=profile' . (!we::$is_guest && allowedTo('profile_view_own') ? ';(?:[^"]+;)?u=(?!' . we::$id . ')' : '') . '[^"]*"[^>]*>(.*?)</a>~',
+			'~<a\b[^>]+href="' . $preg_scripturl . '\?(?:[^"]+)?\baction=profile' . (we::$is_member && allowedTo('profile_view_own') ? ';(?:[^"]+;)?u=(?!' . we::$id . ')' : '') . '[^"]*"[^>]*>(.*?)</a>~',
 			'$1', $buffer
 		);
 	// Now we'll color profile links based on membergroup.
@@ -748,7 +748,7 @@ function while_we_re_here()
 				<p>', $txt[$context['behavior_error'] . '_log'], '</p>
 			</div>';
 	}
-	elseif (!$checked_security_files && !we::$is_guest && allowedTo('admin_forum'))
+	elseif (!$checked_security_files && we::$is_member && allowedTo('admin_forum'))
 	{
 		$checked_security_files = true;
 		$security_files = array('import.php', 'install.php', 'webinstall.php', 'upgrade.php', 'convert.php', 'repair_paths.php', 'repair_settings.php', 'Settings.php~', 'Settings_bak.php~');
@@ -838,7 +838,7 @@ function db_debug_junk()
 	elseif ($settings['db_show_debug_who'] == 'mod')
 		$show_debug &= allowedTo('moderate_forum');
 	elseif ($settings['db_show_debug_who'] == 'regular')
-		$show_debug &= !we::$is_guest;
+		$show_debug &= we::$is_member;
 	else
 		$show_debug &= ($settings['db_show_debug_who'] == 'any');
 
@@ -849,7 +849,7 @@ function db_debug_junk()
 	elseif ($settings['db_show_debug_who_log'] == 'mod')
 		$show_debug_query &= allowedTo('moderate_forum');
 	elseif ($settings['db_show_debug_who_log'] == 'regular')
-		$show_debug_query &= !we::$is_guest;
+		$show_debug_query &= we::$is_member;
 	else
 		$show_debug_query &= ($settings['db_show_debug_who_log'] == 'any');
 

@@ -42,7 +42,7 @@ function Logout($internal = false, $redirect = true)
 	unset($_SESSION['first_login']);
 
 	// Just ensure they aren't a guest!
-	if (!we::$is_guest)
+	if (we::$is_member)
 	{
 		// Pass the logout information to hooks.
 		call_hook('logout', array($user_settings['member_name']));

@@ -694,7 +694,7 @@ function moveTopics($topics, $toBoard)
 	list ($isSeen) = wesql::fetch_row($request);
 	wesql::free_result($request);
 
-	if (!empty($isSeen) && !we::$is_guest)
+	if (!empty($isSeen) && we::$is_member)
 	{
 		wesql::insert('replace',
 			'{db_prefix}log_boards',

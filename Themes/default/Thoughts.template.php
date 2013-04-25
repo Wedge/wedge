@@ -155,8 +155,8 @@ function template_thoughts_table()
 	if (allowedTo('post_thought'))
 	{
 		echo '
-			<tr class="windowbg2">
-				<td class="bc">', $txt['date'], '</td>
+			<tr class="windowbg2">', SKIN_MOBILE ? '' : '
+				<td class="bc">' . $txt['date'] . '</td>', '
 				<td><span class="my thought" id="thought0"><span></span></span></td>
 			</tr>';
 
