@@ -384,13 +384,15 @@ function setupThoughtMenu()
 	$context['mini_menu_items']['thought'] = array(
 		'lk' => array(
 			'caption' => 'acme_like',
-			'action' => '<URL>?action=like;thought;msg=%1%;' . $context['session_query'],
+			'action' => '',
 			'class' => 'like_button',
+			'click' => 'return oThought.like(%1%)',
 		),
 		'uk' => array(
 			'caption' => 'acme_unlike',
-			'action' => '<URL>?action=like;thought;msg=%1%;' . $context['session_query'],
+			'action' => '',
 			'class' => 'unlike_button',
+			'click' => 'return oThought.like(%1%)',
 		),
 		'cx' => array(
 			'caption' => 'thome_context',

@@ -126,6 +126,15 @@ function Thought()
 	$pid = !empty($_POST['parent']) ? (int) $_POST['parent'] : 0;
 	$mid = !empty($_POST['master']) ? (int) $_POST['master'] : 0;
 
+	if (isset($_GET['like']))
+	{
+		loadSource('Like');
+		$_REQUEST['msg'] = $oid;
+		$_GET['thought'] = true;
+		Like();
+		return;
+	}
+
 	// If we have a parent, then get the member data for the parent thought.
 	if ($pid)
 	{
@@ -248,6 +257,13 @@ function Thought()
 
 		call_hook('thought_add', array(&$privacy, &$text, &$pid, &$mid, &$last_thought, &$user_id, &$user_name));
 	}
+
+	return_thoughts();
+}
+
+function return_thoughts()
+{
+	global $context;
 
 	// Welcome to the world of rule-bending dirty hacks.
 	// What you're going to see isn't for the faint-hearted...

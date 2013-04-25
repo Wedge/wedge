@@ -865,6 +865,37 @@ function JumpTo(control)
 			return false;
 		};
 
+		// Event handler for personal text requests.
+		this.personal = function (tid)
+		{
+			$.post(
+				weUrl('action=ajax;sa=thought') + ';in=' + tid + ';personal'
+			);
+
+			return false;
+		};
+
+		this.like = function (tid)
+		{
+			var $thoughts = $('#thought' + tid).closest('.thoughts');
+			show_ajax();
+
+			$.post(
+				weUrl('action=ajax;sa=thought') + ';like;' + we_sessvar + '=' + we_sessid,
+				{
+					cx: $thoughts.data('cx'),
+					oid: tid
+				},
+				function (response)
+				{
+					$thoughts.html(response);
+					hide_ajax();
+				}
+			);
+
+			return false;
+		};
+
 		// Event handler for removal requests.
 		this.remove = function (tid)
 		{
@@ -880,19 +911,8 @@ function JumpTo(control)
 				function (response)
 				{
 					$thoughts.html(response);
-					cancel();
 					hide_ajax();
 				}
-			);
-
-			return false;
-		};
-
-		// Event handler for personal text requests.
-		this.personal = function (tid)
-		{
-			$.post(
-				weUrl('action=ajax;sa=thought') + ';in=' + tid + ';personal'
 			);
 
 			return false;
@@ -919,8 +939,8 @@ function JumpTo(control)
 				function (response)
 				{
 					$thoughts.html(response);
-					cancel();
 					hide_ajax();
+					cancel();
 				}
 			);
 
@@ -929,7 +949,7 @@ function JumpTo(control)
 
 		$('#thought0')
 			.click(function () { oThought.edit(0, 0, true); })
-			.find('span').html($txt['no_thought_yet']);
+			.find('span').html($txt['add_thought']);
 	}
 @endif
 

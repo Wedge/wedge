@@ -167,6 +167,9 @@ function Like()
 
 	if (AJAX)
 	{
+		if ($content_type == 'think')
+			return return_thoughts();
+
 		// OK, we're going to send some details back to the user through the magic of AJAX. We need to get those details, first of all.
 		$members_load = array();
 		$context['liked_posts'] = array();
