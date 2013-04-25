@@ -138,7 +138,7 @@ function template_html_before()
 	<link rel="search" href="<URL>?action=search">';
 
 	// If feeds are enabled, advertise the presence of one.
-	if (!empty($settings['xmlnews_enable']) && (!empty($settings['allow_guestAccess']) || !we::$is_guest))
+	if (!empty($settings['xmlnews_enable']) && (!empty($settings['allow_guestAccess']) || we::$is_member))
 		echo '
 	<link rel="alternate" href="<URL>?action=feed" type="application/atom+xml" title="', $context['forum_name_html_safe'], ' - ', $txt['feed'], '">';
 
@@ -306,7 +306,7 @@ function template_sidebar_before()
 {
 	global $txt, $context, $settings;
 
-	if (we::$is_guest || empty($context['show_login_bar']))
+	if (we::$is_guest && empty($context['show_login_bar']))
 		return;
 
 	echo '
@@ -317,9 +317,9 @@ function template_sidebar_before()
 		<div id="userbox">';
 
 	// If the user is logged in, display stuff like their name, new messages, etc.
-	if (!we::$is_guest)
+	if (we::$is_member)
 	{
-		echo empty(we::$user['avatar']) ? '
+		echo empty(we::$user['avatar']['image']) ? '
 			<ul id="noava">' : '
 			' . we::$user['avatar']['image'] . '
 			<ul>', '

@@ -243,7 +243,7 @@ function template_boards_below()
 {
 	global $context;
 
-	if (!we::$is_guest)
+	if (we::$is_member)
 	{
 		echo '
 	<ul id="posting_icons" class="reset floatleft">';

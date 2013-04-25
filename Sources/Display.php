@@ -155,7 +155,7 @@ function Display()
 	// If this topic has unapproved posts, we need to work out how many posts the user can see, for page indexing.
 	// We also need to discount the first post if this is a blog board.
 	$including_first = $topicinfo['approved'] && $board_info['type'] == 'board' ? 1 : 0;
-	if ($settings['postmod_active'] && $topicinfo['unapproved_posts'] && !we::$is_guest && !allowedTo('approve_posts'))
+	if ($settings['postmod_active'] && $topicinfo['unapproved_posts'] && we::$is_member && !allowedTo('approve_posts'))
 	{
 		$request = wesql::query('
 			SELECT COUNT(id_member) AS my_unapproved_posts
@@ -459,7 +459,7 @@ function Display()
 	$context['is_poll'] = $topicinfo['id_poll'] > 0 && allowedTo('poll_view');
 
 	// Did this user start the topic or not?
-	we::$user['started'] = we::$id == $topicinfo['id_member_started'] && !we::$is_guest;
+	we::$user['started'] = we::$id == $topicinfo['id_member_started'] && we::$is_member;
 	$context['topic_starter_id'] = $topicinfo['id_member_started'];
 
 	// Set the topic's information for the template.
@@ -535,7 +535,7 @@ function Display()
 
 		// Can we actually see who the voters were? (Assuming there were some voters)
 		// voters_visible -> 0 = admin only, 1 = admin + creator only, 2 = members, 3 = anyone
-		if ($realtotal > 0 && (we::$is_admin || ($pollinfo['voters_visible'] == 1 && we::$user['started']) || ($pollinfo['voters_visible'] == 2 && !we::$is_guest) || ($pollinfo['voters_visible'] == 3)))
+		if ($realtotal > 0 && (we::$is_admin || ($pollinfo['voters_visible'] == 1 && we::$user['started']) || ($pollinfo['voters_visible'] == 2 && we::$is_member) || ($pollinfo['voters_visible'] == 3)))
 		{
 			$pollinfo['showing_voters'] = true;
 			$request = wesql::query('
@@ -629,7 +629,7 @@ function Display()
 		// 4. the poll is not locked, and
 		// 5. you have the proper permissions, and
 		// 6. you haven't already voted before.
-		$context['allow_vote'] = !$context['poll']['is_expired'] && (!we::$is_guest || ($pollinfo['guest_vote'] && allowedTo('poll_vote'))) && empty($pollinfo['voting_locked']) && allowedTo('poll_vote') && !$context['poll']['has_voted'];
+		$context['allow_vote'] = !$context['poll']['is_expired'] && (we::$is_member || ($pollinfo['guest_vote'] && allowedTo('poll_vote'))) && empty($pollinfo['voting_locked']) && allowedTo('poll_vote') && !$context['poll']['has_voted'];
 
 		// You're allowed to view the results if:
 		// 1. you're just a super-nice-guy, or
@@ -647,7 +647,7 @@ function Display()
 		// 4. you have the proper permissions, and
 		// 5. you have already voted, and
 		// 6. the poll creator has said you can!
-		$context['allow_change_vote'] = !$context['poll']['is_expired'] && !we::$is_guest && empty($pollinfo['voting_locked']) && allowedTo('poll_vote') && $context['poll']['has_voted'] && $context['poll']['change_vote'];
+		$context['allow_change_vote'] = !$context['poll']['is_expired'] && we::$is_member && empty($pollinfo['voting_locked']) && allowedTo('poll_vote') && $context['poll']['has_voted'] && $context['poll']['change_vote'];
 
 		// You're allowed to return to voting options if:
 		// 1. you are (still) allowed to vote.
@@ -808,7 +808,7 @@ function Display()
 	}
 
 	// Guests can't mark topics read or for notifications, just can't sorry.
-	if (!we::$is_guest)
+	if (we::$is_member)
 	{
 		$mark_at_msg = max($messages);
 		if ($mark_at_msg >= $topicinfo['id_last_msg'])
@@ -1033,7 +1033,7 @@ function Display()
 		$context[$contextual] = allowedTo($perm . '_any') || (we::$user['started'] && allowedTo($perm . '_own'));
 
 	// Cleanup all the permissions with extra stuff...
-	$context['can_mark_notify'] &= !we::$is_guest;
+	$context['can_mark_notify'] &= we::$is_member;
 	$context['can_add_poll'] &= $topicinfo['id_poll'] <= 0;
 	$context['can_remove_poll'] &= $topicinfo['id_poll'] > 0;
 	$context['can_reply'] &= empty($topicinfo['locked']) || allowedTo('moderate_board');
@@ -1042,7 +1042,7 @@ function Display()
 	$context['can_reply_approved'] = $context['can_reply'];
 	$context['can_reply'] |= $context['can_reply_unapproved'];
 	$context['can_quote'] = $context['can_reply'] && (empty($settings['disabledBBC']) || !in_array('quote', explode(',', $settings['disabledBBC'])));
-	$context['can_mark_unread'] = !we::$is_guest;
+	$context['can_mark_unread'] = we::$is_member;
 	// Prevent robots from accessing the Post template
 	$context['can_reply'] &= empty($context['possibly_robot']);
 	// Check that the first post's icon is not a moved icon - i.e. the thread has been moved!
@@ -1335,7 +1335,7 @@ function prepareDisplayContext($reset = false)
 	{
 		$memberContext[$message['id_member']]['can_view_profile'] = allowedTo('profile_view_any') || ($message['id_member'] == we::$id && allowedTo('profile_view_own'));
 		$memberContext[$message['id_member']]['is_topic_starter'] = $message['id_member'] == $context['topic_starter_id'];
-		$memberContext[$message['id_member']]['can_see_warning'] = !isset($context['disabled_fields']['warning_status']) && $memberContext[$message['id_member']]['warning_status'] && (allowedTo('issue_warning') || (!we::$is_guest && !empty($settings['warning_show']) && ($settings['warning_show'] > 1 || $message['id_member'] == we::$id)));
+		$memberContext[$message['id_member']]['can_see_warning'] = !isset($context['disabled_fields']['warning_status']) && $memberContext[$message['id_member']]['warning_status'] && (allowedTo('issue_warning') || (we::$is_member && !empty($settings['warning_show']) && ($settings['warning_show'] > 1 || $message['id_member'] == we::$id)));
 	}
 
 	$memberContext[$message['id_member']]['ip'] = format_ip($message['poster_ip']);
@@ -1374,7 +1374,7 @@ function prepareDisplayContext($reset = false)
 		'href' => '<URL>?topic=' . $topic . '.msg' . $message['id_msg'] . '#msg' . $message['id_msg'],
 		'link' => '<a href="<URL>?topic=' . $topic . '.msg' . $message['id_msg'] . '#msg' . $message['id_msg'] . '" rel="nofollow">' . $message['subject'] . '</a>',
 		'member' => &$memberContext[$message['id_member']],
-		'can_like' => !we::$is_guest && !empty($settings['likes_enabled']) && (!empty($settings['likes_own_posts']) || $message['id_member'] != we::$id),
+		'can_like' => we::$is_member && !empty($settings['likes_enabled']) && (!empty($settings['likes_own_posts']) || $message['id_member'] != we::$id),
 		'icon' => $message['icon'],
 		'icon_url' => $theme[$context['icon_sources'][$message['icon']]] . '/post/' . $message['icon'] . '.gif',
 		'subject' => $message['subject'],

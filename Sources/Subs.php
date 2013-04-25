@@ -1534,7 +1534,7 @@ function setupThemeContext($forceload = false)
 
 	$context['random_news_line'] = !empty($context['news_lines']) ? $context['news_lines'][array_rand($context['news_lines'])] : '';
 
-	if (!we::$is_guest)
+	if (we::$is_member)
 	{
 		// Personal message popup...
 		we::$user['popup_messages'] = we::$user['unread_messages'] > (isset($_SESSION['unread_messages']) ? $_SESSION['unread_messages'] : 0);
@@ -1543,48 +1543,45 @@ function setupThemeContext($forceload = false)
 		if (allowedTo('moderate_forum'))
 			$context['unapproved_members'] = (!empty($settings['registration_method']) && $settings['registration_method'] == 2) || !empty($settings['approveAccountDeletion']) ? $settings['unapprovedMembers'] : 0;
 
-		if (empty(we::$user['avatar']))
-			we::$user['avatar'] = array();
-		if (!isset(we::$user['avatar']['href']))
-			we::$user['avatar']['href'] = '';
+		$avatar =& we::$user['avatar'];
 
 		// Figure out the avatar... uploaded?
-		if (we::$user['avatar']['url'] == '' && !empty(we::$user['avatar']['id_attach']))
-			we::$user['avatar']['href'] = we::$user['avatar']['custom_dir'] ? $settings['custom_avatar_url'] . '/' . we::$user['avatar']['filename'] : '<URL>?action=dlattach;attach=' . we::$user['avatar']['id_attach'] . ';type=avatar';
+		if ($avatar['url'] == '' && !empty($avatar['id_attach']))
+			$avatar['href'] = $avatar['custom_dir'] ? $settings['custom_avatar_url'] . '/' . $avatar['filename'] : '<URL>?action=dlattach;attach=' . $avatar['id_attach'] . ';type=avatar';
 		// Full URL?
-		elseif (strpos(we::$user['avatar']['url'], 'http://') === 0)
+		elseif (strpos($avatar['url'], 'http://') === 0)
 		{
-			we::$user['avatar']['href'] = we::$user['avatar']['url'];
+			$avatar['href'] = $avatar['url'];
 
 			if ($settings['avatar_action_too_large'] == 'option_html_resize' || $settings['avatar_action_too_large'] == 'option_js_resize')
 			{
 				if (!empty($settings['avatar_max_width_external']))
-					we::$user['avatar']['width'] = $settings['avatar_max_width_external'];
+					$avatar['width'] = $settings['avatar_max_width_external'];
 				if (!empty($settings['avatar_max_height_external']))
-					we::$user['avatar']['height'] = $settings['avatar_max_height_external'];
+					$avatar['height'] = $settings['avatar_max_height_external'];
 			}
 		}
 		// Gravatar?
-		elseif (strpos(we::$user['avatar']['url'], 'gravatar://') === 0)
+		elseif (strpos($avatar['url'], 'gravatar://') === 0)
 		{
-			if (we::$user['avatar']['url'] === 'gravatar://' || empty($settings['gravatarAllowExtraEmail']))
-				we::$user['avatar']['href'] = get_gravatar_url(we::$user['email']);
+			if ($avatar['url'] === 'gravatar://' || empty($settings['gravatarAllowExtraEmail']))
+				$avatar['href'] = get_gravatar_url(we::$user['email']);
 			else
-				we::$user['avatar']['href'] = get_gravatar_url(substr(we::$user['avatar']['url'], 11));
+				$avatar['href'] = get_gravatar_url(substr($avatar['url'], 11));
 
 			if (!empty($settings['avatar_max_width_external']))
-				we::$user['avatar']['width'] = $settings['avatar_max_width_external'];
+				$avatar['width'] = $settings['avatar_max_width_external'];
 			if (!empty($settings['avatar_max_height_external']))
-				we::$user['avatar']['height'] = $settings['avatar_max_height_external'];
+				$avatar['height'] = $settings['avatar_max_height_external'];
 		}
 		// Otherwise we assume it's server stored?
-		elseif (we::$user['avatar']['url'] != '')
-			we::$user['avatar']['href'] = $settings['avatar_url'] . '/' . htmlspecialchars(we::$user['avatar']['url']);
+		elseif ($avatar['url'] != '')
+			$avatar['href'] = $settings['avatar_url'] . '/' . htmlspecialchars($avatar['url']);
 
-		$opaque = !empty(we::$user['avatar']['id_attach']) && we::$user['avatar']['transparent'] ? '' : 'opaque ';
+		$opaque = !empty($avatar['id_attach']) && $avatar['transparent'] ? '' : 'opaque ';
 
-		if (!empty(we::$user['avatar']))
-			we::$user['avatar']['image'] = '<img class="' . $opaque . 'avatar" src="' . we::$user['avatar']['href'] . '"' . (isset(we::$user['avatar']['width']) ? ' width="' . we::$user['avatar']['width'] . '"' : '') . (isset(we::$user['avatar']['height']) ? ' height="' . we::$user['avatar']['height'] . '"' : '') . '>';
+		if (!empty($avatar['href']))
+			$avatar['image'] = '<img class="' . $opaque . 'avatar" src="' . $avatar['href'] . '"' . (isset($avatar['width']) ? ' width="' . $avatar['width'] . '"' : '') . (isset($avatar['height']) ? ' height="' . $avatar['height'] . '"' : '') . '>';
 
 		// Figure out how long they've been logged in.
 		we::$user['total_time_logged_in'] = array(
@@ -1595,9 +1592,6 @@ function setupThemeContext($forceload = false)
 	}
 	else
 	{
-		we::$user['messages'] = 0;
-		we::$user['unread_messages'] = 0;
-		we::$user['avatar'] = array();
 		we::$user['total_time_logged_in'] = array('days' => 0, 'hours' => 0, 'minutes' => 0);
 		we::$user['popup_messages'] = false;
 
@@ -2021,7 +2015,7 @@ function setupMenuContext()
 	// Set up the menu privileges.
 	$context['allow_search'] = allowedTo('search_posts');
 	$context['allow_admin'] = allowedTo(array('admin_forum', 'manage_boards', 'manage_permissions', 'moderate_forum', 'manage_membergroups', 'manage_bans', 'send_mail', 'edit_news', 'manage_attachments', 'manage_smileys'));
-	$context['allow_edit_profile'] = !we::$is_guest && allowedTo(array('profile_view_own', 'profile_view_any', 'profile_identity_own', 'profile_identity_any', 'profile_extra_own', 'profile_extra_any', 'profile_remove_own', 'profile_remove_any', 'moderate_forum', 'manage_membergroups', 'profile_title_own', 'profile_title_any'));
+	$context['allow_edit_profile'] = we::$is_member && allowedTo(array('profile_view_own', 'profile_view_any', 'profile_identity_own', 'profile_identity_any', 'profile_extra_own', 'profile_extra_any', 'profile_remove_own', 'profile_remove_any', 'moderate_forum', 'manage_membergroups', 'profile_title_own', 'profile_title_any'));
 	$context['allow_memberlist'] = allowedTo('view_mlist');
 	$context['allow_moderation_center'] = allowedTo('access_mod_center');
 	$context['allow_pm'] = !empty($settings['pm_enabled']) && allowedTo('pm_read');
@@ -2036,7 +2030,7 @@ function setupMenuContext()
 
 	$error_count = allowedTo('admin_forum') ? (!empty($settings['app_error_count']) ? $settings['app_error_count'] : '') : '';
 	$can_view_unseen = allowedTo('media_access_unseen') && isset(we::$user['media_unseen']) && we::$user['media_unseen'] > 0;
-	$has_new_pm = !we::$is_guest && !empty(we::$user['unread_messages']);
+	$has_new_pm = we::$is_member && !empty(we::$user['unread_messages']);
 	$is_b = !empty($board_info['id']);
 
 	$items = array(
@@ -2227,7 +2221,7 @@ function setupMenuContext()
 		'logout' => array(
 			'title' => $txt['logout'],
 			'href' => '<URL>?action=logout;' . $context['session_query'],
-			'show' => !we::$is_guest,
+			'show' => we::$is_member,
 		),
 	);
 

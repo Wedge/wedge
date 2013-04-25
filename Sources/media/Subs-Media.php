@@ -371,10 +371,10 @@ function getMediaPath($mid, $type = 'main', $security_override = false)
 	else
 		$req = '
 		SELECT
-			f.id_file, f.filename, f.directory' . (!we::$is_guest && ($type == 'preview' || $type == 'main') ? ',
+			f.id_file, f.filename, f.directory' . (we::$is_member && ($type == 'preview' || $type == 'main') ? ',
 			IFNULL(lm.time, IFNULL(lm_all.time, 0)) < m.log_last_access_time AS is_new' : ($type == 'thumb' || $type == 'thumba' ? ',
 			forig.filename AS original_filename' : '')) . '
-		FROM {db_prefix}media_items AS m' . (!we::$is_guest && ($type == 'preview' || $type == 'main') ? '
+		FROM {db_prefix}media_items AS m' . (we::$is_member && ($type == 'preview' || $type == 'main') ? '
 			LEFT JOIN {db_prefix}media_log_media AS lm ON (lm.id_media = m.id_media AND lm.id_member = ' . we::$id . ')
 			LEFT JOIN {db_prefix}media_log_media AS lm_all ON (lm_all.id_media = 0 AND lm_all.id_member = ' . we::$id . ')' : ($type == 'thumba' ? '
 			INNER JOIN {db_prefix}media_albums AS albicon ON (albicon.id_album = m.album_id)' : '')) . '
@@ -631,7 +631,7 @@ function allowedToAccessAlbum($albumid, $row = null)
 		wesql::free_result($result);
 	}
 
-	if (($row['album_of'] == we::$id) && !we::$is_guest)
+	if (($row['album_of'] == we::$id) && we::$is_member)
 		return true;
 
 	if (!empty($row['allowed_members']) && in_array(we::$id, explode(',', $row['allowed_members'])))
@@ -1709,7 +1709,7 @@ function aeva_getOnlineType($actions)
 			$ret[1] = $txt['media_wo_search'];
 		break;
 		case 'mya';
-			$ret[0] = !we::$is_guest ? 'direct' : 'hidden';
+			$ret[0] = we::$is_member ? 'direct' : 'hidden';
 			$ret[1] = $txt['media_wo_ua'];
 		break;
 		// home, vua, XML feed, stats...
@@ -2762,7 +2762,7 @@ function aeva_listChildren(&$albums, $skip_table = false)
 		$it2 = $album['overall_total'] - $it1;
 		$totals = $it1 == 0 ? ($it2 == 0 ? $txt['media_no_items'] : $it2 . ' ' . $txt['media_lower_item' . ($it2 == 1 ? '' : 's')]) : $it1 . ' ' . $txt['media_lower_item' . ($it1 == 1 ? '' : 's')];
 		$totals .= $it2 == 0 ? '' : sprintf($it1 == 0 ? $txt['media_items_only_in_children'] : $txt['media_items_also_in_children'], $it2);
-		$can_moderate_here = $can_moderate || (!we::$is_guest && we::$id == $album['owner']['id']);
+		$can_moderate_here = $can_moderate || (we::$is_member && we::$id == $album['owner']['id']);
 
 		if ($i++ % $cols === 0)
 			echo '<tr>';
@@ -2929,7 +2929,7 @@ function aeva_fillMediaArray($request, $all_albums = true)
 			'title' => !empty($row['title']) ? $row['title'] : '&hellip;',
 			'approved' => $row['approved'],
 			'time' => aeva_timeformat($row['time_added']),
-			'is_new' => !empty($row['is_new']) && !we::$is_guest,
+			'is_new' => !empty($row['is_new']) && we::$is_member,
 			'views' => isset($row['type']) && $row['type'] === 'doc' && !empty($row['downloads']) ? $row['downloads'] : $row['views'],
 			'comments' => $row['num_comments'],
 			'poster_id' => $row['id_member'],

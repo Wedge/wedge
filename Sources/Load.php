@@ -619,7 +619,7 @@ function loadPermissions()
 	banPermissions();
 
 	// Load the mod cache so we can know what additional boards they should see, but no sense in doing it for guests
-	if (!we::$is_guest)
+	if (we::$is_member)
 	{
 		if (!isset($_SESSION['mc']) || $_SESSION['mc']['time'] <= $settings['settings_updated'])
 		{
@@ -1587,6 +1587,9 @@ function loadTheme($id_theme = 0, $initialize = true)
 	// Allow overriding the board wide time/number formats.
 	if (empty($user_settings['time_format']) && !empty($txt['time_format']))
 		we::$user['time_format'] = $txt['time_format'];
+
+	if (empty(we::$user['name']) && !empty($txt['guest_title']))
+		we::$user['name'] = $txt['guest_title'];
 
 	if (isset($theme['use_default_images']) && $theme['use_default_images'] == 'always')
 	{

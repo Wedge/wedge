@@ -110,11 +110,11 @@ function template_main_board()
 					</td>
 					<td class="subject ', $alternate_class, '">
 						<div', (!empty($topic['quick_mod']['modify']) ? ' id="topic_' . $topic['id'] . '" ondblclick="modify_topic(' . $topic['id'] . ', ' . $topic['first_post']['id'] . ');"' : ''), '>
-							<span id="msg_' . $topic['first_post']['id'] . '">', $topic['new'] && !we::$is_guest ? $topic['new_link'] : $topic['first_post']['link'],
+							<span id="msg_' . $topic['first_post']['id'] . '">', $topic['new'] && we::$is_member ? $topic['new_link'] : $topic['first_post']['link'],
 							!$context['can_approve_posts'] && !$topic['approved'] ? '&nbsp;<em>(' . $txt['awaiting_approval'] . ')</em>' : '', '</span>';
 
 			// Is this topic new? (assuming they are logged in!)
-			if ($topic['new'] && !we::$is_guest)
+			if ($topic['new'] && we::$is_member)
 					echo '
 							<a href="', $topic['new_href'], '" id="newicon', $topic['first_post']['id'], '" class="note">', $txt['new'], '</a>';
 
@@ -255,12 +255,12 @@ function template_main_blog()
 					<td class="subject ', $use_bg2 ? 'windowbg2' : 'windowbg', $topic['style'], '">
 						<div', (!empty($topic['quick_mod']['modify']) ? ' id="topic_' . $topic['first_post']['id'] . '" ondblclick="modify_topic(\'' . $topic['id'] . '\', \'' . $topic['first_post']['id'] . '\');"' : ''), '>
 							', $topic['is_pinned'] ? '<strong>' : '', '<span id="msg_' . $topic['first_post']['id'] . '" class="blog title">', '<img src="', $topic['first_post']['icon_url'], '" class="middle">&nbsp;',
-							$topic['new'] && !we::$is_guest ? $topic['new_link'] : $topic['first_post']['link'],
+							$topic['new'] && we::$is_member ? $topic['new_link'] : $topic['first_post']['link'],
 							!$context['can_approve_posts'] && !$topic['approved'] ? '&nbsp;<em>(' . $txt['awaiting_approval'] . ')</em>' : '',
 							'</span>', $topic['is_pinned'] ? '</strong>' : '';
 
 			// Is this topic new? (assuming they are logged in!)
-			if ($topic['new'] && !we::$is_guest)
+			if ($topic['new'] && we::$is_member)
 					echo '
 							<a href="', $topic['new_href'], '" id="newicon', $topic['first_post']['id'], '" class="note">', $txt['new'], '</a>';
 
@@ -285,7 +285,7 @@ function template_main_blog()
 
 				if (!empty($topic['replies']))
 					echo '
-							<a href="', $topic['new'] && !we::$is_guest ? $topic['new_href'] : $topic['first_post']['href'], '">', number_context('num_replies', $topic['replies']), '</a>', $topic['can_reply'] ? ' | ' : '';
+							<a href="', $topic['new'] && we::$is_member ? $topic['new_href'] : $topic['first_post']['href'], '">', number_context('num_replies', $topic['replies']), '</a>', $topic['can_reply'] ? ' | ' : '';
 
 				if ($topic['can_reply'])
 				{
@@ -518,7 +518,7 @@ function template_messageindex_legend()
 		<p class="legend">
 			<span class="icon_locked"></span> ', $txt['locked_topic'], '<br>
 			<span class="icon_pinned"></span> ', $txt['pinned_topic'], '<br>
-			<span class="icon_poll"></span> ' . $txt['poll'], '<br>', !empty($settings['enableParticipation']) && !we::$is_guest ? '
+			<span class="icon_poll"></span> ' . $txt['poll'], '<br>', !empty($settings['enableParticipation']) && we::$is_member ? '
 			<span class="icon_my"></span> ' . $txt['participation_caption'] : '', '
 		</p>
 	</section>';

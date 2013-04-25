@@ -128,7 +128,7 @@ function aeva_initGallery($gal_url = null)
 		'album' => array('function' => 'aeva_viewAlbum'),
 		'item' => array('function' => 'aeva_viewItem'),
 		'post' => array(
-			'enabled' => !we::$is_guest,
+			'enabled' => we::$is_member,
 			'function' => 'aeva_mgPost',
 		),
 		'comment' => array(
@@ -312,7 +312,7 @@ function aeva_initGallery($gal_url = null)
 					'icon' => 'images.png',
 				),
 				'post' => array(
-					'enabled' => !we::$is_guest,
+					'enabled' => we::$is_member,
 					'label' => $txt['media_add_item'],
 					'href' => $galurl . 'sa=post',
 					'icon' => 'camera_add.png',
@@ -606,7 +606,7 @@ function aeva_viewAlbum()
 
 	$album = isset($_REQUEST['in']) ? (int) $_REQUEST['in'] : 0;
 	$current_album =& $context['aeva_album'];
-	$is_owner = !we::$is_guest && we::$id == $current_album['owner']['id'];
+	$is_owner = we::$is_member && we::$id == $current_album['owner']['id'];
 
 	if (empty($album) || empty($current_album))
 		fatal_lang_error('media_album_denied', !empty($amSettings['log_access_errors']));
@@ -657,7 +657,7 @@ function aeva_viewAlbum()
 		wesql::free_result($request);
 	}
 
-	if (empty($total_items) && !we::$is_guest)
+	if (empty($total_items) && we::$is_member)
 	{
 		// Quick test to see if we should optimize the log_media table...
 		$request = wesql::query('
@@ -744,7 +744,7 @@ function aeva_viewItem()
 	// Get the item info!
 	$item_data = aeva_getItemData($item);
 	$item_data['last_edited_by'] = !empty($item_data['last_edited_by']) && $item_data['last_edited_by'] != $item_data['id_member'] ? $item_data['last_edited_by'] : -2;
-	$is_owner = !we::$is_guest && $item_data['id_member'] == we::$id;
+	$is_owner = we::$is_member && $item_data['id_member'] == we::$id;
 	$path = $amSettings['data_dir_path'] . '/' . $item_data['directory'] . '/' . aeva_getEncryptedFilename($item_data['filename'], $item_data['id_file']);
 	$cur_filesize = @filesize($path);
 	$context['aeva_size_mismatch'] = $item_data['filesize'] != $cur_filesize && !empty($item_data['filesize']) && $cur_filesize !== false;
@@ -2339,8 +2339,6 @@ function aeva_mgApprove()
 
 function aeva_addView()
 {
-	global $context;
-
 	if (!isset($_REQUEST['in']))
 		die('Hacking attempt...');
 	$id = (int) $_REQUEST['in'];
@@ -2362,7 +2360,7 @@ function aeva_addView()
 
 function aeva_getMedia()
 {
-	global $theme, $amSettings, $context;
+	global $theme, $amSettings;
 
 	if (isset($_REQUEST['dl']) && !aeva_allowedTo('download_item'))
 		fatal_lang_error('media_accessDenied', !empty($amSettings['log_access_errors']));

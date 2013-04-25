@@ -203,7 +203,7 @@ function embedThoughts($to_show = 10)
 			'privacy' => $row['privacy'],
 			'updated' => timeformat($row['updated']),
 			'text' => $row['posts'] < 10 ? preg_replace('~\</?a(?:\s[^>]+)?\>(?:https?://)?~', '', parse_bbc_inline($row['thought'])) : parse_bbc_inline($row['thought']),
-			'can_like' => !we::$is_guest && !empty($settings['likes_enabled']) && (!empty($settings['likes_own_posts']) || $row['id_member'] != we::$id),
+			'can_like' => we::$is_member && !empty($settings['likes_enabled']) && (!empty($settings['likes_own_posts']) || $row['id_member'] != we::$id),
 		);
 
 		$thought =& $thoughts[$row['id_thought']];
@@ -344,7 +344,7 @@ function latestThoughts($memID = 0)
 				'text' => $row['posts'] < 10 ? preg_replace('~\</?a(?:\s[^>]+)?\>(?:https?://)?~', '', parse_bbc_inline($row['thought'])) : parse_bbc_inline($row['thought']),
 				'privacy' => $row['privacy'],
 				'has_children' => $row['has_children'],
-				'can_like' => !we::$is_guest && !empty($settings['likes_enabled']) && (!empty($settings['likes_own_posts']) || $row['id_member'] != we::$id),
+				'can_like' => we::$is_member && !empty($settings['likes_enabled']) && (!empty($settings['likes_own_posts']) || $row['id_member'] != we::$id),
 			);
 
 			$thought['text'] = '<span class="thought" id="thought' . $row['id_thought'] . '" data-oid="' . $row['id_thought'] . '" data-prv="' . $row['privacy'] . '"><span>' . $thought['text'] . '</span></span>';
@@ -432,7 +432,7 @@ function setupThoughtMenu()
 
 		$menu[] = 'cx/' . ($tho['id_master'] ? $tho['id_master'] : $tho['id']);
 
-		if (!we::$is_guest)
+		if (we::$is_member)
 			$menu[] = 're/' . $tho['id_master'];
 
 		// Can we edit, delete and blurbify?

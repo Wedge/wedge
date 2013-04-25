@@ -204,7 +204,7 @@ call_user_func($function);
 wetem::add('sidebar', 'sidebar_quick_access');
 
 // Just quickly sneak the feed stuff in...
-if (!empty($settings['xmlnews_enable']) && !empty($settings['xmlnews_sidebar']) && (!empty($settings['allow_guestAccess']) || !we::$is_guest) && function_exists('template_sidebar_feed'))
+if (!empty($settings['xmlnews_enable']) && !empty($settings['xmlnews_sidebar']) && (!empty($settings['allow_guestAccess']) || we::$is_member) && function_exists('template_sidebar_feed'))
 	wetem::add('sidebar', 'sidebar_feed');
 
 obExit(null, null, true);
@@ -275,7 +275,7 @@ function wedge_main()
 
 	// Load the current theme. Note that ?theme=1 will also work, may be used for guest theming.
 	// Attachments don't require the entire theme to be loaded.
-	if ($action !== 'dlattach' || empty($settings['allow_guestAccess']) || !we::$is_guest)
+	if ($action !== 'dlattach' || empty($settings['allow_guestAccess']) || we::$is_member)
 		loadTheme();
 
 	// Check if the user should be disallowed access.

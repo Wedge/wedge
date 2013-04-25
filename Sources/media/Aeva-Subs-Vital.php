@@ -396,20 +396,6 @@ function aeva_initZoom($autosize, $peralbum = array())
 	add_js_file('scripts/zoomedia.js');
 	add_js('
 	$("a.zoom").zoomedia({
-		lang: {
-			move: "', $txt['media_zoom_move'], '",
-			close: "', $txt['media_close'], '",
-			closeTitle: "', $txt['media_zoom_close_title'], '",
-			loading: "', $txt['media_zoom_loading'], '",
-			loadingTitle: "', $txt['media_zoom_clicktocancel'], '",
-			restoreTitle: "', $txt['media_zoom_clicktoclose'], '",
-			focusTitle: "', $txt['media_zoom_focus'], '",
-			fullExpandTitle: "', $txt['media_zoom_expandtoactual'], '",
-			previousTitle: "', $txt['media_zoom_previous'], '",
-			nextTitle: "', $txt['media_zoom_next'], '",
-			playTitle: "', $txt['media_zoom_play'], '",
-			pauseTitle: "', $txt['media_zoom_pause'], '"
-		},
 		outline: "', empty($peralbum) || !in_array($peralbum['outline'], array('drop-shadow', 'white', 'black')) ? 'glass' : $peralbum['outline'], '",
 		expand: ', !isset($peralbum['expand']) ? 800 : (int) $peralbum['expand'], '
 	});');

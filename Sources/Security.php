@@ -162,7 +162,7 @@ function is_not_guest($message = '')
 	global $txt, $context, $scripturl, $settings;
 
 	// Luckily, this person isn't a guest.
-	if (!we::$is_guest)
+	if (we::$is_member)
 		return;
 
 	// No need to clear the action they were doing (as it used to be; not only are the odds strong that it wouldn't have been updated, this way you can see what they were trying to do and that it didn't work)
@@ -343,7 +343,7 @@ function is_not_banned($forceCheck = false)
 	if (isset($_SESSION['ban']['cannot_access']))
 	{
 		// We don't wanna see you!
-		if (!we::$is_guest)
+		if (we::$is_member)
 			wesql::query('
 				DELETE FROM {db_prefix}log_online
 				WHERE id_member = {int:current_member}',
@@ -380,7 +380,7 @@ function is_not_banned($forceCheck = false)
 		trigger_error('Hacking attempt...', E_USER_ERROR);
 	}
 	// You're not allowed to log in but yet you are. Let's fix that.
-	elseif (isset($_SESSION['ban']['cannot_login']) && !we::$is_guest)
+	elseif (isset($_SESSION['ban']['cannot_login']) && we::$is_member)
 	{
 		// We don't wanna see you!
 		wesql::query('
@@ -1204,7 +1204,7 @@ function showEmailAddress($userProfile_hideEmail, $userProfile_id)
 {
 	global $settings;
 
-	return we::$is_guest || isset($_SESSION['ban']['cannot_post']) ? 'no' : ((!we::$is_guest && we::$id == $userProfile_id && !$userProfile_hideEmail) || allowedTo('moderate_forum') ? 'yes_permission_override' : ($userProfile_hideEmail ? 'no' : 'no_through_forum'));
+	return we::$is_guest || isset($_SESSION['ban']['cannot_post']) ? 'no' : ((we::$is_member && we::$id == $userProfile_id && !$userProfile_hideEmail) || allowedTo('moderate_forum') ? 'yes_permission_override' : ($userProfile_hideEmail ? 'no' : 'no_through_forum'));
 }
 
 /**

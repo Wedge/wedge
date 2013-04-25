@@ -146,7 +146,7 @@ function Welcome()
 		);
 
 		$thought =& $thoughts[$row['id_thought']];
-		$thought['text'] = '<span class="thought" id="thought' . $id . '" data-oid="' . $id . '" data-prv="' . $thought['privacy'] . '"' . (!we::$is_guest ? ' data-tid="' . $id . '"' . ($mid && $mid != $id ? ' data-mid="' . $mid . '"' : '') : '') . ($is_touch ? ' onclick="return true;"' : '') . '><span>' . $thought['text'] . '</span></span>';
+		$thought['text'] = '<span class="thought" id="thought' . $id . '" data-oid="' . $id . '" data-prv="' . $thought['privacy'] . '"' . (we::$is_member ? ' data-tid="' . $id . '"' . ($mid && $mid != $id ? ' data-mid="' . $mid . '"' : '') : '') . ($is_touch ? ' onclick="return true;"' : '') . '><span>' . $thought['text'] . '</span></span>';
 
 		if (!empty($row['id_parent_owner']))
 		{

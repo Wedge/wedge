@@ -33,7 +33,7 @@ function Login2()
 	// Load cookie authentication stuff and subsidiary login stuff.
 	loadSource(array('Subs-Auth', 'Subs-Login'));
 
-	if (isset($_GET['sa']) && $_GET['sa'] == 'salt' && !we::$is_guest)
+	if (isset($_GET['sa']) && $_GET['sa'] == 'salt' && we::$is_member)
 	{
 		if (isset($_COOKIE[$cookiename]) && preg_match('~^a:[34]:\{i:0;(i:\d{1,6}|s:[1-8]:"\d{1,8}");i:1;s:(0|40):"([a-fA-F0-9]{40})?";i:2;[id]:\d{1,14};(i:3;i:\d;)?\}$~', $_COOKIE[$cookiename]) === 1)
 			list (,, $timeout) = @unserialize($_COOKIE[$cookiename]);
@@ -70,7 +70,7 @@ function Login2()
 	}
 
 	// Beyond this point you are assumed to be a guest trying to login.
-	if (!we::$is_guest)
+	if (we::$is_member)
 		redirectexit();
 
 	// Are you guessing with a script that doesn't keep the session id?

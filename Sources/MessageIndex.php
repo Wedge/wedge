@@ -111,7 +111,7 @@ function MessageIndex()
 	}
 
 	// Mark current and parent boards as seen.
-	if (!we::$is_guest)
+	if (we::$is_member)
 	{
 		// We can't know they read it if we allow prefetches.
 		preventPrefetch();
@@ -185,7 +185,7 @@ function MessageIndex()
 	$context['page_title'] = strip_tags($board_info['name']);
 
 	// Set the variables up for the template.
-	$context['can_mark_notify'] = allowedTo('mark_notify') && !we::$is_guest;
+	$context['can_mark_notify'] = allowedTo('mark_notify') && we::$is_member;
 	$context['can_post_new'] = allowedTo('post_new') || ($settings['postmod_active'] && allowedTo('post_unapproved_topics'));
 	$context['can_post_poll'] = allowedTo('poll_post') && $context['can_post_new'];
 	$context['can_moderate_forum'] = allowedTo('moderate_forum');
@@ -523,7 +523,7 @@ function MessageIndex()
 		if ($fake_ascending)
 			$context['topics'] = array_reverse($context['topics'], true);
 
-		if (!empty($settings['enableParticipation']) && !we::$is_guest && !empty($topic_ids))
+		if (!empty($settings['enableParticipation']) && we::$is_member && !empty($topic_ids))
 		{
 			$result = wesql::query('
 				SELECT id_topic
@@ -578,7 +578,7 @@ function MessageIndex()
 			$context['can_remove'] |= ($started && allowedTo('remove_own'));
 		}
 
-		$context['can_markread'] = !we::$is_guest;
+		$context['can_markread'] = we::$is_member;
 		foreach (array('remove', 'lock', 'pin', 'move', 'merge', 'restore', 'approve', 'markread') as $qmod)
 			if (!empty($context['can_' . $qmod]))
 				$quickmod[$qmod] = $txt['quick_mod_' . $qmod];
@@ -618,7 +618,7 @@ function MessageIndex()
 		wetem::add('sidebar', 'messageindex_legend');
 
 	// They can only mark read if they are logged in!
-	$context['can_mark_read'] = !we::$is_guest;
+	$context['can_mark_read'] = we::$is_member;
 	$context['can_order_pinned'] = allowedTo('pin_topic');
 	if ($context['can_order_pinned'])
 	{

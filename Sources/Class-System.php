@@ -15,7 +15,8 @@ class we
 {
 	static $ua, $browser;			// User agent string (we::$ua) and subsequent browser array.
 	static $user, $id;				// All user information, plus their ID
-	static $is_admin, $is_guest;	// we::$is_admin/$is_guest -- or use the slower we::is('admin')/is('guest')
+	static $is_admin;				// we::$is_admin -- or use the slower we::is('admin')
+	static $is_guest, $is_member;	// we::$is_guest/we::$is_member -- or use the slower is('guest')/is('member')
 	static $cache;					// Cache of parsed strings
 
 	// What kind of class are you, anyway? One of a kind!
@@ -54,7 +55,7 @@ class we
 	 */
 	protected static function init_user()
 	{
-		global $context, $settings, $user_settings, $cookiename, $db_prefix, $boardurl, $board, $txt;
+		global $context, $settings, $user_settings, $cookiename, $db_prefix, $boardurl, $board;
 
 		$id_member = 0;
 
@@ -251,7 +252,7 @@ class we
 		// Set up the we::$user array.
 		$user += array(
 			'username' => $username,
-			'name' => $id_member == 0 ? (!empty($txt['guest_title']) ? $txt['guest_title'] : 'Guest') : (isset($user_settings['real_name']) ? $user_settings['real_name'] : ''),
+			'name' => $id_member == 0 ? '' : (isset($user_settings['real_name']) ? $user_settings['real_name'] : ''),
 			'email' => isset($user_settings['email_address']) ? $user_settings['email_address'] : '',
 			'activated' => !empty($user_settings['is_activated']) ? $user_settings['is_activated'] : 0,
 			'passwd' => isset($user_settings['passwd']) ? $user_settings['passwd'] : '',
@@ -271,6 +272,7 @@ class we
 			'time_format' => empty($user_settings['time_format']) ? '' : $user_settings['time_format'],
 			'time_offset' => isset($offset) ? $offset : (empty($user_settings['time_offset']) ? 0 : $user_settings['time_offset']),
 			'avatar' => array(
+				'href' => '',
 				'url' => isset($user_settings['avatar']) ? $user_settings['avatar'] : '',
 				'filename' => empty($user_settings['filename']) ? '' : $user_settings['filename'],
 				'custom_dir' => !empty($user_settings['attachment_type']) && $user_settings['attachment_type'] == 1,
@@ -451,6 +453,7 @@ class we
 		self::$user =& $user;
 		self::$is_admin =& $user['is_admin'];
 		self::$is_guest =& $user['is_guest'];
+		self::$is_member =& $user['is_member'];
 	}
 
 	/**

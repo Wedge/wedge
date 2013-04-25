@@ -140,7 +140,7 @@ function sendmail($to, $subject, $message, $from = null, $message_id = null, $se
 	$mail_result = true;
 
 	// If the recipient list isn't an array, make it one.
-	$to_array = is_array($to) ? $to : array($to);
+	$to_array = (array) $to;
 
 	// Once upon a time, Hotmail could not interpret non-ASCII mails.
 	// In honour of those days, it's still called the 'hotmail fix'.
@@ -371,7 +371,7 @@ function AddMailQueue($flush = false, $to_array = array(), $subject = '', $messa
 		}
 
 		// Now add the current insert to the array...
-		$cur_insert[] = array(time(), (string) $to, (string) $message, (string) $subject, (string) $headers, ($send_html ? 1 : 0), $priority, (int) $is_private);
+		$cur_insert[] = array(time(), (string) $to, (string) $message, (string) $subject, (string) $headers, $send_html ? 1 : 0, $priority, (int) $is_private);
 		$cur_insert_len += $this_insert_len;
 	}
 
@@ -1350,7 +1350,7 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 	}
 
 	// Mark inserted topic as read (only for the user calling this function).
-	if (!empty($topicOptions['mark_as_read']) && !we::$is_guest)
+	if (!empty($topicOptions['mark_as_read']) && we::$is_member)
 	{
 		// Since it's likely they *read* it before replying, let's try an UPDATE first.
 		if (!$new_topic)
@@ -1850,7 +1850,7 @@ function modifyPost(&$msgOptions, &$topicOptions, &$posterOptions)
 	);
 
 	// Mark the edited post as read.
-	if (!empty($topicOptions['mark_as_read']) && !we::$is_guest)
+	if (!empty($topicOptions['mark_as_read']) && we::$is_member)
 	{
 		// Since it's likely they *read* it before editing, let's try an UPDATE first.
 		wesql::query('
@@ -2745,12 +2745,8 @@ function saveDraft($is_pm, $id_context = 0)
 
 function draftXmlReturn($draft, $is_pm)
 {
-	global $txt, $scripturl;
-
-	header('Content-Type: text/xml; charset=UTF-8');
-	echo '<', '?xml version="1.0" encoding="UTF-8"?', '>
-<draft id="', $draft, '" url="', $scripturl, $is_pm ? '?action=pm;sa=showdrafts;delete=%id%' : '?action=profile;area=showdrafts;delete=%id%', '"><![CD', 'ATA[', $txt['last_saved_on'], ': ', timeformat(time()), ']', ']></draft>';
+	global $txt;
 
 	// We send the otherwise fully completed URL back through the buffer, just in case Pretty URLs would reformat it for us.
-	obExit(false);
+	return_xml('<draft id="', $draft, '" url="<URL>', $is_pm ? '?action=pm;sa=showdrafts;delete=%id%' : '?action=profile;area=showdrafts;delete=%id%', '"><![CD', 'ATA[', $txt['last_saved_on'], ': ', timeformat(time()), ']', ']></draft>');
 }

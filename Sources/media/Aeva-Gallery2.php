@@ -366,7 +366,7 @@ function aeva_unseen()
 	list ($total_items) = wesql::fetch_row($request);
 	wesql::free_result($request);
 
-	if (empty($total_items) && !we::$is_guest)
+	if (empty($total_items) && we::$is_member)
 	{
 		// Quick test to see if we should optimize the log_media table...
 		$request = wesql::query('

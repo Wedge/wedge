@@ -257,7 +257,7 @@ function Feed()
 	$cache_t = microtime(true);
 
 	// Get the associative array representing the xml.
-	if (!empty($settings['cache_enable']) && (!we::$is_guest || $settings['cache_enable'] >= 3))
+	if (!empty($settings['cache_enable']) && (we::$is_member || $settings['cache_enable'] >= 3))
 		$xml = cache_get_data('xmlfeed-' . $xml_format . ':' . (we::$is_guest ? '' : we::$id . '-') . $cachekey, 240);
 	if (empty($xml))
 	{
@@ -273,7 +273,7 @@ function Feed()
 		$xml = $subActions[$_GET['sa']]($xml_format);
 
 		if (!empty($settings['cache_enable']) && ((we::$is_guest && $settings['cache_enable'] >= 3)
-		|| (!we::$is_guest && microtime(true) - $cache_t > 0.2)))
+		|| (we::$is_member && microtime(true) - $cache_t > 0.2)))
 			cache_put_data('xmlfeed-' . $xml_format . ':' . (we::$is_guest ? '' : we::$id . '-') . $cachekey, $xml, 240);
 	}
 

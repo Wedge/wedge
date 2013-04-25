@@ -484,7 +484,8 @@ class wess_if extends wess
 		}
 
 		// @is (condition, if_true[, if_false])
-		// (This has got to be one of my most amusing regexes...)
+		// !! Note: this has got to be one of my most amusing regexes... But still, it doesn't always
+		// correctly handle brackets. Add quotes around them if you run into any, err, problems. Lazy me.
 		$pass_this = 0;
 		$strex = '\s*+("(?:[^"@]|@(?!is\h*\())*"|\'(?:[^\'@]|@(?!is\h*\())*\'|(?:[^\'",@]|@(?!is\h*\())(?:[^,@]|@(?!is\h*\())*)\s*+';
 		while (preg_match_all('~@is\h*\(' . $strex . ',' . $strex . '(?:,' . str_replace(',', ')', $strex) . ')?\)~i', $css, $matches) > $pass_this)
@@ -557,7 +558,7 @@ class wess_if extends wess
 					}
 
 					// Browser constant test.
-					if (empty($match) || we::is($match) || ($match == 'guest' && we::$is_guest) || ($match == 'member' && !we::$is_guest))
+					if (empty($match) || we::is($match))
 						break;
 
 					// Very, very basic variable test. Please bear with me...
