@@ -39,7 +39,7 @@ function template_main()
 						</noscript>
 					</div>
 				</div>
-				<table class="table_grid cs0">
+				<table class="table_grid cs0 onlineinfo">
 					<thead>
 						<tr class="catbg left">
 							<th scope="col" class="first_th" style="width: 40%"><a href="<URL>?action=who;start=', $context['start'], ';show=', $context['show_by'], ';sort=user', $context['sort_direction'] != 'down' && $context['sort_by'] == 'user' ? '' : ';asc', '" rel="nofollow">', $txt['who_user'], ' ', $context['sort_by'] == 'user' ? '<span class="sort_' . $context['sort_direction'] . '"></span>' : '', '</a></th>
@@ -68,7 +68,7 @@ function template_main()
 
 		echo '
 								<span class="member">
-									', $member['is_guest'] ? $member['name'] : ($member['is_hidden'] ? '<em>' : '') . '<a href="' . $member['href'] . '" title="' . $txt['view_profile'] . '">' . $member['name'] . '</a>' . ($member['is_hidden'] ? '</em>' : ''), '
+									', $member['is_guest'] ? $member['name'] : '<a href="' . $member['href'] . '" title="' . $txt['view_profile'] . '">' . $member['name'] . '</a>' . ($member['is_hidden'] ? ' <span class="notonline" title="' . $txt['hidden'] . '"></span>' : ''), '
 								</span>';
 
 		if (!empty($member['ip']))

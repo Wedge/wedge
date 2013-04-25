@@ -727,6 +727,8 @@ function BanListSettings($return_config = false)
 
 	loadSource('ManageServer');
 
+	$context['page_title'] = $context['settings_title'] = $txt['ban_settings'];
+
 	// These will be defined in ManageBans.language.php. But even if we came here via admin search, that will be loaded.
 	$config_vars = array(
 		array('percent', 'softban_blankpage', 'subtext' => $txt['softban_percent_subtext']),
@@ -771,7 +773,6 @@ function BanListSettings($return_config = false)
 	}
 
 	$context['post_url'] = '<URL>?action=admin;area=ban;sa=settings;save';
-	$context['settings_title'] = $txt['ban_settings'];
 	wetem::load('show_settings');
 	prepareDBSettingContext($config_vars);
 }
@@ -940,7 +941,7 @@ function updateBannedMembers()
 
 	// No more caching this ban!
 	updateSettings(array('banLastUpdated' => time()));
-	foreach (array('bans_id_member', 'bans_email', 'bans_ip', 'bans_hostname') as $cache)
+	foreach (array('bans_id_member', 'bans_email', 'bans_ip', 'bans_hostname', 'member-groups') as $cache)
 		cache_put_data($cache, null);
 
 	updateStats('member');

@@ -135,7 +135,7 @@ $action_list = array(
 );
 // If an action should not influence the who's online list, please add it here. (Hookable as global)
 $action_no_log = array(
-	'ajax', 'dlattach', 'feed', 'jseditor', 'jsoption', 'notification', 'verificationcode', 'viewquery', 'viewremote',
+	'ajax', 'dlattach', 'feed', 'jseditor', 'jsoption', 'like', 'notification', 'verificationcode', 'viewquery', 'viewremote',
 );
 
 if (empty($settings['pm_enabled']))

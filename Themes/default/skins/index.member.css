@@ -65,6 +65,35 @@
 		text-decoration: underline
 		cursor: pointer
 
+/* Styles for warning icons. This won't be a big deal
+for guests, because most of the time it won't be an option.
+------------------------------------------------- */
+
+.warn_hard_ban,
+.warn_mute
+	color: red
+
+.warn_warned
+	color: green
+
+.warn_hard_ban,
+.warn_soft_ban,
+.warn_mute,
+.warn_moderate,
+.warn_warned
+	color: orange
+	.icon mixes .inline-block
+		width, height: 16px
+		background: url($images/warning_moderate.gif) no-repeat
+
+.warn_hard_ban
+	.icon
+		background-image: url($images/warning_ban.gif)
+
+.warn_warned
+	.icon
+		background-image: url($images/warning_watch.gif)
+
 /* Styles for the personal messages section.
 ------------------------------------------------- */
 

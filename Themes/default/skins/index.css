@@ -1389,19 +1389,12 @@ tr.titlebg
 	.windowbg2&
 		background: #d8e1e7
 
-// Post error notices, general alert notices, and mute/ban warnings
+// Post error notices, general alert notices
 .error,
-.alert,
-.warn_mute,
-.warn_hard_ban
+.alert
 	color: red
 
-.warn_moderate,
-.warn_soft_ban
-	color: orange
-
-.success,
-.warn_warned
+.success
 	color: green
 
 a.moderation_link

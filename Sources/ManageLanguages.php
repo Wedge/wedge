@@ -1043,7 +1043,22 @@ function ModifyLanguageEntries()
 	}
 	else
 	{
-		// !!! We don't know how to handle plugins yet :(
+		$request = wesql::query('
+			SELECT lang_var, lang_key, lang_string, serial
+			FROM {db_prefix}language_changes
+			WHERE id_theme = {int:id_theme}
+				AND id_lang = {string:lang}
+				AND lang_file = {string:lang_file}',
+			array(
+				'id_theme' => 0,
+				'lang' => $context['lang_id'],
+				'lang_file' => md5($context['selected_file']['source_id'] . ':' . $context['selected_file']['lang_id']),
+			)
+		);
+		while ($row = wesql::fetch_assoc($request))
+			if ($row['lang_var'] == 'txt' || $row['lang_var'] == 'helptxt')
+				$context['entries'][$row['lang_var'] . '_' . $row['lang_key']]['current'] = $row['serial'] ? @unserialize($row['lang_string']) : $row['lang_string'];
+		wesql::free_result($request);
 	}
 
 	// There are certain entries we do not allow touching from here. Declared once, but restricted on both loading and saving.
@@ -1076,32 +1091,60 @@ function ModifyLanguageEntries()
 						'lang_key' => $actual_key,
 					)
 				);
-
-				// Figure out what we're flushing. We don't need to do the *entire* cache, but we do need to do anything that could
-				// have been affected by this file. There are some awesome potential cross-contamination possibilities, so be safe.
-				foreach (glob($cachedir . '/lang_*_*_' . $context['selected_file']['lang_id'] . '.php') as $filename)
-					@unlink($filename);
-
-				// Sorry in advance. This is not a fun process.
-				clean_cache('js');
-
-				// OK, so we've removed this one, we can clear the current entry of it then let it fall back to original procedure.
-				unset ($context['entries'][$_GET['eid']]['current']);
-				wetem::load('modify_entries');
-				return;
+				$glob = 'lang_*_*_' . $context['selected_file']['lang_id'] . '.php';
 			}
 			else
 			{
-				// !!! We still don't know how to handle plugins yet! :'(
+				list ($lang_var, $actual_key) = explode('_', $_GET['eid'], 2);
+				$file_key = md5($context['selected_file']['source_id'] . ':' . $context['selected_file']['lang_id']);
+				$request = wesql::query('
+					DELETE FROM {db_prefix}language_changes
+					WHERE id_theme = {int:id_theme}
+						AND id_lang = {string:lang}
+						AND lang_file = {string:lang_file}
+						AND lang_var = {string:lang_var}
+						AND lang_key = {string:lang_key}',
+					array(
+						'id_theme' => 0,
+						'lang' => $context['lang_id'],
+						'lang_file' => $file_key,
+						'lang_var' => $lang_var,
+						'lang_key' => $actual_key,
+					)
+				);
+				$glob = 'lang_*_' . $file_key . '.php';
 			}
+
+			// Figure out what we're flushing. We don't need to do the *entire* cache, but we do need to do anything that could
+			// have been affected by this file. There are some awesome potential cross-contamination possibilities, so be safe.
+			foreach (glob($cachedir . '/' . $glob) as $filename)
+				@unlink($filename);
+
+			// Sorry in advance. This is not a fun process.
+			clean_cache('js');
+
+			// OK, so we've removed this one, we can clear the current entry of it then let it fall back to original procedure.
+			unset ($context['entries'][$_GET['eid']]['current']);
+			wetem::load('modify_entries');
+			return;
 		}
 		elseif (isset($_POST['save']))
 		{
 			checkSession();
 
-			$id_theme = (int) $context['selected_file']['source_id'];
+			// Dealing with plugins?
+			if (isset($context['plugins_dir'][$context['selected_file']['source_id']]))
+			{
+				$id_theme = 0;
+				$lang_file = md5($context['selected_file']['source_id'] . ':' . $context['selected_file']['lang_id']);
+			}
+			else
+			{
+				$id_theme = (int) $context['selected_file']['source_id'];
+				$lang_file = $context['selected_file']['lang_id'];
+			}
+
 			$id_lang = $context['lang_id'];
-			$lang_file = $context['selected_file']['lang_id'];
 			list ($lang_var, $lang_key) = explode('_', $_GET['eid'], 2);
 
 			if (!empty($_POST['entry']))
@@ -1141,7 +1184,12 @@ function ModifyLanguageEntries()
 			);
 
 			// Figure out what we're flushing. We don't need to do the *entire* cache, but we do need to do anything that could have been affected by this file. There are some awesome potential cross-contamination possibilities, so be safe.
-			foreach (glob($cachedir . '/lang_*_*_' . $context['selected_file']['lang_id'] . '.php') as $filename)
+			if ($id_theme == 0) // Plugins.
+				$glob = 'lang_*_' . $lang_file . '.php';
+			else
+				$glob = 'lang_*_*_' . $context['selected_file']['lang_id'] . '.php';
+
+			foreach (glob($cachedir . '/' . $glob) as $filename)
 				@unlink($filename);
 
 			// Sorry in advance. This is not a fun process.

@@ -295,6 +295,15 @@ class we
 			'sanctions' => !empty($user_settings['data']['sanctions']) ? $user_settings['data']['sanctions'] : array(),
 		);
 
+		// Some clean-up.
+		if ($user['is_admin'])
+			$user['sanctions'] = array();
+		else
+			if (!empty($user['sanctions']))
+				foreach ($user['sanctions'] as $infraction => $expiry)
+					if ($expiry != 1 && $expiry < time())
+						unset ($user['sanctions'][$infraction]);
+
 		// Some more data for we::is test flexibility...
 		if (!empty($board_info))
 		{
