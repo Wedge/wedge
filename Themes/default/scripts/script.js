@@ -423,25 +423,24 @@ $.fn.mm = function ()
 	menu_show_me = function ()
 	{
 		var
-			hasul = $('ul', this)[0], style = hasul ? hasul.style : {}, is_visible = style.visibility == 'visible',
-			id = this.id, parent = this.parentNode, is_top = parent.className == 'menu', d = document.dir, w = parent.clientWidth;
+			is_top = $(this).parent().hasClass('menu'),
+			is_visible = $('>ul', this).css('visibility') == 'visible';
 
-		if (hasul)
-		{
-			style.visibility = 'visible';
-			style.opacity = 1;
-			style[d && d == 'rtl' ? 'marginRight' : 'marginLeft'] = (is_top ? $('span', this).width() || 0 : w - 5) + 'px';
-		}
+		$('>ul', this).css({
+			visibility: 'visible',
+			opacity: 1,
+			margin: is_top ? '0 ' + $('span', this).width() + 'px' : 0
+		});
 
-		if (!is_top || !$('h4', this).first().addClass('hove').length)
+		if (!is_top || !$('>h4', this).addClass('hove').length)
 			$(this).addClass('hove').parentsUntil('.menu>li').filter('li').addClass('hove');
 
 		if (!is_visible)
-			$('ul', this).first()
-				.css(is_top ? { marginTop: is_ie6 || is_ie7 ? 12 : 39 } : { marginLeft: w })
-				.animate(is_top ? { marginTop: is_ie6 || is_ie7 ? 6 : 33 } : { marginLeft: w - 5 });
+			$('>ul', this)
+				.css(is_top ? { marginTop: 5 } : { marginLeft: 0 })
+				.animate(is_top ? { marginTop: 0 } : { marginLeft: -5 });
 
-		clearTimeout(menu_delay[id.slice(2)]);
+		clearTimeout(menu_delay[this.id.slice(2)]);
 
 		$(this).siblings('li').each(function () { menu_hide_children(this.id); });
 	},

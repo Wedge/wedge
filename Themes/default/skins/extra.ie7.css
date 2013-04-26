@@ -123,20 +123,6 @@ li.sep
 	width: 20%
 	padding-right: 0
 
-.actions
-	display: block
-	width: 40%
-	float: right
-
-// IE7 totally screws up the menus without all of these together.
-.mimenu ul
-	float: none
-	width: auto
-	li
-		display: block !important
-		a
-			float: none !important
-			text-align: right
 
 /* Misc hacks
 ------------------------------------------------------- */
@@ -157,15 +143,6 @@ input[type=submit]
 
 input.search
 	height: auto
-
-// Old IEs reset background-position to 0 if you provide them with multiples values :-/
-input.submit
-	background-position: 4px center
-input.cancel
-	background-position: 0 100px
-
-#thought_form input[type=submit]
-	background-position: -99px -99px
 
 // Without this, the clear: both on dt will fail.
 dl.settings dd

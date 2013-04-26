@@ -188,7 +188,7 @@ a, #linktree a
 ------------------------------------------------------- */
 
 #main_menu
-	margin: 0 16px
+	margin: 0 16px -10px
 	h4:hover, h4.hove
 		background-color: transparent
 		color: #000
@@ -227,9 +227,6 @@ a, #linktree a
 
 $window_bg = #eeeeea
 $window_bg2 = #e8ebee
-
-.windowbg3
-	background-color: #cacdd3
 
 /* Styles for section headers.
 ------------------------------------------------------- */
@@ -324,11 +321,6 @@ tr.titlebg
 dfn
 	line-height: 140%
 
-@if member
-	#modbuttons a
-		background-position: 6px 7px
-@endif
-
 /* These are our CSS variable and mixin definitions.
 ------------------------------------------------------- */
 
@@ -339,6 +331,9 @@ $post_font = $main_font
 $post_font_size = 10.5pt/140%
 $board_col = #d97b33
 $radius = 20px
+
+@remove #footer, #header, #navi
+	color: #ddc
 
 // Reset the sidebar position from left, to right.
 @remove #edge, #sidebar, #main

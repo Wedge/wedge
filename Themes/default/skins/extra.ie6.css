@@ -1,18 +1,12 @@
 
+/* We hate you, IE6. You and your bastard child IE7. Go to hell. */
+
 /* The dropdown menus
 ------------------------------------------------------- */
 .menu
 	width: 100%
 	a:hover
 		text-decoration: none
-
-	li
-		margin, padding: 0
-		list-style: none
-		cursor: pointer
-		height: auto
-		float: left
-		display: block
 
 	/*	Sort of a hasLayout fix for IE6... Without it, we get an horizontal frame below any menu entry
 		that has a submenu itself. If you have a better fix, please share. Curse you, IE6! */
@@ -57,7 +51,7 @@ li.sep
 
 // The page section
 .pagesection
-	overflow: auto
+	overflow: hidden
 	clear: both
 
 #top_section
@@ -281,10 +275,10 @@ table.table_grid, table.cs0, table.cs1
 	display: block
 	margin: 0
 
-.ie_button
+.ie_button extends input[type=submit]
 	overflow: visible
 
-// IE6 ignores .ie_check if declared alongside input[type=*]... .ie_button doesn't. Screw IE6.
+// IE6 ignores .ie_check if extended from input[type=*]... .ie_button doesn't. Screw IE6.
 .ie_check
 	mixin: checkbox-styling
 
@@ -295,15 +289,6 @@ input.submit, input.delete, input.save, input.new
 
 input.search
 	height: auto
-
-// Old IEs reset background-position to 0 if you provide them with multiples values :-/
-input.submit
-	background-position: 4px center
-input.cancel
-	background-position: 0 100px
-
-#thought_form input.save
-	background-position: -99px -99px
 
 // And it doesn't support opacity.
 .boardstate_off
@@ -341,9 +326,7 @@ ul.stats
 	width: auto
 	li
 		display: block
-		width: 120px
-		a
-			text-align: right
+		width: auto
 
 // Fix IE6's tendency to enlarge select boxes to full width. Tss.
 .sbox

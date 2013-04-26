@@ -42,7 +42,12 @@ table.cs0 final tr.windowbg:last-child td
 		direction: rtl
 */
 
+@replace #content div.frame
+	padding: 0 30px
+	padding: 0 10px
+
 #edge
+	padding-top: 16px
 	direction: rtl
 
 #sidebar, #main
@@ -95,7 +100,7 @@ table.cs0 final tr.windowbg:last-child td
 	@endif
 
 #linktree
-	margin: 0 -20px
+	margin: 0 -10px
 
 #linktree_bt
 	padding-top: 1em
@@ -173,7 +178,6 @@ section.block header, .wehead
 // .cat, .title, .title2 and .posthead are closely related... Inheritance fiesta!
 .catbase extends .grad40
 	border-radius: 5px
-	font: 700 140%/20px $head_font
 	img
 		vertical-align: -3px
 
@@ -199,7 +203,7 @@ section.block header, .wehead
 	font-size: 1.2em
 
 .cat final
-	font: 700 1.2em/1.2em $head_font
+	font: 400 1.2em/1.2em $head_font
 
 .title final
 	font: 400 1em $main_font
@@ -208,18 +212,6 @@ section.block header, .wehead
 /*
 	This is where all styling related to a specific page or area is put.
 /*
-
-/* Styles for the board index.
-------------------------------------------------- */
-
-// The board title!
-.board_list
-	td.info a.subject
-		font: 700 120% $head_font
-
-// This is a fix for topic list backgrounds.
-.topic_table .subject
-	background-size: auto
 
 /* Styles for the info center on the board index.
 ---------------------------------------------------- */
@@ -310,7 +302,7 @@ ul.buttonlist
 // The basic user info on the left
 #basicinfo
 	h4
-		font: 700 120%/105% $head_font
+		font: 400 120%/105% $head_font
 
 /* More icons.
 ------------------------------------------------- */
@@ -335,6 +327,8 @@ ul.buttonlist
 			#wedge
 				border-radius: 0
 		@endif
+		#edge
+			padding-top: 0
 		#sidebar
 			display: block
 			width: auto
@@ -368,3 +362,6 @@ ul.buttonlist
 @replace
 	letter-spacing: -3px
 	letter-spacing: -1px
+
+$head_font_style = 400
+$head_font_size = 140%/20px
