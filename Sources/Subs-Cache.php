@@ -709,6 +709,32 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 		$final
 	);
 
+	// Group as many matches as we can, into a :matches() selector. This is new in CSS4 and implemented
+	// in WebKit and Firefox as of this writing. Because I couldn't find a clean source indicating when
+	// support was added, I'll stick to MDN's list, and use :any until :matches is officialized.
+	$selector = '([abipqsu]|[!+>&#*@:.a-z0-9][^{};,\n"()\~+> ]+?)'; // like $selector_regex, but lazy (+?) and without compounds (\~+> ).
+	if (we::is('chrome[12-],firefox[4-],safari[5.2-]') && preg_match_all('~(?:^|})' . $selector . '([>+: ][^,{]+)(?:,' . $selector . '\2)+(?={)~', $final, $matches, PREG_SET_ORDER))
+	{
+		$magic = we::$browser['is_webkit'] ? ':-webkit-any' : ':-moz-any';
+		foreach ($matches as $m)
+		{
+			// The spec says pseudo-elements aren't allowed INSIDE :matches, but
+			// it seems that implementations seem to also refuse them NEXT to :matches.
+			if (strpos($m[0], ':') !== false && (strpos($m[0], ':before') !== false || strpos($m[0], ':after') !== false ||
+				strpos($m[0], ':first-letter') !== false || strpos($m[0], ':first-line') !== false || strpos($m[0], ':selection') !== false))
+				continue;
+			$final = str_replace(
+				$m[0],
+				($m[0][0] === '}' ? '}' : '') . $magic . '(' . str_replace(
+					array($m[2] . ',', $m[2] . '{', '}'),
+					array(',', '', ''),
+					$m[0] . '{'
+				) . ')' . $m[2],
+				$final
+			);
+		}
+	}
+
 	// Restore comments as requested.
 	if (!empty($comments))
 		wedge_replace_placeholders('.wedge_comment_placeholder{border:0}', $comments[0], $final);
