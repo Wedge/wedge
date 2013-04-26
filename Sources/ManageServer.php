@@ -715,7 +715,9 @@ function prepareDBSettingContext(&$config_vars)
 {
 	global $txt, $helptxt, $context, $settings;
 
+	// Load the help items, plus any from plugins for (?) icons.
 	loadLanguage('Help');
+	call_lang_hook('lang_help');
 
 	$context['config_vars'] = array();
 	$inlinePermissions = array();

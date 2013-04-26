@@ -977,6 +977,8 @@ function GeneralPermissionSettings($return_config = false)
 {
 	global $context, $settings, $txt;
 
+	$context['page_title'] = $txt['permission_settings_title'];
+
 	// All the setting variables
 	$config_vars = array(
 		array('title', 'settings'),
@@ -984,14 +986,13 @@ function GeneralPermissionSettings($return_config = false)
 			array('permissions', 'manage_permissions', 'exclude' => array(-1, 0)), // Don't let guests have these permissions.
 		'',
 			// A few useful settings
-			array('check', 'permission_enable_deny', 0, $txt['permission_settings_enable_deny'], 'help' => 'permissions_deny'),
-			array('check', 'permission_enable_postgroups', 0, $txt['permission_settings_enable_postgroups'], 'help' => 'permissions_postgroups'),
+			array('check', 'permission_enable_deny', 'text_label' => $txt['permission_settings_enable_deny'], 'help' => 'permissions_deny'),
+			array('check', 'permission_enable_postgroups', 'text_label' => $txt['permission_settings_enable_postgroups'], 'help' => 'permissions_postgroups'),
 	);
 
 	if ($return_config)
 		return $config_vars;
 
-	$context['page_title'] = $txt['permission_settings_title'];
 	wetem::load('show_settings');
 
 	// Needed for the inline permission functions, and the settings template.

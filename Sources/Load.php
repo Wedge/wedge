@@ -1770,11 +1770,16 @@ function loadPluginTemplate($plugin_name, $template_name, $fatal = true)
 
 function loadPluginLanguage($plugin_name, $template_name, $lang = '', $fatal = true, $force_reload = false)
 {
-	global $context, $settings, $txt, $db_show_debug;
+	global $context, $settings, $txt, $helptxt, $db_show_debug, $cachedir;
 	static $already_loaded = array();
 
 	if (empty($context['plugins_dir'][$plugin_name]))
 		return;
+
+	if (empty($txt))
+		$txt = array();
+	if (empty($helptxt))
+		$helptxt = array();
 
 	// Default to the user's language.
 	if ($lang == '')
@@ -1783,32 +1788,102 @@ function loadPluginLanguage($plugin_name, $template_name, $lang = '', $fatal = t
 	if (!$force_reload && isset($already_loaded[$template_name]) && $already_loaded[$template_name] == $lang)
 		return $lang;
 
-	$attempts = array();
-	// If true, pass through to the next language attempt even if it's a match. But if it's not English, see about loading that *first*.
-	if (empty($settings['disable_language_fallback']) && $lang !== 'english')
-		$attempts['english'] = true;
-
-	// Then go with user preference, followed by forum default (assuming it isn't already one of the previous)
-	$attempts[$lang] = false;
-	if ($settings['language'] !== 'english')
-		$attempts[$settings['language']] = false;
-
-	$found = false;
-	foreach ($attempts as $load_lang => $continue)
+	$file_key = md5($plugin_name . ':' . $template_name);
+	// Try to get from cache. If successful, clean up and return.
+	$filename = $cachedir . '/lang_' . $lang . '_' . $file_key . '.php';
+	if (file_exists($filename))
 	{
-		$file = $context['plugins_dir'][$plugin_name] . '/' . $template_name . '.' . $load_lang . '.php';
-		if (file_exists($file))
+		@include($filename);
+		if (!empty($val))
 		{
-			template_include($file);
+			$val = @unserialize($val);
+			foreach ($val as $file => $content)
+				if (isset($$file))
+					$$file = array_merge($$file, $content);
+
+			$context['debug']['language_files'][] = $template_name . '.' . $lang . ' (' . $plugin_name . ', cached)'; // !!! Yes, I know.
+			$already_loaded[$plugin_name . ':' . $template_name] = $lang;
+
+			return $lang;
+		}
+	}
+
+	// OK, so we didn't get a cache. Start by dumping the regular contents.
+	$oldhelptxt = $helptxt;
+	$oldtxt = $txt;
+	$txt = array();
+	$helptxt = array();
+
+	$attempts = array('english');
+	if ($lang != 'english')
+		$attempts[] = $lang;
+
+	// We don't want to go berserk if there is only a fallback, but we do if there isn't anything we can load.
+	// This is also much simpler than main language loading because there's only actually one place to look.
+	$found = false;
+	foreach ($attempts as $load_lang)
+	{
+		if (file_exists($context['plugins_dir'][$plugin_name] . '/' . $template_name . '.' . $load_lang . '.php'))
+		{
+			template_include($context['plugins_dir'][$plugin_name] . '/' . $template_name . '.' . $load_lang . '.php');
 			$found = true;
 		}
-		if ($found && !$continue)
-			break;
 	}
 
 	// Oops, didn't find it. Log it.
 	if (!$found)
+	{
+		// And put back the old entries.
+		if (isset($txt))
+		{
+			$txt = !empty($txt) ? array_merge($oldtxt, $txt) : $oldtxt;
+			$helptxt = !empty($helptxt) ? array_merge($oldhelptxt, $helptxt) : $oldhelptxt;
+		}
 		log_error(sprintf($txt['theme_language_error'], '(' . $plugin_name . ') ' . $template_name . '.' . $lang, 'template'));
+	}
+	// We did find it. 
+	else
+	{
+		// Now let's get anything from the database.
+		$request = wesql::query('
+			SELECT lang_var, lang_key, lang_string, serial
+			FROM {db_prefix}language_changes
+			WHERE id_theme = {int:theme}
+				AND id_lang = {string:lang}
+				AND lang_file = {string:lang_file}',
+			array(
+				'theme' => 0, // Plugins always have that.
+				'lang' => $lang,
+				'lang_file' => $file_key,
+			)
+		);
+		$additions = array('txt' => array(), 'helptxt' => array());
+		while ($row = wesql::fetch_assoc($request))
+		{
+			if ($row['lang_var'] == 'txt')
+				$txt[$row['lang_key']] = !empty($row['serial']) ? @unserialize($row['lang_string']) : $row['lang_string'];
+			elseif ($row['lang_var'] == 'helptxt')
+				$helptxt[$row['lang_key']] = !empty($row['serial']) ? @unserialize($row['lang_string']) : $row['lang_string'];
+		}
+		wesql::free_result($request);
+
+		// Now cache this sucker.
+		$filename = $cachedir . '/lang_' . $lang . '_' . $file_key . '.php';
+		$val = array();
+		if (!empty($txt))
+			$val['txt'] = $txt;
+		if (!empty($helptxt))
+			$val['helptxt'] = $helptxt;
+		$cache_data = '<' . '?php if(defined(\'WEDGE\'))$val=\'' . addcslashes(serialize($val), '\\\'') . '\';?' . '>';
+		if (file_put_contents($filename, $cache_data, LOCK_EX) !== strlen($cache_data))
+			@unlink($filename);
+
+		// Now fix the master variables.
+		if (!empty($txt) || !empty($oldtxt))
+			$txt = array_merge($oldtxt, $txt);
+		if (!empty($helptxt) || !empty($oldhelptxt))
+			$helptxt = array_merge($oldhelptxt, $helptxt);
+	}
 
 	// Keep track of what we're up to soldier.
 	if ($db_show_debug === true)
@@ -1870,6 +1945,11 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 		loadEssentialThemeData();
 	}
 
+	if (empty($txt))
+		$txt = array();
+	if (empty($helptxt))
+		$helptxt = array();
+
 	// What theme are we in?
 	$theme_name = basename($theme['theme_url']);
 	if (empty($theme_name))
@@ -1909,7 +1989,7 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 			}
 
 			// OK, this is messy. We need to load the file, grab any changes from the DB, but not touch the existing $txt state.
-			$oldhelptxt = !empty($helptxt) ? (array) $helptxt : array();
+			$oldhelptxt = $helptxt;
 			$oldtxt = $txt;
 			$txt = array();
 			$helptxt = array();

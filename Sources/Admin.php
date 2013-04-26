@@ -957,6 +957,7 @@ function AdminSearchInternal()
 			array('ModifySubscriptionSettings', 'area=paidsubscribe;sa=settings'),
 			array('ModifyLogSettings', 'area=logs;sa=settings'),
 			array('ModifyPmSettings', 'area=pm'),
+			array('ModifyLikeSettings', 'area=likes'),
 			array('BanListSettings', 'area=bans;sa=settings'),
 			array('ModifyMembergroupSettings', 'area=membergroups;sa=settings'),
 		),
@@ -994,6 +995,7 @@ function AdminSearchInternal()
 		else
 			foreach ($search_places as $setting_area)
 			{
+				$context['page_title'] = '';
 				// Get a list of their variables.
 				if (isset($setting_area[2]))
 					$config_vars = $setting_area[0](true, $setting_area[2]);
@@ -1001,7 +1003,7 @@ function AdminSearchInternal()
 					$config_vars = $setting_area[0](true);
 
 				foreach ($config_vars as $var)
-					if (!empty($var[1]) && !in_array($var[0], array('permissions', 'switch', 'desc', 'warning')))
+					if (!empty($var[1]) && !in_array($var[0], array('permissions', 'switch', 'desc', 'warning', 'callback')))
 					{
 						// Using the construction of prepareServerSettingsContext?
 						if (isset($var[2]) && in_array($var[2], array('file', 'db')))
@@ -1009,14 +1011,19 @@ function AdminSearchInternal()
 							$item = array($var[0], $setting_area[1]);
 							if (isset($var[5], $helptxt[$var[5]]))
 								$item[2] = $var[5];
+							if (!empty($context['page_title']))
+								$item[3] = $context['page_title'];
+
 							$search_data[$setting_type][] = $item;
 						}
 						// Then it's prepareDBSettingsContext style.
 						else
 						{
-							$item = array($var[1], $setting_area[1]);
+							$item = array(isset($var['text_label']) ? $var['text_label'] : $var[1], $setting_area[1]);
 							if (isset($var['help'], $helptxt[$var['help']]))
 								$item[2] = $var['help'];
+							if (!empty($context['page_title']))
+								$item[3] = $context['page_title'];
 							$search_data[$setting_type][] = $item;
 						}
 					}
@@ -1070,6 +1077,7 @@ function AdminSearchInternal()
 				$context['search_results'][] = array(
 					'url' => (substr($item[1], 0, 4) == 'area' ? '<URL>?action=admin;' . $item[1] : $item[1]) . ';' . $context['session_query'] . ((substr($item[1], 0, 4) == 'area' && $section != 'sections' ? '#' . $item[0][0] : '')),
 					'name' => $name,
+					'parent_name' => isset($item[3]) ? $item[3] : '',
 					'type' => $section,
 					'help' => shorten_subject(isset($item[2]) ? strip_tags($helptxt[$item[2]]) : (isset($helptxt[$found]) ? strip_tags($helptxt[$found]) : ''), 255),
 				);
