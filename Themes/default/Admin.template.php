@@ -1496,7 +1496,7 @@ function template_admin_search_results()
 
 			if ($result['help'])
 				echo '
-				<p class="double_height">', $result['help'], '</p>';
+				<dfn>', $result['help'], '</dfn>';
 
 			echo '
 			</li>';
