@@ -236,7 +236,7 @@ function Thought()
 			call_hook('thought_update', array(&$last_thought, &$privacy, &$update, &$text));
 		}
 	}
-	else
+	elseif ($text)
 	{
 		// Okay, so this is a new thought... Insert it, we'll cache it if it's not a comment.
 		wesql::query('
