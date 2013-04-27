@@ -361,11 +361,11 @@ function AddMembergroup()
 			'{db_prefix}membergroups',
 			array(
 				'id_group' => 'int', 'description' => 'string', 'group_name' => 'string-80', 'min_posts' => 'int',
-				'stars' => 'string', 'online_color' => 'string', 'group_type' => 'int',
+				'stars' => 'string', 'online_color' => 'string', 'format' => 'string', 'group_type' => 'int',
 			),
 			array(
 				$id_group, '', $_POST['group_name'], ($postCountBasedGroup ? (int) $_POST['min_posts'] : '-1'),
-				'1#rank.gif', '', $_POST['group_type'],
+				'1#rank.gif', '', '', $_POST['group_type'],
 			),
 			array('id_group')
 		);
@@ -727,12 +727,19 @@ function EditMembergroup()
 		$_POST['group_hidden'] = empty($_POST['group_hidden']) || $_POST['min_posts'] != -1 || $_REQUEST['group'] == 3 ? 0 : (int) $_POST['group_hidden'];
 		$_POST['group_inherit'] = $_REQUEST['group'] > 1 && $_REQUEST['group'] != 3 && (empty($inherit_type) || $inherit_type != 1) ? (int) $_POST['group_inherit'] : -2;
 
+		$format = array();
+		foreach (array('bold', 'italic', 'underline', 'strike') as $item)
+			if (!empty($_POST['format_' . $item]))
+				$format[] = substr($item, 0, 1);
+		if (!empty($_POST['format_free']))
+			$format[] = $_POST['format_free'];
+
 		// !!! Don't set online_color for the Moderators group?
 
 		// Do the update of the membergroup settings.
 		wesql::query('
 			UPDATE {db_prefix}membergroups
-			SET group_name = {string:group_name}, online_color = {string:online_color},
+			SET group_name = {string:group_name}, online_color = {string:online_color}, format = {string:format},
 				max_messages = {int:max_messages}, min_posts = {int:min_posts}, stars = {string:stars},
 				description = {string:group_desc}, group_type = {int:group_type}, hidden = {int:group_hidden},
 				id_parent = {int:group_inherit}
@@ -746,6 +753,7 @@ function EditMembergroup()
 				'current_group' => $_REQUEST['group'],
 				'group_name' => $_POST['group_name'],
 				'online_color' => $_POST['online_color'],
+				'format' => implode('|', $format),
 				'stars' => $_POST['stars'],
 				'group_desc' => $_POST['group_desc'],
 			)
@@ -1055,7 +1063,7 @@ function EditMembergroup()
 
 	// Fetch the current group information.
 	$request = wesql::query('
-		SELECT group_name, description, min_posts, online_color, max_messages, stars, group_type, hidden, id_parent
+		SELECT group_name, description, min_posts, online_color, format, max_messages, stars, group_type, hidden, id_parent
 		FROM {db_prefix}membergroups
 		WHERE id_group = {int:current_group}
 		LIMIT 1',
@@ -1076,6 +1084,7 @@ function EditMembergroup()
 		'description' => htmlspecialchars($row['description']),
 		'editable_name' => htmlspecialchars($row['group_name']),
 		'color' => $row['online_color'],
+		'format' => explode('|', $row['format']),
 		'min_posts' => $row['min_posts'],
 		'max_messages' => $row['max_messages'],
 		'star_count' => (int) $row['stars'][0],
@@ -1187,10 +1196,30 @@ function ModifyMembergroupSettings($return_config = false)
 		'cond' => $txt['group_show_cond']
 	);
 
+	$ban_groups = array(
+		0 => $txt['ban_group_none'],
+	);
+	$request = wesql::query('
+		SELECT id_group, group_name
+		FROM {db_prefix}membergroups
+		WHERE id_group NOT IN ({array_int:exclusions})
+			AND min_posts = -1
+		ORDER BY id_group',
+		array(
+			'exclusions' => array(1, 3), // this group can't be a post count group (min_posts) or admins or moderators.
+		)
+	);
+	while ($row = wesql::fetch_assoc($request))
+		$ban_groups[$row['id_group']] = '&lt;span class="group' . $row['id_group'] . '"&gt;' . $row['group_name'] . '&lt;/span&gt;';
+	wesql::free_result($request);
+
+	$context['page_title'] = $txt['membergroups_settings'];
+
 	$config_vars = array(
 		array('permissions', 'manage_membergroups', 'exclude' => array(-1, 0)),
 		array('select', 'group_text_show', $which_groups),
 		array('check', 'show_group_key'),
+		array('select', 'ban_group', $ban_groups, 'subtext' => $txt['ban_group_subtext']),
 		array('title', 'membergroup_badges'),
 		array('desc', 'membergroup_badges_desc'),
 		array('callback', 'badge_order'),
@@ -1202,7 +1231,6 @@ function ModifyMembergroupSettings($return_config = false)
 	// Needed for the settings functions.
 	loadSource('ManageServer');
 	wetem::load('show_settings');
-	$context['page_title'] = $txt['membergroups_settings'];
 
 	// Doing badges is complicated.
 	add_jquery_ui();

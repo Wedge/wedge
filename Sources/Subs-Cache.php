@@ -804,23 +804,59 @@ function dynamic_group_colors()
 {
 	global $context, $settings;
 
+	$bius = array('b', 'i', 'u', 's');
 	$rep = '';
 	$request = wesql::query('
-		SELECT id_group, online_color
+		SELECT id_group, online_color, format
 		FROM {db_prefix}membergroups AS g
-		WHERE g.online_color != {string:blank}',
+		WHERE g.online_color != {string:blank} OR g.format != {string:blank}',
 		array(
 			'blank' => '',
 		)
 	);
 	while ($row = wesql::fetch_assoc($request))
 	{
-		if (empty($row['online_color']))
-			continue;
-
 		$rep .= '
-.group' . $row['id_group'] . '
+.group' . $row['id_group'];
+
+		if (!empty($row['online_color']))
+			$rep .= '
 	color: ' . $row['online_color'];
+
+		if (!empty($row['format']))
+		{
+			$row['format'] = explode('|', $row['format']);
+			// Actually faster than foreaching+switch.
+			if (in_array('b', $row['format']))
+				$rep .= '
+	font-weight: bold';
+
+			if (in_array('i', $row['format']))
+				$rep .= '
+	font-style: italic';
+
+			// Now we do underline and strikethrough which nest.
+			$text_decoration = array();
+			if (in_array('u', $row['format']))
+				$text_decoration[] = 'underline';
+			if (in_array('s', $row['format']))
+				$text_decoration[] = 'line-through';
+			if (!empty($text_decoration))
+				$rep .= '
+	text-decoration: ' . implode(' ', $text_decoration);
+
+			// Lastly freeformat. As in... anything left?
+			$row['format'] = array_diff($row['format'], $bius);
+			if (!empty($row['format']))
+			{
+				// Users get a single line textbox, they expect to use ; as a separator.
+				$row['format'] = explode(';', implode('', $row['format']));
+				array_walk($row['format'], 'trim');
+				foreach ($row['format'] as $item)
+					$rep .= '
+	' . $item;
+			}
+		}
 	}
 
 	return $rep;

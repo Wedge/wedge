@@ -247,12 +247,31 @@ function template_edit_group()
 					</dd>';
 
 	echo '
+				</dl>
+				<hr>
+				<dl class="settings">
 					<dt>
 						<label for="online_color_input"><strong>', $txt['membergroups_online_color'], ':</strong></label>
 						<dfn>', $txt['membergroups_online_color_desc'], '</dfn>
 					</dt>
 					<dd>
 						<input name="online_color" id="online_color_input" value="', $context['group']['color'], '" size="20">
+					</dd>
+					<dt>
+						<strong>', $txt['membergroups_additional_formatting'], '</strong>
+					</dt>
+					<dd>';
+
+	foreach (array('bold', 'italic', 'underline', 'strike') as $item)
+		echo '
+					<label>', $txt['membergroups_add_format_' . $item], ' <input type="checkbox" name="format_', $item, '"', in_array($item[0], $context['group']['format']) ? ' checked' : '', '></label>&nbsp; &nbsp;';
+
+	// Now we need to do some processing :/
+	$context['group']['format'] = array_diff($context['group']['format'], array('b', 'i', 'u', 's'));
+
+	echo '
+						<br>
+						', $txt['membergroups_add_format_free'], ': <input class="w75" name="format_free" value="', !empty($context['group']['format']) ? westr::safe(implode('', $context['group']['format']), ENT_QUOTES) : '', '" maxlength="200">
 					</dd>
 					<dt>
 						<label for="star_count_input"><strong>', $txt['membergroups_star_count'], ':</strong></label>
@@ -270,6 +289,9 @@ function template_edit_group()
 						<input name="star_image" id="star_image_input" value="', $context['group']['star_image'], '" onchange="if (this.value && this.form.star_count.value == 0) this.form.star_count.value = 1; else if (!this.value) this.form.star_count.value = 0; $(\'#star_preview\').attr(\'src\', we_theme_url + \'/images/\' + (this.value && this.form.star_count.value > 0 ? this.value.replace(/\$language/g, \'', we::$user['language'], '\') : \'blank.gif\'));" size="20">
 						<img id="star_preview" src="', $theme['images_url'], '/', $context['group']['star_image'] == '' ? 'blank.gif' : $context['group']['star_image'], '">
 					</dd>
+				</dl>
+				<hr>
+				<dl class="settings">
 					<dt>
 						<label for="max_messages_input"><strong>', $txt['membergroups_max_messages'], ':</strong></label>
 						<dfn>', $txt['membergroups_max_messages_note'], '</dfn>

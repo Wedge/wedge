@@ -226,6 +226,9 @@ function deleteMembergroups($groups)
 
 	// Make a note of the fact that the cache may be wrong.
 	$settings_update = array('settings_updated' => time());
+	// Have we deleted the ban group?
+	if (!empty($settings['ban_group']) && in_array($settings['ban_group'], $groups))
+		$settings_update['ban_group'] = 0;
 	// Have we deleted the spider group?
 	if (isset($settings['spider_group']) && in_array($settings['spider_group'], $groups))
 		$settings_update['spider_group'] = 0;

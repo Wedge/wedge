@@ -1421,6 +1421,8 @@ function checkUserRequest_blacklist()
 			'Morfeus',
 			'Mozilla/4.0 (Hydra)',
 			'Nessus',
+			'PMAfind',
+			'revolt',
 			'w3af',
 		),
 		'contains' => array(
@@ -1447,7 +1449,7 @@ function checkUserRequest_blacklist()
 			'compatible ; MSIE',
 			'compatible-',
 			'DTS Agent',
-			'Gecko/25',
+			'Gecko/2525',
 			'Indy Library',
 			'MVAClient',
 			'Murzillo compatible',
@@ -1680,6 +1682,12 @@ function checkUserRequest_useragent()
 		if ((!match_cidr($_SERVER['REMOTE_ADDR'], array('66.249.64.0/19', '64.233.160.0/19', '72.14.192.0/18', '203.208.32.0/19', '74.125.0.0/16', '216.239.32.0/19', '209.85.128.0/17'))) || (empty($settings['disableHostnameLookup']) && !test_ip_host($_SERVER['REMOTE_ADDR'], 'googlebot.com')))
 			return $context['behavior_error'] = 'behav_not_googlebot';
 	}
+	// What about Baidu? I know we don't really like Baidu, but it's even generating fake bots now.
+	elseif (stripos($context['http_headers']['User-Agent'], 'baidu') !== false)
+	{
+		if (!match_cidr($_SERVER['REMOTE_ADDR'], array('119.63.192.0/21', '123.125.71.0/24', '180.76.0.0/16', '220.181.0.0/16')) === false)
+			return $context['behavior_error'] = 'behav_not_baidu';
+	}
 	// OK, so presumably this is some kind of Mozilla derivative? (No guarantee it's actually Firefox, mind. All main browsers cite Mozilla. :/)
 	elseif (stripos($context['http_headers']['User-Agent'], 'Mozilla') === 0)
 	{
@@ -1764,6 +1772,7 @@ function userBehaviorResponse()
 		case 'behav_not_msnbot':
 		case 'behav_not_yahoobot':
 		case 'behav_not_googlebot':
+		case 'behav_not_baidu':
 			$error_blocks = array('behavior_false_ua', 'behavior_misconfigured_privacy');
 			break;
 		case 'behav_no_ua_in_post':

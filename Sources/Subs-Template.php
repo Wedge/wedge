@@ -351,22 +351,64 @@ function ob_sessrewrite($buffer)
 	// Load cached membergroup ids.
 	if (($members_groups = cache_get_data('member-groups', 5000)) === null)
 	{
+		// First get the possible groups we could be working with. Saves us doing a join and potentially getting a result of members size * 2...
+		$possible_groups = array();
+		$request = wesql::query('
+			SELECT g.id_group
+			FROM {db_prefix}membergroups AS g
+			WHERE g.online_color != {string:blank} OR g.format != {string:blank}',
+			array(
+				'blank' => '',
+			)
+		);
+		while ($row = wesql::fetch_row($request))
+			$possible_groups[$row[0]] = true;
+		wesql::free_result($request);
+
+		// This is a SOFT change. We do NOT modify their account with it. There are good reasons for this.
+		$ban_group = !empty($settings['ban_group']) && isset($possible_groups[$settings['ban_group']]) ? $settings['ban_group'] : 0;
+		$ban_level = 100000; // can't be achieved.
+		if ($ban_group)
+		{
+			$inf_levels = !empty($settings['infraction_levels']) ? unserialize($settings['infraction_levels']) : array();
+			if (!empty($inf_levels['hard_ban']['enabled']))
+				$ban_level = $inf_levels['hard_ban']['points'];
+		}
+
+		// Now get all the members.
 		$members_groups = array();
 		$request = wesql::query('
-			SELECT m.id_member, m.id_post_group, g.id_group, g.online_color
-			FROM {db_prefix}members AS m
-			INNER JOIN {db_prefix}membergroups AS g ON g.online_color != {string:blank}
-				AND ((m.id_group = g.id_group) OR (m.id_post_group = g.id_group))',
+			SELECT m.id_member, ' . (!empty($ban_group) ? 'm.is_activated, m.warning, m.data, ' : '') . 'm.id_post_group, m.id_group
+			FROM {db_prefix}members AS m',
 			array(
 				'blank' => '',
 			)
 		);
 		while ($row = wesql::fetch_assoc($request))
 		{
-			if (empty($row['online_color']))
-				continue;
-			if (empty($members_groups[$row['id_member']]) || $row['id_group'] !== $row['id_post_group'])
+			if ($ban_group)
+			{
+				if ($row['is_activated'] >= 20 || $row['warning'] >= $ban_level)
+				{
+					$members_groups[$row['id_member']] = $ban_group;
+					continue;
+				}
+				// Hmm, we couldn't do it quickly. Time to parse their data in the hopes of finding something applicable.
+				if ($row['warning'] > 0)
+				{
+					$data = !empty($row['data']) ? unserialize($row['data']) : array();
+					if (!empty($data['sanctions']['hard_ban']) && ($data['sanctions']['hard_ban'] == 1 || $data['sanctions']['hard_ban'] > time()))
+					{
+						$members_groups[$row['id_member']] = $ban_group;
+						continue;
+					}
+				}
+			}
+
+			if (isset($possible_groups[$row['id_group']]))
 				$members_groups[$row['id_member']] = $row['id_group'];
+			elseif (isset($possible_groups[$row['id_post_group']]))
+				$members_groups[$row['id_post_group']] = $row['id_post_group'];
 		}
 		wesql::free_result($request);
 		cache_put_data('member-groups', $members_groups, 5000);

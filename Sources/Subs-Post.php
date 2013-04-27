@@ -1108,6 +1108,7 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 	$msgOptions['attachments'] = empty($msgOptions['attachments']) ? array() : $msgOptions['attachments'];
 	$msgOptions['approved'] = isset($msgOptions['approved']) ? (int) $msgOptions['approved'] : 1;
 	$msgOptions['parent'] = isset($msgOptions['parent']) ? (int) $msgOptions['parent'] : 0;
+	$msgOptions['data'] = isset($msgOptions['data']) ? (array) $msgOptions['data'] : array();
 	$topicOptions['id'] = empty($topicOptions['id']) ? 0 : (int) $topicOptions['id'];
 	$topicOptions['poll'] = isset($topicOptions['poll']) ? (int) $topicOptions['poll'] : null;
 	$topicOptions['lock_mode'] = isset($topicOptions['lock_mode']) ? $topicOptions['lock_mode'] : null;
@@ -1188,13 +1189,13 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 			'id_board' => 'int', 'id_topic' => 'int', 'id_member' => 'int', 'subject' => 'string-255', 'id_parent' => 'int',
 			'body' => (!empty($settings['max_messageLength']) && $settings['max_messageLength'] > 65534 ? 'string-' . $settings['max_messageLength'] : 'string-65534'),
 			'poster_name' => 'string-255', 'poster_email' => 'string-255', 'poster_time' => 'int', 'poster_ip' => 'int',
-			'smileys_enabled' => 'int', 'modified_name' => 'string', 'icon' => 'string-16', 'approved' => 'int',
+			'smileys_enabled' => 'int', 'modified_name' => 'string', 'icon' => 'string-16', 'approved' => 'int', 'data' => 'string',
 		),
 		array(
 			$topicOptions['board'], $topicOptions['id'], $posterOptions['id'], $msgOptions['subject'], $msgOptions['parent'],
 			$msgOptions['body'],
 			$posterOptions['name'], $posterOptions['email'], time(), get_ip_identifier($posterOptions['ip']),
-			$msgOptions['smileys_enabled'] ? 1 : 0, '', $msgOptions['icon'], $msgOptions['approved'],
+			$msgOptions['smileys_enabled'] ? 1 : 0, '', $msgOptions['icon'], $msgOptions['approved'], !empty($msgOptions['data']) ? serialize($msgOptions['data']) : '',
 		),
 		array('id_msg')
 	);
@@ -1796,6 +1797,8 @@ function modifyPost(&$msgOptions, &$topicOptions, &$posterOptions)
 			wesql::free_result($request);
 		}
 	}
+	if (isset($msgOptions['data']))
+		$messages_columns['data'] = !empty($msgOptions['data']) ? serialize($msgOptions['data']) : '';
 	if (!empty($msgOptions['modify_time']))
 	{
 		$messages_columns['modified_time'] = $msgOptions['modify_time'];
@@ -1960,7 +1963,7 @@ function approvePosts($msgs, $approve = true)
 	$request = wesql::query('
 		SELECT m.id_msg, m.approved, m.id_topic, m.id_board, t.id_first_msg, t.id_last_msg,
 			m.body, m.subject, IFNULL(mem.real_name, m.poster_name) AS poster_name, m.id_member,
-			t.approved AS topic_approved, b.count_posts
+			t.approved AS topic_approved, b.count_posts, m.data
 		FROM {db_prefix}messages AS m
 			INNER JOIN {db_prefix}topics AS t ON (t.id_topic = m.id_topic)
 			INNER JOIN {db_prefix}boards AS b ON (b.id_board = m.id_board)
@@ -1982,7 +1985,7 @@ function approvePosts($msgs, $approve = true)
 	while ($row = wesql::fetch_assoc($request))
 	{
 		// Easy...
-		$msgs[] = $row['id_msg'];
+		$msgs[$row['id_msg']] = !empty($row['data']) ? unserialize($row['data']) : array();
 		$topics[] = $row['id_topic'];
 
 		// Ensure our change array exists already.
@@ -2057,15 +2060,44 @@ function approvePosts($msgs, $approve = true)
 		return;
 
 	// Now we have the differences make the changes, first the easy one.
-	wesql::query('
-		UPDATE {db_prefix}messages
-		SET approved = {int:approved_state}
-		WHERE id_msg IN ({array_int:message_list})',
-		array(
-			'message_list' => $msgs,
-			'approved_state' => $approve ? 1 : 0,
-		)
-	);
+	$easy_msg = array();
+	foreach ($msgs as $msg => $data)
+		if (!$approve || !isset($data['unapproved_msg']))
+		{
+			$easy_msg[] = $msg;
+			unset ($msgs[$msg]);
+		}
+
+	if (!empty($easy_msg))
+		wesql::query('
+			UPDATE {db_prefix}messages
+			SET approved = {int:approved_state}
+			WHERE id_msg IN ({array_int:message_list})',
+			array(
+				'message_list' => $easy_msg,
+				'approved_state' => $approve ? 1 : 0,
+			)
+		);
+
+	// If there are some left, we have to do them one by one. Fortunately that's not a *huge* deal.
+	if ($approve && !empty($msgs))
+	{
+		foreach ($msgs as $msg => $data)
+		{
+			unset ($data['unapproved_msg']);
+			wesql::query('
+				UPDATE {db_prefix}messages
+				SET approved = {int:approved_state},
+					data = {string:data}
+				WHERE id_msg = {int:msg}',
+				array(
+					'approved_state' => 1,
+					'data' => !empty($data) ? serialize($data) : '',
+					'msg' => $msg,
+				)
+			);
+		}	
+	}
 
 	// If we were unapproving find the last msg in the topics...
 	if (!$approve)
@@ -2133,7 +2165,7 @@ function approvePosts($msgs, $approve = true)
 			DELETE FROM {db_prefix}approval_queue
 			WHERE id_msg IN ({array_int:message_list})',
 			array(
-				'message_list' => $msgs,
+				'message_list' => array_merge($easy_msg, array_keys($msgs)),
 			)
 		);
 	}

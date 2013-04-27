@@ -828,6 +828,21 @@ function EditCustomProfiles()
 			),
 		),
 		'im' => array(
+			'skype' => array(
+				'field_name' => 'Skype',
+				'field_desc' => $txt['your_skype'],
+				'profile_area' => 'forumprofile',
+				'display' => true,
+				'placement' => '1', // with icons
+				'enclose' => '
+				<a href="skype:{INPUT}?userinfo"><img src="http://mystatus.skype.com/smallicon/{INPUT}" alt="Skype - {INPUT}" title="Skype - {INPUT}" /></a>',
+				'field_type' => 'text',
+				'max_length' => '22',
+				'bbc' => false,
+				'mask' => 'regex',
+				'regex' => '~[a-z][a-z0-9,_.-]{5,21}~i',
+				'private' => '0', // users can see it, owner can edit it
+			),
 			'aim' => array(
 				'field_name' => 'AOL Instant Messenger',
 				'field_desc' => $txt['your_aim'],
@@ -849,19 +864,6 @@ function EditCustomProfiles()
 				'display' => true,
 				'placement' => '1', // with icons
 				'enclose' => '<a class="yim" href="http://edit.yahoo.com/config/send_webmesg?.target={INPUT}" target="_blank" title="Yahoo! Messenger - {INPUT}"><img src="http://opi.yahoo.com/online?m=g&amp;t=0&amp;u={INPUT}" alt="Yahoo! Messenger - {INPUT}"></a>',
-				'field_type' => 'text',
-				'max_length' => '50',
-				'bbc' => false,
-				'mask' => 'email',
-				'private' => '0', // users can see it, owner can edit it
-			),
-			'live' => array(
-				'field_name' => 'MSN/Live',
-				'field_desc' => $txt['msn_email_address'],
-				'profile_area' => 'forumprofile',
-				'display' => true,
-				'placement' => '1', // with icons
-				'enclose' => '<a class="msn" href="http://members.msn.com/{INPUT}" target="_blank" title="Live - {INPUT}"><img src="{IMAGES_URL}/fields/msntalk.gif" alt="Live - {INPUT}"></a>',
 				'field_type' => 'text',
 				'max_length' => '50',
 				'bbc' => false,
