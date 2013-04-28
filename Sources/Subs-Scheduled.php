@@ -106,6 +106,8 @@ function recalculateNextImperative()
  *
  * @param int $time The timestamp (server time) that a task should be carried out.
  * @param array $task An array of details for a one off task.
+ *
+ * @return mixed False if the task could not be added, or otherwise the (integer) identifier of the task in the database in case some logging function would like it.
  */
 function addNextImperative($time, $task)
 {
@@ -123,6 +125,7 @@ function addNextImperative($time, $task)
 			$time, serialize($task),
 		)
 	);
+	$id = wesql::insert_id();
 
 	// We could call recalculateNextImperative but there's no sense doing that when we can save 1+ DB queries. (Only update if it's nearer, and we already have the time so just do the update itself.)
 	if ($time < $settings['next_imperative'])
@@ -132,7 +135,7 @@ function addNextImperative($time, $task)
 			)
 		);
 
-	return true;
+	return $id;
 }
 
 /**
@@ -147,6 +150,26 @@ function imperative_removeTopic($details)
 
 	loadSource('RemoveTopic');
 	removeTopics($details['topic'], $details['update_postcount'], !$details['use_recycle']);
+
+	return true;
+}
+
+/**
+ * Removes a warning from a user's account when it has expired.
+ *
+ * @param array $details An array containing elements 'mem' (integer of the user in question)
+ */
+function imperative_removeInfraction($details)
+{
+	if (empty($details['mem']))
+		return false;
+
+	// The profile area does its own housekeeping. But it only applies it if the user's profile actually gets visited.
+	// So we have to make sure. It's not like we just invalidate a single given variable, either, because we
+	// have to figure out the complete state to include any other infractions the user already had.
+	loadMemberData($details['mem']);
+	loadSource('Profile-Actions');
+	get_validated_infraction_log($details['mem'], false);
 
 	return true;
 }

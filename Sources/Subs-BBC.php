@@ -1040,7 +1040,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 	{
 		// Have you been naughty? Well, have you?
 		// !!! Note that there might be other punishments yet, so leave these as two separate ifs.
-		if (!empty($user_profile[$owner]['sanctions']['disemvowel']) && $user_profile[$owner]['sanctions']['disemvowel'] < time())
+		if (!empty($user_profile[$owner]['sanctions']['disemvowel']))
 			$message = disemvowel($message);
 	}
 

@@ -131,6 +131,8 @@ function ModifySignatureSettings($return_config = false)
 	global $context, $txt, $settings, $sig_start, $helptxt;
 
 	$context['page_title'] = $txt['signature_settings'];
+	// Need this for the bbc options.
+	loadLanguage('ManagePosts');
 
 	$config_vars = array(
 			// Are signatures even enabled?

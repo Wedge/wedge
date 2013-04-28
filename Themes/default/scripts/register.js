@@ -12,6 +12,17 @@
 
 @language Login;
 
+function verifyAgree()
+{
+	if (document.forms.registration.we_autov_pwmain.value != document.forms.registration.we_autov_pwverify.value)
+	{
+		say($txt['register_passwords_differ_js']);
+		return false;
+	}
+
+	return true;
+}
+
 function weRegister(formID, passwordDifficultyLevel)
 {
 	var

@@ -49,17 +49,6 @@ function template_registration_form()
 	add_js_file('scripts/register.js');
 
 	add_js('
-	function verifyAgree()
-	{
-		if (currentAuthMethod == \'passwd\' && document.forms.registration.we_autov_pwmain.value != document.forms.registration.we_autov_pwverify.value)
-		{
-			say(' . JavaScriptEscape($txt['register_passwords_differ_js']) . ');
-			return false;
-		}
-
-		return true;
-	}
-
 	new weRegister("registration", ' . (empty($settings['password_strength']) ? 0 : $settings['password_strength']) . ');');
 
 	// Any errors?

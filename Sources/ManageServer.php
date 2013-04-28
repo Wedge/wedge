@@ -926,23 +926,46 @@ function saveSettings(&$config_vars)
 
 	// Now sort everything into a big array, and figure out arrays and etc.
 	$new_settings = array();
-	foreach ($config_passwords as $config_var)
-		if (isset($_POST[$config_var][1]) && $_POST[$config_var][0] == $_POST[$config_var][1])
-			$new_settings[$config_var] = '\'' . addcslashes($_POST[$config_var][0], '\'\\') . '\'';
 
-	foreach ($config_strs as $config_var)
-		if (isset($_POST[$config_var]))
-			$new_settings[$config_var] = '\'' . addcslashes($_POST[$config_var], '\'\\') . '\'';
+	foreach ($config_vars as $config_var)
+	{
+		// We just saved the file-based settings, so skip their definitions.
+		if (!is_array($config_var) || $config_var[2] != 'file')
+			continue;
 
-	foreach ($config_ints as $config_var)
-		if (isset($_POST[$config_var]))
-			$new_settings[$config_var] = (int) $_POST[$config_var];
+		$this_var = $config_var[0];
 
-	foreach ($config_bools as $key)
-		$new_settings[$key] = !empty($_POST[$key]) ? '1' : '0';
-
-	foreach ($config_truebools as $key)
-		$new_settings[$key] = !empty($_POST[$key]) ? 'true' : 'false';
+		switch ($config_var[3])
+		{
+			case 'password':
+				if (in_array($this_var, $config_passwords))
+				{
+					if (isset($_POST[$this_var][1]) && $_POST[$this_var][0] == $_POST[$this_var][1]);
+						$new_settings[$this_var] = '\'' . addcslashes($_POST[$this_var][0], '\'\\') . '\'';
+				}
+				break;
+			case 'text':
+				if (in_array($this_var, $config_strs))
+				{
+					if (isset($_POST[$this_var]))
+						$new_settings[$this_var] = '\'' . addcslashes($_POST[$this_var], '\'\\') . '\'';
+				}
+				break;
+			case 'int':
+				if (in_array($this_var, $config_ints))
+				{
+					if (isset($_POST[$this_var]))
+						$new_settings[$this_var] = (int) $_POST[$this_var];
+				}
+				break;
+			case 'check':
+				if (in_array($this_var, $config_bools))
+					$new_settings[$this_var] = !empty($_POST[$this_var]) ? '1' : '0';
+				elseif (in_array($this_var, $config_truebools))
+					$new_settings[$this_var] = !empty($_POST[$this_var]) ? 'true' : 'false';
+				break;
+		}
+	}
 
 	// Save the relevant settings in the Settings.php file.
 	loadSource('Subs-Admin');
