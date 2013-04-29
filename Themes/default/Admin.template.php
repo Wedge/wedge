@@ -847,12 +847,12 @@ function template_show_settings()
 					foreach ($context['board_listing'] as $cat_id => $cat)
 					{
 						echo '
-							<strong>', $cat['name'], '</strong> <input type="checkbox" id="catsel', $cat_id, '" onclick="selectcat(', $cat_id, ');">
+							<label><strong>', $cat['name'], '</strong> <input type="checkbox" id="catsel', $cat_id, '" onclick="selectcat(', $cat_id, ');"></label>
 							<ul class="permission_groups">';
 
 						foreach ($cat['boards'] as $id_board => $board)
 							echo '
-								<li>&nbsp; ', $board[0] > 0 ? str_repeat('&nbsp; &nbsp; ', $board[0]) : '', '<input type="checkbox" class="cat', $cat_id, '" name="', $config_var['name'], '[', $id_board, ']" value="on"', !empty($config_var['value']) && in_array($id_board, $config_var['value']) ? ' checked' : '', '>', $board[1], '</li>';
+								<li>&nbsp; ', $board[0] > 0 ? str_repeat('&nbsp; &nbsp; ', $board[0]) : '', '<label><input type="checkbox" class="cat', $cat_id, '" name="', $config_var['name'], '[', $id_board, ']" value="on"', !empty($config_var['value']) && in_array($id_board, $config_var['value']) ? ' checked' : '', '> ', $board[1], '</label></li>';
 
 						echo '
 							</ul>';

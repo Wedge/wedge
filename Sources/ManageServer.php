@@ -1012,7 +1012,7 @@ function saveDBSettings(&$config_vars)
 
 	foreach ($config_vars as $var)
 	{
-		if (!isset($var[1]) || (!isset($_POST[$var[1]]) && !in_array($var[0], array('check', 'yesno', 'permissions', 'multi_select')) && ($var[0] != 'bbc' || !isset($_POST[$var[1] . '_enabledTags']))))
+		if (!isset($var[1]) || (!isset($_POST[$var[1]]) && !in_array($var[0], array('check', 'yesno', 'permissions', 'multi_select', 'boards')) && ($var[0] != 'bbc' || !isset($_POST[$var[1] . '_enabledTags']))))
 			continue;
 
 		// Checkboxes!
@@ -1030,7 +1030,7 @@ function saveDBSettings(&$config_vars)
 					if (isset($var[2][$invar]))
 						$options[] = $invar;
 
-			$setArray[$var[1]] = serialize($options);
+			$setArray[$var[1]] = !empty($options) ? serialize($options) : '';
 		}
 		// Integers!
 		elseif ($var[0] == 'int')
@@ -1086,7 +1086,7 @@ function saveDBSettings(&$config_vars)
 					if (isset($context['board_array'][$invar]))
 						$options[] = $invar;
 
-			$setArray[$var[1]] = serialize($options);
+			$setArray[$var[1]] = !empty($options) ? serialize($options) : '';
 		}
 	}
 
