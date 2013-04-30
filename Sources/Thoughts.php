@@ -18,7 +18,7 @@ if (!defined('WEDGE'))
 // Not exactly optimized for speed, but we can always rewrite it later.
 function Thoughts()
 {
-	global $context, $txt;
+	global $context, $txt, $settings;
 
 	// If we're not in a specific thought thread, we're asking for the latest thoughts.
 	$master = isset($_REQUEST['in']) ? (int) $_REQUEST['in'] : 0;
@@ -94,6 +94,7 @@ function Thoughts()
 				'updated' => timeformat($row['updated']),
 				'privacy' => $row['privacy'],
 				'text' => $row['thought'],
+				'can_like' => we::$is_member && !empty($settings['likes_enabled']) && (!empty($settings['likes_own_posts']) || $row['id_member'] != we::$id),
 			);
 
 			if (empty($row['id_parent_owner']) && !empty($thoughts))
@@ -447,7 +448,7 @@ function setupThoughtMenu()
 				$menu[] = 'bl';
 		}
 
-		// If we can't do anything, it's not even worth recording the last message ID...
+		// If we can't do anything, it's not even worth recording it...
 		if (!empty($menu))
 		{
 			$context['mini_menu']['thought'][$tho['id']] = $menu;

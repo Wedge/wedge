@@ -543,11 +543,10 @@ function cleanXml($string)
 
 /**
  * Helper functions to return an Ajax request, either xml, JS object or plain text, bypassing the skeleton system.
- * return_raw() is a special case; as it's meant to return short strings, it bypasses gzipping and ob_sessrewrite.
+ * return_raw() is a special case; as it's meant to return short strings, it bypasses ob_sessrewrite.
  */
 function return_raw()
 {
-	while (@ob_end_clean());
 	header('Content-Type: text/plain; charset=UTF-8');
 	$args = func_get_args();
 	exit(implode('', $args));
@@ -558,8 +557,7 @@ function return_text()
 	clean_output();
 	header('Content-Type: text/plain; charset=UTF-8');
 	$args = func_get_args();
-	echo implode('', $args);
-	obExit(false);
+	exit(implode('', $args));
 }
 
 function return_xml()
@@ -567,16 +565,14 @@ function return_xml()
 	clean_output();
 	header('Content-Type: text/xml; charset=UTF-8');
 	$args = func_get_args();
-	echo '<?xml version="1.0" encoding="UTF-8"?', '>', implode('', $args);
-	obExit(false);
+	exit('<?xml version="1.0" encoding="UTF-8"?' . '>' . implode('', $args));
 }
 
 function return_json($json)
 {
 	clean_output();
 	header('Content-Type: application/json; charset=UTF-8');
-	echo str_replace('\\/', '/', we_json_encode($json));
-	obExit(false);
+	exit(str_replace('\\/', '/', we_json_encode($json)));
 }
 
 // Fallback function for json_encode().

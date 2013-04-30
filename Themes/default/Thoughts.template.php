@@ -94,6 +94,12 @@ function template_thoughts_thread()
 		20 => 'friends',
 	);
 
+	if (allowedTo('post_thought') || !empty($settings['likes_enabled']))
+		add_js('
+	oThought = new Thought([[-3, "everyone", "', $txt['privacy_public'], '"], [0, "members", "', $txt['privacy_members'], '"], ',
+	// !! @worg This is temporary code for use on Wedge.org. Clean this up!!
+	in_array(20, we::$user['groups']) ? '[20, "friends", "Friends"], ' : '', '[5, "justme", "', $txt['privacy_self'], '"]]);');
+
 	$col = 2;
 	foreach ($context['thoughts'] as $thought)
 	{
@@ -104,7 +110,7 @@ function template_thoughts_thread()
 					<a class="more_button thome" data-id="', $thought['id'], '">', $txt['actions_button'], '</a>',
 					$thought['privacy'] != -3 ? '<div class="privacy_' . @$privacy_icon[$thought['privacy']] . '"></div>' : '', '
 					<a href="<URL>?action=profile;u=', $thought['id_member'], '">', $thought['owner_name'], '</a>
-					<span class="date">(', $thought['updated'], ')</span> &raquo; ', $thought['text'], '
+					<span class="date">(', $thought['updated'], ')</span> &raquo; ', $thought['text'], template_thought_likes($thought['id']), '
 				</div>';
 
 		if (!empty($thought['sub']))
@@ -129,7 +135,7 @@ function template_sub_thoughts(&$thought)
 		echo '<li id="t', $tho['id'], '"><div><a class="more_button thome" data-id="', $tho['id'], '">', $txt['actions_button'], '</a>',
 			$tho['privacy'] != -3 ? '<div class="privacy_' . @$privacy_icon[$tho['privacy']] . '"></div>' : '',
 			empty($tho['owner_name']) ? '' : '<a href="<URL>?action=profile;u=' . $tho['id_member'] . '">' .
-			$tho['owner_name'] . '</a> <span class="date">(' . $tho['updated'] . ')</span> &raquo; ', parse_bbc($tho['text']), '</div>';
+			$tho['owner_name'] . '</a> <span class="date">(' . $tho['updated'] . ')</span> &raquo; ', parse_bbc($tho['text']), template_thought_likes($tho['id']), '</div>';
 
 		if (!empty($tho['sub']))
 			template_sub_thoughts($tho);
@@ -141,7 +147,7 @@ function template_sub_thoughts(&$thought)
 
 function template_thoughts_table()
 {
-	global $context, $txt;
+	global $context, $txt, $settings;
 
 	// @worg!!
 	$privacy_icon = array(
@@ -153,18 +159,17 @@ function template_thoughts_table()
 
 	// This is where we'll show the Thought postbox.
 	if (allowedTo('post_thought'))
-	{
 		echo '
 			<tr class="windowbg2">', SKIN_MOBILE ? '' : '
 				<td class="bc">' . $txt['date'] . '</td>', '
 				<td><span class="my thought" id="thought0"><span></span></span></td>
 			</tr>';
 
+	if (allowedTo('post_thought') || !empty($settings['likes_enabled']))
 		add_js('
 	oThought = new Thought([[-3, "everyone", "', $txt['privacy_public'], '"], [0, "members", "', $txt['privacy_members'], '"], ',
 	// !! @worg This is temporary code for use on Wedge.org. Clean this up!!
 	in_array(20, we::$user['groups']) ? '[20, "friends", "Friends"], ' : '', '[5, "justme", "', $txt['privacy_self'], '"]]);');
-	}
 
 	$col = 2;
 	if (!SKIN_MOBILE)
