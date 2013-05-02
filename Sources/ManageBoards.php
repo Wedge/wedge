@@ -850,6 +850,22 @@ function EditBoardSettings($return_config = false)
 		$recycle_boards[$row['id_board']] = $row['cat_name'] . ' - ' . $row['board_name'];
 	wesql::free_result($request);
 
+	// Now the category list for the moderation area.
+	$cat_list = array(
+		-1 => $txt['modcenter_category_first'],
+	);
+	$request = wesql::query('
+		SELECT cat_order, name
+		FROM {db_prefix}categories
+		ORDER BY cat_order');
+	while ($row = wesql::fetch_assoc($request))
+		$cat_list[$row['cat_order']] = sprintf($txt['modcenter_category_after'], $row['name']);
+	wesql::free_result($request);
+	if (!isset($settings['modcenter_category']))
+		$settings['modcenter_category'] = -1;
+
+	$context['page_title'] = $txt['boards_and_cats'] . ' - ' . $txt['settings'];
+
 	// Here and the board settings...
 	$config_vars = array(
 		array('title', 'settings'),
@@ -860,9 +876,11 @@ function EditBoardSettings($return_config = false)
 			array('check', 'countChildPosts'),
 			array('check', 'recycle_enable', 'onclick' => '$(\'#recycle_board\').prop(\'disabled\', !this.checked);'),
 			array('select', 'recycle_board', $recycle_boards),
-			array('check', 'allow_ignore_boards'),
+			array('boards', 'ignorable_boards'),
 		'',
 			array('select', 'display_flags', array('none' => $txt['flags_none'], 'specified' => $txt['flags_specified'], 'all' => $txt['flags_all'])),
+		'',
+			array('select', 'modcenter_category', $cat_list),
 	);
 
 	if ($return_config)
@@ -873,8 +891,6 @@ function EditBoardSettings($return_config = false)
 
 	// Don't let guests have these permissions.
 	$context['post_url'] = '<URL>?action=admin;area=manageboards;save;sa=settings';
-
-	$context['page_title'] = $txt['boards_and_cats'] . ' - ' . $txt['settings'];
 
 	loadTemplate('ManageBoards');
 	wetem::load('show_settings');

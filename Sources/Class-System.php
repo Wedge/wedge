@@ -287,7 +287,7 @@ class we
 			'media_unseen' => empty($user_settings['media_unseen']) ? 0 : $user_settings['media_unseen'],
 			'total_time_logged_in' => empty($user_settings['total_time_logged_in']) ? 0 : $user_settings['total_time_logged_in'],
 			'buddies' => !empty($settings['enable_buddylist']) && !empty($user_settings['buddy_list']) ? explode(',', $user_settings['buddy_list']) : array(),
-			'ignoreboards' => !empty($user_settings['ignore_boards']) && !empty($settings['allow_ignore_boards']) ? explode(',', $user_settings['ignore_boards']) : array(),
+			'ignoreboards' => !empty($user_settings['ignore_boards']) && !empty($settings['ignorable_boards']) ? explode(',', $user_settings['ignore_boards']) : array(),
 			'ignoreusers' => !empty($user_settings['pm_ignore_list']) ? explode(',', $user_settings['pm_ignore_list']) : array(),
 			'warning' => isset($user_settings['warning']) ? $user_settings['warning'] : 0,
 			'permissions' => array(),
