@@ -175,7 +175,8 @@ function template_ban_details()
 				<div class="pagesection">
 					<div class="floatright">
 						<div class="additional_row" style="text-align: right;">
-							<input type="submit" value="', $txt['save'], '" class="save">
+							<input type="submit" value="', $txt['save'], '" class="save">', !empty($context['ban_details']['id_ban']) ? '
+							<input type="submit" name="delete" value="' . $txt['ban_remove_single'] . '" class="delete" onclick="return ask(' . JavaScriptEscape($txt['ban_remove_single_confirm']) . ', e);">' : '', '
 							<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 							<input type="hidden" name="ban" value="', $context['ban_details']['id_ban'], '">
 						</div>

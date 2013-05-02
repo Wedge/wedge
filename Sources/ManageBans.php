@@ -358,6 +358,19 @@ function BanListEdit()
 
 		if (!empty($settings['disableHostnameLookup']) && $context['ban_details']['ban_type'] == 'hostname')
 			fatal_lang_error('ban_no_modify', false);
+
+		if (isset($_REQUEST['delete']) && !empty($context['ban_details']['id_ban']))
+		{
+			wesql::query('
+				DELETE FROM {db_prefix}bans
+				WHERE id_ban = {int:ban}',
+				array(
+					'ban' => $context['ban_details']['id_ban'],
+				)
+			);
+			updateBannedMembers();
+			redirectexit('action=admin;area=ban;sa=' . $context['ban_details']['hardness']);
+		}
 	}
 
 	if (!empty($context['ban_details']['extra']))
