@@ -115,8 +115,9 @@ function reqWin(from, desired_width, string, modal_type, callback, e)
 	var
 		help_page = from && from.href ? from.href : from,
 		title = from && from.href ? $(from).text() : 0,
+		// window.innerHeight doesn't work in oldIE, and $(window).height() sometimes returns the body height in Chrome...
 		viewport_width = $(window).width(),
-		viewport_height = $(window).height(),
+		viewport_height = Math.min($(window).height(), screen.height),
 		previous_target = $('#helf').data('src'),
 		close_window = function ()
 		{
@@ -607,7 +608,7 @@ $(function ()
 
 /**
  * UI for notifications.
- * Rewritten from original code by Dragooon. Thanks!
+ * Thanks to Dragooon for the initial implementation!
  */
 
 @if member
@@ -654,7 +655,7 @@ $(function ()
 						{
 							$(this).parent().hide(300, function () { $(this).remove(); });
 							we_notifs--;
-							$shade.find('.notenice,.note').attr('class', we_notifs > 0 ? 'notenice' : 'note').text(we_notifs);
+							$shade.prev().attr('class', we_notifs > 0 ? 'notenice' : 'note').text(we_notifs);
 							$('title').text((we_notifs > 0 ? '(' + we_notifs + ') ' : '') + original_title);
 
 							$.post(weUrl('action=notification;sa=markread;in=' + id));
@@ -692,7 +693,7 @@ $(function ()
 				if (count != window.we_notifs)
 				{
 					we_notifs = count;
-					$shade.find('.notenice,.note').attr('class', we_notifs > 0 ? 'notenice' : 'note').text(we_notifs);
+					$shade.prev().attr('class', we_notifs > 0 ? 'notenice' : 'note').text(we_notifs);
 					$('title').text((we_notifs > 0 ? '(' + we_notifs + ') ' : '') + original_title);
 					is_up_to_date = false;
 				}
@@ -853,7 +854,7 @@ function JumpTo(control)
 				pr += '<option value="' + privacies[p][0] + '"' + (in_array(privacies[p][0] + '', privacy) ? ' selected' : '') + '>&lt;div class="privacy_' + privacies[p][1] + '"&gt;&lt;/div&gt;' + privacies[p][2] + '</option>';
 
 			// Hide current thought, and add tools to write new thought.
-			thought.hide().after('<form id="thought_form"><input type="text" maxlength="255" id="ntho"><select id="npriv">'
+			thought.toggle(is_new && is_new !== 1).after('<form id="thought_form"><input type="text" maxlength="255" id="ntho"><select id="npriv">'
 				+ pr + '</select><input type="submit" class="save"><input type="button" class="cancel"></form>');
 			$('#npriv')
 				.next().val(we_submit).click(function () { return oThought.submit(tid, mid || tid); })	// Save button
@@ -947,7 +948,7 @@ function JumpTo(control)
 		};
 
 		$('#thought0')
-			.click(function () { oThought.edit(0, 0, true); })
+			.click(function () { oThought.edit(0, 0, 1); })
 			.find('span').html($txt['add_thought']);
 	}
 @endif
