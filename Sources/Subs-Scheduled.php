@@ -168,7 +168,7 @@ function imperative_removeInfraction($details)
 	// So we have to make sure. It's not like we just invalidate a single given variable, either, because we
 	// have to figure out the complete state to include any other infractions the user already had.
 	loadMemberData($details['mem']);
-	loadSource('Profile-Actions');
+	loadSource('ManageInfractions');
 	get_validated_infraction_log($details['mem'], false);
 
 	return true;

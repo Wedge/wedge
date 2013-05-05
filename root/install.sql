@@ -759,6 +759,21 @@ CREATE TABLE {$db_prefix}group_moderators (
 ) ENGINE=MyISAM;
 
 #
+# Table structure for table `infractions`
+#
+
+CREATE TABLE {$db_prefix}infractions (
+	id_infraction smallint(5) unsigned NOT NULL auto_increment,
+	infraction_name varchar(60) NOT NULL default '',
+	infraction_msg text NOT NULL,
+	points smallint(4) unsigned NOT NULL default 0,
+	sanctions varchar(255) NOT NULL default '',
+	duration varchar(5) NOT NULL default '',
+	issuing_groups varchar(255) NOT NULL default '',
+	PRIMARY KEY (id_infraction)
+) ENGINE=MyISAM;
+
+#
 # Table structure for table `language_changes`
 #
 
@@ -923,6 +938,35 @@ CREATE TABLE {$db_prefix}log_ips (
 	member_ip char(32) NOT NULL default '',
 	PRIMARY KEY (id_ip),
 	UNIQUE member_ip (member_ip)
+) ENGINE=MyISAM;
+
+#
+# Table structure for table `log_infractions`
+#
+CREATE TABLE {$db_prefix}log_infractions (
+	id_issue int(10) unsigned NOT NULL auto_increment,
+	issued_by mediumint(8) unsigned NOT NULL default 0,
+	issued_by_name varchar(255) NOT NULL default '',
+	issue_date int(10) unsigned NOT NULL default 0,
+	issued_to mediumint(8) unsigned NOT NULL default 0,
+	issued_to_name varchar(255) NOT NULL default '',
+	reason varchar(255) NOT NULL default '',
+	duration varchar(5) NOT NULL default '1w',
+	points smallint(5) NOT NULL default 0,
+	sanctions varchar(255) NOT NULL default '',
+	notice_subject varchar(255) NOT NULL default '',
+	notice_body text NOT NULL,
+	inf_state tinyint(3) unsigned NOT NULL default 0,
+	revoked_by mediumint(8) unsigned NOT NULL default 0,
+	revoked_by_name varchar(255) NOT NULL default '',
+	revoked_date int(10) unsigned NOT NULL default 0,
+	revoked_reason varchar(255) NOT NULL default '',
+	imperative int(10) unsigned NOT NULL default 0,
+	because_of text NOT NULL,
+	PRIMARY KEY (id_issue),
+	KEY issued_by (issued_by),
+	KEY issued_to (issued_to),
+	KEY issue_date (issue_date)
 ) ENGINE=MyISAM;
 
 #
@@ -1608,7 +1652,7 @@ CREATE TABLE {$db_prefix}members (
 	date_registered int(10) unsigned NOT NULL default 0,
 	id_msg_last_visit int(10) unsigned NOT NULL default 0,
 	total_time_logged_in int(10) unsigned NOT NULL default 0,
-	warning tinyint(4) NOT NULL default 0,
+	warning smallint(5) NOT NULL default 0,
 	media_items mediumint(8) unsigned NOT NULL default 0,
 	media_comments mediumint(8) unsigned NOT NULL default 0,
 	media_unseen mediumint(8) NOT NULL default '-1',
@@ -2271,7 +2315,9 @@ VALUES
 	('newsfader_time', '5000'),
 	('additional_options_collapsable', '1'),
 	('likes_enable', '1'),
-	('notifications_prune_days', '7');
+	('notifications_prune_days', '7'),
+	('infraction_settings', 'a:3:{s:17:"revoke_own_issued";b:1;s:17:"revoke_any_issued";a:1:{i:0;i:1;}s:14:"no_warn_groups";a:1:{i:0;i:1;}}'),
+	('infraction_levels', 'a:8:{s:9:"no_avatar";a:2:{s:6:"points";i:20;s:7:"enabled";b:0;}s:6:"no_sig";a:2:{s:6:"points";i:20;s:7:"enabled";b:0;}s:10:"disemvowel";a:2:{s:6:"points";i:40;s:7:"enabled";b:1;}s:8:"moderate";a:2:{s:6:"points";i:45;s:7:"enabled";b:1;}s:8:"post_ban";a:2:{s:6:"points";i:70;s:7:"enabled";b:1;}s:6:"pm_ban";a:2:{s:6:"points";i:80;s:7:"enabled";b:1;}s:8:"soft_ban";a:2:{s:6:"points";i:100;s:7:"enabled";b:1;}s:8:"hard_ban";a:2:{s:6:"points";i:150;s:7:"enabled";b:1;}}');
 # --------------------------------------------------------
 
 #
