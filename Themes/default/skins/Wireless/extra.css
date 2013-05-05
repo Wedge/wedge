@@ -4,6 +4,9 @@
  * (c) 2010-2013, Wedgeward (http://wedge.org)
  */
 
+#top_section
+	padding: 8px 15px
+
 .poster
 	display: block
 	box-sizing: border-box
@@ -62,11 +65,3 @@
 		min-zoom, zoom: .7 // minimum-scale and initial-scale
 		max-zoom: 2 // maximum-scale
 @endif
-
-// Removing flex settings for browsers that support them.
-@remove .postarea
-	flex-direction: column
-	align-items: stretch
-
-@remove .post_wrapper
-	display: flex

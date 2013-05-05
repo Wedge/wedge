@@ -1446,7 +1446,7 @@ class wess_prefixes extends wess
 		$ov = $os['version'];
 		list ($ie, $ie8down, $ie9, $ie10, $opera, $firefox, $safari, $chrome, $ios, $android, $webkit) = array(
 			$b['ie'], $b['ie8down'], $b['ie9'], $b['ie10'], $b['opera'], $b['firefox'],
-			$b['safari'] && !$b['ios'], $b['chrome'], $os['ios'], $os['android'] && $b['webkit'] && !$b['chrome'], $b['webkit']
+			$b['safari'] && !$os['ios'], $b['chrome'], $os['ios'], $os['android'] && $b['webkit'] && !$b['chrome'], $b['webkit']
 		);
 
 		// Only IE6/7/8 don't support border-radius these days.

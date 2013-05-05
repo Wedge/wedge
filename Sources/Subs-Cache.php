@@ -308,7 +308,7 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 	$css = array();
 
 	// Pre-cache a special keyword that always returns true.
-	we::$cache['global'] = true;
+	we::$cache['global'] = 'global';
 
 	// !! @todo: the following is quite resource intensive... Maybe we should cache the results somehow?
 	// !! e.g. cache for several minutes, but delete cache if the filemtime for current folder or its parent folders was updated.
@@ -323,7 +323,7 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 			$cached_files[$fold] = array_diff((array) @scandir($fold ? $fold : '', 1), array('.', '..', '.htaccess', 'index.php', 'skin.xml', 'custom.xml'));
 
 		// A 'local' suffix means the file should only be parsed if it's in the same folder as the current skin.
-		we::$cache['local'] = $fold == $deep_folder;
+		we::$cache['local'] = $fold == $deep_folder ? 'local' : false;
 
 		foreach ($cached_files[$fold] as $file)
 		{
@@ -675,7 +675,7 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 	// And we've finally got our full, working filename...
 	$id = preg_replace(
 		'~\b' . we::$os['os'] . '\b~', str_replace('dows', '', we::$os['os'] . we::$os['version']),
-		implode('-', array_merge(array(we::$browser['agent'] . we::$browser['version']), $suffix ? $suffix : array()))
+		implode('-', array_merge(array(we::$browser['agent'] . we::$browser['version']), isset($suffix) ? $suffix : array()))
 	);
 	$id = empty($settings['obfuscate_filenames']) ? $id : md5($id);
 
