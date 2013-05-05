@@ -121,7 +121,7 @@ function Post2()
 	call_hook('post_pre_validate', array(&$post_errors));
 
 	// Wrong verification code?
-	if (!we::$is_admin && !we::$user['is_mod'] && !empty($settings['posts_require_captcha']) && (we::$user['posts'] < $settings['posts_require_captcha'] || (we::$is_guest && $settings['posts_require_captcha'] == -1)))
+	if (!we::$is_admin && !we::$is['mod'] && !empty($settings['posts_require_captcha']) && (we::$user['posts'] < $settings['posts_require_captcha'] || (we::$is_guest && $settings['posts_require_captcha'] == -1)))
 	{
 		loadSource('Subs-Editor');
 		$verificationOptions = array(
@@ -807,7 +807,7 @@ function Post2()
 	$_POST['icon'] = !empty($attachIDs) && $_POST['icon'] == 'xx' ? 'clip' : (isset($_POST['icon']) ? $_POST['icon'] : 'xx');
 
 	// Magical device-dependent icons.
-	if ($_POST['icon'] == 'xx' && we::$browser['is_mobile'])
+	if ($_POST['icon'] == 'xx' && we::$os['mobile'])
 	{
 		$_POST['icon'] = 'wireless'; // Ye olde mobile icon...
 		if (we::is('ios'))

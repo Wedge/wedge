@@ -331,7 +331,7 @@ function loadBoard()
 			);
 
 			// Load privacy settings.
-			// !!! Are we still meant to be using this now we have query_see_topic ? It's going to be inaccurate!
+			// !!! Are we still meant to be using this now we have query_see_topic..? It's going to be inaccurate!
 			if ($row['member_groups'] === '0')
 				$board_info['privacy'] = 'members';
 			elseif ($row['member_groups'] === '-1,0')
@@ -417,16 +417,18 @@ function loadBoard()
 
 	if (!empty($board))
 	{
-		// Now check if the user is a moderator.
+		// Now tell the system class where we are, and whether we're a moderator.
 		we::$cache = array();
-		we::$user['is_mod'] |= isset($board_info['moderators'][we::$id]);
+		we::$is['mod'] |= isset($board_info['moderators'][we::$id]);
+		we::$is['b' . $board] = true;
+		we::$is['c' . $board_info['cat']['id']] = true;
 
 		if ($board_info['banned_member'] && !$board_info['allowed_member'])
 			$board_info['error'] = 'access';
 
 		if (!we::$is_admin && !in_array($board_info['id'], we::$user['qsb_boards']))
 		{
-			if (!we::$user['is_mod'] && (!empty($board_info['owner_id']) && we::$id != $board_info['owner_id']))
+			if (!we::$is['mod'] && (!empty($board_info['owner_id']) && we::$id != $board_info['owner_id']))
 			{
 				switch ($board_info['privacy'])
 				{
@@ -478,7 +480,7 @@ function loadBoard()
 	$context['current_board'] = $board;
 
 	// Hacker... you can't see this topic, I'll tell you that. (But moderators can!)
-	if (!empty($board_info['error']) && ($board_info['error'] != 'access' || !we::$user['is_mod']))
+	if (!empty($board_info['error']) && ($board_info['error'] != 'access' || !we::$is['mod']))
 	{
 		// The permissions and theme need loading, just to make sure everything goes smoothly.
 		loadPermissions();
@@ -503,7 +505,7 @@ function loadBoard()
 			fatal_lang_error('topic_gone', false);
 	}
 
-	if (we::$user['is_mod'])
+	if (we::$is['mod'])
 		we::$user['groups'][] = 3;
 }
 
@@ -1243,7 +1245,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 		$skin = we::$user['skin'];
 	}
 	// The theme is the forum's mobile default.
-	elseif (we::$user['is_mobile'])
+	elseif (we::$is['mobile'])
 	{
 		$id_theme = $settings['theme_guests_mobile'];
 		$skin = $settings['theme_skin_guests_mobile'];
@@ -1282,8 +1284,8 @@ function loadTheme($id_theme = 0, $initialize = true)
 	// Time to determine our CSS list...
 	// First, load our requested skin folder.
 	$context['skin'] = empty($skin) ? (empty($id_theme) ?
-		(we::$user['is_mobile'] ? $settings['theme_skin_guests_mobile'] : $settings['theme_skin_guests']) :
-		(we::$user['is_mobile'] ? 'skins/Wireless' : 'skins')) :
+		(we::$is['mobile'] ? $settings['theme_skin_guests_mobile'] : $settings['theme_skin_guests']) :
+		(we::$is['mobile'] ? 'skins/Wireless' : 'skins')) :
 		($skin === 'skins' || strpos($skin, 'skins/') === 0 ? '' : 'skins/') . $skin;
 	$folders = explode('/', $context['skin']);
 	$context['css_folders'] = array();
@@ -1302,7 +1304,6 @@ function loadTheme($id_theme = 0, $initialize = true)
 		'index' => false,
 		'sections' => false
 	);
-	$context['css_suffixes'] = array();
 
 	$member = empty(we::$id) ? -1 : we::$id;
 
@@ -1548,7 +1549,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 		$required_files = implode('+', $templates);
 		loadLanguage($required_files, '', false);
 		if ($context['right_to_left'] = !empty($txt['lang_rtl']))
-			we::$user['is_rtl'] = true; // May be needed in we::is tests.
+			we::$is['rtl'] = true; // May be needed in we::is tests.
 
 		// Initialize our JS files to cache right before we run template_init().
 		weInitJS();
@@ -1600,53 +1601,6 @@ function loadTheme($id_theme = 0, $initialize = true)
 	// Make a special URL for the language.
 	// !!! $txt['image_lang'] isn't defined anywhere...
 	$theme['lang_images_url'] = $theme['images_url'] . '/' . (!empty($txt['image_lang']) ? $txt['image_lang'] : we::$user['language']);
-
-	// CSS suffixes are used for cached CSS filenames.
-	// Add Webkit fixes -- there are so many popular browsers based on it.
-	if (we::is('webkit') && we::$browser['agent'] !== 'webkit')
-		$context['css_suffixes'][] = 'webkit';
-
-	// Add any potential browser-based fixes.
-	if (isset(we::$browser['agent']))
-		$context['css_suffixes'][] = we::$browser['agent'] . we::$browser['version'];
-
-	// Add any potential OS-based fixes.
-	if (isset(we::$browser['os']))
-		$context['css_suffixes'][] = we::$browser['os'] . we::$browser['os_version'];
-
-	// RTL languages require an additional stylesheet.
-	if ($context['right_to_left'])
-		$context['css_suffixes'][] = 'rtl';
-
-	// We may also have special stylesheets for guests and members.
-	if (we::$is_guest)
-		$context['css_suffixes'][] = 'guest';
-	else
-	{
-		$context['css_suffixes'][] = 'member';
-		$context['css_suffixes'][] = 'm' . we::$id;
-	}
-
-	// And even for boards and categories. Freedom is good.
-	if (isset($board_info['id']))
-	{
-		$context['css_suffixes'][] = 'b' . $board_info['id'];
-		$context['css_suffixes'][] = 'c' . $board_info['cat']['id'];
-	}
-	elseif (!empty($_GET['category']) && (int) $_GET['category'])
-		$context['css_suffixes'][] = 'c' . (int) $_GET['category'];
-
-	// Is the user an administrator?
-	if (we::$is_admin)
-		$context['css_suffixes'][] = 'admin';
-	// Or maybe a moderator, then?
-	elseif (we::$user['is_mod'])
-		$context['css_suffixes'][] = 'mod';
-
-	// These are special flow-control keywords.
-	$context['css_suffixes'][] = 'local';		// index.local.css will only be included if the file is in the current skin's folder.
-	$context['css_suffixes'][] = 'global';		// index.global.css will be included in the current skin and all its sub-skins (default.)
-	$context['css_suffixes'][] = 'replace';		// index.replace.css will ensure that all parent folders' index.css and index.*.css files will be excluded.
 
 	$context['tabindex'] = 1;
 	$time = time();

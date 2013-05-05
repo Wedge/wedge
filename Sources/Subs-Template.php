@@ -588,7 +588,7 @@ function ob_sessrewrite($buffer)
 
 	// Strip protocol out of links that share it with the current page's URL. Makes oldIE go crazy, so no cookie for him.
 	$strip_protocol = '(<[^>]+\s(?:href|src|action)=")' . preg_quote(substr(we::$user['server'], 0, strpos(we::$user['server'], '://')), '~') . '://';
-	if (we::$browser['is_ie8down'])
+		if (we::$browser['ie8down'])
 		$buffer = preg_replace('~' . $strip_protocol . '((?:[^.]|\.(?!css))*?")~', '$1//$2', $buffer);
 	else
 		$buffer = preg_replace('~' . $strip_protocol . '~', '$1//', $buffer);

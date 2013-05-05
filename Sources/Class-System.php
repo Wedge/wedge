@@ -13,9 +13,9 @@
 
 class we
 {
-	static $ua, $browser;			// User agent string (we::$ua) and subsequent browser array.
-	static $user, $id;				// All user information, plus their ID
-	static $is_admin;				// we::$is_admin -- or use the slower we::is('admin')
+	static $ua, $browser, $os;		// User agent string (we::$ua) and subsequent browser array, and OS.
+	static $user, $id, $is;			// All user information, plus their ID, and an array of variables defining the environment.
+	static $is_admin;				// we::$is_admin -- or use the slower we::$is['admin'] or we::is('admin')
 	static $is_guest, $is_member;	// we::$is_guest/we::$is_member -- or use the slower is('guest')/is('member')
 	static $cache;					// Cache of parsed strings
 
@@ -55,7 +55,7 @@ class we
 	 */
 	protected static function init_user()
 	{
-		global $context, $settings, $user_settings, $cookiename, $db_prefix, $boardurl, $board;
+		global $context, $settings, $user_settings, $cookiename, $db_prefix, $boardurl;
 
 		$id_member = 0;
 
@@ -257,12 +257,6 @@ class we
 			'activated' => !empty($user_settings['is_activated']) ? $user_settings['is_activated'] : 0,
 			'passwd' => isset($user_settings['passwd']) ? $user_settings['passwd'] : '',
 			'language' => empty($user_settings['lngfile']) || empty($settings['userLanguage']) ? $settings['language'] : $user_settings['lngfile'],
-			'is_guest' => $id_member == 0,
-			'is_member' => $id_member > 0,
-			'is_m' . $id_member => true,
-			'is_admin' => in_array(1, $user['groups']),
-			'is_mod' => false,
-			'is_mobile' => $_SESSION['is_mobile'],
 			'theme' => $_SESSION['is_mobile'] ? (empty($user_settings['id_theme_mobile']) ? 0 : $user_settings['id_theme_mobile']) : (empty($user_settings['id_theme']) ? 0 : $user_settings['id_theme']),
 			'skin' => $_SESSION['is_mobile'] ? (empty($user_settings['id_theme_mobile']) ? '' : $user_settings['skin_mobile']) : (empty($user_settings['id_theme']) ? '' : $user_settings['skin']),
 			'last_login' => empty($user_settings['last_login']) ? 0 : $user_settings['last_login'],
@@ -295,8 +289,17 @@ class we
 			'sanctions' => !empty($user_settings['data']['sanctions']) ? $user_settings['data']['sanctions'] : array(),
 		);
 
+		$is = array(
+			'guest' => $id_member == 0,
+			'member' => $id_member > 0,
+			'm' . $id_member => true,
+			'admin' => in_array(1, $user['groups']),
+			'mod' => false,
+			'mobile' => $_SESSION['is_mobile'],
+		);
+
 		// Some clean-up.
-		if ($user['is_admin'])
+		if ($is['admin'])
 			$user['sanctions'] = array();
 		else
 			if (!empty($user['sanctions']))
@@ -305,13 +308,8 @@ class we
 						unset ($user['sanctions'][$infraction]);
 
 		// Some more data for we::is test flexibility...
-		if (!empty($board_info))
-		{
-			$user['is_b' . $board_info['id']] = true;
-			$user['is_c' . $board_info['cat']['id']] = true;
-		}
-		elseif (!empty($_GET['category']) && (int) $_GET['category'])
-			$user['is_c' . (int) $_GET['category']] = true;
+		if (!empty($_GET['category']) && (int) $_GET['category'])
+			$is['c' . (int) $_GET['category']] = true;
 
 		// Fill in the server URL for the current user. This is user-specific, as they may be using a different URL than the script's default URL (Pretty URL, secure access...)
 		// Note that HTTP_X_FORWARDED_SERVER is mostly used by proxy servers. If the client doesn't provide anything, it's probably a bot.
@@ -342,7 +340,7 @@ class we
 			$user['language'] = strtr($_SESSION['language'], './\\:', '____');
 
 		// Just build this here, it makes it easier to change/use - administrators can see all boards.
-		if ($user['is_admin'])
+		if ($is['admin'])
 		{
 			$user['query_list_board'] = '1=1';
 			$user['query_see_board'] = '1=1';
@@ -407,7 +405,7 @@ class we
 		// Ok, guess they don't want to see all the boards.
 		else
 		{
-			if ($user['is_admin'])
+			if ($is['admin'])
 			{
 				// Admin can implicitly see and enter every board. If they want to ignore boards, make sure we clear both of the 'wanna see' options.
 				$user['query_wanna_list_board'] = 'b.id_board NOT IN (' . implode(',', $user['ignoreboards']) . ')';
@@ -422,10 +420,10 @@ class we
 
 		// {query_see_topic}, which has basic t.approved tests as well
 		// as more elaborate topic privacy, is set up here.
-		if ($user['is_admin'])
+		if ($is['admin'])
 			$user['query_see_topic'] = '1=1';
 
-		elseif ($user['is_guest'])
+		elseif ($is['guest'])
 			$user['query_see_topic'] = empty($settings['postmod_active']) ? 't.privacy = \'default\'' : '(t.approved = 1 AND t.privacy = \'default\')';
 
 		// If we're in a board, the approve_posts permission may be set for the current topic.
@@ -458,11 +456,12 @@ class we
 		wesql::register_replacement('query_wanna_see_board', $user['query_wanna_see_board']);
 		wesql::register_replacement('query_wanna_list_board', $user['query_wanna_list_board']);
 
-		self::$id = $id_member;
+		self::$is =& $is;
 		self::$user =& $user;
-		self::$is_admin =& $user['is_admin'];
-		self::$is_guest =& $user['is_guest'];
-		self::$is_member =& $user['is_member'];
+		self::$id = $id_member;
+		self::$is_admin =& $is['admin'];
+		self::$is_guest =& $is['guest'];
+		self::$is_member =& $is['member'];
 	}
 
 	/**
@@ -479,7 +478,7 @@ class we
 	 * - Gecko engine (used in Firefox and compatible)
 	 * - Internet Explorer (plus tests for IE6 and above)
 	 *
-	 * Current OSes detected via self::$browser['os']:
+	 * Current OSes detected via self::$os['os']:
 	 * - iOS (Safari Mobile is the only browser engine allowed on iPhone, iPod, iPad etc.)
 	 * - Android
 	 * - Windows (and versions equal to or above XP)
@@ -491,29 +490,26 @@ class we
 
 		// The following determines the user agent (browser) as best it can.
 		$ua = self::$ua;
-		$browser['is_opera'] = strpos($ua, 'Opera') !== false;
+		$browser['opera'] = strpos($ua, 'Opera') !== false;
 
 		// Detect Webkit and related
-		$browser['is_webkit'] = $is_webkit = strpos($ua, 'AppleWebKit') !== false;
-		$browser['is_chrome'] = $is_webkit && (strpos($ua, 'Chrome') !== false || strpos($ua, 'CriOS') !== false);
-		$browser['is_safari'] = $is_webkit && !$browser['is_chrome'] && strpos($ua, 'Safari') !== false;
-
-		// Detecting broader mobile browsers. Make sure you rely on skin.xml's <mobile> setting in priority.
-		$browser['is_mobile'] = !empty(self::$user['is_mobile']);
+		$browser['webkit'] = $is_webkit = strpos($ua, 'AppleWebKit') !== false;
+		$browser['chrome'] = $is_webkit && (strpos($ua, 'Chrome') !== false || strpos($ua, 'CriOS') !== false);
+		$browser['safari'] = $is_webkit && !$browser['chrome'] && strpos($ua, 'Safari') !== false;
 
 		// Detect Firefox versions
-		$browser['is_gecko'] = !$is_webkit && strpos($ua, 'Gecko') !== false;	// Mozilla and compatible
-		$browser['is_firefox'] = strpos($ua, 'Gecko/') !== false;				// Firefox says "Gecko/20xx", not "like Gecko"
+		$browser['gecko'] = !$is_webkit && strpos($ua, 'Gecko') !== false;	// Mozilla and compatible
+		$browser['firefox'] = strpos($ua, 'Gecko/') !== false;				// Firefox says "Gecko/20xx", not "like Gecko"
 
-		$browser['is_ie'] = $is_ie = strpos($ua, 'MSIE') !== false;
+		$browser['ie'] = $is_ie = strpos($ua, 'MSIE') !== false;
 
 		// Retrieve the version number, as a floating point.
 		// Chrome for iOS uses the Safari Mobile string and replaces Version with CriOS.
 		preg_match('~' . (
-				$browser['is_opera'] || $browser['is_safari'] ? 'version[/ ]' :
-				($browser['is_firefox'] ? 'firefox/' :
-				($browser['is_ie'] ? 'msie ' :
-				($browser['is_chrome'] ? 'c(?:hrome|rios)/' :
+				$browser['opera'] || $browser['safari'] ? 'version[/ ]' :
+				($browser['firefox'] ? 'firefox/' :
+				($browser['ie'] ? 'msie ' :
+				($browser['chrome'] ? 'c(?:hrome|rios)/' :
 				'applewebkit/')))
 			) . '([\d.]+)~i', $ua, $ver)
 		|| preg_match('~(?:version|opera)[/ ]([\d.]+)~i', $ua, $ver);
@@ -521,7 +517,7 @@ class we
 		$ver = isset($ver[1]) ? (float) $ver[1] : 0;
 
 		// A WebKit thing, with no version...? Set the equivalent Safari version.
-		if ($browser['is_safari'] && !$ver)
+		if ($browser['safari'] && !$ver)
 		{
 			preg_match('~applewebkit/([\d.]+)~i', $ua, $ver);
 			$ver = isset($ver[1]) ? (float) $ver[1] : 0;
@@ -529,34 +525,38 @@ class we
 		}
 
 		// No need to store version numbers for outdated versions.
-		if ($browser['is_opera'])		$ver = max(11, $ver);
-		elseif ($browser['is_chrome'])	$ver = max(20, $ver);
-		elseif ($browser['is_firefox'])	$ver = $ver < 5 ? max(3, $ver) : max(15, $ver); // Pre-v5 Firefox remains popular.
-		elseif ($browser['is_safari'])	$ver = max(4, $ver);
-		elseif ($browser['is_ie'])		$ver = max(6, $ver);
+		if ($browser['opera'])			$ver = max(11, $ver);
+		elseif ($browser['chrome'])		$ver = max(20, $ver);
+		elseif ($browser['firefox'])	$ver = $ver < 5 ? max(3, $ver) : max(15, $ver); // Pre-v5 Firefox remains popular.
+		elseif ($browser['safari'])		$ver = max(4, $ver);
+		elseif ($browser['ie'])			$ver = max(6, $ver);
 
 		// Reduce to first significant sub-version (if any), e.g. v2.01 => 2, v2.50.3 => 2.5
 		$browser['version'] = floor($ver * 10) / 10;
 
-		$browser['is_ie8down'] = $is_ie && $ver <= 8;
+		$browser['ie8down'] = $is_ie && $ver <= 8;
 		for ($i = 6; $i <= 10; $i++)
-			$browser['is_ie' . $i] = $is_ie && $ver == $i;
+			$browser['ie' . $i] = $is_ie && $ver == $i;
 
 		// Store our browser name... Start with specific browsers, end with generic engines.
 		foreach (array('opera', 'chrome', 'firefox', 'ie', 'safari', 'webkit', 'gecko', '') as $agent)
 		{
 			$browser['agent'] = $agent;
-			if (!$agent || $browser['is_' . $agent])
+			if (!$agent || $browser[$agent])
 				break;
 		}
+
+		// @if mobile -> returns true if user is browsing using a mobile device.
+		// @if SKIN_MOBILE -> returns true if user's current skin is mobile-oriented, such as the Wireless skin.
+		$os['mobile'] = !empty(self::$is['mobile']);
 
 		// Determine current OS and version if it can turn out to be useful; currently
 		// Windows XP and above, or iOS 4 and above, or Android 2 and above.
 		// !! Should we add BlackBerry, Firefox OS and others..?
-		$browser['is_windows'] = strpos($ua, 'Windows ') !== false;
-		$browser['is_android'] = strpos($ua, 'Android') !== false;
-		$browser['is_ios'] = $is_webkit && strpos($ua, '(iP') !== false;
-		if ($browser['is_windows'])
+		$os['windows'] = strpos($ua, 'Windows ') !== false;
+		$os['android'] = strpos($ua, 'Android') !== false;
+		$os['ios'] = $is_webkit && strpos($ua, '(iP') !== false;
+		if ($os['windows'])
 		{
 			if (preg_match('~Windows(?: NT)? (\d+\.\d+)~', $ua, $ver))
 				$os_ver = max(5.1, (float) $ver[1]);
@@ -566,27 +566,27 @@ class we
 					if (strpos($ua, 'Windows ' . $key) !== false)
 						break;
 		}
-		elseif ($browser['is_android'] && preg_match('~Android (\d+\.\d)~', $ua, $ver))
+		elseif ($os['android'] && preg_match('~Android (\d+\.\d)~', $ua, $ver))
 			$os_ver = max(2, (float) $ver[1]);
-		elseif ($browser['is_ios'] && preg_match('~ OS (\d+(?:_\d))~', $ua, $ver))
+		elseif ($os['ios'] && preg_match('~ OS (\d+(?:_\d))~', $ua, $ver))
 			$os_ver = max(3, (float) str_replace('_', '.', $ver[1]));
 
-		$browser['os'] = '';
-		foreach (array('windows', 'android', 'ios') as $os)
-			if ($browser['is_' . $os])
-				$browser['os'] = $os;
+		$os['os'] = '';
+		foreach (array('windows', 'android', 'ios') as $this_os)
+			if ($os[$this_os])
+				$os['os'] = $this_os;
 
 		// Firefox OS doesn't advertise itself, but can officially be detected this way.
-		if (empty($browser['os']) && $browser['is_firefox'] && strpos($ua, '(Mobile;') !== false)
+		if (empty($os['os']) && $browser['firefox'] && strpos($ua, '(Mobile;') !== false)
 		{
-			$browser['os'] = 'ffos';
-			$browser['is_mobile'] = we::$user['is_mobile'] = true;
-			$os_var = '';
+			$os['os'] = 'ffos';
+			$os['mobile'] = self::$is['mobile'] = true;
+			$os_ver = '';
 		}
 
 		// !! Note that rounding to an integer (instead of the first significant sub-version)
 		// could probably help reduce the number of cached files by a large margin. Opinions?
-		$browser['os_version'] = isset($os_ver) ? floor($os_ver * 10) / 10 : '';
+		$os['version'] = !empty($os_ver) ? floor($os_ver * 10) / 10 : '';
 
 		// This isn't meant to be reliable, it's just meant to catch most bots to prevent PHPSESSID from showing up.
 		$browser['possibly_robot'] = !empty(self::$user['possibly_robot']);
@@ -595,8 +595,12 @@ class we
 		if (!self::$is_guest || in_array($context['action'], array('login', 'login2', 'register')))
 			$browser['possibly_robot'] = false;
 
+		$browser[$browser['agent'] . $browser['version']] = true;
+		$os[$os['os'] . $os['version']] = true;
+
 		// Save the results...
 		self::$browser = $browser;
+		self::$os = $os;
 
 		// And we'll also let you modify the browser array ASAP.
 		call_hook('detect_browser');
@@ -646,7 +650,7 @@ class we
 	}
 
 	/**
-	 * Alias to the analyzer. Send in a short, simple string.
+	 * Alias to the analyzer, with a cache to speed it up. Optimized for simple is_* variable tests.
 	 */
 	public static function is($string)
 	{
@@ -655,10 +659,12 @@ class we
 		if (isset(self::$cache[$string]))
 			return self::$cache[$string];
 
-		if (isset(self::$user['is_' . $string]))
-			return self::$cache[$string] = !empty(self::$user['is_' . $string]);
-		if (isset(self::$browser['is_' . $string]))
-			return self::$cache[$string] = !empty(self::$browser['is_' . $string]);
+		if (isset(self::$is[$string]))
+			return self::$cache[$string] = empty(self::$is[$string]) ? false : $string;
+		if (isset(self::$browser[$string]))
+			return self::$cache[$string] = empty(self::$browser[$string]) ? false : $string;
+		if (isset(self::$os[$string]))
+			return self::$cache[$string] = empty(self::$os[$string]) ? false : $string;
 
 		return self::$cache[$string] = self::analyze($string);
 	}
@@ -673,16 +679,17 @@ class we
 		if (!is_array($strings))
 		{
 			// If working on a string, we'll group brackets together, and split the rest.
+			// Note that commas need to be encoded, in case you enter e.g. (ie[6,7])
 			while (strpos($strings, '(') !== false)
 				$strings = preg_replace('~\(([^)]+)\)~e', '"<" . str_replace(array(",", "&"), array(chr(20), chr(21)), "$1") . ">"', $strings);
-			$strings = array_flip(array_map('trim', explode(',', $strings)));
+			$strings = array_flip(array_map('trim', preg_split('~[,|]+~', $strings)));
 		}
 
 		$browser = self::$browser;
 		$a = $browser['agent'];
-		$o = $browser['os'];
 		$bv = $browser['version'];
-		$ov = $browser['os_version'];
+		$o = self::$os['os'];
+		$ov = self::$os['version'];
 
 		// A quick browser test.
 		if (isset($strings[$a])) return $a;											// Example match: ie (any version of the browser.)
@@ -711,11 +718,8 @@ class we
 			$and = strpos($string, '&');
 			if ($and !== false)
 			{
-				$test_all = true;
-				foreach (array_map('trim', preg_split('~&+~', $string)) as $finger)
-					$test_all &= self::is($finger) !== false;
-
-				if ($test_all)
+				// If nothing returned false, then go for it.
+				if (!in_array(false, array_map('we::is', array_map('trim', preg_split('~&+~', $string)))))
 					return $string;
 				continue;
 			}
@@ -731,9 +735,10 @@ class we
 				continue;
 			}
 
-			// If it's a group, fix its separators first.
+			// And now, positive tests.
 			if ($string[0] === '<')
 			{
+				// If it's a group, fix its separators and test it.
 				$string = self::is(str_replace(array(chr(20), chr(21)), array(',', '&'), trim($string, '<>')));
 				if ($string)
 					return $string;
@@ -741,16 +746,15 @@ class we
 			}
 
 			$bracket = strpos($string, '['); // Is there a version request?
-			$real_browser = $bracket === false ? $string : substr($string, 0, $bracket);
+			$request = $bracket === false ? $string : substr($string, 0, $bracket);
 
-			// And now, positive tests.
-			if (empty($browser['is_' . $real_browser]))
+			if (empty($browser[$request]) && empty(self::$os[$request]))
 				continue;
 			if ($bracket === false)
 				return $string;
-			$is_os_test = $browser['os'] == $real_browser;
-			$split = explode('-', trim(substr($string, $is_os_test ? $olength : $alength, -1), ' ]'));
-			$v = $is_os_test ? $ov : $bv;
+
+			$split = explode('-', trim(substr($string, isset(self::$os[$request]) ? $olength : $alength, -1), ' ]'));
+			$v = isset(self::$os[$request]) ? $ov : $bv;
 			if (isset($split[1]))
 			{
 				if (empty($split[0]) && $v <= $split[1]) return $string;	// ie[-8] (version 8 or earlier)

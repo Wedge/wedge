@@ -2,8 +2,8 @@
 /**
  * Wedge
  *
- * This file handles functions that allow caching data in Wedge: regular data (cache_get/put_data), CSS and JavaScript.
- * It also ensures that CSS and JS files are properly parsed and compressed before they're cached.
+ * This file handles all caching data in Wedge: regular data (cache_get/put_data), CSS and JavaScript.
+ * It also ensures that CSS and JS files are properly parsed and compressed by Wess before they're cached.
  *
  * @package wedge
  * @copyright 2010-2013 Wedgeward, wedge.org
@@ -303,11 +303,12 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 	$fallback_folder = $deep_folder = $theme[$context['skin_uses_default_theme'] ? 'default_theme_dir' : 'theme_dir'] . '/';
 	$fallback_folder .= reset($context['css_folders']) . '/';
 	$deep_folder .= end($context['css_folders']) . '/';
-	$requested_suffixes = array('' => 0) + array_flip($context['css_suffixes']);
-	$ignore_versions = array();
 	$found_suffixes = array();
 	$found_files = array();
 	$css = array();
+
+	// Pre-cache a special keyword that always returns true.
+	we::$cache['global'] = true;
 
 	// !! @todo: the following is quite resource intensive... Maybe we should cache the results somehow?
 	// !! e.g. cache for several minutes, but delete cache if the filemtime for current folder or its parent folders was updated.
@@ -321,6 +322,9 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 		if (empty($cached_files[$fold]))
 			$cached_files[$fold] = array_diff((array) @scandir($fold ? $fold : '', 1), array('.', '..', '.htaccess', 'index.php', 'skin.xml', 'custom.xml'));
 
+		// A 'local' suffix means the file should only be parsed if it's in the same folder as the current skin.
+		we::$cache['local'] = $fold == $deep_folder;
+
 		foreach ($cached_files[$fold] as $file)
 		{
 			if (substr($file, -4) !== '.css')
@@ -331,42 +335,31 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 				continue;
 
 			// Get the list of suffixes in the file name.
-			$suffix_string = substr(strstr($file, '.'), 1, -4);
-			$suffixes = array_flip(explode(',', $suffix_string));
-
-			// If we found our browser version in the suffix list, then add to the list of files to load.
-			if (!empty($suffix_string) && $brow = we::analyze($suffixes))
-			{
-				$requested_suffixes[$brow] = true;
-				// !! CSS file suffixes can do what we::is() strings do, except for the following:
-				// - No negative statements (e.g. '!chrome')
-				// - No logical AND statements (e.g. 'chrome && ios')
-				// If you need to use these, you should use @if and @is commands inside the CSS file.
-				if ($brow != we::$browser['agent'] . we::$browser['version'] && $brow != we::$browser['os'] . we::$browser['os_version'])
-					$ignore_versions[$brow] = true;
-			}
-
-			$suffixes_to_keep = array_intersect_key($suffixes, $requested_suffixes);
-
-			// If we find a local suffix in the filename, only process it if it's at the final level.
-			// Also, if we can't find a required suffix in the suffix list, skip the file.
-			if (!$suffixes_to_keep || (isset($suffixes['local']) && $fold !== $deep_folder))
-				continue;
+			$suffix = substr(strstr($file, '.'), 1, -4);
 
 			// If we find a replace suffix, delete any parent skin file with the same radix.
 			// !! This is a work in progress. Needs some extra fine-tuning.
-			if (isset($suffixes['replace']))
+			if (!empty($suffix) && strpos($suffix, 'replace') !== false)
+			{
+				$suffix = preg_replace('~[,&| ]*replace[,&| ]*~', '', $suffix);
 				foreach ($css as $key => $val)
-					if (strpos($val, '/' . $radix . '.') !== false)
+					if (strpos($val, '/' . $radix . '.' . ($suffix ? $suffix . '.' : '')) !== false)
 						unset($css[$key]);
+			}
+
+			// If our suffix isn't valid, then skip the file.
+			if (!empty($suffix) && !($found_suffix = we::is($suffix)))
+				continue;
 
 			$css[] = $fold . $file;
 
 			// If a suffix-less file was found, make sure we tell Wedge.
-			if (isset($suffixes['']))
+			if (empty($suffix))
 				$found_files[] = $radix;
+			// Otherwise, add suffix to our list of keywords. If it was a list of AND-separated suffixes, add them all.
+			else
+				$found_suffixes[] = $found_suffix;
 
-			$found_suffixes += $suffixes_to_keep;
 			if ($db_show_debug === true)
 				$context['debug']['sheets'][] = $file . ' (' . basename($theme[$target . 'url']) . ')';
 			$latest_date = max($latest_date, filemtime($fold . $file));
@@ -382,6 +375,9 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 		if (empty($cached_files[$fold]))
 			$cached_files[$fold] = array_diff((array) @scandir($fold ? $fold : '', 1), array('.', '..', '.htaccess', 'index.php', 'skin.xml', 'custom.xml'));
 
+		// Ignore local files (we're only guests in this folder.)
+		we::$cache['local'] = false;
+
 		foreach ($cached_files[$fold] as $file)
 		{
 			if (substr($file, -4) !== '.css')
@@ -389,15 +385,6 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 
 			$radix = substr($file, 0, strpos($file, '.'));
 			if (!isset($original_files[$radix], $not_found[$radix]))
-				continue;
-
-			// Get the list of suffixes in the file name.
-			$suffixes = array_flip(explode(',', substr(strstr($file, '.'), 1, -4)));
-			$keep_suffixes = array_intersect_key($suffixes, $requested_suffixes);
-
-			// Ignore local files (we're only guests in this folder.)
-			// Also, if we can't find a required suffix in the suffix list, skip the file.
-			if (!$keep_suffixes || isset($keep_suffixes['local']))
 				continue;
 
 			$css[] = $fold . $file;
@@ -419,32 +406,15 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 	$can_gzip = !empty($settings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
 	$ext = $can_gzip ? (we::is('safari') ? '.cgz' : '.css.gz') : '.css';
 
-	// Don't add the flow control keywords to the final URL. If you add a local/global override
-	// and decide to remove it later, simply reupload other CSS files or empty your cache.
-	unset($found_suffixes['local'], $found_suffixes['global'], $found_suffixes['replace']);
-
-	// We need to cache different versions for different browsers/OSes, even if we don't have overrides available.
-	// This is because Wedge may use '@if browser' in the CSS, and also adds vendor prefixes automatically.
-	$found_suffixes[we::$browser['agent'] . we::$browser['version']] = true;
-	$found_suffixes[str_replace('dows', '', we::$browser['os']) . we::$browser['os_version']] = true;
-
-	// Make sure to only keep 'webkit' if we have no other browser name on record.
-	if (we::is('webkit') && we::$browser['agent'] != 'webkit')
-		unset($found_suffixes['webkit']);
+	// And the language. Only do it if the skin allows for multiple languages and we're not in English mode.
+	if (isset($context['skin_available_languages']) && we::$user['language'] !== 'english')
+		$found_suffixes[] = we::$user['language'];
 
 	// Build the target folder from our skin's folder names and main file name. We don't need to show 'common-index-sections-extra-custom' in the main filename, though!
 	$target_folder = trim($id . '-' . implode('-', array_filter(array_diff($files, (array) 'common', $ignore_files))), '-');
 
-	$id = array_filter(array_merge(
-		array_keys(array_diff_key($found_suffixes, $ignore_versions)),
-
-		// And the language. Only do it if the skin allows for multiple languages and we're not in English mode.
-		isset($context['skin_available_languages']) && we::$user['language'] !== 'english'
-			&& count($context['skin_available_languages']) > 1 ? (array) we::$user['language'] : array()
-	));
-
 	// Cache final file and retrieve its name.
-	$final_script = $boardurl . '/css/' . wedge_cache_css_files($target_folder . ($target_folder ? '/' : ''), $id, $latest_date, $css, $can_gzip, $ext);
+	$final_script = $boardurl . '/css/' . wedge_cache_css_files($target_folder . ($target_folder ? '/' : ''), $found_suffixes, $latest_date, $css, $can_gzip, $ext);
 
 	if ($final_script == $boardurl . '/css/')
 		return false;
@@ -474,29 +444,17 @@ function add_plugin_css_file($plugin_name, $original_files = array(), $add_link 
 	$files = array_keys(array_flip($original_files));
 	$basefiles = array();
 
-	// Some of these keywords aren't of any use in uni-dimensional plugin folders anyway.
-	$context['css_suffixes'] = array_diff($context['css_suffixes'], array('local', 'global', 'replace', 'admin', 'mod', 'm' . we::$id));
-	if (isset($board_info['id']))
-		$context['css_suffixes'] = array_diff($context['css_suffixes'], array('b' . $board_info['id'], 'c' . $board_info['cat']['id']));
-	elseif (!empty($_GET['category']) && (int) $_GET['category'])
-		$context['css_suffixes'] = array_diff($context['css_suffixes'], array('c' . (int) $_GET['category']));
-
-	// Make sure to only keep 'webkit' if we have no other browser name on record.
-	if (we::is('webkit') && we::$browser['agent'] != 'webkit')
-		$context['css_suffixes'] = array_diff($context['css_suffixes'], array('webkit'));
-
-	// Plugin CSS files only support a single suffix per file. Deal with it...
+	// Plugin CSS files don't support suffixes for now.
+	// Use @if tests inside them, they should work.
 	foreach ($files as $file)
 	{
 		if (substr($file, -4) === '.css')
 			$file = substr($file, 0, -4);
 		$basefiles[] = substr(strrchr($file, '/'), 1);
-		foreach ($context['css_suffixes'] as $gen)
-			$files[] = $file . '.' . $gen;
+		$files[] = $file;
 	}
 
 	$latest_date = 0;
-	$found_suffixes = array();
 
 	foreach ($files as $i => &$file)
 	{
@@ -518,7 +476,6 @@ function add_plugin_css_file($plugin_name, $original_files = array(), $add_link 
 	$id = array_filter(array_merge(
 		array($context['enabled_plugins'][$plugin_name]),
 		$basefiles,
-		$context['css_suffixes'],
 		we::$user['language'] !== 'english' ? (array) we::$user['language'] : array()
 	));
 	$latest_date %= 1000000;
@@ -587,7 +544,7 @@ function sort_skin_files($a, $b)
  * Create a compact CSS file that concatenates, pre-parses and compresses a list of existing CSS files.
  *
  * @param mixed $folder The target folder (relative to the cache folder.)
- * @param mixed $ids A filename or an array of filename radixes, such as 'index'.
+ * @param mixed $ids An array of filename radixes, such as array('index', 'member', 'extra').
  * @param integer $latest_date The most recent filedate (Unix timestamp format), to be used to differentiate the latest copy from expired ones.
  * @param string $css The CSS file to process, or an array of CSS files to process, in order, with complete path names.
  * @param boolean $gzip Set to true if you want the final file to be compressed with gzip.
@@ -598,26 +555,35 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 {
 	global $theme, $settings, $css_vars, $context, $cssdir, $boarddir, $boardurl;
 
-	$id = empty($settings['obfuscate_filenames']) ? implode('-', (array) $ids) : md5(implode('-', (array) $ids));
-
-	$full_name = ($id ? $id . '-' : '') . $latest_date . $ext;
 	$final_folder = substr($cssdir . '/' . $folder, 0, -1);
-	$final_file = $final_folder . '/' . $full_name;
+	$cachekey = 'css_files-' . $folder . implode('-', $ids);
 
-	if (file_exists($final_file))
-		return $folder . $full_name;
+	// Get the list of tests that shall be done within the CSS files,
+	// and quickly run them to get relevant suffixes. MAGIC!
+	if (($add = cache_get_data($cachekey, 60000)) !== null)
+	{
+		$suffix = array_flip(array_flip(array_filter(array_map('we::is', explode('|', $add)))));
+
+		$id = preg_replace(
+			'~\b' . we::$os['os'] . '\b~', str_replace('dows', '', we::$os['os'] . we::$os['version']),
+			implode('-', array_merge(array(we::$browser['agent'] . we::$browser['version']), $suffix))
+		);
+		$id = empty($settings['obfuscate_filenames']) ? $id : md5($id);
+
+		$full_name = ($id ? $id . '-' : '') . $latest_date . $ext;
+		$final_file = $final_folder . '/' . $full_name;
+
+		if (file_exists($final_file))
+			return $folder . $full_name;
+	}
+
+	we::$user['extra_tests'] = array();
 
 	if (!empty($folder) && $folder != '/' && !file_exists($final_folder))
 	{
 		@mkdir($final_folder, 0755);
 		@copy($cssdir . '/index.php', $final_folder . '/index.php');
 	}
-
-	// Delete cached versions, unless they have the same timestamp (i.e. up to date.)
-	if (is_array($files = glob($final_folder . '/' . ($id ? $id . '-*' : '[0-9]*') . $ext)))
-		foreach ($files as $del)
-			if (($id || preg_match('~/\d+\.~', $del)) && strpos($del, (string) $latest_date) === false)
-				@unlink($del);
 
 	$final = '';
 	$discard_dir = strlen($boarddir) + 1;
@@ -670,7 +636,10 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 		$final .= str_replace('$here', $relative_root . str_replace('\\', '/', str_replace($boarddir, '', dirname($file))), file_get_contents($file));
 
 	if (empty($final)) // Nothing loaded...?
+	{
+		cache_put_data($cachekey, '', 60000);
 		return false;
+	}
 
 	// CSS is always minified. It takes just a sec' to do, and doesn't impair anything.
 	$final = str_replace(array("\r\n", "\r"), "\n", $final); // Always use \n line endings.
@@ -690,6 +659,34 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 
 	foreach ($plugins as $plugin)
 		$plugin->process($final);
+
+	if (we::$user['extra_tests'])
+	{
+		// Okay, so there are better ways to handle these... For instance, a test on android[-4.0] will store
+		// a keyword if you're on Android, even 4.1+. But right now, it's better than what we had before.
+		preg_match_all('~[bcm][0-9]+|[a-z]+~i', implode(' ', array_flip(array_flip(array_merge($ids, we::$user['extra_tests'])))), $matches);
+		$add = array_diff(array_flip(array_flip($matches[0])), array_keys(we::$browser), array('global', 'local'));
+		$suffix = array_flip(array_flip(array_filter(array_map('we::is', $add))));
+	}
+
+	// Cache all tests.
+	cache_put_data($cachekey, implode('|', empty($add) ? $ids : $add), 60000);
+
+	// And we've finally got our full, working filename...
+	$id = preg_replace(
+		'~\b' . we::$os['os'] . '\b~', str_replace('dows', '', we::$os['os'] . we::$os['version']),
+		implode('-', array_merge(array(we::$browser['agent'] . we::$browser['version']), $suffix ? $suffix : array()))
+	);
+	$id = empty($settings['obfuscate_filenames']) ? $id : md5($id);
+
+	$full_name = ($id ? $id . '-' : '') . $latest_date . $ext;
+	$final_file = $final_folder . '/' . $full_name;
+
+	// Delete cached versions, unless they have the same timestamp (i.e. up to date.)
+	if (is_array($files = glob($final_folder . '/' . ($id ? $id . '-*' : '[0-9]*') . $ext)))
+		foreach ($files as $del)
+			if (($id || preg_match('~/\d+\.~', $del)) && strpos($del, (string) $latest_date) === false)
+				@unlink($del);
 
 	// Remove the 'final' keyword.
 	$final = preg_replace('~\s+final\b~', '', $final);
@@ -715,11 +712,10 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 	$selector = '([abipqsu]|[!+>&#*@:.a-z0-9][^{};,\n"()\~+> ]+?)'; // like $selector_regex, but lazy (+?) and without compounds (\~+> ).
 	if (we::is('chrome[12-],firefox[4-],safari[5.2-]') && preg_match_all('~(?:^|})' . $selector . '([>+: ][^,{]+)(?:,' . $selector . '\2)+(?={)~', $final, $matches, PREG_SET_ORDER))
 	{
-		$magic = we::$browser['is_webkit'] ? ':-webkit-any' : ':-moz-any';
+		$magic = we::$browser['webkit'] ? ':-webkit-any' : ':-moz-any';
 		foreach ($matches as $m)
 		{
-			// The spec says pseudo-elements aren't allowed INSIDE :matches, but
-			// it seems that implementations seem to also refuse them NEXT to :matches.
+			// The spec says pseudo-elements aren't allowed INSIDE :matches, but implementations seem to also refuse them NEXT to :matches.
 			if (strpos($m[0], ':') !== false && (strpos($m[0], ':before') !== false || strpos($m[0], ':after') !== false ||
 				strpos($m[0], ':first-letter') !== false || strpos($m[0], ':first-line') !== false || strpos($m[0], ':selection') !== false))
 				continue;
@@ -1436,15 +1432,15 @@ function wedge_get_skin_options()
 	}
 
 	// Skin variables can be accessed either through PHP or Wess code with a test on the SKIN_* constant.
-	define('SKIN_SIDEBAR_RIGHT', we::$user['is_SKIN_SIDEBAR_RIGHT'] = empty($skin_options['sidebar']) || $skin_options['sidebar'] == 'right');
-	define('SKIN_SIDEBAR_LEFT', we::$user['is_SKIN_SIDEBAR_LEFT'] = isset($skin_options['sidebar']) && $skin_options['sidebar'] == 'left');
+	define('SKIN_SIDEBAR_RIGHT', we::$is['SKIN_SIDEBAR_RIGHT'] = empty($skin_options['sidebar']) || $skin_options['sidebar'] == 'right');
+	define('SKIN_SIDEBAR_LEFT', we::$is['SKIN_SIDEBAR_LEFT'] = isset($skin_options['sidebar']) && $skin_options['sidebar'] == 'left');
 	unset($skin_options['sidebar']);
 	if (!isset($skin_options['mobile']))
 		$skin_options['mobile'] = 0;
 
 	// Any other variables, maybe..? e.g. SKIN_MOBILE
 	foreach ($skin_options as $key => $val)
-		define('SKIN_' . strtoupper($key), we::$user['is_SKIN_' . strtoupper($key)] = !empty($val));
+		define('SKIN_' . strtoupper($key), we::$is['SKIN_' . strtoupper($key)] = !empty($val));
 
 	if (!empty($skeleton))
 	{

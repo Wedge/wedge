@@ -47,7 +47,7 @@ class weNotif
 	 */
 	public static function isNotifierDisabled(Notifier $notifier)
 	{
-		return !we::$user['is_guest'] && in_array($notifier->getName(), self::$disabled);
+		return we::$is_member && in_array($notifier->getName(), self::$disabled);
 	}
 
 	/**
@@ -228,7 +228,7 @@ class weNotif
 
 		$sa = !empty($_REQUEST['sa']) ? $_REQUEST['sa'] : '';
 
-		if (we::$user['is_guest'])
+		if (we::$is_guest)
 			fatal_lang_error('no_access', $sa == 'unread' ? false : 'general');
 
 		if ($sa == 'redirect' && isset($_REQUEST['in']))

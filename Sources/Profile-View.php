@@ -483,7 +483,7 @@ function showPosts($memID)
 		$_REQUEST['viewscount'] = '10';
 
 	// We want users to be able to see their own posts, regardless, and admins can see everything.
-	$ignore_perms = we::$user['is_owner'] || we::$user['is_admin'];
+	$ignore_perms = we::$user['is_owner'] || we::$is_admin;
 	if ($context['is_topics'])
 		$request = wesql::query('
 			SELECT COUNT(t.id_topic)

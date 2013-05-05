@@ -186,7 +186,7 @@ class wess_mixin extends wess
 				// Remove the mixin declaration
 				$css = str_replace($mixin[0], '', $css);
 
-				if (!empty($mixin[1]) && !array_intersect(explode(',', strtolower($mixin[1])), $context['css_suffixes']))
+				if (!empty($mixin[1]) && !we::is(we::$user['extra_tests'][] = strtolower($mixin[1])))
 					continue;
 
 				// Create our mixin entry...
@@ -375,16 +375,8 @@ class wess_var extends wess
 			unset($decs);
 
 			foreach ($matches[0] as $i => $dec)
-			{
-				if (empty($matches[2][$i]))
+				if (empty($matches[2][$i]) || we::is(we::$user['extra_tests'][] = strtolower($matches[2][$i])))
 					$css_vars[$matches[1][$i]] = rtrim($matches[4][$i], '; ');
-				else
-				{
-					$ls = explode(',', strtolower($matches[2][$i]));
-					if (array_intersect($ls, $context['css_suffixes']) || we::analyze(array_flip($ls)))
-						$css_vars[$matches[1][$i]] = rtrim($matches[4][$i], '; ');
-				}
-			}
 
 			// Same as above, but for the actual variables.
 			$keys = array_map('strlen', array_keys($css_vars));
@@ -503,7 +495,7 @@ class wess_if extends wess
 					continue;
 				}
 
-				if (we::is($match) || ($this->test_vars && $this->test($match)))
+				if (we::is(we::$user['extra_tests'][] = $match) || ($this->test_vars && $this->test($match)))
 				{
 					if ($matches[2][$i][0] == '\'' || $matches[2][$i][0] == '"')
 						$matches[2][$i] = substr($matches[2][$i], 1, -1);
@@ -558,7 +550,7 @@ class wess_if extends wess
 					}
 
 					// Browser constant test.
-					if (empty($match) || we::is($match))
+					if (empty($match) || we::is(we::$user['extra_tests'][] = $match))
 						break;
 
 					// Very, very basic variable test. Please bear with me...
@@ -1449,11 +1441,12 @@ class wess_prefixes extends wess
 		$prefixed = $this->prefix . $unchanged;
 		$both = $prefixed . $unchanged;
 		$b = we::$browser;
+		$os = we::$os;
 		$v = $b['version'];
-		$ov = $b['os_version'];
+		$ov = $os['version'];
 		list ($ie, $ie8down, $ie9, $ie10, $opera, $firefox, $safari, $chrome, $ios, $android, $webkit) = array(
-			$b['is_ie'], $b['is_ie8down'], $b['is_ie9'], $b['is_ie10'], $b['is_opera'], $b['is_firefox'],
-			$b['is_safari'] && !$b['is_ios'], $b['is_chrome'], $b['is_ios'], $b['is_android'] && $b['is_webkit'] && !$b['is_chrome'], $b['is_webkit']
+			$b['ie'], $b['ie8down'], $b['ie9'], $b['ie10'], $b['opera'], $b['firefox'],
+			$b['safari'] && !$b['ios'], $b['chrome'], $os['ios'], $os['android'] && $b['webkit'] && !$b['chrome'], $b['webkit']
 		);
 
 		// Only IE6/7/8 don't support border-radius these days.
@@ -1577,7 +1570,7 @@ class wess_prefixes extends wess
 		// Note that AFAIK, repeating-* still is prefixed everywhere as of August 2012, it's fixable but give me a break for now.
 		if (strpos($matches[1], 'gradient(') !== false)
 		{
-			if (($b['is_gecko'] && $v >= 16) || ($b['is_opera'] && $v >= 12.1) || ($b['is_ie'] && $v >= 10))
+			if (($b['gecko'] && $v >= 16) || ($b['opera'] && $v >= 12.1) || ($b['ie'] && $v >= 10))
 				return $unchanged;
 
 			$prefixed = preg_replace('~(?<=[\s:])([a-z][a-z-]+-gradient\h*\()~', $this->prefix . '$1', $unchanged);
@@ -1597,7 +1590,7 @@ class wess_prefixes extends wess
 			return str_replace('box', $this->prefix . 'box', $unchanged);
 
 		// The final flexbox model doesn't require a prefix. But Chrome wants to use it.
-		if ($b['is_chrome'] && $v >= 21 && strpos($matches[1], 'flex') !== false)
+		if ($b['chrome'] && $v >= 21 && strpos($matches[1], 'flex') !== false)
 			return str_replace(array('inline-flex', 'flex'), array($this->prefix . 'inline-flex', $this->prefix . 'flex'), $unchanged);
 
 		// There's a need for min/max-resolution to be rewritten for some browsers.
@@ -1607,10 +1600,10 @@ class wess_prefixes extends wess
 			$dpi = $matches[4] == 'dpi' ? $matches[3] : $matches[3] * 96;
 			// Firefox 3.5 (?) to 15: min--moz-device-pixel-ratio: 2
 			// Firefox 16+: directly accepts min-resolution: 2dppx (or 192dpi)
-			if ($b['is_firefox'])
+			if ($b['firefox'])
 				return $v < 16 ? $matches[2] . '-moz-device-pixel-ratio:' . ($dpi / 96) : $matches[1];
 			// WebKit: -webkit-min-device-pixel-ratio: 2 -- Chrome added support for resolution, but as of March 2013 it's still unclear.
-			if ($b['is_webkit'])
+			if ($b['webkit'])
 				return $this->prefix . $matches[2] . '-device-pixel-ratio:' . ($dpi / 96);
 			// IE9+ and Opera should be fine with a dpi unit. Opera 12.1+ supports dppx, but who cares.
 			return $matches[2] . 'resolution:' . $dpi . 'dpi';
@@ -1619,9 +1612,9 @@ class wess_prefixes extends wess
 		// IE9+/Firefox 16+/Chrome 26+ support this unprefixed, Safari 6 needs a prefix.
 		if (strpos($matches[1], 'calc') !== false)
 		{
-			if (($b['is_ie'] && $v >= 9) || ($b['is_chrome'] && $v >= 26) || ($b['is_firefox'] && $v >= 16))
+			if (($b['ie'] && $v >= 9) || ($b['chrome'] && $v >= 26) || ($b['firefox'] && $v >= 16))
 				return $matches[1];
-			if (($b['is_chrome'] && $v >= 19) || ($b['is_firefox'] && $v >= 4) || ($b['is_safari'] && $v >= 6))
+			if (($b['chrome'] && $v >= 19) || ($b['firefox'] && $v >= 4) || ($b['safari'] && $v >= 6))
 				return $this->prefix . $matches[1];
 			// Keep it even if not supported. CSS may provide a prior fallback anyway..?
 			return $matches[1];
@@ -1672,15 +1665,15 @@ class wess_prefixes extends wess
 		$v = $b['version'];
 
 		// IE6/7/8/9 don't support keyframes, IE10, Firefox 16+ and Opera 12.10+ support them unprefixed, other browsers require a prefix.
-		if (($b['is_opera'] && $v < 12.1) || ($b['is_firefox'] && $v < 16) || $b['is_webkit'])
+		if (($b['opera'] && $v < 12.1) || ($b['firefox'] && $v < 16) || $b['webkit'])
 			$css = str_replace('@keyframes ', '@' . $this->prefix . 'keyframes ', $css);
 
 		// IE10+ and Opera 11+ support @viewport, but prefixed. Other browsers...? No idea.
-		if (($b['is_opera'] && $v >= 11) || ($b['is_ie'] && $v >= 10))
+		if (($b['opera'] && $v >= 11) || ($b['ie'] && $v >= 10))
 			$css = str_replace('@viewport', '@' . $this->prefix . 'viewport', $css);
 
 		// Chrome 21+ supports the latest flexbox model... But with a prefix. Go figure.
-		if ($b['is_chrome'] && $v >= 21)
+		if ($b['chrome'] && $v >= 21)
 			$css = preg_replace('~\b(order|justify-content|align-(?:content|items|self)|flex(?:-[a-z]+)?)\h*:~', $this->prefix . '$1:', $css);
 
 		// And finally, listen to the author -- you may add a prefix manually, that will be automatically turned into the current

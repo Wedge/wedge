@@ -59,7 +59,7 @@ function RemoveTopic2()
 	list ($starter, $subject, $approved, $b_type) = wesql::fetch_row($request);
 	wesql::free_result($request);
 
-	if ($starter == we::$id && !allowedTo('remove_any') && ($b_type == 'forum' || we::$user['is_mod']))
+	if ($starter == we::$id && !allowedTo('remove_any') && ($b_type == 'forum' || we::$is['mod']))
 		isAllowedTo('remove_own');
 	else
 		isAllowedTo('remove_any');

@@ -1081,7 +1081,7 @@ function Post($post_errors = array())
 	$context['is_first_post'] = $context['is_new_topic'] || (isset($_REQUEST['msg']) && $_REQUEST['msg'] == $id_first_msg);
 
 	// Do we need to show the visual verification image?
-	$context['require_verification'] = !we::$user['is_mod'] && !we::$is_admin && !empty($settings['posts_require_captcha']) && (we::$user['posts'] < $settings['posts_require_captcha'] || (we::$is_guest && $settings['posts_require_captcha'] == -1));
+	$context['require_verification'] = !we::$is['mod'] && !we::$is_admin && !empty($settings['posts_require_captcha']) && (we::$user['posts'] < $settings['posts_require_captcha'] || (we::$is_guest && $settings['posts_require_captcha'] == -1));
 	if ($context['require_verification'])
 	{
 		loadSource('Subs-Editor');

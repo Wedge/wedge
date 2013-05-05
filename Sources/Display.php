@@ -361,7 +361,7 @@ function Display()
 	$context['no_prevnext'] = empty($prev_topic) && empty($next_topic);
 
 	// Do we need to show the visual verification image?
-	$context['require_verification'] = !we::$user['is_mod'] && !we::$is_admin && !empty($settings['posts_require_captcha']) && (we::$user['posts'] < $settings['posts_require_captcha'] || (we::$is_guest && $settings['posts_require_captcha'] == -1));
+	$context['require_verification'] = !we::$is['mod'] && !we::$is_admin && !empty($settings['posts_require_captcha']) && (we::$user['posts'] < $settings['posts_require_captcha'] || (we::$is_guest && $settings['posts_require_captcha'] == -1));
 	if ($context['require_verification'])
 	{
 		loadSource('Subs-Editor');
