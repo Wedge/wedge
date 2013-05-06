@@ -295,7 +295,7 @@ function getBoardIndex($boardIndexOptions)
 
 	// If we're 'including categories', that means we're on the board index.
 	// And THAT means Moderation Center goodness.
-	if ($boardIndexOptions['include_categories'])
+	if ($boardIndexOptions['include_categories'] && empty($boardIndexOptions['category']))
 	{
 		$thiscat['mod'] = array(
 			'id' => 'mod',

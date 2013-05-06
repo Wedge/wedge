@@ -590,6 +590,9 @@ function profileInfractions($memID)
 			$js[$inf] = array($txt['infraction_' . $inf], $details['points'], !empty($details['enabled']));
 		
 		$context['current_sanctions'] = !empty($cur_profile['sanctions']) ? $cur_profile['sanctions'] : array();
+		// Don't tell the user he is soft banned even if he is.
+		if (we::$id == $memID)
+			unset ($context['current_sanctions']['soft_ban']);
 
 		if (isset($_REQUEST['for']) && strpos($_REQUEST['for'], ':') !== false)
 		{
@@ -769,7 +772,7 @@ function profileInfractions($memID)
 						{
 							$sanctions = explode(',', $infraction_details['sanctions']);
 							foreach ($sanctions as $k => $v)
-								if (!isset($txt['pun_infraction_' . $v]))
+								if (!isset($txt['pun_infraction_' . $v]) || $v == 'soft_ban')
 									unset ($sanctions[$k]);
 
 							if (!empty($sanctions))
@@ -789,10 +792,13 @@ function profileInfractions($memID)
 							$pun_count++;
 						}
 
-						if ($infraction_details['duration'] == 'i')
-							$punishments[] = number_context('punishments_no_expire', $pun_count);
-						else
-							$punishments[] = str_replace('{EXPIRY}', $expiry_str, number_context('punishments_will_expire', $pun_count));
+						if (!empty($punishments))
+						{
+							if ($infraction_details['duration'] == 'i')
+								$punishments[] = number_context('punishments_no_expire', $pun_count);
+							else
+								$punishments[] = str_replace('{EXPIRY}', $expiry_str, number_context('punishments_will_expire', $pun_count));
+						}
 
 						$body_replacements['{PUNISHMENTS}'] = implode("\n\n", $punishments);
 					}
@@ -806,7 +812,7 @@ function profileInfractions($memID)
 
 					$infraction_details['notice_body'] = strtr($infraction_details['notice_body'], $body_replacements);
 					// And just quickly clean up too many linebreaks.
-					$infraction_details['notice_body'] = preg_replace('~\n{3,}~', "\n\n", $infraction_details['notice_body']);
+					$infraction_details['notice_body'] = trim(preg_replace('~\n{3,}~', "\n\n", $infraction_details['notice_body']));
 
 					// Now we send a notification.
 					// !!! Do we need to figure out if the user can't see the PM? Should we also send an email if the user prefs otherwise say 'no notifications'?
