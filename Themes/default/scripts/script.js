@@ -260,7 +260,7 @@ function breakLinks()
 	$('.bbc_link').each(function () {
 		var link = $(this).text();
 		if (link == this.href && link.length > 50)
-			$(this).html(link.slice(0, 25) + '<span><span>' + link.slice(25, -25) + '</span></span><wbr>' + link.slice(-25));
+			$(this).html(link.slice(0, 25) + '<span class="cut"><span>' + link.slice(25, -25) + '</span></span><wbr>' + link.slice(-25));
 	});
 }
 
@@ -624,6 +624,7 @@ $(function ()
 			{
 				is_opened = !is_opened;
 				$shade.toggleClass('open'); // should work, otherwise use $shade[is_opened ? 'show' : 'hide']('fast');
+				$('#notifs').toggleClass('hover');
 
 				// Hide popup when clicking elsewhere.
 				$(document).off('click.no');
@@ -634,6 +635,7 @@ $(function ()
 						return;
 					is_opened = !is_opened;
 					$shade.toggleClass('open');
+					$('#notifs').toggleClass('hover');
 					$(document).off('click.no');
 				});
 			};

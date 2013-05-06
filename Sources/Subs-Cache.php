@@ -1323,7 +1323,7 @@ function wedge_get_skin_options()
 	$skin_options = array();
 	$is_default_theme = true;
 	$not_default = $theme['theme_dir'] !== $theme['default_theme_dir'];
-	$skeleton = '';
+	$skeleton = $set = '';
 
 	// We will rebuild the css folder list, in case we have a replace-type skin in our path.
 	$context['skin_folders'] = array();
@@ -1342,7 +1342,7 @@ function wedge_get_skin_options()
 		if (file_exists($fold . 'skin.xml'))
 			$set = file_get_contents($fold . '/skin.xml');
 
-		// custom.xml files might be used to override both skin.xml and skeleton.xml...
+		// custom.xml files can be used to override both skin.xml and skeleton.xml...
 		if (file_exists($fold . 'custom.xml'))
 		{
 			$custom = file_get_contents($fold . '/custom.xml');
@@ -1359,76 +1359,13 @@ function wedge_get_skin_options()
 
 	$context['skin_uses_default_theme'] = $is_default_theme;
 
-	// The deepest skin gets CSS/JavaScript attention.
-	if (!empty($set))
+	// $set should now contain the local skin's settings.
+	// First get the skin options, such as <sidebar> position.
+	if (strpos($set, '</options>') !== false && preg_match('~<options>(.*?)</options>~s', $set, $match))
 	{
-		// Skin options, such as <sidebar> position.
-		if (strpos($set, '</options>') !== false && preg_match('~<options>(.*?)</options>~s', $set, $match))
-		{
-			preg_match_all('~<([\w-]+)>(.*?)</\\1>~s', $match[1], $options, PREG_SET_ORDER);
-			foreach ($options as $option)
-				$skin_options[$option[1]] = trim($option[2]);
-		}
-
-		if (strpos($set, '</replace>') !== false && preg_match_all('~<replace(?:\s+(regex(?:="[^"]+")?))?(?:\s+for="([^"]+)")?\s*>\s*<from>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</from>\s*<to>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</to>\s*</replace>~s', $set, $matches, PREG_SET_ORDER))
-			foreach ($matches as $match)
-				if (!empty($match[3]) && (empty($match[2]) || we::is($match[2])))
-					$context['skin_replace'][trim($match[3], "\x00..\x1F")] = array(trim($match[4], "\x00..\x1F"), !empty($match[1]));
-
-		if (strpos($set, '</css>') !== false && preg_match_all('~<css(?:\s+for="([^"]+)")?(?:\s+include="([^"]+)")?\s*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</css>~s', $set, $matches, PREG_SET_ORDER))
-		{
-			foreach ($matches as $match)
-			{
-				if (!empty($match[3]) && (empty($match[1]) || we::is($match[1])))
-					add_css(rtrim($match[3], "\t"));
-				if (!empty($match[2]))
-				{
-					$includes = array_map('trim', explode(' ', $match[2]));
-					// Wedge currently only supports providing a full URI in <css include=""> statements.
-					foreach ($includes as $css_file)
-						if (strpos($css_file, '://') !== false)
-							$context['header'] .= '
-	<link rel="stylesheet" href="' . $css_file . '">';
-				}
-			}
-		}
-
-		if (strpos($set, '</code>') !== false && preg_match_all('~<code(?:\s+for="([^"]+)")?(?:\s+include="([^"]+)")?\s*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</code>~s', $set, $matches, PREG_SET_ORDER))
-		{
-			foreach ($matches as $match)
-			{
-				if (!empty($match[1]) && !we::is($match[1]))
-					continue;
-
-				if (!empty($match[2]))
-				{
-					$includes = array_map('trim', explode(' ', $match[2]));
-					// If we have an include param in the code tag, it should either use a full URI, or 'scripts/something.js' (in which case
-					// it'll find data in the current theme, or the default theme), or '$here/something.js', where it'll look in the skin folder.
-					if (strpos($match[2], '$here') !== false)
-						foreach ($includes as &$scr)
-							$scr = str_replace('$here', str_replace($theme['theme_dir'] . '/', '', $folder), $scr);
-					add_js_file($includes);
-				}
-				add_js(rtrim($match[3], "\t"));
-			}
-		}
-
-		if (strpos($set, '</macro>') !== false && preg_match_all('~<macro\s+name="([^"]+)"(?:\s+for="([^"]+)")?\s*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</macro>~s', $set, $matches, PREG_SET_ORDER))
-		{
-			foreach ($matches as $match)
-			{
-				if (!empty($match[2]) && !we::is($match[2]))
-					continue;
-				$context['macros'][$match[1]] = array(
-					'has_if' => strpos($match[3], '<if:') !== false,
-					'body' => $match[3]
-				);
-			}
-		}
-
-		if (strpos($set, '</languages>') !== false && preg_match('~<languages>(.*?)</languages>~s', $set, $match))
-			$context['skin_available_languages'] = array_map('trim', preg_split('~[\s,]+~', $match[1]));
+		preg_match_all('~<([\w-]+)>(.*?)</\\1>~s', $match[1], $options, PREG_SET_ORDER);
+		foreach ($options as $option)
+			$skin_options[$option[1]] = trim($option[2]);
 	}
 
 	// Skin variables can be accessed either through PHP or Wess code with a test on the SKIN_* constant.
@@ -1442,25 +1379,87 @@ function wedge_get_skin_options()
 	foreach ($skin_options as $key => $val)
 		define('SKIN_' . strtoupper($key), we::$is['SKIN_' . strtoupper($key)] = !empty($val));
 
-	if (!empty($skeleton))
-	{
-		// Maybe some mini-skeletons are targeted only to some specific users..?
-		wedge_skin_conditions($skeleton);
-		if (!empty($set))
-		{
-			wedge_skin_conditions($set);
+	// Any conditional skin directives..?
+	wedge_skin_conditions($set);
 
-			// Did we ask to do post-loading operations on blocks/layers of the skeleton?
-			wedge_get_skeleton_operations($skeleton, 'move', array('block', 'to', 'where'));
-			wedge_get_skeleton_operations($skeleton, 'rename', array('block', 'to'));
-			wedge_get_skeleton_operations($skeleton, 'remove', array('block'));
-		}
+	if ($skeleton)
+	{
+		// Look for tests inside mini-skeletons.
+		wedge_skin_conditions($skeleton);
+
+		// Did we ask to do post-loading operations on blocks/layers of the skeleton?
+		wedge_get_skeleton_operations($skeleton, 'move', array('block', 'to', 'where'));
+		wedge_get_skeleton_operations($skeleton, 'rename', array('block', 'to'));
+		wedge_get_skeleton_operations($skeleton, 'remove', array('block'));
 
 		// Now, find skeletons and feed them to the $context['skeleton'] array for later parsing.
 		if (strpos($skeleton, '</skeleton>') !== false && preg_match_all('~<skeleton(?:\s*id="([^"]+)"\s*)?>(.*?)</skeleton>~s', $skeleton, $matches, PREG_SET_ORDER))
 			foreach ($matches as $match)
 				$context['skeleton'][empty($match[1]) ? 'main' : $match[1]] = $match[2];
 	}
+
+	if (!$set)
+		return;
+
+	if (strpos($set, '</replace>') !== false && preg_match_all('~<replace(?:\s+(regex(?:="[^"]+")?))?(?:\s+for="([^"]+)")?\s*>\s*<from>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</from>\s*<to>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</to>\s*</replace>~s', $set, $matches, PREG_SET_ORDER))
+		foreach ($matches as $match)
+			if (!empty($match[3]) && (empty($match[2]) || we::is($match[2])))
+				$context['skin_replace'][trim($match[3], "\x00..\x1F")] = array(trim($match[4], "\x00..\x1F"), !empty($match[1]));
+
+	if (strpos($set, '</css>') !== false && preg_match_all('~<css(?:\s+for="([^"]+)")?(?:\s+include="([^"]+)")?\s*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</css>~s', $set, $matches, PREG_SET_ORDER))
+	{
+		foreach ($matches as $match)
+		{
+			if (!empty($match[3]) && (empty($match[1]) || we::is($match[1])))
+				add_css(rtrim($match[3], "\t"));
+			if (!empty($match[2]))
+			{
+				$includes = array_map('trim', explode(' ', $match[2]));
+				// Wedge currently only supports providing a full URI in <css include=""> statements.
+				foreach ($includes as $css_file)
+					if (strpos($css_file, '://') !== false)
+						$context['header'] .= '
+	<link rel="stylesheet" href="' . $css_file . '">';
+			}
+		}
+	}
+
+	if (strpos($set, '</code>') !== false && preg_match_all('~<code(?:\s+for="([^"]+)")?(?:\s+include="([^"]+)")?\s*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</code>~s', $set, $matches, PREG_SET_ORDER))
+	{
+		foreach ($matches as $match)
+		{
+			if (!empty($match[1]) && !we::is($match[1]))
+				continue;
+
+			if (!empty($match[2]))
+			{
+				$includes = array_map('trim', explode(' ', $match[2]));
+				// If we have an include param in the code tag, it should either use a full URI, or 'scripts/something.js' (in which case
+				// it'll find data in the current theme, or the default theme), or '$here/something.js', where it'll look in the skin folder.
+				if (strpos($match[2], '$here') !== false)
+					foreach ($includes as &$scr)
+						$scr = str_replace('$here', str_replace($theme['theme_dir'] . '/', '', $folder), $scr);
+				add_js_file($includes);
+			}
+			add_js(rtrim($match[3], "\t"));
+		}
+	}
+
+	if (strpos($set, '</macro>') !== false && preg_match_all('~<macro\s+name="([^"]+)"(?:\s+for="([^"]+)")?\s*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</macro>~s', $set, $matches, PREG_SET_ORDER))
+	{
+		foreach ($matches as $match)
+		{
+			if (!empty($match[2]) && !we::is($match[2]))
+				continue;
+			$context['macros'][$match[1]] = array(
+				'has_if' => strpos($match[3], '<if:') !== false,
+				'body' => $match[3]
+			);
+		}
+	}
+
+	if (strpos($set, '</languages>') !== false && preg_match('~<languages>(.*?)</languages>~s', $set, $match))
+		$context['skin_available_languages'] = array_map('trim', preg_split('~[\s,]+~', $match[1]));
 }
 
 /**
