@@ -2298,9 +2298,10 @@ function we_seed_generator()
  *
  * @param string $hook The name of the hook as given in $settings, e.g. login, buffer, reset_pass
  * @param array $parameters Parameters to be passed to the hooked functions. The list of parameters each method is exposed to is dependent on the calling code (e.g. the hook for 'new topic is posted' passes different parameters to the 'final buffer' hook), and parameters passed by reference will be passed to hook functions as such.
+ * @param string $plugin_id If specified, only call hooks matching that plugin id.
  * @return array An array of results, one element per hooked function. This will be solely dependent on the hooked function.
  */
-function call_hook($hook, $parameters = array())
+function call_hook($hook, $parameters = array(), $plugin_id = '')
 {
 	global $settings;
 
@@ -2315,12 +2316,16 @@ function call_hook($hook, $parameters = array())
 		$fun = explode('|', trim($function));
 		$call = strpos($fun[0], '::') !== false ? explode('::', $fun[0]) : $fun[0];
 
+		// Skip if this isn't a call matching the plugin the user wants to reference.
+		if (!empty($plugin_id) && !empty($fun[2]) && $plugin_id != $fun[2])
+			continue;
+
 		// Load any required file.
 		if (!empty($fun[1]))
 		{
 			// We might be loading plugin files, we might not. This can't be set by add_hook, but by the hook manager.
-			if (!empty($fun[2]) && $fun[2] === 'plugin')
-				require_once($fun[1] . '.php');
+			if (!empty($fun[2]))
+				loadPluginSource($fun[2], $fun[1]);
 			else
 				loadSource($fun[1]);
 		}
@@ -2335,7 +2340,7 @@ function call_hook($hook, $parameters = array())
 	return $results;
 }
 
-function call_lang_hook($hook)
+function call_lang_hook($hook, $plugin_id = '')
 {
 	global $settings, $txt, $helptxt;
 
@@ -2348,40 +2353,21 @@ function call_lang_hook($hook)
 
 	foreach ($settings['hooks'][$hook] as $function)
 	{
-		$found = false;
+		$fun = explode('|', trim($function));
+		// This should be an actual language hook. There should be no function to call.
 
-		// Was this a language file hook? There won't be a function if it is. It should be in the form of path/filename without a language or extension, e.g. /path/Plugins/myplugin/myfile (where .english.php is added later)
-		if ($function[0] === '|')
+		// Skip if this isn't a call matching the plugin the user wants to reference.
+		if (!empty($plugin_id) && !empty($fun[2]) && $plugin_id != $fun[2])
+			continue;
+
+		if (empty($fun[0]))
 		{
-			// So, we're looking at files that we're calling for, and they're language files.
-			$parts = explode('|', $function);
-			$path = trim($parts[1]);
-			$attempts = array();
-
-			// If true, pass through to the next language attempt even if it's a match. But if it's not English, see about loading that *first*.
-			if (empty($settings['disable_language_fallback']) && $lang !== 'english')
-				$attempts['english'] = true;
-
-			// Then go with user preference, followed by forum default (assuming it isn't already one of the previous)
-			$attempts[$lang] = false;
-			$attempts[$settings['language']] = false;
-
-			foreach ($attempts as $load_lang => $continue)
-			{
-				$file = $path . '.' . $load_lang . '.php';
-				if (file_exists($file))
-				{
-					template_include($file);
-					$found = true;
-				}
-				if ($found && !$continue)
-					break;
-			}
+			// We might be loading plugin files, we might not. This can't be set by add_hook, but by the hook manager.
+			if (!empty($fun[2]))
+				loadPluginLanguage($fun[2], $fun[1]);
+			else
+				loadLanguage($fun[1]);
 		}
-
-		// Oops, didn't find it. Log it. Remember, we don't have a full filename but the full path and the start of the filename, so get the last file part.
-		if (!$found)
-			log_error(sprintf($txt['theme_language_error'], substr($path, strrpos($path, DIRECTORY_SEPARATOR)) . '.' . $lang, 'template'));
 	}
 }
 

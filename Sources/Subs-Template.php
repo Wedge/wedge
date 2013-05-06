@@ -829,20 +829,20 @@ function while_we_re_here()
 		}
 	}
 	// If the user is banned from posting, inform them of it.
-	elseif (!$showed_banned && isset($_SESSION['ban']['cannot_post']))
+	elseif (!$showed_banned && !empty(we::$user['post_banned']))
 	{
 		$showed_banned = true;
 		echo '
 			<div class="windowbg wrc alert" style="margin: 2ex; padding: 2ex; border: 2px dashed red">
 				', sprintf($txt['you_are_post_banned'], we::$is_guest ? $txt['guest_title'] : we::$user['name']);
 
-		if (!empty($_SESSION['ban']['cannot_post']['reason']))
+		if (!empty(we::$user['data']['ban_reason']))
 			echo '
-				<div style="padding-left: 4ex; padding-top: 1ex">', $_SESSION['ban']['cannot_post']['reason'], '</div>';
+				<div style="padding-left: 4ex; padding-top: 1ex">', we::$user['data']['ban_reason'], '</div>';
 
-		if (!empty($_SESSION['ban']['expire_time']))
+		if (we::$user['sanctions']['post_ban'] != 1)
 			echo '
-				<div>', sprintf($txt['your_ban_expires'], timeformat($_SESSION['ban']['expire_time'], false)), '</div>';
+				<div>', sprintf($txt['your_ban_expires'], timeformat(we::$user['sanctions']['post_ban'], false)), '</div>';
 		else
 			echo '
 				<div>', $txt['your_ban_expires_never'], '</div>';

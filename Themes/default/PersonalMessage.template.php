@@ -242,7 +242,7 @@ function template_folder()
 				// Are we showing the warning status?
 				if ($message['member']['can_see_warning'])
 				echo '
-				<li class="warning">', $context['can_issue_warning'] && $message['member']['warning_status'] != 'ban' ? '<a href="<URL>?action=profile;u=' . $message['member']['id'] . ';area=issuewarning">' : '', '<img src="', $theme['images_url'], '/warning_', $message['member']['warning_status'], '.gif" alt="', $txt['user_warn_' . $message['member']['warning_status']], '">', $context['can_issue_warning'] && $message['member']['warning_status'] != 'ban' ? '</a>' : '', '<span class="warn_', $message['member']['warning_status'], '">', $txt['warn_' . $message['member']['warning_status']], '</span></li>';
+				<li class="warning">', $context['can_issue_warning'] && $message['member']['warning_status'] != 'hard_ban' ? '<a href="<URL>?action=profile;u=' . $message['member']['id'] . ';area=issuewarning">' : '', '<img src="', $theme['images_url'], '/warning_', $message['member']['warning_status'], '.gif" alt="', $txt['user_warn_' . $message['member']['warning_status']], '">', $context['can_issue_warning'] && $message['member']['warning_status'] != 'hard_ban' ? '</a>' : '', '<span class="warn_', $message['member']['warning_status'], '">', $txt['warn_' . $message['member']['warning_status']], '</span></li>';
 			}
 
 			// Done with the information about the poster... on to the post itself.
@@ -546,12 +546,7 @@ function template_search()
 {
 	global $context, $theme, $options, $settings, $txt;
 
-	add_js('
-	function expandCollapseLabels()
-	{
-		$("#searchLabelsExpand").toggle(300);
-		$("#expandLabelsIcon").toggleClass("fold");
-	}');
+	add_js_file('scripts/pm.js');
 
 	if (!empty($context['search_errors']))
 		echo '

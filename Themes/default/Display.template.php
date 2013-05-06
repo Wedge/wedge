@@ -255,8 +255,8 @@ function template_quick_reply()
 			<div id="qr_options" class="roundframe', $options['display_quick_reply'] == 2 ? '' : ' hide', '">
 				<p class="smalltext left">', $txt['quick_reply_desc'], '</p>', $context['is_locked'] ? '
 				<p class="alert smalltext">' . $txt['quick_reply_warning'] . '</p>' : '', !empty($context['oldTopicError']) ? '
-				<p class="alert smalltext">' . sprintf($txt['error_old_topic'], $settings['oldTopicDays']) . '</p>' : '', $context['can_reply_approved'] ? '' : '
-				<em>' . $txt['wait_for_approval'] . '</em>', !$context['can_reply_approved'] && $context['require_verification'] ? '
+				<p class="alert smalltext">' . sprintf($txt['error_old_topic'], $settings['oldTopicDays']) . '</p>' : '', empty($context['post_moderated']) ? '' : '
+				<em>' . $txt['wait_for_approval'] . '</em>', empty($context['post_moderated']) && $context['require_verification'] ? '
 				<br>' : '', '
 				<form action="<URL>?board=', $context['current_board'], ';action=post2" method="post" accept-charset="UTF-8" name="postmodify" id="postmodify" onsubmit="submitonce(this); weSaveEntities(\'postmodify\', ', $context['postbox']->saveEntityFields(), ');" class="clearfix">
 					<input type="hidden" name="topic" value="', $context['current_topic'], '">
@@ -264,8 +264,8 @@ function template_quick_reply()
 					<input type="hidden" name="icon" value="xx">
 					<input type="hidden" name="from_qr" value="1">
 					<input type="hidden" name="notify" value="', $context['is_marked_notify'] || !empty($options['auto_notify']) ? '1' : '0', '">
-					<input type="hidden" name="not_approved" value="', !$context['can_reply_approved'], '">
-					<input type="hidden" name="goback" value="', empty($options['return_to_post']) ? '0' : '1', '">
+					<input type="hidden" name="not_approved" value="', !empty($context['post_moderated']) ? 1 : 0, '">
+					<input type="hidden" name="goback" value="', empty($options['return_to_post']) ? 0 : 1, '">
 					<input type="hidden" name="last" value="', $context['topic_last_message'], '">
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 					<input type="hidden" name="seqnum" value="', $context['form_sequence_number'], '">';

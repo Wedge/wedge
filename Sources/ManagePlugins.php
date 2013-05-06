@@ -1070,7 +1070,7 @@ function EnablePlugin()
 
 	foreach ($hook_data as $point => $details)
 		foreach ($details as $hooked_details)
-			$plugin_details[$point][] = (string) $hooked_details['function'] . '|' . (string) $hooked_details['filename'] . '|plugin' . $hooked_details['priority'];
+			$plugin_details[$point][] = (string) $hooked_details['function'] . '|' . (string) $hooked_details['filename'] . '|' . $manifest_id . $hooked_details['priority'];
 
 	$enabled_plugins = !empty($settings['enabled_plugins']) ? explode(',', $settings['enabled_plugins']) : array();
 	$enabled_plugins[] = $_GET['plugin'];
@@ -1858,6 +1858,10 @@ function knownHooks()
 			'notification_callback',
 			'notification_new',
 
+			// Infractions
+			'infraction_view',
+			'infraction_issue_pre',
+			'infraction_issue_content',
 		),
 	);
 }

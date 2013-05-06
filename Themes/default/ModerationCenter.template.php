@@ -29,6 +29,11 @@ function template_moderation_center()
 
 		</div>';
 
+	// First, the notes block.
+	template_notes();
+	echo '
+		<br>';
+
 	$alternate = true;
 	// Show all the blocks they want to see.
 	foreach ($context['mod_blocks'] as $block)
@@ -48,48 +53,6 @@ function template_moderation_center()
 	echo '
 	</div>
 	<br class="clear">';
-}
-
-function template_latest_news()
-{
-	global $context, $txt, $settings;
-
-	echo '
-		<we:cat>
-			<a href="<URL>?action=help;in=live_news" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
-			', $txt['mc_latest_news'], '
-		</we:cat>
-		<div class="windowbg wrc" style="padding: 5px 7px 5px 12px">
-			<div id="wedge_news" class="smalltext">', $txt['mc_cannot_connect_sm'], '</div>
-		</div>';
-
-	// This requires a lot of javascript...
-	// !! Put this in its own file!!
-	if (empty($settings['disable_wedge_js']))
-		add_js_file(array(
-			'<URL>?action=viewremote;filename=current-version.js',
-			'<URL>?action=viewremote;filename=latest-news.js'
-		), true);
-	add_js_file('scripts/admin.js');
-
-	add_js('
-	new we_AdminIndex({
-		bLoadAnnouncements: true,
-		sAnnouncementTemplate: ', JavaScriptEscape('
-			<dl>
-				%content%
-			</dl>'), ',
-		sAnnouncementMessageTemplate: ', JavaScriptEscape('
-			<dt><a href="%href%">%subject%</a> ' . sprintf($txt['on_date'], '%time%') . '</dt>
-			<dd>
-				%message%
-			</dd>'), ',
-		sAnnouncementContainerId: \'wedge_news\',
-		sMonths: [\'', implode('\', \'', $txt['months']), '\'],
-		sMonthsShort: [\'', implode('\', \'', $txt['months_short']), '\'],
-		sDays: [\'', implode('\', \'', $txt['days']), '\'],
-		sDaysShort: [\'', implode('\', \'', $txt['days_short']), '\']
-	});');
 }
 
 // Show all the group requests the user can see.
@@ -162,7 +125,7 @@ function template_watched_users()
 
 	echo '
 		<we:cat>
-			<a href="<URL>?action=moderate;area=userwatch">', $txt['mc_watched_users'], '</a>
+			<a href="<URL>?action=moderate;area=userwatch">', $txt['mc_warned_users'], '</a>
 		</we:cat>
 		<div class="windowbg wrc">
 			<div class="modbox">
@@ -178,7 +141,7 @@ function template_watched_users()
 		if (empty($context['watched_users']))
 			echo '
 					<li>
-						<strong class="smalltext">', $txt['mc_watched_users_none'], '</strong>
+						<strong class="smalltext">', $txt['mc_warned_users_none'], '</strong>
 					</li>';
 
 		echo '
@@ -503,7 +466,7 @@ function template_user_watch_post_callback($post)
 
 	if ($post['can_delete'])
 		$output_html .= '
-							<a href="<URL>?action=moderate;area=userwatch;sa=post;delete=' . $post['id'] . ';start=' . $context['start'] . ';' . $context['session_query'] . '" onclick="return ask(' . JavaScriptEscape($txt['mc_watched_users_delete_post']) . ', e);" class="remove_button">' . $txt['remove_message'] . '</a>
+							<a href="<URL>?action=moderate;area=userwatch;sa=post;delete=' . $post['id'] . ';start=' . $context['start'] . ';' . $context['session_query'] . '" onclick="return ask(' . JavaScriptEscape($txt['mc_warned_users_delete_post']) . ', e);" class="remove_button">' . $txt['remove_message'] . '</a>
 							<input type="checkbox" name="delete[]" value="' . $post['id'] . '">';
 
 	$output_html .= '
@@ -511,7 +474,7 @@ function template_user_watch_post_callback($post)
 					</div>
 					<br>
 					<div class="smalltext">
-						&#171; ' . $txt['mc_watched_users_posted'] . ': ' . $post['poster_time'] . ' &#187;
+						&#171; ' . $txt['mc_warned_users_posted'] . ': ' . $post['poster_time'] . ' &#187;
 					</div>
 					<hr>
 					' . $post['body'];
@@ -519,154 +482,50 @@ function template_user_watch_post_callback($post)
 	return $output_html;
 }
 
-// Moderation settings
-function template_moderation_settings()
+function template_prefs()
 {
 	global $context, $txt;
 
 	echo '
-	<div id="modcenter">
-		<form action="<URL>?action=moderate;area=settings" method="post" accept-charset="UTF-8">
-			<we:cat>
-				', $txt['mc_prefs_title'], '
-			</we:cat>
-			<div class="information">
-				', $txt['mc_prefs_desc'], '
-			</div>
-			<div class="windowbg2 wrc">
-				<dl class="settings">
-					<dt>
-						<strong>', $txt['mc_prefs_homepage'], ':</strong>
-					</dt>
-					<dd>';
-
-	foreach ($context['homepage_blocks'] as $k => $v)
-		echo '
-						<label><input type="checkbox" name="mod_homepage[', $k, ']"', in_array($k, $context['mod_settings']['user_blocks']) ? ' checked' : '', '> ', $v, '</label><br>';
-
-	echo '
-					</dd>';
+	<form action="<URL>?action=moderate;area=settings" method="post" accept-charset="UTF-8">
+		<we:cat>
+			', $txt['mc_prefs_title'], '
+		</we:cat>
+		<div class="windowbg wrc">
+			<p>', $txt['mc_prefs_desc'], '</p>
+			<dl class="settings">';
 
 	// If they can moderate boards they have more options!
 	if ($context['can_moderate_boards'])
-	{
 		echo '
-					<dt>
-						<strong><label for="mod_notify_report">', $txt['mc_prefs_notify_report'], '</label>:</strong>
-					</dt>
-					<dd>
-						<select id="mod_notify_report" name="mod_notify_report">
-							<option value="0"', $context['mod_settings']['notify_report'] == 0 ? ' selected' : '', '>', $txt['mc_prefs_notify_report_never'], '</option>
-							<option value="1"', $context['mod_settings']['notify_report'] == 1 ? ' selected' : '', '>', $txt['mc_prefs_notify_report_moderator'], '</option>
-							<option value="2"', $context['mod_settings']['notify_report'] == 2 ? ' selected' : '', '>', $txt['mc_prefs_notify_report_always'], '</option>
-						</select>
-					</dd>';
-	}
+				<dt>
+					<label for="mod_notify_report">', $txt['mc_prefs_notify_report'], '</label>:
+				</dt>
+				<dd>
+					<select id="mod_notify_report" name="mod_notify_report">
+						<option value="0"', $context['mod_settings']['notify_report'] == 0 ? ' selected' : '', '>', $txt['mc_prefs_notify_report_never'], '</option>
+						<option value="1"', $context['mod_settings']['notify_report'] == 1 ? ' selected' : '', '>', $txt['mc_prefs_notify_report_moderator'], '</option>
+						<option value="2"', $context['mod_settings']['notify_report'] == 2 ? ' selected' : '', '>', $txt['mc_prefs_notify_report_always'], '</option>
+					</select>
+				</dd>';
 
 	if ($context['can_moderate_approvals'])
-	{
 		echo '
-					<dt>
-						<strong><label for="mod_notify_approval">', $txt['mc_prefs_notify_approval'], '</label>:</strong>
-					</dt>
-					<dd>
-						<input type="checkbox" id="mod_notify_approval" name="mod_notify_approval"', $context['mod_settings']['notify_approval'] ? ' checked' : '', '>
-					</dd>';
-	}
+				<dt>
+					<label for="mod_notify_approval">', $txt['mc_prefs_notify_approval'], '</label>:
+				</dt>
+				<dd>
+					<input type="checkbox" id="mod_notify_approval" name="mod_notify_approval"', $context['mod_settings']['notify_approval'] ? ' checked' : '', '>
+				</dd>';
 
 	echo '
-				</dl>
-				<div class="right">
-					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-					<input type="submit" name="save" value="', $txt['save'], '" class="save">
-				</div>
+			</dl>
+			<div class="right">
+				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
+				<input type="submit" name="save" value="', $txt['save'], '" class="save">
 			</div>
-		</form>
-	</div>
-	<br class="clear">';
-}
-
-// Show a notice sent to a user.
-function template_show_notice()
-{
-	global $txt, $context;
-
-	// We do all the HTML for this one!
-	echo '<!DOCTYPE html>
-<html', $context['right_to_left'] ? ' dir="rtl"' : '', '>
-<head>
-	<meta charset="utf-8">
-	<title>', $context['page_title'], '</title>',
-	theme_base_css(), '
-</head>
-<body>
-	<we:cat>
-		', $txt['show_notice'], '
-	</we:cat>
-	<we:title>
-		', $txt['show_notice_subject'], ': ', $context['notice_subject'], '
-	</we:title>
-	<div class="windowbg wrc">
-		<dl>
-			<dt>
-				<strong>', $txt['show_notice_text'], ':</strong>
-			</dt>
-			<dd>
-				', $context['notice_body'], '
-			</dd>
-		</dl>
-	</div>
-</body>
-</html>';
-}
-
-// Add or edit a warning template.
-function template_warn_template()
-{
-	global $context, $txt;
-
-	echo '
-	<div id="modcenter">
-		<form action="<URL>?action=moderate;area=warnings;sa=templateedit;tid=', $context['id_template'], '" method="post" accept-charset="UTF-8">
-			<we:cat>
-				', $context['page_title'], '
-			</we:cat>
-			<div class="information">
-				', $txt['mc_warning_template_desc'], '
-			</div>
-			<div class="windowbg wrc">
-				<dl class="settings">
-					<dt>
-						<strong><label for="template_title">', $txt['mc_warning_template_title'], '</label>:</strong>
-					</dt>
-					<dd>
-						<input id="template_title" name="template_title" value="', $context['template_data']['title'], '" size="30">
-					</dd>
-					<dt>
-						<strong><label for="template_body">', $txt['profile_warning_notify_body'], '</label>:</strong>
-						<dfn>', $txt['mc_warning_template_body_desc'], '</dfn>
-					</dt>
-					<dd>
-						<textarea id="template_body" name="template_body" rows="10" cols="45" class="smalltext">', $context['template_data']['body'], '</textarea>
-					</dd>
-				</dl>';
-
-	if ($context['template_data']['can_edit_personal'])
-		echo '
-				<label>
-					<input type="checkbox" name="make_personal" id="make_personal"', $context['template_data']['personal'] ? ' checked' : '', '>
-					<strong>', $txt['mc_warning_template_personal'], '</strong>
-				</label>
-				<dfn>', $txt['mc_warning_template_personal_desc'], '</dfn>
-				<br>';
-
-	echo '
-				<input type="submit" name="save" value="', $context['page_title'], '" class="save">
-			</div>
-			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-		</form>
-	</div>
-	<br class="clear">';
+		</div>
+	</form>';
 }
 
 /**

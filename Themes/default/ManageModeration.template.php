@@ -342,6 +342,7 @@ function template_modfilter_edit()
 		rows_added++;
 		$("#conds_empty").hide();
 		$("#conds_notempty").append("<tr id=\"cond_row_" + rows_added + "\" class=\"windowbg\"><td>" + rule + "</td><td>" + details + "<input type=\"hidden\" name=\"rule[]\"></td><td class=\"center\"><a href=\"#\" onclick=\"removeRow(" + rows_added + "); return false;\">" + ' . JavaScriptEscape($txt['remove']) . ' + "</a></td></tr>");
+		$("#conds_notempty tbody tr").unwrap();
 		$("#cond_row_" + rows_added + " input").val(ruletype + ";" + rulevalue);
 
 		$("#condtype").val(0).sb();
@@ -525,7 +526,7 @@ function template_modfilter_warning()
 
 	echo '
 		</select>
-		<input size="5" name="warning" style="padding: 3px 5px 5px 5px" onchange="validateWarning();"> %
+		<input size="5" name="warning" style="padding: 3px 5px 5px 5px" onchange="validateWarning();"> ', $txt['modfilter_warning_is_post'], '
 		<div class="pagesection ruleSave">
 			<div class="floatright">
 				<input class="new" type="submit" value="', $txt['modfilter_condition_done'], '" onclick="addWarning(e);">

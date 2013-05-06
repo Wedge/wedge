@@ -1000,17 +1000,6 @@ CREATE TABLE {$db_prefix}log_mark_read (
 ) ENGINE=MyISAM;
 
 #
-# Table structure for table `log_member_notices`
-#
-
-CREATE TABLE {$db_prefix}log_member_notices (
-	id_notice mediumint(8) unsigned NOT NULL auto_increment,
-	subject varchar(255) NOT NULL default '',
-	body text NOT NULL,
-	PRIMARY KEY (id_notice)
-) ENGINE=MyISAM;
-
-#
 # Table structure for table `log_notify`
 #
 

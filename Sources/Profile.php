@@ -36,6 +36,7 @@ function ModifyProfile($post_errors = array())
 	if (empty($post_errors))
 		loadLanguage('Profile');
 	loadTemplate('Profile');
+	add_js_file('scripts/profile.js');
 
 	// If we only want to see guest posts, use this shortcut.
 	if (isset($_REQUEST['guest']))
@@ -156,57 +157,11 @@ function ModifyProfile($post_errors = array())
 						'any' => 'profile_view_any',
 					),
 				),
-				'permissions' => array(
-					'label' => $txt['showPermissions'],
-					'file' => 'Profile-View',
-					'function' => 'showPermissions',
-					'permission' => array(
-						'own' => 'manage_permissions',
-						'any' => 'manage_permissions',
-					),
-				),
-				'',
-				'tracking' => array(
-					'label' => $txt['trackUser'],
-					'file' => 'Profile-View',
-					'function' => 'tracking',
-					'subsections' => array(
-						'activity' => array($txt['trackActivity'], 'manage_bans'),
-						'ip' => array($txt['trackIP'], 'manage_bans'),
-						'edits' => array($txt['trackEdits'], 'moderate_forum'),
-					),
-					'permission' => array(
-						'own' => 'moderate_forum',
-						'any' => 'moderate_forum',
-					),
-				),
-				'viewwarning' => array(
-					'label' => $txt['profile_view_warnings'],
-					'enabled' => $cur_profile['warning'] && we::$user['is_owner'] && !empty($settings['warning_show']),
-					'file' => 'Profile-View',
-					'function' => 'viewWarning',
-					'permission' => array(
-						'own' => 'profile_view_own',
-						'any' => 'issue_warning',
-					),
-				),
 			),
 		),
 		'edit_profile' => array(
 			'title' => $txt['profileEdit'],
 			'areas' => array(
-				'account' => array(
-					'label' => $txt['account'],
-					'file' => 'Profile-Modify',
-					'function' => 'account',
-					'enabled' => we::$is_admin || ($cur_profile['id_group'] != 1 && !in_array(1, explode(',', $cur_profile['additional_groups']))),
-					'sc' => 'post',
-					'password' => true,
-					'permission' => array(
-						'own' => array('profile_identity_any', 'profile_identity_own', 'manage_membergroups'),
-						'any' => array('profile_identity_any', 'manage_membergroups'),
-					),
-				),
 				'forumprofile' => array(
 					'label' => $txt['forumprofile'],
 					'file' => 'Profile-Modify',
@@ -272,7 +227,7 @@ function ModifyProfile($post_errors = array())
 					'label' => $txt['ignoreboards'],
 					'file' => 'Profile-Modify',
 					'function' => 'ignoreboards',
-					'enabled' => !empty($settings['allow_ignore_boards']),
+					'enabled' => !empty($settings['ignorable_boards']),
 					'sc' => 'post',
 					'permission' => array(
 						'own' => array('profile_extra_any', 'profile_extra_own'),
@@ -292,17 +247,6 @@ function ModifyProfile($post_errors = array())
 					'permission' => array(
 						'own' => array('profile_extra_any', 'profile_extra_own'),
 						'any' => array(),
-					),
-				),
-				'groupmembership' => array(
-					'label' => $txt['groupmembership'],
-					'file' => 'Profile-Modify',
-					'function' => 'groupMembership',
-					'enabled' => !empty($settings['show_group_membership']) && we::$user['is_owner'],
-					'sc' => 'request',
-					'permission' => array(
-						'own' => array('profile_view_own'),
-						'any' => array('manage_membergroups'),
 					),
 				),
 			),
@@ -352,8 +296,8 @@ function ModifyProfile($post_errors = array())
 				),
 			),
 		),
-		'profile_action' => array(
-			'title' => $txt['profileAction'],
+		'profile_manage' => array(
+			'title' => $txt['manage_account'],
 			'areas' => array(
 				'sendpm' => array(
 					'label' => $txt['profileSendIm'],
@@ -361,6 +305,18 @@ function ModifyProfile($post_errors = array())
 					'permission' => array(
 						'own' => array(),
 						'any' => array('pm_send'),
+					),
+				),
+				'account' => array(
+					'label' => $txt['account'],
+					'file' => 'Profile-Modify',
+					'function' => 'account',
+					'enabled' => we::$is_admin || ($cur_profile['id_group'] != 1 && !in_array(1, explode(',', $cur_profile['additional_groups']))),
+					'sc' => 'post',
+					'password' => true,
+					'permission' => array(
+						'own' => array('profile_identity_any', 'profile_identity_own', 'manage_membergroups'),
+						'any' => array('profile_identity_any', 'manage_membergroups'),
 					),
 				),
 				'subscriptions' => array(
@@ -371,6 +327,41 @@ function ModifyProfile($post_errors = array())
 					'permission' => array(
 						'own' => array('profile_view_own'),
 						'any' => array('moderate_forum'),
+					),
+				),
+				'groupmembership' => array(
+					'label' => $txt['groupmembership'],
+					'file' => 'Profile-Modify',
+					'function' => 'groupMembership',
+					'enabled' => !empty($settings['show_group_membership']) && we::$user['is_owner'],
+					'sc' => 'request',
+					'permission' => array(
+						'own' => array('profile_view_own'),
+						'any' => array('manage_membergroups'),
+					),
+				),
+				'',
+				'permissions' => array(
+					'label' => $txt['showPermissions'],
+					'file' => 'Profile-View',
+					'function' => 'showPermissions',
+					'permission' => array(
+						'own' => 'manage_permissions',
+						'any' => 'manage_permissions',
+					),
+				),
+				'tracking' => array(
+					'label' => $txt['trackUser'],
+					'file' => 'Profile-View',
+					'function' => 'tracking',
+					'subsections' => array(
+						'activity' => array($txt['trackActivity'], 'manage_bans'),
+						'ip' => array($txt['trackIP'], 'manage_bans'),
+						'edits' => array($txt['trackEdits'], 'moderate_forum'),
+					),
+					'permission' => array(
+						'own' => 'moderate_forum',
+						'any' => 'moderate_forum',
 					),
 				),
 				'',
@@ -384,19 +375,19 @@ function ModifyProfile($post_errors = array())
 						'any' => array('moderate_forum'),
 					),
 				),
-				'issuewarning' => array(
-					'label' => $txt['profile_issue_warning'],
-					'enabled' => (!we::$user['is_owner'] || we::$is_admin),
+				'infractions' => array(
+					'label' => $txt['profile_infractions'],
 					'file' => 'Profile-Actions',
-					'function' => 'issueWarning',
+					'function' => 'profileInfractions',
 					'permission' => array(
-						'own' => array('issue_warning'),
+						'own' => array('profile_view_own'),
 						'any' => array('issue_warning'),
 					),
 				),
 				'banuser' => array(
 					'label' => $txt['profileBanUser'],
-					'custom_url' => '<URL>?action=admin;area=ban;sa=add;u=' . $memID,
+					'file' => 'Profile-Actions',
+					'function' => 'profileBan',
 					'enabled' => $cur_profile['id_group'] != 1 && !in_array(1, explode(',', $cur_profile['additional_groups'])),
 					'permission' => array(
 						'own' => array(),

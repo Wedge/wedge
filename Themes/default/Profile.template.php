@@ -189,23 +189,46 @@ function template_summary()
 	if ($context['can_view_warning'] && $context['member']['warning'])
 	{
 		echo '
-				<dt>', $txt['profile_warning_level'], ': </dt>
-				<dd>
-					<a href="<URL>?action=profile;u=', $context['id_member'], ';area=', $context['can_issue_warning'] ? 'issuewarning' : 'viewwarning', '">', $context['member']['warning'], '%</a>';
+				<dt class="clear"><span class="alert">', $txt['profile_has_infractions'], '</span>&nbsp;[<a href="#" onclick="$(\'#infraction_info\').toggle(); return false;">' . $txt['view_ban'] . '</a>]</dt>
+				<dt class="clear hide" id="infraction_info">
+					<strong>', $txt['current_active_infractions'], '</strong>';
 
-		// Can we provide information on what this means?
-		if (!empty($context['warning_status']))
+		foreach ($context['infraction_log'] as $id_issue => $infraction)
 			echo '
-					<span class="smalltext">(', $context['warning_status'], ')</span>';
+					<dfn>', $infraction['reason'], ' (<a href="<URL>?action=profile;u=', $context['member']['id'], ';area=infractions;view=', $id_issue, '" onclick="return reqWin(this);">', $txt['view_ban'], '</a>)', !empty($infraction['can_revoke']) ? ' (<a href="<URL>?action=profile;u=' . $context['member']['id'] . ';area=infractions;revoke=' . $id_issue . '">' . $txt['revoke'] . '</a>)' : '', '</dfn>';
+		echo '
+					<br>', $txt['current_points'], ' ', comma_format($context['member']['warning']);
+		if (!empty($context['current_sanctions_levels']))
+		{
+			echo '
+					<br>', $txt['punishments_due_to_points'];
+			foreach ($context['current_sanctions_levels'] as $sanction => $dummy)
+				if (isset($txt['infraction_' . $sanction]))
+					echo '
+					<dfn>', $txt['infraction_' . $sanction], '</dfn>';
+		}
+	
+		echo '
+					<br>', $txt['current_sanctions'];
+
+		if (empty($context['current_sanctions']))
+			echo '
+					<dfn>', $txt['no_sanctions'], '</dfn>';
+		else
+			foreach ($context['current_sanctions'] as $sanction => $expiry)
+				if (isset($txt['infraction_' . $sanction]))
+					echo '
+					<dfn>', $txt['infraction_' . $sanction], ' ', $expiry == 1 ? $txt['expires_never'] : sprintf($txt['expires_dfn'], timeformat($expiry)), '</dfn>';
 
 		echo '
-				</dd>';
+				</dt>
+			</dl>
+			<dl>';
 	}
 
 	// Is this member requiring activation and/or banned?
 	if (!empty($context['activate_message']) || !empty($context['member']['bans']))
 	{
-
 		// If the person looking at the summary has permission, and the account isn't activated, give the viewer the ability to do it themselves.
 		if (!empty($context['activate_message']))
 			echo '
@@ -221,10 +244,12 @@ function template_summary()
 
 			foreach ($context['member']['bans'] as $ban)
 				echo '
-					<dfn>', $ban['ban_reason'], ' (<a href="<URL>?action=admin;area=ban;sa=edit;ban=', $ban['id_ban'], '">', $txt['modify'], '</a>)</dfn>';
+					<dfn><div class="ban_selector ban_items_', $ban['ban_type'], '" title="', $txt['ban_type_' . $ban['ban_type']], '"></div> ', $ban['ban_reason'], $context['can_edit_ban'] ? ' (<a href="<URL>?action=admin;area=ban;sa=edit;ban=' . $ban['id_ban'] . '">' . $txt['modify'] . '</a>)' : '', '</dfn>';
 
 			echo '
-				</dt>';
+				</dt>
+			</dl>
+			<dl>';
 		}
 	}
 
@@ -1668,18 +1693,6 @@ function template_ignoreboards()
 {
 	global $context, $txt, $theme;
 
-	add_js('
-	function selectBoards(ids)
-	{
-		var toggle = true;
-
-		for (i = 0; i < ids.length; i++)
-			toggle = toggle & document.forms.creator["ignore_brd" + ids[i]].checked;
-
-		for (i = 0; i < ids.length; i++)
-			document.forms.creator["ignore_brd" + ids[i]].checked = !toggle;
-	}');
-
 	// The main containing header.
 	echo '
 	<form action="<URL>?action=profile;area=ignoreboards;save" method="post" accept-charset="UTF-8" name="creator" id="creator">
@@ -1719,7 +1732,7 @@ function template_ignoreboards()
 
 			echo '
 							<li class="board" style="margin-', $context['right_to_left'] ? 'right' : 'left', ': ', $board['child_level'], 'em">
-								<label><input type="checkbox" id="ignore_brd', $board['id'], '" name="ignore_brd[', $board['id'], ']" value="', $board['id'], '"', $board['selected'] ? ' checked' : '', '> ', $board['name'], '</label>
+								<label><input type="checkbox" id="ignore_brd', $board['id'], '" name="ignore_brd[', $board['id'], ']" value="', $board['id'], '"', $board['selected'] ? ' checked' : '', !$board['enabled'] ? ' disabled' : '', '> ', $board['name'], '</label>
 							</li>';
 		}
 
@@ -1742,348 +1755,487 @@ function template_ignoreboards()
 	<br>';
 }
 
-// Simple load some theme variables common to several warning templates.
-function template_load_warning_variables()
+function template_profileInfractions()
 {
-	global $settings, $context;
-
-	$context['warningBarWidth'] = 200;
-	// Setup the colors - this is a little messy for theming.
-	$context['colors'] = array(
-		0 => 'lime',
-		$settings['warning_watch'] => 'green',
-		$settings['warning_moderate'] => 'orange',
-		$settings['warning_mute'] => 'red',
-	);
-
-	// Work out the starting color.
-	$context['current_color'] = $context['colors'][0];
-	foreach ($context['colors'] as $limit => $color)
-		if ($context['member']['warning'] >= $limit)
-			$context['current_color'] = $color;
-}
-
-// Show all warnings of a user?
-function template_viewWarning()
-{
-	global $context, $txt, $theme;
-
-	template_load_warning_variables();
+	global $txt, $context, $theme;
 
 	echo '
-		<we:title>
-			<img src="', $theme['images_url'], '/icons/profile_sm.gif">
-			', sprintf($txt['profile_viewwarning_for_user'], $context['member']['name']), '
-		</we:title>
+		<we:cat>', $txt['profile_infractions'], '</we:cat>
+		<p class="information">', $txt['profile_infractions_desc'], '</p>
 		<div class="windowbg wrc">
 			<dl class="settings">
-				<dt>
-					<strong>', $txt['profile_warning_name'], ':</strong>
-				</dt>
-				<dd>
-					', $context['member']['name'], '
-				</dd>
-				<dt>
-					<strong>', $txt['profile_warning_level'], ':</strong>
-				</dt>
-				<dd>
-					<div>
-						<div>
-							<div style="font-size: 8pt; height: 12pt; width: ', $context['warningBarWidth'], 'px; border: 1px solid black; background-color: white; padding: 1px; position: relative">
-								<div id="warning_text" style="padding-top: 1pt; width: 100%; z-index: 2; color: black; position: absolute; text-align: center; font-weight: bold">', $context['member']['warning'], '%</div>
-								<div id="warning_progress" style="width: ', $context['member']['warning'], '%; height: 12pt; z-index: 1; background-color: ', $context['current_color'], '">&nbsp;</div>
-							</div>
-						</div>
-					</div>
-				</dd>';
+				<dt>', $txt['current_points'], '</dt>
+				<dd>', comma_format($context['current_points']), '</dd>';
 
-		// There's some impact of this?
-		if (!empty($context['level_effects'][$context['current_level']]))
+	if (!empty($context['current_sanctions_levels']))
+	{
+		echo '
+				<dt>', $txt['punishments_due_to_points'], '</dt>
+				<dd class="with-list">
+					<ul>';
+		foreach ($context['current_sanctions_levels'] as $infraction => $dummy)
 			echo '
-				<dt>
-					<strong>', $txt['profile_viewwarning_impact'], ':</strong>
-				</dt>
-				<dd>
-					', $context['level_effects'][$context['current_level']], '
-				</dd>';
-
+						<li>', $txt['infraction_' . $infraction], '</li>';
 		echo '
-			</dl>
-		</div>';
-
-	template_show_list('view_warnings');
-}
-
-// Show a lovely interface for issuing warnings.
-function template_issueWarning()
-{
-	global $context, $theme, $txt;
-
-	template_load_warning_variables();
-
-	// !!! Should we really calculate these? jQuery should have done most of it already...
-	// !!! This is also reused in the admin settings now. If this gets rewritten, fix that too please.
-	add_js('
-	var isMoving;
-	function setWarningBarPos(e, changeAmount)
-	{
-		var
-			barWidth = ', $context['warningBarWidth'], ', mouse = e.pageX,
-			percent, size, color = "white", effectText = "";
-
-		// Are we passing the amount to change it by?
-		if (changeAmount)
-			percent = $("#warning_level").val() == "SAME" ?
-				', $context['member']['warning'], ' + changeAmount :
-				parseInt($("#warning_level").val(), 10) + changeAmount;
-		// If not then it\'s a mouse thing.
-		else
-		{
-			if (e.type == "mousedown" && e.which == 1)
-				isMoving = true;
-			if (e.type == "mouseup")
-				isMoving = false;
-			if (!isMoving)
-				return false;
-
-			// Get the position of the container.
-			var position = $("#warning_contain").offset().left;
-			percent = Math.round(Math.round(((mouse - position) / barWidth) * 100) / 5) * 5;
-		}
-
-		percent = Math.min(Math.max(percent, ', $context['min_allowed'], '), ', $context['max_allowed'], ');
-		size = barWidth * (percent/100);');
-
-	// Get the right color.
-	foreach ($context['colors'] as $limit => $color)
-		add_js('
-		if (percent >= ', $limit, ')
-			color = "', $color, '";');
-
-	add_js('
-		$("#warning_progress").css({ width: size + "px", backgroundColor: color });
-		$("#warning_text").css("color", percent < 50 ? "black" : (percent < 60 ? (color == "green" ? "#ccc" : "black") : "white")).html(percent + "%");
-		$("#warning_level").val(percent);');
-
-	// Also set the right effect.
-	foreach ($context['level_effects'] as $limit => $text)
-		add_js('
-		if (percent >= ', $limit, ')
-			effectText = "', $text, '";');
-
-	add_js('
-		$("#cur_level_div").html(effectText);
-	}
-
-	// Disable notification boxes as required.
-	function modifyWarnNotify()
-	{
-		var enable = $("#warn_notify").is(":checked");
-		$("#warn_sub, #warn_body, #warn_temp").prop("disabled", !enable);
-		$("#warn_temp").sb();
-		$("#new_template_link").toggle(enable);
-	}
-
-	function changeWarnLevel(amount)
-	{
-		setWarningBarPos(false, amount);
-	}
-
-	// Warn template.
-	function populateNotifyTemplate()
-	{
-		index = $("#warn_temp").val();
-		if (index == -1)
-			return false;
-
-		// Otherwise see what we can do...');
-
-	foreach ($context['notification_templates'] as $k => $type)
-		add_js('
-		if (index == ', $k, ')
-			$("#warn_body").val("', strtr($type['body'], array('"' => "'", "\n" => '\\n', "\r" => '')), '");');
-
-	add_js('
-	}');
-
-	echo '
-	<form action="<URL>?action=profile;u=', $context['id_member'], ';area=issuewarning" method="post" class="flow_hidden" accept-charset="UTF-8">
-		<we:cat>
-			<img src="', $theme['images_url'], '/icons/profile_sm.gif">
-			', we::$user['is_owner'] ? $txt['profile_warning_level'] : $txt['profile_issue_warning'], '
-		</we:cat>';
-
-	if (!we::$user['is_owner'])
-		echo '
-		<p class="description">', $txt['profile_warning_desc'], '</p>';
-
-	echo '
-		<div class="windowbg wrc">
-			<dl class="settings">';
-
-	if (!we::$user['is_owner'])
-		echo '
-				<dt>
-					<strong>', $txt['profile_warning_name'], ':</strong>
-				</dt>
-				<dd>
-					<strong>', $context['member']['name'], '</strong>
-				</dd>';
-
-	echo '
-				<dt>
-					<strong>', $txt['profile_warning_level'], ':</strong>';
-
-	// Is there only so much they can apply?
-	if ($context['warning_limit'])
-		echo '
-					<dfn>', sprintf($txt['profile_warning_limit_attribute'], $context['warning_limit']), '</dfn>';
-
-	echo '
-				</dt>
-				<dd>
-					<div id="warndiv1" class="hide">
-						<div>
-							<span class="floatleft" style="padding: 0 .5em"><a href="#" onclick="changeWarnLevel(-5); return false;" onmousedown="return false;">[-]</a></span>
-							<div class="floatleft" id="warning_contain" style="font-size: 8pt; height: 12pt; width: ', $context['warningBarWidth'], 'px; border: 1px solid black; background-color: white; padding: 1px; position: relative">
-								<div id="warning_text" style="padding-top: 1pt; width: 100%; z-index: 2; color: black; position: absolute; text-align: center; font-weight: bold" onmousedown="e.preventDefault();">', $context['member']['warning'], '%</div>
-								<div id="warning_progress" style="width: ', $context['member']['warning'], '%; height: 12pt; z-index: 1; background-color: ', $context['current_color'], '">&nbsp;</div>
-							</div>
-							<span class="floatleft" style="padding: 0 .5em"><a href="#" onclick="changeWarnLevel(5); return false;" onmousedown="return false;">[+]</a></span>
-							<div class="clear_left smalltext">', $txt['profile_warning_impact'], ': <span id="cur_level_div">', $context['level_effects'][$context['current_level']], '</span></div>
-						</div>
-						<input type="hidden" name="warning_level" id="warning_level" value="SAME">
-					</div>
-					<div id="warndiv2">
-						<input name="warning_level_nojs" size="6" maxlength="4" value="', $context['member']['warning'], '">&nbsp;', $txt['profile_warning_max'], '
-						<div class="smalltext">', $txt['profile_warning_impact'], ':<br>';
-
-	add_js('
-	$("#warning_contain").on("mousedown mousemove mouseup", setWarningBarPos).mouseleave(function () { isMoving = false; });
-	$("#warndiv1").show();
-	$("#warndiv2").hide();');
-
-	// For non-JavaScript give a better list.
-	foreach ($context['level_effects'] as $limit => $effect)
-		echo '
-							', sprintf($txt['profile_warning_effect_text'], $limit, $effect), '<br>';
-
-	echo '
-						</div>
-					</div>
-				</dd>';
-
-	if (!we::$user['is_owner'])
-	{
-		echo '
-				<dt>
-					<strong>', $txt['profile_warning_reason'], ':</strong>
-					<dfn>', $txt['profile_warning_reason_desc'], '</dfn>
-				</dt>
-				<dd>
-					<input name="warn_reason" id="warn_reason" value="', $context['warning_data']['reason'], '" size="50" style="width: 80%">
+					</ul>
 				</dd>
 			</dl>
 			<hr>
-			<dl class="settings">
-				<dt>
-					<strong>', $txt['profile_warning_notify'], ':</strong>
-				</dt>
-				<dd>
-					<input type="checkbox" name="warn_notify" id="warn_notify" onclick="modifyWarnNotify();"', $context['warning_data']['notify'] ? ' checked' : '', '>
-				</dd>
-				<dt>
-					<strong>', $txt['profile_warning_notify_subject'], ':</strong>
-				</dt>
-				<dd>
-					<input name="warn_sub" id="warn_sub" value="', empty($context['warning_data']['notify_subject']) ? $txt['profile_warning_notify_template_subject'] : $context['warning_data']['notify_subject'], '" size="50" style="width: 80%">
-				</dd>
-				<dt>
-					<strong>', $txt['profile_warning_notify_body'], ':</strong>
-				</dt>
-				<dd>
-					<select name="warn_temp" id="warn_temp" disabled onchange="populateNotifyTemplate();" style="font-size: x-small">
-						<option value="-1" data-hide>', $txt['profile_warning_notify_template'], '</option>';
-
-		foreach ($context['notification_templates'] as $id_template => $template)
-			echo '
-						<option value="', $id_template, '">', $template['title'], '</option>';
-
-		echo '
-					</select>
-					<span class="smalltext hide" id="new_template_link">[<a href="<URL>?action=moderate;area=warnings;sa=templateedit;tid=0" target="_blank" class="new_win">', $txt['profile_warning_new_template'], '</a>]</span><br>
-					<textarea name="warn_body" id="warn_body" cols="40" rows="8">', $context['warning_data']['notify_body'], '</textarea>
-				</dd>';
+			<dl class="settings">';
 	}
-	echo '
-			</dl>
-			<div class="right">
-				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-				<input type="submit" name="save" value="', we::$user['is_owner'] ? $txt['change_profile'] : $txt['profile_warning_issue'], '" class="submit">
-			</div>
-		</div>
-	</form>';
 
-	// Previous warnings?
 	echo '
-	<br>
-	<we:cat>
-		', $txt['profile_warning_previous'], '
-	</we:cat>
-	<table class="table_grid w100 cs0 cp4">
-		<thead>
-			<tr class="titlebg left">
-				<th class="first_th" scope="col" style="width: 20%">', $txt['profile_warning_previous_issued'], '</th>
-				<th scope="col" style="width: 30%">', $txt['profile_warning_previous_time'], '</th>
-				<th scope="col">', $txt['profile_warning_previous_reason'], '</th>
-				<th class="last_th" scope="col" style="width: 6%">', $txt['profile_warning_previous_level'], '</th>
-			</tr>
-		</thead>
-		<tbody>';
-
-	// Print the warnings.
-	$alternate = 0;
-	foreach ($context['previous_warnings'] as $warning)
+				<dt>', $txt['current_sanctions'], '</dt>
+				<dd class="with-list">';
+	if (empty($context['current_sanctions']))
+		echo $txt['not_applicable'];
+	else
 	{
-		$alternate = !$alternate;
 		echo '
-			<tr class="windowbg', $alternate ? '' : '2', '">
-				<td class="smalltext">', $warning['issuer']['link'], '</td>
-				<td class="smalltext">', $warning['time'], '</td>
-				<td class="smalltext">
-					<div class="floatleft">
-						', $warning['reason'], '
-					</div>';
-
-		if (!empty($warning['id_notice']))
+					<ul>';
+		foreach ($context['current_sanctions'] as $infraction => $expiry)
 			echo '
-					<div class="floatright">
-						<a href="<URL>?action=moderate;area=notice;nid=', $warning['id_notice'], '" onclick="window.open(this.href, \'\', \'scrollbars=yes,resizable=yes,width=400,height=250\');return false;" target="_blank" class="new_win" title="', $txt['profile_warning_previous_notice'], '"><img src="', $theme['images_url'], '/filter.gif"></a>
-					</div>';
+						<li>', $txt['infraction_' . $infraction], ' <dfn>', $expiry == 1 ? $txt['expires_never'] : sprintf($txt['expires_dfn'], timeformat($expiry)), '</dfn></li>';
+
 		echo '
-				</td>
-				<td class="smalltext">', $warning['counter'], '</td>
-			</tr>';
+					</ul>';
 	}
 
-	if (empty($context['previous_warnings']))
+	echo '
+				</dd>
+			</dl>
+		</div>';
+
+	if ($context['can_issue_warning'])
 		echo '
-			<tr class="windowbg2">
-				<td class="center" colspan="4">
-					', $txt['profile_warning_previous_none'], '
-				</td>
-			</tr>';
+		<form action="<URL>?action=profile;u=', $context['member']['id'], ';area=infractions;warn" method="post">
+			<div class="right">
+				<input type="submit" class="new" value="', $txt['issue_infraction'], '">
+			</div>
+		</form>';
 
 	echo '
-		</tbody>
-	</table>
-	<div class="pagesection">
-		<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>
-	</div>';
+		<br>
+		<we:cat>', $txt['infraction_history'], '</we:cat>
+		<table class="w100 cs0">
+			<thead>
+				<tr class="catbg left">
+					<th class="first_th" scope="col">', $txt['infraction_issued_by'], '</th>
+					<th scope="col">', $txt['infraction_issued_on'], '</th>
+					<th scope="col">', $txt['infraction_expires_on'], '</th>
+					<th scope="col" class="center">', $txt['infraction_points'], '</th>
+					<th scope="col" class="center">', $txt['current_state'], '</th>
+					<th class="last_th" scope="col" colspan="2"></th>
+				</tr>
+			</thead>
+			<tbody>';
+	$use_bg2 = true;
+	foreach ($context['infraction_log'] as $id_issue => $infraction)
+	{
+		echo '
+				<tr class="windowbg', $use_bg2 ? '2' : '', ' inf_', $infraction['row_class'], '">
+					<td>', !empty($infraction['issued_by']) ? '<a href="<URL>?action=profile;u=' . $infraction['issued_by'] . '">' . $infraction['issued_by_name'] . '</a>' : $infraction['issued_by_name'], '</td>
+					<td class="small">', $infraction['issue_date_format'], '</td>
+					<td class="small">', $infraction['expire_date_format'], '</td>
+					<td class="center">', $infraction['points'], '</td>
+					<td class="center">', $txt['infraction_state_' . $infraction['row_class']], '</td>
+					<td class="center"><a href="<URL>?action=profile;u=', $context['member']['id'], ';area=infractions;view=', $id_issue, '" onclick="return reqWin(this);"><img src="', $theme['images_url'], '/filter.gif"></a></td>
+					<td class="center">', !empty($infraction['can_revoke']) ? '<a href="<URL>?action=profile;u=' . $context['member']['id'] . ';area=infractions;revoke=' . $id_issue . '">' . $txt['revoke'] . '</a>' : '', '</td>
+				</tr>';
 
-	if (!we::$user['is_owner'])
+		$use_bg2 = !$use_bg2;
+	}
+
+	if (empty($context['infraction_log']))
+		echo '
+				<tr class="windowbg2">
+					<td colspan="7" class="center">', $txt['no_infraction_history'], '</td>
+				</tr>';
+
+	echo '
+			</tbody>
+		</table>';
+}
+
+function template_profileInfractions_issue()
+{
+	global $context, $txt, $theme;
+
+	echo '
+		<we:cat>', $txt['issue_infraction'], '</we:cat>
+		<p class="information">', $txt['issue_infraction_desc'], '</p>';
+
+	if (!empty($context['errors']))
+		echo '
+			<div class="errorbox" id="errors">
+				<h3 id="error_serious">', $txt['error_while_submitting'], '</h3>
+				<ul class="error" id="error_list">
+					<li>', implode('</li><li>', $context['errors']), '</li>
+				</ul>
+			</div>';
+
+	echo '
+		<div class="windowbg wrc">
+			<dl class="settings">
+				<dt>', $txt['current_points'], '</dt>
+				<dd>', comma_format($context['current_points']), '</dd>
+				<dt>', $txt['current_sanctions'], '</dt>
+				<dd class="with-list">';
+	if (empty($context['current_sanctions']))
+		echo $txt['not_applicable'];
+	else
+	{
+		echo '
+					<ul>';
+		foreach ($context['current_sanctions'] as $infraction => $expiry)
+			echo '
+						<li>', $txt['infraction_' . $infraction], ' <dfn>', $expiry == 1 ? $txt['expires_never'] : sprintf($txt['expires_dfn'], timeformat($expiry)), '</dfn></li>';
+
+		echo '
+					</ul>';
+	}
+
+	echo '
+				</dd>
+			</dl>
+		</div>';
+
+	echo '
+		<form action="<URL>?action=profile;u=', $context['member']['id'], ';area=infractions;warn;infsave" method="post" accept-charset="UTF-8">';
+
+	if (!empty($context['issuing_for']['note']))
+		foreach ($context['issuing_for']['note'] as $k => $v)
+			if (isset($txt[$v]))
+				$context['issuing_for']['note'][$k] = $txt[$v];
+
+	if (!$context['can_issue_adhoc'])
+	{
+		echo '
+			<div class="windowbg2 wrc">
+				<fieldset>
+					<legend>', $txt['issue_infraction_title'], '</legend>
+					<dl class="settings">';
+
+		if (!empty($context['issuing_for']))
+			echo '
+						<dt>', isset($txt[$context['issuing_for']['desc']]) ? $txt[$context['issuing_for']['desc']] : $context['issuing_for']['desc'], '</dt>
+						<dd>', $context['issuing_for']['link'], '</dd>
+					</dl>
+					<hr>
+					<dl class="settings">';
+
+		echo '
+						<dt>', $txt['issue_noadhoc_which'], '</dt>
+						<dd>
+							<select name="infraction" id="infraction" onchange="updateInf();">';
+		foreach ($context['preset_infractions'] as $infraction => $details)
+			echo '
+								<option value="', $infraction, '"', $infraction == $context['adhoc_stuff']['current_infraction'] ? ' selected' : '', '>', $details['infraction_name'], '</option>';
+
+		echo '
+							</select>
+						</dd>
+						<dt>', $txt['infraction_why'], ' <dfn>', $txt['infraction_why_note'], '</dfn></dt>
+						<dd><input name="reason" maxlength="200" class="w75"></dd>
+					</dl>
+					<hr>
+					<dl class="settings">
+						<dt>', $txt['infraction_duration'], ':</dt>
+						<dd id="duration"></dd>
+						<dt>', $txt['this_points'], '</dt>
+						<dd id="points"></dd>
+						<dt>', $txt['this_sanctions'], '</dt>
+						<dd id="sanctions" class="with-list"></dd>
+					</dl>
+					<hr>
+					<dl class="settings hide" id="no_notifications">
+						<dt></dt>
+						<dd>', $txt['no_notification'], '</dd>
+					</dl>
+					<dl class="settings hide" id="has_notification">
+						<dt>', $txt['notification_subject'], '</dt>
+						<dd id="note_subject"></dd>
+						<dt>', $txt['notification_body'], ' <dfn>', $txt['notification_body_note'], '</dfn>', !empty($context['issuing_for']['note']) ? '<dfn>' . implode('</dfn><dfn>', $context['issuing_for']['note']) . '</dfn>' : '', '</dt>
+						<dd id="note_body"></dd>
+					</dl>
+				</fieldset>
+			</div>';
+
 		add_js('
-	modifyWarnNotify();');
+	updateInf();');
+	}
+	else
+	{
+		echo '
+			<div class="windowbg2 wrc">
+				<fieldset>
+					<legend>', $txt['issue_infraction_title'], '</legend>
+					<p>', $txt['issue_adhoc_infraction_desc'], '</p>';
+
+		if (!empty($context['issuing_for']))
+		{
+			echo '
+					<dl class="settings">
+						<dt>', isset($txt[$context['issuing_for']['desc']]) ? $txt[$context['issuing_for']['desc']] : $context['issuing_for']['desc'], '</dt>
+						<dd>', $context['issuing_for']['link'], '</dd>
+					</dl>
+					<hr>';
+
+			if (!empty($context['issuing_for']['note']))
+				foreach ($context['issuing_for']['note'] as $k => $v)
+					if (isset($txt[$v]))
+						$context['issuing_for']['note'][$k] = $txt[$v];
+		}
+
+		if (!empty($context['preset_infractions']))
+		{
+			echo '
+					<dl class="settings">
+						<dt>', $txt['issue_noadhoc_which'], '</dt>
+						<dd>
+							<select name="infraction" id="infraction" onchange="updateInf();">';
+
+			foreach ($context['preset_infractions'] as $infraction => $details)
+				echo '
+								<option value="', $infraction, '"', $infraction == $context['adhoc_stuff']['current_infraction'] ? ' selected' : '', '>', $details['infraction_name'], '</option>';
+
+			echo '
+								<option class="hr"></option>
+								<option value="custom"', $context['adhoc_stuff']['current_infraction'] === 'custom' ? ' selected' : '', '>', $txt['issue_adhoc'], '</option>
+							</select>
+						</dd>';
+		}
+		else
+			echo '
+					<input type="hidden" id="infraction" value="custom">
+					<dl class="settings">';
+
+		echo '
+						<dt>', $txt['infraction_why'], ' <dfn>', $txt['infraction_why_note'], '</dfn></dt>
+						<dd><input name="reason" maxlength="200" class="w75"></dd>
+					</dl>
+					<dl class="settings">
+						<dt>', $txt['infraction_duration'], ':</dt>
+						<dd id="duration"></dd>
+						<dt>', $txt['this_points'], '</dt>
+						<dd id="points"></dd>
+						<dt>', $txt['this_sanctions'], '</dt>
+						<dd id="sanctions" class="with-list"></dd>
+					</dl>
+					<hr>
+					<dl class="settings hide" id="has_notification">
+						<dt>', $txt['notification_subject'], '</dt>
+						<dd id="note_subject"></dd>
+						<dt>', $txt['notification_body'], ' <dfn>', $txt['notification_body_note'], '</dfn>', !empty($context['issuing_for']['note']) ? '<dfn>' . implode('</dfn><dfn>', $context['issuing_for']['note']) . '</dfn>' : '', '</dt>
+						<dd id="note_body"></dd>
+					</dl>
+					<dl class="settings hide" id="raw_notification">';
+		if (!empty($context['preset_infractions']))
+		{
+			$items = array();
+			foreach ($context['preset_infractions'] as $infraction => $details)
+			{
+				if (!empty($details['infraction_msg']['subject']))
+					$items[] = $infraction;
+			}
+
+			if (!empty($items))
+			{
+				echo '
+						<dt>', $txt['notification_wording'], '</dt>
+						<dd>
+							<select id="template_wording" onchange="selectInfractionWording();">
+								<option value="">', $txt['notification_select'], '</option>
+								<option class="hr"></option>';
+				foreach ($items as $infraction)
+					echo '
+								<option value="', $infraction, '">', $context['preset_infractions'][$infraction]['infraction_name'], '</option>';
+				echo '
+							</select>
+						</dd>';
+			}
+		}
+
+		echo '
+						<dt>', $txt['notification_subject'], '</dt>
+						<dd id="text_subject"><input name="note_subject" class="w75"></dd>
+						<dt>', $txt['notification_body'], ' <dfn>', $txt['notification_body_note'], '</dfn>', !empty($context['issuing_for']['note']) ? '<dfn>' . implode('</dfn><dfn>', $context['issuing_for']['note']) . '</dfn>' : '', '</dt>
+						<dd id="text_body"><textarea name="note_body" rows="7" class="w75"></textarea></dd>
+					</dl>
+					<dl class="settings hide" id="no_notifications">
+						<dt></dt>
+						<dd>', $txt['no_notification'], '</dd>
+					</dl>
+				</fieldset>
+			</div>';
+
+		add_js('
+	updateInf();');
+	}
+
+	echo '
+			<br>
+			<div class="right">', !empty($context['issuing_for']['var']) ? '
+				<input type="hidden" name="for" value="' . $context['issuing_for']['var'] . '">' : '', '
+				<input type="submit" class="submit" value="', $txt['issue_infraction'], '">
+				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
+			</div>
+		</form>';
+}
+
+function template_profileInfractions_revoke()
+{
+	global $context, $txt, $theme;
+
+	echo '
+		<we:cat>', $txt['revoke_infraction'], '</we:cat>
+		<p class="information">', $txt['revoke_infraction_desc'], '</p>';
+
+	if (!empty($context['errors']))
+		echo '
+		<div class="errorbox" id="errors">
+			<h3 id="error_serious">', $txt['error_while_submitting'], '</h3>
+			<ul class="error" id="error_list">
+				<li>', implode('</li><li>', $context['errors']), '</li>
+			</ul>
+		</div>';
+
+	echo '
+		<form action="<URL>?action=profile;u=', $context['member']['id'], ';area=infractions;revoke=', $context['infraction_details']['id_issue'], ';infsave" method="post" accept-charset="UTF-8">
+			<div class="windowbg wrc">
+				<dl class="settings">
+					<dt>', $txt['infraction_issued_by'], '</dt>
+					<dd>', $context['infraction_details']['issued_by_format'], '</dd>
+					<dt>', $txt['infraction_issued_on'], '</dt>
+					<dd>', $context['infraction_details']['issue_date_format'], '</dd>
+					<dt>', $txt['infraction_expires_on'], '</dt>
+					<dd>', $context['infraction_details']['expire_date_format'], '</dd>
+					<dt>', $txt['infraction_reason_given'], '</dt>
+					<dd>', $context['infraction_details']['reason'], '</dd>
+					<dt><a href="<URL>?action=profile;u=', $context['member']['id'], ';area=infractions;view=', $context['infraction_details']['id_issue'], '" onclick="return reqWin(this);"><img src="', $theme['images_url'], '/filter.gif"> ', $txt['view_full_details'], '</a></dt>
+				</dl>
+				<hr>
+				<dl class="settings">
+					<dt>', $txt['why_revoke'], ' <dfn>', $txt['why_revoke_required'], '</dfn></dt>
+					<dd><input value="" name="revoke_reason" class="w75" maxlength="255"></dd>
+				</dl>
+				<div class="right">
+					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
+					<input type="submit" class="submit" value="', $txt['revoke_commmit'], '">
+				</div>
+			</div>
+		</form>';
+}
+
+function template_profileBan()
+{
+	global $txt, $context;
+
+	echo '
+		<we:cat>', $txt['profileBanUser_title'], '</we:cat>
+		<p class="information">', $txt['profileBanUser_desc'], '</p>';
+
+	if (!empty($context['errors']))
+		echo '
+		<div class="errorbox" id="errors">
+			<h3 id="error_serious">', $txt['error_while_submitting'], '</h3>
+			<ul class="error" id="error_list">
+				<li>', implode('</li><li>', $context['errors']), '</li>
+			</ul>
+		</div>';
+
+	echo '
+		<form action="<URL>?action=profile;u=', $context['member']['id'], ';area=banuser;bansave" method="post" accept-charset="UTF-8">
+			<div class="windowbg2 wrc">
+				<fieldset>
+					<legend>', $txt['ban_hardness_header'], '</legend>
+					<dl class="settings">
+						<dt>', $txt['ban_hardness_title'], '</dt>
+						<dd>
+							<select name="hardness">
+								<option value="soft"', $context['ban_details']['hardness'] == 'soft' ? ' selected' : '', '>&lt;div class="ban_selector ban_soft"&gt;&lt;/div&gt; ', $txt['ban_hardness_soft'], '</option>
+								<option value="hard"', $context['ban_details']['hardness'] == 'hard' ? ' selected' : '', '>&lt;div class="ban_selector ban_hard"&gt;&lt;/div&gt; ', $txt['ban_hardness_hard'], '</option>
+							</select>
+						</dd>
+					</dl>
+				</fieldset>
+				<fieldset>
+					<legend>', $txt['ban_information'], '</legend>
+					<dl class="settings">
+						<dt>', $txt['ban_reason'], ' <dfn>', $txt['ban_reason_subtext'], '</dfn></dt>
+						<dd>
+							<textarea name="ban_reason" class="ban">', !empty($context['ban_details']['ban_reason']) ? $context['ban_details']['ban_reason'] : '', '</textarea>
+						</dd>
+						<dt class="ban_message">', $txt['ban_message'], ' <dfn>', $txt['ban_message_subtext'], '</dfn></dt>
+						<dd class="ban_message">
+							<textarea name="ban_message" class="ban">', !empty($context['ban_details']['extra']['message']) ? $context['ban_details']['extra']['message'] : '', '</textarea>
+						</dd>
+					</dl>
+				</fieldset>
+				<fieldset>
+					<legend><div class="ban_selector ban_items_id_member"></div> ', $txt['profileBanUser_acct_title'], '</legend>
+					<dl class="settings">
+						<dt>', $txt['profileBanUser_acct'], '</dt>
+						<dd>
+							<input type="checkbox" name="ban_type_acct"', !empty($context['ban_details']['ban_acct']) ? ' checked' : '', '>
+						</dd>
+					</dl>
+				</fieldset>
+				<fieldset>
+					<legend><div class="ban_selector ban_items_email"></div> ', $txt['profileBanUser_email_title'], '</legend>
+					<dl class="settings">
+						<dt>', $txt['profileBanUser_email'], '</dt>
+						<dd>
+							<input type="checkbox" name="ban_type_on_email"', !empty($context['ban_details']['ban_on_email']) ? ' checked' : '', '>
+						</dd>
+						<dt><a href="<URL>?action=help;in=ban_email_types" class="help" onclick="return reqWin(this);"></a> ', $txt['ban_type_email_type'], '</dt>
+						<dd>
+							<select name="ban_type_email">';
+	foreach (array('specific', 'domain', 'tld') as $type)
+		echo '
+								<option value="', $type, '"', !empty($context['ban_details']['email_type']) && $context['ban_details']['email_type'] == $type ? ' selected' : '', '>', $txt['ban_type_email_type_' . $type], '</option>';
+
+	echo '
+							</select>
+						</dd>
+						<dt>', $txt['ban_type_email_content'], '</dt>
+						<dd>
+							<input name="ban_email_content" size="30" maxlength="100" value="', !empty($context['ban_details']['ban_email']) ? $context['ban_details']['ban_email'] : '', '">
+						</dd>
+						<dt><a href="<URL>?action=help;in=ban_gmail_style" class="help" onclick="return reqWin(this);"></a> ', $txt['ban_email_gmail_style'], '</dt>
+						<dd>
+							<input type="checkbox" value="1"', !empty($context['ban_details']['extra']['gmail_style']) ? ' checked' : '', ' name="ban_gmail_style">
+						</dd>
+					</dl>
+				</fieldset>';
+
+	if (!empty($context['ban_details']['ip']))
+	{
+		echo '
+				<fieldset>
+					<legend><div class="ban_selector ban_items_ip_address"></div> ', $txt['profileBanUser_ip_title'], '</legend>
+					<dl class="settings">';
+
+		foreach ($context['ban_details']['ip'] as $ip => $is_checked)
+		{
+			$formatted_ip = format_ip($ip);
+			echo '
+						<dt><a href="<URL>?action=profile;u=', $context['member']['id'], ';area=tracking;sa=ip;searchip=', $formatted_ip, '" target="_blank">', $formatted_ip, '</a></dt>
+						<dd><input type="checkbox" name="ip[', $ip, ']"', $is_checked ? ' checked' : '', '></dd>';
+		}
+
+		echo '
+					</dl>
+				</fieldset>';
+	}
+
+	echo '
+				<div class="right">
+					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
+					<input type="submit" class="submit" value="', $txt['profileBanUser_issue'], '">
+				</div>
+			</div>
+		</form>';
 }
 
 // Template to show for deleting a users account - now with added delete post capability!
@@ -2102,7 +2254,7 @@ function template_deleteAccount()
 		echo '
 			<p class="description">', $txt['deleteAccount_desc'], '</p>';
 	echo '
-			<div class="windowbg2 wrc">';
+			<div class="windowbg wrc">';
 
 	// If they are deleting their account AND the admin needs to approve it - give them another piece of info ;)
 	if ($context['needs_approval'])
@@ -2400,64 +2552,6 @@ function template_profile_avatar_select()
 		changeSel(selavatar);
 	else
 		previewExternalAvatar(avatar.src);
-
-	function changeSel(selected)
-	{
-		if (cat.selectedIndex == -1)
-			return;
-
-		var val = $(cat).val(), i, count = 0;
-		if (val.indexOf("/") > 0)
-		{
-			$(file).css("display", "inline").prop("disabled", false);
-
-			for (i = file.length; i >= 0; i--)
-				file.options[i] = null;
-
-			for (i = 0; i < files.length; i++)
-				if (files[i].indexOf(val) == 0)
-				{
-					var filename = files[i].slice(files[i].indexOf("/") + 1);
-					var showFilename = filename.slice(0, filename.lastIndexOf("."));
-					showFilename = showFilename.replace(/[_]/g, " ");
-
-					file.options[count] = new Option(showFilename, files[i]);
-
-					if (filename == selected)
-					{
-						if (file.options.defaultSelected)
-							file.options[count].defaultSelected = true;
-						else
-							file.options[count].selected = true;
-					}
-					count++;
-				}
-
-			if (file.selectedIndex == -1 && file.options[0])
-				file.options[0].selected = true;
-
-			showAvatar();
-		}
-		else
-		{
-			$(file).hide().prop("disabled", true);
-			$("#avatar").attr("src", avatardir + val).css({ width: "", height: "" });
-		}
-	}
-
-	function showAvatar()
-	{
-		if (file.selectedIndex == -1)
-			return;
-
-		$("#avatar").attr({
-			src: avatardir + $(file).val(),
-			alt: file.options[file.selectedIndex].text
-		}).css({
-			width: "",
-			height: ""
-		});
-	}
 
 	function previewExternalAvatar(src)
 	{

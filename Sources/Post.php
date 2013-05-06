@@ -148,24 +148,18 @@ function Post($post_errors = array())
 
 		if (empty($_REQUEST['msg']))
 		{
-			if (we::$is_guest && !allowedTo('post_reply_any') && (!$settings['postmod_active'] || !allowedTo('post_unapproved_replies_any')))
+			if (we::$is_guest && !allowedTo('post_reply_any'))
 				is_not_guest();
 
 			// By default the reply will be approved...
 			$context['becomes_approved'] = true;
 			if ($id_member_poster != we::$id)
 			{
-				if ($settings['postmod_active'] && allowedTo('post_unapproved_replies_any') && !allowedTo('post_reply_any'))
-					$context['becomes_approved'] = false;
-				else
-					isAllowedTo('post_reply_any');
+				isAllowedTo('post_reply_any');
 			}
 			elseif (!allowedTo('post_reply_any'))
 			{
-				if ($settings['postmod_active'] && allowedTo('post_unapproved_replies_own') && !allowedTo('post_reply_own'))
-					$context['becomes_approved'] = false;
-				else
-					isAllowedTo('post_reply_own');
+				isAllowedTo('post_reply_own');
 			}
 		}
 		else
@@ -181,12 +175,7 @@ function Post($post_errors = array())
 	{
 		$context['becomes_approved'] = true;
 		if (!empty($board))
-		{
-			if ($settings['postmod_active'] && !allowedTo('post_new') && allowedTo('post_unapproved_topics'))
-				$context['becomes_approved'] = false;
-			else
-				isAllowedTo('post_new');
-		}
+			isAllowedTo('post_new');
 
 		$locked = 0;
 		// !!! These won't work if you're making an event.
@@ -496,7 +485,7 @@ function Post($post_errors = array())
 			// Get the existing message.
 			$request = wesql::query('
 				SELECT
-					m.id_member, m.modified_time, m.smileys_enabled, m.body,
+					m.id_member, m.modified_member, m.modified_time, m.smileys_enabled, m.body,
 					m.poster_name, m.poster_email, m.subject, m.icon, m.approved,
 					IFNULL(a.size, -1) AS filesize, a.filename, a.id_attach,
 					t.id_member_started AS id_member_poster, m.poster_time
@@ -536,6 +525,10 @@ function Post($post_errors = array())
 				isAllowedTo('modify_replies');
 			else
 				isAllowedTo('modify_any');
+
+			// Hmm. What about if this message was previously modified and not by us?
+			if (!empty($row['modified_member']) && $row['modified_member'] != we::$id && empty($settings['allow_non_mod_edit']) && !allowedTo('moderate_board'))
+				fatal_lang_error('cannot_modify_mod_post', false);
 
 			if (!empty($settings['attachmentEnable']))
 			{

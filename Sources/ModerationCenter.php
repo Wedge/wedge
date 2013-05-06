@@ -38,7 +38,6 @@ function ModerationMain($dont_call = false)
 	loadLanguage('ModerationCenter');
 	add_css_file('mana', true);
 
-	$context['admin_preferences'] = !empty($options['admin_preferences']) ? unserialize($options['admin_preferences']) : array();
 	$context['robot_no_index'] = true;
 
 	// This is the menu structure - refer to Subs-Menu.php for the details.
@@ -56,27 +55,13 @@ function ModerationMain($dont_call = false)
 					'file' => 'Modlog',
 					'function' => 'ViewModlog',
 				),
-				'notice' => array(
-					'file' => 'ModerationCenter',
-					'function' => 'ShowNotice',
-					'select' => 'index'
-				),
-				'warnings' => array(
-					'label' => $txt['mc_warnings'],
-					'enabled' => $context['can_moderate_boards'],
-					'function' => 'ViewWarnings',
-					'subsections' => array(
-						'log' => array($txt['mc_warning_log']),
-						'templates' => array($txt['mc_warning_templates'], 'issue_warning'),
-					),
-				),
 				'userwatch' => array(
-					'label' => $txt['mc_watched_users_title'],
+					'label' => $txt['mc_warned_users_title'],
 					'enabled' => $context['can_moderate_boards'],
 					'function' => 'ViewWatchedUsers',
 					'subsections' => array(
-						'member' => array($txt['mc_watched_users_member']),
-						'post' => array($txt['mc_watched_users_post']),
+						'member' => array($txt['mc_warned_users_member']),
+						'post' => array($txt['mc_warned_users_post']),
 					),
 				),
 			),
@@ -122,15 +107,6 @@ function ModerationMain($dont_call = false)
 					'label' => $txt['mc_view_groups'],
 					'file' => 'Groups',
 					'function' => 'Groups',
-				),
-			),
-		),
-		'prefs' => array(
-			'title' => $txt['mc_prefs'],
-			'areas' => array(
-				'settings' => array(
-					'label' => $txt['mc_settings'],
-					'function' => 'ModerationSettings',
 				),
 			),
 		),
@@ -183,11 +159,10 @@ function ModerationHome()
 	$context['page_title'] = $txt['moderation_center'];
 	wetem::load('moderation_center');
 
-	// Load what blocks the user actually can see...
-	$valid_blocks = array(
-		'n' => 'LatestNews',
-		'p' => 'Notes',
-	);
+	// We always do the Notes block.
+	ModBlockNotes();
+
+	// Then load what blocks the user actually can see...
 	if ($context['can_moderate_groups'])
 		$valid_blocks['g'] = 'GroupRequests';
 	if ($context['can_moderate_boards'])
@@ -196,34 +171,17 @@ function ModerationHome()
 		$valid_blocks['w'] = 'WatchedUsers';
 	}
 
-	if (empty($user_settings['mod_prefs']))
-		$user_blocks = 'n' . ($context['can_moderate_boards'] ? 'wr' : '') . ($context['can_moderate_groups'] ? 'g' : '');
-	else
-		list ($user_blocks) = explode('|', $user_settings['mod_prefs']);
-
-	$user_blocks = str_split($user_blocks);
+	// You need one or other of these to have some preferences.
+	if ($context['can_moderate_groups'] || $context['can_moderate_boards'])
+		$valid_blocks['p'] = 'Prefs';
 
 	$context['mod_blocks'] = array();
 	foreach ($valid_blocks as $k => $block)
 	{
-		if (in_array($k, $user_blocks))
-		{
-			$block = 'ModBlock' . $block;
-			if (function_exists($block))
-				$context['mod_blocks'][] = $block();
-		}
+		$block = 'ModBlock' . $block;
+		if (function_exists($block))
+			$context['mod_blocks'][] = $block();
 	}
-}
-
-// Just prepares the time stuff for the Wedge latest news.
-function ModBlockLatestNews()
-{
-	global $context;
-
-	$context['time_format'] = urlencode(we::$user['time_format']);
-
-	// Return the template to use.
-	return 'latest_news';
 }
 
 // Show a list of the most active watched users.
@@ -233,17 +191,12 @@ function ModBlockWatchedUsers()
 
 	if (($watched_users = cache_get_data('recent_user_watches', 240)) === null)
 	{
-		$settings['warning_watch'] = empty($settings['warning_watch']) ? 1 : $settings['warning_watch'];
 		$request = wesql::query('
 			SELECT id_member, real_name, last_login
 			FROM {db_prefix}members
-			WHERE warning >= {int:warning_watch}
+			WHERE warning >= 1
 			ORDER BY last_login DESC
-			LIMIT 10',
-			array(
-				'warning_watch' => $settings['warning_watch'],
-			)
-		);
+			LIMIT 10');
 		$watched_users = array();
 		while ($row = wesql::fetch_assoc($request))
 			$watched_users[] = $row;
@@ -717,10 +670,23 @@ function recountOpenReports()
 	list ($open_reports) = wesql::fetch_row($request);
 	wesql::free_result($request);
 
+	$request = wesql::query('
+		SELECT COUNT(*)
+		FROM {db_prefix}log_reported
+		WHERE ' . we::$user['mod_cache']['bq'] . '
+			AND closed = {int:closed}',
+		array(
+			'closed' => 1,
+		)
+	);
+	list ($closed_reports) = wesql::fetch_row($request);
+	wesql::free_result($request);
+
 	$_SESSION['rc'] = array(
 		'id' => we::$id,
 		'time' => time(),
 		'reports' => $open_reports,
+		'closed' => $closed_reports,
 	);
 
 	$context['open_mod_reports'] = $open_reports;
@@ -981,42 +947,13 @@ function ModReport()
 	wetem::load('viewmodreport');
 }
 
-// Show a notice sent to a user.
-function ShowNotice()
-{
-	global $txt, $context;
-
-	$context['page_title'] = $txt['show_notice'];
-	wetem::load('show_notice');
-	wetem::hide();
-
-	loadTemplate('ModerationCenter');
-
-	// !!! Assumes nothing needs permission more than accessing moderation center!
-	$id_notice = (int) $_GET['nid'];
-	$request = wesql::query('
-		SELECT body, subject
-		FROM {db_prefix}log_member_notices
-		WHERE id_notice = {int:id_notice}',
-		array(
-			'id_notice' => $id_notice,
-		)
-	);
-	if (wesql::num_rows($request) == 0)
-		fatal_lang_error('no_access', false);
-	list ($context['notice_body'], $context['notice_subject']) = wesql::fetch_row($request);
-	wesql::free_result($request);
-
-	$context['notice_body'] = parse_bbc($context['notice_body'], false);
-}
-
 // View watched users.
 function ViewWatchedUsers()
 {
 	global $settings, $context, $txt;
 
 	// Some important context!
-	$context['page_title'] = $txt['mc_watched_users_title'];
+	$context['page_title'] = $txt['mc_warned_users_title'];
 	$context['view_posts'] = isset($_GET['sa']) && $_GET['sa'] == 'post';
 	$context['start'] = isset($_REQUEST['start']) ? (int) $_REQUEST['start'] : 0;
 
@@ -1027,8 +964,8 @@ function ViewWatchedUsers()
 
 	// Put some pretty tabs on cause we're gonna be doing hot stuff here...
 	$context[$context['moderation_menu_name']]['tab_data'] = array(
-		'title' => $txt['mc_watched_users_title'],
-		'description' => $txt['mc_watched_users_desc'],
+		'title' => $txt['mc_warned_users_title'],
+		'description' => $txt['mc_warned_users_desc'],
 	);
 
 	// First off - are we deleting?
@@ -1078,10 +1015,10 @@ function ViewWatchedUsers()
 	// This is all the information required for a watched user listing.
 	$listOptions = array(
 		'id' => 'watch_user_list',
-		'title' => $txt['mc_watched_users_title'] . ' - ' . ($context['view_posts'] ? $txt['mc_watched_users_post'] : $txt['mc_watched_users_member']),
+		'title' => $txt['mc_warned_users_title'] . ' - ' . ($context['view_posts'] ? $txt['mc_warned_users_post'] : $txt['mc_warned_users_member']),
 		'width' => '100%',
 		'items_per_page' => $settings['defaultMaxMessages'],
-		'no_items_label' => $context['view_posts'] ? $txt['mc_watched_users_no_posts'] : $txt['mc_watched_users_none'],
+		'no_items_label' => $context['view_posts'] ? $txt['mc_warned_users_no_posts'] : $txt['mc_warned_users_none'],
 		'base_href' => '<URL>?action=moderate;area=userwatch;sa=' . ($context['view_posts'] ? 'post' : 'member'),
 		'default_sort_col' => $context['view_posts'] ? '' : 'member',
 		'get_items' => array(
@@ -1101,7 +1038,7 @@ function ViewWatchedUsers()
 		'columns' => array(
 			'member' => array(
 				'header' => array(
-					'value' => $txt['mc_watched_users_member'],
+					'value' => $txt['mc_warned_users_member'],
 				),
 				'data' => array(
 					'sprintf' => array(
@@ -1119,11 +1056,11 @@ function ViewWatchedUsers()
 			),
 			'warning' => array(
 				'header' => array(
-					'value' => $txt['mc_watched_users_warning'],
+					'value' => $txt['mc_warned_users_points'],
 				),
 				'data' => array(
 					'function' => create_function('$member', '
-						return allowedTo(\'issue_warning\') ? \'<a href="<URL>?action=profile;u=\' . $member[\'id\'] . \';area=issuewarning">\' . $member[\'warning\'] . \'%</a>\' : $member[\'warning\'] . \'%\';
+						return allowedTo(\'issue_warning\') ? \'<a href="<URL>?action=profile;u=\' . $member[\'id\'] . \';area=infractions">\' . $member[\'warning\'] . \'</a>\' : $member[\'warning\'];
 					'),
 				),
 				'sort' => array(
@@ -1151,7 +1088,7 @@ function ViewWatchedUsers()
 			),
 			'last_login' => array(
 				'header' => array(
-					'value' => $txt['mc_watched_users_last_login'],
+					'value' => $txt['mc_warned_users_last_login'],
 				),
 				'data' => array(
 					'db' => 'last_login',
@@ -1163,7 +1100,7 @@ function ViewWatchedUsers()
 			),
 			'last_post' => array(
 				'header' => array(
-					'value' => $txt['mc_watched_users_last_post'],
+					'value' => $txt['mc_warned_users_last_post'],
 				),
 				'data' => array(
 					'function' => create_function('$member', '
@@ -1222,10 +1159,7 @@ function list_getWatchedUserCount($approve_query)
 	$request = wesql::query('
 		SELECT COUNT(*)
 		FROM {db_prefix}members
-		WHERE warning >= {int:warning_watch}',
-		array(
-			'warning_watch' => $settings['warning_watch'],
-		)
+		WHERE warning > 0'
 	);
 	list ($totalMembers) = wesql::fetch_row($request);
 	wesql::free_result($request);
@@ -1240,7 +1174,7 @@ function list_getWatchedUsers($start, $items_per_page, $sort, $approve_query, $d
 	$request = wesql::query('
 		SELECT id_member, real_name, last_login, posts, warning
 		FROM {db_prefix}members
-		WHERE warning >= {int:warning_watch}
+		WHERE warning > 0
 		ORDER BY {raw:sort}
 		LIMIT ' . $start . ', ' . $items_per_page,
 		array(
@@ -1336,12 +1270,9 @@ function list_getWatchedUserPostsCount($approve_query)
 			FROM {db_prefix}messages AS m
 				INNER JOIN {db_prefix}members AS mem ON (mem.id_member = m.id_member)
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = m.id_board)
-			WHERE mem.warning >= {int:warning_watch}
+			WHERE mem.warning > 0
 				AND {query_see_board}
-				' . $approve_query,
-		array(
-			'warning_watch' => $settings['warning_watch'],
-		)
+				' . $approve_query
 	);
 	list ($totalMemberPosts) = wesql::fetch_row($request);
 	wesql::free_result($request);
@@ -1359,14 +1290,11 @@ function list_getWatchedUserPosts($start, $items_per_page, $sort, $approve_query
 		FROM {db_prefix}messages AS m
 			INNER JOIN {db_prefix}members AS mem ON (mem.id_member = m.id_member)
 			INNER JOIN {db_prefix}boards AS b ON (b.id_board = m.id_board)
-		WHERE mem.warning >= {int:warning_watch}
+		WHERE mem.warning > 0
 			AND {query_see_board}
 			' . $approve_query . '
 		ORDER BY m.id_msg DESC
-		LIMIT ' . $start . ', ' . $items_per_page,
-		array(
-			'warning_watch' => $settings['warning_watch'],
-		)
+		LIMIT ' . $start . ', ' . $items_per_page
 	);
 	$member_posts = array();
 	while ($row = wesql::fetch_assoc($request))
@@ -1390,567 +1318,29 @@ function list_getWatchedUserPosts($start, $items_per_page, $sort, $approve_query
 	return $member_posts;
 }
 
-// Entry point for viewing warning related stuff.
-function ViewWarnings()
-{
-	global $context, $txt;
-
-	$subActions = array(
-		'log' => array('ViewWarningLog'),
-		'templateedit' => array('ModifyWarningTemplate', 'issue_warning'),
-		'templates' => array('ViewWarningTemplates', 'issue_warning'),
-	);
-
-	$_REQUEST['sa'] = isset($_REQUEST['sa'], $subActions[$_REQUEST['sa']]) && (empty($subActions[$_REQUEST['sa']][1]) || allowedTo($subActions[$_REQUEST['sa']]))? $_REQUEST['sa'] : 'log';
-
-	// Some of this stuff is overseas, so to speak.
-	loadTemplate('ModerationCenter');
-	loadLanguage('Profile');
-
-	// Setup the admin tabs.
-	$context[$context['moderation_menu_name']]['tab_data'] = array(
-		'title' => $txt['mc_warnings'],
-		'description' => $txt['mc_warnings_description'],
-	);
-
-	// Call the right function.
-	$subActions[$_REQUEST['sa']][0]();
-}
-
-// Simply put, look at the warning log!
-function ViewWarningLog()
-{
-	global $settings, $context, $txt;
-
-	// Setup context as always.
-	$context['page_title'] = $txt['mc_warning_log_title'];
-
-	loadSource('Subs-List');
-
-	// This is all the information required for a watched user listing.
-	$listOptions = array(
-		'id' => 'warning_list',
-		'title' => $txt['mc_warning_log_title'],
-		'items_per_page' => $settings['defaultMaxMessages'],
-		'no_items_label' => $txt['mc_warnings_none'],
-		'base_href' => '<URL>?action=moderate;area=warnings;sa=log;' . $context['session_query'],
-		'default_sort_col' => 'time',
-		'get_items' => array(
-			'function' => 'list_getWarnings',
-		),
-		'get_count' => array(
-			'function' => 'list_getWarningCount',
-		),
-		// This assumes we are viewing by user.
-		'columns' => array(
-			'issuer' => array(
-				'header' => array(
-					'value' => $txt['profile_warning_previous_issued'],
-				),
-				'data' => array(
-					'db' => 'issuer_link',
-				),
-				'sort' => array(
-					'default' => 'member_name_col',
-					'reverse' => 'member_name_col DESC',
-				),
-			),
-			'recipient' => array(
-				'header' => array(
-					'value' => $txt['mc_warnings_recipient'],
-				),
-				'data' => array(
-					'db' => 'recipient_link',
-				),
-				'sort' => array(
-					'default' => 'recipient_name',
-					'reverse' => 'recipient_name DESC',
-				),
-			),
-			'time' => array(
-				'header' => array(
-					'value' => $txt['profile_warning_previous_time'],
-				),
-				'data' => array(
-					'db' => 'time',
-				),
-				'sort' => array(
-					'default' => 'lc.log_time DESC',
-					'reverse' => 'lc.log_time',
-				),
-			),
-			'reason' => array(
-				'header' => array(
-					'value' => $txt['profile_warning_previous_reason'],
-				),
-				'data' => array(
-					'function' => create_function('$warning', '
-						global $theme, $txt;
-
-						$output = \'
-							<div class="floatleft">
-								\' . $warning[\'reason\'] . \'
-							</div>\';
-
-						if (!empty($warning[\'id_notice\']))
-							$output .= \'
-							<div class="floatright">
-								<a href="<URL>?action=moderate;area=notice;nid=\' . $warning[\'id_notice\'] . \'" onclick="window.open(this.href, \\\'\\\', \\\'scrollbars=yes,resizable=yes,width=400,height=250\\\'); return false;" target="_blank" class="new_win" title="\' . $txt[\'profile_warning_previous_notice\'] . \'"><img src="\' . $theme[\'default_images_url\'] . \'/filter.gif" alt="\' . $txt[\'profile_warning_previous_notice\'] . \'"></a>
-							</div>\';
-
-						return $output;
-					'),
-				),
-			),
-			'points' => array(
-				'header' => array(
-					'value' => $txt['profile_warning_previous_level'],
-				),
-				'data' => array(
-					'db' => 'counter',
-				),
-			),
-		),
-	);
-
-	// Create the watched user list.
-	createList($listOptions);
-
-	wetem::load('show_list');
-	$context['default_list'] = 'warning_list';
-}
-
-function list_getWarningCount()
-{
-	global $settings;
-
-	$request = wesql::query('
-		SELECT COUNT(*)
-		FROM {db_prefix}log_comments
-		WHERE comment_type = {literal:warning}'
-	);
-	list ($totalWarns) = wesql::fetch_row($request);
-	wesql::free_result($request);
-
-	return $totalWarns;
-}
-
-function list_getWarnings($start, $items_per_page, $sort)
-{
-	global $txt, $settings;
-
-	$request = wesql::query('
-		SELECT IFNULL(mem.id_member, 0) AS id_member, IFNULL(mem.real_name, lc.member_name) AS member_name_col,
-			IFNULL(mem2.id_member, 0) AS id_recipient, IFNULL(mem2.real_name, lc.recipient_name) AS recipient_name,
-			lc.log_time, lc.body, lc.id_notice, lc.counter
-		FROM {db_prefix}log_comments AS lc
-			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = lc.id_member)
-			LEFT JOIN {db_prefix}members AS mem2 ON (mem2.id_member = lc.id_recipient)
-		WHERE lc.comment_type = {literal:warning}
-		ORDER BY ' . $sort . '
-		LIMIT ' . $start . ', ' . $items_per_page
-	);
-	$warnings = array();
-	while ($row = wesql::fetch_assoc($request))
-	{
-		$warnings[] = array(
-			'issuer_link' => $row['id_member'] ? ('<a href="<URL>?action=profile;u=' . $row['id_member'] . '">' . $row['member_name_col'] . '</a>') : $row['member_name_col'],
-			'recipient_link' => $row['id_recipient'] ? ('<a href="<URL>?action=profile;u=' . $row['id_recipient'] . '">' . $row['recipient_name'] . '</a>') : $row['recipient_name'],
-			'time' => timeformat($row['log_time']),
-			'reason' => $row['body'],
-			'counter' => $row['counter'] > 0 ? '+' . $row['counter'] : $row['counter'],
-			'id_notice' => $row['id_notice'],
-		);
-	}
-	wesql::free_result($request);
-
-	return $warnings;
-}
-
-// Load all the warning templates.
-function ViewWarningTemplates()
-{
-	global $settings, $context, $txt;
-
-	// Submitting a new one?
-	if (isset($_POST['add']))
-		return ModifyWarningTemplate();
-	elseif (isset($_POST['delete']) && !empty($_POST['deltpl']))
-	{
-		checkSession('post');
-
-		// Log the actions.
-		$request = wesql::query('
-			SELECT recipient_name
-			FROM {db_prefix}log_comments
-			WHERE id_comment IN ({array_int:delete_ids})
-				AND comment_type = {literal:warntpl}
-				AND (id_recipient = {int:generic} OR id_recipient = {int:current_member})',
-			array(
-				'delete_ids' => $_POST['deltpl'],
-				'generic' => 0,
-				'current_member' => we::$id,
-			)
-		);
-		while ($row = wesql::fetch_assoc($request))
-			logAction('delete_warn_template', array('template' => $row['recipient_name']));
-		wesql::free_result($request);
-
-		// Do the deletes.
-		wesql::query('
-			DELETE FROM {db_prefix}log_comments
-			WHERE id_comment IN ({array_int:delete_ids})
-				AND comment_type = {literal:warntpl}
-				AND (id_recipient = {int:generic} OR id_recipient = {int:current_member})',
-			array(
-				'delete_ids' => $_POST['deltpl'],
-				'generic' => 0,
-				'current_member' => we::$id,
-			)
-		);
-	}
-
-	// Setup context as always.
-	$context['page_title'] = $txt['mc_warning_templates_title'];
-
-	loadSource('Subs-List');
-
-	// This is all the information required for a watched user listing.
-	$listOptions = array(
-		'id' => 'warning_template_list',
-		'title' => $txt['mc_warning_templates_title'],
-		'items_per_page' => $settings['defaultMaxMessages'],
-		'no_items_label' => $txt['mc_warning_templates_none'],
-		'base_href' => '<URL>?action=moderate;area=warnings;sa=templates;' . $context['session_query'],
-		'default_sort_col' => 'title',
-		'get_items' => array(
-			'function' => 'list_getWarningTemplates',
-		),
-		'get_count' => array(
-			'function' => 'list_getWarningTemplateCount',
-		),
-		// This assumes we are viewing by user.
-		'columns' => array(
-			'title' => array(
-				'header' => array(
-					'value' => $txt['mc_warning_templates_name'],
-				),
-				'data' => array(
-					'sprintf' => array(
-						'format' => '<a href="<URL>?action=moderate;area=warnings;sa=templateedit;tid=%1$d">%2$s</a>',
-						'params' => array(
-							'id_comment' => false,
-							'title' => false,
-							'body' => false,
-						),
-					),
-				),
-				'sort' => array(
-					'default' => 'template_title',
-					'reverse' => 'template_title DESC',
-				),
-			),
-			'creator' => array(
-				'header' => array(
-					'value' => $txt['mc_warning_templates_creator'],
-				),
-				'data' => array(
-					'db' => 'creator',
-				),
-				'sort' => array(
-					'default' => 'creator_name',
-					'reverse' => 'creator_name DESC',
-				),
-			),
-			'time' => array(
-				'header' => array(
-					'value' => $txt['mc_warning_templates_time'],
-				),
-				'data' => array(
-					'db' => 'time',
-				),
-				'sort' => array(
-					'default' => 'lc.log_time DESC',
-					'reverse' => 'lc.log_time',
-				),
-			),
-			'delete' => array(
-				'header' => array(
-					'style' => 'width: 4%;',
-				),
-				'data' => array(
-					'function' => create_function('$rowData', '
-						global $context, $txt;
-
-						return \'<input type="checkbox" name="deltpl[]" value="\' . $rowData[\'id_comment\'] . \'">\';
-					'),
-					'style' => 'text-align: center;',
-				),
-			),
-		),
-		'form' => array(
-			'href' => '<URL>?action=moderate;area=warnings;sa=templates',
-		),
-		'additional_rows' => array(
-			array(
-				'position' => 'below_table_data',
-				'value' => '
-					<input type="submit" name="add" value="' . $txt['mc_warning_template_add'] . '" class="new">
-					<input type="submit" name="delete" value="' . $txt['mc_warning_template_delete'] . '" onclick="return ask(' . JavaScriptEscape($txt['mc_warning_template_delete_confirm']) . ', e);" class="delete">',
-				'style' => 'text-align: right;',
-			),
-		),
-	);
-
-	// Create the watched user list.
-	createList($listOptions);
-
-	wetem::load('show_list');
-	$context['default_list'] = 'warning_template_list';
-}
-
-function list_getWarningTemplateCount()
-{
-	global $settings;
-
-	$request = wesql::query('
-		SELECT COUNT(*)
-		FROM {db_prefix}log_comments
-		WHERE comment_type = {literal:warntpl}
-			AND (id_recipient = {string:generic} OR id_recipient = {int:current_member})',
-		array(
-			'generic' => 0,
-			'current_member' => we::$id,
-		)
-	);
-	list ($totalWarns) = wesql::fetch_row($request);
-	wesql::free_result($request);
-
-	return $totalWarns;
-}
-
-function list_getWarningTemplates($start, $items_per_page, $sort)
-{
-	global $txt, $settings;
-
-	$request = wesql::query('
-		SELECT lc.id_comment, IFNULL(mem.id_member, 0) AS id_member,
-			IFNULL(mem.real_name, lc.member_name) AS creator_name, recipient_name AS template_title,
-			lc.log_time, lc.body
-		FROM {db_prefix}log_comments AS lc
-			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = lc.id_member)
-		WHERE lc.comment_type = {literal:warntpl}
-			AND (id_recipient = {string:generic} OR id_recipient = {int:current_member})
-		ORDER BY ' . $sort . '
-		LIMIT ' . $start . ', ' . $items_per_page,
-		array(
-			'generic' => 0,
-			'current_member' => we::$id,
-		)
-	);
-	$templates = array();
-	while ($row = wesql::fetch_assoc($request))
-	{
-		$templates[] = array(
-			'id_comment' => $row['id_comment'],
-			'creator' => $row['id_member'] ? ('<a href="<URL>?action=profile;u=' . $row['id_member'] . '">' . $row['creator_name'] . '</a>') : $row['creator_name'],
-			'time' => timeformat($row['log_time']),
-			'title' => $row['template_title'],
-			'body' => westr::htmlspecialchars($row['body']),
-		);
-	}
-	wesql::free_result($request);
-
-	return $templates;
-}
-
-// Edit a warning template.
-function ModifyWarningTemplate()
-{
-	global $context, $txt;
-
-	$context['id_template'] = isset($_REQUEST['tid']) ? (int) $_REQUEST['tid'] : 0;
-	$context['is_edit'] = $context['id_template'];
-
-	// Standard template things.
-	$context['page_title'] = $context['is_edit'] ? $txt['mc_warning_template_modify'] : $txt['mc_warning_template_add'];
-	wetem::load('warn_template');
-	$context[$context['moderation_menu_name']]['current_subsection'] = 'templates';
-
-	// Defaults.
-	$context['template_data'] = array(
-		'title' => '',
-		'body' => $txt['mc_warning_template_body_default'],
-		'personal' => false,
-		'can_edit_personal' => true,
-	);
-
-	// If it's an edit load it.
-	if ($context['is_edit'])
-	{
-		$request = wesql::query('
-			SELECT id_member, id_recipient, recipient_name AS template_title, body
-			FROM {db_prefix}log_comments
-			WHERE id_comment = {int:id}
-				AND comment_type = {literal:warntpl}
-				AND (id_recipient = {int:generic} OR id_recipient = {int:current_member})',
-			array(
-				'id' => $context['id_template'],
-				'generic' => 0,
-				'current_member' => we::$id,
-			)
-		);
-		while ($row = wesql::fetch_assoc($request))
-		{
-			$context['template_data'] = array(
-				'title' => $row['template_title'],
-				'body' => westr::htmlspecialchars($row['body']),
-				'personal' => $row['id_recipient'],
-				'can_edit_personal' => $row['id_member'] == we::$id,
-			);
-		}
-		wesql::free_result($request);
-	}
-
-	// Wait, we are saving?
-	if (isset($_POST['save']))
-	{
-		checkSession('post');
-
-		// To check the BBC is pretty good...
-		loadSource('Class-Editor');
-
-		// Bit of cleaning!
-		$_POST['template_body'] = trim($_POST['template_body']);
-		$_POST['template_title'] = trim($_POST['template_title']);
-
-		// Need something in both boxes.
-		if (empty($_POST['template_body']) || empty($_POST['template_title']))
-			fatal_lang_error('mc_warning_template_error_empty');
-
-		// Safety first.
-		$_POST['template_title'] = westr::htmlspecialchars($_POST['template_title']);
-
-		// Clean up BBC.
-		wedit::preparsecode($_POST['template_body']);
-		// But put line breaks back!
-		$_POST['template_body'] = strtr($_POST['template_body'], array('<br>' => "\n"));
-
-		// Is this personal?
-		$recipient_id = !empty($_POST['make_personal']) ? we::$id : 0;
-
-		// If we are this far it's save time.
-		if ($context['is_edit'])
-		{
-			// Simple update...
-			wesql::query('
-				UPDATE {db_prefix}log_comments
-				SET id_recipient = {int:personal}, recipient_name = {string:title}, body = {string:body}
-				WHERE id_comment = {int:id}
-					AND comment_type = {literal:warntpl}
-					AND (id_recipient = {int:generic} OR id_recipient = {int:current_member})'.
-					($recipient_id ? ' AND id_member = {int:current_member}' : ''),
-				array(
-					'personal' => $recipient_id,
-					'title' => $_POST['template_title'],
-					'body' => $_POST['template_body'],
-					'id' => $context['id_template'],
-					'generic' => 0,
-					'current_member' => we::$id,
-				)
-			);
-
-			// If it wasn't visible and now is they've effectively added it.
-			if ($context['template_data']['personal'] && !$recipient_id)
-				logAction('add_warn_template', array('template' => $_POST['template_title']));
-			// Conversely if they made it personal it's a delete.
-			elseif (!$context['template_data']['personal'] && $recipient_id)
-				logAction('delete_warn_template', array('template' => $_POST['template_title']));
-			// Otherwise just an edit.
-			else
-				logAction('modify_warn_template', array('template' => $_POST['template_title']));
-		}
-		else
-		{
-			wesql::insert('',
-				'{db_prefix}log_comments',
-				array(
-					'id_member' => 'int', 'member_name' => 'string', 'comment_type' => 'string', 'id_recipient' => 'int',
-					'recipient_name' => 'string-255', 'body' => 'string-65535', 'log_time' => 'int',
-				),
-				array(
-					we::$id, we::$user['name'], 'warntpl', $recipient_id,
-					$_POST['template_title'], $_POST['template_body'], time(),
-				),
-				array('id_comment')
-			);
-
-			logAction('add_warn_template', array('template' => $_POST['template_title']));
-		}
-
-		// Get out of town...
-		redirectexit('action=moderate;area=warnings;sa=templates');
-	}
-}
-
-// Change moderation preferences.
-function ModerationSettings()
+function ModBlockPrefs()
 {
 	global $context, $txt, $user_settings;
 
-	// Some useful context stuff.
-	loadTemplate('ModerationCenter');
-	$context['page_title'] = $txt['mc_settings'];
-	wetem::load('moderation_settings');
-
-	// What blocks can this user see?
-	$context['homepage_blocks'] = array(
-		'n' => $txt['mc_prefs_latest_news'],
-		'p' => $txt['mc_notes'],
-	);
-	if ($context['can_moderate_groups'])
-		$context['homepage_blocks']['g'] = $txt['mc_group_requests'];
-	if ($context['can_moderate_boards'])
-	{
-		$context['homepage_blocks']['r'] = $txt['mc_reported_posts'];
-		$context['homepage_blocks']['w'] = $txt['mc_watched_users'];
-	}
-
 	// Does the user have any settings yet?
 	if (empty($user_settings['mod_prefs']))
-	{
-		$mod_blocks = 'n' . ($context['can_moderate_boards'] ? 'wr' : '') . ($context['can_moderate_groups'] ? 'g' : '');
 		$pref_binary = 5;
-	}
 	else
-	{
-		list ($mod_blocks, $pref_binary) = explode('|', $user_settings['mod_prefs']);
-	}
+		list (, $pref_binary) = explode('|', $user_settings['mod_prefs']);
 
 	// Are we saving?
 	if (isset($_POST['save']))
 	{
 		checkSession('post');
 		/* Current format of mod_prefs is:
-			ABCD|yyy
+			|yyy
 
 			WHERE:
-				ABCD = Block indexes to show on moderation main page.
 				yyy = Integer with the following bit status:
 					- yyy & 1 = Always notify on reports.
 					- yyy & 2 = Notify on reports for moderators only.
 					- yyy & 4 = Notify about posts awaiting approval.
 		*/
-
-		// Do blocks first!
-		$mod_blocks = '';
-		if (!empty($_POST['mod_homepage']))
-			foreach ($_POST['mod_homepage'] as $k => $v)
-			{
-				// Make sure they can add this...
-				if (isset($context['homepage_blocks'][$k]))
-					$mod_blocks .= $k;
-			}
 
 		// Now check other options!
 		$pref_binary = 0;
@@ -1961,13 +1351,14 @@ function ModerationSettings()
 		if ($context['can_moderate_boards'] && !empty($_POST['mod_notify_report']))
 			$pref_binary |= ($_POST['mod_notify_report'] == 2 ? 1 : 2);
 
-		updateMemberData(we::$id, array('mod_prefs' => $mod_blocks . '|' . $pref_binary));
+		updateMemberData(we::$id, array('mod_prefs' => '|' . $pref_binary));
 	}
 
 	// What blocks does the user currently have selected?
 	$context['mod_settings'] = array(
 		'notify_report' => $pref_binary & 2 ? 1 : ($pref_binary & 1 ? 2 : 0),
 		'notify_approval' => $pref_binary & 4,
-		'user_blocks' => str_split($mod_blocks),
 	);
+
+	return 'prefs';
 }

@@ -211,7 +211,7 @@ function template_msg_author_warning()
 	// Are we showing the warning status?
 	if (!$msg['member']['is_guest'] && $msg['member']['can_see_warning'])
 		echo '
-							<li class="warning">', $context['can_issue_warning'] && $msg['member']['warning_status'] != 'ban' ? '<a href="<URL>?action=profile;u=' . $msg['member']['id'] . ';area=issuewarning">' : '', '<img src="', $theme['images_url'], '/warning_', $msg['member']['warning_status'], '.gif" alt="', $txt['user_warn_' . $msg['member']['warning_status']], '">', $context['can_issue_warning'] && $msg['member']['warning_status'] != 'ban' ? '</a>' : '', ' <span class="warn_', $msg['member']['warning_status'], '">', $txt['warn_' . $msg['member']['warning_status']], '</span></li>';
+							<li class="warning">', $context['can_issue_warning'] && $msg['member']['warning_status'] != 'hard_ban' ? '<a href="<URL>?action=profile;u=' . $msg['member']['id'] . ';area=issuewarning">' : '', '<span class="warn_', $msg['member']['warning_status'], '"><span class="icon" title="', $txt['user_warn_' . $msg['member']['warning_status']], '"></span> ', $txt['warn_' . $msg['member']['warning_status']], '</span>', $context['can_issue_warning'] && $msg['member']['warning_status'] != 'hard_ban' ? '</a>' : '', '</li>';
 }
 
 function template_msg_author_after()

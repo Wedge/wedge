@@ -186,7 +186,7 @@ function MessageIndex()
 
 	// Set the variables up for the template.
 	$context['can_mark_notify'] = allowedTo('mark_notify') && we::$is_member;
-	$context['can_post_new'] = allowedTo('post_new') || ($settings['postmod_active'] && allowedTo('post_unapproved_topics'));
+	$context['can_post_new'] = allowedTo('post_new');
 	$context['can_post_poll'] = allowedTo('poll_post') && $context['can_post_new'];
 	$context['can_moderate_forum'] = allowedTo('moderate_forum');
 	$context['can_approve_posts'] = allowedTo('approve_posts');

@@ -64,8 +64,6 @@ if (!defined('WEDGE'))
 	void showPermissions(int id_member)
 		// !!!
 
-	void viewWarning(int id_member)
-		// !!!
 */
 
 // View a summary.
@@ -92,15 +90,6 @@ function summary($memID)
 
 	// Are there things we don't show?
 	$context['disabled_fields'] = isset($settings['disabled_profile_fields']) ? array_flip(explode(',', $settings['disabled_profile_fields'])) : array();
-
-	// See if they have broken any warning levels...
-	list ($settings['user_limit']) = explode(',', $settings['warning_settings']);
-	if (!empty($settings['warning_mute']) && $settings['warning_mute'] <= $context['member']['warning'])
-		$context['warning_status'] = $txt['profile_warning_is_muted'];
-	elseif (!empty($settings['warning_moderate']) && $settings['warning_moderate'] <= $context['member']['warning'])
-		$context['warning_status'] = $txt['profile_warning_is_moderation'];
-	elseif (!empty($settings['warning_watch']) && $settings['warning_watch'] <= $context['member']['warning'])
-		$context['warning_status'] = $txt['profile_warning_is_watch'];
 
 	// They haven't even been registered for a full day!?
 	$days_registered = (int) ((time() - $user_profile[$memID]['date_registered']) / (3600 * 24));
@@ -162,10 +151,29 @@ function summary($memID)
 	// Is the signature even enabled on this forum?
 	$context['signature_enabled'] = $settings['signature_settings'][0] == 1;
 
+	// What about warnings?
+	if ($context['can_view_warning'])
+	{
+		// A few things we need to set up first.
+		loadSource(array('Profile-Actions', 'ManageInfractions'));
+		loadLanguage('ManageInfractions');
+		getInfractionLevels();
+
+		$inf_settings = !empty($settings['infraction_settings']) ? unserialize($settings['infraction_settings']) : array();
+		$revoke_any = isset($inf_settings['revoke_any_issued']) ? $inf_settings['revoke_any_issued'] : array();
+		$revoke_any[] = 1; // Admins really are special.
+		$context['revoke_own'] = !empty($inf_settings['revoke_own_issued']);
+		$context['revoke_any'] = count(array_intersect(we::$user['groups'], $revoke_any)) != 0;
+
+		get_validated_infraction_log($memID, false);
+	}
+	
 	// How about, are they banned?
 	$context['member']['bans'] = array();
 	if (allowedTo('moderate_forum'))
 	{
+		add_css_file('mana', true);
+		loadLanguage('ManageBans');
 		// Can they edit the ban?
 		$context['can_edit_ban'] = allowedTo('manage_bans');
 
@@ -2121,102 +2129,4 @@ function showPermissions($memID)
 		$context['member']['permissions']['board'][$row['permission']]['is_denied'] |= empty($row['add_deny']);
 	}
 	wesql::free_result($request);
-}
-
-// View a members warnings?
-function viewWarning($memID)
-{
-	global $settings, $context, $txt;
-
-	// Firstly, can we actually even be here?
-	if (!allowedTo('issue_warning') && (empty($settings['warning_show']) || ($settings['warning_show'] == 1 && !we::$user['is_owner'])))
-		fatal_lang_error('no_access', false);
-
-	// Make sure things which are disabled stay disabled.
-	$settings['warning_watch'] = !empty($settings['warning_watch']) ? $settings['warning_watch'] : 110;
-	$settings['warning_moderate'] = !empty($settings['warning_moderate']) && !empty($settings['postmod_active']) ? $settings['warning_moderate'] : 110;
-	$settings['warning_mute'] = !empty($settings['warning_mute']) ? $settings['warning_mute'] : 110;
-
-	// Let's use a generic list to get all the current warnings, and use the issue warnings grab-a-granny thing.
-	loadSource(array('Subs-List', 'Profile-Actions'));
-
-	$listOptions = array(
-		'id' => 'view_warnings',
-		'title' => $txt['profile_viewwarning_previous_warnings'],
-		'items_per_page' => $settings['defaultMaxMessages'],
-		'no_items_label' => $txt['profile_viewwarning_no_warnings'],
-		'base_href' => '<URL>?action=profile;u=' . $memID . ';area=viewwarning;sa=user',
-		'default_sort_col' => 'log_time',
-		'get_items' => array(
-			'function' => 'list_getUserWarnings',
-			'params' => array(
-				$memID,
-			),
-		),
-		'get_count' => array(
-			'function' => 'list_getUserWarningCount',
-			'params' => array(
-				$memID,
-			),
-		),
-		'columns' => array(
-			'log_time' => array(
-				'header' => array(
-					'value' => $txt['profile_warning_previous_time'],
-				),
-				'data' => array(
-					'db' => 'time',
-				),
-				'sort' => array(
-					'default' => 'lc.log_time DESC',
-					'reverse' => 'lc.log_time',
-				),
-			),
-			'reason' => array(
-				'header' => array(
-					'value' => $txt['profile_warning_previous_reason'],
-					'style' => 'width: 50%',
-				),
-				'data' => array(
-					'db' => 'reason',
-				),
-			),
-			'level' => array(
-				'header' => array(
-					'value' => $txt['profile_warning_previous_level'],
-				),
-				'data' => array(
-					'db' => 'counter',
-				),
-				'sort' => array(
-					'default' => 'lc.counter DESC',
-					'reverse' => 'lc.counter',
-				),
-			),
-		),
-		'additional_rows' => array(
-			array(
-				'position' => 'after_title',
-				'value' => $txt['profile_viewwarning_desc'],
-				'class' => 'smalltext',
-				'style' => 'padding: 2ex;',
-			),
-		),
-	);
-
-	// Create the list for viewing.
-	loadSource('Subs-List');
-	createList($listOptions);
-
-	// Create some common text bits for the template.
-	$context['level_effects'] = array(
-		0 => '',
-		$settings['warning_watch'] => $txt['profile_warning_effect_own_watched'],
-		$settings['warning_moderate'] => $txt['profile_warning_effect_own_moderated'],
-		$settings['warning_mute'] => $txt['profile_warning_effect_own_muted'],
-	);
-	$context['current_level'] = 0;
-	foreach ($context['level_effects'] as $limit => $dummy)
-		if ($context['member']['warning'] >= $limit)
-			$context['current_level'] = $limit;
 }

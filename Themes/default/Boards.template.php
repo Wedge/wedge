@@ -46,8 +46,11 @@ function template_boards()
 			echo '
 							<a class="unreadlink" href="<URL>?action=unread;c=', $category['id'], '">', $txt['view_unread_category'], '</a>';
 
+		if (empty($category['hide_rss']))
+			echo '
+							<a class="catfeed" href="<URL>?action=feed;c=', $category['id'], '"><div class="feed_icon"></div></a>';
+
 		echo '
-							<a class="catfeed" href="<URL>?action=feed;c=', $category['id'], '"><div class="feed_icon"></div></a>
 							', $category['link'], '
 						</we:cat>
 					</td>
@@ -98,7 +101,7 @@ function template_boards()
 						', $settings['display_flags'] == 'all' || ($settings['display_flags'] == 'specified' && !empty($board['language'])) ? '<img src="' . $theme['default_theme_url'] . '/languages/Flag.' . (empty($board['language']) ? $settings['language'] : $board['language']) . '.png"> ': '', '<a', $board['redirect_newtab'] ? ' target="_blank"' : '', ' class="subject" href="', $board['href'], '" id="b', $board['id'], '">', $board['name'], '</a>';
 
 				// Has it outstanding posts for approval?
-				if ($board['can_approve_posts'] && ($board['unapproved_posts'] || $board['unapproved_topics']))
+				if (!empty($board['can_approve_posts']) && (!empty($board['unapproved_posts']) || !empty($board['unapproved_topics'])))
 					echo '
 						<a href="<URL>?action=moderate;area=postmod;sa=', ($board['unapproved_topics'] > 0 ? 'topics' : 'posts'), ';brd=', $board['id'], ';', $context['session_query'], '" title="', sprintf($txt['unapproved_posts'], $board['unapproved_topics'], $board['unapproved_posts']), '" class="moderation_link">(!)</a>';
 
@@ -113,13 +116,19 @@ function template_boards()
 
 				// Show some basic information about the number of posts, etc.
 				if (!SKIN_MOBILE)
+				{
+					$display = array();
+					foreach ($board['display'] as $item => $string)
+						if (isset($board[$item]))
+							$display[] = number_context($string, $board[$item]);
+
 					echo '
 					</td>
 					<td class="stats">
-						<p>', number_context($board['is_redirect'] ? 'num_redirects' : 'num_posts', $board['posts']),
-						$board['is_redirect'] ? '' : '<br>' . number_context('num_topics', $board['topics']), '</p>
+						<p>', implode('<br>', $display),  '</p>
 					</td>
 					<td class="lastpost">';
+				}
 
 				/* The board's and children's 'last_post's have:
 				time, timestamp (a number that represents the time.), id (of the post), topic (topic id.),
@@ -151,16 +160,22 @@ function template_boards()
 							id, name, description, new (is it new?), topics (#), posts (#), href, link, and last_post. */
 					foreach ($board['children'] as $child)
 					{
+						$display = array();
+						if (isset($child['display']))
+							foreach ($child['display'] as $item => $string)
+								if (isset($child[$item]))
+									$display[] = number_context($string, $child[$item]);
+
 						if (!$child['is_redirect'])
 						{
-							$child_title = ($child['new'] ? $txt['new_posts'] : $txt['old_posts']) . ' (' . number_context('num_topics', $child['topics']) . ', ' . number_context('num_posts', $child['posts']) . ')';
+							$child_title = ($child['new'] ? $txt['new_posts'] : $txt['old_posts']) . (!empty($display) ? ' (' . implode(', ', $display) . ')' : '');
 							$child['link'] = '<a href="' . $child['href'] . '"' . ($child['new'] ? ' class="new_posts"' : '') . ' title="' . $child_title . '">' . $child['name'] . '</a>' . ($child['new'] ? ' <a href="<URL>?action=unread;board=' . $child['id'] . '" title="' . $child_title . '" class="note new_posts">' . $txt['new_short'] . '</a>' : '');
 						}
 						else
-							$child['link'] = '<a href="' . $child['href'] . '" title="' . number_context('num_redirects', $child['posts']) . '">' . $child['name'] . '</a>';
+							$child['link'] = '<a href="' . $child['href'] . '"' . (!empty($display) ? ' title="' . implode(', ', $display) . '"' : '') . '>' . $child['name'] . '</a>';
 
 						// Has it posts awaiting approval?
-						if ($child['can_approve_posts'] && ($child['unapproved_posts'] || $child['unapproved_topics']))
+						if (!empty($child['can_approve_posts']) && (!empty($child['unapproved_posts']) || !empty($child['unapproved_topics'])))
 							$child['link'] .= ' <a href="<URL>?action=moderate;area=postmod;sa=' . ($child['unapproved_topics'] > 0 ? 'topics' : 'posts') . ';brd=' . $child['id'] . ';' . $context['session_query'] . '" title="' . sprintf($txt['unapproved_posts'], $child['unapproved_topics'], $child['unapproved_posts']) . '" class="moderation_link">(!)</a>';
 
 						$children[] = $child['new'] ? '<strong>' . $child['link'] . '</strong>' : $child['link'];

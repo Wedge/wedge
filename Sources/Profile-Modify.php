@@ -909,13 +909,15 @@ function saveProfileChanges(&$profile_vars, &$post_errors, $memID)
 	);
 
 	if (isset($_POST['sa']) && $_POST['sa'] == 'ignoreboards' && empty($_POST['ignore_brd']))
-			$_POST['ignore_brd'] = array();
+		$_POST['ignore_brd'] = array();
 
 	unset($_POST['ignore_boards']); // Whatever it is set to is a dirty fithy thing. Kinda like our minds.
 	if (isset($_POST['ignore_brd']))
 	{
 		if (!is_array($_POST['ignore_brd']))
 			$_POST['ignore_brd'] = array ($_POST['ignore_brd']);
+
+		$ignorable_boards = !empty($settings['ignorable_boards']) ? unserialize($settings['ignorable_boards']) : array();
 
 		foreach ($_POST['ignore_brd'] as $k => $d)
 		{
@@ -925,7 +927,7 @@ function saveProfileChanges(&$profile_vars, &$post_errors, $memID)
 			else
 				unset($_POST['ignore_brd'][$k]);
 		}
-		$_POST['ignore_boards'] = implode(',', $_POST['ignore_brd']);
+		$_POST['ignore_boards'] = implode(',', array_intersect($_POST['ignore_brd'], $ignorable_boards));
 		unset($_POST['ignore_brd']);
 
 	}
@@ -2018,8 +2020,10 @@ function ignoreboards($memID)
 	global $txt, $context, $settings, $cur_profile;
 
 	// Have the admins enabled this option?
-	if (empty($settings['allow_ignore_boards']))
+	if (empty($settings['ignorable_boards']))
 		fatal_lang_error('ignoreboards_disallowed', 'user');
+
+	$ignorable_boards = unserialize($settings['ignorable_boards']);
 
 	// Find all the boards this user is allowed to see.
 	$request = wesql::query('
@@ -2052,6 +2056,7 @@ function ignoreboards($memID)
 			'name' => $row['name'],
 			'child_level' => $row['child_level'],
 			'selected' => $row['is_ignored'],
+			'enabled' => in_array($row['id_board'], $ignorable_boards),
 		);
 	}
 	wesql::free_result($request);

@@ -339,6 +339,23 @@ function is_not_banned($forceCheck = false)
 		}
 	}
 
+	// Hmm, maybe, just maybe, they got banned through sanctions. It wouldn't show up in the ban area.
+	if (empty($_SESSION['ban']['cannot_access']))
+	{
+		// They're not hard-banned thus far. Maybe they soon will be.
+		if (!empty(we::$user['sanctions']['hard_ban']))
+		{
+			$_SESSION['ban']['cannot_access'] = array(
+				'ids' => array('sanctions'),
+			);
+			if (we::$user['sanctions']['hard_ban'] != 1)
+				$_SESSION['ban']['cannot_access']['expire_time'] = we::$user['sanctions']['hard_ban'];
+		}
+		// They're not soft-banned either? Maybe they soon will be.
+		elseif (empty($_SESSION['ban']['soft']) && !empty(we::$user['sanctions']['hard_ban']))
+			$_SESSION['ban']['soft'] = true;
+	}
+
 	// If you're fully banned, it's end of the story for you.
 	if (isset($_SESSION['ban']['cannot_access']))
 	{
@@ -379,39 +396,6 @@ function is_not_banned($forceCheck = false)
 		// If we get here, something's gone wrong.... but let's try anyway.
 		trigger_error('Hacking attempt...', E_USER_ERROR);
 	}
-	// You're not allowed to log in but yet you are. Let's fix that.
-	elseif (isset($_SESSION['ban']['cannot_login']) && we::$is_member)
-	{
-		// We don't wanna see you!
-		wesql::query('
-			DELETE FROM {db_prefix}log_online
-			WHERE id_member = {int:current_member}',
-			array(
-				'current_member' => we::$id,
-			)
-		);
-
-		// 'Log' the user out. Can't have any funny business... (save the name!)
-		$old_name = isset(we::$user['name']) && we::$user['name'] != '' ? we::$user['name'] : $txt['guest_title'];
-		we::$user['name'] = '';
-		we::$user['username'] = '';
-		we::$is_guest = true;
-		we::$is_admin = false;
-		we::$cache = array();
-		we::$id = 0;
-		we::$user['permissions'] = array();
-
-		// Wedge's Wipe 'n Clean(r) erases all traces.
-		$_GET['action'] = '';
-		$_GET['board'] = '';
-		$_GET['topic'] = '';
-		writeLog(true);
-
-		loadSource('Logout');
-		Logout(true, false);
-
-		fatal_lang_error('your_ban', 'user', array($old_name, (empty($_SESSION['ban']['cannot_login']['reason']) ? '' : '<br>' . $_SESSION['ban']['cannot_login']['reason']) . '<br>' . (!empty($_SESSION['ban']['expire_time']) ? sprintf($txt['your_ban_expires'], timeformat($_SESSION['ban']['expire_time'], false)) : $txt['your_ban_expires_never']) . '<br>' . $txt['ban_continue_browse']));
-	}
 
 	// Fix up the banning permissions.
 	if (isset(we::$user['permissions']))
@@ -439,55 +423,53 @@ function banPermissions()
 {
 	global $settings, $context;
 
+	$denied_permissions = array();
+
 	// Somehow they got here, at least take away all permissions...
 	if (isset($_SESSION['ban']['cannot_access']))
 		we::$user['permissions'] = array();
-	// Okay, well, you can watch, but don't touch a thing.
-	elseif (isset($_SESSION['ban']['cannot_post']) || (!empty($settings['warning_mute']) && $settings['warning_mute'] <= we::$user['warning']))
+	// What about actual sanctions?
+	elseif (!empty(we::$user['sanctions']))
 	{
-		$denied_permissions = array(
-			'pm_send',
-			'post_thought',
-			'poll_post',
-			'poll_add_own', 'poll_add_any',
-			'poll_edit_own', 'poll_edit_any',
-			'poll_lock_own', 'poll_lock_any',
-			'poll_remove_own', 'poll_remove_any',
-			'manage_attachments', 'manage_smileys', 'manage_boards', 'admin_forum', 'manage_permissions',
-			'moderate_forum', 'manage_membergroups', 'manage_bans', 'send_mail', 'edit_news',
-			'profile_identity_any', 'profile_extra_any', 'profile_title_any',
-			'post_new', 'post_reply_own', 'post_reply_any',
-			'delete_own', 'delete_any', 'delete_replies',
-			'pin_topic',
-			'merge_any', 'split_any',
-			'modify_own', 'modify_any', 'modify_replies',
-			'move_any',
-			'send_topic',
-			'lock_own', 'lock_any',
-			'remove_own', 'remove_any',
-			'post_unapproved_topics', 'post_unapproved_replies_own', 'post_unapproved_replies_any',
-		);
-		call_hook('banned_perms', array(&$denied_permissions));
-		we::$user['permissions'] = array_diff(we::$user['permissions'], $denied_permissions);
-	}
-	// Are they absolutely under moderation?
-	elseif (!empty($settings['warning_moderate']) && $settings['warning_moderate'] <= we::$user['warning'])
-	{
-		// Work out what permissions should change...
-		$permission_change = array(
-			'post_new' => 'post_unapproved_topics',
-			'post_reply_own' => 'post_unapproved_replies_own',
-			'post_reply_any' => 'post_unapproved_replies_any',
-		);
-		foreach ($permission_change as $old => $new)
+		if (!empty(we::$user['sanctions']['pm_ban']))
+			$denied_permissions[] = 'pm_send';
+		if (!empty(we::$user['sanctions']['post_ban']))
 		{
-			if (!in_array($old, we::$user['permissions']))
-				unset($permission_change[$old]);
-			else
-				we::$user['permissions'][] = $new;
+			$denied_permissions = array_merge($denied_permissions, array(
+				'post_new', 'post_reply_own', 'post_reply_any',
+				'post_thought',
+				'poll_post',
+				'poll_add_own', 'poll_add_any',
+				'poll_edit_own', 'poll_edit_any',
+				'poll_lock_own', 'poll_lock_any',
+				'poll_remove_own', 'poll_remove_any',
+			));
+			we::$user['post_banned'] = true;
 		}
-		we::$user['permissions'] = array_diff(we::$user['permissions'], array_keys($permission_change));
+
+		// If they had a sanction against something else, we might want to obliterate more permissions.
+		if (!empty($denied_permissions))
+			$denied_permissions = array_merge($denied_permissions, array(
+				'manage_attachments', 'manage_smileys', 'manage_boards', 'admin_forum', 'manage_permissions',
+				'moderate_forum', 'manage_membergroups', 'manage_bans', 'send_mail', 'edit_news',
+				'profile_identity_any', 'profile_extra_any', 'profile_title_any',
+				'delete_own', 'delete_any', 'delete_replies',
+				'pin_topic',
+				'merge_any', 'split_any',
+				'modify_own', 'modify_any', 'modify_replies',
+				'move_any',
+				'send_topic',
+				'lock_own', 'lock_any',
+				'remove_own', 'remove_any',
+			));
+
+		if (!empty(we::$user['sanctions']['moderate']))
+			we::$user['post_moderated'] = true;
 	}
+
+	call_hook('banned_perms', array(&$denied_permissions));
+	if (!empty($denied_permissions))
+		we::$user['permissions'] = array_diff(we::$user['permissions'], $denied_permissions);
 
 	// !! Find a better place to call this? Needs to be after permissions loaded!
 	// Finally, some bits we cache in the session because it saves queries.
@@ -501,7 +483,10 @@ function banPermissions()
 
 	// Now that we have the mod cache taken care of, let's setup a cache for the number of mod reports still open
 	if (isset($_SESSION['rc']) && $_SESSION['rc']['time'] > $settings['last_mod_report_action'] && $_SESSION['rc']['id'] == we::$id)
+	{
 		$context['open_mod_reports'] = $_SESSION['rc']['reports'];
+		$context['closed_mod_reports'] = $_SESSION['rc']['closed'];
+	}
 	elseif ($_SESSION['mc']['bq'] != '0=1')
 	{
 		loadSource('ModerationCenter');
@@ -1204,7 +1189,7 @@ function showEmailAddress($userProfile_hideEmail, $userProfile_id)
 {
 	global $settings;
 
-	return we::$is_guest || isset($_SESSION['ban']['cannot_post']) ? 'no' : ((we::$is_member && we::$id == $userProfile_id && !$userProfile_hideEmail) || allowedTo('moderate_forum') ? 'yes_permission_override' : ($userProfile_hideEmail ? 'no' : 'no_through_forum'));
+	return we::$is_guest || we::$user['post_moderated'] ? 'no' : ((we::$is_member && we::$id == $userProfile_id && !$userProfile_hideEmail) || allowedTo('moderate_forum') ? 'yes_permission_override' : ($userProfile_hideEmail ? 'no' : 'no_through_forum'));
 }
 
 /**

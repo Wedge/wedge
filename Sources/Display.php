@@ -967,7 +967,7 @@ function Display()
 			SELECT
 				id_msg, icon, subject, poster_time, li.member_ip AS poster_ip, id_member,
 				modified_time, modified_name, modified_member, body, smileys_enabled, poster_name, poster_email,
-				approved, id_msg_modified < {int:new_from} AS is_read
+				approved, id_msg_modified < {int:new_from} AS is_read, m.data
 			FROM {db_prefix}messages AS m
 				LEFT JOIN {db_prefix}log_ips AS li ON (m.poster_ip = li.id_ip)
 			WHERE id_msg IN ({array_int:message_list})
@@ -1027,20 +1027,17 @@ function Display()
 		'can_add_poll' => 'poll_add',
 		'can_remove_poll' => 'poll_remove',
 		'can_reply' => 'post_reply',
-		'can_reply_unapproved' => 'post_unapproved_replies',
 	);
 	foreach ($anyown_permissions as $contextual => $perm)
 		$context[$contextual] = allowedTo($perm . '_any') || (we::$user['started'] && allowedTo($perm . '_own'));
 
 	// Cleanup all the permissions with extra stuff...
+	$context['post_moderated'] = we::$user['post_moderated'];
 	$context['can_mark_notify'] &= we::$is_member;
 	$context['can_add_poll'] &= $topicinfo['id_poll'] <= 0;
 	$context['can_remove_poll'] &= $topicinfo['id_poll'] > 0;
 	$context['can_reply'] &= empty($topicinfo['locked']) || allowedTo('moderate_board');
-	$context['can_reply_unapproved'] &= $settings['postmod_active'] && (empty($topicinfo['locked']) || allowedTo('moderate_board'));
-	// Handle approval flags...
-	$context['can_reply_approved'] = $context['can_reply'];
-	$context['can_reply'] |= $context['can_reply_unapproved'];
+
 	$context['can_quote'] = $context['can_reply'] && (empty($settings['disabledBBC']) || !in_array('quote', explode(',', $settings['disabledBBC'])));
 	$context['can_mark_unread'] = we::$is_member;
 	// Prevent robots from accessing the Post template
@@ -1062,7 +1059,7 @@ function Display()
 	{
 		// They haven't re-agreed, but it's a soft reagreement force (if it weren't, they wouldn't be here anyway!)
 		// So they can view but no posting.
-		$context['can_reply'] = $context['can_quote'] = $context['can_reply_unapproved'] = $context['can_reply_approved'] = false;
+		$context['can_reply'] = $context['can_quote'] = false;
 		$txt['reagree_reply'] = sprintf($txt['reagree_reply'], '<URL>?action=register;reagree');
 		$last_msg = max($messages);
 		$_SESSION['reagree_url'] = '<URL>?topic=' . $context['current_topic'] . '.msg' . $last_msg . '#msg' . $last_msg;
@@ -1210,7 +1207,7 @@ function Display()
 		),
 		'wa' => array(
 			'caption' => 'acme_warn',
-			'action' => '<URL>?action=profile;u=%2%;area=issuewarning;msg=%1%',
+			'action' => '<URL>?action=profile;u=%2%;area=infractions;warn;for=post:%1%',
 			'class' => 'warn_button',
 		),
 		'ai' => array(
@@ -1268,11 +1265,14 @@ function prepareDisplayContext($reset = false)
 	global $theme, $txt, $settings, $options, $board_info;
 	global $memberContext, $context, $messages_request, $topic, $attachments, $topicinfo;
 
-	static $counter = null, $can_pm = null, $profile_own = null, $profile_any = null, $buddy = null, $ignore = null, $is_new = false;
+	static $counter = null, $can_ip = null, $can_pm = null, $profile_own = null, $profile_any = null, $buddy = null, $ignore = null, $is_new = false;
 
 	// If the query returned false, bail.
 	if ($messages_request == false)
 		return false;
+
+	if ($can_ip === null)
+		$can_ip = allowedTo('manage_bans');
 
 	// Remember which message this is, e.g. reply #83.
 	if ($counter === null || $reset)
@@ -1289,6 +1289,9 @@ function prepareDisplayContext($reset = false)
 		wesql::free_result($messages_request);
 		return false;
 	}
+
+	// We have a fun extra piece of information to unpack before letting hooks have their wicked way with this.
+	$message['data'] = !empty($message['data']) ? unserialize($message['data']) : array();
 
 	call_hook('display_prepare_post', array(&$counter, &$message));
 
@@ -1335,7 +1338,7 @@ function prepareDisplayContext($reset = false)
 	{
 		$memberContext[$message['id_member']]['can_view_profile'] = allowedTo('profile_view_any') || ($message['id_member'] == we::$id && allowedTo('profile_view_own'));
 		$memberContext[$message['id_member']]['is_topic_starter'] = $message['id_member'] == $context['topic_starter_id'];
-		$memberContext[$message['id_member']]['can_see_warning'] = !isset($context['disabled_fields']['warning_status']) && $memberContext[$message['id_member']]['warning_status'] && (allowedTo('issue_warning') || (we::$is_member && !empty($settings['warning_show']) && ($settings['warning_show'] > 1 || $message['id_member'] == we::$id)));
+		$memberContext[$message['id_member']]['can_see_warning'] = !empty($settings['warning_show']) && we::$is_member && $memberContext[$message['id_member']]['warning_status'] && ($settings['warning_show'] == 3 || allowedTo('issue_warning') || ($settings['warning_show'] == 2 && $message['id_member'] == we::$id));
 	}
 
 	$memberContext[$message['id_member']]['ip'] = format_ip($message['poster_ip']);
@@ -1394,24 +1397,14 @@ function prepareDisplayContext($reset = false)
 		'is_ignored' => !empty($settings['enable_buddylist']) && !empty($options['posts_apply_ignore_list']) && in_array($message['id_member'], we::$user['ignoreusers']),
 		'can_approve' => !$message['approved'] && $context['can_approve'],
 		'can_unapprove' => $message['approved'] && $context['can_approve'],
-		'can_modify' => (!$context['is_locked'] || allowedTo('moderate_board')) && (allowedTo('modify_any') || (allowedTo('modify_replies') && we::$user['started']) || (allowedTo('modify_own') && $message['id_member'] == we::$id && (empty($settings['edit_disable_time']) || !$message['approved'] || $message['poster_time'] + $settings['edit_disable_time'] * 60 > time()))),
+		'can_modify' => (!$context['is_locked'] || allowedTo('moderate_board')) && (allowedTo('modify_any') || (allowedTo('modify_replies') && we::$user['started']) || (allowedTo('modify_own') && $message['id_member'] == we::$id && (empty($settings['edit_disable_time']) || !$message['approved'] || $message['poster_time'] + $settings['edit_disable_time'] * 60 > time()))) && (empty($message['modified_member']) || $message['modified_member'] == we::$id || !empty($settings['allow_non_mod_edit']) || allowedTo('moderate_board')),
 		'can_remove' => allowedTo('delete_any') || (allowedTo('delete_replies') && we::$user['started']) || (allowedTo('delete_own') && $message['id_member'] == we::$id && (empty($settings['edit_disable_time']) || $message['poster_time'] + $settings['edit_disable_time'] * 60 > time())),
-		'can_see_ip' => allowedTo('manage_bans'),
+		'can_see_ip' => $can_ip,
 		'can_mergeposts' => $merge_safe && !empty($context['last_user_id']) && $context['last_user_id'] == (empty($message['id_member']) ? (empty($message['poster_email']) ? $message['poster_name'] : $message['poster_email']) : $message['id_member']) && (allowedTo('modify_any') || (allowedTo('modify_own') && $message['id_member'] == we::$id)),
 		'last_post_id' => $context['last_msg_id'],
+		'unapproved_msg' => $message['approved'] && !empty($message['data']['unapproved_msg']) ? $message['data']['unapproved_msg'] : '',
+		'warn_msg' => !empty($message['data']['warn_msg']) ? $message['data']['warn_msg'] : '',
 	);
-
-	if (isset($_SESSION['mod_filter'][$message['id_msg']]))
-	{
-		if ($output['approved'])
-		{
-			unset($_SESSION['mod_filter'][$message['id_msg']]);
-			if (empty($_SESSION['mod_filter']))
-				unset($_SESSION['mod_filter']);
-		}
-		else
-			$output['unapproved_msg'] = $_SESSION['mod_filter'][$message['id_msg']];
-	}
 
 	// Keep showing the New logo on every unread post in Newest First mode. Otherwise it gets confusing.
 	if (empty($options['view_newest_first']))

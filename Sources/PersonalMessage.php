@@ -983,7 +983,7 @@ function prepareMessageContext($type = 'subject', $reset = false)
 	else
 	{
 		$memberContext[$message['id_member_from']]['can_view_profile'] = allowedTo('profile_view_any') || ($message['id_member_from'] == we::$id && allowedTo('profile_view_own'));
-		$memberContext[$message['id_member_from']]['can_see_warning'] = !isset($context['disabled_fields']['warning_status']) && $memberContext[$message['id_member_from']]['warning_status'] && (allowedTo('issue_warning') || (!empty($settings['warning_show']) && ($settings['warning_show'] > 1 || $message['id_member_from'] == we::$id)));
+		$memberContext[$message['id_member_from']]['can_see_warning'] = !empty($settings['warning_show']) && $memberContext[$message['id_member_from']]['warning_status'] && ($settings['warning_show'] == 3 || allowedTo('issue_warning') || ($settings['warning_show'] == 2 && $message['id_member_from'] == we::$id));
 	}
 
 	// Censor all the important text...

@@ -99,13 +99,14 @@ function reloadSettings()
 						if (!empty($action['nolog']))
 							$context['nolog_actions'][] = $action['action'];
 					}
+
 				unset($plugin_details['id'], $plugin_details['provides'], $plugin_details['actions']);
 
 				foreach ($plugin_details as $hook => $functions)
 					foreach ($functions as $function)
 					{
 						$priority = (int) substr(strrchr($function, '|'), 1);
-						$hook_stack[$hook][$priority][] = strtr($function, array('$plugindir' => $this_plugindir));
+						$hook_stack[$hook][$priority][] = strtr($function, array('$plugindir/' => ''));
 					}
 			}
 			else
@@ -646,10 +647,20 @@ function loadPermissions()
 function loadMemberData($users, $is_name = false, $set = 'normal')
 {
 	global $user_profile, $settings, $board_info;
+	static $infraction_levels = null;
 
 	// Can't just look for no users. :P
 	if (empty($users))
 		return false;
+
+	if ($infraction_levels === null)
+	{
+		$infraction_levels = array();
+		$levels = !empty($settings['infraction_levels']) ? @unserialize($settings['infraction_levels']) : array();
+		foreach ($levels as $infraction => $details)
+			if (!empty($details['enabled']))
+				$infraction_levels[$infraction] = $details['points'];
+	}
 
 	// Make sure it's an array.
 	$users = !is_array($users) ? array($users) : array_flip(array_flip($users));
@@ -677,7 +688,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 			IFNULL(a.id_attach, 0) AS id_attach, a.filename, a.attachment_type, a.transparency, a.id_folder,
 			mem.id_member, mem.member_name, mem.real_name, mem.signature, mem.personal_text, mem.location, mem.gender,
 			mem.avatar, mem.email_address, mem.hide_email, mem.website_title, mem.website_url, mem.birthdate,
-			mem.posts, mem.id_group, mem.id_post_group, mem.show_online, mem.warning, mem.is_activated,
+			mem.posts, mem.id_group, mem.id_post_group, mem.show_online, mem.warning, mem.is_activated, mem.data,
 
 			mem.last_login, mem.member_ip, mem.member_ip2, mem.lngfile,
 			mem.time_offset, mem.date_registered, mem.buddy_list,
@@ -700,7 +711,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 			IFNULL(a.id_attach, 0) AS id_attach, a.filename, a.attachment_type, a.transparency, a.id_folder,
 			mem.id_member, mem.member_name, mem.real_name, mem.signature, mem.personal_text, mem.location, mem.gender,
 			mem.avatar, mem.email_address, mem.hide_email, mem.website_title, mem.website_url, mem.birthdate,
-			mem.posts, mem.id_group, mem.id_post_group, mem.show_online, mem.warning, mem.is_activated,
+			mem.posts, mem.id_group, mem.id_post_group, mem.show_online, mem.warning, mem.is_activated, mem.data,
 
 			mem.last_login, mem.member_ip, mem.member_ip2, mem.lngfile,
 			mem.time_offset, mem.date_registered, mem.buddy_list,
@@ -738,7 +749,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 			IFNULL(a.id_attach, 0) AS id_attach, a.filename, a.attachment_type, a.transparency, a.id_folder,
 			mem.id_member, mem.member_name, mem.real_name, mem.signature, mem.personal_text, mem.location, mem.gender,
 			mem.avatar, mem.email_address, mem.hide_email, mem.website_title, mem.website_url, mem.birthdate,
-			mem.posts, mem.id_group, mem.id_post_group, mem.show_online, mem.warning, mem.is_activated,
+			mem.posts, mem.id_group, mem.id_post_group, mem.show_online, mem.warning, mem.is_activated, mem.data,
 
 			mem.additional_groups,
 
@@ -793,6 +804,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 			$new_loaded_ids[] = $row['id_member'];
 			$loaded_ids[] = $row['id_member'];
 			$row['options'] = array();
+			$row['set'] = $set;
 			if (!empty($row['member_ip']))
 			{
 				$row['member_ip'] = format_ip($row['member_ip']);
@@ -808,6 +820,44 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 				elseif ($set === 'profile' && !(($row['id_member'] == we::$id && allowedTo('profile_signature_own')) || allowedTo('profile_signature_any')))
 					$row['signature'] = '';
 			}
+
+			// Maybe the user has some sanctions already?
+			if (!empty($row['data']))
+			{
+				$row['data'] = @unserialize($row['data']);
+				$row['sanctions'] = !empty($row['data']['sanctions']) ? $row['data']['sanctions'] : array();
+			}
+			else
+				$row['data'] = array();
+
+			// Maybe they've just been a generically bad individual?
+			// If they have, this overrides any other granting of it and makes it indefinitely long.
+			if (!empty($infraction_levels) && !empty($row['warning']))
+				foreach ($infraction_levels as $infraction => $points)
+					if ($row['warning'] >= $points)
+						$row['sanctions'][$infraction] = 1;
+
+			// OK, quick clean up.
+			if (!empty($row['sanctions']))
+				foreach ($row['sanctions'] as $infraction => $expiry)
+					if ($expiry != 1 && $expiry < time())
+						unset ($row['sanctions'][$infraction]);
+
+			// No signature sanction?
+			if (!empty($row['sanctions']['no_sig']))
+			{
+				// It won't be shown in posts, but it will in the profile if the person is viewing their own, or someone with appropriate power is viewing their profile - so it can be edited etc.
+				if ($set === 'normal' || $set === 'userbox' || ($set === 'profile' && !(($row['id_member'] == we::$id && allowedTo('profile_signature_own')) || allowedTo('profile_signature_any'))))
+					$row['signature'] = '';
+			}
+
+			// This user is banned. We might need to fudge their group.
+			if (!empty($settings['ban_group']) && !empty($row['is_activated']) && ($row['is_activated'] >= 20 || isset($row['sanctions']['hard_ban'])))
+			{
+				$row['additional_groups'] = !empty($row['additional_groups']) ? $row['id_group'] . ',' . $row['additional_groups'] : $row['id_group'];
+				$row['id_group'] = $settings['ban_group'];
+			}
+
 			$user_profile[$row['id_member']] = $row;
 		}
 		wesql::free_result($request);
@@ -932,7 +982,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
  * - IP address: ip and ip2 - the two user IP addresses held by a user.
  * - Online details: online (array; is_online, boolean whether the user is online or not; text, localized string for 'online' or 'offline'; href, URL to send this user a PM; link, the HTML for a link to send this user a PM; image_href, the HTML to send this user a PM, but with the online/offline indicator; label, same as 'text')
  * - User's language: language, the language name, capitalized
- * - Account status: is_activated (boolean for whether account is active), is_banned (boolean for whether account is currently banned), is_guest (true - user is not a guest), warning (user's warning level), warning_status (level of warn status: '', watch, moderate, mute)
+ * - Account status: is_activated (boolean for whether account is active), is_banned (boolean for whether account is currently banned), is_guest (true - user is not a guest), warning (user's warning level), warning_status (level of warn status: '', warned, moderate, mute, soft_ban, hard_ban)
  * - Groups: group (string, the user's primary group), group_id (integer, user's primary group id), post_group (string, the user's post group), group_badges (HTML markup for displaying the user's badge)
  * - Other: options (array of user's options), local_time (user's local time, using their offset), custom_fields (if $full_profile is true, but content depends on custom fields)
  *
@@ -983,6 +1033,20 @@ function loadMemberContext($user, $full_profile = false)
 	$profile['buddy'] = in_array($profile['id_member'], we::$user['buddies']);
 	$buddy_list = !empty($profile['buddy_list']) ? explode(',', $profile['buddy_list']) : array();
 
+	// Now we have some fun. We might be showing ban status.
+	if (!empty($profile['sanctions']['hard_ban']) || (!empty($profile['is_activated']) && $profile['is_activated'] > 20))
+		$profile['warning_status'] = 'hard_ban';
+	elseif (!we::$is_guest && $user != we::$id && (!empty($profile['sanctions']['soft_ban']) || (!empty($profile['is_activated']) && $profile['is_activated'] > 10)))
+		$profile['warning_status'] = 'soft_ban';
+	elseif (!empty($profile['sanctions']['post_ban']))
+		$profile['warning_status'] = 'mute';
+	elseif (!empty($profile['sanctions']['moderate']))
+		$profile['warning_status'] = 'moderate';
+	elseif (!empty($profile['warning']))
+		$profile['warning_status'] = 'warned';
+	else
+		$profile['warning_status'] = '';
+
 	// What a monstrous array...
 	$memberContext[$user] = array(
 		'username' => $profile['member_name'],
@@ -1023,7 +1087,7 @@ function loadMemberContext($user, $full_profile = false)
 		),
 		'language' => isset($profile['lngfile']) ? westr::ucwords(strtr($profile['lngfile'], array('_' => ' ', '-utf8' => ''))) : '',
 		'is_activated' => isset($profile['is_activated']) ? $profile['is_activated'] : 1,
-		'is_banned' => isset($profile['is_activated']) ? $profile['is_activated'] >= 10 : 0,
+		'is_banned' => isset($profile['is_activated']) ? $profile['is_activated'] >= 20 : 0,
 		'options' => $profile['options'],
 		'is_guest' => false,
 		'group' => $profile['member_group'],
@@ -1031,7 +1095,7 @@ function loadMemberContext($user, $full_profile = false)
 		'post_group' => $profile['post_group'],
 		'group_badges' => array(),
 		'warning' => $profile['warning'],
-		'warning_status' => empty($settings['warning_mute']) ? '' : (isset($profile['is_activated']) && $profile['is_activated'] >= $ban_threshold ? 'ban' : ($settings['warning_mute'] <= $profile['warning'] ? 'mute' : (!empty($settings['warning_moderate']) && $settings['warning_moderate'] <= $profile['warning'] ? 'moderate' : (!empty($settings['warning_watch']) && $settings['warning_watch'] <= $profile['warning'] ? 'watch' : '')))),
+		'warning_status' => $profile['warning_status'],
 		'local_time' => isset($profile['time_offset']) ? timeformat(time() + ($profile['time_offset'] - we::$user['time_offset']) * 3600, false) : 0,
 		'media' => isset($profile['media_items']) ? array(
 			'total_items' => $profile['media_items'],
@@ -1120,6 +1184,14 @@ function loadMemberAvatar($user, $force = false)
 	// So, they're not banned, or if they are, we're not hiding their avatar.
 	if (isset($memberContext[$user]) && $memberContext[$user]['is_banned'] && !empty($settings['avatar_banned_hide']))
 		return;
+
+	// No avatar sanction?
+	if (!empty($profile['sanctions']['no_avatar']))
+	{
+		// It won't be shown in posts, but it will in the profile if the person is viewing their own, or someone with appropriate power is viewing their profile - so it can be edited etc.
+		if ($profile['set'] === 'normal' || $profile['set'] === 'userbox' || ($profile['set'] === 'profile' && !(($user == we::$id && allowedTo(array('profile_upload_avatar', 'profile_remote_avatar'))) || allowedTo('profile_extra_any'))))
+			return;
+	}
 
 	// If we're always html resizing, assume it's too large.
 	if ($avatar_width === null)

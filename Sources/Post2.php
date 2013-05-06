@@ -159,6 +159,9 @@ function Post2()
 			fatal_lang_error('not_a_topic');
 	}
 
+	// Whatever, we're going to need somewhere for the message's data.
+	$msgData = array();
+
 	// Replying to a topic?
 	if (!empty($topic) && !isset($_REQUEST['msg']))
 	{
@@ -286,7 +289,7 @@ function Post2()
 		$_REQUEST['msg'] = (int) $_REQUEST['msg'];
 
 		$request = wesql::query('
-			SELECT id_member, poster_name, poster_email, poster_time, approved
+			SELECT id_member, poster_name, poster_email, poster_time, approved, modified_member, data
 			FROM {db_prefix}messages
 			WHERE id_msg = {int:id_msg}
 			LIMIT 1',
@@ -353,6 +356,11 @@ function Post2()
 			if ($row['id_member'] != we::$id)
 				$moderationAction = true;
 		}
+
+		if (!empty($row['modified_member']) && $row['modified_member'] != we::$id && empty($settings['allow_non_mod_edit']) && !allowedTo('moderate_board'))
+			fatal_lang_error('cannot_modify_mod_post', false);
+
+		$msgData = !empty($row['data']) ? unserialize($row['data']) : array();
 
 		$posterIsGuest = empty($row['id_member']);
 
@@ -493,7 +501,11 @@ function Post2()
 		$doModeration = checkPostModeration($_POST['subject'], $_POST['message']);
 	}
 
-	// Mostly we don't know at this point, but if it's an existing post that's been edited, it may become approved in which case we already know about it.
+	// Maybe they've been naughty?
+	if (we::$user['post_moderated'])
+		$becomesApproved = false;
+
+	// Sometimes we don't know at this point, but if it's an existing post that's been edited, it may become approved in which case we already know about it.
 	if (!isset($becomesApproved))
 		$becomesApproved = true;
 
@@ -526,6 +538,10 @@ function Post2()
 		elseif (isset($doModeration['unpin']))
 			$_POST['pin'] = 0;
 	}
+
+	// If we moderated this post from moderation filters...
+	if (empty($doModeration['prevent']) && !empty($doModeration['moderate']))
+		$msgData['unapproved_msg'] = fetchFilterMessages($doModeration['moderate']);
 
 	// Whether we're going onwards to actually save this, or whether we're going back because of errors,
 	// attachments submitted in the form will be in the wrong order.
@@ -826,6 +842,7 @@ function Post2()
 		'smileys_enabled' => !isset($_POST['ns']),
 		'attachments' => empty($attachIDs) ? array() : $attachIDs,
 		'approved' => $becomesApproved,
+		'data' => $msgData,
 	);
 	$topicOptions = array(
 		'id' => empty($topic) ? 0 : $topic,
@@ -868,10 +885,6 @@ function Post2()
 		if (isset($topicOptions['id']))
 			$topic = $topicOptions['id'];
 	}
-
-	// If we moderated this post from moderation filters...
-	if (empty($doModeration['prevent']) && !empty($doModeration['moderate']))
-		$_SESSION['mod_filter'][$msgOptions['id']] = fetchFilterMessages($doModeration['moderate']);
 
 	// Marking read should be done even for editing messages....
 	// Mark all the parents read, since you just posted and they will be unread.

@@ -61,3 +61,9 @@ function wePersonalMessageSend(opt)
 	});
 	oBccAutoSuggest.registerCallback('onBeforeAddItem', onAddItem);
 }
+
+function expandCollapseLabels()
+{
+	$("#searchLabelsExpand").toggle(300);
+	$("#expandLabelsIcon").toggleClass("fold");
+};

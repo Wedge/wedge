@@ -135,67 +135,6 @@ function ModifyBasicSettings($return_config = false)
 	prepareServerSettingsContext($config_vars);
 }
 
-// Moderation type settings - although there are fewer than we have you believe ;)
-function ModifyWarningSettings($return_config = false)
-{
-	global $txt, $context, $settings;
-
-	isAllowedTo('admin_forum');
-
-	loadLanguage('Help');
-	loadLanguage('ManageSettings');
-
-	// Will need the utility functions from here.
-	loadSource('ManageServer');
-
-	$config_vars = array(
-			// Warning system?
-			array('percent', 'warning_watch', 'help' => 'warning_enable', 'subtext' => $txt['setting_warning_watch_subtext']),
-			'moderate' => array('percent', 'warning_moderate', 'subtext' => $txt['setting_warning_moderate_subtext']),
-			array('percent', 'warning_mute', 'subtext' => $txt['setting_warning_mute_subtext']),
-		'',
-			'rem1' => array('int', 'user_limit', 'max' => 100, 'subtext' => $txt['setting_user_limit_subtext']),
-			'rem2' => array('int', 'warning_decrement', 'max' => 100, 'subtext' => $txt['setting_warning_decrement_subtext']),
-			array('select', 'warning_show', array($txt['setting_warning_show_mods'], $txt['setting_warning_show_user'], $txt['setting_warning_show_all']), 'subtext' => $txt['setting_warning_show_subtext']),
-	);
-
-	if ($return_config)
-		return $config_vars;
-
-	// Cannot use moderation if post moderation is not enabled.
-	if (!$settings['postmod_active'])
-		unset($config_vars['moderate']);
-
-	// Saving?
-	if (isset($_GET['save']))
-	{
-		checkSession();
-
-		// Sadly, we can't use the normal validation routine here because we're doing a fun combination.
-		$_POST['warning_watch'] = max(min($_POST['warning_watch'], 100), 0);
-		$_POST['warning_moderate'] = $settings['postmod_active'] ? min($_POST['warning_moderate'], 100) : 0;
-		$_POST['warning_mute'] = max(min($_POST['warning_mute'], 100), 0);
-
-		// Fix the warning setting array!
-		$_POST['warning_settings'] = min(100, (int) $_POST['user_limit']) . ',' . min(100, (int) $_POST['warning_decrement']);
-		$save_vars = $config_vars;
-		$save_vars[] = array('text', 'warning_settings');
-		unset($save_vars['rem1'], $save_vars['rem2']);
-
-		saveDBSettings($save_vars);
-		redirectexit('action=admin;area=warnings');
-	}
-
-	// We actually store lots of these together - for efficiency.
-	list ($settings['user_limit'], $settings['warning_decrement']) = explode(',', $settings['warning_settings']);
-
-	$context['post_url'] = '<URL>?action=admin;area=warnings;save';
-	$context['page_title'] = $context['settings_title'] = $txt['warning_title'];
-
-	wetem::load('show_settings');
-	prepareDBSettingContext($config_vars);
-}
-
 // Let's try keep the spam to a minimum ah Thantos?
 function ModifySpamSettings($return_config = false)
 {
@@ -210,6 +149,8 @@ function ModifySpamSettings($return_config = false)
 
 	// Generate a sample registration image.
 	$context['verification_image_href'] = '<URL>?action=verificationcode;rand=' . md5(mt_rand());
+
+	$context['page_title'] = $context['settings_title'] = $txt['antispam_settings'];
 
 	$config_vars = array(
 			array('desc', 'antispam_settings_desc'),
@@ -357,7 +298,6 @@ function ModifySpamSettings($return_config = false)
 	$(\'#guests_require_captcha\').prop(\'disabled\', true);');
 
 	$context['post_url'] = '<URL>?action=admin;area=antispam;save';
-	$context['page_title'] = $context['settings_title'] = $txt['antispam_settings'];
 
 	wetem::load('show_settings');
 
@@ -371,7 +311,7 @@ function ModifyLogSettings($return_config = false)
 	// Make sure we understand what's going on.
 	loadLanguage('ManageSettings');
 
-	$context['page_title'] = $txt['log_settings'];
+	$context['page_title'] = $context['settings_title'] = $txt['log_settings'];
 
 	$config_vars = array(
 			array('check', 'enableErrorLogging'),
@@ -437,7 +377,6 @@ function ModifyLogSettings($return_config = false)
 	}
 
 	$context['post_url'] = '<URL>?action=admin;area=logs;save;sa=settings';
-	$context['settings_title'] = $txt['log_settings'];
 	wetem::load('show_settings');
 
 	// Get the actual values
@@ -457,6 +396,8 @@ function ModifyPmSettings($return_config = false)
 	);
 
 	loadLanguage('ManageSettings');
+
+	$context['page_title'] = $context['settings_title'] = $txt['admin_personal_messages'];
 
 	if (!empty($settings['pm_enabled']))
 		$config_vars = array_merge($config_vars, array(
@@ -503,7 +444,6 @@ function ModifyPmSettings($return_config = false)
 	}
 
 	$context['post_url'] = '<URL>?action=admin;area=pm;save';
-	$context['page_title'] = $context['settings_title'] = $txt['admin_personal_messages'];
 
 	// Hacky mess for PM settings
 	list ($settings['max_pm_recipients'], $settings['pm_posts_verification'], $settings['pm_posts_per_hour']) = explode(',', $settings['pm_spam_settings']);
@@ -520,6 +460,8 @@ function ModifyLikeSettings($return_config = false)
 	);
 
 	loadLanguage('ManageSettings');
+
+	$context['page_title'] = $context['settings_title'] = $txt['admin_likes'];
 
 	if (!empty($settings['likes_enabled']))
 		$config_vars = array_merge($config_vars, array(
@@ -543,7 +485,6 @@ function ModifyLikeSettings($return_config = false)
 	}
 
 	$context['post_url'] = '<URL>?action=admin;area=likes;save';
-	$context['page_title'] = $context['settings_title'] = $txt['admin_likes'];
 
 	wetem::load('show_settings');
 	prepareDBSettingContext($config_vars);
@@ -659,6 +600,11 @@ function ModifySettingsPageHandler($return_config = false, $plugin_id = null)
 		if (!empty($lang['file']))
 			loadPluginLanguage($plugin_id, (string) $lang['file']);
 
+	// Set up titles for things like the admin search.
+	$admin_cache = unserialize($settings['plugins_admin']);
+	$return_area = $admin_cache[$plugin_id]['area'];
+	$context['settings_title'] = $context['page_title'] = $admin_cache[$plugin_id]['name'];
+
 	// Now go through the rest of the manifest.
 	$config_vars = array();
 	$elements = $manifest->{'settings-page'}->children();
@@ -744,8 +690,6 @@ function ModifySettingsPageHandler($return_config = false, $plugin_id = null)
 		return $config_vars;
 
 	loadSource('ManageServer');
-	$admin_cache = unserialize($settings['plugins_admin']);
-	$return_area = $admin_cache[$plugin_id]['area'];
 
 	// Saving?
 	if (isset($_GET['save']))
@@ -757,7 +701,6 @@ function ModifySettingsPageHandler($return_config = false, $plugin_id = null)
 	}
 
 	$context['post_url'] = '<URL>?action=admin;area=' . $return_area . ';save';
-	$context['settings_title'] = $context['page_title'] = $admin_cache[$plugin_id]['name'];
 	wetem::load('show_settings');
 	prepareDBSettingContext($config_vars);
 }
