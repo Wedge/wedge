@@ -66,4 +66,4 @@ function expandCollapseLabels()
 {
 	$("#searchLabelsExpand").toggle(300);
 	$("#expandLabelsIcon").toggleClass("fold");
-};
+}
