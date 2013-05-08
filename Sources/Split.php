@@ -74,7 +74,7 @@ if (!defined('WEDGE'))
 // Split a topic into two separate topics... in case it got offtopic, etc.
 function SplitTopics()
 {
-	global $topic;
+	global $topic, $board, $context;
 
 	// And... which topic were you splitting, again?
 	if (empty($topic))
@@ -86,7 +86,13 @@ function SplitTopics()
 	// Load up the "dependencies" - the template, getMsgMemberID(), template_page_index(), and sendNotifications().
 	loadTemplate('index');
 	if (!AJAX)
+	{
 		loadTemplate('Split');
+
+		// There are several ways to get into this point. Some will have the user indicating a given board, some will not.
+		$dest_board = isset($_POST['dest_board']) ? min(max((int) $_POST['dest_board'], 0), 1000000) : $board;
+		$context['dest_board'] = getPossibleBoards($dest_board) ? $dest_board : $board;
+	}
 
 	loadSource(array('Subs-Boards', 'Subs-Post'));
 	loadLanguage('ManageTopics');
@@ -206,7 +212,7 @@ function SplitExecute()
 		fatal_lang_error('no_access', false);
 
 	$context['old_topic'] = $topic;
-	$context['new_topic'] = splitTopic($topic, $messagesToBeSplit, $_POST['subname']);
+	$context['new_topic'] = splitTopic($topic, $messagesToBeSplit, $_POST['subname'], $context['dest_board']);
 	$context['page_title'] = $txt['split'];
 }
 
@@ -512,12 +518,12 @@ function SplitSelectionExecute()
 		fatal_lang_error('no_posts_selected', false);
 
 	$context['old_topic'] = $topic;
-	$context['new_topic'] = splitTopic($topic, $_SESSION['split_selection'][$topic], $_POST['subname']);
+	$context['new_topic'] = splitTopic($topic, $_SESSION['split_selection'][$topic], $_POST['subname'], $context['dest_board']);
 	$context['page_title'] = $txt['split'];
 }
 
 // Split a topic in two topics.
-function splitTopic($split1_id_topic, $split_messages, $new_subject)
+function splitTopic($split1_id_topic, $split_messages, $new_subject, $dest_board = null)
 {
 	global $topic, $board, $settings, $txt;
 
@@ -537,6 +543,9 @@ function splitTopic($split1_id_topic, $split_messages, $new_subject)
 	);
 	list ($id_board, $split1_approved) = wesql::fetch_row($request);
 	wesql::free_result($request);
+
+	if ($dest_board === null)
+		$dest_board = (int) $id_board;
 
 	// Find the new first and last not in the list. (old topic)
 	$request = wesql::query('
@@ -657,7 +666,7 @@ function splitTopic($split1_id_topic, $split_messages, $new_subject)
 				'is_pinned' => 'int',
 			),
 			array(
-				(int) $id_board, $split2_first_mem, $split2_last_mem, 0,
+				$dest_board, $split2_first_mem, $split2_last_mem, 0,
 				0, $split2_replies, $split2_unapproved_posts, (int) $split2_approved, 0,
 			),
 			array('id_topic')
@@ -678,11 +687,13 @@ function splitTopic($split1_id_topic, $split_messages, $new_subject)
 			UPDATE {db_prefix}messages
 			SET
 				id_topic = {int:id_topic},
+				id_board = {int:id_board},
 				subject = CASE WHEN id_msg = {int:split_first_msg} THEN {string:new_subject} ELSE {string:new_subject_replies} END
 			WHERE id_msg IN ({array_int:split_msgs})',
 			array(
 				'split_msgs' => $split_messages,
 				'id_topic' => $split2_id_topic,
+				'id_board' => $dest_board,
 				'new_subject' => $new_subject,
 				'split_first_msg' => $split2_first_msg,
 				'new_subject_replies' => $txt['response_prefix'] . $new_subject,
@@ -696,11 +707,13 @@ function splitTopic($split1_id_topic, $split_messages, $new_subject)
 	// Any associated reported posts better follow...
 	wesql::query('
 		UPDATE {db_prefix}log_reported
-		SET id_topic = {int:id_topic}
+		SET id_topic = {int:id_topic},
+			id_board = {int:id_board}
 		WHERE id_msg IN ({array_int:split_msgs})',
 		array(
 			'split_msgs' => $split_messages,
 			'id_topic' => $split2_id_topic,
+			'id_board' => $dest_board,
 		)
 	);
 
@@ -754,17 +767,53 @@ function splitTopic($split1_id_topic, $split_messages, $new_subject)
 			)
 		);
 
-	// The board has more topics now (Or more unapproved ones!).
-	wesql::query('
-		UPDATE {db_prefix}boards
-		SET ' . ($split2_approved ? '
-			num_topics = num_topics + 1' : '
-			unapproved_topics = unapproved_topics + 1') . '
-		WHERE id_board = {int:id_board}',
-		array(
-			'id_board' => $id_board,
-		)
-	);
+	// The board has more topics now (Or more unapproved ones!)
+	if ($id_board == $dest_board)
+	{
+		// We only need to fix the local topic count because the message count in this board is the same.
+		wesql::query('
+			UPDATE {db_prefix}boards
+			SET ' . ($split2_approved ? '
+				num_topics = num_topics + 1' : '
+				unapproved_topics = unapproved_topics + 1') . '
+			WHERE id_board = {int:id_board}',
+			array(
+				'id_board' => $dest_board,
+			)
+		);
+	}
+	else
+	{
+		// The new topic is in a different board, we need to fix that.
+		$approved_moved = $split2_replies + ($split2_approved ? 1 : 0);
+		$unapproved_moved = $split2_unapproved_posts;
+		// Old board first.
+		wesql::query('
+			UPDATE {db_prefix}boards
+			SET num_posts = num_posts - {int:approved_moved},
+				unapproved_posts = unapproved_posts - {int:unapproved_moved}
+			WHERE id_board = {int:old_board}',
+			array(
+				'approved_moved' => $approved_moved,
+				'unapproved_moved' => $unapproved_moved,
+				'old_board' => $id_board,
+			)
+		);
+		// New board. Here we need to fix the number of topics as well as posts.
+		wesql::query('
+			UPDATE {db_prefix}boards
+			SET num_posts = num_posts + {int:approved_moved},
+				unapproved_posts = unapproved_posts + {int:unapproved_moved},' . ($split2_approved ? '
+				num_topics = num_topics + 1' : '
+				unapproved_topics = unapproved_topics + 1') . '
+			WHERE id_board = {int:new_board}',
+			array(
+				'approved_moved' => $approved_moved,
+				'unapproved_moved' => $unapproved_moved,
+				'new_board' => $dest_board,
+			)
+		);
+	}
 
 	// Copy log topic entries.
 	// !!! This should really be chunked.
@@ -794,13 +843,70 @@ function splitTopic($split1_id_topic, $split_messages, $new_subject)
 
 	// Housekeeping.
 	updateStats('topic');
-	updateLastMessages($id_board);
+	updateLastMessages($dest_board);
+	if ($id_board != $dest_board)
+		updateLastMessages($id_board);
 
-	logAction('split', array('topic' => $split1_id_topic, 'new_topic' => $split2_id_topic, 'board' => $id_board));
+	logAction('split', array('topic' => $split1_id_topic, 'new_topic' => $split2_id_topic, 'board' => $dest_board));
 
 	// Notify people that this topic has been split?
 	sendNotifications($split1_id_topic, 'split');
 
 	// Return the ID of the newly created topic.
 	return $split2_id_topic;
+}
+
+function getPossibleBoards($selected = 0)
+{
+	global $context, $settings, $board;
+
+	// If they can move this topic, give them a list of places to move it to.
+	if (!allowedTo('move_any'))
+		return false;
+
+	// Hmm, where are they trying to move it to?
+	if (empty($selected))
+		$selected = $board;
+
+	// Where can they move it to?
+	$boards = empty($settings['ignoreMoveVsNew']) ? boardsAllowedTo('post_new') : array(0);
+	if (empty($boards))
+		$boards = array(-1); // Just so it doesn't foul the query up.
+
+	// Get a list of boards this moderator can move to.
+	$request = wesql::query('
+		SELECT b.id_board, b.name, b.child_level, c.name AS cat_name, c.id_cat
+		FROM {db_prefix}boards AS b
+			LEFT JOIN {db_prefix}categories AS c ON (c.id_cat = b.id_cat)
+		WHERE {query_see_board}
+			AND b.redirect = {string:blank_redirect}' . ($boards != array(0) ? '
+			AND b.id_board IN ({array_int:board_list})' : ''),
+		array(
+			'blank_redirect' => '',
+			'board_list' => $boards,
+		)
+	);
+
+	while ($row = wesql::fetch_assoc($request))
+	{
+		if (!isset($context['categories'][$row['id_cat']]))
+			$context['categories'][$row['id_cat']] = array (
+				'name' => strip_tags($row['cat_name']),
+				'boards' => array(),
+			);
+
+		if ($selected == $row['id_board'])
+			$found = true;
+
+		$context['categories'][$row['id_cat']]['boards'][] = array(
+			'id' => $row['id_board'],
+			'name' => strip_tags($row['name']),
+			'category' => strip_tags($row['cat_name']),
+			'child_level' => $row['child_level'],
+			'selected' => $selected == $row['id_board'],
+		);
+	}
+	wesql::free_result($request);
+
+	return !empty($found);
 }

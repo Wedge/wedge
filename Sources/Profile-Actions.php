@@ -831,7 +831,9 @@ function profileInfractions($memID)
 					loadSource('Subs-Scheduled');
 					$infraction_details['imperative'] = addNextImperative($expiry, array(
 						'function' => 'imperative_removeInfraction',
-						'mem' => $memID,
+						'parameters' => array(
+							'mem' => $memID,
+						),
 					));
 				}
 

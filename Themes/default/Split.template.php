@@ -37,7 +37,31 @@ function template_ask()
 					<li>
 						<label><input type="radio" id="selective" name="step2" value="selective"> ', $txt['select_split_posts'], '</label>
 					</li>
-				</ul>
+				</ul>';
+
+	if (!empty($context['categories']))
+	{
+		echo '
+				<br>
+				<p class="split_topics">
+					<strong>', $txt['board_for_new_topic'], '</strong>
+					<select name="dest_board">';
+		foreach ($context['categories'] as $id_cat => $cat)
+		{
+			echo '
+						<optgroup label="', $cat['name'], '">';
+			foreach ($cat['boards'] as $thisboard)
+				echo '
+							<option value="', $thisboard['id'], '"', $thisboard['selected'] ? ' selected' : '', '>', $thisboard['child_level'] > 0 ? str_repeat('==', $thisboard['child_level']-1) . '=&gt; ' : '', $thisboard['name'], '</option>';
+			echo '
+						</optgroup>';
+		}
+		echo '
+					</select>
+				</p>';
+	}
+
+	echo '
 				<div class="right">
 					<input type="submit" value="', $txt['split'], '" class="submit">
 				</div>
@@ -78,12 +102,37 @@ function template_select()
 	global $context, $theme, $options, $txt;
 
 	echo '
+	<we:cat>', $txt['split'], '</we:cat>
 	<div id="split_topics">
-		<form action="<URL>?action=splittopics;sa=splitSelection;board=', $context['current_board'], '.0" method="post" accept-charset="UTF-8">
+		<form action="<URL>?action=splittopics;sa=splitSelection;board=', $context['current_board'], '.0" method="post" accept-charset="UTF-8">';
+
+	if (!empty($context['categories']))
+	{
+		echo '
+				<div class="windowbg wrc">
+					<strong>', $txt['board_for_new_topic'], '</strong>
+					<select name="dest_board">';
+		foreach ($context['categories'] as $id_cat => $cat)
+		{
+			echo '
+						<optgroup label="', $cat['name'], '">';
+			foreach ($cat['boards'] as $thisboard)
+				echo '
+							<option value="', $thisboard['id'], '"', $thisboard['selected'] ? ' selected' : '', '>', $thisboard['child_level'] > 0 ? str_repeat('==', $thisboard['child_level']-1) . '=&gt; ' : '', $thisboard['name'], '</option>';
+			echo '
+						</optgroup>';
+		}
+		echo '
+					</select>
+				</div>
+				<br class="clear">';
+	}
+
+	echo '
 			<div id="not_selected" class="floatleft">
-				<we:cat>
-					', $txt['split'], ' - ', $txt['select_split_posts'], '
-				</we:cat>
+				<we:title>
+					', $txt['select_split_posts'], '
+				</we:title>
 				<div class="information">
 					', $txt['please_select_split'], '
 				</div>
@@ -108,9 +157,9 @@ function template_select()
 				</ul>
 			</div>
 			<div id="selected" class="floatright">
-				<we:cat>
+				<we:title>
 					', $txt['split_selected_posts'], ' (<a href="<URL>?action=splittopics;sa=selectTopics;subname=', $context['topic']['subject'], ';topic=', $context['topic']['id'], '.', $context['not_selected']['start'], ';start2=', $context['selected']['start'], ';move=reset;msg=0" onclick="return select(\'reset\', 0);">', $txt['split_reset_selection'], '</a>)
-				</we:cat>
+				</we:title>
 				<div class="information">
 					', $txt['split_selected_posts_desc'], '
 				</div>

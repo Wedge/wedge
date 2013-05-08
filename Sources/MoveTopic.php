@@ -88,11 +88,10 @@ function MoveTopic()
 			AND b.id_board IN ({array_int:board_list})' : ''),
 		array(
 			'blank_redirect' => '',
-			'current_board' => $board,
 			'board_list' => $boards,
 		)
 	);
-	$context['boards'] = array();
+
 	while ($row = wesql::fetch_assoc($request))
 	{
 		if (!isset($context['categories'][$row['id_cat']]))
