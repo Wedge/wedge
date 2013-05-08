@@ -1471,7 +1471,7 @@ function template_notification()
 			</we:cat>
 			<p class="description">', $txt['notification_info'], '</p>
 			<div class="windowbg2 wrc">
-				<form action="<URL>?action=profile;area=notifications;save" method="post" accept-charset="UTF-8" id="notify_options" class="flow_hidden">';
+				<form action="<URL>?action=profile;area=notification;save" method="post" accept-charset="UTF-8" id="notify_options" class="flow_hidden">';
 
 	// Allow notification on announcements to be disabled?
 	if (!empty($settings['allow_disableAnnounce']))

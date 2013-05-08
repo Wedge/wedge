@@ -1,12 +1,4 @@
 
-input[type=button], input[type=submit]
-	padding: 3px 4px
-
-// Old IEs reset background-position to 0 if you provide them with multiples values :-/
-input.submit
-	padding-left: 23px
-	background-position: 4px center
-
 #thought_form input[type=submit]
 	background-position: -99px -99px
 

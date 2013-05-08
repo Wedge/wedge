@@ -432,7 +432,7 @@ class weNotif
 			foreach ($notifier_settings as $notifier => $settings)
 				$notifiers[$notifier]->saveProfile(we::$id, $settings);
 
-			redirectexit('action=profile;area=notification');
+			redirectexit('action=profile;area=notifications');
 		}
 
 		// Load the template and form
@@ -443,7 +443,7 @@ class weNotif
 
 		$context['settings_title'] = $txt['notifications'];
 		$context['settings_message'] = $txt['notification_profile_desc'];
-		$context['post_url'] = '<URL>?action=profile;area=notification;save';
+		$context['post_url'] = '<URL>?action=profile;area=notifications;save';
 
 		wetem::load('show_settings');
 	}
