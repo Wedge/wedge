@@ -1023,7 +1023,8 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 		{
 			if ($row['is_post_group'] && !$separated)
 			{
-				if (array_pop(array_keys($groups)) != 'sep1')
+				$keys = array_keys($groups);
+				if (array_pop($keys) != 'sep1')
 					$groups['sep2'] = 'sep';
 				$separated = true;
 			}
