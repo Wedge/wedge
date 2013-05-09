@@ -806,6 +806,9 @@ function template_send()
 			</div>';
 	}
 
+	if (!empty($context['buddy_list']))
+		template_send_contacts();
+
 	echo '
 			<dl id="post_header">';
 
@@ -843,7 +846,7 @@ function template_send()
 					<input name="subject" value="', $context['subject'], '" tabindex="', $context['tabindex']++, '" size="60" maxlength="60">
 				</dd>
 			</dl>
-			<hr class="clear">';
+			<hr class="clearleft">';
 
 	// Show BBC buttons, smileys and textbox.
 	echo $context['postbox']->outputEditor();
@@ -893,7 +896,8 @@ function template_send()
 	));
 
 	add_js('
-	new wePersonalMessageSend({
+	var oPersonalMessage = new wePersonalMessageSend({
+		sObject: \'oPersonalMessage\',
 		sToControlId: \'to_control\',
 		aToRecipients: {');
 
@@ -918,8 +922,32 @@ function template_send()
 		sBccDivId2: \'bcc_div2\',
 		sBccLinkId: \'bcc_link\',
 		sBccLinkContainerId: \'bcc_link_container\',
-		bBccShowByDefault: ', empty($context['recipients']['bcc']) && empty($context['bcc_value']) ? 'false' : 'true', '
+		bBccShowByDefault: ', empty($context['recipients']['bcc']) && empty($context['bcc_value']) ? 'false' : 'true', ',
+		sContactList: \'', !empty($context['buddy_list']) ? 'contactlist' : '', '\'
 	});');
+}
+
+function template_send_contacts()
+{
+	global $context, $txt;
+
+	echo '
+		<we:block class="windowbg floatright" header="', westr::safe($txt['pm_contact_list']), '" id="contactlist">
+			<div>
+				<table>';
+
+	foreach ($context['buddy_list'] as $id => $name)
+	{
+		echo '
+				<tr data-uid="', $id, '" data-name="', $name, '">
+					<td><a href="<URL>?action=profile;u=', $id, '">', $name, '</a></td>
+				</tr>';
+	}
+
+	echo '
+				</table>
+			</div>
+		</we:block>';
 }
 
 // This template asks the user whether they wish to empty out their folder/messages.

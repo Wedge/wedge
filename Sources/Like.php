@@ -217,7 +217,10 @@ function Like()
 		loadTemplate('Msg');
 
 		// Now the AJAXish data. We must be able to like it, otherwise we wouldn't be here!
-		return_raw(template_show_likes($id_content, true));
+		ob_start();
+		template_show_likes($id_content, true);
+		$return = ob_get_clean();
+		return_text($return);
 	}
 	else
 		redirectexit($context['redirect_from_like']);

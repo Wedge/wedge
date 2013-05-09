@@ -1855,6 +1855,8 @@ function MessagePost()
 	$context['message'] = str_replace(array('"', '<', '>', '&nbsp;'), array('&quot;', '&lt;', '&gt;', ' '), $form_message);
 	$context['post_error'] = array();
 
+	$context['buddy_list'] = getContactList();
+
 	// And build the link tree.
 	add_linktree($txt['new_message'], '<URL>?action=pm;sa=send');
 
@@ -1943,6 +1945,8 @@ function messagePostError($error_types, $named_recipients, $recipient_ids = arra
 	$context['subject'] = isset($_REQUEST['subject']) ? westr::htmlspecialchars($_REQUEST['subject']) : '';
 	$context['message'] = isset($_REQUEST['message']) ? str_replace(array('  '), array('&nbsp; '), westr::htmlspecialchars($_REQUEST['message'])) : '';
 	$context['reply'] = !empty($_REQUEST['replied_to']);
+
+	$context['buddy_list'] = getContactList();
 
 	if ($context['reply'])
 	{
@@ -2062,6 +2066,23 @@ function messagePostError($error_types, $named_recipients, $recipient_ids = arra
 
 	// Acquire a new form sequence number.
 	checkSubmitOnce('register');
+}
+
+function getContactList()
+{
+	global $settings, $user_profile;
+
+	$buddies = array();
+
+	if (empty($settings['enable_buddylist']) || empty(we::$user['buddies']))
+		return $buddies;
+
+	loadMemberData(we::$user['buddies']);
+	foreach (we::$user['buddies'] as $buddy)
+		if (isset($user_profile[$buddy]))
+			$buddies[$buddy] = $user_profile[$buddy]['real_name'];
+	asort($buddies);
+	return $buddies;
 }
 
 // Send it!
