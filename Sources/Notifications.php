@@ -70,7 +70,7 @@ class weNotif
 		// Register the notifiers
 		if (!empty(we::$id))
 		{
-			loadSource('Class-NotifierLikes');
+			loadSource('notifiers/Class-NotifierLikes');
 			self::$notifiers['likes'] = new Likes_Notifier();
 		}
 
