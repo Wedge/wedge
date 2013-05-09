@@ -71,7 +71,7 @@ wePersonalMessageSend.prototype.onAddItem = function (sSuggestId)
 
 wePersonalMessageSend.prototype.initContacts = function (sObject)
 {
-	$("#" + this.opt.sContactList + " tr").each(function (index) {
+	$('#' + this.opt.sContactList + ' tr').each(function () {
 		$(this).append('<td><input type="button" value="' + $txt['pm_to'] + '" class="to" onclick="' + sObject + '.addContact(\'to\', ' + $(this).data('uid') + ', \'' + $(this).data('name') + '\');"></td>');
 		$(this).append('<td><input type="button" value="' + $txt['pm_bcc'] + '" class="bcc" onclick="' + sObject + '.addContact(\'bcc\', ' + $(this).data('uid') + ', \'' + $(this).data('name') + '\');"></td>');
 	});
@@ -90,6 +90,6 @@ wePersonalMessageSend.prototype.addContact = function (where, uid, name)
 
 function expandCollapseLabels()
 {
-	$("#searchLabelsExpand").toggle(300);
-	$("#expandLabelsIcon").toggleClass("fold");
+	$('#searchLabelsExpand').toggle(300);
+	$('#expandLabelsIcon').toggleClass('fold');
 }

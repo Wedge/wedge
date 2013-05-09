@@ -1041,14 +1041,15 @@ function isAllowedTo($permission, $boards = null)
 		// Pick the last array entry as the permission shown as the error.
 		$error_permission = array_shift($permission);
 
-		// If they are a guest, show a login. (because the error might be gone if they do!)
+		// If they are a guest, show a login. (Because the error might be gone if they do!)
 		if (we::$is_guest)
 		{
 			loadLanguage('Errors');
 			is_not_guest($txt['cannot_' . $error_permission]);
 		}
 
-		// No need to clear the action they were doing (as it used to be; not only are the odds strong that it wouldn't have been updated, this way you can see what they were trying to do and that it didn't work)
+		// No need to clear the action they were doing (as it used to be; not only are the odds strong that it
+		// wouldn't have been updated, this way you can see what they were trying to do and that it didn't work.)
 		writeLog(true);
 
 		fatal_lang_error('cannot_' . $error_permission, false);

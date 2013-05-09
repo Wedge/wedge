@@ -139,9 +139,7 @@ header, footer, aside, section, article, nav
 #edge
 	width: 100%
 	display: table
-	@if !ie[-7]
-		table-layout: fixed
-	@endif
+	table-layout: fixed
 
 #sidebar
 	display: table-cell
