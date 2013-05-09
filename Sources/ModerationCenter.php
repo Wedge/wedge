@@ -55,13 +55,14 @@ function ModerationMain($dont_call = false)
 					'file' => 'Modlog',
 					'function' => 'ViewModlog',
 				),
-				'userwatch' => array(
+				'warnings' => array(
 					'label' => $txt['mc_warned_users_title'],
 					'enabled' => $context['can_moderate_boards'],
 					'function' => 'ViewWatchedUsers',
 					'subsections' => array(
 						'member' => array($txt['mc_warned_users_member']),
 						'post' => array($txt['mc_warned_users_post']),
+						'log' => array($txt['mc_warning_log'], 'enabled' => allowedTo('issue_warning')),
 					),
 				),
 			),
@@ -952,6 +953,10 @@ function ViewWatchedUsers()
 {
 	global $settings, $context, $txt;
 
+	// If we're viewing the whole log, we need to get out of Dodge.
+	if (isset($_GET['sa']) && $_GET['sa'] == 'log')
+		return ViewInfractionLog();
+
 	// Some important context!
 	$context['page_title'] = $txt['mc_warned_users_title'];
 	$context['view_posts'] = isset($_GET['sa']) && $_GET['sa'] == 'post';
@@ -1019,7 +1024,7 @@ function ViewWatchedUsers()
 		'width' => '100%',
 		'items_per_page' => $settings['defaultMaxMessages'],
 		'no_items_label' => $context['view_posts'] ? $txt['mc_warned_users_no_posts'] : $txt['mc_warned_users_none'],
-		'base_href' => '<URL>?action=moderate;area=userwatch;sa=' . ($context['view_posts'] ? 'post' : 'member'),
+		'base_href' => '<URL>?action=moderate;area=warnings;sa=' . ($context['view_posts'] ? 'post' : 'member'),
 		'default_sort_col' => $context['view_posts'] ? '' : 'member',
 		'get_items' => array(
 			'function' => $context['view_posts'] ? 'list_getWatchedUserPosts' : 'list_getWatchedUsers',
@@ -1113,7 +1118,7 @@ function ViewWatchedUsers()
 			),
 		),
 		'form' => array(
-			'href' => '<URL>?action=moderate;area=userwatch;sa=post',
+			'href' => '<URL>?action=moderate;area=warnings;sa=post',
 			'include_sort' => true,
 			'include_start' => true,
 			'hidden_fields' => array(
@@ -1317,6 +1322,198 @@ function list_getWatchedUserPosts($start, $items_per_page, $sort, $approve_query
 
 	return $member_posts;
 }
+
+function ViewInfractionLog()
+{
+	global $context, $txt, $settings, $theme;
+
+	loadTemplate('ModerationCenter');
+	loadLanguage('Profile');
+
+	loadSource('Subs-List');
+
+	$context['page_title'] = $txt['mc_warned_users_title'] . ' - ' . $txt['mc_warning_log'];
+	$context[$context['moderation_menu_name']]['tab_data'] = array(
+		'title' => $txt['mc_warning_log'],
+		'description' => $txt['mc_warning_log_desc'],
+	);
+
+	// This is all the information required for a watched user listing.
+	$listOptions = array(
+		'id' => 'infraction_log',
+		'title' => $txt['mc_warned_users_title'] . ' - ' . $txt['mc_warning_log'],
+		'width' => '100%',
+		'items_per_page' => $settings['defaultMaxMessages'],
+		'no_items_label' => $txt['mc_warnings_none'],
+		'base_href' => '<URL>?action=moderate;area=warnings;sa=log',
+		'default_sort_col' => 'issue_date',
+		'default_sort_dir' => 'desc',
+		'get_items' => array(
+			'function' => 'list_getInfractionLog',
+		),
+		'get_count' => array(
+			'function' => 'list_getInfractionLogCount',
+		),
+		// This assumes we are viewing by user.
+		'columns' => array(
+			'issued_by' => array(
+				'header' => array(
+					'value' => $txt['mc_warning_by'],
+				),
+				'data' => array(
+					'sprintf' => array(
+						'format' => '<a href="<URL>?action=profile;u=%1$d">%2$s</a>',
+						'params' => array(
+							'issued_by' => false,
+							'issued_by_name' => false,
+						),
+					),
+				),
+				'sort' => array(
+					'default' => 'issued_by_name, id_issue DESC',
+					'reverse' => 'issued_by_name DESC, id_issue DESC',
+				),
+			),
+			'issued_to' => array(
+				'header' => array(
+					'value' => $txt['mc_warning_to'],
+				),
+				'data' => array(
+					'sprintf' => array(
+						'format' => '<a href="<URL>?action=profile;u=%1$d">%2$s</a>',
+						'params' => array(
+							'issued_to' => false,
+							'issued_to_name' => false,
+						),
+					),
+				),
+				'sort' => array(
+					'default' => 'issued_to_name, id_issue DESC',
+					'reverse' => 'issued_to_name DESC, id_issue DESC',
+				),
+			),
+			'issue_date' => array(
+				'header' => array(
+					'value' => $txt['mc_warning_on'],
+				),
+				'data' => array(
+					'timeformat' => 'issue_date',
+				),
+				'sort' => array(
+					'default' => 'issue_date',
+					'reverse' => 'issue_date DESC',
+				),
+			),
+			'points' => array(
+				'header' => array(
+					'value' => $txt['mc_warned_users_points'],
+				),
+				'data' => array(
+					'comma_format' => 'points',
+					'class' => 'center',
+				),
+				'sort' => array(
+					'default' => 'points',
+					'reverse' => 'points DESC',
+				),
+			),
+			'status' => array(
+				'header' => array(
+					'value' => $txt['mc_warning_status'],
+				),
+				'data' => array(
+					'db' => 'status',
+					'class' => 'center',
+				),
+				'sort' => array(
+					'default' => 'inf_state',
+					'reverse' => 'inf_state DESC',
+				),
+			),
+			'view' => array(
+				'data' => array(
+					'sprintf' => array(
+						'format' => '<a href="<URL>?action=profile;u=%1$d;area=infractions;view=%2$d" onclick="return reqWin(this);"><img src="' . $theme['images_url'] . '/filter.gif"></a>',
+						'params' => array(
+							'issued_to' => false,
+							'id_issue' => false,
+						),
+					),
+					'class' => 'center',
+				),
+			),
+			'revoke' => array(
+				'data' => array(
+					'db' => 'revoke',
+					'class' => 'center',
+				),
+			),
+		),
+		'row_class' => 'class',
+	);
+
+	createList($listOptions);
+	wetem::load('show_list');
+	$context['default_list'] = 'infraction_log';
+}
+
+function list_getInfractionLog($start, $items_per_page, $sort)
+{
+	global $txt, $settings, $context;
+
+	// Things we need. To make us go.
+	$classes = array(
+		0 => 'active',
+		1 => 'expired',
+		2 => 'revoked',
+	);
+
+	$inf_settings = !empty($settings['infraction_settings']) ? unserialize($settings['infraction_settings']) : array();
+	$revoke_any = isset($inf_settings['revoke_any_issued']) ? $inf_settings['revoke_any_issued'] : array();
+	$revoke_any[] = 1; // Admins really are special.
+	$context['revoke_own'] = !empty($inf_settings['revoke_own_issued']);
+	$context['revoke_any'] = count(array_intersect(we::$user['groups'], $revoke_any)) != 0;
+
+	$request = wesql::query('
+		SELECT i.id_issue, IFNULL(memi.id_member, 0) AS issued_by, IFNULL(memi.real_name, i.issued_by_name) AS issued_by_name,
+			IFNULL(memt.id_member, 0) AS issued_to, IFNULL(memt.real_name, i.issued_to_name) AS issued_to_name,
+			i.issue_date, i.points, i.inf_state
+		FROM {db_prefix}log_infractions AS i
+		LEFT JOIN {db_prefix}members AS memi ON (i.issued_by = memi.id_member)
+		LEFT JOIN {db_prefix}members AS memt ON (i.issued_to = memt.id_member)
+		ORDER BY {raw:sort}
+		LIMIT {int:start}, {int:items_per_page}',
+		array(
+			'start' => $start,
+			'items_per_page' => $items_per_page,
+			'sort' => $sort,
+		)
+	);
+
+	$items = array();
+	while ($row = wesql::fetch_assoc($request))
+	{
+		$row['class'] = 'inf_' . $classes[$row['inf_state']];
+		$row['status'] = $txt['infraction_state_' . $classes[$row['inf_state']]];
+
+		$row['revoke'] = $row['inf_state'] == 0 && ($context['revoke_any'] || ($context['revoke_own'] && $issued_by == we::$id)) ? '<a href="<URL>?action=profile;u=' . $row['issued_to'] . ';area=infractions;revoke=' . $row['id_issue'] . ';log">' . $txt['revoke'] . '</a>' : '';
+		$items[$row['id_issue']] = $row;
+	}
+
+	return $items;
+}
+
+function list_getInfractionLogCount()
+{
+	$request = wesql::query('
+		SELECT COUNT(*)
+		FROM {db_prefix}log_infractions');
+	list ($totalInfractions) = wesql::fetch_row($request);
+	wesql::free_result($request);
+
+	return $totalInfractions;
+}
+
 
 function ModBlockPrefs()
 {

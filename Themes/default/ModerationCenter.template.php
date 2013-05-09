@@ -125,7 +125,7 @@ function template_watched_users()
 
 	echo '
 		<we:cat>
-			<a href="<URL>?action=moderate;area=userwatch">', $txt['mc_warned_users'], '</a>
+			<a href="<URL>?action=moderate;area=warnings">', $txt['mc_warned_users'], '</a>
 		</we:cat>
 		<div class="windowbg wrc">
 			<div class="modbox">
@@ -466,7 +466,7 @@ function template_user_watch_post_callback($post)
 
 	if ($post['can_delete'])
 		$output_html .= '
-							<a href="<URL>?action=moderate;area=userwatch;sa=post;delete=' . $post['id'] . ';start=' . $context['start'] . ';' . $context['session_query'] . '" onclick="return ask(' . JavaScriptEscape($txt['mc_warned_users_delete_post']) . ', e);" class="remove_button">' . $txt['remove_message'] . '</a>
+							<a href="<URL>?action=moderate;area=warnings;sa=post;delete=' . $post['id'] . ';start=' . $context['start'] . ';' . $context['session_query'] . '" onclick="return ask(' . JavaScriptEscape($txt['mc_warned_users_delete_post']) . ', e);" class="remove_button">' . $txt['remove_message'] . '</a>
 							<input type="checkbox" name="delete[]" value="' . $post['id'] . '">';
 
 	$output_html .= '

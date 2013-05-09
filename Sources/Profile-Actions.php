@@ -355,6 +355,7 @@ function profileInfractions($memID)
 	elseif (!empty($_GET['revoke']))
 	{
 		$_GET['revoke'] = (int) $_GET['revoke'];
+		$context['return_to_log'] = isset($_GET['log']);
 
 		// Zerothly, if this is a warning issued to us, we can't go near it. While we::$user['is_owner'] is shorter, it's actually less clear.
 		if ($memID == we::$id)
@@ -455,7 +456,14 @@ function profileInfractions($memID)
 				);
 
 				// The per-user log area actually checks state for everything and as such will clean up after us here. DRY!
-				redirectexit('action=profile;u=' . $memID . ';area=infractions');
+				if (!$context['return_to_log'])
+					redirectexit('action=profile;u=' . $memID . ';area=infractions');
+				else
+				{
+					// But if we return to the log, we don't.
+					get_validated_infraction_log($memID, false);
+					redirectexit('action=moderate;area=warnings;sa=log');
+				}
 			}
 		}
 

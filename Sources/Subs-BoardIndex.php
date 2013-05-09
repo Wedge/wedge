@@ -400,8 +400,8 @@ function getBoardIndex($boardIndexOptions)
 					'is_redirect' => true,
 					'redirect_newtab' => false,
 					'custom_class' => 'boardstate_off',
-					'href' => '<URL>?action=moderate;area=modlog',
-					'link' => '<a href="<URL>?action=moderate">' . $txt['logs_moderation'] . '</a>',
+					'href' => '<URL>?action=moderate;area=warnings;sa=log',
+					'link' => '<a href="<URL>?action=moderate;area=warnings;sa=log">' . $txt['logs_infractions'] . '</a>',
 					'language' => '',
 				);
 

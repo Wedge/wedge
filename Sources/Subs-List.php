@@ -164,8 +164,15 @@ function createList($listOptions)
 				$cur_data['style'] = $column['data']['style'];
 
 			// Add the data cell properties to the current row.
-			$cur_row[$column_id] = $cur_data;
+			$cur_row['values'][$column_id] = $cur_data;
 		}
+
+		// We might want to apply row-wide styling. We set up in the master definition that we want to use a given column
+		// of results as the row style or additional class for that row and name the column from the result for it.
+		if (isset($listOptions['row_style'], $list_item[$listOptions['row_style']]))
+			$cur_row['style'] = $list_item[$listOptions['row_style']];
+		if (isset($listOptions['row_class'], $list_item[$listOptions['row_class']]))
+			$cur_row['class'] = $list_item[$listOptions['row_class']];
 
 		// Insert the row into the list.
 		$list_context['rows'][$item_id] = $cur_row;

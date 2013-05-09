@@ -345,7 +345,7 @@ function template_modfilter_edit()
 		$("#conds_notempty tbody tr").unwrap();
 		$("#cond_row_" + rows_added + " input").val(ruletype + ";" + rulevalue);
 
-		$("#condtype").val(0).sb();
+		$("#condtype").val("").sb();
 		$("#rulecontainer").empty();
 		$("#btnSave").show();
 	};

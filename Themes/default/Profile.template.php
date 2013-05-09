@@ -1849,7 +1849,7 @@ function template_profileInfractions()
 	if (empty($context['infraction_log']))
 		echo '
 				<tr class="windowbg2">
-					<td colspan="7" class="center">', $txt['no_infraction_history'], '</td>
+					<td colspan="7" class="center">', we::$user['is_owner'] ? $txt['no_infraction_history_you'] : $txt['no_infraction_history'], '</td>
 				</tr>';
 
 	echo '
@@ -2101,7 +2101,7 @@ function template_profileInfractions_revoke()
 		</div>';
 
 	echo '
-		<form action="<URL>?action=profile;u=', $context['member']['id'], ';area=infractions;revoke=', $context['infraction_details']['id_issue'], ';infsave" method="post" accept-charset="UTF-8">
+		<form action="<URL>?action=profile;u=', $context['member']['id'], ';area=infractions;revoke=', $context['infraction_details']['id_issue'], ';infsave', $context['return_to_log'] ? ';log' : '', '" method="post" accept-charset="UTF-8">
 			<div class="windowbg wrc">
 				<dl class="settings">
 					<dt>', $txt['infraction_issued_by'], '</dt>

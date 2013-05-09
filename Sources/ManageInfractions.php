@@ -569,6 +569,11 @@ function get_validated_infraction_log($memID, $keep_all = true)
 			2 => 'revoked',
 		);
 		$time = time();
+
+		if (!isset($context['revoke_any']))
+			$context['revoke_any'] = false;
+		if (!isset($context['revoke_own']))
+			$context['revoke_own'] = false;
 	}
 
 	$context['infraction_log'] = array();
