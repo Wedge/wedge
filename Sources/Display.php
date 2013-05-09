@@ -66,23 +66,6 @@ function Display()
 		redirectexit($url, false);
 	}
 
-	// Load the proper template and/or block.
-	loadTemplate('Display'); // Topic page
-	loadTemplate('Msg'); // Message skeleton
-	wetem::load(
-		array(
-			'report_success',
-			'display_draft',
-			'title_upper',
-			'postlist' => array(
-				'display_posts',
-			),
-			'title_lower',
-			'mod_buttons',
-			'quick_reply'
-		)
-	);
-
 	// Not only does a prefetch make things slower for the server, but it makes it impossible to know if they read it.
 	preventPrefetch();
 
@@ -120,7 +103,7 @@ function Display()
 	$request = wesql::query('
 		SELECT
 			t.num_replies, t.num_views, t.locked, ms.subject, t.is_pinned, t.id_poll, t.id_member_started, ms.icon,
-			t.id_first_msg, t.id_last_msg, t.approved, t.unapproved_posts, t.privacy, t.tags, ms.poster_time,
+			t.id_first_msg, t.id_last_msg, t.approved, t.unapproved_posts, t.privacy, t.tags, ms.poster_time, ms.data AS msgdata,
 			' . (we::$is_guest ? 't.id_last_msg + 1' : 'IFNULL(lt.id_msg, IFNULL(lmr.id_msg, -1)) + 1') . ' AS new_from
 			' . (!empty($settings['recycle_board']) && $settings['recycle_board'] == $board ? ', id_previous_board, id_previous_topic' : '') . '
 		FROM {db_prefix}topics AS t
@@ -140,9 +123,38 @@ function Display()
 	$topicinfo = wesql::fetch_assoc($request);
 	wesql::free_result($request);
 
+	$topicinfo['msgdata'] = !empty($topicinfo['msgdata']) ? unserialize($topicinfo['msgdata']) : array();
+	if (!empty($topicinfo['msgdata']['mv_brd']))
+	{
+		// This topic was moved. Hrm. Can we see this board?
+		if (!we::$is['admin'] && !in_array($topicinfo['msgdata']['mv_brd'], we::$user['qsb_boards']))
+			fatal_lang_error('moved_no_access', false);
+
+		// Failing that, are we doing an instant redirect?
+		if (!empty($topicinfo['msgdata']['mv_tpc']))
+			redirectexit('topic=' . $topicinfo['msgdata']['mv_tpc']);
+	}
+
 	// If the first message's icon is 'moved', it's a moved notice. This should not, in itself, be indexed.
 	if ($topicinfo['icon'] == 'moved')
 		$context['robot_no_index'] = true;
+
+	// Load the proper template and/or block.
+	loadTemplate('Display'); // Topic page
+	loadTemplate('Msg'); // Message skeleton
+	wetem::load(
+		array(
+			'report_success',
+			'display_draft',
+			'title_upper',
+			'postlist' => array(
+				'display_posts',
+			),
+			'title_lower',
+			'mod_buttons',
+			'quick_reply'
+		)
+	);
 
 	$context['real_num_replies'] = $context['num_replies'] = $topicinfo['num_replies'];
 	$context['topic_first_message'] = $topicinfo['id_first_msg'];

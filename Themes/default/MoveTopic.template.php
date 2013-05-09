@@ -80,6 +80,12 @@ function template_main()
 									<option value="0">', $txt['moveTopic_redirection_perm'], '</option>
 								</select>
 							</dd>
+							<dt>
+								', $txt['moveTopic_redirection_auto'], '
+							</dt>
+							<dd>
+								<input type="checkbox" name="autoredirect">
+							</dd>
 						</dl>
 					</fieldset>';
 

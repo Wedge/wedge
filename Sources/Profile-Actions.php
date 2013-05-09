@@ -477,7 +477,7 @@ function profileInfractions($memID)
 	{
 		// Users can't issue warnings to themselves, but that's one route to how we got here.
 		if (we::$user['is_owner'])
-			fatal_lang_error('issue_warning_self', false);
+			fatal_lang_error('cannot_issue_warning_self', false);
 
 		// Can this user actually receive a warning?
 		if (!$context['can_issue_warning'])

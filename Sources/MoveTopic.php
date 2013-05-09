@@ -291,7 +291,14 @@ function MoveTopic2()
 			'body' => $_POST['reason'],
 			'icon' => 'moved',
 			'smileys_enabled' => 1,
+			'data' => array(
+				'mv_brd' => (int) $_POST['toboard'],
+			),
 		);
+		// We always want to record the board moving to, but we don't necessarily have the topic, unless we're auto-redirecting.
+		if (!empty($_POST['autoredirect']))
+			$msgOptions['data']['mv_tpc'] = (int) $topic;
+
 		$topicOptions = array(
 			'board' => $board,
 			'lock_mode' => 1,
