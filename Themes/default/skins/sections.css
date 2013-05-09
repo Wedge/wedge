@@ -1405,43 +1405,40 @@ div.top_row dd
    mobile-friendly rules, is done here.
 ------------------------------------------------- */
 
-@media $responsive
-	body
-		padding: 0
-		@if (opera, ios)
-			#wedge, #header, #footer
-				border-radius: 0
-		@else
-			#wedge
-				border-radius: 0
-		@endif
-		#edge
-			clear: both
-			display: block
-		#sidebar
-			display: block
-			box-sizing: border-box
-			width: auto
-			background: $window_bg
-			border-top: 1px solid #bdb5b5
-			margin: 0 -30px 0
-			// Never inherit something into a @media query, use mixins.
-			section mixes .inline-block
-				width: $sidebar-width
-				vertical-align: top
-				padding: 0 8px 8px
-				margin: 8px
-				header
-					background: none
-		#main
-			display: block
-			padding: 4px 0 12px
-			@if ie[-7]
-				margin-right: 0
-			#offside
-				margin: 0
+@if !ie[-7]
+	@media $responsive
+		body
+			padding: 0
+			@if (opera, ios)
+				#wedge, #header, #footer
+					border-radius: 0
+			@else
+				#wedge
+					border-radius: 0
 			@endif
+			#edge
+				clear: both
+				display: block
+			#sidebar
+				display: block
+				box-sizing: border-box
+				width: auto
+				background: $window_bg
+				border-top: 1px solid #bdb5b5
+				margin: 0 -30px 0
+				// Never inherit something into a @media query, use mixins.
+				section mixes .inline-block
+					width: $sidebar-width
+					vertical-align: top
+					padding: 0 8px 8px
+					margin: 8px
+					header
+						background: none
+			#main
+				display: block
+				padding: 4px 0 12px
 
-@media all and (max-width: "math($sidebar-width * 2)")
-	body #sidebar section
-		width: auto
+	@media all and (max-width: "math($sidebar-width * 2)")
+		body #sidebar section
+			width: auto
+@endif

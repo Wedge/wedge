@@ -583,6 +583,11 @@ function ob_sessrewrite($buffer)
 	if (!empty($settings['minify_html']))
 		$buffer = preg_replace("~\n\t+~", "\n", $buffer);
 
+	// Can't be sure about mobile devices, but IE in WinXP doesn't
+	// support Unicode 3.0 and its non-breakable half-spaces. Yay.
+	if (we::is('ie && windows[-5.2],mobile'))
+		$buffer = str_replace('&#8239;', '&nbsp;', $buffer);
+
 	// Strip domain name out of internal links.
 	$buffer = preg_replace('~(<[^>]+\s(?:href|src|action)=")' . preg_quote(we::$user['server'], '~') . '/(?!/)~', '$1/', $buffer);
 

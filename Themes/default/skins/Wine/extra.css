@@ -347,11 +347,6 @@ ul.buttonlist
 		#main
 			display: block
 			padding: 4px 0 12px
-			@if ie[-7]
-				margin-right: 0
-			#offside
-				margin: 0
-			@endif
 
 @if ie8
 	@media $responsive

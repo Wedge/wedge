@@ -1605,8 +1605,8 @@ function loadTheme($id_theme = 0, $initialize = true)
 	}
 	else
 	{
-		// Add support for media queries to IE 6-8. Don't wanna waste time on other browsers.
-		if (we::is('ie8down'))
+		// Add support for media queries to IE 8. Older versions aren't worth the trouble. Really.
+		if (we::is('ie8'))
 			add_js_file('scripts/respond.js');
 
 		// Custom templates to load, or just default?

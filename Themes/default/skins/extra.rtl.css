@@ -399,7 +399,7 @@ tr.titlebg td
 #avatar_server_stored div
 	float: right
 
-@media all and (max-width: 1000px)
+@media $responsive
 	#basicinfo
 		h4
 			float: right

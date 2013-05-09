@@ -139,7 +139,9 @@ header, footer, aside, section, article, nav
 #edge
 	width: 100%
 	display: table
-	table-layout: fixed
+	@if !ie[-7]
+		table-layout: fixed
+	@endif
 
 #sidebar
 	display: table-cell
@@ -181,16 +183,18 @@ ul#noava
 	padding: 4px 22px 12px 4px
 
 // Main area should have slightly larger text on high-density devices.
-// The max device width ensures it doesn't touch tablets.
-@media all and (min-device-pixel-ratio: 1.5) and (max-width: 1000px)
-	body
-		font-size: 120%
-		.menu > li > span
-			margin-top: 8px
-		#header h1
-			margin-top: 10px
-		#siteslogan
-			margin-top: 45px
+// The $responsive rule (tries) to ensure it doesn't touch tablets.
+@if !ie[-7]
+	@media $responsive and (min-device-pixel-ratio: 1.5)
+		body
+			font-size: 120%
+			.menu > li > span
+				margin-top: 8px
+			#header h1
+				margin-top: 10px
+			#siteslogan
+				margin-top: 45px
+@endif
 
 // Top header
 #top_section
@@ -775,14 +779,11 @@ input[type=file]
 	color: #999
 	border-bottom: 1px solid #bdb5b5
 	padding: 0 15px
-	@if ie7
-		overflow: hidden
-	@endif
 
 .menu
 	font-family: $menu_font
 	min-height: 2em
-	margin: 0 0 -10px // fixes h4's margin, see below...
+	margin: 0 0 @is (ie7, 0, -10px) // fixes h4's margin, see below...
 	padding: 5px 0 1px
 
 	li a
@@ -803,7 +804,7 @@ input[type=file]
 	li ul
 		display: block
 		clear: left
-		@if !ie[-8]
+		@if !ie[-7]
 			top: 100%
 		@endif
 		position: absolute
@@ -829,7 +830,7 @@ input[type=file]
 		@if ie6
 			float: left
 		@endif
-		@if !ie[-8]
+		@if !ie[-7]
 			position: relative
 		@endif
 		list-style: none
@@ -1634,7 +1635,9 @@ dl#feed
 	position: fixed
 	z-index: 1
 	left, top: 0
-	background-color: rgba(0,0,0, .2)
+	@if !ie[-8]
+		background-color: rgba(0,0,0, .2)
+	@endif
 	a
 		text-decoration: underline
 
@@ -1647,7 +1650,9 @@ dl#feed
 #helf
 	header extends .wehead
 		padding: 8px
-		overflow: hidden
+		@if !ie7
+			overflow: hidden
+		@endif
 		text-align: center
 		border-radius: 12px 12px 0 0
 		border-bottom: 1px solid #bbb
@@ -1655,7 +1660,9 @@ dl#feed
 		color: #444
 	footer extends .wefoot
 		padding: 8px
-		overflow: hidden
+		@if !ie7
+			overflow: hidden
+		@endif
 		text-align: center
 		border-radius: 0 0 12px 12px
 		border-top: 1px solid #bbb
