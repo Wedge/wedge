@@ -1514,7 +1514,6 @@ function list_getInfractionLogCount()
 	return $totalInfractions;
 }
 
-
 function ModBlockPrefs()
 {
 	global $context, $txt, $user_settings;

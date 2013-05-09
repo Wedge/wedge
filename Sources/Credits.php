@@ -25,7 +25,7 @@ if (!defined('WEDGE'))
  * @param bool $in_admin If calling from the admin panel, this should be true, to prevent loading the template that is normally loaded where this function would be called as a regular action (action=credits)
  */
 
-function Credits($in_admin = false)
+function Credits()
 {
 	global $context, $settings, $forum_copyright, $boardurl, $txt;
 
@@ -155,11 +155,8 @@ function Credits($in_admin = false)
 
 	call_hook('place_credit');
 
-	if (!$in_admin)
-	{
-		loadTemplate('Who');
-		wetem::load('credits');
-		$context['robot_no_index'] = true;
-		$context['page_title'] = $txt['credits_site'];
-	}
+	loadTemplate('Who');
+	wetem::load('credits');
+	$context['robot_no_index'] = true;
+	$context['page_title'] = $txt['credits_site'];
 }

@@ -102,20 +102,21 @@ function getServerVersions($checkFor)
 	if (in_array('imagick', $checkFor))
 	{
 		$data = array();
-		if (media_handler::testIMagick())
+		$test = new media_handler;
+		if ($test->testIMagick())
 		{
 			$data['imagick'] = true;
 			$imagick = new Imagick;
 			$data['imagick_ver'] = $imagick->getVersion();
 			$imv = $data['imagick_ver']['versionString'];
 		}
-		if (media_handler::testMW())
+		if ($test->testMW())
 		{
 			$data['mw'] = true;
 			$data['mw_ver'] = MagickGetVersion();
 			$imv = $data['mw_ver'][0];
 		}
-		if ($im_ver = media_handler::testImageMagick())
+		if ($im_ver = $test->testImageMagick())
 			$imv = $im_ver;
 		if (isset($imv))
 			$versions['imagick'] = array(

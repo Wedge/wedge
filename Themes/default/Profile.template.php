@@ -52,7 +52,14 @@ function template_summary()
 			<div class="flow_auto">
 				<div class="username">
 					<h4>', $context['member']['link'], '</h4>
-					<span class="position">', $context['member'][$group], '</span>
+					<span class="position">', $context['member'][$group], '</span>';
+
+	if (!empty($context['member']['group_badges']))
+		echo '
+					<div>', implode('</div>
+					<div>', $context['member']['group_badges']), '</div>';
+
+	echo '
 				</div>
 				', $context['member']['avatar']['image'], '
 				<ul class="reset">';

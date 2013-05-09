@@ -187,62 +187,6 @@ function template_admin_support_info()
 	</section>';
 }
 
-// Show some support information and credits to those who helped make this.
-function template_credits()
-{
-	global $context, $theme, $options, $txt;
-
-	// Display latest support questions from wedge.org
-	echo '
-		<we:cat>
-			<a href="<URL>?action=help;in=latest_support" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
-			', $txt['support_latest'], '
-		</we:cat>
-		<div class="windowbg2 wrc">
-			<div id="latestSupport">', $txt['support_latest_fetch'], '</div>
-		</div>
-		<we:cat>
-			', $txt['admin_credits'], '
-		</we:cat>
-		<div class="windowbg wrc">';
-
-	// The most important part - the credits. :P
-	foreach ($context['credits'] as $section)
-	{
-		if (isset($section['pretext']))
-			echo '
-			<p>', $section['pretext'], '</p>';
-
-		echo '
-			<dl>';
-
-		foreach ($section['groups'] as $group)
-		{
-			if (empty($group['members']))
-				continue;
-
-			if (isset($group['title']))
-				echo '
-				<dt>
-					<strong>', $group['title'], ':</strong>
-				</dt>';
-
-			echo '
-				<dd>', implode(', ', $group['members']), '</dd>';
-		}
-
-		echo '
-			</dl>';
-
-		if (isset($section['posttext']))
-			echo '
-			<p>', $section['posttext'], '</p>';
-	}
-
-	echo '
-		</div>';
-}
-
 // Displays information about file versions installed, and compares them to current version.
 function template_view_versions()
 {

@@ -733,6 +733,8 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 			LEFT JOIN {db_prefix}attachments AS a ON (a.id_member = mem.id_member)
 			LEFT JOIN {db_prefix}membergroups AS pg ON (pg.id_group = mem.id_post_group)
 			LEFT JOIN {db_prefix}membergroups AS mg ON (mg.id_group = mem.id_group)';
+
+		$get_badges = true;
 	}
 	elseif ($set === 'minimal')
 	{
@@ -763,6 +765,13 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 			LEFT JOIN {db_prefix}membergroups AS pg ON (pg.id_group = mem.id_post_group)
 			LEFT JOIN {db_prefix}membergroups AS mg ON (mg.id_group = mem.id_group)';
 
+		$get_badges = true;
+	}
+	else
+		trigger_error('loadMemberData(): Invalid member data set \'' . $set . '\'', E_USER_WARNING);
+
+	if (isset($get_badges))
+	{
 		// Load cached membergroup badges (or rank images) and when to show them.
 		if (($member_badges = cache_get_data('member-badges', 5000)) === null)
 		{
@@ -783,8 +792,6 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 			cache_put_data('member-badges', $member_badges, 5000);
 		}
 	}
-	else
-		trigger_error('loadMemberData(): Invalid member data set \'' . $set . '\'', E_USER_WARNING);
 
 	if (!empty($users))
 	{
@@ -920,7 +927,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 	}
 
 	// Shall we show member badges..?
-	if (!empty($loaded_ids) && $set === 'userbox')
+	if (!empty($loaded_ids) && isset($get_badges))
 	{
 		// Badge types (show_when):
 		// 0: never show (e.g. a custom user group can't have a badge.)

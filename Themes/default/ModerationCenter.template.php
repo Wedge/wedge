@@ -225,7 +225,7 @@ function template_reported_posts()
 						<a href="<URL>?action=moderate;area=reports', $context['view_closed'] ? ';sa=closed' : '', ';close=', (int) !$report['closed'], ';rid=', $report['id'], ';start=', $context['start'], ';', $context['session_query'], '">', $close_button, '</a>
 						', !$context['view_closed'] ? '<input type="checkbox" name="close[]" value="' . $report['id'] . '">' : '', '
 					</div>
-					<strong><a href="', $report['topic_href'], '">', $report['subject'], '</a></strong> ', $txt['mc_reportedp_by'], ' <strong>', $report['author']['link'], '</strong>
+					<strong><a href="', $report['topic_href'], '">', $report['subject'], '</a></strong> ', $txt['mc_reportedp_by'], ' <strong>', $report['author']['link'], '</strong> (', number_context('mc_reportedp_count', $report['num_reports']), ')
 				</div>
 				<div class="clear smalltext">
 					&#171; ', $txt['mc_reportedp_last_reported'], ': ', $report['last_updated'], ' &#187;<br>';
@@ -358,7 +358,7 @@ function template_viewmodreport()
 	echo '
 				<span class="floatright"><a href="<URL>?action=moderate;area=reports;ignore=', (int) !$context['report']['ignore'], ';rid=', $context['report']['id'], ';', $context['session_query'], '"', !$context['report']['ignore'] ? ' onclick="return ask(' . JavaScriptEscape($txt['mc_reportedp_ignore_confirm']) . ', e);"' : '', '>', $context['report']['ignore'] ? $unignore_button : $ignore_button, '</a></span>
 				<span class="floatright"><a href="<URL>?action=moderate;area=reports;close=', (int) !$context['report']['closed'], ';rid=', $context['report']['id'], ';', $context['session_query'], '">', $close_button, '</a>&nbsp;&nbsp;</span>
-				', sprintf($txt['mc_modreport_summary'], $context['report']['num_reports'], $context['report']['last_updated']), '
+				', number_context('mc_modreport_summary', $context['report']['num_reports']), ' ', sprintf($txt['mc_modreport_lastreport'], $context['report']['last_updated']), '
 			</div>
 			<div class="windowbg wrc">
 				', $context['report']['body'], '
