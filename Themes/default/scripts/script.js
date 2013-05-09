@@ -117,7 +117,7 @@ function reqWin(from, desired_width, string, modal_type, callback, e)
 		title = from && from.href ? $(from).text() : 0,
 		// window.innerHeight doesn't work in oldIE, and $(window).height() sometimes returns the body height in Chrome...
 		viewport_width = $(window).width(),
-		viewport_height = Math.min($(window).height(), screen.height),
+		viewport_height = window.innerHeight || $(window).height(),
 		previous_target = $('#helf').data('src'),
 		close_window = function ()
 		{

@@ -244,6 +244,9 @@ function adminLogin()
 {
 	global $context, $txt;
 
+	if (AJAX)
+		return_raw('<script>location = "', we::$user['url'], '";</script>');
+
 	loadLanguage('Admin');
 	loadTemplate('Login');
 

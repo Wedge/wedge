@@ -38,7 +38,7 @@ function template_popup()
 	<title>', $context['page_title'], '</title>',
 	theme_base_css(), '
 </head>
-<body class="windowbg" id="helf">
+<body id="helf">
 	<header>', $title ? $title : $txt['help'], '</header>
 	<section>
 		', $context['popup_contents'], '
