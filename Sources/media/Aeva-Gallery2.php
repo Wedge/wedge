@@ -2696,7 +2696,7 @@ function aeva_massDownloadCreate()
 		wetem::load('aeva_done');
 		$context['aeva_done_txt'] = sprintf($txt['media_multi_dl_wait'], $_SESSION['aeva_mdl']['num_done'], $compte);
 		$context['header'] .= '
-	<meta http-equiv="refresh" content="2"; url=' . $galurl . 'sa=massdown;do=create">';
+	<meta http-equiv="refresh" content="2; url=\'' . $galurl . 'sa=massdown;do=create\'">';
 	}
 	else
 	{

@@ -47,12 +47,13 @@ function ViewErrorLog()
 {
 	global $scripturl, $txt, $context, $settings, $user_profile, $filter, $boarddir, $themedir;
 
+	// Only admins can view error logs and files.
+	isAllowedTo('admin_forum');
+
 	// Viewing contents of a file?
 	if (isset($_GET['file']))
 		return ViewFile();
 
-	// Check for the administrative permission to do this.
-	isAllowedTo('admin_forum');
 	$context['can_see_ip'] = allowedTo('manage_bans');
 
 	// Templates, etc...
@@ -643,9 +644,6 @@ function updateErrorCount($count = 0)
 function ViewFile()
 {
 	global $context, $txt, $boarddir, $sourcedir, $cachedir;
-
-	// Only admins can view files
-	isAllowedTo('admin_forum');
 
 	// Decode the file and get the line
 	$file = realpath(base64_decode($_REQUEST['file']));
