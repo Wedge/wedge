@@ -542,14 +542,22 @@ function cleanXml($string)
 }
 
 /**
- * Helper functions to return an Ajax request, either xml, JS object or plain text, bypassing the skeleton system.
- * return_raw() is a special case; as it's meant to return short strings, it bypasses ob_sessrewrite.
+ * Helper functions to return an Ajax request, either xml, JS object or plain text, bypassing the skeleton system
+ * but going through post-processing (ob_sessrewrite), except for return_raw() which skips everything.
  */
 function return_raw()
 {
 	header('Content-Type: text/plain; charset=UTF-8');
 	$args = func_get_args();
 	exit(implode('', $args));
+}
+
+function return_callback($callback, $args = array())
+{
+	clean_output();
+	header('Content-Type: text/plain; charset=UTF-8');
+	echo ($ret = call_user_func_array($callback, $args)) ? $ret : '';
+	exit();
 }
 
 function return_text()

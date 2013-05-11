@@ -14,79 +14,62 @@
 
 function wePersonalMessageSend(opt)
 {
-	this.opt = opt;
-	var that = this;
-
-	this.oToAutoSuggest = null;
-	this.oBccAutoSuggest = null;
-
-	if (!this.opt.bBccShowByDefault)
+	if (!opt.bBccShowByDefault)
 	{
 		// Hide the BCC control.
-		$('#' + this.opt.sBccDivId + ', #' + this.opt.sBccDivId2).hide();
+		$('#' + opt.sBccDivId + ', #' + opt.sBccDivId2).hide();
 
 		// Show the link to set the BCC control back.
-		$('#' + this.opt.sBccLinkContainerId).show();
+		$('#' + opt.sBccLinkContainerId).show();
 
 		// Make the link show the BCC control.
-		$('#' + this.opt.sBccLinkId).click( function() { return that.showBcc(); } );
+		$('#' + opt.sBccLinkId).click(function() {
+			$('#' + opt.sBccDivId + ', #' + opt.sBccDivId2).show();
+			return false;
+		});
 	}
 
-	this.oToAutoSuggest = new weAutoSuggest({
-		bItemList: true,
-		sControlId: this.opt.sToControlId,
-		sPostName: 'recipient_to',
-		aListItems: this.opt.aToRecipients
-	});
-	this.oToAutoSuggest.registerCallback('onBeforeAddItem', function (sSuggestId) { return that.onAddItem(sSuggestId); });
+	var
+		oToAutoSuggest = new weAutoSuggest({
+			bItemList: true,
+			sControlId: opt.sToControlId,
+			sPostName: 'recipient_to',
+			aListItems: opt.aToRecipients
+		}),
+		oBccAutoSuggest = new weAutoSuggest({
+			bItemList: true,
+			sControlId: opt.sBccControlId,
+			sPostName: 'recipient_bcc',
+			aListItems: opt.aBccRecipients
+		});
 
-	this.oBccAutoSuggest = new weAutoSuggest({
-		bItemList: true,
-		sControlId: this.opt.sBccControlId,
-		sPostName: 'recipient_bcc',
-		aListItems: this.opt.aBccRecipients
+	oToAutoSuggest.registerCallback('onBeforeAddItem', function (sSuggestId) {
+		// Prevent items to be added twice or to both the 'To' and 'Bcc'.
+		oToAutoSuggest.deleteAddedItem(sSuggestId);
+		oBccAutoSuggest.deleteAddedItem(sSuggestId);
+		return true;
 	});
-	this.oBccAutoSuggest.registerCallback('onBeforeAddItem', function (sSuggestId) { return that.onAddItem(sSuggestId); });
+	oBccAutoSuggest.registerCallback('onBeforeAddItem', function (sSuggestId) {
+		// Prevent items to be added twice or to both the 'To' and 'Bcc'.
+		oToAutoSuggest.deleteAddedItem(sSuggestId);
+		oBccAutoSuggest.deleteAddedItem(sSuggestId);
+		return true;
+	});
 
-	// Is there a contact list?
-	if (this.opt.sContactList != '')
-		this.initContacts(this.opt.sObject);
+	// Is there a contact list? If not, a search on $('# tr') will return an empty set anyway.
+	$('#' + opt.sContactList + ' tr').each(function () {
+		var that = $(this);
+		$('<td/>')
+			.append($('<input type="button" class="to">').val($txt['pm_to']).click(function () {
+				oToAutoSuggest.addItemLink(that.data('uid'), that.data('name'), false);
+			}))
+			.append($('<input type="button" class="bcc">').val($txt['pm_bcc']).click(function () {
+				$('#' + opt.sBccDivId + ', #' + opt.sBccDivId2).show();
+				oBccAutoSuggest.addItemLink(that.data('uid'), that.data('name'), false);
+			}))
+			.appendTo(this);
+	});
 }
-
-wePersonalMessageSend.prototype.showBcc = function ()
-{
-	// No longer hide it, show it to the world!
-	$('#' + this.opt.sBccDivId + ', #' + this.opt.sBccDivId2).show();
-	return false;
-};
-
-wePersonalMessageSend.prototype.onAddItem = function (sSuggestId)
-{
-	// Prevent items to be added twice or to both the 'To' and 'Bcc'.
-	this.oToAutoSuggest.deleteAddedItem(sSuggestId);
-	this.oBccAutoSuggest.deleteAddedItem(sSuggestId);
-
-	return true;
-};
-
-wePersonalMessageSend.prototype.initContacts = function (sObject)
-{
-	$('#' + this.opt.sContactList + ' tr').each(function () {
-		$(this).append('<td><input type="button" value="' + $txt['pm_to'] + '" class="to" onclick="' + sObject + '.addContact(\'to\', ' + $(this).data('uid') + ', \'' + $(this).data('name') + '\');"></td>');
-		$(this).append('<td><input type="button" value="' + $txt['pm_bcc'] + '" class="bcc" onclick="' + sObject + '.addContact(\'bcc\', ' + $(this).data('uid') + ', \'' + $(this).data('name') + '\');"></td>');
-	});
-};
-
-wePersonalMessageSend.prototype.addContact = function (where, uid, name)
-{
-	if (where == 'to')
-		this.oToAutoSuggest.addItemLink(uid, name, false);
-	else if (where == 'bcc')
-	{
-		this.showBcc();
-		this.oBccAutoSuggest.addItemLink(uid, name, false);
-	}
-};
 
 function expandCollapseLabels()
 {

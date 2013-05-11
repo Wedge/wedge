@@ -250,13 +250,13 @@ weAutoSuggest.prototype.removeLastSearchString = function ()
 // Add a result if not already done.
 weAutoSuggest.prototype.addItemLink = function (sItemId, sItemName, bFromSubmit)
 {
-	// Increase the internal item count.
-	this.iItemCount++;
-
 	// If there's a callback then call it. If it returns false, the item must not be added.
 	if (this.oCallback && this.oCallback.onBeforeAddItem)
-		if (!this.oCallback.onBeforeAddItem.call(sItemId))
+		if (!this.oCallback.onBeforeAddItem.call(this, sItemId))
 			return;
+
+	// Increase the internal item count.
+	this.iItemCount++;
 
 	var that = this, eid = 'suggest_' + this.opt.sControlId + '_' + sItemId;
 	if (!$('#' + eid).length)

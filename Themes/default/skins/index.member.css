@@ -160,7 +160,7 @@ for guests, because most of the time it won't be an option.
 #contactlist
 	margin-left: 2em
 	div
-		overflow-y: scroll
+		overflow-y: auto
 		max-height: 120px
 	.to
 		margin-left: 1em
