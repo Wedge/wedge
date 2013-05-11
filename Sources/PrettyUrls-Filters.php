@@ -20,7 +20,7 @@
 	Subdomains and current development:		Nao
 
 	None of this code was written by anyone else, specifically
-	not anyone associated with Wedge. JUST SO WE'RE CLEAR! >8D
+	anyone not associated with Wedge. JUST SO WE'RE CLEAR! >8D
 */
 
 if (!defined('WEDGE'))

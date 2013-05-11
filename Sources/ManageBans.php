@@ -327,7 +327,7 @@ function BanListAdd()
 
 	add_js_file('scripts/suggest.js');
 	add_js('
-	oToAutoSuggest = new weAutoSuggest({
+	new weAutoSuggest({
 		bItemList: true,
 		sControlId: \'ban_id_member_content\',
 		sPostName: \'ban_id_member_content\',

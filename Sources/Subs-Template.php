@@ -486,7 +486,7 @@ function ob_sessrewrite($buffer)
 		if (count($urls_query) != 0)
 		{
 			// Eliminate duplicate URLs.
-			$urls_query = array_keys(array_flip($urls_query));
+			$urls_query = array_flip(array_flip($urls_query));
 
 			// Retrieve cached URLs
 			$cached_urls = array();
@@ -516,11 +516,10 @@ function ob_sessrewrite($buffer)
 				// Run each filter callback function on each URL
 				loadSource('PrettyUrls-Filters');
 
-				foreach ($settings['pretty_filters'] as $id => $enabled)
+				foreach (array_filter($settings['pretty_filters']) as $id => $dummy)
 				{
 					$func = 'pretty_filter_' . $id;
-					if ($enabled)
-						$func($uncached_urls);
+					$func($uncached_urls);
 				}
 
 				// Fill the cached URLs array

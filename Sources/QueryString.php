@@ -172,9 +172,9 @@ function cleanRequest()
 			// URL has the form domain.com/profile/User?
 			if (preg_match('~/' . (isset($settings['pretty_prefix_profile']) ? $settings['pretty_prefix_profile'] : 'profile/') . '([^/?]*)~', $query_string, $m))
 			{
-				if (empty($m[1]))
+				if (empty($m[1]) && empty($_GET['u']))
 					$_GET['u'] = 0;
-				else
+				elseif (empty($_GET['u']))
 					$_GET['user'] = urldecode($m[1]);
 				$_GET['action'] = 'profile';
 			}
