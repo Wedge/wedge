@@ -351,7 +351,7 @@ class xmlArray
 						);
 				}
 				// If we're looking at a </something> with no start, kill it.
-				elseif (strpos($data, '<') !== false && strpos($data, '<') == 0)
+				elseif ($data[0] === '<')
 				{
 					if (strpos($data, '<', 1) !== false)
 					{

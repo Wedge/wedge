@@ -552,11 +552,12 @@ function return_raw()
 	exit(implode('', $args));
 }
 
+// The callback function can return a value to print, or simply echo it by itself and return nothing.
 function return_callback($callback, $args = array())
 {
 	clean_output();
 	header('Content-Type: text/plain; charset=UTF-8');
-	echo ($ret = call_user_func_array($callback, $args)) ? $ret : '';
+	echo call_user_func_array($callback, $args);
 	exit();
 }
 

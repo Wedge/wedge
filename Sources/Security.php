@@ -706,10 +706,10 @@ function isBannedEmail($email, $error, $return = false)
 					$user = str_replace('.', '', $user);
 			}
 
-			if ($user == '*')
+			if ($user === '*')
 				$ban['domain'] = $domain;
-			elseif (strpos($domain, '*') === 0)
-				$ban['tld'] = '~' . preg_quote(ltrim($domain, '*'), '~') . '$~';
+			elseif ($domain[0] === '*')
+				$ban['tld'] = '~' . preg_quote(substr($domain, 1), '~') . '$~';
 			elseif (strpos($user, '*') !== false)
 			{
 				list ($b, $a) = explode('*', $user);

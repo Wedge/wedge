@@ -150,7 +150,7 @@ function ViewErrorLog()
 			'time' => timeformat($row['log_time']),
 			'timestamp' => $row['log_time'],
 			'url' => array(
-				'html' => htmlspecialchars((strpos($row['url'], '?') === 0 ? $scripturl : '') . $row['url']),
+				'html' => htmlspecialchars(($row['url'][0] === '?' ? $scripturl : '') . $row['url']),
 				'href' => base64_encode(wesql::escape_wildcard_string($row['url']))
 			),
 			'message' => array(
@@ -438,7 +438,7 @@ function ViewIntrusionLog()
 			'timestamp' => $row['event_time'],
 			'http_method' => $row['http_method'],
 			'request_uri' => array(
-				'html' => htmlspecialchars((strpos($row['request_uri'], '?') === 0 ? $scripturl : '') . $row['request_uri']),
+				'html' => htmlspecialchars(($row['request_uri'][0] === '?' ? $scripturl : '') . $row['request_uri']),
 				'href' => base64_encode(wesql::escape_wildcard_string($row['request_uri']))
 			),
 			'protocol' => array(

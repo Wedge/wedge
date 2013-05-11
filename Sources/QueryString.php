@@ -125,7 +125,7 @@ function cleanRequest()
 			}
 
 			// This helps a lot with integration!
-			if (strpos($k, '?') === 0)
+			if ($k[0] === '?')
 			{
 				$_GET[substr($k, 1)] = $v;
 				unset($_GET[$k]);
