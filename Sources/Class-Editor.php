@@ -134,7 +134,7 @@ class wedit
 		// What tags do we allow?
 		$allowed_tags = array('b', 'u', 'i', 's', 'hr', 'list', 'li', 'font', 'size', 'color', 'img', 'left', 'center', 'right', 'url', 'email', 'ftp', 'sub', 'sup');
 
-		$text = parse_bbc($text, true, '', $allowed_tags);
+		$text = parse_bbc($text, array('parse_tags' => $allowed_tags, 'parse_type' => 'post-convert'));
 
 		// Fix for having a line break then a thingy.
 		$text = strtr($text, array('<br><div' => '<div', "\n" => '', "\r" => ''));
@@ -2542,9 +2542,18 @@ class wedit
 					}
 
 					// Font sizes anyone?
-					if (!isset($this->disabled_tags['size']))
-						$js .= ',
-				["select", "sel_size", { "": ' . JavaScriptEscape($txt['font_size']) . ', 1: "6pt", 2: "8pt", 3: "10pt", 4: "12pt", 5: "14pt", 6: "18pt", 7: "24pt" }]';
+					if (!isset($this->disabled_tags['size']) && !empty($settings['editorSizes']))
+					{
+						$fonts = array_filter(array_map('trim', preg_split('~[\s,]+~', $settings['editorSizes'])));
+						if (!empty($fonts))
+						{
+							$js .= ',
+				["select", "sel_size", { "": ' . JavaScriptEscape($txt['font_size']);
+							foreach ($fonts as $k => $v)
+								$js .= ', ' . ($k + 1) . ': "' . $v . '"';
+							$js .= '}]';
+						}
+					}
 
 					// Print a drop down list for all the colors we allow!
 					if (!isset($this->disabled_tags['color']))

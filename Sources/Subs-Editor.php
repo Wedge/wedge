@@ -285,7 +285,7 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 			$question = array_shift($row);
 			$thisVerification['questions'][] = array(
 				'id' => $q_id,
-				'q' => parse_bbc($question),
+				'q' => parse_bbc($question, array('parse_type' => 'q-and-a')),
 				'is_error' => !empty($incorrectQuestions) && in_array($q_id, $incorrectQuestions),
 				'a' => isset($_REQUEST[$verificationOptions['id'] . '_vv'], $_REQUEST[$verificationOptions['id'] . '_vv']['q'], $_REQUEST[$verificationOptions['id'] . '_vv']['q'][$q_id]) ? westr::htmlspecialchars($_REQUEST[$verificationOptions['id'] . '_vv']['q'][$q_id], ENT_QUOTES) : '',
 			);

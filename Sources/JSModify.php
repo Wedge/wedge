@@ -125,7 +125,7 @@ function JSModify()
 
 			wedit::preparsecode($_POST['message']);
 
-			if (westr::htmltrim(strip_tags(parse_bbc($_POST['message'], false), '<img><object><embed><iframe><video><audio>')) === '')
+			if (westr::htmltrim(strip_tags(parse_bbc($_POST['message'], array('smileys' => false, 'parse_type' => 'empty-test')), '<img><object><embed><iframe><video><audio>')) === '')
 			{
 				$post_errors[] = 'no_message';
 				unset($_POST['message']);
@@ -238,7 +238,7 @@ function JSModify()
 		censorText($message['subject']);
 		censorText($message['body']);
 
-		$message['body'] = parse_bbc($message['body'], $row['smileys_enabled'], $row['id_msg']);
+		$message['body'] = parse_bbc($message['body'], array('smileys' => $row['smileys_enabled'], 'cache' => $row['id_msg'], 'owner' => $msgOptions['modify_member'], 'parse_type' => 'post'));
 	}
 	// Topic?
 	elseif (empty($post_errors))

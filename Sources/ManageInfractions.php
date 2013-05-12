@@ -480,6 +480,7 @@ function getInfractionLevels()
 	$context['infraction_levels'] = array(
 		'no_avatar' => array('points' => 20, 'enabled' => false),
 		'no_sig' => array('points' => 20, 'enabled' => false),
+		'scramble' => array('points' => 35, 'enabled' => false),
 		'disemvowel' => array('points' => 40, 'enabled' => false),
 		'moderate' => array('points' => 45, 'enabled' => false),
 		'post_ban' => array('points' => 70, 'enabled' => false),

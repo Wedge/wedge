@@ -327,7 +327,7 @@ function ssi_queryPosts($query_where = '', $query_where_params = array(), $query
 	$posts = array();
 	while ($row = wesql::fetch_assoc($request))
 	{
-		$row['body'] = parse_bbc($row['body'], $row['smileys_enabled'], $row['id_msg']);
+		$row['body'] = parse_bbc($row['body'], array('smileys' => $row['smileys_enabled'], 'cache' => $row['id_msg']));
 
 		// Censor it!
 		censorText($row['subject']);
@@ -473,7 +473,7 @@ function ssi_recentTopics($num_recent = 8, $exclude_boards = null, $include_boar
 	{
 		if (!$just_titles)
 		{
-			$row['body'] = strip_tags(strtr(parse_bbc($row['body'], $row['smileys_enabled'], $row['id_msg']), array('<br />' => '&#10;')));
+			$row['body'] = strip_tags(strtr(parse_bbc($row['body'], array('smileys' => $row['smileys_enabled'], 'cache' => $row['id_msg'], 'parse_type' => 'post-preview')), array('<br />' => '&#10;')));
 			if (westr::strlen($row['body']) > 128)
 				$row['body'] = westr::substr($row['body'], 0, 128) . '...';
 		}
@@ -1132,7 +1132,7 @@ function ssi_recentPoll($topPollInstead = false, $output_method = 'echo')
 	$return = array(
 		'id' => $row['id_poll'],
 		'image' => 'poll',
-		'question' => $row['question'],
+		'question' => parse_bbc($row['question'], array('poll-question')),
 		'total_votes' => $total,
 		'is_locked' => false,
 		'topic' => $row['id_topic'],
@@ -1150,7 +1150,7 @@ function ssi_recentPoll($topPollInstead = false, $output_method = 'echo')
 			'percent' => $bar,
 			'votes' => $option[1],
 			'bar' => '<span class="nowrap"><img src="' . $theme['images_url'] . '/poll_' . ($context['right_to_left'] ? 'right' : 'left') . '.gif" /><img src="' . $theme['images_url'] . '/poll_middle.gif" width="' . $barWide . '" height="12" alt="-" /><img src="' . $theme['images_url'] . '/poll_' . ($context['right_to_left'] ? 'left' : 'right') . '.gif" /></span>',
-			'option' => parse_bbc($option[0]),
+			'option' => parse_bbc($option[0], array('parse_type' => 'poll-option')),
 			'vote_button' => '<input type="' . ($row['max_votes'] > 1 ? 'checkbox' : 'radio') . '" name="options[]" value="' . $i . '">'
 		);
 	}
@@ -1281,10 +1281,10 @@ function ssi_showPoll($topic = null, $output_method = 'echo')
 
 	$return = array(
 		'id' => $row['id_poll'],
-		'image' => empty($pollinfo['voting_locked']) ? 'poll' : 'locked_poll',
-		'question' => $row['question'],
+		'image' => empty($row['voting_locked']) ? 'poll' : 'locked_poll',
+		'question' => parse_bbc($row['question'], array('parse_type' => 'poll-question')),
 		'total_votes' => $total,
-		'is_locked' => !empty($pollinfo['voting_locked']),
+		'is_locked' => !empty($row['voting_locked']),
 		'allow_vote' => $allow_vote,
 		'allow_view_results' => $allow_view_results,
 		'topic' => $topic
@@ -1300,7 +1300,7 @@ function ssi_showPoll($topic = null, $output_method = 'echo')
 			'percent' => $bar,
 			'votes' => $option[1],
 			'bar' => '<span class="nowrap"><img src="' . $theme['images_url'] . '/poll_' . ($context['right_to_left'] ? 'right' : 'left') . '.gif" alt="" /><img src="' . $theme['images_url'] . '/poll_middle.gif" width="' . $barWide . '" height="12" alt="-" /><img src="' . $theme['images_url'] . '/poll_' . ($context['right_to_left'] ? 'left' : 'right') . '.gif" alt="" /></span>',
-			'option' => parse_bbc($option[0]),
+			'option' => parse_bbc($option[0], array('parse_type' => 'poll-option')),
 			'vote_button' => '<input type="' . ($row['max_votes'] > 1 ? 'checkbox' : 'radio') . '" name="options[]" value="' . $i . '">'
 		);
 	}
@@ -1603,7 +1603,7 @@ function ssi_boardNews($board = null, $limit = null, $start = null, $length = nu
 			$row['body'] .= '...';
 		}
 
-		$row['body'] = parse_bbc($row['body'], $row['smileys_enabled'], $row['id_msg']);
+		$row['body'] = parse_bbc($row['body'], array('smileys' => $row['smileys_enabled'], 'cache' => $row['id_msg'], 'parse_type' => 'post', 'owner' => $row['id_member']));
 
 		// Check that this message icon is there...
 		if (!empty($settings['messageIconChecks_enable']) && !isset($icon_sources[$row['icon']]))

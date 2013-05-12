@@ -992,8 +992,8 @@ function prepareMessageContext($type = 'subject', $reset = false)
 	if (!empty($message['subject']))
 		$last_subject = $message['subject'];
 
-	// Run UBBC interpreter on the message.
-	$message['body'] = parse_bbc($message['body'], true, 'pm' . $message['id_pm']);
+	// Run BBC interpreter on the message.
+	$message['body'] = parse_bbc($message['body'], array('cache' => 'pm' . $message['id_pm'], 'parse_type' => 'pm'));
 
 	// Send the array.
 	$output = array(
@@ -1541,7 +1541,7 @@ function MessageSearch2()
 			censorText($row['subject']);
 
 			// Parse out any BBC...
-			$row['body'] = parse_bbc($row['body'], true, 'pm' . $row['id_pm']);
+			$row['body'] = parse_bbc($row['body'], array('cache' => 'pm' . $row['id_pm'], 'parse_type' => 'pm'));
 
 			$href = '<URL>?action=pm;f=' . $context['folder'] . (isset($context['first_label'][$row['id_pm']]) ? ';l=' . $context['first_label'][$row['id_pm']] : '') . ';pmid=' . ($context['display_mode'] == 2 && isset($real_pm_ids[$head_pms[$row['id_pm']]]) ? $real_pm_ids[$head_pms[$row['id_pm']]] : $row['id_pm']) . '#msg' . $row['id_pm'];
 			$is_replied_to =& $context['message_replied'][$row['id_pm']];
@@ -1693,7 +1693,7 @@ function MessagePost()
 			$form_message = '';
 
 		// Do the BBC thang on the message.
-		$row_quoted['body'] = parse_bbc($row_quoted['body'], true, 'pm' . $row_quoted['id_pm']);
+		$row_quoted['body'] = parse_bbc($row_quoted['body'], array('cache' => 'pm' . $row_quoted['id_pm'], 'parse_type' => 'pm'));
 
 		// Set up the quoted message array.
 		$context['quoted_message'] = array(
@@ -1991,7 +1991,7 @@ function messagePostError($error_types, $named_recipients, $recipient_ids = arra
 			'subject' => $row_quoted['subject'],
 			'on_time' => on_timeformat($row_quoted['msgtime']),
 			'timestamp' => forum_time(true, $row_quoted['msgtime']),
-			'body' => parse_bbc($row_quoted['body'], true, 'pm' . $row_quoted['id_pm']),
+			'body' => parse_bbc($row_quoted['body'], array('cache' => 'pm' . $row_quoted['id_pm'], 'parse_type' => 'pm')),
 		);
 	}
 
@@ -2185,7 +2185,7 @@ function MessagePost2()
 		wedit::preparsecode($message);
 
 		// Make sure there's still some content left without the tags.
-		if (westr::htmltrim(strip_tags(parse_bbc(westr::htmlspecialchars($message, ENT_QUOTES), false), '<img><object><embed><iframe><video><audio>')) === '' && (!allowedTo('admin_forum') || strpos($message, '[html]') === false))
+		if (westr::htmltrim(strip_tags(parse_bbc(westr::htmlspecialchars($message, ENT_QUOTES), array('smileys' => false, 'parse_type' => 'empty-test')), '<img><object><embed><iframe><video><audio>')) === '' && (!allowedTo('admin_forum') || strpos($message, '[html]') === false))
 			$post_errors[] = 'no_message';
 	}
 
@@ -2215,7 +2215,7 @@ function MessagePost2()
 		wedit::preparsecode($context['preview_message'], true);
 
 		// Parse out the BBC if it is enabled.
-		$context['preview_message'] = parse_bbc($context['preview_message']);
+		$context['preview_message'] = parse_bbc($context['preview_message'], array('parse_type' => 'preview-pm'));
 
 		// Censor, as always.
 		censorText($context['preview_subject']);
@@ -3778,7 +3778,7 @@ function MessageDrafts()
 		censorText($row['subject']);
 
 		// Do the code.
-		$row['body'] = parse_bbc($row['body'], empty($row['extra']['smileys_enabled']) ? 0 : 1, 'draft' . $row['id_draft']);
+		$row['body'] = parse_bbc($row['body'], array('smileys' => !empty($row['extra']['smileys_enabled']), 'cache' => 'pmdraft' . $row['id_draft'], 'parse_type' => 'pm-draft'));
 
 		// And the array...
 		$context['posts'][$counter += $reverse ? -1 : 1] = array(

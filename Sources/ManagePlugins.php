@@ -367,7 +367,7 @@ function PluginReadme()
 			$name = '<h6>' . $name . '</h6>';
 		}
 
-		$context['popup_contents'] = $name . parse_bbc($contents);
+		$context['popup_contents'] = $name . parse_bbc($contents, array('parse_type' => 'plugin-readme'));
 	}
 	else
 		$context['popup_contents'] = $txt['invalid_plugin_readme'];

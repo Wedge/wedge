@@ -498,7 +498,7 @@ function aeva_home()
 	// Templates
 	wetem::load('aeva_home');
 
-	$context['aeva_welcome'] = parse_bbc(!empty($amSettings['welcome']) ? $amSettings['welcome'] : (isset($txt['media_welcome']) ? $txt['media_welcome'] : $txt['media_default_welcome']));
+	$context['aeva_welcome'] = parse_bbc(!empty($amSettings['welcome']) ? $amSettings['welcome'] : (isset($txt['media_welcome']) ? $txt['media_welcome'] : $txt['media_default_welcome']), array('parse_type' => 'media-welcome'));
 
 	if (we::$is_admin)
 	{
@@ -954,7 +954,7 @@ function aeva_viewItem()
 				'id_comment' => $row['id_comment'],
 				'members' => $row['id_member'],
 				'member' => array('id' => 0),
-				'message' => parse_bbc($row['message']),
+				'message' => parse_bbc($row['message'], array('parse_type' => 'media-comment')),
 				'posted_on' => timeformat($row['posted_on']),
 				'is_edited' => !empty($row['last_edited']) && $row['last_edited'] != '0',
 				'last_edited' => array(
@@ -1063,7 +1063,7 @@ function aeva_viewItem()
 	if ($context['aeva_album']['hidden'])
 		$amSettings['prev_next'] = -1;
 
-	$item_data['description'] = empty($item_data['description']) ? '' : parse_bbc($item_data['description']);
+	$item_data['description'] = empty($item_data['description']) ? '' : parse_bbc($item_data['description'], array('parse_type' => 'media-description'));
 
 	// We need to get the embed object now
 	$item_data['extra_info'] = array();

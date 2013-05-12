@@ -2193,6 +2193,7 @@ VALUES
 	('autoFixDatabase', '1'),
 	('allow_guestAccess', '1'),
 	('enableBBC', '1'),
+	('editorSizes', '6pt\n8pt\n10pt\n12pt\n14pt\n18pt\n24pt'),
 	('editorFonts', 'Courier New\nArial\nImpact\nVerdana\nTimes New Roman\nGeorgia\nTrebuchet MS\nSegoe UI'),
 	('max_messageLength', '20000'),
 	('signature_settings', '1,300,0,0,0,0,0,0:'),

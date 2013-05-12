@@ -68,6 +68,7 @@ function ManagePostSettings()
 		'posts' => 'ModifyPostSettings',
 		'topics' => 'ModifyTopicSettings',
 		'bbc' => 'ModifyBBCSettings',
+		'editor' => 'ModifyPostEditorSettings',
 		'censor' => 'SetCensor',
 		'drafts' => 'ModifyDraftSettings',
 		'merge' => 'ModifyMergeSettings',
@@ -92,6 +93,9 @@ function ManagePostSettings()
 			),
 			'bbc' => array(
 				'description' => $txt['manageposts_bbc_settings_description'],
+			),
+			'editor' => array(
+				'description' => $txt['manageposts_editor_settings_description'],
 			),
 			'censor' => array(
 				'description' => $txt['admin_censored_desc'],
@@ -200,7 +204,6 @@ function ModifyPostSettings($return_config = false)
 			array('check', 'removeNestedQuotes'),
 			array('check', 'enableEmbeddedFlash', 'subtext' => $txt['enableEmbeddedFlash_warning']),
 			array('check', 'additional_options_collapsable'),
-			array('check', 'disable_wysiwyg'),
 		'',
 			// Posting limits...
 			array('int', 'max_messageLength', 'subtext' => $txt['max_messageLength_zero'], 'postinput' => $txt['manageposts_characters']),
@@ -251,7 +254,6 @@ function ModifyBBCSettings($return_config = false)
 			// Main tweaks
 			array('check', 'enableBBC'),
 			array('check', 'enablePostHTML'),
-			array('large_text', 'editorFonts', 'subtext' => $txt['editorFonts_subtext']),
 			array('check', 'autoLinkUrls'),
 		'',
 			array('bbc', 'disabledBBC'),
@@ -292,6 +294,45 @@ function ModifyBBCSettings($return_config = false)
 	$context['post_url'] = '<URL>?action=admin;area=postsettings;save;sa=bbc';
 	$context['settings_title'] = $txt['manageposts_bbc_settings_title'];
 
+	prepareDBSettingContext($config_vars);
+}
+
+// Options for the editor
+function ModifyPostEditorSettings($return_config = false)
+{
+	global $context, $txt, $settings, $db_prefix;
+
+	$context['page_title'] = $context['settings_title'] = $txt['manageposts_editor_settings_title'];
+
+	// All the settings...
+	$config_vars = array(
+			array('check', 'disable_wysiwyg'),
+			array('large_text', 'editorSizes', 'subtext' => $txt['editorSizes_subtext']),
+			array('large_text', 'editorFonts', 'subtext' => $txt['editorFonts_subtext']),
+	);
+
+	if ($return_config)
+		return $config_vars;
+
+	// We'll want this for our easy save.
+	loadSource('ManageServer');
+
+	// Setup the template.
+	wetem::load('show_settings');
+
+	// Are we saving them - are we??
+	if (isset($_GET['save']))
+	{
+		checkSession();
+
+		saveDBSettings($config_vars);
+		redirectexit('action=admin;area=postsettings;sa=editor');
+	}
+
+	// Final settings...
+	$context['post_url'] = '<URL>?action=admin;area=postsettings;save;sa=editor';
+
+	// Prepare the settings...
 	prepareDBSettingContext($config_vars);
 }
 

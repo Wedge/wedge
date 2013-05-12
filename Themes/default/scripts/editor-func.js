@@ -199,7 +199,7 @@ function weButtonBox(opt)
 {
 	this.opt = opt;
 
-	var sBbcContent = '';
+	var sBbcContent = '', fontsizes;
 	$.each(opt.aButtonRows, function (iButtonRowIndex)
 	{
 		var sRowContent = '', bPreviousWasDivider = false;
@@ -238,7 +238,10 @@ function weButtonBox(opt)
 					if (this[1] == 'sel_face')
 						optname = '<span style="font-family: %opt%">%opt%</span>';
 					else if (this[1] == 'sel_size')
+					{
 						optname = '<span style="font-size: %opt%">%opt%</span>';
+						fontsizes = this[2];
+					}
 					else if (this[1] == 'sel_color')
 						optname = '<span style="color: %val%">&diams;</span> %opt%';
 					if (sSelectValue != '')
@@ -267,6 +270,7 @@ function weButtonBox(opt)
 		});
 	});
 
+	this.aFontSizes = fontsizes;
 	$('#' + opt.sContainer).html(sBbcContent).find('select').sb();
 
 	var that = this;

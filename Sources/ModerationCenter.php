@@ -332,7 +332,7 @@ function ModBlockNotes()
 				'link' => $note['id_member'] ? ('<a href="<URL>?action=profile;u=' . $note['id_member'] . '" title="' . strip_tags(on_timeformat($note['log_time'])) . '">' . $note['member_name'] . '</a>') : $note['member_name'],
 			),
 			'time' => timeformat($note['log_time']),
-			'text' => parse_bbc($note['body']),
+			'text' => parse_bbc($note['body'], array('parse_type' => 'mod-note', 'owner' => $note['id_member'])),
 			'delete_href' => '<URL>?action=moderate;area=index;notes;delete=' . $note['id_note'] . ';' . $context['session_query'],
 		);
 	}
@@ -580,7 +580,7 @@ function ReportedPosts()
 			'time_started' => timeformat($row['time_started']),
 			'last_updated' => timeformat($row['time_updated']),
 			'subject' => $row['subject'],
-			'body' => parse_bbc($row['body']),
+			'body' => parse_bbc($row['body'], array('parse_type' => 'report-post', 'owner' => $row['id_author'])),
 			'num_reports' => $row['num_reports'],
 			'closed' => $row['closed'],
 			'ignore' => $row['ignore_all']
@@ -774,7 +774,7 @@ function ModReport()
 		'time_started' => timeformat($row['time_started']),
 		'last_updated' => timeformat($row['time_updated']),
 		'subject' => $row['subject'],
-		'body' => parse_bbc($row['body']),
+		'body' => parse_bbc($row['body'], array('parse_type' => 'report-post', 'owner' => $row['id_author'])),
 		'num_reports' => $row['num_reports'],
 		'closed' => $row['closed'],
 		'ignore' => $row['ignore_all']
@@ -825,7 +825,7 @@ function ModReport()
 	{
 		$context['report']['mod_comments'][] = array(
 			'id' => $row['id_comment'],
-			'message' => parse_bbc($row['body']),
+			'message' => parse_bbc($row['body'], array('parse_type' => 'mod-comment', 'owner' => $row['id_member'])),
 			'time' => timeformat($row['log_time']),
 			'member' => array(
 				'id' => $row['id_member'],
@@ -1312,7 +1312,7 @@ function list_getWatchedUserPosts($start, $items_per_page, $sort, $approve_query
 			'id_topic' => $row['id_topic'],
 			'author_link' => '<a href="<URL>?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>',
 			'subject' => $row['subject'],
-			'body' => parse_bbc($row['body'], $row['smileys_enabled'], $row['id_msg']),
+			'body' => parse_bbc($row['body'], array('smileys' => $row['smileys_enabled'], 'cache' => $row['id_msg'], 'parse_type' => 'post', 'owner' => $row['id_member'])),
 			'poster_time' => timeformat($row['poster_time']),
 			'approved' => $row['approved'],
 			'can_delete' => $delete_boards == array(0) || in_array($row['id_board'], $delete_boards),

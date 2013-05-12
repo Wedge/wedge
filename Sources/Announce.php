@@ -169,7 +169,7 @@ function AnnouncementSend()
 
 	// Get the topic subject and censor it.
 	$request = wesql::query('
-		SELECT m.id_msg, m.subject, m.body
+		SELECT m.id_msg, m.subject, m.body, m.id_member
 		FROM {db_prefix}topics AS t
 			INNER JOIN {db_prefix}messages AS m ON (m.id_msg = t.id_first_msg)
 		WHERE t.id_topic = {int:current_topic}',
@@ -177,13 +177,13 @@ function AnnouncementSend()
 			'current_topic' => $topic,
 		)
 	);
-	list ($id_msg, $context['topic_subject'], $message) = wesql::fetch_row($request);
+	list ($id_msg, $context['topic_subject'], $message, $owner) = wesql::fetch_row($request);
 	wesql::free_result($request);
 
 	censorText($context['topic_subject']);
 	censorText($message);
 
-	$message = trim(un_htmlspecialchars(strip_tags(strtr(parse_bbc($message, false, $id_msg), array('<br>' => "\n", '</div>' => "\n", '</li>' => "\n", '&#91;' => '[', '&#93;' => ']')))));
+	$message = trim(un_htmlspecialchars(strip_tags(strtr(parse_bbc($message, array('smileys' => false, 'cache' => $id_msg, 'parse_type' => 'post', 'owner' => $owner)), array('<br>' => "\n", '</div>' => "\n", '</li>' => "\n", '&#91;' => '[', '&#93;' => ']')))));
 
 	// We need this in order to be able send emails.
 	loadSource('Subs-Post');

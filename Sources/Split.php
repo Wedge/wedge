@@ -368,7 +368,7 @@ function SplitSelectTopics()
 
 	// Get the messages and stick them into an array.
 	$request = wesql::query('
-		SELECT m.subject, IFNULL(mem.real_name, m.poster_name) AS real_name, m.poster_time, m.body, m.id_msg, m.smileys_enabled
+		SELECT m.subject, IFNULL(mem.real_name, m.poster_name) AS real_name, m.id_member, m.poster_time, m.body, m.id_msg, m.smileys_enabled
 		FROM {db_prefix}messages AS m
 			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = m.id_member)
 		WHERE m.id_topic = {int:current_topic}' . (empty($_SESSION['split_selection'][$topic]) ? '' : '
@@ -390,7 +390,7 @@ function SplitSelectTopics()
 		censorText($row['subject']);
 		censorText($row['body']);
 
-		$row['body'] = parse_bbc($row['body'], $row['smileys_enabled'], $row['id_msg']);
+		$row['body'] = parse_bbc($row['body'], array('smileys' => $row['smileys_enabled'], 'cache' => $row['id_msg'], 'parse_type' => 'post', 'owner' => $row['id_member']));
 
 		$context['not_selected']['messages'][$row['id_msg']] = array(
 			'id' => $row['id_msg'],
@@ -409,7 +409,7 @@ function SplitSelectTopics()
 	{
 		// Get the messages and stick them into an array.
 		$request = wesql::query('
-			SELECT m.subject, IFNULL(mem.real_name, m.poster_name) AS real_name, m.poster_time, m.body, m.id_msg, m.smileys_enabled
+			SELECT m.subject, IFNULL(mem.real_name, m.poster_name) AS real_name, m.id_member, m.poster_time, m.body, m.id_msg, m.smileys_enabled
 			FROM {db_prefix}messages AS m
 				LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = m.id_member)
 			WHERE m.id_topic = {int:current_topic}
@@ -431,7 +431,7 @@ function SplitSelectTopics()
 			censorText($row['subject']);
 			censorText($row['body']);
 
-			$row['body'] = parse_bbc($row['body'], $row['smileys_enabled'], $row['id_msg']);
+			$row['body'] = parse_bbc($row['body'], array('smileys' => $row['smileys_enabled'], 'cache' => $row['id_msg'], 'parse_type' => 'post', 'owner' => $row['id_member']));
 
 			$context['selected']['messages'][$row['id_msg']] = array(
 				'id' => $row['id_msg'],

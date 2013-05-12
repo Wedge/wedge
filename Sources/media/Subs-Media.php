@@ -1020,7 +1020,7 @@ function aeva_loadAlbum($album_id = 0)
 	$context['aeva_album'] = array(
 		'id' => $album_info['id_album'],
 		'name' => $album_info['name'],
-		'description' => empty($album_info['description']) ? '' : parse_bbc($album_info['description']),
+		'description' => empty($album_info['description']) ? '' : parse_bbc($album_info['description'], array('parse_type' => 'media-album-description')),
 		'owner' => array(
 			'id' => $album_info['album_of'],
 			'name' => empty($album_info['album_of']) ? $txt['media_user_deleted'] : $album_info['member_name'],
@@ -2653,7 +2653,7 @@ function aeva_loadCustomFields($id_media = null, $albums = array(), $custom = ''
 		$fields[$row['id_field']] = array(
 			'id' => $row['id_field'],
 			'name' => $row['name'],
-			'desc' => empty($row['description']) ? '' : parse_bbc($row['description']),
+			'desc' => empty($row['description']) ? '' : parse_bbc($row['description'], array('parse_type' => 'media-custom-field-description')),
 			'raw_desc' => $row['description'],
 			'bbc' => $row['bbc'],
 			'required' => $row['required'],
@@ -2661,7 +2661,7 @@ function aeva_loadCustomFields($id_media = null, $albums = array(), $custom = ''
 			'options' => trim($row['options']) != '' ? explode(',', $row['options']) : array(),
 			'albums' => $row['albums'] == 'all_albums' ? 'all_albums' : explode(',', $row['albums']),
 			'type' => $row['type'],
-			'value' => !empty($row['value']) ? ($row['searchable'] ? aeva_getTags($row['bbc'] && !empty($row['value']) ? parse_bbc($row['value']) : $row['value']) : ($row['bbc'] && !empty($row['value']) ? parse_bbc($row['value']) : $row['value'])) : '',
+			'value' => !empty($row['value']) ? ($row['searchable'] ? aeva_getTags($row['bbc'] && !empty($row['value']) ? parse_bbc($row['value'], array('parse_type' => 'media-custom-field')) : $row['value']) : ($row['bbc'] && !empty($row['value']) ? parse_bbc($row['value'], array('parse_type' => 'media-custom-field')) : $row['value'])) : '',
 			'raw_value' => !empty($row['value']) ? $row['value'] : '',
 		);
 	}

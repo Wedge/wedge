@@ -63,11 +63,6 @@ function weEditor(opt)
 		toggle: 'toggleView'
 	};
 
-	// Font maps (HTML => CSS size)
-	this.aFontSizes = [
-		0, 6, 8, 10, 12, 14, 18, 24
-	];
-
 	// Color maps!
 	this.oFontColors = {
 		black: '#000000',
@@ -539,12 +534,12 @@ function weEditor(opt)
 				this.we_execCommand('fontname', false, sValue);
 		}
 		// Font size?
-		else if (oSelectProperties[1] == 'sel_size')
+		else if (oSelectProperties[1] == 'sel_size' && sValue)
 		{
 			if (!this.isWysiwyg)
-				this.surroundText('[size=' + this.aFontSizes[sValue] + 'pt]', '[/size]');
+				this.surroundText('[size=' + this.aFontSizes[sValue] + ']', '[/size]');
 			else // WYSIWYG
-				this.insertStyle({ fontSize: this.aFontSizes[sValue] + 'pt' });
+				this.insertStyle({ fontSize: this.aFontSizes[sValue] });
 		}
 		// Or color even?
 		else if (oSelectProperties[1] == 'sel_color')
@@ -958,6 +953,10 @@ function weEditor(opt)
 
 	// Make sure we set the message mode correctly.
 	$('#' + opt.sUniqueId + '_mode').val(+this.isWysiwyg);
+
+	// Get the actual list of font sizes
+	if (opt.oBBCBox.aFontSizes)
+		this.aFontSizes = opt.oBBCBox.aFontSizes;
 
 	// Show the resizer.
 	var sizer = $('#' + opt.sUniqueId + '_resizer');

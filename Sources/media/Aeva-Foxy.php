@@ -193,7 +193,7 @@ function aeva_foxy_playlist()
 			$context['aeva_extra_data'] .= '
 			<tr class="windowbg' . ($curpos % 2 == 0 ? '' : '2') . '"><td class="right">' . $m['play_order'] . '.</td>
 			<td><strong><a href="' . $galurl . 'sa=item;in=' . $m['id'] . '">' . $m['title'] . '</a></strong> <a href="#" onclick="return foxyComment(' . $m['id'] . ');"><img src="' . $theme['default_images_url'] . '/aeva/user_comment.png"></a>' . (!empty($m['description']) ? '
-			<div id="foxyDescription' . $m['id'] . '">' . parse_bbc($m['description']) . '</div>' : '') . '
+			<div id="foxyDescription' . $m['id'] . '">' . parse_bbc($m['description'], array('parse_type' => 'media-description')) . '</div>' : '') . '
 			<div class="hide" id="foxyComment' . $m['id'] . '">
 				<form action="' . $galurl . 'sa=playlists;in=' . $id . ';edit;des=' . $m['id'] . ';' . $context['session_query'] . '" method="post">
 					<textarea name="txt' . $m['id'] . '" cols="60" rows="3">' . $m['description'] . '</textarea>
@@ -337,7 +337,7 @@ function aeva_foxy_playlists()
 			'name' => westr::htmlspecialchars($row['name']),
 			'owner_id' => $row['id_member'],
 			'owner_name' => $row['owner_name'],
-			'description' => empty($row['description']) ? '' : parse_bbc(westr::cut($row['description'], 150, true, false)),
+			'description' => empty($row['description']) ? '' : parse_bbc(westr::cut($row['description'], 150, true, false), array('parse_type' => 'media-playlist-description-preview')),
 			'views' => $row['views'],
 			'num_items' => $row['items'],
 			'num_albums' => $row['albums'],
@@ -1163,8 +1163,8 @@ function aeva_foxy_album($id, $type, $wid = 0, $details = '', $sort = 'm.id_medi
 			'file' => $filename,
 			'thumb' => $thumb,
 			'duration' => round(!empty($meta['duration']) ? $meta['duration'] : 5),
-			'description' => empty($row['description']) ? '' : parse_bbc($row['description']),
-			'lister_description' => empty($row['pl_description']) ? '' : parse_bbc($row['pl_description']),
+			'description' => empty($row['description']) ? '' : parse_bbc($row['description'], array('parse_type' => 'media-description')),
+			'lister_description' => empty($row['pl_description']) ? '' : parse_bbc($row['pl_description'], array('parse_type' => 'media-playlist-description')),
 			'album' => $row['album_name'],
 			'album_id' => $row['id_album'],
 			'album_hidden' => $row['hidden'],
@@ -1322,7 +1322,7 @@ function aeva_foxy_album($id, $type, $wid = 0, $details = '', $sort = 'm.id_medi
 		$box = substr($box, 0, -2) . ' ' . sprintf($txt['media_from_album' . (count($has_album) > 1 ? 's' : '')], count($has_album))
 			. ($type == 'playl' && (we::$is_admin || ($playlist_owner_id == we::$id && aeva_allowedTo('add_playlists'))) ? ' - <a href="<URL>?action=media;sa=playlists;in=' . $id . ';edit;' . $context['session_query'] . '"><img src="' . $theme['images_aeva'] . '/camera_edit.png" class="bottom"> ' . $txt['media_edit_this_item'] . '</a>' : '') . '</div>';
 
-		$box .= !empty($playlist_description) && in_array('description', $details) ? parse_bbc($playlist_description) : '';
+		$box .= !empty($playlist_description) && in_array('description', $details) ? parse_bbc($playlist_description, array('parse_type' => 'media-playlist-description')) : '';
 
 		if (!empty($all_playlists) && in_array('playlists', $details))
 		{

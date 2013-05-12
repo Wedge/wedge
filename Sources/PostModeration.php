@@ -262,7 +262,7 @@ function UnapprovedPosts()
 			'counter' => $context['start'] + $i,
 			'href' => '<URL>?topic=' . $row['id_topic'] . '.msg' . $row['id_msg'] . '#msg' . $row['id_msg'],
 			'subject' => $row['subject'],
-			'body' => parse_bbc($row['body'], $row['smileys_enabled'], $row['id_msg']),
+			'body' => parse_bbc($row['body'], array('smileys' => $row['smileys_enabled'], 'cache' => $row['id_msg'], 'parse_type' => 'post', 'owner' => $row['id_member'])),
 			'on_time' => on_timeformat($row['poster_time']),
 			'poster' => array(
 				'id' => $row['id_member'],

@@ -481,12 +481,9 @@ function Unread()
 		if (!empty($theme['message_index_preview']))
 		{
 			// Limit them to 128 characters - do this FIRST because it's a lot of wasted censoring otherwise.
-			$row['first_body'] = strip_tags(strtr(parse_bbc($row['first_body'], $row['first_smileys'], $row['id_first_msg']), array('<br>' => '&#10;')));
+			$row['first_body'] = strip_tags(strtr(parse_bbc($row['first_body'], array('smileys' => $row['first_smileys'], 'cache' => $row['id_first_msg'], 'parse_type' => 'post-preview', 'owner' => $row['id_first_member'])), array('<br>' => '&#10;')));
 			if (westr::strlen($row['first_body']) > 128)
 				$row['first_body'] = westr::substr($row['first_body'], 0, 128) . '...';
-			$row['last_body'] = strip_tags(strtr(parse_bbc($row['last_body'], $row['last_smileys'], $row['id_last_msg']), array('<br>' => '&#10;')));
-			if (westr::strlen($row['last_body']) > 128)
-				$row['last_body'] = westr::substr($row['last_body'], 0, 128) . '...';
 
 			// Censor the subject and message preview.
 			censorText($row['first_subject']);
@@ -500,6 +497,10 @@ function Unread()
 			}
 			else
 			{
+				$row['last_body'] = strip_tags(strtr(parse_bbc($row['last_body'], array('smileys' => $row['last_smileys'], 'cache' => $row['id_last_msg'], 'parse_type' => 'post-preview', 'owner' => $row['id_last_member'])), array('<br>' => '&#10;')));
+				if (westr::strlen($row['last_body']) > 128)
+					$row['last_body'] = westr::substr($row['last_body'], 0, 128) . '...';
+
 				censorText($row['last_subject']);
 				censorText($row['last_body']);
 			}

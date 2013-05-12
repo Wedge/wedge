@@ -1871,7 +1871,7 @@ function template_aeva_profile_viewcoms()
 		<div class="smalltext" style="padding: 8px">
 			', $txt['media_comment_in'], ' <a href="', $i['url'], '"><b>', $i['media_title'], '</a></b> - ',
 			$txt['media_posted_on' . (is_numeric($i['posted_on'][0]) ? '_date' : '')], ' ', $i['posted_on'], '
-			<blockquote class="windowbg comment_preview">', parse_bbc($i['msg']), '</blockquote>
+			<blockquote class="windowbg comment_preview">', parse_bbc($i['msg'], array('parse_type' => 'media-comment')), '</blockquote>
 		</div>';
 	}
 
@@ -2005,7 +2005,7 @@ function aeva_listFiles($items, $can_moderate = false)
 			</tr>
 			<tr class="windowbg' . ($alt ? '2' : '') . ($item['approved'] ? '' : ' unapp') . '">
 				<td colspan="' . ($check ? '6' : '5') . '">
-					<div class="mg_desc" style="padding: 8px">' . parse_bbc($item['desc']) . '</div>
+					<div class="mg_desc" style="padding: 8px">' . parse_bbc($item['desc'], array('parse_type' => 'media-description')) . '</div>
 				</td>' : '', '
 			</tr>';
 		$alt = !$alt;

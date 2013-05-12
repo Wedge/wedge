@@ -387,7 +387,7 @@ function PackageGBrowse()
 				if ($package['description'] == '')
 					$package['description'] = $txt['package_no_description'];
 				else
-					$package['description'] = parse_bbc(preg_replace('~\[[/]?html\]~i', '', westr::htmlspecialchars($package['description'])));
+					$package['description'] = parse_bbc(preg_replace('~\[[/]?html\]~i', '', westr::htmlspecialchars($package['description'])), array('parse_type' => 'plugin-readme'));
 
 				$package['is_installed'] = isset($installed_mods[$package['id']]);
 				$package['is_current'] = $package['is_installed'] && ($installed_mods[$package['id']] == $package['version']);
