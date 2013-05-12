@@ -101,16 +101,22 @@ function template_thoughts_thread()
 	in_array(20, we::$user['groups']) ? '[20, "friends", "Friends"], ' : '', '[5, "justme", "', $txt['privacy_self'], '"]]);');
 
 	$col = 2;
-	foreach ($context['thoughts'] as $thought)
+	// There will usually be one master thought, but just in case... Loop through the 'array'.
+	foreach ($context['thoughts'] as $id => $thought)
 	{
 		$col = empty($col) ? 2 : '';
 		echo '
-			<tr><td class="windowbg', $col, ' thought"><ul><li id="t', $thought['id'], '">
-				<div>
-					<a class="more_button thome" data-id="', $thought['id'], '">', $txt['actions_button'], '</a>',
+			<tr><td class="windowbg', $col, ' thought"><ul><li id="t', $id, '">
+				<div>';
+		if (empty($tho['owner_name']))
+			echo $thought['privacy'] != -3 ? '<div class="privacy_' . @$privacy_icon[$thought['privacy']] . '"></div> ' : ' ', $thought['text'], '
+				</div>';
+		else
+			echo '
+					<a class="more_button thome" data-id="' . $id . '">' . $txt['actions_button'] . '</a>',
 					$thought['privacy'] != -3 ? '<div class="privacy_' . @$privacy_icon[$thought['privacy']] . '"></div>' : '', '
 					<a href="<URL>?action=profile;u=', $thought['id_member'], '">', $thought['owner_name'], '</a>
-					<span class="date">(', $thought['updated'], ')</span> &raquo; ', $thought['text'], template_thought_likes($thought['id']), '
+					<span class="date">(', $thought['updated'], ')</span> &raquo; ', $thought['text'], template_thought_likes($id), '
 				</div>';
 
 		if (!empty($thought['sub']))
@@ -130,12 +136,15 @@ function template_sub_thoughts(&$thought)
 
 	// !! @todo: see above...
 	echo '<ul>';
-	foreach ($thought['sub'] as $tho)
+	foreach ($thought['sub'] as $id => $tho)
 	{
-		echo '<li id="t', $tho['id'], '"><div><a class="more_button thome" data-id="', $tho['id'], '">', $txt['actions_button'], '</a>',
+		if (empty($tho['owner_name']))
+			echo '<li id="t', $id, '"><div>', $tho['privacy'] != -3 ? '<div class="privacy_' . @$privacy_icon[$tho['privacy']] . '"></div>' : '', $tho['text'], '</div>';
+		else
+			echo '<li id="t', $id, '"><div><a class="more_button thome" data-id="', $id, '">', $txt['actions_button'], '</a>',
 			$tho['privacy'] != -3 ? '<div class="privacy_' . @$privacy_icon[$tho['privacy']] . '"></div>' : '',
-			empty($tho['owner_name']) ? '' : '<a href="<URL>?action=profile;u=' . $tho['id_member'] . '">' .
-			$tho['owner_name'] . '</a> <span class="date">(' . $tho['updated'] . ')</span> &raquo; ', parse_bbc($tho['text']), template_thought_likes($tho['id']), '</div>';
+			'<a href="<URL>?action=profile;u=', $tho['id_member'], '">', $tho['owner_name'], '</a> <span class="date">(', $tho['updated'], ')</span> &raquo; ',
+			parse_bbc($tho['text']), template_thought_likes($id), '</div>';
 
 		if (!empty($tho['sub']))
 			template_sub_thoughts($tho);
