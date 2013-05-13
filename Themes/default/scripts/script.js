@@ -617,7 +617,7 @@ $(function ()
 		var
 			is_up_to_date = false,
 			is_opened = false,
-			original_title = $('title').text(),
+			original_title = document.title,
 			$shade = $('<div/>').addClass('mimenu').appendTo('#notifs'),
 
 			toggle_me = function ()
@@ -658,7 +658,7 @@ $(function ()
 							$(this).parent().hide(300, function () { $(this).remove(); });
 							we_notifs--;
 							$shade.prev().attr('class', we_notifs > 0 ? 'notenice' : 'note').text(we_notifs);
-							$('title').text((we_notifs > 0 ? '(' + we_notifs + ') ' : '') + original_title);
+							document.title = (we_notifs > 0 ? '(' + we_notifs + ') ' : '') + original_title;
 
 							$.post(weUrl('action=notification;sa=markread;in=' + id));
 
@@ -696,7 +696,7 @@ $(function ()
 				{
 					we_notifs = count;
 					$shade.prev().attr('class', we_notifs > 0 ? 'notenice' : 'note').text(we_notifs);
-					$('title').text((we_notifs > 0 ? '(' + we_notifs + ') ' : '') + original_title);
+					document.title = (we_notifs > 0 ? '(' + we_notifs + ') ' : '') + original_title;
 					is_up_to_date = false;
 				}
 			});

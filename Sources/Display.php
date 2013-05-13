@@ -1031,7 +1031,7 @@ function Display()
 	foreach ($common_permissions as $contextual => $perm)
 		$context[$contextual] = allowedTo($perm);
 
-	// Permissions with _any/_own versions.  $context[YYY] => ZZZ_any/_own.
+	// Permissions with _any/_own versions. $context[YYY] => ZZZ_any/_own.
 	$anyown_permissions = array(
 		'can_move' => 'move',
 		'can_lock' => 'lock',

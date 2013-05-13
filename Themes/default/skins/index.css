@@ -77,6 +77,17 @@ header, footer, aside, section, article, nav
 *
 	word-wrap: break-word
 
+/* Mobile Chrome 25+ adds a 'font boosting' feature that's
+	supposed to make text more readable; as of May 2013, it sucks.
+	This resets all cells to have the same size -- a bit smaller,
+	but at least we now have control over the size.
+--------------------------------------------------------------- */
+
+@if chrome[25-] && mobile
+	td
+		max-height: 100%
+@endif
+
 /* Common styles used for inheritance. You can declare
 	them anywhere you like, but having them near the
 	start of the file should avoid cascading issues.
