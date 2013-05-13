@@ -297,6 +297,10 @@ function getBoardIndex($boardIndexOptions)
 	// And THAT means Moderation Center goodness.
 	if ($boardIndexOptions['include_categories'] && empty($boardIndexOptions['category']))
 	{
+		$user_group_key = we::$user['groups'];
+		sort($user_group_key);
+		$user_group_key = implode(',', $user_group_key);
+
 		$thiscat['mod'] = array(
 			'id' => 'mod',
 			'name' => $txt['moderation_cat'],
@@ -330,11 +334,26 @@ function getBoardIndex($boardIndexOptions)
 			);
 			// Lastly, we need to set the last post. I realise it's not actually 'off limits' but that's the mechanism to reuse here.
 			if (!empty($context['open_mod_reports']))
-				$thiscat['mod']['boards']['reported']['last_post']['offlimits'] = $txt['reported_board_desc'];
+			{
+				$reports = cache_quick_get('reported_boardindex-' . $user_group_key, 'ModerationCenter', 'cache_getBoardIndexReports', array());
+				if (!empty($reports['id_report']))
+				{
+					// Now we *know* we have something to display, update the thing to be 'on' and set up displaying that.
+					$repl = array(
+						'{author}' => empty($reports['id_author']) ? $reports['author_name'] : '<a href="<URL>?action=profile;u=' . $reports['id_author'] . '">' . $reports['author_name'] . '</a>',
+						'{link}' => '<a href="<URL>?action=moderate;area=reports;report=' . $reports['id_report'] . '">' . $reports['subject'] . '</a>',
+						'{time}' => on_timeformat($reports['time_updated']),
+					);
+					$thiscat['mod']['boards']['reported']['last_post']['offlimits'] = strtr($txt['reported_board_desc'], $repl);
+					$thiscat['mod']['boards']['reported']['new'] = true;
+					$thiscat['mod']['boards']['reported']['custom_class'] = 'boardstate_on';
+				}
+				
+			}
 		}
 
 		// Group requests
-		if (we::$user['mod_cache']['gq'] != '0=1')
+		if (!empty($settings['show_group_membership']) && we::$user['mod_cache']['gq'] != '0=1')
 		{
 			$thiscat['mod']['boards']['groups'] = array(
 				'new' => false,
@@ -352,8 +371,16 @@ function getBoardIndex($boardIndexOptions)
 				'language' => '',
 			);
 			// Lastly, we need to set the last post. I realise it's not actually 'off limits' but that's the mechanism to reuse here.
-			if (!empty($context['open_mod_reports']))
-				$thiscat['mod']['boards']['reported']['last_post']['offlimits'] = $txt['group_request_desc'];
+			$requests = cache_quick_get('groupreq_boardindex-' . $user_group_key, 'ModerationCenter', 'cache_getBoardIndexGroupReq', array());
+			if (!empty($requests['id_request']))
+			{
+				$repl = array(
+					'{author}' => '<a href="<URL>?action=profile;u=' . $requests['id_member'] . '">' . $requests['member_name'] . '</a>',
+					'{groupname}' => '<a href="<URL>?action=groups;sa=requests;gid=' . $requests['id_group'] . '" class="group' . $requests['id_group'] . '">' . $requests['group_name'] . '</a>',
+					'{time}' => on_timeformat($requests['time_applied']),
+				);
+				$thiscat['mod']['boards']['groups']['last_post']['offlimits'] = strtr($txt['group_request_desc'], $repl);
+			}
 		}
 
 		// Logs

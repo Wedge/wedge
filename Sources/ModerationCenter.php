@@ -103,6 +103,7 @@ function ModerationMain($dont_call = false)
 					'file' => 'Groups',
 					'function' => 'Groups',
 					'custom_url' => '<URL>?action=moderate;area=groups;sa=requests',
+					'enabled' => !empty($settings['show_group_membership']),
 				),
 				'viewgroups' => array(
 					'label' => $txt['mc_view_groups'],
@@ -1557,4 +1558,57 @@ function ModBlockPrefs()
 	);
 
 	return 'prefs';
+}
+
+// Now for some functions used by the board index - but they're moderation center related.
+function cache_getBoardIndexReports()
+{
+	$data = array();
+
+	$request = wesql::query('
+		SELECT lr.id_report, lr.id_member, lr.subject, lr.time_updated, 
+			IFNULL(mem.real_name, lr.membername) AS author_name, IFNULL(mem.id_member, 0) AS id_author
+		FROM {db_prefix}log_reported AS lr
+			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = lr.id_member)
+		WHERE lr.closed = {int:view_closed}
+			AND ' . (we::$user['mod_cache']['bq'] == '1=1' || we::$user['mod_cache']['bq'] == '0=1' ? we::$user['mod_cache']['bq'] : 'lr.' . we::$user['mod_cache']['bq']) . '
+		ORDER BY lr.time_updated DESC
+		LIMIT 1',
+		array(
+			'view_closed' => 0,
+		)
+	);
+	if ($row = wesql::fetch_assoc($request))
+		$data = $row;
+	wesql::free_result($request);
+
+	return array(
+		'data' => $data,
+		'expires' => time() + 240,
+	);
+}
+
+function cache_getBoardIndexGroupReq()
+{
+	$data = array();
+
+	$request = wesql::query('
+		SELECT lgr.id_request, lgr.id_member, lgr.id_group, lgr.time_applied, mem.member_name, mg.group_name, mem.real_name
+		FROM {db_prefix}log_group_requests AS lgr
+			INNER JOIN {db_prefix}members AS mem ON (mem.id_member = lgr.id_member)
+			INNER JOIN {db_prefix}membergroups AS mg ON (mg.id_group = lgr.id_group)
+		WHERE ' . (we::$user['mod_cache']['gq'] == '1=1' || we::$user['mod_cache']['gq'] == '0=1' ? we::$user['mod_cache']['gq'] : 'lgr.' . we::$user['mod_cache']['gq']) . '
+		ORDER BY lgr.id_request DESC
+		LIMIT 1',
+		array(
+		)
+	);
+	if ($row = wesql::fetch_assoc($request))
+		$data = $row;
+	wesql::free_result($request);
+
+	return array(
+		'data' => $data,
+		'expires' => time() + 240,
+	);
 }
