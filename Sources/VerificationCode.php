@@ -17,7 +17,7 @@ if (!defined('WEDGE'))
 // Show the verification code or let it hear.
 function VerificationCode()
 {
-	global $settings, $context, $txt;
+	global $context, $txt;
 
 	$verification_id = isset($_GET['vid']) ? $_GET['vid'] : '';
 	$code = $verification_id && isset($_SESSION[$verification_id . '_vv'], $_SESSION[$verification_id . '_vv']['code']) ? $_SESSION[$verification_id . '_vv']['code'] : (isset($_SESSION['visual_verification_code']) ? $_SESSION['visual_verification_code'] : '');

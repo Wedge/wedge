@@ -691,8 +691,6 @@ function MoveAvatars()
 
 function RemoveAttachmentByAge()
 {
-	global $settings;
-
 	checkSession('post', 'admin');
 
 	// !!! Ignore messages in topics that are pinned?
@@ -725,8 +723,6 @@ function RemoveAttachmentByAge()
 
 function RemoveAttachmentBySize()
 {
-	global $settings;
-
 	checkSession('post', 'admin');
 
 	// Find humungous attachments.
@@ -749,7 +745,7 @@ function RemoveAttachmentBySize()
 
 function RemoveAttachment()
 {
-	global $settings, $txt;
+	global $txt;
 
 	checkSession('post');
 

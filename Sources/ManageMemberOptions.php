@@ -33,7 +33,7 @@ if (!defined('WEDGE'))
 // This function passes control through to the relevant tab.
 function ManageMemberOptions()
 {
-	global $context, $txt, $settings, $theme;
+	global $context, $txt, $theme;
 
 	// You need to be an admin to edit settings!
 	isAllowedTo('admin_forum');
@@ -89,7 +89,7 @@ function ManageMemberOptions()
 
 function ModifyMemberSettings($return_config = false)
 {
-	global $txt, $context, $theme, $settings;
+	global $txt, $context, $theme;
 
 	$context['page_title'] = $txt['member_options_title'] . ' - ' . $txt['mods_cat_features'];
 
@@ -499,7 +499,7 @@ function pauseSignatureApplySettings()
 // Show all the custom profile fields available to the user.
 function ShowCustomProfiles()
 {
-	global $txt, $context, $theme, $settings;
+	global $txt, $context, $theme;
 
 	$context['page_title'] = $txt['custom_profile_title'];
 	wetem::load('show_custom_profile');
@@ -1228,7 +1228,7 @@ function updateProfileFieldsCache()
 
 function ModifyWhosOnline($return_config = false)
 {
-	global $txt, $context, $theme, $settings;
+	global $txt, $context, $theme;
 
 	$context['page_title'] = $txt['member_options_title'] . ' - ' . $txt['admin_whos_online'];
 

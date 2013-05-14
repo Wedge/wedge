@@ -201,7 +201,7 @@ function template_boards()
 
 function template_boards_ministats()
 {
-	global $context, $theme, $txt, $settings;
+	global $context, $theme, $txt;
 
 	// Show some statistics if stat info is off.
 	if (!$theme['show_stats_index'])

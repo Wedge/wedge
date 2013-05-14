@@ -26,7 +26,7 @@ if (!defined('WEDGE'))
  */
 function Pin()
 {
-	global $settings, $topic, $board;
+	global $topic, $board;
 
 	// Maybe we want to reorganize the pinned topics in a board?
 	if (isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'order')
@@ -80,7 +80,7 @@ function Pin()
 
 function OrderPin()
 {
-	global $settings, $board, $txt, $context, $board_info;
+	global $board, $txt, $context, $board_info;
 
 	// !!! Does this need a new permission?
 	isAllowedTo('pin_topic');

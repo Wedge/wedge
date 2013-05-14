@@ -271,7 +271,7 @@ function template_resend()
 
 function template_reagreement()
 {
-	global $context, $theme, $options, $txt, $settings;
+	global $context, $theme, $options, $txt;
 
 	echo '
 		<form action="<URL>?action=activate;reagree" method="post" accept-charset="UTF-8" id="registration">

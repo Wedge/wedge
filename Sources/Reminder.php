@@ -319,7 +319,7 @@ function SecretAnswerInput()
 
 function SecretAnswer2()
 {
-	global $txt, $context, $settings;
+	global $txt, $context;
 
 	checkSession();
 	loadLanguage('Login');

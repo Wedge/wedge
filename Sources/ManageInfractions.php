@@ -380,7 +380,7 @@ function EditInfractions()
 
 function InfractionLevels()
 {
-	global $txt, $context, $settings;
+	global $txt, $context;
 
 	getInfractionLevels();
 

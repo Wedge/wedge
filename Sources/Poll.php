@@ -614,7 +614,6 @@ function EditPoll()
 function EditPoll2()
 {
 	global $txt, $topic, $board, $context;
-	global $settings;
 
 	// Sneaking off, are we?
 	if (empty($_POST))

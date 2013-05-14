@@ -154,7 +154,7 @@ function ModerationMain($dont_call = false)
 // This function basically is the home page of the moderation center.
 function ModerationHome()
 {
-	global $txt, $context, $settings, $user_settings;
+	global $txt, $context, $user_settings;
 
 	loadTemplate('ModerationCenter');
 
@@ -189,7 +189,7 @@ function ModerationHome()
 // Show a list of the most active watched users.
 function ModBlockWatchedUsers()
 {
-	global $context, $settings;
+	global $context;
 
 	if (($watched_users = cache_get_data('recent_user_watches', 240)) === null)
 	{
@@ -453,7 +453,7 @@ function ModBlockGroupRequests()
 // Browse all the reported posts...
 function ReportedPosts()
 {
-	global $txt, $context, $settings;
+	global $txt, $context;
 
 	loadTemplate('ModerationCenter');
 
@@ -624,7 +624,7 @@ function ReportedPosts()
 //!!! As for most things in this file, this needs to be moved somewhere appropriate.
 function ModerateGroups()
 {
-	global $txt, $context, $settings;
+	global $txt, $context;
 
 	// You need to be allowed to moderate groups...
 	if (we::$user['mod_cache']['gq'] == '0=1')
@@ -965,9 +965,6 @@ function ViewWatchedUsers()
 
 	loadTemplate('ModerationCenter');
 
-	// Get some key settings!
-	$settings['warning_watch'] = empty($settings['warning_watch']) ? 1 : $settings['warning_watch'];
-
 	// Put some pretty tabs on cause we're gonna be doing hot stuff here...
 	$context[$context['moderation_menu_name']]['tab_data'] = array(
 		'title' => $txt['mc_warned_users_title'],
@@ -1160,8 +1157,6 @@ function ViewWatchedUsers()
 
 function list_getWatchedUserCount($approve_query)
 {
-	global $settings;
-
 	$request = wesql::query('
 		SELECT COUNT(*)
 		FROM {db_prefix}members
@@ -1184,7 +1179,6 @@ function list_getWatchedUsers($start, $items_per_page, $sort, $approve_query, $d
 		ORDER BY {raw:sort}
 		LIMIT ' . $start . ', ' . $items_per_page,
 		array(
-			'warning_watch' => $settings['warning_watch'],
 			'sort' => $sort,
 		)
 	);
@@ -1269,8 +1263,6 @@ function list_getWatchedUsers($start, $items_per_page, $sort, $approve_query, $d
 
 function list_getWatchedUserPostsCount($approve_query)
 {
-	global $settings;
-
 	$request = wesql::query('
 		SELECT COUNT(*)
 			FROM {db_prefix}messages AS m
@@ -1288,7 +1280,7 @@ function list_getWatchedUserPostsCount($approve_query)
 
 function list_getWatchedUserPosts($start, $items_per_page, $sort, $approve_query, $delete_boards)
 {
-	global $txt, $settings;
+	global $txt;
 
 	$request = wesql::query('
 		SELECT m.id_msg, m.id_topic, m.id_board, m.id_member, m.subject, m.body, m.poster_time,

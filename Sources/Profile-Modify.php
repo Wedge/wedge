@@ -743,7 +743,7 @@ function setupProfileContext($fields)
 // Save the profile changes.
 function saveProfileFields()
 {
-	global $profile_fields, $profile_vars, $context, $old_profile, $post_errors, $settings, $cur_profile;
+	global $profile_fields, $profile_vars, $context, $old_profile, $post_errors, $cur_profile;
 
 	// Load them up.
 	loadProfileFields();
@@ -1250,7 +1250,7 @@ function editBuddyIgnoreLists($memID)
 // Show all the users buddies, as well as a add/delete interface.
 function editBuddies($memID)
 {
-	global $txt, $settings, $context, $user_profile, $memberContext;
+	global $txt, $context, $user_profile, $memberContext;
 
 	// For making changes!
 	$buddiesArray = explode(',', $user_profile[$memID]['buddy_list']);
@@ -1356,7 +1356,7 @@ function editBuddies($memID)
 // Allows the user to view their ignore list, as well as the option to manage members on it.
 function editIgnoreList($memID)
 {
-	global $txt, $settings, $context, $user_profile, $memberContext;
+	global $txt, $context, $user_profile, $memberContext;
 
 	// For making changes!
 	$ignoreArray = explode(',', $user_profile[$memID]['pm_ignore_list']);
@@ -1508,7 +1508,7 @@ function account($memID)
 
 function forumProfile($memID)
 {
-	global $context, $user_profile, $txt, $settings;
+	global $context, $user_profile, $txt;
 
 	loadThemeOptions($memID);
 	if (allowedTo(array('profile_extra_own', 'profile_extra_any')))
@@ -2120,7 +2120,7 @@ function processMemberPrefs($type)
 // Load all the languages for the profile.
 function profileLoadLanguages()
 {
-	global $context, $settings, $theme, $cur_profile;
+	global $context, $theme, $cur_profile;
 
 	$context['profile_languages'] = array();
 
@@ -2946,7 +2946,7 @@ function profileSendActivation()
 // Function to allow the user to choose group membership etc...
 function groupMembership($memID)
 {
-	global $txt, $user_profile, $context, $settings;
+	global $txt, $user_profile, $context;
 
 	$curMember = $user_profile[$memID];
 	$context['primary_group'] = $curMember['id_group'];

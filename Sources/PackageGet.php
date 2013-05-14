@@ -38,7 +38,7 @@ if (!defined('WEDGE'))
 // Browse the list of package servers, add servers...
 function PackageGet()
 {
-	global $txt, $context, $boarddir, $settings;
+	global $txt, $context, $boarddir;
 
 	isAllowedTo('admin_forum');
 	loadSource('Subs-Package');
@@ -186,7 +186,7 @@ function PackageServers()
 // Browse a server's list of packages.
 function PackageGBrowse()
 {
-	global $txt, $boardurl, $context, $scripturl, $boarddir, $context;
+	global $txt, $context, $scripturl, $boarddir, $context;
 
 	if (isset($_GET['server']))
 	{

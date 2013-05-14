@@ -96,7 +96,7 @@ if (!defined('WEDGE'))
 // This helps organize things...
 function MessageMain()
 {
-	global $txt, $context, $user_settings, $settings;
+	global $txt, $context, $user_settings;
 
 	// No guests!
 	is_not_guest();
@@ -299,7 +299,7 @@ function MessageMain()
 // A sidebar to easily access different areas of the section
 function messageIndexBar($area)
 {
-	global $txt, $context, $settings, $theme, $options;
+	global $txt, $context, $theme, $options;
 
 	$pm_areas = array(
 		'folders' => array(
@@ -425,8 +425,6 @@ function messageIndexBar($area)
 	$menuOptions = array(
 		'current_area' => $area,
 		'disable_url_session_check' => true,
-		'toggle_url' => $current_page . ';togglebar',
-		'toggle_redirect_url' => $current_page,
 	);
 
 	// Actually create the menu!
@@ -1052,7 +1050,7 @@ function MarkUnread()
 
 function MessageSearch()
 {
-	global $context, $txt, $settings;
+	global $context, $txt;
 
 	loadLanguage('Search');
 

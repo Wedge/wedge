@@ -55,7 +55,7 @@ function SearchEngines()
 // This is really just the settings page.
 function ManageSearchEngineSettings($return_config = false)
 {
-	global $context, $txt, $settings;
+	global $context, $txt;
 
 	$context['page_title'] = $txt['search_engines'] . ' - ' . $txt['settings'];
 

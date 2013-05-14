@@ -295,7 +295,7 @@ function sendmail($to, $subject, $message, $from = null, $message_id = null, $se
 // Add an email to the mail queue.
 function AddMailQueue($flush = false, $to_array = array(), $subject = '', $message = '', $headers = '', $send_html = false, $priority = 3, $is_private = false)
 {
-	global $context, $settings;
+	global $context;
 
 	static $cur_insert = array();
 	static $cur_insert_len = 0;
@@ -2354,7 +2354,7 @@ function sendApprovalNotifications(&$topicData)
 // Update the last message in a board, and its parents.
 function updateLastMessages($setboards, $id_msg = 0)
 {
-	global $board_info, $board, $settings;
+	global $board_info, $board;
 
 	// Please - let's be sane.
 	if (empty($setboards))

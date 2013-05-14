@@ -777,7 +777,7 @@ function wedge_replace_numbered_placeholders($str, $arr, &$final)
 // Dynamic function to cache language flags into index.css
 function dynamic_language_flags()
 {
-	global $context, $settings;
+	global $context;
 
 	if (empty($context['languages']) || count($context['languages']) < 2)
 		return;
@@ -798,7 +798,7 @@ function dynamic_language_flags()
 // Dynamic function to cache group colors into index.css
 function dynamic_group_colors()
 {
-	global $context, $settings;
+	global $context;
 
 	$bius = array('b', 'i', 'u', 's');
 	$rep = '';
@@ -861,7 +861,7 @@ function dynamic_group_colors()
 // Dynamic function to cache admin menu icons into admenu.css
 function dynamic_admin_menu_icons()
 {
-	global $context, $settings, $admin_areas, $ina;
+	global $context, $admin_areas, $ina;
 
 	function array_search_key($needle, &$arr)
 	{

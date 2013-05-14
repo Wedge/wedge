@@ -481,7 +481,7 @@ function template_wrapper_after()
 
 function template_body_after()
 {
-	global $context, $theme, $txt, $settings, $footer_coding;
+	global $context, $theme, $txt, $footer_coding;
 
 	// Include postponed inline JS, postponed HTML, and then kickstart the main
 	// JavaScript section -- files to include, main vars and functions to start.

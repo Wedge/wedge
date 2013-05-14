@@ -680,7 +680,7 @@ function allowedToAccessItem($id, $is_file_id = false)
 // Load the gallery's critical settings and variables
 function loadMediaSettings($gal_url = null, $load_template = false, $load_language = false)
 {
-	global $amSettings, $settings, $context, $txt, $galurl, $galurl2, $theme, $amOverride;
+	global $amSettings, $context, $txt, $galurl, $galurl2, $theme, $amOverride;
 	static $am_loaded = false;
 
 	if ($load_template)
@@ -1604,7 +1604,7 @@ function aeva_logModAction(&$options, $return_boolean = false)
 
 function aeva_createTextEditor($post_box_name, $post_box_form, $forceDisableBBC = false, $value = '')
 {
-	global $context, $settings, $txt;
+	global $context, $txt;
 
 	loadSource('Class-Editor');
 	$context['postbox'] = new wedit(
@@ -3511,7 +3511,7 @@ function aeva_markAllSeen()
 
 function aeva_addHeaders($autosize = true, $use_zoomedia = true)
 {
-	global $context, $txt, $settings, $amSettings;
+	global $context, $txt, $amSettings;
 	static $done = false;
 
 	if ($done)

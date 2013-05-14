@@ -195,8 +195,6 @@ class media_handler
 
 	function createJpgThumbnail($source, $max_width, $max_height)
 	{
-		global $settings;
-
 		loadSource('Subs-Graphics');
 
 		$default_formats = array(

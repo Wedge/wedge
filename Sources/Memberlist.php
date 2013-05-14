@@ -47,7 +47,7 @@ if (!defined('WEDGE'))
 // Show a listing of the registered members.
 function Memberlist()
 {
-	global $txt, $settings, $context, $theme, $settings;
+	global $txt, $context, $theme, $settings;
 
 	// Make sure they can view the memberlist.
 	isAllowedTo('view_mlist');
@@ -537,7 +537,7 @@ function MLSearch()
 
 function printMemberListRows($request)
 {
-	global $txt, $settings, $context, $theme, $memberContext;
+	global $txt, $context, $theme, $memberContext;
 
 	// Get the most posts.
 	$result = wesql::query('

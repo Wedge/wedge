@@ -74,9 +74,10 @@ function template_permission_index()
 		elseif ($group['id'] == 3)
 			echo '
 							<a href="<URL>?action=help;in=membergroup_moderator" onclick="return reqWin(this);" class="help"></a>';
-		if ($group['color'])
+
+		if ($group['id'] > 0)
 			echo '
-							<span style="color: ', $group['color'], '">', $group['name'], '</span>';
+							<span class="group', $group['id'], '">', $group['name'], '</span>';
 		else
 			echo '
 							', $group['name'];
@@ -250,7 +251,7 @@ function template_permission_index()
 
 function template_by_board()
 {
-	global $context, $theme, $options, $txt, $settings;
+	global $context, $theme, $options, $txt;
 
 	echo '
 		<form action="<URL>?action=admin;area=permissions;sa=board" method="post" accept-charset="UTF-8">
@@ -344,7 +345,7 @@ function template_by_board()
 // Edit permission profiles (predefined).
 function template_edit_profiles()
 {
-	global $context, $theme, $options, $txt, $settings;
+	global $context, $theme, $options, $txt;
 
 	echo '
 		<form action="<URL>?action=admin;area=permissions;sa=profiles" method="post" accept-charset="UTF-8">

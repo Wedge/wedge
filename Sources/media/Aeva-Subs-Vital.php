@@ -224,7 +224,7 @@ function aeva_get_dir_list_subfolders($dirs, $data, &$_list)
 // Get the HTML code for a media item
 function aeva_embedObject($obj, $id_file, $cur_width = 0, $cur_height = 0, $desc = '', $type = null)
 {
-	global $galurl, $context, $theme, $amSettings, $settings, $cookiename;
+	global $galurl, $context, $theme, $amSettings, $cookiename;
 	static $swfobjects = 0;
 
 	if (empty($type))

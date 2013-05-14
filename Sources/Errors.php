@@ -260,7 +260,7 @@ function fatal_lang_error($error, $log = 'general', $sprintf = array(), $header 
  */
 function error_handler($error_level, $error_string, $file, $line)
 {
-	global $theme, $settings, $db_show_debug;
+	global $theme, $db_show_debug;
 
 	// Ignore errors if default reporting behavior was overridden (e.g. through SSI.)
 	if (error_reporting() == 0)

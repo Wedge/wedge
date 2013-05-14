@@ -207,7 +207,7 @@ function quickMod_pin($topic_data, $boards_can)
 
 function quickMod_move($topic_data, $boards_can)
 {
-	global $settings, $board;
+	global $board;
 
 	// If they're not an admin: for each post, figure out what the privileges are for the board it is in, and whether they can actually do that.
 	if (!in_array(0, $boards_can['move_any']))
@@ -412,7 +412,7 @@ function quickMod_merge($topic_data, $boards_can)
 
 function quickMod_approve($topic_data, $boards_can)
 {
-	global $settings, $board;
+	global $board;
 
 	// If they're not an admin: for each post, figure out what the privileges are for the board it is in, and whether they can actually do that.
 	if (!in_array(0, $boards_can['move_any']))

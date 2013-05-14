@@ -14,7 +14,7 @@
 // Template for listing all scheduled tasks.
 function template_view_scheduled_tasks()
 {
-	global $context, $theme, $options, $txt, $settings;
+	global $context, $theme, $options, $txt;
 
 	// We completed some tasks?
 	if (!empty($context['tasks_were_run']))
@@ -29,7 +29,7 @@ function template_view_scheduled_tasks()
 // A template for, you guessed it, editing a task!
 function template_edit_scheduled_tasks()
 {
-	global $context, $theme, $options, $txt, $settings;
+	global $context, $theme, $options, $txt;
 
 	// Starts off with general maintenance procedures.
 	echo '

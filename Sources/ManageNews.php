@@ -807,7 +807,7 @@ function SendMailing($clean_only = false)
 
 function ModifyNewsSettings($return_config = false)
 {
-	global $context, $settings, $txt;
+	global $context, $txt;
 
 	loadLanguage('ManageSettings');
 

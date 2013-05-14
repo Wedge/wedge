@@ -106,7 +106,7 @@ class wedit
 
 	public static function bbc_to_html($text)
 	{
-		global $settings, $theme;
+		global $theme;
 
 		// Turn line breaks back into br's.
 		$text = strtr($text, array("\r" => '', "\n" => '<br>'));
@@ -157,7 +157,7 @@ class wedit
 
 	public static function html_to_bbc($text)
 	{
-		global $settings, $scripturl, $context;
+		global $scripturl, $context;
 
 		// Replace newlines with spaces, as that's how browsers usually interpret them.
 		$text = preg_replace("~\s*[\r\n]+\s*~", ' ', $text);

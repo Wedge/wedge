@@ -458,7 +458,7 @@ function getMsgMemberID($messageID)
 // Modify the settings and position of a board.
 function modifyBoard($board_id, &$boardOptions)
 {
-	global $cat_tree, $boards, $boardList, $settings, $context;
+	global $cat_tree, $boards, $boardList, $context;
 
 	// Get some basic information about all boards and categories.
 	getBoardTree();
@@ -829,7 +829,7 @@ function modifyBoard($board_id, &$boardOptions)
 // Create a new board and set its properties and position.
 function createBoard($boardOptions)
 {
-	global $boards, $settings;
+	global $boards;
 
 	// Trigger an error if one of the required values is not set.
 	if (!isset($boardOptions['board_name']) || trim($boardOptions['board_name']) == '' || !isset($boardOptions['move_to']) || !isset($boardOptions['target_category']))
@@ -1108,7 +1108,7 @@ function fixChildren($parent, $newLevel, $newParent)
 // Restrict to their own boards anyone who's not an admin
 function getBoardTree($restrict = false)
 {
-	global $cat_tree, $boards, $boardList, $txt, $settings;
+	global $cat_tree, $boards, $boardList, $txt;
 
 	$restriction = we::$is_admin || !$restrict ? '' : '
 				AND b.id_owner = ' . (int) we::$id;

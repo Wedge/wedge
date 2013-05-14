@@ -86,7 +86,7 @@ function Groups()
 // This very simply lists the groups, nothing snazy.
 function GroupList()
 {
-	global $txt, $user_profile, $context, $theme, $settings;
+	global $txt, $user_profile, $context, $theme;
 
 	// Yep, find the groups...
 	$request = wesql::query('

@@ -652,8 +652,6 @@ function aeva_limits()
 // Links urls that haven't already been linked
 function aeva_autolink_urls($input)
 {
-	global $context, $settings;
-
 	// Parse any URLs.... And ensure they're not already auto-linked!
 	if (preg_match('~(?:=|\[(?:url|img(?:\s[^]]*)?)])(?:http://|www\.)~i', $input))
 	{

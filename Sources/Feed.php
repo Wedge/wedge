@@ -684,7 +684,7 @@ function getXmlRecent($xml_format)
 // This is obviously not the case right now... And is pretty much useless. :-/
 function getXmlProfile($xml_format)
 {
-	global $scripturl, $memberContext, $user_profile, $settings;
+	global $scripturl, $memberContext, $user_profile;
 
 	// You must input a valid user....
 	if (empty($_GET['u']) || loadMemberData((int) $_GET['u']) === false)

@@ -76,7 +76,7 @@ class custom_search
 	// This function compares the length of two strings plus a little.
 	public function searchSort($a, $b)
 	{
-		global $settings, $excludedWords;
+		global $excludedWords;
 
 		$x = strlen($a) - (in_array($a, $excludedWords) ? 1000 : 0);
 		$y = strlen($b) - (in_array($b, $excludedWords) ? 1000 : 0);

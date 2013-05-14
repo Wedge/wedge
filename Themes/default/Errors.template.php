@@ -37,7 +37,7 @@ function template_fatal_error()
 
 function template_error_log()
 {
-	global $context, $theme, $options, $txt, $settings;
+	global $context, $theme, $options, $txt;
 
 	echo '
 	<form action="<URL>?action=admin;area=logs;sa=errorlog', $context['sort_direction'] == 'down' ? ';desc' : '', ';start=', $context['start'], $context['has_filter'] ? $context['filter']['href'] : '', '" method="post" accept-charset="UTF-8">
@@ -168,7 +168,7 @@ function template_error_log()
 
 function template_intrusion_log()
 {
-	global $context, $theme, $options, $txt, $settings;
+	global $context, $theme, $options, $txt;
 
 	echo '
 	<form action="<URL>?action=admin;area=logs;sa=intrusionlog', $context['sort_direction'] == 'down' ? ';desc' : '', ';start=', $context['start'], $context['has_filter'] ? $context['filter']['href'] : '', '" method="post" accept-charset="UTF-8">

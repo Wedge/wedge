@@ -1987,7 +1987,7 @@ function aeva_deleteAlbum($id = 0, $from_approval = false)
 // Handles the Mass Upload page
 function aeva_massUpload()
 {
-	global $amSettings, $txt, $context, $theme, $galurl, $settings, $cookiename;
+	global $amSettings, $txt, $context, $theme, $galurl, $cookiename;
 
 	// Modifying item's title?
 	if (isset($_POST['submit_title_update']))

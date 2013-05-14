@@ -83,7 +83,7 @@ if (!defined('WEDGE'))
 // Gallery admin initializer
 function aeva_admin_init()
 {
-	global $context, $txt, $theme, $amSettings, $settings;
+	global $context, $txt, $theme, $amSettings;
 
 	// Let's call our friends
 	// Admin2 = maintenance & ban, Admin3 = embedder
@@ -842,7 +842,7 @@ function aeva_admin_perms_add()
 // Used for viewing membergroups in the permission area..
 function aeva_admin_perms_view()
 {
-	global $context, $txt, $settings;
+	global $context, $txt;
 
 	// Load the profile
 	if (!isset($_REQUEST['in']))

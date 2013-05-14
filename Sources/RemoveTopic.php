@@ -148,8 +148,6 @@ function DeleteMessage()
 // So long as you are sure... all old posts will be gone.
 function RemoveOldTopics2()
 {
-	global $settings;
-
 	isAllowedTo('admin_forum');
 	checkSession('post', 'admin');
 

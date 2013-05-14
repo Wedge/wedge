@@ -108,7 +108,7 @@ if (!defined('WEDGE'))
 // Handling function for generating reports.
 function ReportsMain()
 {
-	global $txt, $settings, $context;
+	global $txt, $context;
 
 	// Only admins, only EVER admins!
 	isAllowedTo('admin_forum');

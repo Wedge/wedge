@@ -53,7 +53,7 @@ if (!defined('WEDGE'))
 // This is the main function for the language area.
 function ManageLanguages()
 {
-	global $context, $txt, $settings;
+	global $context, $txt;
 
 	loadLanguage('ManageSettings');
 

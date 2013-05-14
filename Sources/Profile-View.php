@@ -1956,8 +1956,7 @@ function list_getProfileEdits($start, $items_per_page, $sort, $memID)
 
 function showPermissions($memID)
 {
-	global $txt, $board, $settings;
-	global $user_profile, $context;
+	global $txt, $board, $user_profile, $context;
 
 	// Verify if the user has sufficient permissions.
 	isAllowedTo('manage_permissions');

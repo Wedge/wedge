@@ -44,7 +44,7 @@ if (!defined('WEDGE'))
 // The main admin handling function.
 function Admin()
 {
-	global $txt, $context, $settings, $theme, $options, $boardurl, $admin_areas;
+	global $txt, $context, $settings, $theme, $options, $admin_areas;
 
 	// Load the language strings for use in the menu...
 	loadLanguage('Admin');
@@ -631,12 +631,6 @@ function Admin()
 		),
 	);
 
-	$menuOptions = array(
-		'menu_type' => '_dropdown',
-	);
-	if (isset($_GET['togglebar']) && (empty($_GET['area']) || $_GET['area'] == 'index'))
-		$menuOptions['toggle_redirect_url'] = 'action=admin;' . $context['session_query'];
-
 	// Any files to include for administration?
 	if (!empty($settings['integrate_admin_include']))
 	{
@@ -686,7 +680,7 @@ function Admin()
 	add_css_file(array('mana', 'admenu'), true);
 
 	// Actually create the menu!
-	$admin_include_data = createMenu($admin_areas, $menuOptions);
+	$admin_include_data = createMenu($admin_areas);
 	unset($admin_areas);
 
 	// Nothing valid?
@@ -703,7 +697,6 @@ function Admin()
 		$admin_include_data['label'] = $txt['admin_search_results'];
 		$menu_context['current_section'] = '';
 		$menu_context['current_area'] = '';
-		$menu_context['toggle_url'] = $menu_context['base_url'] . $menu_context['extra_parameters'] . ';togglebar';
 	}
 	// The admin front page is not part of the above. But if you can see any of the items in the admin panel, you can see the front page too.
 	elseif (empty($_GET['area']) || $_GET['area'] != $menu_context['current_area'])
@@ -712,7 +705,6 @@ function Admin()
 		$admin_include_data['function'] = 'AdminHome';
 		$menu_context['current_section'] = '';
 		$menu_context['current_area'] = '';
-		$menu_context['toggle_url'] = $menu_context['base_url'] . $menu_context['extra_parameters'] . ';togglebar';
 	}
 
 	// Build the link tree.
@@ -758,7 +750,7 @@ function Admin()
 // The main administration section.
 function AdminHome()
 {
-	global $txt, $context, $boardurl, $settings;
+	global $txt, $context;
 
 	wetem::load('admin');
 	$context['page_title'] = $txt['admin_center'];

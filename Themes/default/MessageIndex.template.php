@@ -13,7 +13,7 @@
 
 function template_main_board()
 {
-	global $context, $theme, $options, $settings, $txt;
+	global $context, $theme, $options, $txt;
 
 	echo '
 	<a id="top"></a>';
@@ -189,7 +189,7 @@ function template_main_board()
 
 function template_main_blog()
 {
-	global $context, $theme, $options, $settings, $txt, $board_info;
+	global $context, $theme, $options, $txt, $board_info;
 
 	echo '
 	<a id="top"></a>';
@@ -529,7 +529,7 @@ function template_messageindex_legend()
 // !!! it based on !empty($context['current_board']) or something?
 function template_messageindex_statistics()
 {
-	global $context, $theme, $options, $txt, $settings, $board_info;
+	global $context, $theme, $options, $txt, $board_info;
 
 	if (!$theme['show_stats_index'])
 		return;

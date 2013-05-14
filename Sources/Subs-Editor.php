@@ -29,7 +29,7 @@ if (!defined('WEDGE'))
 
 function getMessageIcons($board_id)
 {
-	global $settings, $context, $txt, $theme;
+	global $context, $txt, $theme;
 
 	if (($temp = cache_get_data('posting_icons-' . $board_id, 480)) == null)
 	{

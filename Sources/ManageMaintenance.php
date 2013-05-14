@@ -105,7 +105,7 @@ if (!defined('WEDGE'))
 // The maintenance access point.
 function ManageMaintenance()
 {
-	global $txt, $settings, $context, $options;
+	global $txt, $context, $options;
 
 	// You absolutely must be an admin by here!
 	isAllowedTo('admin_forum');
@@ -200,7 +200,7 @@ function ManageMaintenance()
 //	setting up for the conversions (non-UTF-8 to UTF-8 and entities to UTF-8 chars) which are no longer relevant. Leaving this here for now though!
 function MaintainDatabase()
 {
-	global $context, $settings, $txt;
+	global $context, $txt;
 }
 
 // Supporting function for the routine maintenance area.

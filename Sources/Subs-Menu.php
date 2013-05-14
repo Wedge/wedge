@@ -17,34 +17,7 @@ if (!defined('WEDGE'))
 // Create a menu...
 function createMenu($menuData, $menuOptions = array())
 {
-	global $context, $theme, $options, $txt, $settings, $options;
-
-	// First are we toggling use of the side bar generally?
-	if (isset($_GET['togglebar']) && we::$is_member)
-	{
-		// Save the new dropdown menu state.
-		wesql::insert('replace',
-			'{db_prefix}themes',
-			array('id_member' => 'int', 'id_theme' => 'int', 'variable' => 'string-255', 'value' => 'string-65534'),
-			array(
-				array(
-					we::$id,
-					$theme['theme_id'],
-					'use_sidebar_menu',
-					empty($options['use_sidebar_menu']) ? '1' : '0',
-				),
-			),
-			array('id_member', 'id_theme', 'variable')
-		);
-
-		// Clear the theme settings cache for this user.
-		$themes = explode(',', $settings['knownThemes']);
-		foreach ($themes as $th)
-			cache_put_data('theme_settings-' . $th . ':' . we::$id, null, 60);
-
-		// Redirect as this seems to work best.
-		redirectexit(str_replace(array('?togglebar', ';togglebar'), array('?', ';'), we::$user['url']));
-	}
+	global $context, $theme, $options, $txt, $options;
 
 	// Work out where we should get our images from.
 	$context['menu_image_path'] = isset($context['menu_image_path']) ? $context['menu_image_path'] : (file_exists($theme['theme_dir'] . '/images/admin/change_menu.png') ? $theme['images_url'] . '/admin' : $theme['default_images_url'] . '/admin');
@@ -219,9 +192,6 @@ function createMenu($menuData, $menuOptions = array())
 	// Should we use a custom base url, or use the default?
 	$menu_context['base_url'] = isset($menuOptions['base_url']) ? $menuOptions['base_url'] : '<URL>?action=' . $menu_context['current_action'];
 
-	// What about the toggle url?
-	$menu_context['toggle_url'] = isset($menuOptions['toggle_url']) ? $menuOptions['toggle_url'] : $menu_context['base_url'] . (!empty($menu_context['current_area']) ? ';area=' . $menu_context['current_area'] : '') . (!empty($menu_context['current_subsection']) ? ';sa=' . $menu_context['current_subsection'] : '') . $menu_context['extra_parameters'] . ';togglebar';
-
 	// If we didn't find the area we were looking for go to a default one.
 	if (isset($backup_area) && empty($found_section))
 		$menu_context['current_area'] = $backup_area;
@@ -270,20 +240,11 @@ function createMenu($menuData, $menuOptions = array())
 		while (end($areas) == '' && array_pop($areas) !== null);
 	}
 
-	// What type of menu is this?
-	if (empty($menuOptions['menu_type']))
-	{
-		$menuOptions['menu_type'] = '_' . (empty($options['use_sidebar_menu']) ? 'dropdown' : 'sidebar');
-		$menu_context['can_toggle_drop_down'] = we::$is_member;
-	}
-	else
-		$menu_context['can_toggle_drop_down'] = !empty($menuOptions['can_toggle_drop_down']);
-
 	// Almost there - load the template and add to the template layers.
 	if (!AJAX)
 	{
 		loadTemplate(isset($menuOptions['template_name']) ? $menuOptions['template_name'] : 'GenericMenu');
-		$menu_context['template_name'] = (isset($menuOptions['template_name']) ? $menuOptions['template_name'] : 'generic_menu') . $menuOptions['menu_type'];
+		$menu_context['template_name'] = (isset($menuOptions['template_name']) ? $menuOptions['template_name'] : 'generic_menu') . '_dropdown';
 		wetem::add(empty($options['use_sidebar_menu']) ? 'top' : 'sidebar', $menu_context['template_name']);
 		wetem::add('top', 'generic_tabs');
 	}

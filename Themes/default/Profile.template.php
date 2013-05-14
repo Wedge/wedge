@@ -1422,7 +1422,7 @@ function template_profile_pm_settings()
 
 function template_profile_display_prefslist()
 {
-	global $context, $settings, $txt;
+	global $context, $txt;
 
 	// Finish the previous item.
 	echo '
@@ -1536,7 +1536,7 @@ function template_notification()
 // Template for choosing group membership.
 function template_groupMembership()
 {
-	global $context, $theme, $settings, $txt;
+	global $context, $theme, $txt;
 
 	// The main containing header.
 	echo '

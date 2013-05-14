@@ -331,7 +331,7 @@ function template_aeva_item_main_before()
 
 function template_aeva_item_main_item()
 {
-	global $item, $galurl, $context, $txt, $theme, $boardurl, $options;
+	global $item, $galurl, $context, $txt, $theme, $options;
 
 	echo $item['embed_object'], $item['is_resized'] ? '
 			<dfn style="padding-top: 6px">' . $txt['media_resized'] . '</dfn>' : '', '<br>';

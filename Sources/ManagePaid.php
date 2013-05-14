@@ -370,7 +370,7 @@ function ViewSubscriptions()
 // Adding, editing and deleting subscriptions.
 function ModifySubscription()
 {
-	global $context, $txt, $settings;
+	global $context, $txt;
 
 	$context['sub_id'] = isset($_REQUEST['sid']) ? (int) $_REQUEST['sid'] : 0;
 	$context['action_type'] = $context['sub_id'] ? (isset($_REQUEST['delete']) ? 'delete' : 'edit') : 'add';
@@ -677,7 +677,7 @@ function ModifySubscription()
 // View all the users subscribed to a particular subscription!
 function ViewSubscribedUsers()
 {
-	global $context, $txt, $settings, $options;
+	global $context, $txt, $options;
 
 	// Setup the template.
 	$context['page_title'] = $txt['viewing_users_subscribed'];

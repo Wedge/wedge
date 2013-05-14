@@ -2293,8 +2293,6 @@ function setupMenuContext()
  */
 function we_seed_generator()
 {
-	global $settings;
-
 	updateSettings(array('rand_seed' => mt_rand()));
 }
 

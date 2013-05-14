@@ -1018,7 +1018,7 @@ function isReservedName($name, $current_id_member = 0, $is_name = true, $fatal =
 // Get a list of groups that have a given permission (on a given board).
 function groupsAllowedTo($permission, $board_id = null)
 {
-	global $settings, $board_info;
+	global $board_info;
 
 	// Admins are allowed to do anything.
 	$member_groups = array(

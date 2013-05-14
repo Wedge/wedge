@@ -84,7 +84,7 @@ function ManageMail()
 // Display the mail queue...
 function BrowseMailQueue()
 {
-	global $context, $settings, $txt;
+	global $context, $txt;
 
 	// First, are we deleting something from the queue?
 	if (isset($_REQUEST['delete']))
@@ -275,7 +275,7 @@ function list_getMailQueueSize()
 
 function ModifyMailSettings($return_config = false)
 {
-	global $txt, $context, $settings;
+	global $txt, $context;
 
 	$config_vars = array(
 			// Master email settings

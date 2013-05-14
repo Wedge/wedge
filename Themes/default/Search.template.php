@@ -13,7 +13,7 @@
 
 function template_main()
 {
-	global $context, $theme, $options, $txt, $settings;
+	global $context, $theme, $options, $txt;
 
 	if (!empty($context['search_errors']))
 		echo '

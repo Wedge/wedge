@@ -57,7 +57,7 @@ if (!defined('WEDGE'))
 // This function works out what to do!
 function AutoTask()
 {
-	global $time_start, $settings, $context;
+	global $time_start, $context;
 
 	// Special case for doing the mail queue.
 	if (isset($_GET['scheduled']) && $_GET['scheduled'] == 'mailq')
@@ -198,7 +198,7 @@ function AutoTask()
 // Function to sending out approval notices to moderators etc.
 function scheduled_approval_notification()
 {
-	global $scripturl, $settings, $mbname, $txt;
+	global $scripturl, $mbname, $txt;
 
 	// Grab all the items awaiting approval and sort type then board - clear up any things that are no longer relevant.
 	$request = wesql::query('
@@ -516,7 +516,7 @@ function scheduled_auto_optimize()
 // Send out a daily email of all subscribed topics.
 function scheduled_daily_digest()
 {
-	global $is_weekly, $txt, $mbname, $scripturl, $context, $settings;
+	global $is_weekly, $txt, $mbname, $scripturl, $context;
 
 	// We'll want this...
 	loadEssentialThemeData();

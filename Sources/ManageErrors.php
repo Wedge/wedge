@@ -620,8 +620,6 @@ function deleteIntrusions()
 
 function updateErrorCount($count = 0)
 {
-	global $settings;
-
 	if (empty($count))
 	{
 		$request = wesql::query('

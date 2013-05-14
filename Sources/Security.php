@@ -955,8 +955,6 @@ function checkSubmitOnce($action, $is_fatal = true)
 // Check the user's permissions.
 function allowedTo($permission, $boards = null)
 {
-	global $settings;
-
 	// You're always allowed to do nothing. (unless you're a working man, MR. LAZY :P!)
 	if (empty($permission))
 		return true;
@@ -1188,8 +1186,6 @@ function boardsAllowedTo($permissions, $check_access = true)
  */
 function showEmailAddress($userProfile_hideEmail, $userProfile_id)
 {
-	global $settings;
-
 	return we::$is_guest || we::$user['post_moderated'] ? 'no' : ((we::$is_member && we::$id == $userProfile_id && !$userProfile_hideEmail) || allowedTo('moderate_forum') ? 'yes_permission_override' : ($userProfile_hideEmail ? 'no' : 'no_through_forum'));
 }
 
@@ -1205,7 +1201,7 @@ function showEmailAddress($userProfile_hideEmail, $userProfile_id)
  */
 function checkUserBehavior()
 {
-	global $context, $settings, $txt, $webmaster_email, $board, $board_info;
+	global $context, $txt, $webmaster_email, $board, $board_info;
 
 	$context['http_headers'] = get_http_headers();
 	// Did we get any additional headers that wouldn't normally be picked up for any reason?

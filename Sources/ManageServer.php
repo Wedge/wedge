@@ -548,7 +548,7 @@ function ModifyProxySettings($return_config = false)
 
 function ModifyDebugSettings($return_config = false)
 {
-	global $context, $txt, $settings, $cachedir;
+	global $context, $txt, $cachedir;
 
 	$config_vars = array(
 		array('disableTemplateEval', $txt['disableTemplateEval'], 'db', 'check', null, 'disableTemplateEval'),
@@ -879,7 +879,7 @@ function prepareDBSettingContext(&$config_vars)
 // Helper function. Saves settings by putting them in Settings.php or saving them in the settings table.
 function saveSettings(&$config_vars)
 {
-	global $boarddir, $cookiename, $settings, $context, $cachedir;
+	global $boarddir, $cookiename, $context, $cachedir;
 
 	// Fix the darn stupid cookiename! (more may not be allowed, but these for sure!)
 	if (isset($_POST['cookiename']))

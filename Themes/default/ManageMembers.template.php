@@ -232,7 +232,7 @@ function template_search_members()
 
 function template_admin_browse()
 {
-	global $context, $theme, $options, $txt, $settings;
+	global $context, $theme, $options, $txt;
 
 	template_show_list('approve_list');
 

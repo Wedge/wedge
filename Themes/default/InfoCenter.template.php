@@ -97,7 +97,7 @@ function template_info_center_usersonline()
 // If user is logged in but stats are off, show them a PM bar.
 function template_info_center_personalmsg()
 {
-	global $context, $theme, $options, $txt, $settings;
+	global $context, $theme, $options, $txt;
 
 	if (we::$is_guest || $theme['show_stats_index'])
 		return;

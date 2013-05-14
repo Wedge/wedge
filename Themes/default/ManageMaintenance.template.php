@@ -14,7 +14,7 @@
 // Template for the database maintenance tasks.
 function template_maintain_database()
 {
-	global $context, $theme, $options, $txt, $settings;
+	global $context, $theme, $options, $txt;
 
 	// If maintenance has finished tell the user.
 	if (!empty($context['maintenance_finished']))
@@ -44,7 +44,7 @@ function template_maintain_database()
 // Template for the routine maintenance tasks.
 function template_maintain_routine()
 {
-	global $context, $theme, $options, $txt, $settings;
+	global $context, $theme, $options, $txt;
 
 	// If maintenance has finished tell the user.
 	if (!empty($context['maintenance_finished']))
@@ -220,7 +220,7 @@ function template_maintain_members()
 // Template for the topic maintenance tasks.
 function template_maintain_topics()
 {
-	global $txt, $context, $theme, $settings;
+	global $txt, $context, $theme;
 
 	// If maintenance has finished tell the user.
 	if (!empty($context['maintenance_finished']))

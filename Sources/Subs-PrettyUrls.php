@@ -17,7 +17,7 @@ if (!defined('WEDGE'))
 // Generate a pretty URL from a given text
 function pretty_generate_url($text, $is_board = false, $slash = false)
 {
-	global $settings, $txt;
+	global $txt;
 
 	if (strpos(strtolower($text), '[en]') !== false)
 	{

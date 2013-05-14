@@ -13,7 +13,7 @@
 
 function template_display_posts()
 {
-	global $context, $theme, $options, $txt, $settings, $board_info, $msg;
+	global $context, $theme, $options, $txt, $board_info, $msg;
 
 	// OK, we're going to need this!
 	add_js_file('scripts/topic.js');
@@ -134,7 +134,7 @@ function template_topic_poll_before()
 
 function template_topic_poll_results()
 {
-	global $theme, $options, $context, $txt, $settings;
+	global $theme, $options, $context, $txt;
 
 	$bar_num = 1;
 	echo '
@@ -188,7 +188,7 @@ function template_topic_poll_results()
 
 function template_topic_poll_vote()
 {
-	global $theme, $options, $context, $txt, $settings;
+	global $theme, $options, $context, $txt;
 
 	echo '
 			<form action="<URL>?action=poll;sa=vote;topic=', $context['current_topic'], '.', $context['start'], ';poll=', $context['poll']['id'], '" method="post" accept-charset="UTF-8">';

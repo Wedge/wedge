@@ -194,7 +194,7 @@ function SetCensor()
 // Modify all settings related to posts and posting.
 function ModifyPostSettings($return_config = false)
 {
-	global $context, $txt, $settings, $db_prefix;
+	global $context, $txt;
 
 	$context['page_title'] = $context['settings_title'] = $txt['manageposts_settings'];
 
@@ -300,7 +300,7 @@ function ModifyBBCSettings($return_config = false)
 // Options for the editor
 function ModifyPostEditorSettings($return_config = false)
 {
-	global $context, $txt, $settings, $db_prefix;
+	global $context, $txt;
 
 	$context['page_title'] = $context['settings_title'] = $txt['manageposts_editor_settings_title'];
 
@@ -339,7 +339,7 @@ function ModifyPostEditorSettings($return_config = false)
 // Function for modifying topic settings. Not very exciting.
 function ModifyTopicSettings($return_config = false)
 {
-	global $context, $txt, $settings;
+	global $context, $txt;
 
 	$context['page_title'] = $context['settings_title'] = $txt['manageposts_topic_settings'];
 
@@ -393,7 +393,7 @@ function ModifyTopicSettings($return_config = false)
 // Function for modifying drafts settings. Not very exciting.
 function ModifyDraftSettings($return_config = false)
 {
-	global $context, $txt, $settings;
+	global $context, $txt;
 
 	$context['page_title'] = $context['settings_title'] = $txt['manageposts_draft_settings'];
 

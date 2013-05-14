@@ -24,7 +24,7 @@ function template_admin_time_remaining()
 // This is the administration center home.
 function template_admin()
 {
-	global $context, $theme, $options, $txt, $settings;
+	global $context, $theme, $options, $txt;
 
 	// Welcome the admin, and mention any outstanding updates.
 	echo '

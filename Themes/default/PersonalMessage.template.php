@@ -448,7 +448,7 @@ function template_folder()
 // Just list all the personal message subjects - to make templates easier.
 function template_subject_list()
 {
-	global $context, $options, $theme, $settings, $txt;
+	global $context, $options, $theme, $txt;
 
 	echo '
 	<table class="table_grid w100 cs0">
@@ -544,7 +544,7 @@ function template_subject_list()
 
 function template_search()
 {
-	global $context, $theme, $options, $settings, $txt;
+	global $context, $theme, $options, $txt;
 
 	add_js_file('scripts/pm.js');
 
@@ -634,7 +634,7 @@ function template_search()
 
 function template_search_results()
 {
-	global $context, $theme, $options, $settings, $txt;
+	global $context, $theme, $options, $txt;
 
 	echo '
 		<we:cat>
@@ -741,7 +741,7 @@ function template_search_results()
 
 function template_send()
 {
-	global $context, $theme, $options, $settings, $txt;
+	global $context, $theme, $options, $txt;
 
 	// Show which messages were sent successfully and which failed.
 	if (!empty($context['send_log']))
@@ -953,7 +953,7 @@ function template_send_contacts()
 // This template asks the user whether they wish to empty out their folder/messages.
 function template_ask_delete()
 {
-	global $context, $theme, $options, $settings, $txt;
+	global $context, $theme, $options, $txt;
 
 	echo '
 		<we:cat>

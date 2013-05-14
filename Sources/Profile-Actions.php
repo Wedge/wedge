@@ -886,7 +886,7 @@ function profileInfractions($memID)
 
 function profileBan($memID)
 {
-	global $txt, $context, $settings, $cur_profile, $user_profile;
+	global $txt, $context, $cur_profile, $user_profile;
 
 	isAllowedTo('manage_bans');
 	add_css_file('mana', true);

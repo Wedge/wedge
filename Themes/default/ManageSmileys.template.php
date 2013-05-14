@@ -421,7 +421,7 @@ function template_editicons()
 // Editing an individual message icon
 function template_editicon()
 {
-	global $context, $theme, $options, $txt, $settings;
+	global $context, $theme, $options, $txt;
 
 	echo '
 		<form action="<URL>?action=admin;area=smileys;sa=editicon;icon=', $context['new_icon'] ? '0' : $context['icon']['id'], '" method="post" accept-charset="UTF-8">
