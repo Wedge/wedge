@@ -183,7 +183,7 @@ function AnnouncementSend()
 	censorText($context['topic_subject']);
 	censorText($message);
 
-	$message = trim(un_htmlspecialchars(strip_tags(strtr(parse_bbc($message, array('smileys' => false, 'cache' => $id_msg, 'parse_type' => 'post', 'owner' => $owner)), array('<br>' => "\n", '</div>' => "\n", '</li>' => "\n", '&#91;' => '[', '&#93;' => ']')))));
+	$message = trim(un_htmlspecialchars(strip_tags(strtr(parse_bbc($message, 'post', array('smileys' => false, 'cache' => $id_msg, 'user' => $owner)), array('<br>' => "\n", '</div>' => "\n", '</li>' => "\n", '&#91;' => '[', '&#93;' => ']')))));
 
 	// We need this in order to be able send emails.
 	loadSource('Subs-Post');

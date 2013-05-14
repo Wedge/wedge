@@ -609,7 +609,7 @@ function Display()
 		$context['poll'] = array(
 			'id' => $topicinfo['id_poll'],
 			'image' => 'normal_' . (empty($pollinfo['voting_locked']) ? 'poll' : 'locked_poll'),
-			'question' => parse_bbc($pollinfo['question'], array('parse_type' => 'poll-question')),
+			'question' => parse_bbc($pollinfo['question'], 'poll-question'),
 			'total_votes' => $pollinfo['total'],
 			'voters_visible' => $pollinfo['voters_visible'],
 			'showing_voters' => !empty($pollinfo['showing_voters']),
@@ -688,7 +688,7 @@ function Display()
 				'bar' => '<span class="nowrap"><img src="' . $theme['images_url'] . '/poll_' . ($context['right_to_left'] ? 'right' : 'left') . '.gif"><img src="' . $theme['images_url'] . '/poll_middle.gif" width="' . $barWide . '" height="12"><img src="' . $theme['images_url'] . '/poll_' . ($context['right_to_left'] ? 'left' : 'right') . '.gif"></span>',
 				'bar_ndt' => $bar > 0 ? '<div class="bar' . ($option['voted_this'] != -1 ? ' voted' : '') . '" style="width: ' . ($bar * 3) . 'px"></div>' : '',
 				'bar_width' => $barWide,
-				'option' => parse_bbc($option['label'], array('parse_type' => 'poll-option')),
+				'option' => parse_bbc($option['label'], 'poll-option'),
 				'vote_button' => '<input type="' . ($pollinfo['max_votes'] > 1 ? 'checkbox' : 'radio') . '" name="options[]" value="' . $i . '">'
 			);
 		}
@@ -1379,7 +1379,7 @@ function prepareDisplayContext($reset = false)
 		$context['current_post_length'] = 0;
 
 	// Run BBC interpreter on the message.
-	$message['body'] = parse_bbc($message['body'], array('smileys' => $message['smileys_enabled'], 'cache' => $message['id_msg'], 'owner' => $message['id_member']));
+	$message['body'] = parse_bbc($message['body'], 'post', array('smileys' => $message['smileys_enabled'], 'cache' => $message['id_msg'], 'user' => $message['id_member']));
 
 	// Compose the memory eat- I mean message array.
 	$output = array(

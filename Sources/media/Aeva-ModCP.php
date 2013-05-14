@@ -118,7 +118,7 @@ function aeva_modCP_submissions()
 			'del_link' => sprintf($del_link, $row['id']),
 			'poster' => aeva_profile($row['id_member'], $row['member_name']),
 			'posted_on' => $filter != 'albums' ? timeformat($row['posted_on']) : 0,
-			'description' => !empty($row['description']) ? parse_bbc($row['description'], array('parse_type' => 'media-description')) : '',
+			'description' => !empty($row['description']) ? parse_bbc($row['description'], 'media-description') : '',
 			'keywords' => !empty($row['keywords']) ? implode(', ', explode(',', $row['keywords'])) : '',
 		);
 	}
@@ -466,7 +466,7 @@ function aeva_modCP_reports()
 			'id2' => $row['id_media'],
 			'name' => $row['title'],
 			'reported_on' => timeformat($row['val2']),
-			'reason' => parse_bbc($row['val3'], array('parse_type' => 'report-media')),
+			'reason' => parse_bbc($row['val3'], 'report-media'),
 			'reported_by' => array(
 				'id' => $row['val1'],
 				'name' => $row['real_name'],

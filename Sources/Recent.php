@@ -248,7 +248,7 @@ function Recent()
 		censorText($row['subject']);
 
 		// BBC-atize the message.
-		$row['body'] = parse_bbc($row['body'], array('smileys' => $row['smileys_enabled'], 'cache' => $row['id_msg'], 'parse_type' => 'post', 'owner' => $row['id_first_member']));
+		$row['body'] = parse_bbc($row['body'], 'post', array('smileys' => $row['smileys_enabled'], 'cache' => $row['id_msg'], 'user' => $row['id_first_member']));
 
 		// And build the array.
 		$context['posts'][$row['id_msg']] = array(

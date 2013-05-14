@@ -353,7 +353,7 @@ function MessageIndex()
 				// Censor the subject and message. Unlike elsewhere, here they are implicitly different (by design)
 				censorText($row['first_subject']);
 				censorText($row['first_body']);
-				$row['first_body'] = parse_bbc($row['first_body'], array('smileys' => $row['first_smileys'], 'cache' => $row['id_first_msg'], 'parse_type' => 'post-preview'));
+				$row['first_body'] = parse_bbc($row['first_body'], 'post-preview', array('smileys' => $row['first_smileys'], 'cache' => $row['id_first_msg']));
 
 				// Is the theme requesting previews? Better set up the last post for them too. Not likely, but hey.
 				if (!empty($theme['message_index_preview']))
@@ -361,7 +361,7 @@ function MessageIndex()
 					censorText($row['last_subject']);
 					censorText($row['last_body']);
 
-					$row['last_body'] = strip_tags(strtr(parse_bbc($row['last_body'], array('smileys' => $row['last_smileys'], 'cache' => $row['id_last_msg'], 'parse_type' => 'post-preview')), array('<br>' => '&#10;')));
+					$row['last_body'] = strip_tags(strtr(parse_bbc($row['last_body'], 'post-preview', array('smileys' => $row['last_smileys'], 'cache' => $row['id_last_msg'])), array('<br>' => '&#10;')));
 					if (westr::strlen($row['last_body']) > 128)
 						$row['last_body'] = westr::substr($row['last_body'], 0, 128) . '...';
 				}
@@ -390,11 +390,11 @@ function MessageIndex()
 				// Limit them to 128 characters
 				if (westr::strlen($row['first_body']) > 128)
 					$row['first_body'] = westr::substr($row['first_body'], 0, 128) . '...';
-				$row['first_body'] = strip_tags(strtr(parse_bbc($row['first_body'], array('smileys' => $row['first_smileys'], 'cache' => $row['id_first_msg'], 'parse_type' => 'post-preview')), array('<br>' => '&#10;')));
+				$row['first_body'] = strip_tags(strtr(parse_bbc($row['first_body'], 'post-preview', array('smileys' => $row['first_smileys'], 'cache' => $row['id_first_msg'])), array('<br>' => '&#10;')));
 
 				if (westr::strlen($row['last_body']) > 128)
 					$row['last_body'] = westr::substr($row['last_body'], 0, 128) . '...';
-				$row['last_body'] = strip_tags(strtr(parse_bbc($row['last_body'], array('smileys' => $row['last_smileys'], 'cache' => $row['id_last_msg'], 'parse_type' => 'post-preview')), array('<br>' => '&#10;')));
+				$row['last_body'] = strip_tags(strtr(parse_bbc($row['last_body'], 'post-preview', array('smileys' => $row['last_smileys'], 'cache' => $row['id_last_msg'])), array('<br>' => '&#10;')));
 			}
 			// Huh, guess not.
 			else

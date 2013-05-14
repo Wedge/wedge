@@ -215,7 +215,7 @@ function Reagree()
 	loadLanguage(array('Agreement', 'Login'));
 	loadTemplate('Login');
 
-	$context['agreement'] = parse_bbc($txt['registration_agreement_body'], array('cache' => 'agreement_' . we::$user['language'], 'parse_type' => 'agreement'));
+	$context['agreement'] = parse_bbc($txt['registration_agreement_body'], 'agreement', array('cache' => 'agreement_' . we::$user['language']));
 	$context['agree_type'] = !empty($settings['agreement_force']) ? $txt['registration_reagreement_force'] : $txt['registration_reagreement_postonly'];
 
 	wetem::load('reagreement');

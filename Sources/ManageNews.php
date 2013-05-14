@@ -242,7 +242,7 @@ function EditNews()
 			$context['admin_current_news'][$id] = array(
 				'id' => $id,
 				'privacy' => $line[0],
-				'parsed' => preg_replace('~<([/]?)form[^>]*?[>]*>~i', '<em class="smalltext">&lt;$1form&gt;</em>', parse_bbc(substr($line, 1), array('parse_type' => 'news'))),
+				'parsed' => preg_replace('~<([/]?)form[^>]*?[>]*>~i', '<em class="smalltext">&lt;$1form&gt;</em>', parse_bbc(substr($line, 1), 'news')),
 			);
 
 	add_jquery_ui();
@@ -865,7 +865,7 @@ function cache_getNews()
 	{
 		$value = trim($value);
 		if ($value != '')
-			$result[] = parse_bbc(stripslashes(trim($value)), array('parse_type' => 'news')); // really no point setting this to be cached since we're caching the entire news
+			$result[] = parse_bbc(stripslashes(trim($value)), 'news'); // really no point setting this to be cached since we're caching the entire news.
 	}
 
 	return array(

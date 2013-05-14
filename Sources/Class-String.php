@@ -310,7 +310,7 @@ class westr extends westr_mb
 			return rtrim(preg_replace('~&#?\w*$~', '', substr($string, 0, $max_length))) . ($ellipsis && strlen($string) > $max_length ? '&hellip;' : '');
 
 		if ($preparse)
-			$string = parse_bbc($string, array('parse_type' => 'cut'));
+			$string = parse_bbc($string, 'cut');
 
 		$work = preg_replace('~(?:&[^&;]+;|<[^>]+>)~', chr(20), $string);
 

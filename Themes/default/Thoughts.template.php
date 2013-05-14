@@ -144,7 +144,7 @@ function template_sub_thoughts(&$thought)
 			echo '<li id="t', $id, '"><div><a class="more_button thome" data-id="', $id, '">', $txt['actions_button'], '</a>',
 			$tho['privacy'] != -3 ? '<div class="privacy_' . @$privacy_icon[$tho['privacy']] . '"></div>' : '',
 			'<a href="<URL>?action=profile;u=', $tho['id_member'], '">', $tho['owner_name'], '</a> <span class="date">(', $tho['updated'], ')</span> &raquo; ',
-			parse_bbc($tho['text'], array('parse_type' => 'thought', 'owner' => $tho['id_member'])), template_thought_likes($id), '</div>';
+			parse_bbc($tho['text'], 'thought', array('user' => $tho['id_member'])), template_thought_likes($id), '</div>';
 
 		if (!empty($tho['sub']))
 			template_sub_thoughts($tho);

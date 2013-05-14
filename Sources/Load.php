@@ -1033,7 +1033,7 @@ function loadMemberContext($user, $full_profile = false)
 
 	// Set things up to be used before hand.
 	$profile['signature'] = str_replace(array("\n", "\r"), array('<br>', ''), $profile['signature']);
-	$profile['signature'] = parse_bbc($profile['signature'], array('parse_type' => 'signature', 'cache' => 'sig' . $profile['id_member']));
+	$profile['signature'] = parse_bbc($profile['signature'], 'signature', array('cache' => 'sig' . $profile['id_member']));
 
 	$profile['is_online'] = (!empty($profile['show_online']) || allowedTo('moderate_forum')) && $profile['is_online'] > 0;
 	// Setup the buddy status here (One whole in_array call saved :P)
@@ -1147,7 +1147,7 @@ function loadMemberContext($user, $full_profile = false)
 
 			// BBC?
 			if ($custom['bbc'])
-				$value = parse_bbc($value, array('parse_type' => 'custom-field'));
+				$value = parse_bbc($value, 'custom-field');
 			// ... or checkbox?
 			elseif (isset($custom['type']) && $custom['type'] == 'check')
 				$value = $value ? $txt['yes'] : $txt['no'];

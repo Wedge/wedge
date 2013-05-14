@@ -22,13 +22,19 @@ if (!defined('WEDGE'))
  * - This should be written with performance in mind, i.e. use regular expressions for most tags.
  *
  * @param mixed $message The original text, transmitted to parse_bbc()
- * @param array $bbc_options - options are the same as per parse_bbc(), as this function is a wrapper that just pre-sets $bbc_options['parse_tags'].
+ * @param array $bbc_options - options are the same as per parse_bbc(), as this function is a wrapper that just pre-sets $bbc_options['tags'].
  * @param bool $short_list A boolean, true by default, specifying whether to disable the parsing of inline bbcode that is scarcely used, or that could slightly disrupt layout, such as colors, sub and sup.
- * @return mixed See parse_bbc()
+ * @return mixed The parsed string.
  */
-function parse_bbc_inline($message, $bbc_options = array(), $short_list = true)
+function parse_bbc_inline($message, $type = 'generic', $bbc_options = array(), $short_list = true)
 {
-	$bbc_options['parse_tags'] = $short_list ?
+	if ($type === (array) $type)
+	{
+		$bbc_options = $type;
+		$type = 'generic';
+	}
+
+	$bbc_options['tags'] = $short_list ?
 		array(
 			'b', 'u', 'i', 's',
 			'email', 'ftp', 'iurl', 'url', 'nobbc',
@@ -40,7 +46,7 @@ function parse_bbc_inline($message, $bbc_options = array(), $short_list = true)
 			// !! 'size', 'font' -- should we add these..?
 		);
 
-	return parse_bbc($message, $bbc_options);
+	return parse_bbc($message, $type, $bbc_options);
 }
 
 /**
@@ -52,13 +58,7 @@ function parse_bbc_inline($message, $bbc_options = array(), $short_list = true)
  * - The master toggle switch of $settings['enableBBC'] is applied here, as is $settings['enablePostHTML'] being able to handle basic HTML (including b, u, i, s, em, pre, blockquote; a and img are converted to bbcode equivalents)
  *
  * @param mixed $message The original text, including bbcode, to be parsed. This is expected to have been parsed with {@link preparsecode()} previously (for handling of quotes and apostrophes). Alternatively, if boolean false is passed here, the return value is the array listing the acceptable bbcode types.
- * @param array $bbc_options An array of options that affect parsing:
- * - smileys (bool) Whether smileys should be parsed or not, regardless of any other bbcode content. Defaults to on if not specified.
- * - cache (string) If potentially cacheable, this should be the cache's id. If not defined, no caching will occur. This should be a quasi-unique key for the item being parsed, so that if it took over 0.05 seconds, it can be cached. (The final key used for the cache takes the supplied key and includes details such as the user's locale and time offsets, an MD5 digest of the message and other details that potentially affect the way parsing occurs)
- * - print (bool) Whether in the printable mode or not, which disables various tags as well as hiding smileys.
- * - parse_tags (array) A list of tags to be parsed on this run, undefined or empty array to do all those currently enabled. (This overrides any user settings for what is and is not allowed. Additionally, runs with this set are never cached, regardless of cache id being set)
- * - owner (int) If defined, the user id of the author of this content. Used for identifying whether parsing should include user sanctions like disemvowelling.
- * - type (string, required) Indicates what type of content this is. Known values:
+ * @param string $type Indicates what type of content this is (default is generic, i.e. unknown type). Known values:
  *  -- agreement
  *  -- custom-field
  *  -- cut (used with westr::cut)
@@ -95,9 +95,15 @@ function parse_bbc_inline($message, $bbc_options = array(), $short_list = true)
  *  -- report-post
  *  -- signature
  *  -- thought
+ * @param array $bbc_options An array of options that affect parsing:
+ * - smileys (bool) Whether smileys should be parsed or not, regardless of any other bbcode content. Defaults to on if not specified.
+ * - cache (string) If potentially cacheable, this should be the cache's id. If not defined, no caching will occur. This should be a quasi-unique key for the item being parsed, so that if it took over 0.05 seconds, it can be cached. (The final key used for the cache takes the supplied key and includes details such as the user's locale and time offsets, an MD5 digest of the message and other details that potentially affect the way parsing occurs.)
+ * - print (bool) Whether in the printable mode or not, which disables various tags as well as hiding smileys.
+ * - tags (array) A list of tags to be parsed on this run, undefined or empty array to do all those currently enabled. (This overrides any user settings for what is and is not allowed. Additionally, runs with this set are never cached, regardless of cache id being set.)
+ * - user (int) If defined, the user id of the author (owner) of this content. Used for identifying whether parsing should include user sanctions like disemvowelling.
  * @return mixed If $message was boolean false, the return set is the master list of available bbcode, otherwise it is the parsed message.
  */
-function parse_bbc($message, $bbc_options = array()) // $smileys = true, $cache_id = '', $parse_tags = array(), $owner = 0)
+function parse_bbc($message, $type = 'generic', $bbc_options = array()) // $smileys = true, $cache_id = '', $parse_tags = array(), $owner = 0)
 {
 	global $txt, $context, $settings, $user_profile;
 	static $bbc_codes = array(), $bbc_types = array(), $itemcodes = array(), $no_autolink_tags = array();
@@ -107,13 +113,19 @@ function parse_bbc($message, $bbc_options = array()) // $smileys = true, $cache_
 	if ($message === '')
 		return '';
 
+	// This allows us to call parse_bbc($message, array(...)) and skip the type.
+	if ($type === (array) $type)
+	{
+		$bbc_options = $type;
+		$type = 'generic';
+	}
+
 	// Getting information from the parameters.
 	$smileys = !isset($bbc_options['smileys']) ? true : !empty($bbc_options['smileys']);
-	$parse_tags = !empty($bbc_options['parse_tags']) ? $bbc_options['parse_tags'] : array();
+	$parse_tags = !empty($bbc_options['tags']) ? $bbc_options['tags'] : array();
 	$print = !empty($bbc_options['print']);
-	$owner = !empty($bbc_options['owner']) ? $bbc_options['owner'] : 0;
+	$owner = !empty($bbc_options['user']) ? $bbc_options['user'] : 0;
 	$cache_id = !empty($bbc_options['cache']) ? $bbc_options['cache'] : '';
-	$parse_type = !empty($bbc_options['type']) ? $bbc_options['type'] : 'post';
 
 	if (empty($settings['enableBBC']) && $message !== false)
 	{
@@ -252,7 +264,7 @@ function parse_bbc($message, $bbc_options = array()) // $smileys = true, $cache_
 	// Shall we take the time to cache this? Do it if: cache is enabled, at a high level, message is long enough to warrant it,
 	// and after making sure that it doesn't hold an embeddable link -- except if we're in a signature, in which case we won't embed it.
 	if ($cache_id != '' && !empty($settings['cache_enable']) && (($settings['cache_enable'] >= 2 && strlen($message) > 1000) || strlen($message) > 2400)
-		&& empty($parse_tags) && ($parse_type == 'signature' || (strpos($message, 'http://') === false)))
+		&& empty($parse_tags) && ($type == 'signature' || (strpos($message, 'http://') === false)))
 	{
 		// It's likely this will change if the message is modified.
 		$cache_key = 'parse:' . $cache_id . '-' . md5(md5($message) . '-' . $smileys . (empty($disabled) ? '' : implode(',', array_keys($disabled)))
@@ -953,7 +965,7 @@ function parse_bbc($message, $bbc_options = array()) // $smileys = true, $cache_
 
 			// For parsed content, we must recurse to avoid security problems.
 			if ($tag['type'] !== 'unparsed_equals')
-				$data = parse_bbc($data, !empty($tag['parsed_tags_allowed']) ? false : true, '', !empty($tag['parsed_tags_allowed']) ? $tag['parsed_tags_allowed'] : array());
+				$data = parse_bbc($data, $type, array('smileys' => empty($tag['parsed_tags_allowed']), 'tags' => !empty($tag['parsed_tags_allowed']) ? $tag['parsed_tags_allowed'] : array()));
 
 			$tag['after'] = strtr($tag['after'], array('$1' => $data));
 
@@ -1011,7 +1023,7 @@ function parse_bbc($message, $bbc_options = array()) // $smileys = true, $cache_
 				- SSI functions such as ssi_recentTopics() (they tend to crash your browser)
 			*/
 
-			if (!empty($settings['embed_enabled']) && empty($context['embed_disable']) && strpos($message, 'http://') !== false && !$print && $parse_type != 'signature')
+			if (!empty($settings['embed_enabled']) && empty($context['embed_disable']) && strpos($message, 'http://') !== false && !$print && $type != 'signature')
 				$message = aeva_main($message);
 
 			// And reverses any protection already in place
@@ -1041,7 +1053,7 @@ function parse_bbc($message, $bbc_options = array()) // $smileys = true, $cache_
 		if (count($matches) > 0)
 		{
 			$f = 0;
-			global $addnote;
+			global $addnote, $type_for_footnotes;
 			if (is_null($addnote))
 				$addnote = array();
 			foreach ($matches as $m)
@@ -1070,6 +1082,7 @@ function parse_bbc($message, $bbc_options = array()) // $smileys = true, $cache_
 					$message .= '<foot:' . $feet . '>';
 			}
 
+			$type_for_footnotes = $type;
 			$message = preg_replace_callback('~(?:<foot:\d+>)+~', 'parse_footnotes', $message);
 		}
 	}
@@ -1237,7 +1250,7 @@ function replace_smileys($match)
 // The footnote parser. As the name says.
 function parse_footnotes($match)
 {
-	global $addnote;
+	global $addnote, $type_for_footnotes;
 
 	$msg = '<table class="footnotes w100">';
 	preg_match_all('~<foot:(\d+)>~', $match[0], $mat);
@@ -1245,7 +1258,7 @@ function parse_footnotes($match)
 	{
 		$n =& $addnote[$note];
 		$msg .= '<tr><td class="footnum"><a id="footnote' . $n[0] . '" href="#footlink' . $n[0] . '">&nbsp;' . $n[1] . '.&nbsp;</a></td><td class="footnote">'
-			 . (stripos($n[2], '[nb]', 1) === false ? $n[2] : parse_bbc($n[2])) . '</td></tr>';
+			 . (stripos($n[2], '[nb]', 1) === false ? $n[2] : parse_bbc($n[2], $type_for_footnotes)) . '</td></tr>';
 	}
 	return $msg . '</table>';
 }

@@ -428,7 +428,7 @@ function Post2()
 		wedit::preparsecode($_POST['message'], false, $post_errors);
 
 		// Let's see if there's still some content left without the tags.
-		if (westr::htmltrim(strip_tags(parse_bbc($_POST['message'], array('smileys' => false, 'parse_type' => 'empty-test')), '<img><object><embed><iframe><video><audio>')) === '')
+		if (westr::htmltrim(strip_tags(parse_bbc($_POST['message'], 'empty-test', array('smileys' => false)), '<img><object><embed><iframe><video><audio>')) === '')
 			if (!allowedTo('admin_forum') || strpos($_POST['message'], '[html]') === false)
 				$post_errors[] = 'no_message';
 	}
@@ -1033,7 +1033,7 @@ function notifyMembersBoard(&$topicData)
 		censorText($topicData[$key]['body']);
 
 		$topicData[$key]['subject'] = un_htmlspecialchars($topicData[$key]['subject']);
-		$topicData[$key]['body'] = trim(un_htmlspecialchars(strip_tags(strtr(parse_bbc($topicData[$key]['body'], array('smileys' => false, 'parse_type' => 'post-notify')), array('<br>' => "\n", '</div>' => "\n", '</li>' => "\n", '&#91;' => '[', '&#93;' => ']')))));
+		$topicData[$key]['body'] = trim(un_htmlspecialchars(strip_tags(strtr(parse_bbc($topicData[$key]['body'], 'post-notify', array('smileys' => false)), array('<br>' => "\n", '</div>' => "\n", '</li>' => "\n", '&#91;' => '[', '&#93;' => ']')))));
 	}
 
 	// Just the board numbers.

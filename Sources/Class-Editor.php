@@ -134,7 +134,7 @@ class wedit
 		// What tags do we allow?
 		$allowed_tags = array('b', 'u', 'i', 's', 'hr', 'list', 'li', 'font', 'size', 'color', 'img', 'left', 'center', 'right', 'url', 'email', 'ftp', 'sub', 'sup');
 
-		$text = parse_bbc($text, array('parse_tags' => $allowed_tags, 'parse_type' => 'post-convert'));
+		$text = parse_bbc($text, 'post-convert', array('tags' => $allowed_tags));
 
 		// Fix for having a line break then a thingy.
 		$text = strtr($text, array('<br><div' => '<div', "\n" => '', "\r" => ''));

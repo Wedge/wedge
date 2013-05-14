@@ -142,7 +142,7 @@ function Welcome()
 			'owner_name' => $row['owner_name'],
 			'privacy' => $row['privacy'],
 			'updated' => timeformat($row['updated']),
-			'text' => $row['posts'] < 10 ? preg_replace('~\</?a(?:\s[^>]+)?\>(?:https?://)?~', '', parse_bbc_inline($row['thought'], array('parse_type' => 'thought', 'owner' => 'id_member'))) : parse_bbc_inline($row['thought'], array('parse_type' => 'thought', 'owner' => 'id_member')),
+			'text' => $row['posts'] < 10 ? preg_replace('~\</?a(?:\s[^>]+)?\>(?:https?://)?~', '', parse_bbc_inline($row['thought'], 'thought', array('user' => $row['id_member']))) : parse_bbc_inline($row['thought'], 'thought', array('user' => $row['id_member'])),
 		);
 
 		$thought =& $thoughts[$row['id_thought']];

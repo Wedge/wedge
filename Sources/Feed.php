@@ -520,7 +520,7 @@ function getXmlNews($xml_format)
 				$row['body'] = strtr(westr::substr($body, 0, $settings['xmlnews_maxlen'] - 3), array("\n" => '<br />')) . '...';
 		}
 
-		$row['body'] = parse_bbc($row['body'], array('smileys' => $row['smileys_enabled'], 'cache' => $row['id_msg'], 'owner' => $row['id_member'], 'parse_type' => 'post-feed'));
+		$row['body'] = parse_bbc($row['body'], 'post-feed', array('smileys' => $row['smileys_enabled'], 'cache' => $row['id_msg'], 'user' => $row['id_member']));
 
 		censorText($row['body']);
 		censorText($row['subject']);
@@ -639,7 +639,7 @@ function getXmlRecent($xml_format)
 		if (!empty($settings['xmlnews_maxlen']) && westr::strlen(str_replace('<br />', "\n", $row['body'])) > $settings['xmlnews_maxlen'])
 			$row['body'] = strtr(westr::substr(str_replace('<br />', "\n", $row['body']), 0, $settings['xmlnews_maxlen'] - 3), array("\n" => '<br />')) . '...';
 
-		$row['body'] = parse_bbc($row['body'], array('smileys' => $row['smileys_enabled'], 'cache' => $row['id_msg'], 'owner' => $row['id_member'], 'parse_type' => 'post-feed'));
+		$row['body'] = parse_bbc($row['body'], 'post-feed', array('smileys' => $row['smileys_enabled'], 'cache' => $row['id_msg'], 'user' => $row['id_member']));
 
 		censorText($row['body']);
 		censorText($row['subject']);

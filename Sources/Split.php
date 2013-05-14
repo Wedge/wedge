@@ -390,7 +390,7 @@ function SplitSelectTopics()
 		censorText($row['subject']);
 		censorText($row['body']);
 
-		$row['body'] = parse_bbc($row['body'], array('smileys' => $row['smileys_enabled'], 'cache' => $row['id_msg'], 'parse_type' => 'post', 'owner' => $row['id_member']));
+		$row['body'] = parse_bbc($row['body'], 'post', array('smileys' => $row['smileys_enabled'], 'cache' => $row['id_msg'], 'user' => $row['id_member']));
 
 		$context['not_selected']['messages'][$row['id_msg']] = array(
 			'id' => $row['id_msg'],
@@ -431,7 +431,7 @@ function SplitSelectTopics()
 			censorText($row['subject']);
 			censorText($row['body']);
 
-			$row['body'] = parse_bbc($row['body'], array('smileys' => $row['smileys_enabled'], 'cache' => $row['id_msg'], 'parse_type' => 'post', 'owner' => $row['id_member']));
+			$row['body'] = parse_bbc($row['body'], 'post', array('smileys' => $row['smileys_enabled'], 'cache' => $row['id_msg'], 'user' => $row['id_member']));
 
 			$context['selected']['messages'][$row['id_msg']] = array(
 				'id' => $row['id_msg'],

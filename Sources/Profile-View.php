@@ -353,7 +353,7 @@ function showDrafts($memID)
 		censorText($row['subject']);
 
 		// Do the code.
-		$row['body'] = parse_bbc($row['body'], array('smileys' => !empty($row['extra']['smileys_enabled']), 'cache' => 'draft' . $row['id_draft'], 'parse_type' => 'post-draft'));
+		$row['body'] = parse_bbc($row['body'], 'post-draft', array('smileys' => !empty($row['extra']['smileys_enabled']), 'cache' => 'draft' . $row['id_draft']));
 
 		// And the array...
 		$context['posts'][$counter += $reverse ? -1 : 1] = array(
@@ -647,7 +647,7 @@ function showPosts($memID)
 		censorText($row['subject']);
 
 		// Do the code.
-		$row['body'] = parse_bbc($row['body'], array('smileys' => $row['smileys_enabled'], 'cache' => $row['id_msg'], 'parse_type' => 'post', 'owner' => $memID));
+		$row['body'] = parse_bbc($row['body'], 'post', array('smileys' => $row['smileys_enabled'], 'cache' => $row['id_msg'], 'user' => $memID));
 
 		// And the array...
 		$context['posts'][$counter += $reverse ? -1 : 1] = array(
@@ -1922,8 +1922,8 @@ function list_getProfileEdits($start, $items_per_page, $sort, $memID)
 			'member_link' => $txt['trackEdit_deleted_member'],
 			'action' => $row['action'],
 			'action_text' => $action_text,
-			'before' => !empty($extra['previous']) ? ($parse_bbc ? parse_bbc($extra['previous'], array('parse_type' => 'custom-field')) : $extra['previous']) : '',
-			'after' => !empty($extra['new']) ? ($parse_bbc ? parse_bbc($extra['new'], array('parse_type' => 'custom-field')) : $extra['new']) : '',
+			'before' => !empty($extra['previous']) ? ($parse_bbc ? parse_bbc($extra['previous'], 'custom-field') : $extra['previous']) : '',
+			'after' => !empty($extra['new']) ? ($parse_bbc ? parse_bbc($extra['new'], 'custom-field') : $extra['new']) : '',
 			'time' => timeformat($row['log_time']),
 		);
 	}

@@ -343,7 +343,7 @@ function profileInfractions($memID)
 	' . $txt['infraction_notification'] . '<br>
 	<div class="bbc_quote">
 		<div>
-			<blockquote>' . $txt['notification_subject'] . ' ' . $row['notice_subject'] . '<br><br>' . parse_bbc($row['notice_body'], array('smileys' => false, 'parse_type' => 'infraction_notice')) . '
+			<blockquote>' . $txt['notification_subject'] . ' ' . $row['notice_subject'] . '<br><br>' . parse_bbc($row['notice_body'], 'infraction_notice', array('smileys' => false)) . '
 		</div>
 	</div>';
 		}

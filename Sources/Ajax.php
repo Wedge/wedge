@@ -327,7 +327,7 @@ function ThoughtPersonal()
 
 	// Update their user data to use the new valid thought.
 	if (!empty($personal_id_thought))
-		updateMemberData(we::$id, array('personal_text' => parse_bbc_inline($personal_thought, array('parse_type' => 'thought', 'owner' => we::$id))));
+		updateMemberData(we::$id, array('personal_text' => parse_bbc_inline($personal_thought, 'thought', array('user' => we::$id))));
 
 	exit;
 }

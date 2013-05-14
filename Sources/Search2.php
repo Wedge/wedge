@@ -1540,7 +1540,7 @@ function prepareSearchContext($reset = false)
 		$charLimit = 50;
 
 		$message['body'] = strtr($message['body'], array("\n" => ' ', '<br>' => "\n"));
-		$message['body'] = parse_bbc($message['body'], array('smileys' => $message['smileys_enabled'], 'cache' => $message['id_msg'], 'parse_type' => 'post-preview', 'owner' => $message['id_member']));
+		$message['body'] = parse_bbc($message['body'], 'post-preview', array('smileys' => $message['smileys_enabled'], 'cache' => $message['id_msg'], 'user' => $message['id_member']));
 		$message['body'] = strip_tags(strtr($message['body'], array('</div>' => '<br>', '</li>' => '<br>')), '<br>');
 
 		if (westr::strlen($message['body']) > $charLimit)
@@ -1582,7 +1582,7 @@ function prepareSearchContext($reset = false)
 	}
 	// Run BBC interpreter on the message.
 	else
-		$message['body'] = parse_bbc($message['body'], array('smileys' => $message['smileys_enabled'], 'cache' => $message['id_msg'], 'parse_type' => 'post', 'owner' => $message['id_member']));
+		$message['body'] = parse_bbc($message['body'], 'post', array('smileys' => $message['smileys_enabled'], 'cache' => $message['id_msg'], 'user' => $message['id_member']));
 
 	// Make sure we don't end up with a practically empty message body.
 	$message['body'] = preg_replace('~^(?:&nbsp;)+$~', '', $message['body']);

@@ -1091,7 +1091,7 @@ function aeva_embed_video($message, $id_media = 0, $id_preview = 0)
 	$msg = '<a href="' . preg_replace(array('~\[url=([^]]*)][^[]*\[/url]~', '~\[url]([^[]*)\[/url]~'), '$1', $message) . '"></a>';
 
 	$context['embed_mg_hack'] = true;
-	$msg = parse_bbc(substr($message, 0, 4) == 'http' ? $msg : $message, array('parse_type' => 'media-embed'));
+	$msg = parse_bbc(substr($message, 0, 4) == 'http' ? $msg : $message, 'media-embed');
 	unset($context['embed_mg_hack']);
 
 	if (substr($msg, 0, 7) !== '<a href')

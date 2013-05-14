@@ -104,7 +104,7 @@ function Register($reg_errors = array())
 	if ($context['require_agreement'])
 	{
 		loadLanguage('Agreement');
-		$context['agreement'] = !empty($txt['registration_agreement_body']) ? parse_bbc($txt['registration_agreement_body'], array('cache' => 'agreement_' . we::$user['language'], 'parse_type' => 'agreement')) : '';
+		$context['agreement'] = !empty($txt['registration_agreement_body']) ? parse_bbc($txt['registration_agreement_body'], 'agreement', array('cache' => 'agreement_' . we::$user['language'])) : '';
 	}
 
 	// Prepare the time gate! Do it like so, in case later steps want to reset the limit for any reason, but make sure the time is the current one.

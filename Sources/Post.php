@@ -452,7 +452,7 @@ function Post($post_errors = array())
 			wedit::preparsecode($context['preview_message']);
 
 			// Do all bulletin board code tags, with or without smileys.
-			$context['preview_message'] = parse_bbc($context['preview_message'], array('smileys' => empty($_REQUEST['ns']), 'parse_type' => 'preview'));
+			$context['preview_message'] = parse_bbc($context['preview_message'], 'preview', array('smileys' => empty($_REQUEST['ns'])));
 
 			if ($form_subject != '')
 			{
@@ -1225,7 +1225,7 @@ function getTopic()
 	{
 		// Censor, BBC, ...
 		censorText($row['body']);
-		$row['body'] = parse_bbc($row['body'], array('smileys' => $row['smileys_enabled'], 'cache' => $row['id_msg'], 'parse_type' => 'post', 'owner' => $row['id_member']));
+		$row['body'] = parse_bbc($row['body'], 'post', array('smileys' => $row['smileys_enabled'], 'cache' => $row['id_msg'], 'user' => $row['id_member']));
 
 		// ...and store.
 		$context['previous_posts'][] = array(
