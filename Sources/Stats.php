@@ -584,8 +584,9 @@ function Stats()
 		SELECT COUNT(k.id_content) AS likes, m.id_member, m.real_name
 		FROM {db_prefix}likes AS k
 		LEFT JOIN {db_prefix}messages AS msg ON k.id_content = msg.id_msg AND k.content_type = {literal:post}
-		LEFT JOIN {db_prefix}members AS m ON msg.id_member = m.id_member
-		GROUP BY msg.id_member
+		LEFT JOIN {db_prefix}thoughts AS th ON k.id_content = th.id_thought AND k.content_type = {literal:think}
+		JOIN {db_prefix}members AS m ON m.id_member = IFNULL(msg.id_member, th.id_member)
+		GROUP BY m.id_member
 		ORDER BY likes DESC
 		LIMIT 10'
 	);

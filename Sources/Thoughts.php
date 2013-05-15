@@ -203,7 +203,7 @@ function embedThoughts($to_show = 10)
 			'owner_name' => $row['owner_name'],
 			'privacy' => $row['privacy'],
 			'updated' => timeformat($row['updated']),
-			'text' => $row['posts'] < 10 ? preg_replace('~\</?a(?:\s[^>]+)?\>(?:https?://)?~', '', parse_bbc_inline($row['thought']), 'thought', array('user' => $row['id_member'])) : parse_bbc_inline($row['thought'], 'thought', array('user' => $row['id_member'])),
+			'text' => $row['posts'] < 10 ? preg_replace('~\</?a(?:\s[^>]+)?\>(?:https?://)?~', '', parse_bbc_inline($row['thought'], 'thought', array('user' => $row['id_member']))) : parse_bbc_inline($row['thought'], 'thought', array('user' => $row['id_member'])),
 			'can_like' => we::$is_member && !empty($settings['likes_enabled']) && (!empty($settings['likes_own_posts']) || $row['id_member'] != we::$id),
 		);
 
@@ -342,7 +342,7 @@ function latestThoughts($memID = 0)
 				'id_parent_owner' => $row['id_parent_owner'],
 				'owner_name' => $row['owner_name'],
 				'updated' => timeformat($row['updated']),
-				'text' => $row['posts'] < 10 ? preg_replace('~\</?a(?:\s[^>]+)?\>(?:https?://)?~', '', parse_bbc_inline($row['thought']), 'thought', array('user' => $row['id_member'])) : parse_bbc_inline($row['thought'], 'thought', array('user' => $row['id_member'])),
+				'text' => $row['posts'] < 10 ? preg_replace('~\</?a(?:\s[^>]+)?\>(?:https?://)?~', '', parse_bbc_inline($row['thought'], 'thought', array('user' => $row['id_member']))) : parse_bbc_inline($row['thought'], 'thought', array('user' => $row['id_member'])),
 				'privacy' => $row['privacy'],
 				'has_children' => $row['has_children'],
 				'can_like' => we::$is_member && !empty($settings['likes_enabled']) && (!empty($settings['likes_own_posts']) || $row['id_member'] != we::$id),
