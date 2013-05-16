@@ -19,10 +19,10 @@ define('WEDGE', 'SSI');
 
 // We're going to want a few globals... these are all set later.
 global $time_start, $maintenance, $msubject, $mmessage, $mbname;
+global $settings, $context, $sc, $topic, $board, $txt, $scripturl;
 global $boardurl, $boarddir, $sourcedir, $webmaster_email, $cookiename;
-global $db_server, $db_name, $db_user, $db_prefix, $db_persist, $db_error_send, $db_last_error;
-global $db_connection, $settings, $context, $sc, $topic, $board, $txt;
-global $ssi_db_user, $scripturl, $ssi_db_passwd, $db_passwd;
+global $db_server, $db_connection, $db_name, $db_user, $db_prefix, $db_persist;
+global $db_error_send, $db_last_error, $ssi_db_user, $ssi_db_passwd, $db_passwd;
 
 // Remember the current configuration so it can be set back.
 $ssi_magic_quotes_runtime = function_exists('get_magic_quotes_gpc') && get_magic_quotes_runtime();
@@ -246,7 +246,7 @@ function ssi_logout($redirect_to = '', $output_method = 'echo')
 // Recent post list: Board | Subject by | Poster | Date
 function ssi_recentPosts($num_recent = 8, $exclude_boards = null, $include_boards = null, $output_method = 'echo', $limit_body = true)
 {
-	global $theme, $txt, $db_prefix, $settings;
+	global $theme, $txt, $settings;
 
 	// Excluding certain boards...
 	if ($exclude_boards === null && !empty($settings['recycle_enable']) && $settings['recycle_board'] > 0)
@@ -303,7 +303,7 @@ function ssi_fetchPosts($post_ids, $override_permissions = false, $output_method
 // This removes code duplication in other queries - don't call it direct unless you really know what you're up to.
 function ssi_queryPosts($query_where = '', $query_where_params = array(), $query_limit = '', $query_order = 'm.id_msg DESC', $output_method = 'echo', $limit_body = false)
 {
-	global $theme, $scripturl, $txt, $db_prefix;
+	global $theme, $scripturl, $txt;
 
 	// Find all the posts. Newer ones will have higher IDs.
 	$request = wesql::query('
@@ -396,7 +396,7 @@ function ssi_queryPosts($query_where = '', $query_where_params = array(), $query
 // Recent topic list: [Board] | Subject by | Poster | Date
 function ssi_recentTopics($num_recent = 8, $exclude_boards = null, $include_boards = null, $output_method = 'echo', $just_titles = false)
 {
-	global $settings, $theme, $scripturl, $txt, $db_prefix;
+	global $settings, $theme, $scripturl, $txt;
 
 	if ($exclude_boards === null && !empty($settings['recycle_enable']) && $settings['recycle_board'] > 0)
 		$exclude_boards = array($settings['recycle_board']);
@@ -556,7 +556,7 @@ function ssi_recentTopicTitles($num_recent = 8, $exclude_boards = null, $include
 // Show the top poster's name and profile link.
 function ssi_topPoster($topNumber = 1, $output_method = 'echo')
 {
-	global $db_prefix, $scripturl, $settings;
+	global $scripturl, $settings;
 
 	if (empty($settings['allow_guestAccess']) && we::$is_guest)
 		return array();
@@ -596,7 +596,7 @@ function ssi_topPoster($topNumber = 1, $output_method = 'echo')
 // Show boards by activity.
 function ssi_topBoards($num_top = 10, $output_method = 'echo')
 {
-	global $theme, $db_prefix, $txt, $scripturl, $settings;
+	global $theme, $txt, $scripturl, $settings;
 
 	// Find boards with lots of posts.
 	$request = wesql::query('
@@ -654,7 +654,7 @@ function ssi_topBoards($num_top = 10, $output_method = 'echo')
 // Shows the top topics.
 function ssi_topTopics($type = 'replies', $num_topics = 10, $output_method = 'echo')
 {
-	global $db_prefix, $txt, $scripturl, $settings;
+	global $txt, $scripturl, $settings;
 
 	if ($settings['totalMessages'] > 100000)
 	{
@@ -752,7 +752,7 @@ function ssi_topTopicsViews($num_topics = 10, $output_method = 'echo')
 // Show a link to the latest member:  Please welcome, Someone, our latest member.
 function ssi_latestMember($output_method = 'echo')
 {
-	global $db_prefix, $txt, $scripturl, $context, $settings;
+	global $txt, $context, $settings;
 
 	if (we::$is_guest && empty($settings['allow_guestAccess']))
 		return '';
@@ -845,7 +845,7 @@ function ssi_fetchGroupMembers($group_id, $output_method = 'echo')
 // Fetch some member data!
 function ssi_queryMembers($query_where, $query_where_params = array(), $query_limit = '', $query_order = 'id_member DESC', $output_method = 'echo')
 {
-	global $theme, $scripturl, $txt, $db_prefix, $settings, $memberContext;
+	global $theme, $txt, $settings, $memberContext;
 
 	if (empty($settings['allow_guestAccess']) && we::$is_guest)
 		return array();
@@ -910,7 +910,7 @@ function ssi_queryMembers($query_where, $query_where_params = array(), $query_li
 // Show some basic stats:  Total This: XXXX, etc.
 function ssi_boardStats($output_method = 'echo')
 {
-	global $db_prefix, $txt, $scripturl, $settings;
+	global $txt, $scripturl, $settings;
 
 	if (empty($settings['allow_guestAccess']) && we::$is_guest)
 		return array();
@@ -1053,7 +1053,7 @@ function ssi_topPoll($output_method = 'echo')
 // Show the most recently posted poll.
 function ssi_recentPoll($topPollInstead = false, $output_method = 'echo')
 {
-	global $db_prefix, $txt, $theme, $boardurl, $context, $settings;
+	global $txt, $theme, $boardurl, $context, $settings;
 
 	$boardsAllowed = array_intersect(boardsAllowedTo('poll_view'), boardsAllowedTo('poll_vote'));
 
@@ -1183,7 +1183,7 @@ function ssi_recentPoll($topPollInstead = false, $output_method = 'echo')
 
 function ssi_showPoll($topic = null, $output_method = 'echo')
 {
-	global $db_prefix, $txt, $theme, $boardurl, $context;
+	global $txt, $theme, $boardurl, $context;
 
 	$boardsAllowed = boardsAllowedTo('poll_view');
 
@@ -1356,7 +1356,7 @@ function ssi_showPoll($topic = null, $output_method = 'echo')
 // Takes care of voting - don't worry, this is done automatically.
 function ssi_pollVote()
 {
-	global $context, $db_prefix, $sc, $settings;
+	global $context, $sc, $settings;
 
 	if (!isset($_POST[$context['session_var']]) || $_POST[$context['session_var']] != $sc || empty($_POST['options']) || !isset($_POST['poll']))
 	{
@@ -1428,7 +1428,7 @@ function ssi_pollVote()
 
 	// Add their vote in to the tally.
 	wesql::insert('',
-		$db_prefix . 'log_polls',
+		'{db_prefix}log_polls',
 		array('id_poll' => 'int', 'id_member' => 'int', 'id_choice' => 'int'),
 		$inserts,
 		array('id_poll', 'id_member', 'id_choice')
@@ -1491,7 +1491,7 @@ function ssi_news($output_method = 'echo')
 // Show the latest news, with a template... by board.
 function ssi_boardNews($board = null, $limit = null, $start = null, $length = null, $output_method = 'echo')
 {
-	global $scripturl, $db_prefix, $txt, $theme, $settings;
+	global $scripturl, $txt, $theme, $settings;
 
 	if (empty($settings['allow_guestAccess']) && we::$is_guest)
 		return array();
@@ -1668,8 +1668,6 @@ function ssi_boardNews($board = null, $limit = null, $start = null, $length = nu
 // Check the passed id_member/password. If $is_username is true, treats $id as a username.
 function ssi_checkPassword($id = null, $password = null, $is_username = false)
 {
-	global $db_prefix;
-
 	// If $id is null, this was most likely called from a query string and should do nothing.
 	if ($id === null)
 		return;

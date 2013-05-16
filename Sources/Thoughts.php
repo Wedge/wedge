@@ -67,19 +67,10 @@ function Thoughts()
 				OR h.id_master IN ({array_int:think})
 				OR h.id_parent IN ({array_int:think})
 			)
-			AND (
-				h.id_member = {int:me}
-				OR h.privacy = {int:everyone}' . (we::$is_guest ? '' : '
-				OR h.privacy = {int:members}') . '
-				OR FIND_IN_SET(' . implode(', h.privacy)
-				OR FIND_IN_SET(', we::$user['groups']) . ', h.privacy)
-			)
+			AND {query_see_thought}
 			ORDER BY h.id_thought',
 			array(
 				'think' => $think,
-				'me' => we::$id,
-				'everyone' => -3,
-				'members' => 0,
 			)
 		);
 		while ($row = wesql::fetch_assoc($request))
@@ -174,17 +165,10 @@ function embedThoughts($to_show = 10)
 		LEFT JOIN {db_prefix}thoughts AS h2 ON (h.id_parent = h2.id_thought)
 		LEFT JOIN {db_prefix}members AS m ON (h.id_member = m.id_member)
 		LEFT JOIN {db_prefix}members AS mp ON (h2.id_member = mp.id_member)
-		WHERE h.id_member = {int:me}
-			OR h.privacy = {int:everyone}' . (we::$is_guest ? '' : '
-			OR h.privacy = {int:members}
-			OR FIND_IN_SET(' . implode(', h.privacy)
-			OR FIND_IN_SET(', we::$user['groups']) . ', h.privacy)') . '
+		WHERE {query_see_thought}
 		ORDER BY h.id_thought DESC
 		LIMIT {int:per_page}',
 		array(
-			'me' => we::$id,
-			'everyone' => -3,
-			'members' => 0,
 			'per_page' => $to_show,
 		)
 	);
@@ -242,20 +226,10 @@ function latestThoughts($memID = 0)
 		SELECT COUNT(h.id_thought)
 		FROM {db_prefix}thoughts AS h
 		WHERE ' . (!$memID ? '1=1' : 'h.id_member = {int:id_member}') . ($memID && (we::$id == $memID) ? '' : '
-		AND (' . ($memID ? '' : '
-			h.id_member = {int:me}
-			OR ') . '
-			h.privacy = {int:everyone}' . (we::$is_guest ? '' : '
-			OR h.privacy = {int:members}') . '
-			OR FIND_IN_SET(' . implode(', h.privacy)
-			OR FIND_IN_SET(', we::$user['groups']) . ', h.privacy)
-		)') . '
+		AND {query_see_thought}') . '
 		LIMIT 1',
 		array(
-			'me' => we::$id,
 			'id_member' => $memID,
-			'everyone' => -3,
-			'members' => 0,
 		)
 	);
 	list ($total_thoughts) = wesql::fetch_row($request);
@@ -272,21 +246,11 @@ function latestThoughts($memID = 0)
 		SELECT h.id_thought
 		FROM {db_prefix}thoughts AS h
 		WHERE ' . (!$memID ? '1=1' : 'h.id_member = {int:id_member}') . ($memID && (we::$id == $memID) ? '' : '
-		AND (' . ($memID ? '' : '
-			h.id_member = {int:me}
-			OR ') . '
-			h.privacy = {int:everyone}' . (we::$is_guest ? '' : '
-			OR h.privacy = {int:members}') . '
-			OR FIND_IN_SET(' . implode(', h.privacy)
-			OR FIND_IN_SET(', we::$user['groups']) . ', h.privacy)
-		)') . '
+		AND {query_see_thought}') . '
 		ORDER BY h.id_thought DESC
 		LIMIT {int:start}, {int:per_page}',
 		array(
-			'me' => we::$id,
 			'id_member' => $memID,
-			'everyone' => -3,
-			'members' => 0,
 			'start' => floor($context['start'] / $thoughts_per_page) * $thoughts_per_page,
 			'per_page' => $thoughts_per_page,
 		)
@@ -299,37 +263,29 @@ function latestThoughts($memID = 0)
 	// We'll need to get data for: this user's thoughts, its parents, and one or no children.
 	if (!empty($think))
 	{
+		// h is the thought's parent here.
 		$request = wesql::query('
 			SELECT
-				h.updated, h.thought, h.id_thought, h.id_parent, h.id_member,
-				h.id_master, h_parent.id_member AS id_parent_owner, h.privacy,
+				ho.updated, ho.thought, ho.id_thought, ho.id_parent, ho.id_member,
+				ho.id_master, ho.id_member AS id_parent_owner, ho.privacy,
 				m.real_name AS owner_name, m_parent.real_name AS parent_name,
 				m.posts, h_child.id_thought > 0 AS has_children
 			FROM
-				{db_prefix}thoughts AS h
+				{db_prefix}thoughts AS ho
 			LEFT JOIN
-				{db_prefix}members AS m ON (h.id_member = m.id_member)
+				{db_prefix}members AS m ON (ho.id_member = m.id_member)
 			LEFT JOIN
-				{db_prefix}thoughts AS h_parent ON (h_parent.id_thought = h.id_parent AND (
-					h_parent.id_member = {int:me}
-					OR h_parent.privacy = {int:everyone}' . (we::$is_guest ? '' : '
-					OR h_parent.privacy = {int:members}') . '
-					OR FIND_IN_SET(' . implode(', h_parent.privacy)
-					OR FIND_IN_SET(', we::$user['groups']) . ', h_parent.privacy)
-				))
+				{db_prefix}thoughts AS h ON (h.id_thought = ho.id_parent AND {query_see_thought})
 			LEFT JOIN
-				{db_prefix}thoughts AS h_child ON (h_child.id_parent = h.id_thought)
+				{db_prefix}thoughts AS h_child ON (h_child.id_parent = ho.id_thought)
 			LEFT JOIN
-				{db_prefix}members AS m_parent ON (h_parent.id_member = m_parent.id_member)
+				{db_prefix}members AS m_parent ON (h.id_member = m_parent.id_member)
 			WHERE
-				h.id_thought IN ({array_int:think})
-			GROUP BY h.id_thought
-			ORDER BY h.id_thought DESC',
+				ho.id_thought IN ({array_int:think})
+			GROUP BY ho.id_thought
+			ORDER BY ho.id_thought DESC',
 			array(
 				'think' => $think,
-				'me' => we::$id,
-				'everyone' => -3,
-				'members' => 0,
 			)
 		);
 		while ($row = wesql::fetch_assoc($request))

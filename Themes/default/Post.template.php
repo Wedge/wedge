@@ -373,7 +373,21 @@ function template_post_subject()
 		echo '<option value="', $icon['value'], '"', $icon['value'] == $context['icon'] ? ' selected' : '', '>&lt;img src=&quot;', $icon['url'], '&quot;&gt;&nbsp; ', $icon['name'], '</option>';
 
 	echo '
-					</select>
+					</select>';
+
+	if ($context['is_first_post'])
+	{
+		echo '
+					<select name="privacy" id="privacy" tabindex="', $context['tabindex']++, '">';
+
+		foreach ($context['privacies'] as $priv)
+			echo '<option value="', $priv, '"', $priv == $context['current_privacy'] ? ' selected' : '', '>&lt;span class=&quot;privacy_', $priv, '&quot /&gt;&nbsp;', $txt['privacy_' . $priv], '</option>';
+
+		echo '
+					</select>';
+	}
+
+	echo '
 					<input name="subject"', $context['subject'] == '' ? '' : ' value="' . $context['subject'] . '"', ' tabindex="', $context['tabindex']++, '" maxlength="80" class="w75">';
 }
 

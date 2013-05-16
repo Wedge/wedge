@@ -376,7 +376,7 @@ function Post2()
 		}
 	}
 
-	// If the poster is a guest evaluate the legality of name and email.
+	// If the poster is a guest, evaluate the legality of name and email.
 	if ($posterIsGuest)
 	{
 		$_POST['guestname'] = !isset($_POST['guestname']) ? '' : trim($_POST['guestname']);
@@ -851,6 +851,7 @@ function Post2()
 		'lock_mode' => isset($_POST['lock']) ? (int) $_POST['lock'] : null,
 		'pin_mode' => isset($_POST['pin']) ? (int) $_POST['pin'] : null,
 		'mark_as_read' => true,
+		'privacy' => isset($_POST['privacy']) && (empty($topic) || (isset($_REQUEST['msg']) && $_REQUEST['msg'] == $topic_info['id_first_msg'])) ? $_POST['privacy'] : null,
 		'is_approved' => !$settings['postmod_active'] || empty($topic) || !empty($board_info['cur_topic_approved']),
 	);
 	$posterOptions = array(

@@ -733,7 +733,7 @@ function aeva_prevNextThumb($myurl, &$prev)
 function aeva_viewItem()
 {
 	// Comes into play when you're viewing a single item
-	global $galurl, $txt, $amSettings, $context, $db_prefix, $memberContext, $theme, $boarddir;
+	global $galurl, $txt, $amSettings, $context, $memberContext, $theme, $boarddir;
 
 	// Set the item ID
 	$item = isset($_REQUEST['in']) ? (int) $_REQUEST['in'] : 0;
@@ -1250,7 +1250,7 @@ function aeva_viewItem()
 
 function aeva_mgComment()
 {
-	global $context, $galurl, $amSettings, $txt, $db_prefix;
+	global $context, $galurl, $amSettings, $txt;
 
 	// Get the item info
 	$request = wesql::query('
@@ -1349,7 +1349,7 @@ function aeva_mgComment()
 function aeva_mgReport()
 {
 	// Handles reporting of comments/items
-	global $txt, $galurl, $db_prefix, $context;
+	global $txt, $galurl, $context;
 
 	$type = $_GET['type'] == 'comment' ? 'com' : 'item';
 
@@ -2197,7 +2197,7 @@ function aeva_mgEditCom()
 // A common function to delete comments and items
 function aeva_delete()
 {
-	global $galurl, $amSettings, $db_prefix, $txt;
+	global $galurl, $amSettings, $txt;
 
 	if (empty($_GET['type']))
 	{
@@ -2248,7 +2248,7 @@ function aeva_delete()
 // Quick moderation inside album pages...
 function aeva_quickmodAlbum()
 {
-	global $galurl, $amSettings, $db_prefix, $txt;
+	global $galurl, $amSettings, $txt;
 
 	checkSession('post');
 
@@ -2310,7 +2310,7 @@ function aeva_quickmodAlbum()
 // A common function to approve/unapprove items
 function aeva_mgApprove()
 {
-	global $galurl, $amSettings, $db_prefix, $txt;
+	global $galurl, $amSettings, $txt;
 
 	$approval = isset($_GET['sa']) && $_GET['sa'] == 'approve' ? 1 : 0;
 	if (empty($_GET['type']))

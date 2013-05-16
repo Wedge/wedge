@@ -1110,6 +1110,7 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 	$topicOptions['poll'] = isset($topicOptions['poll']) ? (int) $topicOptions['poll'] : null;
 	$topicOptions['lock_mode'] = isset($topicOptions['lock_mode']) ? $topicOptions['lock_mode'] : null;
 	$topicOptions['pin_mode'] = isset($topicOptions['pin_mode']) ? $topicOptions['pin_mode'] : null;
+	$topicOptions['privacy'] = isset($topicOptions['privacy']) && preg_match('~^[a-z]+$~', $topicOptions['privacy']) ? $topicOptions['privacy'] : null;
 	$posterOptions['id'] = empty($posterOptions['id']) ? 0 : (int) $posterOptions['id'];
 	$posterOptions['ip'] = empty($posterOptions['ip']) ? we::$user['ip'] : $posterOptions['ip'];
 
@@ -1222,12 +1223,12 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 			array(
 				'id_board' => 'int', 'id_member_started' => 'int', 'id_member_updated' => 'int', 'id_first_msg' => 'int',
 				'id_last_msg' => 'int', 'locked' => 'int', 'is_pinned' => 'int', 'num_views' => 'int',
-				'id_poll' => 'int', 'unapproved_posts' => 'int', 'approved' => 'int',
+				'id_poll' => 'int', 'unapproved_posts' => 'int', 'approved' => 'int', 'privacy' => 'string',
 			),
 			array(
 				$topicOptions['board'], $posterOptions['id'], $posterOptions['id'], $msgOptions['id'],
 				$msgOptions['id'], $topicOptions['lock_mode'] === null ? 0 : $topicOptions['lock_mode'], $topicOptions['pin_mode'] === null ? 0 : $topicOptions['pin_mode'], 0,
-				$topicOptions['poll'] === null ? 0 : $topicOptions['poll'], $msgOptions['approved'] ? 0 : 1, $msgOptions['approved'],
+				$topicOptions['poll'] === null ? 0 : $topicOptions['poll'], $msgOptions['approved'] ? 0 : 1, $msgOptions['approved'], $topicOptions['privacy'],
 			),
 			array('id_topic')
 		);
@@ -1277,7 +1278,8 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 				' . ($msgOptions['approved'] ? 'id_member_updated = {int:poster_id}, id_last_msg = {int:id_msg},' : '') . '
 				' . $countChange . ($topicOptions['lock_mode'] === null ? '' : ',
 				locked = {int:locked}') . ($topicOptions['pin_mode'] === null ? '' : ',
-				is_pinned = {int:is_pinned}') . '
+				is_pinned = {int:is_pinned}') . ($topicOptions['privacy'] === null ? '' : ',
+				privacy = {string:privacy}') . '
 			WHERE id_topic = {int:id_topic}',
 			array(
 				'poster_id' => $posterOptions['id'],
@@ -1285,6 +1287,7 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 				'locked' => $topicOptions['lock_mode'],
 				'is_pinned' => $topicOptions['pin_mode'],
 				'id_topic' => $topicOptions['id'],
+				'privacy' => $topicOptions['privacy'],
 			)
 		);
 
@@ -1302,7 +1305,7 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 		}
 	}
 
-	// Creating is modifying...in a way.
+	// Creating is modifying... in a way.
 	// !!! Why not set id_msg_modified on the insert?
 	wesql::query('
 		UPDATE {db_prefix}messages
@@ -1723,12 +1726,12 @@ function createAttachment(&$attachmentOptions)
 			wesql::insert('',
 				'{db_prefix}attachments',
 				array(
-					'id_folder' => 'int', 'id_msg' => 'int', 'attachment_type' => 'int', 'filename' => 'string-255', 'file_hash' => 'string-40', 'fileext' => 'string-8',
-					'size' => 'int', 'width' => 'int', 'height' => 'int', 'mime_type' => 'string-20',
+					'id_folder' => 'int', 'id_msg' => 'int', 'attachment_type' => 'int', 'filename' => 'string-255', 'file_hash' => 'string-40',
+					'fileext' => 'string-8', 'size' => 'int', 'width' => 'int', 'height' => 'int', 'mime_type' => 'string-20',
 				),
 				array(
-					$id_folder, (int) $attachmentOptions['post'], 3, $thumb_filename, $thumb_file_hash, $attachmentOptions['fileext'],
-					$thumb_size, $thumb_width, $thumb_height, $thumb_mime,
+					$id_folder, (int) $attachmentOptions['post'], 3, $thumb_filename, $thumb_file_hash,
+					$attachmentOptions['fileext'], $thumb_size, $thumb_width, $thumb_height, $thumb_mime,
 				),
 				array('id_attach')
 			);
@@ -1762,6 +1765,7 @@ function modifyPost(&$msgOptions, &$topicOptions, &$posterOptions)
 	$topicOptions['poll'] = isset($topicOptions['poll']) ? (int) $topicOptions['poll'] : null;
 	$topicOptions['lock_mode'] = isset($topicOptions['lock_mode']) ? $topicOptions['lock_mode'] : null;
 	$topicOptions['pin_mode'] = isset($topicOptions['pin_mode']) ? $topicOptions['pin_mode'] : null;
+	$topicOptions['privacy'] = isset($topicOptions['privacy']) && preg_match('~^[a-z]+$~', $topicOptions['privacy']) ? $topicOptions['privacy'] : null;
 
 	// Does a plugin want to manipulate posts/topics before they're modified?
 	call_hook('modify_post_before', array(&$msgOptions, &$topicOptions, &$posterOptions));
@@ -1818,20 +1822,22 @@ function modifyPost(&$msgOptions, &$topicOptions, &$posterOptions)
 		$update_parameters['var_' . $var] = $val;
 	}
 
-	// Lock and/or pin the post.
-	if ($topicOptions['pin_mode'] !== null || $topicOptions['lock_mode'] !== null || $topicOptions['poll'] !== null)
+	// Topic actions.
+	if ($topicOptions['pin_mode'] !== null || $topicOptions['lock_mode'] !== null || $topicOptions['poll'] !== null || $topicOptions['privacy'] !== null)
 	{
 		wesql::query('
 			UPDATE {db_prefix}topics
 			SET
 				is_pinned = {raw:is_pinned},
 				locked = {raw:locked},
-				id_poll = {raw:id_poll}
+				id_poll = {raw:id_poll}' . ($topicOptions['privacy'] === null ? '' : ',
+				privacy = {string:privacy}') . '
 			WHERE id_topic = {int:id_topic}',
 			array(
 				'is_pinned' => $topicOptions['pin_mode'] === null ? 'is_pinned' : (int) $topicOptions['pin_mode'],
 				'locked' => $topicOptions['lock_mode'] === null ? 'locked' : (int) $topicOptions['lock_mode'],
 				'id_poll' => $topicOptions['poll'] === null ? 'id_poll' : (int) $topicOptions['poll'],
+				'privacy' => $topicOptions['privacy'] === null ? 'privacy' : (string) $topicOptions['privacy'],
 				'id_topic' => $topicOptions['id'],
 			)
 		);

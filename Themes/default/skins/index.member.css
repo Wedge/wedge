@@ -210,25 +210,27 @@ for guests, because most of the time it won't be an option.
 	width: width($images_dir/icons/thought.gif)px
 	height: height($images_dir/icons/thought.gif)px
 
-.privacy_default mixes .inline-block
+.privacy_icons mixes .inline-block
 	background: url($images/icons/privacy.png) 0 0 no-repeat
 	margin-right: 4px
 	width: 10px
 	height: 10px
 
-.privacy_everyone extends .privacy_default
+.privacy_default extends .privacy_icons
 	background-position: 0 -10px
 
-.privacy_members extends .privacy_default
+.privacy_public extends .privacy_default // Uses the same icon.
+
+.privacy_members extends .privacy_icons
 	background-position: 0 -20px
 
-.privacy_groups extends .privacy_default
+.privacy_groups extends .privacy_icons // !! Unused for now...
 	background-position: 0 -30px
 
-.privacy_friends extends .privacy_default
+.privacy_contacts extends .privacy_icons
 	background-position: 0 -40px
 
-.privacy_justme extends .privacy_default
+.privacy_author extends .privacy_icons
 	background-position: 0 -50px
 
 .iconbox

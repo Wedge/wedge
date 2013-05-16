@@ -373,12 +373,12 @@ function loadBoard()
 			// If that is the case do an additional check to see if they have any topics waiting to be approved.
 			if ($board_info['num_topics'] == 0 && $settings['postmod_active'] && !allowedTo('approve_posts'))
 			{
-				wesql::free_result($request); // Free the previous result
+				wesql::free_result($request); // Free the previous result.
 
 				$request = wesql::query('
 					SELECT COUNT(id_topic)
 					FROM {db_prefix}topics
-					WHERE id_member_started={int:id_member}
+					WHERE id_member_started = {int:id_member}
 						AND approved = {int:is_unapproved}
 						AND id_board = {int:board}',
 					array(

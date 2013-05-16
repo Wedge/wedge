@@ -450,11 +450,24 @@ class we
 			)';
 		}
 
+		$user['query_see_thought'] = '
+			(' . ($is['guest'] ? '
+				' : '
+				h.id_member = ' . $id_member . '
+				OR ') . 'h.privacy = -3' . ($is['guest'] ? '' : '
+				OR h.privacy = 0
+				OR (
+					h.privacy = 3
+					AND FIND_IN_SET(' . $id_member . ', (SELECT buddy_list FROM ' . $db_prefix . 'members AS th_mem WHERE th_mem.id_member = h.id_member))
+				)') . '
+			)';
+
 		wesql::register_replacement('query_see_topic', $user['query_see_topic']);
 		wesql::register_replacement('query_see_board', $user['query_see_board']);
 		wesql::register_replacement('query_list_board', $user['query_list_board']);
 		wesql::register_replacement('query_wanna_see_board', $user['query_wanna_see_board']);
 		wesql::register_replacement('query_wanna_list_board', $user['query_wanna_list_board']);
+		wesql::register_replacement('query_see_thought', $user['query_see_thought']);
 
 		self::$is =& $is;
 		self::$user =& $user;

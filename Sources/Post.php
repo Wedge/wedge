@@ -120,13 +120,13 @@ function Post($post_errors = array())
 		wesql::free_result($request);
 	}
 
-	// Check if it's locked. It isn't locked if no topic is specified.
+	// Get some information on this topic, if it exists.
 	if (!empty($topic))
 	{
 		$request = wesql::query('
 			SELECT
-				t.locked, IFNULL(ln.id_topic, 0) AS notify, t.is_pinned, t.id_poll, t.id_last_msg, mf.id_member,
-				t.id_first_msg, mf.subject,
+				t.locked, t.is_pinned, t.id_poll, t.id_last_msg, t.privacy,
+				t.id_first_msg, mf.id_member, mf.subject, IFNULL(ln.id_topic, 0) AS notify,
 				CASE WHEN ml.poster_time > ml.modified_time THEN ml.poster_time ELSE ml.modified_time END AS last_post_time
 			FROM {db_prefix}topics AS t
 				LEFT JOIN {db_prefix}log_notify AS ln ON (ln.id_topic = t.id_topic AND ln.id_member = {int:current_member})
@@ -139,7 +139,11 @@ function Post($post_errors = array())
 				'current_topic' => $topic,
 			)
 		);
-		list ($locked, $context['notify'], $pinned, $pollID, $context['topic_last_message'], $id_member_poster, $id_first_msg, $first_subject, $lastPostTime) = wesql::fetch_row($request);
+		list (
+			$locked, $pinned, $pollID, $context['topic_last_message'], $context['current_privacy'],
+			$id_first_msg, $id_member_poster, $first_subject, $context['notify'],
+			$lastPostTime
+		) = wesql::fetch_row($request);
 		wesql::free_result($request);
 
 		// If this topic already has a poll, they sure can't add another.
@@ -154,13 +158,9 @@ function Post($post_errors = array())
 			// By default the reply will be approved...
 			$context['becomes_approved'] = true;
 			if ($id_member_poster != we::$id)
-			{
 				isAllowedTo('post_reply_any');
-			}
 			elseif (!allowedTo('post_reply_any'))
-			{
 				isAllowedTo('post_reply_own');
-			}
 		}
 		else
 			$context['becomes_approved'] = true;
@@ -173,12 +173,14 @@ function Post($post_errors = array())
 	}
 	else
 	{
+		$context['current_privacy'] = 'default';
 		$context['becomes_approved'] = true;
 		if (!empty($board))
 			isAllowedTo('post_new');
 
+		// It isn't locked if no topic is specified.
 		$locked = 0;
-		// !!! These won't work if you're making an event.
+		// !!! These won't work if you're making an event. (But you're not using the calendar, are you..?)
 		$context['can_lock'] = allowedTo(array('lock_any', 'lock_own'));
 		$context['can_pin'] = allowedTo('pin_topic');
 
@@ -186,7 +188,10 @@ function Post($post_errors = array())
 		$context['pinned'] = !empty($_REQUEST['pin']);
 	}
 
-	// !!! These won't work if you're posting an event!
+	// !! No support for groups for now... Or ever?
+	$context['privacies'] = array('default', 'members', /* 'groups', */ 'contacts', 'author');
+
+	// !!! These won't work if you're posting an event! (See above...)
 	$context['can_notify'] = allowedTo('mark_any_notify');
 	$context['can_move'] = allowedTo('move_any');
 	$context['move'] = !empty($_REQUEST['move']);

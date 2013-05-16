@@ -43,24 +43,24 @@ function JSModify()
 
 	// Assume the first message if no message ID was given.
 	$request = wesql::query('
-			SELECT
-				t.locked, t.num_replies, t.id_member_started, t.id_first_msg, t.is_pinned,
-				m.id_msg, m.id_member, m.poster_time, m.subject, m.smileys_enabled, m.body, m.icon,
-				m.modified_time, m.modified_name, m.modified_member, m.approved
-			FROM {db_prefix}messages AS m
-				INNER JOIN {db_prefix}topics AS t ON (t.id_topic = {int:current_topic})
-			WHERE m.id_msg = {raw:id_msg}
-				AND m.id_topic = {int:current_topic}' . (allowedTo('approve_posts') ? '' : (!$settings['postmod_active'] ? '
-				AND (m.id_member != {int:guest_id} AND m.id_member = {int:current_member})' : '
-				AND (m.approved = {int:is_approved} OR (m.id_member != {int:guest_id} AND m.id_member = {int:current_member}))')),
-			array(
-				'current_member' => we::$id,
-				'current_topic' => $topic,
-				'id_msg' => empty($_REQUEST['msg']) ? 't.id_first_msg' : (int) $_REQUEST['msg'],
-				'is_approved' => 1,
-				'guest_id' => 0,
-			)
-		);
+		SELECT
+			t.locked, t.num_replies, t.id_member_started, t.id_first_msg, t.is_pinned,
+			m.id_msg, m.id_member, m.poster_time, m.subject, m.smileys_enabled, m.body, m.icon,
+			m.modified_time, m.modified_name, m.modified_member, m.approved
+		FROM {db_prefix}messages AS m
+			INNER JOIN {db_prefix}topics AS t ON (t.id_topic = {int:current_topic} AND {query_see_topic})
+		WHERE m.id_msg = {raw:id_msg}
+			AND m.id_topic = {int:current_topic}' . (allowedTo('approve_posts') ? '' : (!$settings['postmod_active'] ? '
+			AND (m.id_member != {int:guest_id} AND m.id_member = {int:current_member})' : '
+			AND (m.approved = {int:is_approved} OR (m.id_member != {int:guest_id} AND m.id_member = {int:current_member}))')),
+		array(
+			'current_member' => we::$id,
+			'current_topic' => $topic,
+			'id_msg' => empty($_REQUEST['msg']) ? 't.id_first_msg' : (int) $_REQUEST['msg'],
+			'is_approved' => 1,
+			'guest_id' => 0,
+		)
+	);
 	if (wesql::num_rows($request) == 0)
 		fatal_lang_error('no_board', false);
 	$row = wesql::fetch_assoc($request);
