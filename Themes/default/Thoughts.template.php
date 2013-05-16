@@ -88,17 +88,16 @@ function template_thoughts_thread()
 	global $context, $txt, $privacy_icon;
 
 	$privacy_icon = array(
-		-3 => 'everyone',
+		-3 => 'public',
 		0 => 'members',
-		5 => 'justme',
-		20 => 'friends',
+		3 => 'contacts',
+		5 => 'author',
 	);
 
 	if (allowedTo('post_thought') || !empty($settings['likes_enabled']))
 		add_js('
-	oThought = new Thought([[-3, "everyone", "', $txt['privacy_public'], '"], [0, "members", "', $txt['privacy_members'], '"], ',
-	// !! @worg This is temporary code for use on Wedge.org. Clean this up!!
-	in_array(20, we::$user['groups']) ? '[20, "friends", "Friends"], ' : '', '[5, "justme", "', $txt['privacy_self'], '"]]);');
+	oThought = new Thought([[-3, "public", "', $txt['privacy_public'], '"], [0, "members", "', $txt['privacy_members'],
+		'"], [3, "contacts", "', $txt['privacy_contacts'], '"], [5, "author", "', $txt['privacy_author'], '"]]);');
 
 	$col = 2;
 	// There will usually be one master thought, but just in case... Loop through the 'array'.
@@ -108,7 +107,7 @@ function template_thoughts_thread()
 		echo '
 			<tr><td class="windowbg', $col, ' thought"><ul><li id="t', $id, '">
 				<div>';
-		if (empty($tho['owner_name']))
+		if (empty($thought['owner_name']))
 			echo $thought['privacy'] != -3 ? '<div class="privacy_' . @$privacy_icon[$thought['privacy']] . '"></div> ' : ' ', $thought['text'], '
 				</div>';
 		else
@@ -158,12 +157,11 @@ function template_thoughts_table()
 {
 	global $context, $txt, $settings;
 
-	// @worg!!
 	$privacy_icon = array(
-		-3 => 'everyone',
+		-3 => 'public',
 		0 => 'members',
-		5 => 'justme',
-		20 => 'friends',
+		3 => 'contacts',
+		5 => 'author',
 	);
 
 	// This is where we'll show the Thought postbox.
@@ -176,9 +174,8 @@ function template_thoughts_table()
 
 	if (allowedTo('post_thought') || !empty($settings['likes_enabled']))
 		add_js('
-	oThought = new Thought([[-3, "everyone", "', $txt['privacy_public'], '"], [0, "members", "', $txt['privacy_members'], '"], ',
-	// !! @worg This is temporary code for use on Wedge.org. Clean this up!!
-	in_array(20, we::$user['groups']) ? '[20, "friends", "Friends"], ' : '', '[5, "justme", "', $txt['privacy_self'], '"]]);');
+	oThought = new Thought([[-3, "public", "', $txt['privacy_public'], '"], [0, "members", "', $txt['privacy_members'],
+		'"], [3, "contacts", "', $txt['privacy_contacts'], '"], [5, "author", "', $txt['privacy_author'], '"]]);');
 
 	$col = 2;
 	if (!SKIN_MOBILE)
