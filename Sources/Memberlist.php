@@ -124,7 +124,7 @@ function Memberlist()
 	// Are there any custom fields for the memberlist? (Ordering as per the member options code!)
 	$context['custom_fields'] = array();
 	$request = wesql::query('
-		SELECT col_name, field_name
+		SELECT col_name, field_name, can_see
 		FROM {db_prefix}custom_fields
 		WHERE show_mlist = {int:show_mlist}
 		ORDER BY position',
@@ -134,6 +134,12 @@ function Memberlist()
 	);
 	while ($row = wesql::fetch_assoc($request))
 	{
+		$row['can_see'] = explode(',', $row['can_see']);
+		foreach ($row['can_see'] as $k => $v)
+			$row['can_see'][$k] = (int) $v;
+		if (count(array_intersect($row['can_see'], we::$user['groups'])) == 0)
+			continue;
+
 		// We get this both for the main column list and for our own reference for later.
 		$context['custom_fields'][$row['col_name']] = array(
 			'label' => $row['field_name'],

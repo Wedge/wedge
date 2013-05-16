@@ -274,7 +274,7 @@ function template_delete_subscription()
 // Add or edit an existing subscriber.
 function template_modify_user_subscription()
 {
-	global $context, $theme, $options, $txt, $settings;
+	global $context, $theme, $options, $txt;
 
 	// Some quickly stolen javascript from Post, could do with being more efficient :)
 	if (!$context['current_subscription']['lifetime'])
@@ -587,7 +587,7 @@ function template_user_subscription()
 // The "choose payment" dialog.
 function template_choose_payment()
 {
-	global $context, $txt, $settings;
+	global $context, $txt;
 
 	echo '
 		<we:cat>

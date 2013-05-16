@@ -715,13 +715,34 @@ function EditCustomProfiles()
 	// Load the profile language for section names.
 	loadLanguage('Profile');
 
+	// Now we need to figure out the possible groups that could see this.
+	$context['can_see_edit_groups'] = array(
+		-2 => $txt['custom_see_edit_owner'],
+		'sep1' => '',
+		-1 => $txt['membergroups_guests'],
+		0 => $txt['membergroups_members'],
+		'sep2' => '',
+	);
+
+	$request = wesql::query('
+		SELECT id_group, group_name, min_posts
+		FROM {db_prefix}membergroups
+		ORDER BY min_posts, id_group');
+	while ($row = wesql::fetch_assoc($request))
+	{
+		if ($row['min_posts'] >= 0 && !isset($context['can_see_edit_groups']['sep3']))
+			$context['can_see_edit_groups']['sep3'] = '';
+
+		$context['can_see_edit_groups'][$row['id_group']] = '<span class="group' . $row['id_group'] . '">' . $row['group_name'] . '</span>';
+	}
+
 	if ($context['fid'])
 	{
 		$request = wesql::query('
 			SELECT
 				id_field, col_name, field_name, field_desc, field_type, field_length, field_options,
-				show_reg, show_display, show_profile, show_mlist, private, guest_access, active,
-				default_value, can_search, bbc, mask, enclose, placement
+				show_reg, show_display, show_profile, show_mlist, can_see, can_edit,
+				active, default_value, can_search, bbc, mask, enclose, placement
 			FROM {db_prefix}custom_fields
 			WHERE id_field = {int:current_field}',
 			array(
@@ -737,6 +758,16 @@ function EditCustomProfiles()
 			{
 				$rows = 3;
 				$cols = 30;
+			}
+
+			foreach (array('can_see', 'can_edit') as $item)
+			if (empty($row[$item]))
+				$row[$item] = array();
+			else
+			{
+				$row[$item] = explode(',', $row[$item]);
+				foreach ($row[$item] as $k => $v)
+					$row[$item][$k] = (int) $v;
 			}
 
 			$context['field'] = array(
@@ -756,8 +787,8 @@ function EditCustomProfiles()
 				'default_select' => $row['field_type'] == 'select' || $row['field_type'] == 'radio' ? $row['default_value'] : '',
 				'options' => strlen($row['field_options']) > 1 ? explode(',', $row['field_options']) : array('', '', ''),
 				'active' => $row['active'],
-				'private' => $row['private'],
-				'guest_access' => $row['guest_access'],
+				'can_see' => $row['can_see'],
+				'can_edit' => $row['can_edit'],
 				'can_search' => $row['can_search'],
 				'mask' => $row['mask'],
 				'regex' => substr($row['mask'], 0, 5) == 'regex' ? substr($row['mask'], 5) : '',
@@ -787,8 +818,8 @@ function EditCustomProfiles()
 			'default_select' => '',
 			'options' => array('', '', ''),
 			'active' => true,
-			'private' => false,
-			'guest_access' => false,
+			'can_see' => array(-2),
+			'can_edit' => array(-2),
 			'can_search' => false,
 			'mask' => 'nohtml',
 			'regex' => '',
@@ -812,7 +843,6 @@ function EditCustomProfiles()
 				'bbc' => false,
 				'mask' => 'regex',
 				'regex' => '~[0-9]{1,11}|[a-z0-9.]{3,32}~i',
-				'private' => '0', // users can see it, owner can edit it
 			),
 			'twitter' => array(
 				'field_name' => 'Twitter',
@@ -826,7 +856,6 @@ function EditCustomProfiles()
 				'bbc' => false,
 				'mask' => 'regex',
 				'regex' => '~[a-z0-9_]{1,16}~i',
-				'private' => '0', // users can see it, owner can edit it
 			),
 		),
 		'im' => array(
@@ -843,7 +872,6 @@ function EditCustomProfiles()
 				'bbc' => false,
 				'mask' => 'regex',
 				'regex' => '~[a-z][a-z0-9,_.-]{5,21}~i',
-				'private' => '0', // users can see it, owner can edit it
 			),
 			'aim' => array(
 				'field_name' => 'AOL Instant Messenger',
@@ -857,7 +885,6 @@ function EditCustomProfiles()
 				'bbc' => false,
 				'mask' => 'regex',
 				'regex' => '~[a-z][0-9a-z.-]{1,31}~i',
-				'private' => '0', // users can see it, owner can edit it
 			),
 			'yim' => array(
 				'field_name' => 'Yahoo! Messenger',
@@ -870,7 +897,6 @@ function EditCustomProfiles()
 				'max_length' => '50',
 				'bbc' => false,
 				'mask' => 'email',
-				'private' => '0', // users can see it, owner can edit it
 			),
 			'icq' => array(
 				'field_name' => 'ICQ',
@@ -884,7 +910,6 @@ function EditCustomProfiles()
 				'bbc' => false,
 				'mask' => 'regex',
 				'regex' => '~[1-9][0-9]{4,9}~i', // The lowest was 10000, highest unknown but 10 digits total should cover it
-				'private' => '0', // users can see it, owner can edit it
 			),
 		),
 		'gaming' => array(
@@ -900,7 +925,6 @@ function EditCustomProfiles()
 				'bbc' => false,
 				'mask' => 'regex',
 				'regex' => '~[0-9a-z_-]{2,50}~i',
-				'private' => '0', // users can see it, owner can edit it
 			),
 		),
 	);
@@ -923,8 +947,6 @@ function EditCustomProfiles()
 		$bbc = isset($_POST['bbc']) ? 1 : 0;
 		$show_profile = $_POST['profile_area'];
 		$active = isset($_POST['active']) ? 1 : 0;
-		$private = isset($_POST['private']) ? (int) $_POST['private'] : 0;
-		$guest_access = isset($_POST['guest_access']) && $private < 2 ? 1 : 0;
 		$can_search = isset($_POST['can_search']) ? 1 : 0;
 
 		// Some masking stuff...
@@ -1064,6 +1086,21 @@ function EditCustomProfiles()
 			// !! Maybe we should adjust based on new text length limits?
 		}
 
+		// Privacy options
+		$privacy = array(
+			'can_see' => array(),
+			'can_edit' => array(),
+		);
+		foreach ($privacy as $priv_type => $dummy)
+		{
+			if (isset($_POST[$priv_type]) && is_array($_POST[$priv_type]))
+				foreach ($context['can_see_edit_groups'] as $id_group => $group_name)
+					if (!empty($group_name) && !empty($_POST[$priv_type][$id_group]))
+						$privacy[$priv_type][] = (int) $id_group;
+
+			$privacy[$priv_type] = implode(',', $privacy[$priv_type]);
+		}
+
 		// Do the insertion/updates.
 		if ($context['fid'])
 		{
@@ -1075,7 +1112,7 @@ function EditCustomProfiles()
 					field_options = {string:field_options}, show_reg = {int:show_reg},
 					show_display = {int:show_display}, show_mlist = {int:show_mlist},
 					show_profile = {string:show_profile},
-					private = {int:private}, guest_access = {int:guest_access},
+					can_see = {string:can_see}, can_edit = {string:can_edit},
 					active = {int:active}, default_value = {string:default_value},
 					can_search = {int:can_search}, bbc = {int:bbc}, mask = {string:mask},
 					enclose = {string:enclose}, placement = {int:placement}
@@ -1085,8 +1122,8 @@ function EditCustomProfiles()
 					'show_reg' => $show_reg,
 					'show_mlist' => $show_mlist,
 					'show_display' => $show_display,
-					'private' => $private,
-					'guest_access' => $guest_access,
+					'can_see' => $privacy['can_see'],
+					'can_edit' => $privacy['can_edit'],
 					'active' => $active,
 					'can_search' => $can_search,
 					'bbc' => $bbc,
@@ -1133,29 +1170,19 @@ function EditCustomProfiles()
 					'col_name' => 'string', 'field_name' => 'string', 'field_desc' => 'string',
 					'field_type' => 'string', 'field_length' => 'string', 'field_options' => 'string',
 					'show_reg' => 'int', 'show_mlist' => 'int', 'show_display' => 'int', 'show_profile' => 'string',
-					'private' => 'int', 'guest_access' => 'int', 'active' => 'int', 'default_value' => 'string',
+					'can_see' => 'string', 'can_edit' => 'string', 'active' => 'int', 'default_value' => 'string',
 					'can_search' => 'int', 'bbc' => 'int', 'mask' => 'string', 'enclose' => 'string', 'placement' => 'int', 'position' => 'int',
 				),
 				array(
 					$colname, $_POST['field_name'], $_POST['field_desc'],
 					$_POST['field_type'], $field_length, $field_options,
 					$show_reg, $show_mlist, $show_display, $show_profile,
-					$private, $guest_access, $active, $default,
+					$privacy['can_see'], $privacy['can_edit'], $active, $default,
 					$can_search, $bbc, $mask, $enclose, $placement, $position,
 				),
 				array('id_field')
 			);
 		}
-
-		// As there's currently no option to priorize certain fields over others, let's order them alphabetically.
-		// Remember to update the member list if we change this.
-		wesql::query('
-			ALTER TABLE {db_prefix}custom_fields
-			ORDER BY field_name',
-			array(
-				'db_error_skip' => true,
-			)
-		);
 	}
 	// Deleting?
 	elseif (isset($_POST['delete']) && $context['field']['colname'])
@@ -1193,24 +1220,25 @@ function EditCustomProfiles()
 function updateProfileFieldsCache()
 {
 	$request = wesql::query('
-		SELECT col_name, field_name, field_type, bbc, enclose, placement, guest_access
+		SELECT col_name, field_name, field_type, bbc, enclose, placement, can_see
 		FROM {db_prefix}custom_fields
 		WHERE show_display = {int:is_displayed}
 			AND active = {int:active}
-			AND private != {int:not_owner_only}
-			AND private != {int:not_admin_only}
 		ORDER BY position',
 		array(
 			'is_displayed' => 1,
 			'active' => 1,
-			'not_owner_only' => 2,
-			'not_admin_only' => 3,
 		)
 	);
 
 	$fields = array();
 	while ($row = wesql::fetch_assoc($request))
 	{
+		$groups = explode(',', $row['can_see']);
+		// Tidy up if we're serializing. Saves them bytes.
+		foreach ($groups as $k => $v)
+			$groups[$k] = (int) $v;
+
 		$fields[] = array(
 			'colname' => strtr($row['col_name'], array('|' => '', ';' => '')),
 			'title' => strtr($row['field_name'], array('|' => '', ';' => '')),
@@ -1218,7 +1246,7 @@ function updateProfileFieldsCache()
 			'bbc' => $row['bbc'] ? '1' : '0',
 			'placement' => !empty($row['placement']) ? $row['placement'] : '0',
 			'enclose' => !empty($row['enclose']) ? $row['enclose'] : '',
-			'show_guest' => !empty($row['guest_access']),
+			'can_see' => $groups,
 		);
 	}
 	wesql::free_result($request);

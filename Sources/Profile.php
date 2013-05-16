@@ -709,28 +709,20 @@ function loadCustomFields($memID, $area = 'summary')
 
 	// Get the right restrictions in place...
 	$where = 'active = 1';
-	if (!allowedTo('admin_forum') && $area != 'register')
-	{
-		// If it's the owner they can see two types of private fields, regardless.
-		if ($memID == we::$id)
-			$where .= $area == 'summary' ? ' AND private < 3' : ' AND (private = 0 OR private = 2)';
-		else
-			$where .= $area == 'summary' ? ' AND private < 2' : ' AND private = 0';
-	}
 
 	if ($area == 'register')
 		$where .= ' AND show_reg != 0';
 	elseif ($area != 'summary')
 		$where .= ' AND show_profile = {string:area}';
 
-	if (we::$is_guest && $area != 'register')
-		$where .= ' AND guest_access = 1';
+	// Setting up for other restriction shortly
+	$privacy_to_check = $area == 'summary' ? 'can_see' : 'can_edit';
 
 	// Load all the relevant fields - and data.
 	$request = wesql::query('
 		SELECT
 			col_name, field_name, field_desc, field_type, field_length, field_options,
-			default_value, bbc, enclose, placement, show_reg
+			default_value, bbc, enclose, placement, show_reg, can_see, can_edit
 		FROM {db_prefix}custom_fields
 		WHERE ' . $where . '
 		ORDER BY position',
@@ -739,8 +731,23 @@ function loadCustomFields($memID, $area = 'summary')
 		)
 	);
 	$context['custom_fields'] = array();
+
 	while ($row = wesql::fetch_assoc($request))
 	{
+		// Figure out whether we can see this stuff. We need to leave this as-is for registration or if we're admins.
+		if (!we::$is_admin && $area != 'register')
+		{
+			$group_privacy = explode(',', $row[$privacy_to_check]);
+			foreach ($group_privacy as $k => $v)
+				$group_privacy[$k] = (int) $v;
+			if (count(array_intersect($group_privacy, we::$user['groups'])) == 0)
+				continue;
+
+			// Now we check the owner too.
+			if ($memID == we::$id && !in_array(-2, $group_privacy))
+				continue;
+		}
+
 		// Shortcut.
 		$exists = $memID && isset($user_profile[$memID], $user_profile[$memID]['options'][$row['col_name']]);
 		$value = $exists ? $user_profile[$memID]['options'][$row['col_name']] : '';

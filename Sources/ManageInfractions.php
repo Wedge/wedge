@@ -655,7 +655,7 @@ function get_validated_infraction_log($memID, $keep_all = true)
 					$context['current_sanctions'][$sanction] = $context['infraction_log'][$row['id_issue']]['expire_date'];
 			}
 
-			$context['infraction_log'][$row['id_issue']]['can_revoke'] = $context['revoke_any'] || ($context['revoke_own'] && $issued_by == we::$id);
+			$context['infraction_log'][$row['id_issue']]['can_revoke'] = $context['revoke_any'] || ($context['revoke_own'] && $row['issued_by'] == we::$id);
 		}
 
 		// We might only want active warnings.

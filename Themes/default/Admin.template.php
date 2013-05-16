@@ -1098,7 +1098,7 @@ function template_edit_profile_field()
 	add_js('
 	function updateInputBoxes()
 	{
-		var curType = $("#field_type").val(), privStatus = $("#private").val();
+		var curType = $("#field_type").val();
 		$("#max_length_dt, #max_length_dd, #bbc_dt, #bbc_dd, #can_search_dt, #can_search_dd").toggle(curType == "text" || curType == "textarea");
 		$("#dimension_dt, #dimension_dd").toggle(curType == "textarea");
 		$("#options_dt, #options_dd").toggle(curType == "select" || curType == "radio");
@@ -1108,11 +1108,8 @@ function template_edit_profile_field()
 		$("#display").prop("disabled", false);
 
 		// Cannot show this on the topic
-		if (curType == "textarea" || privStatus >= 2)
+		if (curType == "textarea")
 			$("#display").prop({ checked: false, disabled: true });
-
-		// Able to show to guests?
-		$("#guest_access_dt, #guest_access_dd").toggle(privStatus < 2);
 	}
 	updateInputBoxes();');
 
@@ -1360,19 +1357,51 @@ function template_edit_profile_field()
 							<dfn>', $txt['custom_edit_privacy_desc'], '</dfn>
 						</dt>
 						<dd>
-							<select name="private" id="private" onchange="updateInputBoxes();" style="width: 100%">
-								<option value="0"', $context['field']['private'] == 0 ? ' selected' : '', '>', $txt['custom_edit_privacy_all'], '</option>
-								<option value="1"', $context['field']['private'] == 1 ? ' selected' : '', '>', $txt['custom_edit_privacy_see'], '</option>
-								<option value="2"', $context['field']['private'] == 2 ? ' selected' : '', '>', $txt['custom_edit_privacy_owner'], '</option>
-								<option value="3"', $context['field']['private'] == 3 ? ' selected' : '', '>', $txt['custom_edit_privacy_none'], '</option>
-							</select>
-						</dd>
-						<dt id="guest_access_dt">
-							<strong>', $txt['custom_edit_guest_access'], ':</strong>
-							<dfn>', $txt['custom_edit_guest_access_desc'], '</dfn>
-						</dt>
-						<dd id="guest_access_dd">
-							<input type="checkbox" name="guest_access"', $context['field']['guest_access'] ? ' checked' : '', '>
+							<div id="fs_privacy_link"><div class="foldable"></div> <a href="#" onclick="$(\'#fs_privacy\').show(); $(\'#fs_privacy_link\').hide(); return false;">', $txt['select_from_list'], '</a></div>
+							<fieldset class="hide" id="fs_privacy">
+								<legend><div class="foldable fold"></div> <a href="#" onclick="$(\'#fs_privacy\').hide(); $(\'#fs_privacy_link\').show(); return false;">', $txt['select_from_list'], '</a></legend>
+								<table>
+									<tr>
+										<th>Can see</th>
+										<th>Can edit</th>
+									</tr>';
+	foreach ($context['can_see_edit_groups'] as $id_group => $group_name)
+	{
+		// No group name = separator
+		if (empty($group_name))
+			echo '
+									<tr>
+										<td colspan="3"><hr></td>
+									</tr>';
+		// Group -1 = guests = no ability to edit anything
+		elseif ($id_group == -1)
+			echo '
+									<tr>
+										<td class="center"><input type="checkbox" name="can_see[', $id_group, ']"', in_array($id_group, $context['field']['can_see']) ? ' checked' : '', '></td>
+										<td></td>
+										<td>', $group_name, '</td>
+									</tr>';
+		// Group 1 = administrators = can always do everything
+		elseif ($id_group == 1)
+			echo '
+									<tr>
+										<td class="center"><input type="checkbox" checked disabled></td>
+										<td class="center"><input type="checkbox" checked disabled></td>
+										<td>', $group_name, '</td>
+									</tr>';
+		// The rabble at the back = everyone else who may or may not be able to do magical things
+		else
+			echo '
+									<tr>
+										<td class="center"><input type="checkbox" name="can_see[', $id_group, ']"', in_array($id_group, $context['field']['can_see']) ? ' checked' : '', '></td>
+										<td class="center"><input type="checkbox" name="can_edit[', $id_group, ']"', in_array($id_group, $context['field']['can_edit']) ? ' checked' : '', '></td>
+										<td>', $group_name, '</td>
+									</tr>';
+	}
+
+	echo '
+								</table>
+							</fieldset>
 						</dd>
 						<dt id="can_search_dt">
 							<strong>', $txt['custom_edit_can_search'], ':</strong>

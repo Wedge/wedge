@@ -542,9 +542,6 @@ function sendpm($recipients, $subject, $message, $store_outbox = true, $from = n
 
 	wesql::free_result($request);
 
-	if (empty($settings['permission_enable_deny']))
-		$disallowed_groups = array();
-
 	$request = wesql::query('
 		SELECT
 			member_name, real_name, id_member, email_address, lngfile,

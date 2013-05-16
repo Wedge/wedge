@@ -83,7 +83,7 @@ function summary($memID)
 		'can_issue_warning' => allowedTo('issue_warning'),
 	);
 	$context['member'] =& $memberContext[$memID];
-	$context['can_view_warning'] = (allowedTo('issue_warning') && !we::$user['is_owner']) || (!empty($settings['warning_show']) && ($settings['warning_show'] > 1 || we::$user['is_owner']));
+	$context['can_view_warning'] = !we::$is_guest && ((allowedTo('issue_warning') && !we::$user['is_owner']) || (!empty($settings['warning_show']) && ($settings['warning_show'] > 1 || we::$user['is_owner'])));
 
 	// Set a canonical URL for this page.
 	$context['canonical_url'] = '<URL>?action=profile;u=' . $memID;
@@ -130,7 +130,7 @@ function summary($memID)
 	if (!empty($settings['who_enabled']) && allowedTo('who_view') && (allowedTo('moderate_forum') || !empty($user_profile[$memID]['show_online'])))
 	{
 		loadSource('Who');
-		$action = determineActions($user_profile[$memID]['url']);
+		$action = determineActions($user_profile[$memID]['url'], false, $memID);
 
 		if ($action !== false)
 			$context['member']['action'] = empty($user_profile[$memID]['show_online']) ? '<em>' . $action . '</em>' : $action;

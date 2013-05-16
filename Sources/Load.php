@@ -612,8 +612,7 @@ function loadPermissions()
 	}
 
 	// Remove all the permissions they shouldn't have ;).
-	if (!empty($settings['permission_enable_deny']))
-		we::$user['permissions'] = array_diff(we::$user['permissions'], $removals);
+	we::$user['permissions'] = array_diff(we::$user['permissions'], $removals);
 
 	if (isset($cache_groups) && !empty($board) && $settings['cache_enable'] >= 2)
 		cache_put_data('permissions:' . $cache_groups . ':' . $board, array(we::$user['permissions'], null), 240);
@@ -870,7 +869,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 		wesql::free_result($request);
 	}
 
-	if (!empty($new_loaded_ids) && $set !== 'minimal' && $set !== 'userbox')
+	if (!empty($new_loaded_ids) && $set !== 'minimal')
 	{
 		$request = wesql::query('
 			SELECT *
@@ -1140,7 +1139,9 @@ function loadMemberContext($user, $full_profile = false)
 		{
 			if (empty($custom['title']) || empty($profile['options'][$custom['colname']]))
 				continue;
-			elseif (we::$is_guest && empty($custom['show_guest']))
+			elseif (!we::$is_admin && count(array_intersect(we::$user['groups'], $custom['can_see'])) == 0)
+				continue;
+			elseif (!we::$is_admin && $user == we::$id && !in_array(-2, $custom['can_see']))
 				continue;
 
 			$value = $profile['options'][$custom['colname']];

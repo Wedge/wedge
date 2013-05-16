@@ -268,7 +268,7 @@ function Who()
 
 }
 
-function determineActions($urls, $preferred_prefix = false)
+function determineActions($urls, $preferred_prefix = false, $override_mem = false)
 {
 	global $context, $txt, $settings, $theme;
 
@@ -307,7 +307,7 @@ function determineActions($urls, $preferred_prefix = false)
 	call_hook('who_allowed', array(&$allowedActions));
 
 	if (!is_array($urls))
-		$url_list = array(array($urls, we::$id));
+		$url_list = array(array($urls, $override_mem ? $override_mem : we::$id));
 	else
 		$url_list = $urls;
 

@@ -376,12 +376,10 @@ function BoardPermissionsReport()
 		SELECT id_profile, id_group, add_deny, permission
 		FROM {db_prefix}board_permissions
 		WHERE id_profile IN ({array_int:profile_list})
-			AND ' . $group_clause . (empty($settings['permission_enable_deny']) ? '
-			AND add_deny = {int:not_deny}' : '') . '
+			AND ' . $group_clause . '
 		ORDER BY id_profile, permission',
 		array(
 			'profile_list' => $profiles,
-			'not_deny' => 1,
 			'groups' => isset($_REQUEST['groups']) ? $_REQUEST['groups'] : array(),
 		)
 	);
@@ -648,11 +646,9 @@ function GroupPermissionsReport()
 	$request = wesql::query('
 		SELECT id_group, add_deny, permission
 		FROM {db_prefix}permissions
-		WHERE ' . $clause . (empty($settings['permission_enable_deny']) ? '
-			AND add_deny = {int:not_denied}' : '') . '
+		WHERE ' . $clause . '
 		ORDER BY permission',
 		array(
-			'not_denied' => 1,
 			'moderator_group' => 3,
 			'groups' => isset($_REQUEST['groups']) ? $_REQUEST['groups'] : array(),
 		)

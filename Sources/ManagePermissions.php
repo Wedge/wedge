@@ -979,7 +979,6 @@ function GeneralPermissionSettings($return_config = false)
 			array('permissions', 'manage_permissions', 'exclude' => array(-1, 0)), // Don't let guests have these permissions.
 		'',
 			// A few useful settings
-			array('check', 'permission_enable_deny', 'text_label' => $txt['permission_settings_enable_deny'], 'help' => 'permissions_deny'),
 			array('check', 'permission_enable_postgroups', 'text_label' => $txt['permission_settings_enable_postgroups'], 'help' => 'permissions_postgroups'),
 	);
 
@@ -998,16 +997,6 @@ function GeneralPermissionSettings($return_config = false)
 	{
 		checkSession('post');
 		saveDBSettings($config_vars);
-
-		// Clear all deny permissions...if we want that.
-		if (empty($settings['permission_enable_deny']))
-			wesql::query('
-				DELETE FROM {db_prefix}permissions, {db_prefix}board_permissions
-				WHERE add_deny = {int:denied}',
-				array(
-					'denied' => 0,
-				)
-			);
 
 		// Make sure there are no postgroup based permissions left.
 		if (empty($settings['permission_enable_postgroups']))
