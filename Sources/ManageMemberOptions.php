@@ -761,14 +761,14 @@ function EditCustomProfiles()
 			}
 
 			foreach (array('can_see', 'can_edit') as $item)
-			if (empty($row[$item]))
-				$row[$item] = array();
-			else
-			{
-				$row[$item] = explode(',', $row[$item]);
-				foreach ($row[$item] as $k => $v)
-					$row[$item][$k] = (int) $v;
-			}
+				if (empty($row[$item]))
+					$row[$item] = array();
+				else
+				{
+					$row[$item] = explode(',', $row[$item]);
+					foreach ($row[$item] as $k => $v)
+						$row[$item][$k] = (int) $v;
+				}
 
 			$context['field'] = array(
 				'name' => $row['field_name'],
@@ -1301,7 +1301,6 @@ function ModifyMemberPreferences($return_config = false)
 	$config_vars = array(
 		array('check', 'show_board_desc', 'display' => 'looklayout'),
 		array('check', 'show_children', 'display' => 'looklayout'),
-		array('check', 'use_sidebar_menu', 'display' => 'looklayout'),
 		array('check', 'show_avatars', 'display' => 'looklayout'),
 		array('check', 'show_signatures', 'display' => 'looklayout'),
 		array('check', 'show_no_censored', 'display' => 'looklayout', 'disabled' => empty($settings['allow_no_censored'])),

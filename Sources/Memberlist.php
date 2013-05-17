@@ -137,7 +137,7 @@ function Memberlist()
 		$row['can_see'] = explode(',', $row['can_see']);
 		foreach ($row['can_see'] as $k => $v)
 			$row['can_see'][$k] = (int) $v;
-		if (count(array_intersect($row['can_see'], we::$user['groups'])) == 0)
+		if (!we::$is_admin && count(array_intersect($row['can_see'], we::$user['groups'])) == 0)
 			continue;
 
 		// We get this both for the main column list and for our own reference for later.
