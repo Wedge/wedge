@@ -57,8 +57,8 @@ body.rich extends .editor
 	width: 100%
 	box-sizing: border-box
 
-/* Styles for edit/new post section (see also editor.css)
------------------------------------------------------------ */
+/* Styles for edit/new post section
+----------------------------------- */
 
 .postbox
 	padding: .5em
@@ -75,13 +75,33 @@ body.rich extends .editor
 		width: 83%
 		margin: .3em 0
 
+#subject_line
+	width: 100%
+	> div
+		display: table-cell
+		white-space: nowrap
+	> div:last-child
+		width: 100%
+		padding-left: 5px
+
+@media all and (max-width: 600px)
+	#subject_line > div
+		display: table-row
+
+#subject
+	width: 100%
+	vertical-align: middle
+	font-size: 100%
+	height: 27px
+
 #post_header extends .postbox
 	img
 		vertical-align: middle
 
-ul.post_options
+#postOptions
 	margin: 0 0 0 1em
-	padding: 0
+	border-bottom: 1px solid #cacdd3
+	padding: .5em
 	list-style: none
 	overflow: hidden
 	li
@@ -89,14 +109,8 @@ ul.post_options
 		width: 49%
 		float: left
 
-#postAdditionalOptionsHeader
+#postOptionsHeader
 	margin-top: 1em
-	strong
-		vertical-align: middle
-
-#postMoreOptions
-	border-bottom: 1px solid #cacdd3
-	padding: .5em
 
 #postAttachment, #postAttachment2
 	overflow: hidden

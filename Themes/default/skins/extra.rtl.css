@@ -265,7 +265,7 @@ span.percent
 	dt, dd
 		float: right
 
-ul.post_options
+#postOptions
 	margin: 0 1em 0 0
 	li
 		float: right

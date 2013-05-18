@@ -952,11 +952,11 @@ function checkSubmitOnce($action, $is_fatal = true)
 		trigger_error('checkSubmitOnce(): Invalid action \'' . $action . '\'', E_USER_WARNING);
 }
 
-// Check the user's permissions.
-function allowedTo($permission, $boards = null)
+// Check the user's permissions. Accepts a permission name, or an array of them.
+function allowedTo($permissions, $boards = null)
 {
-	// You're always allowed to do nothing. (unless you're a working man, MR. LAZY :P!)
-	if (empty($permission))
+	// You're always allowed to do nothing. (Unless you're a working man, MR. LAZY :P!)
+	if (empty($permissions))
 		return true;
 
 	// Administrators are supermen :P
@@ -969,14 +969,19 @@ function allowedTo($permission, $boards = null)
 		// Check if they can do it.
 		$perms = isset(we::$user['permissions']) ? we::$user['permissions'] : array();
 
-		if (!is_array($permission) && in_array($permission, $perms))
-			return true;
 		// Search for any of a list of permissions.
-		elseif (is_array($permission) && count(array_intersect($permission, $perms)) != 0)
-			return true;
-		// You aren't allowed, by default.
-		else
-			return false;
+		if (!is_array($permissions))
+			return in_array($permissions, $perms);
+
+		// array_intersect would do this in one line, but up to hundreds of times slower...
+		$can_do = false;
+		foreach ($permissions as $perm)
+		{
+			$can_do |= in_array($perm, $perms);
+			if ($can_do)
+				break;
+		}
+		return $can_do;
 	}
 	elseif (!is_array($boards))
 		$boards = array($boards);
@@ -996,7 +1001,7 @@ function allowedTo($permission, $boards = null)
 			'board_list' => $boards,
 			'group_list' => we::$user['groups'],
 			'moderator_group' => 3,
-			'permission_list' => is_array($permission) ? 'IN (\'' . implode('\', \'', $permission) . '\')' : ' = \'' . $permission . '\'',
+			'permission_list' => is_array($permissions) ? 'IN (\'' . implode('\', \'', $permissions) . '\')' : ' = \'' . $permissions . '\'',
 		)
 	);
 
@@ -1013,8 +1018,9 @@ function allowedTo($permission, $boards = null)
 	return $result;
 }
 
-// Fatal error if they cannot...
-function isAllowedTo($permission, $boards = null)
+// Fatal error if they cannot... Note that errors sent to the user will be for
+// the last entry in $permissions, so make sure the hardest one to get is last.
+function isAllowedTo($permissions, $boards = null)
 {
 	global $txt;
 
@@ -1030,14 +1036,13 @@ function isAllowedTo($permission, $boards = null)
 		'manage_permissions',
 	);
 
-	// Make it an array, even if a string was passed.
-	$permission = is_array($permission) ? $permission : array($permission);
+	$permissions = (array) $permissions;
 
 	// Check the permission and return an error...
-	if (!allowedTo($permission, $boards))
+	if (!allowedTo($permissions, $boards))
 	{
 		// Pick the last array entry as the permission shown as the error.
-		$error_permission = array_shift($permission);
+		$error_permission = array_shift($permissions);
 
 		// If they are a guest, show a login. (Because the error might be gone if they do!)
 		if (we::$is_guest)
@@ -1057,8 +1062,8 @@ function isAllowedTo($permission, $boards = null)
 	}
 
 	// If you're doing something on behalf of some "heavy" permissions, validate your session.
-	// (take out the heavy permissions, and if you can't do anything but those, you need a validated session.)
-	if (!allowedTo(array_diff($permission, $heavy_permissions), $boards))
+	// (Take out the heavy permissions, and if you can't do anything but those, you need a validated session.)
+	if (!allowedTo(array_diff($permissions, $heavy_permissions), $boards))
 		validateSession();
 }
 

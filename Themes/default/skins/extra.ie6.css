@@ -252,7 +252,7 @@ li.sep
 #admin_main_section
 	width: 100%
 
-#postMoreOptions
+#postOptions
 	border: 0
 
 // Since IE6 doesn't understand border-spacing, we'll just hide borders.

@@ -138,24 +138,22 @@ function template_post_additional_options()
 	// If the admin has enabled the hiding of the additional options - show a link and image for it.
 	if (!empty($settings['additional_options_collapsable']))
 		echo '
-				<div id="postAdditionalOptionsHeader">
+				<div id="postOptionsHeader">
 					<div id="postMoreExpand"></div> <strong><a href="#" id="postMoreExpandLink">', $txt['post_additionalopt'], '</a></strong>
 				</div>';
 
 	// Display the check boxes for all the standard options - if they are available to the user!
 	echo '
-				<div id="postMoreOptions" class="smalltext">
-					<ul class="post_options">', $context['can_notify'] ? '
-						<li><input type="hidden" name="notify" value="0"><label><input type="checkbox" name="notify" id="check_notify"' . ($context['notify'] || !empty($options['auto_notify']) ? ' checked' : '') . ' value="1"> ' . $txt['notify_replies'] . '</label></li>' : '', $context['can_lock'] ? '
-						<li><input type="hidden" name="lock" value="0"><label><input type="checkbox" name="lock" id="check_lock"' . ($context['locked'] ? ' checked' : '') . ' value="1"> ' . $txt['lock_topic'] . '</label></li>' : '', '
-						<li><label><input type="checkbox" name="goback" id="check_back"' . ($context['back_to_topic'] || !empty($options['return_to_post']) ? ' checked' : '') . ' value="1"> ' . $txt['back_to_topic'] . '</label></li>', $context['can_pin'] ? '
-						<li><input type="hidden" name="pin" value="0"><label><input type="checkbox" name="pin" id="check_pin"' . ($context['pinned'] ? ' checked' : '') . ' value="1"> ' . $txt['pin_after'] . '</label></li>' : '', '
-						<li><label><input type="checkbox" name="ns" id="check_smileys"', $context['use_smileys'] ? '' : ' checked', ' value="NS"> ', $txt['dont_use_smileys'], '</label></li>', $context['can_move'] ? '
-						<li><input type="hidden" name="move" value="0"><label><input type="checkbox" name="move" id="check_move" value="1"' . (!empty($context['move']) ? ' checked' : '') . '> ' . $txt['move_after2'] . '</label></li>' : '', $context['can_announce'] && $context['is_first_post'] ? '
-						<li><label><input type="checkbox" name="announce_topic" id="check_announce" value="1"' . (!empty($context['announce']) ? ' checked' : '') . '> ' . $txt['announce_topic'] . '</label></li>' : '', $context['show_approval'] ? '
-						<li><label><input type="checkbox" name="approve" id="approve" value="2"' . ($context['show_approval'] === 2 ? ' checked' : '') . '> ' . $txt['approve_this_post'] . '</label></li>' : '', '
-					</ul>
-				</div>';
+				<ul id="postOptions" class="smalltext">', $context['can_notify'] ? '
+					<li><input type="hidden" name="notify" value="0"><label><input type="checkbox" name="notify" id="check_notify"' . ($context['notify'] || !empty($options['auto_notify']) ? ' checked' : '') . ' value="1"> ' . $txt['notify_replies'] . '</label></li>' : '', $context['can_lock'] ? '
+					<li><input type="hidden" name="lock" value="0"><label><input type="checkbox" name="lock" id="check_lock"' . ($context['locked'] ? ' checked' : '') . ' value="1"> ' . $txt['lock_topic'] . '</label></li>' : '', '
+					<li><label><input type="checkbox" name="goback" id="check_back"' . ($context['back_to_topic'] || !empty($options['return_to_post']) ? ' checked' : '') . ' value="1"> ' . $txt['back_to_topic'] . '</label></li>', $context['can_pin'] ? '
+					<li><input type="hidden" name="pin" value="0"><label><input type="checkbox" name="pin" id="check_pin"' . ($context['pinned'] ? ' checked' : '') . ' value="1"> ' . $txt['pin_after'] . '</label></li>' : '', '
+					<li><label><input type="checkbox" name="ns" id="check_smileys"', $context['use_smileys'] ? '' : ' checked', ' value="NS"> ', $txt['dont_use_smileys'], '</label></li>', $context['can_move'] ? '
+					<li><input type="hidden" name="move" value="0"><label><input type="checkbox" name="move" id="check_move" value="1"' . (!empty($context['move']) ? ' checked' : '') . '> ' . $txt['move_after2'] . '</label></li>' : '', $context['can_announce'] && $context['is_first_post'] ? '
+					<li><label><input type="checkbox" name="announce_topic" id="check_announce" value="1"' . (!empty($context['announce']) ? ' checked' : '') . '> ' . $txt['announce_topic'] . '</label></li>' : '', $context['show_approval'] ? '
+					<li><label><input type="checkbox" name="approve" id="approve" value="2"' . ($context['show_approval'] === 2 ? ' checked' : '') . '> ' . $txt['approve_this_post'] . '</label></li>' : '', '
+				</ul>';
 }
 
 function template_post_attachments()
@@ -329,7 +327,7 @@ function template_postform_after()
 		// If we're collapsed, hide everything now and don't trigger the animation.
 		if (empty($context['show_additional_options']))
 			add_js('
-	$("#postMoreOptions, #postAttachment, #postAttachment2").hide();');
+	$("#postOptions, #postAttachment, #postAttachment2").hide();');
 
 		add_js('
 	new weToggle({', empty($context['show_additional_options']) ? '
@@ -337,7 +335,7 @@ function template_postform_after()
 		onBeforeCollapse: function () { $("#additional_options").val("0"); },
 		onBeforeExpand: function () { $("#additional_options").val("1"); },
 		aSwapContainers: [
-			"postMoreOptions",
+			"postOptions",
 			"postAttachment",
 			"postAttachment2"
 		],
@@ -364,31 +362,37 @@ function template_post_subject()
 
 	// Now show the subject box for this post.
 	echo '
-					<strong>', $txt['message_icon'], ' / <span', isset($context['post_error']['no_subject']) ? ' class="error"' : '', ' id="caption_subject">', $txt['subject'], ':</span></strong>
+					<strong>', $txt['message_icon'], ' / ', $txt['privacy'], ' / <span', isset($context['post_error']['no_subject']) ? ' class="error"' : '', ' id="caption_subject">', $txt['subject'], ':</span></strong>
 					<hr style="height: 0; margin: 4px">
-					<select name="icon" id="icon" tabindex="', $context['tabindex']++, '">';
+					<div id="subject_line">
+						<div>
+							<select name="icon" id="icon" tabindex="', $context['tabindex']++, '">';
 
 	// Loop through each message icon allowed, adding it to the drop down list.
 	foreach ($context['icons'] as $icon)
 		echo '<option value="', $icon['value'], '"', $icon['value'] == $context['icon'] ? ' selected' : '', '>&lt;img src=&quot;', $icon['url'], '&quot;&gt;&nbsp; ', $icon['name'], '</option>';
 
 	echo '
-					</select>';
+							</select>';
 
 	if ($context['is_first_post'])
 	{
 		echo '
-					<select name="privacy" id="privacy" tabindex="', $context['tabindex']++, '">';
+							<select name="privacy" id="privacy" tabindex="', $context['tabindex']++, '">';
 
 		foreach ($context['privacies'] as $priv)
 			echo '<option value="', $priv, '"', $priv == $context['current_privacy'] ? ' selected' : '', '>&lt;span class=&quot;privacy_', $priv, '&quot /&gt;&nbsp;', $txt['privacy_' . $priv], '</option>';
 
 		echo '
-					</select>';
+							</select>';
 	}
 
 	echo '
-					<input name="subject"', $context['subject'] == '' ? '' : ' value="' . $context['subject'] . '"', ' tabindex="', $context['tabindex']++, '" maxlength="80" class="w75">';
+						</div>
+						<div>
+							<input name="subject" id="subject"', $context['subject'] == '' ? '' : ' value="' . $context['subject'] . '"', ' tabindex="', $context['tabindex']++, '" maxlength="80" class="w100">
+						</div>
+					</div>';
 }
 
 function template_post_header_after()
