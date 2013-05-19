@@ -517,22 +517,20 @@ function ShowCustomProfiles()
 		// Do the active ones first.
 		$disable_fields = array_flip($standard_fields);
 		if (!empty($_POST['active']))
-		{
 			foreach ($_POST['active'] as $value)
 				if (isset($disable_fields[$value]))
 					unset($disable_fields[$value]);
-		}
+
 		// What we have left!
 		$changes['disabled_profile_fields'] = empty($disable_fields) ? '' : implode(',', array_keys($disable_fields));
 
 		// Things we want to show on registration?
 		$reg_fields = array();
 		if (!empty($_POST['reg']))
-		{
 			foreach ($_POST['reg'] as $value)
 				if (in_array($value, $standard_fields) && !isset($disable_fields[$value]))
 					$reg_fields[] = $value;
-		}
+
 		// What we have left!
 		$changes['registration_fields'] = empty($reg_fields) ? '' : implode(',', $reg_fields);
 
@@ -684,6 +682,7 @@ function EditCustomProfiles()
 		}
 
 		foreach ($position as $id => $details)
+		{
 			if ($details['old'] != $details['new'])
 				wesql::query('
 					UPDATE {db_prefix}custom_fields
@@ -694,6 +693,7 @@ function EditCustomProfiles()
 						'new_pos' => $details['new'],
 					)
 				);
+		}
 
 		updateProfileFieldsCache();
 		redirectexit('action=admin;area=memberoptions;sa=profile');
@@ -761,6 +761,7 @@ function EditCustomProfiles()
 			}
 
 			foreach (array('can_see', 'can_edit') as $item)
+			{
 				if (empty($row[$item]))
 					$row[$item] = array();
 				else
@@ -769,6 +770,7 @@ function EditCustomProfiles()
 					foreach ($row[$item] as $k => $v)
 						$row[$item][$k] = (int) $v;
 				}
+			}
 
 			$context['field'] = array(
 				'name' => $row['field_name'],

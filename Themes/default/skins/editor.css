@@ -193,3 +193,21 @@ body.rich extends .editor
 	kbd
 		color: #600
 		font-size: 120%
+
+@if member
+	#contactlist
+		margin-left: 2em
+		table-layout: fixed
+		> div
+			overflow-x: hidden
+			overflow-y: auto
+			max-height: 120px
+			margin: -.9em -1.2em
+			padding: .9em
+		> div:last-child
+			white-space: nowrap
+		.to
+			margin-left: 1em
+		.bcc
+			margin: 0 0.5em
+@endif

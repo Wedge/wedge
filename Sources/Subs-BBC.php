@@ -248,7 +248,7 @@ function parse_bbc($message, $type = 'generic', $bbc_options = array()) // $smil
 		// These are all of the allowed bbcode formats.
 		$bbc_types = array_flip(array('unparsed_equals', 'unparsed_commas', 'unparsed_commas_content', 'unparsed_equals_content', 'parsed_equals'));
 
-		// If we are not doing every tag only do ones we are interested in.
+		// If we are not doing every tag, only do ones we are interested in.
 		foreach ($master_codes as $code)
 			if (empty($parse_tags) || in_array($code['tag'], $parse_tags))
 				$bbc_codes[substr($code['tag'], 0, 1)][] = $code;

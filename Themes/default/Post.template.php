@@ -362,7 +362,7 @@ function template_post_subject()
 
 	// Now show the subject box for this post.
 	echo '
-					<strong>', $txt['message_icon'], ' / ', $txt['privacy'], ' / <span', isset($context['post_error']['no_subject']) ? ' class="error"' : '', ' id="caption_subject">', $txt['subject'], ':</span></strong>
+					<strong>', $txt['message_icon'], $context['is_first_post'] ? ' / ' . $txt['privacy'] : '', ' / <span', isset($context['post_error']['no_subject']) ? ' class="error"' : '', ' id="caption_subject">', $txt['subject'], ':</span></strong>
 					<hr style="height: 0; margin: 4px">
 					<div id="subject_line">
 						<div>

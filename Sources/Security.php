@@ -978,6 +978,7 @@ function allowedTo($permissions, $boards = null)
 		foreach ($permissions as $perm)
 		{
 			$can_do |= in_array($perm, $perms);
+			// Did this permission pass? That's all we needed.
 			if ($can_do)
 				break;
 		}
@@ -1009,13 +1010,17 @@ function allowedTo($permissions, $boards = null)
 	if (wesql::num_rows($request) != count($boards))
 		return false;
 
-	$result = true;
+	$can_do = true;
 	while ($row = wesql::fetch_assoc($request))
-		$result &= !empty($row['add_deny']);
+	{
+		$can_do &= !empty($row['add_deny']);
+		// Did this board just say it can't..? Then give up.
+		if (!$can_do)
+			break;
+	}
 	wesql::free_result($request);
 
-	// If the query returned 1, they can do it... otherwise, they can't.
-	return $result;
+	return $can_do;
 }
 
 // Fatal error if they cannot... Note that errors sent to the user will be for
