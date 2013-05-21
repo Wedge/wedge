@@ -69,7 +69,7 @@ function Groups()
 	{
 		loadSource('ModerationCenter');
 		$_GET['area'] = $_REQUEST['sa'] == 'requests' ? 'groups' : 'viewgroups';
-		ModerationMain(true);
+		ModerationCenter(true);
 	}
 	// Otherwise add something to the link tree, for normal people.
 	else

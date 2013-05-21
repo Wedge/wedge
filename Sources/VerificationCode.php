@@ -35,7 +35,7 @@ function VerificationCode()
 		wetem::load('popup');
 
 		$context['page_title'] = $txt['visual_verification_sound'];
-		$context['verification_sound_href'] = '<URL>?action=verificationcode;rand=' . md5(mt_rand()) . ($verification_id ? ';vid=' . $verification_id : '') . ';format=.wav';
+		$context['verification_sound_href'] = '<URL>?action=verification;rand=' . md5(mt_rand()) . ($verification_id ? ';vid=' . $verification_id : '') . ';format=.wav';
 
 		$context['popup_contents'] = '
 		<audio src="' . $context['verification_sound_href'] . '" controls id="audio">';

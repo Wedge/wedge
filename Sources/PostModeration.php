@@ -15,7 +15,7 @@ if (!defined('WEDGE'))
 	die('Hacking attempt...');
 
 // This is a handling function for all things post moderation...
-function PostModerationMain()
+function PostModeration()
 {
 	// !! We'll shift these later bud.
 	loadLanguage('ModerationCenter');

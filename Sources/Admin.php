@@ -99,7 +99,7 @@ function Admin()
 				'current_theme' => array(
 					'label' => $txt['theme_current_settings'],
 					'file' => 'Themes',
-					'function' => 'ThemesMain',
+					'function' => 'Themes',
 					'custom_url' => '<URL>?action=admin;area=theme;sa=settings;th=' . $theme['theme_id'],
 					'icon' => 'current_theme.gif',
 					'bigicon' => 'current_theme.png',
@@ -107,7 +107,7 @@ function Admin()
 				'theme' => array(
 					'label' => $txt['theme_admin'],
 					'file' => 'Themes',
-					'function' => 'ThemesMain',
+					'function' => 'Themes',
 					'icon' => 'themes.gif',
 					'bigicon' => 'themes_and_layout.png',
 					'subsections' => array(

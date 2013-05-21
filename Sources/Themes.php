@@ -18,7 +18,7 @@ if (!defined('WEDGE'))
 	Its tasks include changing theme settings, installing and removing
 	themes, choosing the current theme, and editing themes. This is done in:
 
-	void ThemesMain()
+	void Themes()
 		- manages the action and delegates control to the proper sub action.
 		- loads both the Themes and Settings language files.
 		- checks the session by GET or POST to verify the sent data.
@@ -89,7 +89,7 @@ if (!defined('WEDGE'))
 */
 
 // Subaction handler.
-function ThemesMain()
+function Themes()
 {
 	global $txt, $context;
 

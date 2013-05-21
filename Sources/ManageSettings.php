@@ -148,7 +148,7 @@ function ModifySpamSettings($return_config = false)
 	loadSource('ManageServer');
 
 	// Generate a sample registration image.
-	$context['verification_image_href'] = '<URL>?action=verificationcode;rand=' . md5(mt_rand());
+	$context['verification_image_href'] = '<URL>?action=verification;rand=' . md5(mt_rand());
 
 	$context['page_title'] = $context['settings_title'] = $txt['antispam_settings'];
 
@@ -210,7 +210,7 @@ function ModifySpamSettings($return_config = false)
 		(another question, the only possible answer)
 	),
 	'french' => array(
-		(la seule question, la seule réponse possible)
+		(la seule question, la seule rÃ©ponse possible)
 	),
 	*/
 

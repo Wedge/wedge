@@ -18,7 +18,7 @@ if (!defined('WEDGE'))
 /*	For compatibility reasons, PMs may be called "instant messages".
 	The following functions are used:
 
-	void MessageMain()
+	void PersonalMessage()
 		// !!! ?action=pm
 
 	void messageIndexBar(string area)
@@ -94,7 +94,7 @@ if (!defined('WEDGE'))
 */
 
 // This helps organize things...
-function MessageMain()
+function PersonalMessage()
 {
 	global $txt, $context, $user_settings;
 

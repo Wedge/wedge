@@ -75,7 +75,7 @@ function ModerationMain($dont_call = false)
 					'label' => $txt['mc_unapproved_posts'],
 					'enabled' => $context['can_moderate_approvals'],
 					'file' => 'PostModeration',
-					'function' => 'PostModerationMain',
+					'function' => 'PostModeration',
 					'custom_url' => '<URL>?action=moderate;area=postmod',
 					'subsections' => array(
 						'posts' => array($txt['mc_unapproved_replies']),

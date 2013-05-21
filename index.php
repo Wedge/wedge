@@ -61,81 +61,82 @@ $context = array(
 reloadSettings();
 
 // Here's the monstrous $action array - $action => array($file, [[$function], $plugin_id]).
-// If the function name is the same as the loadSource file name, e.g. Admin.php, to run Admin(), you can skip the function part.
+// If the function name is the same as the loadSource file name, e.g. Admin.php, to run Admin(), you can declare it as a string.
 // Only add $plugin_id if it's for a plugin, otherwise just have (one or) two items in the list.
 $action_list = array(
-	'activate' => array('Activate'),
-	'admin' => array('Admin'),
-	'ajax' => array('Ajax'),
-	'announce' => array('Announce'),
-	'boards' => array('Boards', 'Boards'),
-	'buddy' => array('Buddy'),
-	'collapse' => array('Collapse'),
-	'coppa' => array('CoppaForm'),
-	'credits' => array('Credits'),
-	'deletemsg' => array('RemoveTopic', 'DeleteMessage'),
-	'display' => array('Display'),
-	'dlattach' => array('Dlattach'),
-	'emailuser' => array('Mailer', 'EmailUser'),
-	'feed' => array('Feed'),
-	'groups' => array('Groups'),
-	'help' => array('Help'),
-	'jseditor' => array('JSEditor'),
-	'jsmodify' => array('JSModify'),
-	'jsoption' => array('JSOption'),
-	'like' => array('Like'),
-	'lock' => array('Lock'),
-	'login' => array('Login'),
-	'login2' => array('Login2', 'Login2'),
-	'logout' => array('Logout'),
-	'markasread' => array('Subs-Boards', 'MarkRead'),
-	'media' => array('media/Aeva-Gallery', 'aeva_initGallery'),
-	'mergeposts' => array('Merge', 'MergePosts'),
-	'mergetopics' => array('Merge', 'MergeTopics'),
-	'mlist' => array('Memberlist'),
-	'moderate' => array('ModerationCenter', 'ModerationMain'),
-	'movetopic' => array('MoveTopic'),
-	'movetopic2' => array('MoveTopic', 'MoveTopic2'),
-	'notify' => array('Notify'),
-	'notifyboard' => array('Notify', 'BoardNotify'),
-	'notification' => array('Notifications', 'weNotif::action'),
-	'pin' => array('Pin'),
-	'pm' => array('PersonalMessage', 'MessageMain'),
-	'poll' => array('Poll'),
-	'post' => array('Post'),
-	'post2' => array('Post2'),
-	'printpage' => array('PrintPage'),
-	'profile' => array('Profile', 'ModifyProfile'),
-	'quotefast' => array('QuoteFast'),
-	'quickmod' => array('QuickMod', 'QuickModeration'),
-	'quickmod2' => array('Display', 'QuickInTopicModeration'),
-	'recent' => array('Recent'),
-	'register' => array('Register'),
-	'register2' => array('Register', 'Register2'),
-	'reminder' => array('Reminder', 'RemindMe'),
-	'removetopic2' => array('RemoveTopic', 'RemoveTopic2'),
-	'report' => array('Report'),
-	'restoretopic' => array('RemoveTopic', 'RestoreTopic'),
-	'search' => array('Search'),
-	'search2' => array('Search2'),
-	'sendtopic' => array('Mailer', 'EmailUser'),
-	'skin' => array('Themes', 'PickTheme'),
-	'splittopics' => array('Split', 'SplitTopics'),
-	'stats' => array('Stats'),
-	'suggest' => array('Suggest'),
-	'theme' => array('Themes', 'ThemesMain'),
-	'thoughts' => array('Thoughts'),
-	'trackip' => array('Profile-View', 'trackIP'),
-	'unread' => array('Unread'),
-	'unreadreplies' => array('UnreadReplies'),
-	'verificationcode' => array('VerificationCode'),
-	'viewquery' => array('ViewQuery'),
-	'viewremote' => array('ViewRemote'),
-	'who' => array('Who'),
+	'activate' =>		'Activate',
+	'admin' =>			'Admin',
+	'ajax' =>			'Ajax',
+	'announce' =>		'Announce',
+	'boards' =>			'Boards',
+	'buddy' =>			'Buddy',
+	'collapse' =>		'Collapse',
+	'coppa' =>			'CoppaForm',
+	'credits' =>		'Credits',
+	'deletemsg' =>		array('RemoveTopic', 'DeleteMessage'),
+	'display' =>		'Display',
+	'dlattach' =>		'Dlattach',
+	'emailuser' =>		'Mailer',
+	'feed' =>			'Feed',
+	'groups' =>			'Groups',
+	'help' =>			'Help',
+	'jseditor' =>		'JSEditor',
+	'jsmodify' =>		'JSModify',
+	'jsoption' =>		'JSOption',
+	'like' =>			'Like',
+	'lock' =>			'Lock',
+	'login' =>			'Login',
+	'login2' =>			'Login2',
+	'logout' =>			'Logout',
+	'markasread' =>		array('Subs-Boards', 'MarkRead'),
+	'media' =>			array('media/Aeva-Gallery', 'aeva_initGallery'),
+	'mergeposts' =>		array('Merge', 'MergePosts'),
+	'mergetopics' =>	array('Merge', 'MergeTopics'),
+	'mlist' =>			'Memberlist',
+	'moderate' =>		'ModerationCenter',
+	'movetopic' =>		'MoveTopic',
+	'movetopic2' =>		array('MoveTopic', 'MoveTopic2'),
+	'notify' =>			'Notify',
+	'notifyboard' =>	array('Notify', 'BoardNotify'),
+	'notification' =>	array('Notifications', 'weNotif::action'),
+	'pin' =>			'Pin',
+	'pm' =>				'PersonalMessage',
+	'poll' =>			'Poll',
+	'post' =>			'Post',
+	'post2' =>			'Post2',
+	'printpage' =>		'PrintPage',
+	'profile' =>		array('Profile', 'ModifyProfile'),
+	'quotefast' =>		'QuoteFast',
+	'quickmod' =>		array('QuickMod', 'QuickModeration'),
+	'quickmod2' =>		array('Display', 'QuickInTopicModeration'),
+	'recent' =>			'Recent',
+	'register' =>		'Register',
+	'register2' =>		array('Register', 'Register2'),
+	'reminder' =>		array('Reminder', 'RemindMe'),
+	'removetopic2' =>	array('RemoveTopic', 'RemoveTopic2'),
+	'report' =>			'Report',
+	'restoretopic' =>	array('RemoveTopic', 'RestoreTopic'),
+	'search' =>			'Search',
+	'search2' =>		'Search2',
+	'sendtopic' =>		'Mailer',
+	'skin' =>			array('Themes', 'PickTheme'),
+	'splittopics' =>	array('Split', 'SplitTopics'),
+	'stats' =>			'Stats',
+	'suggest' =>		'Suggest',
+	'theme' =>			'Themes',
+	'thoughts' =>		'Thoughts',
+	'trackip' =>		array('Profile-View', 'trackIP'),
+	'unread' =>			'Unread',
+	'unreadreplies' =>	'UnreadReplies',
+	'verification' =>	'VerificationCode',
+	'viewquery' =>		'ViewQuery',
+	'viewremote' =>		'ViewRemote',
+	'who' =>			'Who',
 );
+
 // If an action should not influence the who's online list, please add it here. (Hookable as global)
 $action_no_log = array(
-	'ajax', 'dlattach', 'feed', 'jseditor', 'jsoption', 'like', 'notification', 'verificationcode', 'viewquery', 'viewremote',
+	'ajax', 'dlattach', 'feed', 'jseditor', 'jsoption', 'like', 'notification', 'verification', 'viewquery', 'viewremote',
 );
 
 if (empty($settings['pm_enabled']))
@@ -213,11 +214,7 @@ obExit(null, null, true);
 if (!isset($settings['app_error_count']))
 	$settings['app_error_count'] = 0;
 if (!empty($context['app_error_count']))
-	updateSettings(
-		array(
-			'app_error_count' => $settings['app_error_count'] + $context['app_error_count'],
-		)
-	);
+	updateSettings(array('app_error_count' => $settings['app_error_count'] + $context['app_error_count']));
 
 // The main controlling function.
 function wedge_main()
@@ -304,7 +301,7 @@ function wedge_main()
 		}
 	}
 	// If guest access is off, a guest can only do one of the very few following actions.
-	elseif (empty($settings['allow_guestAccess']) && we::$is_guest && (empty($action) || !in_array($action, array('coppa', 'login', 'login2', 'register', 'register2', 'reminder', 'activate', 'mailq', 'verificationcode'))))
+	elseif (empty($settings['allow_guestAccess']) && we::$is_guest && (empty($action) || !in_array($action, array('coppa', 'login', 'login2', 'register', 'register2', 'reminder', 'activate', 'mailq', 'verification'))))
 	{
 		loadSource('Subs-Auth');
 		return 'KickGuest';
@@ -345,16 +342,14 @@ function wedge_main()
 		return index_action('fallback_action');
 
 	// Otherwise, it was set - so let's go to that action.
-	if (isset($action_list[$action][2]))
-		loadPluginSource($action_list[$action][2], $action_list[$action][0]);
+	$target = (array) $action_list[$action];
+	if (isset($target[2]))
+		loadPluginSource($target[2], $target[0]);
 	else
-	{
-		// Remember, if the function is the same as the filename, it's only declared the once.
-		if (!isset($action_list[$action][1]))
-			$action_list[$action][1] = $action_list[$action][0];
-		loadSource($action_list[$action][0]);
-	}
-	return $action_list[$action][1];
+		loadSource($target[0]);
+
+	// Remember, if the function is the same as the filename, you may declare it just once.
+	return isset($target[1]) ? $target[1] : $target[0];
 }
 
 function index_action($hook_action = 'default_action')

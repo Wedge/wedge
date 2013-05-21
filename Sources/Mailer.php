@@ -32,7 +32,7 @@ if (!defined('WEDGE'))
 */
 
 // The main handling function for sending specialist (or otherwise) emails to a user.
-function EmailUser()
+function Mailer()
 {
 	global $topic, $txt, $context;
 

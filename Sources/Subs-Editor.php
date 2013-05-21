@@ -94,7 +94,7 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 			'show_visual' => !empty($verificationOptions['override_visual']) || (!empty($settings['use_captcha_images']) && !isset($verificationOptions['override_visual'])),
 			'number_questions' => isset($verificationOptions['override_qs']) ? $verificationOptions['override_qs'] : (!empty($settings['qa_verification_number']) ? $settings['qa_verification_number'] : 0),
 			'max_errors' => isset($verificationOptions['max_errors']) ? $verificationOptions['max_errors'] : 3,
-			'image_href' => '<URL>?action=verificationcode;vid=' . $verificationOptions['id'] . ';rand=' . md5(mt_rand()),
+			'image_href' => '<URL>?action=verification;vid=' . $verificationOptions['id'] . ';rand=' . md5(mt_rand()),
 			'text_value' => '',
 			'questions' => array(),
 			'do_empty_field' => empty($verificationsOptions['no_empty_field']),
