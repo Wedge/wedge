@@ -898,23 +898,6 @@ function checkSession($type = 'post', $from_action = '', $is_fatal = true)
 	trigger_error('Hacking attempt...', E_USER_ERROR);
 }
 
-// Check if a specific confirm parameter was given.
-function checkConfirm($action)
-{
-	global $settings;
-
-	if (isset($_GET['confirm'], $_SESSION['confirm_' . $action]) && md5($_GET['confirm'] . $_SERVER['HTTP_USER_AGENT']) === $_SESSION['confirm_' . $action])
-		return true;
-
-	else
-	{
-		$token = md5(mt_rand() . session_id() . (string) microtime() . $settings['rand_seed']);
-		$_SESSION['confirm_' . $action] = md5($token . $_SERVER['HTTP_USER_AGENT']);
-
-		return $token;
-	}
-}
-
 // Check whether a form has been submitted twice.
 function checkSubmitOnce($action, $is_fatal = true)
 {

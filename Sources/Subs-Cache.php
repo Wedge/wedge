@@ -1595,7 +1595,7 @@ function cache_quick_get($key, $file, $function, $params, $level = 1)
  */
 function cache_put_data($key, $val, $ttl = 120)
 {
-	global $boardurl, $sourcedir, $settings, $memcached, $cache_type;
+	global $boardurl, $settings, $memcached, $cache_type;
 	global $cache_hits, $cache_count, $db_show_debug, $cachedir;
 
 	if (empty($settings['cache_enable']) && !empty($settings))
@@ -1681,7 +1681,7 @@ function cache_put_data($key, $val, $ttl = 120)
  */
 function cache_get_data($key, $ttl = 120)
 {
-	global $boardurl, $sourcedir, $settings, $memcached, $cache_type;
+	global $boardurl, $settings, $memcached, $cache_type;
 	global $cache_hits, $cache_count, $db_show_debug, $cachedir;
 
 	if (empty($settings['cache_enable']) && !empty($settings))

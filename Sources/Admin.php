@@ -616,32 +616,9 @@ function Admin()
 						'add' => array($txt['plugins_add_plugins']),
 					),
 				),
-				'packages' => array(
-					'label' => 'Packages (old)',
-					'file' => 'PackageGet',
-					'function' => 'PackageGet',
-					'permission' => array('admin_forum'),
-					'icon' => 'packages.gif',
-					'bigicon' => 'plugin_manager.png',
-					'subsections' => array(
-						'packageget' => array($txt['download_packages'], 'url' => '<URL>?action=admin;area=packages;sa=packageget;get'),
-					),
-				),
 			),
 		),
 	);
-
-	// Any files to include for administration?
-	if (!empty($settings['integrate_admin_include']))
-	{
-		$admin_includes = explode(',', $settings['integrate_admin_include']);
-		foreach ($admin_includes as $include)
-		{
-			$include = strtr(trim($include), array('$boarddir' => $boarddir, '$sourcedir' => $sourcedir, '$themedir' => $theme['theme_dir']));
-			if (file_exists($include))
-				require_once($include);
-		}
-	}
 
 	// Integrate plugins with handy menu pages.
 	if (!empty($settings['plugins_admin']))

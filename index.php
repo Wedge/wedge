@@ -60,78 +60,78 @@ $context = array(
 // Load the settings from the settings table, and perform operations like optimizing.
 reloadSettings();
 
-// Here's the monstrous $action array - $action => array($file, $function, $plugin_id).
-// Only add $plugin_id if it's for a plugin, otherwise just have two items in the list.
+// Here's the monstrous $action array - $action => array($file, [[$function], $plugin_id]).
+// If the function name is the same as the loadSource file name, e.g. Admin.php, to run Admin(), you can skip the function part.
+// Only add $plugin_id if it's for a plugin, otherwise just have (one or) two items in the list.
 $action_list = array(
-	'activate' => array('Activate.php', 'Activate'),
-	'admin' => array('Admin.php', 'Admin'),
-	'ajax' => array('Ajax.php', 'Ajax'),
-	'announce' => array('Announce.php', 'Announce'),
-	'boards' => array('Boards.php', 'Boards'),
-	'buddy' => array('Buddy.php', 'Buddy'),
-	'collapse' => array('Collapse.php', 'Collapse'),
-	'coppa' => array('CoppaForm.php', 'CoppaForm'),
-	'credits' => array('Credits.php', 'Credits'),
-	'deletemsg' => array('RemoveTopic.php', 'DeleteMessage'),
-	'display' => array('Display.php', 'Display'),
-	'dlattach' => array('Dlattach.php', 'Dlattach'),
-	'emailuser' => array('Mailer.php', 'EmailUser'),
-	'feed' => array('Feed.php', 'Feed'),
-	'groups' => array('Groups.php', 'Groups'),
-	'help' => array('Help.php', 'Help'),
-	'im' => array('PersonalMessage.php', 'MessageMain'),
-	'jseditor' => array('JSEditor.php', 'JSEditor'),
-	'jsmodify' => array('JSModify.php', 'JSModify'),
-	'jsoption' => array('JSOption.php', 'JSOption'),
-	'like' => array('Like.php', 'Like'),
-	'lock' => array('Lock.php', 'Lock'),
-	'login' => array('Login.php', 'Login'),
-	'login2' => array('Login2.php', 'Login2'),
-	'logout' => array('Logout.php', 'Logout'),
-	'markasread' => array('Subs-Boards.php', 'MarkRead'),
-	'media' => array('media/Aeva-Gallery.php', 'aeva_initGallery'),
-	'mergeposts' => array('Merge.php', 'MergePosts'),
-	'mergetopics' => array('Merge.php', 'MergeTopics'),
-	'mlist' => array('Memberlist.php', 'Memberlist'),
-	'moderate' => array('ModerationCenter.php', 'ModerationMain'),
-	'movetopic' => array('MoveTopic.php', 'MoveTopic'),
-	'movetopic2' => array('MoveTopic.php', 'MoveTopic2'),
-	'notify' => array('Notify.php', 'Notify'),
-	'notifyboard' => array('Notify.php', 'BoardNotify'),
-	'notification' => array('Notifications.php', 'weNotif::action'),
-	'pin' => array('Pin.php', 'Pin'),
-	'pm' => array('PersonalMessage.php', 'MessageMain'),
-	'poll' => array('Poll.php', 'Poll'),
-	'post' => array('Post.php', 'Post'),
-	'post2' => array('Post2.php', 'Post2'),
-	'printpage' => array('PrintPage.php', 'PrintPage'),
-	'profile' => array('Profile.php', 'ModifyProfile'),
-	'quotefast' => array('QuoteFast.php', 'QuoteFast'),
-	'quickmod' => array('QuickMod.php', 'QuickModeration'),
-	'quickmod2' => array('Display.php', 'QuickInTopicModeration'),
-	'recent' => array('Recent.php', 'Recent'),
-	'register' => array('Register.php', 'Register'),
-	'register2' => array('Register.php', 'Register2'),
-	'reminder' => array('Reminder.php', 'RemindMe'),
-	'removetopic2' => array('RemoveTopic.php', 'RemoveTopic2'),
-	'report' => array('Report.php', 'Report'),
-	'restoretopic' => array('RemoveTopic.php', 'RestoreTopic'),
-	'search' => array('Search.php', 'Search'),
-	'search2' => array('Search2.php', 'Search2'),
-	'sendtopic' => array('Mailer.php', 'EmailUser'),
-	'skin' => array('Themes.php', 'PickTheme'),
-	'splittopics' => array('Split.php', 'SplitTopics'),
-	'stats' => array('Stats.php', 'Stats'),
-	'suggest' => array('Suggest.php', 'Suggest'),
-	'theme' => array('Themes.php', 'ThemesMain'),
-	'thoughts' => array('Thoughts.php', 'Thoughts'),
-	'trackip' => array('Profile-View.php', 'trackIP'),
-	'unread' => array('Unread.php', 'Unread'),
-	'unreadreplies' => array('UnreadReplies.php', 'UnreadReplies'),
-	'verificationcode' => array('VerificationCode.php', 'VerificationCode'),
-	'viewquery' => array('ViewQuery.php', 'ViewQuery'),
-	'viewremote' => array('ViewRemote.php', 'ViewRemote'),
-	'who' => array('Who.php', 'Who'),
+	'activate' => array('Activate'),
+	'admin' => array('Admin'),
+	'ajax' => array('Ajax'),
+	'announce' => array('Announce'),
+	'boards' => array('Boards', 'Boards'),
+	'buddy' => array('Buddy'),
+	'collapse' => array('Collapse'),
+	'coppa' => array('CoppaForm'),
+	'credits' => array('Credits'),
+	'deletemsg' => array('RemoveTopic', 'DeleteMessage'),
+	'display' => array('Display'),
+	'dlattach' => array('Dlattach'),
+	'emailuser' => array('Mailer', 'EmailUser'),
+	'feed' => array('Feed'),
+	'groups' => array('Groups'),
+	'help' => array('Help'),
+	'jseditor' => array('JSEditor'),
+	'jsmodify' => array('JSModify'),
+	'jsoption' => array('JSOption'),
+	'like' => array('Like'),
+	'lock' => array('Lock'),
+	'login' => array('Login'),
+	'login2' => array('Login2', 'Login2'),
+	'logout' => array('Logout'),
+	'markasread' => array('Subs-Boards', 'MarkRead'),
+	'media' => array('media/Aeva-Gallery', 'aeva_initGallery'),
+	'mergeposts' => array('Merge', 'MergePosts'),
+	'mergetopics' => array('Merge', 'MergeTopics'),
+	'mlist' => array('Memberlist'),
+	'moderate' => array('ModerationCenter', 'ModerationMain'),
+	'movetopic' => array('MoveTopic'),
+	'movetopic2' => array('MoveTopic', 'MoveTopic2'),
+	'notify' => array('Notify'),
+	'notifyboard' => array('Notify', 'BoardNotify'),
+	'notification' => array('Notifications', 'weNotif::action'),
+	'pin' => array('Pin'),
+	'pm' => array('PersonalMessage', 'MessageMain'),
+	'poll' => array('Poll'),
+	'post' => array('Post'),
+	'post2' => array('Post2'),
+	'printpage' => array('PrintPage'),
+	'profile' => array('Profile', 'ModifyProfile'),
+	'quotefast' => array('QuoteFast'),
+	'quickmod' => array('QuickMod', 'QuickModeration'),
+	'quickmod2' => array('Display', 'QuickInTopicModeration'),
+	'recent' => array('Recent'),
+	'register' => array('Register'),
+	'register2' => array('Register', 'Register2'),
+	'reminder' => array('Reminder', 'RemindMe'),
+	'removetopic2' => array('RemoveTopic', 'RemoveTopic2'),
+	'report' => array('Report'),
+	'restoretopic' => array('RemoveTopic', 'RestoreTopic'),
+	'search' => array('Search'),
+	'search2' => array('Search2'),
+	'sendtopic' => array('Mailer', 'EmailUser'),
+	'skin' => array('Themes', 'PickTheme'),
+	'splittopics' => array('Split', 'SplitTopics'),
+	'stats' => array('Stats'),
+	'suggest' => array('Suggest'),
+	'theme' => array('Themes', 'ThemesMain'),
+	'thoughts' => array('Thoughts'),
+	'trackip' => array('Profile-View', 'trackIP'),
+	'unread' => array('Unread'),
+	'unreadreplies' => array('UnreadReplies'),
+	'verificationcode' => array('VerificationCode'),
+	'viewquery' => array('ViewQuery'),
+	'viewremote' => array('ViewRemote'),
+	'who' => array('Who'),
 );
 // If an action should not influence the who's online list, please add it here. (Hookable as global)
 $action_no_log = array(
@@ -222,7 +222,7 @@ if (!empty($context['app_error_count']))
 // The main controlling function.
 function wedge_main()
 {
-	global $context, $settings, $theme, $board, $topic, $board_info, $maintenance, $sourcedir, $action_list;
+	global $context, $settings, $theme, $board, $topic, $board_info, $maintenance, $action_list;
 
 	$action = isset($_GET['action']) ? $_GET['action'] : '';
 
@@ -345,11 +345,15 @@ function wedge_main()
 		return index_action('fallback_action');
 
 	// Otherwise, it was set - so let's go to that action.
-	// !!! Fix this $sourcedir for loadSource
 	if (isset($action_list[$action][2]))
 		loadPluginSource($action_list[$action][2], $action_list[$action][0]);
 	else
-		require_once($sourcedir . '/' . $action_list[$action][0]);
+	{
+		// Remember, if the function is the same as the filename, it's only declared the once.
+		if (!isset($action_list[$action][1]))
+			$action_list[$action][1] = $action_list[$action][0];
+		loadSource($action_list[$action][0]);
+	}
 	return $action_list[$action][1];
 }
 
