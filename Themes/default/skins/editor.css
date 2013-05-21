@@ -210,4 +210,8 @@ body.rich extends .editor
 			margin-left: 1em
 		.bcc
 			margin: 0 0.5em
+
+	@media all and (max-width: 600px)
+		#contactlist
+			display: none
 @endif

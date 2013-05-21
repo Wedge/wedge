@@ -717,7 +717,7 @@ function EditCustomProfiles()
 
 	// Now we need to figure out the possible groups that could see this.
 	$context['can_see_edit_groups'] = array(
-		-2 => $txt['custom_see_edit_owner'],
+		-2 => $txt['custom_edit_see_owner'],
 		'sep1' => '',
 		-1 => $txt['membergroups_guests'],
 		0 => $txt['membergroups_members'],

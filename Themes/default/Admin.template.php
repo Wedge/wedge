@@ -1362,9 +1362,10 @@ function template_edit_profile_field()
 								<legend><div class="foldable fold"></div> <a href="#" onclick="$(\'#fs_privacy\').hide(); $(\'#fs_privacy_link\').show(); return false;">', $txt['select_from_list'], '</a></legend>
 								<table>
 									<tr>
-										<th>Can see</th>
-										<th>Can edit</th>
+										<th>', $txt['custom_edit_can_see'], '</th>
+										<th>', $txt['custom_edit_can_edit'], '</th>
 									</tr>';
+
 	foreach ($context['can_see_edit_groups'] as $id_group => $group_name)
 	{
 		// No group name = separator

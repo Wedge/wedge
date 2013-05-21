@@ -1132,7 +1132,7 @@ function template_include($filename, $once = false)
 				{
 					$j++;
 
-					if (substr_count($line, '<br>') == 0)
+					if (strpos($line, '<br>') === false)
 						continue;
 
 					$n = substr_count($line, '<br>');

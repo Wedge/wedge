@@ -541,6 +541,24 @@ function sort_skin_files($a, $b)
 }
 
 /**
+ * Retrieve a full, final set of dash-separated suffixes for the filename.
+ */
+function wedge_get_css_filename($add)
+{
+	global $settings;
+
+	$suffix = array_filter(array_map('we::is', is_array($add) ? $add : explode('|', $add)));
+
+	if (in_array(we::$os['os'], $suffix))
+		$suffix = array_merge(array(str_replace('dows', '', we::$os['os'] . we::$os['version'])), array_diff($suffix, we::$os['os']));
+	$suffix = array_merge(array(we::$browser['agent'] . we::$browser['version']), $suffix);
+
+	$id = implode('-', array_flip(array_flip(array_filter($suffix))));
+
+	return $id ? (empty($settings['obfuscate_filenames']) ? $id : md5($id)) : '';
+}
+
+/**
  * Create a compact CSS file that concatenates, pre-parses and compresses a list of existing CSS files.
  *
  * @param mixed $folder The target folder (relative to the cache folder.)
@@ -553,7 +571,7 @@ function sort_skin_files($a, $b)
  */
 function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false, $ext = '.css', $additional_vars = array())
 {
-	global $theme, $settings, $css_vars, $context, $cssdir, $boarddir, $boardurl;
+	global $theme, $css_vars, $context, $cssdir, $boarddir, $boardurl;
 
 	$final_folder = substr($cssdir . '/' . $folder, 0, -1);
 	$cachekey = 'css_files-' . $folder . implode('-', $ids);
@@ -562,13 +580,7 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 	// and quickly run them to get relevant suffixes. MAGIC!
 	if (($add = cache_get_data($cachekey, 60000)) !== null)
 	{
-		$suffix = array_flip(array_flip(array_filter(array_map('we::is', explode('|', $add)))));
-
-		$id = preg_replace(
-			'~\b' . we::$os['os'] . '\b~', str_replace('dows', '', we::$os['os'] . we::$os['version']),
-			implode('-', array_merge(array(we::$browser['agent'] . we::$browser['version']), $suffix))
-		);
-		$id = empty($settings['obfuscate_filenames']) ? $id : md5($id);
+		$id = wedge_get_css_filename($add);
 
 		$full_name = ($id ? $id . '-' : '') . $latest_date . $ext;
 		$final_file = $final_folder . '/' . $full_name;
@@ -666,18 +678,13 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 		// a keyword if you're on Android, even 4.1+. But right now, it's better than what we had before.
 		preg_match_all('~[bcm][0-9]+|[a-z]+~i', implode(' ', array_flip(array_flip(array_merge($ids, we::$user['extra_tests'])))), $matches);
 		$add = array_diff(array_flip(array_flip($matches[0])), array_keys(we::$browser), array('global', 'local'));
-		$suffix = array_flip(array_flip(array_filter(array_map('we::is', $add))));
 	}
 
 	// Cache all tests.
 	cache_put_data($cachekey, implode('|', empty($add) ? $ids : $add), 60000);
 
 	// And we've finally got our full, working filename...
-	$id = preg_replace(
-		'~\b' . we::$os['os'] . '\b~', str_replace('dows', '', we::$os['os'] . we::$os['version']),
-		implode('-', array_merge(array(we::$browser['agent'] . we::$browser['version']), isset($suffix) ? $suffix : array()))
-	);
-	$id = empty($settings['obfuscate_filenames']) ? $id : md5($id);
+	$id = wedge_get_css_filename(isset($add) ? $add : array());
 
 	$full_name = ($id ? $id . '-' : '') . $latest_date . $ext;
 	$final_file = $final_folder . '/' . $full_name;

@@ -79,14 +79,13 @@ header, footer, aside, section, article, nav
 
 /* Mobile Chrome 25+ adds a 'font boosting' feature that's
 	supposed to make text more readable; as of May 2013, it sucks.
-	This resets all cells to have the same size -- a bit smaller,
-	but at least we now have control over the size.
+	This resets all elements to have the same size -- a bit smaller,
+	but at least we now have full control over said size.
 --------------------------------------------------------------- */
 
-@if chrome[25-] && mobile
-	td
-		max-height: 100%
-@endif
+	@if chrome[25-] && mobile
+		max-height: 999999em
+	@endif
 
 /* Common styles used for inheritance. You can declare
 	them anywhere you like, but having them near the
@@ -1008,7 +1007,7 @@ li.sep
 	z-index: 47
 	position: absolute
 	padding: 10px 0 0
-	font: 400 14px/20px $main_font
+	font: @ifnull ($mimenu_font_style, 400) @ifnull ($mimenu_font_size, 14px/20px) @ifnull ($mimenu_font, $main_font)
 	top: 100%
 	left: -10px
 	&.right
@@ -1606,7 +1605,7 @@ dl#feed
 .information
 	padding: .5em 1em
 	font-size: .9em
-	line-height: 1.3em
+	line-height: 1.6em
 	border: 1px solid #bbb
 	background: #f0f6f0
 	margin: .2em 1px 1em
