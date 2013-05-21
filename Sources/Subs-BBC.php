@@ -23,10 +23,10 @@ if (!defined('WEDGE'))
  *
  * @param mixed $message The original text, transmitted to parse_bbc()
  * @param array $bbc_options - options are the same as per parse_bbc(), as this function is a wrapper that just pre-sets $bbc_options['tags'].
- * @param bool $short_list A boolean, true by default, specifying whether to disable the parsing of inline bbcode that is scarcely used, or that could slightly disrupt layout, such as colors, sub and sup.
+ * @param bool $short_list A boolean, false by default, specifying whether to disable the parsing of inline bbcode that could slightly disrupt layout, such as colors, sub and sup.
  * @return mixed The parsed string.
  */
-function parse_bbc_inline($message, $type = 'generic', $bbc_options = array(), $short_list = true)
+function parse_bbc_inline($message, $type = 'generic', $bbc_options = array(), $short_list = false)
 {
 	if ($type === (array) $type)
 	{

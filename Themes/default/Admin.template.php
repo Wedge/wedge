@@ -1360,10 +1360,10 @@ function template_edit_profile_field()
 							<div id="fs_privacy_link"><div class="foldable"></div> <a href="#" onclick="$(\'#fs_privacy\').show(); $(\'#fs_privacy_link\').hide(); return false;">', $txt['select_from_list'], '</a></div>
 							<fieldset class="hide" id="fs_privacy">
 								<legend><div class="foldable fold"></div> <a href="#" onclick="$(\'#fs_privacy\').hide(); $(\'#fs_privacy_link\').show(); return false;">', $txt['select_from_list'], '</a></legend>
-								<table>
+								<table class="w100">
 									<tr>
-										<th>', $txt['custom_edit_can_see'], '</th>
-										<th>', $txt['custom_edit_can_edit'], '</th>
+										<th style="padding: 4px">', $txt['custom_edit_can_see'], '</th>
+										<th style="padding: 4px">', $txt['custom_edit_can_edit'], '</th>
 									</tr>';
 
 	foreach ($context['can_see_edit_groups'] as $id_group => $group_name)

@@ -147,7 +147,7 @@ VALUES
 	(25, 'list', 4, 'parsed', '<ul class="bbc_list">', '</ul>', '', '', '', '', 1, '', '', '', '', 'li,list', '', 'none', '', 'inside', ''),
 	(26, 'list', 4, 'parsed', '<ul class="bbc_list" style="list-style-type: {type}">', '</ul>', '', '', '', '', 1, '', '', '', '', 'li,list', '', 'none', 'a:1:{s:4:"type";a:1:{s:5:"match";s:227:"(none|disc|circle|square|decimal|decimal-leading-zero|lower-roman|upper-roman|lower-alpha|upper-alpha|lower-greek|lower-latin|upper-latin|hebrew|armenian|georgian|cjk-ideographic|hiragana|katakana|hiragana-iroha|katakana-iroha)";}}', 'inside', ''),
 	(27, 'ltr', 3, 'parsed', '<div dir="ltr">', '</div>', '', '', '', '', 1, '', '', '', '', '', '', 'none', '', 'none', ''),
-	(28, 'me', 2, 'unparsed_equals', '<div class="meaction">* $1&nbsp;', '</div>', '', '/me ', '<br>', '', 1, '', '', '', '', '', '', 'optional', '', 'none', ''),
+	(28, 'me', 2, 'unparsed_equals', '<span class="meaction">* $1&nbsp;', '</span>', '', '/me ', '', '', 1, '', '', '', '', '', '', 'optional', '', 'none', ''),
 	(29, 'media', 5, 'closed', '', '', ' ', '', '', '', 0, '', '', '', '', '', '', 'none', '', 'none', ''),
 	(30, 'mergedate', 9, 'unparsed_content', '', '', '<div class="mergedate">{{search_date_posted}} $1</div>', '', '', '', 0, '', 'if (is_numeric($data)) $data = timeformat($data);', '', '', '', '', 'none', '', 'none', ''),
 	(31, 'more', 4, 'closed', '', '', ' ', '', '', '', 0, '', '', '', '', '', '', 'none', '', 'none', ''),
