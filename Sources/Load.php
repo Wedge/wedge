@@ -2238,7 +2238,7 @@ function getBoardParents($id_parent)
 /**
  * Attempt to (re)load the list of known language packs.
  *
- * @param bool $use_cache Whether to cache the results of searching the language folders for index.{language}.php files.
+ * @param bool $use_cache Whether to cache the results of searching the language folders for index.{language}.php files. If true, also adheres to the options set in $settings['langsAvail']
  * @return array Returns an array, one element per known language pack, with: name (capitalized name of language pack), selected (bool whether this is the current language), filename (the raw language code, e.g. english_british-utf8), location (full system path to the index.{language}.php file) - this is all part of $context['languages'] too.
  */
 function getLanguages($use_cache = true)
@@ -2246,8 +2246,18 @@ function getLanguages($use_cache = true)
 	global $context, $theme, $settings;
 
 	// If the language array is already filled, or we wanna use the cache and it's not expired...
+	// The master copy will have everything but if we're calling 'from cache' we only want 'available' languages.
 	if ($use_cache && (isset($context['languages']) || ($context['languages'] = cache_get_data('known_languages', !empty($settings['cache_enable']) && $settings['cache_enable'] < 1 ? 86400 : 3600)) !== null))
+	{
+		$langs = !empty($settings['langsAvailable']) ? explode(',', $settings['langsAvailable']) : array();
+		if (empty($langs))
+			$langs[] = $settings['language'];
+		foreach($context['languages'] as $lang => $dummy)
+			if (!in_array($lang, $langs))
+				unset ($context['languages'][$lang]);
+
 		return $context['languages'];
+	}
 
 	// If we don't have our theme information yet, let's get it.
 	if (empty($theme['default_theme_dir']))

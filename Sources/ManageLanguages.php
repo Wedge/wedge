@@ -62,9 +62,6 @@ function ManageLanguages()
 
 	$subActions = array(
 		'edit' => 'ModifyLanguages',
-		'add' => 'AddLanguage',
-		'settings' => 'ModifyLanguageSettings',
-		'downloadlang' => 'DownloadLanguage',
 		'editlang' => 'ModifyLanguage',
 	);
 
@@ -82,385 +79,6 @@ function ManageLanguages()
 	$subActions[$_REQUEST['sa']]();
 }
 
-// Interface for adding a new language
-function AddLanguage()
-{
-	global $context, $txt;
-
-	loadTemplate('ManageLanguages');
-
-	// Are we searching for new languages courtesy of Wedge?
-	if (!empty($_POST['we_add_sub']))
-	{
-		loadSource('Class-WebGet');
-
-		$context['we_search_term'] = htmlspecialchars(trim($_POST['we_add']));
-
-		// We're going to use this URL.
-		// !!! @todo: Update with Wedge language files.
-		$url = 'http://wedge.org/files/fetch_language.php?version=' . urlencode(WEDGE_VERSION);
-
-		// Load the data and stick it into an array.
-		$weget = new weget($url);
-		$data = $weget->get();
-		$language_list = simplexml_load_string($data);
-
-		// Check it exists.
-		if (empty($language_list->language))
-			$context['wedge_error'] = 'no_response';
-		else
-		{
-			$context['wedge_languages'] = array();
-			foreach ($language_list->language as $this_lang)
-			{
-				$lang_name = (string) $this_lang->name;
-				if (!empty($context['we_search_term']) && strpos($lang_name, westr::strtolower($context['we_search_term'])) === false)
-					continue;
-
-				$context['wedge_languages'][] = array(
-					'id' => (string) $this_lang->id,
-					'name' => westr::ucwords($lang_name),
-					'version' => (string) $this_lang->version,
-					'description' => (string) $this_lang->description,
-					'link' => '<URL>?action=admin;area=languages;sa=downloadlang;did=' . (string) $this_lang->id . ';' . $context['session_query'],
-				);
-			}
-
-			if (empty($context['wedge_languages']))
-				$context['wedge_error'] = 'no_files';
-		}
-	}
-
-	wetem::load('add_language');
-}
-
-// Download a language file from the Wedge website.
-function DownloadLanguage()
-{
-	global $context, $boarddir, $txt, $settings;
-
-	loadTemplate('ManageLanguages');
-	loadLanguage('ManageSettings');
-	loadSource('Subs-Package');
-
-	// Clearly we need to know what to request.
-	if (!isset($_GET['did']))
-		fatal_lang_error('no_access', false);
-
-	// Some lovely context.
-	$context['download_id'] = $_GET['did'];
-	wetem::load('download_language');
-	$context['menu_data_' . $context['admin_menu_id']]['current_subsection'] = 'add';
-
-	// Can we actually do the installation - and do they want to?
-	if (!empty($_POST['do_install']) && !empty($_POST['copy_file']))
-	{
-		checkSession('get');
-
-		$chmod_files = array();
-		$install_files = array();
-		// Check writable status.
-		foreach ($_POST['copy_file'] as $file)
-		{
-			// Check it's not very bad.
-			if (strpos($file, '..') !== false || (substr($file, 0, 6) != 'Themes' && !preg_match('~agreement\.[A-Za-z-_0-9]+\.txt$~', $file)))
-				fatal_lang_error('languages_download_illegal_paths');
-
-			$chmod_files[] = $boarddir . '/' . $file;
-			$install_files[] = $file;
-		}
-
-		// Otherwise, go go go!
-		if (!empty($install_files))
-		{
-			// !!! @todo: Update with Wedge language files.
-			$archive_content = read_tgz_file('http://wedge.org/files/fetch_language.php?version=' . urlencode(WEDGE_VERSION) . ';fetch=' . urlencode($_GET['did']), $boarddir, false, true, $install_files);
-			// Make sure the files aren't stuck in the cache.
-			package_flush_cache();
-			$context['install_complete'] = sprintf($txt['languages_download_complete_desc'], '<URL>?action=admin;area=languages');
-
-			return;
-		}
-	}
-
-	// Open up the old china.
-	// !!! @todo: Update with Wedge language files.
-	if (!isset($archive_content))
-		$archive_content = read_tgz_file('http://wedge.org/files/fetch_language.php?version=' . urlencode(WEDGE_VERSION) . ';fetch=' . urlencode($_GET['did']), null);
-
-	if (empty($archive_content))
-		fatal_lang_error('add_language_error_no_response');
-
-	// Now for each of the files, let's do some *stuff*
-	$context['files'] = array(
-		'lang' => array(),
-		'other' => array(),
-	);
-	$context['make_writable'] = array();
-	foreach ($archive_content as $file)
-	{
-		$dirname = dirname($file['filename']);
-		$filename = basename($file['filename']);
-		$extension = substr($filename, strrpos($filename, '.') + 1);
-
-		// Don't do anything with files we don't understand.
-		if (!in_array($extension, array('php', 'jpg', 'gif', 'jpeg', 'png', 'txt')))
-			continue;
-
-		// Basic data.
-		$context_data = array(
-			'name' => $filename,
-			'destination' => $boarddir . '/' . $file['filename'],
-			'generaldest' => $file['filename'],
-			'size' => $file['size'],
-			// Does chmod status allow the copy?
-			'writable' => false,
-			// Should we suggest they copy this file?
-			'default_copy' => true,
-			// Does the file already exist, if so is it same or different?
-			'exists' => false,
-		);
-
-		// Does the file exist, is it different and can we overwrite?
-		if (file_exists($boarddir . '/' . $file['filename']))
-		{
-			if (is_writable($boarddir . '/' . $file['filename']))
-				$context_data['writable'] = true;
-
-			// Finally, do we actually think the content has changed?
-			if ($file['size'] == filesize($boarddir . '/' . $file['filename']) && $file['md5'] === md5_file($boarddir . '/' . $file['filename']))
-			{
-				$context_data['exists'] = 'same';
-				$context_data['default_copy'] = false;
-			}
-			// Attempt to discover newline character differences.
-			elseif ($file['md5'] === md5(preg_replace("~[\r]?\n~", "\r\n", file_get_contents($boarddir . '/' . $file['filename']))))
-			{
-				$context_data['exists'] = 'same';
-				$context_data['default_copy'] = false;
-			}
-			else
-				$context_data['exists'] = 'different';
-		}
-		// No overwrite?
-		else
-		{
-			// Can we at least stick it in the directory...
-			if (is_writable($boarddir . '/' . $dirname))
-				$context_data['writable'] = true;
-		}
-
-		// I love PHP files, that's why I'm a developer and not an artistic type spending my time drinking absinth and living a life of sin...
-		if ($extension == 'php' && preg_match('~\w+\.\w+?\.php~', $filename))
-		{
-			$context_data += array(
-				'version' => '??',
-				'cur_version' => false,
-				'version_compare' => 'newer',
-			);
-
-			list ($name, $language) = explode('.', $filename);
-
-			// Let's get the new version, I like versions, they tell me that I'm up to date.
-			if (preg_match('~\s*Version:\s+(.+?);\s*' . preg_quote($name, '~') . '~i', $file['preview'], $match) == 1)
-				$context_data['version'] = $match[1];
-
-			// Now does the old file exist - if so what is it's version?
-			if (file_exists($boarddir . '/' . $file['filename']))
-			{
-				// OK - what is the current version?
-				$fp = fopen($boarddir . '/' . $file['filename'], 'rb');
-				$header = fread($fp, 768);
-				fclose($fp);
-
-				// Find the version.
-				if (preg_match('~(?://|/\*)\s*Version:\s+(.+?);\s*' . preg_quote($name, '~') . '(?:[\s]{2}|\*/)~i', $header, $match) == 1)
-				{
-					$context_data['cur_version'] = $match[1];
-
-					// How does this compare?
-					if ($context_data['cur_version'] == $context_data['version'])
-						$context_data['version_compare'] = 'same';
-					elseif ($context_data['cur_version'] > $context_data['version'])
-						$context_data['version_compare'] = 'older';
-
-					// Don't recommend copying if the version is the same.
-					if ($context_data['version_compare'] != 'newer')
-						$context_data['default_copy'] = false;
-				}
-			}
-
-			// Add the context data to the main set.
-			$context['files']['lang'][] = $context_data;
-		}
-		else
-		{
-			// If we think it's a theme thing, work out what the theme is.
-			if (substr($dirname, 0, 6) == 'Themes' && preg_match('~Themes[\\/]([^\\/]+)[\\/]~', $dirname, $match))
-				$theme_name = $match[1];
-			else
-				$theme_name = 'misc';
-
-			// Assume it's an image, could be an acceptance note etc but rare.
-			$context['files']['images'][$theme_name][] = $context_data;
-		}
-
-		// Collect together all non-writable areas.
-		if (!$context_data['writable'])
-			$context['make_writable'][] = $context_data['destination'];
-	}
-
-	// So, I'm a perfectionist - let's get the theme names.
-	$theme_indexes = array();
-	foreach ($context['files']['images'] as $k => $dummy)
-		$indexes[] = $k;
-
-	$context['theme_names'] = array();
-	if (!empty($indexes))
-	{
-		$value_data = array(
-			'query' => array(),
-			'params' => array(),
-		);
-
-		foreach ($indexes as $k => $index)
-		{
-			$value_data['query'][] = 'value LIKE {string:value_' . $k . '}';
-			$value_data['params']['value_' . $k] = '%' . $index;
-		}
-
-		$request = wesql::query('
-			SELECT id_theme, value
-			FROM {db_prefix}themes
-			WHERE id_member = {int:no_member}
-				AND variable = {literal:theme_dir}
-				AND (' . implode(' OR ', $value_data['query']) . ')',
-			array_merge($value_data['params'], array(
-				'no_member' => 0,
-				'index_compare_explode' => 'value LIKE \'%' . implode('\' OR value LIKE \'%', $indexes) . '\'',
-			))
-		);
-		$themes = array();
-		while ($row = wesql::fetch_assoc($request))
-		{
-			// Find the right one.
-			foreach ($indexes as $index)
-				if (strpos($row['value'], $index) !== false)
-					$themes[$row['id_theme']] = $index;
-		}
-		wesql::free_result($request);
-
-		if (!empty($themes))
-		{
-			// Now we have the id_theme we can get the pretty description.
-			$request = wesql::query('
-				SELECT id_theme, value
-				FROM {db_prefix}themes
-				WHERE id_member = {int:no_member}
-					AND variable = {literal:name}
-					AND id_theme IN ({array_int:theme_list})',
-				array(
-					'theme_list' => array_keys($themes),
-					'no_member' => 0,
-				)
-			);
-			while ($row = wesql::fetch_assoc($request))
-			{
-				// Now we have it...
-				$context['theme_names'][$themes[$row['id_theme']]] = $row['value'];
-			}
-			wesql::free_result($request);
-		}
-	}
-
-	// This is the list for the main files.
-	$listOptions = array(
-		'id' => 'lang_main_files_list',
-		'title' => $txt['languages_download_main_files'],
-		'get_items' => array(
-			'function' => create_function('', '
-				global $context;
-				return $context[\'files\'][\'lang\'];
-			'),
-		),
-		'columns' => array(
-			'name' => array(
-				'header' => array(
-					'value' => $txt['languages_download_filename'],
-				),
-				'data' => array(
-					'function' => create_function('$rowData', '
-						global $context, $txt;
-
-						return \'<strong>\' . $rowData[\'name\'] . \'</strong><div class="smalltext">\' . $txt[\'languages_download_dest\'] . \': \' . $rowData[\'destination\'] . \'</div>\' . ($rowData[\'version_compare\'] == \'older\' ? \'<br>\' . $txt[\'languages_download_older\'] : \'\');
-					'),
-				),
-			),
-			'writable' => array(
-				'header' => array(
-					'value' => $txt['languages_download_writable'],
-				),
-				'data' => array(
-					'function' => create_function('$rowData', '
-						global $txt;
-
-						return \'<span style="color: \' . ($rowData[\'writable\'] ? \'green\' : \'red\') . \'">\' . ($rowData[\'writable\'] ? $txt[\'yes\'] : $txt[\'no\']) . \'</span>\';
-					'),
-					'style' => 'text-align: center',
-				),
-			),
-			'version' => array(
-				'header' => array(
-					'value' => $txt['languages_download_version'],
-				),
-				'data' => array(
-					'function' => create_function('$rowData', '
-						global $txt;
-
-						return \'<span style="color: \' . ($rowData[\'version_compare\'] == \'older\' ? \'red\' : ($rowData[\'version_compare\'] == \'same\' ? \'orange\' : \'green\')) . \'">\' . $rowData[\'version\'] . \'</span>\';
-					'),
-				),
-			),
-			'exists' => array(
-				'header' => array(
-					'value' => $txt['languages_download_exists'],
-				),
-				'data' => array(
-					'function' => create_function('$rowData', '
-						global $txt;
-
-						return $rowData[\'exists\'] ? ($rowData[\'exists\'] == \'same\' ? $txt[\'languages_download_exists_same\'] : $txt[\'languages_download_exists_different\']) : $txt[\'no\'];
-					'),
-				),
-			),
-			'copy' => array(
-				'header' => array(
-					'value' => $txt['languages_download_copy'],
-				),
-				'data' => array(
-					'function' => create_function('$rowData', '
-						return \'<input type="checkbox" name="copy_file[]" value="\' . $rowData[\'generaldest\'] . \'"\' . ($rowData[\'default_copy\'] ? \' checked\' : \'\') . \'>\';
-					'),
-					'style' => 'text-align: center; width: 4%',
-				),
-			),
-		),
-	);
-
-	// Kill the cache, as it is now invalid..
-	if (!empty($settings['cache_enable']))
-	{
-		cache_put_data('known_languages', null, !empty($settings['cache_enable']) && $settings['cache_enable'] < 1 ? 86400 : 3600);
-		// Delete all cached CSS files.
-		clean_cache('css');
-	}
-
-	loadSource('Subs-List');
-	createList($listOptions);
-
-	$context['default_list'] = 'lang_main_files_list';
-}
-
 // This lists all the current languages and allows editing of them.
 function ModifyLanguages()
 {
@@ -474,22 +92,46 @@ function ModifyLanguages()
 		$context['cache_cleared'] = true;
 	}
 
+	// Whatever we're doing, we want this and we want it uncached.
+	getLanguages(false);
+
 	// Setting a new default?
 	if (!empty($_POST['set_default']) && !empty($_POST['def_language']))
 	{
 		checkSession();
 
-		$languages = getLanguages();
-		if ($_POST['def_language'] != $settings['language'] && isset($languages[$_POST['def_language']]))
+		$new_settings = array();
+		if ($_POST['def_language'] != $settings['language'] && isset($context['languages'][$_POST['def_language']]))
+			$new_settings['language'] = $_POST['def_language'];
+		if (!empty($_POST['userLanguage']))
 		{
-			updateSettings(array('language' => $_POST['def_language']));
-			$settings['language'] = $_POST['def_language'];
+			$new_settings['userLanguage'] = 1;
+			$langs = array();
+			$_POST['available'] = isset($_POST['available']) ? (array) $_POST['available'] : array();
+			foreach ($_POST['available'] as $lang => $dummy)
+				if (isset($context['languages'][$lang]))
+					$langs[] = $lang;
+			if (empty($langs))
+				$langs[] = !empty($new_settings['language']) ? $new_settings : (!empty($settings['language']) ? $settings['language'] : 'english');
+			$new_settings['langsAvailable'] = implode(',', $langs);
+		}
+		else
+		{
+			$new_settings['userLanguage'] = 0;
+			$new_settings['langsAvailable'] = !empty($new_settings['language']) ? $new_settings : (!empty($settings['language']) ? $settings['language'] : 'english');
+		}
+
+		if (!empty($new_settings))
+		{
+			updateSettings($new_settings);
+			$settings = array_merge($settings, $new_settings);
+			// And just because we cache things in the CSS...
+			clean_cache('css');
 		}
 	}
 
 	$listOptions = array(
 		'id' => 'language_list',
-		'items_per_page' => 20,
 		'base_href' => '<URL>?action=admin;area=languages',
 		'cat' => $txt['edit_languages'],
 		'get_items' => array(
@@ -499,6 +141,17 @@ function ModifyLanguages()
 			'function' => 'list_getNumLanguages',
 		),
 		'columns' => array(
+			'available' => array(
+				'header' => array(
+					'value' => $txt['languages_available'] . ' <a href="<URL>?action=help;in=availableLanguage" class="help" onclick="return reqWin(this);"></a>',
+				),
+				'data' => array(
+					'function' => create_function('$rowData', '
+						return \'<input type="checkbox" name="available[\' . $rowData[\'id\'] . \']" value="1"\' . (!empty($rowData[\'available\']) ? \' checked\' : \'\') . \'>\';
+					'),
+					'style' => 'text-align: center; width: 8%',
+				),
+			),
 			'default' => array(
 				'header' => array(
 					'value' => $txt['languages_default'],
@@ -566,6 +219,10 @@ function ModifyLanguages()
 		'additional_rows' => array(
 			array(
 				'position' => 'below_table_data',
+				'value' => '<label><input type="checkbox" name="userLanguage"' . (!empty($settings['userLanguage']) ? ' checked' : '') . '> ' . $txt['userLanguage'] . '</label>',
+			),
+			array(
+				'position' => 'below_table_data',
 				'value' => '<input type="hidden" name="' . $context['session_var'] . '" value="' . $context['session_id'] . '"><input type="submit" name="set_default" value="' . $txt['save'] . '" class="save">',
 				'style' => 'text-align: right',
 			),
@@ -587,18 +244,25 @@ function ModifyLanguages()
 	loadTemplate('ManageLanguages');
 
 	wetem::load('language_home');
+
+	// Oh, and we're done with the proper magical copy of the language list, resume normal services for things like the language selector
+	getLanguages();
 }
 
 // How many languages?
 function list_getNumLanguages()
 {
-	return count(getLanguages());
+	return count(getLanguages(false));
 }
 
 // Fetch the actual language information.
 function list_getLanguages()
 {
 	global $theme, $context, $txt, $settings;
+
+	$langsAvailable = isset($settings['langsAvailable']) ? explode(',', $settings['langsAvailable']) : array();
+	if (empty($langsAvailable))
+		$langsAvailable[] = !empty($settings['language']) ? $settings['language'] : 'english';
 
 	$languages = array();
 	// Keep our old entries.
@@ -607,7 +271,6 @@ function list_getLanguages()
 
 	// Override these for now.
 	$theme['actual_theme_dir'] = $theme['default_theme_dir'];
-	getLanguages();
 
 	// Put them back.
 	$theme['actual_theme_dir'] = $backup_actual_theme_dir;
@@ -621,9 +284,10 @@ function list_getLanguages()
 		$languages[$lang['filename']] = array(
 			'id' => $lang['filename'],
 			'count' => 0,
+			'available' => $settings['language'] == $lang['filename'] || in_array($lang['filename'], $langsAvailable),
 			'default' => $settings['language'] == $lang['filename'] || ($settings['language'] == '' && $lang['filename'] == 'english'),
 			'locale' => $txt['lang_locale'],
-			'name' => '<span class="flag_' . $lang['filename'] . '"></span> ' . $txt['lang_name'],
+			'name' => '<img src="' . $theme['default_theme_url'] . '/languages/Flag.' . $lang['filename'] . '.png"> ' . $txt['lang_name'],
 			'dictionary' => $txt['lang_dictionary'] . ' (' . $txt['lang_spelling'] . ')',
 			'rtl' => $txt['lang_rtl'],
 		);
@@ -655,58 +319,6 @@ function list_getLanguages()
 
 	// Return how many we have.
 	return $languages;
-}
-
-// Edit language related settings.
-function ModifyLanguageSettings($return_config = false)
-{
-	global $context, $txt, $boarddir, $theme;
-
-	loadSource('ManageServer');
-
-	// Warn the user if the backup of Settings.php failed.
-	$settings_not_writable = !is_writable($boarddir . '/Settings.php');
-	$settings_backup_fail = !@is_writable($boarddir . '/Settings_bak.php') || !@copy($boarddir . '/Settings.php', $boarddir . '/Settings_bak.php');
-
-	/* If you're writing a mod, it's a bad idea to add things here....
-	For each option:
-		variable name, description, type (constant), size/possible values, helptext.
-	OR	an empty string for a horizontal rule.
-	OR	a string for a titled section. */
-
-	$config_vars = array(
-		'language' => array('select', 'language', array()),
-		array('check', 'userLanguage'),
-	);
-
-	if ($return_config)
-		return $config_vars;
-
-	// Get our languages. No cache.
-	getLanguages(false);
-	foreach ($context['languages'] as $lang)
-		$config_vars['language'][2][$lang['filename']] = '&lt;span class="flag_' . $lang['filename'] . '"&gt;&lt;/span&gt; ' . $lang['name'];
-
-	// Saving settings?
-	if (isset($_REQUEST['save']))
-	{
-		checkSession();
-		saveDBSettings($config_vars);
-		redirectexit('action=admin;area=languages;sa=settings');
-	}
-
-	// Setup the template stuff.
-	$context['post_url'] = '<URL>?action=admin;area=languages;sa=settings;save';
-	$context['settings_title'] = $txt['language_settings'];
-	$context['save_disabled'] = $settings_not_writable;
-
-	if ($settings_not_writable)
-		$context['settings_message'] = '<p class="center"><strong>' . $txt['settings_not_writable'] . '</strong></p><br>';
-	elseif ($settings_backup_fail)
-		$context['settings_message'] = '<p class="center"><strong>' . $txt['admin_backup_fail'] . '</strong></p><br>';
-
-	// Fill the config array.
-	prepareDBSettingContext($config_vars);
 }
 
 // Edit a particular set of language entries.

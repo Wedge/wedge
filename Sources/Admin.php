@@ -88,12 +88,6 @@ function Admin()
 					'function' => 'ManageLanguages',
 					'icon' => 'languages.gif',
 					'bigicon' => 'languages.png',
-					'subsections' => array(
-						'edit' => array($txt['language_edit']),
-						'add' => array($txt['language_add']),
-						'',
-						'settings' => array($txt['language_settings']),
-					),
 				),
 				'',
 				'current_theme' => array(
@@ -927,7 +921,6 @@ function AdminSearchInternal()
 			array('ModifyDatabaseSettings', 'area=serversettings;sa=database'),
 			array('ModifyCookieSettings', 'area=serversettings;sa=cookie'),
 			array('ModifyCacheSettings', 'area=serversettings;sa=cache'),
-			array('ModifyLanguageSettings', 'area=languages;sa=settings'),
 			array('ModifyRegistrationSettings', 'area=regcenter;sa=settings'),
 			array('ManageSearchEngineSettings', 'area=sengines;sa=settings'),
 			array('ModifySubscriptionSettings', 'area=paidsubscribe;sa=settings'),
