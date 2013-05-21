@@ -550,7 +550,7 @@ function wedge_get_css_filename($add)
 	$suffix = array_filter(array_map('we::is', is_array($add) ? $add : explode('|', $add)));
 
 	if (in_array(we::$os['os'], $suffix))
-		$suffix = array_merge(array(str_replace('dows', '', we::$os['os'] . we::$os['version'])), array_diff($suffix, we::$os['os']));
+		$suffix = array_merge(array(str_replace('dows', '', we::$os['os'] . we::$os['version'])), array_diff($suffix, array(we::$os['os'])));
 	$suffix = array_merge(array(we::$browser['agent'] . we::$browser['version']), $suffix);
 
 	$id = implode('-', array_flip(array_flip(array_filter($suffix))));

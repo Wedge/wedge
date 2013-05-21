@@ -41,23 +41,32 @@
 .inner
 	border-top: 0
 
-@if ios
-	.postarea
-		margin-left: 0
+.postarea
+	margin-left: 0
 
-	// We want really comfortable menu items for use in wireless devices.
-	.mimenu ul li
-		font-size: 1.8em
-		line-height: 1.3em
-		padding: 10px
-		vertical-align: top
+// We want really comfortable menu items for use in wireless devices.
+.mimenu ul li
+	padding: 8px
+	height: auto
 
-	.tinyuser > ul.actions
-		margin-top: 0
+.tinyuser > ul.actions
+	margin-top: 0
 
-	.poster
-		height: 75px
-@endif
+.poster
+	height: 75px
+
+.list_posts
+	font-size: 85%
+
+.topic_details
+	font-size: 110%
+
+.counter
+	padding: .3em .5em .5em .2em
+
+@replace
+	font: 3.6em/1 Cochin, Georgia, serif
+	font: 2em/1 Cochin, Georgia, serif
 
 @if opera[11-], ie[10-]
 	@viewport
@@ -65,3 +74,6 @@
 		min-zoom, zoom: .7 // minimum-scale and initial-scale
 		max-zoom: 2 // maximum-scale
 @endif
+
+$main_font_size = 110%/133%
+$mimenu_font_size = 18px/28px
