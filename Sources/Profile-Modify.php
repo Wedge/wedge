@@ -1119,7 +1119,7 @@ function makeCustomFieldChanges($memID, $area, $sanitize = true)
 
 	// Load the fields we are saving too - make sure we save valid data (etc).
 	$request = wesql::query('
-		SELECT col_name, field_name, field_desc, field_type, field_length, field_options, default_value, show_reg, mask, private
+		SELECT col_name, field_name, field_desc, field_type, field_length, field_options, default_value, show_reg, mask, can_edit
 		FROM {db_prefix}custom_fields
 		WHERE ' . $where . '
 			AND active = {int:is_active}',
@@ -1132,14 +1132,19 @@ function makeCustomFieldChanges($memID, $area, $sanitize = true)
 	$log_changes = array();
 	while ($row = wesql::fetch_assoc($request))
 	{
-		/* This means don't save if:
-			- The user is NOT an admin.
-			- The data is not freely viewable and editable by users.
-			- The data is not invisible to users but editable by the owner (or if it is the user is not the owner)
-			- The area isn't registration, and if it is that the field is not suppossed to be shown there.
-		*/
-		if ($row['private'] != 0 && !allowedTo('admin_forum') && ($memID != we::$id || $row['private'] != 2) && ($area != 'register' || $row['show_reg'] == 0))
-			continue;
+		// Evaluate privacy. If it's during registration, we're expecting to get the information, so no skipping.
+		// No skip for admins (because they have the power), otherwise check 1) the user has 1+ matching group and 2) if it's the user, whether the user has owner permission
+		if ($area != 'register' && !allowedTo('admin_forum'))
+		{
+			$privacy_groups = explode(',', $row['can_edit']);
+			foreach ($privacy_groups as $k => $v)
+				$privacy_groups[$k] = (int) $v;
+			// So if the user has no matching groups, skip it.
+			if (count(array_intersect(we::$user['groups'], $privacy_groups)) == 0)
+				continue;
+			elseif ($memID == we::$id && !in_array(-2, $privacy_groups))
+				continue;
+		}
 
 		// Validate the user data.
 		if ($row['field_type'] == 'check')

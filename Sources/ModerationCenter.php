@@ -15,7 +15,7 @@ if (!defined('WEDGE'))
 	die('Hacking attempt...');
 
 // Entry point for the moderation center.
-function ModerationMain($dont_call = false)
+function ModerationCenter($dont_call = false)
 {
 	global $txt, $context, $settings, $theme, $options;
 
