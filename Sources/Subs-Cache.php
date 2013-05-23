@@ -547,13 +547,15 @@ function wedge_get_css_filename($add)
 {
 	global $settings;
 
-	$suffix = array_filter(array_map('we::is', is_array($add) ? $add : explode('|', $add)));
+	$suffix = array_flip(array_filter(array_map('we::is', is_array($add) ? $add : explode('|', $add))));
 
-	if (in_array(we::$os['os'], $suffix))
-		$suffix = array_merge(array(str_replace('dows', '', we::$os['os'] . we::$os['version'])), array_diff($suffix, array(we::$os['os'])));
-	$suffix = array_merge(array(we::$browser['agent'] . we::$browser['version']), $suffix);
+	if (isset($suffix['m' . we::$id]))
+		unset($suffix['member']);
+	if (isset($suffix[we::$os['os']]))
+		$suffix = array(str_replace('dows', '', we::$os['os'] . we::$os['version']) => true) + array_diff_key($suffix, array(we::$os['os'] => 1));
 
-	$id = implode('-', array_flip(array_flip(array_filter($suffix))));
+	$suffix = array(we::$browser['agent'] . we::$browser['version'] => 1) + $suffix;
+	$id = implode('-', array_keys($suffix));
 
 	return $id ? (empty($settings['obfuscate_filenames']) ? $id : md5($id)) : '';
 }
