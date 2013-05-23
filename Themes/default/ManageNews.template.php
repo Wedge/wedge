@@ -137,7 +137,7 @@ function template_email_members()
 				', $txt['admin_news_select_recipients'], '
 			</div>
 			<div class="windowbg wrc">
-				<dl class="settings">
+				<dl class="settings newsletter">
 					<dt>
 						<strong>', $txt['admin_news_select_group'], ':</strong>
 						<dfn>', $txt['admin_news_select_group_desc'], '</dfn>
@@ -145,12 +145,28 @@ function template_email_members()
 					<dd>';
 
 	foreach ($context['groups'] as $group)
-				echo '
-						<label><input type="checkbox" name="groups[', $group['id'], ']" id="groups_', $group['id'], '" value="', $group['id'], '" checked> ', $group['name'], '</label> <em>(', $group['member_count'], ')</em><br>';
+		if (!$group['is_post'])
+			echo '
+						<label><input type="checkbox" data-type="normal-include" name="groups[', $group['id'], ']" id="groups_', $group['id'], '" value="', $group['id'], '" checked> <span class="group', $group['id'], '">', $group['name'], '</span></label> &ndash; ', $group['member_count'], ' <span class="people"></span><br>';
 
 	echo '
 						<br>
-						<label><input type="checkbox" id="checkAllGroups" checked onclick="invertAll(this, this.form, \'groups\');"> <em>', $txt['check_all'], '</em></label>
+						<label><input type="checkbox" checked onclick="$(\'input[data-type=normal-include]\').prop(\'checked\', this.checked);"> <em>', $txt['check_all'], '</em></label>
+					</dd>
+					<dt>
+						<strong>', $txt['admin_news_select_postgroup'], ':</strong>
+						<dfn>', $txt['admin_news_select_group_desc'], '</dfn>
+					</dt>
+					<dd>';
+
+	foreach ($context['groups'] as $group)
+		if ($group['is_post'])
+			echo '
+						<label><input type="checkbox" data-type="post-include" name="groups[', $group['id'], ']" id="groups_', $group['id'], '" value="', $group['id'], '" checked> <span class="group', $group['id'], '">', $group['name'], '</span></label> &ndash; ', $group['member_count'], ' <span class="people"></span>, ', $group['min_posts'], ' <span class="posts"></span><br>';
+
+	echo '
+						<br>
+						<label><input type="checkbox" checked onclick="$(\'input[data-type=post-include]\').prop(\'checked\', this.checked);"> <em>', $txt['check_all'], '</em></label>
 					</dd>
 				</dl><br class="clear">
 			</div>
@@ -180,7 +196,7 @@ function template_email_members()
 					</dd>
 				</dl>
 				<hr>
-				<dl class="settings">
+				<dl class="settings newsletter">
 					<dt>
 						<strong>', $txt['admin_news_select_excluded_groups'], ':</strong>
 						<dfn>', $txt['admin_news_select_excluded_groups_desc'], '</dfn>
@@ -188,12 +204,28 @@ function template_email_members()
 					<dd>';
 
 	foreach ($context['groups'] as $group)
-				echo '
-						<label><input type="checkbox" name="exclude_groups[', $group['id'], ']" id="exclude_groups_', $group['id'], '" value="', $group['id'], '"> ', $group['name'], '</label> <em>(', $group['member_count'], ')</em><br>';
+		if (!$group['is_post'])
+			echo '
+						<label><input type="checkbox" data-type="normal-exclude" name="exclude_groups[', $group['id'], ']" id="exclude_groups_', $group['id'], '" value="', $group['id'], '"> <span class="group', $group['id'], '">', $group['name'], '</span></label> &ndash; ', $group['member_count'], ' <span class="people"></span><br>';
 
 	echo '
 						<br>
-						<label><input type="checkbox" id="checkAllGroupsExclude" onclick="invertAll(this, this.form, \'exclude_groups\');"> <em>', $txt['check_all'], '</em></label><br>
+						<label><input type="checkbox" onclick="$(\'input[data-type=normal-exclude]\').prop(\'checked\', this.checked);"> <em>', $txt['check_all'], '</em></label><br>
+					</dd>
+					<dt>
+						<strong>', $txt['admin_news_select_excluded_postgroups'], ':</strong>
+						<dfn>', $txt['admin_news_select_excluded_groups_desc'], '</dfn>
+					</dt>
+					<dd>';
+
+	foreach ($context['groups'] as $group)
+		if ($group['is_post'])
+			echo '
+						<label><input type="checkbox" data-type="post-exclude" name="exclude_groups[', $group['id'], ']" id="exclude_groups_', $group['id'], '" value="', $group['id'], '"> <span class="group', $group['id'], '">', $group['name'], '</span></label> &ndash; ', $group['member_count'], ' <span class="people"></span>, ', $group['min_posts'], ' <span class="posts"></span><br>';
+
+	echo '
+						<br>
+						<label><input type="checkbox" onclick="$(\'input[data-type=post-exclude]\').prop(\'checked\', this.checked);"> <em>', $txt['check_all'], '</em></label><br>
 					</dd>
 					<dt>
 						<strong>', $txt['admin_news_select_excluded_members'], ':</strong>

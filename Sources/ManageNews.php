@@ -264,26 +264,13 @@ function SelectMailingMembers()
 	$postGroups = array();
 	$normalGroups = array();
 
-	// If we have post groups disabled then we need to give a "ungrouped members" option.
-	if (empty($settings['permission_enable_postgroups']))
-	{
-		$context['groups'][0] = array(
-			'id' => 0,
-			'name' => $txt['membergroups_members'],
-			'member_count' => 0,
-		);
-		$normalGroups[0] = 0;
-	}
-
 	// Get all the extra groups as well as Administrator and Global Moderator.
 	$request = wesql::query('
 		SELECT mg.id_group, mg.group_name, mg.min_posts
-		FROM {db_prefix}membergroups AS mg' . (empty($settings['permission_enable_postgroups']) ? '
-		WHERE mg.min_posts = {int:min_posts}' : '') . '
+		FROM {db_prefix}membergroups AS mg
 		GROUP BY mg.id_group, mg.min_posts, mg.group_name
 		ORDER BY mg.min_posts, CASE WHEN mg.id_group < {int:newbie_group} THEN mg.id_group ELSE 4 END, mg.group_name',
 		array(
-			'min_posts' => -1,
 			'newbie_group' => 4,
 		)
 	);
@@ -292,6 +279,8 @@ function SelectMailingMembers()
 		$context['groups'][$row['id_group']] = array(
 			'id' => $row['id_group'],
 			'name' => $row['group_name'],
+			'min_posts' => $row['min_posts'],
+			'is_post' => $row['min_posts'] >= 0,
 			'member_count' => 0,
 		);
 
@@ -426,7 +415,7 @@ function ComposeMailing()
 	// Get a list of all full banned users. Only get the ones that can't login to turn off notification.
 	$request = wesql::query('
 		SELECT mem.id_member
-		FROM {db_prefix}members
+		FROM {db_prefix}members AS mem
 		WHERE is_activated >= {int:full_ban}',
 		array(
 			'full_ban' => 20,

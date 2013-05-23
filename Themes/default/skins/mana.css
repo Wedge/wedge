@@ -96,13 +96,25 @@ ol.search_results
 	margin-top: 1px
 	width: 16px
 	height: 16px
-	background: url($images/admin/members.gif) no-repeat
+	background: url-no-base64($images/admin/members.gif) no-repeat
 
 .plugin_from mixes .inline-block
 	float: left
 	vertical-align: bottom
 	font-size: .9em
 	width: 33%
+
+/* Newsletters need some love too.
+------------------------------------------------------- */
+.newsletter
+	.people mixes .inline-block
+		width: 12px
+		height: 14px
+		background: url-no-base64($images/admin/members.gif) no-repeat
+	.posts mixes .inline-block
+		width: 12px
+		height: 14px
+		background: url-no-base64($images/admin/posts.gif) no-repeat
 
 /* Common admin center classes.
 ------------------------------------------------------- */
