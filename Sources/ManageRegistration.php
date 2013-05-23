@@ -215,6 +215,7 @@ function EditAgreement()
 			@unlink($filename);
 
 		$context['was_saved'] = true;
+		updateSettings(array('agreementUpdated' => time()));
 	}
 	elseif (isset($_POST['updatelang']))
 	{
@@ -222,8 +223,90 @@ function EditAgreement()
 		updateSettings(array('requireAgreement' => !empty($_POST['requireAgreement'])));
 		$context['was_saved'] = true;
 	}
+	elseif (isset($_POST['setreagree']))
+	{
+		checkSession();
+
+		// So, did we want to exclude anyone from this fun and games?
+		$exclude = array(we::$id);
+		$groups = array();
+		if (!empty($_POST['exclude']) && is_array($_POST['exclude']))
+			foreach ($_POST['exclude'] as $k => $v)
+				$groups[] = (int) $v;
+		// Find the members in those groups if applicable. In theory this should be a small list.
+		if (!empty($groups))
+		{
+			$clauses = array(
+				'id_group IN ({array_int:groups})',
+				'id_post_group IN ({array_int:groups})',
+			);
+			$vals = array(
+				'groups' => $groups,
+			);
+			foreach ($groups as $k => $v)
+			{
+				$clauses[] = 'FIND_IN_SET({int:group' . $v . '}, additional_groups)';
+				$vals['group' . $v] = $v;
+			}
+			$request = wesql::query('
+				SELECT id_member
+				FROM {db_prefix}members
+				WHERE ' . implode(' OR ', $clauses),
+				$vals
+			);
+			while ($row = wesql::fetch_row($request))
+				$exclude[] = (int) $row[0];
+			wesql::free_result($request);
+		}
+
+		// In theory we only need to touch people already activated, because everything else should fall through the usual channels.
+		wesql::query('
+			UPDATE {db_prefix}members
+			SET is_activated = is_activated + {int:change}
+			WHERE is_activated IN ({array_int:states})
+				AND id_member NOT IN ({array_int:exclude})',
+			array(
+				'change' => 5, // state n1 = activated, state n6 = pending reagree
+				'states' => array(1, 11, 21),
+				'exclude' => $exclude,
+			)
+		);
+
+		// Now just a few things
+		updateSettings(array(
+			'agreement_force' => !empty($_POST['force']),
+			'lastResetAgree' => time(),
+		));
+		$context['was_saved'] = true;
+	}
 
 	$context['require_agreement'] = !empty($settings['requireAgreement']);
+	$context['last_changed'] = !empty($settings['agreementUpdated']) ? timeformat($settings['agreementUpdated']) : $txt['never'];
+	$context['last_reagree'] = !empty($settings['lastResetAgree']) ? timeformat($settings['lastResetAgree']) : $txt['never'];
+	$context['agreement_force'] = !empty($settings['agreement_force']) ? 1 : 0;
+
+	$request = wesql::query('
+		SELECT mg.id_group, mg.group_name, mg.min_posts
+		FROM {db_prefix}membergroups AS mg
+		WHERE id_group != {int:moderator_group}
+		GROUP BY mg.id_group, mg.min_posts, mg.group_name
+		ORDER BY mg.min_posts, CASE WHEN mg.id_group < {int:newbie_group} THEN mg.id_group ELSE 4 END, mg.group_name',
+		array(
+			'moderator_group' => 3,
+			'newbie_group' => 4,
+		)
+	);
+	while ($row = wesql::fetch_assoc($request))
+	{
+		$group_type = $row['min_posts'] == -1 ? 'normal' : 'post';
+		$context['groups'][$group_type][$row['id_group']] = array(
+			'id' => $row['id_group'],
+			'name' => $row['group_name'],
+			'min_posts' => $row['min_posts'],
+			'member_count' => 0,
+		);
+	}
+	wesql::free_result($request);
 
 	wetem::load('edit_agreement');
 	$context['page_title'] = $txt['registration_agreement'];

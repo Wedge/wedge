@@ -467,7 +467,7 @@ function template_admin_register()
 // Form for editing the agreement shown for people registering to the forum.
 function template_edit_agreement()
 {
-	global $context, $txt;
+	global $context, $txt, $settings;
 
 	if (!empty($context['was_saved']))
 		echo '
@@ -502,6 +502,42 @@ function template_edit_agreement()
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 				<div class="right">
 					<input type="submit" class="save" name="updatelang" value="', $txt['save'], '">
+				</div>
+			</form>
+		</div>
+		<we:cat>', $txt['admin_agreement_reagree'], '</we:cat>
+		<div class="windowbg2 wrc">
+			<form action="<URL>?action=admin;area=regcenter;sa=agreement" method="post" accept-charset="UTF-8">
+				<dl class="settings newsletter">
+					<dt>', $txt['admin_agreement_last_changed'], '</dt>
+					<dd>', $context['last_changed'], '</dd>
+					<dt>', $txt['admin_agreement_last_reagree'], '</dt>
+					<dd>', $context['last_reagree'], '</dd>
+					<dt>', $txt['admin_agreement_force'], '</dt>
+					<dd>
+						<select name="force">
+							<option value="0"', $context['agreement_force'] == 0 ? ' selected' : '', '>', $txt['admin_agreement_force_post'], '</option>
+							<option value="1"', $context['agreement_force'] == 1 ? ' selected' : '', '>', $txt['admin_agreement_force_all'], '</option>
+						</select>
+					</dd>
+					<dt>', $txt['admin_agreement_exclude_groups'], '</dt>
+					<dd>';
+		foreach ($context['groups']['normal'] as $group)
+			echo '
+						<label><input type="checkbox" name="group', $group['id'], '"', $group['id'] == 1 ? ' checked' : '', '> <span class="group', $group['id'], '">', $group['name'], '</span></label><br>';
+		echo '
+					</dd>
+					<dt></dt>
+					<dd>';
+		foreach ($context['groups']['post'] as $group)
+			echo '
+						<label><input type="checkbox" name="group', $group['id'], '"', $group['id'] == 1 ? ' checked' : '', '> <span class="group', $group['id'], '">', $group['name'], '</span></label> &ndash; ', $group['min_posts'], ' <span class="posts"></span><br>';
+		echo '
+					</dd>
+				</dl>
+				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
+				<div class="right">
+					<input type="submit" class="save" name="setreagree" value="', $txt['save'], '">
 				</div>
 			</form>
 		</div>';

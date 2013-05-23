@@ -42,7 +42,7 @@ function activateAccount($memID)
 	if (isset($_REQUEST['save'], $user_profile[$memID]['is_activated']) && $user_profile[$memID]['is_activated'] != 1)
 	{
 		// If we are approving the deletion of an account, we do something special ;)
-		if ($user_profile[$memID]['is_activated'] == 4)
+		if ($user_profile[$memID]['is_activated'] % 10 == 4)
 		{
 			loadSource('Subs-Members');
 			deleteMembers($context['id_member']);
@@ -53,7 +53,7 @@ function activateAccount($memID)
 		call_hook('activate', array($user_profile[$memID]['member_name']));
 
 		// Actually update this member now, as it guarantees the unapproved count can't get corrupted.
-		updateMemberData($context['id_member'], array('is_activated' => $user_profile[$memID]['is_activated'] >= 20 ? 21 : 1, 'active_state_change' => time(), 'validation_code' => ''));
+		updateMemberData($context['id_member'], array('is_activated' => $user_profile[$memID]['is_activated'] >= 20 ? 21 : ($user_profile[$memID]['is_activated'] >= 10 ? 11 : 1), 'active_state_change' => time(), 'validation_code' => ''));
 
 		// If we are doing approval, update the stats for the member just in case.
 		if (in_array($user_profile[$memID]['is_activated'], array(3, 4, 13, 14, 23, 24)))

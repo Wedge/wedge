@@ -617,8 +617,8 @@ function get_validated_infraction_log($memID, $keep_all = true)
 		if ($row['inf_state'] == 0)
 		{
 			$new_state = 0;
-			// Oh dear. This one is marked as active but it seems to have expired.
-			if ($context['infraction_log'][$row['id_issue']]['expire_date'] < $time)
+			// Oh dear. This one is marked as active but it seems to have expired. (But only if it's not indefinite.)
+			if ($context['infraction_log'][$row['id_issue']]['expire_date'] < $time && $row['duration'] != 'i')
 				$new_state = 1;
 			// Oops. This was one that got revoked but for some reason we're not showing as such.
 			elseif (!empty($row['revoked_by']))

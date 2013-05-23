@@ -37,6 +37,7 @@ function checkActivation()
 
 	// What is the true activation status of this account?
 	$activation_status = $user_settings['is_activated'] % 10;
+	$ban_status = $user_settings['is_activated'] - $activation_status;
 
 	// Check if the account is activated - COPPA first...
 	if ($activation_status == 5)
@@ -52,7 +53,8 @@ function checkActivation()
 	{
 		if (isset($_REQUEST['undelete']))
 		{
-			updateMemberData($user_settings['id_member'], array('is_activated' => 1));
+			$new_state = $ban_status + (!empty($settings['agreementUpdated']) && $settings['agreementUpdated'] > $user_settings['user_state_change'] ? 6 : 1);
+			updateMemberData($user_settings['id_member'], array('is_activated' => $new_state));
 			updateSettings(array('unapprovedMembers' => ($settings['unapprovedMembers'] > 0 ? $settings['unapprovedMembers'] - 1 : 0)));
 		}
 		else

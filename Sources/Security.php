@@ -432,7 +432,10 @@ function banPermissions()
 	elseif (!empty(we::$user['sanctions']))
 	{
 		if (!empty(we::$user['sanctions']['pm_ban']))
+		{
 			$denied_permissions[] = 'pm_send';
+			we::$user['pm_banned'] = true;
+		}
 		if (!empty(we::$user['sanctions']['post_ban']))
 		{
 			$denied_permissions = array_merge($denied_permissions, array(

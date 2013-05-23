@@ -41,10 +41,10 @@ function CoppaForm()
 		SELECT member_name
 		FROM {db_prefix}members
 		WHERE id_member = {int:id_member}
-			AND is_activated = {int:is_coppa}',
+			AND is_activated IN ({array_int:is_coppa})',
 		array(
 			'id_member' => (int) $_GET['member'],
-			'is_coppa' => 5,
+			'is_coppa' => array(5, 15),
 		)
 	);
 	if (wesql::num_rows($request) == 0)
