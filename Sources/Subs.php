@@ -617,6 +617,22 @@ function JavaScriptEscape($string, $q = "'")
 }
 
 /**
+ * A helper function for AutoSuggest popup declarations.
+ * The more members your forum has, the more results you'll get,
+ * so we need to increase the minimum number of characters to type before we trigger a search.
+ */
+function min_chars()
+{
+	global $settings;
+
+	if (empty($settings['totalMembers']) || $settings['totalMembers'] > 1000)
+		return 'minChars: 3';
+	if ($settings['totalMembers'] > 100)
+		return 'minChars: 2';
+	return 'minChars: 1';
+}
+
+/**
  * Formats a number in a localized fashion.
  *
  * Each of the language packs should declare $txt['number_format'] in the index language file, which is simply a string that consists of the number 1234.00 localized to that region. This function detects the thousands and decimal separators, and uses those in its place. It also detects the number of digits in the decimal position, and rounds to that many digits. Note that the style is cached locally (statically) for the life of the page.

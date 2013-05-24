@@ -416,6 +416,7 @@ function template_modify_user_subscription()
 
 	add_js('
 	new weAutoSuggest({
+		', min_chars(), ',
 		sControlId: \'name_control\'
 	});');
 

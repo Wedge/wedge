@@ -84,15 +84,15 @@ for guests, because most of the time it won't be an option.
 	color: orange
 	.icon mixes .inline-block
 		width, height: 16px
-		background: url-no-base64($images/warning_moderate.gif) no-repeat
+		background: raw-url($images/warning_moderate.gif) no-repeat
 
 .warn_hard_ban
 	.icon
-		background-image: url-no-base64($images/warning_ban.gif)
+		background-image: raw-url($images/warning_ban.gif)
 
 .warn_warned
 	.icon
-		background-image: url-no-base64($images/warning_watch.gif)
+		background-image: raw-url($images/warning_watch.gif)
 
 /* Styles for the personal messages section.
 ------------------------------------------------- */

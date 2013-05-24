@@ -1683,7 +1683,7 @@ dl#feed
 		&.confirm
 			padding-left: 60px
 			border-radius: 12px 12px 0 0
-			background-image: url-no-base64($images/aeva/failed.png)
+			background-image: raw-url($images/aeva/failed.png)
 			background-position: 10px 50%
 			background-repeat: no-repeat
 	#likes

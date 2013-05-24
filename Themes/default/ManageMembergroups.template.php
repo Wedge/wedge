@@ -319,6 +319,7 @@ function template_edit_group()
 
 		add_js('
 	new weAutoSuggest({
+		', min_chars(), ',
 		bItemList: true,
 		sControlId: "group_moderators",
 		sPostName: "moderator_list",
@@ -681,6 +682,7 @@ function template_group_members()
 		add_js_file('scripts/suggest.js');
 		add_js('
 	new weAutoSuggest({
+		', min_chars(), ',
 		bItemList: true,
 		sControlId: "toAdd",
 		sPostName: "member_add"

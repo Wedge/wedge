@@ -710,7 +710,7 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 
 	// Remove double quote hacks, remaining whitespace, and no-base64 tricks.
 	$final = str_replace(
-		array('#wedge-quote#', "\n\n", ';;', ';}', "}\n", "\t", ' !important', 'url-no-base64('),
+		array('#wedge-quote#', "\n\n", ';;', ';}', "}\n", "\t", ' !important', 'raw-url('),
 		array('"', "\n", ';', '}', '}', ' ', '!important', 'url('),
 		$final
 	);

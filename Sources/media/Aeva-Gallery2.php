@@ -1111,11 +1111,15 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 			$memlists[$num] .= '
 			' . $key . ': ' . JavaScriptEscape($val) . ',';
 
+	$min_chars = min_chars();
+
 	add_js('
 	new weAutoSuggest({
+		', $min_chars, ',
 		sControlId: \'change_owner\'
 	});
 	new weAutoSuggest({
+		', $min_chars, ',
 		bItemList: true,
 		sControlId: \'allowed_members\',
 		sPostName:  \'allowed_members_list\',
@@ -1123,6 +1127,7 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 		}
 	});
 	new weAutoSuggest({
+		', $min_chars, ',
 		bItemList: true,
 		sControlId: \'allowed_write\',
 		sPostName:  \'allowed_write_list\',
@@ -1130,6 +1135,7 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 		}
 	});
 	new weAutoSuggest({
+		', $min_chars, ',
 		bItemList: true,
 		sControlId: \'denied_members\',
 		sPostName:  \'denied_members_list\',
@@ -1137,6 +1143,7 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 		}
 	});
 	new weAutoSuggest({
+		', $min_chars, ',
 		bItemList: true,
 		sControlId: \'denied_write\',
 		sPostName:  \'denied_write_list\',

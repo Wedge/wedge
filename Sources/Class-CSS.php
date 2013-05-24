@@ -1696,7 +1696,7 @@ class wess_base64 extends wess
 		global $cssdir;
 
 		$images = array();
-		if (preg_match_all('~url\(([^)]+)\)~i', $css, $matches))
+		if (preg_match_all('~(?<!raw-)url\(([^)]+)\)~i', $css, $matches))
 		{
 			foreach ($matches[1] as $img)
 				if (preg_match('~\.(gif|png|jpe?g)$~', $img, $ext))

@@ -82,10 +82,10 @@ section.ic
 .onlineinfo
 	.contact mixes .inline-block
 		width, height: 16px
-		background-image: url-no-base64($images/icons/online.gif) // this doesn't get much use
+		background-image: raw-url($images/icons/online.gif) // this doesn't get much use
 	.notonline mixes .inline-block
 		width, height: 16px
-		background-image: url-no-base64($images/hidden.png) // nor this
+		background-image: raw-url($images/hidden.png) // nor this
 
 // The small stats
 #index_common_stats
@@ -360,8 +360,6 @@ hr.sep
 .postarea
 	padding: 0 15px
 	display: table-cell
-	.errorbox
-		margin-bottom: 10px
 
 // Posts and personal messages displayed throughout the forum.
 .post, .personalmessage
@@ -454,44 +452,44 @@ hr.sep
 	background-position: 2px -240px
 
 .profile_button extends .vbtn
-	background-image: url-no-base64($images/icons/profile_sm.gif)
+	background-image: raw-url($images/icons/profile_sm.gif)
 .email_button extends .vbtn
-	background-image: url-no-base64($images/email_sm.gif)
+	background-image: raw-url($images/email_sm.gif)
 .ip_button extends .vbtn
-	background-image: url-no-base64($images/ip.gif)
+	background-image: raw-url($images/ip.gif)
 .www_button extends .vbtn
-	background-image: url-no-base64($images/www_sm.gif)
+	background-image: raw-url($images/www_sm.gif)
 
 // !!! While waiting for a better icon... Here's a temp.
 .post_button extends .vbtn
-	background-image: url-no-base64($images/new_some.png)
+	background-image: raw-url($images/new_some.png)
 
 .report_button extends .vbtn
-	background-image: url-no-base64($images/report.png)
+	background-image: raw-url($images/report.png)
 	background-position: 2px 0
 
 @if member
 	.approve_button extends .vbtn
-		background-image: url-no-base64($images/buttons/approve.gif)
+		background-image: raw-url($images/buttons/approve.gif)
 		background-position: 3px 0
 
 	.restore_button extends .vbtn
-		background-image: url-no-base64($images/buttons/restore.gif)
+		background-image: raw-url($images/buttons/restore.gif)
 		background-position: 0 -30px
 
 	.warn_button extends .vbtn
-		background-image: url-no-base64($images/warn.gif)
+		background-image: raw-url($images/warn.gif)
 		background-position: 2px 0
 @endif
 
 // These user menu options definitely aren't available to guests.
 @if member
 	.contact_button extends .vbtn
-		background-image: url-no-base64($images/icons/online.gif)
+		background-image: raw-url($images/icons/online.gif)
 		background-position: 0 0
 		padding-left: 26px
 	.pm_button extends .vbtn
-		background-image: url-no-base64($images/im_on.gif)
+		background-image: raw-url($images/im_on.gif)
 		background-position: 0 0
 @endif
 
@@ -828,6 +826,7 @@ tr.windowbg td
 
 .errorbox
 	padding: 1em
+	margin-bottom: 10px
 	border: 1px solid #c34
 	color: #000
 	background-color: #ffe4e9

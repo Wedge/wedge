@@ -1280,6 +1280,7 @@ function template_aeva_search_searching()
 
 	add_js('
 	new weAutoSuggest({
+		', min_chars(), ',
 		bItemList: true,
 		sControlId: \'sch_mem\',
 		sPostName: \'sch_mem_list\'

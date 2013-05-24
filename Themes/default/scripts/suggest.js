@@ -426,7 +426,7 @@ weAutoSuggest.prototype.autoSuggestUpdate = function ()
 		return true;
 
 	// How many characters shall we start searching on? Too small?
-	else if (sSearchString.length < (this.opt.iMinimumSearchChars || 3))
+	else if (sSearchString.length < (this.opt.minChars || 3))
 	{
 		this.aCache = [];
 		this.autoSuggestHide();

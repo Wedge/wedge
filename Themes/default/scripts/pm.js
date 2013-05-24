@@ -12,7 +12,7 @@
 
 @language PersonalMessage
 
-function wePersonalMessageSend(opt)
+function weSendPM(opt)
 {
 	if (!opt.bBccShowByDefault)
 	{
@@ -31,12 +31,14 @@ function wePersonalMessageSend(opt)
 
 	var
 		oToAutoSuggest = new weAutoSuggest({
+			minChars: opt.minChars,
 			bItemList: true,
 			sControlId: opt.sToControlId,
 			sPostName: 'recipient_to',
 			aListItems: opt.aToRecipients
 		}),
 		oBccAutoSuggest = new weAutoSuggest({
+			minChars: opt.minChars,
 			bItemList: true,
 			sControlId: opt.sBccControlId,
 			sPostName: 'recipient_bcc',

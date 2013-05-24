@@ -6,8 +6,7 @@
 	Consider it as a library of sorts. It's the ideal place to put virtual
 	selectors and useful variables, so this is what we'll be doing.
 
-	NOTE: it's best to avoid including url() files here,
-	if anything use url-no-base64() instead!
+	NOTE: avoid including url() files here, prefer raw-url() instead!
 -------------------------------------------------------------------------- */
 
 // A common inline-block hack (for old IE/Firefox compatibility.)

@@ -896,8 +896,8 @@ function template_send()
 	));
 
 	add_js('
-	var oPersonalMessage = new wePersonalMessageSend({
-		sObject: \'oPersonalMessage\',
+	new weSendPM({
+		', min_chars(), ',
 		sToControlId: \'to_control\',
 		aToRecipients: {');
 

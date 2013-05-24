@@ -257,12 +257,14 @@ function template_email_members()
 	add_js('
 	$("#advanced_select_div").show();
 	new weAutoSuggest({
+		', min_chars(), ',
 		bItemList: true,
 		sControlId: \'members\',
 		sPostName: \'member_list\',
 		aListItems: {}
 	});
 	new weAutoSuggest({
+		', min_chars(), ',
 		bItemList: true,
 		sControlId: \'exclude_members\',
 		sPostName: \'exclude_member_list\',

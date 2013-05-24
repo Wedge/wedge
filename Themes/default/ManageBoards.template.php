@@ -668,6 +668,7 @@ function template_modify_board()
 	add_js_file('scripts/suggest.js');
 	add_js('
 	new weAutoSuggest({
+		', min_chars(), ',
 		bItemList: true,
 		sControlId: \'moderators\',
 		sPostName: \'moderator_list\',
