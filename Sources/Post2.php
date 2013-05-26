@@ -539,6 +539,10 @@ function Post2()
 			$_POST['pin'] = 0;
 	}
 
+	// If post moderation wasn't on before, it will be now.
+	if (!$becomesApproved)
+		updateSettings(array('postmod_active' => 1));
+
 	// If we moderated this post from moderation filters...
 	if (empty($doModeration['prevent']) && !empty($doModeration['moderate']))
 		$msgData['unapproved_msg'] = fetchFilterMessages($doModeration['moderate']);

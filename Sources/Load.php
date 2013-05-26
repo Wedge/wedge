@@ -157,7 +157,7 @@ function reloadSettings()
 	}
 
 	// Is post moderation alive and well?
-	$settings['postmod_active'] = !empty($settings['postmod_rules']);
+	$settings['postmod_active'] = !empty($settings['postmod_active']) || !empty($settings['postmod_rules']);
 
 	// Call pre-load hook functions.
 	call_hook('pre_load');

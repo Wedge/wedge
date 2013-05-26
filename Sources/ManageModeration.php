@@ -490,6 +490,8 @@ function ManageModApprove()
 	}
 
 	$context['approved_all'] = true;
+	// Nothing is true. Everything is permitted. (And if something happens that requires moderation... it'll get turned on there.)
+	updateSettings(array('postmod_active' => 0));
 	ManageModHome();
 }
 

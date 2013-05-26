@@ -232,7 +232,7 @@ function template_maintain_topics()
 
 	// Bit of javascript for showing which boards to prune in an otherwise hidden list.
 	add_js('
-	var rotSwap = false;
+	var rotSwap = false, motSwap = false;
 	function swapRot()
 	{
 		rotSwap = !rotSwap;
@@ -241,6 +241,20 @@ function template_maintain_topics()
 		$("#rotText").html(rotSwap ? ', JavaScriptEscape($txt['maintain_old_choose']), ' : ', JavaScriptEscape($txt['maintain_old_all']), ');
 		$("#rotPanel").slideToggle(rotSwap);
 		$("#rotPanel input[type=checkbox]").prop("checked", !rotSwap);
+	}
+	function swapMot()
+	{
+		motSwap = !motSwap;
+
+		$("#motIcon").toggleClass("fold", motSwap);
+		$("#motText").html(motSwap ? ', JavaScriptEscape($txt['maintain_old_choose']), ' : ', JavaScriptEscape($txt['maintain_old_all']), ');
+		$("#motPanel").slideToggle(motSwap);
+		$("#motPanel li input[type=checkbox]").prop("checked", !motSwap);
+	}
+
+	function selectCat(obj)
+	{
+		$(obj).closest("fieldset").find("input").prop("checked", obj.checked);
 	}');
 
 	echo '
@@ -255,7 +269,7 @@ function template_maintain_topics()
 	// The otherwise hidden "choose which boards to prune".
 	echo '
 					<p>
-						<a id="rotLink"></a>', $txt['maintain_old_since_days1'], '<input type="number" name="maxdays" value="30" min="0" max="9999" size="3">', $txt['maintain_old_since_days2'], '
+						<a id="rotLink"></a>', sprintf($txt['maintain_old_since'], '<input type="number" name="maxdays" value="30" min="0" max="9999" size="3">'), '
 					</p>
 					<p>
 						<label><input type="radio" name="delete_type" id="delete_type_nothing" value="nothing"> ', $txt['maintain_old_nothing_else'], '</label><br>
@@ -279,7 +293,7 @@ function template_maintain_topics()
 	{
 		echo '
 							<fieldset>
-								<legend>', $category['name'], '</legend>
+								<legend><label><input type="checkbox" onclick="selectCat(this);"> ', $category['name'], '</label></legend>
 								<ul class="reset">';
 
 		// Display a checkbox with every board.
@@ -312,47 +326,81 @@ function template_maintain_topics()
 			', $txt['move_topics_maintenance'], '
 		</we:title>
 		<div class="windowbg2 wrc">
-			<form action="<URL>?action=admin;area=maintain;sa=topics;activity=massmove" method="post" accept-charset="UTF-8">
-				<p><label>', $txt['move_topics_from'], '
-				<select name="id_board_from" id="id_board_from">
-					<option data-hide>(', $txt['move_topics_select_board'], ')</option>';
+			<div class="flow_auto">
+				<form action="<URL>?action=admin;area=maintain;sa=topics;activity=massmove" method="post" accept-charset="UTF-8">
+					<p>
+						<a id="rotLink"></a>', sprintf($txt['maintain_old_move_since'], '<input type="number" name="maxdays" value="30" min="0" max="9999" size="3">'), '
+					</p>
+					<p>
+						<label><input type="radio" name="move_type" id="move_type_nothing" value="nothing"> ', $txt['maintain_old_nothing_else'], '</label><br>
+						<label><input type="radio" name="move_type" id="move_type_moved" value="moved" checked> ', $txt['maintain_old_are_moved'], '</label><br>
+						<label><input type="radio" name="move_type" id="move_type_locked" value="locked"> ', $txt['maintain_old_are_locked'], '</label><br>
+					</p>
+					<p>
+						<label><input type="checkbox" name="move_old_not_pinned" id="delete_old_not_pinned" checked> ', $txt['maintain_old_are_not_pinned'], '</label><br>
+					</p>
+					<p>
+						', $txt['move_topics_from'], ':
+						<a href="#motLink" onclick="swapMot(); return false;"><span class="foldable" title="+" id="motIcon"></span></a> <a href="#motLink" onclick="swapMot(); return false;" id="motText" style="font-weight: bold">', $txt['maintain_old_all'], '</a>
+					</p>
+					<div class="flow_hidden hide" id="motPanel">
+						<div class="floatleft" style="width: 49%">';
 
-	// From board
+	// This is the "middle" of the list.
+	$middle = ceil(count($context['categories']) / 2);
+
+	$i = 0;
 	foreach ($context['categories'] as $category)
 	{
 		echo '
-					<optgroup label="', $category['name'], '">';
+							<fieldset>
+								<legend><label><input type="checkbox" onclick="selectCat(this);"> ', $category['name'], '</label></legend>
+								<ul class="reset">';
 
+		// Display a checkbox with every board.
 		foreach ($category['boards'] as $board)
 			echo '
-						<option value="', $board['id'], '"> ', str_repeat('==', $board['child_level']), '=&gt;&nbsp;', $board['name'], '</option>';
+									<li style="margin-', $context['right_to_left'] ? 'right' : 'left', ': ', $board['child_level'] * 1.5, 'em">
+										<label><input type="checkbox" name="boards[', $board['id'], ']" id="boards_', $board['id'], '" checked>', $board['name'], '</label>
+									</li>';
+
 		echo '
-					</optgroup>';
+								</ul>
+							</fieldset>';
+
+		// Increase $i, and check if we're at the middle yet.
+		if (++$i == $middle)
+			echo '
+						</div>
+						<div class="floatright" style="width: 49%">';
 	}
 
 	echo '
-				</select></label>
-				<label for="id_board_to">', $txt['move_topics_to'], '</label>
-				<select name="id_board_to" id="id_board_to">
-					<option data-hide>(', $txt['move_topics_select_board'], ')</option>';
+						</div>
+					</div>
+					<p>
+					<label for="id_board_to">', $txt['move_topics_to'], '</label>
+					<select name="id_board_to" id="id_board_to">
+						<option data-hide>(', $txt['move_topics_select_board'], ')</option>';
 
 	// To board
 	foreach ($context['categories'] as $category)
 	{
 		echo '
-					<optgroup label="', $category['name'], '">';
+						<optgroup label="', $category['name'], '">';
 
 		foreach ($category['boards'] as $board)
 			echo '
-						<option value="', $board['id'], '"> ', str_repeat('==', $board['child_level']), '=&gt;&nbsp;', $board['name'], '</option>';
+							<option value="', $board['id'], '"> ', str_repeat('==', $board['child_level']), '=&gt;&nbsp;', $board['name'], '</option>';
 		echo '
-					</optgroup>';
+						</optgroup>';
 	}
 	echo '
-				</select></p>
-				<input type="submit" value="', $txt['move_topics_now'], '" onclick="return moveTopicsNow(e);" class="submit">
-				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-			</form>
+					</select></p>
+					<input type="submit" value="', $txt['move_topics_now'], '" onclick="return moveTopicsNow(e);" class="submit">
+					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
+				</form>
+			</div>
 		</div>
 	</div>
 	<br class="clear">';

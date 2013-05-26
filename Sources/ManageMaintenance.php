@@ -1766,39 +1766,92 @@ function MaintainMassMoveTopics()
 	// Set up to the context.
 	$context['page_title'] = $txt['not_done_title'];
 	$context['continue_countdown'] = '3';
-	$context['continue_post_data'] = '';
 	$context['continue_get_data'] = '';
+	$context['continue_post_data'] = '';
 	wetem::load('not_done');
 	$context['start'] = empty($_REQUEST['start']) ? 0 : (int) $_REQUEST['start'];
 	$context['start_time'] = time();
 
 	// First time we do this?
-	$id_board_from = isset($_POST['id_board_from']) ? (int) $_POST['id_board_from'] : (int) $_REQUEST['id_board_from'];
+	$id_board_from = array();
 	$id_board_to = isset($_POST['id_board_to']) ? (int) $_POST['id_board_to'] : (int) $_REQUEST['id_board_to'];
+
+	if (isset($_POST['boards']) && is_array($_POST['boards']))
+		$boards = array_keys($_POST['boards']);
+	elseif (isset($_REQUEST['id_board_from']))
+		$boards = explode(',', $_REQUEST['id_board_from']);
+	else
+		$boards = array();
+
+	foreach ($boards as $k => $v)
+	{
+		$v = (int) $v;
+		if ($v > 0 && $v != $id_board_to)
+			$id_board_from[] = $v;
+	}
 
 	// No boards then this is your stop.
 	if (empty($id_board_from) || empty($id_board_to))
 		return;
+
+	// Custom conditions.
+	$condition = '';
+	$condition_params = array(
+		'boards' => $id_board_from,
+		'poster_time' => time() - 3600 * 24 * (isset($_POST['maxdays']) ? (int) $_POST['maxdays'] : 999),
+		'num_topics' => 10,
+	);
+
+	// Just moved notice topics?
+	$_POST['move_type'] = isset($_POST['move_type']) ? $_POST['move_type'] : 'nothing';
+	if ($_POST['move_type'] == 'moved')
+	{
+		$condition .= '
+			AND m.icon = {string:icon}
+			AND t.locked = {int:locked}';
+		$condition_params['icon'] = 'moved';
+		$condition_params['locked'] = 1;
+	}
+	// Otherwise, maybe locked topics only?
+	elseif ($_POST['move_type'] == 'locked')
+	{
+		$condition .= '
+			AND t.locked != {int:unlocked}';
+		$condition_params['unlocked'] = 0; // There are two kinds of locked topics.
+	}
+	else
+		$_POST['move_type'] = 'nothing';
+	$context['continue_post_data'] = '<input type="hidden" name="move_type" value="' . $_POST['move_type'] . '">';
+
+	// Exclude pinned?
+	if (isset($_POST['move_old_not_pinned']))
+	{
+		$condition .= '
+			AND t.is_pinned = {int:is_pinned}';
+		$condition_params['is_pinned'] = 0;
+		$context['continue_post_data'] .= '<input type="hidden" name="move_old_not_pinned" value="1">';
+	}
 
 	// How many topics are we converting?
 	if (!isset($_REQUEST['totaltopics']))
 	{
 		$request = wesql::query('
 			SELECT COUNT(*)
-			FROM {db_prefix}topics
-			WHERE id_board = {int:id_board_from}',
-			array(
-				'id_board_from' => $id_board_from,
-			)
+			FROM {db_prefix}topics AS t
+				INNER JOIN {db_prefix}messages AS m ON (m.id_msg = t.id_last_msg)
+			WHERE
+				m.poster_time < {int:poster_time}' . $condition . '
+				AND t.id_board IN ({array_int:boards})',
+			$condition_params
 		);
-		list ($total_topics) = wesql::fetch_row($request);
+		list($total_topics) = wesql::fetch_row($request);
 		wesql::free_result($request);
 	}
 	else
 		$total_topics = (int) $_REQUEST['totaltopics'];
 
 	// Seems like we need this here.
-	$context['continue_get_data'] = '?action=admin;area=maintain;sa=topics;activity=massmove;id_board_from=' . $id_board_from . ';id_board_to=' . $id_board_to . ';totaltopics=' . $total_topics . ';start=' . $context['start'] . ';' . $context['session_query'];
+	$context['continue_get_data'] = '?action=admin;area=maintain;sa=topics;activity=massmove;id_board_from=' . implode(',', $id_board_from) . ';id_board_to=' . $id_board_to . ';totaltopics=' . $total_topics . ';start=' . $context['start'] . ';' . $context['session_query'];
 
 	// We have topics to move so start the process.
 	if (!empty($total_topics))
@@ -1807,24 +1860,25 @@ function MaintainMassMoveTopics()
 		{
 			// Let's get the topics.
 			$request = wesql::query('
-				SELECT id_topic
-				FROM {db_prefix}topics
-				WHERE id_board = {int:id_board_from}
-				LIMIT 10',
-				array(
-					'id_board_from' => $id_board_from,
-				)
+				SELECT t.id_topic
+				FROM {db_prefix}topics AS t
+					INNER JOIN {db_prefix}messages AS m ON (m.id_msg = t.id_last_msg)
+				WHERE
+					m.poster_time < {int:poster_time}' . $condition . '
+					AND t.id_board IN ({array_int:boards})
+				LIMIT {int:num_topics}',
+				$condition_params
 			);
-
-			// Get the ids.
 			$topics = array();
 			while ($row = wesql::fetch_assoc($request))
 				$topics[] = $row['id_topic'];
+			wesql::free_result($request);
 
 			// Just return if we don't have any topics left to move.
 			if (empty($topics))
 			{
-				cache_put_data('board-' . $id_board_from, null, 120);
+				foreach ($id_board_from as $id_board)
+					cache_put_data('board-' . $id_board, null, 120);
 				cache_put_data('board-' . $id_board_to, null, 120);
 				redirectexit('action=admin;area=maintain;sa=topics;done=massmove');
 			}
@@ -1841,7 +1895,7 @@ function MaintainMassMoveTopics()
 			{
 				// What's the percent?
 				$context['continue_percent'] = round(100 * ($context['start'] / $total_topics), 1);
-				$context['continue_get_data'] = '?action=admin;area=maintain;sa=topics;activity=massmove;id_board_from=' . $id_board_from . ';id_board_to=' . $id_board_to . ';totaltopics=' . $total_topics . ';start=' . $context['start'] . ';' . $context['session_query'];
+				$context['continue_get_data'] = '?action=admin;area=maintain;sa=topics;activity=massmove;id_board_from=' . implode(',', $id_board_from) . ';id_board_to=' . $id_board_to . ';totaltopics=' . $total_topics . ';start=' . $context['start'] . ';' . $context['session_query'];
 
 				// Let the template system do it's thang.
 				return;
@@ -1850,7 +1904,8 @@ function MaintainMassMoveTopics()
 	}
 
 	// Don't confuse admins by having an out of date cache.
-	cache_put_data('board-' . $id_board_from, null, 120);
+	foreach ($id_board_from as $id_board)
+		cache_put_data('board-' . $id_board, null, 120);
 	cache_put_data('board-' . $id_board_to, null, 120);
 
 	redirectexit('action=admin;area=maintain;sa=topics;done=massmove');

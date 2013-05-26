@@ -178,8 +178,8 @@ function RemoveOldTopics2()
 	elseif ($_POST['delete_type'] == 'locked')
 	{
 		$condition .= '
-			AND t.locked = {int:locked}';
-		$condition_params['locked'] = 1;
+			AND t.locked = {int:unlocked}';
+		$condition_params['unlocked'] = 0; // There are two kinds of locked topics.
 	}
 
 	// Exclude pinned?
@@ -497,14 +497,17 @@ function removeTopics($topics, $decreasePostCount = true, $ignoreRecycling = fal
 			$messages[] = $row['id_msg'];
 		wesql::free_result($request);
 	}
-	wesql::query('
-		DELETE FROM {db_prefix}likes
-		WHERE id_content IN ({array_int:messages})
-			AND content_type = {literal:post}',
-		array(
-			'messages' => $messages,
-		)
-	);
+	if (!empty($messages))
+	{
+		wesql::query('
+			DELETE FROM {db_prefix}likes
+			WHERE id_content IN ({array_int:messages})
+				AND content_type = {literal:post}',
+			array(
+				'messages' => $messages,
+			)
+		);
+	}
 
 	// Delete anything related to the topic.
 	wesql::query('

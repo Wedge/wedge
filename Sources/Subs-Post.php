@@ -2195,6 +2195,7 @@ function approvePosts($msgs, $approve = true)
 		foreach ($member_post_changes as $id_member => $count_change)
 			updateMemberData($id_member, array('posts' => 'posts ' . ($approve ? '+' : '-') . ' ' . $count_change));
 
+	updateStats('message');
 	return true;
 }
 
