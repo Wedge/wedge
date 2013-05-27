@@ -70,7 +70,7 @@ class weNotif
 		// Register the notifiers
 		if (!empty(we::$id))
 		{
-			loadSource('notifiers/Class-NotifierLikes');
+			loadSource('notifiers/Likes');
 			self::$notifiers['likes'] = new Likes_Notifier();
 		}
 
@@ -270,6 +270,19 @@ class weNotif
 				$notifications[0]->markAsRead();
 
 			redirectexit();
+		}
+		elseif ($sa == 'preview' && isset($_REQUEST['in']))
+		{
+			$notifications = Notification::get($_REQUEST['in'], we::$id);
+
+			$raw = !empty($notifications[0]) ? $notifications[0]->getPreview() : '';
+			if ($raw === false)
+			{
+				// This is usually a topic, so if it's gone, give the natural error message.
+				loadLanguage('Errors');
+				return_raw('<div class="errorbox">' . $txt['topic_gone'] . '</div>');
+			}
+			return_raw($raw);
 		}
 		elseif (!empty($sa) && !empty(self::$notifiers[$sa]) && is_callable(self::$notifiers[$sa], 'action'))
 			return self::$notifiers[$sa]->action();

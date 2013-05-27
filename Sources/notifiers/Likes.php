@@ -70,4 +70,10 @@ class Likes_Notifier extends Notifier
 
 		return array($txt['welikes_subject'], $this->getText($notification));
 	}
+
+	public function getPreview(Notification $notification)
+	{
+		$data = $notification->getData();
+		return get_single_post($notification->getObject());
+	}
 }

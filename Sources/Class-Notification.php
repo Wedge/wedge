@@ -438,6 +438,17 @@ class Notification
 	}
 
 	/**
+	 * Returns a contextual preview for this notification
+	 *
+	 * @access public
+	 * @return string
+	 */
+	public function getPreview()
+	{
+		return $this->notifier->getPreview($this);
+	}
+
+	/**
 	 * Returns the object's notifier
 	 *
 	 * @access public

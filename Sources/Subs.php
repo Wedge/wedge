@@ -542,6 +542,28 @@ function cleanXml($string)
 }
 
 /**
+ * Takes a message ID, and returns its parsed body.
+ * Can be useful.
+ */
+function get_single_post($id_msg)
+{
+	$req = wesql::query('
+		SELECT
+			id_msg, poster_time, id_member, body, smileys_enabled, poster_name, m.approved, m.data
+		FROM {db_prefix}messages AS m
+		INNER JOIN {db_prefix}topics AS t ON t.id_topic = m.id_topic AND {query_see_topic}
+		WHERE id_msg = {int:id_msg}',
+		array('id_msg' => $id_msg)
+	);
+	$row = wesql::fetch_assoc($req);
+	wesql::free_result($req);
+
+	if (empty($row['id_msg']))
+		return false;
+	return parse_bbc($row['body'], 'post', array('smileys' => $row['smileys_enabled'], 'cache' => $row['id_msg'], 'user' => $row['id_member']));
+}
+
+/**
  * Helper functions to return an Ajax request, either xml, JS object or plain text, bypassing the skeleton system
  * but going through post-processing (ob_sessrewrite), except for return_raw() which skips everything.
  */

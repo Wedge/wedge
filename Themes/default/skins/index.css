@@ -1807,12 +1807,13 @@ th.last_th
 			transition: all .3s ease
 			cursor: auto
 			top: 100%
-			ul li
-				@if !mobile
-					transition: all .3s ease
-					box-shadow: inset 0 -300px 300px -20px rgba(0,0,0,.5)
-				@endif
-				padding: 4px 0 0
+
+		li
+			@if !mobile
+				transition: all .3s ease
+				box-shadow: inset 0 -300px 300px -20px rgba(0,0,0,.5)
+			@endif
+			padding: 4px 0 0
 
 		.open
 			opacity: 1
@@ -1864,6 +1865,33 @@ th.last_th
 		border-radius: 3px
 		padding: 1px 4px
 		background-color: rgba(0,0,0, .02)
+
+	// The preview area is similar to the notification popup,
+	// but it still requires a few tweaks to look fine...
+	#notprev
+		position: absolute
+		top: 10px
+		bottom: 0
+		width: 100%
+		white-space: normal
+		margin-left: 15px
+		li
+			padding: 8px
+			overflow-x: hidden
+			overflow-y: auto
+		// Show the arrow on the left, rather than top.
+		:before, :after
+			position: absolute
+			overflow: visible
+			border-bottom-color: transparent
+			border-right-color: #fbfbf8
+			left: -13px
+			bottom: auto
+			top: 15px
+		:before
+			border-right-color: #b5b5b5
+			left: -15px
+			top: 14px
 @endif
 
 // Used by the Ajax loader.
