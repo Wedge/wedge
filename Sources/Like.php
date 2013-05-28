@@ -49,13 +49,7 @@ function Like()
 					h.id_thought, h.id_member
 				FROM {db_prefix}thoughts AS h
 				WHERE h.id_thought = {int:tid}
-					AND (
-						h.id_member = {int:me}
-						OR h.privacy = {int:everyone}' . (we::$is_guest ? '' : '
-						OR h.privacy = {int:members}
-						OR FIND_IN_SET(' . implode(', h.privacy)
-						OR FIND_IN_SET(', we::$user['groups']) . ', h.privacy)') . '
-					)',
+					AND {query_see_thought}',
 				array(
 					'tid' => $id_content,
 					'me' => we::$id,

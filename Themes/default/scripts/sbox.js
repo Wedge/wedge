@@ -322,7 +322,7 @@
 		updateOriginal = function ()
 		{
 			// Trigger change on the old <select> if necessary
-			has_changed = $orig.val() !== $selected.data('value');
+			has_changed = $orig.val() !== $selected.data('value') && !$selected.hasClass('disabled');
 
 			// Update the original <select>
 			$orig.find('option')[0].selected = false;

@@ -119,9 +119,7 @@ function Welcome()
 		LEFT JOIN {db_prefix}thoughts AS h2 ON (h.id_parent = h2.id_thought)
 		LEFT JOIN {db_prefix}members AS m ON (h.id_member = m.id_member)
 		LEFT JOIN {db_prefix}members AS mp ON (h2.id_member = mp.id_member)
-		WHERE h.id_member = {int:me}
-			OR (h.privacy' . (we::$is_guest ? ' IN (0, 1))' : ' IN (0, 1, 2))
-			OR (h.privacy = 3 AND (FIND_IN_SET({int:me}, m.buddy_list) != 0))') . '
+		WHERE {query_see_thought}
 		ORDER BY h.id_thought DESC LIMIT ' . ($page * 30) . ', ' . $limit,
 		array(
 			'me' => we::$id

@@ -104,6 +104,7 @@ body.rich extends .editor
 	padding: .5em
 	list-style: none
 	overflow: hidden
+	clear: both
 	li
 		margin: .2em 0
 		width: 49%

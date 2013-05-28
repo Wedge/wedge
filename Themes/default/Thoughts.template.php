@@ -34,9 +34,6 @@ function template_showLatestThoughts()
 	if (empty($context['thoughts']))
 		return;
 
-	// !! @todo: allow editing & replying to thoughts directly from within the Profile area...?
-	// onclick="oThought.edit(', $thought['id'], !empty($thought['id_master']) && $thought['id'] != $thought['id_master'] ? ', ' . $thought['id_master'] : '0', ');"
-
 	echo '
 		<we:cat>
 			<div class="thought_icon"></div>
@@ -85,7 +82,7 @@ function template_thoughts()
 
 function template_thoughts_thread()
 {
-	global $context, $txt, $privacy_icon;
+	global $context, $txt, $privacy_icon, $settings;
 
 	$privacy_icon = array(
 		-3 => 'public',
@@ -94,7 +91,7 @@ function template_thoughts_thread()
 		5 => 'author',
 	);
 
-	if (allowedTo('post_thought') || !empty($settings['likes_enabled']))
+	if (we::$is_member && (allowedTo('post_thought') || !empty($settings['likes_enabled'])))
 		add_js('
 	oThought = new Thought([[-3, "public", "', $txt['privacy_public'], '"], [0, "members", "', $txt['privacy_members'],
 		'"], [3, "contacts", "', $txt['privacy_contacts'], '"], [5, "author", "', $txt['privacy_author'], '"]]);');
@@ -172,7 +169,7 @@ function template_thoughts_table()
 				<td><span class="my thought" id="thought0"><span></span></span></td>
 			</tr>';
 
-	if (allowedTo('post_thought') || !empty($settings['likes_enabled']))
+	if (we::$is_member && (allowedTo('post_thought') || !empty($settings['likes_enabled'])))
 		add_js('
 	oThought = new Thought([[-3, "public", "', $txt['privacy_public'], '"], [0, "members", "', $txt['privacy_members'],
 		'"], [3, "contacts", "', $txt['privacy_contacts'], '"], [5, "author", "', $txt['privacy_author'], '"]]);');
