@@ -498,8 +498,8 @@ hr.sep
  */
 
 .smiley mixes .inline-block
-	text-indent: -999em
-	font: 0/0 Arial
+	text-indent: 100%
+	white-space: nowrap
 	overflow: hidden
 
 // Likes and Action menu...

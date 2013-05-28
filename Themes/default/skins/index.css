@@ -455,11 +455,12 @@ select
 select[size]
 	visibility: visible
 
-/* Hide the original <select> from view */
+// Move the original <select> outside the viewport,
+// thus keeping its tabindex and events working.
 select.sb
 	visibility: visible
 	position: absolute
-	left, text-indent: -999999em
+	left: -999em
 
 .sbox mixes .inline-block
 	font-weight: 400
@@ -1234,8 +1235,8 @@ table
 				position: absolute
 				clip: rect(1px, 1px, 1px, 1px)
 			@else
-				text-indent: -999em
-				font: 0/0 Arial
+				text-indent: 100%
+				white-space: nowrap
 				overflow: hidden
 			@endif
 	:link, :visited
@@ -1814,6 +1815,7 @@ th.last_th
 				box-shadow: inset 0 -300px 300px -20px rgba(0,0,0,.5)
 			@endif
 			padding: 4px 0 0
+			background: #fbfbf8
 
 		.open
 			opacity: 1
@@ -1826,9 +1828,9 @@ th.last_th
 					box-shadow: none
 			@endif
 
-	.n_container
+	#n_container
+		clear: both
 		white-space: normal
-		max-height: 24em
 		overflow: auto
 		border-top: 1px solid #ccc
 
@@ -1868,30 +1870,12 @@ th.last_th
 
 	// The preview area is similar to the notification popup,
 	// but it still requires a few tweaks to look fine...
-	#notprev
-		position: absolute
-		top: 10px
-		bottom: 0
-		width: 100%
-		white-space: normal
-		margin-left: 15px
-		li
-			padding: 8px
-			overflow-x: hidden
-			overflow-y: auto
-		// Show the arrow on the left, rather than top.
-		:before, :after
-			position: absolute
-			overflow: visible
-			border-bottom-color: transparent
-			border-right-color: #fbfbf8
-			left: -13px
-			bottom: auto
-			top: 15px
-		:before
-			border-right-color: #b5b5b5
-			left: -15px
-			top: 14px
+	.n_prev
+		font-size: .9em
+		padding: 12px
+		margin-left: 8px
+		border-left: 3px solid #da7
+		border-bottom: 1px solid #ccc
 @endif
 
 // Used by the Ajax loader.

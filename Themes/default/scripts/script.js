@@ -618,7 +618,6 @@ $(function ()
 			is_up_to_date = false,
 			is_opened = false,
 			original_title = document.title,
-			cloned,
 			$shade = $('<div/>').addClass('mimenu').appendTo('#notifs'),
 
 			toggle_me = function ()
@@ -645,26 +644,25 @@ $(function ()
 		{
 			$shade.load(url, function (data)
 			{
+				$('#n_container').css('max-height', ($(window).height() - $('#n_container').offset().top) * .9);
+
 				$(this).find('.n_item').each(function ()
 				{
-					var
-						id = $(this).attr('id').slice(3),
-						delay,
-						preview_me = function ()
-						{
-							$.post(weUrl('action=notification;sa=preview;in=' + id), function (doc) {
-								var was_cloned = cloned;
-								$(cloned).remove();
-								cloned = $shade.find('>ul').clone().attr('id', 'notprev').css({ left: $shade.width() }).appendTo($shade);
-								cloned.html('<li/>').find('li').html(doc).css('height', cloned.height() - 16);
-								cloned.hide().fadeIn(300);
-							});
-						};
+					var that = $(this), id = that.attr('id').slice(3);
 
 					$(this)
 						.hover(function () { $(this).toggleClass('windowbg3').find('.n_read').toggle(); })
-						.hover(function () { delay = setTimeout(preview_me, 300); }, function () { clearTimeout(delay); })
-						.click(function (e) { location = weUrl('action=notification;sa=redirect;in=' + id); })
+						.click(function () {
+							// Try to toggle the preview. If it doesn't exist, create it.
+							if (!that.next('.n_prev').stop().slideToggle(600).length)
+							{
+								show_ajax();
+								$.post(weUrl('action=notification;sa=preview;in=' + id), function (doc) {
+									hide_ajax();
+									$('<div/>').addClass('n_prev').html(doc).insertAfter(that).hide().slideToggle(600);
+								});
+							}
+						})
 
 						.find('.n_read')
 						.hover(function () { $(this).toggleClass('windowbg'); })

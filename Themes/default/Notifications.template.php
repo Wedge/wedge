@@ -17,7 +17,7 @@ function template_notifications_list()
 
 	if (AJAX)
 		echo '
-		<ul id="notlist"><li style="background: #fbfbf8">
+		<ul id="notlist"><li>
 			<span class="floatright">
 				<a href="<URL>?action=notification" style="color: #888">', $txt['notifications_short_all'], '</a> |
 				<span style="display: inline-block"><a href="<URL>?action=profile;area=notifications" style="color: #666"><span id="m_admin" style="margin-top: 1px"></span> ', $txt['notifications_short_settings'], '</a></span>&nbsp;
@@ -26,7 +26,7 @@ function template_notifications_list()
 				&nbsp;', !empty(we::$user['data']['n_all']) ? '<a href="<URL>?action=notification;show=unread" onclick="notload(this.href); return false;">' . $txt['notifications_short_unread'] . '</a>' : '<strong>' . $txt['notifications_short_unread'] . '</strong>', ' |
 				', empty(we::$user['data']['n_all']) ? '<a href="<URL>?action=notification;show=latest" onclick="notload(this.href); return false;">' . $txt['notifications_short_latest'] . '</a>' : '<strong>' . $txt['notifications_short_latest'] . '</strong>', '
 			</span>
-			<div class="n_container clear">';
+			<div id="n_container">';
 	else
 		echo '
 		<we:title>', $txt['notifications'], '</we:title>
