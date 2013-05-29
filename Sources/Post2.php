@@ -413,9 +413,9 @@ function Post2()
 	// Check the subject and message.
 	$_POST['subject'] = isset($_POST['subject']) ? westr::safe($_POST['subject'], ENT_QUOTES, false) : '';
 	$_POST['message'] = isset($_POST['message']) ? westr::safe($_POST['message'], ENT_QUOTES, false) : '';
-	if (empty($_POST['subject']) || westr::htmltrim($_POST['subject']) === '')
+	if (westr::htmltrim($_POST['subject']) === '')
 		$post_errors[] = 'no_subject';
-	if (empty($_POST['message']) || westr::htmltrim($_POST['message']) === '')
+	if (westr::htmltrim($_POST['message']) === '')
 		$post_errors[] = 'no_message';
 	elseif (!empty($settings['max_messageLength']) && westr::strlen($_POST['message']) > $settings['max_messageLength'])
 		$post_errors[] = array('long_message', $settings['max_messageLength']);

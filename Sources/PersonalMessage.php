@@ -912,7 +912,7 @@ function prepareMessageContext($type = 'subject', $reset = false)
 			return false;
 		}
 
-		$subject['subject'] = $subject['subject'] == '' ? $txt['no_subject'] : $subject['subject'];
+		$subject['subject'] = $subject['subject'] === '' ? $txt['no_subject'] : $subject['subject'];
 		censorText($subject['subject']);
 
 		$output = array(
@@ -964,7 +964,7 @@ function prepareMessageContext($type = 'subject', $reset = false)
 	}
 
 	// Use '(no subject)' if none was specified.
-	$message['subject'] = $message['subject'] == '' ? $txt['no_subject'] : $message['subject'];
+	$message['subject'] = $message['subject'] === '' ? $txt['no_subject'] : $message['subject'];
 
 	// Load the message's information - if it's not there, load the guest information.
 	if (!loadMemberContext($message['id_member_from'], true))
@@ -1520,7 +1520,7 @@ function MessageSearch2()
 		while ($row = wesql::fetch_assoc($request))
 		{
 			// If there's no message subject, use the default.
-			$row['subject'] = $row['subject'] == '' ? $txt['no_subject'] : $row['subject'];
+			$row['subject'] = $row['subject'] === '' ? $txt['no_subject'] : $row['subject'];
 
 			// Load this posters context info, if it ain't there then fill in the essentials...
 			if (!loadMemberContext($row['id_member_from'], true))
@@ -2170,9 +2170,9 @@ function MessagePost2()
 	}
 
 	// Did they make any mistakes?
-	if ($_REQUEST['subject'] == '')
+	if ($_REQUEST['subject'] === '')
 		$post_errors[] = 'no_subject';
-	if (!isset($_REQUEST['message']) || $_REQUEST['message'] == '')
+	if (!isset($_REQUEST['message']) || $_REQUEST['message'] === '')
 		$post_errors[] = 'no_message';
 	elseif (!empty($settings['max_messageLength']) && westr::strlen($_REQUEST['message']) > $settings['max_messageLength'])
 		$post_errors[] = array('long_message', $settings['max_messageLength']);
@@ -3759,12 +3759,8 @@ function MessageDrafts()
 	$users = array();
 	while ($row = wesql::fetch_assoc($request))
 	{
-		// Censor....
-		if (empty($row['body']))
-			$row['body'] = '';
-
 		$row['subject'] = westr::htmltrim($row['subject']);
-		if (empty($row['subject']))
+		if ($row['subject'] === '')
 			$row['subject'] = $txt['no_subject'];
 
 		$row['extra'] = empty($row['extra']) ? array() : unserialize($row['extra']);

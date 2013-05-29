@@ -1509,10 +1509,10 @@ function prepareSearchContext($reset = false)
 		return false;
 
 	// Can't have an empty subject can we?
-	$message['subject'] = $message['subject'] != '' ? $message['subject'] : $txt['no_subject'];
+	$message['subject'] = $message['subject'] !== '' ? $message['subject'] : $txt['no_subject'];
 
-	$message['first_subject'] = $message['first_subject'] != '' ? $message['first_subject'] : $txt['no_subject'];
-	$message['last_subject'] = $message['last_subject'] != '' ? $message['last_subject'] : $txt['no_subject'];
+	$message['first_subject'] = $message['first_subject'] !== '' ? $message['first_subject'] : $txt['no_subject'];
+	$message['last_subject'] = $message['last_subject'] !== '' ? $message['last_subject'] : $txt['no_subject'];
 
 	// If it couldn't load, or the user was a guest.... someday may be done with a guest table.
 	if (!loadMemberContext($message['id_member']))

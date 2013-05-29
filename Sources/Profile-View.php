@@ -344,7 +344,7 @@ function showDrafts($memID)
 			$row['body'] = '';
 
 		$row['subject'] = westr::htmltrim($row['subject']);
-		if (empty($row['subject']))
+		if ($row['subject'] === '')
 			$row['subject'] = $txt['no_subject'];
 
 		$row['extra'] = empty($row['extra']) ? array() : unserialize($row['extra']);

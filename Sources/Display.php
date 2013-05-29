@@ -1327,7 +1327,7 @@ function prepareDisplayContext($reset = false)
 		$context['icon_sources'][$message['icon']] = 'images_url';
 
 	// If you're a lazy bum, you probably didn't give a subject...
-	$message['subject'] = $message['subject'] != '' ? $message['subject'] : $txt['no_subject'];
+	$message['subject'] = $message['subject'] !== '' ? $message['subject'] : $txt['no_subject'];
 
 	// Are you allowed to remove at least a single reply?
 	$context['can_remove_post'] |= allowedTo('delete_own') && (empty($settings['edit_disable_time']) || $message['poster_time'] + $settings['edit_disable_time'] * 60 >= time()) && $message['id_member'] == we::$id;

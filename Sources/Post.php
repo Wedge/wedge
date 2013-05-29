@@ -295,9 +295,9 @@ function Post($post_errors = array())
 		// Validate inputs.
 		if (empty($post_errors))
 		{
-			if (empty($_REQUEST['subject']) || westr::htmltrim($_REQUEST['subject']) === '')
+			if (!isset($_REQUEST['subject']) || westr::htmltrim($_REQUEST['subject']) === '')
 				$post_errors[] = 'no_subject';
-			if (empty($_REQUEST['message']) || westr::htmltrim($_REQUEST['message']) === '')
+			if (westr::htmltrim($_REQUEST['message']) === '')
 				$post_errors[] = 'no_message';
 			elseif (!empty($settings['max_messageLength']) && westr::strlen($_REQUEST['message']) > $settings['max_messageLength'])
 				$post_errors[] = array('long_message', $settings['max_messageLength']);
