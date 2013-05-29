@@ -668,7 +668,7 @@ $(function ()
 						.hover(function () { $(this).toggleClass('windowbg'); })
 						.click(function (e)
 						{
-							$(this).parent().hide(300, function () { $(this).remove(); });
+							$(this).parent().next('.n_prev').andSelf().hide(300, function () { $(this).remove(); });
 							we_notifs--;
 							$shade.prev().attr('class', we_notifs > 0 ? 'notenice' : 'note').text(we_notifs);
 							document.title = (we_notifs > 0 ? '(' + we_notifs + ') ' : '') + original_title;

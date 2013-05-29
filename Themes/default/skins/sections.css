@@ -1037,13 +1037,11 @@ tr.windowbg td
 	float: right
 
 .profile_pie
-	background-image: url($images/stats_pie.png)
+	background-image: raw-url($images/stats_pie.png)
 	float: left
-	height: 20px
-	width: 20px
+	width, height: 20px
 	margin: 0 1em 0 0
 	padding: 0
-	text-indent: -1000em
 
 // View contributions
 .counter

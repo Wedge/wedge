@@ -460,7 +460,8 @@ select[size]
 select.sb
 	visibility: visible
 	position: absolute
-	left: -999em
+	clip: rect(1px, 1px, 1px, 1px)
+	width, height: 1px
 
 .sbox mixes .inline-block
 	font-weight: 400

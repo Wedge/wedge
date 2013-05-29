@@ -1609,6 +1609,10 @@ class wess_prefixes extends wess
 			return $matches[2] . 'resolution:' . $dpi . 'dpi';
 		}
 
+		// All browsers expect commas between elements in rect(), except for IE 6/7. The usual...
+		if ($b['ie'] && $v < 8 && strpos($matches[1], 'rect') !== false)
+			return str_replace($matches[2], str_replace(',', ' ', $matches[2]), $matches[1]);
+
 		// IE9+/Firefox 16+/Chrome 26+ support this unprefixed, Safari 6 needs a prefix.
 		if (strpos($matches[1], 'calc') !== false)
 		{
@@ -1647,7 +1651,8 @@ class wess_prefixes extends wess
 			'transform(?:-[a-z-]+)?',		// 2D/3D transformations (transform, transform-style, transform-origin...)
 
 		);
-		$css = preg_replace_callback('~(?<!-)(' . implode('|', $rules) . '):[^\n;]+[\n;]~', array($this, 'fix_rules'), $css);
+		foreach ($rules as $val)
+			$css = preg_replace_callback('~(?<!-)(' . $val . '):[^\n;]+[\n;]~', array($this, 'fix_rules'), $css);
 
 		// Same thing for a few more rules that need a more elaborate detection...
 		$values = array(
@@ -1655,10 +1660,12 @@ class wess_prefixes extends wess
 			'background(?:-image)?:([^\n;]*?(?<!-o-)(?:linear|radial)-gradient\([^)]+\)[^\n;]*)',	// Gradients (linear, radial, repeating...)
 			'display:\h*(inline-flex|flex(?:box)?|box)\b',	// Flexbox model declarations (all 3)
 			'\b(min|max)-resolution:\h*([\d.]+)(dppx|dpi)',	// Useful for responsive design
+			'\brect\h*\(([^)]+)\)',							// rect() function, needs commas except in IE 6/7
 			'\bcalc\h*\(',									// calc() function
 
 		);
-		$css = preg_replace_callback('~(?<!-)(' . implode('|', $values) . ')~', array($this, 'fix_values'), $css);
+		foreach ($values as $val)
+			$css = preg_replace_callback('~(?<!-)(' . $val . ')~', array($this, 'fix_values'), $css);
 
 		// And now for some 'easy' rules that don't need our regex machine.
 		$b = we::$browser;
