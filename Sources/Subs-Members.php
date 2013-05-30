@@ -73,7 +73,7 @@ if (!defined('WEDGE'))
 */
 
 // Delete a group of/single member.
-function deleteMembers($users, $check_not_admin = false)
+function deleteMembers($users, $check_not_admin = false, $merge_to = false)
 {
 	global $settings;
 
@@ -159,10 +159,10 @@ function deleteMembers($users, $check_not_admin = false)
 		// Hooks rock!
 		call_hook('delete_member', array($user));
 
-		// Add it to the administration log for future reference.
+		// Add it to the administration log for future reference. Straight deletion first.
 		$log_inserts[] = array(
-			time(), 3, we::$id, get_ip_identifier(we::$user['ip']), 'delete_member',
-			0, 0, 0, serialize(array('member' => $user[0], 'name' => $user[1], 'member_acted' => we::$user['name'])),
+			time(), 3, we::$id, get_ip_identifier(we::$user['ip']), empty($merge_to) ? 'delete_member' : 'merge_member',
+			0, 0, 0, serialize(array('member' => empty($merge_to) ? $user[0] : $merge_to, 'name' => $user[1], 'member_acted' => we::$user['name'])),
 		);
 
 		// Remove any cached data if enabled.
@@ -1122,7 +1122,7 @@ function membersAllowedTo($permission, $board_id = null)
 }
 
 // This function is used to reassociate members with relevant posts.
-function reattributePosts($memID, $email = false, $membername = false, $post_count = false)
+function reattributePosts($memID, $from_id = 0, $email = false, $membername = false, $post_count = false)
 {
 	// Firstly, if email and username aren't passed find out the members email address and name.
 	if ($email === false && $membername === false)
@@ -1147,14 +1147,14 @@ function reattributePosts($memID, $email = false, $membername = false, $post_cou
 			SELECT COUNT(*)
 			FROM {db_prefix}messages AS m
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = m.id_board AND b.count_posts = {int:count_posts})
-			WHERE m.id_member = {int:guest_id}
+			WHERE m.id_member = {int:from_id}
 				AND m.approved = {int:is_approved}
-				AND m.icon != {literal:recycled}' . (empty($email) ? '' : '
-				AND m.poster_email = {string:email_address}') . (empty($membername) ? '' : '
+				AND m.icon != {literal:recycled}' . (!empty($from_id) || empty($email) ? '' : '
+				AND m.poster_email = {string:email_address}') . (!empty($from_id) || empty($membername) ? '' : '
 				AND m.poster_name = {string:member_name}'),
 			array(
 				'count_posts' => 0,
-				'guest_id' => 0,
+				'from_id' => $from_id,
 				'email_address' => $email,
 				'member_name' => $membername,
 				'is_approved' => 1,
@@ -1163,14 +1163,21 @@ function reattributePosts($memID, $email = false, $membername = false, $post_cou
 		list ($messageCount) = wesql::fetch_row($request);
 		wesql::free_result($request);
 
-		updateMemberData($memID, array('posts' => 'posts + ' . $messageCount));
+		if (!empty($messageCount))
+			updateMemberData($memID, array('posts' => 'posts + ' . $messageCount));
 	}
 
 	$query_parts = array();
-	if (!empty($email))
-		$query_parts[] = 'poster_email = {string:email_address}';
-	if (!empty($membername))
-		$query_parts[] = 'poster_name = {string:member_name}';
+	// If we're merging an account, we definitely don't want the other stuff for matching.
+	if (!empty($from_id))
+		$query_parts[] = 'id_member = {int:from_id}';
+	else
+	{
+		if (!empty($email))
+			$query_parts[] = 'poster_email = {string:email_address}';
+		if (!empty($membername))
+			$query_parts[] = 'poster_name = {string:member_name}';
+	}
 	$query = implode(' AND ', $query_parts);
 
 	// Next, update the posts themselves!
@@ -1181,6 +1188,7 @@ function reattributePosts($memID, $email = false, $membername = false, $post_cou
 		WHERE ' . $query,
 		array(
 			'memID' => $memID,
+			'from_id' => $from_id,
 			'email_address' => $email,
 			'member_name' => $membername,
 		)
@@ -1192,14 +1200,30 @@ function reattributePosts($memID, $email = false, $membername = false, $post_cou
 		UPDATE {db_prefix}topics as t, {db_prefix}messages as m
 		SET t.id_member_started = {int:memID}
 		WHERE m.id_member = {int:memID}
-			AND t.id_member_started = 0
+			AND t.id_member_started = {int:from_id}
 			AND t.id_first_msg = m.id_msg',
 		array(
+			'from_id' => $from_id,
 			'memID' => $memID,
 		)
 	);
 	$counts['topics'] = wesql::affected_rows();
 
+	// And just in case there are any reports... but only fix it if we actually changed anything.
+	$counts['reports'] = 0;
+	if ($counts['messages'])
+	{
+		wesql::query('
+			UPDATE {db_prefix}log_reported AS lr, {db_prefix}messages AS m
+			SET lr.id_member = m.id_member
+			WHERE lr.id_msg = m.id_msg
+				AND lr.id_member != m.id_member'
+		);
+		$counts['reports'] = wesql::affected_rows();
+	}
+
+	// Just in case any plugins want it, send it on. Of course it's too late to do anything with it now...
+	call_hook('reattribute_posts', array($memID, $from_id, $email, $membername, $post_count, &$counts));
 	return $counts;
 }
 

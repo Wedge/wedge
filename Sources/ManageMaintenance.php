@@ -1512,9 +1512,26 @@ function MaintainReattributePosts()
 	$email = $_POST['type'] == 'email' ? $_POST['from_email'] : '';
 	$membername = $_POST['type'] == 'name' ? $_POST['from_name'] : '';
 
+	if ($_POST['type'] == 'from')
+	{
+		$members = !empty($_POST['from_id']) ? findMembers($_POST['from_id']) : 0;
+		if (empty($members))
+			fatal_lang_error('reattribute_cannon_find_member_from');
+		$from_id = array_shift($members);
+		$from_id = $from_id['id'];
+		// We want to get the destination details. Let reattributePosts do that for us.
+		$email = $membername = false;
+	}
+	else
+		$from_id = 0;
+
 	// Now call the reattribute function.
 	loadSource('Subs-Members');
-	reattributePosts($memID, $email, $membername, !empty($_POST['posts']));
+	reattributePosts($memID, $from_id, $email, $membername, !empty($_POST['posts']));
+
+	// If we're merging, now we need to clean out that old account.
+	if (!empty($from_id))
+		deleteMembers($from_id, false, $memID);
 
 	$context['maintenance_finished'] = $txt['maintain_reattribute_posts'];
 }

@@ -87,8 +87,8 @@ function obExit($start = null, $do_finish = null, $from_index = false, $from_fat
 				// We might need to load some stuff here.
 				if (!empty($fun[1]))
 				{
-					if (!empty($fun[2]) && $fun[2] === 'plugin')
-						require_once($fun[1] . '.php');
+					if (!empty($fun[2]))
+						loadPluginSource($fun[2], $fun[1]);
 					else
 						loadSource($fun[1]);
 				}

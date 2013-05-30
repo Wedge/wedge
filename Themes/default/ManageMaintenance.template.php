@@ -108,24 +108,34 @@ function template_maintain_members()
 
 	function checkAttributeValidity()
 	{
-		var valid = true, origText = ', JavaScriptEscape($txt['reattribute_confirm']), ';
+		var
+			valid = true,
+			origText = ', JavaScriptEscape($txt['reattribute_confirm']), ',
+			mergeText = ', JavaScriptEscape($txt['reattribute_confirm_merge']), ';
 
 		if (!$("#to").val())
 			valid = false;
-		warningMessage = origText.replace(/%member_to%/, $("#to").val());
 
-		if ($("#type_email")[0].checked)
+		if ($("#type_from")[0].checked)
+		{
+			if (!$("#from_id").val())
+				valid = false;
+			warningMessage = mergeText.replace(/%find%/, $("#from_id").val());
+		}
+		else if ($("#type_email")[0].checked)
 		{
 			if (!$("#from_email").val())
 				valid = false;
-			warningMessage = warningMessage.replace(/%type%/, ', JavaScriptEscape($txt['reattribute_confirm_email']), ').replace(/%find%/, $("#from_email").val());
+			warningMessage = origText.replace(/%type%/, ', JavaScriptEscape($txt['reattribute_confirm_email']), ').replace(/%find%/, $("#from_email").val());
 		}
 		else
 		{
 			if (!$("#from_name").val())
 				valid = false;
-			warningMessage = warningMessage.replace(/%type%/, ', JavaScriptEscape($txt['reattribute_confirm_username']), ').replace(/%find%/, $("#from_name").val());
+			warningMessage = origText.replace(/%type%/, ', JavaScriptEscape($txt['reattribute_confirm_username']), ').replace(/%find%/, $("#from_name").val());
 		}
+
+		warningMessage = warningMessage.replace(/%member_to%/, $("#to").val());
 
 		$("#do_attribute").prop("disabled", !valid);
 
@@ -147,13 +157,19 @@ function template_maintain_members()
 						<label><input type="radio" name="type" id="type_email" value="email" checked>', $txt['reattribute_email'], '</label>
 					</dt>
 					<dd>
-						<input type="email" name="from_email" id="from_email" value="" onclick="$(\'#type_email\').prop(\'checked\', true); $(\'#from_name\').val(\'\');">
+						<input type="email" name="from_email" id="from_email" value="" onclick="$(\'#type_email\').prop(\'checked\', true); $(\'#from_name, #from_id\').val(\'\');">
 					</dd>
 					<dt>
 						<label><input type="radio" name="type" id="type_name" value="name">', $txt['reattribute_username'], '</label>
 					</dt>
 					<dd>
-						<input name="from_name" id="from_name" value="" onclick="$(\'#type_name\').prop(\'checked\', true); $(\'#from_email\').val(\'\');">
+						<input name="from_name" id="from_name" value="" onclick="$(\'#type_name\').prop(\'checked\', true); $(\'#from_email, #from_id\').val(\'\');">
+					</dd>
+					<dt>
+						<label><input type="radio" name="type" id="type_from" value="from">', $txt['reattribute_user'], '</label>
+					</dt>
+					<dd>
+						<input name="from_id" id="from_id" value="" onclick="$(\'#type_from\').prop(\'checked\', true); $(\'#from_email, #from_name\').val(\'\');">
 					</dd>
 				</dl>
 				<dl class="settings">
@@ -215,6 +231,10 @@ function template_maintain_members()
 	new weAutoSuggest({
 		', min_chars(), ',
 		sControlId: \'to\'
+	});
+	new weAutoSuggest({
+		', min_chars(), ',
+		sControlId: \'from_id\'
 	});');
 }
 

@@ -1782,6 +1782,7 @@ function knownHooks()
 			'delete_member',
 			'delete_member_multiple',
 			'track_ip',
+			'reattribute_posts',
 
 			// User permissions
 			'load_permissions',
