@@ -834,6 +834,61 @@ function template_trackIP()
 	template_show_list('track_user_list');
 }
 
+function template_trackReported()
+{
+	global $context, $txt;
+
+	echo '
+		<we:cat>
+			', sprintf($context['view_closed'] ? $txt['trackReported_view_closed'] : $txt['trackReported_view_active'], $context['switch_url']), '
+		</we:cat>
+		<div class="pagesection">
+			<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>
+		</div>';
+
+	$details_button = create_button('details.gif', 'reported_in_mc', 'reported_in_mc', 'class="middle"');
+
+	foreach ($context['reports'] as $report)
+	{
+		echo '
+		<div class="windowbg', $report['alternate'] ? '' : '2', ' wrc core_posts">
+			<div>
+				<div class="floatright">
+					<a href="', $report['report_href'], '">', $details_button, '</a>
+				</div>
+				<strong><a href="', $report['topic_href'], '">', $report['subject'], '</a></strong> ', $txt['mc_reportedp_by'], ' <strong>', $report['author']['link'], '</strong> (', number_context('mc_reportedp_count', $report['num_reports']), ')
+			</div>
+			<div class="clear smalltext">
+				&#171; ', $txt['mc_reportedp_last_reported'], ': ', $report['last_updated'], ' &#187;<br>';
+
+		// Prepare the comments...
+		$comments = array();
+		foreach ($report['comments'] as $comment)
+			$comments[$comment['member']['id']] = $comment['member']['link'];
+
+		echo '
+				&#171; ', $txt['mc_reportedp_reported_by'], ': ', implode(', ', $comments), ' &#187;
+			</div>
+			<hr>
+			', $report['body'], '
+		</div>';
+	}
+
+	// Were none found?
+	if (empty($context['reports']))
+		echo '
+		<div class="windowbg2 wrc">
+			<p class="center">', $txt['mc_reportedp_none_found'], '</p>
+		</div>';
+
+	echo '
+		<div class="pagesection">
+			<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>
+		</div>
+	</div>
+	<br class="clear">';
+}
+
 function template_showPermissions()
 {
 	global $context, $theme, $txt;

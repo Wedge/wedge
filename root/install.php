@@ -439,6 +439,8 @@ function Welcome()
 	// What about GD2 and related functions?
 	elseif (!checkGD2())
 		$error = 'error_no_gd_library';
+	elseif (!function_exists('simplexml_load_string'))
+		$error = 'error_no_sxml';
 
 	// Since each of the three messages would look the same, anyway...
 	if (isset($error))

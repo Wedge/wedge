@@ -358,6 +358,7 @@ function ModifyProfile($post_errors = array())
 						'activity' => array($txt['trackActivity'], 'manage_bans'),
 						'ip' => array($txt['trackIP'], 'manage_bans'),
 						'edits' => array($txt['trackEdits'], 'moderate_forum'),
+						'reported' => array($txt['trackReported'], 'enabled' => !empty(we::$user['mod_cache']) && we::$user['mod_cache']['bq'] != '0=1'),
 					),
 					'permission' => array(
 						'own' => 'moderate_forum',

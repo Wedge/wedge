@@ -227,6 +227,9 @@ function wedge_main()
 	if ($action === 'keepalive')
 		exit;
 
+	// Allow modifying $action_list easily. (It's a global by now.)
+	call_hook('action_list');
+
 	$context['action'] = $action = isset($action_list[$action]) ? $action : (isset($settings['default_action'], $action_list[$settings['default_action']]) ? $settings['default_action'] : '');
 	$context['subaction'] = isset($_GET['sa']) ? $_GET['sa'] : null;
 
@@ -333,9 +336,6 @@ function wedge_main()
 			return 'Display';
 		}
 	}
-
-	// Allow modifying $action_list easily. (It's a global by now.)
-	call_hook('action_list');
 
 	// Get the function and file to include - if it's not there, do the board index.
 	if (!isset($action_list[$action]))

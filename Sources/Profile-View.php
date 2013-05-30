@@ -1039,15 +1039,18 @@ function tracking($memID)
 	global $context, $txt, $settings, $user_profile;
 
 	$subActions = array(
-		'activity' => array('trackActivity', $txt['trackActivity']),
-		'ip' => array('trackIP', $txt['trackIP']),
-		'edits' => array('trackEdits', $txt['trackEdits']),
+		'activity' => array('trackActivity', $txt['trackActivity'], 'manage_bans'),
+		'ip' => array('trackIP', $txt['trackIP'], 'manage_bans'),
+		'edits' => array('trackEdits', $txt['trackEdits'], 'moderate_forum'),
+		'reported' => array('trackReported', $txt['trackReported'], 'enabled' => !empty(we::$user['mod_cache']['bq']) && we::$user['mod_cache']['bq'] != '0=1'),
 	);
 
-	$context['tracking_area'] = isset($_GET['sa'], $subActions[$_GET['sa']]) ? $_GET['sa'] : (allowedTo('manage_bans') ? 'activity' : (allowedTo('moderate_forum') ? 'edits' : ''));
+	$context['tracking_area'] = isset($_GET['sa'], $subActions[$_GET['sa']]) ? $_GET['sa'] : 'activity';
 
-	if (empty($context['tracking_area']))
-		isAllowedTo('moderate_forum');
+	if (isset($subActions[$context['tracking_area']]['enabled']) && empty($subActions[$context['tracking_area']]['enabled']))
+		fatal_lang_error('no_access');
+	elseif (!empty($subActions[$context['tracking_area']][2]))
+		isAllowedTo($subActions[$context['tracking_area']][2]);
 
 	// Create the tabs for the template.
 	$context[$context['profile_menu_name']]['tab_data'] = array(
@@ -1058,6 +1061,7 @@ function tracking($memID)
 			'activity' => array(),
 			'ip' => array(),
 			'edits' => array(),
+			'reported' => array(),
 		),
 	);
 
@@ -1952,6 +1956,113 @@ function list_getProfileEdits($start, $items_per_page, $sort, $memID)
 	}
 
 	return $edits;
+}
+
+function trackReported($memID)
+{
+	global $txt, $context;
+
+	if (we::$user['mod_cache']['bq'] == '0=1')
+		isAllowedTo('moderate_forum');
+
+	$context['page_title'] = $txt['trackReported'];
+	$context['view_closed'] = isset($_GET['closed']) ? 1 : 0;
+	$context['switch_url'] = '<URL>?action=profile;u=' . $memID . ';area=tracking;sa=reported' . ($context['view_closed'] ? '' : ';closed');
+	loadTemplate('ModerationCenter');
+	loadLanguage('ModerationCenter');
+
+	// How many entries are we viewing? We only want this user's, though.
+	$request = wesql::query('
+		SELECT COUNT(*)
+		FROM {db_prefix}log_reported AS lr
+		WHERE lr.id_member = {int:member}
+			AND lr.closed = {int:view_closed}
+			AND ' . (we::$user['mod_cache']['bq'] == '1=1' || we::$user['mod_cache']['bq'] == '0=1' ? we::$user['mod_cache']['bq'] : 'lr.' . we::$user['mod_cache']['bq']),
+		array(
+			'member' => $memID,
+			'view_closed' => $context['view_closed'],
+		)
+	);
+	list ($context['total_reports']) = wesql::fetch_row($request);
+	wesql::free_result($request);
+
+	// So, that means we can page index, yes?
+	$context['page_index'] = template_page_index('<URL>?action=profile;u=' . $memID . ';area=tracking;sa=reported' . ($context['view_closed'] ? ';closed' : ''), $_GET['start'], $context['total_reports'], 10);
+	$context['start'] = $_GET['start'];
+
+	// Get all the actual reports.
+	$request = wesql::query('
+		SELECT lr.id_report, lr.id_msg, lr.id_topic, lr.id_board, lr.id_member, lr.subject, lr.body,
+			lr.time_started, lr.time_updated, lr.num_reports, lr.closed, lr.ignore_all,
+			IFNULL(mem.real_name, lr.membername) AS author_name, IFNULL(mem.id_member, 0) AS id_author
+		FROM {db_prefix}log_reported AS lr
+			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = lr.id_member)
+		WHERE lr.id_member = {int:member}
+			AND lr.closed = {int:view_closed}
+			AND ' . (we::$user['mod_cache']['bq'] == '1=1' || we::$user['mod_cache']['bq'] == '0=1' ? we::$user['mod_cache']['bq'] : 'lr.' . we::$user['mod_cache']['bq']) . '
+		ORDER BY lr.time_updated DESC
+		LIMIT ' . $context['start'] . ', 10',
+		array(
+			'member' => $memID,
+			'view_closed' => $context['view_closed'],
+		)
+	);
+	$context['reports'] = array();
+	$report_ids = array();
+	for ($i = 0; $row = wesql::fetch_assoc($request); $i++)
+	{
+		$report_ids[] = $row['id_report'];
+		$context['reports'][$row['id_report']] = array(
+			'id' => $row['id_report'],
+			'alternate' => $i % 2,
+			'topic_href' => '<URL>?topic=' . $row['id_topic'] . '.msg' . $row['id_msg'] . '#msg' . $row['id_msg'],
+			'report_href' => '<URL>?action=moderate;area=reports;report=' . $row['id_report'],
+			'author' => array(
+				'id' => $row['id_author'],
+				'name' => $row['author_name'],
+				'link' => $row['id_author'] ? '<a href="<URL>?action=profile;u=' . $row['id_author'] . '">' . $row['author_name'] . '</a>' : $row['author_name'],
+				'href' => '<URL>?action=profile;u=' . $row['id_author'],
+			),
+			'comments' => array(),
+			'time_started' => timeformat($row['time_started']),
+			'last_updated' => timeformat($row['time_updated']),
+			'subject' => $row['subject'],
+			'body' => parse_bbc($row['body'], 'report-post', array('user' => $row['id_author'])),
+			'num_reports' => $row['num_reports'],
+			'closed' => $row['closed'],
+			'ignore' => $row['ignore_all']
+		);
+	}
+	wesql::free_result($request);
+
+	// Now get all the people who reported it.
+	if (!empty($report_ids))
+	{
+		$request = wesql::query('
+			SELECT lrc.id_comment, lrc.id_report, lrc.time_sent,
+				IFNULL(mem.id_member, 0) AS id_member, IFNULL(mem.real_name, lrc.membername) AS reporter
+			FROM {db_prefix}log_reported_comments AS lrc
+				LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = lrc.id_member)
+			WHERE lrc.id_report IN ({array_int:report_list})',
+			array(
+				'report_list' => $report_ids,
+			)
+		);
+		while ($row = wesql::fetch_assoc($request))
+		{
+			$context['reports'][$row['id_report']]['comments'][] = array(
+				'id' => $row['id_comment'],
+				'time' => timeformat($row['time_sent']),
+				'member' => array(
+					'id' => $row['id_member'],
+					'name' => empty($row['reporter']) ? $txt['guest'] : $row['reporter'],
+					'link' => $row['id_member'] ? '<a href="<URL>?action=profile;u=' . $row['id_member'] . '">' . $row['reporter'] . '</a>' : (empty($row['reporter']) ? $txt['guest'] : $row['reporter']),
+					'href' => $row['id_member'] ? '<URL>?action=profile;u=' . $row['id_member'] : '',
+				),
+			);
+		}
+		wesql::free_result($request);
+	}
 }
 
 function showPermissions($memID)

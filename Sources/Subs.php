@@ -702,16 +702,15 @@ function number_context($string, $number, $format_comma = true)
 {
 	global $txt;
 
-	if ($format_comma)
-		$number = comma_format($number);
+	$cnum = $format_comma ? comma_format($number) : $number;
 
 	if ($txt[$string] !== (array) $txt[$string])
-		return sprintf($txt[$string], $number);
+		return sprintf($txt[$string], $cnum);
 
 	if (isset($txt[$string][$number]))
-		return sprintf($txt[$string][$number], $number);
+		return sprintf($txt[$string][$number], $cnum);
 
-	return sprintf($txt[$string]['n'], $number);
+	return sprintf($txt[$string]['n'], $cnum);
 }
 
 /**
@@ -2319,6 +2318,8 @@ function setupMenuContext()
 	elseif ($context['action'] == 'login2' || (we::$is_guest && $context['action'] == 'reminder'))
 		$current_action = 'login';
 	elseif ($context['action'] == 'groups' && $context['allow_moderation_center'])
+		$current_action = 'admin';
+	elseif ($context['action'] == 'moderate' && $context['allow_moderation_center'])
 		$current_action = 'admin';
 
 	$menu_items[$current_action]['active_item'] = true;
