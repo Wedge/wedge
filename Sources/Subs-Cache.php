@@ -809,6 +809,10 @@ function dynamic_group_colors()
 {
 	global $context;
 
+	// If the database isn't ready yet, skip this...
+	if (defined('WEDGE_INSTALLER'))
+		return '';
+
 	$bius = array('b', 'i', 'u', 's');
 	$rep = '';
 	$request = wesql::query('
@@ -1604,33 +1608,19 @@ function cache_quick_get($key, $file, $function, $params, $level = 1)
  */
 function cache_put_data($key, $val, $ttl = 120)
 {
-	global $boardurl, $settings, $memcached, $cache_type;
+	global $settings, $memcached, $cache_type;
 	global $cache_hits, $cache_count, $db_show_debug, $cachedir;
 
 	if (empty($settings['cache_enable']) && !empty($settings))
 		return;
 
-	$cache_count = isset($cache_count) ? $cache_count + 1 : 1;
-	if (isset($db_show_debug) && $db_show_debug === true)
-	{
-		$cache_hits[$cache_count] = array('k' => $key, 'd' => 'put', 's' => $val === null ? 0 : strlen(serialize($val)));
-		$st = microtime(true);
-	}
-
-	if (empty($settings['cache_hash']))
-	{
-		if (!file_exists($cachedir))
-			@fclose(@fopen($cachedir . '/cache.lock', 'w'));
-		$settings['cache_hash'] = md5($boardurl . filemtime($cachedir . '/cache.lock'));
-	}
-
-	$key = $settings['cache_hash'] . '-' . bin2hex($key);
+	$key = cache_prepare_key();
 
 	if ($val !== null)
 		$val = serialize($val);
 
 	if (empty($cache_type))
-		get_cache_type();
+		cache_get_type();
 
 	// The simple yet efficient memcached.
 	if ($cache_type === 'memcached')
@@ -1690,26 +1680,16 @@ function cache_put_data($key, $val, $ttl = 120)
  */
 function cache_get_data($key, $ttl = 120)
 {
-	global $boardurl, $settings, $memcached, $cache_type;
+	global $settings, $memcached, $cache_type;
 	global $cache_hits, $cache_count, $db_show_debug, $cachedir;
 
 	if (empty($settings['cache_enable']) && !empty($settings))
 		return;
 
-	$cache_count = isset($cache_count) ? $cache_count + 1 : 1;
-	if (isset($db_show_debug) && $db_show_debug === true)
-	{
-		$cache_hits[$cache_count] = array('k' => $key, 'd' => 'get');
-		$st = microtime(true);
-	}
-
-	if (empty($settings['cache_hash']))
-		$settings['cache_hash'] = md5($boardurl . filemtime($cachedir . '/cache.lock'));
-
-	$key = $settings['cache_hash'] . '-' . bin2hex($key);
+	$key = cache_prepare_key('put');
 
 	if (empty($cache_type))
-		get_cache_type();
+		cache_get_type();
 
 	if ($cache_type === 'memcached')
 	{
@@ -1747,7 +1727,31 @@ function cache_get_data($key, $ttl = 120)
 	return null;
 }
 
-function get_cache_type()
+function cache_prepare_key($type = 'get')
+{
+	global $boardurl, $settings, $cache_hits, $cache_count, $db_show_debug, $cachedir;
+
+	$cache_count = isset($cache_count) ? $cache_count + 1 : 1;
+	if (isset($db_show_debug) && $db_show_debug === true)
+	{
+		if ($type == 'get')
+			$cache_hits[$cache_count] = array('k' => $key, 'd' => 'get');
+		else
+			$cache_hits[$cache_count] = array('k' => $key, 'd' => 'put', 's' => $val === null ? 0 : strlen(serialize($val)));
+		$st = microtime(true);
+	}
+
+	if (empty($settings['cache_hash']))
+	{
+		if (!file_exists($cachedir . '/cache.lock'))
+			@fclose(@fopen($cachedir . '/cache.lock', 'w'));
+		$settings['cache_hash'] = md5($boardurl . filemtime($cachedir . '/cache.lock'));
+	}
+
+	$key = $settings['cache_hash'] . '-' . bin2hex($key);
+}
+
+function cache_get_type()
 {
 	global $cache_type, $settings;
 

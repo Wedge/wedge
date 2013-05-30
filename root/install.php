@@ -1362,8 +1362,7 @@ function AdminAccount()
 // Final step, clean up and a complete message!
 function DeleteInstall()
 {
-	global $txt, $incontext, $context, $boardurl, $cookiename, $cachedir, $cssdir, $jsdir;
-	global $current_wedge_version, $sourcedir, $settings;
+	global $txt, $incontext, $context, $current_wedge_version, $sourcedir, $settings;
 
 	$incontext['page_title'] = $txt['congratulations'];
 	$incontext['block'] = 'delete_install';
@@ -2007,6 +2006,9 @@ function template_install_above()
 	$context['css_folders'] = array('skins');
 	$context['css_suffixes'] = array(we::$browser['agent']);
 	$settings['minify'] = 'packer';
+
+	if (!file_exists($cachedir . '/cache.lock'))
+		@fclose(@fopen($cachedir . '/cache.lock', 'w'));
 
 	echo '<!DOCTYPE html>
 <html', !empty($txt['lang_rtl']) ? ' dir="rtl"' : '', '>
