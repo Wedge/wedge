@@ -1614,7 +1614,7 @@ function cache_put_data($key, $val, $ttl = 120)
 	if (empty($settings['cache_enable']) && !empty($settings))
 		return;
 
-	$key = cache_prepare_key();
+	$key = cache_prepare_key($key);
 
 	if ($val !== null)
 		$val = serialize($val);
@@ -1686,7 +1686,7 @@ function cache_get_data($key, $ttl = 120)
 	if (empty($settings['cache_enable']) && !empty($settings))
 		return;
 
-	$key = cache_prepare_key('put');
+	$key = cache_prepare_key($key, 'put');
 
 	if (empty($cache_type))
 		cache_get_type();
@@ -1727,7 +1727,7 @@ function cache_get_data($key, $ttl = 120)
 	return null;
 }
 
-function cache_prepare_key($type = 'get')
+function cache_prepare_key($key, $type = 'get')
 {
 	global $boardurl, $settings, $cache_hits, $cache_count, $db_show_debug, $cachedir;
 
@@ -1748,7 +1748,7 @@ function cache_prepare_key($type = 'get')
 		$settings['cache_hash'] = md5($boardurl . filemtime($cachedir . '/cache.lock'));
 	}
 
-	$key = $settings['cache_hash'] . '-' . bin2hex($key);
+	return $settings['cache_hash'] . '-' . bin2hex($key);
 }
 
 function cache_get_type()
