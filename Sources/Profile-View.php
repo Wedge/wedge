@@ -1994,9 +1994,10 @@ function trackReported($memID)
 	$request = wesql::query('
 		SELECT lr.id_report, lr.id_msg, lr.id_topic, lr.id_board, lr.id_member, lr.subject, lr.body,
 			lr.time_started, lr.time_updated, lr.num_reports, lr.closed, lr.ignore_all,
-			IFNULL(mem.real_name, lr.membername) AS author_name, IFNULL(mem.id_member, 0) AS id_author
+			IFNULL(mem.real_name, lr.membername) AS author_name, IFNULL(mem.id_member, 0) AS id_author, b.name AS board_name
 		FROM {db_prefix}log_reported AS lr
 			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = lr.id_member)
+			INNER JOIN {db_prefix}boards AS b ON (lr.id_board = b.id_board)
 		WHERE lr.id_member = {int:member}
 			AND lr.closed = {int:view_closed}
 			AND ' . (we::$user['mod_cache']['bq'] == '1=1' || we::$user['mod_cache']['bq'] == '0=1' ? we::$user['mod_cache']['bq'] : 'lr.' . we::$user['mod_cache']['bq']) . '
@@ -2017,6 +2018,7 @@ function trackReported($memID)
 			'alternate' => $i % 2,
 			'topic_href' => '<URL>?topic=' . $row['id_topic'] . '.msg' . $row['id_msg'] . '#msg' . $row['id_msg'],
 			'report_href' => '<URL>?action=moderate;area=reports;report=' . $row['id_report'],
+			'board_link' => '<a href="<URL>?board=' . $row['id_board'] . '.0">' . $row['board_name'] . '</a>',
 			'author' => array(
 				'id' => $row['id_author'],
 				'name' => $row['author_name'],

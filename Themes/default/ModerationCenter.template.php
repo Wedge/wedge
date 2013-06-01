@@ -225,7 +225,7 @@ function template_reported_posts()
 						<a href="<URL>?action=moderate;area=reports', $context['view_closed'] ? ';sa=closed' : '', ';close=', (int) !$report['closed'], ';rid=', $report['id'], ';start=', $context['start'], ';', $context['session_query'], '">', $close_button, '</a>
 						', !$context['view_closed'] ? '<input type="checkbox" name="close[]" value="' . $report['id'] . '">' : '', '
 					</div>
-					<strong><a href="', $report['topic_href'], '">', $report['subject'], '</a></strong> ', $txt['mc_reportedp_by'], ' <strong>', $report['author']['link'], '</strong> (', number_context('mc_reportedp_count', $report['num_reports']), ')
+					<strong>', $report['board_link'], ' / <a href="', $report['topic_href'], '">', $report['subject'], '</a></strong> ', $txt['mc_reportedp_by'], ' <strong>', $report['author']['link'], '</strong> (', number_context('mc_reportedp_count', $report['num_reports']), ')
 				</div>
 				<div class="clear smalltext">
 					&#171; ', $txt['mc_reportedp_last_reported'], ': ', $report['last_updated'], ' &#187;<br>';

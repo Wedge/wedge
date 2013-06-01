@@ -27,6 +27,9 @@ function getBoardIndex($boardIndexOptions)
 {
 	global $settings, $txt, $theme, $context;
 
+	// We'll need this.
+	loadLanguage('Boards');
+
 	// For performance, track the latest post while going through the boards.
 	if (!empty($boardIndexOptions['set_latest_post']))
 		$latest_post = array(
