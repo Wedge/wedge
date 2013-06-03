@@ -526,6 +526,6 @@ class Notification
 	 */
 	public function getMemberFrom()
 	{
-		$this->id_member_from;
+		return $this->id_member_from;
 	}
 }
