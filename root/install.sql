@@ -679,9 +679,10 @@ CREATE TABLE {$db_prefix}collapsed_categories (
 #
 
 CREATE TABLE {$db_prefix}contact_lists (
-	id_list mediumint(8) unsigned NOT NULL default 0,
 	id_owner mediumint(8) unsigned NOT NULL default 0,
-	PRIMARY KEY (id_list),
+	id_list mediumint(8) unsigned NOT NULL default 0,
+	name varchar(40) NOT NULL default '',
+	PRIMARY KEY (id_list, id_owner),
 	KEY member (id_owner)
 ) ENGINE=MyISAM;
 
@@ -691,12 +692,13 @@ CREATE TABLE {$db_prefix}contact_lists (
 
 CREATE TABLE {$db_prefix}contacts (
 	id_member mediumint(8) unsigned NOT NULL default 0,
+	id_owner mediumint(8) unsigned NOT NULL default 0,
 	id_list mediumint(8) unsigned NOT NULL default 0,
 	is_synchronous tinyint(1) unsigned NOT NULL default 0,
 	position tinyint(4) NOT NULL default 0,
 	updated int(10) unsigned NOT NULL default 0,
 	hidden tinyint(1) unsigned NOT NULL default 0,
-	PRIMARY KEY (id_member, id_list)
+	PRIMARY KEY (id_member, id_owner, id_list)
 ) AUTO_INCREMENT=100 ENGINE=MyISAM;
 
 #
@@ -1775,6 +1777,7 @@ CREATE TABLE {$db_prefix}mod_filter_msg (
 CREATE TABLE {$db_prefix}notifications (
 	id_notification int(10) NOT NULL AUTO_INCREMENT,
 	id_member int(10) NOT NULL default 0,
+	id_member_from int(10) NOT NULL default 0,
 	notifier varchar(50) NOT NULL default '',
 	id_object int(10) NOT NULL default 0,
 	time int(10) NOT NULL default 0,

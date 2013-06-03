@@ -26,6 +26,7 @@ class Notification
 	 */
 	protected $id;
 	protected $id_member;
+	protected $id_member_from;
 	protected $notifier;
 	protected $id_object;
 	protected $time;
@@ -137,7 +138,7 @@ class Notification
 			);
 
 			// Flush the cache
-			cache_put_data('quick_notification_' . $id_member, array(), 0);
+			cache_put_data('quick_notification_' . $id_member, null, 86400);
 		}
 	}
 
@@ -247,8 +248,8 @@ class Notification
 
 			// Create the row
 			wesql::insert('', '{db_prefix}notifications',
-				array('id_member' => 'int', 'notifier' => 'string-50', 'id_object' => 'int', 'time' => 'int', 'unread' => 'int', 'data' => 'string'),
-				array($id_member, $notifier->getName(), $id_object, $time, 1, serialize((array) $data)),
+				array('id_member' => 'int', 'id_member_from' => 'int', 'notifier' => 'string-50', 'id_object' => 'int', 'time' => 'int', 'unread' => 'int', 'data' => 'string'),
+				array($id_member, we::$id, $notifier->getName(), $id_object, $time, 1, serialize((array) $data)),
 				array('id_notification')
 			);
 			$id_notification = wesql::insert_id();
@@ -258,13 +259,12 @@ class Notification
 				$notifications[$id_member] = new self(array(
 					'id_notification' => $id_notification,
 					'id_member' => $id_member,
+					'id_from_member' => we::$id,
 					'id_object' => $id_object,
 					'time' => $time,
 					'unread' => 1,
 					'data' => serialize((array) $data),
 				), $notifier);
-
-				call_hook('notification_new', array($notifications));
 
 				// Send the e-mail?
 				$notifier_name = $notifier->getName();
@@ -276,7 +276,7 @@ class Notification
 				}
 
 				// Flush the cache
-				cache_put_data('quick_notification_' . $id_member, array(), 0);
+				cache_put_data('quick_notification_' . $id_member, null, 86400);
 			}
 			else
 				throw new Exception('Unable to create notification');
@@ -295,6 +295,9 @@ class Notification
 		// Run the post notify hook
 		$notifier->afterNotify($notifications);
 
+		// Run the general hook
+		call_hook('notification_new', array($notifications));
+
 		return $return_single ? array_pop($notifications) : $notifications;
 	}
 
@@ -311,6 +314,7 @@ class Notification
 		// Store the data
 		$this->id = $row['id_notification'];
 		$this->id_member = $row['id_member'];
+		$this->id_member_from = $row['id_member_from'];
 		$this->notifier = $notifier;
 		$this->id_object = $row['id_object'];
 		$this->time = (int) $row['time'];
@@ -343,7 +347,7 @@ class Notification
 		);
 
 		// Flush the cache
-		cache_put_data('quick_notification_' . $this->getMember(), array(), 0);
+		cache_put_data('quick_notification_' . $this->getMember(), null, 86400);
 	}
 
 	/**
@@ -512,5 +516,16 @@ class Notification
 	public function getMember()
 	{
 		return $this->id_member;
+	}
+
+	/**
+	 * Returns the issuing member's ID
+	 *
+	 * @access public
+	 * @return int
+	 */
+	public function getMemberFrom()
+	{
+		$this->id_member_from;
 	}
 }

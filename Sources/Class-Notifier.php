@@ -96,6 +96,37 @@ abstract class Notifier
 	abstract public function getEmail(Notification $notification, array $email_data);
 
 	/**
+	 * A notifier can add an icon which'll show alongside each notification, by default
+	 * we pass the member's avatar
+	 *
+	 * @access public
+	 * @param Notification $notification
+	 * @return string
+	 */
+	public function getIcon(Notification $notification)
+	{
+		global $memberContext;
+
+		$member = $notification->getMemberFrom();
+		if (empty($memberContext[$member]['avatar']))
+			loadMemberAvatar($member, true);
+		if (empty($memberContext[$member]['avatar']))
+			return '';
+		return $memberContext[$member]['avatar']['image'];
+	}
+
+	/**
+	 * Returns the preview of the notification, to be displayed on notification view
+	 *
+	 * @access public
+	 * @param Notification $notification
+	 * @return string
+	 */
+	public function getPreview(Notification $notification)
+	{
+	}
+
+	/**
 	 * Returns all the preferences for this notifier
 	 *
 	 * @access public

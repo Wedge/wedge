@@ -133,11 +133,7 @@ class weNotif
 
 		$notifs = $notification_members = array();
 		foreach ($notifications as $notification)
-		{
-			$data = $notification->getData();
-			if (isset($data['member'], $data['member']['id']))
-				$notification_members[] = $data['member']['id'];
-		}
+			$notification_members[] = $notification->getMemberFrom();
 		loadMemberData($notification_members);
 
 		foreach ($notifications as $notification)
@@ -302,10 +298,7 @@ class weNotif
 		$context['notifications'] = (array) Notification::get(null, we::$id, 0, AJAX && empty(we::$user['data']['n_all']));
 		$notification_members = array();
 		foreach ($context['notifications'] as $notif)
-		{
-			$data = $notif->getData();
-			$notification_members[] = $data['member']['id'];
-		}
+			$notification_members[] = $notif->getMemberFrom();
 		loadMemberData($notification_members);
 
 		$request = wesql::query('

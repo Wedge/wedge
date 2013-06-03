@@ -1002,7 +1002,7 @@ function parse_bbc($message, $type = 'generic', $bbc_options = array()) // $smil
 	else
 		$message = strtr($message, array("\n" => ''));
 
-	if ($message[0] === ' ')
+	if ($message !== '' && $message[0] === ' ')
 		$message = '&nbsp;' . substr($message, 1);
 
 	// Cleanup whitespace.
