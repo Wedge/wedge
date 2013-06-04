@@ -528,7 +528,7 @@ class weNotif
 		// rather than checking in a MySQL query of huge IF/ELSE clauses.
 		$request = wesql::query('
 			SELECT *
-			FROM {db_prefi}notifications
+			FROM {db_prefix}notifications
 			WHERE id_member IN ({array_int:members})
 				AND unread = 1',
 			array(

@@ -1615,7 +1615,7 @@ function cache_put_data($key, $val, $ttl = 120)
 		return;
 
 	$st = microtime(true);
-	$key = cache_prepare_key($key, $val);
+	$key = cache_prepare_key($key, $val, 'put');
 
 	if ($val !== null)
 		$val = serialize($val);
@@ -1688,7 +1688,7 @@ function cache_get_data($key, $ttl = 120)
 		return;
 
 	$st = microtime(true);
-	$key = cache_prepare_key($key, '', 'put');
+	$key = cache_prepare_key($key);
 
 	if (empty($cache_type))
 		cache_get_type();
@@ -1729,7 +1729,7 @@ function cache_get_data($key, $ttl = 120)
 	return null;
 }
 
-function cache_prepare_key($key, $val, $type = 'get')
+function cache_prepare_key($key, $val = '', $type = 'get')
 {
 	global $boardurl, $settings, $cache_hits, $cache_count, $db_show_debug, $cachedir;
 
