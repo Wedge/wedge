@@ -259,7 +259,7 @@ class Notification
 				$notifications[$id_member] = new self(array(
 					'id_notification' => $id_notification,
 					'id_member' => $id_member,
-					'id_from_member' => we::$id,
+					'id_member_from' => we::$id,
 					'id_object' => $id_object,
 					'time' => $time,
 					'unread' => 1,

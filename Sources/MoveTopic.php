@@ -205,7 +205,7 @@ function MoveTopic2()
 
 	// Make sure they can see the board they are trying to move to (and get whether posts count in the target board).
 	$request = wesql::query('
-		SELECT b.count_posts, b.name, m.subject
+		SELECT b.count_posts, b.name, m.subject, m.id_msg
 		FROM {db_prefix}boards AS b
 			INNER JOIN {db_prefix}topics AS t ON (t.id_topic = {int:current_topic})
 			INNER JOIN {db_prefix}messages AS m ON (m.id_msg = t.id_first_msg)
@@ -221,7 +221,7 @@ function MoveTopic2()
 	);
 	if (wesql::num_rows($request) == 0)
 		fatal_lang_error('no_board');
-	list ($pcounter, $board_name, $subject) = wesql::fetch_row($request);
+	list ($pcounter, $board_name, $subject, $id_msg) = wesql::fetch_row($request);
 	wesql::free_result($request);
 
 	// Remember this for later.
@@ -330,28 +330,11 @@ function MoveTopic2()
 		}
 	}
 
-	// Send the topic starter a PM if we wanted to do so.
-	if (isset($_POST['sendPm']))
-	{
-		// Should be in the boardwide language.
-		if (we::$user['language'] != $settings['language'])
-			loadLanguage('ManageTopics', $settings['language']);
-
-		// Make it basically safe but DO NOT preparse it! The PM system does that itself, not here.
-		$_POST['pm'] = westr::htmlspecialchars($_POST['pm'], ENT_QUOTES);
-
-		// Add a URL onto the message.
-		$_POST['pm'] = strtr($_POST['pm'], array(
-			$txt['movetopic_auto_board'] => '[url=' . $scripturl . '?board=' . $_POST['toboard'] . '.0]' . $board_name . '[/url]',
-			$txt['movetopic_auto_topic'] => '[iurl=' . $scripturl . '?topic=' . $topic . '.0]' . $subject . '[/iurl]'
-		));
-
-		$recipients = array(
-			'to' => array($id_member_started),
-			'bcc' => array(),
-		);
-		sendpm($recipients, $txt['moved'] . ': ' . $subject, $_POST['pm']);
-	}
+	// Notify the topic starter, unless the topic starter is the user making the move, because they'd know about it, right?
+	// Even though we store msg id (for the preview), we create it against topic for performance.
+	// Note that we also set up the notification here rather than in moveTopics because we already needed to get some of the details here in the first place *for* moveTopics.
+	if (!empty($id_member_started) && $id_member_started != we::$id)
+		Notification::issue($id_member_started, WeNotif::getNotifiers('move'), $topic, array('member' => array('name' => we::$user['name'], 'id' => we::$id), 'id_msg' => $id_msg, 'subject' => $subject, 'id_board' => $_POST['to_board'], 'board' => $board_name));
 
 	$request = wesql::query('
 		SELECT count_posts

@@ -228,11 +228,12 @@ function quickMod_move($topic_data, $boards_can)
 	if (empty($_REQUEST['move_to']) || empty($topic_data))
 		return;
 
-	// We need to figure out the boards that count posts.
+	// We need to figure out the boards that count posts. And get some other stuff about the topic while we're there.
 	$request = wesql::query('
-		SELECT t.id_topic, t.id_board, b.count_posts
+		SELECT t.id_topic, t.id_board, m.id_msg, t.id_member_started, m.subject, b.count_posts
 		FROM {db_prefix}topics AS t
 			LEFT JOIN {db_prefix}boards AS b ON (t.id_board = b.id_board)
+			INNER JOIN {db_prefix}messages AS m ON (t.id_first_msg = m.id_msg)
 		WHERE t.id_topic IN ({array_int:move_topic_ids})
 		LIMIT ' . count($topic_data),
 		array(
@@ -243,6 +244,7 @@ function quickMod_move($topic_data, $boards_can)
 	$boardMoves = array();
 	$countPosts = array();
 	$moveCache = array();
+	$notifications = array();
 	$to = $_REQUEST['move_to'];
 
 	while ($row = wesql::fetch_assoc($request))
@@ -252,6 +254,8 @@ function quickMod_move($topic_data, $boards_can)
 
 		// For reporting...
 		$moveCache[] = array($row['id_topic'], $row['id_board'], $_REQUEST['move_to']);
+		if ($row['id_member_started'] != 0 && $row['id_member_started'] != we::$id)
+			$notifications[] = $row;
 	}
 	wesql::free_result($request);
 
@@ -264,7 +268,7 @@ function quickMod_move($topic_data, $boards_can)
 	// Does the user post counts need to be updated?
 	$topicRecounts = array();
 	$request = wesql::query('
-		SELECT id_board, count_posts
+		SELECT id_board, count_posts, name
 		FROM {db_prefix}boards
 		WHERE id_board = {int:move_board}',
 		array(
@@ -275,6 +279,7 @@ function quickMod_move($topic_data, $boards_can)
 	while ($row = wesql::fetch_assoc($request))
 	{
 		$cp = empty($row['count_posts']);
+		$board_name = $row['name'];
 
 		// Go through all the topics that are being moved to this board.
 		foreach ($topic_data as $topic => $this_topic)
@@ -288,6 +293,10 @@ function quickMod_move($topic_data, $boards_can)
 		}
 	}
 	wesql::free_result($request);
+
+	if (!empty($board_name) && !empty($notifications))
+		foreach ($notifications as $notif)
+			Notification::issue($notif['id_member_started'], WeNotif::getNotifiers('move'), $notif['id_topic'], array('member' => array('name' => we::$user['name'], 'id' => we::$id), 'id_msg' => $notif['id_msg'], 'subject' => $notif['subject'], 'id_board' => $_REQUEST['move_to'], 'board' => $board_name));
 
 	if (!empty($topicRecounts))
 	{
