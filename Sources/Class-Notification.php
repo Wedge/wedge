@@ -2,7 +2,7 @@
 /**
  * Wedge
  *
- * Contains class for handling individual notification and issuing them
+ * Contains class for handling individual notification and issuing them.
  *
  * @package wedge
  * @copyright 2010-2013 Wedgeward, wedge.org
@@ -15,14 +15,14 @@ if (!defined('WEDGE'))
 	die('File cannot be requested directly.');
 
 /**
- * For each individual notification
- * The aim for abstracting this into a class is mainly for readibility and sensibility
- * Passing arrays is a tad more confusing and error-prone
+ * For each individual notification.
+ * The aim for abstracting this into a class is mainly for readability and sensibility.
+ * Passing arrays is a tad more confusing and error-prone.
  */
 class Notification
 {
 	/**
-	 * Stores the basic notification information
+	 * Stores the basic notification information.
 	 */
 	protected $id;
 	protected $id_member;
@@ -34,7 +34,7 @@ class Notification
 	protected $data;
 
 	/**
-	 * Gets the notifications
+	 * Gets the notifications.
 	 *
 	 * @static
 	 * @access public
@@ -72,7 +72,7 @@ class Notification
 	}
 
 	/**
-	 * Fetches notifications from a query and arranges them in an array
+	 * Fetches notifications from a query and arranges them in an array.
 	 *
 	 * @static
 	 * @access protected
@@ -98,7 +98,7 @@ class Notification
 	}
 
 	/**
-	 * Marks notification as read for a specific member, notifier and object
+	 * Marks notification as read for a specific member, notifier and object.
 	 *
 	 * @static
 	 * @access public
@@ -143,9 +143,9 @@ class Notification
 	}
 
 	/**
-	 * Issues a new notification to a member, also calls the hook
+	 * Issues a new notification to a member, also calls the hook.
 	 * If an array of IDs is passed as $id_member, then the same
-	 * notification is issued for all the members
+	 * notification is issued for all the members.
 	 *
 	 * @static
 	 * @access public
@@ -323,7 +323,7 @@ class Notification
 	}
 
 	/**
-	 * Marks the current notification as read
+	 * Marks the current notification as read.
 	 *
 	 * @access public
 	 * @return void
@@ -351,7 +351,7 @@ class Notification
 	}
 
 	/**
-	 * Updates the data of this notification
+	 * Updates the data of this notification.
 	 *
 	 * @access public
 	 * @param array $data
@@ -364,7 +364,7 @@ class Notification
 	}
 
 	/**
-	 * Updates the time of this notification
+	 * Updates the time of this notification.
 	 *
 	 * @access public
 	 * @return void
@@ -376,7 +376,7 @@ class Notification
 	}
 
 	/**
-	 * Internal function for updating a column
+	 * Internal function for updating a column.
 	 *
 	 * @access protected
 	 * @param string $column
@@ -398,7 +398,7 @@ class Notification
 	}
 
 	/**
-	 * Returns this notification's ID
+	 * Returns this notification's ID.
 	 *
 	 * @access public
 	 * @return int
@@ -409,7 +409,7 @@ class Notification
 	}
 
 	/**
-	 * Returns the text for this notification
+	 * Returns the text for this notification.
 	 *
 	 * @access public
 	 * @return string
@@ -431,7 +431,7 @@ class Notification
 	}
 
 	/**
-	 * Returns the URL for this notification
+	 * Returns the URL for this notification.
 	 *
 	 * @access public
 	 * @return string
@@ -442,7 +442,7 @@ class Notification
 	}
 
 	/**
-	 * Returns a contextual preview for this notification
+	 * Returns a contextual preview for this notification.
 	 *
 	 * @access public
 	 * @return string
@@ -453,7 +453,7 @@ class Notification
 	}
 
 	/**
-	 * Returns the object's notifier
+	 * Returns the object's notifier.
 	 *
 	 * @access public
 	 * @return object
@@ -464,7 +464,7 @@ class Notification
 	}
 
 	/**
-	 * Returns this notification's associated object's ID
+	 * Returns this notification's associated object's ID.
 	 *
 	 * @access public
 	 * @return int
@@ -475,7 +475,7 @@ class Notification
 	}
 
 	/**
-	 * Returns this notification's data
+	 * Returns this notification's data.
 	 *
 	 * @access public
 	 * @return array
@@ -486,7 +486,7 @@ class Notification
 	}
 
 	/**
-	 * Returns this notification's time
+	 * Returns this notification's time.
 	 *
 	 * @access public
 	 * @return int
@@ -497,7 +497,7 @@ class Notification
 	}
 
 	/**
-	 * Returns this notification's unread status
+	 * Returns this notification's unread status.
 	 *
 	 * @access public
 	 * @return int (0, 1)
@@ -508,7 +508,7 @@ class Notification
 	}
 
 	/**
-	 * Returns this notification's member's ID
+	 * Returns this notification's member's ID.
 	 *
 	 * @access public
 	 * @return int
@@ -519,7 +519,7 @@ class Notification
 	}
 
 	/**
-	 * Returns the issuing member's ID
+	 * Returns the issuing member's ID.
 	 *
 	 * @access public
 	 * @return int

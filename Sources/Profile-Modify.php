@@ -611,6 +611,14 @@ function loadProfileFields($force_reload = false)
 			'permission' => 'profile_extra',
 			'label' => $txt['time_zone'],
 		),
+		'personal_text' => array(
+			'type' => 'text',
+			'label' => $txt['personal_text'],
+			'log_change' => true,
+			'size' => 50,
+			'input_attr' => array('maxlength="50"'),
+			'permission' => 'profile_extra',
+		),
 		'usertitle' => array(
 			'type' => 'text',
 			'label' => $txt['custom_title'],
@@ -1526,7 +1534,7 @@ function forumProfile($memID)
 		array(
 			'avatar_choice', 'hr',
 			'bday1', 'location', 'gender', 'hr',
-			'usertitle', 'signature', 'hr',
+			'personal_text', 'usertitle', 'signature', 'hr',
 			'website_title', 'website_url',
 		)
 	);

@@ -354,7 +354,7 @@ function determineActions($urls, $preferred_prefix = false, $override_mem = fals
 				$data[$k] = str_replace('{forum_name}', $context['forum_name'], $txt['who_index']);
 		}
 		// Probably an error or some goon?
-		elseif ($actions['action'] == '')
+		elseif ($actions['action'] === '')
 			$data[$k] = str_replace('{forum_name}', $context['forum_name'], $txt['who_index']);
 		// Some other normal action...?
 		else
@@ -554,7 +554,7 @@ function determineActions($urls, $preferred_prefix = false, $override_mem = fals
 	}
 
 	// Load member names for the profile.
-	if (!empty($profile_ids) && (allowedTo('profile_view_any') || allowedTo('profile_view_own')))
+	if (!empty($profile_ids) && allowedTo(array('profile_view_any', 'profile_view_own')))
 	{
 		$result = wesql::query('
 			SELECT id_member, real_name
@@ -578,8 +578,9 @@ function determineActions($urls, $preferred_prefix = false, $override_mem = fals
 		wesql::free_result($result);
 	}
 
-	if (!empty($profile_names) && (allowedTo('profile_view_any') || allowedTo('profile_view_own')))
+	if (!empty($profile_names) && allowedTo(array('profile_view_any', 'profile_view_own')))
 	{
+		$view_any = allowedTo('profile_view_any');
 		$result = wesql::query('
 			SELECT id_member, member_name, real_name
 			FROM {db_prefix}members
@@ -589,16 +590,11 @@ function determineActions($urls, $preferred_prefix = false, $override_mem = fals
 				'members' => array_keys($profile_names),
 			)
 		);
+		// If we're allowed to view someone's profile, set their action - session/text to sprintf.
 		while ($row = wesql::fetch_assoc($result))
-		{
-			// If they aren't allowed to view this person's profile, skip it.
-			if (!allowedTo('profile_view_any') && we::$id != $row['id_member'])
-				continue;
-
-			// Set their action on each - session/text to sprintf.
-			foreach ($profile_names[$row['member_name']] as $k => $session_text)
-				$data[$k] = sprintf($session_text, $row['id_member'], $row['real_name']);
-		}
+			if (($view_any || we::$id == $row['id_member']) && !empty($profile_names[$row['member_name']]))
+				foreach ($profile_names[$row['member_name']] as $k => $session_text)
+					$data[$k] = sprintf($session_text, $row['id_member'], $row['real_name']);
 	}
 
 	// While the above whos_online hook is good for more complex cases than action=x;sa=y, it's not particularly efficient if you're dealing with multiple lookups and so on. Thus the bulk hook too.

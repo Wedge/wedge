@@ -69,14 +69,15 @@ function template_modify_language_list()
 		<div class="two-columns">
 			<we:block class="windowbg" header="', $txt['language_edit_search'], '">
 				<form action="<URL>?action=admin;area=languages;sa=editlang;lid=', $context['lang_id'], '" method="post" accept-charset="UTF-8">
-					<input type="search" name="search" value="" class="search"><br>';
+					<input type="search" name="search" value="" class="search">';
 
 	foreach (array('plugins', 'themes') as $item)
 		if (!empty($context['language_files'][$item]))
 			echo '
-					<label><input type="checkbox" name="include_', $item, '" value="1" checked> ', $txt['language_edit_search_' . $item], '</input></label><br>';
+					<label style="height: 25px; vertical-align: middle"><input type="checkbox" name="include_', $item, '" value="1" checked> ', $txt['language_edit_search_' . $item], '</input></label>';
 
 	echo '
+					<div style="margin: 6px"></div>
 					<select name="search_type">';
 	foreach (array('both', 'keys', 'values') as $item)
 		echo '
