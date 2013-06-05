@@ -1,25 +1,24 @@
 
-	MMM++++=====~~~~~~~~~~~~======+++++I====
-	MM+++=====~~~~~~~~~~~~~~~~~====+++++====
-	MM?+====~~~~~~:::::::~~~==~~====++++====
-	MM?+====~~~~:::::~~=?+.   I+=====+++====
-	MM+====~~~~::~~++           I+====++====
-	MM+========+=                :I+===+====
-	MM+=======   ...               7+==+===~
-	MM+=====~====~~~~~=+?7.         I+++==~~
-	MM+===++++++==~::,..,::=I+       7?+~~~~
-	MM++?:          :?+~:,,,:~+I      7?~~~~
-	MM+I                  =+=:::=?7    78~~~
-	MD7.                     ~?+===I:   ND~~
-	DO=                         7?==?7  7OD~
-	8N                            =I++I7 N8~
-	N       I$$7III??++++++++?I7.   II??N:OD
-	+ .$$7I???????++++++=======~~==+?~.?DDD~
-	8O7????????????????++++++=======~~~~~~~~
-	MMI?????????????????????++++++======~~~~
-	MMM+?????????????????????????++++++D~~~~
-
-			(ASCII rendition courtesy GlassGiant.com)
+MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMND8O$$$ZODNMMMMMMMMMMMMMMMMMMMMMM
+MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMN87???????????????7DMMMMMMMMMMMMMMMMMMMM
+MMMMMMMMMMMMMMMMMMMMMMMMMMMMN8$????????????????????????$NMMMMMMMMMMMMMMMMM
+MMMMMMMMMMMMMMMMMMMMMMMM87???????????????????????????????ZMMMMMMMMMMMMMMMM
+MMMMMMMMMMMMMMMMMMMM7??????????????????????????????????????OMMMMMMMMMMMMMM
+MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMNDOZ7I??????????????????IOMMMMMMMMMMMM
+MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM8Z????????????????MMMMMMMMMMM
+MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMDZ7???????????$MMMMMMMMMM
+MMMMMMMMMMMMMDO$7777777$$ZODNMMMMMMMMMMMMMMMMMMMMMMMZ?+?????????ZMMMMMMMMM
+MMMMMMMMMNI=======================+?7O8NMMMMMMMMMMMMMMMNZI????????DMMMMMMM
+MMMMMMMMN+===============================+7ZNMMMMMMMMMMMMM8I???????8MMMMMM
+MMMMMMMZ=======================================IZNMMMMMMMMMMMD$?????MMMMMM
+MMMMMN7=============================================ONMMMMMMMMMDI???$MMMMM
+MMMMN?=================================================+7NMMMMMMMMZI?$MMMM
+MMMM?===================++??I7$ZOOOO888OOZ$$7I?+++========+$NMMMMMMM7+ZMMM
+MMMM===========I7Z8NMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMNDO$?====?MMMMMMMONMM
+MMMZ===++78NMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMN8??DMMMMMMMM
+MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+								 (ASCII rendition courtesy GlassGiant.com)
 
 Wedge is a modern forum system built in PHP and MySQL.
 
@@ -37,7 +36,7 @@ Wedge contains code and elements from other products, in no particular order:
 
 Simple Machines Forum 2.0.x
 	-- © Simple Machines and its contributors 2011, http://www.simplemachines.org/
-	-- used under the 3-clause BSD license.
+	-- used under the Modified BSD license.
 
 Bad Behaviour 2.1.x
 	-- © Michael Hampton 2011, http://bad-behavior.ioerror.us/
@@ -50,11 +49,11 @@ Bad Behaviour 2.1.x
 
 WeNotif
 	-- © Shitiz Garg 2012, https://github.com/Dragooon/WeNotif
-	-- used under the BSD 3-clause license.
+	-- used under the Modified BSD license.
 
 Move Notifier
 	-- © John Reyes 2013
-	-- used under the BSD 3-clause license.
+	-- used under the Modified BSD license.
 
 MultiAttach (multiple attachment selector)
 	-- © The-Stickman.com 2005, http://the-stickman.com/web-development/javascript/upload-multiple-files-with-a-single-file-element/
@@ -70,11 +69,11 @@ Exifer (originally Exifixer; extracts EXIF information from digital photos)
 
 JW Player 4.4.157 (media playback)
 	-- © Long Tail Video 2013, http://www.longtailvideo.com/jw-player/
-	-- free version, suitable only for non-commercial sites - for commercial sites, contact LongTail Video.
+	-- free version, suitable only for non-commercial sites - for commercial sites, contact LongTail Video, or disable use of video/audio in the media gallery.
 
 Yahoo UI Uploader (Flash/AJAX mass uploader)
 	-- © Yahoo! Inc., 2006-2013, http://yuilibrary.com/
-	-- used under the 3-clause BSD license
+	-- used under the Modified BSD license
 
 FancyUpload (mass uploader progress bars)
 	-- © Harald Kirschner 2008-2009, http://digitarald.de/project/fancyupload/

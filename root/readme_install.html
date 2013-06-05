@@ -151,6 +151,7 @@
 								<li>the <a href="http://www.php.net/manual/en/ini.core.php#ini.upload-tmp-dir" target="_blank">upload_tmp_dir</a> must be set to a valid directory.</li>
 							</ul>
 						</li>
+						<li>PCRE (Perl-Compatible Regular Expression) engine for PHP must be 7.2 or higher, and cannot be disabled.
 						<li>Database system <a href="http://www.mysql.com/" target="_blank">MySQL</a> 5.0.3 or higher.</li>
 						<li>At least 512 kilobytes of storage space in the database, although more is highly recommended.</li>
 						<li>At least 10 megabytes of storage space on the web server, although more is recommended.</li>
@@ -159,9 +160,9 @@
 					<ul>
 						<li><a href="http://www.linux.org/" target="_blank">Linux</a> or another Unix based operating system.</li>
 						<li>the <a href="http://aspell.sf.net/" target="_blank">GNU Aspell</a> and <a href="http://ftp.gnu.org/gnu/aspell/dict/" target="_blank">its dictionaries</a> for spell checking support.</li>
-						<li><a href="http://httpd.apache.org/" target="_blank">Apache</a> with <a href="http://httpd.apache.org/docs/2.0/mod/mod_rewrite.html" target="_blank">mod_rewrite</a> installed for Pretty URL support.</li>
+						<li><a href="http://httpd.apache.org/" target="_blank">Apache</a> with <a href="http://httpd.apache.org/docs/2.0/mod/mod_rewrite.html" target="_blank">mod_rewrite</a> installed, mainly for Pretty URL support.</li>
 						<li>
-							<a href="http://www.php.net" target="_blank">PHP</a> 5.2.4 or higher, with the following set in php.ini:
+							<a href="http://www.php.net" target="_blank">Ensure the following php.ini settings are set:
 							<ul>
 								<li>the <a href="http://www.php.net/manual/en/info.configuration.php#ini.max-input-time" target="_blank">max_input_time</a> directive is set to a value of at least 30.</li>
 								<li>the <a href="http://www.php.net/manual/en/ini.core.php#ini.post-max-size" target="_blank">post_max_size</a> and <a href="http://www.php.net/configuration.directives#ini.upload-max-filesize" target="_blank">upload_max_filesize</a> directives are set to the size of the largest attachments you wish to be able to upload.</li>
@@ -172,7 +173,7 @@
 								<li><a href="http://www.php.net/manual/en/features.safe-mode.php" target="_blank">Safe mode</a> is disabled, or <a href="http://httpd.apache.org/docs/2.0/suexec.html" target="_blank">suEXEC</a> is enabled.</li>
 							</ul>
 						</li>
-						<li><a href="http://www.mysql.com/" target="_blank">MySQL</a> 5.0.3 or higher with query caching enabled.</li>
+						<li>Enable Query caching in MySQL.</li>
 						<li><a href="http://www.boutell.com/gd/" target="_blank">GD Graphics Library</a> 2.0 or higher.</li>
 					</ul>
 					<p>If your server does not meet these requirements, Wedge may not work properly.</p>

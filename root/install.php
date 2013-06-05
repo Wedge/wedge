@@ -15,6 +15,7 @@ define('WEDGE_INSTALLER', 1);
 
 $GLOBALS['current_wedge_version'] = '0.1';
 $GLOBALS['required_php_version'] = '5.2.4';
+$GLOBALS['required_pcre_version'] = '7.2';
 
 // Don't have PHP support, do you?
 // ><html dir="ltr"><head><title>Error!</title></head><body>Sorry, this installer requires PHP!<div style="display: none">
@@ -393,6 +394,8 @@ function Welcome()
 	// Check the PHP version.
 	if (!function_exists('version_compare') || (version_compare($GLOBALS['required_php_version'], PHP_VERSION) > 0))
 		$incontext['warning'] = $txt['error_php_too_low'];
+	elseif (version_compare($GLOBALS['required_pcre_version'], PCRE_VERSION) > 0) // PCRE_VERSION was introduced in PHP 5.2.4. Lucky.
+		$incontext['warning'] = $txt['error_pcre_too_low'];
 
 	// See if we think they have already installed it?
 	if (is_readable(dirname(__FILE__) . '/Settings.php'))
