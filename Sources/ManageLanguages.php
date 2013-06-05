@@ -535,69 +535,15 @@ function ModifyLanguage()
 			unset($context['language_files'][$type]);
 	}
 
-	// We no longer wish to speak this language.
-	if (!empty($_POST['delete_main']) && $context['lang_id'] != 'english')
-	{
-		checkSession();
-
-		// !!! Todo: FTP Controls?
-		loadSource('Subs-Package');
-
-		// Second, loop through the array to remove the files.
-		foreach ($lang_dirs as $curPath)
-		{
-			foreach ($context['possible_files'][1]['files'] as $lang)
-				if (file_exists($curPath . '/' . $lang['id'] . '.' . $context['lang_id'] . '.php'))
-					unlink($curPath . '/' . $lang['id'] . '.' . $context['lang_id'] . '.php');
-
-			// Check for the email template.
-			if (file_exists($curPath . '/EmailTemplates.' . $context['lang_id'] . '.php'))
-				unlink($curPath . '/EmailTemplates.' . $context['lang_id'] . '.php');
-		}
-
-		// Third, the agreement file.
-		if (file_exists($boarddir . '/agreement.' . $context['lang_id'] . '.txt'))
-			unlink($boarddir . '/agreement.' . $context['lang_id'] . '.txt');
-
-		// Fourth, a related images folder?
-		foreach ($images_dirs as $curPath)
-			if (is_dir($curPath))
-				deltree($curPath);
-
-		// Fifth, members can no longer use this language.
-		wesql::query('
-			UPDATE {db_prefix}members
-			SET lngfile = {string:empty_string}
-			WHERE lngfile = {string:current_language}',
-			array(
-				'empty_string' => '',
-				'current_language' => $context['lang_id'],
-			)
-		);
-
-		// Sixth, update getLanguages() cache.
-		if (!empty($settings['cache_enable']))
-		{
-			cache_put_data('known_languages', null, !empty($settings['cache_enable']) && $settings['cache_enable'] < 1 ? 86400 : 3600);
-			// Delete all cached CSS files.
-			clean_cache('css');
-		}
-
-		// Seventh, if we deleted the default language, set us back to English?
-		if ($context['lang_id'] == $settings['language'])
-		{
-			updateSettings(array('language' => 'english'));
-		}
-
-		// Eighth, get out of here.
-		redirectexit('action=admin;area=languages;sa=edit;' . $context['session_query']);
-	}
-
 	// If we are editing something, let's send it off. We still have to do all the preceding stuff anyway
 	// because it allows us to completely validate that what we're editing exists.
 	if (!empty($context['selected_file']))
 	{
 		return ModifyLanguageEntries();
+	}
+	elseif (isset($_POST['search']) && trim($_POST['search']) !== '')
+	{
+		return SearchLanguageEntries($lang_dirs);
 	}
 	else
 	{
@@ -825,4 +771,191 @@ function ModifyLanguageEntries()
 	}
 	else
 		wetem::load('modify_entries');
+}
+
+function SearchLanguageEntries($lang_dirs)
+{
+	global $context, $txt, $helptxt;
+
+	// Just remember, whatever happens, this is going to suck in performance.
+	// First, remember to push the old $txt and old $helptxt elsewhere. We need them later.
+	$oldtxt = $txt;
+	$oldhelptxt = $helptxt;
+
+	$context['results'] = array(
+		'default' => array(),
+	);
+
+	$search_type = isset($_POST['search_type']) && in_array($_POST['search_type'], array('keys', 'values')) ? $_POST['search_type'] : 'both';
+
+	// Second, sort through the default files, we know they're going to exist.
+	foreach ($context['language_files']['default'] as $section)
+		foreach ($section['files'] as $file_id => $title)
+		{
+			$txt = array();
+			$helptxt = array();
+			include($lang_dirs[1] . '/' . $file_id . '.' . $context['lang_id'] . '.php');
+			foreach (array('txt', 'helptxt') as $lang_type)
+				foreach ($$lang_type as $key => $value)
+				{
+					if ($search_type == 'keys' || $search_type == 'both')
+					{
+						if (stripos($key, $_POST['search']) !== false)
+						{
+							$context['results']['default'][$file_id][$lang_type][$key] = array('master' => $value);
+							continue;
+						}
+					}
+
+					if ($search_type == 'values' || $search_type == 'both')
+					{
+						if (is_array($value))
+						{
+							foreach ($value as $k => $v)
+								if (stripos($v, $_POST['search']) !== false)
+								{
+									$context['results']['default'][$file_id][$lang_type][$key] = array('master' => $value);
+									break;
+								}
+						}
+						elseif (stripos($value, $_POST['search']) !== false)
+							$context['results']['default'][$file_id][$lang_type][$key] = array('master' => $value);
+					}
+				}
+		}
+
+	// Third, get all the entries for this language in the database and apply much the same tests.
+	$request = wesql::query('
+		SELECT lang_file, lang_var, lang_key, lang_string, serial
+		FROM {db_prefix}language_changes
+		WHERE id_theme = {int:default_theme}
+			AND id_lang = {string:lang}',
+		array(
+			'default_theme' => 1,
+			'lang' => $context['lang_id'],
+		)
+	);
+
+	while ($row = wesql::fetch_assoc($request))
+	{
+		$lang_string = !empty($row['serial']) ? unserialize($row['lang_string']) : $row['lang_string'];
+		if ($search_type == 'keys' || $search_type == 'both')
+		{
+			if (stripos($row['lang_key'], $_POST['search']) !== false)
+			{
+				$context['results']['default'][$row['lang_file']][$row['lang_var']][$row['lang_key']]['current'] = $lang_string;
+				continue;
+			}
+		}
+
+		if ($search_type == 'values' || $search_type == 'both')
+		{
+			if (is_array($lang_string))
+			{
+				foreach ($lang_string as $k => $v)
+					if (stripos($v, $_POST['search']) !== false)
+					{
+						$context['results']['default'][$row['lang_file']][$row['lang_var']][$row['lang_key']]['current'] = $lang_string;
+						break;
+					}
+			}
+			elseif (stripos($lang_string, $_POST['search']) !== false)
+				$context['results']['default'][$row['lang_file']][$row['lang_var']][$row['lang_key']]['current'] = $lang_string;
+		}
+	}
+	wesql::free_result($request);
+
+	// Fourth, plugins.
+	if (!empty($_POST['include_plugins']))
+	{
+		$context['results']['plugins'] = array();
+		$plugin_files = array();
+
+		foreach ($context['language_files']['plugins'] as $plugin_id => $section)
+			foreach ($section['files'] as $file_id => $title)
+			{
+				$plugin_files[md5($plugin_id . ':' . $file_id)] = array($plugin_id, $file_id);
+				$txt = array();
+				$helptxt = array();
+				include($context['plugins_dir'][$plugin_id] . '/' . $file_id . '.' . $context['lang_id'] . '.php');
+				foreach (array('txt', 'helptxt') as $lang_type)
+					foreach ($$lang_type as $key => $value)
+					{
+						if ($search_type == 'keys' || $search_type == 'both')
+						{
+							if (stripos($key, $_POST['search']) !== false)
+							{
+								$context['results']['plugins'][$plugin_id][$file_id][$lang_type][$key] = array('master' => $value);
+								continue;
+							}
+						}
+
+						if ($search_type == 'values' || $search_type == 'both')
+						{
+							if (is_array($value))
+							{
+								foreach ($value as $k => $v)
+									if (stripos($v, $_POST['search']) !== false)
+									{
+										$context['results']['plugins'][$plugin_id][$file_id][$lang_type][$key] = array('master' => $value);
+										break;
+									}
+							}
+							elseif (stripos($value, $_POST['search']) !== false)
+								$context['results']['plugins'][$plugin_id][$file_id][$lang_type][$key] = array('master' => $value);
+						}
+					}
+			}
+
+		// Fourth and a bit... plugin changes in the DB. If you were paying attention, you'll note we collated md5s along the way. We kind of need those.
+		if (!empty($plugin_files))
+		{
+			$request = wesql::query('
+				SELECT lang_file, lang_var, lang_key, lang_string, serial
+				FROM {db_prefix}language_changes
+				WHERE id_theme = {int:default_theme}
+					AND id_lang = {string:lang}
+					AND lang_file IN ({array_string:plugin_files})',
+				array(
+					'default_theme' => 0,
+					'lang' => $context['lang_id'],
+					'plugin_files' => array_keys($plugin_files),
+				)
+			);
+
+			while ($row = wesql::fetch_assoc($request))
+			{
+				list($plugin_id, $file_id) = $plugin_files[$row['lang_file']];
+				$lang_string = !empty($row['serial']) ? unserialize($row['lang_string']) : $row['lang_string'];
+				if ($search_type == 'keys' || $search_type == 'both')
+				{
+					if (stripos($row['lang_key'], $_POST['search']) !== false)
+					{
+						$context['results']['plugins'][$plugin_id][$file_id][$row['lang_var']][$row['lang_key']]['current'] = $lang_string;
+						continue;
+					}
+				}
+
+				if ($search_type == 'values' || $search_type == 'both')
+				{
+					if (is_array($lang_string))
+					{
+						foreach ($lang_string as $k => $v)
+							if (stripos($v, $_POST['search']) !== false)
+							{
+								$context['results']['plugins'][$plugin_id][$file_id][$row['lang_var']][$row['lang_key']]['current'] = $lang_string;
+								break;
+							}
+					}
+					elseif (stripos($lang_string, $_POST['search']) !== false)
+						$context['results']['plugins'][$plugin_id][$file_id][$row['lang_var']][$row['lang_key']]['current'] = $lang_string;
+				}
+			}
+			wesql::free_result($request);
+		}
+	}
+
+	$txt = $oldtxt;
+	$helptxt = $oldhelptxt;
+	wetem::load('search_entries');
 }
