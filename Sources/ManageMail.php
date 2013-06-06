@@ -91,13 +91,29 @@ function BrowseMailQueue()
 	{
 		checkSession('post');
 
-		wesql::query('
-			DELETE FROM {db_prefix}mail_queue
-			WHERE id_mail IN ({array_int:mail_ids})',
-			array(
-				'mail_ids' => $_REQUEST['delete'],
-			)
-		);
+		$ids = (array) $_REQUEST['delete'];
+		foreach ($ids as $k => $v)
+			if (empty($v))
+				unset ($ids[$k]);
+			else
+				$ids[$k] = (int) $v;
+
+		if (!empty($ids))
+		{
+			if (!empty($_POST['send_now']))
+			{
+				loadSource('ScheduledTasks');
+				ReduceMailQueue(false, true, true, $ids);
+			}
+			else
+				wesql::query('
+					DELETE FROM {db_prefix}mail_queue
+					WHERE id_mail IN ({array_int:mail_ids})',
+					array(
+						'mail_ids' => $ids,
+					)
+				);
+		}
 	}
 
 	// How many items do we have?
@@ -216,7 +232,9 @@ function BrowseMailQueue()
 		'additional_rows' => array(
 			array(
 				'position' => 'below_table_data',
-				'value' => '<input type="submit" name="delete_redirects" value="' . $txt['delete'] . '" onclick="return ask(we_confirm, e);" class="delete">',
+				'value' => '
+	<input type="submit" name="send_now" value="' . $txt['mailqueue_send_these_items'] . '" onclick="return ask(we_confirm, e);" class="submit">
+	<input type="submit" name="delete_redirects" value="' . $txt['delete'] . '" onclick="return ask(we_confirm, e);" class="delete">',
 			),
 		),
 	);

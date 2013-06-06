@@ -825,7 +825,7 @@ function scheduled_weekly_digest()
 }
 
 // Send a bunch of emails from the mail queue.
-function ReduceMailQueue($number = false, $override_limit = false, $force_send = false)
+function ReduceMailQueue($number = false, $override_limit = false, $force_send = false, $force_ids = array())
 {
 	global $settings;
 
@@ -885,15 +885,31 @@ function ReduceMailQueue($number = false, $override_limit = false, $force_send =
 		updateSettings(array('mail_recent' => $mt . '|' . $mn));
 	}
 
-	// Now we know how many we're sending, let's send them.
-	$request = wesql::query('
-		SELECT /*!40001 SQL_NO_CACHE */ id_mail, time_sent, recipient, body, subject, headers, send_html, private
-		FROM {db_prefix}mail_queue
-		ORDER BY priority ASC, id_mail ASC
-		LIMIT ' . $number,
-		array(
-		)
-	);
+	if (empty($force_ids))
+	{
+		// Now we know how many we're sending, let's send them.
+		$request = wesql::query('
+			SELECT /*!40001 SQL_NO_CACHE */ id_mail, time_sent, recipient, body, subject, headers, send_html, private
+			FROM {db_prefix}mail_queue
+			ORDER BY priority ASC, id_mail ASC
+			LIMIT ' . $number,
+			array(
+			)
+		);
+	}
+	else
+	{
+		// Get the ones we're sending. If we're doing this, we're pretty much ignoring everything else anyway.
+		$request = wesql::query('
+			SELECT /*!40001 SQL_NO_CACHE */ id_mail, time_sent, recipient, body, subject, headers, send_html, private
+			FROM {db_prefix}mail_queue
+			WHERE id_mail IN ({array_int:ids})',
+			array(
+				'ids' => $force_ids,
+			)
+		);
+	}
+
 	$ids = array();
 	$emails = array();
 	while ($row = wesql::fetch_assoc($request))
