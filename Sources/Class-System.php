@@ -242,7 +242,12 @@ class we
 		if (!empty($user_settings['id_attach']) && !$user_settings['transparency'])
 		{
 			$filename = getAttachmentFilename($user_settings['filename'], $user_settings['id_attach'], $user_settings['id_folder']);
-			$user_settings['transparency'] = we_resetTransparency($user_settings['id_attach'], $filename, $user_settings['filename']) ? 'transparent' : 'opaque';
+			$user_settings['transparency'] =
+				we_resetTransparency(
+					$user_settings['id_attach'],
+					empty($user_settings['attachment_type']) ? $filename : $settings['custom_avatar_dir'] . '/' . $user_settings['filename'],
+					$user_settings['filename']
+				) ? 'transparent' : 'opaque';
 		}
 
 		// Get mobile status.

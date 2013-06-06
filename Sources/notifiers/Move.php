@@ -94,22 +94,6 @@ class Move_Notifier extends Notifier
 		return array($txt['notification_move_email_subject'], $this->getText($notification));
 	}
 
-	public function getIcon(Notification $notification)
-	{
-		global $memberContext;
-
-		$data = $notification->getData();
-		if (empty($data['member']['id']))
-			return '';
-		if (empty($memberContext[$data['member']['id']]['avatar']))
-		{
-			loadMemberAvatar($data['member']['id'], true);
-			if (empty($memberContext[$data['member']['id']]['avatar']))
-				return '';
-		}
-		return $memberContext[$data['member']['id']]['avatar']['image'];
-	}
-
 	public function getPreview(Notification $notification)
 	{
 		$data = $notification->getData();

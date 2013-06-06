@@ -48,22 +48,6 @@ class Likes_Notifier extends Notifier
 		return array($txt['welikes_title'], $txt['welikes_desc'], array());
 	}
 
-	public function getIcon(Notification $notification)
-	{
-		global $txt, $memberContext;
-
-		$data = $notification->getData();
-		if (empty($data['member']['id']))
-			return '';
-		if (empty($memberContext[$data['member']['id']]['avatar']))
-		{
-			loadMemberAvatar($data['member']['id'], true);
-			if (empty($memberContext[$data['member']['id']]['avatar']))
-				return '';
-		}
-		return $memberContext[$data['member']['id']]['avatar']['image'];
-	}
-
 	public function getEmail(Notification $notification, array $email_data)
 	{
 		global $txt;

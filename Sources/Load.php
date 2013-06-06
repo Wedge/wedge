@@ -1240,7 +1240,12 @@ function loadMemberAvatar($user, $force = false)
 		if (!$profile['transparency'])
 		{
 			$filename = getAttachmentFilename($profile['filename'], $profile['id_attach'], $profile['id_folder']);
-			$profile['transparency'] = we_resetTransparency($profile['id_attach'], $filename, $profile['filename']) ? 'transparent' : 'opaque';
+			$profile['transparency'] =
+				we_resetTransparency(
+					$profile['id_attach'],
+					empty($profile['attachment_type']) ? $filename : $settings['custom_avatar_dir'] . '/' . $profile['filename'],
+					$profile['filename']
+				) ? 'transparent' : 'opaque';
 		}
 		$memberContext[$user]['avatar'] = array(
 			'name' => $profile['avatar'],
