@@ -246,6 +246,10 @@ function DisplayLike()
 
 	wesql::free_result($request);
 
+	// If we're ignoring someone, spirit them away.
+	foreach (we::$user['ignoreusers'] as $ignored)
+		unset ($likes[$ignored]);
+
 	$members = array_keys($likes);
 	$members_actual = loadMemberData($members);
 	if (count($members_actual) != count($members))

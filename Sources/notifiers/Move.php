@@ -32,7 +32,7 @@ class Move_Notifier extends Notifier
 		$data = $notification->getData();
 
 		// Only one member?
-		$notif = in_array($data['id_board'], we::$user['qsb_boards']) ? 'notification_move' : 'notification_move_noaccess';
+		$notif = we::$is['admin'] || in_array($data['id_board'], we::$user['qsb_boards']) ? 'notification_move' : 'notification_move_noaccess';
 		return strtr($txt[$notif], array(
 			'{MEMBER}' => $data['member']['name'],
 			'{SUBJECT}' => shorten_subject($data['subject'], 25),

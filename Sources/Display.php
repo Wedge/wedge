@@ -1840,6 +1840,9 @@ function prepareLikeContext($messages, $type = 'post')
 
 	while ($row = wesql::fetch_assoc($request))
 	{
+		if (in_array($row['id_member'], we::$user['ignoreusers']))
+			continue;
+
 		// If it's us, log it as being us.
 		if ($row['id_member'] == we::$id)
 			$context['liked_posts'][$row['id_content']]['you'] = true;
