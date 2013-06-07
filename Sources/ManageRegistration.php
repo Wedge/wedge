@@ -346,6 +346,7 @@ function ModifyRegistrationSettings($return_config = false)
 			array('check', 'send_welcomeEmail'),
 			array('check', 'send_validation_onChange'),
 		'',
+			array('select', 'login_type', array($txt['login_username_or_email'], $txt['login_username_only'], $txt['login_email_only'])),
 			array('select', 'password_strength', array($txt['setting_password_strength_low'], $txt['setting_password_strength_medium'], $txt['setting_password_strength_high'])),
 			array('int', 'failed_login_threshold'),
 			array('check', 'enable_quick_login'),

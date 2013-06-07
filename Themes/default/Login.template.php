@@ -41,7 +41,7 @@ function template_login()
 	// Now just get the basic information - username, password, etc.
 	echo '
 				<dl>
-					<dt>', $txt['username'], ':</dt>
+					<dt>', empty($settings['login_type']) ? $txt['username_or_email'] : ($settings['login_type'] == 1 ? $txt['username'] : $txt['email']), ':</dt>
 					<dd><input name="user" size="20" value="', $context['default_username'], '"></dd>
 					<dt>', $txt['password'], ':</dt>
 					<dd><input type="password" name="passwrd" value="', $context['default_password'], '" size="20"></dd>

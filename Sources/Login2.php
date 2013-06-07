@@ -134,20 +134,26 @@ function Login2()
 		return;
 	}
 
-	// Load the data up!
-	$request = wesql::query('
-		SELECT passwd, id_member, id_group, lngfile, is_activated, email_address, additional_groups, member_name, password_salt, passwd_flood
-		FROM {db_prefix}members
-		WHERE member_name = {string:user_name}
-		LIMIT 1',
-		array(
-			'user_name' => $_REQUEST['user'],
-		)
-	);
-	// Probably mistyped or their email, try it as an email address. (member_name first, though!)
-	if (wesql::num_rows($request) == 0 && strpos($_POST['user'], '@') !== false)
+	// Only check this if we allow for username logins.
+	if (empty($settings['login_type']) || $settings['login_type'] == 1)
 	{
-		wesql::free_result($request);
+		// Load the data up!
+		$request = wesql::query('
+			SELECT passwd, id_member, id_group, lngfile, is_activated, email_address, additional_groups, member_name, password_salt, passwd_flood
+			FROM {db_prefix}members
+			WHERE member_name = {string:user_name}
+			LIMIT 1',
+			array(
+				'user_name' => $_REQUEST['user'],
+			)
+		);
+	}
+
+	// Probably mistyped or their email, try it as an email address. (member_name first, though! Assuming we allow for such things.)
+	if ((empty($settings['login_type']) || $settings['login_type'] == 2) && (empty($request) || (wesql::num_rows($request) == 0 && strpos($_POST['user'], '@') !== false)))
+	{
+		if (!empty($request))
+			wesql::free_result($request);
 
 		$request = wesql::query('
 			SELECT passwd, id_member, id_group, lngfile, is_activated, email_address, additional_groups, member_name, password_salt, passwd_flood
@@ -158,11 +164,10 @@ function Login2()
 				'user_name' => $_POST['user'],
 			)
 		);
-
 	}
 
 	// It didn't match anything, so send them on their way.
-	if (wesql::num_rows($request) == 0)
+	if (empty($request) || wesql::num_rows($request) == 0)
 	{
 		wesql::free_result($request);
 		$context['login_errors'] = array($txt['username_no_exist']);

@@ -267,7 +267,7 @@ function latestThoughts($memID = 0)
 		$request = wesql::query('
 			SELECT
 				ho.updated, ho.thought, ho.id_thought, ho.id_parent, ho.id_member,
-				ho.id_master, ho.id_member AS id_parent_owner, ho.privacy,
+				ho.id_master, h.id_member AS id_parent_owner, ho.privacy,
 				m.real_name AS owner_name, m_parent.real_name AS parent_name,
 				m.posts, h_child.id_thought > 0 AS has_children
 			FROM
