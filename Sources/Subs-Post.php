@@ -1382,22 +1382,14 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 		}
 	}
 
-	// If there's a custom search index, it needs updating...
-	if (!empty($settings['search_custom_index_config']))
+	// Notify search backends they need updating.
+	if (!empty($settings['search_index']) && $settings['search_index'] != 'standard')
 	{
-		$customIndexSettings = unserialize($settings['search_custom_index_config']);
-
-		$inserts = array();
-		foreach (text2words($msgOptions['body'], $customIndexSettings['bytes_per_word'], true) as $word)
-			$inserts[] = array($word, $msgOptions['id']);
-
-		if (!empty($inserts))
-			wesql::insert('ignore',
-				'{db_prefix}log_search_words',
-				array('id_word' => 'int', 'id_msg' => 'int'),
-				$inserts,
-				array('id_word', 'id_msg')
-			);
+		loadSearchAPI($settings['search_index']);
+		$search_class_name = $settings['search_index'] . '_search';
+		$searchAPI = new $search_class_name();
+		if ($searchAPI && $searchAPI->isValid() && method_exists($searchAPI, 'putDocuments'))
+			$searchAPI->putDocuments('post', array($msgOptions['id'] => $msgOptions['body']));
 	}
 
 	// Increase the post counter for the user that created the post.
@@ -1784,7 +1776,7 @@ function modifyPost(&$msgOptions, &$topicOptions, &$posterOptions)
 	{
 		$messages_columns['body'] = $msgOptions['body'];
 
-		if (!empty($settings['search_custom_index_config']))
+		if (!empty($settings['search_index']) && $settings['search_index'] != 'standard')
 		{
 			$request = wesql::query('
 				SELECT body
@@ -1884,46 +1876,14 @@ function modifyPost(&$msgOptions, &$topicOptions, &$posterOptions)
 		}
 	}
 
-	// If there's a custom search index, it needs to be modified...
-	if (isset($msgOptions['body']) && !empty($settings['search_custom_index_config']))
+	// Notify search backends they need updating.
+	if (isset($old_body, $msgOptions['body']) && !empty($settings['search_index']) && $settings['search_index'] != 'standard')
 	{
-		$customIndexSettings = unserialize($settings['search_custom_index_config']);
-
-		$stopwords = empty($settings['search_stopwords']) ? array() : explode(',', $settings['search_stopwords']);
-		$old_index = text2words($old_body, $customIndexSettings['bytes_per_word'], true);
-		$new_index = text2words($msgOptions['body'], $customIndexSettings['bytes_per_word'], true);
-
-		// Calculate the words to be added and removed from the index.
-		$removed_words = array_diff(array_diff($old_index, $new_index), $stopwords);
-		$inserted_words = array_diff(array_diff($new_index, $old_index), $stopwords);
-		// Delete the removed words AND the added ones to avoid key constraints.
-		if (!empty($removed_words))
-		{
-			$removed_words = array_merge($removed_words, $inserted_words);
-			wesql::query('
-				DELETE FROM {db_prefix}log_search_words
-				WHERE id_msg = {int:id_msg}
-					AND id_word IN ({array_int:removed_words})',
-				array(
-					'removed_words' => $removed_words,
-					'id_msg' => $msgOptions['id'],
-				)
-			);
-		}
-
-		// Add the new words to be indexed.
-		if (!empty($inserted_words))
-		{
-			$inserts = array();
-			foreach ($inserted_words as $word)
-				$inserts[] = array($word, $msgOptions['id']);
-			wesql::insert('',
-				'{db_prefix}log_search_words',
-				array('id_word' => 'string', 'id_msg' => 'int'),
-				$inserts,
-				array('id_word', 'id_msg')
-			);
-		}
+		loadSearchAPI($settings['search_index']);
+		$search_class_name = $settings['search_index'] . '_search';
+		$searchAPI = new $search_class_name();
+		if ($searchAPI && $searchAPI->isValid() && method_exists($searchAPI, 'updateDocument'))
+			$searchAPI->updateDocument('post', $msgOptions['id'], $old_body, $msgOptions['body']);
 	}
 
 	if (isset($msgOptions['subject']))

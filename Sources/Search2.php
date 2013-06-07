@@ -39,7 +39,7 @@ function Search2()
 {
 	global $settings, $sourcedir, $txt, $db_connection;
 	global $context, $options, $messages_request, $boards_can;
-	global $excludedWords, $participants, $searchAPI;
+	global $excludedWords, $participants;
 
 	// Search may be disabled if they're softly banned.
 	soft_ban('search');
@@ -93,21 +93,19 @@ function Search2()
 
 	// Load up the search API we are going to use.
 	$settings['search_index'] = empty($settings['search_index']) ? 'standard' : $settings['search_index'];
-	if (!file_exists($sourcedir . '/SearchAPI-' . ucwords($settings['search_index']) . '.php'))
+	if (!loadSearchAPI($settings['search_index']))
 		fatal_lang_error('search_api_missing');
-
-	loadSource('SearchAPI-' . ucwords($settings['search_index']));
 
 	// Create an instance of the search API.
 	$search_class_name = $settings['search_index'] . '_search';
 	$searchAPI = new $search_class_name();
-	if (!$searchAPI || ($searchAPI->supportsMethod('isValid') && !$searchAPI->isValid()))
+	if (!$searchAPI || !$searchAPI->isValid())
 	{
 		// Log the error.
 		loadLanguage('Errors');
 		log_error(sprintf($txt['search_api_not_compatible'], 'SearchAPI-' . ucwords($settings['search_index']) . '.php'), 'critical');
 
-		loadSource('SearchAPI-Standard');
+		loadSearchAPI('standard');
 		$searchAPI = new standard_search();
 	}
 
@@ -506,8 +504,8 @@ function Search2()
 		);
 
 		// Sort the indexed words (large words -> small words -> excluded words).
-		if ($searchAPI->supportsMethod('searchSort'))
-			usort($orParts[$orIndex], 'searchSort');
+		if (method_exists($searchAPI, 'searchSort'))
+			usort($orParts[$orIndex], array($searchAPI, 'searchSort'));
 
 		foreach ($orParts[$orIndex] as $word)
 		{
@@ -526,7 +524,7 @@ function Search2()
 				$excludedPhrases[] = $word;
 
 			// Have we got indexes to prepare?
-			if ($searchAPI->supportsMethod('prepareIndexes'))
+			if (method_exists($searchAPI, 'prepareIndexes'))
 				$searchAPI->prepareIndexes($word, $searchWords[$orIndex], $excludedIndexWords, $is_excluded);
 		}
 
@@ -734,7 +732,7 @@ function Search2()
 	));
 
 	// Can this search rely on the API given the parameters?
-	if ($searchAPI->supportsMethod('searchQuery', $query_params))
+	if (method_exists($searchAPI, 'searchQuery'))
 	{
 		$participants = array();
 		$searchArray = array();
@@ -1115,7 +1113,7 @@ function Search2()
 
 				$indexedResults = 0;
 				// We building an index?
-				if ($searchAPI->supportsMethod('indexedWordQuery', $query_params))
+				if (method_exists($searchAPI, 'indexedWordQuery'))
 				{
 					$inserts = array();
 					wesql::query('
@@ -1258,7 +1256,7 @@ function Search2()
 				}
 
 				// Did we either get some indexed results, or otherwise did not do an indexed query?
-				if (!empty($indexedResults) || !$searchAPI->supportsMethod('indexedWordQuery', $query_params))
+				if (!empty($indexedResults) || !method_exists($searchAPI, 'indexedWordQuery'))
 				{
 					$relevance = '1000 * (';
 					$new_weight_total = 0;
@@ -1690,12 +1688,4 @@ function prepareSearchContext($reset = false)
 	$counter++;
 
 	return $output;
-}
-
-// This function compares the length of two strings plus a little.
-function searchSort($a, $b)
-{
-	global $searchAPI;
-
-	return $searchAPI->searchSort($a, $b);
 }

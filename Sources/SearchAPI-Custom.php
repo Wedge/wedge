@@ -45,32 +45,23 @@ class custom_search
 		$this->min_word_length = $this->indexSettings['bytes_per_word'];
 	}
 
-	// Check whether the search can be performed by this API.
-	public function supportsMethod($methodName, $query_params = null)
-	{
-		switch ($methodName)
-		{
-			case 'isValid':
-			case 'searchSort':
-			case 'prepareIndexes':
-			case 'indexedWordQuery':
-				return true;
-			break;
-
-			default:
-
-				// All other methods, too bad dunno you.
-				return false;
-			return;
-		}
-	}
-
 	// If the settings don't exist we can't continue.
 	public function isValid()
 	{
-		global $settings;
+		return !empty($this->indexSettings);
+	}
 
-		return !empty($settings['search_custom_index_config']);
+	public function getInfo()
+	{
+		global $txt;
+
+		return array(
+			'filename' => basename(__FILE__),
+			'setting_index' => 'standard',
+			'has_template' => true,
+			'label' => $txt['search_index_custom'],
+			'desc' => '',
+		);
 	}
 
 	// This function compares the length of two strings plus a little.
@@ -195,5 +186,123 @@ class custom_search
 		);
 
 		return $ignoreRequest;
+	}
+
+	public function createIndex($params = array())
+	{
+	
+	}
+
+	public function dropIndex($params = array())
+	{
+		global $db_prefix;
+
+		loadSource('Class-DBPackages');
+		$tables = wedbPackages::list_tables(false, $db_prefix . 'log_search_words');
+		if (!empty($tables))
+		{
+			wesql::query('
+				DROP TABLE {db_prefix}log_search_words',
+				array(
+				)
+			);
+		}
+
+		updateSettings(array(
+			'search_custom_index_config' => '',
+			'search_custom_index_resume' => '',
+		));
+	}
+
+	public function putDocuments($doc_type, $documents, $params = array())
+	{
+		// !!! This will, in time, need to do something more useful than merely 'post' indexing.
+		if ($doc_type != 'post')
+			return false;
+
+		$inserts = array();
+		foreach ($documents as $doc_id => $doc_content)
+			foreach (text2words($doc_content, $this->indexSettings['bytes_per_word'], true) as $word)
+				$inserts[] = array($word, $doc_id);
+
+		if (!empty($inserts))
+			wesql::insert('ignore',
+				'{db_prefix}log_search_words',
+				array('id_word' => 'int', 'id_msg' => 'int'),
+				$inserts,
+				array('id_word', 'id_msg')
+			);
+	}
+
+	public function updateDocument($doc_type, $doc_id, $old_document, $new_document, $params = array())
+	{
+		global $settings;
+
+		$stopwords = empty($settings['search_stopwords']) ? array() : explode(',', $settings['search_stopwords']);
+		$old_index = text2words($old_document, $this->indexSettings['bytes_per_word'], true);
+		$new_index = text2words($new_document, $this->indexSettings['bytes_per_word'], true);
+
+		// Calculate the words to be added and removed from the index.
+		$removed_words = array_diff(array_diff($old_index, $new_index), $stopwords);
+		$inserted_words = array_diff(array_diff($new_index, $old_index), $stopwords);
+		// Delete the removed words AND the added ones to avoid key constraints.
+		if (!empty($removed_words))
+		{
+			$removed_words = array_merge($removed_words, $inserted_words);
+			wesql::query('
+				DELETE FROM {db_prefix}log_search_words
+				WHERE id_msg = {int:id_msg}
+					AND id_word IN ({array_int:removed_words})',
+				array(
+					'removed_words' => $removed_words,
+					'id_msg' => $doc_id,
+				)
+			);
+		}
+
+		// Add the new words to be indexed.
+		if (!empty($inserted_words))
+		{
+			$inserts = array();
+			foreach ($inserted_words as $word)
+				$inserts[] = array($word, $doc_id);
+			wesql::insert('',
+				'{db_prefix}log_search_words',
+				array('id_word' => 'string', 'id_msg' => 'int'),
+				$inserts,
+				array('id_word', 'id_msg')
+			);
+		}
+	}
+
+	public function removeDocuments($doc_type, $documents, $params = array())
+	{
+		// !!! This will, in time, need to do something more useful than merely 'post' indexing.
+		if ($doc_type != 'post')
+			return false;
+
+		$messages = array();
+		$words = array();
+		foreach ($documents as $id => $body)
+		{
+			if (function_exists('apache_reset_timeout'))
+				@apache_reset_timeout();
+
+			$words = array_merge($words, text2words($body, $this->indexSettings['bytes_per_word'], true));
+			$messages[] = $id;
+		}
+
+		$words = array_unique($words);
+
+		if (!empty($words) && !empty($messages))
+			wesql::query('
+				DELETE FROM {db_prefix}log_search_words
+				WHERE id_word IN ({array_int:word_list})
+					AND id_msg IN ({array_int:message_list})',
+				array(
+					'word_list' => $words,
+					'message_list' => $messages,
+				)
+			);
 	}
 }

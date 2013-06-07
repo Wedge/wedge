@@ -19,10 +19,20 @@ class standard_search
 	// Standard search is supported by default.
 	public $is_supported = true;
 
-	// Method to check whether the method can be performed by the API.
-	public function supportsMethod($methodName, $query_params = null)
+	// All APIs should support this function if nothing else. But all other detection is on method_exists...
+	public function isValid()
 	{
-		// Always fall back to the standard search method.
-		return false;
+		return true;
+	}
+
+	public function getInfo()
+	{
+		return array(
+			'filename' => basename(__FILE__),
+			'setting_index' => 'standard',
+			'has_template' => true,
+			'label' => '',
+			'desc' => '',
+		);
 	}
 }

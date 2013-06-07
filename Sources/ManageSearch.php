@@ -74,7 +74,7 @@ function ManageSearch()
 		'settings' => 'EditSearchSettings',
 		'weights' => 'EditWeights',
 		'method' => 'EditSearchMethod',
-		'removecustom' => 'EditSearchMethod',
+		'remove' => 'EditSearchMethod',
 		'createmsgindex' => 'CreateMessageIndex',
 	);
 
@@ -128,14 +128,8 @@ function EditSearchSettings($return_config = false)
 
 	// Perhaps the search method wants to add some settings?
 	$settings['search_index'] = empty($settings['search_index']) ? 'standard' : $settings['search_index'];
-	if (file_exists($sourcedir . '/SearchAPI-' . ucwords($settings['search_index']) . '.php'))
-	{
-		loadSource('SearchAPI-' . ucwords($settings['search_index']));
-
-		$method_call = array($settings['search_index'] . '_search', 'searchSettings');
-		if (is_callable($method_call))
-			call_user_func_array($method_call, array(&$config_vars));
-	}
+	if (loadSearchAPI($settings['search_index']) && method_exists($settings['search_index'] . '_search', 'searchSettings'))
+		call_user_func_array($method_call, array(&$config_vars));
 
 	if ($return_config)
 		return $config_vars;
@@ -205,30 +199,20 @@ function EditSearchMethod()
 	wetem::load('select_search_method');
 
 	// Load any apis.
-	$context['search_apis'] = loadSearchAPIs();
+	$context['search_apis'] = loadAllSearchAPIs();
 
-	if (!empty($_REQUEST['sa']) && $_REQUEST['sa'] == 'removecustom')
+	if (!empty($_REQUEST['sa']) && $_REQUEST['sa'] == 'remove' && isset($_REQUEST['index'], $context['search_apis'][$_REQUEST['index']]))
 	{
 		checkSession('get');
 
-		loadSource('Class-DBPackages');
-		$tables = wedbPackages::list_tables(false, $db_prefix . 'log_search_words');
-		if (!empty($tables))
-		{
-			wesql::query('
-				DROP TABLE {db_prefix}log_search_words',
-				array(
-				)
-			);
-		}
+		$search_class_name = $_REQUEST['index'] . '_search';
+		$searchAPI = new $search_class_name();
 
-		updateSettings(array(
-			'search_custom_index_config' => '',
-			'search_custom_index_resume' => '',
-		));
+		if ($searchAPI && $searchAPI->isValid() && method_exists($searchAPI, 'dropIndex'))
+			$searchAPI->dropIndex();
 
-		// Go back to the default search method.
-		if (!empty($settings['search_index']) && $settings['search_index'] == 'custom')
+		// If we were using this index, officially stop using it.
+		if (!empty($settings['search_index']) && $settings['search_index'] == $_REQUEST['index'])
 			updateSettings(array(
 				'search_index' => '',
 			));
@@ -268,6 +252,7 @@ function EditSearchMethod()
 				'table_name' => str_replace('_', '\_', $db_prefix) . 'messages',
 			)
 		);
+
 	if ($request !== false && wesql::num_rows($request) == 1)
 	{
 		// Only do this if the user has permission to execute this query.
@@ -556,7 +541,7 @@ function CreateMessageIndex()
 }
 
 // Get the installed APIs.
-function loadSearchAPIs()
+function loadAllSearchAPIs()
 {
 	global $sourcedir, $txt;
 
@@ -572,7 +557,7 @@ function loadSearchAPIs()
 				$header = fread($fp, 4096);
 				fclose($fp);
 
-				if (strpos($header, '* SearchAPI-' . $matches[1] . '.php') !== false)
+				if (strpos($header, 'class ' . strtolower($matches[1]) . '_search') !== false)
 				{
 					require_once($sourcedir . '/' . $file);
 
@@ -581,16 +566,8 @@ function loadSearchAPIs()
 					$searchAPI = new $search_class_name();
 
 					// No Support? NEXT!
-					if (!$searchAPI->is_supported)
-						continue;
-
-					$apis[$index_name] = array(
-						'filename' => $file,
-						'setting_index' => $index_name,
-						'has_template' => in_array($index_name, array('custom', 'standard')),
-						'label' => $index_name && isset($txt['search_index_' . $index_name]) ? $txt['search_index_' . $index_name] : '',
-						'desc' => $index_name && isset($txt['search_index_' . $index_name . '_desc']) ? $txt['search_index_' . $index_name . '_desc'] : '',
-					);
+					if ($searchAPI->is_supported)
+						$apis[$index_name] = $searchAPI->getInfo();
 				}
 			}
 		}

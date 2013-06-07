@@ -37,7 +37,7 @@ class weget
 
 	public function setMethod($method)
 	{
-		if ($this->protocol == 'http' && ($method == 'GET' || $method == 'POST'))
+		if ($this->protocol == 'http' && in_array($method, array('GET', 'POST', 'PUT', 'DELETE', 'HEAD')))
 			$this->method = $method;
 	}
 

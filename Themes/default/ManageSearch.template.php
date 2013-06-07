@@ -147,11 +147,11 @@ function template_select_search_method()
 
 	if ($context['custom_index'])
 		echo '
-								<strong>', $txt['search_index_label'], ':</strong> ', $txt['search_method_index_already_exists'], ' [<a href="<URL>?action=admin;area=managesearch;sa=removecustom;', $context['session_query'], '">', $txt['search_index_custom_remove'], '</a>]<br>
+								<strong>', $txt['search_index_label'], ':</strong> ', $txt['search_method_index_already_exists'], ' [<a href="<URL>?action=admin;area=managesearch;sa=remove;index=custom;', $context['session_query'], '">', $txt['search_index_custom_remove'], '</a>]<br>
 								<strong>', $txt['search_index_size'], ':</strong> ', $context['table_info']['custom_index_length'];
 	elseif ($context['partial_custom_index'])
 		echo '
-								<strong>', $txt['search_index_label'], ':</strong> ', $txt['search_method_index_partial'], ' [<a href="<URL>?action=admin;area=managesearch;sa=removecustom;', $context['session_query'], '">', $txt['search_index_custom_remove'], '</a>] [<a href="<URL>?action=admin;area=managesearch;sa=createmsgindex;resume;', $context['session_query'], '">', $txt['search_index_custom_resume'], '</a>]<br>
+								<strong>', $txt['search_index_label'], ':</strong> ', $txt['search_method_index_partial'], ' [<a href="<URL>?action=admin;area=managesearch;sa=remove;index=custom;', $context['session_query'], '">', $txt['search_index_custom_remove'], '</a>] [<a href="<URL>?action=admin;area=managesearch;sa=createmsgindex;resume;', $context['session_query'], '">', $txt['search_index_custom_resume'], '</a>]<br>
 								<strong>', $txt['search_index_size'], ':</strong> ', $context['table_info']['custom_index_length'];
 	else
 		echo '

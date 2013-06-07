@@ -2171,6 +2171,23 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 }
 
 /**
+ * Attempt to load a search API.
+ *
+ * @param string $api Name of the search API, typically in $settings['search_index']
+ * @return bool True if successful, false if not.
+ */
+function loadSearchAPI($api)
+{
+	global $sourcedir;
+
+	$file = $sourcedir . '/SearchAPI-' . ucwords($api) . '.php';
+	if (!file_exists($file))
+		return false;
+	@include($file);
+	return class_exists($api . '_search');
+}
+
+/**
  * Get all parent boards (requires first parent as parameter)
  * From a given board, iterate up through the board hierarchy to find all of the parents back to forum root.
  *

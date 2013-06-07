@@ -443,42 +443,37 @@ function removeTopics($topics, $decreasePostCount = true, $ignoreRecycling = fal
 	);
 	removeAttachments($attachmentQuery, 'messages');
 
-	// Delete possible search index entries.
-	if (!empty($settings['search_custom_index_config']))
+	// Notify search backends they need updating.
+	if (!empty($settings['search_index']) && $settings['search_index'] != 'standard')
 	{
-		$customIndexSettings = unserialize($settings['search_custom_index_config']);
-
-		$words = array();
-		$messages = array();
-		$request = wesql::query('
-			SELECT id_msg, body
-			FROM {db_prefix}messages
-			WHERE id_topic IN ({array_int:topics})',
-			array(
-				'topics' => $topics,
-			)
-		);
-		while ($row = wesql::fetch_assoc($request))
+		loadSearchAPI($settings['search_index']);
+		$search_class_name = $settings['search_index'] . '_search';
+		$searchAPI = new $search_class_name();
+		if ($searchAPI && $searchAPI->isValid() && method_exists($searchAPI, 'removeDocuments'))
 		{
-			if (function_exists('apache_reset_timeout'))
-				@apache_reset_timeout();
-
-			$words = array_merge($words, text2words($row['body'], $customIndexSettings['bytes_per_word'], true));
-			$messages[] = $row['id_msg'];
-		}
-		wesql::free_result($request);
-		$words = array_unique($words);
-
-		if (!empty($words) && !empty($messages))
-			wesql::query('
-				DELETE FROM {db_prefix}log_search_words
-				WHERE id_word IN ({array_int:word_list})
-					AND id_msg IN ({array_int:message_list})',
+			$documents = array();
+			$words = array();
+			$messages = array();
+			$request = wesql::query('
+				SELECT id_msg, body
+				FROM {db_prefix}messages
+				WHERE id_topic IN ({array_int:topics})',
 				array(
-					'word_list' => $words,
-					'message_list' => $messages,
+					'topics' => $topics,
 				)
 			);
+			while ($row = wesql::fetch_assoc($request))
+			{
+				if (function_exists('apache_reset_timeout'))
+					@apache_reset_timeout();
+
+				$documents[$row['id_msg']] = $row['body'];
+			}
+			wesql::free_result($request);
+
+			$searchAPI->removeDocuments('post', $documents);
+			$messages = array_keys($documents);
+		}
 	}
 
 	// Likes. Need to get the message ids - we may already have them, we may not.
@@ -582,7 +577,7 @@ function removeMessage($message, $decreasePostCount = true)
 
 	$request = wesql::query('
 		SELECT
-			m.id_member, m.icon, m.poster_time, m.subject,' . (empty($settings['search_custom_index_config']) ? '' : ' m.body,') . '
+			m.id_member, m.icon, m.poster_time, m.subject,' . (empty($settings['search_index']) || $settings['search_index'] == 'standard' ? '' : ' m.body,') . '
 			m.approved, t.id_topic, t.id_first_msg, t.id_last_msg, t.num_replies, t.id_board,
 			t.id_member_started AS id_member_poster,
 			b.count_posts
@@ -969,20 +964,14 @@ function removeMessage($message, $decreasePostCount = true)
 			)
 		);
 
-		if (!empty($settings['search_custom_index_config']))
+		// Notify search backends they need updating.
+		if (!empty($settings['search_index']) && $settings['search_index'] != 'standard')
 		{
-			$customIndexSettings = unserialize($settings['search_custom_index_config']);
-			$words = text2words($row['body'], $customIndexSettings['bytes_per_word'], true);
-			if (!empty($words))
-				wesql::query('
-					DELETE FROM {db_prefix}log_search_words
-					WHERE id_word IN ({array_int:word_list})
-						AND id_msg = {int:id_msg}',
-					array(
-						'word_list' => $words,
-						'id_msg' => $message,
-					)
-				);
+			loadSearchAPI($settings['search_index']);
+			$search_class_name = $settings['search_index'] . '_search';
+			$searchAPI = new $search_class_name();
+			if ($searchAPI && $searchAPI->isValid() && method_exists($searchAPI, 'removeDocuments'))
+				$searchAPI->removeDocuments('post', array($message => $row['body']));
 		}
 
 		// Delete attachment(s) if they exist.
