@@ -48,7 +48,9 @@ function cleanRequest()
 
 	// Is this a page requested through jQuery? If yes, set the AJAX constant so we can choose to show only the template's default block.
 	// !! upcook is a cookie hack for the AeMe mass-uploader. It should be removed once rewritten to get rid of Flash!
-	define('AJAX', (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') || !empty($_REQUEST['upcook']));
+	$ajax = (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') || !empty($_REQUEST['upcook']);
+	define('INFINITE', $ajax && !empty($_POST['infinite']));
+	define('AJAX', $ajax && !INFINITE);
 
 	// $scripturl is your board URL if you asked to remove index.php or the user visits for the first time
 	// (in which case they'll get the annoying PHPSESSID stuff in their URL and we need index.php in them.)

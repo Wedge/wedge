@@ -495,6 +495,9 @@ $.fn.mime = function (oList, oStrings)
 {
 	this.each(function ()
 	{
+		if ($(this).parent().hasClass('mime'))
+			return;
+
 		var
 			$mime = $(this),
 			id = $mime.data('id') || $mime.closest('.root').attr('id').slice(3), // Extract the context id from the parent message

@@ -604,7 +604,7 @@ function ob_sessrewrite($buffer)
 		$buffer = preg_replace('~<img\s((?:[^a>]|a(?!lt\b))+)>~', '<img alt $1>', $buffer);
 
 	// Return the changed buffer, and make a final optimization.
-	return preg_replace("~\s</script>\n*<script>~", '', $buffer);
+	return preg_replace("~\s</script>\s*<script>|\s<script>\s*</script>~", '', $buffer);
 }
 
 // Move inline events to the end
@@ -612,6 +612,9 @@ function wedge_event_delayer($match)
 {
 	global $context;
 	static $eve = 1, $dupes = array();
+
+	if ($eve == 1 && INFINITE)
+		$eve = 100 * (isset($_GET['start']) ? $_GET['start'] / 15 : 0) + 1;
 
 	$eve_list = array();
 	preg_match_all('~\son(\w+)="([^"]+)"~', $match[0], $insides, PREG_SET_ORDER);
@@ -942,6 +945,10 @@ function db_debug_junk()
 
 		$_SESSION['debug'] =& $db_cache;
 	}
+
+	// A small trick to avoid repeating block names ad nauseam...
+	foreach ($context['debug']['blocks'] as $name => $count)
+		$context['debug']['blocks'][$name] = $count > 1 ? $name . ' (' . $count . 'x)' : $name;
 
 	$show_list_js = "$(this).hide().next().show(); return false;";
 	$temp = '
@@ -1289,7 +1296,7 @@ function execBlock($block_name, $fatal = false)
 		return;
 
 	if ($db_show_debug === true)
-		$context['debug']['blocks'][] = $block_name;
+		$context['debug']['blocks'][$block_name] = isset($context['debug']['blocks'][$block_name]) ? $context['debug']['blocks'][$block_name] + 1 : 1;
 
 	if (strpos($block_name, ':') !== false)
 	{

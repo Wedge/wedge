@@ -21,6 +21,80 @@ $(function () {
 	});
 });
 
+// Fix post height in Display. We have to do this at onload, because of images. :(
+$(window).load(function () {
+
+	// Ignore non-topic pages.
+	if (!$(document).find('#forumposts').length)
+		return;
+
+	// count_scrolls will allow us to ensure not to load anything through accidental wheel rolls.
+	var count_scrolls = 0;
+	$(window).on('DOMMouseScroll mousewheel', function ()
+	{
+		if ($(window).scrollTop() >= $(document).height() - $(window).height())
+		{
+			if (count_scrolls++ > 2)
+			{
+				var next_page = $('span.next_page > a').first().attr('href');
+				if (next_page)
+				{
+					count_scrolls = -999; // Avoid extra requests while loading the posts...
+					show_ajax();
+					var $new_page = $('<div/>').insertAfter($('hr.sep').last());
+					$new_page.load(
+
+						// Load the next page, and show only the #forumposts area.
+						next_page + ' #forumposts',
+
+						// This asks Wedge to ignore the Ajax status, and load the index template for page indexes.
+						{ infinite: true },
+
+						function (html)
+						{
+							// Retrieve the page index for the new area, and replace the parent's with them.
+							var page_indexes = $(html).contents().find('.pagesection nav');
+							$('.pagesection nav').first().html(page_indexes.get(0));
+							$('.pagesection nav').last().html(page_indexes.get(1));
+
+							// We're rebuilding scripts from the string response, and inserting them to force jQuery to execute them.
+							// Please note that jQuery doesn't need to be reloaded, and script.js causes issues, so we'll avoid it for now.
+							$new_page.append($(html).filter('script:not([src*=jquery]):not([src*=script])'));
+
+							// We have to re-run the event delayer, as it has new values to insert...
+							// !! Is it worth putting it into its own function in script.js..?
+							$('*[data-eve]', $new_page).each(function ()
+							{
+								var that = $(this);
+								$.each(that.attr('data-eve').split(' '), function () {
+									that.on(eves[this][0], eves[this][1]);
+								});
+							});
+
+							// Ensure that all posts are on the same (DOM) level as its predecessors.
+							var root = $new_page.find('.root'), max_count = 0, id;
+							while ((id = root.first().parent().attr('id')) != 'forumposts' && id != 'quickModForm' && max_count++ < 10)
+								root.unwrap();
+
+							hide_ajax();
+
+							// Using replaceState, because storing the previous page state is headache material.
+							if (window.history && history.replaceState)
+								history.replaceState(null, '', next_page);
+
+							count_scrolls = 0;
+							root.hide().fadeIn(800);
+						}
+					);
+				}
+			}
+		}
+		else
+			count_scrolls = 0;
+	});
+
+});
+
 var hide_prefixes = [];
 
 // Expand an attached thumbnail
@@ -459,9 +533,10 @@ function QuickReply(opt)
 
 		// Add checkboxes to all the messages.
 		$('.' + opt.sClass).each(function () {
-			$('<input type="checkbox" name="msgs[]" value="' + $(this).closest('.root').attr('id').slice(3) + '"></input>')
-			.click(handleClick)
-			.appendTo(this);
+			if (!$(this).find('input[type="checkbox"]').length)
+				$('<input type="checkbox" name="msgs[]" value="' + $(this).closest('.root').attr('id').slice(3) + '"></input>')
+				.click(handleClick)
+				.appendTo(this);
 		});
 	}
 

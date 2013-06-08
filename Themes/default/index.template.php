@@ -681,6 +681,7 @@ function template_mini_menu($menu, $class)
 				$js .= '"' . $item . '", ';
 		$js = substr($js, 0, -2) . '],';
 	}
+
 	add_js(substr($js, 0, -1) . '
 	});');
 }
@@ -819,7 +820,7 @@ function template_page_index($base_url, &$start, $max_value, $num_per_page, $fle
 	// Finally, the next link.
 	if ($show_prevnext && $start + $num_per_page < $max_value)
 	{
-		$pageindex .= sprintf($base_link, $start + $num_per_page, $txt['previous_next_forward']);
+		$pageindex .= '<span class="next_page">' . sprintf($base_link, $start + $num_per_page, $txt['previous_next_forward']) . '</span>';
 
 		// If we're in a topic page, and later pages have unread posts, show a New notification after the Next link!
 		if (empty($options['view_newest_first']) && !empty($topicinfo['new_from']) && $topicinfo['new_from'] <= $topicinfo['id_last_msg'])
