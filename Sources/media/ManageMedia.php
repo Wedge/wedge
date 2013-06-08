@@ -1381,7 +1381,7 @@ function aeva_admin_quotas_edit()
 					'type' => $type,
 				)
 			);
-			// !! Temporary fix. Don't know why mysql_affected_rows() was returning 0.
+			// !! Temporary fix. Don't know why mysqli_affected_rows() was returning 0.
 			wesql::insert('ignore',
 				'{db_prefix}media_quotas',
 				array('id_group', 'id_profile', 'type', 'quota'),

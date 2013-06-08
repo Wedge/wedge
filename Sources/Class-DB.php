@@ -54,11 +54,8 @@ class wesql
 	{
 		global $mysql_set_mode;
 
-		// Attempt to connect.
-		if (!empty($db_options['persist']))
-			$connection = @mysql_pconnect($db_server, $db_user, $db_passwd);
-		else
-			$connection = @mysql_connect($db_server, $db_user, $db_passwd);
+		// Attempt to connect. (And in non SSI mode, also select the database)
+		$connection = mysqli_connect((!empty($db_options['persist']) ? 'p:' : '') . $db_server, $db_user, $db_passwd, empty($db_options['dont_select_db']) ? $db_name : '') or die(mysqli_connect_error());
 
 		// Ooops, couldn't connect. See whether that should be a fatal or silent error.
 		if (!$connection)
@@ -68,10 +65,6 @@ class wesql
 			else
 				show_db_error();
 		}
-
-		// Selecting a DB? If so, select it, and die if we couldn't.
-		if (empty($db_options['dont_select_db']) && !@mysql_select_db($db_name, $connection) && empty($db_options['non_fatal']))
-			show_db_error();
 
 		if (isset($mysql_set_mode) && $mysql_set_mode === true)
 			wesql::query('SET sql_mode = \'\', AUTOCOMMIT = 1',
@@ -232,10 +225,8 @@ class wesql
 				self::error_backtrace('Hacking attempt...', 'Hacking attempt...' . "\n" . $db_string, E_USER_ERROR, __FILE__, __LINE__);
 		}
 
-		if (empty($db_unbuffered))
-			$ret = @mysql_query($db_string, $connection);
-		else
-			$ret = @mysql_unbuffered_query($db_string, $connection);
+		$ret = @mysqli_query($connection, $db_string, empty($db_unbuffered) ? MYSQLI_STORE_RESULT : MYSQLI_USE_RESULT);
+
 		if ($ret === false && empty($db_values['db_error_skip']))
 			$ret = self::serious_error($db_string, $connection);
 
@@ -248,13 +239,13 @@ class wesql
 
 	public static function affected_rows($connection = null)
 	{
-		return mysql_affected_rows($connection === null ? self::$_db_con : $connection);
+		return mysqli_affected_rows($connection === null ? self::$_db_con : $connection);
 	}
 
 	public static function insert_id($connection = null)
 	{
 		$connection = $connection === null ? self::$_db_con : $connection;
-		return mysql_insert_id($connection);
+		return mysqli_insert_id($connection);
 	}
 
 	public static function transaction($operation = 'commit', $connection = null)
@@ -267,7 +258,7 @@ class wesql
 				case 'begin':
 				case 'rollback':
 				case 'commit':
-					return @mysql_query(strtoupper($operation), $connection);
+					return @mysqli_query($connection, strtoupper($operation));
 			default:
 				return false;
 		}
@@ -275,7 +266,7 @@ class wesql
 
 	public static function error($connection = null)
 	{
-		return mysql_error($connection === null ? self::$_db_con : $connection);
+		return mysqli_error($connection === null ? self::$_db_con : $connection);
 	}
 
 	public static function serious_error($db_string, $connection = null)
@@ -293,8 +284,8 @@ class wesql
 		$connection = $connection === null ? self::$_db_con : $connection;
 
 		// This is the error message...
-		$query_error = mysql_error($connection);
-		$query_errno = mysql_errno($connection);
+		$query_error = mysqli_error($connection);
+		$query_errno = mysqli_errno($connection);
 
 		// Error numbers:
 		//		1016: Can't open file '....MYI'
@@ -387,22 +378,13 @@ class wesql
 				{
 					// Are we in SSI mode? If so try that username and password first
 					if (WEDGE == 'SSI' && !empty($ssi_db_user) && !empty($ssi_db_passwd))
-					{
-						if (empty($db_persist))
-							self::$_db_con = @mysql_connect($db_server, $ssi_db_user, $ssi_db_passwd);
-						else
-							self::$_db_con = @mysql_pconnect($db_server, $ssi_db_user, $ssi_db_passwd);
-					}
-					// Fall back to the regular username and password if need be
-					if (!$db_connection)
-					{
-						if (empty($db_persist))
-							self::$_db_con = @mysql_connect($db_server, $db_user, $db_passwd);
-						else
-							self::$_db_con = @mysql_pconnect($db_server, $db_user, $db_passwd);
-					}
+						self::$_db_con = @mysqli_connect((!empty($db_persist) ? 'p:' : '') . $db_server, $ssi_db_user, $ssi_db_passwd);
 
-					if (!self::$_db_con || !@mysql_select_db($db_name, self::$_db_con))
+					// Fall back to the regular username and password if need be
+					if (!self::$_db_con)
+						self::$_db_con = @mysqli_connect((!empty($db_persist) ? 'p:' : '') . $db_server, $db_user, $db_passwd);
+
+					if (!self::$_db_con || !@mysqli_select_db(self::$_db_con, $db_name))
 						self::$_db_con = false;
 				}
 
@@ -413,7 +395,7 @@ class wesql
 					{
 						$ret = self::query($db_string, false, false);
 
-						$new_errno = mysql_errno($db_connection);
+						$new_errno = mysqli_errno($db_connection);
 						if ($ret !== false || in_array($new_errno, array(1205, 1213)))
 							break;
 					}
@@ -526,7 +508,7 @@ class wesql
 		if ($connection === null)
 			$connection = self::$_db_con;
 
-		if (!is_resource($connection))
+		if (!is_object($connection))
 			show_db_error();
 
 		if (isset(self::$callback_values[$matches[1]]))
@@ -536,7 +518,7 @@ class wesql
 			self::error_backtrace('Invalid value inserted or no type specified.', '', E_USER_ERROR, __FILE__, __LINE__);
 
 		if ($matches[1] == 'literal')
-			return sprintf('\'%1$s\'', mysql_real_escape_string($matches[2], $connection));
+			return sprintf('\'%1$s\'', mysqli_real_escape_string($connection, $matches[2]));
 
 		if (!isset($values[$matches[2]]))
 			self::error_backtrace('The database value you\'re trying to insert does not exist: ' . htmlspecialchars($matches[2]), '', E_USER_ERROR, __FILE__, __LINE__);
@@ -553,7 +535,7 @@ class wesql
 
 			case 'string':
 			case 'text':
-				return sprintf('\'%1$s\'', mysql_real_escape_string($replacement, $connection));
+				return sprintf('\'%1$s\'', mysqli_real_escape_string($connection, $replacement));
 			break;
 
 			case 'array_int':
@@ -584,7 +566,7 @@ class wesql
 						self::error_backtrace('Database error, given array of string values is empty. (' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
 
 					foreach ($replacement as $key => $value)
-						$replacement[$key] = sprintf('\'%1$s\'', mysql_real_escape_string($value, $connection));
+						$replacement[$key] = sprintf('\'%1$s\'', mysqli_real_escape_string($connection, $value));
 
 					return implode(', ', $replacement);
 				}
@@ -680,32 +662,32 @@ class wesql
 
 	public static function fetch_assoc($result)
 	{
-		return mysql_fetch_assoc($result);
+		return mysqli_fetch_assoc($result);
 	}
 
 	public static function fetch_row($result)
 	{
-		return mysql_fetch_row($result);
+		return mysqli_fetch_row($result);
 	}
 
 	public static function free_result($result)
 	{
-		return mysql_free_result($result);
+		return mysqli_free_result($result);
 	}
 
 	public static function data_seek($result, $row_num)
 	{
-		return mysql_data_seek($result, $row_num);
+		return mysqli_data_seek($result, $row_num);
 	}
 
 	public static function num_fields($result)
 	{
-		return mysql_num_fields($result);
+		return mysqli_field_count($result);
 	}
 
 	public static function num_rows($result)
 	{
-		return mysql_num_rows($result);
+		return mysqli_num_rows($result);
 	}
 
 	public static function escape_string($string)
@@ -720,12 +702,12 @@ class wesql
 
 	public static function server_info($connection = null)
 	{
-		return mysql_get_server_info($connection === null ? self::$_db_con : $connection);
+		return mysqli_get_server_info($connection === null ? self::$_db_con : $connection);
 	}
 
 	public static function select_db($db_name, $connection = null)
 	{
 		$connection = $connection === null ? self::$_db_con : $connection;
-		return mysql_select_db($db_name, $connection);
+		return mysqli_select_db($connection, $db_name);
 	}
 }

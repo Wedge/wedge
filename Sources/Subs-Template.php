@@ -536,8 +536,9 @@ function ob_sessrewrite($buffer)
 				}
 
 				// Cache these URLs in the database (use mysql_query to avoid some issues.)
+				// !!! Um, why?
 				if (count($cache_data) > 0)
-					mysql_query("REPLACE INTO {$db_prefix}pretty_urls_cache (url_id, replacement) VALUES " . implode(', ', $cache_data));
+					mysqli_query("REPLACE INTO {$db_prefix}pretty_urls_cache (url_id, replacement) VALUES " . implode(', ', $cache_data));
 			}
 
 			// Put the URLs back into the buffer

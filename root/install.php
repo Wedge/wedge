@@ -416,7 +416,7 @@ function Welcome()
 	// Is some database support even compiled in?
 	$mysql_supported = false;
 
-	if (function_exists('mysql_connect'))
+	if (function_exists('mysqli_connect'))
 	{
 		if (!file_exists(dirname(__FILE__) . '/install.sql'))
 		{
@@ -667,7 +667,7 @@ function DatabaseSettings()
 	$incontext['db']['name'] = '';
 	$incontext['db']['pass'] = '';
 
-	if (function_exists('mysql_connect'))
+	if (function_exists('mysqli_connect'))
 	{
 		if (isset($db['default_host']))
 			$incontext['db']['server'] = ini_get($db['default_host']) or $incontext['db']['server'] = 'localhost';
@@ -772,9 +772,9 @@ function DatabaseSettings()
 		}
 
 		// Do they meet the install requirements?
-		if ((version_compare($db['required_client'], preg_replace('~^\D*|\-.+?$~', '', mysql_get_client_info())) > 0) || (version_compare($db['required_server'], preg_replace('~^\D*|\-.+?$~', '', mysql_get_server_info())) > 0))
+		if ((version_compare($db['required_client'], preg_replace('~^\D*|\-.+?$~', '', mysqli_get_client_info())) > 0) || (version_compare($db['required_server'], preg_replace('~^\D*|\-.+?$~', '', mysqli_get_server_info())) > 0))
 		{
-			$incontext['error'] = sprintf($txt['error_db_too_low'], 'Server: ' . mysql_get_server_info() . ' / Client: ' . mysql_get_client_info());
+			$incontext['error'] = sprintf($txt['error_db_too_low'], 'Server: ' . mysqli_get_server_info() . ' / Client: ' . mysqli_get_client_info());
 			return false;
 		}
 
@@ -985,7 +985,7 @@ function DatabasePopulation()
 		{
 			// Error 1050: Table already exists!
 			// !! Needs to be made better!
-			if (mysql_errno($db_connection) === 1050 && preg_match('~^\s*CREATE TABLE ([^\s\n\r]+?)~', $current_statement, $match) == 1)
+			if (mysqli_errno($db_connection) === 1050 && preg_match('~^\s*CREATE TABLE ([^\s\n\r]+?)~', $current_statement, $match) == 1)
 			{
 				$exists[] = $match[1];
 				$incontext['sql_results']['table_dups']++;

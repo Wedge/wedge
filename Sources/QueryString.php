@@ -525,7 +525,7 @@ function cleanRequest()
 /**
  * Given an array, this function ensures every key and value is escaped for database purposes.
  *
- * This function traverses an array - including nested arrays as appropriate (calling itself recursively as necessary), and runs every array value through the string escaper as used by the database library (typically mysql_real_escape_string()). Uses two underscores to guard against overloading.
+ * This function traverses an array - including nested arrays as appropriate (calling itself recursively as necessary), and runs every array value through the string escaper as used by the database library (typically mysqli_real_escape_string()). Uses two underscores to guard against overloading.
  *
  * @param mixed $var Either an array or string; if a string, simply return the string escaped, otherwise traverse the array and calls itself on each element of the array (and calls the DB escape string on the array keys) - typically the contents will be non-array, so will be escaped, and the routine will bubble back up through the recursive layers.
  * @return mixed The effective return is a string or array whose entire key/value pair set has been escaped; as a recursive function some calls will only be returning strings back to itself.
