@@ -1052,7 +1052,7 @@ function template_show_custom_profile()
 				<li class="windowbg">
 					<span class="handle"></span>
 					<div class="floatright">
-						<input type="submit" name="modify[', $id, ']" value="', $txt['modify'], '" class="submit">
+						<input type="submit" name="modify[', $id, ']" value="', $txt['modify'], '" class="modify">
 						<input type="hidden" name="order[]" value="', $id, '">
 					</div>
 					<span class="sortme">', $field['field_name'], '</span>

@@ -206,7 +206,8 @@ function ModifyProfile($post_errors = array())
 				'notifications' => array(
 					'label' => $txt['notifications'],
 					'enabled' => true,
-					'function' => 'weNotif_profile',
+					'file' => 'Notifications',
+					'function' => array('weNotif', 'profile'),
 					'permission' => array(
 						'own' => array('profile_extra_any', 'profile_extra_own'),
 					),
@@ -529,7 +530,7 @@ function ModifyProfile($post_errors = array())
 	}
 
 	// Make sure that the area function does exist!
-	if (!isset($profile_include_data['function']) || !function_exists($profile_include_data['function']))
+	if (!isset($profile_include_data['function']) || !is_callable($profile_include_data['function']))
 	{
 		destroyMenu();
 		fatal_lang_error('no_access', false);
@@ -696,7 +697,7 @@ function ModifyProfile($post_errors = array())
 		redirectexit('action=profile' . (we::$user['is_owner'] ? '' : ';u=' . $memID) . ';area=' . $current_area);
 
 	// Call the appropriate subaction function.
-	$profile_include_data['function']($memID);
+	call_user_func_array($profile_include_data['function'], array($memID));
 
 	// Set the page title if it's not already set...
 	if (!isset($context['page_title']))

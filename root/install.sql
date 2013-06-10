@@ -2055,7 +2055,7 @@ CREATE TABLE {$db_prefix}scheduled_tasks (
 	time_regularity smallint(5) NOT NULL default 0,
 	time_unit varchar(1) NOT NULL default 'h',
 	disabled tinyint(3) NOT NULL default 0,
-	task varchar(24) NOT NULL default '',
+	task varchar(32) NOT NULL default '',
 	sourcefile varchar(255) NOT NULL default '',
 	PRIMARY KEY (id_task),
 	KEY next_time (next_time),
@@ -2078,8 +2078,8 @@ VALUES
 	(7, 0, {$sched_task_offset}, 1, 'd', 0, 'fetchRemoteFiles', ''),
 	(8, 0, 0, 1, 'w', 0, 'weekly_maintenance', ''),
 	(9, 0, 120, 1, 'd', 1, 'paid_subscriptions', ''),
-	(10, 0, 0, 1, 'd', 0, 'notification_prune', ''),
-	(11, 0, 0, 6, 'h', 0, 'notification_periodical', '');
+	(10, 0, 0, 1, 'd', 0, 'weNotif::scheduled_prune', 'Notifications'),
+	(11, 0, 0, 6, 'h', 0, 'weNotif::scheduled_periodical', 'Notifications');
 # --------------------------------------------------------
 
 #

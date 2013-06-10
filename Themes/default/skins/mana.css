@@ -187,40 +187,6 @@ fieldset dl
 	width: 33%
 
 
-/* Styles for the manage boards section.
-------------------------------------------------- */
-#manage_boards
-	ul
-		padding: 0
-		margin: 0 0 0.6em 0
-		max-height: 30em
-		overflow: auto
-	li
-		list-style-type: none
-		border-bottom: 1px dotted #8a8d92
-		padding: 0.2em
-		margin: 1px
-		clear: right
-	li img
-		vertical-align: middle
-		padding-bottom: 3px
-	#recycle_board
-		background-color: #dee
-	span.post_group, span.regular_members, span.everyone
-		border-bottom: 1px dotted #000
-		cursor: help
-	tr.everyone td
-		padding-bottom: 14px
-
-.move_links
-	padding: 0 13px 0 0
-
-.modify_boards
-	padding: 0 0.5em
-
-#boardtheme
-	font-family: $mono_font
-
 /* Styles for the manage membergroups section.
 ------------------------------------------------- */
 #groupForm
@@ -266,6 +232,67 @@ fieldset dl
 			min-width: 150px
 			img
 				margin: 0
+
+
+/* Styles for the manage boards section.
+------------------------------------------------- */
+#manage_boards
+	ul
+		padding: 0
+		margin: 0 0 0.6em 0
+		max-height: 30em
+		overflow: auto
+	li
+		list-style-type: none
+		border-bottom: 1px dotted #8a8d92
+		padding: 0.2em
+		margin: 1px
+		clear: right
+	li img
+		vertical-align: middle
+		padding-bottom: 3px
+	#recycle_board
+		background-color: #dee
+	span.post_group, span.regular_members, span.everyone
+		border-bottom: 1px dotted #000
+		cursor: help
+	tr.everyone td
+		padding-bottom: 14px
+
+#manage_boards_list
+	ul.sortable
+		margin: 1em 0
+		padding: 0
+		ul
+			padding: 0 0 0 25px
+	li
+		list-style-type: none
+		margin: 5px 0 0 0
+		div.windowbg
+			border: 1px dotted gray
+			border-left: 0
+			padding: 10px 10px 10px 22px
+			position: relative
+			.handle extends #sortable li .handle // only want the handle, not the whole thing
+				cursor: move
+		input.permbutton mixes .button-padding
+			background: url($images/buttons/permissions.png) 5px center no-repeat
+			background-color: #e0eaf6
+		.floatright
+			margin: 0 4px
+	.sortable_error
+		background: #fbe3e4
+	.placeholder
+		outline: 1px dashed #4183C4;
+
+.move_links
+	padding: 0 13px 0 0
+
+.modify_boards
+	padding: 0 0.5em
+
+#boardtheme
+	font-family: $mono_font
 
 /* Styles for the manage members section.
 ------------------------------------------------- */

@@ -129,12 +129,13 @@ function AutoTask()
 			}
 
 			// The function must exist or we are wasting our time, plus do some timestamp checking, and database check!
-			if (function_exists('scheduled_' . $row['task']) && (!isset($_GET['ts']) || $_GET['ts'] == $row['next_time']) && $affected_rows)
+			$sched_function = strpos($row['task'], '::') !== false ? explode('::', $row['task']) : 'scheduled_' . $row['task'];
+			if (is_callable($sched_function) && (!isset($_GET['ts']) || $_GET['ts'] == $row['next_time']) && $affected_rows)
 			{
 				ignore_user_abort(true);
 
 				// Do the task...
-				$completed = call_user_func('scheduled_' . $row['task']);
+				$completed = call_user_func($sched_function);
 
 				// Log that we did it ;)
 				if ($completed)
@@ -152,7 +153,7 @@ function AutoTask()
 					);
 				}
 			}
-			elseif (!function_exists('scheduled_' . $row['task']))
+			elseif (!is_callable($sched_function))
 			{
 				// If it doesn't exist now, odds are it won't exist in the future either... just need to check this on its own.
 				wesql::query('

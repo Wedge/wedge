@@ -749,6 +749,10 @@ input.new mixes .button-padding
 	background: url($images/buttons/new.png) 5px center no-repeat
 	background-color: #e0eaf6
 
+input.modify mixes .button-padding
+	background: url($images/buttons/modify.png) 5px center no-repeat
+	background-color: #f3f3c8
+
 input.cancel
 	background-color: #fff0e3
 	padding-left: 5px

@@ -682,7 +682,7 @@ class wesql
 
 	public static function num_fields($result)
 	{
-		return mysqli_field_count($result);
+		return mysqli_num_fields($result);
 	}
 
 	public static function num_rows($result)

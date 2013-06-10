@@ -140,14 +140,19 @@ function ScheduledTasks()
 			if (!empty($row['sourcefile']))
 			{
 				if (strpos($row['sourcefile'], 'plugin;') === 0)
-					require_once(substr($row['sourcefile'], 7) . '.php');
+				{
+					list (, $plugin_id, $filename) = explode(';', $row['sourcefile']);
+					if (!empty($filename) && !empty($context['plugins_dir'][$plugin_id]))
+						loadPluginSource($plugin_id, $filename);
+				}
 				else
 					loadSource($row['sourcefile']);
 			}
 
 			$start_time = microtime(true);
 			// The functions got to exist for us to use it.
-			if (!function_exists('scheduled_' . $row['task']))
+			$sched_function = strpos($row['task'], '::') !== false ? explode('::', $row['task']) : 'scheduled_' . $row['task'];
+			if (!is_callable($sched_function))
 				continue;
 
 			// Try to stop a timeout, this would be bad...
@@ -156,7 +161,7 @@ function ScheduledTasks()
 				@apache_reset_timeout();
 
 			// Do the task...
-			$completed = call_user_func('scheduled_' . $row['task']);
+			$completed = call_user_func($sched_function);
 
 			// Log that we did it ;)
 			if ($completed)

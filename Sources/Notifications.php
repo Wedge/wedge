@@ -569,18 +569,3 @@ class weNotif
 		));
 	}
 }
-
-function weNotif_profile($memID)
-{
-	return weNotif::profile($memID);
-}
-
-function scheduled_notification_prune()
-{
-	return weNotif::scheduled_prune();
-}
-
-function scheduled_notification_periodical()
-{
-	return weNotif::scheduled_periodical();
-}
