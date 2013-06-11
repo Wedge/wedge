@@ -586,9 +586,9 @@ function template_modify_group_classic($type)
 						<td class="smalltext w100 right"><label for="', $permission['own']['id'], '_on">', $permission['own']['name'], ':</label></td>';
 
 						echo '
-						<td style="width: 10px"><input type="radio" name="perm[', $permission_type['id'], '][', $permission['own']['id'], ']"', $permission['own']['select'] == 'on' ? ' checked' : '', ' value="on" id="', $permission['own']['id'], '_on"', $disable_field, '></td>
-						<td style="width: 10px"><input type="radio" name="perm[', $permission_type['id'], '][', $permission['own']['id'], ']"', $permission['own']['select'] == 'off' ? ' checked' : '', ' value="off"', $disable_field, '></td>
-						<td style="width: 10px"><input type="radio" name="perm[', $permission_type['id'], '][', $permission['own']['id'], ']"', $permission['own']['select'] == 'denied' ? ' checked' : '', ' value="deny"', $disable_field, '></td>';
+						<td style="width: 10px"><input type="radio" name="perm[', $permission_type['id'], '][', $permission['own']['id'], ']"', $permission['own']['select'] == 'on' ? ' checked' : '', ' value="on" id="', $permission['own']['id'], '_on"', $disable_field, ' title="', $txt['permissions_option_on_title'], '"></td>
+						<td style="width: 10px"><input type="radio" name="perm[', $permission_type['id'], '][', $permission['own']['id'], ']"', $permission['own']['select'] == 'off' ? ' checked' : '', ' value="off"', $disable_field, ' title="', $txt['permissions_option_off_title'], '"></td>
+						<td style="width: 10px"><input type="radio" name="perm[', $permission_type['id'], '][', $permission['own']['id'], ']"', $permission['own']['select'] == 'denied' ? ' checked' : '', ' value="deny"', $disable_field, ' title="', $txt['permissions_option_deny_title'], '"></td>';
 
 							echo '
 					</tr>
@@ -601,12 +601,12 @@ function template_modify_group_classic($type)
 
 						if ($context['group']['id'] == -1)
 							echo '
-						<td colspan="3"><input type="checkbox" name="perm[', $permission_type['id'], '][', $permission['any']['id'], ']"', $permission['any']['select'] == 'on' ? ' checked' : '', ' value="on" id="', $permission['any']['id'], '_on"', $disable_field, '></td>';
+						<td colspan="3"><input type="checkbox" name="perm[', $permission_type['id'], '][', $permission['any']['id'], ']"', $permission['any']['select'] == 'on' ? ' checked' : '', ' value="on" id="', $permission['any']['id'], '_on"', $disable_field, ' title="', $txt['permissions_option_on_title'], '"></td>';
 						else
 							echo '
-						<td><input type="radio" name="perm[', $permission_type['id'], '][', $permission['any']['id'], ']"', $permission['any']['select'] == 'on' ? ' checked' : '', ' value="on" id="', $permission['any']['id'], '_on" onclick="document.forms.permissionForm.', $permission['own']['id'], '_on.checked = true;"', $disable_field, '></td>
-						<td><input type="radio" name="perm[', $permission_type['id'], '][', $permission['any']['id'], ']"', $permission['any']['select'] == 'off' ? ' checked' : '', ' value="off"', $disable_field, '></td>
-						<td><input type="radio" name="perm[', $permission_type['id'], '][', $permission['any']['id'], ']"', $permission['any']['select']== 'denied' ? ' checked' : '', ' value="deny" id="', $permission['any']['id'], '_deny" onclick="window.weUsedDeny = true;"', $disable_field, '></td>';
+						<td><input type="radio" name="perm[', $permission_type['id'], '][', $permission['any']['id'], ']"', $permission['any']['select'] == 'on' ? ' checked' : '', ' value="on" id="', $permission['any']['id'], '_on" onclick="document.forms.permissionForm.', $permission['own']['id'], '_on.checked = true;"', $disable_field, ' title="', $txt['permissions_option_on_title'], '"></td>
+						<td><input type="radio" name="perm[', $permission_type['id'], '][', $permission['any']['id'], ']"', $permission['any']['select'] == 'off' ? ' checked' : '', ' value="off"', $disable_field, ' title="', $txt['permissions_option_off_title'], '"></td>
+						<td><input type="radio" name="perm[', $permission_type['id'], '][', $permission['any']['id'], ']"', $permission['any']['select']== 'denied' ? ' checked' : '', ' value="deny" id="', $permission['any']['id'], '_deny" onclick="window.weUsedDeny = true;"', $disable_field, ' title="', $txt['permissions_option_deny_title'], '"></td>';
 
 						echo '
 					</tr>';
@@ -618,12 +618,12 @@ function template_modify_group_classic($type)
 
 						if ($context['group']['id'] == -1)
 							echo '
-						<td><input type="checkbox" name="perm[', $permission_type['id'], '][', $permission['id'], ']"', $permission['select'] == 'on' ? ' checked' : '', ' value="on"', $disable_field, '></td>';
+						<td><input type="checkbox" name="perm[', $permission_type['id'], '][', $permission['id'], ']"', $permission['select'] == 'on' ? ' checked' : '', ' value="on"', $disable_field, ' title="', $txt['permissions_option_on_title'], '"></td>';
 						else
 							echo '
-						<td><input type="radio" name="perm[', $permission_type['id'], '][', $permission['id'], ']"', $permission['select'] == 'on' ? ' checked' : '', ' value="on"', $disable_field, '></td>
-						<td><input type="radio" name="perm[', $permission_type['id'], '][', $permission['id'], ']"', $permission['select'] == 'off' ? ' checked' : '', ' value="off"', $disable_field, '></td>
-						<td><input type="radio" name="perm[', $permission_type['id'], '][', $permission['id'], ']"', $permission['select'] == 'denied' ? ' checked' : '', ' value="deny" onclick="window.weUsedDeny = true;"', $disable_field, '></td>';
+						<td><input type="radio" name="perm[', $permission_type['id'], '][', $permission['id'], ']"', $permission['select'] == 'on' ? ' checked' : '', ' value="on"', $disable_field, ' title="', $txt['permissions_option_on_title'], '"></td>
+						<td><input type="radio" name="perm[', $permission_type['id'], '][', $permission['id'], ']"', $permission['select'] == 'off' ? ' checked' : '', ' value="off"', $disable_field, ' title="', $txt['permissions_option_off_title'], '"></td>
+						<td><input type="radio" name="perm[', $permission_type['id'], '][', $permission['id'], ']"', $permission['select'] == 'denied' ? ' checked' : '', ' value="deny" onclick="window.weUsedDeny = true;"', $disable_field, ' title="', $txt['permissions_option_deny_title'], '"></td>';
 
 						echo '
 					</tr>';
@@ -665,9 +665,9 @@ function template_inline_permissions()
 	foreach ($context['member_groups'] as $group)
 		echo '
 				<dt>
-					<span class="perms"><input type="radio" name="', $context['current_permission'], '[', $group['id'], ']" value="on"', $group['status'] == 'on' ? ' checked' : '', '></span>
-					<span class="perms"><input type="radio" name="', $context['current_permission'], '[', $group['id'], ']" value="off"', $group['status'] == 'off' ? ' checked' : '', '></span>
-					<span class="perms"><input type="radio" name="', $context['current_permission'], '[', $group['id'], ']" value="deny"', $group['status'] == 'deny' ? ' checked' : '', '></span>
+					<span class="perms"><input type="radio" name="', $context['current_permission'], '[', $group['id'], ']" value="on"', $group['status'] == 'on' ? ' checked' : '', ' title="', $txt['permissions_option_on_title'], '"></span>
+					<span class="perms"><input type="radio" name="', $context['current_permission'], '[', $group['id'], ']" value="off"', $group['status'] == 'off' ? ' checked' : '', ' title="', $txt['permissions_option_off_title'], '"></span>
+					<span class="perms"><input type="radio" name="', $context['current_permission'], '[', $group['id'], ']" value="deny"', $group['status'] == 'deny' ? ' checked' : '', ' title="', $txt['permissions_option_deny_title'], '"></span>
 				</dt>
 				<dd>
 					<span', $group['is_postgroup'] ? ' style="font-style: italic"' : '', '>', $group['name'], '</span>

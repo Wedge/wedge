@@ -317,9 +317,6 @@ ul.stats
 		&.last
 			white-space: normal
 
-.smiley
-	text-indent: 0
-
 // IE6 totally screws up the menus without all of these together.
 .mimenu ul
 	float: none

@@ -61,7 +61,7 @@ if (!defined('WEDGE'))
 	void init_inline_permissions(array permissions)
 		- internal function to initialize the inline permission settings.
 		- loads the ManagePermissions language and template.
-		- loads a context variables for each permission.
+		- loads a context variable for each permission.
 		- used by several settings screens to set specific permissions.
 
 	void theme_inline_permissions(string permission)
@@ -1650,7 +1650,7 @@ function init_inline_permissions($permission_details)
 	// Permissions itself is an array of permission-name to groups that can't have it. We only actually need the list of permissions for most things here.
 	$permissions = array_keys($permission_details);
 
-	// Load the permission settings for guests
+	// Load the permission settings for guests.
 	foreach ($permissions as $permission)
 		$context[$permission] = array(
 			-1 => array(
@@ -1714,19 +1714,14 @@ function init_inline_permissions($permission_details)
 
 	// Firstly, deal with the case that guests do not have access.
 	if (empty($settings['allow_guestAccess']))
-	{
 		foreach ($permissions as $permission)
 			unset($context[$permission][-1]);
-	}
 
 	// Some permissions cannot be given to certain groups. Remove the groups.
 	foreach ($permission_details as $permission => $excluded_groups)
-	{
-		if (empty($excluded_groups))
-			continue;
-		foreach ($excluded_groups as $group)
-			unset($context[$permission][$group]);
-	}
+		if (!empty($excluded_groups))
+			foreach ($excluded_groups as $group)
+				unset($context[$permission][$group]);
 }
 
 // Show a collapsible box to set a specific permission.

@@ -749,8 +749,9 @@ input.new mixes .button-padding
 	background: url($images/buttons/new.png) 5px center no-repeat
 	background-color: #e0eaf6
 
+// Let's make un-raw this once we start using it a bit more, all right..?
 input.modify mixes .button-padding
-	background: url($images/buttons/modify.png) 5px center no-repeat
+	background: raw-url($images/buttons/modify.png) 5px center no-repeat
 	background-color: #f3f3c8
 
 input.cancel
@@ -1236,14 +1237,8 @@ table
 		:before
 			content: "\2026"
 		span
-			@if safari
-				position: absolute
-				clip: rect(1px, 1px, 1px, 1px)
-			@else
-				text-indent: 100%
-				white-space: nowrap
-				overflow: hidden
-			@endif
+			position: absolute
+			clip: rect(1px, 1px, 1px, 1px)
 	:link, :visited
 		color: #789
 

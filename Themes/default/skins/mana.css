@@ -273,17 +273,17 @@ fieldset dl
 			border-left: 0
 			padding: 10px 10px 10px 22px
 			position: relative
-			.handle extends #sortable li .handle // only want the handle, not the whole thing
+			.handle extends #sortable li .handle // Only want the handle, not the whole thing.
 				cursor: move
 		input.permbutton mixes .button-padding
-			background: url($images/buttons/permissions.png) 5px center no-repeat
+			background: raw-url($images/buttons/permissions.png) 5px center no-repeat
 			background-color: #e0eaf6
 		.floatright
 			margin: 0 4px
 	.sortable_error
 		background: #fbe3e4
 	.placeholder
-		outline: 1px dashed #4183C4;
+		outline: 1px dashed #4183C4
 
 .move_links
 	padding: 0 13px 0 0
