@@ -4,7 +4,8 @@
 
 input, textarea
 	:disabled
-		background: #eee
+		background-color: #eee
+		opacity: .66
 
 /* Styles for the admin quick search.
 ------------------------------------------------------- */

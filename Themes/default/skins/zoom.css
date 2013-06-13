@@ -73,7 +73,7 @@
 	background: rgba(255,255,255, .5)
 	height, line-height: 20px
 	z-index: 1000
-	span extends .wheel
+	span extends .loading
 		margin-right: 10px
 
 .zoom-drop-shadow extends .zoom-base

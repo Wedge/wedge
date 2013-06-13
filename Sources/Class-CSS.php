@@ -1516,16 +1516,6 @@ class wess_prefixes extends wess
 			return $prefixed;
 		}
 
-		// IE6/7/8/9 don't support transitions. IE10, Chrome 26+, Firefox 16+ and Opera 12.10+ support them unprefixed, other browsers require a prefix.
-		if ($matches[1] === 'transition')
-		{
-			if ($ie8down || $ie9 || ($firefox && $v < 4))
-				return '';
-			if (($opera && $v < 12.1) || ($firefox && $v < 16) || ($chrome && $v < 26) || $safari)
-				return $prefixed;
-			return $unchanged;
-		}
-
 		// IE6/7/8/9 don't support animations, IE10, Firefox 16+ and Opera 12.10+ support them unprefixed, other browsers require a prefix.
 		if (strpos($matches[1], 'animation') === 0)
 		{
@@ -1536,7 +1526,7 @@ class wess_prefixes extends wess
 			return $unchanged;
 		}
 
-		// IE6/7/8 don't support transforms, IE10, Firefox 16+ and Opera 12.10+ support them unprefixed, other browsers require a prefix.
+		// IE6/7/8 don't support transforms, IE10, Firefox 16+ and Opera 12.1x (not 15) support them unprefixed, other browsers require a prefix.
 		if (strpos($matches[1], 'transform') === 0)
 		{
 			if ($ie8down || ($firefox && $v < 3.5))
@@ -1583,6 +1573,19 @@ class wess_prefixes extends wess
 				$prefixed = preg_replace('~(?<=radial-gradient\()([\sa-z-]+\s+)?at\s([^,]+)(?=,)~e', '\'$2\' . (\'$1\' != \'\' ? \', $1\' : \'\')', $prefixed);
 
 			return $prefixed;
+		}
+
+		// IE6/7/8/9 don't support transitions. IE10, Chrome 26+, Firefox 16+ and Opera 12.10+ support them unprefixed, other browsers require a prefix.
+		if (strpos($matches[1], 'transition') !== false)
+		{
+			// In case the transition value is 'transform', we need to prefix it on browsers that need it.
+			if ($b['ie9'] || ($b['opera'] && $v < 12.1) || ($b['firefox'] && $v < 16) || $b['webkit'])
+				$unchanged = str_replace($matches[2], preg_replace('~\btransform\b~', $this->prefix . 'transform', $matches[2]), $unchanged);
+			if ($b['ie8down'] || $b['ie9'] || ($b['firefox'] && $v < 4))
+				return '';
+			if (($b['opera'] && $v < 12.1) || ($b['firefox'] && $v < 16) || ($b['chrome'] && $v < 26) || $b['safari'])
+				return $this->prefix . $unchanged;
+			return $unchanged;
 		}
 
 		// All browsers that support the old flexbox model will require a prefix.
@@ -1646,7 +1649,6 @@ class wess_prefixes extends wess
 			'column-[a-z-]+',				// Multi-column layout
 			'box-[a-z-]+',					// Old Flexbox model
 			'grid-[a-z]+',					// Grid layout
-			'transition(?:-[a-z-]+)?',		// Animated transitions
 			'animation(?:-[a-z-]+)?',		// Proper animations
 			'transform(?:-[a-z-]+)?',		// 2D/3D transformations (transform, transform-style, transform-origin...)
 
@@ -1658,6 +1660,7 @@ class wess_prefixes extends wess
 		$values = array(
 
 			'background(?:-image)?:([^\n;]*?(?<!-o-)(?:linear|radial)-gradient\([^)]+\)[^\n;]*)',	// Gradients (linear, radial, repeating...)
+			'transition(?:-[a-z-]+)?:([^\n;]*)',			// Animated transitions (we need to fix 'transform' values, if any.)
 			'display:\h*(inline-flex|flex(?:box)?|box)\b',	// Flexbox model declarations (all 3)
 			'\b(min|max)-resolution:\h*([\d.]+)(dppx|dpi)',	// Useful for responsive design
 			'\brect\h*\(([^)]+)\)',							// rect() function, needs commas except in IE 6/7

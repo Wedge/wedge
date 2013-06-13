@@ -13,6 +13,10 @@
 @language index;
 
 $(function () {
+	// Only execute this on MessageIndex pages.
+	if (!$(document).find('#messageindex').length)
+		return;
+
 	// Fix icons in MessageIndex
 	$.each('.locked .pinned .poll .my'.split(' '), function (key, val) {
 		$('.subject' + val).each(function () {
@@ -21,19 +25,25 @@ $(function () {
 	});
 });
 
-// Fix post height in Display. We have to do this at onload, because of images. :(
 $(window).load(function () {
 
-	// Ignore non-topic pages.
+	// Only execute this on Display pages.
 	if (!$(document).find('#forumposts').length)
 		return;
 
-	// count_scrolls will allow us to ensure not to load anything through accidental wheel rolls.
+	/*
+		This is the code for the infinite scrolling feature.
+		There are limitations to it, though. Browsing through history is far from perfect,
+		and JavaScript may fail, especially if the new page has embedded items in it.
+		Please bear with us until we can fix everything...
+	*/
+
 	var count_scrolls = 0;
 	$(window).on('DOMMouseScroll mousewheel', function ()
 	{
 		if ($(window).scrollTop() >= $(document).height() - $(window).height())
 		{
+			// Ensure not to load anything through accidental wheel rolls.
 			if (count_scrolls++ > 2)
 			{
 				var next_page = $('span.next_page > a').first().attr('href');

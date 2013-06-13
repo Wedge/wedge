@@ -235,7 +235,9 @@ img.new_posts
 	display: table
 	// Without this, wide code blocks will break layout.
 	table-layout: fixed
-	width: 100%
+	// height: 100% does nothing per se (thankfully), but it allows Chrome
+	// (and only it for now..?) to properly set a height on table cells.
+	width, height: 100%
 
 // Alternating backgrounds for posts
 .postbg extends .windowbg
@@ -360,6 +362,13 @@ hr.sep
 .postarea
 	padding: 0 15px
 	display: table-cell
+	@if (chrome) // Could use can_flex, but it doesn't work outside of Chrome anyway.
+		position: relative
+		height: 100%
+		display: flex
+		flex-direction: column
+		align-items: stretch
+	@endif
 
 // Posts and personal messages displayed throughout the forum.
 .post, .personalmessage
@@ -369,6 +378,10 @@ hr.sep
 
 .post
 	margin, padding: 0
+	@if can_flex
+		.root &
+			flex: 1
+	@endif
 
 // Setting a margin here helps take advantage of margin collapsing. (e.g. when a post starts with a quote.)
 .inner
