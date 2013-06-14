@@ -331,7 +331,7 @@ function MoveTopic2()
 	// Even though we store msg id (for the preview), we create it against topic for performance.
 	// Note that we also set up the notification here rather than in moveTopics because we already needed to get some of the details here in the first place *for* moveTopics.
 	if (!empty($id_member_started) && $id_member_started != we::$id)
-		Notification::issue($id_member_started, WeNotif::getNotifiers('move'), $topic, array('member' => array('name' => we::$user['name'], 'id' => we::$id), 'id_msg' => $id_msg, 'subject' => $subject, 'id_board' => $_POST['to_board'], 'board' => $board_name));
+		Notification::issue($id_member_started, WeNotif::getNotifiers('move'), $topic, array('member' => array('name' => we::$user['name'], 'id' => we::$id), 'id_msg' => $id_msg, 'subject' => $subject, 'id_board' => $_POST['toboard'], 'board' => $board_name));
 
 	$request = wesql::query('
 		SELECT count_posts

@@ -408,10 +408,9 @@ function MLSearch()
 
 	// Can they search custom fields?
 	$request = wesql::query('
-		SELECT col_name, field_name, field_desc
+		SELECT col_name, field_name, field_desc, can_see
 		FROM {db_prefix}custom_fields
 		WHERE active = {int:active}
-			' . (allowedTo('admin_forum') ? '' : ' AND private < {int:private_level}') . '
 			AND can_search = {int:can_search}
 			AND (field_type = {literal:text} OR field_type = {literal:textarea})',
 		array(
@@ -422,11 +421,20 @@ function MLSearch()
 	);
 	$context['custom_search_fields'] = array();
 	while ($row = wesql::fetch_assoc($request))
+	{
+		// Gotta check visibility. Admins are naturally exempt.
+		$row['can_see'] = explode(',', $row['can_see']);
+		foreach ($row['can_see'] as $k => $v)
+			$row['can_see'][$k] = (int) $v;
+		if (!we::$is_admin && count(array_intersect($row['can_see'], we::$user['groups'])) == 0)
+			continue;
+
 		$context['custom_search_fields'][$row['col_name']] = array(
 			'colname' => $row['col_name'],
 			'name' => $row['field_name'],
 			'desc' => $row['field_desc'],
 		);
+	}
 	wesql::free_result($request);
 
 	// They're searching..
