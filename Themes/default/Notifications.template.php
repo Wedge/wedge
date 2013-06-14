@@ -54,6 +54,55 @@ function template_notifications_list()
 		</div>';
 }
 
+function template_notification_subs_profile()
+{
+	global $txt, $context, $theme;
+
+	echo '
+		<we:cat>
+			', $txt['notif_subs'], '
+		</we:cat>
+		<p class="windowbg description">', $txt['notif_subs_desc'], '</p>';
+
+	foreach ($context['notif_subscriptions'] as $subscription)
+	{
+		echo '
+		<div class="generic_list">
+			<table class="table_grid cs0 w100">
+				<thead>
+					<tr class="catbg">
+						<th scope="cols" class="left first_th">', $subscription['profile']['label'], '</th>
+						<th scope="cols" class="left">', $txt['notif_subs_start_time'], '</th>
+						<th scope="cols" class="left last_th" style="width: 8%">', $txt['notif_unsubscribe'], '</th>
+					</tr>
+				</thead>
+				<tr>
+					<td class="windowbg description" colspan="3">', $subscription['profile']['description'], '</td>
+				</tr>';
+
+		$alt = false;
+		foreach ($subscription['objects'] as $object)
+		{
+			$alt = !$alt;
+
+			echo '
+				<tr class="windowbg', $alt ? '2' : '', '">
+					<td><a href="', $object['link'], '">', $object['title'], '</a></td>
+					<td>', $object['time'], '</td>
+					<td class="center">
+						<a href="<URL>?action=notification;sa=unsubscribe;object=', $object['id'], ';type=', $subscription['type'], ';', $context['session_query'], '">
+							<img src="', $theme['images_url'], '/small_delete.gif" alt="x">
+						</a>
+					</td>
+				</tr>';
+		}
+
+		echo '
+			</table>
+		</div>';
+	}
+}
+
 function template_notification_email($notifications)
 {
 	global $txt;

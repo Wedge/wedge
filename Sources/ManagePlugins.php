@@ -1858,6 +1858,7 @@ function knownHooks()
 			// Notifications
 			'notification_callback',
 			'notification_new',
+			'notification_subscription',
 
 			// Infractions
 			'infraction_view',

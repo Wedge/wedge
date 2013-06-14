@@ -207,7 +207,16 @@ function ModifyProfile($post_errors = array())
 					'label' => $txt['notifications'],
 					'enabled' => true,
 					'file' => 'Notifications',
-					'function' => array('weNotif', 'profile'),
+					'function' => 'weNotif::profile',
+					'permission' => array(
+						'own' => array('profile_extra_any', 'profile_extra_own'),
+					),
+				),
+				'notifsubs' => array(
+					'label' => $txt['notif_subs'],
+					'enabled' => true,
+					'function' => 'weNotif::subs_profile',
+					'file' => 'Notifications',
 					'permission' => array(
 						'own' => array('profile_extra_any', 'profile_extra_own'),
 					),
@@ -428,7 +437,7 @@ function ModifyProfile($post_errors = array())
 		{
 			if (is_numeric($area_id))
 				continue;
-			// If it said no permissions that meant it wasn't valid!
+			// If it said no permissions, that meant it wasn't valid!
 			if (empty($area['permission'][we::$user['is_owner'] ? 'own' : 'any']))
 				$area['enabled'] = false;
 			// Otherwise pick the right set.

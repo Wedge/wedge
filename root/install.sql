@@ -1787,6 +1787,17 @@ CREATE TABLE {$db_prefix}notifications (
 ) ENGINE=MyISAM;
 
 #
+# Table structure for table 'notif_subs'
+#
+CREATE TABLE {$db_prefix}notif_subs (
+	id_member int(10) NOT NULL,
+	id_object int(10) NOT NULL,
+	type varchar(20) NOT NULL,
+	starttime int(10) NOT NULL default 0,
+	PRIMARY KEY (id_member, id_object, type)
+) ENGINE=MyISAM;
+
+#
 # Table structure for table `package_servers`
 #
 

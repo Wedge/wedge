@@ -15,7 +15,7 @@ if (!defined('WEDGE'))
 	die('File cannot be requested directly.');
 
 /**
- * Class for handling notification hooks and actions
+ * Class for handling notification hooks and actions.
  */
 class weNotif
 {
@@ -23,13 +23,14 @@ class weNotif
 	protected static $quick_count = 25;
 	protected static $disabled = array();
 	protected static $pref_cache = array();
+	protected static $subscribers = array();
 
 	/**
-	 * Returns the notifiers
+	 * Returns the notifiers.
 	 *
 	 * @static
 	 * @access public
-	 * @param string $notifier If specified, only returns this notifier
+	 * @param string $notifier If specified, only returns this notifier.
 	 * @return array
 	 */
 	public static function getNotifiers($notifier = null)
@@ -38,7 +39,20 @@ class weNotif
 	}
 
 	/**
-	 * Checks if a notifier is disabled or not for this user
+	 * Returns the subscribers.
+	 *
+	 * @static
+	 * @access public
+	 * @param string $subscriber If specified, only returns this subscriber.
+	 * @return array
+	 */
+	public static function getSubscribers($subscriber = null)
+	{
+		return !empty($subscriber) ? (!empty(self::$subscribers[$subscriber]) ? self::$subscribers[$subscriber] : null) : self::$subscribers;
+	}
+
+	/**
+	 * Checks if a notifier is disabled or not for this user.
 	 *
 	 * @static
 	 * @access public
@@ -51,8 +65,8 @@ class weNotif
 	}
 
 	/**
-	 * Calls notification_callback hook for registering notification hooks
-	 * Also loads notification for this user's quick view
+	 * Calls notification_callback hook for registering notification hooks.
+	 * Also loads notification for this user's quick view.
 	 *
 	 * @static
 	 * @access public
@@ -65,6 +79,8 @@ class weNotif
 		loadSource(array(
 			'Class-Notification',
 			'Class-Notifier',
+			'Class-NotifSubscriber',
+			'Class-NotifSubscription',
 		));
 
 		// Register the notifiers
@@ -83,6 +99,13 @@ class weNotif
 			if ($object instanceof Notifier)
 				self::$notifiers[$object->getName()] = $object;
 		}
+
+		// Register the subscribers
+		call_hook('notification_subscription', array(&self::$subscribers));
+
+		foreach (self::$subscribers as $type => $object)
+			if (!($object instanceof NotifSubscriber) || self::isNotifierDisabled($object->getNotifier()))
+				unset(self::$subscribers[$type]);
 
 		loadLanguage('Notifications');
 
@@ -151,7 +174,7 @@ class weNotif
 	}
 
 	/**
-	 * Loads a specific member's notifier preferences
+	 * Loads a specific member's notifier preferences.
 	 *
 	 * @static
 	 * @access public
@@ -182,8 +205,8 @@ class weNotif
 	}
 
 	/**
-	 * Saves a specific member's notifier preferences. Not really meant to be used
-	 * directly but via Notifier interface
+	 * Saves a specific member's notifier preferences. Not really
+	 * meant to be used directly, but via Notifier interface.
 	 *
 	 * @static
 	 * @access public
@@ -213,7 +236,7 @@ class weNotif
 	}
 
 	/**
-	 * Handles the notification action
+	 * Handles the notification action.
 	 *
 	 * @static
 	 * @access public
@@ -242,6 +265,32 @@ class weNotif
 
 			// Redirect to the target
 			redirectexit($notification->getURL());
+		}
+		elseif ($sa == 'subscribe' || $sa == 'unsubscribe')
+		{
+			checkSession('get');
+
+			$object = (int) $_REQUEST['object'];
+			$type = strtolower(trim($_REQUEST['type']));
+
+			if (empty($object) || empty($type) || we::$is_guest || !isset(self::$subscribers[$type]))
+				fatal_lang_error('wenotif_subs_object_type_empty');
+
+			// Run it by the subscription objects and see if
+			// this thing is subscribable (is that a word?)
+			if (!self::$subscribers[$type]->isValidObject($object))
+				fatal_lang_error('wenotif_subs_invalid_object');
+
+			$subscription = NotifSubscription::get(self::$subscribers[$type], $object);
+			if (($sa == 'subscribe' && $subscription !== false) || ($sa == 'unsubscribe' && $subscription === false))
+				fatal_lang_error('wenotif_subs_' . ($sa == 'subscribe' ? 'already' : 'not') . '_subscribed');
+
+			if ($sa == 'subscribe')
+				NotifSubscription::store(self::$subscribers[$type], $object);
+			else
+				$subscription->delete();
+
+			redirectexit(self::$subscribers[$type]->getURL($object));
 		}
 		elseif ($sa == 'unread')
 		{
@@ -316,7 +365,7 @@ class weNotif
 	}
 
 	/**
-	 * Handles our profile area
+	 * Handles our profile area.
 	 *
 	 * @static
 	 * @access public
@@ -412,7 +461,7 @@ class weNotif
 			{
 				if (!empty($_POST['disable_' . $notifier->getName()]))
 					$disabled[] = $notifier->getName();
-				if (!empty($_POST['email_' . $notifier->getName()]))
+				if (isset($_POST['email_' . $notifier->getName()]))
 					$email[$notifier->getName()] = (int) $_POST['email_' . $notifier->getName()];
 			}
 
@@ -456,7 +505,65 @@ class weNotif
 	}
 
 	/**
-	 * Handles routinely pruning notifications older than x days
+	 * Profile area for subscriptions.
+	 *
+	 * @static
+	 * @access public
+	 * @param int $memID
+	 * @return void
+	 */
+	public static function subs_profile($memID)
+	{
+		global $txt, $context;
+
+		$subscriptions = array();
+		$starttimes = array();
+		foreach (self::$subscribers as $type => $subscriber)
+		{
+			$subscriptions[$type] = array(
+				'type' => $type,
+				'subscriber' => $subscriber,
+				'profile' => $subscriber->getProfile($memID),
+				'objects' => array(),
+			);
+			$starttimes[$type] = array();
+		}
+
+		$request = wesql::query('
+			SELECT id_object, type, starttime
+			FROM {db_prefix}notif_subs
+			WHERE id_member = {int:member}',
+			array(
+				'member' => $memID,
+			)
+		);
+		while ($row = wesql::fetch_assoc($request))
+		{
+			if (isset($subscriptions[$row['type']]))
+				$subscriptions[$row['type']]['objects'][] = $row['id_object'];
+			$starttimes[$row['type']][$row['id_object']] = timeformat($row['starttime']);
+		}
+
+		wesql::free_result($request);
+
+		// Load individual subscription's objects
+		foreach ($subscriptions as &$subscription)
+			if (!empty($subscription['objects']))
+			{
+				$subscription['objects'] = $subscription['subscriber']->getObjects($subscription['objects']);
+ 
+				foreach ($subscription['objects'] as $id => &$object)
+					$object['time'] = $starttimes[$subscription['type']][$id];
+			}
+
+		$context['notif_subscriptions'] = $subscriptions;
+		$context['page_title'] = $txt['notif_subs'];
+		loadTemplate('Notifications');
+		wetem::load('notification_subs_profile');
+	}
+
+	/**
+	 * Handles routinely pruning notifications older than x days.
 	 *
 	 * @static
 	 * @access public
@@ -477,7 +584,7 @@ class weNotif
 	}
 
 	/**
-	 * Handled sending periodical notifications to every member
+	 * Handles sending periodical notifications to every member.
 	 *
 	 * @static
 	 * @access public
@@ -485,6 +592,10 @@ class weNotif
 	 */
 	public static function scheduled_periodical()
 	{
+		global $txt;
+
+		loadSource('Subs-Post');
+
 		// Fetch all the members which have pending e-mails
 		$request = wesql::query('
 			SELECT id_member, real_name, email_address, data, unread_notifications
@@ -498,21 +609,22 @@ class weNotif
 		while ($row = wesql::fetch_assoc($request))
 		{
 			$data = unserialize($row['data']);
-			if (empty($data['email_notifiers']))
-				continue;
 
 			$valid_notifiers = array();
 
-			foreach ($data['email_notifiers'] as $notifier => $status)
-				if ($status < 2 && (empty($data['disabled_notifiers']) || !in_array($notifier, $data['disabled_notifiers'])) && self::getNotifiers($notifier) !== null)
-					$valid_notifiers[] = $notifier;
+			foreach (self::$notifiers as $notifier)
+			{
+				$status = isset($data['email_notifiers'][$notifier->getName()]) ? $data['email_notifiers'][$notifier->getName()] : 0;
+				if ($status < 2 && (empty($data['disabled_notifiers']) || !in_array($notifier, $data['disabled_notifiers'])))
+					$valid_notifiers[$notifier->getName()] = $notifier;
+			}
 
 			if (empty($valid_notifiers))
 				continue;
 
 			$members[$row['id_member']] = array(
 				'id' => $row['id_member'],
-				'name' => $ow['real_name'],
+				'name' => $row['real_name'],
 				'email' => $row['email_address'],
 				'valid_notifiers' => $valid_notifiers,
 				'notifications' => array(),
@@ -538,7 +650,7 @@ class weNotif
 		);
 
 		while ($row = wesql::fetch_assoc($request))
-			if (in_array($row['notifier'], $members[$row['id_member']]['valid_notifiers']))
+			if (isset($members[$row['id_member']]['valid_notifiers'][$row['notifier']]))
 			{
 				$mem =& $members[$row['id_member']];
 
@@ -557,7 +669,7 @@ class weNotif
 			if (empty($m['notifications']))
 				continue;
 
-			// Assemble the notifications into one huge text
+			// Assemble the notifications into one huge text.
 			$body = template_notification_email($m['notifications']);
 			$subject = sprintf($txt['notification_email_periodical_subject'], $m['name'], $m['unread']);
 
