@@ -218,8 +218,7 @@ class Notification
 			$notification = new Notification($row, $notifier);
 
 			// If the notifier returns false, we drop this notification
-			if (!$notifier->handleMultiple($notification, $data, $email_data)
-				&& !in_array($notifier->getName(), $members[$row['id_member']]['disabled_notifiers']))
+			if (!$notifier->handleMultiple($notification, $data, $email_data) && !in_array($notifier->getName(), $members[$row['id_member']]['disabled_notifiers']))
 			{
 				$notification->updateTime();
 				unset($members[$row['id_member']]);
@@ -228,7 +227,7 @@ class Notification
 					&& $members[$row['id_member']]['email_notifiers'][$notifier->getName()] === 1)
 				{
 					list ($subject, $body) = $notifier->getEmail($notification, $email_data);
-					sendemail($members[$row['id_member']]['email'], $subject, $body);
+					sendmail($members[$row['id_member']]['email'], $subject, $body);
 				}
 			}
 		}

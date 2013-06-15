@@ -175,13 +175,14 @@ $sites = array(
 		'title' => 'Dailymotion',
 		'website' => 'http://www.dailymotion.com',
 		'type' => 'pop',
+		'plugin' => 'html',
 		// http://www.dailymotion.com/video/xx1bs_numa-numa-dance_fun
 		// http://dailymotion.alice.it/it/featured/cluster/news/video/x6k9g6_hillary-clinton-uniti-per-barack-ob_news
 		// http://www.dailymotion.com/related/x5hsal_b2oba_music/video/xxq49_booba-on-nest-pas-couche-france-2_music?from=rss
 		'pattern' => 'http://(?:www\.)?dailymotion\.(?:com|[a-z]{2}|alice\.it)/(?:[^"]*?video|swf)/([a-z0-9]{1,18})',
-		'movie' => 'http://www.dailymotion.com/swf/$2&related=0',
-		'size' => array(520, 416),
-		'ui-height' => 21,
+		'movie' => '<iframe class="aext" width="{int:width}" height="{int:height}" src="http://www.dailymotion.com/embed/video/$2" type="text/html" scrolling="no" marginheight="0" marginwidth="0" frameborder="0"></iframe>',
+		'size' => array(480, 270),
+		'ui-height' => 0,
 		'lookup-title-skip' => true,
 		'fix-html-pattern' => '(?:<div\>)?<object [^>]*><param name="movie" value="$1">.*?</object>(?:<br /><b><a href="$1">[^<]*</a></b>(?:<br /><i>[^<]*<a href="[^"]*">[^<]*</a></i>)?</div\>)?',
 	),
@@ -243,7 +244,7 @@ $sites = array(
 		'pattern' => 'http://(?:www\.|player\.)?vimeo\.com/(?:video/)?(\d{1,12})',
 		'plugin' => 'html',
 		'movie' => '<iframe class="aext" src="http://player.vimeo.com/video/$2" width="{int:width}" height="{int:height}" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>',
-		'size' => array(500, 375),
+		'size' => array(500, 281),
 		'fix-html-pattern' => '<object [^>]*>\s{0,3}<param name="allowfullscreen" value="true" />\s{0,3}<param name="allowscriptaccess" value="always" />\s{0,3}<param name="movie" value="http://vimeo\.com/moogaloop\.swf\?clip_id=(\d{1,12})[^<>]*?>.*?</object>(?:<p><a href="http://vimeo\.com.*?</a>.*?</a>.*?</a>\.</p>)?',
 		'fix-html-url' => 'http://www.vimeo.com/$1',
 		'lookup-title-skip' => true,
@@ -261,18 +262,6 @@ $sites = array(
 		'size' => array(420, 339),
 		'fix-html-pattern' => '<object [^>]*><param name="movie" value="$1" />.*?</object>',
 		'fix-html-url' => 'http://www.123video.nl/playvideos.asp?MovieID=$2',
-	),
-	array(
-		'id' => '5mi',
-		'title' => '5min Life Videopedia',
-		'website' => 'http://www.5min.com',
-		'type' => 'video',
-		// http://www.5min.com/Video/Quick-Tip-Knife-Technique-30438039
-		'pattern' => 'http://(?:www\.)?5min\.com/(?:Embeded/|Video/[\w-]*?-)(\d{8})',
-		'movie' => 'http://www.5min.com/Embeded/$2/',
-		'size' => array(425, 355),
-		'fix-html-pattern' => '(?:<div style=\'text-align:center\'>)?<object [^>]*id=\'FiveminPlayer\'>(?:<param [^>]*>)+<param name=\'movie\' value=\'$1\'/>.*?</object>(?:<br/><a href=\'http://www\.5min\.com/[^<>]*?>[^<>]*?</a></div>)?',
-		'fix-html-url' => 'http://www.5min.com/Video/-$2',
 	),
 	array(
 		'id' => '9yo',
@@ -514,18 +503,6 @@ $sites = array(
 		// http://www.broadcaster.com/clip/28934
 	),
 	array(
-		'id' => 'car',
-		'title' => 'CarPix Tv',
-		'website' => 'http://carpixtv.vidiac.com',
-		'type' => 'video',
-		'pattern' => 'http://carpixtv\.vidiac\.com/video/([0-9a-z]{8}(?:-[0-9a-z]{4}){3}-[0-9a-z]{12})\.htm',
-		'movie' => 'http://carpixtv.vidiac.com/vidiac.swf?video=$2',
-		'size' => array(428, 352),
-		// http://carpixtv.vidiac.com/video/ad98f9ea-70c7-4987-a724-9b1300cf1f18.htm
-		'fix-html-pattern' => '<embed src="http://(?:carpixtv\.)?vidiac.com/[^<>]*?video=([0-9a-z]{8}(?:-[0-9a-z]{4}){3}-[0-9a-z]{12})[^<>]*?(?:/>|></embed>)(?:<br/><a href="http://vidiac.com/[^<>]*?">[^<>]*?</a>)?',
-		'fix-html-url' => 'http://carpixtv.vidiac.com/video/$1.htm',
-	),
-	array(
 		'id' => 'spo',
 		'title' => 'CBS Sports',
 		'website' => 'http://www.cbssports.com',
@@ -645,18 +622,6 @@ $sites = array(
 		// http://clipser.com/watch_video/378901
 		'fix-html-pattern' => '<object [^>]*><param name="movie" value="$1">.*?</object>',
 		'fix-html-url' => 'http://www.clipser.com/watch_video/$2',
-	),
-	array(
-		'id' => 'clk',
-		'title' => 'ClipShack',
-		'website' => 'http://www.clipshack.com',
-		'type' => 'video',
-		'pattern' => 'http://(?:www\.)?clipshack\.com/Clip\.aspx\?key=([0-9a-f]{16})',
-		'movie' => 'http://www.clipshack.com/player.swf?key=$2',
-		'size' => array(430, 370),
-		// http://clipshack.com/Clip.aspx?key=9330D2F8E5CB7000
-		'fix-html-pattern' => '<embed src="$1" width="\d*" height="\d*" wmode="transparent"></embed>',
-		'fix-html-url' => 'http://www.clipshack.com/Clip.aspx?key=$2',
 	),
 	array(
 		'id' => 'col',
