@@ -649,11 +649,18 @@ function aeva_limits()
 	}
 }
 
+function aeva_fix_lookbehind($match)
+{
+	return $match[0] . '!<AEVA_LOOKBEHIND>!';
+}
+
 // Links urls that haven't already been linked
 function aeva_autolink_urls($input)
 {
 	// Parse any URLs.... And ensure they're not already auto-linked!
-	if (preg_match('~(?:=|\[(?:url|img(?:\s[^]]*)?)])(?:http://|www\.)~i', $input))
+	$input = preg_replace_callback('~(=|\[(?:url|img(?:\s[^]]*)?)])(http://|https://|ftp://|ftps://|www\.)~i', 'aeva_fix_lookbehind', $input);
+
+	if (preg_match('~(?:http://|www\.)[^!]~i', $input))
 	{
 		$input = preg_replace(
 			array(
@@ -667,7 +674,7 @@ function aeva_autolink_urls($input)
 	}
 
 	// Return it
-	return $input;
+	return str_replace('!<AEVA_LOOKBEHIND>!', '', $input);
 }
 
 // Protects [noae] bbcoded items - recursive. Used instead of the ACTUAL tag to prevent infinite loop.
@@ -739,7 +746,7 @@ function embed_lookups_obtain_callback($input)
 
 	$arr =& $sites[$upto];
 
-	// On callback this is an array
+	// On callback, this is an array.
 	if (is_array($input))
 	{
 		// Secondary url - we use the variable in another url.
@@ -839,7 +846,7 @@ function embed_lookups_match($input)
 		if (!empty($sites[$upto]['lookup-url']) || ((!empty($sites[$upto]['lookup-title']) || !empty($settings['embed_lookup_titles'])) && (empty($settings['embed_titles']) || $settings['embed_titles'] == 2)))
 			$input = embed_lookups_obtain_callback($input);
 
-	// Undo All protection
+	// Undo all protection
 	$input = str_replace('noae://', 'http://', $input);
 
 	// All sites are done.
@@ -867,19 +874,19 @@ function aeva_onposting($input)
 	);
 
 	// Protect quotes from embedding
-	// False doesn't meant retain or replace, but whether we're fully protecting it.
+	// False doesn't mean retain or replace, but whether we're fully protecting it.
 	if (empty($settings['embed_quote']))
 		$array['quote'] = true;
 
 	// Protect all these items
 	$input = aeva_protection($array, $input, false);
 
-	// Attempt to Load - Enabled Sites
+	// Attempt to load - Enabled Sites
 	if (empty($sites) && file_exists($sourcedir . '/media/Aeva-Sites.php'))
 		loadSource('media/Aeva-Sites');
 
 	// If we can't use generated version (either just after install, OR permissions meant generated
-	// version couldn't be created, OR it can't be found), load the full un-optimized version
+	// version couldn't be created, OR it can't be found), load the full un-optimized version.
 	if (empty($sites))
 		loadSource(
 			file_exists($sourcedir . '/media/Aeva-Sites-Custom.php') ? array('media/Subs-Aeva-Sites', 'media/Aeva-Sites-Custom') : 'media/Subs-Aeva-Sites'
@@ -889,10 +896,10 @@ function aeva_onposting($input)
 	if (!empty($settings['embed_fix_html']))
 		$input = aeva_fix_html($input);
 
-	// Do Lookups
+	// Do lookups
 	if (!empty($settings['embed_lookups']))
 	{
-		// Will [url] BBCode links which aren't currently URL-BBCoded (so they get can get looked up/embedded by Aeva)
+		// Will [url] BBCode links which aren't currently URL-BBCoded, so they get can get looked up/embedded by Aeva.
 		if (!empty($settings['autoLinkUrls']))
 			$input = aeva_autolink_urls($input);
 		$input = embed_lookups_match($input);
