@@ -479,25 +479,6 @@ function determineActions($urls, $preferred_prefix = false, $override_mem = fals
 				}
 			}
 		}
-
-		if (allowedTo('moderate_forum'))
-		{
-			$error_message = '';
-			$is_warn = isset($actions['who_warn']);
-
-			if (isset($actions['who_error_raw']))
-				$error_message = str_replace('"', '&quot;', $actions['who_error_raw']);
-			elseif (isset($actions['who_error_lang'], $txt[$actions['who_error_lang']]))
-				$error_message = str_replace('"', '&quot;', empty($actions['who_error_params']) ? $txt[$actions['who_error_lang']] : vsprintf($txt[$actions['who_error_lang']], $actions['who_error_params']));
-			elseif (isset($actions['who_warn']))
-				$error_message = str_replace('"', '&quot;', $txt['who_guest_login']);
-
-			if (!empty($error_message))
-				$data[$k] = '<img src="' . $theme['images_url'] . '/' . ($is_warn ? 'who_warn' : 'who_error') . '.gif" title="' . $error_message . '" alt="' . $error_message . '"> ' . $data[$k];
-
-			// !!! Should we store the full URL into the session, à la Noisen?
-			$data[$k] .= ' (<abbr title="' . str_replace('"', "''", var_export($actions, true)) . '">?</abbr>)';
-		}
 	}
 
 	if (!empty($mediaFetch))
@@ -596,6 +577,32 @@ function determineActions($urls, $preferred_prefix = false, $override_mem = fals
 				foreach ($profile_names[$row['member_name']] as $k => $session_text)
 					$data[$k] = sprintf($session_text, $row['id_member'], $row['real_name']);
 	}
+
+	// Having done various replaces, we need to fix up errors and debug information.
+	if (allowedTo('moderate_forum'))
+		foreach ($url_list as $k => $url)
+		{
+			// Get the request parameters..
+			$actions = @unserialize($url[0]);
+			if ($actions === false)
+				continue;
+
+			$error_message = '';
+			$is_warn = isset($actions['who_warn']);
+
+			if (isset($actions['who_error_raw']))
+				$error_message = str_replace('"', '&quot;', $actions['who_error_raw']);
+			elseif (isset($actions['who_error_lang'], $txt[$actions['who_error_lang']]))
+				$error_message = str_replace('"', '&quot;', empty($actions['who_error_params']) ? $txt[$actions['who_error_lang']] : vsprintf($txt[$actions['who_error_lang']], $actions['who_error_params']));
+			elseif (isset($actions['who_warn']))
+				$error_message = str_replace('"', '&quot;', $txt['who_guest_login']);
+
+			if (!empty($error_message))
+				$data[$k] = '<img src="' . $theme['images_url'] . '/' . ($is_warn ? 'who_warn' : 'who_error') . '.gif" title="' . $error_message . '" alt="' . $error_message . '"> ' . $data[$k];
+
+			// !!! Should we store the full URL into the session, à la Noisen?
+			$data[$k] .= ' (<abbr title="' . htmlspecialchars(var_export($actions, true), ENT_QUOTES) . '">?</abbr>)';
+		}
 
 	// While the above whos_online hook is good for more complex cases than action=x;sa=y, it's not particularly efficient if you're dealing with multiple lookups and so on. Thus the bulk hook too.
 	call_hook('whos_online_complete', array(&$urls, &$data));
