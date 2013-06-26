@@ -430,7 +430,7 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 	<link rel="stylesheet" href="' . $final_script . '">';
 }
 
-function add_plugin_css_file($plugin_name, $original_files = array(), $add_link = false)
+function add_plugin_css_file($plugin_name, $original_files = array(), $add_link = false, $ignore_files = array())
 {
 	global $context, $settings, $theme, $boardurl, $pluginsdir, $board_info;
 
@@ -483,7 +483,11 @@ function add_plugin_css_file($plugin_name, $original_files = array(), $add_link 
 	$can_gzip = !empty($settings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
 	$ext = $can_gzip ? (we::is('safari') ? '.cgz' : '.css.gz') : '.css';
 
+	// Build the target folder from our skin's folder names and main file name. We don't need to show 'common-index-sections-extra-custom' in the main filename, though!
+	$target_folder = trim(implode('-', array_filter(array_diff($original_files, (array) 'common', $ignore_files))), '-');
+
 	// Cache final file and retrieve its name.
+	$final_script = $boardurl . '/css/' . wedge_cache_css_files($target_folder . ($target_folder ? '/' : ''), $id, $latest_date, $files, $can_gzip, $ext, array('$plugindir' => $context['plugins_url'][$plugin_name]));
 	$final_script = $boardurl . '/css/' . wedge_cache_css_files('', $id, $latest_date, $files, $can_gzip, $ext, array('$plugindir' => $context['plugins_url'][$plugin_name]));
 
 	if ($final_script == $boardurl . '/css/')

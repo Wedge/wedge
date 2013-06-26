@@ -62,10 +62,7 @@ function ViewQuery()
 	{
 		$_SESSION['view_queries'] = $_SESSION['view_queries'] == 1 ? 0 : 1;
 
-		if (strpos($_SESSION['old_url'], 'action=viewquery') !== false)
-			redirectexit();
-		else
-			redirectexit($_SESSION['old_url']);
+		redirectexit(empty($_SERVER['HTTP_REFERER']) ? (strpos($_SESSION['old_url'], 'action=viewquery') === false ? $_SESSION['old_url'] : '') : $_SERVER['HTTP_REFERER']);
 	}
 
 	$query_id = isset($_REQUEST['qq']) ? (int) $_REQUEST['qq'] - 1 : -1;

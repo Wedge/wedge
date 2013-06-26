@@ -1406,6 +1406,7 @@ function checkUserRequest_blacklist()
 		'contains' => array(
 			// harvesters
 			'Email Extractor',
+			'EMail Exractor',
 			'unspecified.mail',
 			'User-agent: ',
 			'WebaltBot',

@@ -537,6 +537,7 @@ function ob_sessrewrite($buffer)
 
 				// Cache these URLs in the database (use mysql_query to avoid some issues.)
 				// !!! Um, why?
+				// !!! Because!!! (That's some code I never got around to harmonizing...)
 				if (count($cache_data) > 0)
 					mysqli_query("REPLACE INTO {$db_prefix}pretty_urls_cache (url_id, replacement) VALUES " . implode(', ', $cache_data));
 			}
@@ -952,7 +953,7 @@ function db_debug_junk()
 
 	$show_list_js = "$(this).hide().next().show(); return false;";
 	$temp = '
-<div class="smalltext" style="text-align: left; margin: 1ex">' . sprintf($txt['debug_report'],
+<div class="windowbg2 smalltext" style="text-align: left; margin: 0; padding: 1em">' . sprintf($txt['debug_report'],
 		count($context['debug']['templates']),		implode(', ', $context['debug']['templates']),
 		count($context['debug']['blocks']),			implode(', ', $context['debug']['blocks']),
 		count($context['debug']['language_files']),	implode(', ', $context['debug']['language_files']),
@@ -976,11 +977,13 @@ function db_debug_junk()
 	}
 
 	if ($show_debug_query)
-		$temp .= '<a href="' . $scripturl . '?action=viewquery" target="_blank" class="new_win">' . sprintf($txt['debug_queries_used' . ($warnings == 0 ? '' : '_and_warnings')], $db_count, $warnings) . '</a><br><br>';
+		$temp .= '<br><a href="' . $scripturl . '?action=viewquery" target="_blank" class="new_win">' . sprintf($txt['debug_queries_used' . ($warnings == 0 ? '' : '_and_warnings')], $db_count, $warnings) . '</a> - <a href="' . $scripturl . '?action=viewquery;sa=hide">' . $txt['debug_' . (empty($_SESSION['view_queries']) ? 'show' : 'hide') . '_queries'] . '</a>';
 	else
-		$temp .= sprintf($txt['debug_queries_used'], $db_count) . '<br><br>';
+		$temp .= '<br>' . sprintf($txt['debug_queries_used'], $db_count);
 
 	if ($_SESSION['view_queries'] == 1 && !empty($db_cache))
+	{
+		$temp .= '<br><br>';
 		foreach ($db_cache as $q => $qq)
 		{
 			$is_select = substr(trim($qq['q']), 0, 6) == 'SELECT' || preg_match('~^INSERT(?: IGNORE)? INTO \w+(?:\s+\([^)]+\))?\s+SELECT .+$~s', trim($qq['q'])) != 0;
@@ -1014,9 +1017,7 @@ function db_debug_junk()
 				$temp .= sprintf($txt['debug_query_which_took'], round($qq['t'], 8)) . '<br>';
 			$temp .= '<br>';
 		}
-
-	if ($show_debug_query)
-		$temp .= '<a href="' . $scripturl . '?action=viewquery;sa=hide">' . $txt['debug_' . (empty($_SESSION['view_queries']) ? 'show' : 'hide') . '_queries'] . '</a>';
+	}
 
 	$context['debugging_info'] = $temp . '
 </div>';
