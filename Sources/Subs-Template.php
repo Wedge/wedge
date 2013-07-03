@@ -549,7 +549,7 @@ function ob_sessrewrite($buffer)
 	}
 
 	if (!empty($context['debugging_info']))
-		$buffer = substr_replace($buffer, $context['debugging_info'], strrpos($buffer, '</body>'), 0);
+		$buffer = substr_replace($buffer, $context['debugging_info'], strrpos($buffer, '</ul>') + 5, 0);
 
 	// Update the load times
 	if (!empty($context['show_load_time']))
@@ -953,7 +953,7 @@ function db_debug_junk()
 
 	$show_list_js = "$(this).hide().next().show(); return false;";
 	$temp = '
-<div class="windowbg2 smalltext" style="text-align: left; margin: 0; padding: 1em">' . sprintf($txt['debug_report'],
+<div class="smalltext padding" style="margin: 8px 0 0; border-top: 1px solid #aaa">' . sprintf($txt['debug_report'],
 		count($context['debug']['templates']),		implode(', ', $context['debug']['templates']),
 		count($context['debug']['blocks']),			implode(', ', $context['debug']['blocks']),
 		count($context['debug']['language_files']),	implode(', ', $context['debug']['language_files']),

@@ -269,7 +269,10 @@ function return_thoughts()
 	// What you're going to see isn't for the faint-hearted...
 	// We're going to emulate Wedge building a thought page.
 
-	list ($type, $ctx, $page) = explode(' ', $_POST['cx']);
+	list ($type, $ctx, $page) = explode(' ', isset($_POST['cx']) ? $_POST['cx'] : 'invalid 0 0');
+	if ($type == 'invalid')
+		obExit(false);
+
 	$_REQUEST['start'] = $page;
 
 	loadSource(array('Thoughts', 'Subs-Cache'));
