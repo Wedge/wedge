@@ -16,48 +16,24 @@ if (!defined('WEDGE'))
 
 class Likes_Notifier extends Notifier
 {
-	public function getURL(Notification $notification)
+	public function getText(Notification $notification, $is_email = false)
 	{
-		$data = $notification->getData();
-		return 'topic=' . $data['topic'] . '.msg' . $notification->getObject() . '#msg' . $notification->getObject();
-	}
-
-	public function getName()
-	{
-		return 'likes';
-	}
-
-	public function getText(Notification $notification)
-	{
-		global $txt;
+		global $txt, $scripturl;
 
 		$data = $notification->getData();
+		$url = $scripturl . '?' . $notification->getURL();
+		$member_url = $scripturl . '?action=profile;u=' . $data['member']['id'];
 
-		return sprintf($txt['welikes_notification'], $data['member']['name'], $data['subject']);
-	}
-
-	public function handleMultiple(Notification $notification, array &$data, array &$email_data)
-	{
-		return false;
-	}
-
-	public function getProfile($id_member)
-	{
-		global $txt;
-
-		return array($txt['welikes_title'], $txt['welikes_desc'], array());
-	}
-
-	public function getEmail(Notification $notification, array $email_data)
-	{
-		global $txt;
-
-		return array($txt['welikes_subject'], $this->getText($notification));
-	}
-
-	public function getPreview(Notification $notification)
-	{
-		$data = $notification->getData();
-		return get_single_post($notification->getObject());
+		return strtr(
+			$txt[$is_email ? 'notifier_likes_email' : 'notifier_likes_html'],
+			array(
+				'{MEMBER}' => $data['member']['name'],
+				'{MEMBER_LINK}' => '<a href="' . $member_url . '">' . $data['member']['name'] . '</a>',
+				'{MEMBER_URL}' => $member_url,
+				'{OBJECT_NAME}' => $data['subject'],
+				'{OBJECT_URL}' => $url,
+				'{OBJECT_LINK}' => '<a href="' . $url . '">' . $data['subject'] . '</a>',
+			)
+		);
 	}
 }

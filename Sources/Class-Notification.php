@@ -149,18 +149,19 @@ class Notification
 	 *
 	 * @static
 	 * @access public
-	 * @param array $id_member
-	 * @param Notifier $notifier
-	 * @param int $id_object
-	 * @param array $data
+	 * @param string $notifier_name e.g. 'move'
+	 * @param array/int $id_member Who shall receive the notification? May be a list of members.
+	 * @param int $id_object What object is this notification about?
+	 * @param array $data Any extra data to store as well? Such as member names...
 	 * @param array $email_data
 	 * @return Notification
 	 * @throws Exception, upon the failure of creating a notification for whatever reason
 	 */
-	public static function issue($id_member, Notifier $notifier, $id_object, $data = array(), $email_data = array())
+	public static function issue($notifier_name, $id_member, $id_object, $data = array(), $email_data = array())
 	{
 		loadSource('Subs-Post');
 
+		$notifier = weNotif::getNotifier($notifier_name);
 		$id_object = (int) $id_object;
 		if (empty($id_object))
 			throw new Exception('Object cannot be empty for notification');
@@ -206,25 +207,25 @@ class Notification
 				AND unread = 1
 			LIMIT {int:limit}',
 			array(
-				'notifier' => $notifier->getName(),
+				'notifier' => $notifier_name,
 				'object' => $id_object,
 				'member' => array_keys($members),
 				'limit' => count($members),
 			)
 		);
-		// If we do, then we run it by the notifier
+		// If we do, then we run it by the notifier.
 		while ($row = wesql::fetch_assoc($request))
 		{
 			$notification = new Notification($row, $notifier);
 
-			// If the notifier returns false, we drop this notification
-			if (!$notifier->handleMultiple($notification, $data, $email_data) && !in_array($notifier->getName(), $members[$row['id_member']]['disabled_notifiers']))
+			// If the notifier returns false, we drop this notification.
+			if (!$notifier->handleMultiple($notification, $data, $email_data) && !in_array($notifier_name, $members[$row['id_member']]['disabled_notifiers']))
 			{
 				$notification->updateTime();
 				unset($members[$row['id_member']]);
 
-				if (!empty($members[$row['id_member']]['email_notifiers'][$notifier->getName()])
-					&& $members[$row['id_member']]['email_notifiers'][$notifier->getName()] === 1)
+				if (!empty($members[$row['id_member']]['email_notifiers'][$notifier_name])
+					&& $members[$row['id_member']]['email_notifiers'][$notifier_name] === 1)
 				{
 					list ($subject, $body) = $notifier->getEmail($notification, $email_data);
 					sendmail($members[$row['id_member']]['email'], $subject, $body);
@@ -242,13 +243,13 @@ class Notification
 		$notifications = array();
 		foreach ($members as $id_member => $pref)
 		{
-			if (in_array($notifier->getName(), $pref['disabled_notifiers']))
+			if (in_array($notifier_name, $pref['disabled_notifiers']))
 				continue;
 
 			// Create the row
 			wesql::insert('', '{db_prefix}notifications',
 				array('id_member' => 'int', 'id_member_from' => 'int', 'notifier' => 'string-50', 'id_object' => 'int', 'time' => 'int', 'unread' => 'int', 'data' => 'string'),
-				array($id_member, we::$id, $notifier->getName(), $id_object, $time, 1, serialize((array) $data)),
+				array($id_member, we::$id, $notifier_name, $id_object, $time, 1, serialize((array) $data)),
 				array('id_notification')
 			);
 			$id_notification = wesql::insert_id();
@@ -266,7 +267,6 @@ class Notification
 				), $notifier);
 
 				// Send the e-mail?
-				$notifier_name = $notifier->getName();
 				if (!empty($pref['email_notifiers'][$notifier_name]) && $pref['email_notifiers'][$notifier_name] === 1)
 				{
 					list ($subject, $body) = $notifier->getEmail($notifications[$id_member], $email_data);

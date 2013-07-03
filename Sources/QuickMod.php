@@ -296,7 +296,7 @@ function quickMod_move($topic_data, $boards_can)
 
 	if (!empty($board_name) && !empty($notifications))
 		foreach ($notifications as $notif)
-			Notification::issue($notif['id_member_started'], WeNotif::getNotifiers('move'), $notif['id_topic'], array('member' => array('name' => we::$user['name'], 'id' => we::$id), 'id_msg' => $notif['id_msg'], 'subject' => $notif['subject'], 'id_board' => $_REQUEST['move_to'], 'board' => $board_name));
+			Notification::issue('move', $notif['id_member_started'], $notif['id_topic'], array('member' => array('name' => we::$user['name'], 'id' => we::$id), 'id_msg' => $notif['id_msg'], 'subject' => $notif['subject'], 'id_board' => $_REQUEST['move_to'], 'board' => $board_name));
 
 	if (!empty($topicRecounts))
 	{

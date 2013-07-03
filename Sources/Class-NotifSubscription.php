@@ -88,12 +88,12 @@ class NotifSubscription
 	 * @static
 	 * @access public
 	 * @param NotifSubscriber $subs
+	 * @param string $notifier Notifier name
 	 * @param int $object
-	 * @param Notifier $notifier
 	 * @param array $data
 	 * @return array of Notification
 	 */
-	public static function issue(NotifSubscriber $subs, $object, Notifier $notifier, array $data)
+	public static function issue(NotifSubscriber $subs, string $notifier, $object, array $data)
 	{
 		// Fetch all the members having this subscription
 		$query = wesql::query('
@@ -121,7 +121,7 @@ class NotifSubscription
 		if (empty($members))
 			return array();
 
-		$notifications = Notification::issue($members, $notifier, $object, $data);
+		$notifications = Notification::issue($notifier, $members, $object, $data);
 
 		return $notifications;
 	}

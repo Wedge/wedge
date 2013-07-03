@@ -2,7 +2,7 @@
 /**
  * Wedge
  *
- * Contains base notifier class which is to be extended to implement notifiers
+ * Contains base notifier class, which is to be extended to implement notifiers.
  *
  * @package wedge
  * @copyright 2010-2013 Wedgeward, wedge.org
@@ -15,63 +15,105 @@ if (!defined('WEDGE'))
 	die('File cannot be requested directly.');
 
 /**
- * Notifier interface, every notifier adding their own stuff must implement this interface
+ * Notifier interface, every notifier adding their own stuff must implement this interface.
  */
-abstract class Notifier
+class Notifier
 {
 	/**
-	 * Callback for getting the URL of the object
+	 * Callback for getting the URL of the object.
+	 * You can override it if the notification isn't about a post.
 	 *
 	 * @access public
 	 * @param Notification $notification
-	 * @return string A fully qualified HTTP URL
+	 * @return string A fully qualified URL
 	 */
-	abstract public function getURL(Notification $notification);
+	public function getURL(Notification $notification)
+	{
+		$data = $notification->getData();
+		$msg = $notification->getObject();
+
+		// Notifications are free to store the topic ID in 'id_topic' or 'topic', we're not judging.
+		return '<URL>?topic=' . (isset($data['topic']) ? $data['topic'] : $data['id_topic']) . '.msg' . $msg . '#msg' . $msg;
+	}
 
 	/**
-	 * Callback for getting the text to display on the notification screen
+	 * Callback for getting the text to display on the notification screen or e-mail.
 	 *
 	 * @access public
 	 * @param Notification $notification
-	 * @return string The text this notification wants to display
+	 * @param boolean $is_email
+	 * @return string The text this notification wants to output
 	 */
-	abstract public function getText(Notification $notification);
+	public function getText(Notification $notification, $is_email = false)
+	{
+		global $txt;
+
+		$data = $notification->getData();
+		$object = $notification->getObject();
+		$object_url = $notification->getURL();
+
+		return strtr(
+			$txt['notifier_' . $this->getName() . ($is_email ? '_text' : '_html')],
+			array(
+				'{MEMBER_NAME}' => $data['member']['name'],
+				'{MEMBER_LINK}' => '<a href="<URL>?action=profile;u=' . $data['member']['id'] . '">' . $data['member']['name'] . '</a>',
+				'{OBJECT_NAME}' => $data['subject'],
+				'{OBJECT_LINK}' => '<a href="' . $object_url . '">' . $data['subject'] . '</a>',
+				'{OBJECT_URL}'  => $object_url,
+			)
+		);
+	}
 
 	/**
-	 * Returns the name of this notifier
+	 * Returns the name of this notifier, e.g. 'likes'. You can override it if needed.
 	 *
 	 * @access public
 	 * @return string
 	 */
-	abstract public function getName();
-
-	/**
-	 * Callback for handling multiple notifications on the same object
-	 *
-	 * @access public
-	 * @param Notification $notification
-	 * @param array &$data Reference to the new notification's data, if something needs to be altered
-	 * @param array &$email_data Any extra e-mail data passed
-	 * @return bool, if false then a new notification is not created but the current one's time is updated
-	 */
-	public function handleMultiple(Notification $notification, array &$data, array &$email_data)
+	public function getName()
 	{
-		return true;
+		static $name = '';
+		if (empty($name))
+			$name = strtolower(preg_replace('~_Notifier.*~', '', get_class($this)));
+		return $name;
 	}
 
 	/**
-	 * Returns the elements for notification's profile area
-	 * The third parameter of the array, config_vars, is same as the settings config vars specified in
-	 * various settings page
+	 * Callback for handling multiple notifications on the same object.
+	 * By default, if an item already has a notification issued for it, further notifications
+	 * will be ignored, and the last notification will have its date bumped.
+	 * If you need to change this, just override the function to return true.
+	 *
+	 * @access public
+	 * @param Notification $notification
+	 * @param array &$data Reference to the new notification's data, if something needs to be altered.
+	 * @param array &$email_data Any extra e-mail data passed
+	 * @return bool Whether or not to handle.
+	 */
+	public function handleMultiple(Notification $notification, array &$data, array &$email_data)
+	{
+		return false;
+	}
+
+	/**
+	 * Returns the elements for notification's profile area.
+	 * The third parameter of the array, config_vars, is same as
+	 * the settings' config vars specified in various settings page.
 	 *
 	 * @access public
 	 * @param int $id_member The ID of the member whose profile is currently being accessed
 	 * @return array(title, description, config_vars)
 	 */
-	abstract public function getProfile($id_member);
+	public function getProfile($id_member)
+	{
+		global $txt;
+
+		$name = $this->getName();
+		return array($txt['notifier_' . $name . '_title'], $txt['notifier_' . $name . '_desc'], array());
+	}
 
 	/**
-	 * Callback for profile area, called when saving the profile area
+	 * Callback for profile area, called when saving the profile area.
 	 *
 	 * @access public
 	 * @param int $id_member The ID of the member whose profile is currently being accessed
@@ -86,18 +128,24 @@ abstract class Notifier
 	 * E-mail handler, must be present since the user has the ability to receive e-mail
 	 * from any notifier. This only applies for instant e-mail notification, otherwise
 	 * for periodicals standard notification text is sent. This is to prevent overbearing
-	 * information in the notification e-mail
+	 * information in the notification e-mail.
 	 *
 	 * @access public
 	 * @param Notification $notification
-	 * @param array $email_data
+	 * @param array $email_data (not used by default, sorry.)
 	 * @return array(subject, body)
 	 */
-	abstract public function getEmail(Notification $notification, array $email_data);
+	public function getEmail(Notification $notification, array $email_data)
+	{
+		global $txt;
+
+		$name = $this->getName();
+		return array($txt['notifier_' . $name . '_subject'], $this->getText($notification, true));
+	}
 
 	/**
-	 * A notifier can add an icon which'll show alongside each notification, by default
-	 * we pass the member's avatar
+	 * A notifier can add an icon which'll show alongside each notification.
+	 * By default, we pass the member's avatar.
 	 *
 	 * @access public
 	 * @param Notification $notification
@@ -116,7 +164,7 @@ abstract class Notifier
 	}
 
 	/**
-	 * Returns the preview of the notification, to be displayed on notification view
+	 * Returns the preview of the notification, to be displayed on notification view.
 	 *
 	 * @access public
 	 * @param Notification $notification
@@ -124,10 +172,23 @@ abstract class Notifier
 	 */
 	public function getPreview(Notification $notification)
 	{
+		global $txt;
+
+		// By default, we'll be retrieving a topic post.
+		// Override this method to retrieve something else, if needed.
+		$data = $notification->getData();
+		$raw = get_single_post($notification->getObject());
+
+		if ($raw !== false)
+			return $raw;
+
+		// Since this is a topic post, if it's gone, give the natural error message.
+		loadLanguage('Errors');
+		return '<div class="errorbox">' . $txt['topic_gone'] . '</div>';
 	}
 
 	/**
-	 * Returns all the preferences for this notifier
+	 * Returns all the preferences for this notifier.
 	 *
 	 * @access public
 	 * @param int $id_member If NULL, the current member is assumed
@@ -140,7 +201,7 @@ abstract class Notifier
 	}
 
 	/**
-	 * Shorthand for returning a single preference for the specific member
+	 * Shorthand for returning a single preference for the specific member.
 	 *
 	 * @access public
 	 * @param string $key
@@ -154,7 +215,7 @@ abstract class Notifier
 	}
 
 	/**
-	 * Saves a specific member's preference for this notifier
+	 * Saves a specific member's preference for this notifier.
 	 *
 	 * @access public
 	 * @param string $key
@@ -191,7 +252,7 @@ abstract class Notifier
 	}
 
 	/**
-	 * This hook is called after notifications have been issued
+	 * This hook is called after notifications have been issued.
 	 *
 	 * @access public
 	 * @param array $notifications

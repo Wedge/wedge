@@ -2,7 +2,7 @@
 /**
  * Wedge
  *
- * Contains functions for handling the entire notification system
+ * Contains functions for handling the entire notification system.
  *
  * @package wedge
  * @copyright 2010-2013 Wedgeward, wedge.org
@@ -321,14 +321,7 @@ class weNotif
 		{
 			$notifications = Notification::get($_REQUEST['in'], we::$id);
 
-			$raw = !empty($notifications[0]) ? $notifications[0]->getPreview() : '';
-			if ($raw === false)
-			{
-				// This is usually a topic, so if it's gone, give the natural error message.
-				loadLanguage('Errors');
-				return_raw('<div class="errorbox">' . $txt['topic_gone'] . '</div>');
-			}
-			return_raw($raw);
+			return_raw(!empty($notifications[0]) ? $notifications[0]->getPreview() : '');
 		}
 		elseif (!empty($sa) && !empty(self::$notifiers[$sa]) && is_callable(self::$notifiers[$sa], 'action'))
 			return self::$notifiers[$sa]->action();

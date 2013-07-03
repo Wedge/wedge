@@ -1,102 +1,60 @@
 <?php
+/**
+ * Wedge
+ *
+ * Contains functions for notifying users based on topic moves.
+ *
+ * @package wedge
+ * @copyright 2010-2013 Wedgeward, wedge.org
+ * @license http://wedge.org/license/
+ *
+ * @version 0.1
+ */
 
 if (!defined('WEDGE'))
 	die('File cannot be requested directly');
 
 class Move_Notifier extends Notifier
 {
-	/**
-	 * Callback for getting the URL of the object
-	 *
-	 * @access public
-	 * @param Notification $notification
-	 * @return string A fully qualified HTTP URL
-	 */
+	// We'll need to override getURL, because getObject stores a topic ID, not a post ID. (See Class-Notifier.php)
 	public function getURL(Notification $notification)
 	{
 		$data = $notification->getData();
-		return 'topic=' . $notification->getObject() . '.msg' . $data['id_msg'] . '#msg' . $data['id_msg'];
+		return '<URL>?topic=' . $notification->getObject() . '.0';
 	}
 
-	/**
-	 * Callback for getting the text to display on the notification screen
-	 *
-	 * @access public
-	 * @param Notification $notification
-	 * @return string The text this notification wants to display
-	 */
-	public function getText(Notification $notification)
+	// We'll override the getText function, too.
+	public function getText(Notification $notification, $is_email = false)
 	{
 		global $txt;
 
 		$data = $notification->getData();
 
 		// Only one member?
-		$notif = we::$is['admin'] || in_array($data['id_board'], we::$user['qsb_boards']) ? 'notification_move' : 'notification_move_noaccess';
-		return strtr($txt[$notif], array(
-			'{MEMBER}' => $data['member']['name'],
-			'{SUBJECT}' => shorten_subject($data['subject'], 25),
-			'{BOARD}' => $data['board'],
+		$notif = we::$is['admin'] || in_array($data['id_board'], we::$user['qsb_boards']) ? 'notifier_move' : 'notifier_move_noaccess';
+
+		return strtr($txt[$notif . ($is_email ? '_text' : '_html')], array(
+			'{MEMBER_NAME}' => $data['member']['name'],
+			'{MEMBER_LINK}' => '<a href="<URL>?action=profile;u=' . $data['member']['id'] . '">' . $data['member']['name'] . '</a>',
+			'{TOPIC_NAME}' => $data['subject'],
+			'{TOPIC_LINK}' => '<a href="' . $notification->getURL() . '">' . $data['subject'] . '</a>',
+			'{BOARD_NAME}' => $data['board'],
+			'{BOARD_LINK}' => '<a href="<URL>?board=' . $data['id_board'] . '">' . $data['board'] . '</a>',
 		));
-	}
-
-	/**
-	 * Returns the name of this notifier
-	 *
-	 * @access public
-	 * @return string
-	 */
-	public function getName()
-	{
-		return 'move';
-	}
-
-	/**
-	 * Callback for handling multiple notifications on the same object
-	 * We don't have any special criterion for this
-	 *
-	 * @access public
-	 * @param Notification $notification
-	 * @param array &$data Reference to the new notification's data, if something needs to be altered
-	 * @return bool, if false then a new notification is not created but the current one's time is updated
-	 */
-	public function handleMultiple(Notification $notification, array &$data, array &$email_data)
-	{
-		return false;
-	}
-
-	/**
-	 * Returns the elements for notification's profile area
-	 *
-	 * @access public
-	 * @param int $id_member The ID of the member whose profile is currently being accessed
-	 * @return array(title, description, config_vars)
-	 */
-	public function getProfile($id_member)
-	{
-		global $txt;
-
-		return array($txt['notification_move_profile'], $txt['notification_move_profile_desc'], array());
-	}
-
-	/**
-	 * E-mail handler
-	 *
-	 * @access public
-	 * @param Notification $notification
-	 * @param array $email_data Any additional e-mail data passed to Notification::issue function
-	 * @return array(subject, body)
-	 */
-	public function getEmail(Notification $notification, array $email_data)
-	{
-		global $txt;
-
-		return array($txt['notification_move_email_subject'], $this->getText($notification));
 	}
 
 	public function getPreview(Notification $notification)
 	{
+		global $txt;
+
 		$data = $notification->getData();
-		return get_single_post($data['id_msg']);
+		$raw = get_single_post($data['id_msg']);
+
+		if ($raw !== false)
+			return $raw;
+
+		// Since this is a topic post, if it's gone, give the natural error message.
+		loadLanguage('Errors');
+		return '<div class="errorbox">' . $txt['topic_gone'] . '</div>';
 	}
 }

@@ -107,22 +107,18 @@ function template_notification_email($notifications)
 {
 	global $txt;
 
-	$str = $txt['notification_email_periodical_body'] . '<br><br>';
+	$str = $txt['notification_email_periodical_body'] . "\n\n";
 
 	foreach ($notifications as $notifier => $notifs)
 	{
-		list ($title) = weNotif::getNotifiers($notifier)->getProfile();
+		list ($title) = weNotif::getNotifiers($notifier)->getProfile($notifs);
 
-		$str .= '
-			<h3>' . $title . '</h3>
-			<hr>
-			<div style="margin-left: 15px">';
+		$str .= "\n" . $title . "\n" . str_repeat('=', strlen($title)) . "\n";
 
 		foreach ($notifs as $n)
-			$str .= '<div>' . $n->getText() . '</div>';
+			$str .= $n->getEmail();
 
-		$str .='
-			</div>';
+		$str .= "\n\n";
 	}
 
 	return $str;

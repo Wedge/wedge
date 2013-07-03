@@ -145,7 +145,7 @@ function Like()
 
 		// Send notifications. Just posts for now.
 		if (!empty($id_author) && !empty($subject))
-			Notification::issue($id_author, WeNotif::getNotifiers('likes'), $_REQUEST['msg'], array(
+			Notification::issue('likes', $id_author, $_REQUEST['msg'], array(
 				'topic' => $topic,
 				'subject' => $subject,
 				'member' => array(
