@@ -16,12 +16,12 @@
 					<logo_toggler />
 					<search_box />
 					<language_selector />
-					<random_news />
 				</header>
 				<menu />
 				<content_wrap>
 					<offside_wrap>
 						<main_wrap>
+							<random_news />
 							<linktree />
 							<top></top>
 							<default>

@@ -192,8 +192,8 @@ ul#noava
 
 // Main area should have slightly larger text on high-density devices.
 // The $responsive rule (tries) to ensure it doesn't touch tablets.
-@if !ie[-7]
-	@media $responsive and (min-device-pixel-ratio: 1.5)
+@if !ie[-8]
+	@media $responsive and (min-resolution: 1.5dppx)
 		body
 			font-size: 120%
 			.menu > li > span
@@ -216,17 +216,14 @@ ul#noava
 	h2 extends .horizontal-arrow
 		margin-right: 0
 
-#header
-	h2
-		color: #939380
-	// The main title
-	h1
-		margin: 42px 0 0 30px
-		float: left
-		a
-			color: #766
-			letter-spacing: -1px
-			font: 100 3em/1em $big_font
+// Main title
+#header h1
+	margin: 42px 0 0 30px
+	float: left
+	a
+		color: #766
+		letter-spacing: -1px
+		font: 100 3em/1em $big_font
 
 // The search box, with a few hacks to allow for a drop-down menu...
 #search_form
@@ -273,8 +270,7 @@ ul#noava
 		display: inline
 		line-height: 20px
 		padding: .5em .5em .5em 0
-		&.last:after
-			display: none
+		&.last:after mixes .hide
 
 #linktree_bt extends #linktree
 	padding: 1em 0 0
@@ -918,8 +914,7 @@ li.hove > a:before, .menu h4.hove:after
 	h4
 		padding-right: 6px
 		// We don't need arrows.
-		:after
-			display: none
+		:after mixes .hide
 
 li.chosen h4
 	background-color: #95a89d !important
@@ -929,9 +924,7 @@ li.chosen h4
 		color: #fff
 
 // Hide arrows from menu items with no sub-menus.
-li.nodrop h4
-	:after
-		display: none
+li.nodrop h4:after mixes .hide
 
 // Separator code
 li.sep
@@ -1717,7 +1710,7 @@ h6
 /* Styles used by the auto suggest control.
 ------------------------------------------------------- */
 
-.auto_suggest extends .hide
+.auto_suggest mixes .hide
 	color: #000
 	background: #fff
 	border: 1px solid #cbcdd3
