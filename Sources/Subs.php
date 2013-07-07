@@ -1071,7 +1071,7 @@ function writeLog($force = false)
  */
 function redirectexit($setLocation = '', $refresh = false, $permanent = false)
 {
-	global $scripturl, $context, $settings, $db_show_debug, $db_cache;
+	global $scripturl, $context, $db_show_debug, $db_cache;
 
 	// In case we have mail to send, better do that - as obExit doesn't always quite make it...
 	if (!empty($context['flush_mail']))
@@ -1090,23 +1090,7 @@ function redirectexit($setLocation = '', $refresh = false, $permanent = false)
 		$setLocation = preg_replace('/^' . preg_quote($scripturl, '/') . '\\??/', $scripturl . '?debug;', $setLocation);
 
 	// Redirections should be prettified too
-	if (!empty($settings['pretty_enable_filters']))
-	{
-		loadSource('PrettyUrls-Filters');
-		$url = array(0 => array('url' => str_replace($scripturl, '', $setLocation)));
-		foreach ($settings['pretty_filters'] as $id => $enabled)
-		{
-			$func = 'pretty_filter_' . $id;
-			if ($enabled)
-				$func($url);
-			if (isset($url[0]['replacement']))
-				break;
-		}
-		if (isset($url[0]['replacement']))
-			$setLocation = $url[0]['replacement'];
-		$setLocation = str_replace(chr(18), '\'', $setLocation);
-		$setLocation = preg_replace(array('~;+|=;~', '~\?;~', '~[?;=]#|&amp;#~', '~[?;=#]$|&amp;$~'), array(';', '?', '#', ''), $setLocation);
-	}
+	$setLocation = prettify_urls($setLocation);
 
 	// Maybe hooks want to change where we are heading?
 	call_hook('redirect', array(&$setLocation, &$refresh));
@@ -1125,6 +1109,41 @@ function redirectexit($setLocation = '', $refresh = false, $permanent = false)
 		$_SESSION['debug_redirect'] = $db_cache;
 
 	obExit(false);
+}
+
+/**
+ * Takes random URLs, and turns them into pretty URLs if enabled.
+ *
+ * @param string $inputs The string representing the URL, or an array of them. If the pretty URLs feature is disabled, the entry will be returned untouched.
+ * @return string The prettified URL(s).
+ */
+function prettify_urls($inputs)
+{
+	global $settings, $scripturl;
+
+	if (empty($settings['pretty_enable_filters']))
+		return $inputs;
+
+	loadSource('PrettyUrls-Filters');
+	$is_single = !is_array($inputs);
+	$inputs = (array) $inputs;
+	foreach ($inputs as &$input)
+	{
+		$url = array(0 => array('url' => str_replace($scripturl, '', $input)));
+		foreach ($settings['pretty_filters'] as $id => $enabled)
+		{
+			$func = 'pretty_filter_' . $id;
+			if ($enabled)
+				$func($url);
+			if (isset($url[0]['replacement']))
+				break;
+		}
+		if (isset($url[0]['replacement']))
+			$input = $url[0]['replacement'];
+		$input = str_replace(chr(18), '\'', $input);
+		$input = preg_replace(array('~;+|=;~', '~\?;~', '~[?;=]#|&amp;#~', '~[?;=#]$|&amp;$~'), array(';', '?', '#', ''), $input);
+	}
+	return $is_single ? $inputs[0] : $inputs;
 }
 
 /**

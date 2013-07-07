@@ -146,6 +146,14 @@ function sendmail($to, $subject, $message, $from = null, $message_id = null, $se
 	// In honour of those days, it's still called the 'hotmail fix'.
 	if ($hotmail_fix === null)
 	{
+		if (!empty($settings['pretty_enable_filters']))
+		{
+			// Prettify all Wedge-generated URLs found in the message.
+			$message = str_replace('<URL>', $scripturl, $message);
+			preg_match_all('~' . preg_quote($scripturl, '~') . '[^\s]*~', $message, $urls);
+			$message = str_replace($urls[0], prettify_urls($urls[0]), $message);
+		}
+
 		$hotmail_to = array();
 		foreach ($to_array as $i => $to_address)
 		{

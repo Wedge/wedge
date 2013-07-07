@@ -535,7 +535,7 @@ function ob_sessrewrite($buffer)
 						$cache_data[] = '(\'' . $url_id . '\', \'' . addslashes($url['replacement']) . '\')';
 				}
 
-				// Cache these URLs in the database (use mysql_query to avoid some issues.)
+				// Cache these URLs in the database (use mysqli_query to avoid some issues.)
 				// !!! Um, why?
 				// !!! Because!!! (That's some code I never got around to harmonizing...)
 				if (count($cache_data) > 0)
@@ -594,7 +594,7 @@ function ob_sessrewrite($buffer)
 
 	// Strip protocol out of links that share it with the current page's URL. Makes oldIE go crazy, so no cookie for him.
 	$strip_protocol = '(<[^>]+\s(?:href|src|action)=")' . preg_quote(substr(we::$user['server'], 0, strpos(we::$user['server'], '://')), '~') . '://';
-		if (we::$browser['ie8down'])
+	if (we::$browser['ie8down'])
 		$buffer = preg_replace('~' . $strip_protocol . '((?:[^.]|\.(?!css))*?")~', '$1//$2', $buffer);
 	else
 		$buffer = preg_replace('~' . $strip_protocol . '~', '$1//', $buffer);
@@ -655,7 +655,7 @@ function wedge_profile_colors($match)
 function wedge_indenazi($match)
 {
 	if ($match[2] < 0)
-		return preg_replace('~(\n\t*)' . str_repeat("\t", -$match[2]) . '(?=[<a-zA-Z0-9])~', '$1', $match[3]);
+		return preg_replace('~(\n\t*?)\t' . ($match[2] < -1 ? '{1,' . -$match[2] . '}' : '') . '(?=[<a-zA-Z0-9])~', '$1', $match[3]);
 	return preg_replace('~(\n\t*)(?=[<a-zA-Z0-9])~', '$1' . str_repeat("\t", $match[2]), $match[3]);
 }
 
