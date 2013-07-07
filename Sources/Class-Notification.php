@@ -161,7 +161,7 @@ class Notification
 	{
 		loadSource('Subs-Post');
 
-		$notifier = weNotif::getNotifier($notifier_name);
+		$notifier = weNotif::getNotifiers($notifier_name);
 		$id_object = (int) $id_object;
 		if (empty($id_object))
 			throw new Exception('Object cannot be empty for notification');
