@@ -154,6 +154,9 @@ $right = @is (rtl, left, right)
 /* Should we have border-radius around page corners..? Set to 0 to disable. */
 $radius = 8px
 
+/* Something one can remove to make more space in responsive mode... */
+$horizontal_content_padding = 30px
+
 /* Maximum window width for the browser to trigger the low-res responsive CSS mode. */
 $responsive_max_width = 1000px
 $responsive = "all and (max-width: $responsive_max_width)"

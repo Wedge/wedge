@@ -1,14 +1,14 @@
 <?xml version="1.0"?>
 <!--
-	Layout skeleton. Overrides the theme's $context['skeleton'] variable.
+	Layout skeleton. Overrides the theme's root skeleton.
 	This file can be ommitted from your skin, in which case it will use
 	the equivalent skeleton from the parent skin (and so on until the root skin.)
 
 	The following uses pseudo-HTML to represent the final array.
 
-		- Use <tags></tags> to define layers (functions called as wrappers around other functions)
+		- Use <tags></tags> to define layers, i.e. functions called as wrappers around other functions (blocks).
 
-		- Use <self closing tags /> to define blocks (i.e. straightforward functions)
+		- Use <self closing tags /> to define blocks, i.e. straightforward functions.
 
 		- If you have a block that you need to make sure will show up, make sure to specify an array of fallback layers.
 		  e.g. wetem::add(array('my_layer', 'sidebar', ''), 'my_block') will try to add 'my_block' to 'my_layer',
@@ -31,9 +31,10 @@
 				<sidebar_wrap indent="-1">
 					<sidebar>
 						<!-- This is where Wedge will insert any side information. -->
-						<search_box indent="-1" />
-						<language_selector indent="-1" />
-						<random_news indent="-1" />
+						<top_bar>
+							<search_box indent="-1" />
+							<language_selector indent="-1" />
+						</top_bar>
 					</sidebar>
 				</sidebar_wrap>
 
@@ -42,11 +43,14 @@
 					<indenter indent="1">
 
 						<header>
-							<!-- The header layer: top bar, logo, things like that... -->
+							<!-- The header layer: top bar, logo, things like that... In the case of Warm, we moved top_bar to the sidebar. -->
 						</header>
 
 						<!-- The main menu. -->
 						<menu />
+
+						<!-- A single random news, hidden if you don't set any news. -->
+						<random_news />
 
 						<!-- The navigation bar (linktree.) -->
 						<linktree />

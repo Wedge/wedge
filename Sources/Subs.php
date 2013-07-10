@@ -1315,6 +1315,42 @@ function trackStats($stats = array())
 }
 
 /**
+ * Retrieves an associative array with topic IDs and their corresponding number of unread posts.
+ *
+ * @param string $posts An array of topics, as returned by ssi_recentTopics() for instance.
+ */
+function get_unread_numbers($posts)
+{
+	$has_unread = $nb_new = array();
+	if (we::$is_member)
+		foreach ($posts as $post)
+			if (!empty($post['is_new']))
+				$has_unread[] = $post['topic'];
+
+	if (empty($has_unread))
+		return array();
+
+	$request = wesql::query('
+		SELECT COUNT(DISTINCT m.id_msg) AS co, m.id_topic
+		FROM {db_prefix}messages AS m
+			LEFT JOIN {db_prefix}log_topics AS lt ON (lt.id_topic = m.id_topic AND lt.id_member = {int:id_member})
+			LEFT JOIN {db_prefix}log_mark_read AS lmr ON (lmr.id_board = m.id_board AND lmr.id_member = {int:id_member})
+		WHERE m.id_topic IN ({array_int:has_unread})
+			AND (m.id_msg > IFNULL(lt.id_msg, IFNULL(lmr.id_msg, 0)))
+		GROUP BY m.id_topic',
+		array(
+			'id_member' => we::$id,
+			'has_unread' => $has_unread
+		)
+	);
+	while ($row = wesql::fetch_assoc($request))
+		$nb_new[$row['id_topic']] = $row['co'];
+	wesql::free_result($request);
+
+	return $nb_new;
+}
+
+/**
  * Attempt to check whether a given user has been carrying out specific actions repeatedly, faster than a given frequency.
  *
  * Different actions take different periods of time. Each action also has a fatal message when triggered (and suspends execution), and the messages are based on the action, suffixed with 'WaitTime_broken' and which are specified in Errors.{language}.php.

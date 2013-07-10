@@ -1674,11 +1674,11 @@ class wess_prefixes extends wess
 		$b = we::$browser;
 		$v = $b['version'];
 
-		// IE6/7/8/9 don't support keyframes, IE10, Firefox 16+ and Opera 12.10+ support them unprefixed, other browsers require a prefix.
+		// IE 6-9 don't support keyframes; IE 10, Firefox 16+ and Opera 12.10+ support them unprefixed, other browsers require a prefix.
 		if (($b['opera'] && $v < 12.1) || ($b['firefox'] && $v < 16) || $b['webkit'])
 			$css = str_replace('@keyframes ', '@' . $this->prefix . 'keyframes ', $css);
 
-		// IE10+ and Opera 11+ support @viewport, but prefixed. Other browsers...? No idea.
+		// IE 10+ and Presto 11+ support @viewport, but prefixed. Other browsers...? No idea.
 		if (($b['opera'] && $v >= 11) || ($b['ie'] && $v >= 10))
 			$css = str_replace('@viewport', '@' . $this->prefix . 'viewport', $css);
 
