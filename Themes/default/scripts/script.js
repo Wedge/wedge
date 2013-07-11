@@ -520,7 +520,7 @@ $.fn.mime = function (oList, oStrings)
 		});
 
 		$mime.wrap('<span class="mime"></span>').after($men).parent().hover(
-			function () { $men.stop(true).show().animate(visiblePosition, 300, function () { $men.css('overflow', 'visible') }); },
+			function () { $men.stop(true).show().animate(visiblePosition, 300, function () { $men.css('overflow', 'visible'); }); },
 			function () { $men.stop(true).animate(hiddenPosition, 200, function () { $men.hide(); }); }
 		);
 
@@ -559,6 +559,9 @@ $(function ()
 	// Transform existing select boxes into our super boxes.
 	$('select').sb();
 
+	// Save a copy of our untreated menu, for responsiveness.
+	$('#main_menu').clone().removeClass('css menu').attr('id', 'sidemenu').prependTo('#sidebar');
+
 	// Now replace our pure CSS menus with JS-powered versions.
 	$('.menu').removeClass('css').mm();
 
@@ -574,6 +577,79 @@ $(function ()
 	// Disable parent links on hover-impaired browsers.
 	if (is_touch)
 		$('.umme,.subsection>a,.menu>li:not(.nodrop)>h4>a').click(false);
+
+	var
+		orig_sid,
+		orig_wid,
+		side_time, old_y = 0,
+		sidebar_shown = false,
+		// We can't do a hard-scroll on IE<10 and Opera Presto.
+		can_hardware = !is_opera && !is_ie8down && !ua('msie 9'),
+		$edge = $('#edge'),
+		show_sidebar = function ()
+		{
+			// Don't show the sidebar if: it's already shown, or we're zooming (mobile devices), or we're not in responsive mode.
+			if (sidebar_shown || document.width > window.innerWidth || $('#sidebar').css('position') != 'absolute')
+				return true;
+
+			// If the sidebar button is part of the sidebar container, it'll be displaced by a hard-scroll, so avoid that.
+			can_hardware &= !$('#sideshow').closest('#edge').length;
+			orig_wid = $edge[0].offsetWidth;
+			orig_sid = $edge[0].offsetLeft;
+			sidebar_shown = true;
+
+			$(document).on('mousedown.sw', function (e) {
+				// HTML implies user clicked on a scrollbar, or at least outside the HTML contents.
+				if (!$(e.target).closest('#sidebar').length && e.target.tagName != 'HTML')
+					hide_sidebar();
+			});
+			$edge.width(orig_wid);
+			if (can_hardware)
+				$edge.css({ transform: 'translate3d(-' + $('#sidebar').width() + 'px,0,0)' });
+			else
+				$edge.animate({ left: orig_sid - $('#sidebar').width() }, 500);
+			$(window).on('resize.sw', function () {
+				// Fix the sidebar position if the window has just been enlarged.
+				if (sidebar_shown && $('#sidebar').css('position') != 'absolute')
+					hide_sidebar_for_real();
+			});
+		},
+		hide_sidebar_for_real = function ()
+		{
+			sidebar_shown = false;
+			if (can_hardware)
+				$edge.attr('style', '');
+			else
+				$edge.animate({ left: orig_sid }, 500);
+			$(window).off('.sw');
+			$(document).off('.sw');
+		},
+		hide_sidebar = function ()
+		{
+			// Remove the style attribute, resets everything and disables hardware acceleration.
+			if (can_hardware)
+				$edge.attr('style', '');
+			else
+				$edge.animate({ left: orig_sid }, 500);
+			clearTimeout(side_time);
+			side_time = setTimeout(hide_sidebar_for_real, 500);
+		};
+
+	$(document).on(is_ff ? 'mouseup' : 'mousedown', function (e) {
+		// Catch the wheel button (or middle-click), and if it's not attempting to open a link, toggle the sidebar.
+		if (e.which == 2 && e.target.tagName !== 'A' && $('#sidebar').css('position') == 'absolute')
+		{
+			sidebar_shown ? hide_sidebar() : show_sidebar();
+			return false;
+		}
+	});
+
+	$('<div/>')
+		.attr('id', 'sideshow')
+		.attr('title', $txt['sideshow'])
+		.click(function () { sidebar_shown ? hide_sidebar() : show_sidebar(); })
+		.append('<div/>')
+		.insertAfter('#upshrink');
 
 	// Show a pop-up with more options when focusing the quick search box.
 	var opened;
@@ -633,7 +709,8 @@ $(function ()
 				$(document).off('click.no');
 				if (!is_opened) // skipping the 'return' compresses badly. sigh.
 					return;
-				$(document).on('click.no', function (e) {
+				$(document).on('click.no', function (e)
+				{
 					if ($(e.target).closest('#notifs').length)
 						return;
 					is_opened = !is_opened;

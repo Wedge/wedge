@@ -1,8 +1,4 @@
 
-#main
-	display: block
-	padding: 4px 4px 8px
-
 // Make the poster info area less prominent.
 .poster
 	width: 7.5em
@@ -12,9 +8,6 @@
 
 .postarea
 	margin-left: 8em
-
-#content div.frame
-	padding: 0 10px 20px
 
 .board_list
 	td.stats
@@ -30,12 +23,6 @@
 
 .smiley
 	vertical-align: middle
-
-@media $responsive
-	body
-		#sidebar
-			margin: 0 -10px
-			font-size, line-height: 1.5em
 
 .smalltext
 	font-size: .6em

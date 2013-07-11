@@ -119,7 +119,6 @@ header, footer, aside, section, article, nav
 ------------------------------------------------------- */
 
 #wedge
-	overflow: hidden
 	max-width: 1240px
 	border-radius: $radius
 	margin: auto
@@ -144,12 +143,27 @@ header, footer, aside, section, article, nav
 #content
 	color: #444
 	div.frame
-		padding: 0 30px
+		padding: 0 $horizontal_content_padding
 
 #edge
 	width: 100%
 	display: table
 	table-layout: fixed
+
+#sideshow mixes .hide
+	cursor: pointer
+	padding: 7px 0 0 1em
+	float: right
+	div
+		width: 1.2em
+		height: .18em
+		line-height: 25px
+		border-top: .54em double #888
+		border-bottom: .18em solid #888
+		transition: all .3s ease
+	:hover div
+		border-top: .54em double #600
+		border-bottom: .18em solid #600
 
 #sidebar
 	display: table-cell
@@ -189,20 +203,6 @@ ul#noava
 	vertical-align: top
 	min-height: 200px
 	padding: 4px 22px 12px 4px
-
-// Main area should have slightly larger text on high-density devices.
-// The $responsive rule (tries) to ensure it doesn't touch tablets.
-@if !ie[-8]
-	@media $responsive and (min-resolution: 1.5dppx)
-		body
-			font-size: 120%
-			.menu > li > span
-				margin-top: 8px
-			#header h1
-				margin-top: 10px
-			#siteslogan
-				margin-top: 45px
-@endif
 
 // Top header
 #top_section
@@ -958,6 +958,7 @@ li.sep
 	float: none
 	margin: 0 0 0 4px
 
+// This will show an arrow above menus.
 // Classes using this must manually set position: relative.
 .menu > li > ul, .mimenu > ul
 	:before, :after
@@ -987,6 +988,25 @@ li.sep
 	:before, :after
 		left: auto
 		right: 15px
+
+#sidemenu mixes .hide
+	border-bottom: 1px solid #ccc
+	margin: 0
+	padding: 0 0 20px
+	h4
+		font-size: 1.4em
+		line-height: 1.6em
+	ul
+		display: block
+		margin: 0
+		padding: 0 0 0 20px
+	li
+		padding: 4px 8px
+		margin: 0
+		display: block
+		font-size: 1.1em
+	.sep
+		margin: -1em 0
 
 /* Styles for the mini-menus.
 ---------------------------------------------------- */

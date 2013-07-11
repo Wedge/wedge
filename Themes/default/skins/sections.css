@@ -11,7 +11,7 @@
 	box-sizing: border-box
 	margin-bottom: 10px
 	td.info a.subject
-		font: 400 120% $subject_font
+		font: 400 120%/120% $subject_font
 		color: $board_col
 	td.children
 		color: #555
@@ -1411,44 +1411,62 @@ div.top_row dd
 .hide
 	display: none
 
-/* Media queries. Responsive design, i.e.
+/* Media queries. Responsive design, e.g.
    mobile-friendly rules, is done here.
 ------------------------------------------------- */
 
 @if !ie[-7]
 	@media $responsive
+		html
+			// Don't set a background directly on the body. Trust me.
+			background: #fff
 		body
 			padding: 0
-			@if (opera, ios)
-				#wedge, #header, #footer
-					border-radius: 0
-			@else
-				#wedge
+			#wedge
+				overflow-x: hidden
+				border-radius: 0
+			@if opera, ios
+				#header, #footer
 					border-radius: 0
 			@endif
 			#edge
-				clear: both
+				position: relative
 				display: block
-			#sidebar
-				display: block
-				box-sizing: border-box
-				width: auto
-				background: $window_bg
-				border-top: 1px solid #bdb5b5
-				margin: 0 -30px 0
-				// Never inherit something into a @media query, use mixins.
-				section mixes .inline-block
-					width: $sidebar-width
-					vertical-align: top
-					padding: 0 8px 8px
-					margin: 8px
-					header
-						background: none
+				transition: transform .5s ease
 			#main
 				display: block
 				padding: 4px 0 12px
+			#forumposts
+				margin: 0 -$horizontal_content_padding
+			#sideshow mixes .inline-block
+			#sidebar
+				position: absolute
+				width: math($sidebar-width + 20px)
+				top: 0
+				left: 100%
+				height: 100%
+				margin-left: $horizontal_content_padding
+				color: #444
+				background: average(#fff, $window_bg)
+				border-left: 1px solid darker($window_bg, 20%)
+				.column
+					padding-right: $horizontal_content_padding
 
-	@media all and (max-width: "math($sidebar-width * 2)")
-		body #sidebar section
-			width: auto
+	// Main area should have slightly larger text on high-density devices.
+	// The $responsive rule (tries) to ensure it doesn't touch tablets.
+	@media $responsive and (min-resolution: 1.5dppx)
+		body
+			// #sideshow will be a floating icon, from now on.
+			#sideshow
+				position: fixed
+				top, right: 3px
+				border: 1px solid #ccc
+				gradient: rgba(255,255,255,1), rgba(255,255,255,.66)
+				padding: 5px
+				z-index: 999
+			.menu > li > span
+				margin-top: 8px
+			#main_menu mixes .hide
+			#sidemenu
+				display: block
 @endif
