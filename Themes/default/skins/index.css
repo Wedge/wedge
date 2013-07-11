@@ -1458,25 +1458,31 @@ a.moderation_link
 		color: red
 		font-weight: 700
 
-/* AJAX notification bar
+/* AJAX notification popup
 ------------------------------------------------------- */
 
-#ajax
-	background: #fff
-	border-bottom: 3px solid #f96f00
-	box-shadow: 0 0 8px #000
-	color: #f96f00
+#ajax mixes .inline-block
+	background: rgba(255, 255, 255, .75)
+	color: #444
+	z-index: 999
 	text-align: center
-	box-sizing: border-box
-	font-size: 16pt
-	padding: 16px
-	width: 100%
-	line-height: 25px
-	position: fixed
-	top, left: 0
+	text-transform: uppercase
+	border: 1px solid #fff
+	font: 400 10pt/15px "Franklin Gothic Medium", Arial, sans-serif
+	height: 15px
+	border-radius, padding: 8px
+	position: absolute
+	cursor: pointer
+	opacity: 0
+	transform: scale(.8)
+	transition: transform .2s ease-in-out, opacity .2s ease-in-out
+	body.waiting &
+		opacity: 1
+		transform: scale(1)
+		transition: transform .3s ease-in-out, opacity .3s ease-in-out
 	a extends .loading
 		float: right
-		margin: 8px 8px 0
+		margin: 2px 2px 0 10px
 
 /* Definition lists
 ------------------------------------------------------- */

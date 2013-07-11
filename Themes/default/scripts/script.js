@@ -286,19 +286,33 @@ function expandPages(spanNode, firstPage, lastPage, perPage)
 	$(spanNode).remove();
 }
 
-// Create the div for the indicator, and add the image, link to turn it off, and loading text.
-function show_ajax()
+// Create the Ajax loading icon, and add a link to turn it off.
+// 'where' should be empty to center on screen, or a DOM element to serve as the center point.
+// 'exact' is an optional array of two numbers, indicating a top/left offset to be applied on top of where's.
+// e.g., show_ajax('#notifs', [0, 20]) will show the Ajax popup 20 pixels below the center of the #notifs text.
+function show_ajax(where, exact)
 {
-	$('body').append(
+	// We're delaying the creation a bit, to account for super-fast AJAX (e.g. local server, etc.)
+	window.ajax = setTimeout(function ()
+	{
+		var offs = $(where).offset();
 		$('<div id="ajax">')
-			.html('<a href="#" onclick="hide_ajax();" title="' + (we_cancel || '') + '"></a>' + we_loading)
-			.css(is_ie6 ? { position: 'absolute', top: $(window).scrollTop() } : {})
-	);
+			.html('<a title="' + (we_cancel || '') + '"></a>' + we_loading)
+			.click(hide_ajax)
+			.appendTo('body');
+			$('#ajax').offset({
+				left: (offs && offs.left || 0) + (exact && exact[0] || 0) + $(where || window).width() / 2 - $('#ajax').width() / 2,
+				top: (offs && offs.top || 0) + (exact && exact[1] || 0) + $(where || window).height() / 2 - $('#ajax').height() / 2 + (where ? 0 : $(window).scrollTop())
+			});
+		$('body').addClass('waiting');
+	}, 200);
 }
 
 function hide_ajax()
 {
-	$('#ajax').remove();
+	clearTimeout(window.ajax);
+	$('body').removeClass('waiting');
+	setTimeout(function () { $('#ajax').remove(); }, 200);
 }
 
 // Rating boxes in Media area.
@@ -574,9 +588,17 @@ $(function ()
 		});
 	});
 
-	// Disable parent links on hover-impaired browsers.
 	if (is_touch)
+	{
+		// Disable parent links on hover-impaired browsers.
 		$('.umme,.subsection>a,.menu>li:not(.nodrop)>h4>a').click(false);
+
+		var meta = $('meta[name=viewport]'), initial_meta = meta.attr('content');
+
+		$('input,textarea')
+			.focus(function () { meta.attr('content', initial_meta + ',maximum-scale=1,user-scalable=0'); })
+			.blur(function () { meta.attr('content', initial_meta); });
+	}
 
 	var
 		orig_sid,
@@ -722,8 +744,10 @@ $(function ()
 
 		notload = function (url, toggle)
 		{
+			show_ajax('#notifs', [0, 30]);
 			$shade.load(url, function (data)
 			{
+				hide_ajax();
 				$('#n_container').css('max-height', ($(window).height() - $('#n_container').offset().top) * .9);
 
 				$(this).find('.n_item').each(function ()
@@ -732,14 +756,25 @@ $(function ()
 
 					$(this)
 						.hover(function () { $(this).toggleClass('windowbg3').find('.n_read').toggle(); })
-						.click(function () {
+						.click(function ()
+						{
 							// Try to toggle the preview. If it doesn't exist, create it.
-							if (!that.next('.n_prev').stop().slideToggle(600).length)
+							if (!that.next('.n_prev').stop(true, true).slideToggle(600).length)
 							{
-								show_ajax();
+								show_ajax(this);
 								$.post(weUrl('action=notification;sa=preview;in=' + id), function (doc) {
 									hide_ajax();
 									$('<div/>').addClass('n_prev').html(doc).insertAfter(that).hide().slideToggle(600);
+
+									if (that.hasClass('n_new'))
+									{
+										that.removeClass('n_new');
+										we_notifs--;
+										$shade.prev().attr('class', we_notifs > 0 ? 'notenice' : 'note').text(we_notifs);
+										document.title = (we_notifs > 0 ? '(' + we_notifs + ') ' : '') + original_title;
+
+										$.post(weUrl('action=notification;sa=markread;in=' + id));
+									}
 								});
 							}
 						})
@@ -748,7 +783,10 @@ $(function ()
 						.hover(function () { $(this).toggleClass('windowbg'); })
 						.click(function (e)
 						{
-							$(this).parent().next('.n_prev').andSelf().hide(300, function () { $(this).remove(); });
+							if (!that.hasClass('n_new'))
+								return false;
+
+							that.removeClass('n_new').next('.n_prev').andSelf().hide(300, function () { $(this).remove(); });
 							we_notifs--;
 							$shade.prev().attr('class', we_notifs > 0 ? 'notenice' : 'note').text(we_notifs);
 							document.title = (we_notifs > 0 ? '(' + we_notifs + ') ' : '') + original_title;
@@ -785,7 +823,7 @@ $(function ()
 		{
 			$.post(weUrl('action=notification;sa=unread'), function (count)
 			{
-				if (count != window.we_notifs)
+				if (count !== '' && count != window.we_notifs)
 				{
 					we_notifs = count;
 					$shade.prev().attr('class', we_notifs > 0 ? 'notenice' : 'note').text(we_notifs);

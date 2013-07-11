@@ -1411,6 +1411,9 @@ div.top_row dd
 .hide
 	display: none
 
+body.waiting *
+	cursor: progress
+
 /* Media queries. Responsive design, e.g.
    mobile-friendly rules, is done here.
 ------------------------------------------------- */
