@@ -1823,6 +1823,9 @@ th.last_th
 		> span
 			font-size: 0.9em
 
+		.like_button
+			padding-right: 0
+
 		.mimenu final
 			opacity: 0
 			visibility: hidden

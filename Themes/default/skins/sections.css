@@ -1459,7 +1459,10 @@ body.waiting *
 				border-left: 1px solid darker($window_bg, 20%)
 				.column
 					padding-right: $horizontal_content_padding
+@endif
 
+@if !ie[-8]
+	// IE8 doesn't understand min-resolution, and thus accepts it. Go figure. Ignore it!
 	// Main area should have slightly larger text on high-density devices.
 	// The $responsive rule (tries) to ensure it doesn't touch tablets.
 	@media $responsive and (min-resolution: 1.5dppx)

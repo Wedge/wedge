@@ -616,8 +616,8 @@ $(function ()
 
 			// If the sidebar button is part of the sidebar container, it'll be displaced by a hard-scroll, so avoid that.
 			can_hardware &= !$('#sideshow').closest('#edge').length;
-			orig_wid = $edge[0].offsetWidth;
-			orig_sid = $edge[0].offsetLeft;
+			orig_wid = $edge.width();
+			orig_sid = parseInt($edge.css('left')) || 0;
 			sidebar_shown = true;
 
 			$(document).on('mousedown.sw', function (e) {
@@ -629,7 +629,7 @@ $(function ()
 			if (can_hardware)
 				$edge.css({ transform: 'translate3d(-' + $('#sidebar').width() + 'px,0,0)' });
 			else
-				$edge.animate({ left: orig_sid - $('#sidebar').width() }, 500);
+				$edge.stop(true).animate({ left: orig_sid - $('#sidebar').width() }, 500);
 			$(window).on('resize.sw', function () {
 				// Fix the sidebar position if the window has just been enlarged.
 				if (sidebar_shown && $('#sidebar').css('position') != 'absolute')
@@ -642,7 +642,7 @@ $(function ()
 			if (can_hardware)
 				$edge.attr('style', '');
 			else
-				$edge.animate({ left: orig_sid }, 500);
+				$edge.stop(true).animate({ left: orig_sid }, 500).width('');
 			$(window).off('.sw');
 			$(document).off('.sw');
 		},
@@ -652,7 +652,7 @@ $(function ()
 			if (can_hardware)
 				$edge.attr('style', '');
 			else
-				$edge.animate({ left: orig_sid }, 500);
+				$edge.stop(true).animate({ left: orig_sid }, 500).width('');
 			clearTimeout(side_time);
 			side_time = setTimeout(hide_sidebar_for_real, 500);
 		};
@@ -674,34 +674,37 @@ $(function ()
 		.insertAfter('#upshrink');
 
 	// Show a pop-up with more options when focusing the quick search box.
-	var opened;
+	var opened, $pop = $('<div class="mimenu right">').appendTo($('#search_form').addClass('mime'));
 	$('#search_form .search').focus(function ()
 	{
 		if (opened)
 			return;
-		var $pop = $('#search_form')
-			.addClass('mime')
-			.append('<div>')
-			.find('div').last()
-			.addClass('mimenu')
-			.load(weUrl('action=search' + (window.we_topic ? ';topic=' + we_topic : '') + (window.we_board ? ';board=' + we_board : '')), function () {
-				$('#search_popup').width($('#search_popup').width());
-				$pop.hide().show(300).find('select').sb();
-			});
+		$pop.load(weUrl('action=search' + (window.we_topic ? ';topic=' + we_topic : '') + (window.we_board ? ';board=' + we_board : '')), function () {
+			$pop.hide().css('top', 0).animate({
+				opacity: 'toggle',
+				top: '100%'
+			}).find('select').sb();
+		});
 		opened = true;
 		$(document).on('click.sf', function (e) {
 			if ($(e.target).closest('#search_form').length)
 				return;
 			opened = false;
 			$(document).off('.sf');
-			$pop.hide(function () { $(this).remove(); });
+			$pop.css('top', '100%').animate({
+				opacity: 'toggle',
+				top: '0%'
+			});
 		}).on('keyup.sf', function (e) {
 			// keydown target holds previous element, keyup holds next one. Found this by myself, eheh.
 			if (e.altKey || e.ctrlKey || e.keyCode != 9 || $(e.target).closest('#search_form').length)
 				return;
 			opened = false;
 			$(document).off('.sf');
-			$pop.hide(function () { $(this).remove(); });
+			$pop.css('top', '100%').animate({
+				opacity: 'toggle',
+				top: '0%'
+			});
 		});
 	});
 });
@@ -783,15 +786,17 @@ $(function ()
 						.hover(function () { $(this).toggleClass('windowbg'); })
 						.click(function (e)
 						{
-							if (!that.hasClass('n_new'))
-								return false;
+							var was_new = that.hasClass('n_new');
 
 							that.removeClass('n_new').next('.n_prev').andSelf().hide(300, function () { $(this).remove(); });
-							we_notifs--;
-							$shade.prev().attr('class', we_notifs > 0 ? 'notenice' : 'note').text(we_notifs);
-							document.title = (we_notifs > 0 ? '(' + we_notifs + ') ' : '') + original_title;
+							if (was_new)
+							{
+								we_notifs--;
+								$shade.prev().attr('class', we_notifs > 0 ? 'notenice' : 'note').text(we_notifs);
+								document.title = (we_notifs > 0 ? '(' + we_notifs + ') ' : '') + original_title;
 
-							$.post(weUrl('action=notification;sa=markread;in=' + id));
+								$.post(weUrl('action=notification;sa=markread;in=' + id));
+							}
 
 							// Cancel the implied clink on the parent.
 							e.stopImmediatePropagation();
