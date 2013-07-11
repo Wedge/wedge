@@ -13,9 +13,11 @@
 		<body>
 			<wrapper>
 				<header>
-					<logo_toggler />
-					<search_box />
-					<language_selector />
+					<top_bar>
+						<logo_toggler />
+						<search_box />
+						<language_selector />
+					</top_bar>
 				</header>
 				<menu />
 				<content_wrap>

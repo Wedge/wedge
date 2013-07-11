@@ -189,8 +189,19 @@ function template_wrapper_before()
 function template_header_before()
 {
 	echo '
-	<div id="header"><div class="frame">
+	<div id="header"><div class="frame">';
+}
+
+function template_top_bar_before()
+{
+	echo '
 		<div id="top_section"><div class="frame">';
+}
+
+function template_top_bar_after()
+{
+	echo '
+		</div></div>';
 }
 
 // End the header layer.
@@ -199,7 +210,6 @@ function template_header_after()
 	global $context, $options;
 
 	echo '
-		</div></div>
 		<div id="upper_section"', empty($options['collapse_header']) ? '' : ' class="hide"', '><div class="frame"><we:banner logo="',
 		$context['header_logo_url_html_safe'], '">', $context['site_slogan'], '</we:banner>
 		</div></div>
@@ -258,27 +268,14 @@ function template_language_selector()
 		$lng = preg_replace('~([;&?])language=[a-z-]+[;&]~i', '$1', $lng);
 
 	echo '
-			<p>';
+			<div id="flags">';
 
 	foreach ($context['languages'] as $language)
 		echo '
 				<a href="', $lng, 'language=', $language['filename'], '"', $language['code'] ? ' rel="alternate" hreflang="' . $language['code'] . '"' : '', ' class="flag_', $language['filename'], '" title="', westr::htmlspecialchars($language['name']), '"></a>';
 
 	echo '
-			</p>';
-}
-
-function template_random_news()
-{
-	global $txt, $context, $theme;
-
-	// Show a random news item? (or you could pick one from news_lines...)
-	if (empty($theme['enable_news']) || empty($context['random_news_line']))
-		return;
-
-	echo '
-			<h2>', $txt['news'], we::is('ie6,ie7') ? ' > ' : '', '</h2>
-			<p>', $context['random_news_line'], '</p>';
+			</div>';
 }
 
 function template_logo_toggler()
@@ -297,9 +294,25 @@ function template_logo_toggler()
 	});');
 }
 
+function template_random_news()
+{
+	global $txt, $context, $theme;
+
+	// Show a random news item? (or you could pick one from news_lines...)
+	if (empty($theme['enable_news']) || empty($context['random_news_line']))
+		return;
+
+	echo '
+	<div id="sitenews">
+		<span>', $txt['news'], we::is('ie6,ie7') ? ' > ' : '', '</span>
+		', $context['random_news_line'], '
+	</div>';
+}
+
 function template_sidebar_wrap_before()
 {
-	echo '<we:sidebar>';
+	echo '
+	<we:sidebar>';
 }
 
 function template_sidebar_before()

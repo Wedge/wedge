@@ -207,14 +207,19 @@ ul#noava
 // Top header
 #top_section
 	padding: 8px 30px
-	p, h2
-		mixin: .inline-block
-		margin: 6px 1em 0 0
-		padding: 0
-	p a
+
+#flags mixes .inline-block // Language flags
+	margin: 6px 1em 0 0
+	padding: 0
+	a
 		margin-top: -3px
-	h2 extends .horizontal-arrow
-		margin-right: 0
+
+#sitenews
+	padding: 7px
+	border-bottom: 1px dotted #999
+	span extends .horizontal-arrow
+		color: #888
+		font-weight: 700
 
 // Main title
 #header h1
@@ -228,6 +233,7 @@ ul#noava
 // The search box, with a few hacks to allow for a drop-down menu...
 #search_form
 	float: right
+	max-width: 50%
 	.mimenu
 		width: @is (ie6, auto, 100%)
 		@if ie6
@@ -869,17 +875,17 @@ input[type=file]
 li.active > a
 	font-weight: 700
 
-// We need a right-floated .horizontal-arrow for our sub-menus...
+// We need an .horizontal-arrow for our sub-menus...
 li.subsection > a
-	padding: 6px 8px
-	overflow: hidden
-	:before
+	margin-right: 12px
+	:after
 		opacity: .3
 		font: .6em/1 Arial
 		vertical-align: .12em
 		content: "\a0\a0\25ba"
+		position: absolute
 		margin-top: .6em
-		float: right
+		right: 8px
 
 // Hover colors. We're using box-shadow to keep the ability to set hover-independent background colors.
 .css h4:hover, .menu h4:hover, h4.hove
@@ -893,7 +899,7 @@ li.subsection > a
 			color: #fff
 
 // Quick hack for arrow colors on selected parents.
-li.hove > a:before, .menu h4.hove:after
+li.hove > a:after, .menu h4.hove:after
 	opacity: .5
 	transition: opacity .3s
 

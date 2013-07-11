@@ -315,44 +315,23 @@ ul.buttonlist
 /* CSS for smaller widths.
 ------------------------------------------------------- */
 
-// You can avoid precedence problems by resetting the query,
+// You could avoid precedence problems by resetting the query,
 // just by adding the 'reset' keyword next to it.
-@media $responsive reset
+// Just be careful to always carry the important bits over!
+@media $responsive
 	body
 		padding: 0
-		@if (opera, ios)
-			#wedge, #header, #footer
-				border-radius: 0
-		@else
-			#wedge
-				border-radius: 0
+		#wedge @is ("opera, ios", ", #header, #footer", "")
+			border-radius: 0
 		@endif
 		#edge
 			padding-top: 0
-		#sidebar
-			display: block
-			width: auto
-			border, border-radius: 0
-			border-top: 1px solid #bdb5b5
-			margin: 0 -30px -30px
-			section mixes .inline-block
-				vertical-align: top
-				width: $sidebar-width
-				padding: 0 8px 8px
-				margin: 8px
-				header
-					background: rgba(0,0,0,.05)
-					box-shadow: none
-					color: #333
 		#main
 			display: block
 			padding: 4px 0 12px
-
-@if ie8
-	@media $responsive
-		body #edge
-			table-layout: auto
-@endif
+		#sideshow div
+			border-top: .54em double #ccc
+			border-bottom: .18em solid #ccc
 
 @replace
 	letter-spacing: -3px

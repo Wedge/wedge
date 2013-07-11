@@ -61,21 +61,6 @@ $darkgrad = #f3f2f0
 #edge
 	padding: 0
 
-#sidebar
-	padding: 60px 0
-	border: 0
-	background: none
-	header
-		border-radius: 4px
-	.column
-		background: #edefe6
-		border: 1px solid #ccc
-		border-radius: 8px
-		padding: 14px 12px 12px
-	.title
-		font-size: 1.2em
-		padding: 4px 4px 4px 8px
-
 #main
 	padding: 4px 22px 12px 8px
 
@@ -145,18 +130,6 @@ $darkgrad = #f3f2f0
 		padding: 0
 		#wedge
 			border: 0
-		#sidebar
-			top, padding: 0
-			display: block
-			margin: 0 -20px -20px
-			.column
-				border, border-radius: 0
-			section header
-				color: #000
-				border: 0
-				background: rgba(0,0,0,.02)
-				border-radius: 4px
-				box-shadow: none
 		#linktree
 			margin: 0
 
@@ -168,7 +141,7 @@ $darkgrad = #f3f2f0
 	color: #333
 	div.frame
 		padding: 10px 20px
-	ul li a
+	a
 		color: #679
 
 /* Styles for the general looks for the default theme.
@@ -331,6 +304,10 @@ $post_font = $main_font
 $post_font_size = 10.5pt/140%
 $board_col = #d97b33
 $radius = 20px
+
+@remove
+	border-top: .54em double #ccc
+	border-bottom: .18em solid #ccc
 
 @remove #footer, #header, #navi
 	color: #ddc
