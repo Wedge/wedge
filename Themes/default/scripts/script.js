@@ -574,7 +574,7 @@ $(function ()
 	$('select').sb();
 
 	// Save a copy of our untreated menu, for responsiveness.
-	$('#main_menu').clone().removeClass('css menu').attr('id', 'sidemenu').prependTo('#sidebar');
+	$('#main_menu').clone().removeClass('css menu').attr('id', 'sidemenu').prependTo('#sidebar>div');
 
 	// Now replace our pure CSS menus with JS-powered versions.
 	$('.menu').removeClass('css').mm();
@@ -603,63 +603,77 @@ $(function ()
 	var
 		orig_sid,
 		orig_wid,
-		side_time, old_y = 0,
+		to_left,
+		old_y = 0,
 		sidebar_shown = false,
 		// We can't do a hard-scroll on IE<10 and Opera Presto.
 		can_hardware = !is_opera && !is_ie8down && !ua('msie 9'),
 		$edge = $('#edge'),
+		// !! A special hack for Warm... Any ways to make it more universal..?
+		$main = $('#offside').length ? $('#offside') : $('#main'),
 		show_sidebar = function ()
 		{
 			// Don't show the sidebar if: it's already shown, or we're zooming (mobile devices), or we're not in responsive mode.
-			if (sidebar_shown || document.width > window.innerWidth || $('#sidebar').css('position') != 'absolute')
+			if (sidebar_shown || document.width > window.innerWidth || $('#sideshow').is(':hidden'))
 				return true;
 
 			// If the sidebar button is part of the sidebar container, it'll be displaced by a hard-scroll, so avoid that.
 			can_hardware &= !$('#sideshow').closest('#edge').length;
-			orig_wid = $edge.width();
+			orig_wid = $main.width();
 			orig_sid = parseInt($edge.css('left')) || 0;
 			sidebar_shown = true;
+
+			$main.width(orig_wid);
+			$('#sidebar').css('display', $main.css('display'));
+			$('#sidebar>div').css('margin-top', $(window).scrollTop() > $('#sidebar').offset().top ? Math.min(
+				$('#sidebar').outerHeight() - $('#sidebar>div').outerHeight(),
+				$(window).scrollTop() - $('#sidebar').offset().top
+			) : 0);
 
 			$(document).on('mousedown.sw', function (e) {
 				// HTML implies user clicked on a scrollbar, or at least outside the HTML contents.
 				if (!$(e.target).closest('#sidebar').length && e.target.tagName != 'HTML')
 					hide_sidebar();
 			});
-			$edge.width(orig_wid);
-			if (can_hardware)
+
+			to_left = $('#sidebar').offset().left > $main.offset().left;
+			if (!to_left)
+				$edge.css({ left: orig_sid - $('#sidebar').width() });
+
+			if (can_hardware && to_left)
 				$edge.css({ transform: 'translate3d(-' + $('#sidebar').width() + 'px,0,0)' });
 			else
-				$edge.stop(true).animate({ left: orig_sid - $('#sidebar').width() }, 500);
+				$edge.stop(true).animate({ left: orig_sid + (to_left ? $('#sidebar').width() : 0) }, 500);
 			$(window).on('resize.sw', function () {
 				// Fix the sidebar position if the window has just been enlarged.
-				if (sidebar_shown && $('#sidebar').css('position') != 'absolute')
+				if (sidebar_shown && $('#sideshow').is(':hidden'))
 					hide_sidebar_for_real();
 			});
 		},
 		hide_sidebar_for_real = function ()
 		{
 			sidebar_shown = false;
-			if (can_hardware)
-				$edge.attr('style', '');
-			else
-				$edge.stop(true).animate({ left: orig_sid }, 500).width('');
+			// Remove the style attribute, resets everything and disables hardware acceleration.
+			$edge.attr('style', '');
+			$('#sidebar').attr('style', '');
+			$main.width('');
 			$(window).off('.sw');
 			$(document).off('.sw');
 		},
 		hide_sidebar = function ()
 		{
-			// Remove the style attribute, resets everything and disables hardware acceleration.
-			if (can_hardware)
+			if (can_hardware && to_left)
+			{
 				$edge.attr('style', '');
+				setTimeout(hide_sidebar_for_real, 500);
+			}
 			else
-				$edge.stop(true).animate({ left: orig_sid }, 500).width('');
-			clearTimeout(side_time);
-			side_time = setTimeout(hide_sidebar_for_real, 500);
+				$edge.stop(true).animate({ left: orig_sid - (to_left ? 0 : $('#sidebar').width())}, 500, hide_sidebar_for_real);
 		};
 
 	$(document).on(is_ff ? 'mouseup' : 'mousedown', function (e) {
 		// Catch the wheel button (or middle-click), and if it's not attempting to open a link, toggle the sidebar.
-		if (e.which == 2 && e.target.tagName !== 'A' && $('#sidebar').css('position') == 'absolute')
+		if (e.which == 2 && e.target.tagName !== 'A' && !$('#sideshow').is(':hidden'))
 		{
 			sidebar_shown ? hide_sidebar() : show_sidebar();
 			return false;
@@ -671,7 +685,7 @@ $(function ()
 		.attr('title', $txt['sideshow'])
 		.click(function () { sidebar_shown ? hide_sidebar() : show_sidebar(); })
 		.append('<div/>')
-		.insertAfter('#upshrink');
+		.appendTo('#top_section>div');
 
 	// Show a pop-up with more options when focusing the quick search box.
 	var opened, $pop = $('<div class="mimenu right">').appendTo($('#search_form').addClass('mime'));

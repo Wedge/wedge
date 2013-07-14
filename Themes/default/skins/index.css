@@ -142,8 +142,6 @@ header, footer, aside, section, article, nav
 
 #content
 	color: #444
-	div.frame
-		padding: 0 $horizontal_content_padding
 
 #edge
 	width: 100%
@@ -171,7 +169,7 @@ header, footer, aside, section, article, nav
 	width: $sidebar-width
 	font-size: .9em
 	.column
-		padding: 20px 0 0 20px
+		padding: 20px $horizontal_content_padding 0
 		section
 			margin: 0 0 15px
 
@@ -202,7 +200,7 @@ ul#noava
 	display: table-cell
 	vertical-align: top
 	min-height: 200px
-	padding: 4px 22px 12px 4px
+	padding: 4px $horizontal_content_padding 12px
 
 // Top header
 #top_section
@@ -997,8 +995,8 @@ li.sep
 
 #sidemenu mixes .hide
 	border-bottom: 1px solid #ccc
-	margin: 0
-	padding: 0 0 20px
+	margin: 0 0 10px
+	padding: 0 0 10px
 	h4
 		font-size: 1.4em
 		line-height: 1.6em

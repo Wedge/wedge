@@ -1434,11 +1434,7 @@ body.waiting *
 			@endif
 			#edge
 				position: relative
-				display: block
 				transition: transform .5s ease
-			#main
-				display: block
-				padding: 4px 0 12px
 			#forumposts
 				margin: 0 -$horizontal_content_padding
 			#search_form
@@ -1448,15 +1444,7 @@ body.waiting *
 					min-width: 300px
 			#sideshow mixes .inline-block
 			#sidebar
-				position: absolute
-				width: math($sidebar-width + 20px)
-				top: 0
-				left: 100%
-				height: 100%
-				margin-left: $horizontal_content_padding
-				color: #444
-				background: average(#fff, $window_bg)
-				border-left: 1px solid darker($window_bg, 20%)
+				display: none
 				.column
 					padding-right: $horizontal_content_padding
 @endif

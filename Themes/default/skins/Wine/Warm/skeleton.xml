@@ -30,17 +30,18 @@
 				<!-- A sidebar wrapper is necessary if you want maximum compatibility. It should open and close a table, or a compatible div. -->
 				<sidebar_wrap indent="-1">
 					<sidebar>
-						<!-- This is where Wedge will insert any side information. -->
-						<top_bar>
-							<search_box indent="-1" />
-							<language_selector indent="-1" />
-						</top_bar>
+						<search_box indent="-1" />
+						<language_selector indent="-1" />
 					</sidebar>
 				</sidebar_wrap>
 
 				<!-- We usually need to add a wrapper after the sidebar that will be defined as a table cell. -->
 				<offside_wrap indent="-1">
 					<indenter indent="1">
+
+						<!-- This is where Wedge will insert any side information. -->
+						<top_bar>
+						</top_bar>
 
 						<header>
 							<!-- The header layer: top bar, logo, things like that... In the case of Warm, we moved top_bar to the sidebar. -->
