@@ -42,9 +42,8 @@ table.cs0 final tr.windowbg:last-child td
 		direction: rtl
 */
 
-@replace #content div.frame
-	padding: 0 30px
-	padding: 0 10px
+#content div.frame
+	padding-bottom: 16px
 
 #edge
 	padding-top: 16px
@@ -69,11 +68,6 @@ table.cs0 final tr.windowbg:last-child td
 		text-decoration: none
 	.column
 		padding: 14px 12px 12px
-
-@if !ie[-7]
-	#main
-		padding: 0 0 0 30px
-@endif
 
 #header
 	h2
@@ -107,7 +101,6 @@ table.cs0 final tr.windowbg:last-child td
 
 // The footer with copyright links etc.
 #footer
-	margin-top: 16px
 	border-top: 3px solid #bdb5b5
 	a
 		color: #fff
@@ -326,12 +319,11 @@ ul.buttonlist
 		@endif
 		#edge
 			padding-top: 0
-		#main
-			display: block
-			padding: 4px 0 12px
 		#sideshow div
 			border-top: .54em double #ccc
 			border-bottom: .18em solid #ccc
+		#forumposts
+			margin: 0 -math($horizontal_content_padding / 2)
 
 @replace
 	letter-spacing: -3px

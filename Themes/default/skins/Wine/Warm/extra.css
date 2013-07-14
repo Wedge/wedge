@@ -15,26 +15,19 @@ h4, h5
 #offside
 	display: @is (ios, block, table-cell)
 
-@media $responsive
-	body
-		#main
-			padding: 0
-		#sidebar
-			display: table-footer-group
-			background: $side_bg
-			text-align: left
-			.column > *
-				float: left
-				width: 240px
-		#offside
-			display: block
-
 #content div.frame
 	margin: 0
-	padding: 0 20px 4px
+	padding: 0 20px 16px
 
 #edge
 	padding: 0
+
+@media $responsive
+	body
+		#sideshow
+			display: block
+			position: fixed
+			top, right: 3px
 
 #sidebar
 	border, border-radius: 0
@@ -52,9 +45,6 @@ h4, h5
 		list-style-type: none
 	p
 		clear: both
-
-#top_section
-	display: none
 
 .wehead
 	box-shadow: none
@@ -79,10 +69,11 @@ h4, h5
 #wedgelogo
 	background: none
 
+#top_section
+	padding: 0
+
 #upper_section
 	border-top: 0
-
-#top_section, #upper_section
 	border-bottom: 3px solid lighter($reddish, 3%)
 
 #main
@@ -93,7 +84,7 @@ h4, h5
 	border-top: 1px solid #c3d0de
 	gradient: darker($body_bg, 0%), darker($body_bg, 10%), 200deg
 	color: #333
-	ul li a
+	a
 		color: #679
 
 dl#feed
@@ -166,8 +157,10 @@ dl#feed
 			padding-left: 8px
 			border-radius: 8px 0 0 8px
 
-#linktree_bt ul
-	margin: 0 20px 0
+#linktree_bt
+	padding: 0 0 1em
+	ul
+		margin: 0 20px 0
 
 @remove #linktree_bt ul
 	border-width: 1px 0 0 0
@@ -281,6 +274,7 @@ tr.titlebg th, tr.catbg th
 
 #search_form
 	float: none
+	max-width: 100% // This one's in the sidebar, not the header!
 	input.search
 		width: 133px
 		margin-right: 4px
@@ -314,7 +308,7 @@ $main_font_size = 88%/140%
 $post_font_size = 9.7pt/140%
 
 @remove #linktree
-	margin: 0 -20px
+	margin: 0 -10px
 
 @remove #wedge
 	border-radius: $radius

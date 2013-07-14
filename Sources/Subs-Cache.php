@@ -1396,24 +1396,23 @@ function wedge_get_skin_options()
 	foreach ($skin_options as $key => $val)
 		define('SKIN_' . strtoupper($key), we::$is['SKIN_' . strtoupper($key)] = !empty($val));
 
-	// Any conditional skin directives..?
-	wedge_skin_conditions($set);
-
-	if ($skeleton)
+	// Any conditional directives inside the skin.xml or skeleton.xml files..?
+	$sources = $skeleton ? array(&$set, &$skeleton) : array(&$set);
+	foreach ($sources as &$source)
 	{
-		// Look for tests inside mini-skeletons.
-		wedge_skin_conditions($skeleton);
+		wedge_skin_conditions($source);
 
 		// Did we ask to do post-loading operations on blocks/layers of the skeleton?
-		wedge_get_skeleton_operations($skeleton, 'move', array('block', 'to', 'where'));
-		wedge_get_skeleton_operations($skeleton, 'rename', array('block', 'to'));
-		wedge_get_skeleton_operations($skeleton, 'remove', array('block'));
+		wedge_get_skeleton_operations($source, 'move', array('block', 'to', 'where'));
+		wedge_get_skeleton_operations($source, 'rename', array('block', 'to'));
+		wedge_get_skeleton_operations($source, 'remove', array('block'));
+	}
 
-		// Now, find skeletons and feed them to the $context['skeleton'] array for later parsing.
-		if (strpos($skeleton, '</skeleton>') !== false && preg_match_all('~<skeleton(?:\s*id="([^"]+)"\s*)?>(.*?)</skeleton>~s', $skeleton, $matches, PREG_SET_ORDER))
+	// Now, find skeletons and feed them to the $context['skeleton'] array for later parsing.
+	if ($skeleton && strpos($skeleton, '</skeleton>') !== false)
+		if (preg_match_all('~<skeleton(?:\s*id="([^"]+)"\s*)?>(.*?)</skeleton>~s', $skeleton, $matches, PREG_SET_ORDER))
 			foreach ($matches as $match)
 				$context['skeleton'][empty($match[1]) ? 'main' : $match[1]] = $match[2];
-	}
 
 	if (!$set)
 		return;

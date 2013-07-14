@@ -16,6 +16,9 @@
 		By Nao, inspired by Bloc's Curve.
 	]]></comment>
 
+	<move block="linktree" to="menu" where="after" />
+	<move block="linktree:bottom" to="content_wrap" where="after" />
+
 	<code for="ie6" include="scripts/pngfix.js scripts/ie6hover.js"><![CDATA[
 	$('input[type=checkbox], input[type=radio]').addClass('ie_check');
 	$('input[type=submit], input[type=button]').addClass('ie_button');
