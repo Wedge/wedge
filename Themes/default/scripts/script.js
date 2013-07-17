@@ -603,22 +603,22 @@ $(function ()
 	var
 		orig_sid,
 		orig_wid,
-		to_left,
+		sidebar_on_right,
 		old_y = 0,
 		sidebar_shown = false,
-		// We can't do a hard-scroll on IE<10 and Opera Presto.
-		can_hardware = !is_opera && !is_ie8down && !ua('msie 9'),
+		do_hardware,
+
+		// $main is the first child of the sidebar container that isn't the sidebar.
+		// Usually, it should be #main or #offside.
 		$edge = $('#edge'),
-		// !! A special hack for Warm... Any ways to make it more universal..?
-		$main = $('#offside').length ? $('#offside') : $('#main'),
+		$main = $edge.children().not('#sidebar').first(),
+
 		show_sidebar = function ()
 		{
-			// Don't show the sidebar if: it's already shown, or we're zooming (mobile devices), or we're not in responsive mode.
-			if (sidebar_shown || document.width > window.innerWidth || $('#sideshow').is(':hidden'))
+			// Don't show the sidebar if it's already visible.
+			if (sidebar_shown || $('#sideshow').is(':hidden'))
 				return true;
 
-			// If the sidebar button is part of the sidebar container, it'll be displaced by a hard-scroll, so avoid that.
-			can_hardware &= !$('#sideshow').closest('#edge').length;
 			orig_wid = $main.width();
 			orig_sid = parseInt($edge.css('left')) || 0;
 			sidebar_shown = true;
@@ -626,7 +626,7 @@ $(function ()
 			$main.width(orig_wid);
 			$('#sidebar').css('display', $main.css('display'));
 			$('#sidebar>div').css('margin-top', $(window).scrollTop() > $('#sidebar').offset().top ? Math.min(
-				$('#sidebar').outerHeight() - $('#sidebar>div').outerHeight(),
+				$('#sidebar').height() - $('#sidebar>div').height(),
 				$(window).scrollTop() - $('#sidebar').offset().top
 			) : 0);
 
@@ -636,14 +636,18 @@ $(function ()
 					hide_sidebar();
 			});
 
-			to_left = $('#sidebar').offset().left > $main.offset().left;
-			if (!to_left)
-				$edge.css({ left: orig_sid - $('#sidebar').width() });
+			sidebar_on_right = $('#sidebar').offset().left > $main.offset().left;
+			$edge.css({ left: orig_sid - (sidebar_on_right ? 0 : $('#sidebar').width()) });
 
-			if (can_hardware && to_left)
-				$edge.css({ transform: 'translate3d(-' + $('#sidebar').width() + 'px,0,0)' });
-			else
-				$edge.stop(true).animate({ left: orig_sid + (to_left ? $('#sidebar').width() : 0) }, 500);
+			// Can't hard-scroll on skins that have the HTML for the side button inside the sidebar container.
+			if (!$('#sideshow').closest('#edge').length)
+				$edge.css({ transform: 'translate3d(' + (sidebar_on_right ? '-' : '') + $('#sidebar').width() + 'px,0,0)' });
+
+			// And can't hard-scroll on some browsers, like IE < 10.
+			do_hardware = $edge.css('transform') != 'none';
+			if (!do_hardware)
+				$edge.stop(true).animate({ left: orig_sid - (sidebar_on_right ? $('#sidebar').width() : 0) }, 500);
+
 			$(window).on('resize.sw', function () {
 				// Fix the sidebar position if the window has just been enlarged.
 				if (sidebar_shown && $('#sideshow').is(':hidden'))
@@ -654,21 +658,24 @@ $(function ()
 		{
 			sidebar_shown = false;
 			// Remove the style attribute, resets everything and disables hardware acceleration.
-			$edge.attr('style', '');
 			$('#sidebar').attr('style', '');
+			$edge.attr('style', '');
 			$main.width('');
 			$(window).off('.sw');
 			$(document).off('.sw');
 		},
 		hide_sidebar = function ()
 		{
-			if (can_hardware && to_left)
+			if (do_hardware)
 			{
-				$edge.attr('style', '');
+				// Two alternatives, for completeness: (1) $edge.one('transitionend', hide_sidebar_for_real) is clean, but reportedly not supported by webOS.
+				// (2) the following is bad-ass, as it allows changing the value from within CSS, but it's also a bit overkill... Innit?
+				// setTimeout(hide_sidebar_for_real, (parseFloat($edge.css('transition-duration')) || .5) * ($edge.css('transition-duration').indexOf('m') == -1 ? 1000 : 1));
 				setTimeout(hide_sidebar_for_real, 500);
+				$edge.css({ transform: 'none' });
 			}
 			else
-				$edge.stop(true).animate({ left: orig_sid - (to_left ? 0 : $('#sidebar').width())}, 500, hide_sidebar_for_real);
+				$edge.stop(true).animate({ left: orig_sid - (sidebar_on_right ? 0 : $('#sidebar').width())}, 500, hide_sidebar_for_real);
 		};
 
 	$(document).on(is_ff ? 'mouseup' : 'mousedown', function (e) {
@@ -684,8 +691,8 @@ $(function ()
 		.attr('id', 'sideshow')
 		.attr('title', $txt['sideshow'])
 		.click(function () { sidebar_shown ? hide_sidebar() : show_sidebar(); })
-		.append('<div/>')
-		.appendTo('#top_section>div');
+		.append('<div/><div/><div/>')
+		.prependTo('#top_section>div');
 
 	// Show a pop-up with more options when focusing the quick search box.
 	var opened, $pop = $('<div class="mimenu right">').appendTo($('#search_form').addClass('mime'));

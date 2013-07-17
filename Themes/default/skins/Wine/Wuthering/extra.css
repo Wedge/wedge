@@ -58,6 +58,11 @@ $darkgrad = #f3f2f0
 #edge
 	padding: 0
 
+#sidebar
+	border: 1px solid #ccc
+	border-right: 0
+	border-radius: 8px 0 0 8px
+
 #top_section
 	background: none
 	border: 0
@@ -79,7 +84,7 @@ $darkgrad = #f3f2f0
 
 // The navigation list (i.e. linktree)
 #linktree
-	background: transparent
+	background: #faf8f6
 	margin: 20px 20px 0 // The linktree is one level up, so it needs to compensate its increased width.
 	ul
 		border-radius: 8px

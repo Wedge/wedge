@@ -58,7 +58,8 @@ table.cs0 final tr.windowbg:last-child td
 	vertical-align: top
 	width: $sidebar-width
 	border: 1px solid #ccc
-	border-radius: 8px
+	border-left: 0
+	border-radius: 0 8px 8px 0
 	.title
 		font-size: 1.2em
 		padding: 4px 4px 4px 8px
@@ -317,11 +318,8 @@ ul.buttonlist
 		#wedge @is ("opera, ios", ", #header, #footer", "")
 			border-radius: 0
 		@endif
-		#edge
-			padding-top: 0
 		#sideshow div
-			border-top: .54em double #ccc
-			border-bottom: .18em solid #ccc
+			background: #ccc
 		#forumposts
 			margin: 0 -math($horizontal_content_padding / 2)
 

@@ -150,18 +150,21 @@ header, footer, aside, section, article, nav
 
 #sideshow mixes .hide
 	cursor: pointer
-	padding: 7px 0 0 1em
+	padding: 2px 0 0 1em
 	float: right
+	width: @is (mobile, 5vw, 16px)
 	div
-		width: 1.2em
-		height: .18em
-		line-height: 25px
-		border-top: .54em double #888
-		border-bottom: .18em solid #888
+		@if mobile
+			height: .66vw
+			margin: .7vw 0
+		@else
+			height: 2px
+			margin: 3px 0
+		@endif
+		background: #888
 		transition: all .3s ease
 	:hover div
-		border-top: .54em double #600
-		border-bottom: .18em solid #600
+		background: #600
 
 #sidebar
 	display: table-cell

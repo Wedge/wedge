@@ -16,8 +16,6 @@
 		By Nao.
 	]]></comment>
 
-	<move block="linktree" to="content_wrap" where="first" />
-
 	<options>
 		<sidebar>
 			left
