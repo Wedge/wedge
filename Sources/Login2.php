@@ -52,7 +52,7 @@ function Login2()
 	// Double check the cookie...
 	elseif (isset($_GET['sa']) && $_GET['sa'] == 'check')
 	{
-		// Strike!  You're outta there!
+		// Strike! You're outta there!
 		if ($_GET['member'] != we::$id)
 			fatal_lang_error('login_cookie_error', false);
 
@@ -73,10 +73,10 @@ function Login2()
 	if (we::$is_member)
 		redirectexit();
 
-	// Are you guessing with a script that doesn't keep the session id?
+	// Are you guessing with a script that doesn't keep the session ID?
 	spamProtection('login');
 
-	// Set the login_url if it's not already set (but careful not to send us to an attachment).
+	// Set the login_url if it's not already set (but careful not to send us to an attachment.)
 	if (empty($_SESSION['login_url']) && isset($_SESSION['old_url']) && strpos($_SESSION['old_url'], 'dlattach') === false && preg_match('~(board|topic)[=,]~', $_SESSION['old_url']) != 0)
 		$_SESSION['login_url'] = $_SESSION['old_url'];
 
@@ -84,7 +84,7 @@ function Login2()
 	if (isset($_SESSION['failed_login']) && $_SESSION['failed_login'] >= $settings['failed_login_threshold'] * 3)
 		fatal_lang_error('login_threshold_fail', 'critical');
 
-	// Set up the cookie length.  (if it's invalid, just fall through and use the default.)
+	// Set up the cookie length. (If it's invalid, just fall through and use the default.)
 	if (isset($_POST['cookieneverexp']) || (!empty($_POST['cookielength']) && $_POST['cookielength'] == -1))
 		$settings['cookieTime'] = 3153600;
 	elseif (!empty($_POST['cookielength']) && ($_POST['cookielength'] >= 1 || $_POST['cookielength'] <= 525600))
@@ -215,10 +215,10 @@ function Login2()
 	else
 		$sha_passwd = sha1(strtolower($user_settings['member_name']) . un_htmlspecialchars($_POST['passwrd']));
 
-	// Bad password!  Thought you could fool the database?!
+	// Bad password! Thought you could fool the database?!
 	if ($user_settings['passwd'] != $sha_passwd)
 	{
-		// Let's be cautious, no hacking please. thanx.
+		// Let's be cautious, no hacking please. Thanx.
 		validatePasswordFlood($user_settings['id_member'], $user_settings['passwd_flood']);
 
 		// Maybe we were too hasty... let's try some other authentication methods.
@@ -240,11 +240,11 @@ function Login2()
 			// This one is a strange one... MyPHP, crypt() on the MD5 hash.
 			$other_passwords[] = crypt(md5($_POST['passwrd']), md5($_POST['passwrd']));
 
-			// Snitz style - SHA-256.  Technically, this is a downgrade, but most PHP configurations don't support sha256 anyway.
+			// Snitz style - SHA-256. Technically, this is a downgrade, but most PHP configurations don't support sha256 anyway.
 			if (strlen($user_settings['passwd']) == 64 && function_exists('mhash') && defined('MHASH_SHA256'))
 				$other_passwords[] = bin2hex(mhash(MHASH_SHA256, $_POST['passwrd']));
 
-			// phpBB3 users new hashing.  We now support it as well ;).
+			// phpBB3 users new hashing. We now support it as well. ;)
 			$other_passwords[] = phpBB3_password_check($_POST['passwrd'], $user_settings['passwd']);
 
 			// APBoard 2 Login Method.
@@ -256,7 +256,7 @@ function Login2()
 		// The hash should be 40 if it's SHA-1, so we're safe with more here too.
 		elseif (strlen($user_settings['passwd']) == 32)
 		{
-			// vBulletin 3 style hashing?  Let's welcome them with open arms \o/.
+			// vBulletin 3 style hashing? Let's welcome them with open arms. \o/
 			$other_passwords[] = md5(md5($_POST['passwrd']) . $user_settings['password_salt']);
 
 			// Hmm.. p'raps it's Invision 2 style?
@@ -292,7 +292,7 @@ function Login2()
 		if (strpos(strtolower(PHP_OS), 'win') !== 0)
 			$other_passwords[] = sha1_smf(strtolower($user_settings['member_name']) . un_htmlspecialchars($_POST['passwrd']));
 
-		// Whichever encryption it was using, let's make it use Wedge's now ;)
+		// Whichever encryption it was using, let's make it use Wedge's now. ;)
 		if (in_array($user_settings['passwd'], $other_passwords))
 		{
 			$user_settings['passwd'] = $sha_passwd;
@@ -307,7 +307,7 @@ function Login2()
 			// They've messed up again - keep a count to see if they need a hand.
 			$_SESSION['failed_login'] = isset($_SESSION['failed_login']) ? $_SESSION['failed_login'] + 1 : 1;
 
-			// Hmm... don't remember it, do you?  Here, try the password reminder ;).
+			// Hmm... don't remember it, do you? Here, try the password reminder. ;)
 			if ($_SESSION['failed_login'] >= $settings['failed_login_threshold'])
 				redirectexit('action=reminder');
 			// We'll give you another chance...

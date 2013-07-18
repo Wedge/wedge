@@ -64,8 +64,8 @@ $(window).load(function () {
 						{
 							// Retrieve the page index for the new area, and replace the parent's with them.
 							var page_indexes = $(html).contents().find('.pagesection nav');
-							$('.pagesection nav').first().html(page_indexes.get(0));
-							$('.pagesection nav').last().html(page_indexes.get(1));
+							$('.pagesection nav').first().replaceWith(page_indexes.get(0));
+							$('.pagesection nav').last().replaceWith(page_indexes.get(1));
 
 							// We're rebuilding scripts from the string response, and inserting them to force jQuery to execute them.
 							// Please note that jQuery doesn't need to be reloaded, and script.js causes issues, so we'll avoid it for now.
@@ -82,8 +82,8 @@ $(window).load(function () {
 							});
 
 							// Ensure that all posts are on the same (DOM) level as its predecessors.
-							var root = $new_page.find('.root'), max_count = 0, id;
-							while ((id = root.first().parent().attr('id')) != 'forumposts' && id != 'quickModForm' && max_count++ < 10)
+							var root = $new_page.find('.root').first(), up_to = $('.root').first().parent(), max_count = 0, id;
+							while (root.parent()[0] != up_to[0] && max_count++ < 10)
 								root.unwrap();
 
 							hide_ajax();

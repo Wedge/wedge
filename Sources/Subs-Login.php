@@ -336,10 +336,10 @@ function validatePasswordFlood($id_member, $password_flood_value = false, $was_c
 	if (!empty($number_tries))
 	{
 		// If it wasn't *that* long ago, don't give them another five goes.
-		$number_tries = time() - $time_stamp < 20 ? 2 : $number_tries;
+		$number_tries = $time_stamp < time() - 20 ? 2 : $number_tries;
 
 		// You lot, back here, now.
-		if (time() - $time_stamp < 10)
+		if ($time_stamp < time() - 10)
 			$time_stamp = time();
 	}
 
