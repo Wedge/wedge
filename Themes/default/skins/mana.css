@@ -7,6 +7,9 @@ input, textarea
 		background-color: #eee
 		opacity: .66
 
+.pw_countdown extends .plainbox
+	margin: 0 14px 5px
+
 /* Styles for the admin quick search.
 ------------------------------------------------------- */
 #quick_search

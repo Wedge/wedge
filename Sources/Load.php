@@ -1309,7 +1309,11 @@ function loadTheme($id_theme = 0, $initialize = true)
 
 	// The theme was specified by parameter.
 	if (!empty($id_theme))
+	{
 		$id_theme = (int) $id_theme;
+		if (!empty(we::$user['theme']) && we::$user['theme'] == $id_theme)
+			$skin = we::$user['skin'];
+	}
 	// The theme was specified by REQUEST.
 	elseif (!empty($_REQUEST['theme']) && (!empty($settings['theme_allow']) || allowedTo('admin_forum')))
 	{

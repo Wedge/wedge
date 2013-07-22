@@ -712,7 +712,7 @@ function Admin()
 	if (empty($settings['securityDisable']) && !empty($_SESSION['admin_time']))
 	{
 		$context['time_remaining'] = sprintf($txt['minutes_remaining_message'], '<strong>' . number_context('minutes_remaining', (int) floor((($_SESSION['admin_time'] + 3600) - time()) / 60)) . '</strong>');
-		wetem::after('linktree', 'admin_time_remaining');
+		wetem::first('top', 'admin_time_remaining');
 	}
 
 	$admin_include_data['function']();

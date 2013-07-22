@@ -85,7 +85,8 @@ $darkgrad = #f3f2f0
 // The navigation list (i.e. linktree)
 #linktree
 	background: #faf8f6
-	padding: 20px 20px 0 // The linktree is one level up, so it needs to compensate its increased width.
+	margin: 0
+	padding: 15px 20px 5px // The linktree is one level up, so it needs to compensate its increased width.
 	ul
 		border-radius: 8px
 		background: linear-gradient(0deg, #fdfdfd, #ededed)
