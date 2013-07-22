@@ -152,11 +152,17 @@ header, footer, aside, section, article, nav
 	cursor: pointer
 	padding: 2px 0 0 1em
 	float: right
-	width: @is (mobile, 5vw, 16px)
+	width: 16px
+	// These will still need a px-based fallback, for a few years at least.
+	@if mobile
+		width: 5$vmin
+	@endif
 	div
-		@if mobile
-			height: .66vw
-			margin: .7vw 0
+		@if mobile 
+			height: 2px
+			height: .66$vmin
+			margin: 3px 0
+			margin: .7$vmin 0
 		@else
 			height: 2px
 			margin: 3px 0

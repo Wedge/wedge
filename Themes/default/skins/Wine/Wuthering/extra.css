@@ -85,13 +85,12 @@ $darkgrad = #f3f2f0
 // The navigation list (i.e. linktree)
 #linktree
 	background: #faf8f6
-	margin: 20px 20px 0 // The linktree is one level up, so it needs to compensate its increased width.
+	padding: 20px 20px 0 // The linktree is one level up, so it needs to compensate its increased width.
 	ul
 		border-radius: 8px
 		background: linear-gradient(0deg, #fdfdfd, #ededed)
-		padding: 0
+		padding, margin: 0
 		border: 1px solid #ccc
-		margin: 8px 0 12px
 		overflow: hidden
 	li
 		@if firefox
@@ -125,21 +124,16 @@ $darkgrad = #f3f2f0
 			border-radius: 8px 0 0 8px
 
 #linktree_bt
-	margin: 0 20px 20px
+	padding: 0 20px 20px
 
 @media $responsive
 	body
 		padding: 0
 		#wedge
 			border: 0
-		#linktree final
-			margin: 20px 20px 0
-		#linktree_bt
-			margin: 0 20px 20px
 
 // The footer with copyright links etc.
 #footer extends .lightgrad
-	text-align: center
 	background-color: #f4f2f3
 	border-top: 1px solid #ccc
 	border-radius: 0 0 20px 20px

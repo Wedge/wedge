@@ -157,6 +157,9 @@ $radius = 8px
 /* Something one can remove to make more space in responsive mode... */
 $horizontal_content_padding = 30px
 
+/* helper var for vmin. Keep using non-vmin fallbacks, though! */
+$vmin = @is (ie9, vm, vmin)
+
 /* Maximum window width for the browser to trigger the low-res responsive CSS mode. */
 $responsive_max_width = 1000px
 $responsive = "all and (max-width: $responsive_max_width)"

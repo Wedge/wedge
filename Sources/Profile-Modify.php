@@ -1266,10 +1266,7 @@ function editBuddies($memID)
 	global $txt, $context, $user_profile, $memberContext;
 
 	// For making changes!
-	$buddiesArray = explode(',', $user_profile[$memID]['buddy_list']);
-	foreach ($buddiesArray as $k => $dummy)
-		if ($dummy == '')
-			unset($buddiesArray[$k]);
+	$buddiesArray = array_filter(explode(',', $user_profile[$memID]['buddy_list']));
 
 	// Removing a buddy?
 	if (isset($_GET['remove']))
@@ -1321,6 +1318,7 @@ function editBuddies($memID)
 			while ($row = wesql::fetch_assoc($request))
 				$buddiesArray[] = (int) $row['id_member'];
 			wesql::free_result($request);
+			$buddiesArray = array_flip(array_flip(array_filter($buddiesArray)));
 
 			// Now update the current users buddy list.
 			$user_profile[$memID]['buddy_list'] = implode(',', $buddiesArray);

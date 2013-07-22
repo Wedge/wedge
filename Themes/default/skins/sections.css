@@ -1472,6 +1472,11 @@ body.waiting *
 					min-width: 400px
 			.menu > li > span
 				margin-top: 8px
+			#upshrink
+				margin-right: 16px
+				@if mobile
+					margin-right: 6$vmin
+				@endif
 			#header h1
 				margin-top: 8px
 				font-size: 75% // of 3em (see below.)

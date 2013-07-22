@@ -657,7 +657,8 @@ $(function ()
 		hide_sidebar_for_real = function ()
 		{
 			sidebar_shown = false;
-			// Remove the style attribute, resets everything and disables hardware acceleration.
+			// Remove the style attributes, reset everything and disable hardware acceleration.
+			$('#sidebar>div').attr('style', '');
 			$('#sidebar').attr('style', '');
 			$edge.attr('style', '');
 			$main.width('');
