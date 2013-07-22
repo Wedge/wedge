@@ -127,7 +127,7 @@ function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow =
 
 	$lang_name = !empty($settings['js_lang'][$id]) && !empty(we::$user['language']) && we::$user['language'] != $settings['language'] ? we::$user['language'] . '-' : '';
 	$can_gzip = !empty($settings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
-	$ext = $can_gzip ? (we::is('safari') ? '.jgz' : '.js.gz') : '.js';
+	$ext = $can_gzip ? (we::is('safari[-5.0]') ? '.jgz' : '.js.gz') : '.js';
 
 	if (!file_exists($jsdir . '/' . $id . $lang_name . $latest_date . $ext))
 		wedge_cache_js($id, $lang_name, $latest_date, $ext, $files, $can_gzip);
@@ -208,7 +208,7 @@ function add_plugin_js_file($plugin_name, $files = array(), $is_direct_url = fal
 
 	$lang_name = !empty($settings['js_lang'][$id]) && !empty(we::$user['language']) && we::$user['language'] != $settings['language'] ? we::$user['language'] . '-' : '';
 	$can_gzip = !empty($settings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
-	$ext = $can_gzip ? (we::is('safari') ? '.jgz' : '.js.gz') : '.js';
+	$ext = $can_gzip ? (we::is('safari[-5.0]') ? '.jgz' : '.js.gz') : '.js';
 
 	if (!file_exists($jsdir . '/' . $id . $lang_name . $latest_date . $ext))
 		wedge_cache_js($id, $lang_name, $latest_date, $ext, $files, $can_gzip, true);
@@ -404,7 +404,7 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 	$latest_date %= 1000000;
 
 	$can_gzip = !empty($settings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
-	$ext = $can_gzip ? (we::is('safari') ? '.cgz' : '.css.gz') : '.css';
+	$ext = $can_gzip ? (we::is('safari[-5.0]') ? '.cgz' : '.css.gz') : '.css';
 
 	// And the language. Only do it if the skin allows for multiple languages and we're not in English mode.
 	if (isset($context['skin_available_languages']) && we::$user['language'] !== 'english')
@@ -481,7 +481,7 @@ function add_plugin_css_file($plugin_name, $original_files = array(), $add_link 
 	$latest_date %= 1000000;
 
 	$can_gzip = !empty($settings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
-	$ext = $can_gzip ? (we::is('safari') ? '.cgz' : '.css.gz') : '.css';
+	$ext = $can_gzip ? (we::is('safari[-5.0]') ? '.cgz' : '.css.gz') : '.css';
 
 	// Build the target folder from our skin's folder names and main file name. We don't need to show 'common-index-sections-extra-custom' in the main filename, though!
 	$target_folder = trim(implode('-', array_filter(array_diff($original_files, (array) 'common', $ignore_files))), '-');
@@ -558,7 +558,8 @@ function wedge_get_css_filename($add)
 	if (isset($suffix[we::$os['os']]))
 		$suffix = array(str_replace('dows', '', we::$os['os'] . we::$os['version']) => true) + array_diff_key($suffix, array(we::$os['os'] => 1));
 
-	$suffix = array(we::$browser['agent'] . we::$browser['version'] => 1) + $suffix;
+	if (!empty(we::$browser['agent']))
+		$suffix = array(we::$browser['agent'] . we::$browser['version'] => 1) + $suffix;
 	$id = implode('-', array_keys($suffix));
 
 	return $id ? (empty($settings['obfuscate_filenames']) ? $id : md5($id)) : '';

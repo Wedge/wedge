@@ -2307,6 +2307,7 @@ function getLanguages($use_cache = true)
 			if (!preg_match('~/index\.([^.]+)\.php$~', $entry, $matches))
 				continue;
 			// Try including this to retrieve the country code. If it doesn't work -- can live with it.
+			$txt = array();
 			@include($entry);
 			$context['languages'][$matches[1]] = array(
 				'name' => $txt['lang_name'],
