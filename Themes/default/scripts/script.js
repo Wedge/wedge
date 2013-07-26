@@ -593,6 +593,7 @@ $(function ()
 		// Disable parent links on hover-impaired browsers.
 		$('.umme,.subsection>a,.menu>li:not(.nodrop)>h4>a').click(false);
 
+		// Disable zooming when focusing an input box or textarea.
 		var meta = $('meta[name=viewport]'), initial_meta = meta.attr('content');
 
 		$('input,textarea')
@@ -694,6 +695,25 @@ $(function ()
 		.click(function () { sidebar_shown ? hide_sidebar() : show_sidebar(); })
 		.append('<div/><div/><div/>')
 		.prependTo('#top_section>div');
+});
+
+/**
+ * load()
+ * This is the list of non-critical functions that should be executed once the DOM is fully loaded, including images.
+ */
+
+$(window).load(function ()
+{
+	$('#upshrink').attr('title', $txt['upshrink_description']);
+
+	// You may change the ID names for the elements in the index template,
+	// but you'll have to add_js() the code below, with the new IDs in place.
+	new weToggle({
+		isCollapsed: !!window.we_colhead,
+		aSwapContainers: ['upper_section'],
+		aSwapImages: ['upshrink'],
+		sOption: 'collapse_header'
+	});
 
 	// Show a pop-up with more options when focusing the quick search box.
 	var opened, $pop = $('<div class="mimenu right">').appendTo($('#search_form').addClass('mime'));

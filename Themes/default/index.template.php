@@ -280,18 +280,10 @@ function template_language_selector()
 
 function template_logo_toggler()
 {
-	global $options, $txt, $context;
+	global $options;
 
 	echo '
-			<div id="upshrink"', empty($options['collapse_header']) ? ' class="fold"' : '', ' title="', $txt['upshrink_description'], '"></div>';
-
-	add_js('
-	new weToggle({', empty($options['collapse_header']) ? '' : '
-		isCollapsed: true,', '
-		aSwapContainers: ["upper_section"],
-		aSwapImages: ["upshrink"],
-		sOption: "collapse_header"
-	});');
+			<div id="upshrink"', empty($options['collapse_header']) ? ' class="fold"' : '', '>›</div>';
 }
 
 function template_random_news()
@@ -494,7 +486,7 @@ function template_wrapper_after()
 
 function template_body_after()
 {
-	global $context, $theme, $txt, $footer_coding;
+	global $context, $options, $theme, $txt, $footer_coding;
 
 	// Include postponed inline JS, postponed HTML, and then kickstart the main
 	// JavaScript section -- files to include, main vars and functions to start.
@@ -536,7 +528,8 @@ function template_body_after()
 	we_theme_url = "' . $theme['theme_url'] . '";', '
 	we_sessid = "', $context['session_id'], '";
 	we_sessvar = "', $context['session_var'], '";', $context['server']['iso_case_folding'] && isset($context['main_js_files']['scripts/sha1.js']) ? '
-	we_iso_case_folding = true' : '', empty($context['current_topic']) ? '' : '
+	we_iso_case_folding = 1;' : '', empty($options['collapse_header']) ? '' : '
+	we_colhead = 1;', empty($context['current_topic']) ? '' : '
 	we_topic = ' . $context['current_topic'] . ';', empty($context['current_board']) ? '' : '
 	we_board = ' . $context['current_board'] . ';', $context['show_pm_popup'] ? '
 

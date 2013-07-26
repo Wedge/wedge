@@ -1337,29 +1337,34 @@ div.top_row dd
 ------------------------------------------------- */
 .foldable extends .upshrinks
 	width, height: 14px
-	background-position: -20px 0
 	.fold&
-		background-position: -20px -25px
+		background-position: 0 -25px
 
-.shrinkable extends .upshrinks
-	width, height: 20px
-	background-position: 0 0
+.shrinkable
+	width: 20px
+	height: 25px
+	color: #666
+	font: 700 30px/20px Arial
+	text-indent: 5px
+	transform-origin: 50% 50%
+	transform: rotate(90deg)
+	transition: transform .3s ease
 	.fold&
-		background-position: 0 -20px
+		transform: rotate(-90deg)
 
 .catfold extends .foldable
 
 // The upshrink image needs some tweaking
 #upshrink extends .shrinkable
 	float: right
-	margin-left: 1em
+	margin-left: .5em
 
 #qr_expand, #postMoreExpand, #newsupshrink
 	base: .foldable
 
 // Action button, but depends on upshrink image.
 .more_button extends .upshrinks
-	background-position: -18px 2px
+	background-position: 2px 2px
 	padding: 0 4px 0 22px
 	height: 20px
 
