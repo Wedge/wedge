@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<!--
+	Macros. These examples are actually fairly useless since they just
+	mostly repeat the default macros defined in index.template.php, but it
+	makes it easier to get the point. Use these settings to override any
+	macros set up in the theme with your own versions. For instance, you
+	can change the header banner with little effort.
+-->
+
+<macro name="banner">
+		{body}
+		<if:logo><h1>
+			<a href="<URL>">{logo}</a>
+		</h1></if:logo></macro>
+
+<macro name="title"><header class="title">{body}</header></macro>
+
+<macro name="sidebar">
+<div id="edge">
+	<aside id="sidebar"><div class="column">{body}</div></aside></macro>
+
+<macro name="sidebar" for="ie[-7]">
+<table id="edge" cellspacing="0"><tr><td id="sidebar" class="top"><div class="column">{body}</div></td></macro>
+
+<macro name="offside"><div id="offside">{body}</div></div></macro>
+<macro name="offside" for="ie[-7]"><td id="offside" class="top">{body}</td></tr></table></macro>

@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<!--
+	You can define macros for your theme, with default contents. Then, skins can override them through
+	skin.xml, custom.xml or macros.xml (see the skins/Wine/Warm/skin.xml file for a sample implementation.)
+	Macro names are case-sensitive, for performance reasons.
+-->
+
+<!-- The logo area for the website. Feel free to redefine it. -->
+<macro name="banner">
+			<if:logo><h1>
+				<a href="{url}">{logo}</a>
+			</h1></if:logo>
+			{body}</macro>
+
+<!-- The header bars. Nothing special about them... -->
+<macro name="title"><header class="title<if:class> {class}</if:class>"<if:style> style="{style}"</if:style><if:id> id="{id}"</if:id>>{body}</header></macro>
+<macro name="title2"><header class="title2<if:class> {class}</if:class>"<if:style> style="{style}"</if:style><if:id> id="{id}"</if:id>>{body}</header></macro>
+<macro name="cat"><header class="cat<if:class> {class}</if:class>"<if:style> style="{style}"</if:style><if:id> id="{id}"</if:id>>{body}</header></macro>
+
+<!-- And some post-related macros, which might be useful, e.g. removing contents entirely in Wireless. -->
+<macro name="msg_header"><div class="postheader">{body}</div></macro>
+<macro name="msg_post"><div class="post">{body}</div></macro>
+<macro name="msg_signature><div class="signature">{body}</div></macro>
+
+<!-- Our sidebar. Now for a little trick -- since IE6 and IE7 need to be in a table, we're closing here the table that was opened in the sidebar macro. -->
+<macro name="sidebar">
+	<aside id="sidebar"><div class="column">{body}
+	</div></aside>
+	</div></macro>
+
+<macro name="sidebar" for="ie[-7]">
+	<td id="sidebar" class="top"><div class="column">{body}</div></td></tr></table></macro>
+
+<!--
+	Our main content, shown next to the sidebar.
+	IE 6-7 will use table tags to show the sidebar, while other browsers will rely
+	on more accurate div tags with a "display: table-cell" setting.
+-->
+<macro name="offside"><div id="edge">{body}</macro>
+<macro name="offside" for="ie[-7]">
+	<table id="edge" cellspacing="0"><tr><td class="top">{body}</td></macro>
+
+<!--
+	Now with a regular content macro. You may add a class, title and/or footer to it. If you don't specify a title,
+	everything between the <if:title> tags will be hidden. Same for the footer and class.
+-->
+<macro name="block"><section class="block<if:class> {class}</if:class>"<if:style> style="{style}"</if:style><if:id> id="{id}"</if:id>><if:header><header>{header}</header></if:header>{body}<if:footer><footer>{footer}</footer></if:footer></section></macro>

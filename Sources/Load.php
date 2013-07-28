@@ -1643,24 +1643,8 @@ function loadTheme($id_theme = 0, $initialize = true)
 		// Initialize our JS files to cache right before we run template_init().
 		weInitJS();
 
-		// Initialize the theme and load the default macros.
+		// Initialize the theme.
 		execBlock('init', 'ignore');
-
-		// Now we initialize the search/replace pairs for macros.
-		// They can be overloaded in a skin's skin.xml file.
-		if (!empty($theme['macros']))
-		{
-			foreach ($theme['macros'] as $name => $contents)
-			{
-				if (is_array($contents))
-					$contents = ($version = we::analyze($contents)) !== false ? $contents[$version] : (isset($contents['else']) ? $contents['else'] : '{body}');
-
-				$context['macros'][$name] = array(
-					'has_if' => strpos($contents, '<if:') !== false,
-					'body' => $contents,
-				);
-			}
-		}
 
 		// Now we'll override all of these...
 		loadSource('Subs-Cache');

@@ -15,11 +15,6 @@ function template_msg_wrap_before()
 {
 	global $msg, $context;
 
-	// Show a "new" anchor if this message is new.
-	if ($msg['first_new'] && (!$context['first_new_message'] || !empty($_REQUEST['start'])))
-		echo '
-			<a id="new"></a>';
-
 	// msg123 serves as the anchor, as well as an easy way to find the message ID,
 	// or other classes (such as can-mod), from within it. For instance,
 	// var id_msg = $(this).closest('.root').attr('id').slice(3);
@@ -245,7 +240,7 @@ function template_msg_header()
 	global $msg, $theme, $txt;
 
 	echo '
-						<div class="postheader">';
+						<we:msg_header>';
 
 	// Show a checkbox for quick moderation?
 	if ($msg['can_remove'])
@@ -270,7 +265,7 @@ function template_msg_header()
 									)) : '',
 								'</span>
 							</div>
-						</div>';
+						</we:msg_header>';
 }
 
 function template_msg_header_mobile()
@@ -295,7 +290,7 @@ function template_msg_ignored()
 function template_msg_body_before()
 {
 	echo '
-						<div class="post">';
+						<we:msg_post>';
 }
 
 function template_msg_body()
@@ -315,7 +310,7 @@ function template_msg_body()
 function template_msg_body_after()
 {
 	echo '
-						</div>';
+						</we:msg_post>';
 }
 
 function template_msg_bottom_before()
@@ -452,7 +447,7 @@ function template_msg_signature()
 	// Show the member's signature?
 	if (!empty($msg['member']['signature']) && !empty($options['show_signatures']) && $context['signature_enabled'])
 		echo '
-						<div class="signature">', $msg['member']['signature'], '</div>';
+						<we:msg_signature>', $msg['member']['signature'], '</we:msg_signature>';
 }
 
 function template_msg_bottom_after()

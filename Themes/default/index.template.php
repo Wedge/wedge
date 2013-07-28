@@ -22,7 +22,7 @@
 // Initialize the template... mainly little settings.
 function template_init()
 {
-	global $context, $theme, $settings, $txt;
+	global $context, $theme, $settings;
 
 	// Add the theme-specific JavaScript files to our priority cache list.
 	if (!empty($context['main_js_files']))
@@ -46,58 +46,6 @@ function template_init()
 
 	/* Set the following variable to true if this theme requires the optional theme strings file to be loaded. */
 	$theme['require_theme_strings'] = false;
-
-	/*
-		You can define macros for your theme, with default contents. Then, skins can override them through
-		the skin.xml file (see the skins/Wine/Warm/skin.xml file for a sample implementation.)
-		Macro names are case-sensitive, for performance reasons.
-
-		Note that we can serve different content to different browsers by using the array syntax.
-		It can also be done in skin.xml by using the 'for="ie[-7]"' parameter in the macro tag.
-	*/
-
-	$theme['macros'] = array(
-
-		// We start with the header bars. Nothing special about them...
-		'title'		=> '<header class="title<if:class> {class}</if:class>"<if:style> style="{style}"</if:style><if:id> id="{id}"</if:id>>{body}</header>',
-		'title2'	=> '<header class="title2<if:class> {class}</if:class>"<if:style> style="{style}"</if:style><if:id> id="{id}"</if:id>>{body}</header>',
-		'cat'		=> '<header class="cat<if:class> {class}</if:class>"<if:style> style="{style}"</if:style><if:id> id="{id}"</if:id>>{body}</header>',
-
-		// Now with a regular content macro. You may add a class, title and/or footer to it. If you don't specify a title,
-		// everything between the <if:title> tags will be hidden. Same for the footer and class.
-		'block'		=> '<section class="block<if:class> {class}</if:class>"<if:style> style="{style}"</if:style><if:id> id="{id}"</if:id>>'
-						. '<if:header><header>{header}</header></if:header>'
-						. '{body}'
-						. '<if:footer><footer>{footer}</footer></if:footer></section>',
-
-		// Our main content.
-		// IE 6-7 will use table tags to show the sidebar, while other browsers will rely
-		// on more accurate div tags with a 'display: table-cell' setting.
-		'offside'	=> array(
-			'ie[-7]'	=> '
-	<table id="edge" cellspacing="0"><tr><td class="top">{body}</td>',
-			'else'		=> '<div id="edge">{body}',
-		),
-
-		// Our sidebar. Now for a little trick -- since IE6 and IE7 need to be in a table,
-		// we're closing here the table that was opened in the sidebar macro.
-		'sidebar'	=> array(
-			'ie[-7]'	=> '
-	<td id="sidebar" class="top"><div class="column">{body}</div></td></tr></table>',
-			'else'		=> '
-	<aside id="sidebar"><div class="column">{body}
-	</div></aside>
-	</div>',
-		),
-
-		// The main header of the website. Feel free to redefine it in your skins and themes.
-		'banner'	=> '
-			<if:logo><h1>
-				<a href="' . (!empty($settings['home_url']) && !empty($settings['home_link']) ? $settings['home_url'] : '<URL>') . '">{logo}</a>
-			</h1></if:logo>
-			{body}',
-
-	);
 }
 
 // The main block above the content.
@@ -207,11 +155,12 @@ function template_top_bar_after()
 // End the header layer.
 function template_header_after()
 {
-	global $context, $options;
+	global $context, $settings, $options;
 
 	echo '
 		<div id="upper_section"', empty($options['collapse_header']) ? '' : ' class="hide"', '><div class="frame"><we:banner logo="',
-		$context['header_logo_url_html_safe'], '">', $context['site_slogan'], '</we:banner>
+		$context['header_logo_url_html_safe'], '" url="', !empty($settings['home_url']) && !empty($settings['home_link']) ?
+		$settings['home_url'] : '<URL>', '">', $context['site_slogan'], '</we:banner>
 		</div></div>
 	</div></div>';
 }
@@ -607,7 +556,7 @@ function template_linktree($position = 'top', $force_show = false)
 // Show the menu up top. Something like [home] [profile] [logout]...
 function template_menu()
 {
-	global $context, $txt;
+	global $context;
 
 	echo '
 	<div id="navi">

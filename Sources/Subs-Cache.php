@@ -1341,7 +1341,7 @@ function wedge_get_skin_options()
 	$skin_options = array();
 	$is_default_theme = true;
 	$not_default = $theme['theme_dir'] !== $theme['default_theme_dir'];
-	$skeleton = $set = '';
+	$skeleton = $macros = $set = '';
 
 	// We will rebuild the css folder list, in case we have a replace-type skin in our path.
 	$context['skin_folders'] = array();
@@ -1357,14 +1357,19 @@ function wedge_get_skin_options()
 		if (file_exists($fold . 'skeleton.xml'))
 			$skeleton .= file_get_contents($fold . '/skeleton.xml');
 
+		// Remember all of the macros we can find.
+		if (file_exists($fold . 'macros.xml'))
+			$macros .= file_get_contents($fold . '/macros.xml');
+
 		if (file_exists($fold . 'skin.xml'))
 			$set = file_get_contents($fold . '/skin.xml');
 
-		// custom.xml files can be used to override both skin.xml and skeleton.xml...
+		// custom.xml files can be used to override skin.xml, skeleton.xml and macros.xml...
 		if (file_exists($fold . 'custom.xml'))
 		{
 			$custom = file_get_contents($fold . '/custom.xml');
 			$skeleton .= $custom;
+			$macros .= $custom;
 			$set .= $custom;
 		}
 
@@ -1462,18 +1467,14 @@ function wedge_get_skin_options()
 		}
 	}
 
-	if (strpos($set, '</macro>') !== false && preg_match_all('~<macro\s+name="([^"]+)"(?:\s+for="([^"]+)")?\s*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</macro>~s', $set, $matches, PREG_SET_ORDER))
-	{
+	// Gather macros here.
+	if (strpos($macros, '</macro>') !== false && preg_match_all('~<macro\s+name="([^"]+)"(?:\s+for="([^"]+)")?\s*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</macro>~s', $macros, $matches, PREG_SET_ORDER))
 		foreach ($matches as $match)
-		{
-			if (!empty($match[2]) && !we::is($match[2]))
-				continue;
-			$context['macros'][$match[1]] = array(
-				'has_if' => strpos($match[3], '<if:') !== false,
-				'body' => $match[3]
-			);
-		}
-	}
+			if (empty($match[2]) || we::is($match[2]))
+				$context['macros'][$match[1]] = array(
+					'has_if' => strpos($match[3], '<if:') !== false,
+					'body' => $match[3]
+				);
 
 	if (strpos($set, '</languages>') !== false && preg_match('~<languages>(.*?)</languages>~s', $set, $match))
 		$context['skin_available_languages'] = array_map('trim', preg_split('~[\s,]+~', $match[1]));
