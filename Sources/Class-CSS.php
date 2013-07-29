@@ -1460,12 +1460,12 @@ class wess_prefixes extends wess
 			return $unchanged;
 		}
 
-		// Only newer Firefox, Chrome and Safari versions support border-image without a prefix.
+		// Only newer Firefox, Chrome, IE and Safari versions support border-image without a prefix.
 		if ($matches[1] === 'border-image')
 		{
-			if ($ie)
+			if ($ie && $v < 11)
 				return '';
-			if ($chrome || ($safari && $v >= 6) || ($firefox && $v >= 15))
+			if ($ie || ($chrome && $v >= 16) || ($ios && $ov >= 6) || ($safari && $v >= 6) || ($firefox && $v >= 15))
 				return $unchanged;
 			return $prefixed;
 		}
@@ -1500,7 +1500,7 @@ class wess_prefixes extends wess
 			return $opera || $ie10 ? $unchanged : $prefixed;
 		}
 
-		// As of April 2013, IE10+, Firefox and WebKit support this prefixed. Opera<14 and IE<10 don't.
+		// As of July 2013, IE10+, Firefox and WebKit support this prefixed. Opera<14 and IE<10 don't.
 		if ($matches[1] === 'user-select')
 		{
 			if ($firefox || $webkit || ($ie && $v >= 10))
@@ -1508,7 +1508,7 @@ class wess_prefixes extends wess
 			return '';
 		}
 
-		// As of October 2012, IE10 supports this unprefixed, and Firefox and Chrome need a prefix.
+		// As of July 2013, IE10 supports this unprefixed, and Firefox and Chrome need a prefix.
 		if ($matches[1] === 'font-feature-settings')
 		{
 			if ($ie && $v >= 10)
@@ -1516,7 +1516,7 @@ class wess_prefixes extends wess
 			return $prefixed;
 		}
 
-		// IE6/7/8/9 don't support animations, IE10, Firefox 16+ and Opera 12.10+ support them unprefixed, other browsers require a prefix.
+		// IE6/7/8/9 don't support animations, IE10, Firefox 16+ and Opera 12.1 support them unprefixed, other browsers require a prefix.
 		if (strpos($matches[1], 'animation') === 0)
 		{
 			if ($ie8down || $ie9 || ($firefox && $v < 5) || ($opera && $v < 12) || ($safari && $v < 4))
@@ -1534,6 +1534,16 @@ class wess_prefixes extends wess
 			if ($ie9 || ($opera && $v < 12.1) || ($firefox && $v < 16) || $webkit)
 				return $prefixed;
 			return $unchanged;
+		}
+
+		// Browser support level is identical for both of these, according to MDN and caniuse.com.
+		if (strpos($matches[1], 'backface-visibility') === 0 || strpos($matches[1], 'perspective') === 0)
+		{
+			if (($ie && $v >= 10) || ($firefox && $v >= 16))
+				return $unchanged;
+			if (($firefox && $v >= 10) || ($chrome && $v >= 12) || $webkit)
+				return $prefixed;
+			return '';
 		}
 
 		// The old flexible box model... Never got out of prefix land.
@@ -1554,18 +1564,20 @@ class wess_prefixes extends wess
 	{
 		$unchanged = $matches[0];
 		$b = we::$browser;
+		$os = we::$os;
 		$v = $b['version'];
+		$ov = $os['version'];
 
-		// IE6/7/8/9 don't support gradients (screw 'em!), IE10 final supports them unprefixed, and Firefox 16+ dropped the prefix.
-		// Note that AFAIK, repeating-* still is prefixed everywhere as of August 2012, it's fixable but give me a break for now.
+		// IE 6-9 don't support gradients (screw 'em!), IE10 final supports them unprefixed,
+		// and Firefox 16, Chrome 26 and Safari 7 dropped the prefix. Not iOS 7.
 		if (strpos($matches[1], 'gradient(') !== false)
 		{
-			if (($b['gecko'] && $v >= 16) || ($b['opera'] && $v >= 12.1) || ($b['ie'] && $v >= 10))
+			if (($b['chrome'] && $v >= 26) || ($b['gecko'] && $v >= 16) || ($b['opera'] && $v >= 12.1) || ($b['safari'] && $v >= 7) || ($b['ie'] && $v >= 10))
 				return $unchanged;
 
 			$prefixed = preg_replace('~(?<=[\s:])([a-z][a-z-]+-gradient\h*\()~', $this->prefix . '$1', $unchanged);
 
-			// !! Is it worth supporting gradians, radians and turns..? Wedge only uses degrees.
+			// This is a little trick to convert degrees between prefixed and unprefixed variants. I even shared: http://tinyurl.com/pcnfk27
 			if (strpos($prefixed, 'deg') !== false)
 				$prefixed = preg_replace('~(gradient\h*\(\s*)(-?(?:\d+|\d*\.\d+))(?=deg\b)~e', '\'$1\' . (90 - \'$2\')', $prefixed);
 
@@ -1583,7 +1595,7 @@ class wess_prefixes extends wess
 				$unchanged = str_replace($matches[2], preg_replace('~\btransform\b~', $this->prefix . 'transform', $matches[2]), $unchanged);
 			if ($b['ie8down'] || $b['ie9'] || ($b['firefox'] && $v < 4))
 				return '';
-			if (($b['opera'] && $v < 12.1) || ($b['firefox'] && $v < 16) || ($b['chrome'] && $v < 26) || $b['safari'])
+			if (($b['opera'] && $v < 12.1) || ($b['firefox'] && $v < 16) || ($b['chrome'] && $v < 26) || ($b['safari'] && $v < 7) || ($os['ios'] && $ov < 7))
 				return $this->prefix . $unchanged;
 			return $unchanged;
 		}
@@ -1592,8 +1604,8 @@ class wess_prefixes extends wess
 		if (strpos($matches[1], 'box') !== false)
 			return str_replace('box', $this->prefix . 'box', $unchanged);
 
-		// The final flexbox model doesn't require a prefix. But Chrome wants to use it.
-		if ($b['chrome'] && $v >= 21 && strpos($matches[1], 'flex') !== false)
+		// The final flexbox model (Chrome 21+, Opera 12.1, IE11+, Safari 7+) is final, and shouldn't require a prefix. Silly WebKit...
+		if ((($b['safari'] && $v >= 7) || ($os['ios'] && $ov >= 7) || ($b['chrome'] && $v >= 21 && $v < 29)) && strpos($matches[1], 'flex') !== false)
 			return str_replace(array('inline-flex', 'flex'), array($this->prefix . 'inline-flex', $this->prefix . 'flex'), $unchanged);
 
 		// There's a need for min/max-resolution to be rewritten for some browsers.
@@ -1621,7 +1633,7 @@ class wess_prefixes extends wess
 		{
 			if (($b['ie'] && $v >= 9) || ($b['chrome'] && $v >= 26) || ($b['firefox'] && $v >= 16))
 				return $matches[1];
-			if (($b['chrome'] && $v >= 19) || ($b['firefox'] && $v >= 4) || ($b['safari'] && $v >= 6))
+			if (($b['chrome'] && $v >= 19) || ($b['firefox'] && $v >= 4) || ($b['safari'] && $v == 6) || ($os['ios'] && $ov >= 6 && $ov < 7))
 				return $this->prefix . $matches[1];
 			// Keep it even if not supported. CSS may provide a prior fallback anyway..?
 			return $matches[1];
@@ -1651,6 +1663,8 @@ class wess_prefixes extends wess
 			'grid-[a-z]+',					// Grid layout
 			'animation(?:-[a-z-]+)?',		// Proper animations
 			'transform(?:-[a-z-]+)?',		// 2D/3D transformations (transform, transform-style, transform-origin...)
+			'backface-visibility',			// 3D
+			'perspective(?:-origin)?',		// 3D
 
 		);
 		foreach ($rules as $val)
