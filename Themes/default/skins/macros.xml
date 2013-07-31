@@ -18,7 +18,9 @@
 <macro name="cat"><header class="cat<if:class> {class}</if:class>"<if:style> style="{style}"</if:style><if:id> id="{id}"</if:id>>{body}</header></macro>
 
 <!-- And some post-related macros, which might be useful, e.g. removing contents entirely in Wireless. -->
+<macro name="msg"><div id="{id}" class="{class}">{body}</div></macro>
 <macro name="msg_header"><div class="postheader">{body}</div></macro>
+<macro name="msg_area"><div class="postarea">{body}</div></macro>
 <macro name="msg_post"><div class="post">{body}</div></macro>
 <macro name="msg_signature><div class="signature">{body}</div></macro>
 

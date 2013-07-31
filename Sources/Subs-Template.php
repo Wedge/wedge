@@ -201,6 +201,50 @@ function ob_sessrewrite($buffer)
 
 	$buffer = str_replace(array(chr(15), chr(16)), array('"', "'"), $buffer);
 
+	/*
+		Soft-merging forum posts.
+		This relies on the msg mini-skeleton having a similar structure to the default's.
+	*/
+	if (strpos($buffer, '<we:msg_') !== false)
+	{
+		$ex_uid = $ex_area = $new_area = $cur_bg = $one_removed = '';
+		// First, find all potential messages in this page...
+		preg_match_all('~<we:msg [^>]*id="([^"]+)" class="([^"]+)"[^>]*>(.*?)</we:msg>~s', $buffer, $messages, PREG_SET_ORDER);
+		foreach ($messages as $msg)
+		{
+			// Find the author ID for the current post, and isolate the post's content.
+			preg_match('~data-id="(\d+)" class="[^"]*umme~', $msg[3], $uid);
+			preg_match('~<we:msg_area>(.*?)</we:msg_area>~s', $msg[3], $area);
+			$area = $area[1];
+
+			// Do we need soft merging?
+			if ($ex_uid == $uid)
+			{
+				// Remove colored backgrounds and signature, keep the ID and classes (for JS mostly), and move the post area to the previous area, in a special div.
+				$new_area = $ex_area . '<div class="merged ' . preg_replace('~ postbg2?\b|\bpostbg2? ~', '', $msg[2]) . '" id="' . $msg[1] . '">' . $area . '</div>';
+				$new_area = preg_replace('~<we:msg_signature>.*?</we:msg_signature>~s', '', $new_area);
+				$buffer = str_replace(array($msg[0], $ex_area), array('<!REMOVED>', $new_area), $buffer);
+				$ex_area = $new_area;
+				$one_removed = true;
+			}
+			else
+			{
+				$ex_uid = $uid;
+				$ex_area = $area;
+				if ($cur_bg)
+					$msg[0] = str_replace(array('postbg2', 'postbg'), $cur_bg == 'postbg2' ? 'postbg' : 'postbg2', $msg[0]);
+				$cur_bg = strpos($msg[2], 'postbg2') === false ? 'postbg2' : 'postbg';
+			}
+		}
+		// Remove any extra separators.
+		if ($one_removed)
+			$buffer = preg_replace('~<hr[^>]*>\s*<!REMOVED>~', '', $buffer);
+	}
+
+	/*
+		Macro magic!
+	*/
+
 	// Nerd alert -- the first few lines (tag search process) can be done in a simple regex.
 	//	while (preg_match_all('~<we:([^>\s]+)\s*([a-z][^>]+)?\>((?' . '>[^<]+|<(?!/?we:\\1))*?)</we:\\1>~i', $buffer, $matches, PREG_SET_ORDER))
 	// It's case-insensitive, but always slower -- noticeably so with hundreds of macros.
@@ -234,21 +278,23 @@ function ob_sessrewrite($buffer)
 				$macro = isset($context['macros'][$code]) ? $context['macros'][$code] : array('has_if' => false, 'body' => '');
 				$body = str_replace('{body}', substr($buffer, $gt + 1, $end_code - $gt - 1), $macro['body']);
 
-				// Has it got an <if:param> section?
-				if ($macro['has_if'])
+				// Have we got any parameters?
+				if (strpos($body, '{') !== false)
 				{
 					preg_match_all('~([a-z][^\s="]*)="([^"]+)"~', substr($buffer, $p, $gt - $p), $params);
-
-					// Remove <if> and its contents if the param is not used in the template. Otherwise, clean up the <if> tag...
-					while (preg_match_all('~<if:([^>]+)>((?' . '>[^<]+|<(?!/?if:\\1>))*?)</if:\\1>~i', $body, $ifs, PREG_SET_ORDER))
-						foreach ($ifs as $ifi)
-							$body = str_replace($ifi[0], !empty($params) && in_array($ifi[1], $params[1]) ? $ifi[2] : '', $body);
 
 					// ...And replace with the contents.
 					if (!empty($params))
 						foreach ($params[1] as $id => $param)
 							$body = str_replace('{' . $param . '}', strpos($params[2][$id], 'htmlsafe::') === 0 ? html_entity_decode(substr($params[2][$id], 10)) : $params[2][$id], $body);
 				}
+
+				// Remove <if> and its contents if the param is not used in the template. Otherwise, clean up the <if> tag...
+				if ($macro['has_if'])
+					while (preg_match_all('~<if:([^>]+)>((?' . '>[^<]+|<(?!/?if:\\1>))*?)</if:\\1>~i', $body, $ifs, PREG_SET_ORDER))
+						foreach ($ifs as $ifi)
+							$body = str_replace($ifi[0], !empty($params) && in_array($ifi[1], $params[1]) ? $ifi[2] : '', $body);
+
 				$buffer = str_replace(substr($buffer, $p, $end_code + strlen($code) + 6 - $p), $body, $buffer);
 			}
 		}

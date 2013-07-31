@@ -1615,12 +1615,15 @@ class wess_prefixes extends wess
 			$dpi = $matches[4] == 'dpi' ? $matches[3] : $matches[3] * 96;
 			// Firefox 3.5 (?) to 15: min--moz-device-pixel-ratio: 2
 			// Firefox 16+: directly accepts min-resolution: 2dppx (or 192dpi)
-			if ($b['firefox'])
-				return $v < 16 ? $matches[2] . '-moz-device-pixel-ratio:' . ($dpi / 96) : $matches[1];
-			// WebKit: -webkit-min-device-pixel-ratio: 2 -- Chrome added support for resolution, but as of March 2013 it's still unclear.
+			if ($b['firefox'] && $v < 16)
+				return $matches[2] . '-moz-device-pixel-ratio:' . ($dpi / 96);
+			// Firefox >= 16, Chrome >= 29 and Opera >= 12.1 support dppx, so go with it...
+			if ($b['firefox'] || ($b['chrome'] && $v >= 29) || ($b['opera'] && $v >= 12.1))
+				return $unchanged;
+			// WebKit and Chrome < 29 only support -webkit-min-device-pixel-ratio: 2
 			if ($b['webkit'])
 				return $this->prefix . $matches[2] . '-device-pixel-ratio:' . ($dpi / 96);
-			// IE9+ and Opera should be fine with a dpi unit. Opera 12.1+ supports dppx, but who cares.
+			// IE9+ and older Opera should be fine with a dpi unit.
 			return $matches[2] . 'resolution:' . $dpi . 'dpi';
 		}
 

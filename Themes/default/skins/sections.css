@@ -238,6 +238,9 @@ img.new_posts
 	// height: 100% does nothing per se (thankfully), but it allows Chrome
 	// (and only it for now..?) to properly set a height on table cells.
 	width, height: 100%
+	&.merged
+		display: block
+		height: auto
 
 // Alternating backgrounds for posts
 .postbg extends .windowbg
@@ -381,7 +384,12 @@ hr.sep
 	@if can_flex
 		.root &
 			flex: 1
+		.merged &
+			flex: none
 	@endif
+
+.merged
+	border-top: 1px solid #ccc
 
 // Setting a margin here helps take advantage of margin collapsing. (e.g. when a post starts with a quote.)
 .inner

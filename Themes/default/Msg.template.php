@@ -19,7 +19,7 @@ function template_msg_wrap_before()
 	// or other classes (such as can-mod), from within it. For instance,
 	// var id_msg = $(this).closest('.root').attr('id').slice(3);
 	echo '
-			<div id="msg', $msg['id'], '" class="root',
+			<we:msg id="msg', $msg['id'], '" class="root',
 				$msg['alternate'] == 0 ? ' postbg' : ' postbg2',
 				$msg['approved'] ? '' : ' approve',
 				$msg['can_modify'] ? ' can-mod' : '',
@@ -226,13 +226,7 @@ function template_msg_author_after()
 function template_msg_area_before()
 {
 	echo '
-					<div class="postarea">';
-}
-
-function template_msg_area_after()
-{
-	echo '
-					</div>';
+					<we:msg_area>';
 }
 
 function template_msg_header()
@@ -241,6 +235,8 @@ function template_msg_header()
 
 	echo '
 						<we:msg_header>';
+
+	template_msg_new_anchor();
 
 	// Show a checkbox for quick moderation?
 	if ($msg['can_remove'])
@@ -270,8 +266,19 @@ function template_msg_header()
 
 function template_msg_header_mobile()
 {
-		echo '
+	echo '
 						<h5></h5>';
+
+	template_msg_new_anchor();
+}
+
+function template_msg_new_anchor()
+{
+	global $msg, $context;
+
+	// Show a "new" anchor if this message is new.
+	if ($msg['first_new'] && (!$context['first_new_message'] || !empty($_REQUEST['start'])))
+		echo '<a id="new"></a>';
 }
 
 function template_msg_ignored()
@@ -459,13 +466,19 @@ function template_msg_bottom_after()
 						</footer>';
 }
 
+function template_msg_area_after()
+{
+	echo '
+					</we:msg_area>';
+}
+
 function template_msg_wrap_after()
 {
 	global $msg, $context;
 
 	echo '
 				</div>
-			</div>', $context['topic_last_message'] === $msg['id'] ? '' : '
+			</we:msg>', $context['topic_last_message'] === $msg['id'] ? '' : '
 			<hr class="sep">';
 }
 
