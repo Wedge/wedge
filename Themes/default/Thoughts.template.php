@@ -119,7 +119,7 @@ function template_thoughts_thread()
 			template_sub_thoughts($thought);
 
 		echo '
-			</li></ul></td></tr>';
+			</li></ul>', AJAX ? $context['header'] : '', '</td></tr>';
 	}
 }
 
@@ -203,6 +203,9 @@ function template_thoughts_table()
 			</tr>';
 		}
 	}
+
+	if (!empty($context['header']))
+		echo '<tr class="hide"><td>', $context['header'], '</td></tr>';
 }
 
 function template_thought_likes($id_thought)

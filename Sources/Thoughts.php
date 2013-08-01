@@ -75,6 +75,7 @@ function Thoughts()
 		);
 		while ($row = wesql::fetch_assoc($request))
 		{
+			$row['thought'] = parse_bbc_inline($row['thought'], 'thought', array('user' => $row['id_parent_owner']));
 			$thought = array(
 				'id' => $row['id_thought'],
 				'id_member' => $row['id_member'],
@@ -116,7 +117,7 @@ function Thoughts()
 				{
 					if (empty($row['parent_name']) && !isset($txt['deleted_thought']))
 						loadLanguage('Post');
-					$thought['text'] = (empty($row['parent_name']) ? '@' . $txt['deleted_thought'] : '@<a href="<URL>?action=profile;u=' . $row['id_parent_owner'] . '">' . $row['parent_name'] . '</a>') . '&gt; ' . parse_bbc_inline($row['thought'], 'thought', array('user' => $row['id_parent_owner']));
+					$thought['text'] = (empty($row['parent_name']) ? '@' . $txt['deleted_thought'] : '@<a href="<URL>?action=profile;u=' . $row['id_parent_owner'] . '">' . $row['parent_name'] . '</a>') . '&gt; ' . $row['thought'];
 					$thoughts[$row['id_master']] = $thought;
 				}
 				elseif ($row['id_master'] === $row['id_parent'] || !isset($thoughts[$row['id_master']]['sub']))
@@ -178,6 +179,7 @@ function embedThoughts($to_show = 10)
 	{
 		$id = $row['id_thought'];
 		$mid = $row['id_master'];
+		$row['thought'] = parse_bbc_inline($row['thought'], 'thought', array('user' => $row['id_member']));
 		$thoughts[$row['id_thought']] = array(
 			'id' => $row['id_thought'],
 			'id_member' => $row['id_member'],
@@ -187,7 +189,7 @@ function embedThoughts($to_show = 10)
 			'owner_name' => $row['owner_name'],
 			'privacy' => $row['privacy'],
 			'updated' => timeformat($row['updated']),
-			'text' => $row['posts'] < 10 ? preg_replace('~\</?a(?:\s[^>]+)?\>(?:https?://)?~', '', parse_bbc_inline($row['thought'], 'thought', array('user' => $row['id_member']))) : parse_bbc_inline($row['thought'], 'thought', array('user' => $row['id_member'])),
+			'text' => $row['posts'] < 10 ? preg_replace('~\</?a(?:\s[^>]+)?\>(?:https?://)?~', '', $row['thought']) : $row['thought'],
 			'can_like' => we::$is_member && !empty($settings['likes_enabled']) && (!empty($settings['likes_own_posts']) || $row['id_member'] != we::$id),
 		);
 
@@ -290,6 +292,7 @@ function latestThoughts($memID = 0)
 		);
 		while ($row = wesql::fetch_assoc($request))
 		{
+			$row['thought'] = parse_bbc_inline($row['thought'], 'thought', array('user' => $row['id_member']));
 			$thought = array(
 				'id' => $row['id_thought'],
 				'id_member' => $row['id_member'],
@@ -298,7 +301,7 @@ function latestThoughts($memID = 0)
 				'id_parent_owner' => $row['id_parent_owner'],
 				'owner_name' => $row['owner_name'],
 				'updated' => timeformat($row['updated']),
-				'text' => $row['posts'] < 10 ? preg_replace('~\</?a(?:\s[^>]+)?\>(?:https?://)?~', '', parse_bbc_inline($row['thought'], 'thought', array('user' => $row['id_member']))) : parse_bbc_inline($row['thought'], 'thought', array('user' => $row['id_member'])),
+				'text' => $row['posts'] < 10 ? preg_replace('~\</?a(?:\s[^>]+)?\>(?:https?://)?~', '', $row['thought']) : $row['thought'],
 				'privacy' => $row['privacy'],
 				'has_children' => $row['has_children'],
 				'can_like' => we::$is_member && !empty($settings['likes_enabled']) && (!empty($settings['likes_own_posts']) || $row['id_member'] != we::$id),
