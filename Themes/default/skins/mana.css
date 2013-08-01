@@ -272,7 +272,7 @@ fieldset dl
 	li
 		list-style-type: none
 		margin: 5px 0 0 0
-		div.windowbg
+		div.windowbg, div.windowbg2
 			border: 1px dotted gray
 			border-left: 0
 			padding: 10px 10px 10px 22px

@@ -101,6 +101,116 @@ function template_main()
 	<br class="clear">';
 }
 
+// Template for listing all the boards and setting up magic for rearranging them.
+function template_board_list()
+{
+	global $context, $txt;
+
+	echo '
+	<div id="manage_boards_list">
+		<we:cat>
+			', $txt['boardsEdit'], '
+		</we:cat>';
+
+	echo '
+		<ul class="sortable">';
+
+	foreach ($context['board_list'] as $category)
+	{
+		echo '
+			<li class="root" id="cat_c', $category['node']['id'], '">
+				<div class="windowbg2">
+					<span class="handle"></span> ', $category['node']['name'], '
+					<div class="floatright">
+						<form action="<URL>?action=admin;area=manageboards;sa=cat;cat=', $category['node']['id'], '" method="post"><input type="submit" class="modify" value="', $txt['modify'], '"></form>
+					</div>
+					<div class="floatright">
+						<form action="<URL>?action=admin;area=manageboards;sa=newboard;cat=', $category['node']['id'], '" method="post"><input type="submit" value="', $txt['mboards_new_board'], '" class="new"></form>
+					</div>
+					<br class="clear">
+				</div>';
+		if (!empty($category['children']))
+		{
+			echo '
+				<ul>';
+			foreach ($category['children'] as $child)
+				template_board_tree($child);
+			echo '
+				</ul>';
+		}
+		echo '
+			</li>';
+	}
+
+	echo '
+		</ul>
+	</div>
+	<div class="right">
+		<input type="submit" name="saveorder" value="', $txt['editnews_saveorder'], '" class="save" id="saveorder" onclick="return dosave();">
+	</div>
+	<div id="output"></div>
+	<br class="clear">';
+
+	add_js('
+	$(".sortable").nestedSortable({
+		handle: "div",
+		items: "li",
+		listType: "ul",
+		protectRoot: true,
+		errorClass: "sortable_error",
+		placeholder: "placeholder",
+		forcePlaceholderSize: true,
+		tabSize: 25,
+		revert: 150,
+		update: function (event, ui) { $(\'#saveorder\').show(); }
+	});
+	$(\'#saveorder\').hide();
+	function dosave()
+	{
+		show_ajax("#saveorder", [0, 0]);
+		$("#saveorder").prop(\'disabled\', true);
+		$.post(
+			weUrl(\'action=admin;area=manageboards\'),
+			\'saveorder=1&\' + we_sessvar + \'=\' + we_sessid + \'&\' + $(".sortable").nestedSortable("serialize"),
+			function() { hide_ajax(); $("#saveorder").prop("disabled", false).hide(); }
+		);
+		return false;
+	}');
+}
+
+function template_board_tree($child)
+{
+	global $txt;
+
+	$indent = !empty($child['node']['level']) ? str_repeat('		', $child['node']['level']) : '';
+
+	echo '
+					', $indent, '<li id="board_b', $child['node']['id'], '">
+						', $indent, '<div class="windowbg">
+							', $indent, '<span class="handle"></span> ', $child['node']['name'], '
+							', $indent, '<div class="floatright">
+								', $indent, '<form action="<URL>?action=admin;area=manageboards;sa=board;boardid=', $child['node']['id'], '" method="post"><input type="submit" class="modify" value="', $txt['modify'], '"></form>
+							', $indent, '</div>
+							', $indent, '<div class="floatright">
+								', $indent, '<form action="<URL>?action=admin;area=permissions;sa=index;pid=', $child['node']['profile'], '" method="post"><input type="submit" class="permbutton" value="', $txt['mboards_permissions'], '"></form>
+							', $indent, '</div>	
+							', $indent, '<br class="clear">
+						', $indent, '</div>';
+
+	// Did I mention I really hate recursion? But as much as I dislike it, it is the most elegant solution here.
+	if (!empty($child['children']))
+	{
+		echo '
+						', $indent, '<ul>';
+		foreach ($child['children'] as $subchild)
+			template_board_tree($subchild);
+		echo '
+						', $indent, '</ul>';
+	}
+	echo '
+					', $indent, '</li>';
+}
+
 // Template for editing/adding a category on the forum.
 function template_modify_category()
 {

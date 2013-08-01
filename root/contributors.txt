@@ -59,6 +59,10 @@ MultiAttach (multiple attachment selector)
 	-- © The-Stickman.com 2005, http://the-stickman.com/web-development/javascript/upload-multiple-files-with-a-single-file-element/
 	-- used under the MIT license, http://opensource.org/licenses/mit-license.php
 
+jQuery nestedSortable
+	-- © Manuele J Sarfatti 2010-2013, https://github.com/mjsarfatti/nestedSortable
+	-- used under the MIT license, http://opensource.org/licenses/mit-license.php
+
 getID3 (media file information)
 	-- © James Heinrich 2013, http://getid3.org/
 	-- used under the MPLv2

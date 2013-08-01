@@ -68,7 +68,7 @@ if (!defined('WEDGE'))
 // The controller; doesn't do anything, just delegates.
 function ManageBoards()
 {
-	global $context, $txt;
+	global $context, $txt, $boards;
 
 	// Everything's gonna need this.
 	loadLanguage('ManageBoards');
@@ -119,6 +119,135 @@ function ManageBoardsMain()
 	loadTemplate('ManageBoards');
 
 	loadSource('Subs-Boards');
+
+	if (isset($_REQUEST['saveorder']))
+	{
+		checkSession();
+		if (empty($_POST['cat']) || empty($_POST['board']) || !is_array($_POST['cat']) || !is_array($_POST['board']))
+			obExit(false);
+
+		// First get all the categories and all the boards. We want to try to minimise some of the work if we can help it.
+		$current_cats = array();
+		$current_boards = array();
+		$request = wesql::query('
+			SELECT id_cat, cat_order
+			FROM {db_prefix}categories');
+		while ($row = wesql::fetch_assoc($request))
+			$current_cats[$row['id_cat']] = array('current' => $row['cat_order']);
+		wesql::free_result($request);
+
+		$request = wesql::query('
+			SELECT id_board, id_cat, child_level, board_order, id_parent
+			FROM {db_prefix}boards');
+		while ($row = wesql::fetch_assoc($request))
+			$current_boards[$row['id_board']] = $row;
+		wesql::free_result($request);
+
+		// Now crunch the categories
+		$success = false;
+		if (count($current_cats) == count($_POST['cat']))
+		{
+			$success = true;
+			$current_pos = 1;
+			// Incoming, cat will be cat[c1] = null because they don't have parents of any kind. So we don't care about the value.
+			foreach ($_POST['cat'] as $cat_id => $dummy)
+			{
+				$id_cat = (int) substr($cat_id, 1);
+				if ($id_cat < 1)
+				{
+					$success = false;
+					break;
+				}
+				else
+					$current_cats[$id_cat]['new'] = $current_pos++;
+			}
+		}
+
+		// Now we do the heavy lifting of boards. This won't be pretty.
+		if ($success && count($current_boards) == count($_POST['board']))
+		{
+			$current_pos = 1;
+			$this_cat = 0;
+			foreach ($_POST['board'] as $board_id => $board_parent)
+			{
+				$id_board = (int) substr($board_id, 1);
+				if ($id_board < 1)
+				{
+					$success = false;
+					break;
+				}
+
+				if (strpos($board_parent, 'c') === 0)
+				{
+					// So the parent is a category. That helps us a lot.
+					$this_cat = (int) substr($board_parent, 1);
+					$current_boards[$id_board]['new_id_cat'] = $this_cat;
+					$current_boards[$id_board]['new_child_level'] = 0;
+					$current_boards[$id_board]['new_board_order'] = $current_pos++;
+					$current_boards[$id_board]['new_id_parent'] = 0;
+				}
+				else
+				{
+					$parent_board = (int) substr($board_parent, 1);
+
+					// Since this is a child, by definition we must have hit the parent already.
+					if (!isset($current_boards[$parent_board]['new_id_cat']))
+					{
+						$success = false;
+						break;
+					}
+					else
+						$parent_board_data = $current_boards[$parent_board];
+
+					$current_boards[$id_board]['new_id_cat'] = $this_cat;
+					$current_boards[$id_board]['new_child_level'] = $parent_board_data['new_child_level'] + 1;
+					$current_boards[$id_board]['new_board_order'] = $current_pos++;
+					$current_boards[$id_board]['new_id_parent'] = $parent_board;
+				}
+			}
+		}
+
+		// All done?
+		if ($success)
+		{
+			// First go through and find (and update) any categories that are now different.
+			foreach ($current_cats as $id_cat => $cat_details)
+				if ($cat_details['current'] != $cat_details['new'])
+					wesql::query('
+						UPDATE {db_prefix}categories
+						SET cat_order = {int:cat_order}
+						WHERE id_cat = {int:id_cat}',
+						array(
+							'cat_order' => $cat_details['new'],
+							'id_cat' => $id_cat,
+						)
+					);
+
+			$items = array('id_cat', 'child_level', 'board_order', 'id_parent');
+			foreach ($current_boards as $id_board => $board_details)
+			{
+				// For each board, figure out if any one of the four columns has changed.
+				$changed = false;
+				foreach ($items as $item)
+					if ($board_details[$item] != $board_details['new_' . $item])
+						$changed = true;
+
+				if ($changed)
+					wesql::query('
+						UPDATE {db_prefix}boards
+						SET
+							id_cat = {int:new_id_cat},
+							child_level = {int:new_child_level},
+							board_order = {int:new_board_order},
+							id_parent = {int:new_id_parent}
+						WHERE id_board = {int:id_board}',
+						$board_details
+					);
+			}
+		}
+
+		obExit(false);
+	}
 
 	if (isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'move' && in_array($_REQUEST['move_to'], array('child', 'before', 'after', 'top')))
 	{
@@ -228,6 +357,16 @@ function ManageBoardsMain()
 
 	$context['page_title'] = $txt['boards_and_cats'];
 	$context['can_manage_permissions'] = allowedTo('manage_permissions');
+
+	if (!$context['move_board'])
+	{
+		// getBoardTree makes $cat_tree with all that hierarchy. But it's a pain to get rid of what we don't want, bah.
+		$context['board_list'] = &$cat_tree;
+
+		wetem::load('board_list');
+		add_jquery_ui();
+		add_js_file('scripts/jquery.mjs.nestedSortable.js');
+	}
 }
 
 // Modify a specific category.
