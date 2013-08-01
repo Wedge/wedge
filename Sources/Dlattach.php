@@ -182,7 +182,8 @@ function Dlattach()
 	}
 
 	// Set up sending the file with its headers. The filename should be in UTF-8 but of course, browsers don't always expect that...
-	$fixchar = create_function('$n', '
+	$fixchar = create_function('$matches', '
+		$n = $matches[1];
 		if ($n < 32)
 			return \'\';
 		elseif ($n < 128)
@@ -198,11 +199,11 @@ function Dlattach()
 
 	// Different browsers like different standards...
 	if (we::is('ie8down'))
-		header('Content-Disposition: ' . $disposition . '; filename="' . urlencode(preg_replace('~&#(\d{3,8});~e', '$fixchar(\'$1\')', $real_filename)) . '"');
+		header('Content-Disposition: ' . $disposition . '; filename="' . urlencode(preg_replace_callback('~&#(\d{3,8});~', $fixchar, $real_filename)) . '"');
 	elseif (we::is('safari'))
 		header('Content-Disposition: ' . $disposition . '; filename="' . $real_filename . '"');
 	else
-		header('Content-Disposition: ' . $disposition . '; filename*=UTF-8\'\'' . rawurlencode(preg_replace('~&#(\d{3,8});~e', '$fixchar(\'$1\')', $real_filename)));
+		header('Content-Disposition: ' . $disposition . '; filename*=UTF-8\'\'' . rawurlencode(preg_replace_callback('~&#(\d{3,8});~', $fixchar, $real_filename)));
 
 	// If this has an "image extension" - but isn't actually an image - then ensure it isn't cached cause of silly IE.
 	if (!isset($_REQUEST['image']) && in_array($file_ext, array('gif', 'jpg', 'bmp', 'png', 'jpeg', 'tiff')))

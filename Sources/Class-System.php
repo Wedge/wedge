@@ -694,12 +694,18 @@ class we
 	 */
 	public static function analyze($strings)
 	{
+		static $quote_replace = null;
+		if ($quote_replace === null)
+			$quote_replace = create_function('$matches', '
+				return "<" . str_replace(array(",", "&"), array(chr(20), chr(21)), "$1") . ">";
+			');
+
 		if (!is_array($strings))
 		{
 			// If working on a string, we'll group brackets together, and split the rest.
 			// Note that commas need to be encoded, in case you enter e.g. (ie[6,7])
 			while (strpos($strings, '(') !== false)
-				$strings = preg_replace('~\(([^)]+)\)~e', '"<" . str_replace(array(",", "&"), array(chr(20), chr(21)), "$1") . ">"', $strings);
+				$strings = preg_replace_callback('~\(([^)]+)\)~', $quote_replace, $strings);
 			$strings = array_flip(array_map('trim', preg_split('~[,|]+~', $strings)));
 		}
 

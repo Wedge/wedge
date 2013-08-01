@@ -719,20 +719,7 @@ function mimespecialchars($string, $with_charset = true, $hotmail_fix = false, $
 
 	// This is the fun part....
 	if (preg_match_all('~&#(\d{3,8});~', $string, $matches) !== 0 && !$hotmail_fix)
-	{
-		// Let's, for now, assume there are only &#021;'ish characters.
-		$simple = true;
-
-		foreach ($matches[1] as $entity)
-			if ($entity > 128)
-				$simple = false;
-		unset($matches);
-
-		if ($simple)
-			$string = preg_replace('~&#(\d{3,8});~e', 'chr(\'$1\')', $string);
-		else
-			$string = westr::entity_to_utf8($string);
-	}
+		$string = westr::entity_to_utf8($string);
 
 	// Convert all special characters to HTML entities...just for Hotmail :-\
 	if ($hotmail_fix)

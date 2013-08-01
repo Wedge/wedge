@@ -79,23 +79,31 @@ class westr_foundation
 	// Converts entities (&#224;) to their equivalent UTF-8 characters. Sample usage:
 	static function entity_to_utf8($string)
 	{
-		return preg_replace('~&#(\d{2,8});~e', 'westr_foundation::entity_to_utf8_process(\'$1\')', $string);
+		return preg_replace_callback('~&#(\d{2,8});~', 'westr_foundation::entity_to_utf8_process', $string);
 	}
 
 	// Converts UTF-8 characters to their equivalent entities (&#224;).
 	static function utf8_to_entity($string)
 	{
-		return preg_replace('~([\x80-\x{10FFFF}])~eu', 'westr_foundation::utf8_to_entity_process(\'$1\')', $string);
+		return preg_replace_callback('~([\x80-\x{10FFFF}])~u', 'westr_foundation::utf8_to_entity_process', $string);
 	}
 
 	// Converts &#224; to \u00e0, for use in JavaScript notation. Gzip likes these, you know..?
 	static function entity_to_js_code($string)
 	{
-		return preg_replace('~&#(\d+);~e', '\'\u\' . str_pad(dechex(\'$1\'), 4, \'0\', STR_PAD_LEFT)', $string);
+		return preg_replace_callback('~&#(\d+);~', 'westr_foundation::strpad', $string);
+	}
+
+	static function strpad($entstring)
+	{
+		return '\u' . str_pad(dechex($entstring[1]), 4, '0', STR_PAD_LEFT);
 	}
 
 	static function entity_to_utf8_process($n)
 	{
+		if (is_array($n))
+			$n = $n[1];
+
 		if ($n < 128)
 			return chr($n);
 		elseif ($n < 2048)
@@ -107,6 +115,9 @@ class westr_foundation
 
 	static function utf8_to_entity_process($c)
 	{
+		if (is_array($c))
+			$c = $c[1];
+
 		$len = strlen($c);
 		$cc = ord($c[0]);
 		if ($len === 1 && $cc < 128)

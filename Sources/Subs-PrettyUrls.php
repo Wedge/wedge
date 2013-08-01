@@ -72,7 +72,7 @@ function pretty_generate_url($text, $is_board = false, $slash = false)
 		'zh' =>	array('ж', 'Ж'),
 	);
 
-	$text = preg_replace('~(&#(\d{1,7});)~e', 'fix_accents(\'$2\')', $text); // Turns &#12345; to UTF-8
+	$text = preg_replace('~(&#(\d{1,7});)~', 'fix_accents', $text); // Turns &#12345; to UTF-8
 
 	$text = str_replace(array('&amp;', '&quot;', '£', '¥', 'ß', '¹', '²', '³', '©', '®', '™', '½', '¼', '¾', '§'),
 						array('&', '"', 'p', 'yen', 'ss', '1', '2', '3', 'c', 'r', 'tm', '1-2', '1-4', '3-4', 's'), $text);
@@ -90,7 +90,7 @@ function pretty_generate_url($text, $is_board = false, $slash = false)
 	$text = preg_replace('~&(..?)(acute|grave|cedil|uml|circ|ring|tilde|lig|slash);~', '$1', $text);
 	$text = str_replace(array('&#169;', '&#0169;', '&copy;', '&#153;', '&#0153;', '&trade;', '&#174;', '&#0174;', '&reg;', '&#160;', '&nbsp;'),
 						array('c', 'c', 'c', 'tm', 'tm', 'tm', 'r', 'r', 'r', '-', '-'), $text); // © ™ ® nbsp
-	$text = preg_replace('~(&#(\d{1,7}|x[0-9a-f]{1,6});)~e', 'entity_replace(\'$2\')', $text); // Turns &#12345; to %AB%CD
+	$text = preg_replace_callback('~(&#(\d{1,7}|x[0-9a-f]{1,6});)~', 'entity_replace', $text); // Turns &#12345; to %AB%CD
 
 	$text = preg_replace(array('~[\x00-\x1f\x80-\xff]~', '~&[^;]*?;~', '~[^a-z0-9\$%_' . ($slash ? '/' : '') . '-]~'), '-', $text);
 	$text = str_replace(array('"', "'"), chr(18), $text);
@@ -102,8 +102,9 @@ function pretty_generate_url($text, $is_board = false, $slash = false)
 	return trim(preg_replace('~-+~', '-', $text), '-');
 }
 
-function entity_replace($string)
+function entity_replace($matches)
 {
+	$string = $matches[2]; // Comes from preg_replace_callback
 	$num = $string[0] === 'x' ? hexdec(substr($string, 1)) : (int) $string;
 	$rep = $num > 0x10FFFF || ($num >= 0xD800 && $num <= 0xDFFF) ? '' : ($num < 0x80 ?
 	chr($num) : ($num == 0 || ($num >= 0x80 && $num < 0x100) ? '-' : ($num < 0x800 ?
@@ -115,7 +116,7 @@ function entity_replace($string)
 
 function fix_accents($num)
 {
-	$num = (int) $num;
+	$num = (int) $num[2]; // Comes from preg_replace_callback
 	if ($num < 0x100)
 		return chr($num);
 	return '&#' . $num . ';';
