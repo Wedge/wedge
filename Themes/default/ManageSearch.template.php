@@ -129,54 +129,39 @@ function template_select_search_method()
 				</dl>
 				<fieldset class="search_settings floatleft">
 					<legend>', $txt['search_index'], '</legend>
-					<dl>
-						<dt>
-							<label>
-								<input type="radio" name="search_index" value=""', empty($settings['search_index']) ? ' checked' : '', '>
-								', $txt['search_index_none'], '
-							</label>
-						</dt>
-						<dt>
-							<label>
-								<input type="radio" name="search_index" value="custom"', !empty($settings['search_index']) && $settings['search_index'] == 'custom' ? ' checked' : '', $context['custom_index'] ? '' : ' onclick="say(' . JavaScriptEscape($txt['search_index_custom_warning']) . ');"', '>
-								', $txt['search_index_custom'], '
-							</label>
-						</dt>
-						<dd>
-							<span class="smalltext">';
+					<dl>';
 
-	if ($context['custom_index'])
-		echo '
-								<strong>', $txt['search_index_label'], ':</strong> ', $txt['search_method_index_already_exists'], ' [<a href="<URL>?action=admin;area=managesearch;sa=remove;index=custom;', $context['session_query'], '">', $txt['search_index_custom_remove'], '</a>]<br>
-								<strong>', $txt['search_index_size'], ':</strong> ', $context['table_info']['custom_index_length'];
-	elseif ($context['partial_custom_index'])
-		echo '
-								<strong>', $txt['search_index_label'], ':</strong> ', $txt['search_method_index_partial'], ' [<a href="<URL>?action=admin;area=managesearch;sa=remove;index=custom;', $context['session_query'], '">', $txt['search_index_custom_remove'], '</a>] [<a href="<URL>?action=admin;area=managesearch;sa=createmsgindex;resume;', $context['session_query'], '">', $txt['search_index_custom_resume'], '</a>]<br>
-								<strong>', $txt['search_index_size'], ':</strong> ', $context['table_info']['custom_index_length'];
-	else
-		echo '
-								<strong>', $txt['search_index_label'], ':</strong> ', $txt['search_method_no_index_exists'], ' [<a href="<URL>?action=admin;area=managesearch;sa=createmsgindex">', $txt['search_index_create_custom'], '</a>]';
-
-	echo '
-							</span>
-						</dd>';
-
-	foreach ($context['search_apis'] as $api)
+	foreach ($context['search_apis'] as $index => $index_details)
 	{
-		if (empty($api['label']) || $api['has_template'])
-			continue;
-
 		echo '
 						<dt>
-							<input type="radio" name="search_index" value="', $api['setting_index'], '"', !empty($settings['search_index']) && $settings['search_index'] == $api['setting_index'] ? ' checked' : '', '>
-							', $api['label'], '
+							<label>
+								<input type="radio" name="search_index" value="', $index != 'standard' ? $index : '', '"', !empty($index_details['active']) ? ' checked' : '', '>
+								', $index_details['label'], '
+							</label>
 						</dt>';
 
-	if ($api['desc'])
-		echo '
+		if ($index != 'standard')
+		{
+			echo '
 						<dd>
-							<span class="smalltext">', $api['desc'], '</span>
+							<span class="smalltext">';
+			if ($index_details['state'] == 'none')
+				echo '
+								<strong>', $txt['search_index_label'], ':</strong> ', $txt['search_method_no_index_exists'], !empty($index_details['can_create']) ? ' [<a href="<URL>?action=admin;area=managesearch;sa=createmsgindex;type=' . $index . '">' . $txt['search_index_create_custom'] . '</a>]' : '';
+			elseif ($index_details['state'] == 'partial')
+				echo '
+								<strong>', $txt['search_index_label'], ':</strong> ', $txt['search_method_index_partial'], ' [<a href="<URL>?action=admin;area=managesearch;sa=remove;index=', $index, ';', $context['session_query'], '">', $txt['search_index_custom_remove'], '</a>] [<a href="<URL>?action=admin;area=managesearch;sa=createmsgindex;resume;', $context['session_query'], '">', $txt['search_index_custom_resume'], '</a>]<br>
+								<strong>', $txt['search_index_size'], ':</strong> ', $index_details['formatted_size'];
+			elseif ($index_details['state'] == 'complete')
+				echo '
+								<strong>', $txt['search_index_label'], ':</strong> ', $txt['search_method_index_already_exists'], ' [<a href="<URL>?action=admin;area=managesearch;sa=remove;index=', $index, ';', $context['session_query'], '">', $txt['search_index_custom_remove'], '</a>]<br>
+								<strong>', $txt['search_index_size'], ':</strong> ', $index_details['formatted_size'];
+			
+			echo '
+							</span>
 						</dd>';
+		}
 	}
 
 	echo '

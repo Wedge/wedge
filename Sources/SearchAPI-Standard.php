@@ -27,12 +27,16 @@ class standard_search
 
 	public function getInfo()
 	{
+		global $txt;
 		return array(
 			'filename' => basename(__FILE__),
 			'setting_index' => 'standard',
 			'has_template' => true,
-			'label' => '',
+			'label' => $txt['search_index_none'],
 			'desc' => '',
+			'state' => 'none',
+			'size' => 0,
+			'can_create' => true,
 		);
 	}
 }

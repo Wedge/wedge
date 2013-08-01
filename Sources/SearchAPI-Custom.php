@@ -53,7 +53,45 @@ class custom_search
 
 	public function getInfo()
 	{
-		global $txt;
+		global $txt, $settings, $db_prefix;
+
+		if (!empty($settings['search_custom_index_resume']) && empty($settings['search_custom_index_config']))
+			$state = 'partial';
+		elseif (!empty($settings['search_custom_index_config']))
+			$state = 'complete';
+		else
+			$state = 'none';
+
+		if ($state != 'none')
+		{
+			// Now check the custom index table, if it exists at all.
+			if (preg_match('~^`(.+?)`\.(.+?)$~', $db_prefix, $match) !== 0)
+				$request = wesql::query('
+					SHOW TABLE STATUS
+					FROM {string:database_name}
+					LIKE {string:table_name}',
+					array(
+						'database_name' => '`' . strtr($match[1], array('`' => '')) . '`',
+						'table_name' => str_replace('_', '\_', $match[2]) . 'log_search_words',
+					)
+				);
+			else
+				$request = wesql::query('
+					SHOW TABLE STATUS
+					LIKE {string:table_name}',
+					array(
+						'table_name' => str_replace('_', '\_', $db_prefix) . 'log_search_words',
+					)
+				);
+
+			if ($request !== false && wesql::num_rows($request) == 1)
+			{
+				// Only do this if the user has permission to execute this query.
+				$row = wesql::fetch_assoc($request);
+				$size = $row['Data_length'] + $row['Index_length'];
+				wesql::free_result($request);
+			}
+		}
 
 		return array(
 			'filename' => basename(__FILE__),
@@ -61,6 +99,9 @@ class custom_search
 			'has_template' => true,
 			'label' => $txt['search_index_custom'],
 			'desc' => '',
+			'state' => $state,
+			'size' => isset($size) ? $size : 0,
+			'can_create' => true,
 		);
 	}
 

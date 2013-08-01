@@ -209,7 +209,12 @@ function EditSearchMethod()
 		$searchAPI = new $search_class_name();
 
 		if ($searchAPI && $searchAPI->isValid() && method_exists($searchAPI, 'dropIndex'))
+		{
 			$searchAPI->dropIndex();
+			// We should also update the information we already collected.
+			$context['search_apis'][$_REQUEST['index']]['state'] = 'none';
+			$context['search_apis'][$_REQUEST['index']]['size'] = 0;
+		}
 
 		// If we were using this index, officially stop using it.
 		if (!empty($settings['search_index']) && $settings['search_index'] == $_REQUEST['index'])
@@ -221,16 +226,35 @@ function EditSearchMethod()
 	{
 		checkSession();
 		updateSettings(array(
-			'search_index' => empty($_POST['search_index']) || ($_POST['search_index'] != 'custom' && !isset($context['search_apis'][$_POST['search_index']])) ? '' : $_POST['search_index'],
+			'search_index' => empty($_POST['search_index']) || (!isset($context['search_apis'][$_POST['search_index']])) ? '' : $_POST['search_index'],
 			'search_force_index' => isset($_POST['search_force_index']) ? '1' : '0',
 			'search_match_words' => isset($_POST['search_match_words']) ? '1' : '0',
 		));
 	}
 
+	foreach ($context['search_apis'] as $api => $index)
+	{
+		if (!empty($settings['search_index']) && isset($context['search_apis'][$settings['search_index']]))
+			$context['search_apis'][$api]['active'] = true;
+		else
+			$context['search_apis']['standard']['active'] = true;
+
+		// We also need to reformat the size nicely.
+		if (!empty($index['size']) && is_numeric($index['size']))
+			$context['search_apis'][$api]['formatted_size'] = comma_format($index['size'] / 1024) . ' ' . $txt['search_method_kilobytes'];
+	}
+
+	// I'd quite like 'no index' to be the first option but we probably don't have it as such.
+	$standard_index = $context['search_apis']['standard'];
+	unset ($context['search_apis']['standard']);
+	$context['search_apis'] = array_merge(
+		array('standard' => $standard_index),
+		$context['search_apis']
+	);
+
 	$context['table_info'] = array(
 		'data_length' => 0,
 		'index_length' => 0,
-		'custom_index_length' => 0,
 	);
 
 	// Get some info about the messages table, to show its size and index size.
@@ -262,34 +286,6 @@ function EditSearchMethod()
 		wesql::free_result($request);
 	}
 
-	// Now check the custom index table, if it exists at all.
-	if (preg_match('~^`(.+?)`\.(.+?)$~', $db_prefix, $match) !== 0)
-		$request = wesql::query('
-			SHOW TABLE STATUS
-			FROM {string:database_name}
-			LIKE {string:table_name}',
-			array(
-				'database_name' => '`' . strtr($match[1], array('`' => '')) . '`',
-				'table_name' => str_replace('_', '\_', $match[2]) . 'log_search_words',
-			)
-		);
-	else
-		$request = wesql::query('
-			SHOW TABLE STATUS
-			LIKE {string:table_name}',
-			array(
-				'table_name' => str_replace('_', '\_', $db_prefix) . 'log_search_words',
-			)
-		);
-	if ($request !== false && wesql::num_rows($request) == 1)
-	{
-		// Only do this if the user has permission to execute this query.
-		$row = wesql::fetch_assoc($request);
-		$context['table_info']['index_length'] += $row['Data_length'] + $row['Index_length'];
-		$context['table_info']['custom_index_length'] = $row['Data_length'] + $row['Index_length'];
-		wesql::free_result($request);
-	}
-
 	// Format the data and index length in kilobytes.
 	foreach ($context['table_info'] as $type => $size)
 	{
@@ -299,9 +295,6 @@ function EditSearchMethod()
 
 		$context['table_info'][$type] = comma_format($context['table_info'][$type] / 1024) . ' ' . $txt['search_method_kilobytes'];
 	}
-
-	$context['custom_index'] = !empty($settings['search_custom_index_config']);
-	$context['partial_custom_index'] = !empty($settings['search_custom_index_resume']) && empty($settings['search_custom_index_config']);
 }
 
 function CreateMessageIndex()
