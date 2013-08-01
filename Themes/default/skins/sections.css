@@ -518,11 +518,6 @@ hr.sep
  * End of list.
  */
 
-.smiley mixes .inline-block
-	text-indent: 100%
-	white-space: nowrap
-	overflow: hidden
-
 // Likes and Action menu...
 .actionbar extends .clearfix
 	padding: 6px 0 4px

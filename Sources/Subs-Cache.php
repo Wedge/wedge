@@ -1209,7 +1209,8 @@ function wedge_cache_smileys($set, $smileys, $extra)
 				. ($smiley['embed'] ? 'data:image/' . $ext . ';base64,' . base64_encode(file_get_contents($filename)) : $url . $smiley['file']) . ')}';
 	}
 
-	$final = $final_raw . $final_gzip;
+	// We can't apply a mixin here, but as .smiley is a naturally inline tag anyway, .inline-block isn't needed.
+	$final = '.smiley{display:inline-block;vertical-align:middle;text-indent:100%;white-space:nowrap;overflow:hidden}' . $final_raw . $final_gzip;
 	unset($final_raw, $final_gzip);
 	if ($context['smiley_gzip'])
 		$final = gzencode($final, 9);

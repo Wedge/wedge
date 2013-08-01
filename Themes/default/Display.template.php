@@ -107,11 +107,11 @@ function template_display_posts()
 	new weToggle({
 		isCollapsed: true,
 		aSwapContainers: [
-			"msg' . $msgid . ' .info",
-			"msg' . $msgid . ' .inner",
-			"msg' . $msgid . ' ' . (empty($context['liked_posts'][$msgid]) ? '.actionbar' : '.actions') . '"
+			"msg' . $msgid . ' .info:first",
+			"msg' . $msgid . ' .inner:first",
+			"msg' . $msgid . ' ' . (empty($context['liked_posts'][$msgid]) ? '.actionbar' : '.actions') . ':first"
 		],
-		aSwapLinks: ["msg' . $msgid . ' .ignored"]
+		aSwapLinks: ["msg' . $msgid . ' .ignored:first"]
 	});');
 }
 
