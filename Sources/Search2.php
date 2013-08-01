@@ -115,6 +115,12 @@ function Search2()
 		// Topic: do nothing, board: erase any topic IDs, everywhere: erase any options.
 		if ($_REQUEST['search_type'] == 'board')
 			unset($_REQUEST['topic']);
+		elseif ($_REQUEST['search_type'] == 'tree' && !empty($_REQUEST['brd']))
+		{
+			unset($_REQUEST['topic']);
+			loadSource('Subs-Boards');
+			$_REQUEST['brd'] = getBoardChildren($_REQUEST['brd']);
+		}
 		elseif ($_REQUEST['search_type'] == 'everywhere')
 			unset($_REQUEST['topic'], $_REQUEST['brd']);
 	}

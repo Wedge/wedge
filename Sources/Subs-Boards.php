@@ -1250,3 +1250,39 @@ function isChildOf($child, $parent)
 
 	return isChildOf($boards[$child]['parent'], $parent);
 }
+
+function getBoardChildren($boards)
+{
+	if (!is_array($boards))
+		$boards = (array) $boards;
+	foreach ($boards as $k => $v)
+		$boards[$k] = (int) $v;
+
+	$cache_key = 'board_children-' . implode(',', $boards);
+	if (($complete_boards = cache_get_data($cache_key, 480)) === null)
+	{
+		$complete_boards = $boards;
+		$this_iteration = $boards;
+		while (!empty($this_iteration))
+		{
+			$request = wesql::query('
+				SELECT id_board
+				FROM {db_prefix}boards
+				WHERE id_parent IN ({array_int:boards})',
+				array(
+					'boards' => $this_iteration,
+				)
+			);
+			$this_iteration = array();
+			while ($row = wesql::fetch_row($request))
+				$this_iteration[] = $row[0];
+			wesql::free_result($request);
+
+			$complete_boards = array_merge($complete_boards, $this_iteration);
+		}
+
+		cache_put_data($cache_key, $complete_boards, 480);
+	}
+
+	return $complete_boards;
+}

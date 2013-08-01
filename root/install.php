@@ -772,7 +772,7 @@ function DatabaseSettings()
 		}
 
 		// Do they meet the install requirements?
-		if ((version_compare($db['required_client'], preg_replace('~^\D*|\-.+?$~', '', mysqli_get_client_info())) > 0) || (version_compare($db['required_server'], preg_replace('~^\D*|\-.+?$~', '', mysqli_get_server_info())) > 0))
+		if ((version_compare($db['required_client'], preg_replace('~^\D*|\-.+?$~', '', mysqli_get_client_info())) > 0) || (version_compare($db['required_server'], preg_replace('~^\D*|\-.+?$~', '', mysqli_get_server_info($db_connection))) > 0))
 		{
 			$incontext['error'] = sprintf($txt['error_db_too_low'], 'Server: ' . mysqli_get_server_info() . ' / Client: ' . mysqli_get_client_info());
 			return false;

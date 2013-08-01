@@ -187,7 +187,8 @@ function template_search_ajax()
 				<option value="topic" selected>', $txt['search_this_topic'], '</option>';
 	if (!empty($context['current_board']))
 		echo '
-				<option value="board"', empty($context['current_topic']) ? ' selected' : '', '>', $txt['search_this_board'], '</option>';
+				<option value="board"', empty($context['current_topic']) ? ' selected' : '', '>', $txt['search_this_board'], '</option>
+				<option value="tree">', $txt['search_this_tree'], '</option>';
 
 	echo '
 				<option value="everywhere">', $txt['search_everywhere'], '</option>
