@@ -79,6 +79,8 @@ function Feed()
 
 	// Get rid of session IDs!
 	$context['no_sid_thank_you'] = true;
+	// And don't let the thing strip the 'internal' links because they're not internal now.
+	$context['no_strip_domain'] = true;
 
 	// Default to latest 5. No more than 255, please. Why 255, I don't know. Because it sounds geeky?
 	$_GET['limit'] = empty($_GET['limit']) || (int) $_GET['limit'] < 1 ? 5 : min((int) $_GET['limit'], 255);
@@ -389,8 +391,8 @@ function dumpTags($data, $i, $tag = null, $xml_format = '')
 		else
 		{
 			// Beginning tag.
-			if ($xml_format == 'atom' && $key == 'content')
-				echo '<content type="html">';
+			if ($xml_format == 'atom' && $key == 'summary')
+				echo '<summary type="html">';
 			else
 				echo '<', $key, '>';
 
@@ -543,7 +545,7 @@ function getXmlNews($xml_format)
 			$data[] = array(
 				'title' => cdata_parse($row['subject']),
 				'link' => $scripturl . '?topic=' . $row['id_topic'] . '.0',
-				'content' => cdata_parse($row['body']),
+				'summary' => cdata_parse($row['body']),
 				'category' => array(
 					'term' => $row['id_board'],
 					'label' => $row['bname'],
@@ -660,7 +662,7 @@ function getXmlRecent($xml_format)
 			$data[] = array(
 				'title' => cdata_parse($row['subject']),
 				'link' => $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['id_msg'] . '#msg' . $row['id_msg'],
-				'content' => cdata_parse($row['body']),
+				'summary' => cdata_parse($row['body']),
 				'category' => array(
 					'term' => $row['id_board'], // !!! Could also store id_topic?
 					'label' => $row['bname'],

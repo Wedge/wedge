@@ -635,15 +635,18 @@ function ob_sessrewrite($buffer)
 	if (we::is('ie && windows[-5.2],mobile'))
 		$buffer = str_replace('&#8239;', '&nbsp;', $buffer);
 
-	// Strip domain name out of internal links.
-	$buffer = preg_replace('~(<[^>]+\s(?:href|src|action)=")' . preg_quote(we::$user['server'], '~') . '/(?!/)~', '$1/', $buffer);
+	// Strip domain name out of internal links. Mostly for the benefit of feeds.
+	if (empty($context['no_strip_domain']))
+	{
+		$buffer = preg_replace('~(<[^>]+\s(?:href|src|action)=")' . preg_quote(we::$user['server'], '~') . '/(?!/)~', '$1/', $buffer);
 
-	// Strip protocol out of links that share it with the current page's URL. Makes oldIE go crazy, so no cookie for him.
-	$strip_protocol = '(<[^>]+\s(?:href|src|action)=")' . preg_quote(substr(we::$user['server'], 0, strpos(we::$user['server'], '://')), '~') . '://';
-	if (we::$browser['ie8down'])
-		$buffer = preg_replace('~' . $strip_protocol . '((?:[^.]|\.(?!css))*?")~', '$1//$2', $buffer);
-	else
-		$buffer = preg_replace('~' . $strip_protocol . '~', '$1//', $buffer);
+		// Strip protocol out of links that share it with the current page's URL. Makes oldIE go crazy, so no cookie for him.
+		$strip_protocol = '(<[^>]+\s(?:href|src|action)=")' . preg_quote(substr(we::$user['server'], 0, strpos(we::$user['server'], '://')), '~') . '://';
+		if (we::$browser['ie8down'])
+			$buffer = preg_replace('~' . $strip_protocol . '((?:[^.]|\.(?!css))*?")~', '$1//$2', $buffer);
+		else
+			$buffer = preg_replace('~' . $strip_protocol . '~', '$1//', $buffer);
+	}
 
 	// The lesser of two evils. Add empty alt params to img tags that don't have them.
 	// Takes bandwidth, but only does it for validator bots. They started the war.
