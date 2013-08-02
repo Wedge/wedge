@@ -367,8 +367,9 @@ function cleanRequest()
 		}
 		else
 		{
-			$_REQUEST['topic'] = str_replace(array('&#039;', '&#39;', '\\'), array(chr(18), chr(18), ''), $_REQUEST['topic']);
-			$_REQUEST['topic'] = preg_replace('~([\x80-\xff])~e', 'sprintf(\'%%%x\', ord(\'$1\'))', $_REQUEST['topic']);
+			loadSource('Subs-PrettyUrls'); // Just in case it's not there yet... We need entity_percents().
+			$_REQUEST['topic'] = str_replace(array('&#039;', '&#39;', '\\'), array("\x12", "\x12", ''), $_REQUEST['topic']);
+			$_REQUEST['topic'] = preg_replace_callback('~([\x80-\xff])~', 'entity_percents', $_REQUEST['topic']);
 			// Are we feeling lucky?
 			$query = wesql::query('
 				SELECT p.id_topic, t.id_board

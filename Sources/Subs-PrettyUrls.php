@@ -72,7 +72,7 @@ function pretty_generate_url($text, $is_board = false, $slash = false)
 		'zh' =>	array('ж', 'Ж'),
 	);
 
-	$text = preg_replace('~(&#(\d{1,7});)~', 'fix_accents', $text); // Turns &#12345; to UTF-8
+	$text = preg_replace('~&#(\d{1,7});~', 'fix_accents', $text); // Turns &#12345; to UTF-8
 
 	$text = str_replace(array('&amp;', '&quot;', '£', '¥', 'ß', '¹', '²', '³', '©', '®', '™', '½', '¼', '¾', '§'),
 						array('&', '"', 'p', 'yen', 'ss', '1', '2', '3', 'c', 'r', 'tm', '1-2', '1-4', '3-4', 's'), $text);
@@ -90,7 +90,7 @@ function pretty_generate_url($text, $is_board = false, $slash = false)
 	$text = preg_replace('~&(..?)(acute|grave|cedil|uml|circ|ring|tilde|lig|slash);~', '$1', $text);
 	$text = str_replace(array('&#169;', '&#0169;', '&copy;', '&#153;', '&#0153;', '&trade;', '&#174;', '&#0174;', '&reg;', '&#160;', '&nbsp;'),
 						array('c', 'c', 'c', 'tm', 'tm', 'tm', 'r', 'r', 'r', '-', '-'), $text); // © ™ ® nbsp
-	$text = preg_replace_callback('~(&#(\d{1,7}|x[0-9a-f]{1,6});)~', 'entity_replace', $text); // Turns &#12345; to %AB%CD
+	$text = preg_replace_callback('~&#(\d{1,7}|x[0-9a-f]{1,6});~', 'entity_replace', $text); // Turns &#12345; to %AB%CD
 
 	$text = preg_replace(array('~[\x00-\x1f\x80-\xff]~', '~&[^;]*?;~', '~[^a-z0-9\$%_' . ($slash ? '/' : '') . '-]~'), '-', $text);
 	$text = str_replace(array('"', "'"), chr(18), $text);
@@ -104,22 +104,26 @@ function pretty_generate_url($text, $is_board = false, $slash = false)
 
 function entity_replace($matches)
 {
-	$string = $matches[2]; // Comes from preg_replace_callback
+	$string = $matches[1]; // Comes from preg_replace_callback
 	$num = $string[0] === 'x' ? hexdec(substr($string, 1)) : (int) $string;
 	$rep = $num > 0x10FFFF || ($num >= 0xD800 && $num <= 0xDFFF) ? '' : ($num < 0x80 ?
-	chr($num) : ($num == 0 || ($num >= 0x80 && $num < 0x100) ? '-' : ($num < 0x800 ?
-	chr(192 | $num >> 6) . chr(128 | $num & 63) : ($num < 0x10000 ?
-	chr(224 | $num >> 12) . chr(128 | $num >> 6 & 63) . chr(128 | $num & 63) :
-	chr(240 | $num >> 18) . chr(128 | $num >> 12 & 63) . chr(128 | $num >> 6 & 63) . chr(128 | $num & 63)))));
-	return preg_replace('~([\x80-\xff])~e', 'sprintf(\'%%%x\', ord(\'$1\'))', $rep);
+		chr($num) : ($num == 0 || ($num >= 0x80 && $num < 0x100) ? '-' : ($num < 0x800 ?
+		chr(192 | $num >> 6) . chr(128 | $num & 63) : ($num < 0x10000 ?
+		chr(224 | $num >> 12) . chr(128 | $num >> 6 & 63) . chr(128 | $num & 63) :
+		chr(240 | $num >> 18) . chr(128 | $num >> 12 & 63) . chr(128 | $num >> 6 & 63) . chr(128 | $num & 63)))));
+	return preg_replace('~([\x80-\xff])~', 'entity_percents', $rep);
 }
 
-function fix_accents($num)
+function entity_percents($matches)
 {
-	$num = (int) $num[2]; // Comes from preg_replace_callback
-	if ($num < 0x100)
-		return chr($num);
-	return '&#' . $num . ';';
+	return '%' . sprintf('%x', ord($matches[1]));
+}
+
+function fix_accents($matches)
+{
+	if ($matches[1] < 256)
+		return chr($matches[1]);
+	return '&#' . $matches[1] . ';';
 }
 
 // Remove percent-encoded multi-byte characters that were not completely trimmed at the end of a pretty URL

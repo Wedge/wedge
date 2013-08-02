@@ -199,7 +199,7 @@ function ob_sessrewrite($buffer)
 		$buffer = substr_replace($buffer, $thing, $this_pos, empty($settings['minify_html']) ? 34 : 32);
 	}
 
-	$buffer = str_replace(array(chr(15), chr(16)), array('"', "'"), $buffer);
+	$buffer = strtr($buffer, "\x0f\x10", '"\'');
 
 	/*
 		Soft-merging forum posts.
@@ -574,7 +574,7 @@ function ob_sessrewrite($buffer)
 				{
 					if (!isset($url['replacement']))
 						$url['replacement'] = $url['url'];
-					$url['replacement'] = str_replace(chr(18), "'", $url['replacement']);
+					$url['replacement'] = str_replace("\x12", "'", $url['replacement']);
 					$url['replacement'] = preg_replace(array('~"~', '~=?;+~', '~\?;~'), array('%22', ';', '?'), rtrim($url['replacement'], '&?;'));
 					$cached_urls[$url_id] = $url['replacement'];
 					if ($use_cache && strlen($url_id) < 256)
@@ -615,7 +615,7 @@ function ob_sessrewrite($buffer)
 		// We'll need to protect textareas and pre tags first, as these don't like inden@zi changes.
 		preg_match_all('~(?:<textarea\b.*?</textarea>|<pre\b.*?</pre>)~s', $buffer, $protect);
 		if (!empty($protect))
-			$buffer = str_replace($protect[0], chr(24), $buffer);
+			$buffer = str_replace($protect[0], "\x18", $buffer);
 
 		$max_loops = 100;
 		while (strpos($buffer, '<inden@zi=') !== false && $max_loops-- > 0)
@@ -623,7 +623,7 @@ function ob_sessrewrite($buffer)
 
 		if (!empty($protect))
 			foreach ($protect[0] as $item)
-				$buffer = preg_replace('~' . chr(24) . '~', $item, $buffer, 1);
+				$buffer = preg_replace("~\x18~", $item, $buffer, 1);
 	}
 
 	// The following hidden variable, 'minify_html', will remove tabs and thus please Google PageSpeed. Whatever.

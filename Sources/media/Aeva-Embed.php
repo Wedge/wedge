@@ -272,11 +272,16 @@ function aeva_match(&$message, $for_real = false)
 	return $has_any;
 }
 
+function aeva_strip_options($match)
+{
+	return strtr($match[0], '~', '-');
+}
+
 // The core function: replace matched links with the full embedded object.
 function aeva_build_object($input)
 {
 	global $context, $settings, $sites, $upto, $boardurl, $txt;
-	static $swfobjects = 0, $repl_func = null;
+	static $swfobjects = 0;
 
 	// Load the language files, English if no translated version is available.
 	if (!isset($txt['aeva']) && loadLanguage('Media') == false)
@@ -368,12 +373,8 @@ function aeva_build_object($input)
 	$opt = empty($options) ? array() : str_replace('~', '-', explode('-', substr($options, 1)));
 
 	// Strip the #options out of the original link
-	if ($repl_func === null)
-		$repl_func = create_function('$matches', '
-			return str_replace("~", "-", $matches[1]);
-		');
 	$input[1] = preg_replace('~#.*~', '', $input[1]);
-	$input = preg_replace_callback('~(#[^"<]*)~', $repl_func, $input);
+	$input = preg_replace_callback('~#[^"<]*~', 'aeva_strip_options', $input);
 	if ($tentative_title && substr($tentative_title, 0, 7) !== 'http://')
 		$title = $tentative_title;
 

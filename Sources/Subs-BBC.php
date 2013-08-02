@@ -162,11 +162,6 @@ function parse_bbc($message, $type = 'generic', $bbc_options = array()) // $smil
 			FROM {db_prefix}bbcode'
 		);
 
-		$lang_strings = create_function('$val', '
-			global $txt;
-			return isset($txt[$val[1]]) ? $txt[$val[1]] : $val[1];
-		');
-
 		while ($row = wesql::fetch_assoc($result))
 		{
 			$bbcode = array(
@@ -189,7 +184,7 @@ function parse_bbc($message, $type = 'generic', $bbc_options = array()) // $smil
 					$bbcode[$bbc_field] = explode(',', $row[$db_field]);
 			foreach ($field_list as $db_field => $bbc_field)
 				if (!empty($row[$db_field]))
-					$bbcode[$bbc_field] = preg_replace_callback('~{{(\w+)}}~', $lang_strings, trim($row[$db_field]));
+					$bbcode[$bbc_field] = preg_replace_callback('~{{(\w+)}}~', 'parse_lang_strings', trim($row[$db_field]));
 
 			// Reformat it from DB structure
 			$master_codes[] = $bbcode;
@@ -1122,6 +1117,15 @@ function parse_bbc($message, $type = 'generic', $bbc_options = array()) // $smil
 	}
 
 	return $message;
+}
+
+function parse_lang_strings($val)
+{
+	global $txt;
+
+	if (isset($txt[$val[1]]))
+		return $txt[$val[1]];
+	return '<em>' . $val[1] . '</em>';
 }
 
 /**

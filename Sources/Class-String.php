@@ -91,10 +91,10 @@ class westr_foundation
 	// Converts &#224; to \u00e0, for use in JavaScript notation. Gzip likes these, you know..?
 	static function entity_to_js_code($string)
 	{
-		return preg_replace_callback('~&#(\d+);~', 'westr_foundation::strpad', $string);
+		return preg_replace_callback('~&#(\d+);~', 'westr_foundation::ucode', $string);
 	}
 
-	static function strpad($entstring)
+	static function ucode($entstring)
 	{
 		return '\u' . str_pad(dechex($entstring[1]), 4, '0', STR_PAD_LEFT);
 	}

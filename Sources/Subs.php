@@ -631,11 +631,12 @@ function JavaScriptEscape($string, $q = "'")
 {
 	global $scripturl;
 
-	return chr($q == '"' ? 15 : 16) . str_replace(
-		array('\\',   "\n",   'script',   'href=',   '"' . $scripturl,         "'" . $scripturl,         $q == '"' ? "'" : '"',    $q),
-		array('\\\\', "\\\n", 'scr\\ipt', 'hr\\ef=', '"' . $scripturl . '"+"', "'" . $scripturl . "'+'", chr($q == '"' ? 16 : 15), '\\' . chr($q == '"' ? 15 : 16)),
+	$xq = $q == '"' ? "\x0f" : "\x10";
+	return $xq . str_replace(
+		array('\\',   "\n",   'script',   'href=',   '"' . $scripturl,         "'" . $scripturl,         $q == '"' ? "'" : '"',       $q),
+		array('\\\\', "\\\n", 'scr\\ipt', 'hr\\ef=', '"' . $scripturl . '"+"', "'" . $scripturl . "'+'", $q == '"' ? "\x10" : "\x0f", '\\' . $xq),
 		$string
-	) . chr($q == '"' ? 15 : 16);
+	) . $xq;
 }
 
 /**
@@ -1140,7 +1141,7 @@ function prettify_urls($inputs)
 		}
 		if (isset($url[0]['replacement']))
 			$input = $url[0]['replacement'];
-		$input = str_replace(chr(18), '\'', $input);
+		$input = strtr($input, "\x12", '\'');
 		$input = preg_replace(array('~;+|=;~', '~\?;~', '~[?;=]#|&amp;#~', '~[?;=#]$|&amp;$~'), array(';', '?', '#', ''), $input);
 	}
 	return $is_single ? $inputs[0] : $inputs;

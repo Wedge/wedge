@@ -687,6 +687,11 @@ class we
 		return self::$cache[$string] = self::analyze($string);
 	}
 
+	private static function protect_brackets($match)
+	{
+		return '<' . strtr($match[1], ',&|', "\x14\x15\x16") . '>';
+	}
+
 	/**
 	 * Analyzes the given array keys (or comma-separated list), and tries to determine if it encompasses the current browser version.
 	 * Can deal with relatively complex strings. e.g., "firefox, !mobile && ie[-7]" means "if browser is Firefox, or is a desktop version of IE 6 or IE 7".
@@ -694,18 +699,12 @@ class we
 	 */
 	public static function analyze($strings)
 	{
-		static $quote_replace = null;
-		if ($quote_replace === null)
-			$quote_replace = create_function('$matches', '
-				return "<" . str_replace(array(",", "&"), array(chr(20), chr(21)), "$1") . ">";
-			');
-
+		// If working on a string, we'll group brackets together, and split the rest.
+		// Note that commas need to be encoded, in case you enter e.g. (ie[6,7])
 		if (!is_array($strings))
 		{
-			// If working on a string, we'll group brackets together, and split the rest.
-			// Note that commas need to be encoded, in case you enter e.g. (ie[6,7])
 			while (strpos($strings, '(') !== false)
-				$strings = preg_replace_callback('~\(([^)]+)\)~', $quote_replace, $strings);
+				$strings = preg_replace_callback('~\(([^)]+)\)~', 'we::protect_brackets', $strings);
 			$strings = array_flip(array_map('trim', preg_split('~[,|]+~', $strings)));
 		}
 
@@ -752,7 +751,7 @@ class we
 			if ($string[0] === '!')
 			{
 				// If it's a group, fix its separators first.
-				$string = $string[1] === '<' ? str_replace(array(chr(20), chr(21)), array(',', '&'), trim($string, '!<>')) : substr($string, 1);
+				$string = $string[1] === '<' ? strtr(trim($string, '!<>'), "\x14\x15\x16", ',&|') : substr($string, 1);
 
 				if (!self::is($string))
 					return $string;
@@ -763,7 +762,7 @@ class we
 			if ($string[0] === '<')
 			{
 				// If it's a group, fix its separators and test it.
-				$string = self::is(str_replace(array(chr(20), chr(21)), array(',', '&'), trim($string, '<>')));
+				$string = self::is(strtr(trim($string, '<>'), "\x14\x15\x16", ',&|'));
 				if ($string)
 					return $string;
 				continue;

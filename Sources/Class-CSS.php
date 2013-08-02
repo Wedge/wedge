@@ -1280,13 +1280,13 @@ class wess_nesting extends wess
 		// Basically, (..,..) [..,..] "..,.." and '..,..' will be protected before the split.
 		if ($has_commas = strpos($selector, ',') !== false)
 			while (preg_match('~\([^(]*,[^(]*\)|\[[^[]*,[^[]*]|"[^"]*,[^"]*"|\'[^\']*,[^\']*\'~', $selector, $match))
-				$selector = str_replace($match[0], str_replace(',', chr(20), $match[0]), $selector);
+				$selector = str_replace($match[0], strtr($match[0], ',', "\x14"), $selector);
 
 		$arr = array_map('trim', explode(',', $selector));
 		if ($has_commas)
 			foreach ($arr as $key => $val)
-				if (strpos($val, chr(20)) !== false)
-					$arr[$key] = str_replace(chr(20), ',', $val);
+				if (strpos($val, "\x14") !== false)
+					$arr[$key] = strtr($val, "\x14", ',');
 
 		return $arr;
 	}
