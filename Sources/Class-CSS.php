@@ -1054,7 +1054,7 @@ class wess_nesting extends wess
 			elseif (strpos($base[2], ',') !== false)
 			{
 				$selectors = $this->split_selectors($base[2]);
-				$base[2] = $selectors[0];
+				$bases[$i][2] = $selectors[0];
 				unset($selectors[0]);
 				foreach ($selectors as $sel)
 					$bases[] = array(
@@ -1699,8 +1699,8 @@ class wess_prefixes extends wess
 		if (($b['opera'] && $v >= 11) || ($b['ie'] && $v >= 10))
 			$css = str_replace('@viewport', '@' . $this->prefix . 'viewport', $css);
 
-		// Chrome 21+ supports the latest flexbox model... But with a prefix. Go figure.
-		if ($b['chrome'] && $v >= 21)
+		// Chrome 21-28 supports the latest flexbox model... But with a prefix.
+		if ($b['chrome'] && $v >= 21 && $v < 29)
 			$css = preg_replace('~\b(order|justify-content|align-(?:content|items|self)|flex(?:-[a-z]+)?)\h*:~', $this->prefix . '$1:', $css);
 
 		// And finally, listen to the author -- you may add a prefix manually, that will be automatically turned into the current
