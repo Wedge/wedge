@@ -162,17 +162,20 @@ function template_board_list()
 		forcePlaceholderSize: true,
 		tabSize: 25,
 		revert: 150,
-		update: function (event, ui) { $(\'#saveorder\').show(); }
+		update: function (event, ui) { $("#saveorder").show(); }
 	});
-	$(\'#saveorder\').hide();
+	$("#saveorder").hide();
 	function dosave()
 	{
 		show_ajax("#saveorder", [0, 0]);
-		$("#saveorder").prop(\'disabled\', true);
+		$("#saveorder").prop("disabled", true);
 		$.post(
-			weUrl(\'action=admin;area=manageboards\'),
-			\'saveorder=1&\' + we_sessvar + \'=\' + we_sessid + \'&\' + $(".sortable").nestedSortable("serialize"),
-			function() { hide_ajax(); $("#saveorder").prop("disabled", false).hide(); }
+			weUrl("action=admin;area=manageboards"),
+			"saveorder=1&" + we_sessvar + "=" + we_sessid + "&" + $(".sortable").nestedSortable("serialize"),
+			function () {
+				hide_ajax();
+				$("#saveorder").prop("disabled", false).hide();
+			}
 		);
 		return false;
 	}');
@@ -193,7 +196,7 @@ function template_board_tree($child)
 							', $indent, '</div>
 							', $indent, '<div class="floatright">
 								', $indent, '<form action="<URL>?action=admin;area=permissions;sa=index;pid=', $child['node']['profile'], '" method="post"><input type="submit" class="permbutton" value="', $txt['mboards_permissions'], '"></form>
-							', $indent, '</div>	
+							', $indent, '</div>
 							', $indent, '<br class="clear">
 						', $indent, '</div>';
 

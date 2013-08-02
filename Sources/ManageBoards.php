@@ -365,7 +365,7 @@ function ManageBoardsMain()
 
 		wetem::load('board_list');
 		add_jquery_ui();
-		add_js_file('scripts/jquery.mjs.nestedSortable.js');
+		add_js_file('scripts/nested-sortable.js');
 	}
 }
 

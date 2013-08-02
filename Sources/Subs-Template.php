@@ -635,7 +635,7 @@ function ob_sessrewrite($buffer)
 	if (we::is('ie && windows[-5.2],mobile'))
 		$buffer = str_replace('&#8239;', '&nbsp;', $buffer);
 
-	// Strip domain name out of internal links. Mostly for the benefit of feeds.
+	// Strip domain name out of internal links.
 	if (empty($context['no_strip_domain']))
 	{
 		$buffer = preg_replace('~(<[^>]+\s(?:href|src|action)=")' . preg_quote(we::$user['server'], '~') . '/(?!/)~', '$1/', $buffer);
