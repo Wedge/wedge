@@ -564,7 +564,7 @@ function QuickReply(opt)
 			if (!oContainerDiv)
 			{
 				// Create a container div.
-				oContainerDiv = $('<div id="iconlist"></div>').hide().css('width', oCurDiv.offsetWidth).appendTo('body');
+				oContainerDiv = $('<div id="iconlist"/>').hide().css('width', oCurDiv.offsetWidth).appendTo('body');
 
 				// Start to fetch its contents.
 				show_ajax();
@@ -574,7 +574,7 @@ function QuickReply(opt)
 					$('icon', XMLDoc).each(function (key, iconxml)
 					{
 						oContainerDiv.append(
-							$('<div class="item"></div>')
+							$('<div class="item"/>')
 								.mousedown(function ()
 								{
 									// Event handler for clicking on one of the icons.
@@ -608,19 +608,15 @@ function QuickReply(opt)
 				left: $(oCurDiv).offset().left - 1
 			});
 
-
 			// If user clicks outside, this will close the list.
-			$('body').on('mousedown.ic', function () {
-				oContainerDiv.fadeOut();
-				$('body').off('mousedown.ic');
-			});
+			$('body').one('mousedown', function () { oContainerDiv.fadeOut(); });
 		};
 
 		// Replace all message icons by icons with hoverable and clickable div's.
 		$('.can-mod').each(function () {
 			var id = this.id.slice(3);
 			$(this)
-				.find('.messageicon')
+				.find('.messageicon:first')
 				.addClass('iconbox')
 				.click(function () { openPopup(this, id); });
 		});
