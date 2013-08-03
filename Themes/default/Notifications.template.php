@@ -109,16 +109,18 @@ function template_notification_email($notifications)
 
 	$str = $txt['notification_email_periodical_body'] . "\n\n";
 
-	foreach ($notifications as $notifier => $notifs)
+	foreach ($notifications as $notifier_name => $notifs)
 	{
-		list ($title) = weNotif::getNotifiers($notifier)->getProfile($notifs);
+		$notifier = weNotif::getNotifiers($notifier_name);
+		list ($title) = $notifier->getProfile($notifs);
 
 		$str .= "\n" . $title . "\n" . str_repeat('=', strlen($title)) . "\n";
 
 		foreach ($notifs as $n)
-			$str .= $n->getEmail();
-
-		$str .= "\n\n";
+		{
+			list (, $body) = $notifier->getEmail($n);
+			$str .= $body . "\n\n";
+		}
 	}
 
 	return $str;

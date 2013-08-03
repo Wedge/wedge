@@ -12,7 +12,18 @@
 
 @language index;
 
-$(function () {
+$(function ()
+{
+	// This is one of the weirdest bugs in Chrome... If a horizontal (but no vertical)
+	// scrollbar is set on an element inside a flex container, the scrollbar will be
+	// very hard to click. I figured that adding a vertical scrollbar would fix this.
+	if (is_chrome)
+		$('.post code').each(function ()
+		{
+			if (this.scrollWidth > this.offsetWidth && this.scrollHeight <= this.offsetHeight)
+				$(this).css('overflow-y', 'scroll');
+		});
+
 	// Only execute this on MessageIndex pages.
 	if (!$(document).find('#messageindex').length)
 		return;

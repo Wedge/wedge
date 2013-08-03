@@ -611,7 +611,7 @@ class weNotif
 			{
 				$status = isset($data['email_notifiers'][$notifier->getName()]) ? $data['email_notifiers'][$notifier->getName()] : 0;
 				if ($status < 2 && (empty($data['disabled_notifiers']) || !in_array($notifier, $data['disabled_notifiers'])))
-					$valid_notifiers[$notifier->getName()] = $notifier;
+					$valid_notifiers[$notifier->getName()] = true;
 			}
 
 			if (empty($valid_notifiers))

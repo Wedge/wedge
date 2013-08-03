@@ -89,7 +89,7 @@ class Notification
 			if (!isset($notifiers[$row['notifier']]))
 				continue;
 
-			$notifications[] = new Notification($row, $notifiers[$row['notifier']]);
+			$notifications[] = new self($row, $notifiers[$row['notifier']]);
 		}
 
 		wesql::free_result($request);
@@ -153,11 +153,10 @@ class Notification
 	 * @param array/int $id_member Who shall receive the notification? May be a list of members.
 	 * @param int $id_object What object is this notification about?
 	 * @param array $data Any extra data to store as well? Such as member names...
-	 * @param array $email_data
 	 * @return Notification
 	 * @throws Exception, upon the failure of creating a notification for whatever reason
 	 */
-	public static function issue($notifier_name, $id_member, $id_object, $data = array(), $email_data = array())
+	public static function issue($notifier_name, $id_member, $id_object, $data = array())
 	{
 		loadSource('Subs-Post');
 
@@ -169,7 +168,7 @@ class Notification
 		$members = (array) $id_member;
 		$return_single = !is_array($id_member);
 
-		// Load the pending member's preferences for checking email notification and disabled notifiers
+		// Load the pending member's preferences for checking email notification and disabled notifiers.
 		$request = wesql::query('
 			SELECT data, email_address, id_member
 			FROM {db_prefix}members
@@ -193,11 +192,11 @@ class Notification
 		}
 		wesql::free_result($request);
 
-		// Run this by the notifier before we do anything else
-		if (!$notifier->beforeNotify($members, $id_object, $data, $email_data))
+		// Run this by the notifier before we do anything else.
+		if (!$notifier->beforeNotify($members, $id_object, $data))
 			return false;
 
-		// Load the members' unread notifications for handling multiples
+		// Load the members' unread notifications for handling multiples.
 		$request = wesql::query('
 			SELECT *
 			FROM {db_prefix}notifications
@@ -216,10 +215,10 @@ class Notification
 		// If we do, then we run it by the notifier.
 		while ($row = wesql::fetch_assoc($request))
 		{
-			$notification = new Notification($row, $notifier);
+			$notification = new self($row, $notifier);
 
 			// If the notifier returns false, we drop this notification.
-			if (!$notifier->handleMultiple($notification, $data, $email_data) && !in_array($notifier_name, $members[$row['id_member']]['disabled_notifiers']))
+			if (!$notifier->handleMultiple($notification, $data) && !in_array($notifier_name, $members[$row['id_member']]['disabled_notifiers']))
 			{
 				$notification->updateTime();
 				unset($members[$row['id_member']]);
@@ -227,7 +226,7 @@ class Notification
 				if (!empty($members[$row['id_member']]['email_notifiers'][$notifier_name])
 					&& $members[$row['id_member']]['email_notifiers'][$notifier_name] === 1)
 				{
-					list ($subject, $body) = $notifier->getEmail($notification, $email_data);
+					list ($subject, $body) = $notifier->getEmail($notification);
 					sendmail($members[$row['id_member']]['email'], $subject, $body);
 				}
 			}
@@ -239,7 +238,7 @@ class Notification
 		if (empty($members))
 			return array();
 
-		// Process individual member's notification now
+		// Process individual member's notification.
 		$notifications = array();
 		foreach ($members as $id_member => $pref)
 		{
@@ -269,7 +268,7 @@ class Notification
 				// Send the e-mail?
 				if (!empty($pref['email_notifiers'][$notifier_name]) && $pref['email_notifiers'][$notifier_name] === 1)
 				{
-					list ($subject, $body) = $notifier->getEmail($notifications[$id_member], $email_data);
+					list ($subject, $body) = $notifier->getEmail($notifications[$id_member]);
 
 					sendmail($pref['email'], $subject, $body);
 				}

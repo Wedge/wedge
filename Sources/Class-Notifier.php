@@ -87,10 +87,9 @@ class Notifier
 	 * @access public
 	 * @param Notification $notification
 	 * @param array &$data Reference to the new notification's data, if something needs to be altered.
-	 * @param array &$email_data Any extra e-mail data passed
 	 * @return bool Whether or not to handle.
 	 */
-	public function handleMultiple(Notification $notification, array &$data, array &$email_data)
+	public function handleMultiple(Notification $notification, array &$data)
 	{
 		return false;
 	}
@@ -125,17 +124,13 @@ class Notifier
 	}
 
 	/**
-	 * E-mail handler, must be present since the user has the ability to receive e-mail
-	 * from any notifier. This only applies for instant e-mail notification, otherwise
-	 * for periodicals standard notification text is sent. This is to prevent overbearing
-	 * information in the notification e-mail.
+	 * E-mail handler. Returns the subject (if it's a single notification), and body.
 	 *
 	 * @access public
 	 * @param Notification $notification
-	 * @param array $email_data (not used by default, sorry.)
 	 * @return array(subject, body)
 	 */
-	public function getEmail(Notification $notification, array $email_data)
+	public function getEmail(Notification $notification)
 	{
 		global $txt;
 
@@ -243,10 +238,9 @@ class Notifier
 	 * @param array &$members An array of members with ID as the key
 	 * @param int &$id_object
 	 * @param array &$data Any data passed to the Notification::issue
-	 * @param array &$email_data
 	 * @return bool
 	 */
-	public function beforeNotify(array &$members, &$id_object, array &$data, array &$email_data)
+	public function beforeNotify(array &$members, &$id_object, array &$data)
 	{
 		return true;
 	}
