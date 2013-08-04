@@ -1150,11 +1150,13 @@ ul.reset, ul.reset li
 	vertical-align: bottom
 
 img.center
-	margin: auto
+	margin: 8px auto
 img.left
 	float: left
+	margin: 8px 16px 8px 0
 img.right
 	float: right
+	margin: 8px 0 8px 16px
 
 /*
 	It's important to repeat left/right/center statements to
@@ -1243,7 +1245,7 @@ table
 	code
 		display: block
 		font: 8pt/1.5em $mono_font
-		background: rgba(240, 235, 255, .5)
+		background: rgba(230, 242, 245, .5)
 		border-top: 2px solid #999
 		border-bottom: 2px solid #999
 		padding: 3px 1em
@@ -1276,6 +1278,7 @@ table
 
 .bbc_img
 	border: 0
+	margin: 8px
 	max-width: 100%
 
 .bbc_table
@@ -1556,7 +1559,7 @@ dl#feed
 
 .cat extends .catbase
 	clear: left
-	letter-spacing: -.5px
+	letter-spacing: -.25px
 	color: #666
 	a
 		border-bottom: 0 !important

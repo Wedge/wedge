@@ -9,18 +9,13 @@
 	NOTE: avoid including url() files here, prefer raw-url() instead!
 -------------------------------------------------------------------------- */
 
-// A common inline-block hack (for old IE/Firefox compatibility.)
+// A common inline-block hack (for old IE compatibility.)
 @mixin .inline-block
-
-	// Firefox 2.x doesn't support inline-block.
-	@if firefox[-2]
-		display: -moz-inline-box
-	@endif
 
 	display: inline-block
 	vertical-align: middle
 
-	// IE6/7 need layout to show inline-block divs... And a default right margin from my experience...
+	// IE6/7 need layout to enable inline-block on a block element... And a default right margin, from my experience.
 	@if ie[-7]
 		margin-right: 6px
 		zoom: 1
@@ -105,7 +100,7 @@
 		background-repeat: no-repeat
 	@endif
 
-/* Common and helper variable.
+/* Common and helper variables.
 ------------------------------------------------------- */
 
 /*

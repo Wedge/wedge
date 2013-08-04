@@ -364,13 +364,14 @@ hr.sep
 
 .postarea
 	padding: 0 15px
-	display: table-cell
 	@if (chrome) // Could use can_flex, but it doesn't work outside of Chrome anyway.
 		position: relative
 		height: 100%
 		display: flex
 		flex-direction: column
 		align-items: stretch
+	@else
+		display: table-cell
 	@endif
 
 // Posts and personal messages displayed throughout the forum.

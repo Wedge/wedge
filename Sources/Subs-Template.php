@@ -221,8 +221,9 @@ function ob_sessrewrite($buffer)
 			if ($ex_uid == $uid)
 			{
 				// Remove colored backgrounds and signature, keep the ID and classes (for JS mostly), and move the post area to the previous area, in a special div.
-				$new_area = $ex_area . '<div class="merged ' . preg_replace('~ postbg2?\b|\bpostbg2? ~', '', $msg[2]) . '" id="' . $msg[1] . '">' . $area . '</div>';
-				$new_area = preg_replace('~<we:msg_signature>.*?</we:msg_signature>~s', '', $new_area);
+				$new_area = preg_replace('~<we:msg_signature>.*?</we:msg_signature>~s', '', $ex_area)
+					. '<div class="merged ' . preg_replace('~ postbg2?\b|\bpostbg2? ~', '', $msg[2]) . '" id="' . $msg[1] . '">'
+					. $area . '</div>';
 				$buffer = str_replace(array($msg[0], $ex_area), array('<!REMOVED>', $new_area), $buffer);
 				$ex_area = $new_area;
 				$one_removed = true;

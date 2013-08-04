@@ -22,7 +22,7 @@
 <macro name="msg_header"><div class="postheader">{body}</div></macro>
 <macro name="msg_area"><div class="postarea">{body}</div></macro>
 <macro name="msg_post"><div class="post">{body}</div></macro>
-<macro name="msg_signature><div class="signature">{body}</div></macro>
+<macro name="msg_signature"><div class="signature">{body}</div></macro>
 
 <!-- Our sidebar. Now for a little trick -- since IE6 and IE7 need to be in a table, we're closing here the table that was opened in the sidebar macro. -->
 <macro name="sidebar">
