@@ -85,7 +85,7 @@
 	<code for="ie6" include="scripts/pngfix.js scripts/ie6hover.js"><![CDATA[
 	$('input[type=checkbox], input[type=radio]').addClass('ie_check');
 	$('input[type=submit], input[type=button]').addClass('ie_button');
-	DD_belatedPNG.fix('.ping,#wedgelogo,#footer,#footer div.frame');
+	DD_belatedPNG.fix('.ping,#logo,#footer,#footer div.frame');
 	$.ie6hover();
 	]]></code>
 

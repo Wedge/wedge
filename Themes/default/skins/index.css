@@ -249,7 +249,7 @@ ul#noava
 		@endif
 		left: 0
 
-#siteslogan
+#slogan
 	float: left
 	margin: 57px 30px 0 20px
 	color: #888
@@ -1150,13 +1150,13 @@ ul.reset, ul.reset li
 	vertical-align: bottom
 
 img.center
-	margin: 8px auto
+	margin: 4px auto
 img.left
 	float: left
-	margin: 8px 16px 8px 0
+	margin-left: 0
 img.right
 	float: right
-	margin: 8px 0 8px 16px
+	margin-right: 0
 
 /*
 	It's important to repeat left/right/center statements to
@@ -1278,7 +1278,7 @@ table
 
 .bbc_img
 	border: 0
-	margin: 8px
+	margin: 4px 8px
 	max-width: 100%
 
 .bbc_table
@@ -1572,7 +1572,6 @@ dl#feed
 	background: #fcfaf8
 	gradient: rgba(212, 212, 212, 0), rgba(212, 212, 212, .2)
 	border-color: #ddd // #fd9604
-	border-width: 0 0 2px 2px
 	border-radius: 4px
 	.table_list &
 		margin: -5px

@@ -104,7 +104,7 @@ th.last_th
 	float: right
 
 // Float these items to the left
-#siteslogan, #wedgelogo
+#slogan, #logo
 	float: left
 
 // The upshrink image needs some tweaking

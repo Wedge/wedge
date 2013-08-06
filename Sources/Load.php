@@ -1573,7 +1573,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 	$context['forum_name_html_safe'] = westr::htmlspecialchars($context['forum_name']);
 	$context['header_logo_url_html_safe'] = empty($theme['header_logo_url']) ? $context['forum_name_html_safe']
 		: 'htmlsafe::' . westr::htmlspecialchars('<img src="' . westr::htmlspecialchars($theme['header_logo_url']) . '" alt="' . $context['forum_name'] . '">');
-	$context['site_slogan'] = empty($theme['site_slogan']) ? '<div id="wedgelogo"></div>' : '<div id="siteslogan">' . $theme['site_slogan'] . '</div>';
+	$context['site_slogan'] = empty($settings['site_slogan']) ? '<div id="logo"></div>' : '<div id="slogan">' . $settings['site_slogan'] . '</div>';
 	if (isset($settings['load_average']))
 		$context['load_average'] = $settings['load_average'];
 

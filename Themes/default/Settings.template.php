@@ -23,12 +23,6 @@ function template_settings()
 			'type' => 'text',
 		),
 		array(
-			'id' => 'site_slogan',
-			'label' => $txt['site_slogan'],
-			'description' => $txt['site_slogan_desc'],
-			'type' => 'text',
-		),
-		array(
 			'id' => 'smiley_sets_default',
 			'label' => $txt['smileys_default_set_for_theme'],
 			'options' => $context['smiley_sets'],

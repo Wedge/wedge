@@ -80,7 +80,7 @@ table.cs0 final tr.windowbg:last-child td
 			color: darker(hue(#fc9, 20), -20%)
 			font: 100 2.8em $big_font
 
-#siteslogan
+#slogan
 	float: right
 	color: #000
 

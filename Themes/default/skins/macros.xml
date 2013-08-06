@@ -5,11 +5,9 @@
 	Macro names are case-sensitive, for performance reasons.
 -->
 
-<!-- The logo area for the website. Feel free to redefine it. -->
+<!-- The banner for the website. Feel free to redefine it. -->
 <macro name="banner">
-			<if:logo><h1>
-				<a href="{url}">{logo}</a>
-			</h1></if:logo>
+			<h1><a href="{url}">{title}</a></h1>
 			{body}</macro>
 
 <!-- The header bars. Nothing special about them... -->

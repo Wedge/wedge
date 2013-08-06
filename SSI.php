@@ -1090,7 +1090,7 @@ function ssi_recentPoll($topPollInstead = false, $output_method = 'echo')
 	wesql::free_result($request);
 
 	// This user has voted on all the polls.
-	if ($row === false)
+	if ($row === null)
 		return array();
 
 	// If this is a guest who's voted we'll through ourselves to show poll to show the results.
