@@ -14,20 +14,32 @@ h4, h5
 
 #offside
 	display: @is (ios, block, table-cell)
+	background: $main_bg
+
+@if !ie[-8]
+	@media $responsive
+		body
+			#sidebar
+				background: $side_bg
+				color: $side_col
+			.postbg, .postbg2
+				margin, border-radius: 0
+
+			// #sideshow being part of the sidebar, we'll always move it to be a floating icon.
+			#sideshow
+				position: fixed
+				top, right: 3px
+				border: 1px solid #ccc
+				gradient: rgba(255,255,255,1), rgba(255,255,255,.66)
+				padding: 5px
+				z-index: 999
+@endif
 
 #content div.frame
 	margin: 0
-	padding: 0 20px 16px
 
 #edge
 	padding: 0
-
-@media $responsive
-	body
-		#sideshow
-			display: block
-			position: fixed
-			top, right: 3px
 
 #sidebar
 	border, border-radius: 0
@@ -39,6 +51,7 @@ h4, h5
 		border: 0
 	header
 		color: #744
+		text-shadow: none
 	.column
 		padding: 20px 25px 10px 15px
 	ul
@@ -66,7 +79,7 @@ h4, h5
 		:first-letter
 			color: #555
 
-#wedgelogo
+#logo
 	background: none
 
 #top_section
@@ -78,7 +91,6 @@ h4, h5
 
 #main
 	display: block
-	padding: 0 8px
 
 #footer
 	border-top: 1px solid #c3d0de
@@ -115,7 +127,7 @@ dl#feed
 		margin: 0 1em
 
 // !! That one's pretty much a hack...
-#siteslogan
+#slogan
 	margin-top: 54px
 	color: #777
 
@@ -125,6 +137,13 @@ dl#feed
 /* Restyling the linktree. For big arrow fans.
 ------------------------------------------------------- */
 #linktree li unextends .horizontal-arrow
+
+// Since we can't access the parent's $horizontal_content_padding
+// which is being redefined below, we'll have a guess at 3 common paddings.
+@remove #linktree
+	margin: 0 -30px
+	margin: 0 -20px
+	margin: 0 -10px
 
 // The navigation list (i.e. linktree)
 #linktree
@@ -188,11 +207,15 @@ dl#feed
 
 /* Custom BBCode styling.
 ------------------------------------------------------- */
-.bbc_quote > div
-	background-color: #e8eee8
-
-.alternate > div
+.bbc_quote > div,
+.bbc_quote .bbc_quote .bbc_quote .bbc_quote > div,
+.bbc_quote .bbc_quote .bbc_quote .bbc_quote .bbc_quote .bbc_quote > div
 	background-color: #e3eae3
+
+.bbc_quote > div,
+.bbc_quote .bbc_quote .bbc_quote > div,
+.bbc_quote .bbc_quote .bbc_quote .bbc_quote .bbc_quote > div
+	background-color: #e8eee8
 
 .bbc_code code, .php_code code
 	background: #eef5ec
@@ -272,9 +295,15 @@ tr.titlebg th, tr.catbg th
 #qr_expand
 	margin-top: -2px
 
+// Ensure #notifs isn't 'floated' in the sidebar...
+#notifs unextends .inline-block
+
+// #search_form needs to forget about these, too.
+@remove #search_form
+	float: right
+	max-width: 50%
+
 #search_form
-	float: none
-	max-width: 100% // This one's in the sidebar, not the header!
 	input.search
 		width: 133px
 		margin-right: 4px
@@ -301,14 +330,14 @@ $main_bg   = rgb(246,248,239)
 $head_bg   = rgba(233,235,186,.66)
 $body_bg   = #f6f8ef
 $side_bg   = #e8e3cb
+$side_col  = #333
 $footer_bg = lighter($side_bg, 70%)
 $main_font = "Open Sans", Verdana, Arial, sans-serif
 $post_font = "Open Sans", Verdana, Arial, sans-serif
 $main_font_size = 88%/140%
 $post_font_size = 9.7pt/140%
-
-@remove #linktree
-	margin: 0 -10px
+$horizontal_content_padding = 20px
+$responsive_search_min_width = math($sidebar-width - 50px)
 
 @remove #wedge
 	border-radius: $radius
