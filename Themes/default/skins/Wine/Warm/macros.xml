@@ -9,9 +9,7 @@
 
 <macro name="banner">
 		{body}
-		<if:logo><h1>
-			<a href="<URL>">{logo}</a>
-		</h1></if:logo></macro>
+		<h1><a href="<URL>">{title}</a></h1></macro>
 
 <macro name="title"><header class="title">{body}</header></macro>
 

@@ -1348,7 +1348,7 @@ class wess_math extends wess
 {
 	function process(&$css)
 	{
-		if (!preg_match_all('~(["\']?)math\(((?:[\t ()\d.+/*%-]|(?<=\d)([a-z]{2,4})|\b(?:round|ceil|floor|abs|fmod|min|max|rand)\()+)\)\\1~i', $css, $matches))
+		if (!preg_match_all('~(["\']?)math\(((?:[\t ()\d.+/*%-]|(?<=\d)([a-z]{2,4})|\b(?:math|round|ceil|floor|abs|fmod|min|max|rand)\()+)\)\\1~i', $css, $matches))
 			return;
 
 		$done = array();
@@ -1357,6 +1357,9 @@ class wess_math extends wess
 			if (isset($done[$math]))
 				continue;
 			$done[$math] = true;
+
+			if (strpos(strtolower($math), 'math(') !== false)
+				$this->process($math);
 
 			if (isset($matches[3][$i]))
 				$math = preg_replace('~(?<=\d)' . $matches[3][$i] . '~', '', $math);

@@ -197,9 +197,7 @@ function template_notifications()
 
 	echo '
 			<div id="notifs">
-				<span class="note', $context['unread_notifications'] ? 'nice' : '', '">
-					', $context['unread_notifications'], '
-				</span>
+				<span class="note', $context['unread_notifications'] ? 'nice' : '', '">', $context['unread_notifications'], '</span>
 				', $txt['notifications'], '
 			</div>';
 }

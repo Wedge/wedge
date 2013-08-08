@@ -68,7 +68,7 @@ $darkgrad = #f3f2f0
 	border: 0
 	padding: 0 20px 10px
 
-#siteslogan
+#slogan
 	float: left
 	letter-spacing: -1px
 	text-shadow: #ddd 1px 1px 2px
@@ -191,7 +191,6 @@ a, #linktree a
 ------------------------------------------------------- */
 
 .bbc_code code, .php_code code
-	background: #eef
 	white-space: pre
 
 
@@ -320,7 +319,7 @@ $radius = 20px
 @remove #footer
 	margin-top: 16px
 
-@remove #siteslogan
+@remove #slogan
 	color: #000
 
 @remove #linktree_bt ul

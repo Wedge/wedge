@@ -1450,7 +1450,7 @@ body.waiting *
 				.mimenu
 					left: auto
 					right: 0
-					min-width: 300px
+					min-width: @ifnull($responsive_search_min_width, 300px)
 			#sideshow mixes .inline-block
 			#sidebar
 				display: none
@@ -1478,7 +1478,7 @@ body.waiting *
 				input.search
 					max-width: 100%
 				.mimenu
-					min-width: 400px
+					min-width: math(@ifnull($responsive_search_min_width, 300px) + 100px)
 			.menu > li > span
 				margin-top: 8px
 			#upshrink
