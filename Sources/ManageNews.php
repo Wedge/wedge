@@ -557,7 +557,7 @@ function SendMailing($clean_only = false)
 		foreach ($addressed as $curmem)
 		{
 			$curmem = trim($curmem);
-			if ($curmem != '')
+			if (!empty($curmem) && is_valid_email($curmem))
 				$context['recipients']['emails'][$curmem] = $curmem;
 		}
 	}

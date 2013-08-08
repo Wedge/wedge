@@ -287,12 +287,16 @@ function PersonalMessage()
 	if (allowedTo('save_pm_draft'))
 		$subActions['showdrafts'] = 'MessageDrafts';
 
-	if (!isset($_REQUEST['sa']) || !isset($subActions[$_REQUEST['sa']]))
-		MessageFolder();
-	else
+	if (isset($_REQUEST['sa'], $subActions[$_REQUEST['sa']]))
 	{
 		messageIndexBar($_REQUEST['sa']);
 		$subActions[$_REQUEST['sa']]();
+	}
+	else
+	{
+		// It didn't exist or it wasn't valid. Either way is fine with us.
+		unset ($_REQUEST['sa']);
+		MessageFolder();
 	}
 }
 
@@ -417,9 +421,6 @@ function messageIndexBar($area)
 	}
 
 	loadSource('Subs-Menu');
-
-	// What page is this, again?
-	$current_page = '<URL>?action=pm' . (!empty($_REQUEST['sa']) ? ';sa=' . $_REQUEST['sa'] : '') . (!empty($context['folder']) ? ';f=' . $context['folder'] : '') . (!empty($context['current_label_id']) ? ';l=' . $context['current_label_id'] : '');
 
 	// Set a few options for the menu.
 	$menuOptions = array(
