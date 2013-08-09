@@ -92,6 +92,59 @@ class wedit
 		return null;
 	}
 
+	private static function parse_smileys($a)
+	{
+		global $theme;
+		return '<img alt="' . htmlspecialchars($a[2]) . '" class="smiley ' . $a[1] . '" src="' . $theme['images_url'] . '/blank.gif" onresizestart="return false;">';
+	}
+
+	private static function unparse_smileys($a)
+	{
+		return ' <div class="smiley ' . $a[2] . '">' . un_htmlspecialchars($a[1] . $a[3]) . '</div>';
+	}
+
+	private static function unparse_td($a)
+	{
+		return str_repeat('[td][/td]', $a[1] - 1) . '[td]';
+	}
+
+	private static function fix_img_links($a)
+	{
+		return $a[1] . preg_replace('~action(?:=|%3d)(?!dlattach)~i', 'action-', $a[2]) . '[/img]';
+	}
+
+	private static function protect_html($a)
+	{
+		return '[html]' . strtr(un_htmlspecialchars($a[1]), array("\n" => '&#13;', '  ' => ' &#32;', '[' => '&#91;', ']' => '&#93;')) . '[/html]';
+	}
+
+	// !! These don't exactly match the function above... Oversight?
+	private static function unprotect_html($a)
+	{
+		return '[html]' . strtr(htmlspecialchars($a[1], ENT_QUOTES), array('\\&quot;' => '&quot;', '&amp;#13;' => '<br>', '&amp;#32;' => ' ', '&amp;#91;' => '[', '&amp;#93;' => ']')) . '[/html]';
+	}
+
+	private static function cleanup_nobbc($a)
+	{
+		return '[nobbc]' . strtr($a[1], array('[' => '&#91;', ']' => '&#93;', ':' => '&#58;', '@' => '&#64;')) . '[/nobbc]';
+	}
+
+	private static function preparse_time($a)
+	{
+		global $settings;
+		return '[time]' . (is_numeric($a[2]) || @strtotime($a[2]) == 0 ? $a[2] : strtotime($a[2]) - ($a[1] == 'absolute' ? 0 : (($settings['time_offset'] + we::$user['time_offset']) * 3600))) . '[/time]';
+	}
+
+	private static function format_time($a)
+	{
+		return '[time]' . timeformat($a[1], false) . '[/time]';
+	}
+
+	private static function lowercase_tags($a)
+	{
+		return '[' . $a[1] . strtolower($a[2]) . $a[3] . ']';
+	}
+
 	public function add_button($name, $button_text, $onclick = '', $access_key = '', $class = '')
 	{
 		// This allows us to add buttons to it from code side since we don't let users manipulate this array directly otherwise.
@@ -150,7 +203,7 @@ class wedit
 		$text = preg_replace(array_keys($working_html), array_values($working_html), $text);
 
 		// Parse smileys into something browsable.
-		$text = preg_replace('~(?:\s|&nbsp;)?<i class="smiley ([^<>]+?)"[^<>]*?>([^<]*)</i>~e', '\'<img alt="\' . htmlspecialchars(\'$2\') . \'" class="smiley $1" src="' . $theme['images_url'] . '/blank.gif" onresizestart="return false;">\'', $text);
+		$text = preg_replace_callback('~(?:\s|&nbsp;)?<i class="smiley ([^<>]+?)"[^<>]*?>([^<]*)</i>~', 'wedit::parse_smileys', $text);
 
 		return $text;
 	}
@@ -197,7 +250,7 @@ class wedit
 		$text = preg_replace('~\\<\\!\\[CDATA\\[.*?\\]\\]\\>~i', '', $text);
 
 		// Do the smileys ultra fast!
-		$text = preg_replace('~<img(?:[^>]*\salt="([^"]+)")?[^>]*\sclass="smiley ([^"]+)"(?:[^>]*\salt="([^"]+)")?[^>]*>(?:\s)?~e', '\' <div class="smiley $2">\' . un_htmlspecialchars(\'$1$3\') . \'</div>\'', $text);
+		$text = preg_replace_callback('~<img(?:[^>]*\salt="([^"]+)")?[^>]*\sclass="smiley ([^"]+)"(?:[^>]*\salt="([^"]+)")?[^>]*>~', 'wedit::unparse_smileys', $text);
 
 		// Only try to buy more time if the client didn't quit.
 		if (connection_aborted() && $context['server']['is_apache'])
@@ -760,7 +813,6 @@ class wedit
 			'~</table>~i' => '[/table]',
 			'~<tr(?:\s.*?)*?\>~i' => '[tr]',
 			'~</tr>~i' => '[/tr]',
-			'~<(?:td|th)\s[^<>]*?colspan="?(\d{1,2})"?.*?\>~ie' => 'str_repeat(\'[td][/td]\', $1 - 1) . \'[td]\'',
 			'~<(?:td|th)(?:\s.*?)*?\>~i' => '[td]',
 			'~</(?:td|th)>~i' => '[/td]',
 			'~<br(?:\s[^<>]*?)?\>~i' => "\n",
@@ -771,6 +823,7 @@ class wedit
 			'~</blockquote>~i' => '&lt;/blockquote&gt;',
 		);
 		$text = preg_replace(array_keys($tags), array_values($tags), $text);
+		$text = preg_replace_callback('~<(?:td|th)\s[^<>]*?colspan="?(\d{1,2})"?[^>]*>~i', 'wedit::unparse_td', $text);
 
 		// Please give us just a little more time.
 		if (connection_aborted() && $context['server']['is_apache'])
@@ -1739,7 +1792,7 @@ class wedit
 		$message = preg_replace('~&amp;#(\d{4,5}|[2-9]\d{2,4}|1[2-9]\d);~', '&#$1;', $message);
 
 		// Clean up after nobbc ;)
-		$message = preg_replace('~\[nobbc\](.+?)\[/nobbc\]~ie', '\'[nobbc]\' . strtr(\'$1\', array(\'[\' => \'&#91;\', \']\' => \'&#93;\', \':\' => \'&#58;\', \'@\' => \'&#64;\')) . \'[/nobbc]\'', $message);
+		$message = preg_replace_callback('~\[nobbc\](.+?)\[/nobbc\]~i', 'wedit::cleanup_nobbc', $message);
 
 		// Remove \r's... they're evil!
 		$message = strtr($message, array("\r" => ''));
@@ -1804,23 +1857,23 @@ class wedit
 				if (!$previewing && strpos($parts[$i], '[html]') !== false)
 				{
 					if (allowedTo('admin_forum'))
-						$parts[$i] = preg_replace('~\[html\](.+?)\[/html\]~ise', '\'[html]\' . strtr(un_htmlspecialchars(\'$1\'), array("\n" => \'&#13;\', \'  \' => \' &#32;\', \'[\' => \'&#91;\', \']\' => \'&#93;\')) . \'[/html]\'', $parts[$i]);
+						$parts[$i] = preg_replace_callback('~\[html](.+?)\[/html]~is', 'wedit::protect_html', $parts[$i]);
 
 					// We should edit them out, or else if an admin edits the message they will get shown...
 					else
 						while (strpos($parts[$i], '[html]') !== false)
-							$parts[$i] = preg_replace('~\[/?html\]~i', '', $parts[$i]);
+							$parts[$i] = preg_replace('~\[/?html]~i', '', $parts[$i]);
 				}
 
 				// Let's look at the time tags...
-				$parts[$i] = preg_replace('~\[time(?:=(absolute))*\](.+?)\[/time\]~ie', '\'[time]\' . (is_numeric(\'$2\') || @strtotime(\'$2\') == 0 ? \'$2\' : strtotime(\'$2\') - (\'$1\' == \'absolute\' ? 0 : (($settings[\'time_offset\'] + we::$user[\'time_offset\']) * 3600))) . \'[/time]\'', $parts[$i]);
+				$parts[$i] = preg_replace_callback('~\[time(?:=(absolute))*\](.+?)\[/time\]~i', 'wedit::preparse_time', $parts[$i]);
 
 				// Change the color specific tags to [color=the color].
 				$parts[$i] = preg_replace('~\[(black|blue|green|red|white)\]~', '[color=$1]', $parts[$i]);		// First do the opening tags.
 				$parts[$i] = preg_replace('~\[/(?:black|blue|green|red|white)\]~', '[/color]', $parts[$i]);		// And now do the closing tags
 
 				// Make sure all tags are lowercase.
-				$parts[$i] = preg_replace('~\[(/?)(list|li|table|tr|td)((\s[^\]]+)*)\]~ie', '\'[$1\' . strtolower(\'$2\') . \'$3]\'', $parts[$i]);
+				$parts[$i] = preg_replace_callback('~\[(/?)(list|li|table|tr|td)((\s[^\]]+)*)]~i', 'wedit::lowercase_tags', $parts[$i]);
 
 				$list_open = substr_count($parts[$i], '[list]') + substr_count($parts[$i], '[list ');
 				$list_close = substr_count($parts[$i], '[/list]');
@@ -1956,10 +2009,10 @@ class wedit
 			// If $i is a multiple of four (0, 4, 8, ...) then it's not a code section...
 			if ($i % 4 == 0)
 			{
-				$parts[$i] = preg_replace('~\[html\](.+?)\[/html\]~ie', '\'[html]\' . strtr(htmlspecialchars(\'$1\', ENT_QUOTES), array(\'\\&quot;\' => \'&quot;\', \'&amp;#13;\' => \'<br>\', \'&amp;#32;\' => \' \', \'&amp;#91;\' => \'[\', \'&amp;#93;\' => \']\')) . \'[/html]\'', $parts[$i]);
+				$parts[$i] = preg_replace_callback('~\[html](.+?)\[/html]~i', 'wedit::unprotect_html', $parts[$i]);
 
 				// Attempt to un-parse the time to something less awful.
-				$parts[$i] = preg_replace('~\[time\](\d{0,10})\[/time\]~ie', '\'[time]\' . timeformat(\'$1\', false) . \'[/time]\'', $parts[$i]);
+				$parts[$i] = preg_replace_callback('~\[time](\d{0,10})\[/time]~i', 'wedit:format_time', $parts[$i]);
 			}
 		}
 
@@ -2041,7 +2094,7 @@ class wedit
 			wedit::fixTag($message, $param['tag'], $param['protocols'], $param['embeddedUrl'], $param['hasEqualSign'], !empty($param['hasExtra']));
 
 		// Now fix possible security problems with images loading links automatically...
-		$message = preg_replace('~(\[img.*?\])(.+?)\[/img\]~eis', '\'$1\' . preg_replace(\'~action(=|%3d)(?!dlattach)~i\', \'action-\', \'$2\') . \'[/img]\'', $message);
+		$message = preg_replace_callback('~(\[img.*?\])(.+?)\[/img\]~is', 'wedit::fix_img_links', $message);
 
 		// Limit the size of images posted?
 		if (!empty($settings['max_image_width']) || !empty($settings['max_image_height']))
