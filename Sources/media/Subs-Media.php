@@ -2452,8 +2452,13 @@ function aeva_protect_bbc(&$message)
 	global $settings, $context;
 
 	if (!empty($settings['enableBBC']) && $context['action'] !== 'jseditor' || stripos($message, '[code]') !== false || stripos($message, '[noembed]') !== false || stripos($message, '[html]') !== false)
-		$message = preg_replace('~\[(code|noembed|html)]((?>[^[]|\[(?!/?\\1])|(?R))+?)\[/\\1]~ie',
-			"'[$1]' . str_ireplace('[media', '&#91;media', '$2') . '[/$1]'", $message);
+		$message = preg_replace_callback('~\[(code|noembed|html)]((?>[^[]|\[(?!/?\\1])|(?R))+?)\[/\\1]~i',
+			'aeva_protect_bbc_callback', $message);
+}
+
+function aeva_protect_bbc_callback($match)
+{
+	return $match[1] . str_ireplace('[media', '&#91;media', $match[2]) . '[/' . $match[1] . ']';
 }
 
 function aeva_parse_bbc(&$message, $cache_id = -1)

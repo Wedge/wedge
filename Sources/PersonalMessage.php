@@ -294,8 +294,8 @@ function PersonalMessage()
 	}
 	else
 	{
-		// It didn't exist or it wasn't valid. Either way is fine with us.
-		unset ($_REQUEST['sa']);
+		// It didn't exist, or it wasn't valid. Either way is fine with us.
+		unset($_REQUEST['sa']);
 		MessageFolder();
 	}
 }

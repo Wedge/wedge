@@ -171,11 +171,19 @@ class wess
 
 class wess_mixin extends wess
 {
+	var $default = array();
+	var $target;
+
+	private function def($a)
+	{
+		return $this->default[$this->target][(int) $a[1]];
+	}
+
 	function process(&$css)
 	{
 		global $context;
 
-		$mix = $def = array();
+		$mix = array();
 
 		// Find mixin declarations, capture their tab level and stop at the first empty or unindented line.
 		if (preg_match_all('~@mixin\h+(?:{([^}]+)}\h*)?([\w.-]+)(?:\(([^()]+)\))?[^\v]*\v+(\h+)([^\v]*\n+)((?:\4\h*[^\v]*\v+)*)~i', $css, $mixins, PREG_SET_ORDER))
@@ -232,7 +240,11 @@ class wess_mixin extends wess
 
 						// Replace all missing variables with their default value.
 						if (!empty($def[$tg]))
-							$rep = preg_replace('~\$%(\d+)%~e', '$def[$tg][(int) \'$1\']', $rep);
+						{
+							$this->default = $def;
+							$this->target = $tg;
+							$rep = preg_replace_callback('~\$%(\d+)%~', array($this, 'def'), $rep);
+						}
 					}
 					// Or is this a simple non-mixin selector we want to mix with? (Child selectors aren't allowed for these.)
 					elseif (preg_match_all('~(?<=\n)' . preg_quote($tg, '~') . '\h*(?:[a-zA-Z]+\h*)?\v+(\h+)([^\v]*\v+)((?:\1[^\v]*\v+)*)~', $css, $selectors, PREG_SET_ORDER))
@@ -264,7 +276,11 @@ class wess_mixin extends wess
 
 						// Replace all missing variables with their default value.
 						if (!empty($def[$tg]))
-							$rep = preg_replace('~\$%(\d+)%~e', '$def[$tg][(int) \'$1\']', $rep);
+						{
+							$this->default = $def;
+							$this->target = $tg;
+							$rep = preg_replace_callback('~\$%(\d+)%~', array($this, 'def'), $rep);
+						}
 					}
 					// Or is this a simple non-mixin selector we want to mix with? (Child selectors aren't allowed for these.)
 					elseif (preg_match_all('~(?<=\n)' . preg_quote($tg, '~') . '\h*(?:[a-zA-Z]+\h*)?\v+(\h+)([^\v]*\v+)((?:\1[^\v]*\v+)*)~', $css, $selectors, PREG_SET_ORDER))
@@ -766,6 +782,11 @@ class wess_nesting extends wess
 		return strlen($a[1]) . ':';
 	}
 
+	private static function protect_colons($a)
+	{
+		return str_replace(':', '#wedge-colon#', $a[0]);
+	}
+
 	function process(&$css)
 	{
 		/******************************************************************************
@@ -859,7 +880,7 @@ class wess_nesting extends wess
 		*/
 		$tree = preg_replace('~^(@(?:import|charset)\h+[^{}\n]*);?$~mi', '<rule selector="$1"></rule>', $tree); // Transform single-line @rules into selectors
 		$tree = preg_replace('~^([!+>&#*@:.a-z0-9][^{};]*?\h*reset);~mi', '<rule selector="$1"></rule>', $tree); // Transform single-line resets into selectors
-		$tree = preg_replace('~(\burl\([^)]+\))~e', 'str_replace(\':\', \'#wedge-colon#\', \'$1\')', $tree); // Protect colons (:) inside URLs
+		$tree = preg_replace_callback('~\burl\([^)]+\)~', 'wess_nesting::protect_colons', $tree); // Protect colons (:) inside URLs
 		$tree = preg_replace('~([a-z-, ]+)\h*:(?!//)\h*([^;}{' . ($css_syntax ? '' : '\n') . ']+?);*\h*(?=[\n}])~i', '<property name="$1" value="$2">', $tree); // Transform properties
 		$tree = preg_replace('~^([!+>&#*@:.a-z0-9](?:[^{\n]|(?=,)\n)*?)\s*{~mi', '<rule selector="$1">', $tree); // Transform selectors. Strings starting with a digit are only allowed because of keyframes.
 		$tree = preg_replace(array('~ {2,}~'), array(' '), $tree); // Remove extra spaces
@@ -1430,6 +1451,16 @@ class wess_prefixes extends wess
 		$this->prefix = we::is('opera') ? '-o-' : (we::is('webkit') ? '-webkit-' : (we::is('gecko') ? '-moz-' : (we::is('ie') ? '-ms-' : '')));
 	}
 
+	private static function degrees($a)
+	{
+		return $a[1] . (90 - $a[2]);
+	}
+
+	private static function radial($a)
+	{
+		return $a[2] . ($a[1] != '' ? ', ' . $a[1] : '');
+	}
+
 	/**
 	 * Fix CSS properties, i.e. rules, anything before a colon.
 	 * Compatibility sheet is adapted from caniuse.com
@@ -1582,10 +1613,10 @@ class wess_prefixes extends wess
 
 			// This is a little trick to convert degrees between prefixed and unprefixed variants. I even shared: http://tinyurl.com/pcnfk27
 			if (strpos($prefixed, 'deg') !== false)
-				$prefixed = preg_replace('~(gradient\h*\(\s*)(-?(?:\d+|\d*\.\d+))(?=deg\b)~e', '\'$1\' . (90 - \'$2\')', $prefixed);
+				$prefixed = preg_replace_callback('~(gradient\h*\(\s*)(-?(?:\d+|\d*\.\d+))(?=deg\b)~', 'wess_prefixes::degrees', $prefixed);
 
 			if (strpos($prefixed, 'radial-gradient') !== false)
-				$prefixed = preg_replace('~(?<=radial-gradient\()([\sa-z-]+\s+)?at\s([^,]+)(?=,)~e', '\'$2\' . (\'$1\' != \'\' ? \', $1\' : \'\')', $prefixed);
+				$prefixed = preg_replace_callback('~(?<=radial-gradient\()([\sa-z-]+\s+)?at\s([^,]+)(?=,)~', 'wess_prefixes::radial', $prefixed);
 
 			return $prefixed;
 		}

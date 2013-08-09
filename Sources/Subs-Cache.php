@@ -672,9 +672,9 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 	$final = preg_replace('~//[ \t][^\n]*~', '', $final); // Strip remaining comments like me. OMG does this mean I'm gonn
 
 	// Just like comments, we're going to preserve content tags.
-	$i = 0;
 	preg_match_all('~(?<=\s)content\s*:([^\n]+)~', $final, $contags);
-	$final = preg_replace('~(?<=\s)content\s*:[^\n]+~e', '\'content: wedge\' . $i++', $final);
+	$context['reset_content_counter'] = true;
+	$final = preg_replace_callback('~(?<=\s)content\s*:[^\n]+~', 'wedge_hide_content', $final);
 
 	foreach ($plugins as $plugin)
 		$plugin->process($final);
@@ -765,6 +765,19 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 	@file_put_contents($final_file, $final);
 
 	return $folder . $full_name;
+}
+
+function wedge_hide_content()
+{
+	global $context;
+	static $i;
+
+	if (!empty($context['reset_content_counter']))
+	{
+		$i = 0;
+		unset($context['reset_content_counter']);
+	}
+	return 'content: wedge' . $i++;
 }
 
 // This will replace {$str}, {$str}, ... in $final with successive entries in $arr
