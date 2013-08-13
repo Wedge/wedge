@@ -2467,7 +2467,7 @@ class wedit
 			echo '
 				<div id="smileyBox_', $this->id, '"></div>';
 
-		if (we::is('ie'))
+		if (we::is('ie[-10]'))
 			add_js('
 	$("#', $this->id, '").on("select click keyup change", function () { this.caretPos = document.selection.createRange().duplicate(); });');
 

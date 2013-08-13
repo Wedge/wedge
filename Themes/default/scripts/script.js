@@ -41,7 +41,7 @@ var
 	is_opera = ua('opera'),
 
 	// IE gets versioned, too. Do you have to ask why..?
-	is_ie = ua('msie'), // ua('msie') || ua('(ie') should also detect IE 11+
+	is_ie = ua('msie') || ua('trident'), // ua('trident') seems to be the only way to detect IE 11+.
 	is_ie6 = is_ie && ua('msie 6'),
 	is_ie7 = is_ie && ua('msie 7'),
 	is_ie8 = is_ie && ua('msie 8'),

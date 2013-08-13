@@ -712,7 +712,7 @@ function template_edit_style()
 			{
 			');
 
-	if (we::is('ie'))
+	if (we::is('ie[-10]'))
 		add_js('
 				for (var j = 0, sheets = frames["css_preview_box"].document.styleSheets; j < sheets.length; j++)
 				{

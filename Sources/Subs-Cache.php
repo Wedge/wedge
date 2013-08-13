@@ -559,7 +559,7 @@ function wedge_get_css_filename($add)
 		$suffix = array(str_replace('dows', '', we::$os['os'] . we::$os['version']) => true) + array_diff_key($suffix, array(we::$os['os'] => 1));
 
 	if (!empty(we::$browser['agent']))
-		$suffix = array(we::$browser['agent'] . we::$browser['version'] => 1) + $suffix;
+		$suffix = array(we::$browser['agent'] . (!empty(we::$browser['version']) ? we::$browser['version'] : '') => 1) + $suffix;
 	$id = implode('-', array_keys($suffix));
 
 	return $id ? (empty($settings['obfuscate_filenames']) ? $id : md5($id)) : '';

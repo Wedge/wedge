@@ -485,7 +485,8 @@ class we
 	/**
 	 * Attempts to detect the browser, including version, needed for browser specific fixes and behaviours, and populates we::$browser with the findings.
 	 *
-	 * In all cases, general branch as well as major version is detected for, meaning that not only would Internet Explorer 8 be detected, so would Internet Explorer generically. This also sets flags for general emulation behavior later on, plus handling some types of robot.
+	 * In all cases, general branch as well as major version is detected for, meaning that not only would Internet Explorer 8 be detected,
+	 * so would Internet Explorer generically. This also sets flags for general emulation behavior later on, plus handling some types of robot.
 	 *
 	 * Current browsers detected via self::$browser['agent']:
 	 * - Opera
@@ -519,14 +520,14 @@ class we
 		$browser['gecko'] = !$is_webkit && strpos($ua, 'Gecko') !== false;	// Mozilla and compatible
 		$browser['firefox'] = strpos($ua, 'Gecko/') !== false;				// Firefox says "Gecko/20xx", not "like Gecko"
 
-		$browser['ie'] = $is_ie = strpos($ua, 'MSIE') !== false;
+		$browser['ie'] = $is_ie = strpos($ua, 'MSIE') !== false || strpos($ua, 'Trident/') !== false; // MSIE was removed from IE 11.
 
 		// Retrieve the version number, as a floating point.
 		// Chrome for iOS uses the Safari Mobile string and replaces Version with CriOS.
 		preg_match('~' . (
 				$browser['opera'] || $browser['safari'] ? 'version[/ ]' :
 				($browser['firefox'] ? 'firefox/' :
-				($browser['ie'] ? 'msie ' :
+				($browser['ie'] ? '(?:msie |rv[: ])' :
 				($browser['chrome'] ? 'c(?:hrome|rios)/' :
 				'applewebkit/')))
 			) . '([\d.]+)~i', $ua, $ver)
