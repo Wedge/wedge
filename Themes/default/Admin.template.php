@@ -257,15 +257,9 @@ function template_view_versions()
 			<table class="table_grid w100 cs0">
 				<thead>
 					<tr class="catbg left">
-						<th scope="col" class="first_th w50">
-							<strong>', $txt['admin_wedgefile'], '</strong>
-						</th>
-						<th scope="col" class="w25">
-							<strong>', $txt['dvc_your'], '</strong>
-						</th>
-						<th scope="col" class="last_th w25">
-							<strong>', $txt['dvc_current'], '</strong>
-						</th>
+						<th class="w50">', $txt['admin_wedgefile'], '</th>
+						<th class="w25">', $txt['dvc_your'], '</th>
+						<th class="w25">', $txt['dvc_current'], '</th>
 					</tr>
 				</thead>
 				<tbody>';
@@ -1518,6 +1512,7 @@ function template_callback_question_answer_list()
 					<tr id="row', $row, '">
 						<td class="lang">
 							<select name="lang_select[', $row, ']" id="lang_select[', $row, ']">';
+
 			foreach ($context['languages'] as $lang_id => $lang)
 				echo '
 								<option value="', $lang_id, '"', $question['lang'] == $lang_id ? ' selected' : '', '>&lt;div class="flag_', $lang_id, '"&gt;&lt;/div&gt;', $lang['name'], '</option>';
@@ -1525,16 +1520,20 @@ function template_callback_question_answer_list()
 			echo '
 							</select>
 						</td>
-						<td class="question"><input name="question[', $row, ']" value="', $question['question'], '" size="42"></td>
+						<td class="question"><input name="question[', $row, ']" value="', $question['question'], '" size="32"></td>
 						<td class="answer">';
+
 			$answers = array();
 			foreach ($question['answers'] as $answer)
 				$answers[] = '<input name="answer[' . $row . '][]" value="' . $answer . '" size="25">';
+
 			echo '
 							', implode('<br>', $answers), '
 						</td>
-						<td><input type="submit" class="new" value="', $txt['setup_verification_add_answer'], '" onclick="addAnswer(', $row, '); return false;"></td>
-						<td><input type="submit" class="delete" value="', $txt['remove'], '" onclick="removeRow(', $row, '); return false;"></td>
+						<td>
+							<input type="submit" class="new" value="', $txt['setup_verification_add_answer'], '" onclick="addAnswer(', $row, '); return false;">
+							<input type="submit" class="delete" value="', $txt['remove'], '" onclick="removeRow(', $row, '); return false;">
+						</td>
 					</tr>';
 		}
 		$row++;
@@ -1561,10 +1560,9 @@ function template_callback_question_answer_list()
 		lang_select += \'</select></td>\';
 		$(\'#\' + row_id).append(lang_select);
 
-		$(\'#\' + row_id).append(\'<td class="question"><input name="question[\' + nextrow + \']" size="42"></td>\');
+		$(\'#\' + row_id).append(\'<td class="question"><input name="question[\' + nextrow + \']" size="32"></td>\');
 		$(\'#\' + row_id).append(\'<td class="answer"><input name="answer[\' + nextrow + \'][]" size="25"></td>\');
-		$(\'#\' + row_id).append(\'<td><input type="submit" class="new" value="\' + addans_str + \'" onclick="addAnswer(\' + nextrow + \'); return false;"></td>\');
-		$(\'#\' + row_id).append(\'<td><input type="submit" class="delete" value="\' + remove_str + \'" onclick="removeRow(\' + nextrow + \'); return false;"></td>\');
+		$(\'#\' + row_id).append(\'<td><input type="submit" class="new" value="\' + addans_str + \'" onclick="addAnswer(\' + nextrow + \'); return false;">\n<input type="submit" class="delete" value="\' + remove_str + \'" onclick="removeRow(\' + nextrow + \'); return false;"></td>\');
 		$(\'#\' + row_id + \' select\').sb();
 
 		nextrow++;

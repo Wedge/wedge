@@ -310,15 +310,15 @@ function template_main()
 			<table class="table_grid w100 cs0 cp4" id="stats_history">
 				<thead>
 					<tr class="titlebg">
-						<th class="first_th w25">', $txt['yearly_summary'], '</th>
+						<th class="w25">', $txt['yearly_summary'], '</th>
 						<th>', $txt['stats_new_topics'], '</th>
 						<th>', $txt['stats_new_posts'], '</th>
 						<th>', $txt['stats_new_members'], '</th>
-						<th', empty($settings['hitStats']) ? ' class="last_th"' : '', '>', $txt['most_online'], '</th>';
+						<th>', $txt['most_online'], '</th>';
 
 		if (!empty($settings['hitStats']))
 			echo '
-						<th class="last_th">', $txt['page_views'], '</th>';
+						<th>', $txt['page_views'], '</th>';
 
 		echo '
 					</tr>

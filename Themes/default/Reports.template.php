@@ -82,7 +82,7 @@ function template_main()
 			echo '
 			<thead>
 				<tr class="catbg">
-					<th scope="col" colspan="', $table['column_count'], '">', $table['title'], '</th>
+					<th colspan="', $table['column_count'], '">', $table['title'], '</th>
 				</tr>
 			</thead>
 			<tbody>';

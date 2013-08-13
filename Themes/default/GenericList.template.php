@@ -83,18 +83,9 @@ function template_show_list($list_id = null)
 				<tr class="catbg">';
 
 		// Loop through each column and add a table header.
-		$i = 0;
 		foreach ($cur_list['headers'] as $col_header)
-		{
-			$i++;
-			if (empty($col_header['class']) && $i == 1)
-				$col_header['class'] = 'first_th';
-			elseif (empty($col_header['class']) && $i == $header_count)
-				$col_header['class'] = 'last_th';
-
 			echo '
-					<th scope="col"', empty($col_header['class']) ? '' : ' class="' . $col_header['class'] . '"', empty($col_header['style']) ? '' : ' style="' . $col_header['style'] . '"', empty($col_header['colspan']) ? '' : ' colspan="' . $col_header['colspan'] . '"', '>', empty($col_header['href']) ? '' : '<a href="' . $col_header['href'] . '" rel="nofollow">', empty($col_header['label']) ? '&nbsp;' : $col_header['label'], empty($col_header['href']) ? '' : '</a>', empty($col_header['sort_image']) ? '' : ' <span class="sort_' . $col_header['sort_image'] . '"></span>', '</th>';
-		}
+					<th', empty($col_header['class']) ? '' : ' class="' . $col_header['class'] . '"', empty($col_header['style']) ? '' : ' style="' . $col_header['style'] . '"', empty($col_header['colspan']) ? '' : ' colspan="' . $col_header['colspan'] . '"', '>', empty($col_header['href']) ? '' : '<a href="' . $col_header['href'] . '" rel="nofollow">', empty($col_header['label']) ? '&nbsp;' : $col_header['label'], empty($col_header['href']) ? '' : '</a>', empty($col_header['sort_image']) ? '' : ' <span class="sort_' . $col_header['sort_image'] . '"></span>', '</th>';
 
 		echo '
 				</tr>

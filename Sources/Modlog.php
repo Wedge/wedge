@@ -187,7 +187,7 @@ function ViewModlog()
 			'action' => array(
 				'header' => array(
 					'value' => $txt['modlog_action'],
-					'class' => 'left first_th',
+					'class' => 'left',
 				),
 				'data' => array(
 					'db' => 'action_text',

@@ -454,7 +454,7 @@ function template_subject_list()
 	<table class="table_grid w100 cs0">
 	<thead>
 		<tr class="catbg">
-			<th class="first_th center" style="width: 4%">
+			<th class="center" style="width: 4%">
 			</th>
 			<th class="left" style="width: 22%">
 				<a href="<URL>?action=pm;f=', $context['folder'], ';start=', $context['start'], ';sort=date', $context['sort_by'] == 'date' && $context['sort_direction'] == 'up' ? ';desc' : '', $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', '">', $txt['date'], $context['sort_by'] == 'date' ? ' <span class="sort_' . $context['sort_direction'] . '"></span>' : '', '</a>
@@ -473,7 +473,7 @@ function template_subject_list()
 			<th class="left" style="width: 15%">
 				<a href="<URL>?action=pm;f=', $context['folder'], ';start=', $context['start'], ';sort=name', $context['sort_by'] == 'name' && $context['sort_direction'] == 'up' ? ';desc' : '', $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', '">', ($context['from_or_to'] == 'from' ? $txt['from'] : $txt['to']), $context['sort_by'] == 'name' ? ' <span class="sort_' . $context['sort_direction'] . '"></span>' : '', '</a>
 			</th>
-			<th style="text-align: center; width: 4%" class="last_th">
+			<th style="text-align: center; width: 4%">
 				<input type="checkbox" onclick="invertAll(this, this.form);">
 			</th>
 		</tr>
@@ -650,9 +650,9 @@ function template_search_results()
 	<table class="table_grid w100 cs0">
 	<thead>
 		<tr class="catbg left">
-			<th class="first_th" style="width: 30%">', $txt['date'], '</th>
+			<th style="width: 30%">', $txt['date'], '</th>
 			<th class="w50">', $txt['subject'], '</th>
-			<th class="last_th" style="width: 20%">', $txt['from'], '</th>
+			<th style="width: 20%">', $txt['from'], '</th>
 		</tr>
 	</thead>
 	<tbody>';
@@ -1002,10 +1002,10 @@ function template_labels()
 		<table class="table_grid w100 cs0">
 		<thead>
 			<tr class="catbg">
-				<th class="left first_th">
+				<th class="left">
 					', $txt['pm_label_name'], '
 				</th>
-				<th class="center last_th" style="width: 4%">';
+				<th class="center" style="width: 4%">';
 
 	if (count($context['labels']) > 2)
 		echo '
@@ -1165,10 +1165,10 @@ function template_rules()
 		<table class="table_grid w100 cs0">
 		<thead>
 			<tr class="catbg">
-				<th class="left first_th">
+				<th class="left">
 					', $txt['pm_rule_title'], '
 				</th>
-				<th style="width: 4%" class="center last_th">';
+				<th style="width: 4%" class="center">';
 
 	if (!empty($context['rules']))
 		echo '

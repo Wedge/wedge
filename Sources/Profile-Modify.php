@@ -1685,7 +1685,7 @@ function notification($memID)
 			'board_name' => array(
 				'header' => array(
 					'value' => $txt['notifications_boards'],
-					'class' => 'left first_th',
+					'class' => 'left',
 				),
 				'data' => array(
 					'function' => create_function('$board', '
@@ -1767,7 +1767,7 @@ function notification($memID)
 			'subject' => array(
 				'header' => array(
 					'value' => $txt['notifications_topics'],
-					'class' => 'left first_th',
+					'class' => 'left',
 				),
 				'data' => array(
 					'function' => create_function('$topic', '

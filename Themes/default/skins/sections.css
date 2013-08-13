@@ -1244,6 +1244,8 @@ div.top_row dd
 	margin-top: 5px
 	td
 		text-align: center
+	tbody th
+		border-radius: 0
 	th
 		width: 15%
 	.day

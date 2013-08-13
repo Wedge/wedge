@@ -36,9 +36,9 @@ function template_modfilter_home()
 	<table class="table_grid cs0 w100">
 		<thead>
 			<tr class="catbg">
-				<th scope="col" class="first_th left">', $txt['modfilter_rule_' . $type], '</th>
+				<th class="left">', $txt['modfilter_rule_' . $type], '</th>
 				<th class="left">', $txt['modfilter_conditions'], '</th>
-				<th scope="col" class="last_th"></th>
+				<th></th>
 			</tr>
 		</thead>
 		<tbody>';
@@ -219,9 +219,9 @@ function template_modfilter_edit()
 				<table class="table_grid cs0" style="width: 100%" id="conds">
 					<thead>
 						<tr class="catbg">
-							<th scope="col" class="first_th left" style="width: 40%">', $txt['modfilter_conds_item'], '</th>
-							<th scope="col" class="left">', $txt['modfilter_conds_criteria'], '</th>
-							<th scope="col" class="last_th" style="width: 10%"></th>
+							<th class="left" style="width: 40%">', $txt['modfilter_conds_item'], '</th>
+							<th class="left">', $txt['modfilter_conds_criteria'], '</th>
+							<th style="width: 10%"></th>
 						</tr>
 					</thead>
 					<tbody id="conds_empty">

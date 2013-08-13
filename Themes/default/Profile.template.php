@@ -502,25 +502,25 @@ function template_showPosts()
 		<table class="table_grid w100 cs1 cp2 center">
 			<thead>
 				<tr class="titlebg">
-					<th class="first_th left w25" scope="col">
+					<th class="left w25">
 						<a href="<URL>?action=profile;u=', $context['current_member'], ';area=showposts;sa=attach;sort=filename', ($context['sort_direction'] == 'down' && $context['sort_order'] == 'filename' ? ';asc' : ''), '">
 							', $txt['show_attach_filename'], '
 							', ($context['sort_order'] == 'filename' ? '<span class="sort_' . ($context['sort_direction'] == 'down' ? 'down' : 'up') . '"></span>' : ''), '
 						</a>
 					</th>
-					<th scope="col" style="width: 12%">
+					<th style="width: 12%">
 						<a href="<URL>?action=profile;u=', $context['current_member'], ';area=showposts;sa=attach;sort=downloads', ($context['sort_direction'] == 'down' && $context['sort_order'] == 'downloads' ? ';asc' : ''), '">
 							', $txt['show_attach_downloads'], '
 							', ($context['sort_order'] == 'downloads' ? '<span class="sort_' . ($context['sort_direction'] == 'down' ? 'down' : 'up') . '"></span>' : ''), '
 						</a>
 					</th>
-					<th class="left" scope="col" style="width: 30%">
+					<th class="left" style="width: 30%">
 						<a href="<URL>?action=profile;u=', $context['current_member'], ';area=showposts;sa=attach;sort=subject', ($context['sort_direction'] == 'down' && $context['sort_order'] == 'subject' ? ';asc' : ''), '">
 							', $txt['message'], '
 							', ($context['sort_order'] == 'subject' ? '<span class="sort_' . ($context['sort_direction'] == 'down' ? 'down' : 'up') . '"></span>' : ''), '
 						</a>
 					</th>
-					<th class="last_th left" scope="col">
+					<th class="left">
 						<a href="<URL>?action=profile;u=', $context['current_member'], ';area=showposts;sa=attach;sort=posted', ($context['sort_direction'] == 'down' && $context['sort_order'] == 'posted' ? ';asc' : ''), '">
 						', $txt['show_attach_posted'], '
 						', ($context['sort_order'] == 'posted' ? '<span class="sort_' . ($context['sort_direction'] == 'down' ? 'down' : 'up') . '"></span>' : ''), '
@@ -577,10 +577,10 @@ function template_editBuddies()
 
 		<table class="table_grid w100 cs1 cp4 center">
 			<tr class="catbg">
-				<th class="first_th left" scope="col" style="width: 20%">', $txt['name'], '</th>
-				<th scope="col">', $txt['online_status'], '</th>
-				<th scope="col">', $txt['email'], '</th>
-				<th class="last_th" scope="col">', $txt['buddy_remove'], '</th>
+				<th class="left" style="width: 20%">', $txt['name'], '</th>
+				<th>', $txt['online_status'], '</th>
+				<th>', $txt['email'], '</th>
+				<th>', $txt['buddy_remove'], '</th>
 			</tr>';
 
 	// If they don't have any buddies don't list them!
@@ -645,10 +645,10 @@ function template_editIgnoreList()
 		</we:cat>
 		<table class="table_grid w100 cs1 cp4 center">
 			<tr class="catbg">
-				<th class="first_th" scope="col" style="width: 20%">', $txt['name'], '</th>
-				<th scope="col">', $txt['online_status'], '</th>
-				<th scope="col">', $txt['email'], '</th>
-				<th class="last_th" scope="col">', $txt['ignore_remove'], '</th>
+				<th style="width: 20%">', $txt['name'], '</th>
+				<th>', $txt['online_status'], '</th>
+				<th>', $txt['email'], '</th>
+				<th>', $txt['ignore_remove'], '</th>
 			</tr>';
 
 	// If they don't have anyone on their ignore list, don't list it!
@@ -807,8 +807,8 @@ function template_trackIP()
 		<table class="table_grid w100 cs0">
 			<thead>
 				<tr class="catbg">
-					<th class="first_th" scope="col">', $txt['ip_address'], '</th>
-					<th class="last_th" scope="col">', $txt['display_name'], '</th>
+					<th>', $txt['ip_address'], '</th>
+					<th>', $txt['display_name'], '</th>
 				</tr>
 			</thead>
 			<tbody>';
@@ -937,8 +937,8 @@ function template_showPermissions()
 			<table class="table_grid w100 cs0">
 				<thead>
 					<tr class="titlebg left">
-						<th class="first_th w50" scope="col">', $txt['showPermissions_permission'], '</th>
-						<th class="last_th w50" scope="col">', $txt['showPermissions_status'], '</th>
+						<th class="w50">', $txt['showPermissions_permission'], '</th>
+						<th class="w50">', $txt['showPermissions_status'], '</th>
 					</tr>
 				</thead>
 				<tbody>';
@@ -996,8 +996,8 @@ function template_showPermissions()
 			<table class="table_grid w100 cs0">
 				<thead>
 					<tr class="titlebg left">
-						<th class="first_th w50" scope="col">', $txt['showPermissions_permission'], '</th>
-						<th class="last_th w50" scope="col">', $txt['showPermissions_status'], '</th>
+						<th class="w50">', $txt['showPermissions_permission'], '</th>
+						<th class="w50">', $txt['showPermissions_status'], '</th>
 					</tr>
 				</thead>
 				<tbody>';
@@ -1631,8 +1631,8 @@ function template_groupMembership()
 			<table class="table_grid w100 cs0 cp4">
 				<thead>
 					<tr class="catbg">
-						<th class="first_th" scope="col" ', $context['can_edit_primary'] ? ' colspan="2"' : '', '>', $txt['current_membergroups'], '</th>
-						<th class="last_th" scope="col"></th>
+						<th', $context['can_edit_primary'] ? ' colspan="2"' : '', '>', $txt['current_membergroups'], '</th>
+						<th></th>
 					</tr>
 				</thead>
 				<tbody>';
@@ -1684,10 +1684,8 @@ function template_groupMembership()
 			<table class="table_grid w100 cs0 cp4">
 				<thead>
 					<tr class="catbg">
-						<th class="first_th" scope="col">
-							', $txt['available_groups'], '
-						</th>
-						<th class="last_th" scope="col"></th>
+						<th>', $txt['available_groups'], '</th>
+						<th></th>
 					</tr>
 				</thead>
 				<tbody>';
@@ -1880,15 +1878,16 @@ function template_profileInfractions()
 		<table class="w100 cs0 cp4">
 			<thead>
 				<tr class="catbg left">
-					<th class="first_th" scope="col">', $txt['infraction_issued_by'], '</th>
-					<th scope="col">', $txt['infraction_issued_on'], '</th>
-					<th scope="col">', $txt['infraction_expires_on'], '</th>
-					<th scope="col" class="center">', $txt['infraction_points'], '</th>
-					<th scope="col" class="center">', $txt['current_state'], '</th>
-					<th class="last_th" scope="col" colspan="2"></th>
+					<th>', $txt['infraction_issued_by'], '</th>
+					<th>', $txt['infraction_issued_on'], '</th>
+					<th>', $txt['infraction_expires_on'], '</th>
+					<th class="center">', $txt['infraction_points'], '</th>
+					<th class="center">', $txt['current_state'], '</th>
+					<th colspan="2"></th>
 				</tr>
 			</thead>
 			<tbody>';
+
 	$use_bg2 = true;
 	foreach ($context['infraction_log'] as $id_issue => $infraction)
 	{

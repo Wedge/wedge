@@ -23,12 +23,12 @@ function template_infractions()
 		<table class="w100 cs0">
 			<thead>
 				<tr class="catbg">
-					<th scope="col" class="first_th">', $txt['infraction_name'], '</th>
-					<th scope="col">', $txt['infraction_points'], '</th>
-					<th scope="col">', $txt['infraction_duration'], '</th>
-					<th scope="col">', $txt['infraction_sanctions'], '</th>
-					<th scope="col">', $txt['infraction_issuers'], '</th>
-					<th scope="col" class="last_th"></th>
+					<th>', $txt['infraction_name'], '</th>
+					<th>', $txt['infraction_points'], '</th>
+					<th>', $txt['infraction_duration'], '</th>
+					<th>', $txt['infraction_sanctions'], '</th>
+					<th>', $txt['infraction_issuers'], '</th>
+					<th></th>
 				</tr>
 			</thead>
 			<tbody>';

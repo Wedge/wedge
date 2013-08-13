@@ -51,6 +51,7 @@
 
 html
 	min-height: 100%
+	overflow-y: scroll
 	background: #369																			// For old browsers...
 	background: fixed linear-gradient(45deg, #505b66, #a0a6ab 500px, #505b66 1000px, #505b66)	// Fallback background for browsers that support linear gradients...
 	background: radial-gradient(circle farthest-corner at 50% 40%, #eee, #012)					// And this is the one we want. Phew...
@@ -216,8 +217,19 @@ ul#noava
 	padding: 8px 30px
 
 #flags mixes .inline-block // Language flags
-	margin: 6px 1em 0 0
-	padding: 0
+//	margin: 6px 1em 0 0
+//	padding: 0
+	margin: 4px .5em -1px 0
+
+/* from .iconbox */
+	text-align: center
+	cursor: pointer
+	padding: 2px 3px
+	:hover, &.hove
+		padding: 1px 2px
+		background: #fff
+		border: 1px solid #adadad
+/* back to normal... */
 	a
 		margin-top: -3px
 
@@ -643,6 +655,12 @@ tr.catbg .sbox, tr.titlebg .sbox
 
 .qaction
 	font-size: .85em
+
+.dd mixes .hide
+	position: absolute
+	background: rgba(255,255,255,.5)
+	border: 1px solid #aaa
+	padding: 8px
 
 /* Top-level menu icons.
 ------------------------------------------------------- */
@@ -1611,20 +1629,24 @@ dl#feed
 		font-size: 10pt
 		th
 			padding: 4px 3px
-	th.last_th input
-		margin: 0 2px
+		th:first-child
+			border-top-left-radius: 8px
+		th:last-child
+			border-top-right-radius: 8px
 	th.left
 		padding: 0 .7em
 	td, th
 		padding: 3px
 		border: 1px solid #fff
 		border-width: 0 1px 1px 0
+	th
+		border-width: 0 0 1px 0
+	th:last-child input
+		margin: 0 2px
 	td:last-child
 		border-right-width: 0
 	tr:last-child td
 		border-bottom-width: 0
-	th
-		border-width: 0 0 1px 0
 
 // GenericList
 .additional_row
@@ -1801,16 +1823,6 @@ h6
 	#header, #navi, #sidebar
 		display: none !important
 
-/* A few more header styles...
-------------------------------------------------------- */
-
-th.first_th
-	border-radius: 8px 0 0 0
-	padding-left: 8px !important
-
-th.last_th
-	border-radius: 0 8px 0 0
-
 /* A few styles for notifications
 ------------------------------------------------------- */
 @if member
@@ -1946,24 +1958,3 @@ $alphamix = $main_bg
 @mixin checkbox-styling
 	background: none
 	border: 0
-
-/*
-	// This example is here to showcase the mixin power. You can use : or = in param lists.
-
-	@mixin example($border, $width: 777px, $co: #888)
-		width: $width
-		font-size: 1em
-		background: $main_bg
-		a
-			@if $border > 0
-				border: $border
-			@endif
-			color: $board_col
-
-	.class
-		.thing mixes example (2px)
-			or...
-			mixin: example
-			mixin: example(1px dotted white)
-			mixin: example(,, #fff)
-*/

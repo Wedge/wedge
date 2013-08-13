@@ -80,7 +80,6 @@ function Memberlist()
 		'is_online' => array(
 			'label' => $txt['online_status'],
 			'width' => '60',
-			'class' => 'first_th',
 		),
 		'real_name' => array(
 			'label' => $txt['username']
@@ -149,10 +148,6 @@ function Memberlist()
 	}
 	if (!empty($context['custom_fields']))
 		$context['columns'] = array_insert($context['columns'], 'id_group', $context['custom_fields']);
-
-	// Aesthetic stuff.
-	end($context['columns']);
-	$context['columns'][key($context['columns'])]['class'] = 'last_th';
 
 	add_linktree($txt['members_list'], '<URL>?action=mlist');
 

@@ -71,9 +71,9 @@ function template_notification_subs_profile()
 			<table class="table_grid cs0 w100">
 				<thead>
 					<tr class="catbg">
-						<th scope="cols" class="left first_th">', $subscription['profile']['label'], '</th>
-						<th scope="cols" class="left">', $txt['notif_subs_start_time'], '</th>
-						<th scope="cols" class="left last_th" style="width: 8%">', $txt['notif_unsubscribe'], '</th>
+						<th class="left">', $subscription['profile']['label'], '</th>
+						<th class="left">', $txt['notif_subs_start_time'], '</th>
+						<th class="left" style="width: 8%">', $txt['notif_unsubscribe'], '</th>
 					</tr>
 				</thead>
 				<tr>

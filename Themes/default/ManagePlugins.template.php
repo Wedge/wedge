@@ -191,10 +191,10 @@ function template_add_plugins()
 		<table class="table_grid cs0" style="width: 100%">
 			<thead>
 				<tr class="catbg">
-					<th scope="col" class="first_th" style="text-align: left; width: 55%">', $txt['plugins_repository'], '</th>
-					<th scope="col" style="width: 15%">', $txt['plugins_active'], '</th>
-					<th scope="col" style="width: 15%"></th>
-					<th scope="col" style="width: 15%" class="last_th"></th>
+					<th style="width: 55%; text-align: left">', $txt['plugins_repository'], '</th>
+					<th style="width: 15%">', $txt['plugins_active'], '</th>
+					<th style="width: 15%"></th>
+					<th style="width: 15%"></th>
 				</tr>
 			</thead>
 			<tbody>';

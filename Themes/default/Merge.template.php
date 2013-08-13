@@ -149,11 +149,11 @@ function template_merge_extra_options()
 			<table class="table_grid w100 cs0">
 				<thead>
 					<tr class="catbg">
-						<th scope="col" class="first_th center" style="width: 10px">', $txt['merge_check'], '</th>
-						<th scope="col" class="left">', $txt['subject'], '</th>
-						<th scope="col" class="left">', $txt['started_by'], '</th>
-						<th scope="col" class="left">', $txt['last_post'], '</th>
-						<th scope="col" class="last_th" style="width: 20px">', $txt['merge_include_notifications'], '</th>
+						<th class="center" style="width: 10px">', $txt['merge_check'], '</th>
+						<th class="left">', $txt['subject'], '</th>
+						<th class="left">', $txt['started_by'], '</th>
+						<th class="left">', $txt['last_post'], '</th>
+						<th style="width: 20px">', $txt['merge_include_notifications'], '</th>
 					</tr>
 				</thead>
 				<tbody>';

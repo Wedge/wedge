@@ -47,39 +47,39 @@ function template_main_board()
 		if (!empty($context['topics']))
 		{
 			echo '
-					<th scope="col" class="first_th" style="width: 4%">&nbsp;</th>
-					<th scope="col" class="left">', template_messageindex_sortlink('subject', $txt['subject']), ' / ', template_messageindex_sortlink('starter', $txt['started_by']), '</th>';
+					<th style="width: 4%">&nbsp;</th>
+					<th class="left">', template_messageindex_sortlink('subject', $txt['subject']), ' / ', template_messageindex_sortlink('starter', $txt['started_by']), '</th>';
 
 			if (!SKIN_MOBILE)
 			{
 				echo '
-					<th scope="col" style="width: 14%">', template_messageindex_sortlink('replies', $txt['replies']), ' / ', template_messageindex_sortlink('views', $txt['views']), '</th>';
+					<th style="width: 14%">', template_messageindex_sortlink('replies', $txt['replies']), ' / ', template_messageindex_sortlink('views', $txt['views']), '</th>';
 
 				// Show a "select all" box for quick moderation?
 				if (empty($context['quick_moderation']))
 					echo '
-					<th scope="col" class="left last_th" style="width: 22%">', template_messageindex_sortlink('last_post', $txt['last_post']), '</th>';
+					<th class="left" style="width: 22%">', template_messageindex_sortlink('last_post', $txt['last_post']), '</th>';
 				else
 					echo '
-					<th scope="col" class="left" style="width: 22%">', template_messageindex_sortlink('last_post', $txt['last_post']), '</th>';
+					<th class="left" style="width: 22%">', template_messageindex_sortlink('last_post', $txt['last_post']), '</th>';
 			}
 
 			// Show a "select all" box for quick moderation?
 			if (!empty($context['quick_moderation']))
 				echo '
-					<th scope="col" class="last_th" style="width: 24px"><input type="checkbox" onclick="invertAll(this, this.form, \'topics[]\');"></th>';
+					<th style="width: 24px"><input type="checkbox" onclick="invertAll(this, this.form, \'topics[]\');"></th>';
 
 			// If it's on in "image" mode, don't show anything but the column.
 			elseif (!empty($context['quick_moderation']))
 				echo '
-					<th class="last_th" style="width: 4%">&nbsp;</th>';
+					<th style="width: 4%">&nbsp;</th>';
 		}
 		// No topics.... just say, "sorry bub".
 		else
 			echo '
-					<th scope="col" class="first_th" style="width: 8%">&nbsp;</th>
+					<th style="width: 8%">&nbsp;</th>
 					<th colspan="3"><strong>', $txt['msg_alert_none'], '</strong></th>
-					<th scope="col" class="last_th" style="width: 8%">&nbsp;</th>';
+					<th style="width: 8%">&nbsp;</th>';
 
 		echo '
 				</tr>
@@ -225,9 +225,9 @@ function template_main_blog()
 		// Are there actually any topics to show?
 		if (empty($context['topics']))
 			echo '
-					<th scope="col" class="first_th" style="width: 8%">&nbsp;</th>
+					<th style="width: 8%">&nbsp;</th>
 					<th colspan="3"><strong>', $txt['msg_alert_none'], '</strong></th>
-					<th scope="col" class="last_th" style="width: 8%">&nbsp;</th>';
+					<th style="width: 8%">&nbsp;</th>';
 
 		echo '
 				</tr>

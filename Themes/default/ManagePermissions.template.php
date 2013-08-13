@@ -35,12 +35,12 @@ function template_permission_index()
 			<table class="table_grid w100 cs0">
 				<thead>
 					<tr class="catbg center">
-						<th class="first_th left">', $txt['membergroups_name'], '</th>
+						<th class="left">', $txt['membergroups_name'], '</th>
 						<th style="width: 10%">', $txt['membergroups_members_top'], '</th>
 						<th style="width: 8%">', $txt['permissions_allowed'], '</th>
 						<th style="width: 8%">', $txt['permissions_denied'], '</th>
 						<th style="width: 10%">', $context['can_modify'] ? $txt['permissions_modify'] : $txt['permissions_view'], '</th>
-						<th class="last_th" style="width: 4%">
+						<th style="width: 4%">
 							', $context['can_modify'] ? '<input type="checkbox" onclick="invertAll(this, this.form, \'group\');">' : '', '
 						</th>
 					</tr>
@@ -336,9 +336,9 @@ function template_edit_profiles()
 			<table class="table_grid w100 cs0">
 				<thead>
 					<tr class="catbg">
-						<th class="first_th">', $txt['permissions_profile_name'], '</th>
+						<th>', $txt['permissions_profile_name'], '</th>
 						<th>', $txt['permissions_profile_used_by'], '</th>
-						<th class="last_th" style="width: 5%">', $txt['delete'], '</th>
+						<th style="width: 5%">', $txt['delete'], '</th>
 					</tr>
 				</thead>
 				<tbody>';

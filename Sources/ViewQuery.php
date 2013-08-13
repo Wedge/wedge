@@ -157,18 +157,16 @@ function ViewQuery()
 			if ($result === false)
 			{
 				echo '
-	<table class="cp4 cs0" style="border: 1px; empty-cells: show; font-family: serif; margin-bottom: 2ex">
+	<table class="cp4" style="margin-bottom: 2ex">
 		<tr><td>', wesql::error($db_connection), '</td></tr>
 	</table>';
 				continue;
 			}
 
-			echo '
-	<table class="cp4 cs0" rules="all" style="border: 1px; empty-cells: show; font-family: serif; margin-bottom: 2ex">';
-
 			$row = wesql::fetch_assoc($result);
 
 			echo '
+	<table class="cp4" rules="all" style="margin-bottom: 2ex">
 		<tr>
 			<th>' . implode('</th>
 			<th>', array_keys($row)) . '</th>
@@ -176,13 +174,12 @@ function ViewQuery()
 
 			wesql::data_seek($result, 0);
 			while ($row = wesql::fetch_assoc($result))
-			{
 				echo '
 		<tr>
 			<td>' . implode('</td>
 			<td>', $row) . '</td>
 		</tr>';
-			}
+
 			wesql::free_result($result);
 
 			echo '

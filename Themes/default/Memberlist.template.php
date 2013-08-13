@@ -47,18 +47,15 @@ function template_main()
 		// We're not able (through the template) to sort the search results right now...
 		if (isset($context['old_search']))
 			echo '
-					<th scope="col"', isset($column['class']) ? ' class="' . $column['class'] . '"' : '', isset($column['width']) ? ' style="width: ' . $column['width'] . 'px"' : '', isset($column['colspan']) ? ' colspan="' . $column['colspan'] . '"' : '', '>
-						', $column['label'], '</th>';
+					<th', isset($column['class']) ? ' class="' . $column['class'] . '"' : '', isset($column['width']) ? ' style="width: ' . $column['width'] . 'px"' : '', isset($column['colspan']) ? ' colspan="' . $column['colspan'] . '"' : '', '>', $column['label'], '</th>';
 		// This is a selected column, so underline it or some such.
 		elseif ($column['selected'])
 			echo '
-					<th scope="col" class="nowrap', isset($column['class']) ? ' ' . $column['class'] : '', '" style="width: auto"' . (isset($column['colspan']) ? ' colspan="' . $column['colspan'] . '"' : '') . '>
-						<a href="' . $column['href'] . '" rel="nofollow">' . $column['label'] . ' <span class="sort_' . $context['sort_direction'] . '"></span></a></th>';
+					<th class="nowrap', isset($column['class']) ? ' ' . $column['class'] : '', '" style="width: auto"' . (isset($column['colspan']) ? ' colspan="' . $column['colspan'] . '"' : '') . '><a href="' . $column['href'] . '" rel="nofollow">' . $column['label'] . ' <span class="sort_' . $context['sort_direction'] . '"></span></a></th>';
 		// This is just some column... show the link and be done with it.
 		else
 			echo '
-					<th scope="col"', isset($column['class']) ? ' class="' . $column['class'] . '"' : '', isset($column['width']) ? ' style="width: ' . $column['width'] . 'px"' : '', isset($column['colspan']) ? ' colspan="' . $column['colspan'] . '"' : '', '>
-						', $column['link'], '</th>';
+					<th', isset($column['class']) ? ' class="' . $column['class'] . '"' : '', isset($column['width']) ? ' style="width: ' . $column['width'] . 'px"' : '', isset($column['colspan']) ? ' colspan="' . $column['colspan'] . '"' : '', '>', $column['link'], '</th>';
 	}
 	echo '
 				</tr>
