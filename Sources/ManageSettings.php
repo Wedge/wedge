@@ -98,9 +98,11 @@ function ModifyBasicSettings($return_config = false)
 
 	$config_vars = array(
 			array('mbname', $txt['setting_mbname'], 'file', 'text', 30),
-			array('home_url', $txt['home_url'], 'db', 'text', 30, 'subtext' => $txt['home_url_subtext']),
+			array('home_url', $txt['home_url'], 'db', 'text', 40, 'subtext' => $txt['home_url_subtext']),
 			array('home_link', $txt['home_link'], 'db', 'check', 'subtext' => $txt['home_link_subtext']),
-			array('site_slogan', $txt['site_slogan'], 'db', 'text', 50, 'subtext' => $txt['site_slogan_desc']),
+		'',
+			array('site_slogan', $txt['site_slogan'], 'db', 'text', 40, 'subtext' => $txt['site_slogan_desc']),
+			array('header_logo_url', $txt['header_logo_url'], 'db', 'text', 40, 'subtext' => $txt['header_logo_url_desc']),
 		'',
 			// Number formatting, timezones.
 			array('todayMod', $txt['todayMod'], 'db', 'select', array(

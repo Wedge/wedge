@@ -17,12 +17,6 @@ function template_settings()
 
 	$context['theme_settings'] = array(
 		array(
-			'id' => 'header_logo_url',
-			'label' => $txt['header_logo_url'],
-			'description' => $txt['header_logo_url_desc'],
-			'type' => 'text',
-		),
-		array(
 			'id' => 'smiley_sets_default',
 			'label' => $txt['smileys_default_set_for_theme'],
 			'options' => $context['smiley_sets'],
