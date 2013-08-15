@@ -761,7 +761,7 @@ class wess_func extends wess
 			$done[$file] = true;
 
 			// Get dimensions from file. Try to turn it into absolute path if a URL was given.
-			list ($width, $height) = getimagesize(str_replace($boardurl, $boarddir, $file));
+			list ($width, $height) = @getimagesize(str_replace($boardurl, $boarddir, $file));
 			$css = str_replace(array('width(' . $file . ')', 'height(' . $file . ')'), array($width, $height), $css);
 		}
 	}
@@ -1484,7 +1484,7 @@ class wess_prefixes extends wess
 		);
 
 		// Only IE6/7/8 don't support border-radius these days.
-		if ($matches[1] === 'border-radius')
+		if (strpos($matches[1], '-radius') !== false)
 		{
 			if ($ie8down)
 				return '';
@@ -1688,7 +1688,7 @@ class wess_prefixes extends wess
 		// Some prominent CSS3 may or may not need a prefix. Wedge will take care of that for you.
 		$rules = array(
 
-			'border-radius',				// Rounded corners
+			'border(?:-[a-z-]+)?-radius',	// Rounded corners
 			'box-shadow',					// Rectangular drop shadows
 			'box-sizing',					// Determines whether a container's width includes padding and border
 			'border-image',					// Border images

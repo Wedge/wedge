@@ -63,7 +63,10 @@ function template_main()
 				<dt>', $txt['users_online_today'], ':</dt>
 				<dd>', $context['online_today'], '</dd>
 				<dt>', $txt['users_online'], ':</dt>
-				<dd>', $context['users_online'], '</dd>
+				<dd>', $context['users_online'], '</dd>';
+
+	if (allowedTo('moderate_forum'))
+		echo '
 				<dt>', $txt['most_online_ever'], ':</dt>
 				<dd>', $context['most_members_online']['number'], ' (', $context['most_members_online']['date'], ')</dd>';
 
@@ -313,7 +316,10 @@ function template_main()
 						<th class="w25">', $txt['yearly_summary'], '</th>
 						<th>', $txt['stats_new_topics'], '</th>
 						<th>', $txt['stats_new_posts'], '</th>
-						<th>', $txt['stats_new_members'], '</th>
+						<th>', $txt['stats_new_members'], '</th>';
+
+		if (allowedTo('moderate_forum'))
+			echo '
 						<th>', $txt['most_online'], '</th>';
 
 		if (!empty($settings['hitStats']))
@@ -335,7 +341,10 @@ function template_main()
 						</th>
 						<th>', $year['new_topics'], '</th>
 						<th>', $year['new_posts'], '</th>
-						<th>', $year['new_members'], '</th>
+						<th>', $year['new_members'], '</th>';
+
+			if (allowedTo('moderate_forum'))
+				echo '
 						<th>', $year['most_members_online'], '</th>';
 
 			if (!empty($settings['hitStats']))
@@ -355,7 +364,10 @@ function template_main()
 						</th>
 						<th>', $month['new_topics'], '</th>
 						<th>', $month['new_posts'], '</th>
-						<th>', $month['new_members'], '</th>
+						<th>', $month['new_members'], '</th>';
+
+			if (allowedTo('moderate_forum'))
+				echo '
 						<th>', $month['most_members_online'], '</th>';
 
 				if (!empty($settings['hitStats']))
@@ -374,7 +386,10 @@ function template_main()
 						<td class="day">', $day['year'], '-', $day['month'], '-', $day['day'], '</td>
 						<td>', $day['new_topics'], '</td>
 						<td>', $day['new_posts'], '</td>
-						<td>', $day['new_members'], '</td>
+						<td>', $day['new_members'], '</td>';
+
+						if (allowedTo('moderate_forum'))
+							echo '
 						<td>', $day['most_members_online'], '</td>';
 
 						if (!empty($settings['hitStats']))
@@ -422,8 +437,8 @@ function template_main()
 			\'date\',
 			\'new_topics\',
 			\'new_posts\',
-			\'new_members\',
-			\'most_members_online\'' . (empty($settings['hitStats']) ? '' : ',
+			\'new_members\'' . (allowedTo('moderate_forum') ? '' : ',
+			\'most_members_online\'') . (empty($settings['hitStats']) ? '' : ',
 			\'hits\'') . '
 		]
 	});');

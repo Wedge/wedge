@@ -35,6 +35,7 @@ function Stats()
 	global $txt, $settings, $context;
 
 	isAllowedTo('view_stats');
+	$can_view_most_online = allowedTo('moderate_forum');
 
 	if (empty($settings['trackStats']))
 		fatal_lang_error('cannot_view_stats', false);
@@ -79,7 +80,8 @@ function Stats()
 
 				foreach ($month['days'] as $day)
 					$stats .= '<day date="' . $day['year'] . '-' . $day['month'] . '-' . $day['day'] . '" new_topics="' . $day['new_topics'] . '" new_posts="'
-							. $day['new_posts'] . '" new_members="' . $day['new_members'] . '" most_members_online="' . $day['most_members_online'] . '"'
+							. $day['new_posts'] . '" new_members="' . $day['new_members'] . '"'
+							. ($can_view_most_online ? ' most_members_online="' . $day['most_members_online'] . '"' : '')
 							. (empty($settings['hitStats']) ? '' : ' hits="' . $day['hits'] . '"') . ' />';
 
 				$stats .= '</month>';
@@ -162,11 +164,13 @@ function Stats()
 	$context['num_members'] = comma_format($settings['totalMembers']);
 	$context['num_posts'] = comma_format($settings['totalMessages']);
 	$context['num_topics'] = comma_format($settings['totalTopics']);
-	$context['most_members_online'] = array(
-		'number' => comma_format($settings['mostOnline']),
-		'date' => timeformat($settings['mostDate'])
-	);
 	$context['latest_member'] =& $context['common_stats']['latest_member'];
+
+	if ($can_view_most_online)
+		$context['most_members_online'] = array(
+			'number' => comma_format($settings['mostOnline']),
+			'date' => timeformat($settings['mostDate'])
+		);
 
 	// Male vs. female ratio - let's calculate this only every four minutes.
 	if (($context['gender'] = cache_get_data('stats_gender', 240)) == null)

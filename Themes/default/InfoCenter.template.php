@@ -86,11 +86,16 @@ function template_info_center_usersonline()
 	}
 
 	echo '
-		</p>
+		</p>';
+
+	if (allowedTo('moderate_forum'))
+		echo '
 		<p class="last">
 			', $txt['most_online_today'], ': <strong>', comma_format($settings['mostOnlineToday']), '</strong>.
 			', $txt['most_online_ever'], ': ', comma_format($settings['mostOnline']), ' (', timeformat($settings['mostDate']), ')
-		</p>
+		</p>';
+
+	echo '
 	</section>';
 }
 
