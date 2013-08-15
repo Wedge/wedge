@@ -62,7 +62,7 @@ function template_maintenance()
 		<we:cat>
 			', $txt['attachment_stats'], '
 		</we:cat>
-		<div class="windowbg wrc">
+		<div class="windowbg2 wrc">
 			<dl class="settings">
 				<dt><strong>', $txt['attachment_total'], ':</strong></dt><dd>', $context['num_attachments'], '</dd>
 				<dt><strong>', $txt['attachment_manager_total_avatars'], ':</strong></dt><dd>', $context['num_avatars'], '</dd>
@@ -73,7 +73,7 @@ function template_maintenance()
 		<we:cat>
 			', $txt['attachment_integrity_check'], '
 		</we:cat>
-		<div class="windowbg wrc">
+		<div class="windowbg2 wrc">
 			<form action="<URL>?action=admin;area=manageattachments;sa=repair;', $context['session_query'], '" method="post" accept-charset="UTF-8">
 				<p>', $txt['attachment_integrity_check_desc'], '</p>
 				<input type="submit" value="', $txt['attachment_check_now'], '" class="submit">
@@ -82,7 +82,7 @@ function template_maintenance()
 		<we:cat>
 			', $txt['attachment_pruning'], '
 		</we:cat>
-		<div class="windowbg wrc">
+		<div class="windowbg2 wrc">
 			<form action="<URL>?action=admin;area=manageattachments" method="post" accept-charset="UTF-8" onsubmit="return ask(', $warning, ', e);" style="margin: 0 0 2ex 0">
 				', $txt['attachment_remove_old'], ' <input name="age" value="25" size="4"> ', $txt['days_word'], '<br>
 				', $txt['attachment_pruning_message'], ': <input name="notice" value="', $txt['attachment_delete_admin'], '" size="40"><br>
@@ -124,7 +124,7 @@ function template_attachment_repair()
 		<we:cat>
 			', $txt['repair_attachments_complete'], '
 		</we:cat>
-		<div class="windowbg wrc">
+		<div class="windowbg2 wrc">
 			', $txt['repair_attachments_complete_desc'], '
 		</div>
 	</div>

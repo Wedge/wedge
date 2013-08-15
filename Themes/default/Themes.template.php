@@ -613,9 +613,9 @@ function template_edit_browse()
 		<table class="table_grid w100 cs0">
 		<thead>
 			<tr class="catbg">
-				<th class="left first_th w50" scope="col">', $txt['themeadmin_edit_filename'], '</th>
-				<th scope="col" style="width: 35%">', $txt['themeadmin_edit_modified'], '</th>
-				<th class="last_th" scope="col" style="width: 15%">', $txt['themeadmin_edit_size'], '</th>
+				<th class="left w50">', $txt['themeadmin_edit_filename'], '</th>
+				<th style="width: 35%">', $txt['themeadmin_edit_modified'], '</th>
+				<th style="width: 15%">', $txt['themeadmin_edit_size'], '</th>
 			</tr>
 		</thead>
 		<tbody>';

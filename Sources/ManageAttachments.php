@@ -333,31 +333,25 @@ function BrowseFiles()
 					'function' => create_function('$rowData', '
 						global $settings, $context;
 
-						$link = \'<a href="\';
-
 						// In case of a custom avatar URL attachments have a fixed directory.
 						if ($rowData[\'attachment_type\'] == 1)
-							$link .= sprintf(\'%1$s/%2$s\', $settings[\'custom_avatar_url\'], $rowData[\'filename\']);
+							$url = sprintf(\'%1$s/%2$s\', $settings[\'custom_avatar_url\'], $rowData[\'filename\']);
 
 						// By default avatars are downloaded almost as attachments.
 						elseif ($context[\'browse_type\'] == \'avatars\')
-							$link .= sprintf(\'<URL>?action=dlattach;type=avatar;attach=%1$d\', $rowData[\'id_attach\']);
+							$url = sprintf(\'<URL>?action=dlattach;type=avatar;attach=%1$d\', $rowData[\'id_attach\']);
 
 						// Normal attachments are always linked to a topic ID.
 						else
-							$link .= sprintf(\'<URL>?action=dlattach;topic=%1$d.0;attach=%2$d\', $rowData[\'id_topic\'], $rowData[\'id_attach\']);
+							$url = sprintf(\'<URL>?action=dlattach;topic=%1$d.0;attach=%2$d\', $rowData[\'id_topic\'], $rowData[\'id_attach\']);
 
-						$link .= \'"\';
-
-						// Show a popup on click if it\'s a picture and we know its dimensions.
+						// Show a 50x50 (or smaller) thumbnail if it\'s a picture, and we know its dimensions.
+						$link = \'\';
 						if (!empty($rowData[\'width\']) && !empty($rowData[\'height\']))
-							$link .= sprintf(\' onclick="return reqWin(this\' . ($rowData[\'attachment_type\'] == 1 ? \'\' : \'.href + \\\';image\\\'\') . \', %1$d, %2$d, true);"\', $rowData[\'width\'] + 20, $rowData[\'height\'] + 50, true);
+							$link .= \'<img style="float: left; margin-right: 8px; max-width: 50px; max-height: 50px" src="\' . $url . \';image;nh">\'
+								  . sprintf(\'<span class="tinytext">%1$dx%2$d</span> \', $rowData[\'width\'], $rowData[\'height\']);
 
-						$link .= sprintf(\'>%1$s</a>\', westr::htmlspecialchars($rowData[\'filename\']));
-
-						// Show the dimensions.
-						if (!empty($rowData[\'width\']) && !empty($rowData[\'height\']))
-							$link .= sprintf(\' <span class="smalltext">%1$dx%2$d</span>\', $rowData[\'width\'], $rowData[\'height\']);
+						$link .= sprintf(\'<a href="%1$s" class="smalltext">%2$s</a>\', $url, westr::htmlspecialchars($rowData[\'filename\']));
 
 						return $link;
 					'),
@@ -377,7 +371,6 @@ function BrowseFiles()
 
 						return sprintf(\'%1$s%2$s\', round($rowData[\'size\'] / 1024, 2), $txt[\'kilobyte\']);
 					'),
-					'class' => 'windowbg',
 				),
 				'sort' => array(
 					'default' => 'a.size',
@@ -421,7 +414,6 @@ function BrowseFiles()
 
 						return $date;
 						'),
-					'class' => 'windowbg',
 				),
 				'sort' => array(
 					'default' => $context['browse_type'] === 'avatars' ? 'mem.last_login' : 'm.id_msg',
@@ -438,7 +430,6 @@ function BrowseFiles()
 
 						return comma_format($rowData[\'downloads\']);
 					'),
-					'class' => 'windowbg',
 				),
 				'sort' => array(
 					'default' => 'a.downloads',
