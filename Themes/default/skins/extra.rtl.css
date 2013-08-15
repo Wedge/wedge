@@ -4,19 +4,16 @@
 
 .floatright
 	float: left
-
 .floatleft
 	float: right
 
 .clear_left
 	clear: right
-
 .clear_right
 	clear: left
 
 .right
 	text-align: left
-
 .left
 	text-align: right
 
@@ -61,11 +58,12 @@ dl.settings
 	a.unreadlink
 		float: left
 
-th.first_th
-	border-radius: 0 8px 0 0
-
-th.last_th
-	border-radius: 8px 0 0 0
+.table_grid
+	tr.catbg, tr.titlebg
+		th:first-child
+			border-radius: 0 8px 0 0
+		th:last-child
+			border-radius: 8px 0 0 0
 
 
 /* Styles for the standard dropdown menus.

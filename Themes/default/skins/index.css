@@ -1088,36 +1088,28 @@ li.sep
 // Left and right-floating
 .floatleft
 	float: left
-
 .floatright
 	float: right
-
 .flow_auto
 	overflow: auto
-
 .flow_hidden
 	overflow: hidden
 
 .clear
 	clear: both
-
 .clear_left
 	clear: left
-
 .clear_right
 	clear: right
 
-.nowrap
-	white-space: nowrap
-
-.smalltext, tr.smalltext th
-	font-size: .9em
-
-.normaltext
-	font-size: 1em
-
 .largetext
-	font-size: 1.4em
+	font-size: 140%
+.normaltext
+	font-size: 100%
+.smalltext, tr.smalltext th
+	font-size: 85%
+.tinytext
+	font-size: 70%
 
 // Centering an element that has width
 .centered
@@ -1126,17 +1118,18 @@ li.sep
 // Centering, right and left-aligning text within an element
 .left
 	text-align: left
-
 .center
 	text-align: center
-
 .right
 	text-align: right
+
+// Some common styles
+.nowrap
+	white-space: nowrap
 
 .double_height
 	line-height: 2em
 
-// Some common padding styles
 .padding
 	padding: .7em
 

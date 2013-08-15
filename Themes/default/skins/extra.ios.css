@@ -24,7 +24,7 @@
 .smiley
 	vertical-align: middle
 
-.smalltext
+.tinytext, .smalltext
 	font-size: .6em
 	line-height: 1.2em
 

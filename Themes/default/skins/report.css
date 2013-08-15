@@ -4,12 +4,15 @@ body
 	background-color: #fff
 	zoom: 1
 
-body, td, .normaltext
+body, td
 	font-family: Verdana, Arial, sans-serif
 	font-size: small
 
 *, a:link, a:visited, a:hover, a:active
 	color: #000 !important
+
+.tinytext
+	font-size: xx-small
 
 .smalltext, .bbc_quote header, .bbc_code header
 	font-size: x-small

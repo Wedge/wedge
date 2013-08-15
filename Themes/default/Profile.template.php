@@ -2297,7 +2297,7 @@ function template_profileBan()
 		</form>';
 }
 
-// Template to show for deleting a users account - now with added delete post capability!
+// Template to show for deleting a user's account - now with added delete post capability!
 function template_deleteAccount()
 {
 	global $context, $theme, $txt;
@@ -2308,10 +2308,12 @@ function template_deleteAccount()
 			<we:cat>
 				<img src="', $theme['images_url'], '/icons/profile_sm.gif">', $txt['deleteAccount'], '
 			</we:cat>';
+
 	// If deleting another account give them a lovely info box.
 	if (!we::$user['is_owner'])
 		echo '
 			<p class="description">', $txt['deleteAccount_desc'], '</p>';
+
 	echo '
 			<div class="windowbg wrc">';
 
@@ -2776,6 +2778,7 @@ function template_profile_smiley_pick()
 							<option value="', $set['id'], '"', $set['selected'] ? ' selected' : '', '>', $set['name'], '</option>';
 
 	echo '
-						</select> <img id="smileypr" src="', $context['member']['smiley_set']['id'] != 'none' ? $settings['smileys_url'] . '/' . ($context['member']['smiley_set']['id'] != '' ? $context['member']['smiley_set']['id'] : (!empty($theme['smiley_sets_default']) ? $theme['smiley_sets_default'] : $settings['smiley_sets_default'])) . '/smiley.gif' : $theme['images_url'] . '/blank.gif', '" alt=":)" class="top" style="padding-left: 20px">
+						</select>
+						<img id="smileypr" src="', $context['member']['smiley_set']['id'] != 'none' ? $settings['smileys_url'] . '/' . ($context['member']['smiley_set']['id'] != '' ? $context['member']['smiley_set']['id'] : (!empty($theme['smiley_sets_default']) ? $theme['smiley_sets_default'] : $settings['smiley_sets_default'])) . '/smiley.gif' : $theme['images_url'] . '/blank.gif', '" alt=":)" class="top" style="padding-left: 20px">
 					</dd>';
 }

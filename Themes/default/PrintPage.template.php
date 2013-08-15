@@ -80,6 +80,10 @@ function template_print_before()
 			{
 				font-size: x-small;
 			}
+			.tinytext
+			{
+				font-size: xx-small;
+			}
 			.smalltext, .bbc_quote header, .bbc_code header
 			{
 				font-size: x-small;
