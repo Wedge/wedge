@@ -644,6 +644,7 @@ class we
 		// Note: Google recommends that Android smartphones indicate the 'Mobile' keyword. Tablets shouldn't have it.
 		foreach (explode('|', implode('|', array(
 			'Generic' => 'mobile', // Mainly for Android smartphones -- excludes tablets.
+			'Android' => 'android', // In some weird situations, such as Chrome desktop emulation of Android, it doesn't have the 'mobile' string.
 			'iOS' => 'iphone|ipod', // iPad tablets can perfectly handle non-mobile layouts...
 			'BlackBerry' => 'blackberry',
 			'Symbian' => 'symbian',

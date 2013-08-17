@@ -364,8 +364,8 @@ function Display()
 	}
 
 	// Create a previous/next string if the selected theme has it as a selected option.
-	$short_prev = empty($prev_title) ? '' : westr::cut($prev_title, 60);
-	$short_next = empty($next_title) ? '' : westr::cut($next_title, 60);
+	$short_prev = empty($prev_title) ? '' : westr::cut($prev_title, SKIN_MOBILE ? 20 : 60);
+	$short_next = empty($next_title) ? '' : westr::cut($next_title, SKIN_MOBILE ? 20 : 60);
 	$context['prevnext_prev'] = '
 			<div class="prevnext_prev">' . (empty($prev_topic) ? '' : '&laquo;&nbsp;<a href="<URL>?topic=' . $prev_topic . '.0#new"' . ($prev_title != $short_prev ? ' title="' . $prev_title . '"' : '') . '>' . $short_prev . '</a>') . '</div>';
 	$context['prevnext_next'] = '
@@ -1358,6 +1358,8 @@ function prepareDisplayContext($reset = false)
 	// Do the censor thang.
 	censorText($message['body']);
 	censorText($message['subject']);
+	if (SKIN_MOBILE)
+		$message['subject'] = westr::cut($message['subject'], 20);
 
 	$merge_safe = true;
 
@@ -1394,7 +1396,7 @@ function prepareDisplayContext($reset = false)
 		'icon_url' => $theme[$context['icon_sources'][$message['icon']]] . '/post/' . $message['icon'] . '.gif',
 		'subject' => $message['subject'],
 		'on_time' => on_timeformat($message['poster_time']),
-		'timestamp' => $message['poster_time'], // Don't apply time offset here. This is only used for displaying the time to mobile users, and timeformat() is called for that (which adjusts for timezone)
+		'timestamp' => $message['poster_time'], // Don't apply time offset here. This isn't used, but doesn't cost anything to include here, so...
 		'counter' => $board_info['type'] == 'board' ? $counter : ($counter == $context['start'] ? 0 : $counter),
 		'modified' => array(
 			'on_time' => on_timeformat($message['modified_time']),
