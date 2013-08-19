@@ -2012,7 +2012,7 @@ class wedit
 				$parts[$i] = preg_replace_callback('~\[html](.+?)\[/html]~i', 'wedit::unprotect_html', $parts[$i]);
 
 				// Attempt to un-parse the time to something less awful.
-				$parts[$i] = preg_replace_callback('~\[time](\d{0,10})\[/time]~i', 'wedit:format_time', $parts[$i]);
+				$parts[$i] = preg_replace_callback('~\[time](\d{0,10})\[/time]~i', 'wedit::format_time', $parts[$i]);
 			}
 		}
 

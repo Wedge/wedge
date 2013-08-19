@@ -114,6 +114,10 @@ function template_html_before()
 		echo '
 	<meta name="robots" content="noindex">';
 
+	if (isset($_SESSION['session_var'], $_GET[$_SESSION['session_var']]))
+		echo '
+	<meta name="referrer" content="origin">';
+
 	echo '
 </head>';
 }
