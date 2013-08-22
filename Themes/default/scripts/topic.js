@@ -36,11 +36,79 @@ $(function ()
 	});
 });
 
-$(window).load(function () {
-
+$(window).load(function ()
+{
 	// Only execute this on Display pages.
 	if (!$(document).find('#forumposts').length)
 		return;
+
+	/*
+		This area will deal with ensuring that user boxes (avatars etc.) stay on-screen
+		while you're scrolling the page, making it easier to determine who wrote what.
+	*/
+
+	// We need padding values, to ensure the user box doesn't go beyond acceptable boundaries.
+	var
+		$first_post = $('.poster').first(),
+		poster_padding_top = parseInt($first_post.css('padding-top')),
+		poster_padding_bot = parseInt($first_post.css('padding-bottom'));
+
+	// Once the page is loaded, we lock user box sizes, to prevent breaking the effect.
+	$('.poster').each(function () { $(this).width($(this).width()).height($(this).height()); });
+
+	// If user box has no padding, chances are it doesn't want this effect anyway.
+	if (!isNaN(poster_padding_top))
+	{
+		$(window).scroll(function ()
+		{
+			var
+				top = $(window).scrollTop(),
+				$poster = null,
+				offset,
+				poster_top,
+				ex_poster_top,
+				last = true;
+
+			// On each scroll, we retrieve the top position
+			// of all posts, to see which one is in scope.
+			$('.poster').each(function ()
+			{
+				if ($poster === null)
+				{
+					$poster = $(this);
+					offset = $(this).offset();
+					poster_top = offset.top;
+					return;
+				}
+				ex_poster_top = poster_top;
+				offset = $(this).offset();
+				poster_top = offset.top;
+				if (poster_top >= top)
+					return last = false;
+				$poster = $(this);
+			});
+
+			// If we're below the last post, we need some fixin'.
+			if (last)
+			{
+				ex_poster_top = poster_top;
+				poster_top += $poster.height();
+			}
+
+			// Or if we're above the first post, we can just forget about the effect.
+			// Otherwise, go ahead and 'fix' our current post's user box position.
+			var $col = top < $first_post.offset().top ? false : $poster.find('.column');
+			$('.poster .column').not($col).css('position', '');
+			if ($col.length)
+				$col.css({
+					position: 'fixed',
+					top: Math.min(poster_padding_top, poster_top - top - $col.height() - poster_padding_top - poster_padding_bot),
+					left: offset.left,
+					width: $col.width(),
+					height: $col.height()
+				});
+		});
+	}
 
 	/*
 		This is the code for the infinite scrolling feature.
@@ -113,7 +181,6 @@ $(window).load(function () {
 		else
 			count_scrolls = 0;
 	});
-
 });
 
 var hide_prefixes = [];
