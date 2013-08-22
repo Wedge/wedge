@@ -1825,8 +1825,6 @@ function prepareLikeContext($messages, $type = 'post')
 	if (empty($messages))
 		return;
 
-	$members_load = array();
-
 	// First, get everyone who has marked this as Like.
 	$request = wesql::query('
 		SELECT id_content, id_member
@@ -1848,25 +1846,10 @@ function prepareLikeContext($messages, $type = 'post')
 		// If it's us, log it as being us.
 		if ($row['id_member'] == we::$id)
 			$context['liked_posts'][$row['id_content']]['you'] = true;
-		// Otherwise, add it to the list, and if it's a member whose name we don't have, save that separately too. But only if we have up to 2 names.
-		elseif (empty($context['liked_posts'][$row['id_content']]['names']) || count($context['liked_posts'][$row['id_content']]['names']) < 2)
-		{
-			$context['liked_posts'][$row['id_content']]['names'][] = $row['id_member'];
-			if (!isset($user_profile[$row['id_member']]))
-				$members_load[$row['id_member']] = true;
-		}
-		// More than 3 people liked this (not including current user)? Just get the names.
+		elseif (empty($context['liked_posts'][$row['id_content']]['others']))
+			$context['liked_posts'][$row['id_content']]['others'] = 1;
 		else
-		{
-			if (empty($context['liked_posts'][$row['id_content']]['others']))
-				$context['liked_posts'][$row['id_content']]['others'] = 1;
-			else
-				$context['liked_posts'][$row['id_content']]['others']++;
-		}
+			$context['liked_posts'][$row['id_content']]['others']++;
 	}
 	wesql::free_result($request);
-
-	// Any members to load? We don't need everything, just their names. Note we deliberately didn't put it in the above query, because the chances are that we actually don't want all the names.
-	if (!empty($members_load))
-		loadMemberData(array_keys($members_load), false, 'minimal');
 }

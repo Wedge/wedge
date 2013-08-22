@@ -525,31 +525,14 @@ function template_show_likes($id_msg = 0, $can_like = false)
 
 	if (!empty($likes))
 	{
-		// Simplest case, it's just you.
-		if ($you_like && empty($likes['names']))
-		{
-			$string = $txt['you_like_this'];
-			$num_likes = 1;
-		}
-		// So we have some names to display?
-		elseif (!empty($likes['names']))
-		{
-			$base_id = $you_like ? 'you_' : '';
-			if (!empty($likes['others']))
-				$string = number_context($base_id . 'n_like_this', $likes['others']);
-			else
-				$string = $txt[$base_id . count($likes['names']) . '_like_this'];
-
-			// OK so at this point we have the string with the number of 'others' added, and also 'You' if appropriate. Now to add other names.
-			foreach ($likes['names'] as $k => $v)
-				$string = str_replace('{name' . ($k + 1) . '}', '<a href="<URL>?action=profile;u=' . $v . '">' . $user_profile[$v]['real_name'] . '</a>', $string);
-			$num_likes = ($you_like ? 1 : 0) + count($likes['names']) + (empty($likes['others']) ? 0 : $likes['others']);
-		}
+		// We need two things, firstly whether we liked it or not, and how many people who weren't us liked it.
+		$other_likes = isset($likes['others']) ? $likes['others'] : 0;
+		$string = number_context($you_like ? 'you_like_this' : 'like_this', $other_likes);
+		$num_likes = $other_likes + ($you_like ? 1 : 0);
+		$show_likes = '<span class="note' . ($you_like ? 'nice' : '') . '">' . $num_likes . '</span>';
 	}
 	else
 		$num_likes = 0;
-
-	$show_likes = $num_likes ? '<span class="note' . ($you_like ? 'nice' : '') . '">' . $num_likes . '</span>' : '';
 
 	echo '
 							<div class="post_like">';
