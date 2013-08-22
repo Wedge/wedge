@@ -1513,9 +1513,9 @@ function wedge_show_skins(&$th, &$style, $current_theme_id = '', $current_skin =
 		if ($show_defaults)
 		{
 			if ($sty['dir'] == $settings['theme_skin_guests'])
-				$output .= ' &lt;small style="color: #aaa"&gt;' . $txt['skin_default'] . '&lt;/small&gt;';
+				$output .= ' &lt;small&gt;' . $txt['skin_default'] . '&lt;/small&gt;';
 			elseif ($sty['dir'] == $settings['theme_skin_guests_mobile'])
-				$output .=' &lt;small style="color: #aaa"&gt;' . $txt['skin_default_mobile'] . '&lt;/small&gt;';
+				$output .=' &lt;small&gt;' . $txt['skin_default_mobile'] . '&lt;/small&gt;';
 		}
 		$output .= '</option>';
 		if (!empty($sty['skins']))

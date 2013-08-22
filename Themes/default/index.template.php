@@ -103,7 +103,7 @@ function template_html_before()
 
 	if (SKIN_MOBILE && !we::is('opera[11-], ie[10-]'))
 		echo '
-	<meta name="viewport" content="width=device-width, initial-scale=0.7, maximum-scale=2.0, minimum-scale=0.7, user-scalable=1">';
+	<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=2,minimum-scale=0.7,user-scalable=1">';
 
 	if (!empty($context['meta_description']))
 		echo '

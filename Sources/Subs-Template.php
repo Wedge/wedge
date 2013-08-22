@@ -205,7 +205,7 @@ function ob_sessrewrite($buffer)
 		Soft-merging forum posts.
 		This relies on the msg mini-skeleton having a similar structure to the default's.
 	*/
-	if (!SKIN_MOBILE && strpos($buffer, '<we:msg_') !== false)
+	if ((!defined('SKIN_MOBILE') || !SKIN_MOBILE) && strpos($buffer, '<we:msg_') !== false)
 	{
 		$ex_uid = $ex_area = $new_area = $cur_bg = $one_removed = '';
 		// First, find all potential messages in this page...

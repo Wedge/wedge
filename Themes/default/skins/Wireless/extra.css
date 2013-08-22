@@ -7,53 +7,50 @@
 #top_section
 	padding: 8px 15px
 
-.poster
+#sidebar .column
+	padding: 20px 10px 0 20px
+
+.postheader extends .clearfix
 	display: block
 	box-sizing: border-box
 	width: auto
-	height: 58px
-	padding: 10px 12px 12px
+	padding: 8px 12px
+	min-height: 60px
+	background: rgba(0,0,0, .042) // Add a bit of contrast...
 
 	h4
+		display: inline
 		margin-top, margin-left: 0
+	h5
+		display: inline
+		line-height: 1.2em
+		font-weight: 400
+	h5:before
+		content: "-"
 	div.avatar
 		float: left
-		margin-right: 12px
 	img.avatar
 		max-height: 40px
-	ul
-		margin: 0
+		margin-right: 12px
 
 .postarea
 	display: block
 	width: auto // mostly for IE6
+	margin-left: 0
 
-.tinyuser
-	float, text-align: right
-	max-width: 50%
-	span
-		float: right
-		font-size: 90%
-	> ul.actions
-		float: right
-		margin: 3px 0 0
+@remove .postarea
+	padding: 0 15px
+
+.post
+	padding: 0 4px
 
 .inner
 	border-top: 0
-
-.postarea
-	margin-left: 0
 
 // We want really comfortable menu items for use in wireless devices.
 .mimenu ul li
 	padding: 8px
 	height: auto
-
-.tinyuser > ul.actions
-	margin-top: 0
-
-.poster
-	height: 75px
 
 .list_posts
 	font-size: 85%
@@ -64,6 +61,9 @@
 .counter
 	padding: .3em .5em .5em .2em
 
+@remove
+	letter-spacing: -.25px
+
 @replace
 	font: 3.6em/1 Cochin, Georgia, serif
 	font: 2em/1 Cochin, Georgia, serif
@@ -71,9 +71,12 @@
 @if opera[11-], ie[10-]
 	@viewport
 		width: device-width
-		min-zoom, zoom: .7 // minimum-scale and initial-scale
+		zoom: 1 // initial-scale
+		min-zoom: .7 // minimum-scale
 		max-zoom: 2 // maximum-scale
 @endif
 
-$main_font_size = 110%/133%
 $mimenu_font_size = 18px/28px
+$horizontal_content_padding = 10px
+$head_font_size = 1.3em/1.3em
+$main_font_size = 15px/130%
