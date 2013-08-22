@@ -150,7 +150,7 @@ function template_folder()
 			$window_class = $message['alternate'] == 0 ? '' : '2';
 
 			echo '
-	<div class="postbg', $window_class, $message['member']['id'] === we::$id ? ' self' : '', ' pm"><div class="post_wrapper">
+	<div class="msg', $window_class, $message['member']['id'] === we::$id ? ' self' : '', ' pm"><div class="post_wrapper">
 		<div class="poster">
 			<a id="msg', $message['id'], '"></a>
 			<h4>';

@@ -1386,7 +1386,6 @@ function prepareDisplayContext($reset = false)
 	// Compose the memory eat- I mean message array.
 	$output = array(
 		'attachment' => loadAttachmentContext($message['id_msg']),
-		'alternate' => $counter % 2,
 		'id' => $message['id_msg'],
 		'href' => '<URL>?topic=' . $topic . '.msg' . $message['id_msg'] . '#msg' . $message['id_msg'],
 		'link' => '<a href="<URL>?topic=' . $topic . '.msg' . $message['id_msg'] . '#msg' . $message['id_msg'] . '" rel="nofollow">' . $message['subject'] . '</a>',

@@ -15,7 +15,7 @@ html
 	background-size: auto 700px
 	background-repeat: repeat-x
 
-.postbg
+.msg
 	background-image: linear-gradient(rgba(160,160,160,.15), rgba(160,160,160,.02) 242px, transparent)
 	background-size: auto 700px
 	background-repeat: repeat-x
@@ -247,9 +247,8 @@ section.ic
 /* Post styling (still in the Display template)
 ---------------------------------------------------- */
 
-// Alternating backgrounds for posts
-.postbg, .postbg2
-	base: .wrc
+// Per-post styling
+.msg extends .wrc
 	padding: 0
 
 // Poster details and list of items

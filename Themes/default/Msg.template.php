@@ -17,10 +17,9 @@ function template_msg_wrap_before()
 
 	// msg123 serves as the anchor, as well as an easy way to find the message ID,
 	// or other classes (such as can-mod), from within it. For instance,
-	// var id_msg = $(this).closest('.root').attr('id').slice(3);
+	// var id_msg = $(this).closest('.msg').attr('id').slice(3);
 	echo '
-			<we:msg id="msg', $msg['id'], '" class="root',
-				$msg['alternate'] == 0 ? ' postbg' : ' postbg2',
+			<we:msg id="msg', $msg['id'], '" class="msg',
 				$msg['approved'] ? '' : ' approve',
 				$msg['can_modify'] ? ' can-mod' : '',
 				SKIN_MOBILE ? ' mobile' : '',

@@ -231,7 +231,7 @@ img.new_posts
 /* Post styling (Msg template)
 ---------------------------------------------------- */
 
-.root
+.msg
 	display: table
 	// Without this, wide code blocks will break layout.
 	table-layout: fixed
@@ -242,12 +242,10 @@ img.new_posts
 		display: block
 		height: auto
 
-// Alternating backgrounds for posts
-.postbg extends .windowbg
+	// Alternating backgrounds for posts
 	background: $post_bg
-
-.postbg2 extends .windowbg2
-	background: $post_bg2
+	:nth-of-type(even)
+		background: $post_bg2
 
 // A post separator, useful when printing.
 hr.sep
@@ -370,6 +368,9 @@ hr.sep
 	@else
 		display: table-cell
 	@endif
+	// Soft-merged posts shouldn't have a background.
+	.msg
+		background: none
 
 // Posts and personal messages displayed throughout the forum.
 .post, .personalmessage
@@ -380,7 +381,7 @@ hr.sep
 .post
 	margin, padding: 0
 	@if can_flex
-		.root &
+		.msg &
 			flex: 1
 		.merged &
 			flex: none

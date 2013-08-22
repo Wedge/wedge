@@ -35,7 +35,7 @@ function template_preview()
 			<we:cat>
 				<span id="preview_subject">', empty($context['preview_subject']) ? '' : $context['preview_subject'], '</span>
 			</we:cat>
-			<div class="postbg wrc core_posts">
+			<div class="msg wrc core_posts">
 				', empty($context['preview_message']) ? '<br>' : $context['preview_message'], '
 			</div><br>
 		</div>';

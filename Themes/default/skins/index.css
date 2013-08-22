@@ -1445,7 +1445,7 @@ tr.titlebg
 .approve
 	color: #000
 	background-color: #ffeaea
-	.postbg2&
+	:nth-of-type(even)
 		background-color: #fff2f2
 
 // Color for background of *topics* requiring approval

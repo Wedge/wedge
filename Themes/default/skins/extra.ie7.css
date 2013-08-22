@@ -94,7 +94,7 @@ li.sep
 /* Editor
 ------------------------------------------------------- */
 // No support for box-sizing...
-#preview_section > .postbg
+#preview_section .msg
 	width: auto
 
 

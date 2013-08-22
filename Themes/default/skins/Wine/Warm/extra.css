@@ -22,7 +22,9 @@ h4, h5
 			#sidebar
 				background: $side_bg
 				color: $side_col
-			.postbg, .postbg2
+			#forumposts
+				margin: 0 -20px
+			.msg
 				margin, border-radius: 0
 
 			// #sideshow being part of the sidebar, we'll always move it to be a floating icon.

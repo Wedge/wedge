@@ -161,7 +161,7 @@ $(window).load(function ()
 							});
 
 							// Ensure that all posts are on the same (DOM) level as its predecessors.
-							var root = $new_page.find('.root').first(), up_to = $('.root').first().parent(), max_count = 0, id;
+							var root = $new_page.find('.msg').first(), up_to = $('.msg').first().parent(), max_count = 0, id;
 							while (root.parent()[0] != up_to[0] && max_count++ < 10)
 								root.unwrap();
 
@@ -201,7 +201,7 @@ function expandThumb(thumbID)
 @if member
 	function likePost(obj)
 	{
-		var iMessageId = $(obj).closest('.root').attr('id').slice(3);
+		var iMessageId = $(obj).closest('.msg').attr('id').slice(3);
 
 		show_ajax();
 		$.post(obj.href, function (response)
@@ -346,7 +346,7 @@ function QuickReply(opt)
 	// When a user presses quote, put it in the quick reply box (if expanded).
 	this.quote = function (iMessage)
 	{
-		var iMessageId = $(iMessage).closest('.root').attr('id').slice(3);
+		var iMessageId = $(iMessage).closest('.msg').attr('id').slice(3);
 
 		if (!bCollapsed)
 		{
@@ -429,7 +429,7 @@ function QuickReply(opt)
 		// Function called when a user presses the edit button.
 		this.modifyMsg = function (iMessage)
 		{
-			var iMessageId = $(iMessage).closest('.root').attr('id').slice(3);
+			var iMessageId = $(iMessage).closest('.msg').attr('id').slice(3);
 
 			// Did we press the Quick Modify button by error while trying to submit? Oops.
 			if (sCurMessageId == iMessageId)
@@ -622,7 +622,7 @@ function QuickReply(opt)
 		// Add checkboxes to all the messages.
 		$('.' + opt.sClass).each(function () {
 			if (!$(this).find('input[type="checkbox"]').length)
-				$('<input type="checkbox" name="msgs[]" value="' + $(this).closest('.root').attr('id').slice(3) + '"></input>')
+				$('<input type="checkbox" name="msgs[]" value="' + $(this).closest('.msg').attr('id').slice(3) + '"></input>')
 				.click(handleClick)
 				.appendTo(this);
 		});

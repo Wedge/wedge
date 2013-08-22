@@ -138,7 +138,7 @@ $window_bg2 = #f8faf8 // lighter(#e3e0d0, 11%) // darker(hue($main_bg, -20), .5%
 $window_bg3 = #f0f0f0
 $board_col = #d97b33
 
-/* .postbg classes are used to alternate colors between posts. */
+/* The .msg class should, by default, alternate between these two colors. */
 $post_bg = #f2f3ee
 $post_bg2 = #f3f7f3
 

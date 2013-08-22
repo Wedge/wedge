@@ -207,7 +207,7 @@ function ob_sessrewrite($buffer)
 	*/
 	if ((!defined('SKIN_MOBILE') || !SKIN_MOBILE) && strpos($buffer, '<we:msg_') !== false)
 	{
-		$ex_uid = $ex_area = $new_area = $cur_bg = $one_removed = '';
+		$ex_uid = $ex_area = $new_area = $one_removed = '';
 		// First, find all potential messages in this page...
 		preg_match_all('~<we:msg [^>]*id="([^"]+)" class="([^"]+)"[^>]*>(.*?)</we:msg>~s', $buffer, $messages, PREG_SET_ORDER);
 		foreach ($messages as $msg)
@@ -222,7 +222,7 @@ function ob_sessrewrite($buffer)
 			{
 				// Remove colored backgrounds and signature, keep the ID and classes (for JS mostly), and move the post area to the previous area, in a special div.
 				$new_area = preg_replace('~<we:msg_signature>.*?</we:msg_signature>~s', '', $ex_area)
-					. '<div class="merged ' . preg_replace('~ postbg2?\b|\bpostbg2? ~', '', $msg[2]) . '" id="' . $msg[1] . '">'
+					. '<div class="merged ' . $msg[2] . '" id="' . $msg[1] . '">'
 					. $area . '</div>';
 				$buffer = str_replace(array($msg[0], $ex_area), array('<!REMOVED>', $new_area), $buffer);
 				$ex_area = $new_area;
@@ -232,9 +232,6 @@ function ob_sessrewrite($buffer)
 			{
 				$ex_uid = $uid;
 				$ex_area = $area;
-				if ($cur_bg)
-					$msg[0] = str_replace(array('postbg2', 'postbg'), $cur_bg == 'postbg2' ? 'postbg' : 'postbg2', $msg[0]);
-				$cur_bg = strpos($msg[2], 'postbg2') === false ? 'postbg2' : 'postbg';
 			}
 		}
 		// Remove any extra separators.

@@ -514,11 +514,11 @@ $.fn.mime = function (oList, oStrings)
 
 		var
 			$mime = $(this),
-			id = $mime.data('id') || $mime.closest('.root').attr('id').slice(3), // Extract the context id from the parent message
+			id = $mime.data('id') || ($mime.closest('.msg').attr('id') || '').slice(3), // Extract the context id from the parent message
 			$men = $('<div class="mimenu"><ul class="actions"></ul></div>').hide(),
 			pms;
 
-		$.each(oList[id], function ()
+		$.each(oList ? oList[id] : [], function ()
 		{
 			pms = oStrings[this.slice(0, 2)];
 

@@ -46,7 +46,7 @@ function previewPost()
 
 		// Create and show the preview section, with a fine little animation.
 		$('#preview_subject').html($('subject', XMLDoc).text());
-		$('#preview_section > .postbg').html($('body', XMLDoc).text());
+		$('#preview_section .msg').html($('body', XMLDoc).text());
 		$('#preview_section').animate({ opacity: 'show', height: 'show' }).addClass('post');
 
 		var
