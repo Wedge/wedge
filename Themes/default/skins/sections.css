@@ -273,18 +273,15 @@ hr.sep
 	width: 100%
 
 // Post title, date and action list
-.postheader extends .flow_hidden
+.postheader extends .clearfix
 	display: table
 	table-layout: fixed
 	width: 100%
 	padding: 10px 0 5px
 	border-bottom: 1px solid #ccc
-	h5
-		line-height: 1.2em
-
-.keyinfo
-	span
-		font-size: .85em
+	time
+		display: block
+		font-size: .9em
 	.modified
 		font-style: italic
 		color: #a0aaa0
@@ -1229,7 +1226,7 @@ dl.stats
 .post_like
 	float: left
 	height: 20px
-	margin-right: 8px
+	margin: 0 8px
 	.fadein
 		opacity: .6
 		transition: opacity .3s ease
@@ -1459,7 +1456,7 @@ body.waiting *
 @endif
 
 @if !ie[-8]
-	// IE8's media query shiv doesn't understand min-resolution, so we'll ignore it.
+	// IE8's media query shiv, if present, doesn't understand min-resolution, so we'll ignore it.
 	// Main area should have slightly larger text on high-density devices.
 	// The $responsive rule (tries) to ensure it doesn't touch tablets.
 	@media $responsive and (min-resolution: 1.5dppx)

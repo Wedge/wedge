@@ -44,27 +44,31 @@
 
 <skeleton id="msg">
 	<msg_wrap>
-		<msg_author>
-			<if SKIN_MOBILE>
-				<msg_author_group_mobile />
-			<else>
-				<msg_author_title />
-				<msg_author_avatar />
-				<msg_author_group />
-				<msg_author_badge />
-				<msg_author_blurb />
-				<msg_author_postcount />
-				<msg_author_icons />
-				<msg_author_cf />
-				<msg_author_warning />
-			</if>
-		</msg_author>
+		<if !SKIN_MOBILE>
+			<msg_author>
+				<msg_author_name />
+				<msg_author_details>
+					<msg_author_title />
+					<msg_author_avatar />
+					<msg_author_group />
+					<msg_author_badge />
+					<msg_author_blurb />
+					<msg_author_postcount />
+					<msg_author_icons />
+					<msg_author_cf />
+					<msg_author_warning />
+					<msg_author_email />
+				</msg_author_details>
+			</msg_author>
+		</if>
 		<msg_area>
-			<if SKIN_MOBILE>
-				<msg_header_mobile />
-			<else>
-				<msg_header />
-			</if>
+			<msg_header>
+				<if SKIN_MOBILE>
+					<msg_author_avatar />
+					<msg_author_name />
+				</if>
+				<msg_header_body />
+			</msg_header>
 			<msg_ignored />
 			<msg_body />
 			<msg_bottom>

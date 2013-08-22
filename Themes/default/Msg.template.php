@@ -32,30 +32,13 @@ function template_msg_wrap_before()
 // Show information about the poster of this message.
 function template_msg_author_before()
 {
-	global $msg, $context, $settings, $theme, $options;
-
 	echo '
-					<div class="poster">';
+					<div class="poster"><div class="column">';
+}
 
-	$gts = !empty($settings['group_text_show']) ? $settings['group_text_show'] : 'cond';
-
-	if (SKIN_MOBILE)
-	{
-		if (!empty($context['mini_menu']['action'][$msg['id']]))
-			echo '
-						<div class="tinyuser">
-							<span>', timeformat($msg['timestamp']), '</span>
-						</div>';
-
-		// Show avatar for mobile skins
-		if (!empty($theme['show_user_images']) && !empty($options['show_avatars']) && !empty($msg['member']['avatar']['image']))
-			echo '
-						<div class="avatar">
-							<a href="<URL>?action=profile;u=', $msg['member']['id'], '">
-								', $msg['member']['avatar']['image'], '
-							</a>
-						</div>';
-	}
+function template_msg_author_name()
+{
+	global $msg, $theme;
 
 	echo '
 						<h4>';
@@ -67,7 +50,12 @@ function template_msg_author_before()
 	// Show a link to the member's profile.
 	echo '
 							<a href="', $msg['member']['href'], '" data-id="', $msg['member']['id'], '" class="umme">', $msg['member']['name'], '</a>
-						</h4>
+						</h4>';
+}
+
+function template_msg_author_details_before()
+{
+	echo '
 						<ul class="info">';
 }
 
@@ -129,13 +117,13 @@ function template_msg_author_avatar()
 	global $msg, $theme, $options;
 
 	// Show avatars, images, etc.?
-	if (!$msg['member']['is_guest'] && !empty($theme['show_user_images']) && !empty($options['show_avatars']) && !empty($msg['member']['avatar']['image']))
+	if (!empty($theme['show_user_images']) && !empty($options['show_avatars']) && !empty($msg['member']['avatar']['image']))
 		echo '
-							<li class="avatar">
+							<we:msg_author_avatar>
 								<a href="<URL>?action=profile;u=', $msg['member']['id'], '">
 									', $msg['member']['avatar']['image'], '
 								</a>
-							</li>';
+							</we:msg_author_avatar>';
 }
 
 function template_msg_author_blurb()
@@ -209,17 +197,25 @@ function template_msg_author_warning()
 							<li class="warning">', $context['can_issue_warning'] && $msg['member']['warning_status'] != 'hard_ban' ? '<a href="<URL>?action=profile;u=' . $msg['member']['id'] . ';area=issuewarning">' : '', '<span class="warn_', $msg['member']['warning_status'], '"><span class="icon" title="', $txt['user_warn_' . $msg['member']['warning_status']], '"></span> ', $txt['warn_' . $msg['member']['warning_status']], '</span>', $context['can_issue_warning'] && $msg['member']['warning_status'] != 'hard_ban' ? '</a>' : '', '</li>';
 }
 
-function template_msg_author_after()
+function template_msg_author_email()
 {
 	global $msg, $txt, $theme;
 
 	if ($msg['member']['is_guest'] && !SKIN_MOBILE && !empty($msg['member']['email']) && in_array($msg['member']['show_email'], array('yes_permission_override', 'no_through_forum')))
 		echo '
 							<li class="email"><a href="<URL>?action=emailuser;sa=email;msg=', $msg['id'], '" rel="nofollow">', $theme['use_image_buttons'] ? '<img src="' . $theme['images_url'] . '/email_sm.gif" alt="' . $txt['email'] . '" title="' . $txt['email'] . '">' : $txt['email'], '</a></li>';
+}
 
+function template_msg_author_details_after()
+{
 	echo '
-						</ul>
-					</div>';
+						</ul>';
+}
+
+function template_msg_author_after()
+{
+	echo '
+					</div></div>';
 }
 
 // Done with the information about the poster... on to the post itself.
@@ -229,47 +225,50 @@ function template_msg_area_before()
 					<we:msg_area>';
 }
 
-function template_msg_header()
+function template_msg_header_before()
 {
-	global $msg, $theme, $txt;
-
 	echo '
 						<we:msg_header>';
 
 	template_msg_new_anchor();
+}
+
+function template_msg_header_body()
+{
+	global $msg, $theme, $txt;
 
 	// Show a checkbox for quick moderation?
 	if ($msg['can_remove'])
 		echo '
 							<span class="inline_mod_check"></span>';
 
+	if (!SKIN_MOBILE)
+		echo '
+							<div class="messageicon">
+								<img src="', $msg['icon_url'], '">
+							</div>';
+
 	echo '
-							<div class="keyinfo">
-								<div class="messageicon">
-									<img src="', $msg['icon_url'] . '">
-								</div>
-								<h5>
-									<a href="', $msg['href'], '" rel="nofollow">', $msg['subject'], '</a>', $msg['new'] ? '
-									<div class="note">' . $txt['new'] . '</div>' : '', '
-								</h5>
-								<span>&#171; ', !empty($msg['counter']) ? sprintf($txt['reply_number'], $msg['counter']) : '', ' ', $msg['on_time'], ' &#187;</span>
+							<h5>
+								<a href="', $msg['href'], '" rel="nofollow">', $msg['subject'], '</a>', $msg['new'] ? '
+								<div class="note">' . $txt['new'] . '</div>' : '', '
+							</h5>
+							<time>
+								&#171; ', !empty($msg['counter']) ? sprintf($txt['reply_number'], $msg['counter']) : '', ' ', $msg['on_time'], ' &#187;
 								<span class="modified">', $theme['show_modify'] && !empty($msg['modified']['name']) ?
 									// Show "Last Edit on Date by Person" if this post was edited.
 									strtr($txt[$msg['modified']['name'] !== $msg['member']['name'] ? 'last_edit' : 'last_edit_mine'], array(
 										'{date}' => $msg['modified']['on_time'],
 										'{name}' => !empty($msg['modified']['member']) ? '<a href="<URL>?action=profile;u=' . $msg['modified']['member'] . '">' . $msg['modified']['name'] . '</a>' : $msg['modified']['name']
-									)) : '',
-								'</span>
-							</div>
-						</we:msg_header>';
+									)) : '', '
+								</span>
+							</time>';
 }
 
-function template_msg_header_mobile()
+function template_msg_header_after()
 {
 	echo '
-						<h5></h5>';
-
-	template_msg_new_anchor();
+						</we:msg_header>';
 }
 
 function template_msg_new_anchor()
