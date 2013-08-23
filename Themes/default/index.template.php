@@ -206,6 +206,18 @@ function template_notifications()
 			</div>';
 }
 
+function template_pms()
+{
+	global $txt, $context;
+
+	if ($context['allow_pm'])
+		echo '
+			<div id="pms">
+				<span class="note', !empty(we::$user['unread_messages']) ? 'nice' : '', '">', we::$user['unread_messages'], '</span>
+				', $txt['pm_short'], '
+			</div>';
+}
+
 function template_language_selector()
 {
 	global $context;
@@ -437,7 +449,7 @@ function template_wrapper_after()
 
 function template_body_after()
 {
-	global $context, $options, $theme, $txt, $footer_coding;
+	global $context, $options, $theme, $txt, $footer_coding, $settings;
 
 	// Include postponed inline JS, postponed HTML, and then kickstart the main
 	// JavaScript section -- files to include, main vars and functions to start.
@@ -472,6 +484,10 @@ function template_body_after()
 	<!-- insert inline events here -->
 </script>', "\n", theme_base_js(), '<script>';
 	}
+
+	if (!empty($settings['pm_enabled']))
+		echo '
+	we_pms = ', we::$user['unread_messages'], ';';
 
 	echo '
 	we_script = "<URL>";
@@ -570,7 +586,7 @@ function template_menu()
 
 		echo '<li', $class ? ' class="' . ltrim($class) . '"' : '', '><span id="m_' . $act . '"></span><h4><a href="', $item['href'], '"',
 			!empty($item['nofollow']) ? ' rel="nofollow"' : '', '>', $item['title'],
-			!empty($item['notice']) ? '<span class="note' . ($act === 'media' ? '' : ($act === 'pm' ? 'nice' : 'warn')) . '">' . $item['notice'] . '</span>' : '',
+			!empty($item['notice']) ? '<span class="note' . ($act === 'media' ? '' : 'warn') . '">' . $item['notice'] . '</span>' : '',
 			'</a></h4>';
 
 		if (!empty($item['sub_items']))

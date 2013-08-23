@@ -54,6 +54,42 @@ function template_pm_after()
 	</div>';
 }
 
+function template_pm_popup()
+{
+	global $txt, $context, $memberContext;
+
+	echo '
+		<ul id="pmlist"><li>
+			<span class="floatright">', $context['can_send'] ? '
+				<a href="<URL>?action=pm;sa=send" style="color: #888">' . $txt['compose'] . '</a> |' : '', $context['show_drafts'] ? '
+				<a href="<URL>?action=pm;sa=showdrafts" style="color: #888">' . $txt['drafts'] . '</a> |' : '', '
+				<span style="display: inline-block"><a href="<URL>?action=pm;sa=settings" style="color: #666">', $txt['notifications_short_settings'], '</a></span>&nbsp;
+			</span>
+			<span class="floatleft" style="margin-bottom: 4px">
+				&nbsp;<strong>', $txt['notifications_short_unread'], '</strong> |
+				<a href="<URL>?action=pm" style="color: #888">', $txt['inbox'], '</a> |
+				<a href="<URL>?action=pm;f=sent" style="color: #888">', $txt['sent_items'], '</a>
+			</span>
+			<div id="pm_container">';
+
+	if (empty($context['personal_messages']))
+		echo '
+			<div class="center padding">', $txt['no_pms'], '</div>';
+	else
+		foreach ($context['personal_messages'] as $pm)
+			echo '
+				<div class="n_item n_new" id="pm', $pm['id_pm'], '">
+					<div class="n_time">', timeformat($pm['msgtime']), '</div>
+					<div class="n_icon">', !empty($memberContext[$pm['id_member_from']]['avatar']) ? $memberContext[$pm['id_member_from']]['avatar']['image'] : '', '</div>
+					<div class="n_text"> ', sprintf($txt[$pm['sprintf']], $pm['member_link'], $pm['msg_link']), '</div>
+				</div>';
+
+	if (AJAX)
+		echo '
+			</div>
+		</li></ul>';
+}
+
 function template_folder()
 {
 	global $context, $theme, $options, $settings, $txt;

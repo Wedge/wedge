@@ -689,12 +689,6 @@ tr.catbg .sbox, tr.titlebg .sbox
 #m_profile extends #m_home
 	background-position: 0 0
 
-#m_pm extends #m_home
-	background-position: -93px 0
-
-#m_pm_unread extends #m_home
-	background-position: -112px 0
-
 #m_media extends #m_home
 	background-position: -54px 0
 	width: 18px
@@ -1823,7 +1817,7 @@ h6
 /* A few styles for notifications
 ------------------------------------------------------- */
 @if member
-	#notifs mixes .inline-block
+	#notifs, #pms mixes .inline-block
 		user-select: none
 		height, line-height: 25px
 		cursor: pointer
@@ -1874,7 +1868,7 @@ h6
 					box-shadow: none
 			@endif
 
-	#n_container
+	#n_container, #pm_container
 		clear: both
 		white-space: normal
 		overflow: auto

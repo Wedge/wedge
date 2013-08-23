@@ -96,7 +96,7 @@ if (!defined('WEDGE'))
 // This helps organize things...
 function PersonalMessage()
 {
-	global $txt, $context, $user_settings;
+	global $txt, $context, $user_settings, $settings;
 
 	// No guests!
 	is_not_guest();
@@ -125,6 +125,132 @@ function PersonalMessage()
 	loadLanguage('PersonalMessage');
 	loadTemplate('PersonalMessage');
 	loadTemplate('Msg'); // For template_user_status
+
+	// Are we just getting AJAXy things?
+	if (AJAX && isset($_GET['sa']) && $_GET['sa'] == 'ajax')
+		if (!isset($_GET['preview']))
+		{
+			// We're getting the list of unread PMs.
+			$context['can_send'] = allowedTo('pm_send');
+			$context['show_drafts'] = $context['can_send'] && allowedTo('save_pm_draft') && !empty($settings['masterSavePmDrafts']);
+			wetem::hide();
+			wetem::load('pm_popup');
+
+			// Now we get the list of PMs to deal with.
+			$request = wesql::query('
+				SELECT id_pm
+				FROM {db_prefix}pm_recipients
+				WHERE id_member = {int:current_member}
+					AND is_read = {int:new}
+				ORDER BY id_pm',
+				array(
+					'current_member' => we::$id,
+					'new' => 0,
+				)
+			);
+			$context['personal_messages'] = array();
+			while ($row = wesql::fetch_row($request))
+				$context['personal_messages'][$row[0]] = array();
+			wesql::free_result($request);
+
+			// For reasons not entirely clear, this could sometimes get out of sync.
+			if (count($context['personal_messages']) != we::$user['unread_messages'])
+				updateMemberData(
+					we::$id,
+					array(
+						'unread_messages' => count($context['personal_messages']),
+					)
+				);
+
+			// OK so we have some ids, now fetch the message details.
+			if (!empty($context['personal_messages']))
+			{
+				$senders = array();
+
+				$request = wesql::query('
+					SELECT pm.id_pm, pm.id_pm_head, IFNULL(mem.id_member, pm.id_member_from) AS id_member_from,
+						IFNULL(mem.real_name, pm.from_name) AS member_from, pm.msgtime, pm.subject
+					FROM {db_prefix}personal_messages AS pm
+						LEFT JOIN {db_prefix}members AS mem ON (pm.id_member_from = mem.id_member)
+					WHERE pm.id_pm IN ({array_int:id_pms})',
+					array(
+						'id_pms' => array_keys($context['personal_messages']),
+					)
+				);
+				while ($row = wesql::fetch_assoc($request))
+				{
+					if (!empty($row['id_member_from']))
+						$senders[] = $row['id_member_from'];
+					$row['sprintf'] = $row['id_pm'] == $row['id_pm_head'] ? 'pm_sent_to_you' : 'pm_replied_to_pm';
+					$row['member_link'] = !empty($row['id_member_from']) ? '<a href="<URL>?action=profile;u=' . $row['id_member_from'] . '">' . $row['member_from'] . '</a>' : $row['member_from'];
+					$row['msg_link'] = '<a href="<URL>?action=pm;f=inbox;pmsg=' . $row['id_pm'] . '">' . $row['subject'] . '</a>';
+					$context['personal_messages'][$row['id_pm']] = $row;
+				}
+				wesql::free_result($request);
+
+				if (!empty($senders))
+				{
+					$loaded = loadMemberData($senders);
+					foreach ($loaded as $member)
+						loadMemberAvatar($member, true);
+				}
+			}
+
+			return;
+		}
+		else
+		{
+			// We're getting a specific preview.
+			$pmsg = (int) $_GET['preview'];
+			if (!isAccessiblePM($pmsg, isset($_REQUEST['f']) && $_REQUEST['f'] == 'sent' ? 'outbox' : 'inbox'))
+				fatal_lang_error('no_access');
+			$request = wesql::query('
+				SELECT body
+				FROM {db_prefix}personal_messages
+				WHERE id_pm = {int:pm}',
+				array(
+					'pm' => $pmsg,
+				)
+			);
+			list ($body) = wesql::fetch_row($request);
+			wesql::free_result($request);
+
+			// While we're at it we could, I guess, mark it read.
+			wesql::query('
+				UPDATE {db_prefix}pm_recipients
+				SET is_read = 1
+				WHERE id_pm = {int:pm}
+					AND id_member = {int:member}
+					AND is_read = 0',
+				array(
+					'pm' => $pmsg,
+					'member' => we::$id,
+				)
+			);
+			$request = wesql::query('
+				SELECT COUNT(id_pm)
+				FROM {db_prefix}pm_recipients
+				WHERE id_member = {int:current_member}
+					AND is_read = {int:new}
+				ORDER BY id_pm',
+				array(
+					'current_member' => we::$id,
+					'new' => 0,
+				)
+			);
+			list ($count) = wesql::fetch_row($request);
+			wesql::free_result($request);
+			updateMemberData(
+				we::$id,
+				array(
+					'unread_messages' => $count,
+				)
+			);
+			// And next time we actually enter the inbox certain things need to be recalculated.
+			cache_put_data('labelCounts:' . we::$id, null);
+
+			return_raw ($context['header'] . parse_bbc($body, 'pm', array('cache' => 'pm' . $pmsg)));
+		}
 
 	// Load up the members maximum message capacity.
 	if (we::$is_admin)

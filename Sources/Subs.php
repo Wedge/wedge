@@ -2243,31 +2243,6 @@ function setupMenuContext()
 				),
 			),
 		),
-		'pm' => array(
-			'title' => $txt['pm_short'],
-			'notice' => $has_new_pm ? we::$user['unread_messages'] : '',
-			'href' => '<URL>?action=pm',
-			'show' => $context['allow_pm'],
-			'sub_items' => array(
-				'pm_read' => array(
-					'title' => $txt['pm_menu_read'],
-					'notice' => $has_new_pm ? we::$user['unread_messages'] : '',
-					'href' => '<URL>?action=pm',
-					'show' => allowedTo('pm_read'),
-				),
-				'',
-				'pm_send' => array(
-					'title' => $txt['pm_menu_send'],
-					'href' => '<URL>?action=pm;sa=send',
-					'show' => allowedTo('pm_send'),
-				),
-				'pm_draft' => array(
-					'title' => $txt['pm_menu_drafts'],
-					'href' => '<URL>?action=pm;sa=showdrafts',
-					'show' => allowedTo('pm_send') && allowedTo('save_pm_draft') && !empty($settings['masterSavePmDrafts']),
-				),
-			),
-		),
 		'media' => array(
 			'title' => isset($txt['media_gallery']) ? $txt['media_gallery'] : 'Media',
 			'notice' => $can_view_unseen ? we::$user['media_unseen'] : '',

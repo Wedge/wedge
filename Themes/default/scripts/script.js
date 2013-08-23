@@ -762,9 +762,12 @@ $(window).load(function ()
 	{
 		var
 			is_up_to_date = false,
+			is_pm_up_to_date = false,
 			is_opened = false,
 			original_title = document.title,
 			$shade = $('<div/>').addClass('mimenu').appendTo('#notifs'),
+			$pmshade = $('<div/>').addClass('mimenu').appendTo('#pms'),
+			is_pm_opened = false,
 
 			toggle_me = function ()
 			{
@@ -783,6 +786,25 @@ $(window).load(function ()
 					is_opened = !is_opened;
 					$shade.toggleClass('open');
 					$('#notifs').toggleClass('hover');
+					$(document).off('click.no');
+				});
+			},
+
+			toggle_me_pm = function ()
+			{
+				is_pm_opened = !is_pm_opened;
+				$pmshade.toggleClass('open');
+				$('#pms').toggleClass('hover');
+				$(document).off('click.no');
+				if (!is_pm_opened)
+					return;
+				$(document).on('click.no', function (e)
+				{
+					if ($(e.target).closest('#pms').length)
+						return;
+					is_pm_opened = !is_pm_opened;
+					$pmshade.toggleClass('open');
+					$('#pms').toggleClass('hover');
 					$(document).off('click.no');
 				});
 			};
@@ -851,10 +873,71 @@ $(window).load(function ()
 			});
 		};
 
+		pmload = function (url, toggle)
+		{
+			show_ajax('#pms', [0, 30]);
+			$pmshade.load(url, function (data)
+			{
+				hide_ajax();
+				$('#pm_container').css('max-height', ($(window).height() - $('#pm_container').offset().top) * .9);
+
+				$(this).find('.n_item').each(function ()
+				{
+					var that = $(this), id = that.attr('id').slice(2);
+
+					$(this)
+						.hover(function () { $(this).toggleClass('windowbg3').find('.n_read').toggle(); })
+						.click(function ()
+						{
+							// Try to toggle the preview. If it doesn't exist, create it.
+							if (!that.next('.n_prev').stop(true, true).slideToggle(600).length)
+							{
+								show_ajax(this);
+								$.post(weUrl('action=pm;sa=ajax;preview=' + id), function (doc) {
+									hide_ajax();
+									$('<div/>').addClass('n_prev').html(doc).insertAfter(that).hide().slideToggle(600);
+
+									if (that.hasClass('n_new'))
+									{
+										that.removeClass('n_new');
+										we_pms--;
+										$pmshade.prev().attr('class', we_pms > 0 ? 'notenice' : 'note').text(we_pms);
+									}
+								});
+							}
+						})
+
+						.find('.n_read')
+						.hover(function () { $(this).toggleClass('windowbg'); })
+						.click(function (e)
+						{
+							var was_new = that.hasClass('n_new');
+
+							that.removeClass('n_new').next('.n_prev').andSelf().hide(300, function () { $(this).remove(); });
+							if (was_new)
+							{
+								we_pms--;
+								$pmshade.prev().attr('class', we_pms > 0 ? 'notenice' : 'note').text(we_pms);
+							}
+
+							// Cancel the implied clink on the parent.
+							e.stopImmediatePropagation();
+							return false;
+						});
+				});
+
+				if (toggle)
+					toggle_me_pm();
+			});
+		};
+
 		$('#notifs').click(function (e)
 		{
 			if (e.target != this)
 				return true;
+
+			if (is_pm_opened)
+				toggle_me_pm();
 
 			if (!is_up_to_date)
 			{
@@ -865,17 +948,44 @@ $(window).load(function ()
 				toggle_me();
 		});
 
+		$('#pms').click(function (e)
+		{
+			if (e.target != this)
+				return true;
+
+			if (is_opened)
+				toggle_me();
+
+			if (!is_pm_up_to_date)
+			{
+				// Multiple things go back to PMs via AJAX. We want to be explicit to keep the PM code simpler...
+				pmload(weUrl('action=pm;sa=ajax'), true);
+				is_pm_up_to_date = true;
+			}
+			else
+				toggle_me_pm();
+		});
+
 		// Update the notification count...
 		var auto_update = function ()
 		{
 			$.post(weUrl('action=notification;sa=unread'), function (count)
 			{
+				// The response is x;y where x = notifications, y = unread PMs
+				var items = count.split(';');
+				count = items[0];
 				if (count !== '' && count != window.we_notifs)
 				{
 					we_notifs = count;
 					$shade.prev().attr('class', we_notifs > 0 ? 'notenice' : 'note').text(we_notifs);
 					document.title = (we_notifs > 0 ? '(' + we_notifs + ') ' : '') + original_title;
 					is_up_to_date = false;
+				}
+				if (items[1] !== '-1' && count != window.we_pms)
+				{
+					we_pms = items[1];
+					$pmshade.prev().attr('class', we_pms > 0 ? 'notenice' : 'note').text(we_pms);
+					is_pm_up_to_date = false;
 				}
 			});
 

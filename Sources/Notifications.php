@@ -244,7 +244,7 @@ class weNotif
 	 */
 	public static function action()
 	{
-		global $context, $txt;
+		global $context, $txt, $settings;
 
 		$sa = !empty($_REQUEST['sa']) ? $_REQUEST['sa'] : '';
 
@@ -306,7 +306,7 @@ class weNotif
 			list ($unread_count) = wesql::fetch_row($request);
 			wesql::free_result($request);
 
-			return_raw($unread_count);
+			return_raw($unread_count . ';' . (!empty($settings['pm_enabled']) ? we::$user['unread_messages'] : -1));
 		}
 		elseif ($sa == 'markread' && isset($_REQUEST['in']))
 		{
