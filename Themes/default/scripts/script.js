@@ -764,10 +764,10 @@ $(window).load(function ()
 			is_up_to_date = false,
 			is_pm_up_to_date = false,
 			is_opened = false,
+			is_pm_opened = false,
 			original_title = document.title,
 			$shade = $('<div/>').addClass('mimenu').appendTo('#notifs'),
 			$pmshade = $('<div/>').addClass('mimenu').appendTo('#pms'),
-			is_pm_opened = false,
 
 			toggle_me = function ()
 			{
@@ -806,6 +806,64 @@ $(window).load(function ()
 					$pmshade.toggleClass('open');
 					$('#pms').toggleClass('hover');
 					$(document).off('click.no');
+				});
+			},
+
+			pmload = function (url, toggle)
+			{
+				show_ajax('#pms', [0, 30]);
+				$pmshade.load(url, function (data)
+				{
+					hide_ajax();
+					$('#pm_container').css('max-height', ($(window).height() - $('#pm_container').offset().top) * .9);
+
+					$(this).find('.n_item').each(function ()
+					{
+						var that = $(this), id = that.attr('id').slice(2);
+
+						$(this)
+							.hover(function () { $(this).toggleClass('windowbg3').find('.n_read').toggle(); })
+							.click(function ()
+							{
+								// Try to toggle the preview. If it doesn't exist, create it.
+								if (!that.next('.n_prev').stop(true, true).slideToggle(600).length)
+								{
+									show_ajax(this);
+									$.post(weUrl('action=pm;sa=ajax;preview=' + id), function (doc) {
+										hide_ajax();
+										$('<div/>').addClass('n_prev').html(doc).insertAfter(that).hide().slideToggle(600);
+
+										if (that.hasClass('n_new'))
+										{
+											that.removeClass('n_new');
+											we_pms--;
+											$pmshade.prev().attr('class', we_pms > 0 ? 'notenice' : 'note').text(we_pms);
+										}
+									});
+								}
+							})
+
+							.find('.n_read')
+							.hover(function () { $(this).toggleClass('windowbg'); })
+							.click(function (e)
+							{
+								var was_new = that.hasClass('n_new');
+
+								that.removeClass('n_new').next('.n_prev').andSelf().hide(300, function () { $(this).remove(); });
+								if (was_new)
+								{
+									we_pms--;
+									$pmshade.prev().attr('class', we_pms > 0 ? 'notenice' : 'note').text(we_pms);
+								}
+
+								// Cancel the implied click on the parent.
+								e.stopImmediatePropagation();
+								return false;
+							});
+					});
+
+					if (toggle)
+						toggle_me_pm();
 				});
 			};
 
@@ -862,7 +920,7 @@ $(window).load(function ()
 								$.post(weUrl('action=notification;sa=markread;in=' + id));
 							}
 
-							// Cancel the implied clink on the parent.
+							// Cancel the implied click on the parent.
 							e.stopImmediatePropagation();
 							return false;
 						});
@@ -870,64 +928,6 @@ $(window).load(function ()
 
 				if (toggle)
 					toggle_me();
-			});
-		};
-
-		pmload = function (url, toggle)
-		{
-			show_ajax('#pms', [0, 30]);
-			$pmshade.load(url, function (data)
-			{
-				hide_ajax();
-				$('#pm_container').css('max-height', ($(window).height() - $('#pm_container').offset().top) * .9);
-
-				$(this).find('.n_item').each(function ()
-				{
-					var that = $(this), id = that.attr('id').slice(2);
-
-					$(this)
-						.hover(function () { $(this).toggleClass('windowbg3').find('.n_read').toggle(); })
-						.click(function ()
-						{
-							// Try to toggle the preview. If it doesn't exist, create it.
-							if (!that.next('.n_prev').stop(true, true).slideToggle(600).length)
-							{
-								show_ajax(this);
-								$.post(weUrl('action=pm;sa=ajax;preview=' + id), function (doc) {
-									hide_ajax();
-									$('<div/>').addClass('n_prev').html(doc).insertAfter(that).hide().slideToggle(600);
-
-									if (that.hasClass('n_new'))
-									{
-										that.removeClass('n_new');
-										we_pms--;
-										$pmshade.prev().attr('class', we_pms > 0 ? 'notenice' : 'note').text(we_pms);
-									}
-								});
-							}
-						})
-
-						.find('.n_read')
-						.hover(function () { $(this).toggleClass('windowbg'); })
-						.click(function (e)
-						{
-							var was_new = that.hasClass('n_new');
-
-							that.removeClass('n_new').next('.n_prev').andSelf().hide(300, function () { $(this).remove(); });
-							if (was_new)
-							{
-								we_pms--;
-								$pmshade.prev().attr('class', we_pms > 0 ? 'notenice' : 'note').text(we_pms);
-							}
-
-							// Cancel the implied clink on the parent.
-							e.stopImmediatePropagation();
-							return false;
-						});
-				});
-
-				if (toggle)
-					toggle_me_pm();
 			});
 		};
 
@@ -972,20 +972,19 @@ $(window).load(function ()
 			$.post(weUrl('action=notification;sa=unread'), function (count)
 			{
 				// The response is x;y where x = notifications, y = unread PMs
-				var items = count.split(';');
-				count = items[0];
-				if (count !== '' && count != window.we_notifs)
+				count = count.split(';');
+				if (count[0] !== '' && count[0] != window.we_notifs)
 				{
-					we_notifs = count;
+					we_notifs = count[0];
+					is_up_to_date = false;
 					$shade.prev().attr('class', we_notifs > 0 ? 'notenice' : 'note').text(we_notifs);
 					document.title = (we_notifs > 0 ? '(' + we_notifs + ') ' : '') + original_title;
-					is_up_to_date = false;
 				}
-				if (items[1] !== '-1' && count != window.we_pms)
+				if (count[1] !== '-1' && count[1] != window.we_pms)
 				{
 					we_pms = items[1];
-					$pmshade.prev().attr('class', we_pms > 0 ? 'notenice' : 'note').text(we_pms);
 					is_pm_up_to_date = false;
+					$pmshade.prev().attr('class', we_pms > 0 ? 'notenice' : 'note').text(we_pms);
 				}
 			});
 

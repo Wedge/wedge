@@ -698,14 +698,14 @@ tr.catbg .sbox, tr.titlebg .sbox
 	width: 14px
 
 #m_login extends #m_home
-	background-position: -149px 0
+	background-position: -112px 0
 	width: 15px
 
 #m_register extends #m_home
-	background-position: -167px 0
+	background-position: -130px 0
 
 #m_logout extends #m_home
-	background-position: -131px 0
+	background-position: -94px 0
 	width: 15px
 
 /* Styles for buttons and other form elements
