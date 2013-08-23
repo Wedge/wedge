@@ -1243,7 +1243,9 @@ function template_edit_options()
 		{
 			echo '
 					<dt>
-						<strong', !empty($field['is_error']) ? ' class="error"' : '', '>', $field['label'], '</strong>';
+						', $field['type'] == 'check' ? '<label for="' . $key . '">' : '',
+						'<strong', !empty($field['is_error']) ? ' class="error"' : '', '>', $field['label'], '</strong>',
+						$field['type'] == 'check' ? '</label>' : '';
 
 			// Does it have any subtext to show?
 			if (!empty($field['subtext']))
