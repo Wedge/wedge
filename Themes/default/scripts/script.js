@@ -815,7 +815,10 @@ $(window).load(function ()
 				$pmshade.load(url, function (data)
 				{
 					hide_ajax();
-					$('#pm_container').css('max-height', ($(window).height() - $('#pm_container').offset().top) * .9);
+					$('#pm_container')
+						.css('max-height', ($(window).height() - $('#pm_container').offset().top) * .9)
+						.closest('.mimenu')
+						.css('max-width', $(window).width() * .95);
 
 					$(this).find('.n_item').each(function ()
 					{
@@ -873,7 +876,10 @@ $(window).load(function ()
 			$shade.load(url, function (data)
 			{
 				hide_ajax();
-				$('#n_container').css('max-height', ($(window).height() - $('#n_container').offset().top) * .9);
+				$('#n_container')
+					.css('max-height', ($(window).height() - $('#n_container').offset().top) * .9)
+					.closest('.mimenu')
+					.css('max-width', $(window).width() * .95);
 
 				$(this).find('.n_item').each(function ()
 				{

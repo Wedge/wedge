@@ -61,6 +61,10 @@
 .counter
 	padding: .3em .5em .5em .2em
 
+#notlist, #pmlist
+	font-size: .8em
+	line-height: 1.3em
+
 @remove
 	letter-spacing: -.25px
 
