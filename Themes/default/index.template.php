@@ -199,21 +199,22 @@ function template_notifications()
 {
 	global $txt, $context;
 
-	echo '
+	if (isset($context['unread_notifications']))
+		echo '
 			<div id="notifs">
-				<span class="note', $context['unread_notifications'] ? 'nice' : '', '">', $context['unread_notifications'], '</span>
+				<span class="note', $context['unread_notifications'] ? '' : 'void', '">', $context['unread_notifications'], '</span>
 				', $txt['notifications'], '
 			</div>';
 }
 
-function template_pms()
+function template_pm_notifications()
 {
 	global $txt, $context;
 
 	if ($context['allow_pm'])
 		echo '
 			<div id="pms">
-				<span class="note', !empty(we::$user['unread_messages']) ? 'nice' : '', '">', we::$user['unread_messages'], '</span>
+				<span class="note', !empty(we::$user['unread_messages']) ? '' : 'void', '">', we::$user['unread_messages'], '</span>
 				', $txt['pm_short'], '
 			</div>';
 }

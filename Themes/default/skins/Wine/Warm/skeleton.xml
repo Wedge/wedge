@@ -31,6 +31,8 @@
 				<sidebar_wrap indent="-1">
 					<sidebar>
 						<search_box indent="-1" />
+						<notifications indent="-1" />
+						<pm_notifications indent="-1" />
 						<language_selector indent="-1" />
 					</sidebar>
 				</sidebar_wrap>

@@ -16,7 +16,8 @@
 					<top_bar>
 						<logo_toggler />
 						<search_box />
-						<pms />
+						<notifications />
+						<pm_notifications />
 						<language_selector />
 					</top_bar>
 				</header>

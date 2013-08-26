@@ -817,7 +817,7 @@ $(window).load(function ()
 					hide_ajax();
 					$('#pm_container')
 						.css('max-height', ($(window).height() - $('#pm_container').offset().top) * .9)
-						.closest('.mimenu')
+						.closest('ul')
 						.css('max-width', $(window).width() * .95);
 
 					$(this).find('.n_item').each(function ()
@@ -840,7 +840,7 @@ $(window).load(function ()
 										{
 											that.removeClass('n_new');
 											we_pms--;
-											$pmshade.prev().attr('class', we_pms > 0 ? 'notenice' : 'note').text(we_pms);
+											$pmshade.prev().attr('class', we_pms > 0 ? 'note' : 'notevoid').text(we_pms);
 										}
 									});
 								}
@@ -856,7 +856,7 @@ $(window).load(function ()
 								if (was_new)
 								{
 									we_pms--;
-									$pmshade.prev().attr('class', we_pms > 0 ? 'notenice' : 'note').text(we_pms);
+									$pmshade.prev().attr('class', we_pms > 0 ? 'note' : 'notevoid').text(we_pms);
 								}
 
 								// Cancel the implied click on the parent.
@@ -878,7 +878,7 @@ $(window).load(function ()
 				hide_ajax();
 				$('#n_container')
 					.css('max-height', ($(window).height() - $('#n_container').offset().top) * .9)
-					.closest('.mimenu')
+					.closest('ul')
 					.css('max-width', $(window).width() * .95);
 
 				$(this).find('.n_item').each(function ()
@@ -901,7 +901,7 @@ $(window).load(function ()
 									{
 										that.removeClass('n_new');
 										we_notifs--;
-										$shade.prev().attr('class', we_notifs > 0 ? 'notenice' : 'note').text(we_notifs);
+										$shade.prev().attr('class', we_notifs > 0 ? 'note' : 'notevoid').text(we_notifs);
 										document.title = (we_notifs > 0 ? '(' + we_notifs + ') ' : '') + original_title;
 
 										$.post(weUrl('action=notification;sa=markread;in=' + id));
@@ -920,7 +920,7 @@ $(window).load(function ()
 							if (was_new)
 							{
 								we_notifs--;
-								$shade.prev().attr('class', we_notifs > 0 ? 'notenice' : 'note').text(we_notifs);
+								$shade.prev().attr('class', we_notifs > 0 ? 'note' : 'notevoid').text(we_notifs);
 								document.title = (we_notifs > 0 ? '(' + we_notifs + ') ' : '') + original_title;
 
 								$.post(weUrl('action=notification;sa=markread;in=' + id));
@@ -983,14 +983,14 @@ $(window).load(function ()
 				{
 					we_notifs = count[0];
 					is_up_to_date = false;
-					$shade.prev().attr('class', we_notifs > 0 ? 'notenice' : 'note').text(we_notifs);
+					$shade.prev().attr('class', we_notifs > 0 ? 'note' : 'notevoid').text(we_notifs);
 					document.title = (we_notifs > 0 ? '(' + we_notifs + ') ' : '') + original_title;
 				}
 				if (count[1] !== '-1' && count[1] != window.we_pms)
 				{
 					we_pms = items[1];
 					is_pm_up_to_date = false;
-					$pmshade.prev().attr('class', we_pms > 0 ? 'notenice' : 'note').text(we_pms);
+					$pmshade.prev().attr('class', we_pms > 0 ? 'note' : 'notevoid').text(we_pms);
 				}
 			});
 

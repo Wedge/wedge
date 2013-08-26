@@ -459,6 +459,14 @@ em
 		gradient: rgb(100, 175, 100), rgb(100, 190, 100)
 	@endif
 
+// Same, but neutral. Doesn't get in the way.
+.notevoid extends .note
+	@if ie[-9]
+		background-color: rgb(175, 175, 175)
+	@else
+		gradient: rgb(150, 150, 150), rgb(175, 175, 175)
+	@endif
+
 // The sort direction indicator. A small but potentially important detail.
 .sort_up mixes .inline-block
 	background: url($images/sort.gif) 0 0 no-repeat

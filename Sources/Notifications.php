@@ -121,15 +121,6 @@ class weNotif
 
 			self::$disabled = $disabled_notifiers;
 
-			wetem::insert(
-				array(
-					'search_box' => 'after',
-					'sidebar' => 'add',
-					'default' => 'first'
-				),
-				'notifications'
-			);
-
 			add_js_inline('
 	we_notifs = ', (int) $context['unread_notifications'], ';');
 		}

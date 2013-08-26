@@ -437,7 +437,7 @@ function template_main()
 			\'date\',
 			\'new_topics\',
 			\'new_posts\',
-			\'new_members\'' . (allowedTo('moderate_forum') ? '' : ',
+			\'new_members\'' . (!allowedTo('moderate_forum') ? '' : ',
 			\'most_members_online\'') . (empty($settings['hitStats']) ? '' : ',
 			\'hits\'') . '
 		]
