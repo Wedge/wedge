@@ -127,7 +127,6 @@ img.new_posts
 	width: 100%
 	box-sizing: border-box
 	padding: 8px
-	margin: 4px
 	border-radius: 12px
 	background: rgba(0,0,0, .015)
 	@if ie[-7]

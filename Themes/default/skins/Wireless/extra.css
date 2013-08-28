@@ -47,6 +47,9 @@
 .inner
 	border-top: 0
 
+.signature
+	padding-left, padding-right: 8px
+
 // We want really comfortable menu items for use in wireless devices.
 .mimenu ul li
 	padding: 8px

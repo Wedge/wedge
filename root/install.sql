@@ -164,8 +164,8 @@ VALUES
 	(42, 's', 1, 'parsed', '<del>', '</del>', '', '', '', '', 0, '', '', '', '', '', '', 'none', '', 'none', ''),
 	(43, 'size', 4, 'unparsed_equals', '<span style="font-size: $1" class="bbc_size">', '</span>', '', '', '', '', 0, '([1-9][\\d]?p[xt]|small(?:er)?|large[r]?|x[x]?-(?:small|large)|medium|(0\\.[1-9]|[1-9](\\.[\\d][\\d]?)?)?em)\\]', '', '', '', '', '', 'none', '', 'none', ''),
 	(44, 'size', 4, 'unparsed_equals', '<span style="font-size: $1" class="bbc_size">', '</span>', '', '', '', '', 0, '[1-7]\\]', '$sizes = array(1 => 8, 2 => 10, 3 => 12, 4 => 14, 5 => 18, 6 => 24, 7 => 36);\n$data = $sizes[$data] . ''pt'';', '', '', '', '', 'none', '', 'none', ''),
-	(45, 'spoiler', 7, 'parsed', '<div class="spoiler"><div class="spoilerhint"><input type="button" value="{{spoiler}}" onclick="$(this.parentNode.parentNode.lastChild).toggle(); return false;">{{click_for_spoiler}}</div><div class="spoiled hide">', '</div></div>', '', '', '', '', 1, '', '', '', '', '', '', 'none', '', 'none', ''),
-	(46, 'spoiler', 7, 'parsed_equals', '<div class="spoiler"><div class="spoilerhint"><input type="button" value=$1 onclick="$(this.parentNode.parentNode.lastChild).toggle(); return false;">{{click_for_spoiler}}</div><div class="spoiled hide">', '</div></div>', '', '', '', '', 1, '', '', '', '', '', ' ', 'optional', '', 'none', ''),
+	(45, 'spoiler', 7, 'parsed', '<div class="spoiler"><header><input type="button" value="{{spoiler}}" onclick="$(this.parentNode.parentNode.lastChild).toggle(); return false;">{{click_for_spoiler}}</header><blockquote>', '</blockquote></div>', '', '', '', '', 1, '', '', '', '', '', '', 'none', '', 'none', ''),
+	(46, 'spoiler', 7, 'parsed_equals', '<div class="spoiler"><header><input type="button" value=$1 onclick="$(this.parentNode.parentNode.lastChild).toggle(); return false;">{{click_for_spoiler}}</header><blockquote>', '</blockquote></div>', '', '', '', '', 1, '', '', '', '', '', ' ', 'optional', '', 'none', ''),
 	(47, 'sub', 3, 'parsed', '<sub>', '</sub>', '', '', '', '', 0, '', '', '', '', '', '', 'none', '', 'none', ''),
 	(48, 'sup', 3, 'parsed', '<sup>', '</sup>', '', '', '', '', 0, '', '', '', '', '', '', 'none', '', 'none', ''),
 	(49, 'table', 5, 'parsed', '<table class="bbc_table">', '</table>', '', '', '', '', 1, '', '', '', '', 'tr', '', 'none', '', 'inside', ''),
@@ -2409,7 +2409,8 @@ VALUES
 	(17, 'Alexa', 'ia_archiver', ''),
 	(18, 'Omgili', 'omgilibot', ''),
 	(19, 'EntireWeb', 'Speedy Spider', ''),
-	(20, 'Yandex', 'Yandex', '');
+	(20, 'Yandex', 'Yandex', ''),
+	(21, 'UptimeRobot', 'UptimeRobot', '');
 
 #
 # Table structure for table `subscriptions`
@@ -2533,7 +2534,6 @@ CREATE TABLE {$db_prefix}topics (
 	approved tinyint(3) NOT NULL default 1,
 	privacy enum('default', 'members', 'groups', 'contacts', 'author') NOT NULL default 'default',
 	privacy_id int(10) unsigned NOT NULL default 0,
-	tags text NOT NULL,
 	PRIMARY KEY (id_topic),
 	UNIQUE last_message (id_last_msg, id_board),
 	UNIQUE first_message (id_first_msg, id_board),
