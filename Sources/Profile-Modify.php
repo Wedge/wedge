@@ -440,6 +440,7 @@ function loadProfileFields($force_reload = false)
 			'preload' => create_function('', '
 				global $context, $cur_profile;
 
+				loadLanguage(\'PersonalMessage\');
 				$context[\'display_mode\'] = $cur_profile[\'pm_prefs\'] & 3;
 				$context[\'send_email\'] = $cur_profile[\'pm_email_notify\'];
 				$context[\'receive_from\'] = !empty($cur_profile[\'pm_receive_from\']) ? $cur_profile[\'pm_receive_from\'] : 0;
@@ -592,6 +593,7 @@ function loadProfileFields($force_reload = false)
 			'permission' => 'profile_extra',
 			'preload' => create_function('', '
 				global $context, $cur_profile;
+
 				$context[\'member\'][\'time_offset\'] = $cur_profile[\'time_offset\'];
 				return true;
 			'),

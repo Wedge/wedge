@@ -95,9 +95,9 @@ $(window).load(function ()
 				poster_top += $poster.height();
 			}
 
-			// Or if we're above the first post, we can just forget about the effect.
+			// If we're above the first post, or the post is shorter than the user box, we can just forget about the effect.
 			// Otherwise, go ahead and 'fix' our current post's user box position.
-			var $col = top < $first_post.offset().top ? false : $poster.find('.column');
+			var $col = top < $first_post.offset().top || $poster.height() <= $poster.find('.column').height() + poster_padding_top + poster_padding_bot ? false : $poster.find('.column');
 			$('.poster .column').not($col).css('position', '');
 			if ($col.length)
 				$col.css({

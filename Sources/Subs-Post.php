@@ -610,6 +610,13 @@ function sendpm($recipients, $subject, $message, $store_outbox = true, $from = n
 			}
 		}
 
+		if (!empty($row['ignored']) && $row['id_member'] != $from['id'])
+		{
+			$log['failed'][$row['id_member']] = sprintf($txt['pm_error_ignored_by_user'], $row['real_name']);
+			unset($all_to[array_search($row['id_member'], $all_to)]);
+			continue;
+		}
+
 		// If the receiving account is banned (>=20) or pending deletion (4), refuse to send the PM.
 		if ($row['is_activated'] >= 20 || ($row['is_activated'] == 4 && !we::$is_admin))
 		{
