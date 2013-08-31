@@ -150,7 +150,7 @@ function template_topic_poll_results()
 		if ($context['allow_poll_view'])
 		{
 			echo '
-				', $option['bar_ndt'], '
+					', $option['bar_ndt'], '
 					<span class="percentage', $option['voted_this'] ? ' voted' : '', '">', $option['votes'], ' (', $option['percent'], '%)</span>';
 
 			// Showing votes to users? Means we must have some votes!

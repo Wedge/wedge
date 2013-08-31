@@ -64,6 +64,11 @@
 .counter
 	padding: .3em .5em .5em .2em
 
+.poll dl
+	padding: 1em 0 0
+	dt, dd
+		width: 90%
+
 #notlist, #pmlist
 	font-size: .8em
 	line-height: 1.3em

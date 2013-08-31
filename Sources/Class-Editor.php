@@ -100,7 +100,7 @@ class wedit
 
 	private static function unparse_smileys($a)
 	{
-		return ' <div class="smiley ' . $a[2] . '">' . un_htmlspecialchars($a[1] . $a[3]) . '</div>';
+		return ' <div class="smiley ' . $a[2] . '">' . un_htmlspecialchars(isset($a[3]) ? $a[3] : $a[1]) . '</div>';
 	}
 
 	private static function unparse_td($a)

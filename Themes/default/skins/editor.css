@@ -32,7 +32,7 @@ html.rich
 .rich
 	background: $main_bg
 	.smiley
-		margin: 0 2px
+		margin: 0 2px 0 5px
 
 // textarea has a font-size of 95% by default, but it's inherited from the body's 88%.
 // As we're applying this to the body, we want to calculate 95% of 88% instead.
