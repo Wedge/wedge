@@ -1442,8 +1442,12 @@ function wedge_get_skin_options()
 	{
 		foreach ($matches as $match)
 		{
-			if (!empty($match[3]) && (empty($match[1]) || we::is($match[1])))
+			if (!empty($match[1]) && !we::is($match[1]))
+				continue;
+
+			if (!empty($match[3]))
 				add_css(rtrim($match[3], "\t"));
+
 			if (!empty($match[2]))
 			{
 				$includes = array_map('trim', explode(' ', $match[2]));
@@ -1488,6 +1492,9 @@ function wedge_get_skin_options()
 
 	if (strpos($set, '</languages>') !== false && preg_match('~<languages>(.*?)</languages>~s', $set, $match))
 		$context['skin_available_languages'] = array_map('trim', preg_split('~[\s,]+~', $match[1]));
+
+	// If you write a plugin that adds new skin options, plug it into this!
+	call_hook('skin_parser', array(&$set, &$skeleton, &$macros));
 }
 
 /**

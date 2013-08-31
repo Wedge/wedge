@@ -1658,7 +1658,7 @@ class wess_prefixes extends wess
 			if ($b['webkit'])
 				return $this->prefix . $matches[2] . '-device-pixel-ratio:' . ($dpi / 96);
 			// IE9+ and older Opera should be fine with a dpi unit.
-			return $matches[2] . 'resolution:' . $dpi . 'dpi';
+			return $matches[2] . '-resolution:' . $dpi . 'dpi';
 		}
 
 		// All browsers expect commas between elements in rect(), except for IE 6/7. The usual...

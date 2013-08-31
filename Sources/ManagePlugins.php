@@ -1734,7 +1734,7 @@ function knownHooks()
 
 		'function' => array(
 
-			// Cornerstone items
+			// Foundation stone items
 			'pre_load',
 			'determine_location',
 			'detect_browser',
@@ -1742,6 +1742,7 @@ function knownHooks()
 			'menu_items',
 			'action_list',
 			'behavior',
+			'skin_parser',
 
 			// Threads and posts display
 			'post_bbc_parse',
