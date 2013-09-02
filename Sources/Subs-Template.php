@@ -1357,12 +1357,26 @@ function execBlock($block_name, $fatal = false)
 	// Figure out what the template function is named.
 	$theme_function = 'template_' . $block_name;
 
+	if (isset($context['template_befores'][$theme_function]))
+	{
+		$func =& $context['template_befores'][$theme_function];
+		if (is_array($func))
+			$func = create_function($func[0], $func[1]);
+		call_user_func_array($func, $vars);
+	}
 	// !!! Doing these tests is relatively slow, but there aren't that many. In case performance worsens,
 	// !!! we should cache the function list (get_defined_functions()) and isset() against the cache.
-	if (function_exists($theme_function_before = $theme_function . '_before'))
+	elseif (function_exists($theme_function_before = $theme_function . '_before'))
 		call_user_func_array($theme_function_before, $vars);
 
-	if (function_exists($theme_function_override = $theme_function . '_override'))
+	if (isset($context['template_overrides'][$theme_function]))
+	{
+		$func =& $context['template_overrides'][$theme_function];
+		if (is_array($func))
+			$func = create_function($func[0], $func[1]);
+		call_user_func_array($func, $vars);
+	}
+	elseif (function_exists($theme_function_override = $theme_function . '_override'))
 		call_user_func_array($theme_function_override, $vars);
 	elseif (function_exists($theme_function))
 		call_user_func_array($theme_function, $vars);
@@ -1371,7 +1385,14 @@ function execBlock($block_name, $fatal = false)
 	elseif ($fatal !== 'ignore')
 		exit(log_error(sprintf(isset($txt['theme_template_error']) ? $txt['template_block_error'] : 'Unable to load the "%s" template block!', (string) $block_name), 'template'));
 
-	if (function_exists($theme_function_after = $theme_function . '_after'))
+	if (isset($context['template_afters'][$theme_function]))
+	{
+		$func =& $context['template_afters'][$theme_function];
+		if (is_array($func))
+			$func = create_function($func[0], $func[1]);
+		call_user_func_array($func, $vars);
+	}
+	elseif (function_exists($theme_function_after = $theme_function . '_after'))
 		call_user_func_array($theme_function_after, $vars);
 
 	// Are we showing debugging for templates? Just make sure not to do it before the doctype...

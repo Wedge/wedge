@@ -253,7 +253,7 @@ function template_msg_header_body()
 								<div class="note">' . $txt['new'] . '</div>' : '', '
 							</h5>
 							<time>
-								&#171; ', !empty($msg['counter']) ? sprintf($txt['reply_number'], $msg['counter']) : '', ' ', $msg['on_time'], ' &#187;
+								« ', !empty($msg['counter']) ? sprintf($txt['reply_number'], $msg['counter']) : '', ' ', $msg['on_time'], ' »
 								<span class="modified">', $theme['show_modify'] && !empty($msg['modified']['name']) ?
 									// Show "Last Edit on Date by Person" if this post was edited.
 									strtr($txt[$msg['modified']['name'] !== $msg['member']['name'] ? 'last_edit' : 'last_edit_mine'], array(

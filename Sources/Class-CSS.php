@@ -1451,6 +1451,7 @@ class wess_prefixes extends wess
 		$this->prefix = we::is('opera') ? '-o-' : (we::is('webkit') ? '-webkit-' : (we::is('gecko') ? '-moz-' : (we::is('ie') ? '-ms-' : '')));
 	}
 
+	// This is a little trick to convert degrees between prefixed and unprefixed gradients. I even shared: http://tinyurl.com/pcnfk27
 	private static function degrees($a)
 	{
 		return $a[1] . (90 - $a[2]);
@@ -1611,11 +1612,10 @@ class wess_prefixes extends wess
 
 			$prefixed = preg_replace('~(?<=[\s:])([a-z][a-z-]+-gradient\h*\()~', $this->prefix . '$1', $unchanged);
 
-			// This is a little trick to convert degrees between prefixed and unprefixed variants. I even shared: http://tinyurl.com/pcnfk27
 			if (strpos($prefixed, 'deg') !== false)
 				$prefixed = preg_replace_callback('~(gradient\h*\(\s*)(-?(?:\d+|\d*\.\d+))(?=deg\b)~', 'wess_prefixes::degrees', $prefixed);
 
-			if (strpos($prefixed, 'radial-gradient') !== false)
+			if (strpos($prefixed, 'radial-gradient') !== false && $b['webkit']) // Pretty much Safari-specific...
 				$prefixed = preg_replace_callback('~(?<=radial-gradient\()([\sa-z-]+\s+)?at\s([^,]+)(?=,)~', 'wess_prefixes::radial', $prefixed);
 
 			return $prefixed;

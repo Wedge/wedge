@@ -1460,7 +1460,7 @@ function template_admin_search_results()
 		{
 			echo '
 			<li>
-				', !empty($result['parent_name']) ? $result['parent_name'] . ' &#187; ' : '', '<a href="', $result['url'], '"><strong>', $result['name'], '</strong></a> [', isset($txt['admin_search_section_' . $result['type']]) ? $txt['admin_search_section_' . $result['type']] : $result['type'], ']';
+				', !empty($result['parent_name']) ? $result['parent_name'] . ' » ' : '', '<a href="', $result['url'], '"><strong>', $result['name'], '</strong></a> [', isset($txt['admin_search_section_' . $result['type']]) ? $txt['admin_search_section_' . $result['type']] : $result['type'], ']';
 
 			if ($result['help'])
 				echo '

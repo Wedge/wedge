@@ -1490,6 +1490,12 @@ function wedge_get_skin_options()
 					'body' => $match[3]
 				);
 
+	// Override template functions directly.
+	if (strpos($set, '</template>') !== false && preg_match_all('~<template\s+name="([^"]+)"(?:\s+param(?:s|eters)?="([^"]*)")?(?:\s+where="([^"]*)")?(?:\s+for="([^"]*)")?\s*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</template>~s', $set, $matches, PREG_SET_ORDER))
+		foreach ($matches as $match)
+			if (empty($match[4]) || we::is($match[4]))
+				$context['template_' . (empty($match[3]) || ($match[3] != 'before' && $match[3] != 'after') ? 'override' : $match[3]) . 's']['template_' . preg_replace('~^template_~', '', $match[1])] = array($match[2], $match[5]);
+
 	if (strpos($set, '</languages>') !== false && preg_match('~<languages>(.*?)</languages>~s', $set, $match))
 		$context['skin_available_languages'] = array_map('trim', preg_split('~[\s,]+~', $match[1]));
 
