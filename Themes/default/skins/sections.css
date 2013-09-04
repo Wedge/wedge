@@ -291,9 +291,12 @@ hr.sep
 .poster
 	width: 14em
 	display: table-cell
-	background: rgba(0,0,0, .025)
-	padding: 10px 12px 12px 0
+	@if !ie[-8]
+		background: rgba(0,0,0, .025)
+	@endif
+	padding: 6px 12px 12px 0
 	vertical-align: top
+	position: relative
 
 	h4
 		margin: 3px 0 3px 16px // 19px originally.

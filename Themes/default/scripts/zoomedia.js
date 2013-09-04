@@ -23,11 +23,12 @@ $.fn.zoomedia = function (options)
 		$zoom, $zoom_desc, $zoom_close,
 		$zoom_content, $zoom_desc_contain,
 
+		// !! Temporary code. Need to implement more features!
 		lang = {
 /*			move: $txt['media_zoom_move'],
 			close: $txt['media_close'], */
 			closeTitle: $txt['media_zoom_close_title'],
-			loading: $txt['media_zoom_loading'],
+			loading: $txt['media_zoom_loading'] /*,
 /*			loadingTitle: $txt['media_zoom_clicktocancel'],
 			restoreTitle: $txt['media_zoom_clicktoclose'],
 			focusTitle: $txt['media_zoom_focus'],

@@ -210,9 +210,9 @@ li.sep
 
 .actions
 	display: block
-	width: 40%
 	float: right
 	li
+		white-space: nowrap
 		width: 1%
 
 .inner

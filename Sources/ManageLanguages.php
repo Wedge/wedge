@@ -446,10 +446,7 @@ function ModifyLanguage()
 			$objects = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($plugin_path), RecursiveIteratorIterator::SELF_FIRST);
 			foreach ($objects as $name => $object)
 				if (is_dir($name))
-				{
-					$local_path = str_replace($plugin_path, '', $name) . '|';
-					$lang_dirs[$plugin_id][$local_path] = $name;
-				}
+					$lang_dirs[$plugin_id][str_replace($plugin_path, '', $name) . '/'] = $name;
 
 			if (empty($lang_dirs[$plugin_id]))
 				unset($lang_dirs[$plugin_id], $themes[$plugin_id], $context['language_files']['plugins'][$plugin_id]);
