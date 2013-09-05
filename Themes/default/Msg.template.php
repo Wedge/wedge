@@ -32,7 +32,7 @@ function template_msg_wrap_before()
 function template_msg_author_before()
 {
 	echo '
-					<div class="poster"><div class="column">';
+					<div class="poster"><div>';
 }
 
 function template_msg_author_name()

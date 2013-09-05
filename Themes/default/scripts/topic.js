@@ -50,80 +50,68 @@ $(window).load(function ()
 	// We need padding values, to ensure the user box doesn't go beyond acceptable boundaries.
 	var
 		$first_post = $('.poster').first(),
-		poster_padding_top = parseInt($first_post.css('padding-top')),
-		poster_padding_bot = parseInt($first_post.css('padding-bottom')),
+		poster_padding_top = parseInt($first_post.css('paddingTop')),
+		poster_padding_bot = parseInt($first_post.css('paddingBottom')),
 		follow_me = function ()
 		{
 			var
 				top = $(window).scrollTop(),
-				$poster = null,
+				$poster,
 				$col,
 				offset,
-				next_poster_top,
+				poster_top,
 				col_height,
-				last = true;
+				poster_height;
 
 			// On each scroll, we retrieve the top position
 			// of all posts, to see which one is in scope.
 			$('.poster').each(function ()
 			{
-				if ($poster === null)
-				{
-					$poster = $(this);
-					offset = $(this).offset();
-					next_poster_top = offset.top;
-					return;
-				}
-				offset = $(this).offset();
-				next_poster_top = offset.top;
-				if (next_poster_top >= top)
-					return last = false;
 				$poster = $(this);
+				offset = $poster.offset();
+				poster_top = offset.top;
+				poster_height = $poster.height();
+				if (top < poster_top + poster_height + poster_padding_top + poster_padding_bot)
+					return false;
 			});
 
-			// If we're below the last post, we need some fixin'.
-			if (last)
-				next_poster_top += $poster.height();
-
-			$col = $poster.find('.column');
+			$col = $poster.find('>div');
 			col_height = $col.height();
 
 			// If we're above the first post, or the post is shorter than the user box, we can just forget about the effect.
-			if (top < $first_post.offset().top || $poster.height() <= col_height + poster_padding_top + poster_padding_bot)
+			if (top < $first_post.offset().top || poster_height == col_height)
 				$col = false;
 			// If we're close to the next post, stick the previous user box to the bottom; this increases performance.
-			else if (top > next_poster_top - col_height - poster_padding_bot)
+			else if (top >= poster_top + poster_height + poster_padding_top - col_height)
 				$col.css({
-					position: 'absolute',
-					bottom: poster_padding_bot,
+					position: '',
 					top: '',
 					left: '',
-					width: '',
-					height: ''
+					paddingTop: poster_height - col_height
 				});
 			// Otherwise, go ahead and 'fix' our current post's user box position.
 			else
 				$col.css({
 					position: 'fixed',
-					top: Math.min(poster_padding_top, next_poster_top - poster_padding_bot - top - col_height),
+					top: poster_padding_top,
 					left: offset.left,
-					width: $col.width(),
-					height: col_height
+					paddingTop: 0
 				});
 
-			$('.poster .column').not($col).css('position', '');
+			$('.poster>div').not($col).css({
+				position: '',
+				top: '',
+				left: '',
+				paddingTop: 0
+			});
 		};
 
 	// Once the page is loaded, we lock user box sizes, to prevent breaking the effect.
-	$('.poster').each(function () { $(this).width($(this).width()).height($(this).height()); });
+	$('.poster>div,.poster').each(function () { $(this).width($(this).width()).height($(this).height()); });
 
 	// If user box has no padding, chances are it doesn't want this effect anyway.
-	if (!isNaN(poster_padding_top) && !is_ie6)
+	if (!isNaN(poster_padding_top) && !is_ie6 && !is_ie7)
 	{
-		// As of September 2013, Firefox still doesn't support setting position: relative on a table cell, so we have to add an intermediate div...
-		if (is_ff)
-			$('.poster').each(function () { $(this).wrapInner($('<div/>').css('position', 'relative').width($(this).width()).height($(this).height())); });
-
 		$(window).scroll(follow_me);
 		follow_me();
 	}

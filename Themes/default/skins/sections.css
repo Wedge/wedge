@@ -294,9 +294,8 @@ hr.sep
 	@if !ie[-8]
 		background: rgba(0,0,0, .025)
 	@endif
-	padding: 6px 12px 12px 0
+	padding: 6px 12px 16px 0
 	vertical-align: top
-	position: relative
 
 	h4
 		margin: 3px 0 3px 16px // 19px originally.
@@ -1459,7 +1458,7 @@ body.waiting *
 @endif
 
 @if !ie[-8]
-	// IE8's media query shiv, if present, doesn't understand min-resolution, so we'll ignore it.
+	// IE8's media query shim, if present, doesn't understand min-resolution, so we'll ignore it.
 	// Main area should have slightly larger text on high-density devices.
 	// The $responsive rule (tries) to ensure it doesn't touch tablets.
 	@media $responsive and (min-resolution: 1.5dppx)
