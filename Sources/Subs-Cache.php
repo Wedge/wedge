@@ -387,6 +387,14 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 			if (!isset($original_files[$radix], $not_found[$radix]))
 				continue;
 
+			// Get the list of suffixes in the file name.
+//			$suffixes = array_flip(explode(',', substr(strstr($file, '.'), 1, -4)));
+//			$keep_suffixes = array_intersect_key($suffixes, $requested_suffixes);
+
+			// If we can't find a required suffix in the suffix list, skip the file.
+//			if (!$keep_suffixes)
+//				continue;
+
 			$css[] = $fold . $file;
 
 			if ($db_show_debug === true)
@@ -1342,6 +1350,47 @@ function wedge_skin_conditions(&$str)
 }
 
 /**
+ * A helper function to parse skin tags in any order, e.g. <css for="ie[-8]" include="file"> or <css include="file" for="ie[-8]">.
+ */
+function wedge_parse_skin_tags(&$file, $name, $params = array())
+{
+	$tags = array();
+	if (strpos($file, '</' . $name . '>') === false)
+		return $tags;
+	$params = (array) $params;
+
+	// The CDATA stuff, to be honest, is only there for XML warriors. It doesn't actually allow you to use </$name> inside it.
+	preg_match_all('~<' . $name . '\b([^>]*)>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</' . $name . '>~s', $file, $matches, PREG_SET_ORDER);
+	if (empty($matches))
+		return $tags;
+
+	$empty_list = array();
+	foreach ($params as $param)
+		$empty_list[$param] = '';
+	foreach ($matches as $match)
+	{
+		$item = $empty_list;
+		$item['value'] = $match[2];
+		// No parameters? Just return now...
+		if (empty($match[1]))
+		{
+			$tags[] = $item;
+			continue;
+		}
+		// Or is a different browser targeted? Ignore this entry completely...
+		elseif (strpos($match[1], 'for="') !== false && preg_match('~\bfor="([^"]*)"~', $match[1], $val) && !we::is($val[1]))
+			continue;
+
+		// Now we'll retrieve the parameters individually, to allow for different param order.
+		foreach ($params as $param)
+			if (preg_match('~\b' . $param . '="([^"]*)"~', $match[1], $val))
+				$item[$param] = $val[1];
+		$tags[] = $item;
+	}
+	return $tags;
+}
+
+/**
  * Parses the current skin's skin.xml and skeleton.xml files, and those above them.
  */
 function wedge_get_skin_options()
@@ -1425,76 +1474,67 @@ function wedge_get_skin_options()
 	}
 
 	// Now, find skeletons and feed them to the $context['skeleton'] array for later parsing.
-	if ($skeleton && strpos($skeleton, '</skeleton>') !== false)
-		if (preg_match_all('~<skeleton(?:\s*id="([^"]+)"\s*)?>(.*?)</skeleton>~s', $skeleton, $matches, PREG_SET_ORDER))
-			foreach ($matches as $match)
-				$context['skeleton'][empty($match[1]) ? 'main' : $match[1]] = $match[2];
+	$matches = $skeleton ? wedge_parse_skin_tags($skeleton, 'skeleton', 'id') : array();
+	foreach ($matches as $match)
+		$context['skeleton'][empty($match['id']) ? 'main' : $match['id']] = $match['value'];
 
 	if (!$set)
 		return;
 
-	if (strpos($set, '</replace>') !== false && preg_match_all('~<replace(?:\s+(regex(?:="[^"]+")?))?(?:\s+for="([^"]+)")?\s*>\s*<from>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</from>\s*<to>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</to>\s*</replace>~s', $set, $matches, PREG_SET_ORDER))
-		foreach ($matches as $match)
-			if (!empty($match[3]) && (empty($match[2]) || we::is($match[2])))
-				$context['skin_replace'][trim($match[3], "\x00..\x1F")] = array(trim($match[4], "\x00..\x1F"), !empty($match[1]));
+	$matches = wedge_parse_skin_tags($set, 'replace', 'regex');
+	foreach ($matches as $match)
+		if (preg_match('~<from>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</from>\s*<to>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</to>~', $match['value'], $from_to))
+			$context['skin_replace'][trim($from_to[1], "\x00..\x1F")] = array(trim($from_to[2], "\x00..\x1F"), !empty($match['regex']));
 
-	if (strpos($set, '</css>') !== false && preg_match_all('~<css(?:\s+for="([^"]+)")?(?:\s+include="([^"]+)")?\s*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</css>~s', $set, $matches, PREG_SET_ORDER))
+	$matches = wedge_parse_skin_tags($set, 'css', 'include');
+	foreach ($matches as $match)
 	{
-		foreach ($matches as $match)
+		if (!empty($match['value']))
+			add_css(rtrim($match['value'], "\t"));
+
+		if (!empty($match['include']))
 		{
-			if (!empty($match[1]) && !we::is($match[1]))
-				continue;
-
-			if (!empty($match[3]))
-				add_css(rtrim($match[3], "\t"));
-
-			if (!empty($match[2]))
+			$includes = array_map('trim', explode(' ', $match['include']));
+			// Wedge currently only supports providing a full URI in <css include=""> statements.
+			foreach ($includes as $css_file)
 			{
-				$includes = array_map('trim', explode(' ', $match[2]));
-				// Wedge currently only supports providing a full URI in <css include=""> statements.
-				foreach ($includes as $css_file)
-					if (strpos($css_file, '://') !== false)
-						$context['header'] .= '
+				if (strpos($css_file, '://') !== false)
+					$context['header'] .= '
 	<link rel="stylesheet" href="' . $css_file . '">';
+				else
+					add_js_file($css_file);
 			}
 		}
 	}
 
-	if (strpos($set, '</code>') !== false && preg_match_all('~<code(?:\s+for="([^"]+)")?(?:\s+include="([^"]+)")?\s*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</code>~s', $set, $matches, PREG_SET_ORDER))
+	$matches = wedge_parse_skin_tags($set, 'code', 'include');
+	foreach ($matches as $match)
 	{
-		foreach ($matches as $match)
+		if (!empty($match['include']))
 		{
-			if (!empty($match[1]) && !we::is($match[1]))
-				continue;
-
-			if (!empty($match[2]))
-			{
-				$includes = array_map('trim', explode(' ', $match[2]));
-				// If we have an include param in the code tag, it should either use a full URI, or 'scripts/something.js' (in which case
-				// it'll find data in the current theme, or the default theme), or '$here/something.js', where it'll look in the skin folder.
-				if (strpos($match[2], '$here') !== false)
-					foreach ($includes as &$scr)
-						$scr = str_replace('$here', str_replace($theme['theme_dir'] . '/', '', $folder), $scr);
-				add_js_file($includes);
-			}
-			add_js(rtrim($match[3], "\t"));
+			$includes = array_map('trim', explode(' ', $match['include']));
+			// If we have an include param in the code tag, it should either use a full URI, or 'scripts/something.js' (in which case
+			// it'll find data in the current theme, or the default theme), or '$here/something.js', where it'll look in the skin folder.
+			if (strpos($match['include'], '$here') !== false)
+				foreach ($includes as &$scr)
+					$scr = str_replace('$here', str_replace($theme['theme_dir'] . '/', '', $folder), $scr);
+			add_js_file($includes);
 		}
+		add_js(rtrim($match['value'], "\t"));
 	}
 
 	// Gather macros here.
-	if (strpos($macros, '</macro>') !== false && preg_match_all('~<macro\s+name="([^"]+)"(?:\s+for="([^"]+)")?\s*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</macro>~s', $macros, $matches, PREG_SET_ORDER))
-		foreach ($matches as $match)
-			if (empty($match[2]) || we::is($match[2]))
-				$context['macros'][$match[1]] = array(
-					'has_if' => strpos($match[3], '<if:') !== false,
-					'body' => $match[3]
-				);
+	$matches = wedge_parse_skin_tags($macros, 'macro', 'name');
+	foreach ($matches as $match)
+		$context['macros'][$match['name']] = array(
+			'has_if' => strpos($match['value'], '<if:') !== false,
+			'body' => $match['value']
+		);
 
 	// Override template functions directly.
-	if (strpos($set, '</template>') !== false && preg_match_all('~<template\s+name="([^"]+)"(?:\s+param(?:s|eters)?="([^"]*)")?(?:\s+where="([^"]*)")?(?:\s+for="([^"]*)")?\s*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</template>~s', $set, $matches, PREG_SET_ORDER))
-		foreach ($matches as $match)
-			if (empty($match[4]) || we::is($match[4]))
-				$context['template_' . (empty($match[3]) || ($match[3] != 'before' && $match[3] != 'after') ? 'override' : $match[3]) . 's']['template_' . preg_replace('~^template_~', '', $match[1])] = array($match[2], $match[5]);
+	$matches = wedge_parse_skin_tags($set, 'template', array('name', 'param(?:s|eters)?', 'where'));
+	foreach ($matches as $match)
+		$context['template_' . ($match['where'] != 'before' && $match['where'] != 'after' ? 'override' : $match['where']) . 's']['template_' . preg_replace('~^template_~', '', $match['name'])] = array($match['param(?:s|eters)?'], $match['value']);
 
 	if (strpos($set, '</languages>') !== false && preg_match('~<languages>(.*?)</languages>~s', $set, $match))
 		$context['skin_available_languages'] = array_map('trim', preg_split('~[\s,]+~', $match[1]));
