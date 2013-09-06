@@ -1351,6 +1351,7 @@ function wedge_skin_conditions(&$str)
 
 /**
  * A helper function to parse skin tags in any order, e.g. <css for="ie[-8]" include="file"> or <css include="file" for="ie[-8]">.
+ * Specifying params is required, to prevent undefined index errors when accessing the param by name directly. Plus, it's cleaner.
  */
 function wedge_parse_skin_tags(&$file, $name, $params = array())
 {
@@ -1381,7 +1382,7 @@ function wedge_parse_skin_tags(&$file, $name, $params = array())
 		elseif (strpos($match[1], 'for="') !== false && preg_match('~\bfor="([^"]*)"~', $match[1], $val) && !we::is($val[1]))
 			continue;
 
-		// Now we'll retrieve the parameters individually, to allow for different param order.
+		// Now we'll retrieve the parameters individually, to allow for any param order.
 		foreach ($params as $param)
 			if (preg_match('~\b' . $param . '="([^"]*)"~', $match[1], $val))
 				$item[$param] = $val[1];
@@ -1486,41 +1487,44 @@ function wedge_get_skin_options()
 		if (preg_match('~<from>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</from>\s*<to>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</to>~', $match['value'], $from_to))
 			$context['skin_replace'][trim($from_to[1], "\x00..\x1F")] = array(trim($from_to[2], "\x00..\x1F"), !empty($match['regex']));
 
+	// Add inline CSS or CSS files to all pages.
 	$matches = wedge_parse_skin_tags($set, 'css', 'include');
 	foreach ($matches as $match)
 	{
-		if (!empty($match['value']))
-			add_css(rtrim($match['value'], "\t"));
-
+		// If we have an include param in the tag, it should either use a full URI, or 'something', in which case
+		// it'll look for skins/something.css in the root, then satellite files (suffixes, child folders..), if any.
 		if (!empty($match['include']))
 		{
 			$includes = array_map('trim', explode(' ', $match['include']));
-			// Wedge currently only supports providing a full URI in <css include=""> statements.
-			foreach ($includes as $css_file)
+			$has_external = strpos($match['include'], '://') !== false;
+			foreach ($includes as $val)
 			{
-				if (strpos($css_file, '://') !== false)
+				if ($has_external && strpos($val, '://') !== false)
 					$context['header'] .= '
-	<link rel="stylesheet" href="' . $css_file . '">';
+	<link rel="stylesheet" href="' . $val . '">';
 				else
-					add_js_file($css_file);
+					add_css_file($val, true);
 			}
 		}
+		if (!empty($match['value']))
+			add_css(rtrim($match['value'], "\t"));
 	}
 
-	$matches = wedge_parse_skin_tags($set, 'code', 'include');
+	// Add inline JS or JS files to all pages. Very similar to the above code...
+	$matches = wedge_parse_skin_tags($set, 'script', 'include');
 	foreach ($matches as $match)
 	{
+		// If we have an include param in the tag, it should either use a full URI, or 'scripts/something.js'
+		// to load a local script, or '$here/something.js', where it'll look for it in the skin folder.
 		if (!empty($match['include']))
 		{
 			$includes = array_map('trim', explode(' ', $match['include']));
-			// If we have an include param in the code tag, it should either use a full URI, or 'scripts/something.js' (in which case
-			// it'll find data in the current theme, or the default theme), or '$here/something.js', where it'll look in the skin folder.
-			if (strpos($match['include'], '$here') !== false)
-				foreach ($includes as &$scr)
-					$scr = str_replace('$here', str_replace($theme['theme_dir'] . '/', '', $folder), $scr);
-			add_js_file($includes);
+			$has_here = strpos($match['include'], '$here') !== false;
+			foreach ($includes as $val)
+				add_js_file($has_here ? str_replace('$here', str_replace($theme['theme_dir'] . '/', '', $folder), $val) : $val);
 		}
-		add_js(rtrim($match['value'], "\t"));
+		if (!empty($match['value']))
+			add_js(rtrim($match['value'], "\t"));
 	}
 
 	// Gather macros here.
@@ -1536,8 +1540,9 @@ function wedge_get_skin_options()
 	foreach ($matches as $match)
 		$context['template_' . ($match['where'] != 'before' && $match['where'] != 'after' ? 'override' : $match['where']) . 's']['template_' . preg_replace('~^template_~', '', $match['name'])] = array($match['param(?:s|eters)?'], $match['value']);
 
-	if (strpos($set, '</languages>') !== false && preg_match('~<languages>(.*?)</languages>~s', $set, $match))
-		$context['skin_available_languages'] = array_map('trim', preg_split('~[\s,]+~', $match[1]));
+	$matches = wedge_parse_skin_tags($set, 'languages');
+	foreach ($matches as $match)
+		$context['skin_available_languages'] = array_filter(preg_split('~[\s,]+~', $match['value']));
 
 	// If you write a plugin that adds new skin options, plug it into this!
 	call_hook('skin_parser', array(&$set, &$skeleton, &$macros));

@@ -68,13 +68,12 @@
 	</options>
 
 	<!--
-		Code. This section allows you to define extra JavaScript that should be
-		added at the end of the page. You can specify a target browser using the
-		"for" keyword. You can also require some JavaScript files to be loaded,
+		JavaScript. This section allows you to define extra JS code that should be
+		added at the end of the page. As with other tags, you can specify a target
+		browser using "for". You can also require some JavaScript files to be loaded,
 		use the "include" keyword to specify a comma-separated list of files.
-		They should either use a relative path based on the current theme, or
-		the $here variable which acts as an alias to the skin's folder.
-		If you use both keywords, use them in this order: for, and include.
+		You can specify an external HTTP URL, or a relative path based on $here,
+		a variable representing the current skin folder ($here/myscript.js).
 
 		In the examples below, we're applying PNG compatibility fixes to IE6
 		(loading the DD_belatedPNG script in the process); we're also allowing
@@ -82,12 +81,12 @@
 		iOS devices to show the sidebar below the main content.
 	-->
 
-	<code for="ie6" include="scripts/pngfix.js scripts/ie6hover.js"><![CDATA[
+	<script for="ie6" include="scripts/pngfix.js scripts/ie6hover.js"><![CDATA[
 	$('input[type=checkbox], input[type=radio]').addClass('ie_check');
 	$('input[type=submit], input[type=button]').addClass('ie_button');
 	DD_belatedPNG.fix('.ping,#logo,#footer,#footer div.frame');
 	$.ie6hover();
-	]]></code>
+	]]></script>
 
 	<!--
 		Raw CSS. This section allows you to define extra style rules that should be
@@ -97,7 +96,7 @@
 		keyword, which is mandatory if you want to use behavior files for IE.
 	-->
 
-	<css for="no_browser"><![CDATA[
+	<css for="disabled"><![CDATA[
 	.ie_sucks_anyway {}
 	]]></css>
 
@@ -117,7 +116,7 @@
 		Since you can't account for all available languages, just list here all of those you did consider.
 
 		The first in the list will be the fallback (usually English.)
-		- Remove the bangs (!) to enable the feature. <languages> is the right tag for this.
+		- Remove the bangs (!) to enable the feature.
 		- Don't use the tag if you don't offer custom language styling, obviously, otherwise it will
 		  just waste several bytes per page by adding the language name to the cached file URL.
 	-->
@@ -150,5 +149,22 @@
 		<from><aside id="sidebar">(.*?)</aside></from>
 		<to><aside id="sidebar">Testing opener. $1 Testing closer.</aside></to>
 	</!replace>
+
+	<!--
+		Template functions
+
+		This allows you to override an existing template function, such as template_linktree() here.
+		As usual, replace !template with template, or it won't work.
+		Parameters:
+			name - name of the function to replace. You may ommit the 'template_' part.
+			params - parameters of the function, if needed. 99% of the time, you can skip this.
+			where - position of the new replacement function.
+				override: Wedge will skip the original function, and execute this one instead.
+				before: Wedge will execute this function before the original function is run.
+				after: Try to guess. Hmm...
+	-->
+	<!template name="linktree" params="$position = 'top', $force_show = false" where="before">
+		echo $position;
+	</!template>
 
 </skin>
