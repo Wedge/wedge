@@ -270,7 +270,7 @@ function template_main_blog()
 						<input type="checkbox" name="topics[]" class="floatright" value="', $topic['id'], '">';
 
 			echo '
-							<p>', $txt['posted_by'], ' ', $topic['first_post']['member']['link'], ', ', $topic['last_post']['on_time'], '
+							<p>', $txt['posted_by'], ' ', $topic['first_post']['member']['link'], ', ', $topic['first_post']['on_time'], '
 							&nbsp; (', number_context('num_views', $topic['views']), ')
 								<small id="pages', $topic['first_post']['id'], '">', $topic['pages'], '</small>
 							</p>

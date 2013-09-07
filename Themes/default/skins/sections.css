@@ -360,7 +360,7 @@ hr.sep
 
 .postarea
 	padding: 0 15px
-	@if (chrome) // Could use can_flex, but it doesn't work outside of Chrome anyway.
+	@if chrome // Could use can_flex, but it doesn't work outside of Chrome anyway.
 		position: relative
 		height: 100%
 		display: flex

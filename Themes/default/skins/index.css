@@ -54,7 +54,7 @@ html
 	overflow-y: scroll
 	background: #369																			// For old browsers...
 	background: fixed linear-gradient(45deg, #505b66, #a0a6ab 500px, #505b66 1000px, #505b66)	// Fallback background for browsers that support linear gradients...
-	background: radial-gradient(circle farthest-corner at 50% 40%, #eee, #012)					// And this is the one we want. Phew...
+	background: radial-gradient(circle at 50% 40%, #eee, #012)									// And this is the one we want. Phew...
 
 body
 	color: #ccc
@@ -67,8 +67,11 @@ body
 		transition: all .3s ease
 	@endif
 
-header, footer, aside, section, article, nav
-	display: block
+// html5shiv does the job automatically for IE < 9.
+@if !(opera[11.1-], safari[5-], chrome[6-], firefox[4-], android[2.2-])
+	header, footer, aside, section, article, nav
+		display: block
+@endif
 
 /* Let's be crazy... Universal selector! This should
 	prevent words from breaking the layout. Obviously,
@@ -76,7 +79,9 @@ header, footer, aside, section, article, nav
 ------------------------------------------------------- */
 
 *
-	word-wrap: break-word
+	@if !ie6
+		word-wrap: break-word
+	@endif
 
 /* Mobile Chrome 25+ adds a 'font boosting' feature that's
 	supposed to make text more readable; as of May 2013, it sucks.
