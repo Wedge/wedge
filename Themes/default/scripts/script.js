@@ -121,7 +121,8 @@ function reqWin(from, desired_width, string, modal_type, callback, e)
 		previous_target = $('#helf').data('src'),
 		close_window = function ()
 		{
-			$('#popup').fadeOut(function () { $(this).remove(); });
+			$('#popup,#helf').removeClass('show');
+			setTimeout(function () { $('#popup').remove(); }, 300);
 		},
 		animate_popup = function ()
 		{
@@ -135,23 +136,8 @@ function reqWin(from, desired_width, string, modal_type, callback, e)
 					maxHeight: viewport_height - 20 - $(this).height() + $section.height()
 				});
 
-			// In case the height was set to auto, some browsers (ahem)
-			// will misbehave. Reset it to a hard number.
-			$section.height($section.height());
-
-			$(this)
-				.hide()
-				.css({
-					visibility: 'visible',
-					left: (viewport_width - $(this).width()) / 2,
-					top: (viewport_height - $(this).height()) / 2 - 20
-				})
-				// !! Can also use specialEasing for diversity...
-				.animate({
-					opacity: 'show',
-					top: '+=20'
-				})
-				.ds();
+			$(this).css({ left: (viewport_width - $(this).width()) / 2, top: (viewport_height - $(this).height()) / 2 }).ds();
+			$('#popup,#helf').addClass('show');
 		};
 
 	// Try and get the title for the current link.
@@ -175,8 +161,7 @@ function reqWin(from, desired_width, string, modal_type, callback, e)
 		.attr('id', 'popup')
 		.width(viewport_width)
 		.height(viewport_height)
-		.css({ top: is_ie6 || is_ios ? $(window).scrollTop() : 0 })
-		.fadeIn()
+		.css('top', is_ie6 || is_ios ? $(window).scrollTop() : 0)
 		.append(
 			$('<div>')
 			.attr('id', 'helf')

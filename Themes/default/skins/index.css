@@ -1697,11 +1697,16 @@ dl#feed
 	position: fixed
 	z-index: 1
 	left, top: 0
+	opacity: 0
+	transition: opacity .3s ease
 	@if !ie[-8]
 		background-color: rgba(0,0,0, .2)
 	@endif
 	a
 		text-decoration: underline
+	&.show
+		opacity: 1
+		transition: opacity .8s ease
 
 	// Actual body for the JavaScript popup
 	#helf
@@ -1710,6 +1715,11 @@ dl#feed
 		position: absolute
 
 #helf
+	transform: perspective(500px) translateY(-20px) rotateX(-20deg)
+	transition: transform .3s ease
+	&.show
+		transform: perspective(500px)
+		transition: transform .8s ease
 	header extends .wehead
 		padding: 8px
 		@if !ie7
