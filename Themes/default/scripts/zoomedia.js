@@ -17,7 +17,7 @@
 $.fn.zoomedia = function (options)
 {
 	var
-		double_clicked, img, $img, $fullsize, $anchor,
+		double_clicked, img, $img, $fullsize, $anchor, $ele,
 		show_loading, padding,
 
 		$zoom, $zoom_desc, $zoom_close,
@@ -83,11 +83,9 @@ $.fn.zoomedia = function (options)
 			});
 
 		$anchor = $(this);
+		$ele = $anchor.children().first();
 
-		var
-			url = this.href,
-			$ele = $anchor.children().first(),
-			offset = $ele.offset();
+		var offset = $ele.offset();
 
 		original_size = {
 			x: offset.left,
@@ -111,32 +109,28 @@ $.fn.zoomedia = function (options)
 
 				win_width = win.width(),
 				win_height = win.height(),
-				is_html = !!$frame.length,
-				desc = $anchor.next('.zoom-overlay').html() || '';
+				is_html = !!$frame.length;
 
 			done_loading();
-			$zoom_desc_contain.toggle(desc != '').width(img_width);
-			$zoom_desc.html(desc);
 			$zoom_content.html(options.noScale ? '' : $img.addClass('scale'));
+			$zoom_desc.html($anchor.next('.zoom-overlay').html() || '');
 			padding = $zoom.width() - img_width;
 
 			// If the image is too large for our viewport, reduce it horizontally.
-			if (img_width > win_width)
+			if (img_width > win_width - 16)
 			{
-				img_width += win_width - $zoom.width();
+				img_width += win_width - 16 - $zoom.width();
 				img_height = img_width / ratio;
-				$zoom_desc_contain.width('auto');
 				$img
 					.width(img_width)
 					.height(img_height);
 			}
 
 			// And/or if it's too tall, reduce it even more.
-			if ($zoom.height() > win_height)
+			if ($zoom.height() > win_height - 16)
 			{
-				img_height += win_height - $zoom.height();
+				img_height += win_height - 16 - $zoom.height();
 				img_width = img_height * ratio;
-				$zoom_desc_contain.width('auto');
 				$img
 					.width(img_width)
 					.height(img_height);
@@ -144,60 +138,53 @@ $.fn.zoomedia = function (options)
 
 			var width = $zoom.width(), height = $zoom.height();
 
-			$zoom_desc_contain
-				.css('overflow', 'hidden')
-				.width('auto')
-				.height('auto');
-
 			if (!is_html)
-				$img
-					.width('100%')
-					.height('auto');
+				$img.width('100%').height('auto');
 
 			$zoom.css({
-				left: original_size.x - padding / 2,
-				top: original_size.y - padding / 2,
+				left: original_size.x - padding / 2 + parseInt($ele.css('padding-left')),
+				top: original_size.y - padding / 2 + parseInt($ele.css('padding-top')),
 				width: original_size.w + padding,
-				height: original_size.h + padding,
-				visibility: 'visible'
+				height: original_size.h + padding
+			}).width(); // This hack forces a quick reflow.
+
+			$zoom.addClass('anim').css({
+				left: Math.max(0, win.scrollLeft() + (win_width - width) / 2),
+				top: Math.max(0, win.scrollTop() + (win_height - height) / 2),
+				width: width,
+				height: height
 			})
-			.toggle(is_html)
-			.animate({
-					left: Math.max(0, win.scrollLeft() + (win_width - width) / 2),
-					top: Math.max(0, win.scrollTop() + (win_height - height) / 2),
-					width: width,
-					height: height,
-					opacity: is_html ? '+=0' : 'show'
-				},
-				duration,
-				'swing2',
-				function ()
-				{
-					if (options.noScale)
-						$zoom_content.html(img);
-
-					$zoom_desc_contain.css('overflow', 'visible');
-					$zoom.css('zIndex', 999);
-
-					// Now that our animation is finished, let's check whether
-					// we double-clicked that thumbnail to request a full version!
-					if (double_clicked)
-						double_click(e);
-					else
-					{
-						$zoom_content.one('dblclick', double_click);
-						$zoom_close.fadeIn(300, 'linear');
-					}
-					zooming = false;
-					active = true;
-				}
-			)
 			.ds();
+
+			setTimeout(function ()
+			{
+				if (options.noScale)
+					$zoom_content.html(img);
+
+				// Disable the main animation, because it would slow down dragging.
+				$zoom.addClass('animated').removeClass('anim').css('zIndex', 999).height('auto');
+
+				// Now that our animation is finished, let's check whether
+				// we double-clicked that thumbnail to request a full version!
+				if (double_clicked)
+					double_click(e);
+				else
+				{
+					// Time to show the description...
+					if ($zoom_desc.html())
+						$zoom_desc_contain.slideDown();
+
+					$zoom_close.fadeIn(300, 'linear');
+					$zoom_content.one('dblclick', double_click);
+				}
+				zooming = false;
+				active = true;
+			}, 800);
 		};
 
 		var $frame = $anchor.next('.zoom-html');
 		if (!$frame.width())
-			$('<img>').on('load.zoom', whenReady).attr('src', url);
+			$('<img>').on('load.zoom', whenReady).attr('src', $anchor[0].href);
 		else
 			whenReady.call($frame.clone().addClass('nodrag').appendTo($zoom_content).show()[0]);
 
@@ -221,13 +208,17 @@ $.fn.zoomedia = function (options)
 						var w2 = Math.min(win.width() - $zoom.width() + $img.width(), wt, wt * (win.height() - $zoom.height() + $img.height()) / ht);
 						ht = ht * w2 / wt;
 						done_loading();
-						$zoom_desc.width('auto');
 						$zoom.animate({
-							left: '-=' + (w2 - $img.width()) / 2,
-							top: '-=' + (ht - $img.height()) / 2,
-							width: '+=' + (w2 - $img.width()),
-							height: '+=' + (ht - $img.height())
+							left: '-=' + (w2 - $img.width() - 10) / 2,
+							top: '-=' + (ht - $img.height() - 10) / 2,
+							width: '+=' + (w2 - $img.width() - 10),
+							height: '+=' + (ht - $img.height() - 10)
 						}, 500, null, function () {
+							// Time to show the description...
+							$zoom.height('auto');
+							if ($zoom_desc.html() && !$zoom_desc.is(':visible'))
+								$zoom_desc_contain.slideDown();
+
 							$zoom_close.fadeIn(300, 'linear');
 						});
 					};
@@ -288,27 +279,29 @@ $.fn.zoomedia = function (options)
 			$zoom_content.html('');
 
 		$zoom_close.hide();
-		$zoom_desc_contain.css('overflow', 'hidden');
-		$zoom.animate(
-			{
-				left: original_size.x - padding / 2,
-				top: original_size.y - padding / 2,
+		$zoom_desc_contain.slideUp(100);
+		$zoom.height($zoom.height()).height();
+		$zoom
+			.removeClass('animated')
+			.addClass('anim')
+			.css({
+				left: original_size.x - padding / 2 + parseInt($ele.css('padding-left')),
+				top: original_size.y - padding / 2 + parseInt($ele.css('padding-top')),
 				width: original_size.w + padding,
 				height: original_size.h + padding,
-				opacity: 'hide'
-			},
-			duration,
-			null,
-			function () {
-				zooming = false;
-				active = false;
-				$zoom.remove();
-			}
-		);
+				opacity: 0
+			});
+		setTimeout(function () {
+			zooming = false;
+			active = false;
+			$zoom.remove();
+		}, 800);
+
 		return false;
 	};
 
-	$(this).each(function () {
+	$(this).each(function ()
+	{
 		$(this).click(show).dblclick(function (e) {
 			if (zooming)
 				double_clicked = true;

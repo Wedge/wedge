@@ -18,6 +18,23 @@
 	border-radius: 8px
 	z-index: 1
 
+#zoom
+	opacity: 0
+	visibility: hidden
+	transform: rotateX(10deg)
+
+#zoom.anim
+	opacity: 1
+	visibility: visible
+	transform: rotateX(0)
+	transition: left .8s, top .8s, width .8s, height .8s, opacity .8s, transform .8s
+
+#zoom.animated
+	opacity: 1
+	visibility: visible
+	transform: rotateX(0)
+	transition: none
+
 #zoom-content
 	padding: 10px
 	text-align: center
@@ -32,17 +49,20 @@
 	background: url($images/aeva/close.png) no-repeat
 
 #zoom-desc
-	max-height: 5em
+	max-height: 10em
 	overflow: hidden
 
 .zoom-desc-contain
+	display: none
 	box-sizing: border-box
-	margin: 0 10px 10px
+	margin: -3px 10px 10px
 	text-align: left
 	cursor: default
 	color: #000
 	.mg_desc
 		color: #888
+	.aelink
+		margin-left: 4px
 
 .zoom-overlay, .zoom-html
 	display: none

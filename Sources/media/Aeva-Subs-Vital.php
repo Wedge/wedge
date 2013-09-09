@@ -396,8 +396,7 @@ function aeva_initZoom($autosize, $peralbum = array())
 	add_js_file('scripts/zoomedia.js');
 	add_js('
 	$("a.zoom").zoomedia({
-		outline: "', empty($peralbum) || !in_array($peralbum['outline'], array('drop-shadow', 'white', 'black')) ? 'glass' : $peralbum['outline'], '",
-		expand: ', !isset($peralbum['expand']) ? 800 : (int) $peralbum['expand'], '
+		outline: "', empty($peralbum) || !in_array($peralbum['outline'], array('drop-shadow', 'white', 'black')) ? 'glass' : $peralbum['outline'], '"
 	});');
 	return;
 

@@ -986,7 +986,6 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 	$peralbum['zoom'] = isset($peralbum['zoom']) && $peralbum['zoom'] == 'no' ? 'no' : 'yes';
 	$peralbum['outline'] = isset($peralbum['outline']) && in_array($peralbum['outline'], array('drop-shadow', 'white', 'black', 'glass')) ? $peralbum['outline'] : 'glass';
 	$peralbum['autosize'] = isset($peralbum['autosize']) && $peralbum['autosize'] == 'no' ? 'no' : 'yes';
-	$peralbum['expand'] = isset($peralbum['expand']) && is_numeric($peralbum['expand']) ? (int) $peralbum['expand'] : 800;
 	$peralbum['fadeinout'] = empty($peralbum['fadeinout']) ? 0 : 1;
 	$peralbum['sort'] = empty($peralbum['sort']) ? 'm.id_media DESC' : $peralbum['sort'];
 
@@ -1341,13 +1340,6 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 				'glass' => array('glass', $peralbum['outline'] == 'glass'),
 			),
 		),
-		'zoom_expand' => array(
-			'label' => $txt['media_zoom_expand'],
-			'subtext' => $txt['media_zoom_expand_info'],
-			'fieldname' => 'zoom_expand',
-			'value' => $peralbum['expand'],
-			'type' => 'text',
-		),
 		'zoom_autosize' => array(
 			'label' => $txt['media_zoom_autosize'],
 			'subtext' => $txt['media_zoom_autosize_info'],
@@ -1394,7 +1386,6 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 			$context['aeva_form']['zoom_section'],
 			$context['aeva_form']['zoom_enable'],
 			$context['aeva_form']['zoom_outline'],
-			$context['aeva_form']['zoom_expand'],
 			$context['aeva_form']['zoom_autosize'],
 			$context['aeva_form']['zoom_fadeinout']
 		);
@@ -1405,8 +1396,6 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 		$peralbum['zoom'] = isset($_POST['zoom']) && $_POST['zoom'] == 0 ? 'no' : 'yes';
 		$peralbum['outline'] = isset($_POST['zoom_outline']) && in_array($_POST['zoom_outline'], array('drop-shadow', 'white', 'black', 'glass')) ? $_POST['zoom_outline'] : 'glass';
 		$peralbum['autosize'] = isset($_POST['zoom_autosize']) && $_POST['zoom_autosize'] == 0 ? 'no' : 'yes';
-		$peralbum['expand'] = isset($_POST['zoom_expand']) ? (int) $_POST['zoom_expand'] : 0;
-		$peralbum['expand'] = !empty($peralbum['expand']) ? max(100, min(5000, $peralbum['expand'])) : 800;
 		$peralbum['fadeinout'] = empty($_POST['zoom_fadeinout']) ? 0 : 1;
 		$peralbum['view'] = !empty($_POST['default_view']) && in_array($_POST['default_view'], array('normal', 'filestack')) ? $_POST['default_view'] : 'normal';
 
