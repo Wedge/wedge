@@ -6,34 +6,30 @@
 
 .zoom mixes .inline-block
 	position: @is (ie[-7], "static", "relative")
+	max-width: 100%
 
-.zoom-base virtual
+/*
+	This is the main component. You can set a custom animation speed (for instance, in custom.css)
+	by overriding the .anim class; you may use either 's' (second) or 'ms' (millisecond) values.
+	Browsers with no support for transitions will use a value of 700ms by default.
+	For instance, add this to your custom.css (or zoom.global.css) file to speed up the animations:
+
+	#zoom.anim
+		transition: transform .3s, opacity .3s
+*/
+#zoom
 	// We set visibility to hidden to avoid getting 0 on child zoom-desc's height
-	visibility: hidden
 	position: absolute
-	top, left: 0
+	top, left, opacity: 0
 	background: #fff
 	border: 1px solid #ccc
 	box-shadow: 0 0 18px #666
 	border-radius: 8px
-	z-index: 1
-
-#zoom
-	opacity: 0
-	visibility: hidden
-	transform: rotateX(10deg)
-
-#zoom.anim
-	opacity: 1
-	visibility: visible
-	transform: rotateX(0)
-	transition: left .8s, top .8s, width .8s, height .8s, opacity .8s, transform .8s
-
-#zoom.animated
-	opacity: 1
-	visibility: visible
-	transform: rotateX(0)
-	transition: none
+	z-index: 11
+	&.anim
+		transition: transform .6s, opacity .7s
+	&.animdone
+		transition: none
 
 #zoom-content
 	padding: 10px
@@ -81,22 +77,7 @@
 	width, height: 34px
 */
 
-.zoom-loading
-	position: absolute
-	color: black
-	font-size: 8pt
-	font-weight: 700
-	text-transform: uppercase
-	padding: 3px 5px 3px 10px
-	border: 1px solid rgba(255,255,255, .25)
-	border-radius: 8px
-	background: rgba(255,255,255, .5)
-	height, line-height: 20px
-	z-index: 1000
-	span extends .loading
-		margin-right: 10px
-
-.zoom-drop-shadow extends .zoom-base
+.zoom-drop-shadow
 	background: #777
 	border: 0
 	#zoom-content
@@ -116,11 +97,11 @@
 	h3, .title final
 		color: #e2e8d8
 
-.zoom-white extends .zoom-base
-.zoom-glass extends .zoom-base
+.zoom-white
+.zoom-glass
 	background: linear-gradient(0deg, #fff, rgba(255,255,255, .9) 100px, rgba(128,128,128, .5))
 
-.zoom-black extends .zoom-base
+.zoom-black
 	background: #000
 	border: 1px solid #333
 	.zoom-desc-contain, .zoom-html

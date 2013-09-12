@@ -18,17 +18,17 @@ $.fn.zoomedia = function (options)
 {
 	var
 		double_clicked, img, $img, $fullsize, $anchor, $ele,
-		show_loading, padding,
+		show_loading, padding, animation, supports_hardware, src, tar,
+		transition_duration,
 
 		$zoom, $zoom_desc, $zoom_close,
 		$zoom_content, $zoom_desc_contain,
 
-		// !! Temporary code. Need to implement more features!
+		// !! Temporary code. Need to implement more features! Or not!
 		lang = {
 /*			move: $txt['media_zoom_move'],
 			close: $txt['media_close'], */
-			closeTitle: $txt['media_zoom_close_title'],
-			loading: $txt['media_zoom_loading'] /*,
+			closeTitle: $txt['media_zoom_close_title'] /*,
 /*			loadingTitle: $txt['media_zoom_clicktocancel'],
 			restoreTitle: $txt['media_zoom_clicktoclose'],
 			focusTitle: $txt['media_zoom_focus'],
@@ -41,7 +41,6 @@ $.fn.zoomedia = function (options)
 
 		options = options || {},
 		outline = options.outline || '',
-		duration = options.expand || 500,
 
 		zooming = active = false,
 		original_size = {},
@@ -94,7 +93,7 @@ $.fn.zoomedia = function (options)
 			h: $ele.height()
 		};
 
-		loading(original_size.x + original_size.w / 2, original_size.y + original_size.h / 2);
+		loading($ele);
 
 		// This gets executed once the item to zoom is ready to show.
 		var whenReady = function ()
@@ -107,19 +106,19 @@ $.fn.zoomedia = function (options)
 				img_height = options.height || img.height || $img.height() || 1,
 				ratio = img_width / img_height,
 
-				win_width = win.width(),
-				win_height = win.height(),
+				win_width = window.innerWidth || win.width(),
+				win_height = window.innerHeight || win.height(),
 				is_html = !!$frame.length;
 
 			done_loading();
-			$zoom_content.html(options.noScale ? '' : $img.addClass('scale'));
+			$zoom_content.html($img.addClass('scale'));
 			$zoom_desc.html($anchor.next('.zoom-overlay').html() || '');
 			padding = $zoom.width() - img_width;
 
 			// If the image is too large for our viewport, reduce it horizontally.
 			if (img_width > win_width - 16)
 			{
-				img_width += win_width - 16 - $zoom.width();
+				img_width += win_width - 8 - $zoom.width();
 				img_height = img_width / ratio;
 				$img
 					.width(img_width)
@@ -129,7 +128,7 @@ $.fn.zoomedia = function (options)
 			// And/or if it's too tall, reduce it even more.
 			if ($zoom.height() > win_height - 16)
 			{
-				img_height += win_height - 16 - $zoom.height();
+				img_height += win_height - 8 - $zoom.height();
 				img_width = img_height * ratio;
 				$img
 					.width(img_width)
@@ -137,32 +136,52 @@ $.fn.zoomedia = function (options)
 			}
 
 			var width = $zoom.width(), height = $zoom.height();
+			$zoom.offset({
+				left: Math.max(0, win.scrollLeft() + (win_width - width) / 2),
+				top: Math.max(0, win.scrollTop() + (win_height - height) / 2)
+			});
 
 			if (!is_html)
 				$img.width('100%').height('auto');
 
-			$zoom.css({
-				left: original_size.x - padding / 2 + parseInt($ele.css('padding-left')),
-				top: original_size.y - padding / 2 + parseInt($ele.css('padding-top')),
-				width: original_size.w + padding,
-				height: original_size.h + padding
-			}).width(); // This hack forces a quick reflow.
+			src = {
+				left: original_size.x + parseInt($ele.css('padding-left')),
+				top: original_size.y + parseInt($ele.css('padding-top')),
+				width: original_size.w,
+				height: original_size.h,
+				opacity: 0
+			};
 
-			$zoom.addClass('anim').css({
-				left: Math.max(0, win.scrollLeft() + (win_width - width) / 2),
-				top: Math.max(0, win.scrollTop() + (win_height - height) / 2),
-				width: width,
-				height: height
-			})
-			.ds();
+			compute_zoom(width, height);
+
+			var s = $zoom[0].style, supports = function (name) {
+				return name.toLowerCase() in s || ('Webkit' + name) in s || ('Moz' + name) in s || ('O' + name) in s || ('ms' + name) in s;
+			};
+
+			// We need to use both transforms and transitions. IE9, for instance, doesn't support both.
+			supports_hardware = supports('Transition') && supports('Transform');
+
+			// Translate from final to initial state.
+			$zoom.css(tar).css('transform', animation).css({ opacity: 0 }).width();
+			$zoom.addClass('anim');
+
+			// This is a quick and dirty way to extract a second or millisecond-based duration.
+			var css_duration = $zoom.css('transition-duration') || '.7s', duration = parseFloat(css_duration);
+			transition_duration = css_duration.indexOf(duration + 'ms') > -1 ? duration : duration * 1000;
+
+			if (supports_hardware)
+				$zoom.css('transform', '').css({ opacity: 1 }); // Remove the translation; this starts the animation.
+			else
+				$zoom.stop(true).css(src).animate(tar, transition_duration);
+
+			$zoom.ds();
 
 			setTimeout(function ()
 			{
-				if (options.noScale)
-					$zoom_content.html(img);
-
 				// Disable the main animation, because it would slow down dragging.
-				$zoom.addClass('animated').removeClass('anim').css('zIndex', 999).height('auto');
+				// At this point, we set the z-index to be above the invisible layer, which
+				// has served its purpose (i.e. capturing double-clicks during the animation.)
+				$zoom.addClass('animdone').css('zIndex', 800).width();
 
 				// Now that our animation is finished, let's check whether
 				// we double-clicked that thumbnail to request a full version!
@@ -171,15 +190,16 @@ $.fn.zoomedia = function (options)
 				else
 				{
 					// Time to show the description...
-					if ($zoom_desc.html())
-						$zoom_desc_contain.slideDown();
+					$zoom.height('auto');
+					if ($zoom_desc.html() && !$zoom_desc.is(':visible'))
+						$zoom_desc_contain.slideDown(function () { $zoom.height('auto'); });
 
 					$zoom_close.fadeIn(300, 'linear');
 					$zoom_content.one('dblclick', double_click);
 				}
 				zooming = false;
 				active = true;
-			}, 800);
+			}, transition_duration);
 		};
 
 		var $frame = $anchor.next('.zoom-html');
@@ -197,8 +217,7 @@ $.fn.zoomedia = function (options)
 		$fullsize = $zoom_desc.find('.fullsize').attr('href'); // $zoom_desc or $anchor.next('.zoom-overlay')
 		if ($fullsize && img && img.src != $fullsize)
 		{
-			var pos = $img.offset();
-			loading(pos.left + $img.width() / 2, pos.top + $img.height() / 2);
+			loading($img);
 			$img.off('load.zoom').load(function ()
 			{
 				var
@@ -217,7 +236,7 @@ $.fn.zoomedia = function (options)
 							// Time to show the description...
 							$zoom.height('auto');
 							if ($zoom_desc.html() && !$zoom_desc.is(':visible'))
-								$zoom_desc_contain.slideDown();
+								$zoom_desc_contain.slideDown(function () { $zoom.height('auto'); });
 
 							$zoom_close.fadeIn(300, 'linear');
 						});
@@ -243,28 +262,15 @@ $.fn.zoomedia = function (options)
 
 	// Add the 'Loading' label at the center of our current object. If the item is already cached,
 	// it'll hide it immediately, so we only show it if it's actually loading something.
-	loading = function (x, y)
+	loading = function ($where)
 	{
-		show_loading = setTimeout(function ()
-		{
-			var loa = $('<div class="zoom-loading"><span />' + (lang.loading || '') + '</div>').click(function () {
-				zooming = false;
-				$('img').off('load.zoom');
-				$(this).remove();
-				return false;
-			}).mousedown(false);
-			loa.hide().appendTo('body').css({
-				left: x - loa.outerWidth() / 2,
-				top: y - loa.outerHeight() / 2
-			}).fadeIn(300);
-		}, 200);
+		show_loading = setTimeout(function () { show_ajax($where); }, 200);
 	},
 
 	done_loading = function ()
 	{
-		$zoom_close.hide();
 		clearTimeout(show_loading);
-		$('.zoom-loading').hide();
+		hide_ajax();
 	},
 
 	hide = function ()
@@ -275,29 +281,53 @@ $.fn.zoomedia = function (options)
 		$($zoom, $zoom_content).off();
 		$(document).off('.zoom');
 
-		if (options.noScale)
-			$zoom_content.html('');
-
 		$zoom_close.hide();
 		$zoom_desc_contain.slideUp(100);
-		$zoom.height($zoom.height()).height();
-		$zoom
-			.removeClass('animated')
-			.addClass('anim')
-			.css({
-				left: original_size.x - padding / 2 + parseInt($ele.css('padding-left')),
-				top: original_size.y - padding / 2 + parseInt($ele.css('padding-top')),
-				width: original_size.w + padding,
-				height: original_size.h + padding,
-				opacity: 0
-			});
+
 		setTimeout(function () {
-			zooming = false;
-			active = false;
-			$zoom.remove();
-		}, 800);
+			compute_zoom($zoom.width(), $zoom.height());
+			if (supports_hardware)
+				$zoom.css('transform', '').removeClass('animdone').css('transform', animation).css({ opacity: 0 });
+			else
+				$zoom.animate(src, transition_duration);
+
+			setTimeout(function () {
+				zooming = false;
+				active = false;
+				$zoom.remove();
+			}, transition_duration);
+		}, $zoom_desc.html() ? 100 : 1);
 
 		return false;
+	},
+
+	compute_zoom = function (width, height)
+	{
+		$zoom_desc_contain.hide();
+		tar = {
+			left: $zoom.offset().left,
+			top: $zoom.offset().top,
+			width: width,
+			height: height,
+			opacity: 1
+		};
+
+		// The scaling ratio is calculated based on the size of the images. It'll be off by a couple of pixels if you don't
+		// have equivalent padding on the thumbnail, though. But it's all right, opacity is close to 0 at that point.
+		animation = 'translate3d('
+			+ (src.left - tar.left - (tar.width - src.width) / 2) + 'px,'
+			+ (src.top - tar.top - (tar.height - src.height) / 2) + 'px,0)'
+			+ ' scale(' + $ele.width() / $img.width() + ')';
+
+		/*
+			// This animation is amusing... The scaling is done first, so we need to adjust
+			// the translation, but it unexpectedly created a less linear animation.
+			// It's probably not to everyone's taste, though, so it's disabled for now!
+
+			animation = 'scale(' + $ele.width() / $img.width() + ') translate3d('
+				+ (src.left - tar.left - (tar.width - src.width) / 2) / ($ele.width() / $img.width()) + 'px,'
+				+ (src.top - tar.top - (tar.height - src.height) / 2) / ($ele.width() / $img.width()) + 'px,0)';
+		*/
 	};
 
 	$(this).each(function ()
@@ -307,13 +337,12 @@ $.fn.zoomedia = function (options)
 				double_clicked = true;
 			return false;
 		});
+		// This child layer will overlay the initial thumbnail and catch
+		// any double-clicks on it, even while it's being animated.
 		$('<div>').appendTo(this).css({
 			position: 'absolute',
-			left: 0,
-			top: 0,
-			width: $(this).width(),
-			height: $(this).height(),
-			zIndex: 2
+			top: 0, left: 0, right: 0, bottom: 0,
+			zIndex: 12
 		}).mousedown(false);
 	});
 
