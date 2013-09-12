@@ -488,7 +488,7 @@ class wess_if extends wess
 
 			// List browsers that support CSS3 animations (Wedge adds prefixes automatically.)
 			if (strpos($css, 'can_animate') !== false)
-				$css = preg_replace('~\bcan_animate\b~', '(chrome, firefox[5-], opera[12-], ie[10-], safari[4-] && !ios, ios[3.2-], android[2.1-])', $css);
+				$css = preg_replace('~\bcan_animate\b~', '(chrome, firefox[5-], opera[12-], ie[10-], safari[4-], ios[3.2-], android[2.1-])', $css);
 		}
 
 		// @is (condition, if_true[, if_false])

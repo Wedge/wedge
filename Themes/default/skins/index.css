@@ -222,19 +222,8 @@ ul#noava
 	padding: 8px 30px
 
 #flags mixes .inline-block // Language flags
-//	margin: 6px 1em 0 0
-//	padding: 0
-	margin: 4px .5em -1px 0
-
-/* from .iconbox */
-	text-align: center
-	cursor: pointer
-	padding: 2px 3px
-	:hover, &.hove
-		padding: 1px 2px
-		background: #fff
-		border: 1px solid #adadad
-/* back to normal... */
+	margin: 6px 1em 0 0
+	padding: 0
 	a
 		margin-top: -3px
 
@@ -672,12 +661,6 @@ tr.catbg .sbox, tr.titlebg .sbox
 
 .qaction
 	font-size: .85em
-
-.dd mixes .hide
-	position: absolute
-	background: rgba(255,255,255,.5)
-	border: 1px solid #aaa
-	padding: 8px
 
 /* Top-level menu icons.
 ------------------------------------------------------- */
@@ -1498,21 +1481,21 @@ a.moderation_link
 	text-align: center
 	text-transform: uppercase
 	border: 1px solid #fff
-	font: 400 10pt/15px "Franklin Gothic Medium", Arial, sans-serif
+	font: 700 12px/15px Arial, sans-serif
 	height: 15px
 	border-radius, padding: 8px
 	position: absolute
 	cursor: pointer
-	opacity: 0
-	transform: scale(.8)
-	transition: transform .2s ease-in-out, opacity .2s ease-in-out
-	body.waiting &
-		opacity: 1
-		transform: scale(1)
-		transition: transform .3s ease-in-out, opacity .3s ease-in-out
+	opacity: 1
+	transform: scale(1)
+	transition: transform .3s ease-in-out, opacity .3s ease-in-out
+	&.anim
+		opacity: 0
+		transform: scale(.8)
+		transition: transform .2s ease-in-out, opacity .2s ease-in-out
 	a extends .loading
-		float: right
-		margin: 2px 2px 0 10px
+		vertical-align: -2px
+		margin: 0 8px 0 2px
 
 /* Definition lists
 ------------------------------------------------------- */
@@ -1837,6 +1820,7 @@ h6
 
 /* A few styles for notifications
 ------------------------------------------------------- */
+
 @if member
 	#notifs, #pms mixes .inline-block
 		user-select: none
@@ -1941,8 +1925,8 @@ h6
 		border-bottom: 1px solid #ccc
 @endif
 
-// Used by the Ajax loader.
-@if chrome, firefox[5-], opera[12-], safari[4-], ie[10-]
+// Used by the Ajax loader. No need to declare it everywhere...
+@if can_animate
 	@keyframes spin
 		to
 			transform: rotate(360deg)
@@ -1970,3 +1954,24 @@ $alphamix = $main_bg
 @mixin checkbox-styling
 	background: none
 	border: 0
+
+/*
+	// This example is here to showcase the mixin power. You can use : or = in param lists.
+
+	@mixin example($border, $width: 777px, $co: #888)
+		width: $width
+		font-size: 1em
+		background: $main_bg
+		a
+			@if $border > 0
+				border: $border
+			@endif
+			color: $board_col
+
+	.class
+		.thing mixes example (2px)
+			or...
+			mixin: example
+			mixin: example(1px dotted white)
+			mixin: example(,, #fff)
+*/

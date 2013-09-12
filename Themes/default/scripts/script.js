@@ -284,19 +284,21 @@ function show_ajax(where, exact)
 		$('<div id="ajax">')
 			.html('<a title="' + (we_cancel || '') + '"></a>' + we_loading)
 			.click(hide_ajax)
+			.addClass('anim')
 			.appendTo('body');
-			$('#ajax').offset({
-				left: (offs && offs.left || 0) + (exact && exact[0] || 0) + $(where || window).width() / 2 - $('#ajax').width() / 2,
-				top: (offs && offs.top || 0) + (exact && exact[1] || 0) + $(where || window).height() / 2 - $('#ajax').height() / 2 + (where ? 0 : $(window).scrollTop())
-			});
-		$('body').addClass('waiting');
+
+		// window.innerWidth/Height, if set, holds the actual viewport size.
+		$('#ajax').offset({
+			left: (offs && offs.left || 0) + (exact && exact[0] || 0) + (where ? $(where).width() : window.innerWidth || $(window).width()) / 2 - $('#ajax').outerWidth() / 2,
+			top: (offs && offs.top || 0) + (exact && exact[1] || 0) + (where ? $(where).height() : window.innerHeight || $(window).height()) / 2 - $('#ajax').outerHeight() / 2 + (where ? 0 : $(window).scrollTop())
+		}).removeClass('anim');
 	}, 200);
 }
 
 function hide_ajax()
 {
 	clearTimeout(window.ajax);
-	$('body').removeClass('waiting');
+	$('#ajax').addClass('anim');
 	setTimeout(function () { $('#ajax').remove(); }, 200);
 }
 
