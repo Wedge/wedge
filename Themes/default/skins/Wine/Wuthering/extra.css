@@ -56,7 +56,10 @@ $darkgrad = #f3f2f0
 	background: #faf8f6
 
 #edge
-	padding: 0
+	padding: 8px 0 0
+
+#main
+	padding-top: 0
 
 #sidebar
 	border: 1px solid #ccc

@@ -35,16 +35,19 @@ div.subheader
 table.aextbox
 	padding: 4px 0
 	text-align: center
+	table-layout: fixed
 
 	.pics > div
 		margin: 0
 
-	img.aext
-		padding: 4px
-		border: 1px solid #aaa
-		background: #f3f8f3
-		box-shadow: 3px 3px 4px #ccc
-		margin: 0
+img.aext
+	box-sizing: border-box
+	padding: 4px
+	border: 1px solid #aaa
+	background: #f3f8f3
+	box-shadow: 3px 3px 4px #ccc
+	max-width: 100%
+	margin: 0
 
 .aeva_statsbar
 	border: 1px solid black

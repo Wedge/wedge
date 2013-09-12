@@ -58,6 +58,7 @@ p.moderators
 
 /* Styles for the info center on the board index.
 ---------------------------------------------------- */
+
 section.ic
 	p
 		margin: 0 0 .5em
@@ -100,9 +101,14 @@ section.ic
 img.new_posts
 	padding: 0 .1em
 
-/* Styles for the message (topic) index.
-   You can target the page with #messageindex
+/* Styles for the topic index.
 ---------------------------------------------------- */
+
+#messageindex
+	> table
+		table-layout: fixed
+	> table > tbody > tr > td
+		width: 100%
 
 // The page navigation area
 #childboards .table_list
@@ -122,6 +128,7 @@ img.new_posts
 
 /* Styles for the Display template (topic view).
 ---------------------------------------------------- */
+
 // Topic title and Quick access
 .posthead
 	width: 100%
@@ -587,6 +594,7 @@ ul.buttonlist extends "ul.reset, .clearfix"
 
 /* Styles for edit poll section.
 ---------------------------------------------------- */
+
 #edit_poll
 	overflow: hidden
 	fieldset
@@ -620,6 +628,7 @@ dl.poll_options
 
 /* Styles for the move topic section.
 ---------------------------------------------------- */
+
 .move_topic
 	width: 710px
 	margin: auto
@@ -630,6 +639,7 @@ div.move_topic fieldset
 
 /* Styles for the send topic section.
 ---------------------------------------------------- */
+
 fieldset.send_topic
 	border: none
 	padding: .5em
@@ -645,6 +655,7 @@ dl.send_mail
 
 /* Styles for the report topic section.
 ---------------------------------------------------- */
+
 #report dl
 	margin-bottom: 0
 	&.settings dt
@@ -654,6 +665,7 @@ dl.send_mail
 
 /* Styles for the split topic section.
 ---------------------------------------------------- */
+
 #selected, #not_selected
 	width: 49%
 
@@ -666,6 +678,7 @@ ul.split_messages
 
 /* Styles for the merge topic section.
 ---------------------------------------------------- */
+
 ul.merge_topics li
 	list-style-type: none
 
@@ -683,6 +696,7 @@ fieldset.merge_options
 
 /* Styles for the login areas.
 ------------------------------------------------------- */
+
 .login
 	margin: auto
 	dl
@@ -709,6 +723,7 @@ fieldset.merge_options
 
 /* Styles for the registration section.
 ------------------------------------------------------- */
+
 .register_error
 	border: 1px dashed red
 	padding: 5px
@@ -754,6 +769,7 @@ dl.register_form
 
 /* Styles for maintenance mode.
 ------------------------------------------------------- */
+
 #maintenance_mode
 	width: 75%
 	min-width: 520px
@@ -771,6 +787,7 @@ tr.titlebg td
 
 /* Styles for sidebar menus.
 ------------------------------------------------------- */
+
 .left_menu
 	margin: .1em 2em .5em
 	padding: 0
@@ -793,6 +810,7 @@ tr.windowbg td
 
 /* Styles for the board index's topic table.
 ------------------------------------------------------- */
+
 .topic_table
 	.stats
 		text-align: center
@@ -835,6 +853,7 @@ tr.windowbg td
 
 /* Styles for (fatal) errors.
 ------------------------------------------------- */
+
 #fatal_error
 	width: 80%
 	margin: auto
@@ -1204,6 +1223,7 @@ tr.windowbg td
 
 /* Styles for the statistics center.
 ------------------------------------------------- */
+
 #stats
 	#main dl
 		min-height: 210px
@@ -1259,6 +1279,7 @@ div.top_row dd
 
 /* Styles for the memberlist section.
 ------------------------------------------------- */
+
 #mlist_search
 	margin: auto
 	width: 520px
@@ -1270,6 +1291,7 @@ div.top_row dd
 
 /* Styles for the search section.
 ------------------------------------------------- */
+
 #searchform, #simple_search p
 	padding: .5em
 	margin: 0
@@ -1329,6 +1351,7 @@ div.top_row dd
 
 /* Styles for the search results page.
 ------------------------------------------------- */
+
 .topic_table .bbc_quote
 	&, header
 		margin: .5em
@@ -1340,6 +1363,7 @@ div.top_row dd
 
 /* Foldable icons.
 ------------------------------------------------- */
+
 .foldable extends .upshrinks
 	width, height: 14px
 	.fold&
@@ -1375,6 +1399,7 @@ div.top_row dd
 
 /* Board status icons.
 ------------------------------------------------- */
+
 .boardstate_on mixes .inline-block
 	background: url($images/boardicon.png) 0 0 no-repeat
 	width: 37px
@@ -1388,6 +1413,7 @@ div.top_row dd
 
 /* More icons.
 ------------------------------------------------- */
+
 .feed_icon mixes .inline-block
 	background: url($images/icons/feed.gif) no-repeat
 	width: width($images_dir/icons/feed.gif)px
@@ -1417,6 +1443,7 @@ div.top_row dd
 
 /* Any hacks that may need higher precedence.
 ------------------------------------------------- */
+
 // We worship his shadow.
 .hide
 	display: none

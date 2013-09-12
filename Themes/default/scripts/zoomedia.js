@@ -44,7 +44,7 @@ $.fn.zoomedia = function (options)
 
 		zooming = active = false,
 		original_size = {},
-		win = $(window),
+		$win = $(window),
 
 	show = function (e)
 	{
@@ -106,8 +106,9 @@ $.fn.zoomedia = function (options)
 				img_height = options.height || img.height || $img.height() || 1,
 				ratio = img_width / img_height,
 
-				win_width = window.innerWidth || win.width(),
-				win_height = window.innerHeight || win.height(),
+				// window.innerWidth is more 'correct' in mobile mode, but in desktop it also counts the scrollbar size.
+				win_width = Math.min(window.innerWidth || $win.width(), $win.width()),
+				win_height = Math.min(window.innerHeight || $win.height(), $win.height()),
 				is_html = !!$frame.length;
 
 			done_loading();
@@ -118,7 +119,7 @@ $.fn.zoomedia = function (options)
 			// If the image is too large for our viewport, reduce it horizontally.
 			if (img_width > win_width - 16)
 			{
-				img_width += win_width - 8 - $zoom.width();
+				img_width += win_width - 16 - $zoom.width();
 				img_height = img_width / ratio;
 				$img
 					.width(img_width)
@@ -128,7 +129,7 @@ $.fn.zoomedia = function (options)
 			// And/or if it's too tall, reduce it even more.
 			if ($zoom.height() > win_height - 16)
 			{
-				img_height += win_height - 8 - $zoom.height();
+				img_height += win_height - 16 - $zoom.height();
 				img_width = img_height * ratio;
 				$img
 					.width(img_width)
@@ -137,8 +138,8 @@ $.fn.zoomedia = function (options)
 
 			var width = $zoom.width(), height = $zoom.height();
 			$zoom.offset({
-				left: Math.max(0, win.scrollLeft() + (win_width - width) / 2),
-				top: Math.max(0, win.scrollTop() + (win_height - height) / 2)
+				left: Math.max(0, $win.scrollLeft() + (win_width - width) / 2),
+				top: Math.max(0, $win.scrollTop() + (win_height - height) / 2)
 			});
 
 			if (!is_html)
@@ -224,7 +225,7 @@ $.fn.zoomedia = function (options)
 					wt = img.naturalWidth,
 					ht = img.naturalHeight,
 					rezoom = function () {
-						var w2 = Math.min(win.width() - $zoom.width() + $img.width(), wt, wt * (win.height() - $zoom.height() + $img.height()) / ht);
+						var w2 = Math.min($win.width() - $zoom.width() + $img.width(), wt, wt * ($win.height() - $zoom.height() + $img.height()) / ht);
 						ht = ht * w2 / wt;
 						done_loading();
 						$zoom.animate({

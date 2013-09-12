@@ -77,7 +77,7 @@
 	width, height: 34px
 */
 
-.zoom-drop-shadow
+#zoom.zoom-drop-shadow
 	background: #777
 	border: 0
 	#zoom-content
@@ -97,11 +97,11 @@
 	h3, .title final
 		color: #e2e8d8
 
-.zoom-white
-.zoom-glass
+#zoom.zoom-white,
+#zoom.zoom-glass
 	background: linear-gradient(0deg, #fff, rgba(255,255,255, .9) 100px, rgba(128,128,128, .5))
 
-.zoom-black
+#zoom.zoom-black
 	background: #000
 	border: 1px solid #333
 	.zoom-desc-contain, .zoom-html
@@ -111,6 +111,6 @@
 
 // Safari, prior to 5.1, didnt't support linear-gradient but webkit-gradient instead.
 @if safari[-5.09]
-	.zoom-glass
+	#zoom.zoom-glass
 		background: -webkit-gradient(linear, left bottom, left top, from(#fff), to(rgba(128,128,128, .5)), color-stop(50%, rgba(255,255,255, .9)))
 @endif
