@@ -586,7 +586,7 @@ function package_get_contents($filename)
 			$package_cache = false;
 	}
 
-	if (strpos($filename, 'Packages/') !== false || $package_cache === false || !isset($package_cache[$filename]))
+	if ($package_cache === false || !isset($package_cache[$filename]))
 		return file_get_contents($filename);
 	else
 		return $package_cache[$filename];
@@ -616,7 +616,7 @@ function package_put_contents($filename, $data, $testing = false)
 
 	package_chmod($filename);
 
-	if (!$testing && (strpos($filename, 'Packages/') !== false || $package_cache === false))
+	if (!$testing && $package_cache === false)
 	{
 		$fp = @fopen($filename, in_array(substr($filename, -3), $text_filetypes) ? 'w' : 'wb');
 
@@ -627,7 +627,7 @@ function package_put_contents($filename, $data, $testing = false)
 		fwrite($fp, $data);
 		fclose($fp);
 	}
-	elseif (strpos($filename, 'Packages/') !== false || $package_cache === false)
+	elseif ($package_cache === false)
 		return strlen($data);
 	else
 	{

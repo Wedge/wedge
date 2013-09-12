@@ -2458,7 +2458,7 @@ function aeva_protect_bbc(&$message)
 
 function aeva_protect_bbc_callback($match)
 {
-	return $match[1] . str_ireplace('[media', '&#91;media', $match[2]) . '[/' . $match[1] . ']';
+	return '[' . $match[1] . ']' . str_ireplace('[media', '&#91;media', $match[2]) . '[/' . $match[1] . ']';
 }
 
 function aeva_parse_bbc(&$message, $cache_id = -1)
@@ -2533,7 +2533,10 @@ function aeva_showThumbnail($data)
 	$details = !empty($details) ? explode(',', $details) : '';
 	$caption = !empty($caption) ? preg_replace('/(^\&quot\;|&quot;$)/', '', $caption) : $txt['media_gotolink'];
 	$my_width = $width > 0 ? ' width="' . $width . '"' : '';
-	$css_stuff = $align == 'left' ? array('padding: 8px 16px 8px 0') : ($align == 'right' ? array('padding: 4px 0 8px 16px') : array());
+	$css_stuff = $align == 'left' ?
+		array('margin: 0 auto 0 0; padding: 8px 16px 8px 0') : ($align == 'right' ?
+		array('margin: 0 0 0 auto; padding: 4px 0 8px 16px') :
+		array('margin: auto'));
 	if ($width > 0)
 		$css_stuff[] = 'width: ' . ($width + 12) . 'px';
 	$show_bigger = in_array($type, array('normal', 'link', 'preview'));
@@ -2622,8 +2625,7 @@ function aeva_showThumbnail($data)
 	$caption_box = ($type != 'link' && $caption == $txt['media_gotolink']) ? '' : '<div class="aeva_caption">' . ($type == 'link' ? '<a href="<URL>?action=media;sa=item;in=' . $id . '">' : '') . $caption . ($type == 'link' ? '</a>' : '') . '</div>';
 
 	$data =
-		($show_main_div ? '<table class="aextbox"' . ($align ? ' style="margin: ' . ($align == 'left' ? '0 auto 0 0' : ($align == 'right' ? '0 0 0 auto' : 'auto')) . '"' : '')
-		. (!empty($css_stuff) ? ' style="' . implode('; ', $css_stuff) . '"' : '') . '><tr><td>' : '')
+		($show_main_div ? '<table class="aextbox" style="' . implode('; ', $css_stuff) . '"><tr><td>' : '')
 		. $box . (empty($inside_caption) ? '' : $inside_caption)
 		. ($show_main_div && !empty($caption_box) ? '</td></tr><tr><td>' : '')
 		. ($type === 'av' && !empty($inside_caption) ? '' : $caption_box)
