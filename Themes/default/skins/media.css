@@ -140,21 +140,30 @@ img.aext
 #itembox
 	display: table
 	table-layout: fixed
-	width: 100%
+	width, height: 100% // Setting height ensures #media-item behaves like a table-cell.
 	section
 		margin: 12px 0
 
 #media-item
-	display: table-cell
+	@if can_flex
+		height: 100%
+		display: flex
+		flex-direction: column
+		justify-content: space-around
+	@else
+		display: table-cell
+	@endif
 	vertical-align: middle
 	text-align: center
 	overflow: visible
-	box-sizing: border-box
-	padding: 16px 0
 	.actionbar
 		margin: 0 20px
 		line-height: 1.5em
 		text-align: right
+
+#item-area
+	box-sizing: border-box
+	padding: 16px 0
 
 #media-details
 	display: @is (ie[-7], block, table-cell)

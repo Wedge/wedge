@@ -1725,6 +1725,10 @@ class wess_prefixes extends wess
 		$b = we::$browser;
 		$v = $b['version'];
 
+		// IE 6 doesn't support min-height, but 'height' behaves the same way. If you don't use both at the same time, it should be okay.
+		if ($b['ie'] && $v == 6)
+			$css = preg_replace('~\bmin-height\b~', 'height', $css);
+
 		// IE 6-9 don't support keyframes; IE 10, Firefox 16+ and Opera 12.10+ support them unprefixed, other browsers require a prefix.
 		if (($b['opera'] && $v < 12.1) || ($b['firefox'] && $v < 16) || $b['webkit'])
 			$css = str_replace('@keyframes ', '@' . $this->prefix . 'keyframes ', $css);

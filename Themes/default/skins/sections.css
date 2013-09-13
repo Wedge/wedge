@@ -1415,9 +1415,9 @@ div.top_row dd
 ------------------------------------------------- */
 
 .feed_icon mixes .inline-block
-	background: url($images/icons/feed.gif) no-repeat
-	width: width($images_dir/icons/feed.gif)px
-	height: height($images_dir/icons/feed.gif)px
+	background: url($images/icons/feed.gif) 0 center no-repeat
+	padding-left: math(width($images_dir/icons/feed.gif)px + 4)
+	min-height: height($images_dir/icons/feed.gif)px
 	text-decoration: none
 	.catfeed &
 		margin-left: -4px

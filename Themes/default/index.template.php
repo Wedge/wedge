@@ -361,8 +361,7 @@ function template_sidebar_feed()
 	echo '
 	<section>
 		<we:title>
-			<div class="feed_icon"></div>
-			', $txt['feed'], '
+			<div class="feed_icon">', $txt['feed'], '</div>
 		</we:title>
 		<dl id="feed">';
 

@@ -26,7 +26,7 @@ function template_main()
 	<div class="main_section" id="memberlist">
 		<we:cat>', !isset($context['old_search']) ? '
 			<span class="floatright">' . $context['letter_links'] . '</span>' : '', '
-			<a class="memfeed" href="<URL>?action=feed;sa=members"><div class="feed_icon"></div></a>
+			<a class="memfeed" href="<URL>?action=feed;sa=members" class="feed_icon"></a>
 			', $txt['members_list'];
 
 	echo '
