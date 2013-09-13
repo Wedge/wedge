@@ -218,20 +218,20 @@ function template_main_blog()
 
 		echo '
 	<div class="topic_table" id="messageindex">
-		<table class="table_grid cs0">
-			<thead>
-				<tr class="catbg">';
+		<table class="table_grid cs0">';
 
 		// Are there actually any topics to show?
 		if (empty($context['topics']))
 			echo '
+			<thead>
+				<tr class="catbg">
 					<th style="width: 8%">&nbsp;</th>
 					<th colspan="3"><strong>', $txt['msg_alert_none'], '</strong></th>
-					<th style="width: 8%">&nbsp;</th>';
+					<th style="width: 8%">&nbsp;</th>
+				</tr>
+			</thead>';
 
 		echo '
-				</tr>
-			</thead>
 			<tbody>';
 
 		// If this person can approve items and we have some awaiting approval tell them.

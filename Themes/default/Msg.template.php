@@ -222,14 +222,14 @@ function template_msg_area_before()
 {
 	echo '
 					<we:msg_area>';
+
+	template_msg_new_anchor();
 }
 
 function template_msg_header_before()
 {
 	echo '
 						<we:msg_header>';
-
-	template_msg_new_anchor();
 }
 
 function template_msg_header_body()
