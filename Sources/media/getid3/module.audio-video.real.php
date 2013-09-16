@@ -18,8 +18,8 @@ getid3_lib::IncludeDependency(GETID3_INCLUDEPATH.'module.audio-video.riff.php', 
 class getid3_real extends getid3_handler
 {
 
-	function Analyze() {
-		$info =& $this->getid3->info;
+	public function Analyze() {
+		$info = &$this->getid3->info;
 
 		$info['fileformat']       = 'real';
 		$info['bitrate']          = 0;
@@ -60,7 +60,7 @@ class getid3_real extends getid3_handler
 
 			// shortcut
 			$info['real']['chunks'][$ChunkCounter] = array();
-			$thisfile_real_chunks_currentchunk =& $info['real']['chunks'][$ChunkCounter];
+			$thisfile_real_chunks_currentchunk = &$info['real']['chunks'][$ChunkCounter];
 
 			$thisfile_real_chunks_currentchunk['name']   = $ChunkName;
 			$thisfile_real_chunks_currentchunk['offset'] = ftell($this->getid3->fp) - 8;
@@ -174,7 +174,7 @@ class getid3_real extends getid3_handler
 						$offset += $thisfile_real_chunks_currentchunk['type_specific_len'];
 
 						// shortcut
-						$thisfile_real_chunks_currentchunk_typespecificdata =& $thisfile_real_chunks_currentchunk['type_specific_data'];
+						$thisfile_real_chunks_currentchunk_typespecificdata = &$thisfile_real_chunks_currentchunk['type_specific_data'];
 
 						switch ($thisfile_real_chunks_currentchunk['mime_type']) {
 							case 'video/x-pn-realvideo':
@@ -183,7 +183,7 @@ class getid3_real extends getid3_handler
 
 								// shortcut
 								$thisfile_real_chunks_currentchunk['video_info'] = array();
-								$thisfile_real_chunks_currentchunk_videoinfo     =& $thisfile_real_chunks_currentchunk['video_info'];
+								$thisfile_real_chunks_currentchunk_videoinfo     = &$thisfile_real_chunks_currentchunk['video_info'];
 
 								$thisfile_real_chunks_currentchunk_videoinfo['dwSize']            = getid3_lib::BigEndian2Int(substr($thisfile_real_chunks_currentchunk_typespecificdata,  0, 4));
 								$thisfile_real_chunks_currentchunk_videoinfo['fourcc1']           =                           substr($thisfile_real_chunks_currentchunk_typespecificdata,  4, 4);
@@ -202,7 +202,7 @@ class getid3_real extends getid3_handler
 								//$thisfile_real_chunks_currentchunk_videoinfo['unknown8']          = getid3_lib::BigEndian2Int(substr($thisfile_real_chunks_currentchunk_typespecificdata, 34, 2));
 								//$thisfile_real_chunks_currentchunk_videoinfo['unknown9']          = getid3_lib::BigEndian2Int(substr($thisfile_real_chunks_currentchunk_typespecificdata, 36, 2));
 
-								$thisfile_real_chunks_currentchunk_videoinfo['codec'] = getid3_riff::RIFFfourccLookup($thisfile_real_chunks_currentchunk_videoinfo['fourcc2']);
+								$thisfile_real_chunks_currentchunk_videoinfo['codec'] = getid3_riff::fourccLookup($thisfile_real_chunks_currentchunk_videoinfo['fourcc2']);
 
 								$info['video']['resolution_x']    =         $thisfile_real_chunks_currentchunk_videoinfo['width'];
 								$info['video']['resolution_y']    =         $thisfile_real_chunks_currentchunk_videoinfo['height'];
@@ -230,7 +230,7 @@ class getid3_real extends getid3_handler
 							case 'logical-fileinfo':
 								// shortcut
 								$thisfile_real_chunks_currentchunk['logical_fileinfo'] = array();
-								$thisfile_real_chunks_currentchunk_logicalfileinfo     =& $thisfile_real_chunks_currentchunk['logical_fileinfo'];
+								$thisfile_real_chunks_currentchunk_logicalfileinfo     = &$thisfile_real_chunks_currentchunk['logical_fileinfo'];
 
 								$thisfile_real_chunks_currentchunk_logicalfileinfo_offset = 0;
 								$thisfile_real_chunks_currentchunk_logicalfileinfo['logical_fileinfo_length'] = getid3_lib::BigEndian2Int(substr($thisfile_real_chunks_currentchunk_typespecificdata, $thisfile_real_chunks_currentchunk_logicalfileinfo_offset, 4));
@@ -370,7 +370,7 @@ class getid3_real extends getid3_handler
 	}
 
 
-	function ParseOldRAheader($OldRAheaderData, &$ParsedArray) {
+	public function ParseOldRAheader($OldRAheaderData, &$ParsedArray) {
 		// http://www.freelists.org/archives/matroska-devel/07-2003/msg00010.html
 
 		$ParsedArray = array();
@@ -484,7 +484,7 @@ class getid3_real extends getid3_handler
 		return true;
 	}
 
-	function RealAudioCodecFourCClookup($fourcc, $bitrate) {
+	public function RealAudioCodecFourCClookup($fourcc, $bitrate) {
 		static $RealAudioCodecFourCClookup = array();
 		if (empty($RealAudioCodecFourCClookup)) {
 			// http://www.its.msstate.edu/net/real/reports/config/tags.stats
@@ -523,4 +523,5 @@ class getid3_real extends getid3_handler
 		}
 		return $fourcc;
 	}
+
 }
