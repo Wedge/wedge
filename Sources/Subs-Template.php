@@ -630,8 +630,8 @@ function ob_sessrewrite($buffer)
 
 	// Can't be sure about mobile devices, but IE in WinXP doesn't
 	// support Unicode 3.0 and its non-breakable half-spaces. Yay.
-	if (we::is('ie && windows[-5.2],mobile'))
-		$buffer = str_replace('&#8239;', '&nbsp;', $buffer);
+	if (we::$user['language'] != 'english' && we::is('ie && windows[-5.2],mobile'))
+		$buffer = str_replace('&#8239;', '!', $buffer);
 
 	// Strip domain name out of internal links.
 	if (empty($context['no_strip_domain']))

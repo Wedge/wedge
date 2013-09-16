@@ -2546,7 +2546,7 @@ function aeva_showThumbnail($data)
 		return '';
 
 	$is_playlist = in_array($type, array('media_album', 'audio_album', 'video_album', 'photo_album', 'playlist'));
-	$no_zoom = empty($amSettings['use_zoom']) || AJAX || $context['action'] === 'feed';
+	$no_zoom = empty($amSettings['use_zoom']) || $context['action'] === 'feed';
 
 	aeva_addHeaders(true, !$no_zoom);
 	$box = '';

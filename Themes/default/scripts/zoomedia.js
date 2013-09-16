@@ -18,7 +18,7 @@ $.fn.zoomedia = function (options)
 {
 	var
 		double_clicked, img, $img, $fullsize, $anchor, $ele,
-		show_loading, padding, animation, supports_hardware, src, tar,
+		padding, animation, supports_hardware, src, tar,
 		transition_duration,
 
 		$zoom, $zoom_desc, $zoom_close,
@@ -61,7 +61,7 @@ $.fn.zoomedia = function (options)
 				<div class="zoom-desc-contain">\
 					<div id="zoom-desc" class="nodrag"></div>\
 				</div>\
-				<a href="#" title="' + (lang.closeTitle || '') + '" id="zoom-close"></a>\
+				<a href="#" title="' + (lang.closeTitle || '') + '" id="zoom-close">×</a>\
 			</div>');
 
 		$zoom = $('#zoom');
@@ -93,7 +93,7 @@ $.fn.zoomedia = function (options)
 			h: $ele.height()
 		};
 
-		loading($ele);
+		show_ajax($ele);
 
 		// This gets executed once the item to zoom is ready to show.
 		var whenReady = function ()
@@ -111,7 +111,7 @@ $.fn.zoomedia = function (options)
 				win_height = Math.min(window.innerHeight || $win.height(), $win.height()),
 				is_html = !!$frame.length;
 
-			done_loading();
+			hide_ajax();
 			$zoom_content.html($img.addClass('scale'));
 			$zoom_desc.html($anchor.next('.zoom-overlay').html() || '');
 			padding = $zoom.width() - img_width;
@@ -220,7 +220,7 @@ $.fn.zoomedia = function (options)
 		$zoom_desc.find('.fullsize').next().andSelf().remove();
 		if ($fullsize && img && img.src != $fullsize)
 		{
-			loading($img);
+			show_ajax($img);
 			$img.off('load.zoom').load(function ()
 			{
 				var
@@ -229,7 +229,7 @@ $.fn.zoomedia = function (options)
 					rezoom = function () {
 						var w2 = Math.min($win.width() - $zoom.width() + $img.width(), wt, wt * ($win.height() - $zoom.height() + $img.height()) / ht);
 						ht = ht * w2 / wt;
-						done_loading();
+						hide_ajax();
 						$zoom.animate({
 							left: '-=' + (w2 - $img.width() - 10) / 2,
 							top: '-=' + (ht - $img.height() - 10) / 2,
@@ -246,35 +246,20 @@ $.fn.zoomedia = function (options)
 					};
 				if (wt > 0)
 					rezoom();
+				// Stupid IE forces us to emulate natural properties through a hidden img...
 				else
-				{
-					// Stupid IE forces us to emulate natural properties through a hidden img...
 					$('<img>').load(function () {
 						wt = this.width;
 						ht = this.height;
 						$(this).remove();
 						rezoom();
 					}).attr('src', img.src);
-				}
 			}).attr('src', $fullsize);
 		}
 		else
 			$zoom_close.fadeIn(300, 'linear');
 
 		return false;
-	},
-
-	// Add the 'Loading' label at the center of our current object. If the item is already cached,
-	// it'll hide it immediately, so we only show it if it's actually loading something.
-	loading = function ($where)
-	{
-		show_loading = setTimeout(function () { show_ajax($where); }, 200);
-	},
-
-	done_loading = function ()
-	{
-		clearTimeout(show_loading);
-		hide_ajax();
 	},
 
 	hide = function ()
@@ -285,7 +270,7 @@ $.fn.zoomedia = function (options)
 		$($zoom, $zoom_content).off();
 		$(document).off('.zoom');
 
-		$zoom_close.hide();
+		$zoom_close.fadeOut(300);
 		$zoom_desc_contain.slideUp(100);
 
 		setTimeout(function () {
@@ -343,11 +328,7 @@ $.fn.zoomedia = function (options)
 		});
 		// This child layer will overlay the initial thumbnail and catch
 		// any double-clicks on it, even while it's being animated.
-		$('<div>').appendTo(this).css({
-			position: 'absolute',
-			top: 0, left: 0, right: 0, bottom: 0,
-			zIndex: 12
-		}).mousedown(false);
+		$('<div>').addClass('zoom-catcher').appendTo(this).mousedown(false);
 	});
 
 	return this;

@@ -277,7 +277,7 @@ function expandPages(spanNode, firstPage, lastPage, perPage)
 // e.g., show_ajax('#notifs', [0, 20]) will show the Ajax popup 20 pixels below the center of the #notifs text.
 function show_ajax(where, exact)
 {
-	// We're delaying the creation a bit, to account for super-fast AJAX (e.g. local server, etc.)
+	// We're delaying the creation a bit, to account for super-fast AJAX (e.g. local server, caching, etc.)
 	window.ajax = setTimeout(function ()
 	{
 		var offs = $(where).offset();
@@ -289,8 +289,8 @@ function show_ajax(where, exact)
 
 		// window.innerWidth/Height, if set, holds the actual viewport size.
 		$('#ajax').offset({
-			left: (offs && offs.left || 0) + (exact && exact[0] || 0) + (where ? $(where).width() : window.innerWidth || $(window).width()) / 2 - $('#ajax').outerWidth() / 2,
-			top: (offs && offs.top || 0) + (exact && exact[1] || 0) + (where ? $(where).height() : window.innerHeight || $(window).height()) / 2 - $('#ajax').outerHeight() / 2 + (where ? 0 : $(window).scrollTop())
+			left: (offs && offs.left || 0) + (exact && exact[0] || 0) + (where ? $(where).outerWidth() : Math.min(window.innerWidth || $(window).width(), $(window).width())) / 2 - $('#ajax').outerWidth() / 2,
+			top: (offs && offs.top || 0) + (exact && exact[1] || 0) + (where ? $(where).outerHeight() : Math.min(window.innerHeight || $(window).height(), $(window).height())) / 2 - $('#ajax').outerHeight() / 2 + (where ? 0 : $(window).scrollTop())
 		}).removeClass('anim');
 	}, 200);
 }
@@ -975,7 +975,7 @@ $(window).load(function ()
 				}
 				if (count[1] !== '-1' && count[1] != window.we_pms)
 				{
-					we_pms = items[1];
+					we_pms = count[1];
 					is_pm_up_to_date = false;
 					$pmshade.prev().attr('class', we_pms > 0 ? 'note' : 'notevoid').text(we_pms);
 				}

@@ -8,6 +8,13 @@
 	position: @is (ie[-7], "static", "relative")
 	max-width: 100%
 
+@if !ie[-7]
+	.zoom-catcher
+		position: absolute
+		top, left, right, bottom: 0
+		z-index: 12
+@endif
+
 /*
 	This is the main component. You can set a custom animation speed (for instance, in custom.css)
 	by overriding the .anim class; you may use either 's' (second) or 'ms' (millisecond) values.
@@ -32,7 +39,7 @@
 		transition: none
 
 #zoom-content
-	padding: 10px
+	padding: 10px 10px 7px
 	text-align: center
 	img.scale
 		margin: auto
@@ -41,8 +48,22 @@
 	display: none
 	position: absolute
 	top, left: -12px
-	width, height: 30px
-	background: url($images/aeva/close.png) no-repeat
+	@if ie[-8]
+		width, height: 30px
+		background: url($images/aeva/close.png) no-repeat
+		font-size: 0
+	@else
+		width, height, line-height: 18px
+		font-weight: 700
+		font-size: 20px
+		background: #000
+		color: #fff
+		border: 2px solid #fff
+		border-radius: 100%
+		box-shadow: 1px 1px 6px #000
+		text-decoration: none
+		text-align: center
+	@endif
 
 #zoom-desc
 	max-height: 10em
@@ -51,7 +72,7 @@
 .zoom-desc-contain
 	display: none
 	box-sizing: border-box
-	margin: -3px 10px 10px
+	margin: 0 10px 10px
 	text-align: left
 	cursor: default
 	color: #000
