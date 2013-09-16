@@ -1,14 +1,11 @@
 <?php
 /**
- * Wedge
- *
  * Displays fatal errors, the error log, and handles showing buggy lines within file context, to help with debugging.
  *
- * @package wedge
- * @copyright 2010-2013 Wedgeward, wedge.org
+ * @package Wedge
+ * @copyright 2010 René-Gilles Deberdt, wedge.org
  * @license http://wedge.org/license/
- *
- * @version 0.1
+ * @author see contributors.txt
  */
 
 // Show an error message. This should have at least a back button and $context['error_message'].

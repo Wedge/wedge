@@ -1,14 +1,11 @@
 <?php
 /**
- * Wedge
- *
  * Displays the permission index, plus the full permission configuration for each group.
  *
- * @package wedge
- * @copyright 2010-2013 Wedgeward, wedge.org
+ * @package Wedge
+ * @copyright 2010 René-Gilles Deberdt, wedge.org
  * @license http://wedge.org/license/
- *
- * @version 0.1
+ * @author see contributors.txt
  */
 
 function template_permission_index()

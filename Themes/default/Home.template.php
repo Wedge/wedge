@@ -1,14 +1,11 @@
 <?php
 /**
- * Wedge
- *
  * Displays the custom homepage. Hack away!
  *
- * @package wedge
- * @copyright 2010-2011 Wedgeward, wedge.org
+ * @package Wedge
+ * @copyright 2010 René-Gilles Deberdt, wedge.org
  * @license http://wedge.org/license/
- *
- * @version 0.1
+ * @author see contributors.txt
  */
 
 function template_main()

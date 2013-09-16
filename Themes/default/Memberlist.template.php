@@ -1,14 +1,11 @@
 <?php
 /**
- * Wedge
- *
  * Displays the user-visible member list and limited search function form.
  *
- * @package wedge
- * @copyright 2010-2013 Wedgeward, wedge.org
+ * @package Wedge
+ * @copyright 2010 René-Gilles Deberdt, wedge.org
  * @license http://wedge.org/license/
- *
- * @version 0.1
+ * @author see contributors.txt
  */
 
 // Displays a sortable listing of all members registered on the forum.

@@ -1,17 +1,14 @@
 <?php
 /**
- * Wedge
- *
  * These are all of the websites available for automatic embedding in posts.
  * In most circumstances you will however use a GENERATED php file containing only
  * ENABLED sites and based on your settings. It's more efficient this way.
  * Uses portions written by Karl Benson.
  *
- * @package wedge
- * @copyright 2010-2013 Wedgeward, wedge.org
+ * @package Wedge
+ * @copyright 2010 René-Gilles Deberdt, wedge.org
  * @license http://wedge.org/license/
- *
- * @version 0.1
+ * @author see contributors.txt
  */
 
 // Prevent attempts to access this file directly

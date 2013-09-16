@@ -1,14 +1,11 @@
 <?php
 /**
- * Wedge
- *
  * Handles all normal scheduled tasks, both the triggering of them from the asynchronous request as well as scheduling for the next.
  *
- * @package wedge
- * @copyright 2010-2013 Wedgeward, wedge.org
+ * @package Wedge
+ * @copyright 2010 René-Gilles Deberdt, wedge.org
  * @license http://wedge.org/license/
- *
- * @version 0.1
+ * @author see contributors.txt
  */
 
 if (!defined('WEDGE'))

@@ -1,12 +1,11 @@
 <?php
 /**
- * Wedge
- *
  * Contains the master settings for Wedge, including database credentials.
  *
- * @package wedge
- * @copyright Wedgeward, wedge.org
+ * @package Wedge
+ * @copyright 2010 René-Gilles Deberdt, wedge.org
  * @license http://wedge.org/license/
+ * @author see contributors.txt
  */
 
 ########## Maintenance ##########

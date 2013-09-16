@@ -1,14 +1,11 @@
 <?php
 /**
- * Wedge
- *
  * Displays and searches the memberlist within the administration panel, which includes banned members and more search options.
  *
- * @package wedge
- * @copyright 2010-2013 Wedgeward, wedge.org
+ * @package Wedge
+ * @copyright 2010 René-Gilles Deberdt, wedge.org
  * @license http://wedge.org/license/
- *
- * @version 0.1
+ * @author see contributors.txt
  */
 
 if (!defined('WEDGE'))

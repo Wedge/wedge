@@ -1,14 +1,11 @@
 <?php
 /**
- * Wedge
- *
  * Displays the following lists: very recent posts, unread posts and unread replies (unread posts in topics you replied to before.)
  *
- * @package wedge
- * @copyright 2010-2013 Wedgeward, wedge.org
+ * @package Wedge
+ * @copyright 2010 René-Gilles Deberdt, wedge.org
  * @license http://wedge.org/license/
- *
- * @version 0.1
+ * @author see contributors.txt
  */
 
 function template_main()

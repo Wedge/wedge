@@ -1,16 +1,13 @@
 <?php
 /**
- * Wedge
- *
  * Show playlists, create album topics, deal with gallery feeds, etc.
  * All of these features were previously exclusive to Aeva Media 2.x (commercial version).
  * Licensed exclusively for use in Wedge.
  *
- * @package wedge
- * @copyright 2010-2013 Wedgeward, wedge.org
+ * @package Wedge
+ * @copyright 2010 René-Gilles Deberdt, wedge.org
  * @license http://wedge.org/license/
- *
- * @version 0.1
+ * @author see contributors.txt
  */
 
 /*

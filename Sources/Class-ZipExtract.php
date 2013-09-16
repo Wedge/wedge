@@ -1,14 +1,16 @@
 <?php
 /**
- * Wedge
+ * Zip extraction class.
  *
- * ZIP extraction class.
- *
- * @package wedge
- * @copyright 2012-2013 Wedgeward, wedge.org
- * @license BSD
- *
- * @version 0.1
+ * @package Wedge
+ * @copyright 2010 René-Gilles Deberdt, wedge.org
+ * @license http://wedge.org/license/
+ * @author see contributors.txt
+ */
+
+/**
+ * Note: this file was authored entirely by Peter Spicer,
+ * who chose to make it available under the BSD license.
  */
 
 class wextr

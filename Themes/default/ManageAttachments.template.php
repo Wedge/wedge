@@ -1,14 +1,11 @@
 <?php
 /**
- * Wedge
- *
  * Displays the configuration of attachments and avatars, and allows to browse the uploaded files.
  *
- * @package wedge
- * @copyright 2010-2013 Wedgeward, wedge.org
+ * @package Wedge
+ * @copyright 2010 René-Gilles Deberdt, wedge.org
  * @license http://wedge.org/license/
- *
- * @version 0.1
+ * @author see contributors.txt
  */
 
 // Template template wraps around the simple settings page to add javascript functionality.

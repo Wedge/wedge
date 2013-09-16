@@ -1,14 +1,11 @@
 <?php
 /**
- * Wedge
- *
  * The main administration template, including the home page, credits, file versions, censored words, pending-completion, generic settings handling and more.
  *
- * @package wedge
- * @copyright 2010-2013 Wedgeward, wedge.org
+ * @package Wedge
+ * @copyright 2010 René-Gilles Deberdt, wedge.org
  * @license http://wedge.org/license/
- *
- * @version 0.1
+ * @author see contributors.txt
  */
 
 function template_admin_time_remaining()

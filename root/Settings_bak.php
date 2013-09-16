@@ -1,12 +1,11 @@
 <?php
 /**
- * Wedge
- *
  * Contains a backup of the master settings.
  *
- * @package wedge
- * @copyright 2010-2013 Wedgeward, wedge.org
+ * @package Wedge
+ * @copyright 2010 René-Gilles Deberdt, wedge.org
  * @license http://wedge.org/license/
+ * @author see contributors.txt
  */
 
 ########## Maintenance ##########

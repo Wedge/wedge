@@ -1,6 +1,5 @@
 <?php
-
-/*!
+/**
  * @package Packer v3.1 (beta?), PHP port
  * @author Dean Edwards, fixed by Nao/Wedge
  * @license http://www.opensource.org/licenses/mit-license.php

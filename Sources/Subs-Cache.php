@@ -1,15 +1,12 @@
 <?php
 /**
- * Wedge
- *
  * This file handles all caching data in Wedge: regular data (cache_get/put_data), CSS and JavaScript.
  * It also ensures that CSS and JS files are properly parsed and compressed by Wess before they're cached.
  *
- * @package wedge
- * @copyright 2010-2013 Wedgeward, wedge.org
+ * @package Wedge
+ * @copyright 2010 René-Gilles Deberdt, wedge.org
  * @license http://wedge.org/license/
- *
- * @version 0.1
+ * @author see contributors.txt
  */
 
 if (!defined('WEDGE'))
@@ -1182,8 +1179,8 @@ function wedge_cache_js($id, &$lang_name, $latest_date, $ext, $js, $gzip = false
 	// Remove the copyright years and version information, in case you're a paranoid android.
 	// Then remove the extra whitespace that we may have added around comments to avoid glitches.
 	$final = preg_replace(
-		array('~/\*!(?:[^*]|\*[^/])*?@package wedge.*?\*/~s', '~(^|\n)\n/\*~', '~\*/\n~'),
-		array("/*!\n * @package wedge\n * @copyright Wedgeward, wedge.org\n * @license http://wedge.org/license/\n */", '$1/*', '*/'),
+		array('~/\*!(?:[^*]|\*[^/])*?@package Wedge.*?\*/~s', '~(^|\n)\n/\*~', '~\*/\n~'),
+		array("/*!\n * @package Wedge\n * @copyright René-Gilles Deberdt, wedge.org\n * @license http://wedge.org/license/\n */", '$1/*', '*/'),
 		$final
 	);
 

@@ -1,8 +1,5 @@
 <?php
-
 /**
- * Wedge
- *
  * json_encode() polyfill. Since Wedge doesn't support versions of PHP
  * that don't provide json_decode, this is only provided for users
  * whose host disabled the function for whatever reason.
@@ -10,11 +7,10 @@
  * Note that this file is a trimmed down version of the original (linked below),
  * without comments or the equivalent decode() function.
  *
- * @package wedge
- * @copyright 2010-2013 Wedgeward, wedge.org
+ * @package Wedge
+ * @copyright 2010 René-Gilles Deberdt, wedge.org
  * @license http://wedge.org/license/
- *
- * @version 0.1
+ * @author see contributors.txt
  */
 
 if (!defined('WEDGE'))

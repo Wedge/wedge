@@ -1,14 +1,11 @@
 <?php
 /**
- * Wedge
- *
  * This file is all about showing you the Who's Online list.
  *
- * @package wedge
- * @copyright 2010-2013 Wedgeward, wedge.org
+ * @package Wedge
+ * @copyright 2010 RenÃ©-Gilles Deberdt, wedge.org
  * @license http://wedge.org/license/
- *
- * @version 0.1
+ * @author see contributors.txt
  */
 
 if (!defined('WEDGE'))
@@ -600,7 +597,7 @@ function determineActions($urls, $preferred_prefix = false, $override_mem = fals
 			if (!empty($error_message))
 				$data[$k] = '<img src="' . $theme['images_url'] . '/' . ($is_warn ? 'who_warn' : 'who_error') . '.gif" title="' . $error_message . '" alt="' . $error_message . '"> ' . $data[$k];
 
-			// !!! Should we store the full URL into the session, à la Noisen?
+			// !!! Should we store the full URL into the session, ï¿½ la Noisen?
 			$data[$k] .= ' (<abbr title="' . htmlspecialchars(var_export($actions, true), ENT_QUOTES) . '">?</abbr>)';
 		}
 

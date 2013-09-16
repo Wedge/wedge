@@ -1,14 +1,11 @@
 <?php
 /**
- * Wedge
- *
  * The core template that underpins the entire layout, including key configuration settings.
  *
- * @package wedge
- * @copyright 2010-2013 Wedgeward, wedge.org
+ * @package Wedge
+ * @copyright 2010 René-Gilles Deberdt, wedge.org
  * @license http://wedge.org/license/
- *
- * @version 0.1
+ * @author see contributors.txt
  */
 
 /*
@@ -67,7 +64,7 @@ function template_html_before()
 	<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>';
 
 	echo theme_base_css(), '
-	<!-- Powered by Wedge, © Wedgeward - http://wedge.org -->
+	<!-- Powered by Wedge, © R.-G. Deberdt - http://wedge.org -->
 	<title>', $context['page_title_html_safe'], !empty($context['page_indicator']) ? $context['page_indicator'] : '', '</title>';
 
 	// If the forum is in a sub-folder, in which case it needs to explicitly set a favicon URL.

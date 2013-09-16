@@ -1,14 +1,11 @@
 <?php
 /**
- * Wedge
- *
  * The Who's Who of Wedge Wardens. Keeps track of all the credits, and displays them to everyone, or just within the admin panel.
  *
- * @package wedge
- * @copyright 2010-2013 Wedgeward, wedge.org
+ * @package Wedge
+ * @copyright 2010 René-Gilles Deberdt, wedge.org
  * @license http://wedge.org/license/
- *
- * @version 0.1
+ * @author see contributors.txt
  */
 
 if (!defined('WEDGE'))
@@ -54,10 +51,8 @@ function Credits()
 				array(
 					'title' => $txt['credits_groups_ps'],
 					'members' => array(
-						'<b>Wedgeward</b> &ndash;
-						<br>
+						'<div class="floatleft" style="margin-left: 8px"><img src="http://wedge.org/about/nao.png" style="margin: 8px auto 4px"><br class="clear">Ren&eacute;-Gilles Deberdt</div>
 						<div class="floatleft"><img src="http://wedge.org/about/pete.png" style="margin: 8px auto 4px"><br class="clear">Peter Spicer</div>
-						<div class="floatleft" style="margin-left: 8px"><img src="http://wedge.org/about/nao.png" style="margin: 8px auto 4px"><br class="clear">Ren&eacute;-Gilles Deberdt</div>
 						<div class="clear"></div>',
 					),
 				),
@@ -65,12 +60,12 @@ function Credits()
 					'title' => $txt['credits_groups_dev'],
 					'members' => array(
 						'<b>Nao &#23578;</b> (Ren&eacute;-Gilles Deberdt)',
-						'<b>Arantor</b> (Peter Spicer)',
 					),
 				),
 				array(
 					'title' => $txt['credits_groups_consultants'],
 					'members' => array(
+						'Arantor (Peter Spicer)',
 						'Aaron (Aaron van Geffen)',
 						'Dragooon (Shitiz Garg)',
 						'live627 (John Rayes)',
@@ -126,17 +121,6 @@ function Credits()
 				'Dragooon',
 			)), 'Karl Benson'),
 		),
-		'images' => array(
-			'famfamfam' => '<a href="http://famfamfam.com/">FamFamFam</a> Flags &amp; Silk &copy; Mark James, 2005',
-			'icons' => '<a href="http://commons.wikimedia.org/wiki/Crystal_Clear">Crystal Icons</a> &copy; Crystal Project, 2001-2012',
-			'diagona' => '<a href="http://p.yusukekamiyamane.com/">Diagona</a> &copy; Y&#363;suke Kamiyamane',
-		),
-		'tools' => array(
-			'idtags' => '<a href="http://getid3.org">GetID3</a>',
-			'exif' => '<a href="http://www.zenphoto.org/trac/wiki/ExifixerLibrary/">Exifixer</a>',
-			'player' => '<a href="http://www.longtailvideo.com/jw-player/">JW Player</a>',
-			'uploader' => '<a href="http://developer.yahoo.com/yui/">Yahoo! UI Uploader</a>',
-		),
 		'mods' => array(
 		),
 	);
@@ -149,7 +133,7 @@ function Credits()
 		You may also add credits at the end of the $context['credits'] array, following the same structure.
 
 		Copyright statements should be in the form of a value only without a array key, i.e.:
-			'Some Mod by Wedgeward &copy; 2010',
+			'Some Mod by the Wedge team &copy; 2010',
 			$txt['some_mod_copyright'],
 	*/
 

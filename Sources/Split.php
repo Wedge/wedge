@@ -1,14 +1,11 @@
 <?php
 /**
- * Wedge
- *
  * Handles splitting of topics, both the interface and processing.
  *
- * @package wedge
- * @copyright 2010-2013 Wedgeward, wedge.org
+ * @package Wedge
+ * @copyright 2010 René-Gilles Deberdt, wedge.org
  * @license http://wedge.org/license/
- *
- * @version 0.1
+ * @author see contributors.txt
  */
 
 /* Original module by Mach8 - We'll never forget you. */

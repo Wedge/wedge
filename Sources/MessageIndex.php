@@ -1,14 +1,11 @@
 <?php
 /**
- * Wedge
- *
  * Prepares the listing of topics in a given forum or blog board, as well as any sub-boards.
  *
- * @package wedge
- * @copyright 2010-2013 Wedgeward, wedge.org
+ * @package Wedge
+ * @copyright 2010 René-Gilles Deberdt, wedge.org
  * @license http://wedge.org/license/
- *
- * @version 0.1
+ * @author see contributors.txt
  */
 
 if (!defined('WEDGE'))

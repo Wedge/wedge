@@ -1,14 +1,11 @@
 <?php
 /**
- * Wedge
- *
  * Displays your personal messages, as well as all related information.
  *
- * @package wedge
- * @copyright 2010-2013 Wedgeward, wedge.org
+ * @package Wedge
+ * @copyright 2010 René-Gilles Deberdt, wedge.org
  * @license http://wedge.org/license/
- *
- * @version 0.1
+ * @author see contributors.txt
  */
 
 // This is the main sidebar for the personal messages section.

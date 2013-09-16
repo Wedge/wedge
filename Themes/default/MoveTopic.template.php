@@ -1,14 +1,11 @@
 <?php
 /**
- * Wedge
- *
  * Displays the interface for moving a topic to another board.
  *
- * @package wedge
- * @copyright 2010-2013 Wedgeward, wedge.org
+ * @package Wedge
+ * @copyright 2010 René-Gilles Deberdt, wedge.org
  * @license http://wedge.org/license/
- *
- * @version 0.1
+ * @author see contributors.txt
  */
 
 // Show an interface for selecting which board to move a post to.

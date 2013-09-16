@@ -18,70 +18,81 @@ MMMM?===================++??I7$ZOOOO888OOZ$$7I?+++========+$NMMMMMMM7+ZMMM
 MMMM===========I7Z8NMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMNDO$?====?MMMMMMMONMM
 MMMZ===++78NMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMN8??DMMMMMMMM
 MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
-								 (ASCII rendition courtesy GlassGiant.com)
 
-Wedge is a modern forum system built in PHP and MySQL.
+   Wedge is a modern community management system built in PHP and MySQL.
 
-Wedge Developers:	Nao 尚 (René-Gilles Deberdt)
-					Arantor (Peter Spicer)
+    Created by René-Gilles Deberdt and Peter Spicer on August 25, 2010.
 
-Contributions:		Dragooon (Shitiz Garg)
-					live627 (John Rayes)
-					TE (Thorsten Eurich)
+--------------------------------------------------------------------------
 
 
-Wedge contains code and elements from other products, in no particular order:
+Director:		Nao 尚 (René-Gilles Deberdt)
+
+Contributors:	Arantor (Peter Spicer) -- former co-developer
+				Dragooon (Shitiz Garg) -- gallery, notifications
+				live627 (John Rayes) -- various improvements
+				TE (Thorsten Eurich) -- importer code
+
+Based on:		Simple Machines Forum 2.0
+					-- © Simple Machines and its contributors 2011, http://www.simplemachines.org/
+					-- used under the Modified BSD license
+
+
+--------------------------------------------------------------------------
+
+Wedge also contains code and elements from other products, in no particular order:
 
 == Code ==
 
-Simple Machines Forum 2.0.x
-	-- © Simple Machines and its contributors 2011, http://www.simplemachines.org/
-	-- used under the Modified BSD license.
+Aeva Media (media gallery)
+	-- Initial code by Dragooon and Nao 尚, © Shitiz Garg & René-Gilles Deberdt 2008-2010, http://aeva.noisen.com/
+	-- closed license, used under permission from both authors.
 
-Bad Behaviour 2.1.x
+Bad Behaviour 2.1.x (anti-hack code)
 	-- © Michael Hampton 2011, http://bad-behavior.ioerror.us/
-	-- used under the LGPL v3 license, http://www.gnu.org/licenses/lgpl.html under 4) as a Combined Work
-	-- 4a: notice here given.
-	-- 4b: a copy of the LGPL and GPL text is not bundled to discourage misrepresentation of overall license terms.
-	-- 4c: the credits page indicates Bad Behaviour's use.
-	-- 4d0: the Minimal Corresponding Source is available upon request however in isolation will be of little practical use due to intra-application dependencies.
-	-- 4e: not applicable.
+	-- used under the LGPL v3 license, http://www.gnu.org/licenses/lgpl.html under 4) as a Combined Work.
+		-- 4a: notice here given.
+		-- 4b: a copy of the LGPL and GPL text is not bundled to discourage misrepresentation of overall license terms.
+		-- 4c: the credits page indicates Bad Behaviour's use.
+		-- 4d0: the Minimal Corresponding Source is available upon request however in isolation will be of little practical use due to intra-application dependencies.
+		-- 4e: not applicable.
 
-WeNotif
-	-- © Shitiz Garg 2012, https://github.com/Dragooon/WeNotif
+Notification system
+	-- Initial code by Dragooon, © Shitiz Garg 2012, https://github.com/Dragooon/WeNotif
 	-- used under the Modified BSD license.
 
-Move Notifier
-	-- © John Reyes 2013
+Move Notifier ('Your topic has been moved' notifications)
+	-- Initial code by live627, © John Rayes 2013.
 	-- used under the Modified BSD license.
 
 MultiAttach (multiple attachment selector)
 	-- © The-Stickman.com 2005, http://the-stickman.com/web-development/javascript/upload-multiple-files-with-a-single-file-element/
 	-- used under the MIT license, http://opensource.org/licenses/mit-license.php
 
-jQuery nestedSortable
-	-- © Manuele J Sarfatti 2010-2013, https://github.com/mjsarfatti/nestedSortable
-	-- used under the MIT license, http://opensource.org/licenses/mit-license.php
-
-getID3 (media file information)
-	-- © James Heinrich 2013, http://getid3.org/
-	-- used under the MPLv2
-
-Exifer (originally Exifixer; extracts EXIF information from digital photos)
-	-- © Jake Olefsky 2005, http://www.offsky.com/software/exif/index.php ; Zenphoto 2013, https://github.com/zenphoto/zenphoto/blob/master/zp-core/exif/
-	-- used under the GPLv2
-
 JW Player 4.4.157 (media playback)
 	-- © Long Tail Video 2013, http://www.longtailvideo.com/jw-player/
-	-- free version, suitable only for non-commercial sites - for commercial sites, contact LongTail Video, or disable use of video/audio in the media gallery.
+	-- free version, suitable only for non-commercial sites - for commercial sites, contact LongTail Video, or disable use of
+		video/audio in the media gallery. We will shortly replace the library with an open-source one, to remove this restriction.
 
 Yahoo UI Uploader (Flash/AJAX mass uploader)
 	-- © Yahoo! Inc., 2006-2013, http://yuilibrary.com/
-	-- used under the Modified BSD license
+	-- used under the Modified BSD license.
 
-FancyUpload (mass uploader progress bars)
-	-- © Harald Kirschner 2008-2009, http://digitarald.de/project/fancyupload/
-	-- used under the MIT license
+Also see these files for more contributor credits:
+
+- Sources/Class-JSMin.php
+- Sources/Class-JSON.php
+- Sources/Class-SFTP.php
+- Sources/Class-ZipExtract.php
+- Sources/media/Class-Zip.php
+- Sources/media/Subs-Exif.php
+- Sources/media/getid3/
+- scripts/ie6hover.js
+- scripts/nested.js
+- scripts/sbox.js
+- scripts/sha1.js
+
+
 
 == Images ==
 
@@ -96,4 +107,8 @@ Diagona, Fugue
 Crystal Clear
 	-- © Crystal Project 2001-2012, http://commons.wikimedia.org/wiki/Crystal_Clear
 	-- used under the LGPLv3, http://www.gnu.org/licenses/lgpl.html
-	-- no code linkage, some images renamed
+	-- no code linkage, some images renamed.
+
+FancyUpload (mass uploader progress bars)
+	-- © Harald Kirschner 2008-2009, http://digitarald.de/project/fancyupload/
+	-- used under the MIT license

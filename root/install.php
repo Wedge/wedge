@@ -1,14 +1,11 @@
 <?php
 /**
- * Wedge
- *
  * This file handles installing Wedge, and more importantly running all the database creation steps.
  *
- * @package wedge
- * @copyright 2010-2013 Wedgeward, wedge.org
+ * @package Wedge
+ * @copyright 2010 René-Gilles Deberdt, wedge.org
  * @license http://wedge.org/license/
- *
- * @version 0.1
+ * @author see contributors.txt
  */
 
 define('WEDGE_INSTALLER', 1);
@@ -2093,7 +2090,7 @@ function template_install_below()
 	echo '
 	</div></div></div></div></div></div>
 	<div id="footer"><div class="frame" style="height: 30px; line-height: 30px">
-		<a href="http://wedge.org/" title="Free Forum Software" target="_blank" class="new_win">Wedge &copy; 2010-2013, Wedgeward</a>
+		<a href="http://wedge.org/" title="Free Forum Software" target="_blank" class="new_win">Wedge &copy; 2010, René-Gilles Deberdt</a>
 	</div></div>
 	</div>
 	<script><!-- // --><![CDATA[

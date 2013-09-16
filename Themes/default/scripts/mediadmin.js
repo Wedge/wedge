@@ -1,14 +1,11 @@
 /*!
- * Wedge
- *
  * Helper functions for the media admin area.
  * Uses portions written by Shitiz Garg.
  *
- * @package wedge
- * @copyright 2010-2013 Wedgeward, wedge.org
+ * @package Wedge
+ * @copyright 2010 René-Gilles Deberdt, wedge.org
  * @license http://wedge.org/license/
- *
- * @version 0.1
+ * @author see contributors.txt
  */
 
 function admin_toggle(id)

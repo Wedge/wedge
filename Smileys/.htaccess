@@ -1,16 +1,3 @@
-
-#
-# Wedge
-#
-# This is the .htaccess file. It sets cache control for uncached smileys.
-#
-# @package wedge
-# @copyright 2010-2013 Wedgeward, wedge.org
-# @license http://wedge.org/license/
-#
-# @version 0.1
-#
-
 <IfModule mod_headers.c>
 	Header set Cache-Control "max-age=2592000"
 </IfModule>
