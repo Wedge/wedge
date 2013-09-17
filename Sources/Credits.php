@@ -45,42 +45,37 @@ function Credits()
 	wesql::free_result($query);
 
 	$context['credits'] = array(
-		'wedge' => array(
-			'title' => $txt['credits_team'],
-			'groups' => array(
-				array(
-					'title' => $txt['credits_groups_ps'],
-					'members' => array(
-						'<div class="floatleft" style="margin-left: 8px"><img src="http://wedge.org/about/nao.png" style="margin: 8px auto 4px"><br class="clear">Ren&eacute;-Gilles Deberdt</div>
-						<div class="floatleft"><img src="http://wedge.org/about/pete.png" style="margin: 8px auto 4px"><br class="clear">Peter Spicer</div>
-						<div class="clear"></div>',
-					),
-				),
-				array(
-					'title' => $txt['credits_groups_dev'],
-					'members' => array(
-						'<b>Nao &#23578;</b> (Ren&eacute;-Gilles Deberdt)',
-					),
-				),
-				array(
-					'title' => $txt['credits_groups_consultants'],
-					'members' => array(
-						'Arantor (Peter Spicer)',
-						'Aaron (Aaron van Geffen)',
-						'Dragooon (Shitiz Garg)',
-						'live627 (John Rayes)',
-						'TE (Thorsten Eurich)',
-					),
-				),
-				array(
-					'title' => $txt['credits_special'],
-					'members' => array(
-						'Dismal Shadow (Edwin Mendez)',
-						'MultiformeIngegno (Lorenzo Raffio)',
-						'[Unknown] &amp; Karl Benson',
-						'Norodo',
-					),
-				),
+		array(
+			'title' => $txt['credits_groups_ps'],
+			'members' => array(
+				'<div style="float: left; text-align: center"><img src="http://wedge.org/about/nao.png" style="margin: 8px auto 4px"><br class="clear">Ren&eacute;-Gilles<br>Deberdt</div>
+				<div style="float: left; text-align: center; margin-left: 8px"><img src="http://wedge.org/about/pete.png" style="margin: 8px auto 4px"><br class="clear">Peter Spicer</div>
+				<div class="clear"></div>',
+			),
+		),
+		array(
+			'title' => $txt['credits_groups_dev'],
+			'members' => array(
+				'<b>Nao &#23578;</b> (Ren&eacute;-Gilles Deberdt)',
+			),
+		),
+		array(
+			'title' => $txt['credits_groups_contributors'],
+			'members' => array(
+				'Arantor (Peter Spicer)',
+				'Aaron (Aaron van Geffen)',
+				'Dragooon (Shitiz Garg)',
+				'live627 (John Rayes)',
+				'TE (Thorsten Eurich)',
+			),
+		),
+		array(
+			'title' => $txt['credits_special'],
+			'members' => array(
+				'Dismal Shadow (Edwin Mendez)',
+				'MultiformeIngegno (Lorenzo Raffio)',
+				'[Unknown] &amp; Karl Benson',
+				'Norodo',
 			),
 		),
 	);
@@ -88,13 +83,8 @@ function Credits()
 	// Give the translators some credit for their hard work.
 	if (!empty($txt['translation_credits']))
 		$context['credits'][] = array(
-			'title' => $txt['credits_groups_translation'],
-			'groups' => array(
-				array(
-					'title' => $txt['credits_groups_language'],
-					'members' => $txt['translation_credits'],
-				),
-			),
+			'title' => $txt['credits_groups_language'],
+			'members' => $txt['translation_credits'],
 		);
 
 	$context['copyrights'] = array(

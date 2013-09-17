@@ -3,7 +3,7 @@
  * Zip extraction class.
  *
  * @package Wedge
- * @copyright 2010 René-Gilles Deberdt, wedge.org
+ * @copyright 2010 RenÃ©-Gilles Deberdt, wedge.org
  * @license http://wedge.org/license/
  * @author see contributors.txt
  */

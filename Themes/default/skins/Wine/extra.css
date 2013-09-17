@@ -1,7 +1,7 @@
 
 /*!
  * Wine skin for Wedge
- * © 2010 René-Gilles Deberdt, http://wedge.org
+ * Â© 2010 RenÃ©-Gilles Deberdt, http://wedge.org
  */
 
 body
@@ -209,6 +209,7 @@ section.block header, .wehead
 
 /* Styles for the info center on the board index.
 ---------------------------------------------------- */
+
 section.ic
 	.last
 		margin: 0
@@ -286,6 +287,7 @@ ul.buttonlist
 
 /* Styles for sidebar menus.
 ------------------------------------------------------- */
+
 .left_menu
 	margin: .5em 2em
 
@@ -299,6 +301,7 @@ ul.buttonlist
 
 /* More icons.
 ------------------------------------------------- */
+
 .cat .help final
 	vertical-align: -2px
 

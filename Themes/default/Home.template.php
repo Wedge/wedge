@@ -3,7 +3,7 @@
  * Displays the custom homepage. Hack away!
  *
  * @package Wedge
- * @copyright 2010 René-Gilles Deberdt, wedge.org
+ * @copyright 2010 RenÃ©-Gilles Deberdt, wedge.org
  * @license http://wedge.org/license/
  * @author see contributors.txt
  */
@@ -20,7 +20,7 @@ function template_main()
 	if (!SKIN_MOBILE)
 		echo '
 	<div class="home-intro">
-		<img src="http://wedge.org/wedge.png" style="width: 130px; height: 135px; float: left; margin-top: 0" />
+		<img src="http://wedge.org/wedge.png" style="width: 115px; height: 135px; float: left; margin-top: 8px" />
 		<div class="windowbg2 wrc" style="margin: 16px 0 0 146px">', $txt['wedge_home_intro'], '
 		</div>
 	</div>';

@@ -171,36 +171,26 @@ function template_credits()
 			', $txt['credits_software'], '
 		</we:cat>
 
-		<div class="two-columns">';
+		<div class="two-columns">
+			<we:block class="windowbg2" header="', westr::safe($txt['credits_team']), '">';
 
-	foreach ($context['credits'] as $section)
-	{
+	$i = 1;
+	$max = count($context['credits']);
+
+	foreach ($context['credits'] as $group)
 		echo '
-			<we:block class="windowbg2" header="', westr::safe($section['title']), '">';
-
-		$i = 1;
-		$max = count($section['groups']);
-		foreach ($section['groups'] as $group)
-			echo '
 				<h6>', $group['title'], '</h6>
-				<ul', $i++ === $max ? ' class="last"' : '', '>
-					<li>', implode('</li>
+				<ul', $i === $max ? ' class="last"' : '', '>
+					<li', $i++ == 1 ? ' style="list-style-type: none"' : '', '>', implode('</li>
 					<li>', $group['members']), '</li>
 				</ul>';
 
-		if (isset($section['posttext']))
-			echo '
-				<p class="posttext">', $section['posttext'], '</p>';
-
-		echo '
-			</we:block>';
-	}
-
 	echo '
+			</we:block>
 		</div>
 		<div class="two-columns">
-			<we:block class="windowbg" header="', westr::safe($txt['credits_copyright']), '">
-				<h6>', $txt['credits_forum'], '</h6>
+			<we:block class="windowbg" header="', westr::safe($txt['credits_others']), '">
+				<h6>', $txt['credits_copyright'], '</h6>
 				<ul>
 					<li>', implode('</li>
 					<li style="padding-top: 8px">', $context['copyrights']['software']), '</li>
@@ -212,22 +202,6 @@ function template_credits()
 				<ul>
 					<li>', implode('</li>
 					<li>', $context['copyrights']['mods']), '</li>
-				</ul>';
-
-	echo '
-				<h6>', $txt['credits_tools'], '</h6>
-				<ul>';
-
-	foreach ($context['copyrights']['tools'] as $name => $str)
-		echo '
-					<li>', $str, isset($txt['credits_tools_' . $name]) ? ' &ndash; ' . $txt['credits_tools_' . $name] : '', '</li>';
-
-	echo '
-				</ul>
-				<h6>', $txt['credits_images'], '</h6>
-				<ul class="last">
-					<li>', implode('</li>
-					<li>', $context['copyrights']['images']), '</li>
 				</ul>';
 
 	echo '

@@ -84,6 +84,8 @@ Also see these files for more contributor credits:
 - Sources/Class-JSON.php
 - Sources/Class-SFTP.php
 - Sources/Class-ZipExtract.php
+- Sources/media/Aeva-Embed.php (uses portions by Karl Benson)
+- Sources/media/ManageMedia3.php (uses portions by Karl Benson)
 - Sources/media/Class-Zip.php
 - Sources/media/Subs-Exif.php
 - Sources/media/getid3/
