@@ -305,7 +305,7 @@ hr.sep
 	vertical-align: top
 
 	h4
-		margin: 3px 0 3px 16px // 19px originally.
+		padding: 3px 0 3px 16px // 19px originally.
 		font: 400 120%/120% $subject_font
 
 	ul.info extends ul.reset

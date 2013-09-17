@@ -13,7 +13,7 @@ $(function ()
 {
 	// This is one of the weirdest bugs in Chrome... If a horizontal (but no vertical)
 	// scrollbar is set on an element inside a flex container, the scrollbar will be
-	// 'ignored' by the layout engine. Forcing the scrollbar's flex to none fixes this.
+	// 'ignored' by the layout engine. Forcing the element's flex to none fixes this.
 	if (is_chrome)
 		$('.post code').each(function ()
 		{
@@ -49,6 +49,7 @@ $(window).load(function ()
 		$first_post = $('.poster').first(),
 		poster_padding_top = parseInt($first_post.css('paddingTop')),
 		poster_padding_bot = parseInt($first_post.css('paddingBottom')),
+		sep_height = $('hr.sep').first().outerHeight(),
 		follow_me = function ()
 		{
 			var
@@ -68,7 +69,7 @@ $(window).load(function ()
 				offset = $poster.offset();
 				poster_top = offset.top;
 				poster_height = $poster.height();
-				if (top < poster_top + poster_height + poster_padding_top + poster_padding_bot)
+				if (top < poster_top + poster_height + poster_padding_top + poster_padding_bot + sep_height)
 					return false;
 			});
 
@@ -76,10 +77,10 @@ $(window).load(function ()
 			col_height = $col.height();
 
 			// If we're above the first post, or the post is shorter than the user box, we can just forget about the effect.
-			if (top < $first_post.offset().top || poster_height == col_height)
+			if (poster_height == col_height || top < $first_post.offset().top)
 				$col = false;
 			// If we're close to the next post, stick the previous user box to the bottom; this increases performance.
-			else if (top >= poster_top + poster_height + poster_padding_top - col_height)
+			else if (top >= poster_top + poster_height - col_height)
 				$col.css({
 					position: '',
 					top: '',
