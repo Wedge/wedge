@@ -10,7 +10,7 @@
 
 /**
  * Note: this file was authored entirely by Peter Spicer,
- * who chose to make it available under the BSD license.
+ * who chose to make it available under the 3-clause BSD license.
  */
 
 class wextr
