@@ -136,7 +136,7 @@ function obExit($start = null, $do_finish = null, $from_index = false, $from_fat
  */
 function ob_sessrewrite($buffer)
 {
-	global $scripturl, $settings, $context, $db_prefix, $session_var;
+	global $scripturl, $settings, $context, $db_prefix, $session_var, $board_info;
 	global $txt, $time_start, $db_count, $db_show_debug, $cached_urls, $use_cache, $members_groups;
 
 	// Just quit if $scripturl is set to nothing, or the SID is not defined. (SSI?)
@@ -205,10 +205,16 @@ function ob_sessrewrite($buffer)
 	if ((!defined('SKIN_MOBILE') || !SKIN_MOBILE) && strpos($buffer, '<we:msg_') !== false)
 	{
 		$ex_uid = $ex_area = $new_area = $one_removed = '';
+		$is_board = isset($board_info['type']) && $board_info['type'] == 'board';
+
 		// First, find all potential messages in this page...
 		preg_match_all('~<we:msg [^>]*id="([^"]+)" class="([^"]+)"[^>]*>(.*?)</we:msg>~s', $buffer, $messages, PREG_SET_ORDER);
 		foreach ($messages as $msg)
 		{
+			// Blog posts aren't soft-mergeable.
+			if (!$is_board && strpos($msg[2], 'first-post') !== false)
+				continue;
+
 			// Find the author ID for the current post, and isolate the post's content.
 			preg_match('~data-id="(\d+)" class="[^"]*umme~', $msg[3], $uid);
 			preg_match('~<we:msg_area>(.*?)</we:msg_area>~s', $msg[3], $area);
@@ -217,10 +223,13 @@ function ob_sessrewrite($buffer)
 			// Do we need soft merging?
 			if ($ex_uid == $uid)
 			{
+				// If no merging was done on the previous post, do it now.
+				$do_first = strpos($ex_area, '<div class="merged ') === false;
+
 				// Remove colored backgrounds and signature, keep the ID and classes (for JS mostly), and move the post area to the previous area, in a special div.
-				$new_area = preg_replace('~<we:msg_signature>.*?</we:msg_signature>~s', '', $ex_area)
-					. '<div class="merged ' . $msg[2] . '" id="' . $msg[1] . '">'
-					. $area . '</div>';
+				$new_area = preg_replace('~<we:msg_signature>.*?</we:msg_signature>~s', '', $do_first ? '<div class="merged">' . $ex_area . '</div>' : $ex_area)
+					. '<div class="merged ' . $msg[2] . '" id="' . $msg[1] . '">' . $area . '</div>';
+
 				$buffer = str_replace(array($msg[0], $ex_area), array('<!REMOVED>', $new_area), $buffer);
 				$ex_area = $new_area;
 				$one_removed = true;

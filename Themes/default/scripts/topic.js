@@ -421,7 +421,7 @@ function QuickReply(opt)
 				if (sSubjectBuffer !== 0)
 				{
 					oCurSubjectDiv.html(sSubjectBuffer);
-					oCurMessageDiv.show().next().remove();
+					oCurMessageDiv.fadeIn(1000).next().remove();
 				}
 
 				// No longer in edit mode, that's right.
@@ -444,7 +444,7 @@ function QuickReply(opt)
 				modifyCancel();
 
 			sCurMessageId = iMessageId;
-			oCurMessageDiv = $('#msg' + sCurMessageId + ' .inner');
+			oCurMessageDiv = $('#msg' + sCurMessageId + ' .inner').first().fadeOut(1000);
 
 			// If this is not valid then simply give up.
 			if (!oCurMessageDiv.length)
@@ -462,31 +462,32 @@ function QuickReply(opt)
 				if (sCurMessageId != $('message', XMLDoc).attr('id'))
 					return modifyCancel();
 
+				// Calculate the height of .postheader + .post
+				var
+					$parent = oCurMessageDiv.parent().parent(),
+					target_height = $parent.height();
+
 				// Create the textarea after the message, and show it through a slide animation.
 				oCurMessageDiv
-					.slideUp(500)
+					.hide()
 					.after(
 						opt.sBody.wereplace({
 							msg_id: sCurMessageId,
 							body: $('message', XMLDoc).text()
 						})
-					)
-					.next()
-					.hide()
-					.slideDown(500);
+					);
 
 				// Replace the subject part.
-				oCurSubjectDiv = $('#msg' + sCurMessageId + ' h5');
+				oCurSubjectDiv = $('#msg' + sCurMessageId + ' h5').first();
 				sSubjectBuffer = oCurSubjectDiv.html();
 
-				oCurSubjectDiv
-					.html(
-						opt.sSubject.wereplace({
-							subject: $('subject', XMLDoc).text()
-						})
-					)
-					.hide()
-					.slideDown(sSubjectBuffer == '' ? 500 : 0);
+				oCurSubjectDiv.html(
+					opt.sSubject.wereplace({
+						subject: $('subject', XMLDoc).text()
+					})
+				);
+
+				$('#qm_post').height(Math.max(80, $('#qm_post').height() + target_height - $parent.height())).parent().parent().hide().fadeIn(1000);
 			});
 		};
 
