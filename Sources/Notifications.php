@@ -653,10 +653,13 @@ class weNotif
 				continue;
 
 			// Assemble the notifications into one huge text.
-			$body = template_notification_email($m['notifications']);
+			// !! We're setting HTML to false for now, as it saves some bandwidth and CPU time; consider adding a user setting..?
+			$use_html = false;
+			$body = template_notification_email($m['notifications'], $use_html);
+			$plain_body = $use_html ? template_notification_email($m['notifications'], false) : false;
 			$subject = sprintf($txt['notification_email_periodical_subject'], $m['name'], $m['unread']);
 
-			sendmail($m['email'], $subject, $body, null, null, true);
+			sendmail($m['email'], $subject, $body, null, null, $plain_body);
 		}
 
 		updateMemberData(array_keys($members), array(

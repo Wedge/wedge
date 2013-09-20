@@ -13,10 +13,9 @@ if (!defined('WEDGE'))
 
 /*	This file contains those functions pertaining to posting, and other such
 	operations, including sending emails, ims, blocking spam, preparsing posts,
-	and the post box.  This is done with the following:
+	and the post box. This is done with the following:
 
-	bool sendmail(array to, string subject, string message,
-			string message_id = auto, string from = webmaster,
+	bool sendmail(array to, string subject, string message, string message_id = auto, string from = webmaster,
 			bool send_html = false, int priority = 3, bool hotmail_fix = null)
 		- sends an email to the specified recipient.
 		- uses the mail_type setting and the webmaster_email global.
@@ -35,8 +34,7 @@ if (!defined('WEDGE'))
 		string headers = '', bool send_html = false, int priority = 3)
 		// !!
 
-	array sendpm(array recipients, string subject, string message,
-			array from = current_member, int pm_head = 0)
+	array sendpm(array recipients, string subject, string message, array from = current_member, int pm_head = 0)
 		- sends an personal message from the specified person to the
 		  specified people. (from defaults to the user.)
 		- recipients should be an array containing the arrays 'to' and 'bcc',
@@ -47,28 +45,26 @@ if (!defined('WEDGE'))
 		- returns an array with log entries telling how many recipients were
 		  successful and which recipients it failed to send to.
 
-	string mimespecialchars(string text, bool with_charset = true,
-			hotmail_fix = false, string custom_charset = null)
+	string mimespecialchars(string text, bool with_charset = true, hotmail_fix = false, string custom_charset = null)
 		- prepare text strings for sending as email.
+		- set with_charset to true to encode header elements (from, subject, etc.)
 		- in case there are higher ASCII characters in the given string, this
-		  function will attempt the transport method 'quoted-printable'.
-		  Otherwise the transport method '7bit' is used.
-		- with hotmail_fix set all higher ASCII characters are converted to
-		  HTML entities to assure proper display of the mail.
-		- uses character set custom_charset if set.
-		- returns an array containing the converted string
-		  and the transport method.
+		  function will attempt to transfer base64-encoded content.
+		  Otherwise, the transport method '7bit' is used.
+		- with hotmail_fix set, all higher ASCII characters are converted
+		  to HTML entities to ensure proper display of the email.
+		- uses character set custom_charset, if set.
+		- returns an array containing the converted string and the transport method.
 
-	bool smtp_mail(array mail_to_array, string subject, string message,
-			string headers)
-		- sends mail, like mail() but over SMTP.  Used internally.
+	bool smtp_mail(array mail_to_array, string subject, string message, string headers)
+		- sends mail, like mail() but over SMTP. Used internally.
 		- takes email addresses, a subject and message, and any headers.
 		- expects no slashes or entities.
 		- returns whether it sent or not.
 
 	bool server_parse(string message, resource socket, string response)
 		- sends the specified message to the server, and checks for the
-		  expected response. (used internally.)
+		  expected response. (Used internally.)
 		- takes the message to send, socket to send on, and the expected
 		  response code.
 		- returns whether it responded as such.
@@ -79,7 +75,7 @@ if (!defined('WEDGE'))
 		- uses the Post langauge file.
 		- topics represents the topics the action is happening to.
 		- the type can be any of reply, pin, lock, unlock, remove, move,
-		  merge, and split.  An appropriate message will be sent for each.
+		  merge, and split. An appropriate message will be sent for each.
 		- automatically finds the subject and its board, and checks permissions
 		  for each member who is "signed up" for notifications.
 		- will not send 'reply' notifications more than once in a row.
@@ -106,8 +102,7 @@ if (!defined('WEDGE'))
 
 	void updateLastMessages(array id_board's, int id_msg)
 		- takes an array of board IDs and updates their last messages.
-		- if the board has a parent, that parent board is also automatically
-		  updated.
+		- if the board has a parent, that parent board is also automatically updated.
 		- columns updated are id_last_msg and lastUpdated.
 		- note that id_last_msg should always be updated using this function,
 		  and is not automatically updated upon other changes.
@@ -131,7 +126,7 @@ function sendmail($to, $subject, $message, $from = null, $message_id = null, $se
 
 	// Line breaks need to be \r\n only in windows or for SMTP.
 	// ($context['server']['is_windows'] isn't always loaded at this point.)
-	$line_break = strpos(PHP_OS, 'WIN') === 0 || !$use_sendmail ? "\r\n" : "\n";
+	$br = strpos(PHP_OS, 'WIN') === 0 || !$use_sendmail ? "\r\n" : "\n";
 
 	// So far so good.
 	$mail_result = true;
@@ -149,6 +144,14 @@ function sendmail($to, $subject, $message, $from = null, $message_id = null, $se
 			$message = str_replace('<URL>', $scripturl, $message);
 			preg_match_all('~' . preg_quote($scripturl, '~') . '[^\s]*~', $message, $urls);
 			$message = str_replace($urls[0], prettify_urls($urls[0]), $message);
+
+			// If this is a HTML message, we also need to run through the raw text. Yes, it's a waste of time...
+			if (is_string($send_html))
+			{
+				$send_html = str_replace('<URL>', $scripturl, $send_html);
+				preg_match_all('~' . preg_quote($scripturl, '~') . '[^\s]*~', $send_html, $urls);
+				$send_html = str_replace($urls[0], prettify_urls($urls[0]), $send_html);
+			}
 		}
 
 		$hotmail_to = array();
@@ -176,82 +179,70 @@ function sendmail($to, $subject, $message, $from = null, $message_id = null, $se
 	// Get rid of entities.
 	$subject = un_htmlspecialchars($subject);
 	// Make the message use the proper line breaks.
-	$message = str_replace(array("\r", "\n"), array('', $line_break), $message);
+	$message = str_replace(array("\r", "\n"), array('', $br), $message);
 
 	// Make sure hotmail mails are sent as HTML so that HTML entities work.
 	if ($hotmail_fix && !$send_html)
 	{
 		$send_html = true;
-		$message = strtr($message, array($line_break => '<br>' . $line_break));
+		$message = strtr($message, array($br => '<br>' . $br));
 		$message = preg_replace('~(' . preg_quote($scripturl, '~') . '(?:[?/][\w%.,?&;=#-]+)?)~', '<a href="$1">$1</a>', $message);
 	}
 
-	list ($from_name) = mimespecialchars(addcslashes($from !== null ? $from : $context['forum_name'], '<>()\'\\"'), true, $hotmail_fix, $line_break);
-	list ($subject) = mimespecialchars($subject, true, $hotmail_fix, $line_break);
+	list ($from_name) = mimespecialchars(addcslashes($from !== null ? $from : $context['forum_name'], '<>()\'\\"'), true, $hotmail_fix, $br);
+	list ($subject) = mimespecialchars($subject, true, $hotmail_fix, $br);
 
 	// Construct the mail headers...
-	$headers = 'From: ' . $from_name . ' <' . (empty($settings['mail_from']) ? $webmaster_email : $settings['mail_from']) . '>' . $line_break;
-	$headers .= $from !== null ? 'Reply-To: ' . $from_name . ' <' . $from . '>' . $line_break : '';
-	$headers .= 'Return-Path: ' . (empty($settings['mail_from']) ? $webmaster_email : $settings['mail_from']) . $line_break;
-	$headers .= 'Date: ' . gmdate('D, d M Y H:i:s') . ' -0000' . $line_break;
+	$headers = 'From: ' . $from_name . ' <' . (empty($settings['mail_from']) ? $webmaster_email : $settings['mail_from']) . '>' . $br;
+	$headers .= $from !== null ? 'Reply-To: ' . $from_name . ' <' . $from . '>' . $br : '';
+	$headers .= 'Return-Path: ' . (empty($settings['mail_from']) ? $webmaster_email : $settings['mail_from']) . $br;
+	$headers .= 'Date: ' . gmdate('D, d M Y H:i:s') . ' -0000' . $br;
 
 	if ($message_id !== null && empty($settings['mail_no_message_id']))
-		$headers .= 'Message-ID: <' . md5($scripturl . microtime()) . '-' . $message_id . strstr(empty($settings['mail_from']) ? $webmaster_email : $settings['mail_from'], '@') . '>' . $line_break;
-	$headers .= 'X-Mailer: Wedge' . $line_break;
+		$headers .= 'Message-ID: <' . md5($scripturl . microtime()) . '-' . $message_id . strstr(empty($settings['mail_from']) ? $webmaster_email : $settings['mail_from'], '@') . '>' . $br;
+	$headers .= 'X-Mailer: Wedge' . $br;
 
 	// Pass this to the hook before we start modifying the output -- it'll make it easier later.
 	if (in_array(false, call_hook('outgoing_email', array(&$subject, &$message, &$headers)), true))
 		return false;
 
-	// Save the original message...
-	$orig_message = $message;
-
 	// The mime boundary separates the different alternative versions.
-	$mime_boundary = 'Wedge-' . md5($message . time());
+	$mime_boundary = 'We' . md5($message . time());
 
 	// Using mime, as it allows to send a plain unencoded alternative.
-	$headers .= 'Mime-Version: 1.0' . $line_break;
-	$headers .= 'Content-Type: multipart/alternative; boundary="' . $mime_boundary . '"' . $line_break;
-	$headers .= 'Content-Transfer-Encoding: 7bit' . $line_break;
+	$headers .= 'Mime-Version: 1.0' . $br;
+	$headers .= 'Content-Type: multipart/alternative; boundary=' . $mime_boundary . $br;
+	$headers .= 'Content-Transfer-Encoding: 7bit' . $br;
 
-	// Sending HTML?  Let's plop in some basic stuff, then.
+	$raw_message = !$send_html ? $message : (is_string($send_html) ? $send_html : un_htmlspecialchars(strip_tags(strtr($message, array('</title>' => $br, '<br>' => $br, '</li>' => $br, '</ul>' => $br)))));
+
+	// Send a plain message first, for the older web clients.
+	list ($plain_message) = mimespecialchars($raw_message, false, true, $br);
+	$body = $plain_message . $br;
+
+	// Now, add an encoded message using the forum's character set. Even if no one sees it, we need it for spam checkers.
+	list ($plain_charset_message, $encoding) = mimespecialchars($raw_message, false, false, $br);
+	$body .= '--' . $mime_boundary . $br;
+	$body .= 'Content-Type: text/plain; charset=UTF-8' . $br;
+	$body .= 'Content-Transfer-Encoding: ' . $encoding . $br . $br;
+	$body .= $plain_charset_message . $br;
+
+	// Sending HTML? Add the proper body, then...
 	if ($send_html)
 	{
-		$no_html_message = un_htmlspecialchars(strip_tags(strtr($orig_message, array('</title>' => $line_break))));
-
-		// But, then, dump it and use a plain one for dinosaur clients.
-		list ($plain_message) = mimespecialchars($no_html_message, false, true, $line_break);
-		$message = $plain_message . $line_break . '--' . $mime_boundary . $line_break;
-
-		// This is the plain text version.  Even if no one sees it, we need it for spam checkers.
-		list ($plain_charset_message, $encoding) = mimespecialchars($no_html_message, false, false, $line_break);
-		$message .= 'Content-Type: text/plain; charset=UTF-8' . $line_break;
-		$message .= 'Content-Transfer-Encoding: ' . $encoding . $line_break . $line_break;
-		$message .= $plain_charset_message . $line_break . '--' . $mime_boundary . $line_break;
-
-		// This is the actual HTML message, prim and proper.  If we wanted images, they could be inlined here (with multipart/related, etc.)
-		list ($html_message, $encoding) = mimespecialchars($orig_message, false, $hotmail_fix, $line_break);
-		$message .= 'Content-Type: text/html; charset=UTF-8' . $line_break;
-		$message .= 'Content-Transfer-Encoding: ' . ($encoding == '' ? '7bit' : $encoding) . $line_break . $line_break;
-		$message .= $html_message . $line_break . '--' . $mime_boundary . '--';
+		// This is the actual HTML message, in all its glory. If we wanted images, they could be inlined here (with multipart/related, etc.)
+		list ($html_message, $encoding) = mimespecialchars($message, false, $hotmail_fix, $br);
+		$body .= '--' . $mime_boundary . $br;
+		$body .= 'Content-Type: text/html; charset=UTF-8' . $br;
+		$body .= 'Content-Transfer-Encoding: ' . ($encoding == '' ? '7bit' : $encoding) . $br . $br;
+		$body .= $html_message . $br;
 	}
-	// Text is good too.
-	else
-	{
-		// Send a plain message first, for the older web clients.
-		list ($plain_message) = mimespecialchars($orig_message, false, true, $line_break);
-		$message = $plain_message . $line_break . '--' . $mime_boundary . $line_break;
 
-		// Now add an encoded message using the forum's character set.
-		list ($encoded_message, $encoding) = mimespecialchars($orig_message, false, false, $line_break);
-		$message .= 'Content-Type: text/plain; charset=UTF-8' . $line_break;
-		$message .= 'Content-Transfer-Encoding: ' . $encoding . $line_break . $line_break;
-		$message .= $encoded_message . $line_break . '--' . $mime_boundary . '--';
-	}
+	$body .= '--' . $mime_boundary . '--';
 
 	// Are we using the mail queue, if so this is where we butt in...
 	if (!empty($settings['mail_queue']) && $priority != 0)
-		return AddMailQueue(false, $to_array, $subject, $message, $headers, $send_html, $priority, $is_private);
+		return AddMailQueue(false, $to_array, $subject, $body, $headers, !!$send_html, $priority, $is_private);
 
 	// If it's a priority mail, send it now - note though that this should NOT be used for sending many at once.
 	elseif (!empty($settings['mail_queue']) && !empty($settings['mail_limit']))
@@ -271,13 +262,13 @@ function sendmail($to, $subject, $message, $from = null, $message_id = null, $se
 		$subject = strtr($subject, array("\r" => '', "\n" => ''));
 		if (!empty($settings['mail_strip_carriage']))
 		{
-			$message = strtr($message, array("\r" => ''));
+			$body = strtr($body, array("\r" => ''));
 			$headers = strtr($headers, array("\r" => ''));
 		}
 
 		foreach ($to_array as $to)
 		{
-			if (!mail(strtr($to, array("\r" => '', "\n" => '')), $subject, $message, $headers))
+			if (!mail(strtr($to, array("\r" => '', "\n" => '')), $subject, $body, $headers))
 			{
 				loadLanguage('Post');
 				log_error(sprintf($txt['mail_send_unable'], $to), 'mail');
@@ -291,7 +282,7 @@ function sendmail($to, $subject, $message, $from = null, $message_id = null, $se
 		}
 	}
 	else
-		$mail_result = $mail_result && smtp_mail($to_array, $subject, $message, $headers);
+		$mail_result = $mail_result && smtp_mail($to_array, $subject, $body, $headers);
 
 	// Everything go smoothly?
 	return $mail_result;
@@ -380,7 +371,7 @@ function AddMailQueue($flush = false, $to_array = array(), $subject = '', $messa
 		$cur_insert_len += $this_insert_len;
 	}
 
-	// If they are using SSI there is a good chance obExit will never be called.  So let's be nice and flush it for them.
+	// If they are using SSI there is a good chance obExit will never be called. So let's be nice and flush it for them.
 	if (WEDGE === 'SSI')
 		return AddMailQueue(true);
 
@@ -410,7 +401,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = true, $from = n
 			'name' => we::$user['name'],
 			'username' => we::$user['username']
 		);
-	// Probably not needed.  /me something should be of the typer.
+	// Probably not needed. /me something should be of the typer.
 	else
 		we::$user['name'] = $from['name'];
 
@@ -717,37 +708,36 @@ function sendpm($recipients, $subject, $message, $store_outbox = true, $from = n
 }
 
 // Prepare text strings for sending as email body or header.
-function mimespecialchars($string, $with_charset = true, $hotmail_fix = false, $line_break = "\r\n")
+function mimespecialchars($string, $with_charset = true, $hotmail_fix = false, $br = "\r\n")
 {
 	global $context;
 
 	// This is the fun part....
-	if (preg_match_all('~&#(\d{3,8});~', $string, $matches) !== 0 && !$hotmail_fix)
+	if (preg_match('~&#\d{3,8};~', $string) && !$hotmail_fix)
 		$string = westr::entity_to_utf8($string);
 
-	// Convert all special characters to HTML entities...just for Hotmail :-\
+	// Convert all special characters to HTML entities... just for Hotmail :-\
 	if ($hotmail_fix)
-		return array('UTF-8', westr::utf8_to_entity($string), '7bit');
+		return array(westr::utf8_to_entity($string), '7bit');
 
-	// We don't need to mess with the subject line if no special characters were in it..
-	elseif (!$hotmail_fix && preg_match('~([^\x09\x0A\x0D\x20-\x7F])~', $string) === 1)
+	// We don't need to mess with the body if no special characters are in it...
+	if (preg_match('~[^\x09\x0a\x0d\x20-\x7f]~', $string))
 	{
 		// Base64 encode.
 		$string = base64_encode($string);
 
-		// Show the characterset and the transfer-encoding for header strings.
+		// Show the character set and the transfer-encoding for header strings.
 		if ($with_charset)
 			$string = '=?UTF-8?B?' . $string . '?=';
 
-		// Break it up in lines (mail body).
+		// Break it up in lines (mail body.)
 		else
-			$string = chunk_split($string, 76, $line_break);
+			$string = chunk_split($string, 76, $br);
 
 		return array($string, 'base64');
 	}
 
-	else
-		return array($string, '7bit');
+	return array($string, '7bit');
 }
 
 // Send an email via SMTP.
@@ -781,14 +771,14 @@ function smtp_mail($mail_to_array, $subject, $message, $headers)
 	// Try to connect to the SMTP server... if it doesn't exist, only wait three seconds.
 	if (!$socket = fsockopen($settings['smtp_host'], empty($settings['smtp_port']) ? 25 : $settings['smtp_port'], $errno, $errstr, 3))
 	{
-		// Maybe we can still save this?  The port might be wrong.
+		// Maybe we can still save this? The port might be wrong.
 		if (substr($settings['smtp_host'], 0, 4) == 'ssl:' && (empty($settings['smtp_port']) || $settings['smtp_port'] == 25))
 		{
 			if ($socket = fsockopen($settings['smtp_host'], 465, $errno, $errstr, 3))
 				log_error($txt['smtp_port_ssl']);
 		}
 
-		// Unable to connect!  Don't show any error message, but just log one and try to continue anyway.
+		// Unable to connect! Don't show any error message, but just log one and try to continue anyway.
 		if (!$socket)
 		{
 			log_error($txt['smtp_no_connect'] . ': ' . $errno . ' : ' . $errstr);
@@ -1543,7 +1533,7 @@ function createAttachment(&$attachmentOptions)
 			$dirSize += filesize($attach_dir . '/' . $file);
 		}
 
-		// Too big!  Maybe you could zip it or something...
+		// Too big! Maybe you could zip it or something...
 		if ($attachmentOptions['size'] + $dirSize > $settings['attachmentDirSizeLimit'] * 1024)
 			$attachmentOptions['errors'][] = 'directory_full';
 		// Soon to be too big - warn the admins...
@@ -1680,7 +1670,7 @@ function createAttachment(&$attachmentOptions)
 			{
 				// Let's update the image information
 				// !!! This is becoming a mess: we keep coming back and update the database,
-				//  instead of getting it right the first time.
+				// instead of getting it right the first time.
 				if (isset($validImageTypes[$size[2]]))
 				{
 					$attachmentOptions['mime_type'] = 'image/' . $validImageTypes[$size[2]];

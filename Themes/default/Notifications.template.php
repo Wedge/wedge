@@ -100,24 +100,30 @@ function template_notification_subs_profile()
 	}
 }
 
-function template_notification_email($notifications)
+function template_notification_email($notifications, $use_html = false)
 {
 	global $txt;
 
-	$str = $txt['notification_email_periodical_body'] . "\n\n";
+	$str = $txt['notification_email_periodical_body'] . ($use_html ? '<br><br>' : "\n\n");
 
 	foreach ($notifications as $notifier_name => $notifs)
 	{
 		$notifier = weNotif::getNotifiers($notifier_name);
 		list ($title) = $notifier->getProfile($notifs);
 
-		$str .= "\n" . $title . "\n" . str_repeat('=', strlen($title)) . "\n";
+		if ($use_html)
+			$str .= '<h3>' . $title . '</h3><ul>';
+		else
+			$str .= "\n\n" . $title . "\n" . str_repeat('=', strlen($title)) . "\n\n";
 
 		foreach ($notifs as $n)
 		{
-			list (, $body) = $notifier->getEmail($n);
-			$str .= $body . "\n\n";
+			$body = $notifier->getText($n, !$use_html); // If HTML is disabled, we'll ask for a text e-mail.
+			$str .= $use_html ? '<li style="padding:0 0 6px">' . $body . '</li>' : $body . "\n\n";
 		}
+
+		if ($use_html)
+			$str .= '</ul>';
 	}
 
 	return $str;
