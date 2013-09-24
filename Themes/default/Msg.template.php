@@ -223,6 +223,11 @@ function template_msg_area_before()
 	template_msg_new_anchor();
 }
 
+function template_msg_entry_before()
+{
+	echo '<we:msg_entry>';
+}
+
 function template_msg_header_before()
 {
 	echo '
@@ -315,13 +320,9 @@ function template_msg_body_after()
 						</we:msg_post>';
 }
 
-function template_msg_bottom_before()
+function template_msg_entry_after()
 {
-	global $context;
-
-	if ($context['ignoring'])
-		echo '
-						<footer>';
+	echo '</we:msg_entry>';
 }
 
 function template_msg_actionbar_before()
@@ -450,15 +451,6 @@ function template_msg_signature()
 	if (!empty($msg['member']['signature']) && !empty($options['show_signatures']) && $context['signature_enabled'])
 		echo '
 						<we:msg_signature>', $msg['member']['signature'], '</we:msg_signature>';
-}
-
-function template_msg_bottom_after()
-{
-	global $context;
-
-	if ($context['ignoring'])
-		echo '
-						</footer>';
 }
 
 function template_msg_area_after()

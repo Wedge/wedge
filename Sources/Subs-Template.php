@@ -204,7 +204,7 @@ function ob_sessrewrite($buffer)
 	*/
 	if ((!defined('SKIN_MOBILE') || !SKIN_MOBILE) && strpos($buffer, '<we:msg_') !== false)
 	{
-		$ex_uid = $ex_area = $new_area = $one_removed = '';
+		$ex_uid = $ex_area = $area = $one_removed = '';
 		$is_board = isset($board_info['type']) && $board_info['type'] == 'board';
 
 		// First, find all potential messages in this page...
@@ -217,28 +217,22 @@ function ob_sessrewrite($buffer)
 
 			// Find the author ID for the current post, and isolate the post's content.
 			preg_match('~data-id="(\d+)" class="[^"]*umme~', $msg[3], $uid);
-			preg_match('~<we:msg_area>(.*?)</we:msg_area>~s', $msg[3], $area);
-			$area = $area[1];
+			preg_match('~<we:msg_entry>(.*?)</we:msg_entry>~s', $msg[3], $area);
 
 			// Do we need soft merging?
 			if ($ex_uid == $uid)
 			{
-				// If no merging was done on the previous post, do it now.
-				$do_first = strpos($ex_area, '<div class="merged ') === false;
-
 				// Remove colored backgrounds and signature, keep the ID and classes (for JS mostly), and move the post area to the previous area, in a special div.
-				$new_area = preg_replace('~<we:msg_signature>.*?</we:msg_signature>~s', '', $do_first ? '<div class="merged">' . $ex_area . '</div>' : $ex_area)
-					. '<div class="merged ' . $msg[2] . '" id="' . $msg[1] . '">' . $area . '</div>';
+				$area[0] = str_replace('<we:msg_entry>', '<we:msg_entry class="merged">', $ex_area[0])
+					. '<we:msg_entry class="merged' . (empty($msg[2]) ? '' : ' ' . $msg[2]) . '"' . (empty($msg[1]) ? '' : ' id="' . $msg[1] . '"') . '>' . $area[1] . '</we:msg_entry>';
 
-				$buffer = str_replace(array($msg[0], $ex_area), array('<!REMOVED>', $new_area), $buffer);
-				$ex_area = $new_area;
+				$buffer = str_replace(array($msg[0], $ex_area[0]), array('<!REMOVED>', $area[0]), $buffer);
 				$one_removed = true;
 			}
 			else
-			{
 				$ex_uid = $uid;
-				$ex_area = $area;
-			}
+
+			$ex_area = $area;
 		}
 		// Remove any extra separators.
 		if ($one_removed)

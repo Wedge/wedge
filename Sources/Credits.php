@@ -89,27 +89,37 @@ function Credits()
 
 	$context['copyrights'] = array(
 		'software' => array(
-			'wedge' => $txt['credits_wedge'],
-			'smf2' => sprintf($txt['credits_smf2'], implode(', ', array(
-				'[Unknown]',
-				'Aaron',
-				'Antechinus',
-				'Bloc',
-				'Compuart',
-				'Grudge',
-				'JayBachatero',
-				'Nao &#23578;',
-				'Norv',
-				'Orstio',
-				'regularexpression',
-				'[SiNaN]',
-				'TE',
-				'Thantos',
-			)), 'winrules'),
-			'aeva' => sprintf($txt['credits_aeme'], implode(', ', array(
-				'Nao &#23578;',
-				'Dragooon',
-			)), 'Karl Benson'),
+			'wedge' => sprintf($txt['credits_wedge'],
+				'René-Gilles Deberdt',
+				'http://wedge.org/license/',
+				2010
+			),
+			'smf2' => sprintf($txt['credits_smf2'], implode(', ',
+				array(
+					'[Unknown]',
+					'Aaron',
+					'Antechinus',
+					'Bloc',
+					'Compuart',
+					'Grudge',
+					'JayBachatero',
+					'Nao &#23578;',
+					'Norv',
+					'Orstio',
+					'regularexpression',
+					'[SiNaN]',
+					'TE',
+					'Thantos',
+				)),
+				'winrules'),
+			'aeva' => sprintf($txt['credits_aeme'], implode(', ',
+				array(
+					'Nao &#23578;',
+					'Dragooon',
+				)),
+				'Karl Benson',
+				'http://aeva.noisen.com/'
+			),
 		),
 		'mods' => array(
 		),

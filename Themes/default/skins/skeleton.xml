@@ -64,17 +64,19 @@
 			</msg_author>
 		</if>
 		<msg_area>
-			<msg_header>
-				<if SKIN_MOBILE>
-					<msg_author_avatar />
-					<msg_author_name />
-				</if>
-				<msg_header_body />
-			</msg_header>
-			<msg_ignored />
-			<msg_body />
-			<msg_bottom>
+			<msg_entry>
+				<msg_header>
+					<if SKIN_MOBILE>
+						<msg_author_avatar />
+						<msg_author_name />
+					</if>
+					<msg_header_body />
+				</msg_header>
+				<msg_ignored />
+				<msg_body />
 				<msg_actionbar />
+			</msg_entry>
+			<msg_bottom>
 				<msg_attachments />
 				<msg_customfields />
 				<msg_signature />

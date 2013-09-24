@@ -17,9 +17,14 @@
 
 <!-- And some post-related macros, which might be useful, e.g. removing contents entirely in Wireless. -->
 <macro name="msg"><div id="{id}" class="{class}">{body}</div></macro>
-<macro name="msg_header"><div class="postheader">{body}</div></macro>
 <macro name="msg_area"><div class="postarea">{body}</div></macro>
+
+<!-- msg_entry contains anything in a post that should be retained when soft-merging happens. Usually, msg_header and msg_post. -->
+<macro name="msg_entry"><article<if:class> class="{class}"</if:class><if:id> id="{id}"</if:id>>{body}</article></macro>
+<macro name="msg_header"><div class="postheader">{body}</div></macro>
 <macro name="msg_post"><div class="post">{body}</div></macro>
+
+<!-- These will usually be removed when soft-merging. -->
 <macro name="msg_signature"><div class="signature">{body}</div></macro>
 <macro name="msg_author_avatar"><li class="avatar">{body}</li></macro>
 <macro name="msg_author_avatar" for="SKIN_MOBILE"><div class="avatar">{body}</div></macro>
