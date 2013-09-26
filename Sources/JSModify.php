@@ -267,7 +267,7 @@ function JSModify()
 			$errors[] = is_array($post_error) ? sprintf($txt['error_' . $post_error[0]], $post_error[1]) : $txt['error_' . $post_error];
 
 		return_xml('<we>
-	<error where="#qm_', in_array('no_subject', $post_errors) ? 'subject' : (in_array('no_message', $post_errors) ||
+	<error where="#qe_', in_array('no_subject', $post_errors) ? 'subject' : (in_array('no_message', $post_errors) ||
 		in_array(array('long_message', $settings['max_messageLength']), $post_errors) ? 'post' : ''), '"><![CDATA[', implode('<br>', $errors), ']]></error></we>');
 	}
 

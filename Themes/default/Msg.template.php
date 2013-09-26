@@ -335,38 +335,33 @@ function template_msg_actionbar()
 {
 	global $msg, $context, $options, $txt;
 
-	// Can the user modify the contents of this post? Show the modify inline image.
-	if ($msg['can_modify'])
-		echo '
-							<div class="quick_edit" title="', $txt['modify_msg'], '" onclick="return window.oQuickModify && oQuickModify.modifyMsg(this);" onmousedown="return false;">&nbsp;</div>';
+	if (!$msg['has_buttons'])
+		return;
 
-	if ($msg['has_buttons'])
-	{
-		echo '
+	echo '
 							<ul class="actions">';
 
-		// Can they reply? Have they turned on quick reply?
-		if ($context['can_quote'] && !empty($options['display_quick_reply']) && !SKIN_MOBILE)
-			echo '
+	// Can they reply? Have they turned on quick reply?
+	if ($context['can_quote'] && !empty($options['display_quick_reply']) && !SKIN_MOBILE)
+		echo '
 								<li><a href="<URL>?action=post;quote=', $msg['id'], ';topic=', $context['current_topic'], '.', $context['start'], ';last=', $context['topic_last_message'], '" class="quote_button" onclick="return window.oQuickReply && oQuickReply.quote(this);">', $txt['quote'], '</a></li>';
 
-		// So... quick reply is off, but they *can* reply?
-		elseif ($context['can_quote'] && !SKIN_MOBILE)
-			echo '
+	// So... quick reply is off, but they *can* reply?
+	elseif ($context['can_quote'] && !SKIN_MOBILE)
+		echo '
 								<li><a href="<URL>?action=post;quote=', $msg['id'], ';topic=', $context['current_topic'], '.', $context['start'], ';last=', $context['topic_last_message'], '" class="quote_button">', $txt['quote'], '</a></li>';
 
-		// Can the user modify the contents of this post?
-		if ($msg['can_modify'] && !SKIN_MOBILE)
-			echo '
+	// Can the user modify the contents of this post?
+	if ($msg['can_modify'] && !SKIN_MOBILE)
+		echo '
 								<li><a href="<URL>?action=post;msg=', $msg['id'], ';topic=', $context['current_topic'], '.', $context['start'], '" class="edit_button">', $txt['modify'], '</a></li>';
 
-		if (!empty($context['mini_menu']['action'][$msg['id']]))
-			echo '
+	if (!empty($context['mini_menu']['action'][$msg['id']]))
+		echo '
 								<li><a class="acme more_button">', $txt[SKIN_MOBILE ? 'actions_button' : 'more_actions'], '</a></li>';
 
-		echo '
+	echo '
 							</ul>';
-	}
 }
 
 function template_msg_actionbar_after()
@@ -390,8 +385,7 @@ function template_msg_attachments()
 		return;
 
 	echo '
-						<div class="attachments">
-							<div style="overflow: ', we::is('firefox') ? 'visible' : 'auto', '">';
+						<div class="attachments">';
 
 	foreach ($msg['attachment'] as $attachment)
 	{
@@ -399,18 +393,17 @@ function template_msg_attachments()
 		{
 			if ($attachment['thumbnail']['has_thumb'])
 				echo '
-								<a href="', $attachment['href'], ';image" id="link_', $attachment['id'], '" class="zoom"><img src="', $attachment['thumbnail']['href'], '" id="thumb_', $attachment['id'], '"></a><br>';
+							<div><a href="', $attachment['href'], ';image" id="link_', $attachment['id'], '" class="zoom"><img src="', $attachment['thumbnail']['href'], '" id="thumb_', $attachment['id'], '"></a></div>';
 			else
 				echo '
-								<img src="', $attachment['href'], ';image" width="', $attachment['width'], '" height="', $attachment['height'], '"><br>';
+							<div><img src="', $attachment['href'], ';image" width="', $attachment['width'], '" height="', $attachment['height'], '"></div>';
 		}
 		echo '
-								<a href="', $attachment['href'], '"><img src="', $theme['images_url'], '/icons/clip.gif" class="middle">&nbsp;', $attachment['name'], '</a>
-								(', $attachment['size'], $attachment['is_image'] ? ', ' . $attachment['real_width'] . 'x' . $attachment['real_height'] : '', ' - ', number_context($attachment['is_image'] ? 'attach_viewed' : 'attach_downloaded', $attachment['downloads']), ')<br>';
+							<p><a href="', $attachment['href'], '"><img src="', $theme['images_url'], '/icons/clip.gif" class="middle">&nbsp;', $attachment['name'], '</a>
+							- ', $attachment['size'], $attachment['is_image'] ? ', ' . $attachment['real_width'] . 'x' . $attachment['real_height'] : '', ', ', number_context($attachment['is_image'] ? 'attach_viewed' : 'attach_downloaded', $attachment['downloads']), '</p>';
 	}
 
 	echo '
-							</div>
 						</div>';
 }
 

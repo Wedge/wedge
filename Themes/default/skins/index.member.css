@@ -35,25 +35,16 @@
 	margin: 0 9px 0 -2px
 	cursor: pointer
 
-#error_box
-	padding: 4px
+#error_box extends .plainbox mixes .hide
+	position: absolute
+	bottom: -6px
+	z-index: 1
 
-#quick_edit_body_container
-	margin: 4px 0 12px // top section already has #error_box padding to compensate.
+#qe_subject
+	width: 100%
+	margin: 16px 0 4px
 
-#qm_subject
-	width: 80%
-
-#qm_post
-	margin-bottom: 10px
-	@if ie[-8]
-		max-width, min-width: 100%
-		width: 635px
-	@else
-		width: 100%
-	@endif
-
-.qm_error
+.qe_error
 	border: 1px solid red
 
 // "You are ignoring..." box. Obviously, only members can see this.

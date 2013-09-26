@@ -104,15 +104,23 @@ $(window).load(function ()
 			});
 		};
 
-	// Once the page is loaded, we lock user box sizes, to prevent breaking the effect.
-	$('.poster>div,.poster').each(function () { $(this).width($(this).width()).height($(this).height()); });
-
-	// If user box has no padding, chances are it doesn't want this effect anyway.
-	if (!isNaN(poster_padding_top) && !is_ie6 && !is_ie7)
+	if (!is_touch)
 	{
-		$(window).scroll(follow_me);
-		follow_me();
+		// Once the page is loaded, we lock user box sizes, to prevent breaking the effect.
+		$('.poster>div,.poster').each(function () { $(this).width($(this).width()).css('min-height', $(this).height()); });
+
+		// If user box has no padding, chances are it doesn't want this effect anyway.
+		if (!isNaN(poster_padding_top) && !is_ie6 && !is_ie7)
+		{
+			$(window).bind('scroll resize', follow_me);
+			follow_me();
+		}
 	}
+
+	@if member
+		// Run the post icon init code.
+		IconList();
+	@endif
 
 	/*
 		This is the code for the infinite scrolling feature.
@@ -150,6 +158,15 @@ $(window).load(function ()
 							$('.pagesection nav').first().replaceWith(page_indexes.get(0));
 							$('.pagesection nav').last().replaceWith(page_indexes.get(1));
 
+							// Prepare all new posts for follow_me.
+							if (!is_touch)
+								$('.poster>div,.poster', $new_page).each(function () { $(this).width($(this).width()).css('min-height', $(this).height()); });
+
+							// Ensure that all posts are on the same (DOM) level as its predecessors.
+							var root = $new_page.find('.msg').first(), up_to = $('.msg').first().parent(), max_count = 0, id;
+							while (root.parent()[0] != up_to[0] && max_count++ < 10)
+								root.unwrap();
+
 							// We're rebuilding scripts from the string response, and inserting them to force jQuery to execute them.
 							// Please note that jQuery doesn't need to be reloaded, and script.js causes issues, so we'll avoid it for now.
 							$new_page.append($(html).filter('script:not([src*=jquery]):not([src*=script])'));
@@ -163,11 +180,6 @@ $(window).load(function ()
 									that.on(eves[this][0], eves[this][1]);
 								});
 							});
-
-							// Ensure that all posts are on the same (DOM) level as its predecessors.
-							var root = $new_page.find('.msg').first(), up_to = $('.msg').first().parent(), max_count = 0, id;
-							while (root.parent()[0] != up_to[0] && max_count++ < 10)
-								root.unwrap();
 
 							hide_ajax();
 
@@ -405,35 +417,33 @@ function QuickReply(opt)
 
 
 @if member
-	// *** QuickModify object.
-	function QuickModify(opt)
+	// *** QuickEdit object.
+	function QuickEdit(tabindex)
 	{
-		var
-			sCurMessageId = 0,
-			sSubjectBuffer = 0,
-			oCurMessageDiv,
-			oCurSubjectDiv,
+		var sCurMessageId = 0, $body, $post, $editor, $quicked,
 
-			// Function in case the user presses cancel (or other circumstances cause it).
-			modifyCancel = function ()
+		// Function in case the user presses cancel (or other circumstances cause it).
+		qe_cancel = function ()
+		{
+			// Roll back the HTML to its original state.
+			if (sCurMessageId)
 			{
-				// Roll back the HTML to its original state.
-				if (sSubjectBuffer !== 0)
-				{
-					oCurSubjectDiv.html(sSubjectBuffer);
-					oCurMessageDiv.fadeIn(1000).next().remove();
-				}
+				$post.height('');
+				$post.children().not($quicked).finish().css('visibility', 'visible').fadeTo(800, 1);
+				$quicked.finish().fadeOut(800, function () { $(this).remove(); });
+				$('#quickModForm').unbind('submit');
+			}
 
-				// No longer in edit mode, that's right.
-				sCurMessageId = 0;
+			// No longer in edit mode, that's right.
+			sCurMessageId = 0;
 
-				return false;
-			};
+			return false;
+		},
 
 		// Function called when a user presses the edit button.
-		this.modifyMsg = function (iMessage)
+		qe_edit = function ()
 		{
-			var iMessageId = $(iMessage).closest('.msg').attr('id').slice(3);
+			var iMessageId = $(this).closest('.msg').attr('id').slice(3);
 
 			// Did we press the Quick Modify button by error while trying to submit? Oops.
 			if (sCurMessageId == iMessageId)
@@ -441,14 +451,17 @@ function QuickReply(opt)
 
 			// First cancel if there's another message still being edited.
 			if (sCurMessageId)
-				modifyCancel();
+			{
+				qe_cancel();
+				$quicked.remove(); // Can't afford to wait.
+			}
 
 			sCurMessageId = iMessageId;
-			oCurMessageDiv = $('#msg' + sCurMessageId + ' .inner').first().fadeOut(1000);
+			$body = $('#msg' + sCurMessageId + ' .inner').first();
 
 			// If this is not valid then simply give up.
-			if (!oCurMessageDiv.length)
-				return modifyCancel();
+			if (!$body.length)
+				return qe_cancel();
 
 			// Send out the Ajax request to get more info
 			show_ajax();
@@ -460,39 +473,82 @@ function QuickReply(opt)
 
 				// Confirming that the message ID is the same as requested...
 				if (sCurMessageId != $('message', XMLDoc).attr('id'))
-					return modifyCancel();
+					return qe_cancel();
 
-				// Calculate the height of .postheader + .post
-				var
-					$parent = oCurMessageDiv.parent().parent(),
-					target_height = $parent.height();
+				// Add a layer above the post header & body, where we'll put our textarea.
+				$post = $body.closest('article');
 
-				// Create the textarea after the message, and show it through a slide animation.
-				oCurMessageDiv
-					.hide()
-					.after(
-						opt.sBody.wereplace({
-							msg_id: sCurMessageId,
-							body: $('message', XMLDoc).text()
-						})
-					);
+				// Now, create the quick editor.
+				// !! Is 65.500 chars a valid limit..? Dunno. Should check.
+				$quicked = $(
+					'<div>\
+						<input id="qe_subject" maxlength="80">\
+						<div id="error_box" class="error"/>\
+						<textarea maxlength="65500"/>\
+						<div class="right">\
+							<input type="submit" name="post" class="save" accesskey="s">&nbsp;\
+							<input type="submit" name="cancel" class="cancel">\
+						</div>\
+					</div>'
+				).addClass('quicked').appendTo($post);
 
-				// Replace the subject part.
-				oCurSubjectDiv = $('#msg' + sCurMessageId + ' h5').first();
-				sSubjectBuffer = oCurSubjectDiv.html();
+				$editor = $quicked.find('textarea');
+				$('#quickModForm').submit(qe_save);
+				$quicked.find('.save')
+					.attr('tabindex', tabindex + 2)
+					.val(we_submit)
+					.click(qe_save);
+				$quicked.find('.cancel')
+					.attr('tabindex', tabindex + 3)
+					.val(we_cancel)
+					.click(qe_cancel);
+				$('#qe_subject')
+					.attr('tabindex', tabindex)
+					.val($('subject', XMLDoc).text());
 
-				oCurSubjectDiv.html(
-					opt.sSubject.wereplace({
-						subject: $('subject', XMLDoc).text()
-					})
-				);
+				// Make the textarea as short as possible, to avoid an overflow.
+				$editor
+					.attr('tabindex', tabindex + 1)
+					.val($('message', XMLDoc).text())
+					.height(0)
+					.addClass('editor')
+					// !! Running this several times per keypress..? Ugly, but works even on repeated keystrokes.
+					.bind('change keydown keypress keyup', function ()
+					{
+						var offset = $editor.height();
 
-				$('#qm_post').height(Math.max(80, $('#qm_post').height() + target_height - $parent.height())).parent().parent().hide().fadeIn(1000);
+						$editor.height(0).css('height', Math.max(min_height, Math.min(max_height, $editor[0].scrollHeight + 12)));
+						offset = $editor.height() - offset;
+						var new_height = parseInt($editor.css('height'));
+
+						if (offset)
+						{
+							$post.height('+=' + offset);
+							window.scrollTo(0, $(window).scrollTop() + offset);
+							if (offset < 0 && new_height >= max_height - offset) // Are we back from the limit?
+								$editor.css('overflow-y', 'hidden');
+						}
+						else if (new_height >= max_height) // Are we going over the limit..?
+							$editor.css('overflow-y', 'auto');
+					});
+
+				// Resize the textarea to use all available space.
+				$editor.height($editor.height() + $post.height() - $quicked.height());
+
+				var min_height = parseInt($editor.css('height')), max_height = Math.max(min_height, 800);
+
+				if ($post.height() < $quicked.height())
+					$post.height($quicked.height());
+
+				// Hide the regular post, and show the text area instead.
+				// Visibility hack is needed for IE6/IE7, because of the action menu's z-index.
+				$post.children().not($quicked).fadeTo(800, 0, function () { $(this).css('visibility', 'hidden'); });
+				$quicked.fadeTo(0, 0).fadeTo(800, 1);
 			});
-		};
+		},
 
 		// The function called after a user wants to save his precious message.
-		this.modifySave = function ()
+		qe_save = function ()
 		{
 			// We cannot save if we weren't in edit mode.
 			if (!sCurMessageId)
@@ -504,9 +560,9 @@ function QuickReply(opt)
 				weUrl('action=jsmodify;' + we_sessvar + '=' + we_sessid),
 				{
 					topic: we_topic,
-					subject: $('#qm_subject').val().replace(/&#/g, '&#38;#'),
-					message: $('#qm_post').val().replace(/&#/g, '&#38;#'),
-					msg: $('#qm_msg').val()
+					subject: $('#qe_subject').val().replace(/&#/g, '&#38;#'),
+					message: $editor.val().replace(/&#/g, '&#38;#'),
+					msg: sCurMessageId
 				},
 				function (XMLDoc)
 				{
@@ -516,13 +572,13 @@ function QuickReply(opt)
 					if ($('body', XMLDoc).length)
 					{
 						// Replace current body.
-						oCurMessageDiv.html($('body', XMLDoc).text());
+						$body.html($('body', XMLDoc).text());
 
 						// Destroy the textarea and show the new body...
-						modifyCancel();
+						qe_cancel();
 
 						// Replace subject text with the new one.
-						oCurSubjectDiv.find('a').html($('subject', XMLDoc).text());
+						$('#msg' + sCurMessageId + ' h5 a').first().html($('subject', XMLDoc).text());
 
 						// If this is the first message, also update the topic subject.
 						if ($('subject', XMLDoc).attr('is_first'))
@@ -533,27 +589,27 @@ function QuickReply(opt)
 						$('#msg' + sCurMessageId + ' .modified').html($('modified', XMLDoc).text());
 
 						// Finally, we can safely declare we're up and running...
-						sCurMessageId = sSubjectBuffer = 0;
+						sCurMessageId = 0;
 					}
 					else if ($('error', XMLDoc).length)
 					{
-						$('#error_box').html($('error', XMLDoc).text());
-						$('#msg' + sCurMessageId + ' input').removeClass('qm_error');
-						$($('error', XMLDoc).attr('where')).addClass('qm_error');
+						$('#error_box').html($('error', XMLDoc).text()).fadeIn();
+						$('#msg' + sCurMessageId + ' input').removeClass('qe_error');
+						$($('error', XMLDoc).attr('where')).addClass('qe_error');
 					}
 				}
 			)
 			// Unexpected error...?
 			.fail(
 				function (XHR, textStatus, errorThrown) {
-					$('#error_box').html(textStatus + (errorThrown ? ' - ' + errorThrown : ''));
+					$('#error_box').html(textStatus + (errorThrown ? ' - ' + errorThrown : '')).fadeIn();
 				}
 			);
 
 			return false;
 		};
 
-		this.modifyCancel = modifyCancel;
+		$('<div class="quick_edit">&nbsp;</div>').click(qe_edit).mousedown(false).attr('title', $txt['modify_msg']).prependTo('.can-mod .actionbar');
 	}
 
 	function InTopicModeration(opt)
@@ -610,7 +666,7 @@ function QuickReply(opt)
 					// Make sure this form isn't submitted in another way than this function.
 					var
 						oForm = $('#' + opt.sFormId)[0],
-						oInput = $('<input type="hidden" name="' + we_sessvar + '" />').val(we_sessid).appendTo(oForm);
+						oInput = $('<input type="hidden">').attr('name', we_sessvar).val(we_sessid).appendTo(oForm);
 
 					if ($(this).parent().hasClass('modrem')) // 'this' is the remove button itself.
 						oForm.action = oForm.action.replace(/[?;]restore_selected=1/, '');

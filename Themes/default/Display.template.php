@@ -21,7 +21,7 @@ function template_display_posts()
 
 	if (we::$is_member)
 		echo '
-			<form action="<URL>?action=quickmod2;topic=', $context['current_topic'], '.', $context['start'], '" method="post" accept-charset="UTF-8" name="quickModForm" id="quickModForm" style="margin: 0" onsubmit="return window.oQuickModify && oQuickModify.modifySave()">';
+			<form action="<URL>?action=quickmod2;topic=', $context['current_topic'], '.', $context['start'], '" method="post" accept-charset="UTF-8" name="quickModForm" id="quickModForm">';
 
 	$ignoredMsgs = array();
 	$message_skeleton = new weSkeleton('msg');
@@ -76,21 +76,11 @@ function template_display_posts()
 	});');
 
 	if (we::$is_member)
+	{
 		add_js('
-	var oQuickModify = new QuickModify({
-		sSubject: ' . JavaScriptEscape('<input id="qm_subject" value="%subject%" size="80" maxlength="80" tabindex="' . $context['tabindex']++ . '">') . ',
-		sBody: ' . JavaScriptEscape('
-			<div id="quick_edit_body_container">
-				<div id="error_box" class="error"></div>
-				<textarea class="editor" id="qm_post" rows="12" tabindex="' . $context['tabindex']++ . '">%body%</textarea>
-				<input type="hidden" name="' . $context['session_var'] . '" value="' . $context['session_id'] . '">
-				<input type="hidden" id="qm_msg" value="%msg_id%">
-				<div class="right">
-					<input type="submit" name="post" value="' . $txt['save'] . '" tabindex="' . $context['tabindex']++ . '" accesskey="s" onclick="return window.oQuickModify && oQuickModify.modifySave();" class="save">&nbsp;&nbsp;<input type="submit" name="cancel" value="' . $txt['form_cancel'] . '" tabindex="' . $context['tabindex']++ . '" onclick="return oQuickModify.modifyCancel();" class="cancel">
-				</div>
-			</div>') . '
-	});
-	new IconList;');
+	new QuickEdit(' . $context['tabindex'] . ');');
+		$context['tabindex'] += 4;
+	}
 
 	// Show mini-menus.
 	template_mini_menu('user', 'umme');
@@ -106,7 +96,8 @@ function template_display_posts()
 		aSwapContainers: [
 			"msg' . $msgid . ' .info:first",
 			"msg' . $msgid . ' .inner:first",
-			"msg' . $msgid . ' ' . (empty($context['liked_posts'][$msgid]) ? '.actionbar' : '.actions') . ':first"
+			"msg' . $msgid . ' ' . (empty($context['liked_posts'][$msgid]) ? '.actionbar' : '.actions') . ':first",
+			"msg' . $msgid . ' .attachments:first"
 		],
 		aSwapLinks: ["msg' . $msgid . ' .ignored:first"]
 	});');

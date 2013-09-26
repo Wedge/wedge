@@ -244,7 +244,7 @@ img.new_posts
 	// height: 100% does nothing per se (thankfully), but it allows Chrome
 	// (and only it for now..?) to properly set a height on table cells.
 	width, height: 100%
-	&.merged
+	& .merged, &.merged
 		display: block
 		height: auto
 
@@ -272,9 +272,13 @@ hr.sep
 
 // Poster and postarea + moderation area underneath
 .post_wrapper
-	display: table-row
-	overflow: auto
 	width: 100%
+	@if can_flex
+		display: flex
+	@else
+		display: table-row
+		overflow: auto
+	@endif
 
 // Post title, date and action list
 .postheader extends .clearfix
@@ -296,13 +300,20 @@ hr.sep
 
 // Poster details and list of items
 .poster
-	width: 14em
-	display: table-cell
+	@if can_flex
+		flex: 0 0 14em
+	@else
+		display: table-cell
+		width: 14em
+	@endif
 	@if !ie[-8]
 		background: rgba(0,0,0, .025)
 	@endif
 	padding: 6px 12px 16px 0
 	vertical-align: top
+
+	> div
+		width: 100%
 
 	h4
 		padding: 3px 0 3px 16px // 19px originally.
@@ -334,8 +345,8 @@ hr.sep
 				vertical-align: bottom
 				padding: 0 .2em
 
-// These squares will show up next to the author name in a post. They quickly tell you
-// whether a user is online, has a website, is male/female or is a contact of yours.
+/* These squares will show up next to the author name in a post. They quickly tell you
+   whether a user is online, has a website, is male/female or is a contact of yours. */
 .pixelicons mixes .inline-block
 	width: 15px
 	overflow: hidden
@@ -367,20 +378,54 @@ hr.sep
 
 .postarea
 	padding: 0 15px
-	@if chrome // Could use can_flex, but it doesn't work outside of Chrome anyway.
-		position: relative
-		height: 100%
+	@if can_flex
 		display: flex
 		flex-direction: column
-		align-items: stretch
+		flex: 1 0 1em
 	@else
 		display: table-cell
+		position: relative // Needed for quick-edit in IE 6-8.
 	@endif
-	// Soft-merged posts shouldn't have a background.
+	/* Soft-merged posts shouldn't have a background. */
 	.msg
 		background: none
 
-// Posts and personal messages displayed throughout the forum.
+	article
+		position: relative
+		@if can_flex
+			display: flex
+			flex-direction: column
+			flex: 1 0 auto
+			@if firefox
+			.actionbar
+				flex: 0 0 1.5em
+			@endif
+		.merged
+			flex: none
+		@endif
+
+@if member
+	.quicked
+		position: absolute
+		left, right: 3px
+		top: 0
+
+		textarea
+			overflow-y: hidden
+			margin-bottom: 10px
+			font-size: 100%
+			@if ie[-8]
+				max-width, min-width: 100%
+				width: 635px
+			@else
+				width: 100%
+			@endif
+
+		.right
+			margin-bottom: 10px
+@endif
+
+/* Posts and personal messages displayed throughout the forum. */
 .post, .personalmessage
 	font: $post_font_size $post_font
 	padding: .1em 0
@@ -390,13 +435,15 @@ hr.sep
 	margin, padding: 0
 	@if can_flex
 		.msg &
-			flex: 1
-		.merged &
+			flex: 1 0 auto
+		.merged &, &.no-flex
 			flex: none
 	@endif
 
 .merged
 	border-top: 1px solid #ccc
+	:first-child
+		border-top: 0
 
 // Setting a margin here helps take advantage of margin collapsing. (e.g. when a post starts with a quote.)
 .inner
@@ -405,8 +452,7 @@ hr.sep
 // All the signatures used in the forum. You might want to add max-height here ;)
 .signature, .attachments
 	overflow: auto
-	clear: both
-	padding: 1em 0 8px
+	padding: 8px 0
 	border-top: 1px solid #ccc
 	line-height: 1.4em
 	font-size: .9em
@@ -503,7 +549,7 @@ hr.sep
 
 	.restore_button extends .vbtn
 		background-image: raw-url($images/buttons/restore.gif)
-		background-position: 0 -30px
+		background-position: 2px 3px
 
 	.warn_button extends .vbtn
 		background-image: raw-url($images/warn.gif)
@@ -543,15 +589,10 @@ hr.sep
 		img
 			vertical-align: -3px
 
-// Webkit needs this otherwise the post goes off to the right.
-// But it causes issues in IE, and breaks cached search engines pages.
 .attachments
-	clear: @is (webkit, right, both)
-	padding: 1em 0 2em
-	hr
-		margin: 1em 0
-	div
-		padding: 0 .5em
+	padding: 1em 1em 2em
+	p
+		margin: 0 0 1em
 
 ul.buttonlist extends "ul.reset, .clearfix"
 	margin: 5px -8px 5px 0
