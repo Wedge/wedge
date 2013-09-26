@@ -468,20 +468,12 @@ class wess_if extends wess
 		// Convert some useful capability tests.
 		if (!$this->test_vars)
 		{
-			// List of browsers that support the STANDARD flexbox model (i.e. display: flex)
-			// Chrome supports it with a prefix. Opera 12.1+ supports it, but in a broken way. Maybe not worth bothering..?
+			// List of browsers that support the STANDARD flexbox model, i.e. display: flex.
+			// I added IE 10 support by changing the properties on the fly, so you should be fine with it, if your code isn't too complex.
+			// Chrome supports flexbox, earlier with a prefix. Opera 12.1 supports it, but in a broken way. Not worth bothering, though...
+			// For reference, browsers supporting the OLD, useless model were: (firefox[2-], chrome[4-], safari[3.1-] && !ios, ios[3.2-])
 			if (strpos($css, 'can_flex') !== false)
-				$css = preg_replace('~\bcan_flex\b~', '(firefox[22-], chrome[26-], opera[12.1-])', $css);
-
-			// List of browsers that support the previous/TWEEN flexbox model (i.e. display: flexbox)
-			// Really, it's just IE10... And it requires a prefix.
-			if (strpos($css, 'can_flex_flexbox') !== false)
-				$css = preg_replace('~\bcan_flex_flexbox\b~', '(ie10)', $css);
-
-			// List of browsers that support the OLD flexbox model (i.e. display: box)
-			// All require a prefix.
-			if (strpos($css, 'can_flex_box') !== false)
-				$css = preg_replace('~\bcan_flex_box\b~', '(firefox[2-], chrome[4-], safari[3.1-] && !ios, ios[3.2-])', $css);
+				$css = preg_replace('~\bcan_flex\b~', '(firefox[22-], chrome[26-], opera[12.1-], ie[10-], safari[7-], ios[7-])', $css);
 
 			// List browsers that support CSS3 animations (Wedge adds prefixes automatically.)
 			if (strpos($css, 'can_animate') !== false)
@@ -1578,10 +1570,6 @@ class wess_prefixes extends wess
 			return '';
 		}
 
-		// The old flexible box model... Never got out of prefix land.
-		if (strpos($matches[1], 'box-') === 0)
-			return $prefixed;
-
 		// Hyphens aren't supported or always require a prefix, for now.
 		return $both;
 	}
@@ -1631,11 +1619,7 @@ class wess_prefixes extends wess
 			return $unchanged;
 		}
 
-		// All browsers that support the old flexbox model will require a prefix.
-		if (strpos($matches[1], 'box') !== false)
-			return str_replace('box', $this->prefix . 'box', $unchanged);
-
-		// The final flexbox model (Chrome 21+, Opera 12.1, IE11+, Safari 7+) is final, and shouldn't require a prefix. Silly WebKit...
+		// The final flexbox model (Chrome 21+, Opera 12.1, IE11+, Safari 7+) is final, as the name says, and shouldn't require a prefix. Silly WebKit...
 		if ((($b['safari'] && $v >= 7) || ($os['ios'] && $ov >= 7) || ($b['chrome'] && $v >= 21 && $v < 29)) && strpos($matches[1], 'flex') !== false)
 			return str_replace(array('inline-flex', 'flex'), array($this->prefix . 'inline-flex', $this->prefix . 'flex'), $unchanged);
 
@@ -1677,9 +1661,6 @@ class wess_prefixes extends wess
 		return $unchanged;
 	}
 
-	// Note: the old flexbox model is taken into account, but not the new one. This is because it has too many related properties and would
-	// take to long to support, especially when Opera already implemented it prefix-free. Meaning that Firefox and Chrome will probably do
-	// the same soon enough. (As of Firefox 21 and Chrome 26, they need prefixes everywhere, and Firefox requires a setting to be enabled.)
 	function process(&$css)
 	{
 		// Some prominent CSS3 may or may not need a prefix. Wedge will take care of that for you.
@@ -1693,7 +1674,6 @@ class wess_prefixes extends wess
 			'font-feature-settings',		// Ligatures and other things
 			'hyphens',						// Automatic hyphens on long words
 			'column-[a-z-]+',				// Multi-column layout
-			'box-[a-z-]+',					// Old Flexbox model
 			'grid-[a-z]+',					// Grid layout
 			'animation(?:-[a-z-]+)?',		// Proper animations
 			'transform(?:-[a-z-]+)?',		// 2D/3D transformations (transform, transform-style, transform-origin...)
@@ -1709,7 +1689,7 @@ class wess_prefixes extends wess
 
 			'background(?:-image)?:([^\n;]*?(?<!-o-)(?:linear|radial)-gradient\([^)]+\)[^\n;]*)',	// Gradients (linear, radial, repeating...)
 			'transition(?:-[a-z-]+)?:([^\n;]*)',			// Animated transitions (we need to fix 'transform' values, if any.)
-			'display:\h*(inline-flex|flex(?:box)?|box)\b',	// Flexbox model declarations (all 3)
+			'display:\h*(flex|inline-flex)\b',				// Final flexbox model declarations
 			'\b(min|max)-resolution:\h*([\d.]+)(dppx|dpi)',	// Useful for responsive design
 			'\brect\h*\(([^)]+)\)',							// rect() function, needs commas except in IE 6/7
 			'\bcalc\h*\(',									// calc() function
@@ -1718,7 +1698,8 @@ class wess_prefixes extends wess
 		foreach ($values as $val)
 			$css = preg_replace_callback('~(?<!-)(' . $val . ')~', array($this, 'fix_values'), $css);
 
-		// And now for some 'easy' rules that don't need our regex machine.
+		// And now for some 'easy' rules that don't need our regex machine,
+		// or custom rules that are better served individually.
 		$b = we::$browser;
 		$v = $b['version'];
 
@@ -1734,9 +1715,42 @@ class wess_prefixes extends wess
 		if (($b['opera'] && $v >= 11) || ($b['ie'] && $v >= 10))
 			$css = str_replace('@viewport', '@' . $this->prefix . 'viewport', $css);
 
-		// Chrome 21-28 supports the latest flexbox model... But with a prefix.
+		// Chrome 21-28 supports the final flexbox model... But with a prefix.
 		if ($b['chrome'] && $v >= 21 && $v < 29)
 			$css = preg_replace('~\b(order|justify-content|align-(?:content|items|self)|flex(?:-[a-z]+)?)\h*:~', $this->prefix . '$1:', $css);
+
+		// IE 10 is a special case for flexboxing. It supports an older syntax, which we'll convert below,
+		// but it's not 100% compatible, so you might want to check your CSS in an actual IE 10 browser, just in case.
+		if ($b['ie'] && $v == 10)
+			$css = preg_replace(
+				array(
+					'~\bdisplay\h*:\h*(flex|inline-flex)\b~',
+					'~\bflex\h*:~',
+					'~\border\h*:~',
+					'~\balign-items\h*:~',
+					'~\balign-self\h*:~',
+					'~\balign-content\h*:~',
+					'~\bjustify-content\h*:~',
+					'~\bflex-direction\h*:~',
+					'~\bflex-wrap\h*:\h*nowrap\b~',
+					'~\bflex-wrap\h*:~',
+					'~\bflex-(start|end)\b~',
+				),
+				array(
+					'display:-ms-$1box',
+					'-ms-flex:',
+					'-ms-flex-order:',
+					'-ms-flex-align:',
+					'-ms-flex-item-align:',
+					'-ms-flex-line-pack:',
+					'-ms-flex-pack:',
+					'-ms-flex-direction:',
+					'-ms-flex-wrap:none',
+					'-ms-flex-wrap:',
+					'$1',
+				),
+				$css
+			);
 
 		// And finally, listen to the author -- you may add a prefix manually, that will be automatically turned into the current
 		// browser's official prefix. e.g. add "-prefix-my-rule" and Wess will turn it into "-moz-my-rule" for Firefox users.
