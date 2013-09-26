@@ -32,7 +32,7 @@ function template_main_board()
 		// If Quick Moderation is enabled, start the form.
 		if (!empty($context['quick_moderation']))
 			echo '
-	<form action="<URL>?action=quickmod;board=', $context['current_board'], '.', $context['start'], '" method="post" accept-charset="UTF-8" class="clear" name="quickModForm" id="quickModForm">';
+	<form action="<URL>?action=quickmod;board=', $context['current_board'], '.', $context['start'], '" method="post" accept-charset="UTF-8" name="quickModForm" id="quickModForm">';
 
 		echo '
 	<div class="topic_table" id="messageindex">
@@ -211,7 +211,7 @@ function template_main_blog()
 		// If Quick Moderation is enabled, start the form.
 		if (!empty($context['quick_moderation']))
 			echo '
-	<form action="<URL>?action=quickmod;board=', $context['current_board'], '.', $context['start'], '" method="post" accept-charset="UTF-8" class="clear" name="quickModForm" id="quickModForm">';
+	<form action="<URL>?action=quickmod;board=', $context['current_board'], '.', $context['start'], '" method="post" accept-charset="UTF-8" name="quickModForm" id="quickModForm">';
 
 		echo '
 	<div class="topic_table" id="messageindex">

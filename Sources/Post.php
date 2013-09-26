@@ -363,8 +363,6 @@ function Post($post_errors = array())
 		if (!in_array('no_subject', $post_errors) && westr::htmltrim($form_subject) === '')
 			$post_errors[] = 'no_subject';
 
-		$context['post_error'] = array('messages' => array());
-
 		// Any errors occurred?
 		if (!empty($post_errors))
 		{

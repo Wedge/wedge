@@ -750,7 +750,7 @@ input[type=submit], input[type=button]
 	@if ie6, ie7
 		overflow: visible
 	@endif
-	:hover
+	:hover, :focus
 		transition: all .3s ease
 		box-shadow: inset 1px 1px #fff, inset 25px 0 25px rgba(0,0,0, .04), 0 1px 2px rgba(0,0,0, .2)
 
@@ -1703,10 +1703,10 @@ dl#feed
 		position: absolute
 
 #helf
-	transform: perspective(500px) translateY(-20px) rotateX(-20deg)
+	transform: perspective(1000px) translateY(-20px) rotateX(-20deg)
 	transition: transform .3s ease
 	&.show
-		transform: perspective(500px)
+		transform: perspective(1000px)
 		transition: transform .8s ease
 	header extends .wehead
 		padding: 8px

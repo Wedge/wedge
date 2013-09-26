@@ -92,7 +92,7 @@ function template_unread()
 	<we:cat>
 		', $txt['show_unread'], '
 	</we:cat>
-	<form action="<URL>?action=quickmod" method="post" accept-charset="UTF-8" name="quickModForm" id="quickModForm" style="margin: 0">
+	<form action="<URL>?action=quickmod" method="post" accept-charset="UTF-8" name="quickModForm" id="quickModForm">
 		<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 		<input type="hidden" name="qaction" value="markread">
 		<input type="hidden" name="redirect_url" value="action=unread', $context['querystring_board_limits'], '">';
