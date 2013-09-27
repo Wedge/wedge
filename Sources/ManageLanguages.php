@@ -11,40 +11,10 @@
 if (!defined('WEDGE'))
 	die('Hacking attempt...');
 
-/*	This file contains all the functionality required to be able to edit the
+/*
+	This file contains all the functionality required to be able to edit the
 	core server settings. This includes anything from which an error may result
 	in the forum destroying itself in a firey fury.
-
-	void AddLanguage()
-		// !!!
-
-	void DownloadLanguage()
-		- Uses the ManageSettings template and the download_language block.
-		- Requires a valid download ID ("did") in the URL.
-		- Also handles installing language files.
-		- Attempts to chmod things as needed.
-		- Uses a standard list to display information about all the files and where they'll be put.
-
-	void ManageLanguages()
-		// !!!
-
-	void ModifyLanguages()
-		// !!!
-
-	int list_getNumLanguages()
-		// !!!
-
-	array list_getLanguages()
-		- Callback for $listOptions['get_items']['function'] in ManageLanguageSettings.
-		- Determines which languages are available by looking for the "index.{language}.php" file.
-		- Also figures out how many users are using a particular language.
-
-	void ModifyLanguageSettings()
-		// !!!
-
-	void ModifyLanguage()
-		// !!!
-
 */
 
 // This is the main function for the language area.
@@ -252,7 +222,10 @@ function list_getNumLanguages()
 	return count(getLanguages(false));
 }
 
-// Fetch the actual language information.
+/* Fetch the actual language information.
+	- Callback for $listOptions['get_items']['function'] in ManageLanguageSettings.
+	- Determines which languages are available by looking for the "index.{language}.php" file.
+	- Also figures out how many users are using a particular language. */
 function list_getLanguages()
 {
 	global $theme, $context, $txt, $settings;

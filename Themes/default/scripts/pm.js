@@ -58,11 +58,12 @@ function weSendPM(opt)
 	// Is there a contact list? If not, a search on $('# tr') will return an empty set anyway.
 	$('#' + opt.sContactList + ' tr').each(function () {
 		var that = $(this);
+		// The \u00a0 (nbsp) replacement is for the French language. ;)
 		$('<td/>')
-			.append($('<input type="button" class="to">').val($txt['pm_to']).click(function () {
+			.append($('<input type="button" class="to">').val($txt['pm_to'].replace(/\u00a0/, '')).click(function () {
 				oToAutoSuggest.addItemLink(that.data('uid'), that.data('name'), false);
 			}))
-			.append($('<input type="button" class="bcc">').val($txt['pm_bcc']).click(function () {
+			.append($('<input type="button" class="bcc">').val($txt['pm_bcc'].replace(/\u00a0/, '')).click(function () {
 				$('#' + opt.sBccDivId + ', #' + opt.sBccDivId2).show();
 				oBccAutoSuggest.addItemLink(that.data('uid'), that.data('name'), false);
 			}))

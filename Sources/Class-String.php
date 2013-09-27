@@ -73,7 +73,7 @@ class westr_foundation
 		return $string;
 	}
 
-	// Converts entities (&#224;) to their equivalent UTF-8 characters. Sample usage:
+	// Converts entities (&#224;) to their equivalent UTF-8 characters.
 	static function entity_to_utf8($string)
 	{
 		return preg_replace_callback('~&#(\d{2,8});~', 'westr_foundation::entity_to_utf8_process', $string);

@@ -683,9 +683,13 @@ function QuickReply(opt)
 		// Add checkboxes to all the messages.
 		$('.' + opt.sClass).each(function () {
 			if (!$(this).find('input[type="checkbox"]').length)
-				$('<input type="checkbox" name="msgs[]" value="' + $(this).closest('.msg').attr('id').slice(3) + '"></input>')
+			{
+				// !! The zero hack is for IE 11. For some reason, it sends an error without this,
+				// if the dev tools are opened AND the debugger isn't running. (Sep 2013)
+				$('<input type="checkbox">').attr('name', 'msgs[]').val(($(this).closest('.msg').attr('id') || '   0').slice(3))
 				.click(handleClick)
 				.appendTo(this);
+			}
 		});
 	}
 

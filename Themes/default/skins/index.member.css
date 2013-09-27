@@ -20,10 +20,12 @@
 		background-image: url($images/small_poll.gif)
 	a.move
 		background-image: url($images/small_move.gif)
-	a.delete
-		background-image: url($images/small_delete.gif)
 	a.lock
 		background-image: url($images/small_lock.gif)
+	a.delete
+		background-image: url($images/small_delete.gif)
+
+.modrem a extends #modbuttons a.delete
 
 .table_list a.unreadlink
 	font-size: .9em

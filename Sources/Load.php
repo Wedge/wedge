@@ -1949,7 +1949,7 @@ function loadSource($source_name)
  * @param string $template_name The name of the language file to load, without any .{language}.php prefix, e.g. 'Errors' or 'Who'.
  * @param string $lang Specifies the language to attempt to load; if not specified (or empty), load it in the current user's default language.
  * @param bool $fatal Whether to issue a fatal error in the event the language file could not be loaded.
- * @param bool $force_reload Whether to reload the language file even if previously loaded before.
+ * @param mixed $force_reload Usually a boolean, tells whether to reload the language file even if previously loaded before. Set to 'all' to reload all previously loaded files.
  * @param bool $fallback Are we in a fallback call? (i.e. loading English prior to loading another language.)
  * @return string The name of the language from which the loaded language file was taken.
  */
@@ -1957,6 +1957,12 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 {
 	global $theme, $context, $settings, $boarddir, $db_show_debug, $txt, $helptxt, $cachedir;
 	static $already_loaded = array(), $folder_date = array();
+
+	if ($force_reload === 'all')
+	{
+		loadLanguage(array_keys($already_loaded), $lang, $fatal, true, $fallback);
+		return '';
+	}
 
 	// Default to the user's language.
 	if ($lang == '')
@@ -2060,7 +2066,8 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 		// That couldn't be found! Log the error, but *try* to continue normally.
 		if (!$found)
 		{
-			// Put stuff back and if we did scrape a fallback together, add it to the current strings so that - hopefully, we won't get an error, even if there's a missing language file.
+			// Put stuff back and if we did scrape a fallback together, add it to the current strings
+			// so that, hopefully, we won't get an error, even if there's a missing language file.
 			if (isset($txt))
 			{
 				$txt = !empty($txt) ? array_merge($oldtxt, $txt) : $oldtxt;
@@ -2120,7 +2127,11 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 				$filename = $cachedir . '/lang_' . $tid . '_' . $lang . '_' . $template . '.php';
 				$val = array();
 				if (!empty($txt))
+				{
+					// First of all, we need to convert numeric entities to UTF8. Takes less space in memory, for starters.
+					$txt = array_map('westr::entity_to_utf8', $txt);
 					$val['txt'] = $txt;
+				}
 				if (!empty($helptxt))
 					$val['helptxt'] = $helptxt;
 				$cache_data = '<' . '?php if(defined(\'WEDGE\'))$val=\'' . addcslashes(serialize($val), '\\\'') . '\';?' . '>';
@@ -2143,7 +2154,7 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 				we::$user['time_format'] = $txt['time_format'];
 		}
 
-		// Keep track of what we're up to soldier.
+		// Keep track of what we're up to, soldier.
 		if ($db_show_debug === true)
 			$context['debug']['language_files'][] = $template . '.' . $lang . ' (' . $theme_name . ')';
 
