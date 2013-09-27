@@ -422,7 +422,7 @@ function QuickReply(opt)
 	{
 		var sCurMessageId = 0, $body, $post, $editor, $quicked,
 
-		// Function in case the user presses cancel (or other circumstances cause it).
+		// Function in case the user presses cancel, or other circumstances cause it.
 		qe_cancel = function ()
 		{
 			// Roll back the HTML to its original state.
@@ -445,7 +445,7 @@ function QuickReply(opt)
 		{
 			var iMessageId = $(this).closest('.msg').attr('id').slice(3);
 
-			// Did we press the Quick Modify button by error while trying to submit? Oops.
+			// Did we press the Quick Edit button by error while trying to submit? Oops.
 			if (sCurMessageId == iMessageId)
 				return;
 
@@ -533,16 +533,19 @@ function QuickReply(opt)
 					});
 
 				// Resize the textarea to use all available space.
-				$editor.height($editor.height() + $post.height() - $quicked.height());
+				$editor.height($editor.height() + $post.height() - $quicked.height() - $post.find('.actionbar').outerHeight());
 
 				var min_height = parseInt($editor.css('height')), max_height = Math.max(min_height, 800);
 
 				if ($post.height() < $quicked.height())
 					$post.height($quicked.height());
 
+				if (parseInt($editor.css('height')) >= max_height) // Are we ALREADY over the limit..?
+					$editor.css('overflow-y', 'auto');
+
 				// Hide the regular post, and show the text area instead.
 				// Visibility hack is needed for IE6/IE7, because of the action menu's z-index.
-				$post.children().not($quicked).fadeTo(800, 0, function () { $(this).css('visibility', 'hidden'); });
+				$post.children().not($quicked).not('.actionbar').fadeTo(800, 0, function () { $(this).css('visibility', 'hidden'); });
 				$quicked.fadeTo(0, 0).fadeTo(800, 1);
 			});
 		},
@@ -578,7 +581,7 @@ function QuickReply(opt)
 						qe_cancel();
 
 						// Replace subject text with the new one.
-						$('#msg' + sCurMessageId + ' h5 a').first().html($('subject', XMLDoc).text());
+						$post.find('h5 a').first().html($('subject', XMLDoc).text());
 
 						// If this is the first message, also update the topic subject.
 						if ($('subject', XMLDoc).attr('is_first'))
@@ -586,15 +589,12 @@ function QuickReply(opt)
 
 						// Show this message as 'modified on x by y'. If the theme doesn't support this,
 						// the request will simply be ignored because jQuery won't find the target.
-						$('#msg' + sCurMessageId + ' .modified').html($('modified', XMLDoc).text());
-
-						// Finally, we can safely declare we're up and running...
-						sCurMessageId = 0;
+						$post.find('.modified').html($('modified', XMLDoc).text());
 					}
 					else if ($('error', XMLDoc).length)
 					{
 						$('#error_box').html($('error', XMLDoc).text()).fadeIn();
-						$('#msg' + sCurMessageId + ' input').removeClass('qe_error');
+						$post.find('input,textarea').removeClass('qe_error');
 						$($('error', XMLDoc).attr('where')).addClass('qe_error');
 					}
 				}
@@ -614,36 +614,17 @@ function QuickReply(opt)
 
 	function InTopicModeration(opt)
 	{
-		var bButtonsShown = false, iNumSelected = 0,
+		var buttons_added = false, iNumSelected = 0,
 
 		handleClick = function ()
 		{
-			var
-				display = opt.sStrip + ' ul',
-				addButton = function (sClass)
-				{
-					// Adds a button to the button strip.
-					$('<li></li>').addClass(sClass).html('<a href="#"></a>').click(handleSubmit).hide().appendTo('#' + display);
-				};
+			var $display = $('#' + opt.sStrip + ' ul');
 
-			if (!bButtonsShown)
+			if (!buttons_added)
 			{
-				// Make sure it can go somewhere.
-				if (!$('#' + display).length)
-					$('<ul id="' + display + '"></ul>').addClass('buttonlist floatleft').appendTo('#' + opt.sStrip);
-				else
-					$('#' + display).show();
-
-				// Add the 'remove selected items' button.
-				if (opt.bRemove)
-					addButton('modrem');
-
-				// Add the 'restore selected items' button.
-				if (opt.bRestore)
-					addButton('modres');
-
-				// Adding these buttons once should be enough.
-				bButtonsShown = true;
+				opt.bRemove && $('<li/>').addClass('modrem').html('<a href="#"/>').click(handleSubmit).hide().appendTo($display);  // Add 'remove selected items'.
+				opt.bRestore && $('<li/>').addClass('modres').html('<a href="#"/>').click(handleSubmit).hide().appendTo($display); // Add 'restore selected items'.
+				buttons_added = true;
 			}
 
 			// Keep stats on how many items were selected. ('this' is the checkbox.)
@@ -654,7 +635,7 @@ function QuickReply(opt)
 			$('.modres a').html($txt['quick_mod_restore'] + ' [' + iNumSelected + ']').parent().filter(iNumSelected > 0 ? ':hidden' : ':visible').fadeToggle(iNumSelected * 300);
 
 			// Try to restore the correct position.
-			$('#' + display + ' li').removeClass('last').filter(':visible:last').addClass('last');
+			$display.show().children().removeClass('last').filter(':visible:last').addClass('last');
 		},
 
 		handleSubmit = function (e)

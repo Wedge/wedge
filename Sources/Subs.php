@@ -523,9 +523,9 @@ function array_insert($input, $to, $array, $after = false)
 }
 
 /**
- * Prunes non valid XML/XHTML characters from a string intended for XML/XHTML transport use.
+ * Prunes non-valid XML/XHTML characters from a string intended for XML/XHTML transport use.
  *
- * Primarily this function removes non-printable control codes from an XML output (tab, CR, LF are preserved), including non valid UTF-8 character signatures if appropriate.
+ * Primarily this function removes non-printable control codes from an XML output (tab, CR, LF are preserved), including non-valid UTF-8 character signatures if appropriate.
  *
  * @param string $string A string of potential output.
  * @return string The sanitized string.

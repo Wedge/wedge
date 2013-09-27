@@ -71,11 +71,11 @@ function QuoteFast()
 			censorText($row['subject']);
 
 			return_xml('<we>
-	<subject><![CDATA[', cleanXml(addcslashes($row['subject'], '"')), ']]></subject>
-	<message id="', (int) $_REQUEST['quote'], '"><![CDATA[', cleanXml($row['body']), ']]></message></we>');
+	<subject><![CDATA[', cleanXml(un_htmlspecialchars($row['subject'], '"')), ']]></subject>
+	<message id="', (int) $_REQUEST['quote'], '"><![CDATA[', cleanXml(un_htmlspecialchars($row['body'])), ']]></message></we>');
 		}
 
-		// Remove any nested quotes.
+		// Remove any nested quotes, if needed.
 		if (!empty($settings['removeNestedQuotes']))
 			$row['body'] = preg_replace(array('~\n?\[quote.*?\].+?\[/quote\]\n?~is', '~^\n~', '~\[/quote\]~'), '', $row['body']);
 

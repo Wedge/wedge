@@ -255,8 +255,7 @@ function JSModify()
 		censorText($message['subject']);
 
 		return_xml('<we>
-	<modified><![CDATA[', empty($message['modified']['time']) ? '' : cleanXml($txt['last_edit'] . ' ' . $message['modified']['time']
-	. ' ' . $txt['by'] . ' ' . $message['modified']['name']), ']]></modified>', empty($message['subject']) ? '' : '
+	<modified><![CDATA[', empty($message['modified']['time']) ? '' : cleanXml(strtr($txt['last_edit'], array('{name}' =>  $message['modified']['name'], '{date}' => $message['modified']['time']))), ']]></modified>', empty($message['subject']) ? '' : '
 	<subject><![CDATA[' . cleanXml($message['subject']) . ']]></subject>', '</we>');
 	}
 	else
@@ -272,7 +271,7 @@ function JSModify()
 	}
 
 	return_xml('<we>
-	<modified><![CDATA[', empty($message['modified']['time']) ? '' : cleanXml(sprintf($txt['last_edit'], $message['modified']['time'], $message['modified']['name'])), ']]></modified>
+	<modified><![CDATA[', empty($message['modified']['time']) ? '' : cleanXml(strtr($txt['last_edit'], array('{name}' =>  $message['modified']['name'], '{date}' => $message['modified']['time']))), ']]></modified>
 	<subject', $message['first_in_topic'] ? ' is_first="1"' : '', '><![CDATA[', cleanXml($message['subject']), ']]></subject>
-	<body><![CDATA[', $message['body'], ']]></body></we>');
+	<body><![CDATA[', cleanXml($message['body']), ']]></body></we>');
 }
