@@ -68,7 +68,7 @@ final class weSkeleton
 		// If this is the main skeleton and it's empty, it means it's a barebones skeleton.
 		// Give it a couple of layers to allow it to load the main content.
 		if ($id === 'main' && empty($context['skeleton'][$id]))
-			self::hide();
+			$this->hide();
 
 		// Apply all skeleton operations now.
 		if (!empty($context['skeleton_ops'][$id]))

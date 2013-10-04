@@ -1734,6 +1734,7 @@ class wess_prefixes extends wess
 					'~\bflex-direction\h*:~',
 					'~\bflex-wrap\h*:\h*nowrap\b~',
 					'~\bflex-wrap\h*:~',
+					'~\bspace-between\b~',
 					'~\bflex-(start|end)\b~',
 				),
 				array(
@@ -1747,6 +1748,7 @@ class wess_prefixes extends wess
 					'-ms-flex-direction:',
 					'-ms-flex-wrap:none',
 					'-ms-flex-wrap:',
+					'justify',
 					'$1',
 				),
 				$css

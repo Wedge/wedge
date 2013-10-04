@@ -45,7 +45,7 @@ function template_main_board()
 		{
 			echo '
 					<th style="width: 4%">&nbsp;</th>
-					<th class="left">', template_messageindex_sortlink('subject', $txt['subject']), ' / ', template_messageindex_sortlink('starter', $txt['started_by']), '</th>';
+					<th class="left', SKIN_MOBILE ? ' w100' : '', '">', template_messageindex_sortlink('subject', $txt['subject']), ' / ', template_messageindex_sortlink('starter', $txt['started_by']), '</th>';
 
 			if (!SKIN_MOBILE)
 			{

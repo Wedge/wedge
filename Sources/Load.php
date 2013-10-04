@@ -1481,12 +1481,10 @@ function loadTheme($id_theme = 0, $initialize = true)
 		{
 			$aliases = explode(',', $settings['forum_alias_urls']);
 
+			// Rip off all the boring parts, spaces, etc.
 			foreach ($aliases as $alias)
-			{
-				// Rip off all the boring parts, spaces, etc.
 				if ($detected_url == trim($alias) || strtr($detected_url, array('http://' => '', 'https://' => '')) == trim($alias))
 					$do_fix = true;
-			}
 		}
 
 		// Hmm... check #2 - is it just different by a www? Send them to the correct place!!
@@ -1495,13 +1493,8 @@ function loadTheme($id_theme = 0, $initialize = true)
 			// Okay, this seems weird, but we don't want an endless loop - this will make $_GET not empty ;)
 			if (empty($_GET))
 				redirectexit('wwwRedirect');
-			else
-			{
-				list ($k, $v) = each($_GET);
-
-				if ($k != 'wwwRedirect')
-					redirectexit('wwwRedirect;' . $k . '=' . $v);
-			}
+			elseif (key($_GET) != 'wwwRedirect')
+				redirectexit('wwwRedirect;' . key($_GET) . '=' . current($_GET));
 		}
 
 		// #3 is just a check for SSL...
@@ -1634,8 +1627,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 		// ...and attempt to load their associated language files.
 		$required_files = implode('+', $templates);
 		loadLanguage($required_files, '', false);
-		if ($context['right_to_left'] = !empty($txt['lang_rtl']))
-			we::$is['rtl'] = true; // May be needed in we::is tests.
+		we::$is['rtl'] = $context['right_to_left'] = !empty($txt['lang_rtl']); // May be needed in we::is tests.
 
 		// Initialize our JS files to cache right before we run template_init().
 		weInitJS();

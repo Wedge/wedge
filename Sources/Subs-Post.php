@@ -1304,8 +1304,8 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 		}
 	}
 
-	// Creating is modifying... in a way.
-	// !!! Why not set id_msg_modified on the insert?
+	// id_msg_modified is used as a synonym of id_msg when looking for
+	// unread posts, so it needs to have the same initial value.
 	wesql::query('
 		UPDATE {db_prefix}messages
 		SET id_msg_modified = {int:id_msg}

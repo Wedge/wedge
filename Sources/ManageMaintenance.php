@@ -1413,7 +1413,7 @@ function AdminBoardRecount()
 	redirectexit('action=admin;area=maintain;sa=routine;done=recount');
 }
 
-// Perform a detailed version check.  A very good thing ;).
+// Perform a detailed version check. A very good thing ;)
 function VersionDetail()
 {
 	global $txt, $context, $theme;

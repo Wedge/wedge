@@ -236,7 +236,7 @@ function ob_sessrewrite($buffer)
 		}
 		// Remove any extra separators.
 		if ($one_removed)
-			$buffer = preg_replace('~<hr[^>]*>\s*<!REMOVED>~', '', $buffer);
+			$buffer = preg_replace('~\s*<hr[^>]*>\s*<!REMOVED>~', '', $buffer);
 	}
 
 	/*

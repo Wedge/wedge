@@ -564,7 +564,7 @@ $(function ()
 	$('.menu').removeClass('css').mm();
 
 	// Bind all delayed inline events to their respective DOM elements.
-	$('*[data-eve]').each(function ()
+	$('[data-eve]').each(function ()
 	{
 		var that = $(this);
 		$.each(that.attr('data-eve').split(' '), function () {
@@ -1066,7 +1066,7 @@ function weToggle(opt)
 function JumpTo(control)
 {
 	$('#' + control)
-		.html('<select><option data-hide>=> ' + $('#' + control).text() + '</option></select>')
+		.html('<select><option data-hide>=> ' + $txt['select_destination'] + '</option></select>')
 		.css({ visibility: 'visible' })
 		.find('select').sb().focus(function ()
 		{
@@ -1093,7 +1093,7 @@ function JumpTo(control)
 					});
 
 					// Add the remaining items after the currently selected item.
-					$('#' + control).find('select').off('focus').append(sList).sb().change(function () {
+					$('#' + control).find('select').off('focus').html(sList).sb().change(function () {
 						location = parseInt($val = $(this).val()) ? weUrl('board=' + $val + '.0') : $val;
 					});
 					hide_ajax();

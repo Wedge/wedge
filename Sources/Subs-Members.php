@@ -1138,19 +1138,19 @@ function reattributePosts($memID, $from_id = 0, $email = false, $membername = fa
 	}
 
 	// If they want the post count restored then we need to do some research.
+	// !! Note: doesn't seem to work, actually...
 	if ($post_count)
 	{
 		$request = wesql::query('
 			SELECT COUNT(*)
 			FROM {db_prefix}messages AS m
-				INNER JOIN {db_prefix}boards AS b ON (b.id_board = m.id_board AND b.count_posts = {int:count_posts})
+				INNER JOIN {db_prefix}boards AS b ON (b.id_board = m.id_board AND b.count_posts = 0)
 			WHERE m.id_member = {int:from_id}
 				AND m.approved = {int:is_approved}
 				AND m.icon != {literal:recycled}' . (!empty($from_id) || empty($email) ? '' : '
 				AND m.poster_email = {string:email_address}') . (!empty($from_id) || empty($membername) ? '' : '
 				AND m.poster_name = {string:member_name}'),
 			array(
-				'count_posts' => 0,
 				'from_id' => $from_id,
 				'email_address' => $email,
 				'member_name' => $membername,

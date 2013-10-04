@@ -345,7 +345,7 @@ function template_sidebar_quick_access()
 		<we:title>
 			', $txt['jump_to'], '
 		</we:title>
-		<p id="jump_to">', $txt['select_destination'], '</p>
+		<p id="jump_to"></p>
 	</section>';
 }
 
@@ -446,6 +446,14 @@ function template_wrapper_after()
 
 function template_body_after()
 {
+	template_insert_javascript();
+
+	echo '
+</body>';
+}
+
+function template_insert_javascript()
+{
 	global $context, $options, $theme, $txt, $footer_coding, $settings;
 
 	// Include postponed inline JS, postponed HTML, and then kickstart the main
@@ -503,8 +511,7 @@ function template_body_after()
 	// and mods, and close all outstanding tags. We're done!
 	// $context['footer_js'] assumes the <script> tag is already output.
 	echo $context['footer_js'], '
-</script>
-</body>';
+</script>';
 }
 
 function template_html_after()
