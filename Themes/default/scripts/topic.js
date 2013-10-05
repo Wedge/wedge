@@ -123,78 +123,70 @@ $(window).load(function ()
 
 	/*
 		This is the code for the infinite scrolling feature.
-		There are limitations to it, though. Browsing through history is far from perfect,
-		and JavaScript may fail, especially if the new page has embedded items in it.
-		Please bear with us until we can fix everything...
+		There are limitations to it, though; mostly, browsing through history is far from perfect.
 	*/
 
-	var count_scrolls = 0;
-	$(window).on('DOMMouseScroll mousewheel', function ()
+	var requested = false, done_once = false, no_more_pages = false, ready_to_show = false, next_link, $new_page;
+	$(window).on('DOMMouseScroll mousewheel scroll', function ()
 	{
-		if ($(window).scrollTop() >= $(document).height() - $(window).height())
+		// Are we scrolling at most three pages from the bottom..? If yes, prefect the next page.
+		if (!no_more_pages && !requested && $(window).scrollTop() >= Math.max(600, $(document).height() - $(window).height() * 3))
 		{
-			// Ensure not to load anything through accidental wheel rolls.
-			if (count_scrolls++ > 2)
+			requested = true;
+			next_link = $('span.next_page > a').first().attr('href');
+			// And now, load the next page and hide it!
+			if (next_link)
 			{
-				var next_page = $('span.next_page > a').first().attr('href');
-				if (next_page)
-				{
-					count_scrolls = -999; // Avoid extra requests while loading the posts...
-					show_ajax();
-					var $new_page = $('<div/>').insertAfter($('hr.sep').last());
-					$new_page.load(
-
-						// Load the next page, and show only the #forumposts area.
-						next_page + ' #forumposts',
-
-						// This asks Wedge to ignore the Ajax status, and load the index template for page indexes.
-						{ infinite: true },
-
-						function (html)
-						{
-							// Retrieve the page index for the new area, and replace the parent's with them.
-							var page_indexes = $(html).contents().find('.pagesection nav');
-							$('.pagesection nav').first().replaceWith(page_indexes.get(0));
-							$('.pagesection nav').last().replaceWith(page_indexes.get(1));
-
-							// Prepare all new posts for follow_me.
-							if (!is_touch)
-								$('.poster>div,.poster', $new_page).each(function () { $(this).width($(this).width()).css('min-height', $(this).height()); });
-
-							// Ensure that all posts are on the same (DOM) level as its predecessors.
-							var root = $new_page.find('.msg').first(), up_to = $('.msg').first().parent(), max_count = 0, id;
-							while (root.parent()[0] != up_to[0] && max_count++ < 10)
-								root.unwrap();
-
-							// We're rebuilding scripts from the string response, and inserting them to force jQuery to execute them.
-							// Please note that jQuery doesn't need to be reloaded, and script.js causes issues, so we'll avoid it for now.
-							$new_page.append($(html).filter('script:not([src*=jquery]):not([src*=script])'));
-
-							// We have to re-run the event delayer, as it has new values to insert...
-							// !! Is it worth putting it into its own function in script.js..?
-							$('*[data-eve]', $new_page).each(function ()
-							{
-								var that = $(this);
-								$.each(that.attr('data-eve').split(' '), function () {
-									that.on(eves[this][0], eves[this][1]);
-								});
-							});
-
-							hide_ajax();
-
-							// Using replaceState, because storing the previous page state is headache material.
-							if (window.history && history.replaceState)
-								history.replaceState(null, '', next_page);
-
-							count_scrolls = 0;
-							root.hide().fadeIn(800);
-						}
-					);
-				}
+				done_once = true;
+				$new_page = $('<div style="overflow:hidden"/>').height(0).insertAfter($('hr.sep').last()).load(
+					next_link,
+					{ infinite: true },	// This asks Wedge to ignore the Ajax status, so it can get page indexes from the index template.
+					function () { ready_to_show = true; }
+				);
 			}
+			else
+				no_more_pages = true;
 		}
-		else
-			count_scrolls = 0;
+
+		if (no_more_pages && done_once && !next_link)
+		{
+			requested = false;
+			$.post(weUrl('action=markasread;sa=topic;topic=' + we_topic + ';t=' + (1 + +$('.msg').last().attr('id').slice(3)) + ';' + we_sessvar + '=' + we_sessid));
+		}
+
+		// Did we reach the end of the page..?
+		if (ready_to_show && $(window).scrollTop() >= $(document).height() - $(window).height())
+		{
+			requested = false;
+			ready_to_show = false;
+
+			// Retrieve the page index for the new area, and replace the parent's with them.
+			$('.pagesection nav').each(function () {
+				$(this).find('.updown').siblings().remove().end().before($('#pinf').clone().contents());
+			});
+			$('#pinf').remove();
+
+			// We have to re-run the event delayer, as it has new values to insert...
+			// !! Is it worth putting it into its own function in script.js..?
+			$('[data-eve]', $new_page).each(function ()
+			{
+				var that = $(this);
+				$.each(that.attr('data-eve').split(' '), function () {
+					that.on(eves[this][0], eves[this][1]);
+				});
+			});
+
+			// Using replaceState, because storing the previous page state is headache material.
+			if (window.history && history.replaceState)
+				history.replaceState(null, '', next_link);
+
+			// Move all posts at the same (DOM) level as their predecessors, and fade them in.
+			$new_page.children().hide().fadeIn(800).first().unwrap();
+
+			// Prepare all new posts for follow_me.
+			if (!is_touch)
+				$('.poster>div,.poster').each(function () { $(this).width($(this).width()).css('min-height', $(this).height()); });
+		}
 	});
 });
 

@@ -474,7 +474,6 @@ function Display()
 	// Set the topic's information for the template.
 	$context['subject'] = $topicinfo['subject'];
 	$context['num_views'] = $topicinfo['num_views'];
-	$context['mark_unread_time'] = $topicinfo['new_from'];
 
 	// Set a canonical URL for this page.
 	$context['canonical_url'] = '<URL>?topic=' . $topic . '.' . $context['start'] . ($can_show_all ? ';all' : '');
@@ -791,6 +790,9 @@ function Display()
 	call_hook('display_message_list', array(&$messages, &$times, &$all_posters));
 	$posters = array_unique($all_posters);
 
+	// What's the oldest comment in the page..?
+	$context['mark_unread_time'] = min($board_info['type'] == 'board' ? $messages : array_slice($messages, 1));
+
 	// When was the last time this topic was replied to? Should we warn them about it?
 	if (!empty($settings['oldTopicDays']))
 	{
@@ -819,7 +821,9 @@ function Display()
 	// Guests can't mark topics read or for notifications, just can't sorry.
 	if (we::$is_member)
 	{
-		$mark_at_msg = max($messages);
+		// In case the page is being pre-fetched for infinite scrolling, mark it as
+		// partially unread only, in case the user actually didn't read the posts.
+		$mark_at_msg = INFINITE ? $context['mark_unread_time'] - 1 : max($messages);
 		if ($mark_at_msg >= $topicinfo['id_last_msg'])
 			$mark_at_msg = $settings['maxMsgID'];
 		if ($mark_at_msg >= $topicinfo['new_from'])
@@ -970,7 +974,7 @@ function Display()
 			SELECT
 				id_msg, icon, subject, poster_time, li.member_ip AS poster_ip, id_member,
 				modified_time, modified_name, modified_member, body, smileys_enabled, poster_name, poster_email,
-				approved, id_msg_modified < {int:new_from} AS is_read, m.data
+				approved, id_msg < {int:new_from} AS is_read, m.data, id_msg_modified
 			FROM {db_prefix}messages AS m
 				LEFT JOIN {db_prefix}log_ips AS li ON (m.poster_ip = li.id_ip)
 			WHERE id_msg IN ({array_int:message_list})
@@ -1258,6 +1262,13 @@ function Display()
 	if ($context['can_restore_topic'])
 		$context['nav_buttons']['mod']['restore'] = array('text' => 'restore_topic', 'url' => '<URL>?action=restoretopic;topics=' . $context['current_topic'] . ';' . $context['session_query']);
 
+	// All of this... FOR THAT?!
+	if (INFINITE)
+	{
+		wetem::replace(array('postlist_infinite' => array('display_posts')));
+		wetem::hide();
+	}
+
 	// Generic processing that doesn't apply to per-post handling.
 	call_hook('display_main');
 }
@@ -1395,7 +1406,8 @@ function prepareDisplayContext($reset = false)
 			'member' => $message['modified_member'],
 		),
 		'body' => $message['body'],
-		'new' => empty($message['is_read']) && !$is_new,
+		'new' => !$message['is_read'] && !$is_new,
+		'edited' => $message['is_read'] && $message['id_msg_modified'] > $topicinfo['new_from'],
 		'approved' => $message['approved'],
 		'first_new' => isset($context['start_from']) && $context['start_from'] == $counter,
 		'is_ignored' => !empty($settings['enable_buddylist']) && !empty($options['posts_apply_ignore_list']) && in_array($message['id_member'], we::$user['ignoreusers']),
@@ -1411,8 +1423,8 @@ function prepareDisplayContext($reset = false)
 	);
 
 	// Keep showing the New logo on every unread post in Newest First mode. Otherwise it gets confusing.
-	if (empty($options['view_newest_first']))
-		$is_new |= empty($message['is_read']);
+	if (empty($options['view_newest_first']) && empty($output['edited']))
+		$is_new |= !$message['is_read'];
 
 	$output['can_mergeposts'] &= !empty($output['last_post_id']);
 

@@ -251,8 +251,9 @@ function template_msg_header_body()
 
 	echo '
 							<h5>
-								<a href="', $msg['href'], '" rel="nofollow">', $msg['subject'], '</a>', $msg['new'] ? '
-								<div class="note">' . $txt['new'] . '</div>' : '', '
+								<a href="', $msg['href'], '" rel="nofollow">', $msg['subject'], '</a>', $msg['edited'] ? '
+								<div class="notenice">' . $txt['edited'] . '</div>' : ($msg['new'] ? '
+								<div class="note">' . $txt['new'] . '</div>' : ''), '
 							</h5>
 							<time>
 								« ', !empty($msg['counter']) ? sprintf($txt['reply_number'], $msg['counter']) : '', ' ', $msg['on_time'], ' »

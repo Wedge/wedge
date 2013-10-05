@@ -192,7 +192,8 @@ function MarkRead()
 
 	checkSession('get');
 
-	if (isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'all')
+	$sa = isset($_REQUEST['sa']) ? $_REQUEST['sa'] : '';
+	if ($sa == 'all')
 	{
 		// Find all the boards this user can see.
 		$result = wesql::query('
@@ -219,7 +220,7 @@ function MarkRead()
 
 		redirectexit();
 	}
-	elseif (isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'unreadreplies')
+	elseif ($sa == 'unreadreplies')
 	{
 		// Make sure all the boards are integers!
 		$topics = explode('-', $_REQUEST['topics']);
@@ -242,7 +243,7 @@ function MarkRead()
 	}
 
 	// Special case: mark a topic unread!
-	elseif (isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'topic')
+	elseif ($sa == 'topic')
 	{
 		// First, let's figure out what the latest message is.
 		$result = wesql::query('
@@ -256,15 +257,15 @@ function MarkRead()
 		$topicinfo = wesql::fetch_assoc($result);
 		wesql::free_result($result);
 
+		// Default behavior: Wedge always provides a 't' variable.
 		if (!empty($_GET['t']))
 		{
-			// If they read the whole topic, go back to the beginning.
+			// Ensure for realistic boundaries.
 			if ($_GET['t'] >= $topicinfo['id_last_msg'])
-				$earlyMsg = 0;
-			// If they want to mark the whole thing read, same.
+				$earlyMsg = $settings['maxMsgID'];
 			elseif ($_GET['t'] <= $topicinfo['id_first_msg'])
 				$earlyMsg = 0;
-			// Otherwise, get the latest message before the named one.
+			// If it's anywhere inside the topic, get the latest post before the named one.
 			else
 			{
 				$result = wesql::query('
@@ -275,16 +276,16 @@ function MarkRead()
 						AND id_msg < {int:topic_msg_id}',
 					array(
 						'current_topic' => $topic,
-						'topic_msg_id' => (int) $_GET['t'],
 						'id_first_msg' => $topicinfo['id_first_msg'],
+						'topic_msg_id' => (int) $_GET['t'],
 					)
 				);
 				list ($earlyMsg) = wesql::fetch_row($result);
 				wesql::free_result($result);
 			}
 		}
-		// Marking read from first page?  That's the whole topic.
-		elseif ($_REQUEST['start'] == 0)
+		// Marking read from first page? That's the whole topic.
+		elseif (empty($_REQUEST['start']))
 			$earlyMsg = 0;
 		else
 		{
@@ -311,6 +312,9 @@ function MarkRead()
 			array($earlyMsg, we::$id, $topic),
 			array('id_member', 'id_topic')
 		);
+
+		if (AJAX)
+			exit;
 
 		redirectexit('board=' . $board . '.0');
 	}

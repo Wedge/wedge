@@ -182,7 +182,6 @@ body
 	display: table-cell
 	vertical-align: top
 	width: $sidebar-width
-	font-size: .9em
 	.column
 		padding: 20px $horizontal_content_padding 0
 		section
@@ -422,6 +421,7 @@ em
 
 // The 'New' icon, generally speaking.
 .note mixes .inline-block
+	vertical-align: .1em
 	border-radius: 7px
 	@if ie[-9]
 		background-color: #eb8c66
@@ -431,7 +431,6 @@ em
 	color: #fff !important
 	font: 700 7.5pt/100% Tahoma, Arial, sans-serif
 	text-transform: uppercase
-	vertical-align: .1em
 	margin: 0 3px
 	padding: 2px 5px 3px
 	:hover
@@ -1415,19 +1414,23 @@ tr.titlebg
 	clear: left
 	font-size: .9em
 	padding: .2em
-	margin-bottom: 1px
 	.floatright input
 		margin-top: 3px
+	.note
+		vertical-align: middle
 	nav
 		float: left
 		padding: .3em 0 .3em
-		a[data-href]
-			font-weight: 700
-		> strong
+		strong
 			:before
 				content: "["
 			:after
 				content: "]"
+		a[data-href]
+			font-weight: 700
+	.updown
+		font-weight: 700
+		padding-left: 1em
 
 // Colors for background of posts requiring approval
 .approve

@@ -10,18 +10,29 @@
 
 function template_display_posts()
 {
-	global $context, $theme, $options, $txt, $board_info, $msg;
+	global $context, $theme, $options, $txt, $board_info, $msg, $footer_coding;
+
+	if (INFINITE)
+	{
+		$footer_coding = true;
+		$context['header_css'] = '';
+		$context['footer_js_inline'] = '';
+		$context['footer_js'] = '';
+	}
 
 	// OK, we're going to need this!
 	add_js_file('scripts/topic.js');
 
-	// Show the topic information - icon, subject, etc.
-	echo '
+	if (!INFINITE)
+	{
+		// Show the topic information - icon, subject, etc.
+		echo '
 		<div id="forumposts"', $board_info['type'] == 'board' ? '' : ' class="blog"', '>';
 
-	if (we::$is_member)
-		echo '
+		if (we::$is_member)
+			echo '
 			<form action="<URL>?action=quickmod2;topic=', $context['current_topic'], '.', $context['start'], '" method="post" accept-charset="UTF-8" name="quickModForm" id="quickModForm">';
+	}
 
 	$ignoredMsgs = array();
 	$message_skeleton = new weSkeleton('msg');
@@ -58,12 +69,15 @@ function template_display_posts()
 	}
 	unset($msg, $message_skeleton);
 
-	if (we::$is_member)
-		echo '
+	if (!INFINITE)
+	{
+		if (we::$is_member)
+			echo '
 			</form>';
 
-	echo '
+		echo '
 		</div>';
+	}
 
 	if ($context['can_remove_post'])
 		add_js('
@@ -101,6 +115,19 @@ function template_display_posts()
 		],
 		aSwapLinks: ["msg' . $msgid . ' .ignored:first"]
 	});');
+
+	// We need to show JS and CSS in the same block, as we're not getting headers and all. We're only keeping what matters.
+	if (INFINITE)
+	{
+		if (!empty($context['header_css']))
+			echo '<style>', $context['header_css'], '</style>';
+
+		template_insert_javascript();
+
+		$context['header_css'] = '';
+		$context['footer_js_inline'] = '';
+		$context['footer_js'] = '';
+	}
 }
 
 function template_topic_poll_before()
@@ -343,7 +370,7 @@ function template_postlist_before()
 	echo '
 		<div class="pagesection">',
 			template_button_strip($context['nav_buttons']['normal']), '
-			<nav>', $txt['pages'], ': ', $context['page_index'], $context['menu_separator'], '&nbsp;&nbsp;<a href="#" onclick="return go_down();"><strong>', $txt['go_down'], '</strong></a></nav>
+			<nav>', $txt['pages'], ': ', $context['page_index'], $context['menu_separator'], '<a href="#" class="updown" onclick="return go_down();">', $txt['go_down'], '</a></nav>
 		</div>', we::is('ie6') ? '
 		<div class="clear"></div>' : '';
 }
@@ -355,8 +382,16 @@ function template_postlist_after()
 	echo '
 		<div class="pagesection">',
 			template_button_strip($context['nav_buttons']['normal']), '
-			<nav>', $txt['pages'], ': ', $context['page_index'], $context['menu_separator'], '&nbsp;&nbsp;<a href="#" onclick="return go_up();"><strong>', $txt['go_up'], '</strong></a></nav>
+			<nav>', $txt['pages'], ': ', $context['page_index'], $context['menu_separator'], '<a href="#" class="updown" onclick="return go_up();">', $txt['go_up'], '</a></nav>
 		</div>';
+}
+
+// A simplified version; really, we only need the new page index.
+function template_postlist_infinite_after()
+{
+	global $context;
+
+	echo '<nav id="pinf">', $context['page_index'], '</nav>';
 }
 
 function template_title_lower()
