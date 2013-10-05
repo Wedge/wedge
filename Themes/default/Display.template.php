@@ -19,12 +19,11 @@ function template_display_posts()
 		$context['footer_js_inline'] = '';
 		$context['footer_js'] = '';
 	}
-
-	// OK, we're going to need this!
-	add_js_file('scripts/topic.js');
-
-	if (!INFINITE)
+	else
 	{
+		// OK, we're going to need this!
+		add_js_file('scripts/topic.js');
+
 		// Show the topic information - icon, subject, etc.
 		echo '
 		<div id="forumposts"', $board_info['type'] == 'board' ? '' : ' class="blog"', '>';

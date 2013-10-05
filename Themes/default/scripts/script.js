@@ -493,7 +493,7 @@ $.fn.mime = function (oList, oStrings)
 {
 	this.each(function ()
 	{
-		if ($(this).parent().hasClass('mime'))
+		if (this.className.indexOf('processed') >= 0 || $(this).addClass('processed').parent().hasClass('mime'))
 			return;
 
 		var

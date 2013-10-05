@@ -318,7 +318,10 @@ $.fn.zoomedia = function (options)
 
 	$(this).each(function ()
 	{
-		$(this).click(show).dblclick(function (e) {
+		if (this.className.indexOf('processed') >= 0)
+			return this;
+
+		$(this).addClass('processed').click(show).dblclick(function (e) {
 			if (zooming)
 				double_clicked = true;
 			return false;

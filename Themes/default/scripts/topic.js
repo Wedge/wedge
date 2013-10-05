@@ -127,7 +127,7 @@ $(window).load(function ()
 	*/
 
 	var requested = false, done_once = false, no_more_pages = false, ready_to_show = false, next_link, $new_page;
-	$(window).on('DOMMouseScroll mousewheel scroll', function ()
+	$(window).on(is_touch ? 'touchmove' : 'scroll', function ()
 	{
 		// Are we scrolling at most three pages from the bottom..? If yes, prefect the next page.
 		if (!no_more_pages && !requested && $(window).scrollTop() >= Math.max(600, $(document).height() - $(window).height() * 3))
@@ -148,7 +148,7 @@ $(window).load(function ()
 				no_more_pages = true;
 		}
 
-		if (no_more_pages && done_once && !next_link)
+		if (no_more_pages && requested && done_once && !next_link)
 		{
 			requested = false;
 			$.post(weUrl('action=markasread;sa=topic;topic=' + we_topic + ';t=' + (1 + +$('.msg').last().attr('id').slice(3)) + ';' + we_sessvar + '=' + we_sessid));
@@ -654,8 +654,8 @@ function QuickReply(opt)
 		};
 
 		// Add checkboxes to all the messages.
-		$('.' + opt.sClass).each(function () {
-			if (!$(this).find('input[type="checkbox"]').length)
+		$('.' + opt.sClass).not('.processed').each(function () {
+			if (!$(this).addClass('processed').find('input[type="checkbox"]').length)
 			{
 				// !! The zero hack is for IE 11. For some reason, it sends an error without this,
 				// if the dev tools are opened AND the debugger isn't running. (Sep 2013)
