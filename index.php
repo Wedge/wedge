@@ -105,7 +105,7 @@ $action_list = array(
 	'profile' =>		array('Profile', 'ModifyProfile'),
 	'quotefast' =>		'QuoteFast',
 	'quickmod' =>		array('QuickMod', 'QuickModeration'),
-	'quickmod2' =>		array('Display', 'QuickInTopicModeration'),
+	'quickmod2' =>		array('QuickMod', 'QuickInTopicModeration'),
 	'recent' =>			'Recent',
 	'register' =>		'Register',
 	'register2' =>		array('Register', 'Register2'),
@@ -131,7 +131,7 @@ $action_list = array(
 	'who' =>			'Who',
 );
 
-// If an action should not influence the who's online list, please add it here. (Hookable as global)
+// If an action should not influence the who's online list, please add it here. (Hookable as global.)
 $action_no_log = array(
 	'ajax', 'dlattach', 'feed', 'jseditor', 'jsoption', 'like', 'notification', 'verification', 'viewquery', 'viewremote',
 );

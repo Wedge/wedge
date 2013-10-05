@@ -15,8 +15,7 @@ $(function ()
 	// scrollbar is set on an element inside a flex container, the scrollbar will be
 	// 'ignored' by the layout engine. Forcing the element's flex to none fixes this.
 	if (is_chrome)
-		$('.post code').each(function ()
-		{
+		$('.post code').each(function () {
 			if (this.scrollWidth > this.offsetWidth && this.scrollHeight <= this.offsetHeight)
 				$(this).css('flex', 'none');
 		});
@@ -232,13 +231,13 @@ function expandThumb(thumbID)
 
 function go_up()
 {
-	$('html,body').animate({ scrollTop: 0 }, 1000);
+	$('html,body').animate({ scrollTop: 0 }, 600);
 	return false;
 }
 
 function go_down()
 {
-	$('html,body').animate({ scrollTop: $(document).height() - $(window).height() }, 1000);
+	$('html,body').animate({ scrollTop: $(document).height() - $(window).height() }, 600);
 	return false;
 }
 
@@ -533,7 +532,7 @@ function QuickReply(opt)
 					});
 
 				// Resize the textarea to use all available space.
-				$editor.height($editor.height() + $post.height() - $quicked.height() - $post.find('.actionbar').outerHeight());
+				$editor.height($editor.height() + $post.height() - $quicked.height());
 
 				var min_height = parseInt($editor.css('height')), max_height = Math.max(min_height, 800);
 
@@ -545,7 +544,7 @@ function QuickReply(opt)
 
 				// Hide the regular post, and show the text area instead.
 				// Visibility hack is needed for IE6/IE7, because of the action menu's z-index.
-				$post.children().not($quicked).not('.actionbar').fadeTo(800, 0, function () { $(this).css('visibility', 'hidden'); });
+				$post.children().not($quicked).fadeTo(800, 0, function () { $(this).css('visibility', 'hidden'); });
 				$quicked.fadeTo(0, 0).fadeTo(800, 1);
 			});
 		},
@@ -609,7 +608,8 @@ function QuickReply(opt)
 			return false;
 		};
 
-		$('<div class="quick_edit">&nbsp;</div>').click(qe_edit).mousedown(false).attr('title', $txt['modify_msg']).prependTo('.can-mod .actionbar');
+		// Add the quick edit button to all posts that can be modified, and don't already have it (e.g. during an infinite scroll fetch.)
+		$('<div class="quick_edit">&nbsp;</div>').click(qe_edit).mousedown(false).attr('title', $txt['modify_msg']).prependTo('.can-mod .actionbar:not(:has(.quick_edit))');
 	}
 
 	function InTopicModeration(opt)

@@ -288,7 +288,7 @@ function aeva_build_object($input)
 		return str_replace(array('<aeva href="http://', '</aeva>'), array('<a href="noae://', '</a>'), preg_replace('`#[\w/.~-]*`', '', $input[0], 1)) . ' ' . $txt['media_too_many_embeds'];
 
 	$arr =& $sites[$upto];
-	$use_object_init = AJAX || WEDGE == 'SSI' || $context['action'] === 'feed' || !empty($settings['embed_noscript']) || !empty($context['embed_mg_hack']);
+	$use_object_init = AJAX || INFINITE || WEDGE == 'SSI' || $context['action'] === 'feed' || !empty($settings['embed_noscript']) || !empty($context['embed_mg_hack']);
 	$use_object = $use_object_init || (!empty($arr['plugin']) && $arr['plugin'] != 'flash') || !empty($arr['allow-script']) || ($arr['id'] == 'yav' && we::is('firefox'));
 
 	$object = $extra_js = '';
@@ -429,7 +429,7 @@ function aeva_build_object($input)
 			$object_params .= '<param name="flashvars" value="<flashvars>">';
 	}
 
-	if (!empty($plugin) && (AJAX || WEDGE == 'SSI'))
+	if (!empty($plugin) && (AJAX || INFINITE || WEDGE == 'SSI'))
 	{
 		if ($swfobjects++ === 0)
 			$swfobjects = rand(1000,9999);

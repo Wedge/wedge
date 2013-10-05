@@ -454,11 +454,9 @@ function template_msg_area_after()
 
 function template_msg_wrap_after()
 {
-	global $msg, $context;
-
 	echo '
 				</div>
-			</we:msg>', $context['topic_last_message'] === $msg['id'] ? '' : '
+			</we:msg>
 			<hr class="sep">';
 }
 

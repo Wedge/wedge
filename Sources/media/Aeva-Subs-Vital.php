@@ -278,7 +278,7 @@ function aeva_embedObject($obj, $id_file, $cur_width = 0, $cur_height = 0, $desc
 			case 'video/mp4':
 			case 'video/3gpp':
 
-				if (AJAX || WEDGE == 'SSI' || $context['action'] === 'feed')
+				if (AJAX || INFINITE || WEDGE == 'SSI' || $context['action'] === 'feed')
 				{
 					$output .= '
 		<embed src="' . aeva_theme_url('player.swf') . '" flashvars="file=' . $galurl . 'sa=media;in=' . $id_file . $increm
@@ -467,13 +467,22 @@ function aeva_getEncryptedFilename($name, $id, $check_for_encrypted = false, $bo
 	if ($id < 5)
 		return $both ? array($name, $name) : $name;
 
-	// Remove special accented characters - eg. s�.
-	$clean_name = strtr($name, '������������������������������������������������������������', 'SZszYAAAAAACEEEEIIIINOOOOOOUUUUYaaaaaaceeeeiiiinoooooouuuuyy');
-	$clean_name = strtr($clean_name, array('�' => 'TH', '�' => 'th', '�' => 'DH', '�' => 'dh', '�' => 'ss', '�' => 'OE', '�' => 'oe', '�' => 'AE', '�' => 'ae', '�' => 'u'));
+	// Remove special accented characters.
+	// The following should match, in non-UTF8 characters: 'ŠŽšžŸÀÁÂÃÄÅÇÈÉÊËÌÍÎÏÑÒÓÔÕÖØÙÚÛÜÝàáâãäåçèéêëìíîïñòóôõöøùúûüýÿ'
+	$clean_name = strtr(
+		$name,
+		"\x8a\x8e\x9a\x9e\x9f\xc0\xc1\xc2\xc3\xc4\xc5\xc7\xc8\xc9\xca\xcb\xcc\xcd\xce\xcf\xd1\xd2\xd3\xd4\xd5\xd6\xd8\xd9\xda\xdb\xdc\xdd\xe0\xe1\xe2\xe3\xe4\xe5\xe7\xe8\xe9\xea\xeb\xec\xed\xee\xef\xf1\xf2\xf3\xf4\xf5\xf6\xf8\xf9\xfa\xfb\xfc\xfd\xff",
+		'SZszYAAAAAACEEEEIIIINOOOOOOUUUUYaaaaaaceeeeiiiinoooooouuuuyy'
+	);
+	// And this is the non-UTF8 equivalent of ÞþÐðßŒœÆæµ...
+	$clean_name = strtr($clean_name, array("\xde" => 'TH', "\xfe" => 'th', "\xd0" => 'DH', "\xf0" => 'dh', "\xdf" => 'ss', "\x8c" => 'OE', "\x9c" => 'oe', "\xc6" => 'AE', "\xe6" => 'ae', "\xb5" => 'u'));
 
 	// Sorry, no spaces, dots, or anything else but letters allowed.
 	$clean_name = preg_replace(array('/\s/', '/[^\w_\.-]/'), array('_', ''), $clean_name);
 	$ext = aeva_getExt($name);
+
+	// !!! '_ext' forces the file to have no extension, thus breaking download/upload ops in poor FTP clients.
+	// Should we add a flag saying to add the extension for that file..?
 	$enc_name = $id . '_' . strtr($clean_name, '.', '_') . md5($clean_name) . '_ext' . $ext;
 	$clean_name = substr(sha1($id), 0, 2) . sha1($id . $clean_name) . '.' . $ext;
 

@@ -161,6 +161,111 @@ function QuickModeration()
 	redirectexit($redirect_url);
 }
 
+// In-topic quick moderation.
+function QuickInTopicModeration()
+{
+	global $topic, $board, $settings, $context;
+
+	// Check the session = get or post.
+	checkSession('request');
+
+	loadSource('RemoveTopic');
+
+	if (empty($_REQUEST['msgs']))
+		redirectexit('topic=' . $topic . '.' . $_REQUEST['start']);
+
+	$messages = array();
+	foreach ($_REQUEST['msgs'] as $dummy)
+		$messages[] = (int) $dummy;
+
+	// We are restoring messages. We handle this in another place.
+	if (isset($_REQUEST['restore_selected']))
+		redirectexit('action=restoretopic;msgs=' . implode(',', $messages) . ';' . $context['session_query']);
+
+	// Allowed to delete any message?
+	if (allowedTo('delete_any'))
+		$allowed_all = true;
+	// Allowed to delete replies to their messages?
+	elseif (allowedTo('delete_replies'))
+	{
+		$request = wesql::query('
+			SELECT id_member_started
+			FROM {db_prefix}topics
+			WHERE id_topic = {int:current_topic}
+			LIMIT 1',
+			array(
+				'current_topic' => $topic,
+			)
+		);
+		list ($starter) = wesql::fetch_row($request);
+		wesql::free_result($request);
+
+		$allowed_all = $starter == we::$id;
+	}
+	else
+		$allowed_all = false;
+
+	// Make sure they're allowed to delete their own messages, if not any.
+	if (!$allowed_all)
+		isAllowedTo('delete_own');
+
+	// Allowed to remove which messages?
+	$request = wesql::query('
+		SELECT id_msg, subject, id_member, poster_time
+		FROM {db_prefix}messages
+		WHERE id_msg IN ({array_int:message_list})
+			AND id_topic = {int:current_topic}' . (!$allowed_all ? '
+			AND id_member = {int:current_member}' : '') . '
+		LIMIT ' . count($messages),
+		array(
+			'current_member' => we::$id,
+			'current_topic' => $topic,
+			'message_list' => $messages,
+		)
+	);
+	$messages = array();
+	while ($row = wesql::fetch_assoc($request))
+	{
+		if (!$allowed_all && !empty($settings['edit_disable_time']) && $row['poster_time'] + $settings['edit_disable_time'] * 60 < time())
+			continue;
+
+		$messages[$row['id_msg']] = array($row['subject'], $row['id_member']);
+	}
+	wesql::free_result($request);
+
+	// Get the first message in the topic - because you can't delete that!
+	$request = wesql::query('
+		SELECT id_first_msg, id_last_msg
+		FROM {db_prefix}topics
+		WHERE id_topic = {int:current_topic}
+		LIMIT 1',
+		array(
+			'current_topic' => $topic,
+		)
+	);
+	list ($first_message, $last_message) = wesql::fetch_row($request);
+	wesql::free_result($request);
+
+	// Delete all the messages we know they can delete. ($messages)
+	foreach ($messages as $message => $info)
+	{
+		// Just skip the first message - if it's not the last.
+		if ($message == $first_message && $message != $last_message)
+			continue;
+		// If the first message is going then don't bother going back to the topic as we're effectively deleting it.
+		elseif ($message == $first_message)
+			$topicGone = true;
+
+		removeMessage($message);
+
+		// Log this moderation action ;).
+		if (allowedTo('delete_any') && (!allowedTo('delete_own') || $info[1] != we::$id))
+			logAction('delete', array('topic' => $topic, 'subject' => $info[0], 'member' => $info[1], 'board' => $board));
+	}
+
+	redirectexit(!empty($topicGone) ? 'board=' . $board : 'topic=' . $topic . '.' . $_REQUEST['start']);
+}
+
 function quickMod_pin($topic_data, $boards_can)
 {
 	// Need to check the permissions, that the board that each topic is in, is in the list of boards we can sticky a topic - assuming we're not an admin

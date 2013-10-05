@@ -54,7 +54,7 @@ p.moderators
 	overflow: auto
 	margin: 1em 0
 	display: none
-	color: #575757 // Shouldn't be shorthand style due to a JS bug in IE!
+	color: #575757 // Shouldn't be shorthand style, due to a JS bug in IE!
 
 /* Styles for the info center on the board index.
 ---------------------------------------------------- */
@@ -261,6 +261,8 @@ hr.sep
 		margin: -6px 0
 	@else
 		margin: 1px 0
+		:last-child
+			margin, height: 0
 	@endif
 
 // Like #forumposts, but for blogs only.
@@ -837,18 +839,6 @@ tr.titlebg td
 	li.sep
 		display: none // alternatively, line-height: 3px
 
-.side_section .title
-	margin-bottom: 5px
-
-tr.windowbg td
-	padding: .3em .7em
-
-#credits
-	.intro
-		font-style: italic
-	ul.last
-		margin-bottom: 0
-
 /* Styles for the board index's topic table.
 ------------------------------------------------------- */
 
@@ -891,6 +881,9 @@ tr.windowbg td
 	padding: 8px
 	margin: 0 -4px 0 4px
 	background: url($images/icons/quick_my.gif) center no-repeat
+
+tr.windowbg td
+	padding: .3em .7em
 
 /* Styles for (fatal) errors.
 ------------------------------------------------- */
