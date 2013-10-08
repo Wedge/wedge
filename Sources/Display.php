@@ -791,7 +791,7 @@ function Display()
 	$posters = array_unique($all_posters);
 
 	// What's the oldest comment in the page..?
-	$context['mark_unread_time'] = min($board_info['type'] == 'board' ? $messages : array_slice($messages, 1));
+	$context['mark_unread_time'] = min($board_info['type'] == 'board' || count($messages) < 2 ? $messages : array_slice($messages, 1));
 
 	// When was the last time this topic was replied to? Should we warn them about it?
 	if (!empty($settings['oldTopicDays']))

@@ -959,6 +959,7 @@ class wess_nesting extends wess
 					background: #fff
 
 				Of course you may also use just one selector, or provide no selectors; Wess will target all selectors in the entire file.
+				You may also replace #fff with a wildcard (*), in which case this rule will be removed, whatever its value.
 			*/
 			if (strpos($node['selector'], '@remove') === 0)
 			{
@@ -1210,10 +1211,10 @@ class wess_nesting extends wess
 			foreach ($node['props'] as &$prop)
 			{
 				// Does this property belong to a general @remove?
-				if (isset($removals[$prop['name'] . ':' . $prop['value']]))
+				if (isset($removals[$prop['name'] . ':' . $prop['value']]) || isset($removals[$prop['name'] . ':*']))
 					continue;
 				// Does this property belong to a @remove specific to this selector?
-				if (isset($specific_removals[$prop['name'] . ':' . $prop['value']]))
+				if (isset($specific_removals[$prop['name'] . ':' . $prop['value']]) || isset($specific_removals[$prop['name'] . '']))
 					continue;
 				// Or maybe a regular one?
 				if (!strpos($prop['name'], ','))

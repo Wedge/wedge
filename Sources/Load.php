@@ -1887,7 +1887,10 @@ function loadPluginLanguage($plugin_name, $template_name, $lang = '', $fatal = t
 		$filename = $cachedir . '/lang_' . $lang . '_' . $file_key . '.php';
 		$val = array();
 		if (!empty($txt))
+		{
+			$txt = array_map('westr::entity_to_utf8', $txt);
 			$val['txt'] = $txt;
+		}
 		if (!empty($helptxt))
 			$val['helptxt'] = $helptxt;
 		$cache_data = '<' . '?php if(defined(\'WEDGE\'))$val=\'' . addcslashes(serialize($val), '\\\'') . '\';?' . '>';
