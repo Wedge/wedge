@@ -1514,7 +1514,7 @@ function MaintainReattributePosts()
 	{
 		$members = !empty($_POST['from_id']) ? findMembers($_POST['from_id']) : 0;
 		if (empty($members))
-			fatal_lang_error('reattribute_cannon_find_member_from');
+			fatal_lang_error('reattribute_cannot_find_member_from');
 		$from_id = array_shift($members);
 		$from_id = $from_id['id'];
 		// We want to get the destination details. Let reattributePosts do that for us.

@@ -162,6 +162,7 @@ function template_maintain_members()
 					<dd>
 						<input name="from_name" id="from_name" value="" onclick="$(\'#type_name\').prop(\'checked\', true); $(\'#from_email, #from_id\').val(\'\');">
 					</dd>
+					<hr style="clear: both">
 					<dt>
 						<label><input type="radio" name="type" id="type_from" value="from">', $txt['reattribute_user'], '</label>
 					</dt>
@@ -169,6 +170,7 @@ function template_maintain_members()
 						<input name="from_id" id="from_id" value="" onclick="$(\'#type_from\').prop(\'checked\', true); $(\'#from_email, #from_name\').val(\'\');">
 					</dd>
 				</dl>
+				<hr>
 				<dl class="settings">
 					<dt>
 						<label for="to"><strong>', $txt['reattribute_current_member'], ':</strong></label>
@@ -177,6 +179,7 @@ function template_maintain_members()
 						<input name="to" id="to" value="">
 					</dd>
 				</dl>
+				<hr>
 				<p class="maintain_members">
 					<label><input type="checkbox" name="posts" id="posts" checked> ', $txt['reattribute_increase_posts'], '</label>
 				</p>

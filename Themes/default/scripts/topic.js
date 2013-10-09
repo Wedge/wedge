@@ -127,7 +127,7 @@ $(window).load(function ()
 	*/
 
 	var requested = false, done_once = false, no_more_pages = false, ready_to_show = false, next_link, $new_page;
-	$(window).on(is_touch ? 'touchmove' : 'scroll', function ()
+	$(window).on(is_touch ? 'touchmove' : 'DOMMouseScroll mousewheel scroll', function ()
 	{
 		// Are we scrolling at most three pages from the bottom..? If yes, prefect the next page.
 		if (!no_more_pages && !requested && $(window).scrollTop() >= Math.max(600, $(document).height() - $(window).height() * 3))

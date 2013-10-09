@@ -1443,7 +1443,7 @@ function template_admin_search_results()
 	</we:cat>
 
 	<div class="windowbg wrc">
-		', sprintf($txt['admin_search_results_desc'], $context['search_term']);
+		<h6>', sprintf($txt['admin_search_results_desc'], $context['search_term']), '</h6>';
 
 	if (empty($context['search_results']))
 		echo '
@@ -1452,7 +1452,7 @@ function template_admin_search_results()
 	else
 	{
 		echo '
-		<ol class="search_results">';
+		<ul class="search_results">';
 		foreach ($context['search_results'] as $result)
 		{
 			echo '

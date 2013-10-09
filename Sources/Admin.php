@@ -1045,7 +1045,7 @@ function AdminSearchInternal()
 					'name' => $name,
 					'parent_name' => isset($item[3]) ? $item[3] : '',
 					'type' => $section,
-					'help' => shorten_subject(isset($item[2]) ? strip_tags($helptxt[$item[2]]) : (isset($helptxt[$found]) ? strip_tags($helptxt[$found]) : ''), 255),
+					'help' => isset($item[2], $helptxt[$item[2]]) ? $helptxt[$item[2]] : (isset($helptxt[$found]) ? $helptxt[$found] : ''),
 				);
 			}
 		}

@@ -20,12 +20,9 @@ input, textarea
 		padding: 18px 0 0 12px
 		font-size: 0.8em !important
 
-ol.search_results
-	margin-top, padding-top: 0
-	li
-		padding-top: 1em
-		border-bottom: 1px solid #ccc
-
+.search_results li
+	padding: 1em
+	border-bottom: 1px solid #ccc
 
 /* Styles for the admin home screen bar.
 ------------------------------------------------------- */
