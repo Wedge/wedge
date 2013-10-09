@@ -1370,8 +1370,7 @@ function wedge_parse_skin_tags(&$file, $name, $params = array())
 	$params = (array) $params;
 
 	// The CDATA stuff, to be honest, is only there for XML warriors. It doesn't actually allow you to use </$name> inside it.
-	preg_match_all('~<' . $name . '\b([^>]*)>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</' . $name . '>~s', $file, $matches, PREG_SET_ORDER);
-	if (empty($matches))
+	if (!preg_match_all('~<' . $name . '\b([^>]*)>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</' . $name . '>~s', $file, $matches, PREG_SET_ORDER))
 		return $tags;
 
 	$empty_list = array();
@@ -1390,6 +1389,11 @@ function wedge_parse_skin_tags(&$file, $name, $params = array())
 		// Or is a different browser targeted? Ignore this entry completely...
 		elseif (strpos($match[1], 'for="') !== false && preg_match('~\bfor="([^"]*)"~', $match[1], $val) && !we::is($val[1]))
 			continue;
+		// Or do we require to be on a certain page? i.e., <css url-action="profile" url-area="forumprofile"> would only apply CSS to the Forum Profile page.
+		elseif (strpos($match[1], 'url-') !== false && preg_match_all('~\burl-([a-z]+)="([^"]*)"~', $match[1], $url_bits, PREG_SET_ORDER))
+			foreach ($url_bits as $bit)
+				if (!isset($_GET[$bit[1]]) || $_GET[$bit[1]] != $bit[2])
+					continue 2;
 
 		// Now we'll retrieve the parameters individually, to allow for any param order.
 		foreach ($params as $param)

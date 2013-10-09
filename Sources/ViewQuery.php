@@ -74,12 +74,12 @@ function ViewQuery()
 	theme_base_css(), '
 	<style>
 		body { margin: 1ex }
-		body, td, th, .normaltext { font-size: x-small }
-		.smalltext { font-size: xx-small }
+		body, td, th, .normaltext { font-size: small }
+		.smalltext { font-size: x-small }
 	</style>
 </head>
-<body id="helf">
-	<div class="windowbg wrc">';
+<body>
+	<div class="windowbg wrc left">';
 
 	foreach ($_SESSION['debug'] as $q => $query_data)
 	{
