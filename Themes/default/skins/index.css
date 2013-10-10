@@ -275,6 +275,8 @@ ul#noava
 	clear: both
 	color: #999
 	padding: 0 0 1em
+	:empty final
+		padding: 0
 	a
 		color: #963
 	ul
@@ -769,9 +771,9 @@ input.new mixes .button-padding
 	background: url($images/buttons/new.png) 5px center no-repeat
 	background-color: #e0eaf6
 
-// Let's make un-raw this once we start using it a bit more, all right..?
+// Let's un-raw this once we start using it a bit more, all right..?
 input.modify mixes .button-padding
-	background: raw-url($images/buttons/modify.png) 5px center no-repeat
+	background: raw-url($images/buttons/modify.gif) 5px center no-repeat
 	background-color: #f3f3c8
 
 input.cancel

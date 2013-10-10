@@ -669,7 +669,7 @@ $(function ()
 		if (e.which == 2 && e.target.tagName !== 'A' && !$('#sideshow').is(':hidden'))
 		{
 			sidebar_shown ? hide_sidebar() : show_sidebar();
-			return false;
+			e.preventDefault();
 		}
 	});
 

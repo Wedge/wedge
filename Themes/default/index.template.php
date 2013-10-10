@@ -568,11 +568,11 @@ function template_linktree($position = 'top', $force_show = false)
 			if ($needs_fix)
 				echo ' > ';
 		}
-		echo '</ul>';
-	}
-
-	echo '
+		echo '</ul>
 	</div>';
+	}
+	else
+		echo '</div>';
 }
 
 // Show the main menu, up top.
