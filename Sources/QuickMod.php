@@ -566,7 +566,6 @@ function quickMod_markread($topic_data, $boards_can)
 	wesql::insert('replace',
 		'{db_prefix}log_topics',
 		array('id_msg' => 'int', 'id_member' => 'int', 'id_topic' => 'int'),
-		$markArray,
-		array('id_member', 'id_topic')
+		$markArray
 	);
 }

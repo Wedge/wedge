@@ -442,8 +442,7 @@ function SaveFilterRule()
 		wesql::insert('',
 			'{db_prefix}mod_filter_msg',
 			array('id_rule' => 'int', 'rule_type' => 'string', 'lang' => 'string', 'msg' => 'string'),
-			$insert_row,
-			array('id_rule', 'rule_type', 'lang')
+			$insert_row
 		);
 
 	// Are we modifying a rule? Then we should strip the original node before proceeding.

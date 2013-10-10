@@ -569,8 +569,7 @@ function SetQuickGroups()
 					array(
 						'permission' => 'string', 'id_group' => 'int', 'add_deny' => 'int',
 					),
-					$inserts,
-					array('permission', 'id_group')
+					$inserts
 				);
 			}
 		}
@@ -620,8 +619,7 @@ function SetQuickGroups()
 			wesql::insert('',
 				'{db_prefix}board_permissions',
 				array('permission' => 'string', 'id_group' => 'int', 'id_profile' => 'int', 'add_deny' => 'int'),
-				$inserts,
-				array('permission', 'id_group', 'id_profile')
+				$inserts
 			);
 		}
 
@@ -687,16 +685,14 @@ function SetQuickGroups()
 					wesql::insert('replace',
 						'{db_prefix}permissions',
 						array('permission' => 'string', 'id_group' => 'int', 'add_deny' => 'int'),
-						$permChange,
-						array('permission', 'id_group')
+						$permChange
 					);
 				// Board permissions go into the other table.
 				else
 					wesql::insert('replace',
 						'{db_prefix}board_permissions',
 						array('permission' => 'string', 'id_group' => 'int', 'id_profile' => 'int', 'add_deny' => 'int'),
-						$permChange,
-						array('permission', 'id_group', 'id_profile')
+						$permChange
 					);
 			}
 		}
@@ -924,8 +920,7 @@ function ModifyMembergroup2()
 			wesql::insert('replace',
 				'{db_prefix}permissions',
 				array('id_group' => 'int', 'permission' => 'string', 'add_deny' => 'int'),
-				$givePerms['membergroup'],
-				array('id_group', 'permission')
+				$givePerms['membergroup']
 			);
 		}
 	}
@@ -948,8 +943,7 @@ function ModifyMembergroup2()
 		wesql::insert('replace',
 			'{db_prefix}board_permissions',
 			array('id_group' => 'int', 'permission' => 'string', 'add_deny' => 'int', 'id_profile' => 'int'),
-			$givePerms['board'],
-			array('id_group', 'permission', 'id_profile')
+			$givePerms['board']
 		);
 	}
 
@@ -1252,8 +1246,7 @@ function setPermissionLevel($level, $group, $profile = 'null')
 		wesql::insert('',
 			'{db_prefix}permissions',
 			array('id_group' => 'int', 'permission' => 'string'),
-			$groupInserts,
-			array('id_group')
+			$groupInserts
 		);
 
 		$boardInserts = array();
@@ -1263,8 +1256,7 @@ function setPermissionLevel($level, $group, $profile = 'null')
 		wesql::insert('',
 			'{db_prefix}board_permissions',
 			array('id_profile' => 'int', 'id_group' => 'int', 'permission' => 'string'),
-			$boardInserts,
-			array('id_profile', 'id_group')
+			$boardInserts
 		);
 	}
 	// Setting profile permissions for a specific group.
@@ -1295,8 +1287,7 @@ function setPermissionLevel($level, $group, $profile = 'null')
 			wesql::insert('',
 				'{db_prefix}board_permissions',
 				array('id_profile' => 'int', 'id_group' => 'int', 'permission' => 'string'),
-				$boardInserts,
-				array('id_profile', 'id_group')
+				$boardInserts
 			);
 		}
 	}
@@ -1338,8 +1329,7 @@ function setPermissionLevel($level, $group, $profile = 'null')
 			wesql::insert('',
 				'{db_prefix}board_permissions',
 				array('id_profile' => 'int', 'id_group' => 'int', 'permission' => 'string'),
-				$boardInserts,
-				array('id_profile', 'id_group')
+				$boardInserts
 			);
 		}
 		wesql::free_result($query);
@@ -1350,11 +1340,10 @@ function setPermissionLevel($level, $group, $profile = 'null')
 			$boardInserts[] = array($profile, 0, $permission);
 
 		wesql::insert('',
-				'{db_prefix}board_permissions',
-				array('id_profile' => 'int', 'id_group' => 'int', 'permission' => 'string'),
-				$boardInserts,
-				array('id_profile', 'id_group')
-			);
+			'{db_prefix}board_permissions',
+			array('id_profile' => 'int', 'id_group' => 'int', 'permission' => 'string'),
+			$boardInserts
+		);
 	}
 	// $profile and $group are both null!
 	else
@@ -1780,8 +1769,7 @@ function save_inline_permissions($permission_details)
 		wesql::insert('',
 			'{db_prefix}permissions',
 			array('id_group' => 'int', 'permission' => 'string', 'add_deny' => 'int'),
-			$insertRows,
-			array('id_group', 'permission')
+			$insertRows
 		);
 
 	// Do a full child update.
@@ -1841,13 +1829,8 @@ function EditPermissionProfiles()
 		// Insert the profile itself.
 		wesql::insert('',
 			'{db_prefix}permission_profiles',
-			array(
-				'profile_name' => 'string',
-			),
-			array(
-				$_POST['profile_name'],
-			),
-			array('id_profile')
+			array('profile_name' => 'string'),
+			array($_POST['profile_name'])
 		);
 		$profile_id = wesql::insert_id();
 
@@ -1869,8 +1852,7 @@ function EditPermissionProfiles()
 			wesql::insert('',
 				'{db_prefix}board_permissions',
 				array('id_profile' => 'int', 'id_group' => 'int', 'permission' => 'string', 'add_deny' => 'int'),
-				$inserts,
-				array('id_profile', 'id_group', 'permission')
+				$inserts
 			);
 	}
 	// Renaming?
@@ -2035,8 +2017,7 @@ function updateChildPermissions($parents, $profile = null)
 			wesql::insert('',
 				'{db_prefix}permissions',
 				array('id_group' => 'int', 'permission' => 'string', 'add_deny' => 'int'),
-				$permissions,
-				array('id_group', 'permission')
+				$permissions
 			);
 		}
 	}
@@ -2079,8 +2060,7 @@ function updateChildPermissions($parents, $profile = null)
 			wesql::insert('',
 				'{db_prefix}board_permissions',
 				array('id_group' => 'int', 'id_profile' => 'int', 'permission' => 'string', 'add_deny' => 'int'),
-				$permissions,
-				array('id_group', 'id_profile', 'permission')
+				$permissions
 			);
 		}
 	}

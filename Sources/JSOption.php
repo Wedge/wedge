@@ -86,8 +86,7 @@ function JSOption()
 	wesql::insert('replace',
 		'{db_prefix}themes',
 		array('id_theme' => 'int', 'id_member' => 'int', 'variable' => 'string-255', 'value' => 'string-65534'),
-		array($theme['theme_id'], we::$id, $_POST['v'], is_array($_POST['val']) ? implode(',', $_POST['val']) : $_POST['val']),
-		array('id_theme', 'id_member', 'variable')
+		array($theme['theme_id'], we::$id, $_POST['v'], is_array($_POST['val']) ? implode(',', $_POST['val']) : $_POST['val'])
 	);
 
 	cache_put_data('theme_settings-' . $theme['theme_id'] . ':' . we::$id, null, 60);

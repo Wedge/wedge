@@ -135,8 +135,7 @@ function Like()
 		wesql::insert('',
 			'{db_prefix}likes',
 			array('id_content' => 'int', 'content_type' => 'string-6', 'id_member' => 'int', 'like_time' => 'int'),
-			array($id_content, $content_type, we::$id, $like_time),
-			array('id_content', 'content_type', 'id_member')
+			array($id_content, $content_type, we::$id, $like_time)
 		);
 		$now_liked = true;
 

@@ -94,8 +94,7 @@ function downloadAvatar($url, $memID, $max_width, $max_height)
 		array(
 			$memID, empty($settings['custom_avatar_enabled']) ? 0 : 1, $destName, $avatar_hash, $ext, 1,
 			$id_folder,
-		),
-		array('id_attach')
+		)
 	);
 	$attachID = wesql::insert_id();
 	// Retain this globally in case the script wants it.

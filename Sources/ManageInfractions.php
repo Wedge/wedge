@@ -325,8 +325,7 @@ function EditInfractions()
 						implode(',', $context['infraction_details']['sanctions']),
 						$context['infraction_details']['duration']['unit'] == 'i' ? 'i' : $context['infraction_details']['duration']['number'] . $context['infraction_details']['duration']['unit'],
 						implode(',', $context['infraction_details']['issuing_groups']),
-					),
-					array('id_infraction')
+					)
 				);
 			else
 				wesql::query('

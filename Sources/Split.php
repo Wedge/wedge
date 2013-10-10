@@ -650,24 +650,24 @@ function splitTopic($split1_id_topic, $split_messages, $new_subject, $dest_board
 
 	// We're off to insert the new topic!  Use 0 for now to avoid UNIQUE errors.
 	wesql::insert('',
-			'{db_prefix}topics',
-			array(
-				'id_board' => 'int',
-				'id_member_started' => 'int',
-				'id_member_updated' => 'int',
-				'id_first_msg' => 'int',
-				'id_last_msg' => 'int',
-				'num_replies' => 'int',
-				'unapproved_posts' => 'int',
-				'approved' => 'int',
-				'is_pinned' => 'int',
-			),
-			array(
-				$dest_board, $split2_first_mem, $split2_last_mem, 0,
-				0, $split2_replies, $split2_unapproved_posts, (int) $split2_approved, 0,
-			),
-			array('id_topic')
-		);
+		'{db_prefix}topics',
+		array(
+			'id_board' => 'int',
+			'id_member_started' => 'int',
+			'id_member_updated' => 'int',
+			'id_first_msg' => 'int',
+			'id_last_msg' => 'int',
+			'num_replies' => 'int',
+			'unapproved_posts' => 'int',
+			'approved' => 'int',
+			'is_pinned' => 'int',
+		),
+		array(
+			$dest_board, $split2_first_mem, $split2_last_mem, 0,
+			0, $split2_replies, $split2_unapproved_posts, (int) $split2_approved, 0,
+		)
+	);
+
 	$split2_id_topic = wesql::insert_id();
 	if ($split2_id_topic <= 0)
 		fatal_lang_error('cant_insert_topic');
@@ -831,9 +831,9 @@ function splitTopic($split1_id_topic, $split_messages, $new_subject, $dest_board
 		wesql::insert('ignore',
 			'{db_prefix}log_topics',
 			array('id_member' => 'int', 'id_topic' => 'int', 'id_msg' => 'int'),
-			$replaceEntries,
-			array('id_member', 'id_topic')
+			$replaceEntries
 		);
+
 		unset($replaceEntries);
 	}
 	wesql::free_result($request);

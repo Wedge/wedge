@@ -674,8 +674,7 @@ function MergeExecute($topics = array())
 		wesql::insert('replace',
 			'{db_prefix}log_topics',
 			array('id_member' => 'int', 'id_topic' => 'int', 'id_msg' => 'int'),
-			$replaceEntries,
-			array('id_member', 'id_topic')
+			$replaceEntries
 		);
 		unset($replaceEntries);
 
@@ -710,11 +709,10 @@ function MergeExecute($topics = array())
 				$replaceEntries[] = array($row['id_member'], $id_topic, 0, $row['sent']);
 
 			wesql::insert('replace',
-					'{db_prefix}log_notify',
-					array('id_member' => 'int', 'id_topic' => 'int', 'id_board' => 'int', 'sent' => 'int'),
-					$replaceEntries,
-					array('id_member', 'id_topic', 'id_board')
-				);
+				'{db_prefix}log_notify',
+				array('id_member' => 'int', 'id_topic' => 'int', 'id_board' => 'int', 'sent' => 'int'),
+				$replaceEntries
+			);
 			unset($replaceEntries);
 
 			wesql::query('

@@ -794,8 +794,7 @@ function Post2()
 			array(
 				$_POST['question'], $_POST['poll_hide'], $_POST['poll_max_votes'], (empty($_POST['poll_expire']) ? 0 : time() + $_POST['poll_expire'] * 3600 * 24), we::$id,
 				$_POST['guestname'], $_POST['poll_change_vote'], $_POST['poll_guest_vote'],
-			),
-			array('id_poll')
+			)
 		);
 		$id_poll = wesql::insert_id();
 
@@ -811,8 +810,7 @@ function Post2()
 		wesql::insert('',
 			'{db_prefix}poll_choices',
 			array('id_poll' => 'int', 'id_choice' => 'int', 'label' => 'string-255'),
-			$pollOptions,
-			array('id_poll', 'id_choice')
+			$pollOptions
 		);
 	}
 	else
@@ -911,8 +909,7 @@ function Post2()
 		wesql::insert('ignore',
 			'{db_prefix}log_notify',
 			array('id_member' => 'int', 'id_topic' => 'int', 'id_board' => 'int'),
-			array(we::$id, $topic, 0),
-			array('id_member', 'id_topic', 'id_board')
+			array(we::$id, $topic, 0)
 		);
 	}
 	elseif (!$newTopic)
@@ -1053,8 +1050,7 @@ function notifyMembersBoard(&$topicData)
 		array(
 			'id_topic' => 'int', 'id_msg' => 'int', 'note_type' => 'string', 'exclude' => 'int',
 		),
-		$digest_insert,
-		array()
+		$digest_insert
 	);
 
 	// Find the members with notification on for these boards.

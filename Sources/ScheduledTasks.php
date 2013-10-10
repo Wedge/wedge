@@ -145,8 +145,7 @@ function AutoTask()
 						),
 						array(
 							$row['id_task'], time(), (int) $total_time,
-						),
-						array()
+						)
 					);
 				}
 			}
@@ -994,8 +993,7 @@ function ReduceMailQueue($number = false, $override_limit = false, $force_send =
 		wesql::insert('replace',
 			'{db_prefix}settings',
 			array('variable' => 'string', 'value' => 'string'),
-			array('mail_failed_attempts', empty($settings['mail_failed_attempts']) ? 1 : ++$settings['mail_failed_attempts']),
-			array('variable')
+			array('mail_failed_attempts', empty($settings['mail_failed_attempts']) ? 1 : ++$settings['mail_failed_attempts'])
 		);
 
 		// If we have failed too many times, tell mail to wait a bit and try again.
@@ -1014,8 +1012,7 @@ function ReduceMailQueue($number = false, $override_limit = false, $force_send =
 		wesql::insert('',
 			'{db_prefix}mail_queue',
 			array('time_sent' => 'int', 'recipient' => 'string', 'body' => 'string', 'subject' => 'string', 'headers' => 'string', 'send_html' => 'string', 'private' => 'int'),
-			$failed_emails,
-			array('id_mail')
+			$failed_emails
 		);
 
 		return false;

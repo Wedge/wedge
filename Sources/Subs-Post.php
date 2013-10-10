@@ -312,8 +312,7 @@ function AddMailQueue($flush = false, $to_array = array(), $subject = '', $messa
 				'time_sent' => 'int', 'recipient' => 'string-255', 'body' => 'string', 'subject' => 'string-255',
 				'headers' => 'string-65534', 'send_html' => 'int', 'priority' => 'int', 'private' => 'int',
 			),
-			$cur_insert,
-			array('id_mail')
+			$cur_insert
 		);
 
 		$cur_insert = array();
@@ -357,8 +356,7 @@ function AddMailQueue($flush = false, $to_array = array(), $subject = '', $messa
 					'time_sent' => 'int', 'recipient' => 'string-255', 'body' => 'string', 'subject' => 'string-255',
 					'headers' => 'string-65534', 'send_html' => 'int', 'priority' => 'int', 'private' => 'int',
 				),
-				$cur_insert,
-				array('id_mail')
+				$cur_insert
 			);
 
 			// Clear this out.
@@ -635,8 +633,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = true, $from = n
 		array(
 			$pm_head, $from['id'], ($store_outbox ? 0 : 1),
 			$from['username'], time(), $htmlsubject, $htmlmessage,
-		),
-		array('id_pm')
+		)
 	);
 	$id_pm = wesql::insert_id();
 
@@ -674,8 +671,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = true, $from = n
 			array(
 				'id_pm' => 'int', 'id_member' => 'int', 'bcc' => 'int', 'deleted' => 'int', 'is_new' => 'int'
 			),
-			$insertRows,
-			array('id_pm', 'id_member')
+			$insertRows
 		);
 	}
 
@@ -958,8 +954,7 @@ function sendNotifications($topics, $type, $exclude = array(), $members_only = a
 		array(
 			'id_topic' => 'int', 'id_msg' => 'int', 'note_type' => 'string', 'exclude' => 'int',
 		),
-		$digest_insert,
-		array()
+		$digest_insert
 	);
 
 	// Find the members with notification on for this topic.
@@ -1183,8 +1178,7 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 			$msgOptions['body'],
 			$posterOptions['name'], $posterOptions['email'], time(), get_ip_identifier($posterOptions['ip']),
 			$msgOptions['smileys_enabled'] ? 1 : 0, '', $msgOptions['icon'], $msgOptions['approved'], !empty($msgOptions['data']) ? serialize($msgOptions['data']) : '',
-		),
-		array('id_msg')
+		)
 	);
 	$msgOptions['id'] = wesql::insert_id();
 
@@ -1228,8 +1222,7 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 				$topicOptions['pin_mode'] === null ? 0 : $topicOptions['pin_mode'],
 				$topicOptions['poll'] === null ? 0 : $topicOptions['poll'], 0,
 				$topicOptions['privacy'] === null ? 'default' : $topicOptions['privacy'],
-			),
-			array('id_topic')
+			)
 		);
 		$topicOptions['id'] = wesql::insert_id();
 
@@ -1344,8 +1337,7 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 			),
 			array(
 				$msgOptions['id'],
-			),
-			array()
+			)
 		);
 	}
 
@@ -1375,8 +1367,7 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 			wesql::insert('ignore',
 				'{db_prefix}log_topics',
 				array('id_topic' => 'int', 'id_member' => 'int', 'id_msg' => 'int'),
-				array($topicOptions['id'], $posterOptions['id'], $msgOptions['id']),
-				array('id_topic', 'id_member')
+				array($topicOptions['id'], $posterOptions['id'], $msgOptions['id'])
 			);
 		}
 	}
@@ -1593,8 +1584,7 @@ function createAttachment(&$attachmentOptions)
 			$id_folder, (int) $attachmentOptions['post'], $attachmentOptions['name'], $attachmentOptions['file_hash'], $attachmentOptions['fileext'],
 			(int) $attachmentOptions['size'], (empty($attachmentOptions['width']) ? 0 : (int) $attachmentOptions['width']), (empty($attachmentOptions['height']) ? '0' : (int) $attachmentOptions['height']),
 			(!empty($attachmentOptions['mime_type']) ? $attachmentOptions['mime_type'] : ''),
-		),
-		array('id_attach')
+		)
 	);
 	$attachmentOptions['id'] = wesql::insert_id();
 
@@ -1723,8 +1713,7 @@ function createAttachment(&$attachmentOptions)
 				array(
 					$id_folder, (int) $attachmentOptions['post'], 3, $thumb_filename, $thumb_file_hash,
 					$attachmentOptions['fileext'], $thumb_size, $thumb_width, $thumb_height, $thumb_mime,
-				),
-				array('id_attach')
+				)
 			);
 			$attachmentOptions['thumb'] = wesql::insert_id();
 
@@ -1869,8 +1858,7 @@ function modifyPost(&$msgOptions, &$topicOptions, &$posterOptions)
 			wesql::insert('ignore',
 				'{db_prefix}log_topics',
 				array('id_topic' => 'int', 'id_member' => 'int', 'id_msg' => 'int'),
-				array($topicOptions['id'], we::$id, $settings['maxMsgID']),
-				array('id_topic', 'id_member')
+				array($topicOptions['id'], we::$id, $settings['maxMsgID'])
 			);
 		}
 	}
@@ -2141,8 +2129,7 @@ function approvePosts($msgs, $approve = true)
 		wesql::insert('ignore',
 			'{db_prefix}approval_queue',
 			array('id_msg' => 'int'),
-			$msgInserts,
-			array('id_msg')
+			$msgInserts
 		);
 	}
 
@@ -2217,8 +2204,7 @@ function sendApprovalNotifications(&$topicData)
 		array(
 			'id_topic' => 'int', 'id_msg' => 'int', 'note_type' => 'string', 'exclude' => 'int',
 		),
-		$digest_insert,
-		array()
+		$digest_insert
 	);
 
 	// Find everyone who needs to know about this.
@@ -2731,8 +2717,7 @@ function saveDraft($is_pm, $id_context = 0)
 			$board,
 			$id_context,
 			$extra,
-		),
-		array('id_draft')
+		)
 	);
 
 	return wesql::insert_id();

@@ -79,8 +79,7 @@ function Notify()
 		wesql::insert('ignore',
 			'{db_prefix}log_notify',
 			array('id_member' => 'int', 'id_topic' => 'int'),
-			array(we::$id, $topic),
-			array('id_member', 'id_topic')
+			array(we::$id, $topic)
 		);
 	}
 	else
@@ -153,8 +152,7 @@ function BoardNotify()
 		wesql::insert('ignore',
 			'{db_prefix}log_notify',
 			array('id_member' => 'int', 'id_board' => 'int'),
-			array(we::$id, $board),
-			array('id_member', 'id_board')
+			array(we::$id, $board)
 		);
 	}
 	// ...or off?

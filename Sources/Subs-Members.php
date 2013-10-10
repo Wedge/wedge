@@ -175,8 +175,7 @@ function deleteMembers($users, $check_not_admin = false, $merge_to = false)
 				'log_time' => 'int', 'id_log' => 'int', 'id_member' => 'int', 'ip' => 'int', 'action' => 'string',
 				'id_board' => 'int', 'id_topic' => 'int', 'id_msg' => 'int', 'extra' => 'string-65534',
 			),
-			$log_inserts,
-			array('id_action')
+			$log_inserts
 		);
 
 	// Make these peoples' posts guest posts.
@@ -742,8 +741,7 @@ function registerMember(&$regOptions, $return_errors = false)
 	wesql::insert('',
 		'{db_prefix}members',
 		$column_names,
-		$values,
-		array('id_member')
+		$values
 	);
 	$memberID = wesql::insert_id();
 
@@ -764,8 +762,7 @@ function registerMember(&$regOptions, $return_errors = false)
 		wesql::insert('',
 			'{db_prefix}themes',
 			array('id_member' => 'int', 'variable' => 'string-255', 'value' => 'string-65534'),
-			$inserts,
-			array('id_member', 'variable')
+			$inserts
 		);
 	}
 

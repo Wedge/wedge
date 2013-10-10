@@ -277,8 +277,7 @@ function loadForumTests()
 						$row[\'myid_first_msg\'],
 						$row[\'myid_last_msg\'],
 						$row[\'my_num_replies\']
-					),
-					array(\'id_topic\')
+					)
 				);
 
 				$newTopicID = wesql::insert_id();
@@ -385,8 +384,7 @@ function loadForumTests()
 						$txt[\'salvaged_poll_message_body\'],
 						\'xx\',
 						1,
-					),
-					array(\'id_topic\')
+					)
 				);
 
 				$newMessageID = wesql::insert_id();
@@ -410,8 +408,7 @@ function loadForumTests()
 						$newMessageID,
 						$newMessageID,
 						0,
-					),
-					array(\'id_topic\')
+					)
 				);
 
 				$newTopicID = wesql::insert_id();
@@ -1041,8 +1038,7 @@ function loadForumTests()
 						wesql::insert(\'ignore\',
 							"{db_prefix}log_search_subjects",
 							array(\'word\' => \'string\', \'id_topic\' => \'int\'),
-							$inserts,
-							array(\'word\', \'id_topic\')
+							$inserts
 						);
 						$inserts = array();
 					}
@@ -1053,8 +1049,7 @@ function loadForumTests()
 					wesql::insert(\'ignore\',
 						"{db_prefix}log_search_subjects",
 						array(\'word\' => \'string\', \'id_topic\' => \'int\'),
-						$inserts,
-						array(\'word\', \'id_topic\')
+						$inserts
 					);
 			'),
 			'message_function' => create_function('$row', '
@@ -1518,8 +1513,7 @@ function createSalvageArea()
 		wesql::insert('',
 			'{db_prefix}categories',
 			array('name' => 'string-255', 'cat_order' => 'int'),
-			array($txt['salvaged_category_name'], -1),
-			array('id_cat')
+			array($txt['salvaged_category_name'], -1)
 		);
 
 		if (wesql::affected_rows() <= 0)
@@ -1552,8 +1546,7 @@ function createSalvageArea()
 		wesql::insert('',
 			'{db_prefix}boards',
 			array('name' => 'string-255', 'description' => 'string-255', 'id_cat' => 'int', 'member_groups' => 'string', 'board_order' => 'int', 'redirect' => 'string'),
-			array($txt['salvaged_board_name'], $txt['salvaged_board_description'], $salvageCatID, '1', -1, ''),
-			array('id_board')
+			array($txt['salvaged_board_name'], $txt['salvaged_board_description'], $salvageCatID, '1', -1, '')
 		);
 
 		if (wesql::affected_rows() <= 0)

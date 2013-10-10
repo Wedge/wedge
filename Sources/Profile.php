@@ -671,8 +671,7 @@ function ModifyProfile($post_errors = array())
 						'action' => 'string', 'id_log' => 'int', 'log_time' => 'int', 'id_member' => 'int', 'ip' => 'int',
 						'extra' => 'string-65534',
 					),
-					$log_changes,
-					array('id_action')
+					$log_changes
 				);
 			}
 

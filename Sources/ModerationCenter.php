@@ -242,8 +242,7 @@ function ModBlockNotes()
 				),
 				array(
 					we::$id, we::$user['name'], 'modnote', '', $_POST['new_note'], time(),
-				),
-				array('id_comment')
+				)
 			);
 
 			// Clear the cache.
@@ -746,8 +745,7 @@ function ModReport()
 				array(
 					we::$id, we::$user['name'], 'reportc', '',
 					$_REQUEST['report'], $newComment, time(),
-				),
-				array('id_comment')
+				)
 			);
 
 			// Redirect to prevent double submittion.

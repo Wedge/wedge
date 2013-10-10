@@ -704,8 +704,7 @@ function ModifyLanguageEntries()
 			wesql::insert('replace',
 				'{db_prefix}language_changes',
 				array('id_theme' => 'int', 'id_lang' => 'string', 'lang_file' => 'string', 'lang_var' => 'string', 'lang_key' => 'string', 'lang_string' => 'string', 'serial' => 'int'),
-				array($id_theme, $id_lang, $lang_file, $lang_var, $lang_key, $lang_string, $serial),
-				array('id_theme', 'id_lang', 'lang_file', 'lang_var', 'lang_key')
+				array($id_theme, $id_lang, $lang_file, $lang_var, $lang_key, $lang_string, $serial)
 			);
 
 			// Figure out what we're flushing. We don't need to do the *entire* cache, but we do need to do anything that could have been affected by this file. There are some awesome potential cross-contamination possibilities, so be safe.

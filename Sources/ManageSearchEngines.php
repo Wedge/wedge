@@ -373,8 +373,7 @@ function EditSpider()
 				),
 				array(
 					$_POST['spider_name'], $_POST['spider_agent'], $ips,
-				),
-				array('id_spider')
+				)
 			);
 
 		// Order by user agent length.
@@ -526,8 +525,7 @@ function logSpider()
 				),
 				array(
 					$_SESSION['id_robot'], time(), $date, 1,
-				),
-				array('id_spider', 'stat_date')
+				)
 			);
 		}
 	}
@@ -546,8 +544,7 @@ function logSpider()
 		wesql::insert('',
 			'{db_prefix}log_spider_hits',
 			array('id_spider' => 'int', 'log_time' => 'int', 'url' => 'string'),
-			array($_SESSION['id_robot'], time(), $url),
-			array()
+			array($_SESSION['id_robot'], time(), $url)
 		);
 	}
 }
@@ -599,8 +596,7 @@ function consolidateSpiderStats()
 		wesql::insert('ignore',
 			'{db_prefix}log_spider_stats',
 			array('stat_date' => 'date', 'id_spider' => 'int', 'page_hits' => 'int', 'last_seen' => 'int'),
-			$stat_inserts,
-			array('stat_date', 'id_spider')
+			$stat_inserts
 		);
 
 	// All processed.

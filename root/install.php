@@ -1045,8 +1045,7 @@ function DatabasePopulation()
 			wesql::insert('replace',
 				$db_prefix . 'settings',
 				array('variable' => 'string-255', 'value' => 'string-65534'),
-				$rows,
-				array('variable')
+				$rows
 			);
 		}
 	}
@@ -1058,13 +1057,8 @@ function DatabasePopulation()
 		if (date_default_timezone_set($timezone_id))
 			wesql::insert('',
 				$db_prefix . 'settings',
-				array(
-					'variable' => 'string-255', 'value' => 'string-65534',
-				),
-				array(
-					'default_timezone', $timezone_id,
-				),
-				array('variable')
+				array('variable' => 'string-255', 'value' => 'string-65534'),
+				array('default_timezone', $timezone_id)
 			);
 	}
 
@@ -1091,8 +1085,7 @@ function DatabasePopulation()
 				'hardness' => 'int', 'ban_type' => 'string', 'ban_content' => 'string',
 				'ban_reason' => 'string', 'extra' => 'string', 'added' => 'int', 'member_added' => 'int',
 			),
-			$rows,
-			array('id_ban')
+			$rows
 		);
 	}
 
@@ -1129,8 +1122,7 @@ function DatabasePopulation()
 	wesql::insert('replace',
 		'{db_prefix}settings',
 		array('variable' => 'string-255', 'value' => 'string-65534'),
-		array('pretty_filters', serialize($settings['pretty_filters'])),
-		array('variable')
+		array('pretty_filters', serialize($settings['pretty_filters']))
 	);
 
 	require_once($sourcedir . '/Subs.php');
@@ -1293,8 +1285,7 @@ function AdminAccount()
 					'', '', '', '',
 					'', '', '',
 					'', '', '',
-				),
-				array('id_member')
+				)
 			);
 
 			// Awww, crud!
@@ -1396,8 +1387,7 @@ function DeleteInstall()
 	wesql::insert('ignore',
 		'{db_prefix}log_activity',
 		array('date' => 'date', 'topics' => 'int', 'posts' => 'int', 'registers' => 'int'),
-		array(strftime('%Y-%m-%d', time()), 1, 1, (!empty($incontext['member_id']) ? 1 : 0)),
-		array('date')
+		array(strftime('%Y-%m-%d', time()), 1, 1, (!empty($incontext['member_id']) ? 1 : 0))
 	);
 
 	// Automatically log them in ;)
@@ -1430,8 +1420,7 @@ function DeleteInstall()
 			),
 			array(
 				session_id(), time(), 'USER_AGENT|s:' . strlen($_SERVER['HTTP_USER_AGENT']) . ':"' . $_SERVER['HTTP_USER_AGENT'] . '";admin_time|i:' . time() . ';',
-			),
-			array('session_id')
+			)
 		);
 	}
 

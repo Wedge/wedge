@@ -274,8 +274,7 @@ function ThemeList()
 			wesql::insert('replace',
 				'{db_prefix}themes',
 				array('id_theme' => 'int', 'id_member' => 'int', 'variable' => 'string-255', 'value' => 'string-65534'),
-				$setValues,
-				array('id_theme', 'variable', 'id_member')
+				$setValues
 			);
 		}
 
@@ -416,8 +415,7 @@ function SetThemeSettings()
 			wesql::insert('replace',
 				'{db_prefix}themes',
 				array('id_member' => 'int', 'id_theme' => 'int', 'variable' => 'string-255', 'value' => 'string-65534'),
-				$inserts,
-				array('id_member', 'id_theme', 'variable')
+				$inserts
 			);
 		}
 
@@ -960,8 +958,7 @@ function ThemeInstall()
 			wesql::insert('',
 				'{db_prefix}themes',
 				array('id_theme' => 'int', 'variable' => 'string-255', 'value' => 'string-65534'),
-				$inserts,
-				array('id_theme', 'variable')
+				$inserts
 			);
 
 		updateSettings(array('knownThemes' => strtr($settings['knownThemes'] . ',' . $id_theme, array(',,' => ','))));

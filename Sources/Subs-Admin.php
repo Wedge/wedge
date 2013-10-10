@@ -431,8 +431,7 @@ function updateAdminPreferences()
 	wesql::insert('replace',
 		'{db_prefix}themes',
 		array('id_member' => 'int', 'id_theme' => 'int', 'variable' => 'string-255', 'value' => 'string-65534'),
-		array(we::$id, 1, 'admin_preferences', $options['admin_preferences']),
-		array('id_member', 'id_theme', 'variable')
+		array(we::$id, 1, 'admin_preferences', $options['admin_preferences'])
 	);
 
 	// Make sure we invalidate any cache.

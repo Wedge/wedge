@@ -1043,8 +1043,7 @@ function makeThemeChanges($memID, $id_theme)
 			wesql::insert('replace',
 				'{db_prefix}themes',
 				array('id_member' => 'int', 'id_theme' => 'int', 'variable' => 'string-255', 'value' => 'string-65534'),
-				$themeSetArray,
-				array('id_member', 'id_theme', 'variable')
+				$themeSetArray
 			);
 		}
 
@@ -1208,8 +1207,7 @@ function makeCustomFieldChanges($memID, $area, $sanitize = true)
 		wesql::insert('replace',
 			'{db_prefix}themes',
 			array('id_theme' => 'int', 'variable' => 'string-255', 'value' => 'string-65534', 'id_member' => 'int'),
-			$changes,
-			array('id_theme', 'variable', 'id_member')
+			$changes
 		);
 		if (!empty($log_changes) && !empty($settings['log_enabled_profile']))
 			wesql::insert('',
@@ -1218,8 +1216,7 @@ function makeCustomFieldChanges($memID, $area, $sanitize = true)
 					'action' => 'string', 'id_log' => 'int', 'log_time' => 'int', 'id_member' => 'int', 'ip' => 'int',
 					'extra' => 'string-65534',
 				),
-				$log_changes,
-				array('id_action')
+				$log_changes
 			);
 	}
 }
@@ -2646,8 +2643,7 @@ function profileSaveAvatarData(&$value)
 					array(
 						$memID, (empty($settings['custom_avatar_enabled']) ? 0 : 1), $destName, $file_hash, $extension, filesize($_FILES['attachment']['tmp_name']),
 						(int) $width, (int) $height, $mime_type, $id_folder,
-					),
-					array('id_attach')
+					)
 				);
 
 				$cur_profile['id_attach'] = wesql::insert_id();
@@ -3193,8 +3189,7 @@ function groupMembership2($profile_vars, $post_errors, $memID)
 			),
 			array(
 				$memID, $group_id, time(), $_POST['reason'],
-			),
-			array('id_request')
+			)
 		);
 
 		// Send an email to all group moderators etc.

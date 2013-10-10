@@ -885,8 +885,7 @@ function Search2()
 					wesql::insert('',
 						'{db_prefix}log_search_results',
 						array('id_search' => 'int', 'id_topic' => 'int', 'relevance' => 'int', 'id_msg' => 'int', 'num_matches' => 'int'),
-						$inserts,
-						array('id_search', 'id_topic')
+						$inserts
 					);
 				}
 
@@ -1100,8 +1099,7 @@ function Search2()
 						wesql::insert('',
 							('{db_prefix}' . ($createTemporary ? 'tmp_' : '') . 'log_search_topics'),
 							$createTemporary ? array('id_topic' => 'int') : array('id_search' => 'int', 'id_topic' => 'int'),
-							$inserts,
-							$createTemporary ? array('id_topic') : array('id_search', 'id_topic')
+							$inserts
 						);
 					}
 
@@ -1187,8 +1185,7 @@ function Search2()
 						wesql::insert('',
 							'{db_prefix}' . ($createTemporary ? 'tmp_' : '') . 'log_search_messages',
 							$createTemporary ? array('id_msg' => 'int') : array('id_msg' => 'int', 'id_search' => 'int'),
-							$inserts,
-							$createTemporary ? array('id_msg') : array('id_msg', 'id_search')
+							$inserts
 						);
 					}
 

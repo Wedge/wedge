@@ -852,8 +852,7 @@ function profileInfractions($memID)
 						'notice_subject' => 'string', 'notice_body' => 'string', 'inf_state' => 'int',
 						'imperative' => 'int', 'because_of' => 'string',
 					),
-					$infraction_details,
-					array('id_issue')
+					$infraction_details
 				);
 
 				// Bump it back to the list of infractions. This will also update their account with the entire infraction history.
@@ -1051,8 +1050,7 @@ function profileBan($memID)
 					'hardness' => 'int', 'ban_type' => 'string', 'ban_content' => 'string',
 					'ban_reason' => 'string', 'extra' => 'string', 'added' => 'int', 'member_added' => 'int',
 				),
-				$ban_criteria,
-				array('id_ban')
+				$ban_criteria
 			);
 			loadSource('ManageBans');
 			updateBannedMembers();
@@ -1340,8 +1338,7 @@ function subscriptions($memID)
 				array(
 					$context['sub']['id'], $memID, 0, 0, $pending_details,
 					time(), '',
-				),
-				array('id_sublog')
+				)
 			);
 		}
 

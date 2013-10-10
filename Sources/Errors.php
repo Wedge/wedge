@@ -150,8 +150,7 @@ function log_error($error_message, $error_type = 'general', $file = null, $line 
 		wesql::insert('',
 			'{db_prefix}log_errors',
 			array('id_member' => 'int', 'log_time' => 'int', 'ip' => 'int', 'url' => 'string-65534', 'message' => 'string-65534', 'error_type' => 'string-255', 'file' => 'string-255', 'line' => 'int'),
-			$error_info,
-			array('id_error')
+			$error_info
 		);
 		$last_error = $error_info;
 

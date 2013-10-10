@@ -209,8 +209,7 @@ function trackStatsUsersOnline($total_users_online)
 			wesql::insert('ignore',
 				'{db_prefix}log_activity',
 				array('date' => 'date', 'most_on' => 'int'),
-				array($date, $total_users_online),
-				array('date')
+				array($date, $total_users_online)
 			);
 		}
 		// There's an entry in log_activity on today...

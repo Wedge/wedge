@@ -222,8 +222,7 @@ function pretty_filter_topics(&$urls)
 				'',
 				'{db_prefix}pretty_topic_urls',
 				array('id_topic' => 'int', 'pretty_url' => 'string'),
-				$add_new,
-				array()
+				$add_new
 			);
 		}
 

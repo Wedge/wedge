@@ -170,8 +170,7 @@ function updateStats($type, $parameter1 = null, $parameter2 = null)
 				wesql::insert('ignore',
 					'{db_prefix}log_search_subjects',
 					array('word' => 'string', 'id_topic' => 'int'),
-					$inserts,
-					array('word', 'id_topic')
+					$inserts
 				);
 		}
 	}
@@ -497,8 +496,7 @@ function updateSettings($changeArray, $update = false)
 	wesql::insert('replace',
 		'{db_prefix}settings',
 		array('variable' => 'string-255', 'value' => 'string-65534'),
-		$replaceArray,
-		array('variable')
+		$replaceArray
 	);
 
 	// Kill the cache - it needs redoing now, but we won't bother ourselves with that here.
@@ -1025,8 +1023,7 @@ function writeLog($force = false)
 		wesql::insert($do_delete ? 'ignore' : 'replace',
 			'{db_prefix}log_online',
 			array('session' => 'string', 'id_member' => 'int', 'id_spider' => 'int', 'log_time' => 'int', 'ip' => 'int', 'url' => 'string'),
-			array($session_id, we::$id, empty($_SESSION['id_robot']) ? 0 : $_SESSION['id_robot'], time(), get_ip_identifier(we::$user['ip']), $serialized),
-			array('session')
+			array($session_id, we::$id, empty($_SESSION['id_robot']) ? 0 : $_SESSION['id_robot'], time(), get_ip_identifier(we::$user['ip']), $serialized)
 		);
 	}
 
@@ -1245,8 +1242,7 @@ function logAction($action, $extra = array(), $log_type = 'moderate')
 		array(
 			time(), $log_types[$log_type], we::$id, get_ip_identifier(we::$user['ip']), $action,
 			$board_id, $topic_id, $msg_id, serialize($extra),
-		),
-		array('id_action')
+		)
 	);
 
 	return wesql::insert_id();
@@ -1301,8 +1297,7 @@ function trackStats($stats = array())
 		wesql::insert('ignore',
 			'{db_prefix}log_activity',
 			array_merge($insert_keys, array('date' => 'date')),
-			array_merge($cache_stats, array($date)),
-			array('date')
+			array_merge($cache_stats, array($date))
 		);
 	}
 
@@ -1390,8 +1385,7 @@ function spamProtection($error_type)
 	wesql::insert('replace',
 		'{db_prefix}log_floodcontrol',
 		array('ip' => 'int', 'log_time' => 'int', 'log_type' => 'string'),
-		array(get_ip_identifier(we::$user['ip']), time(), $error_type),
-		array('ip', 'log_type')
+		array(get_ip_identifier(we::$user['ip']), time(), $error_type)
 	);
 
 	// If affected is 0 or 2, it was there already.

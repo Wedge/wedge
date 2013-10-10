@@ -239,8 +239,7 @@ function Vote()
 	wesql::insert('',
 		'{db_prefix}log_polls',
 		array('id_poll' => 'int', 'id_member' => 'int', 'id_choice' => 'int'),
-		$inserts,
-		array('id_poll', 'id_member', 'id_choice')
+		$inserts
 	);
 
 	wesql::query('
@@ -764,8 +763,7 @@ function EditPoll2()
 			array(
 				$_POST['question'], $_POST['poll_hide'], $_POST['poll_voters_visible'], $_POST['poll_max_votes'], $_POST['poll_expire'], we::$id,
 				we::$user['username'], $_POST['poll_change_vote'], $_POST['poll_guest_vote'],
-			),
-			array('id_poll')
+			)
 		);
 
 		// Set the poll ID.
@@ -838,8 +836,7 @@ function EditPoll2()
 				),
 				array(
 					$bcinfo['id_poll'], $k, $option, 0,
-				),
-				array()
+				)
 			);
 	}
 

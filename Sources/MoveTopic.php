@@ -494,8 +494,7 @@ function moveTopics($topics, $toBoard)
 			wesql::insert('replace',
 				'{db_prefix}log_topics',
 				array('id_topic' => 'int', 'id_member' => 'int', 'id_msg' => 'int'),
-				$log_topics,
-				array('id_topic', 'id_member')
+				$log_topics
 			);
 
 			$log_topics = array();
@@ -510,8 +509,7 @@ function moveTopics($topics, $toBoard)
 		wesql::insert('replace',
 			'{db_prefix}log_topics',
 			array('id_topic' => 'int', 'id_member' => 'int', 'id_msg' => 'int'),
-			$log_topics,
-			array('id_topic', 'id_member')
+			$log_topics
 		);
 	}
 
@@ -697,8 +695,7 @@ function moveTopics($topics, $toBoard)
 		wesql::insert('replace',
 			'{db_prefix}log_boards',
 			array('id_board' => 'int', 'id_member' => 'int', 'id_msg' => 'int'),
-			array($toBoard, we::$id, $settings['maxMsgID']),
-			array('id_board', 'id_member')
+			array($toBoard, we::$id, $settings['maxMsgID'])
 		);
 	}
 

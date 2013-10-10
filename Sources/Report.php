@@ -244,8 +244,7 @@ function ReportToModerator2()
 				array(
 					$_POST['msg'], $message['id_topic'], $message['id_board'], $message['id_poster'], $message['real_name'],
 					$message['subject'], $message['body'], time(), time(), 1, 0,
-				),
-				array('id_report')
+				)
 			);
 			$id_report = wesql::insert_id();
 		}
@@ -262,8 +261,7 @@ function ReportToModerator2()
 				array(
 					$id_report, we::$id, we::$user['name'], we::$user['email'],
 					get_ip_identifier(we::$user['ip']), $poster_comment, time(),
-				),
-				array('id_comment')
+				)
 			);
 		}
 	}

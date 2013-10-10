@@ -884,9 +884,6 @@ function get_ip_identifier($ip)
 		),
 		array(
 			$ip,
-		),
-		array(
-			'id_ip',
 		)
 	);
 	return wesql::insert_id();

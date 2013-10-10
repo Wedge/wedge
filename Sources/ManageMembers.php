@@ -1273,8 +1273,7 @@ function AdminApprove()
 				'log_time' => 'int', 'id_log' => 'int', 'id_member' => 'int', 'ip' => 'int', 'action' => 'string',
 				'id_board' => 'int', 'id_topic' => 'int', 'id_msg' => 'int', 'extra' => 'string-65534',
 			),
-			$log_inserts,
-			array('id_action')
+			$log_inserts
 		);
 	}
 

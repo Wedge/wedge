@@ -148,8 +148,7 @@ function createCategory($catOptions)
 		),
 		array(
 			$catOptions['cat_name'],
-		),
-		array('id_cat')
+		)
 	);
 
 	// Grab the new category ID.
@@ -305,8 +304,7 @@ function collapseCategories($categories, $new_status, $members = null, $check_co
 				array(
 					'id_cat' => 'int', 'id_member' => 'int',
 				),
-				$updates['insert'],
-				array('id_cat', 'id_member')
+				$updates['insert']
 			);
 
 		// And expand the ones that were originally collapsed.

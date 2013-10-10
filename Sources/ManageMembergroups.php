@@ -363,8 +363,7 @@ function AddMembergroup()
 			array(
 				$id_group, '', $_POST['group_name'], ($postCountBasedGroup ? (int) $_POST['min_posts'] : '-1'),
 				'1#rank.gif', '', '', $_POST['group_type'],
-			),
-			array('id_group')
+			)
 		);
 
 		// Update the post groups now, if this is a post group!
@@ -435,8 +434,7 @@ function AddMembergroup()
 				wesql::insert('',
 					'{db_prefix}permissions',
 					array('id_group' => 'int', 'permission' => 'string', 'add_deny' => 'int'),
-					$inserts,
-					array('id_group', 'permission')
+					$inserts
 				);
 
 			$request = wesql::query('
@@ -456,8 +454,7 @@ function AddMembergroup()
 				wesql::insert('',
 					'{db_prefix}board_permissions',
 					array('id_group' => 'int', 'id_profile' => 'int', 'permission' => 'string', 'add_deny' => 'int'),
-					$inserts,
-					array('id_group', 'id_profile', 'permission')
+					$inserts
 				);
 
 			// Also get some membergroup information if we're copying and not copying from guests...
@@ -561,8 +558,7 @@ function AddMembergroup()
 				array(
 					'id_board' => 'int', 'id_group' => 'int', 'view_perm' => 'string', 'enter_perm' => 'string',
 				),
-				$insert_rows,
-				array('id_board', 'id_group')
+				$insert_rows
 			);
 
 		// If this is joinable then set it to show group membership in people's profiles.
@@ -823,8 +819,7 @@ function EditMembergroup()
 					array(
 						'id_board' => 'int', 'id_group' => 'int', 'view_perm' => 'string', 'enter_perm' => 'string',
 					),
-					$insert_rows,
-					array('id_board', 'id_group')
+					$insert_rows
 				);
 
 			$_POST['boardaccess'] = empty($_POST['boardaccess']) || !is_array($_POST['boardaccess']) ? array() : $_POST['boardaccess'];
@@ -1035,8 +1030,7 @@ function EditMembergroup()
 				wesql::insert('',
 					'{db_prefix}group_moderators',
 					array('id_group' => 'int', 'id_member' => 'int'),
-					$mod_insert,
-					array('id_group', 'id_member')
+					$mod_insert
 				);
 			}
 		}

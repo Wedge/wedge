@@ -116,8 +116,7 @@ function MessageIndex()
 		wesql::insert('replace',
 			'{db_prefix}log_boards',
 			array('id_msg' => 'int', 'id_member' => 'int', 'id_board' => 'int'),
-			array($settings['maxMsgID'], we::$id, $board),
-			array('id_member', 'id_board')
+			array($settings['maxMsgID'], we::$id, $board)
 		);
 
 		if (!empty($board_info['parent_boards']))

@@ -124,15 +124,13 @@ function markBoardsRead($boards, $unread = false)
 		wesql::insert('replace',
 			'{db_prefix}log_mark_read',
 			array('id_msg' => 'int', 'id_member' => 'int', 'id_board' => 'int'),
-			$markRead,
-			array('id_board', 'id_member')
+			$markRead
 		);
 
 		wesql::insert('replace',
 			'{db_prefix}log_boards',
 			array('id_msg' => 'int', 'id_member' => 'int', 'id_board' => 'int'),
-			$markRead,
-			array('id_board', 'id_member')
+			$markRead
 		);
 	}
 
@@ -232,8 +230,7 @@ function MarkRead()
 		wesql::insert('replace',
 			'{db_prefix}log_topics',
 			array('id_msg' => 'int', 'id_member' => 'int', 'id_topic' => 'int'),
-			$markRead,
-			array('id_member', 'id_topic')
+			$markRead
 		);
 
 		if (isset($_SESSION['seen_cache']))
@@ -309,8 +306,7 @@ function MarkRead()
 		wesql::insert('replace',
 			'{db_prefix}log_topics',
 			array('id_msg' => 'int', 'id_member' => 'int', 'id_topic' => 'int'),
-			array($earlyMsg, we::$id, $topic),
-			array('id_member', 'id_topic')
+			array($earlyMsg, we::$id, $topic)
 		);
 
 		if (AJAX)
@@ -422,8 +418,7 @@ function MarkRead()
 			wesql::insert('replace',
 				'{db_prefix}log_boards',
 				array('id_msg' => 'int', 'id_member' => 'int', 'id_board' => 'int'),
-				$logBoardInserts,
-				array('id_member', 'id_board')
+				$logBoardInserts
 			);
 		}
 		wesql::free_result($result);
@@ -695,8 +690,7 @@ function modifyBoard($board_id, &$boardOptions)
 		wesql::insert('',
 			'{db_prefix}board_groups',
 			array('id_board' => 'int', 'id_group' => 'int', 'view_perm' => 'string', 'enter_perm' => 'string'),
-			$rows,
-			array('id_board', 'id_group')
+			$rows
 		);
 	}
 
@@ -757,8 +751,7 @@ function modifyBoard($board_id, &$boardOptions)
 			wesql::insert('',
 				'{db_prefix}moderators',
 				array('id_board' => 'int', 'id_member' => 'int'),
-				$inserts,
-				array('id_board', 'id_member')
+				$inserts
 			);
 		}
 
@@ -862,8 +855,7 @@ function createBoard($boardOptions)
 		array(
 			$boardOptions['target_category'], $boardOptions['board_name'], '', 0,
 			'-1,0', '', 'dummy' . rand(100000, 999999), 11, '',
-		),
-		array('id_board')
+		)
 	);
 	$board_id = wesql::insert_id();
 

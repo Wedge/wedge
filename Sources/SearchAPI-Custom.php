@@ -267,8 +267,7 @@ class custom_search
 			wesql::insert('ignore',
 				'{db_prefix}log_search_words',
 				array('id_word' => 'int', 'id_msg' => 'int'),
-				$inserts,
-				array('id_word', 'id_msg')
+				$inserts
 			);
 	}
 
@@ -307,8 +306,7 @@ class custom_search
 			wesql::insert('',
 				'{db_prefix}log_search_words',
 				array('id_word' => 'string', 'id_msg' => 'int'),
-				$inserts,
-				array('id_word', 'id_msg')
+				$inserts
 			);
 		}
 	}

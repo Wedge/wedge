@@ -814,8 +814,7 @@ function removeMessage($message, $decreasePostCount = true)
 				array(
 					$settings['recycle_board'], $row['id_member'], $row['id_member'], $message,
 					$message, 0, 1, $row['id_topic'],
-				),
-				array('id_topic')
+				)
 			);
 
 		// Capture the ID of the new topic...
@@ -859,8 +858,7 @@ function removeMessage($message, $decreasePostCount = true)
 				wesql::insert('replace',
 					'{db_prefix}log_topics',
 					array('id_topic' => 'int', 'id_member' => 'int', 'id_msg' => 'int'),
-					array($topicID, we::$id, $settings['maxMsgID']),
-					array('id_topic', 'id_member')
+					array($topicID, we::$id, $settings['maxMsgID'])
 				);
 
 			// Mark recycle board as seen, if it was marked as seen before.
@@ -868,8 +866,7 @@ function removeMessage($message, $decreasePostCount = true)
 				wesql::insert('replace',
 					'{db_prefix}log_boards',
 					array('id_board' => 'int', 'id_member' => 'int', 'id_msg' => 'int'),
-					array($settings['recycle_board'], we::$id, $settings['maxMsgID']),
-					array('id_board', 'id_member')
+					array($settings['recycle_board'], we::$id, $settings['maxMsgID'])
 				);
 
 			// Add one topic and post to the recycle bin board.

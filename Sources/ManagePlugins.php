@@ -768,8 +768,7 @@ function EnablePlugin()
 					'task' => 'string',
 					'sourcefile' => 'string',
 				),
-				$inserts,
-				array('task')
+				$inserts
 			);
 		}
 	}
@@ -1004,8 +1003,7 @@ function EnablePlugin()
 					'trim_wspace' => 'string',
 					'id_plugin' => 'string',
 				),
-				$new_bbcode,
-				array('id_bbcode')
+				$new_bbcode
 			);
 		}
 	}
@@ -1645,8 +1643,7 @@ function editPluginRepo()
 		wesql::insert(isset($columns['id_server']) ? 'replace' : 'insert',
 			'{db_prefix}package_servers',
 			$columns,
-			$context['repository'],
-			array('id_server')
+			$context['repository']
 		);
 
 		redirectexit('action=admin;area=plugins;sa=add');

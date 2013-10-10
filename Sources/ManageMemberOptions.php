@@ -1178,8 +1178,7 @@ function EditCustomProfiles()
 					$show_reg, $show_mlist, $show_display, $show_profile,
 					$privacy['can_see'], $privacy['can_edit'], $active, $default,
 					$can_search, $bbc, $mask, $enclose, $placement, $position,
-				),
-				array('id_field')
+				)
 			);
 		}
 	}
@@ -1428,8 +1427,7 @@ function ModifyMemberPreferences($return_config = false)
 			wesql::insert('replace',
 				'{db_prefix}themes',
 				array('id_member' => 'int', 'id_theme' => 'int', 'variable' => 'string-255', 'value' => 'string-65534'),
-				$setValues,
-				array('id_theme', 'variable', 'id_member')
+				$setValues
 			);
 		}
 

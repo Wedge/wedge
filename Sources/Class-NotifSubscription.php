@@ -71,8 +71,7 @@ class NotifSubscription
 
 		wesql::insert('', '{db_prefix}notif_subs',
 			array('id_member' => 'int', 'id_object' => 'int', 'type' => 'string', 'starttime' => 'int'),
-			array($member, $object, $subs->getName(), time()),
-			array('id_member', 'id_object', 'type')
+			array($member, $object, $subs->getName(), time())
 		);
 
 		return new self($member, $object, $subs);

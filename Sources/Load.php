@@ -2469,8 +2469,7 @@ function sessionWrite($session_id, $data)
 		$result = wesql::insert('ignore',
 			'{db_prefix}sessions',
 			array('session_id' => 'string', 'data' => 'string', 'last_update' => 'int'),
-			array($session_id, $data, time()),
-			array('session_id')
+			array($session_id, $data, time())
 		);
 
 	return $result;

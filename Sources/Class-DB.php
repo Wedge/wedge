@@ -429,11 +429,11 @@ class wesql
 		fatal_error($context['error_message'], false);
 	}
 
-	public static function insert($method, $table, $columns, $data, $keys = null, $disable_trans = false, $connection = null)
+	public static function insert($method, $table, $columns, $data)
 	{
 		global $db_prefix;
 
-		$connection = $connection === null ? self::$_db_con : $connection;
+		$connection = self::$_db_con;
 
 		// With nothing to insert, simply return.
 		if (empty($data))

@@ -478,8 +478,7 @@ function ModifySubscription()
 					$_POST['name'], $_POST['desc'], $isActive, $span, $cost,
 					$_POST['prim_group'], $addgroups, $isRepeatable, $allowpartial, $emailComplete,
 					$reminder,
-				),
-				array('id_subscribe')
+				)
 			);
 			$context['sub_id'] = wesql::insert_id();
 		}
@@ -546,8 +545,7 @@ function ModifySubscription()
 					array(
 						'id_subscribe' => 'int', 'id_group' => 'int',
 					),
-					$allowed_groups,
-					array('id_subscribe', 'id_group')
+					$allowed_groups
 				);
 		}
 
@@ -1034,8 +1032,7 @@ function ModifyUserSubscription()
 					array(
 						$context['sub_id'], $id_member, $id_group, $starttime,
 						$endtime, $status,
-					),
-					array('id_sublog')
+					)
 				);
 			}
 		}
@@ -1553,8 +1550,7 @@ function addSubscription($id_subscribe, $id_member, $renewal = 0, $forceStartTim
 		array(
 			$id_subscribe, $id_member, $old_id_group, $starttime,
 			$endtime, 1, '',
-		),
-		array('id_sublog')
+		)
 	);
 }
 

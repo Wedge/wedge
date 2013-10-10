@@ -1427,8 +1427,7 @@ function ssi_pollVote()
 	wesql::insert('',
 		'{db_prefix}log_polls',
 		array('id_poll' => 'int', 'id_member' => 'int', 'id_choice' => 'int'),
-		$inserts,
-		array('id_poll', 'id_member', 'id_choice')
+		$inserts
 	);
 	wesql::query('
 		UPDATE {db_prefix}poll_choices

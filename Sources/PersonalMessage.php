@@ -3548,8 +3548,7 @@ function ManageRules()
 				),
 				array(
 					we::$id, $ruleName, $criteria, $actions, $doDelete, $isOr,
-				),
-				array('id_rule')
+				)
 			);
 		else
 			wesql::query('

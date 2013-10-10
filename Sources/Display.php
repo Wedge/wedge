@@ -830,8 +830,7 @@ function Display()
 			wesql::insert($topicinfo['new_from'] == 0 ? 'ignore' : 'replace',
 				'{db_prefix}log_topics',
 				array('id_member' => 'int', 'id_topic' => 'int', 'id_msg' => 'int'),
-				array(we::$id, $topic, $mark_at_msg),
-				array('id_member', 'id_topic')
+				array(we::$id, $topic, $mark_at_msg)
 			);
 
 		// Check for notifications on this topic OR board.
@@ -915,8 +914,7 @@ function Display()
 			wesql::insert('replace',
 				'{db_prefix}log_boards',
 				array('id_msg' => 'int', 'id_member' => 'int', 'id_board' => 'int'),
-				array($settings['maxMsgID'], we::$id, $board),
-				array('id_member', 'id_board')
+				array($settings['maxMsgID'], we::$id, $board)
 			);
 		}
 	}
@@ -1641,8 +1639,7 @@ function loadAttachmentContext($id_msg)
 						wesql::insert('',
 							'{db_prefix}attachments',
 							array('id_folder' => 'int', 'id_msg' => 'int', 'attachment_type' => 'int', 'filename' => 'string', 'file_hash' => 'string', 'size' => 'int', 'width' => 'int', 'height' => 'int', 'fileext' => 'string', 'mime_type' => 'string'),
-							array($id_folder_thumb, $id_msg, 3, $thumb_filename, $thumb_hash, (int) $thumb_size, (int) $attachment['thumb_width'], (int) $attachment['thumb_height'], $thumb_ext, $thumb_mime),
-							array('id_attach')
+							array($id_folder_thumb, $id_msg, 3, $thumb_filename, $thumb_hash, (int) $thumb_size, (int) $attachment['thumb_width'], (int) $attachment['thumb_height'], $thumb_ext, $thumb_mime)
 						);
 						$old_id_thumb = $attachment['id_thumb'];
 						$attachment['id_thumb'] = wesql::insert_id();
