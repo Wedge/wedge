@@ -11,17 +11,22 @@
 
 $(function ()
 {
-	// This is one of the weirdest bugs in Chrome... If a horizontal (but no vertical)
-	// scrollbar is set on an element inside a flex container, the scrollbar will be
-	// 'ignored' by the layout engine. Forcing the element's flex to none fixes this.
-	if (is_chrome)
+	// This is a weird bug in Chrome and Firefox, due to an inconsistency in the flexbox specs.
+	// If a horizontal (but no vertical) scrollbar is set on an element inside a flex container,
+	// the scrollbar will be 'ignored' by the layout engine. Forcing the element's flex to none fixes this in Chrome,
+	// but Firefox doesn't want to know about it, and we need to disable flex on these posts.
+	if (is_chrome || is_ff)
 		$('.post code').each(function () {
 			if (this.scrollWidth > this.offsetWidth && this.scrollHeight <= this.offsetHeight)
+			{
 				$(this).css('flex', 'none');
+				if (is_ff)
+					$(this).parentsUntil('.post_wrapper').each(function () { if ($(this).css('display') == 'flex') $(this).css('display', 'block'); });
+			}
 		});
 
 	// Only execute this on MessageIndex pages.
-	if (!$(document).find('#messageindex').length)
+	if (!$('#messageindex').length)
 		return;
 
 	// Fix icons in MessageIndex
@@ -35,7 +40,7 @@ $(function ()
 $(window).load(function ()
 {
 	// Only execute this on Display pages.
-	if (!$(document).find('#forumposts').length)
+	if (!$('#forumposts').length)
 		return;
 
 	/*
@@ -111,7 +116,7 @@ $(window).load(function ()
 		// If user box has no padding, chances are it doesn't want this effect anyway.
 		if (!isNaN(poster_padding_top) && !is_ie6 && !is_ie7)
 		{
-			$(window).bind('scroll resize', follow_me);
+			$(window).on('scroll resize', follow_me);
 			follow_me();
 		}
 	}
@@ -422,7 +427,7 @@ function QuickReply(opt)
 				$post.height('');
 				$post.children().not($quicked).finish().css('visibility', 'visible').fadeTo(800, 1);
 				$quicked.finish().fadeOut(800, function () { $(this).remove(); });
-				$('#quickModForm').unbind('submit');
+				$('#quickModForm').off('submit');
 			}
 
 			// No longer in edit mode, that's right.
@@ -504,7 +509,7 @@ function QuickReply(opt)
 					.height(0)
 					.addClass('editor')
 					// !! Running this several times per keypress..? Ugly, but works even on repeated keystrokes.
-					.bind('change keydown keypress keyup', function ()
+					.on('change keydown keypress keyup', function ()
 					{
 						var offset = $editor.height();
 
@@ -670,71 +675,79 @@ function QuickReply(opt)
 	// *** IconList object.
 	function IconList()
 	{
-		var oContainerDiv,
+		var $container, oIconXML, oDiv,
+
+		close_popup = function ()
+		{
+			$container.remove();
+			$('body').off('click', close_popup);
+		},
 
 		// Show the list of icons after the user clicked the original icon.
-		openPopup = function (oDiv, iMessageId)
+		open_popup = function ()
 		{
-			var iCurMessageId = iMessageId, oCurDiv = oDiv;
+			oDiv = this;
 
-			if (!oContainerDiv)
+			// Create a container div.
+			if ($container)
+				close_popup();
+			$container = $('<div id="iconlist"/>').hide().css('width', this.offsetWidth).appendTo(this);
+
+			// Start to fetch its contents.
+			if (!oIconXML)
 			{
-				// Create a container div.
-				oContainerDiv = $('<div id="iconlist"/>').hide().css('width', oCurDiv.offsetWidth).appendTo('body');
-
-				// Start to fetch its contents.
 				show_ajax();
-				$.post(weUrl('action=ajax;sa=messageicons'), { board: we_board }, function (XMLDoc)
-				{
-					hide_ajax();
-					$('icon', XMLDoc).each(function (key, iconxml)
-					{
-						oContainerDiv.append(
-							$('<div class="item"/>')
-								.mousedown(function ()
-								{
-									// Event handler for clicking on one of the icons.
-									var thisicon = this;
-									show_ajax();
-
-									$.post(
-										weUrl('action=jsmodify;' + we_sessvar + '=' + we_sessid),
-										{
-											topic: we_topic,
-											msg: iCurMessageId,
-											icon: $(iconxml).attr('value')
-										},
-										function (oXMLDoc)
-										{
-											hide_ajax();
-											if (!$('error', oXMLDoc).length)
-												$('img', oCurDiv).attr('src', $('img', thisicon).attr('src'));
-										}
-									);
-								})
-								.append($(iconxml).text())
-						);
-					});
-				});
+				$.post(weUrl('action=ajax;sa=messageicons'), { board: we_board }, show_icons);
 			}
+			else
+				show_icons(oIconXML);
 
-			// Show the container, and position it.
-			oContainerDiv.fadeIn().css({
-				top: $(oCurDiv).offset().top + oDiv.offsetHeight,
-				left: $(oCurDiv).offset().left - 1
+			return false;
+		},
+
+		show_icons = function (XMLDoc)
+		{
+			hide_ajax();
+			oIconXML = XMLDoc;
+			$('icon', XMLDoc).each(function (key, icon_xml)
+			{
+				$container.append(
+					$('<div class="item"/>')
+						.click(function ()
+						{
+							// Event handler for clicking on one of the icons.
+							close_popup();
+							var this_icon = this;
+							show_ajax();
+
+							$.post(
+								weUrl('action=jsmodify;' + we_sessvar + '=' + we_sessid),
+								{
+									topic: we_topic,
+									msg: $(oDiv).closest('.msg').attr('id').slice(3),
+									icon: $(icon_xml).attr('value')
+								},
+								function (oXMLDoc)
+								{
+									hide_ajax();
+									if (!$('error', oXMLDoc).length)
+										$('img', oDiv).first().attr('src', $('img', this_icon).attr('src'));
+								}
+							);
+							return false;
+						})
+						.append($(icon_xml).text())
+				);
 			});
 
+			// Show the container.
+			$container.fadeIn();
+
 			// If user clicks outside, this will close the list.
-			$('body').one('mousedown', function () { oContainerDiv.fadeOut(); });
+			$('body').click(close_popup);
 		};
 
 		// Replace all message icons by icons with hoverable and clickable div's.
-		$('.can-mod').each(function () {
-			var id = this.id.slice(3);
-			$(this)
-				.find('.messageicon:first')
-				.addClass('iconbox')
-				.click(function () { openPopup(this, id); });
-		});
+		$('.can-mod .messageicon').addClass('iconbox').click(open_popup);
 	}
 @endif

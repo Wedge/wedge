@@ -438,7 +438,7 @@ hr.sep
 	@if can_flex
 		.msg &
 			flex: 1 0 auto
-		.merged &, &.no-flex
+		.merged &
 			flex: none
 	@endif
 
@@ -470,6 +470,7 @@ hr.sep
 .messageicon
 	float: left
 	margin: 0 .5em 0 0
+	padding: 3px 3px 1px
 	img
 		padding: 6px 3px
 

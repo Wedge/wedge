@@ -219,27 +219,20 @@ for guests, because most of the time it won't be an option.
 .iconbox
 	text-align: center
 	cursor: pointer
-	padding: 3px 3px 1px
 	:hover
 		padding: 2px 2px 0
 		background: #fff
 		border: 1px solid #adadad
 
 #iconlist
-	text-align: center
 	cursor: pointer
 	position: absolute
-	padding: 3px
+	z-index: 10
+	margin: 0 -3px
 	border: 1px solid #adadad
 	background: #fff
-	.item
-		text-align: center
-		padding: 3px 3px 1px
-		margin-left, margin-right: auto
-		border: 1px solid #fff
-		:hover
-			border: 1px dotted gray
-			background: #e0e0f0
+	.item:hover
+		background: #e0e0f0
 
 /* And for the infraction history. Guests cannot see it.
 ------------------------------------------------- */
