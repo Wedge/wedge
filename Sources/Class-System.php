@@ -551,7 +551,7 @@ class we
 		$browser['version'] = floor($ver * 10) / 10;
 
 		$browser['ie8down'] = $is_ie && $ver <= 8;
-		for ($i = 6; $i <= 10; $i++)
+		for ($i = 6; $i <= 11; $i++)
 			$browser['ie' . $i] = $is_ie && $ver == $i;
 
 		// Store our browser name... Start with specific browsers, end with generic engines.

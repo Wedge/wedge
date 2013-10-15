@@ -171,40 +171,21 @@ function template_credits()
 			', $txt['credits_software'], '
 		</we:cat>
 
-		<div class="two-columns">
-			<we:block class="windowbg2" header="', westr::safe($txt['credits_team']), '">';
+		<we:block class="windowbg2 credits">';
 
 	$i = 1;
 	$max = count($context['credits']);
 
 	foreach ($context['credits'] as $group)
 		echo '
+			<div>
 				<h6>', $group['title'], '</h6>
 				<ul', $i === $max ? ' class="last"' : '', '>
 					<li', $i++ == 1 ? ' style="list-style-type: none"' : '', '>', implode('</li>
 					<li>', $group['members']), '</li>
-				</ul>';
+				</ul>
+			</div>';
 
 	echo '
-			</we:block>
-		</div>
-		<div class="two-columns">
-			<we:block class="windowbg" header="', westr::safe($txt['credits_others']), '">
-				<h6>', $txt['credits_copyright'], '</h6>
-				<ul>
-					<li>', implode('</li>
-					<li style="padding-top: 8px">', $context['copyrights']['software']), '</li>
-				</ul>';
-
-	if (!empty($context['copyrights']['mods']))
-		echo '
-				<h6>', $txt['credits_modifications'], '</h6>
-				<ul>
-					<li>', implode('</li>
-					<li>', $context['copyrights']['mods']), '</li>
-				</ul>';
-
-	echo '
-			</we:block>
-		</div>';
+		</we:block>';
 }

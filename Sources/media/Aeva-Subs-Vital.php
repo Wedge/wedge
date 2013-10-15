@@ -478,7 +478,7 @@ function aeva_getEncryptedFilename($name, $id, $check_for_encrypted = false, $bo
 	$clean_name = strtr($clean_name, array("\xde" => 'TH', "\xfe" => 'th', "\xd0" => 'DH', "\xf0" => 'dh', "\xdf" => 'ss', "\x8c" => 'OE', "\x9c" => 'oe', "\xc6" => 'AE', "\xe6" => 'ae', "\xb5" => 'u'));
 
 	// Sorry, no spaces, dots, or anything else but letters allowed.
-	$clean_name = preg_replace(array('/\s/', '/[^\w_\.-]/'), array('_', ''), $clean_name);
+	$clean_name = preg_replace(array('/\s/', '/[^\w.-]/'), array('_', ''), $clean_name);
 	$ext = aeva_getExt($name);
 
 	// !!! '_ext' forces the file to have no extension, thus breaking download/upload ops in poor FTP clients.

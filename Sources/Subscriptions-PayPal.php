@@ -162,7 +162,7 @@ class paypal_payment
 			$this->_findSubscription();
 
 		// Verify the currency!
-		if (strtolower($_POST['mc_currency']) != $settings['paid_currency_code'])
+		if (strtolower($_POST['mc_currency']) != strtolower($settings['paid_currency_code']))
 			exit;
 
 		// Can't exist if it doesn't contain anything.

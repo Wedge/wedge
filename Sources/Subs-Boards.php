@@ -220,7 +220,7 @@ function MarkRead()
 	}
 	elseif ($sa == 'unreadreplies')
 	{
-		// Make sure all the boards are integers!
+		// Make sure all the topics are integers!
 		$topics = explode('-', $_REQUEST['topics']);
 
 		$markRead = array();

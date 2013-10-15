@@ -584,6 +584,7 @@ function ViewMemberlist()
 			'check' => array(
 				'header' => array(
 					'value' => '<input type="checkbox" onclick="invertAll(this, this.form);">',
+					'class' => 'center',
 				),
 				'data' => array(
 					'function' => create_function('$rowData', '

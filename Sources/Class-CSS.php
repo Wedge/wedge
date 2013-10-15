@@ -1469,8 +1469,8 @@ class wess_prefixes extends wess
 		$os = we::$os;
 		$v = $b['version'];
 		$ov = $os['version'];
-		list ($ie, $ie8down, $ie9, $ie10, $opera, $firefox, $safari, $chrome, $ios, $android, $webkit) = array(
-			$b['ie'], $b['ie8down'], $b['ie9'], $b['ie10'], $b['opera'], $b['firefox'],
+		list ($ie, $ie8down, $ie9, $ie10, $ie11, $opera, $firefox, $safari, $chrome, $ios, $android, $webkit) = array(
+			$b['ie'], $b['ie8down'], $b['ie9'], $b['ie10'], $b['ie11'], $b['opera'], $b['firefox'],
 			$b['safari'] && !$os['ios'], $b['chrome'], $os['ios'], $os['android'] && $b['webkit'] && !$b['chrome'], $b['webkit']
 		);
 
@@ -1518,11 +1518,19 @@ class wess_prefixes extends wess
 		}
 
 		// IE6/7/8/9 don't support columns, IE10 and Opera support them, other browsers require a prefix.
-		if (strpos($matches[1], 'column-') === 0)
+		if (strpos($matches[1], 'column') === 0)
 		{
 			if ($ie8down || $ie9 || ($firefox && $v < 3.6) || ($opera && $v < 11.1))
 				return '';
-			return $opera || $ie10 ? $unchanged : $prefixed;
+			return $opera || $ie10 || $ie11 ? $unchanged : $prefixed;
+		}
+
+		// WebKit requires some magic for column breaks.
+		if (strpos($matches[1], 'break-') === 0)
+		{
+			if ($ie8down || $ie9 || ($firefox && $v < 3.6) || ($opera && $v < 11.1))
+				return '';
+			return $opera || $ie10 || $ie11 ? $unchanged : $this->prefix . 'column-' . $unchanged;
 		}
 
 		// As of July 2013, IE10+, Firefox and WebKit support this prefixed. Opera<14 and IE<10 don't.
@@ -1674,7 +1682,8 @@ class wess_prefixes extends wess
 			'user-select',					// Prevents from selecting custom controls
 			'font-feature-settings',		// Ligatures and other things
 			'hyphens',						// Automatic hyphens on long words
-			'column-[a-z-]+',				// Multi-column layout
+			'column(?:s|-[a-z-]+)',			// Multi-column layout
+			'break-[a-z-]+',				// Multi-column layout
 			'grid-[a-z]+',					// Grid layout
 			'animation(?:-[a-z-]+)?',		// Proper animations
 			'transform(?:-[a-z-]+)?',		// 2D/3D transformations (transform, transform-style, transform-origin...)

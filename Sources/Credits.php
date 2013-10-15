@@ -87,57 +87,46 @@ function Credits()
 			'members' => $txt['translation_credits'],
 		);
 
-	$context['copyrights'] = array(
-		'software' => array(
-			'wedge' => sprintf($txt['credits_wedge'],
+	$context['credits'][] = array(
+		'title' => $txt['credits_copyright'],
+		'members' => array(
+			sprintf(
+				$txt['credits_wedge'],
 				'René-Gilles Deberdt',
 				'http://wedge.org/license/',
 				2010
 			),
-			'smf2' => sprintf($txt['credits_smf2'], implode(', ',
-				array(
-					'[Unknown]',
-					'Aaron',
-					'Antechinus',
-					'Bloc',
-					'Compuart',
-					'Grudge',
-					'JayBachatero',
-					'Nao &#23578;',
-					'Norv',
-					'Orstio',
-					'regularexpression',
-					'[SiNaN]',
-					'TE',
-					'Thantos',
-				)),
-				'winrules'),
-			'aeva' => sprintf($txt['credits_aeme'], implode(', ',
-				array(
-					'Nao &#23578;',
-					'Dragooon',
-				)),
+			$txt['credits_smf2'],
+			sprintf(
+				$txt['credits_aeme'],
+				'Nao &#23578;',
+				'Dragooon',
 				'Karl Benson',
 				'http://aeva.noisen.com/'
 			),
 		),
-		'mods' => array(
-		),
 	);
+
+	$context['plugin_credits'] = array();
 
 	/*
 		To Plugin Authors:
-		You may add a copyright statement to this array for your plugins.
-		Do NOT edit the file, it could get messy. Simply call an add_hook('place_credit', 'my_function', 'my_source_file')
-		where my_function will simply add your copyright to $context['copyrights']['mods'].
-		You may also add credits at the end of the $context['credits'] array, following the same structure.
-
-		Copyright statements should be in the form of a value only without a array key, i.e.:
-			'Some Mod by the Wedge team &copy; 2010',
-			$txt['some_mod_copyright'],
+		The best way to credit your plugins in a visible, yet unobtrusive way, is to add a copyright statement to this array.
+		Do NOT edit the file, it could get messy. Simply call an add_hook('place_credit', 'my_function', 'my_source_file'), with:
+		function my_function() {
+			global $context, $txt;
+			// e.g. '<a href="link">Plugin42</a> is &copy; Nao and Wedge contributors 2010, MIT license.'
+			$context['plugin_credits'][] = $txt['copyright_string_for_my_plugin'];
+		}
 	*/
 
 	call_hook('place_credit');
+
+	if (!empty($context['plugin_credits']))
+		$context['credits']['mods'] = array(
+			'title' => $txt['credits_plugins'],
+			'members' => $context['plugin_credits'],
+		);
 
 	loadTemplate('Who');
 	wetem::load('credits');
