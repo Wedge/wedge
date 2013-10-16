@@ -351,7 +351,7 @@ function weEditor(opt)
 				$FrameBody.html(sText);
 
 				// Trick the cursor into coming back!
-				if (is_opera || is_ff)
+				if (is_opera || is_firefox)
 				{
 					// For some obscure reason, some Opera versions still require this.
 					// Firefox also needs it to focus, although it doesn't actually blink.
@@ -714,7 +714,7 @@ function weEditor(opt)
 	{
 		if (!this.isWysiwyg)
 			$oText[0].focus();
-		else if (is_ff || is_opera)
+		else if (is_firefox || is_opera)
 			$Frame[0].focus();
 		else
 			oFrameWindow.focus();

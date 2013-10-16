@@ -79,9 +79,9 @@ function Home()
 
 	if ($context['home_show']['info'])
 	{
-		// In this case, we want to load the info center -- but not in the sidebar.
-		// We will simply create the info_center layer at the end of the main block and inject the blocks into it.
-		wetem::add(array(
+		// In this case, we want to load the info center -- where? Most convenient places for your device.
+		// We will simply create the info_center layer at the end of the main (or sidebar) block and inject the blocks into it.
+		wetem::add(we::is('mobile') ? 'default' : 'sidebar', array(
 			'info_center' => array(
 				'info_center_statistics',
 				'info_center_usersonline',

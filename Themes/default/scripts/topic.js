@@ -15,12 +15,12 @@ $(function ()
 	// If a horizontal (but no vertical) scrollbar is set on an element inside a flex container,
 	// the scrollbar will be 'ignored' by the layout engine. Forcing the element's flex to none fixes this in Chrome,
 	// but Firefox doesn't want to know about it, and we need to disable flex on these posts.
-	if (is_chrome || is_ff)
+	if (is_chrome || is_firefox)
 		$('.post code').each(function () {
 			if (this.scrollWidth > this.offsetWidth && this.scrollHeight <= this.offsetHeight)
 			{
 				$(this).css('flex', 'none');
-				if (is_ff)
+				if (is_firefox)
 					$(this).parentsUntil('.post_wrapper').each(function () { if ($(this).css('display') == 'flex') $(this).css('display', 'block'); });
 			}
 		});

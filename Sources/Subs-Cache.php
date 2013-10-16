@@ -1364,6 +1364,8 @@ function wedge_skin_conditions(&$str)
  */
 function wedge_parse_skin_tags(&$file, $name, $params = array())
 {
+	global $board_info;
+
 	$tags = array();
 	if (strpos($file, '</' . $name . '>') === false)
 		return $tags;
@@ -1389,10 +1391,12 @@ function wedge_parse_skin_tags(&$file, $name, $params = array())
 		// Or is a different browser targeted? Ignore this entry completely...
 		elseif (strpos($match[1], 'for="') !== false && preg_match('~\bfor="([^"]*)"~', $match[1], $val) && !we::is($val[1]))
 			continue;
+		elseif (strpos($match[1], 'board-type="') !== false && (!isset($board_info, $board_info['type']) || (preg_match('~\bboard-type="([^"]*)"~', $match[1], $val) && $board_info['type'] != $val[1])))
+			continue;
 		// Or do we require to be on a certain page? i.e., <css url-action="profile" url-area="forumprofile"> would only apply CSS to the Forum Profile page.
 		elseif (strpos($match[1], 'url-') !== false && preg_match_all('~\burl-([a-z]+)="([^"]*)"~', $match[1], $url_bits, PREG_SET_ORDER))
 			foreach ($url_bits as $bit)
-				if (!isset($_GET[$bit[1]]) || $_GET[$bit[1]] != $bit[2])
+				if (!isset($_GET[$bit[1]]) || ($_GET[$bit[1]] != $bit[2] && $bit[2] != '*'))
 					continue 2;
 
 		// Now we'll retrieve the parameters individually, to allow for any param order.

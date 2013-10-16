@@ -44,7 +44,7 @@ var
 	is_ie8 = is_ie && ua('msie 8'),
 	is_ie8down = is_ie6 || is_ie7 || is_ie8,
 
-	is_ff = !is_webkit && !is_ie && ua('mozilla');
+	is_firefox = !is_webkit && !is_ie && ua('mozilla');
 
 // Replace the default jQuery easing type for animations.
 $.easing.swing2 = $.easing.swing;
@@ -664,9 +664,9 @@ $(function ()
 				$edge.stop(true).animate({ left: orig_sid - (sidebar_on_right ? 0 : $('#sidebar').width())}, 500, hide_sidebar_for_real);
 		};
 
-	$(document).on(is_ff ? 'mouseup' : 'mousedown', function (e) {
+	$(document).on(is_firefox ? 'mouseup' : 'mousedown', function (e) {
 		// Catch the wheel button (or middle-click), and if it's not attempting to open a link, toggle the sidebar.
-		if (e.which == 2 && e.target.tagName !== 'A' && !$('#sideshow').is(':hidden'))
+		if (e.which == 2 && e.target.tagName !== 'A' && !$('#sideshow').is(':hidden') && !$.hasData(e))
 		{
 			sidebar_shown ? hide_sidebar() : show_sidebar();
 			e.preventDefault();

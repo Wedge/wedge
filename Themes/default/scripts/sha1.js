@@ -61,7 +61,7 @@ function hashLoginPassword(doForm, cur_session_id)
 	doForm.hash_passwrd.value = hex_sha1(hex_sha1(doForm.user.value.php_to8bit().php_strtolower() + doForm.passwrd.value.php_to8bit()) + cur_session_id);
 
 	// It looks nicer to fill it with asterisks, but Firefox will try to save that.
-	doForm.passwrd.value = is_ff != -1 ? '' : doForm.passwrd.value.replace(/./g, '*');
+	doForm.passwrd.value = is_firefox ? '' : doForm.passwrd.value.replace(/./g, '*');
 }
 
 function hashAdminPassword(doForm, username, cur_session_id)
