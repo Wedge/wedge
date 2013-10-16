@@ -547,19 +547,28 @@ function ModifyDebugSettings($return_config = false)
 {
 	global $context, $txt, $cachedir;
 
+	add_js('
+	function update_show_debug()
+	{
+		$("#db_show_debug_who,#db_show_debug_who_log").attr("disabled", !$("#db_show_debug").is(":checked")).sb();
+	}
+	update_show_debug();');
+
 	$config_vars = array(
 		array('disableTemplateEval', $txt['disableTemplateEval'], 'db', 'check', null, 'disableTemplateEval'),
 		array('timeLoadPageEnable', $txt['timeLoadPageEnable'], 'db', 'check', null, 'timeLoadPageEnable'),
 		'',
-		array('db_show_debug', $txt['db_show_debug'], 'file', 'check', null, 'db_show_debug'),
+		array('db_show_debug', $txt['db_show_debug'], 'file', 'check', null, 'db_show_debug', 'onclick' => 'update_show_debug()'),
 		array('db_show_debug_who', $txt['db_show_debug_who'], 'db', 'select', array(
 			// !!! Hideous long format to cope with the lack of preparsing done by preparseServerSettingsContext and template expectations
+			'none' => array('none', $txt['db_show_debug_none']),
 			'admin' => array('admin', $txt['db_show_debug_admin']),
 			'mod' => array('mod', $txt['db_show_debug_admin_mod']),
 			'regular' => array('regular', $txt['db_show_debug_regular']),
 			'any' => array('any', $txt['db_show_debug_any']),
 		), 'db_show_debug_who'),
 		array('db_show_debug_who_log', $txt['db_show_debug_who_log'], 'db', 'select', array(
+			'none' => array('none', $txt['db_show_debug_none']),
 			'admin' => array('admin', $txt['db_show_debug_admin']),
 			'mod' => array('mod', $txt['db_show_debug_admin_mod']),
 			'regular' => array('regular', $txt['db_show_debug_regular']),
@@ -697,6 +706,8 @@ function prepareServerSettingsContext(&$config_vars)
 					$item['max'] = $config_var['max'];
 				$item['step'] = isset($config_var['step']) ? $config_var['step'] : 1;
 			}
+			if (isset($config_var['onclick']))
+				$item['javascript'] = ' onclick="' . $config_var['onclick'] . '"';
 
 			$context['config_vars'][] = $item;
 		}

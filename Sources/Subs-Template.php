@@ -934,7 +934,7 @@ function db_debug_junk()
 	global $db_cache, $db_count, $db_show_debug, $cache_count, $cache_hits;
 
 	// Is debugging on? (i.e. it is set, and it is true, and we're not on action=viewquery or an help popup.
-	$show_debug = isset($db_show_debug) && $db_show_debug === true && $context['action'] !== 'viewquery' && $context['action'] !== 'help';
+	$show_debug = $show_debug_query = isset($db_show_debug) && $db_show_debug === true && $context['action'] !== 'viewquery' && $context['action'] !== 'help';
 
 	// Check groups
 	if (empty($settings['db_show_debug_who']) || $settings['db_show_debug_who'] == 'admin')
@@ -944,10 +944,9 @@ function db_debug_junk()
 	elseif ($settings['db_show_debug_who'] == 'regular')
 		$show_debug &= we::$is_member;
 	else
-		$show_debug &= ($settings['db_show_debug_who'] == 'any');
+		$show_debug &= $settings['db_show_debug_who'] == 'any';
 
-	// Now, who can see the query log? Need to have the ability to see any of this anyway.
-	$show_debug_query = $show_debug;
+	// Now, who can see the query log?
 	if (empty($settings['db_show_debug_who_log']) || $settings['db_show_debug_who_log'] == 'admin')
 		$show_debug_query &= we::$is_admin;
 	elseif ($settings['db_show_debug_who_log'] == 'mod')
@@ -955,33 +954,70 @@ function db_debug_junk()
 	elseif ($settings['db_show_debug_who_log'] == 'regular')
 		$show_debug_query &= we::$is_member;
 	else
-		$show_debug_query &= ($settings['db_show_debug_who_log'] == 'any');
+		$show_debug_query &= $settings['db_show_debug_who_log'] == 'any';
 
 	// Now, let's tidy this up. If we're not showing queries, make sure anything that was logged is gone.
 	if (!$show_debug_query)
 	{
 		unset($_SESSION['debug'], $db_cache);
 		$_SESSION['view_queries'] = 0;
+		if (!$show_debug)
+			return;
 	}
-	if (!$show_debug)
-		return;
 
 	loadLanguage('Stats');
 
 	if (empty($_SESSION['view_queries']))
 		$_SESSION['view_queries'] = 0;
-	if (empty($context['debug']['language_files']))
-		$context['debug']['language_files'] = array();
-	if (empty($context['debug']['sheets']))
-		$context['debug']['sheets'] = array();
 
-	$files = get_included_files();
-	$total_size = 0;
-	for ($i = 0, $n = count($files); $i < $n; $i++)
+	$temp = '
+	<div class="smalltext padding" style="margin: 8px 0 0; border-top: 1px solid #aaa">';
+
+	if ($show_debug)
 	{
-		if (file_exists($files[$i]))
-			$total_size += filesize($files[$i]);
-		$files[$i] = strtr($files[$i], array($boarddir => '.'));
+		if (empty($context['debug']['language_files']))
+			$context['debug']['language_files'] = array();
+		if (empty($context['debug']['sheets']))
+			$context['debug']['sheets'] = array();
+
+		$files = get_included_files();
+		$total_size = 0;
+		for ($i = 0, $n = count($files); $i < $n; $i++)
+		{
+			if (file_exists($files[$i]))
+				$total_size += filesize($files[$i]);
+			$files[$i] = strtr($files[$i], array($boarddir => '.'));
+		}
+
+		// A small trick to avoid repeating block names ad nauseam...
+		foreach ($context['debug']['blocks'] as $name => $count)
+			$context['debug']['blocks'][$name] = $count > 1 ? $name . ' (' . $count . 'x)' : $name;
+
+		$show_list_js = "$(this).hide().next().show(); return false;";
+		$temp .= sprintf(
+			$txt['debug_report'],
+			count($context['debug']['templates']),		implode(', ', $context['debug']['templates']),
+			count($context['debug']['blocks']),			implode(', ', $context['debug']['blocks']),
+			count($context['debug']['language_files']),	implode(', ', $context['debug']['language_files']),
+			count($context['debug']['sheets']),			implode(', ', $context['debug']['sheets']),
+			count($files), round($total_size / 1024), $show_list_js, implode(', ', $files),
+			ceil(memory_get_peak_usage() / 1024)
+		);
+
+		if (!empty($settings['cache_enable']) && !empty($cache_hits))
+		{
+			$entries = array();
+			$total_t = 0;
+			$total_s = 0;
+			foreach ($cache_hits as $cache_hit)
+			{
+				$entries[] = sprintf($txt['debug_cache_seconds_bytes'], $cache_hit['d'] . ' ' . $cache_hit['k'], comma_format($cache_hit['t'], 5), $cache_hit['s']);
+				$total_t += $cache_hit['t'];
+				$total_s += $cache_hit['s'];
+			}
+			$temp .= sprintf($txt['debug_cache_hits'], $cache_count, comma_format($total_t, 5), comma_format($total_s), $show_list_js, implode(', ', $entries));
+		}
+		$temp .= '<br>';
 	}
 
 	$warnings = 0;
@@ -994,43 +1030,15 @@ function db_debug_junk()
 		$_SESSION['debug'] =& $db_cache;
 	}
 
-	// A small trick to avoid repeating block names ad nauseam...
-	foreach ($context['debug']['blocks'] as $name => $count)
-		$context['debug']['blocks'][$name] = $count > 1 ? $name . ' (' . $count . 'x)' : $name;
-
-	$show_list_js = "$(this).hide().next().show(); return false;";
-	$temp = '
-<div class="smalltext padding" style="margin: 8px 0 0; border-top: 1px solid #aaa">' . sprintf($txt['debug_report'],
-		count($context['debug']['templates']),		implode(', ', $context['debug']['templates']),
-		count($context['debug']['blocks']),			implode(', ', $context['debug']['blocks']),
-		count($context['debug']['language_files']),	implode(', ', $context['debug']['language_files']),
-		count($context['debug']['sheets']),			implode(', ', $context['debug']['sheets']),
-		count($files), round($total_size / 1024), $show_list_js, implode(', ', $files),
-		ceil(memory_get_peak_usage() / 1024)
-	);
-
-	if (!empty($settings['cache_enable']) && !empty($cache_hits))
-	{
-		$entries = array();
-		$total_t = 0;
-		$total_s = 0;
-		foreach ($cache_hits as $cache_hit)
-		{
-			$entries[] = sprintf($txt['debug_cache_seconds_bytes'], $cache_hit['d'] . ' ' . $cache_hit['k'], comma_format($cache_hit['t'], 5), $cache_hit['s']);
-			$total_t += $cache_hit['t'];
-			$total_s += $cache_hit['s'];
-		}
-		$temp .= sprintf($txt['debug_cache_hits'], $cache_count, comma_format($total_t, 5), comma_format($total_s), $show_list_js, implode(', ', $entries));
-	}
-
 	if ($show_debug_query)
-		$temp .= '<br><a href="' . $scripturl . '?action=viewquery" target="_blank" class="new_win">' . sprintf($txt['debug_queries_used' . ($warnings == 0 ? '' : '_and_warnings')], $db_count, $warnings) . '</a> - <a href="' . $scripturl . '?action=viewquery;sa=hide">' . $txt['debug_' . (empty($_SESSION['view_queries']) ? 'show' : 'hide') . '_queries'] . '</a>';
+		$temp .= '<a href="' . $scripturl . '?action=viewquery" target="_blank" class="new_win">' . sprintf($txt['debug_queries_used' . ($warnings == 0 ? '' : '_and_warnings')], $db_count, $warnings) . '</a> - <a href="' . $scripturl . '?action=viewquery;sa=hide">' . $txt['debug_' . (empty($_SESSION['view_queries']) ? 'show' : 'hide') . '_queries'] . '</a>';
 	else
-		$temp .= '<br>' . sprintf($txt['debug_queries_used'], $db_count);
+		$temp .= sprintf($txt['debug_queries_used'], $db_count);
 
 	if ($_SESSION['view_queries'] == 1 && !empty($db_cache))
 	{
 		$temp .= '<br><br>';
+
 		foreach ($db_cache as $q => $qq)
 		{
 			$is_select = substr(trim($qq['q']), 0, 6) == 'SELECT' || preg_match('~^INSERT(?: IGNORE)? INTO \w+(?:\s+\([^)]+\))?\s+SELECT .+$~s', trim($qq['q'])) != 0;

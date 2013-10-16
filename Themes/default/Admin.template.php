@@ -779,6 +779,7 @@ function template_show_settings()
 					echo '
 						<fieldset id="fs_', $config_var['name'], '">
 							<legend><a href="#" onclick="$(\'#fs_', $config_var['name'], '\').hide(); $(\'#fs_', $config_var['name'], '_link\').show(); return false;">', $txt['select_from_list'], '</a></legend>';
+
 					foreach ($context['board_listing'] as $cat_id => $cat)
 					{
 						echo '
@@ -792,6 +793,7 @@ function template_show_settings()
 						echo '
 							</ul>';
 					}
+
 					add_js('
 	function selectcat(id)
 	{
