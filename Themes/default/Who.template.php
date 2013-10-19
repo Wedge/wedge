@@ -171,20 +171,20 @@ function template_credits()
 			', $txt['credits_software'], '
 		</we:cat>
 
-		<we:block class="windowbg2 credits">';
+		<we:block class="windowbg2 splitter">';
 
 	$i = 1;
 	$max = count($context['credits']);
 
 	foreach ($context['credits'] as $group)
 		echo '
-			<div>
+			<section>
 				<h6>', $group['title'], '</h6>
 				<ul', $i === $max ? ' class="last"' : '', '>
 					<li', $i++ == 1 ? ' style="list-style-type: none"' : '', '>', implode('</li>
 					<li>', $group['members']), '</li>
 				</ul>
-			</div>';
+			</section>';
 
 	echo '
 		</we:block>';

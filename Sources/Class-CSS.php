@@ -1214,7 +1214,7 @@ class wess_nesting extends wess
 				if (isset($removals[$prop['name'] . ':' . $prop['value']]) || isset($removals[$prop['name'] . ':*']))
 					continue;
 				// Does this property belong to a @remove specific to this selector?
-				if (isset($specific_removals[$prop['name'] . ':' . $prop['value']]) || isset($specific_removals[$prop['name'] . '']))
+				if (isset($specific_removals[$prop['name'] . ':' . $prop['value']]) || isset($specific_removals[$prop['name'] . ':*']))
 					continue;
 				// Or maybe a regular one?
 				if (!strpos($prop['name'], ','))

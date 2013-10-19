@@ -238,15 +238,17 @@ img.new_posts
 ---------------------------------------------------- */
 
 .msg
-	display: table
-	// Without this, wide code blocks will break layout.
-	table-layout: fixed
-	// height: 100% does nothing per se (thankfully), but it allows Chrome
-	// (and only it for now..?) to properly set a height on table cells.
-	width, height: 100%
-	& .merged, &.merged
-		display: block
-		height: auto
+	@if !can_flex
+		display: table
+		// Without this, wide code blocks will break layout.
+		table-layout: fixed
+		// height: 100% does nothing per se (thankfully), but it allows Chrome
+		// (and only it for now..?) to properly set a height on table cells.
+		width, height: 100%
+		& .merged, &.merged
+			display: block
+			height: auto
+	@endif
 
 	// Alternating backgrounds for posts
 	background: $post_bg
@@ -988,6 +990,8 @@ tr.windowbg td
 		border-bottom: 0
 	dt.clear
 		width: 100%
+	a
+		text-decoration: underline
 
 // Signature header
 .signature h5
@@ -1311,16 +1315,6 @@ div.top_row dd
 		text-align: left
 	.month
 		padding: .3em 0 .3em 1.5em
-
-/* Styles for the credits page.
-------------------------------------------------- */
-
-#credits .credits
-	columns: 2
-	column-gap: 2em
-	column-rule: 1px solid #eee
-	div
-		break-inside: avoid
 
 /* Styles for the memberlist section.
 ------------------------------------------------- */

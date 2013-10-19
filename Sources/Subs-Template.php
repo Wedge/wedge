@@ -57,11 +57,12 @@ function obExit($start = null, $do_finish = null, $from_index = false, $from_fat
 	if ($do_start)
 	{
 		// Generate a HTML-safe version of the page title: notably, remove any tags and encode entities. What a messy call though...
-		if (!empty($context['page_title']) && empty($context['page_title_html_safe']))
-			$context['page_title_html_safe'] = westr::htmlspecialchars(un_htmlspecialchars(strip_tags($context['page_title'])), ENT_COMPAT, false, false);
+		if (empty($context['page_title_html_safe']))
+			$context['page_title_html_safe'] = empty($context['page_title']) ? '' : westr::htmlspecialchars(un_htmlspecialchars(strip_tags($context['page_title'])), ENT_COMPAT, false, false);
 
-		// Start up the session URL fixer.
-		ob_start('ob_sessrewrite');
+		// Start up the session URL fixer. Don't do it in SSI, as it did it already.
+		if (!defined('WEDGE') || WEDGE != 'SSI')
+			ob_start('ob_sessrewrite');
 
 		// Run any possible extra output buffers as provided by mods.
 		if (!empty($theme['output_buffers']) && is_string($theme['output_buffers']))

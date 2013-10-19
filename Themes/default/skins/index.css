@@ -115,11 +115,20 @@ body
 	width: 48.8%
 	margin: 0 .4%
 
+.splitter
+	columns: 2
+	column-gap: 2em
+	column-rule: 1px solid #eee
+	> section
+		break-inside: avoid
+
 // Two columns become one if viewed on a small screen.
 @media all and (max-width: 800px)
 	.two-columns
 		width: 100%
 		margin: 0
+	.splitter
+		columns: 1
 
 /* Main layout declarations (body, sidebar...)
 ------------------------------------------------------- */
