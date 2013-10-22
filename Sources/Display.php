@@ -100,7 +100,7 @@ function Display()
 	$request = wesql::query('
 		SELECT
 			t.num_replies, t.num_views, t.locked, ms.subject, t.is_pinned, t.id_poll, t.id_member_started, ms.icon,
-			t.id_first_msg, t.id_last_msg, t.approved, t.unapproved_posts, t.privacy, t.tags, ms.poster_time, ms.data AS msgdata,
+			t.id_first_msg, t.id_last_msg, t.approved, t.unapproved_posts, t.privacy, ms.poster_time, ms.data AS msgdata,
 			' . (we::$is_guest ? 't.id_last_msg + 1' : 'IFNULL(lt.id_msg, IFNULL(lmr.id_msg, -1)) + 1') . ' AS new_from
 			' . (!empty($settings['recycle_board']) && $settings['recycle_board'] == $board ? ', id_previous_board, id_previous_topic' : '') . '
 		FROM {db_prefix}topics AS t
