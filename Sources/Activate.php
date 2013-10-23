@@ -161,7 +161,7 @@ function Activate()
 		elseif ($row['validation_code'] == '')
 		{
 			loadLanguage('Profile');
-			fatal_lang_error('registration_not_approved', false, array('<URL>?action=activate;user=' . $_row['member_name']));
+			fatal_lang_error('registration_not_approved', false, array('<URL>?action=activate;user=' . $row['member_name']));
 		}
 
 		wetem::load('retry_activate');
