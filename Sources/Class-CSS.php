@@ -178,8 +178,6 @@ class wess_mixin extends wess
 
 	function process(&$css)
 	{
-		global $context;
-
 		$mix = array();
 
 		// Find mixin declarations, capture their tab level and stop at the first empty or unindented line.
@@ -356,7 +354,7 @@ class wess_var extends wess
 
 	function process(&$css)
 	{
-		global $css_vars, $context, $alphamix;
+		global $css_vars, $alphamix;
 
 		// Reuse CSS variables from Wedge.
 		$css_vars = isset($css_vars) ? $css_vars : array();
@@ -463,8 +461,6 @@ class wess_if extends wess
 
 	function process(&$css)
 	{
-		global $context;
-
 		// Convert some useful capability tests.
 		if (!$this->test_vars)
 		{

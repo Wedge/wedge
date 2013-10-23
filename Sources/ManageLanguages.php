@@ -49,7 +49,7 @@ function ManageLanguages()
 // This lists all the current languages and allows editing of them.
 function ModifyLanguages()
 {
-	global $txt, $context, $settings, $boarddir, $cachedir;
+	global $txt, $context, $settings, $cachedir;
 
 	if (isset($_GET['cleancache']))
 	{
@@ -294,7 +294,7 @@ function list_getLanguages()
 // Edit a particular set of language entries.
 function ModifyLanguage()
 {
-	global $theme, $context, $txt, $settings, $boarddir;
+	global $theme, $context, $txt;
 
 	// First up, validate the language selected.
 	getLanguages(false);

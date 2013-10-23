@@ -42,7 +42,7 @@ if (!defined('WEDGE'))
 // View the forum's error log.
 function ViewErrorLog()
 {
-	global $scripturl, $txt, $context, $settings, $user_profile, $filter, $boarddir, $themedir;
+	global $scripturl, $txt, $context, $settings, $user_profile, $filter;
 
 	// Only admins can view error logs and files.
 	isAllowedTo('admin_forum');
@@ -339,7 +339,7 @@ function deleteErrors()
 
 function ViewIntrusionLog()
 {
-	global $scripturl, $txt, $context, $settings, $user_profile, $filter, $boarddir, $themedir;
+	global $scripturl, $txt, $context, $settings, $user_profile, $filter;
 
 	// Check for the administrative permission to do this.
 	isAllowedTo('admin_forum');

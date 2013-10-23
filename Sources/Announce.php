@@ -57,7 +57,7 @@ function Announce()
  */
 function AnnouncementSelectMembergroup()
 {
-	global $txt, $context, $topic, $board, $board_info;
+	global $txt, $context, $topic;
 
 	$groups = getAnnounceGroups();
 
@@ -143,7 +143,7 @@ function AnnouncementSelectMembergroup()
  */
 function AnnouncementSend()
 {
-	global $topic, $board, $board_info, $context, $settings, $scripturl, $txt;
+	global $topic, $board, $context, $settings, $scripturl;
 
 	checkSession();
 

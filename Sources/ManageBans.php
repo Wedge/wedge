@@ -80,7 +80,7 @@ function ManageBan()
 
 function createBanList()
 {
-	global $context, $txt, $theme;
+	global $context, $txt;
 
 	$ban_is_hard = $context['sub_action'] == 'hard';
 

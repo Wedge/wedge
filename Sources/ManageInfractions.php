@@ -376,7 +376,7 @@ function EditInfractions()
 
 function InfractionLevels()
 {
-	global $txt, $context;
+	global $context;
 
 	getInfractionLevels();
 
@@ -555,7 +555,8 @@ function calculate_infraction_expiry($start, $duration)
 // This nasty function gets the log, but while we're at it, also ensures what's in the log is what's applied to the user's account.
 function get_validated_infraction_log($memID, $keep_all = true)
 {
-	global $context, $txt;
+	global $context, $user_profile;
+
 	static $classes = null, $time = null;
 
 	if ($classes === null)

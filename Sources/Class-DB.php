@@ -499,7 +499,7 @@ class wesql
 
 	public static function value_replacement__callback($matches)
 	{
-		global $db_callback, $db_prefix;
+		global $db_callback;
 
 		list ($values, $connection) = $db_callback;
 		if ($connection === null)

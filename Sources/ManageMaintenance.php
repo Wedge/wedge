@@ -102,7 +102,7 @@ if (!defined('WEDGE'))
 // The maintenance access point.
 function ManageMaintenance()
 {
-	global $txt, $context, $options;
+	global $txt, $context;
 
 	// You absolutely must be an admin by here!
 	isAllowedTo('admin_forum');

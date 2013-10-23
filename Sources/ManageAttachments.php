@@ -146,7 +146,7 @@ function ManageAttachments()
 
 function ManageAttachmentSettings($return_config = false)
 {
-	global $txt, $settings, $context, $options;
+	global $txt, $settings, $context;
 
 	$context['valid_upload_dir'] = is_dir($settings['attachmentUploadDir']) && is_writable($settings['attachmentUploadDir']);
 
@@ -294,7 +294,7 @@ function ManageAvatarSettings($return_config = false)
 
 function BrowseFiles()
 {
-	global $context, $txt, $options, $settings;
+	global $context, $txt, $settings;
 
 	wetem::load('browse');
 
@@ -558,7 +558,7 @@ function list_getNumFiles($browse_type)
 
 function MaintainFiles()
 {
-	global $context, $settings, $txt;
+	global $context, $settings;
 
 	wetem::load('maintenance');
 

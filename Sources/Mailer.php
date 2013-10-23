@@ -31,7 +31,7 @@ if (!defined('WEDGE'))
 // The main handling function for sending specialist (or otherwise) emails to a user.
 function Mailer()
 {
-	global $topic, $txt, $context;
+	global $context;
 
 	// Don't index anything here.
 	$context['robot_no_index'] = true;

@@ -22,7 +22,7 @@ class wedit
 
 	public function __construct($editorOptions)
 	{
-		global $settings, $options, $context, $theme;
+		global $settings, $options, $theme;
 
 		if (!is_array($editorOptions))
 			$editorOptions = array($editorOptions);
@@ -156,8 +156,6 @@ class wedit
 
 	public static function bbc_to_html($text)
 	{
-		global $theme;
-
 		// Turn line breaks back into br's.
 		$text = strtr($text, array("\r" => '', "\n" => '<br>'));
 
@@ -1347,7 +1345,7 @@ class wedit
 
 	public function loadBBC()
 	{
-		global $settings, $txt, $theme;
+		global $settings, $txt;
 
 		if ($this->bbc !== null)
 			return;
@@ -1783,8 +1781,6 @@ class wedit
 	// Parses some bbc before sending into the database...
 	public static function preparsecode(&$message, $previewing = false, &$post_errors = null)
 	{
-		global $settings, $context;
-
 		// This line makes all languages *theoretically* work even with the wrong charset ;)
 		$message = preg_replace('~&amp;#(\d{4,5}|[2-9]\d{2,4}|1[2-9]\d);~', '&#$1;', $message);
 
@@ -2449,7 +2445,7 @@ class wedit
 
 	public function outputEditor()
 	{
-		global $context, $theme, $options, $txt, $settings, $boarddir, $boardurl, $smiley_css_done;
+		global $context, $theme, $txt, $settings, $boarddir, $boardurl, $smiley_css_done;
 
 		$smileycontainer = empty($this->editorOptions['custom_smiley_div']) ? 'smileyBox_' . $this->id : $this->editorOptions['custom_smiley_div'];
 		$bbccontainer = empty($this->editorOptions['custom_bbc_div']) ? 'bbcBox_' . $this->id : $this->editorOptions['custom_bbc_div'];

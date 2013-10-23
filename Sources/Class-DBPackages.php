@@ -301,7 +301,7 @@ class wedbPackages
 	// Add a column.
 	public static function add_column($table_name, $column_info, $if_exists = 'update')
 	{
-		global $txt, $db_prefix;
+		global $db_prefix;
 
 		$table_name = str_replace('{db_prefix}', $db_prefix, $table_name);
 
@@ -838,7 +838,7 @@ class wedbPackages
 	// Optimize a table - return data freed!
 	public static function optimize_table($table)
 	{
-		global $db_name, $db_prefix;
+		global $db_prefix;
 
 		$table = str_replace('{db_prefix}', $db_prefix, $table);
 

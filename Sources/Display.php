@@ -1275,7 +1275,7 @@ function Display()
 function prepareDisplayContext($reset = false)
 {
 	global $theme, $txt, $settings, $options, $board_info;
-	global $memberContext, $context, $messages_request, $topic, $attachments, $topicinfo;
+	global $memberContext, $context, $messages_request, $topic, $topicinfo;
 
 	static $counter = null, $can_ip = null, $can_pm = null, $profile_own = null, $profile_any = null, $buddy = null, $ignore = null, $is_new = false;
 
@@ -1713,7 +1713,7 @@ function loadAttachmentContext($id_msg)
 
 function prepareLikeContext($messages, $type = 'post')
 {
-	global $context, $user_profile;
+	global $context;
 
 	$context['liked_posts'] = array();
 	if (empty($messages))

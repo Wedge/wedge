@@ -30,7 +30,7 @@ if (!defined('WEDGE'))
  */
 function Boards()
 {
-	global $txt, $settings, $context, $theme, $options;
+	global $txt, $settings, $context, $theme;
 
 	loadTemplate('Boards');
 	loadTemplate('InfoCenter');

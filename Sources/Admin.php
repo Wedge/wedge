@@ -837,7 +837,7 @@ function AdminSearch()
 // A complicated but relatively quick internal search.
 function AdminSearchInternal()
 {
-	global $context, $txt, $helptxt, $settings_search, $settings;
+	global $context, $txt, $helptxt, $settings;
 
 	// Try to get some more memory.
 	ini_set('memory_limit', '128M');
