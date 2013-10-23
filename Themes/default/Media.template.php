@@ -11,7 +11,7 @@
 
 function template_aeva_header()
 {
-	global $context, $txt, $amSettings, $theme;
+	global $context, $txt, $amSettings;
 
 	// Show Media tabs, except if not inside the gallery itself or if uploading via a popup
 	if (empty($context['current_board']) && !isset($_REQUEST['noh']))
@@ -232,7 +232,7 @@ function show_stat($intro, $number)
 
 function show_prevnext($id, $url)
 {
-	global $galurl, $context;
+	global $galurl;
 
 	$trans = $url[3] == 'transparent' ? ' ping' : '';
 
@@ -328,7 +328,7 @@ function template_aeva_item_main_before()
 
 function template_aeva_item_main_item()
 {
-	global $item, $galurl, $context, $txt, $theme, $options;
+	global $item, $context, $txt;
 
 	echo '<div id="item-area">', $item['embed_object'], $item['is_resized'] ? '
 			<dfn style="padding-top: 6px">' . $txt['media_resized'] . '</dfn>' : '', '<br>';
@@ -363,7 +363,7 @@ function template_aeva_item_main_after()
 
 function template_aeva_item_details()
 {
-	global $galurl, $context, $amSettings, $txt, $theme, $boardurl, $options;
+	global $galurl, $context, $amSettings, $txt, $theme, $boardurl;
 
 	$item =& $context['item_data'];
 	$in_sidebar = wetem::parent('aeva_item_details') == 'sidebar';
@@ -648,7 +648,7 @@ function template_aeva_item_actions()
 
 function template_aeva_item_playlists()
 {
-	global $item, $txt, $galurl, $context;
+	global $item, $txt, $galurl, $context, $theme;
 
 	if (!isset($item['playlists']) || empty($item['playlists']['current']))
 		return;
@@ -827,7 +827,8 @@ function template_aeva_done()
 function template_aeva_form()
 {
 	// This is a pretty global template used for forms like reporting, commenting, adding, editing etc.
-	global $context, $txt, $galurl;
+	global $context, $txt;
+
 	static $chk = 1, $colspan = 0;
 
 	echo '
@@ -1211,7 +1212,7 @@ function template_aeva_unseen()
 
 function template_aeva_search_searching()
 {
-	global $txt, $galurl, $context, $theme;
+	global $txt, $galurl, $context;
 
 	echo '
 	<br>
@@ -1305,7 +1306,7 @@ function template_aeva_search_results()
 
 function template_aeva_viewUserAlbums()
 {
-	global $txt, $context, $galurl, $amSettings, $theme;
+	global $txt, $context, $galurl, $amSettings, $theme, $settings;
 
 	// The Albums!
 	echo '
@@ -1688,7 +1689,7 @@ function template_aeva_multiUpload_xml()
 
 function template_aeva_multiUpload()
 {
-	global $context, $txt, $galurl, $theme, $boardurl;
+	global $context, $txt, $theme, $boardurl;
 
 	echo '
 	<div class="windowbg wrc_top">
@@ -1822,7 +1823,7 @@ function template_aeva_profile_summary()
 // Template for viewing all items from a single member
 function template_aeva_profile_viewitems()
 {
-	global $context, $txt, $galurl, $theme;
+	global $context, $txt, $theme;
 
 	echo '
 		<we:cat>
@@ -1935,7 +1936,7 @@ function template_aeva_profile_viewvotes()
 // Who rated what list
 function template_aeva_whoRatedWhat()
 {
-	global $context, $txt, $theme, $galurl;
+	global $context, $txt, $galurl;
 
 	echo '
 		<table class="bordercolor w100 cs1 cp8">
@@ -1967,7 +1968,7 @@ function template_aeva_whoRatedWhat()
 // Filestack view for gallery
 function aeva_listFiles($items, $can_moderate = false)
 {
-	global $galurl, $context, $txt, $theme;
+	global $galurl, $context, $txt;
 
 	$can_moderate_one = $can_moderate_here = aeva_allowedTo('moderate');
 	if (!$can_moderate_one)
@@ -2024,7 +2025,7 @@ function template_aeva_playlist()
 
 function template_aeva_rating_object($item)
 {
-	global $context, $theme, $txt, $galurl;
+	global $txt, $galurl;
 
 	$object = ($item['can_rate'] ? '
 				<form action="' . $galurl . 'sa=item;in=' . $item['id_media'] . '" method="post" id="ratingF">' : '') . '

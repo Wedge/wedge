@@ -10,7 +10,7 @@
 
 function template_main()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $theme, $txt;
 
 	if (!empty($context['search_errors']))
 		echo '
@@ -234,7 +234,7 @@ function template_search_ajax()
 
 function template_results()
 {
-	global $context, $theme, $options, $txt, $message;
+	global $context, $theme, $txt, $message;
 
 	if (isset($context['did_you_mean']) || empty($context['topics']))
 	{

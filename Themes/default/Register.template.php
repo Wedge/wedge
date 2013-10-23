@@ -275,7 +275,7 @@ function template_registration_form()
 // After registration... all done ;).
 function template_after()
 {
-	global $context, $txt;
+	global $context;
 
 	// Not much to see here, just a quick... "you're now registered!" or what have you.
 	echo '
@@ -464,7 +464,7 @@ function template_admin_register()
 // Form for editing the agreement shown for people registering to the forum.
 function template_edit_agreement()
 {
-	global $context, $txt, $settings;
+	global $context, $txt;
 
 	if (!empty($context['was_saved']))
 		echo '

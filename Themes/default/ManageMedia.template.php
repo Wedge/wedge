@@ -317,7 +317,7 @@ function template_aeva_admin_modlog()
 function template_aeva_admin_reports()
 {
 	// Shows the reports page
-	global $galurl, $context, $txt, $theme, $amSettings;
+	global $galurl, $context, $txt;
 
 	echo '
 
@@ -394,7 +394,7 @@ function template_aeva_admin_bans()
 
 function template_aeva_admin_perms()
 {
-	global $txt, $context, $theme;
+	global $txt, $context;
 
 	echo '
 	<we:cat>
@@ -641,7 +641,7 @@ function template_aeva_admin_quota_view()
 // Custom fields template
 function template_aeva_admin_fields()
 {
-	global $txt, $galurl, $context;
+	global $txt, $context;
 
 	echo '
 		<table class="bordercolor w100 center cp4 cs1">

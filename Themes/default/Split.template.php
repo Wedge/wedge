@@ -10,7 +10,7 @@
 
 function template_ask()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $txt;
 
 	echo '
 	<div id="split_topics">
@@ -70,7 +70,7 @@ function template_ask()
 
 function template_main()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $txt;
 
 	echo '
 	<div id="split_topics">
@@ -96,7 +96,7 @@ function template_main()
 
 function template_select()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $theme, $txt;
 
 	echo '
 	<we:cat>', $txt['split'], '</we:cat>

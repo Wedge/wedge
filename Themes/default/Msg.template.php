@@ -185,7 +185,7 @@ function template_msg_author_cf()
 
 function template_msg_author_warning()
 {
-	global $msg, $context, $txt, $theme;
+	global $msg, $context, $txt;
 
 	// Are we showing the warning status?
 	if (!$msg['member']['is_guest'] && $msg['member']['can_see_warning'])
@@ -494,7 +494,7 @@ function template_user_status(&$member)
 
 function template_show_likes($id_msg = 0, $can_like = false)
 {
-	global $msg, $context, $txt, $user_profile;
+	global $msg, $context, $txt;
 
 	$string = '';
 	$id_msg = !empty($msg['id']) ? $msg['id'] : $id_msg;

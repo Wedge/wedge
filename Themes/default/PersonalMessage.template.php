@@ -11,7 +11,7 @@
 // This is the main sidebar for the personal messages section.
 function template_pm_before()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $txt;
 
 	if ($context['page_title'] === $txt['showDrafts'])
 		echo '
@@ -482,7 +482,7 @@ function template_folder()
 // Just list all the personal message subjects - to make templates easier.
 function template_subject_list()
 {
-	global $context, $options, $theme, $txt;
+	global $context, $theme, $txt;
 
 	echo '
 	<table class="table_grid w100 cs0">
@@ -578,7 +578,7 @@ function template_subject_list()
 
 function template_search()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $txt;
 
 	add_js_file('scripts/pm.js');
 
@@ -668,7 +668,7 @@ function template_search()
 
 function template_search_results()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $txt;
 
 	echo '
 		<we:cat>
@@ -775,7 +775,7 @@ function template_search_results()
 
 function template_send()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $theme, $txt;
 
 	// Show which messages were sent successfully and which failed.
 	if (!empty($context['send_log']))
@@ -987,7 +987,7 @@ function template_send_contacts()
 // This template asks the user whether they wish to empty out their folder/messages.
 function template_ask_delete()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $txt;
 
 	echo '
 		<we:cat>
@@ -1002,7 +1002,7 @@ function template_ask_delete()
 // This template asks the user what messages they want to prune.
 function template_prune()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $txt;
 
 	echo '
 	<form action="<URL>?action=pm;sa=prune" method="post" accept-charset="UTF-8" onsubmit="return ask(', JavaScriptEscape($txt['pm_prune_warning']), ', e);">
@@ -1022,7 +1022,7 @@ function template_prune()
 // Here we allow the user to setup labels, remove labels and change rules for labels (i.e, do quite a bit)
 function template_labels()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $txt;
 
 	echo '
 	<form action="<URL>?action=pm;sa=manlabels" method="post" accept-charset="UTF-8">
@@ -1114,7 +1114,7 @@ function template_labels()
 // Template for reporting a personal message.
 function template_report_message()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $txt;
 
 	echo '
 	<form action="<URL>?action=pm;sa=report;l=', $context['current_label_id'], '" method="post" accept-charset="UTF-8">
@@ -1170,7 +1170,7 @@ function template_report_message()
 // Little template just to say "Yep, it's been submitted"
 function template_report_message_complete()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $txt;
 
 	echo '
 		<we:cat>
@@ -1185,7 +1185,7 @@ function template_report_message_complete()
 // Manage rules.
 function template_rules()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $txt;
 
 	echo '
 	<form action="<URL>?action=pm;sa=manrules" method="post" accept-charset="UTF-8" name="manRules" id="manrules">
@@ -1261,7 +1261,7 @@ function template_rules()
 // Template for adding/editing a rule.
 function template_add_rule()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $txt;
 
 	add_js('
 	var criteriaNum = 0, actionNum = 0, groups = [], labels = [];');
@@ -1574,7 +1574,7 @@ function template_add_rule()
 // For displaying the saved drafts.
 function template_pm_drafts()
 {
-	global $context, $theme, $options, $settings, $txt;
+	global $context, $theme, $settings, $txt;
 
 	echo '
 		<we:cat>

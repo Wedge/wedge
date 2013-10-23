@@ -10,7 +10,7 @@
 
 function template_main()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $theme, $txt;
 
 	echo '
 		<we:cat>
@@ -27,7 +27,7 @@ function template_main()
 
 function template_notify_board()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $theme, $txt;
 
 	echo '
 		<we:cat>

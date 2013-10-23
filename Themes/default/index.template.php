@@ -19,7 +19,7 @@
 // Initialize the template... mainly little settings.
 function template_init()
 {
-	global $context, $theme, $settings;
+	global $context, $theme;
 
 	// Add the theme-specific JavaScript files to our priority cache list.
 	if (!empty($context['main_js_files']))
@@ -353,7 +353,7 @@ function template_sidebar_quick_access()
 // This function is only added to the list if the feeds are available, so we don't even need to check anything.
 function template_sidebar_feed()
 {
-	global $context, $txt, $topic, $board, $board_info;
+	global $txt, $topic, $board, $board_info;
 
 	echo '
 	<section>
@@ -454,7 +454,7 @@ function template_body_after()
 
 function template_insert_javascript()
 {
-	global $context, $options, $theme, $txt, $footer_coding, $settings;
+	global $context, $options, $theme, $txt, $settings;
 
 	// Include postponed inline JS, postponed HTML, and then kickstart the main
 	// JavaScript section -- files to include, main vars and functions to start.
@@ -666,7 +666,7 @@ function template_mini_menu($menu, $class)
 // The same footer area...
 function template_footer()
 {
-	global $context, $txt, $theme, $boardurl;
+	global $context, $txt;
 
 	echo '
 	<div id="footer"><div class="frame">

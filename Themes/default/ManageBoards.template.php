@@ -11,7 +11,7 @@
 // Template for listing all the current categories and boards.
 function template_main()
 {
-	global $context, $theme, $options, $txt, $settings;
+	global $context, $theme, $txt, $settings;
 
 	// Table header.
 	echo '
@@ -214,7 +214,7 @@ function template_board_tree($child)
 // Template for editing/adding a category on the forum.
 function template_modify_category()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $txt;
 
 	// Print table header.
 	echo '
@@ -291,7 +291,7 @@ function template_modify_category()
 // A template to confirm if a user wishes to delete a category - and whether they want to save the boards.
 function template_confirm_category_delete()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $txt;
 
 	// Print table header.
 	echo '
@@ -345,7 +345,7 @@ function template_confirm_category_delete()
 // Below is the template for adding/editing an board on the forum.
 function template_modify_board()
 {
-	global $context, $theme, $options, $txt, $settings;
+	global $context, $txt, $settings;
 
 	// The main table header.
 	echo '
@@ -831,7 +831,7 @@ function template_modify_board()
 // A template used when a user is deleting a board with child boards in it - to see what they want to do with them.
 function template_confirm_board_delete()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $txt;
 
 	// Print table header.
 	echo '

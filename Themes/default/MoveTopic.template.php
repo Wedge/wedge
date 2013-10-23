@@ -11,7 +11,7 @@
 // Show an interface for selecting which board to move a post to.
 function template_main()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $txt;
 
 	echo '
 		<form action="<URL>?action=movetopic2;topic=', $context['current_topic'], '.0" method="post" accept-charset="UTF-8" onsubmit="submitonce();">

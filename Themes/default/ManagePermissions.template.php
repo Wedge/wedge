@@ -10,7 +10,7 @@
 
 function template_permission_index()
 {
-	global $context, $theme, $options, $txt, $settings;
+	global $context, $txt;
 
 	// Not allowed to edit?
 	if (!$context['can_modify'])
@@ -228,7 +228,7 @@ function template_permission_index()
 
 function template_by_board()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $txt;
 
 	echo '
 		<form action="<URL>?action=admin;area=permissions;sa=board" method="post" accept-charset="UTF-8">
@@ -322,7 +322,7 @@ function template_by_board()
 // Edit permission profiles (predefined).
 function template_edit_profiles()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $txt;
 
 	echo '
 		<form action="<URL>?action=admin;area=permissions;sa=profiles" method="post" accept-charset="UTF-8">
@@ -416,7 +416,7 @@ function template_edit_profiles()
 
 function template_modify_group()
 {
-	global $context, $theme, $options, $txt, $settings;
+	global $context, $txt;
 
 	// Cannot be edited?
 	if (!$context['profile']['can_modify'])
@@ -489,7 +489,7 @@ function template_modify_group()
 
 function template_modify_group_classic($type)
 {
-	global $context, $theme, $options, $txt, $settings;
+	global $context, $txt;
 
 	$permission_type =& $context['permissions'][$type];
 	$disable_field = $context['profile']['can_modify'] ? '' : ' disabled';
@@ -645,7 +645,7 @@ function template_modify_group_classic($type)
 
 function template_inline_permissions()
 {
-	global $context, $theme, $options, $txt, $settings;
+	global $context, $txt;
 
 	echo '
 		<fieldset id="', $context['current_permission'], '">

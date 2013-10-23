@@ -10,7 +10,7 @@
 
 function template_modify_weights()
 {
-	global $context, $theme, $options, $txt, $settings;
+	global $context, $txt, $settings;
 
 	echo '
 		<form action="<URL>?action=admin;area=managesearch;sa=weights" method="post" accept-charset="UTF-8">
@@ -94,7 +94,7 @@ function template_modify_weights()
 
 function template_select_search_method()
 {
-	global $context, $theme, $options, $txt, $settings;
+	global $context, $txt, $settings;
 
 	echo '
 		<form action="<URL>?action=admin;area=managesearch;sa=method" method="post" accept-charset="UTF-8">
@@ -181,7 +181,7 @@ function template_select_search_method()
 
 function template_create_index()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $txt;
 
 	echo '
 		<form action="<URL>?action=admin;area=managesearch;sa=createmsgindex;step=1" method="post" accept-charset="UTF-8" name="create_index">
@@ -310,7 +310,7 @@ function template_spider_edit()
 // Show... spider... logs...
 function template_show_spider_log()
 {
-	global $context, $txt, $theme;
+	global $context, $txt;
 
 	// Standard fields.
 	template_show_list('spider_log');
@@ -335,7 +335,7 @@ function template_show_spider_log()
 
 function template_show_spider_stats()
 {
-	global $context, $txt, $theme;
+	global $context, $txt;
 
 	// Standard fields.
 	template_show_list('spider_stat_list');

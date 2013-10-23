@@ -11,7 +11,7 @@
 // Displays a sortable listing of all members registered on the forum.
 function template_main()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $theme, $txt;
 
 	// Build the memberlist button array.
 	$memberlist_buttons = array(
@@ -138,7 +138,7 @@ function template_main()
 // A page allowing people to search the member list.
 function template_search()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $theme, $txt;
 
 	// Build the memberlist button array.
 	$memberlist_buttons = array(

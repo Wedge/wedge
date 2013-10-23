@@ -10,7 +10,7 @@
 
 function template_browse()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $theme, $txt;
 
 	// Showing the filtering.
 	$items = array();
@@ -149,7 +149,7 @@ function template_browse()
 
 function template_remove()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $txt;
 
 	echo '
 	<form action="<URL>?action=admin;area=plugins;sa=remove;plugin=', $_GET['plugin'], ';commit" method="post">

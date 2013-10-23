@@ -46,8 +46,7 @@ function template_modfilter_home()
 			$use_bg2 = !$use_bg2;
 
 			$action = $rules['action'];
-			$rule_params = $rules['criteria'];
-
+		
 			echo '
 			<tr class="windowbg', $use_bg2 ? '2' : '', '">
 				<td style="width: 30%">', isset($txt['modfilter_action_' . $action]) ? $txt['modfilter_action_' . $action] : $action, !empty($rules['msg']) ? '<div class="smalltext"><a href="<URL>?action=admin;area=modfilters;sa=msgpopup;ruletype=' . $type . ';rule=' . $rules['msg'] . '" onclick="return reqWin(this);">(' . $txt['modfilter_msg'] . ')</a></div>' : '', '</td>
@@ -506,7 +505,7 @@ function template_modfilter_links()
 
 function template_modfilter_warning()
 {
-	global $context, $txt;
+	global $txt;
 
 	$js_conds = array();
 	echo '
@@ -570,7 +569,8 @@ function template_modfilter_subject()
 
 function template_regex_modfilter($type)
 {
-	global $context, $txt;
+	global $txt;
+
 	$utype = ucfirst($type);
 	$js_conds = array();
 	echo '
@@ -627,7 +627,8 @@ function template_regex_modfilter($type)
 // you'll have to roll your own in your plugin, but that's no huge deal, it's not like most of this has to change.
 function template_range_modfilter($type)
 {
-	global $context, $txt;
+	global $txt;
+
 	$utype = ucfirst($type);
 
 	$js_conds = array();

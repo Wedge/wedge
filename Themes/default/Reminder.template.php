@@ -10,7 +10,7 @@
 
 function template_main()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $txt;
 
 	echo '
 	<br>
@@ -34,7 +34,7 @@ function template_main()
 
 function template_reminder_pick()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $txt;
 
 	echo '
 	<br>
@@ -63,7 +63,7 @@ function template_reminder_pick()
 
 function template_sent()
 {
-	global $context, $theme, $options, $txt;
+	global $context;
 
 	echo '
 		<br>
@@ -77,7 +77,7 @@ function template_sent()
 
 function template_set_password()
 {
-	global $context, $theme, $options, $txt, $settings;
+	global $context, $theme, $txt, $settings;
 
 	echo '
 	<br>
@@ -119,7 +119,7 @@ function template_set_password()
 
 function template_ask()
 {
-	global $context, $theme, $options, $txt, $settings;
+	global $context, $theme, $txt, $settings;
 
 	echo '
 	<br>

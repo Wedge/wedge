@@ -11,7 +11,7 @@
 // Show statistical style information...
 function template_info_center_statistics()
 {
-	global $context, $theme, $options, $txt, $settings;
+	global $context, $theme, $txt, $settings;
 
 	if (empty($theme['show_stats_index']))
 		return;
@@ -42,7 +42,7 @@ function template_info_center_statistics()
 
 function template_info_center_usersonline()
 {
-	global $context, $theme, $options, $txt, $settings;
+	global $context, $theme, $txt, $settings;
 
 	// "Users online" - in order of activity.
 	echo '
@@ -99,7 +99,7 @@ function template_info_center_usersonline()
 // If user is logged in but stats are off, show them a PM bar.
 function template_info_center_personalmsg()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $theme, $txt;
 
 	if (we::$is_guest || $theme['show_stats_index'])
 		return;

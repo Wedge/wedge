@@ -11,7 +11,7 @@
 // Choose which type of report to run?
 function template_report_type()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $txt;
 
 	echo '
 		<form action="<URL>?action=admin;area=reports" method="post" accept-charset="UTF-8">
@@ -49,7 +49,7 @@ function template_report_type()
 // This is the standard template for showing reports in.
 function template_main()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $txt;
 
 	// Build the reports button array.
 	$report_buttons = array(
@@ -141,7 +141,7 @@ function template_main()
 // Header of the print page!
 function template_report_before()
 {
-	global $context, $theme, $options, $txt;
+	global $context;
 
 	echo '<!DOCTYPE html>
 <html', $context['right_to_left'] ? ' dir="rtl"' : '', '>
@@ -155,7 +155,7 @@ function template_report_before()
 
 function template_print()
 {
-	global $context, $theme, $options, $txt;
+	global $context;
 
 	// Go through each table!
 	foreach ($context['tables'] as $table)

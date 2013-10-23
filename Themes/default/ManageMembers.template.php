@@ -10,7 +10,7 @@
 
 function template_search_members()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $txt;
 
 	echo '
 		<form action="<URL>?action=admin;area=viewmembers" method="post" accept-charset="UTF-8">
@@ -227,7 +227,7 @@ function template_search_members()
 
 function template_admin_browse()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $txt;
 
 	template_show_list('approve_list');
 

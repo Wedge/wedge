@@ -541,7 +541,7 @@ function template_prefs()
  */
 function create_button($name, $alt, $label = '', $custom = '')
 {
-	global $theme, $txt, $context;
+	global $theme, $txt;
 
 	if (!$theme['use_image_buttons'])
 		return $txt[$alt];

@@ -11,7 +11,7 @@
 // This contains the html for the generic sidebar.
 function template_generic_menu_sidebar()
 {
-	global $context, $theme, $options, $txt;
+	global $context;
 
 	// Which menu are we rendering?
 	$context['cur_menu_id'] = isset($context['cur_menu_id']) ? $context['cur_menu_id'] + 1 : 0;
@@ -68,7 +68,7 @@ function template_generic_menu_sidebar()
 // This contains the html for the generic dropdown menu.
 function template_generic_menu_dropdown()
 {
-	global $context, $theme, $options, $txt;
+	global $context;
 
 	// Which menu are we rendering?
 	$context['cur_menu_id'] = isset($context['cur_menu_id']) ? $context['cur_menu_id'] + 1 : 0;
@@ -140,7 +140,7 @@ function template_generic_menu_dropdown()
 // Some code for showing a tabbed view.
 function template_generic_tabs()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $theme, $txt;
 
 	// Search for the current area. Make sure we're playing with the correct menu!
 	$menu_context =& $context['menu_data_' . (isset($context['cur_menu_id']) ? $context['cur_menu_id'] : 0)];

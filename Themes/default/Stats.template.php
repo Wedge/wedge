@@ -10,7 +10,7 @@
 
 function template_main()
 {
-	global $context, $theme, $options, $txt, $settings;
+	global $context, $theme, $txt, $settings;
 
 	echo '
 		<we:cat>

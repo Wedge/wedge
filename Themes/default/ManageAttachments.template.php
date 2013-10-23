@@ -28,7 +28,7 @@ function template_avatar_settings_after()
 
 function template_browse()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $theme, $txt;
 
 	echo '
 	<div id="manage_attachments">
@@ -50,7 +50,7 @@ function template_browse()
 
 function template_maintenance()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $txt;
 
 	$warning = JavaScriptEscape($txt['attachment_pruning_warning']);
 
@@ -112,7 +112,7 @@ function template_maintenance()
 
 function template_attachment_repair()
 {
-	global $context, $txt, $theme;
+	global $context, $txt;
 
 	// If we've completed just let them know!
 	if ($context['completed'])

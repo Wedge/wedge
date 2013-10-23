@@ -11,7 +11,7 @@
 // The only template in the file.
 function template_main()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $theme, $txt;
 
 	// Display the table header and linktree.
 	echo '

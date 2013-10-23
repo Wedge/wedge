@@ -21,7 +21,7 @@ function template_admin_time_remaining()
 // This is the administration center home.
 function template_admin()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $options, $txt;
 
 	// Welcome the admin, and mention any outstanding updates.
 	echo '
@@ -187,7 +187,7 @@ function template_admin_support_info()
 // Displays information about file versions installed, and compares them to current version.
 function template_view_versions()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $txt;
 
 	echo '
 		<we:cat>
@@ -460,7 +460,7 @@ function template_view_versions()
 // Form for stopping people using naughty words, etc.
 function template_edit_censored()
 {
-	global $context, $theme, $options, $txt, $settings;
+	global $context, $txt, $settings;
 
 	// First section is for adding/removing words from the censored list.
 	echo '
@@ -533,7 +533,7 @@ function template_edit_censored()
 // Maintenance is a lovely thing, isn't it?
 function template_not_done()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $txt;
 
 	echo '
 		<we:cat>
@@ -981,7 +981,6 @@ function template_phpinfo()
 	</div>';
 	}
 
-	$columns = array();
 	$length = ceil(count($context['toc']) / 2);
 	$count = 0;
 
@@ -1021,7 +1020,7 @@ function template_phpinfo()
 // Template for showing custom profile fields.
 function template_show_custom_profile()
 {
-	global $context, $txt, $theme;
+	global $context, $txt;
 
 	// Standard fields.
 	template_show_list('standard_profile_fields');
@@ -1085,7 +1084,7 @@ function template_show_custom_profile()
 // Edit a profile field?
 function template_edit_profile_field()
 {
-	global $context, $txt, $theme;
+	global $context, $txt;
 
 	// All the javascript for this page - quite a bit!
 	add_js('
@@ -1430,7 +1429,7 @@ function template_edit_profile_field()
 // Results page for an admin search.
 function template_admin_search_results()
 {
-	global $context, $txt, $theme, $options;
+	global $context, $txt;
 
 	echo '
 	<we:cat>

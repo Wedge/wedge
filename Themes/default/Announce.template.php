@@ -10,7 +10,7 @@
 
 function template_announce()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $txt;
 
 	echo '
 	<div id="announcement">
@@ -53,7 +53,7 @@ function template_announce()
 
 function template_announcement_send()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $txt;
 
 	echo '
 	<br>

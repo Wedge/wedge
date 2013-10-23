@@ -11,7 +11,7 @@
 // Template for the database maintenance tasks.
 function template_maintain_database()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $txt;
 
 	// If maintenance has finished tell the user.
 	if (!empty($context['maintenance_finished']))
@@ -41,7 +41,7 @@ function template_maintain_database()
 // Template for the routine maintenance tasks.
 function template_maintain_routine()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $txt;
 
 	// If maintenance has finished tell the user.
 	if (!empty($context['maintenance_finished']))
@@ -79,7 +79,7 @@ function template_maintain_routine()
 // Template for the member maintenance tasks.
 function template_maintain_members()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $txt;
 
 	// If maintenance has finished tell the user.
 	if (!empty($context['maintenance_finished']))
@@ -241,7 +241,7 @@ function template_maintain_members()
 // Template for the topic maintenance tasks.
 function template_maintain_topics()
 {
-	global $txt, $context, $theme;
+	global $txt, $context;
 
 	// If maintenance has finished tell the user.
 	if (!empty($context['maintenance_finished']))
@@ -439,7 +439,7 @@ function template_maintain_topics()
 // Simple template for showing results of our optimization...
 function template_optimize()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $txt;
 
 	echo '
 	<div id="manage_maintenance">
@@ -468,7 +468,7 @@ function template_optimize()
 
 function template_convert_utf8()
 {
-	global $context, $txt, $theme;
+	global $context, $txt;
 
 	echo '
 	<div id="manage_maintenance">
@@ -508,7 +508,7 @@ function template_convert_utf8()
 
 function template_convert_entities()
 {
-	global $context, $txt, $theme;
+	global $context, $txt;
 
 	echo '
 	<div id="manage_maintenance">

@@ -11,7 +11,7 @@
 // The main block - for theme administration.
 function template_main()
 {
-	global $context, $theme, $options, $txt, $settings;
+	global $context, $txt, $settings;
 
 	echo '
 		<form action="<URL>?action=admin;area=theme;sa=admin" method="post" accept-charset="UTF-8">
@@ -192,7 +192,7 @@ function template_guest_selector($is_mobile = false)
 
 function template_list_themes()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $txt;
 
 	echo '
 		<we:cat>
@@ -256,7 +256,7 @@ function template_list_themes()
 
 function template_set_settings()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $theme, $txt;
 
 	echo '
 		<form action="<URL>?action=admin;area=theme;sa=settings;th=', $context['theme_settings']['theme_id'], '" method="post" accept-charset="UTF-8">
@@ -408,7 +408,7 @@ function template_set_settings()
 // This template allows for the selection of different themes ;)
 function template_pick()
 {
-	global $context, $theme, $options, $txt, $settings;
+	global $context, $txt, $settings;
 
 	echo '
 	<div id="pick_theme">
@@ -516,7 +516,7 @@ function template_list_skins(&$th, $theme_id, $theme_url = '', $theme_dir = '', 
 // Okay, that theme was installed successfully!
 function template_installed()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $txt;
 
 	// Not much to show except a link back...
 	echo '
@@ -535,7 +535,7 @@ function template_installed()
 
 function template_edit_list()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $txt;
 
 	echo '
 		<we:cat>
@@ -565,7 +565,7 @@ function template_edit_list()
 
 function template_copy_template()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $txt;
 
 	echo '
 		<we:cat>
@@ -604,7 +604,7 @@ function template_copy_template()
 
 function template_edit_browse()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $txt;
 
 	echo '
 		<table class="table_grid w100 cs0">
@@ -651,7 +651,7 @@ function template_edit_browse()
 // Wanna edit the stylesheet?
 function template_edit_style()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $txt;
 
 	if ($context['session_error'])
 		echo '
@@ -790,7 +790,7 @@ function template_edit_style()
 // This edits the template...
 function template_edit_template()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $txt;
 
 	if ($context['session_error'])
 		echo '
@@ -836,7 +836,7 @@ function template_edit_template()
 
 function template_edit_file()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $txt;
 
 	if ($context['session_error'])
 		echo '

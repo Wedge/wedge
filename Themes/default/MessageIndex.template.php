@@ -186,7 +186,7 @@ function template_main_board()
 
 function template_main_blog()
 {
-	global $context, $theme, $options, $txt, $board_info;
+	global $context, $options, $txt, $board_info;
 
 	echo '
 	<a id="top"></a>';
@@ -473,7 +473,7 @@ function template_messageindex_draft()
 
 function template_messageindex_sortlink($sort, $caption)
 {
-	global $context, $theme;
+	global $context;
 
 	if (empty($context['can_reorder']))
 		echo $caption; // !!! If we want the direction indicator: , $context['sort_by'] == $sort ? ' <span class="sort_' . $context['sort_direction'] . '></span>' : '';
@@ -526,7 +526,7 @@ function template_messageindex_legend()
 // !!! it based on !empty($context['current_board']) or something?
 function template_messageindex_statistics()
 {
-	global $context, $theme, $options, $txt, $board_info;
+	global $context, $theme, $txt, $board_info;
 
 	if (!$theme['show_stats_index'])
 		return;

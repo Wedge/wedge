@@ -10,7 +10,7 @@
 
 function template_main()
 {
-	global $context, $theme, $options, $txt, $settings;
+	global $context, $theme, $txt, $settings;
 
 	echo '
 	<div class="main_section">
@@ -83,7 +83,7 @@ function template_main()
 
 function template_unread()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $theme, $txt;
 
 	// JavaScript for generating topic status icons.
 	add_js_file('scripts/topic.js');
@@ -222,7 +222,7 @@ function template_unread()
 
 function template_replies()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $theme, $txt;
 
 	// JavaScript for generating topic status icons.
 	add_js_file('scripts/topic.js');

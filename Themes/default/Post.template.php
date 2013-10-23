@@ -130,7 +130,7 @@ function template_postbox()
 function template_post_additional_options()
 {
 	// !!! This needs to be rewritten to be extensible, declared in Post.php and available as a simple list to be iterated over.
-	global $theme, $txt, $options, $context, $settings;
+	global $txt, $options, $context, $settings;
 
 	// If the admin has enabled the hiding of the additional options - show a link and image for it.
 	if (!empty($settings['additional_options_collapsable']))
@@ -259,7 +259,7 @@ function template_post_buttons()
 
 function template_post_shortcuts()
 {
-	global $context, $txt;
+	global $txt;
 
 	// List of keyboard shortcuts.
 	echo '
@@ -270,7 +270,7 @@ function template_post_shortcuts()
 
 function template_postform_after()
 {
-	global $context, $theme, $counter, $txt, $settings;
+	global $context, $counter, $txt, $settings;
 
 	// We've finished with the main form elements, so finish the UI for it.
 	echo '
@@ -486,7 +486,7 @@ function template_make_poll()
 // Previous post handling
 function template_show_previous_posts()
 {
-	global $context, $theme, $options, $txt, $settings;
+	global $context, $txt;
 
 	echo '
 		<div id="recent" class="flow_hidden main_section">

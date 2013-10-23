@@ -10,7 +10,7 @@
 
 function template_boards()
 {
-	global $context, $theme, $options, $txt, $settings;
+	global $context, $theme, $txt, $settings;
 
 	echo '
 	<div id="boards_container">';
@@ -212,7 +212,7 @@ function template_boards_ministats()
 function template_boards_newsfader()
 {
 	// Show the news fader?  (assuming there are things to show...)
-	global $context, $theme, $options, $txt, $settings;
+	global $context, $options, $txt, $settings;
 
 	if (!empty($settings['show_newsfader']) && !empty($context['fader_news_lines']))
 	{

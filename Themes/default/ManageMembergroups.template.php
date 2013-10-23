@@ -10,8 +10,6 @@
 
 function template_main()
 {
-	global $context, $theme, $options, $txt;
-
 	template_show_list('regular_membergroups_list');
 	echo '<br><br>';
 	template_show_list('post_count_membergroups_list');
@@ -19,7 +17,7 @@ function template_main()
 
 function template_new_group()
 {
-	global $context, $theme, $options, $txt, $settings;
+	global $context, $txt, $settings;
 
 	echo '
 		<form action="<URL>?action=admin;area=membergroups;sa=add" method="post" accept-charset="UTF-8" id="groupForm">
@@ -140,7 +138,7 @@ function template_new_group()
 
 function template_edit_group()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $theme, $txt;
 
 	echo '
 		<form action="<URL>?action=admin;area=membergroups;sa=edit;group=', $context['group']['id'], '" method="post" accept-charset="UTF-8" name="groupForm" id="groupForm">
@@ -528,7 +526,7 @@ function template_group_board_selection()
 // Templating for viewing the members of a group.
 function template_group_members()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $theme, $txt;
 
 	echo '
 		<form action="<URL>?action=', $context['action'], isset($context['admin_area']) ? ';area=' . $context['admin_area'] : '', ';sa=members;group=', $context['group']['id'], '" method="post" accept-charset="UTF-8">
@@ -690,7 +688,7 @@ function template_group_members()
 // Allow the moderator to enter a reason to each user being rejected.
 function template_group_request_reason()
 {
-	global $theme, $options, $context, $txt;
+	global $context, $txt;
 
 	// Show a welcome message to the user.
 	echo '

@@ -11,7 +11,7 @@
 // Editing the smiley sets.
 function template_editsets()
 {
-	global $context, $theme, $options, $txt, $settings;
+	global $context, $txt, $settings;
 
 	template_show_list('smiley_set_list');
 
@@ -36,7 +36,7 @@ function template_editsets()
 // Modifying a smiley set.
 function template_modifyset()
 {
-	global $context, $theme, $options, $txt, $settings;
+	global $context, $txt, $settings;
 
 	echo '
 		<form action="<URL>?action=admin;area=smileys;sa=editsets" method="post" accept-charset="UTF-8">
@@ -120,7 +120,7 @@ function template_modifyset()
 // Editing an individual smiley
 function template_modifysmiley()
 {
-	global $context, $theme, $options, $txt, $settings;
+	global $context, $txt, $settings;
 
 	echo '
 		<form action="<URL>?action=admin;area=smileys;sa=editsmileys" method="post" accept-charset="UTF-8" name="smileyForm" id="smileyForm">
@@ -209,7 +209,7 @@ function template_modifysmiley()
 // Adding a new smiley.
 function template_addsmiley()
 {
-	global $context, $theme, $options, $txt, $settings;
+	global $context, $txt, $settings;
 
 	add_js('
 	function switchType()
@@ -367,7 +367,7 @@ function template_addsmiley()
 // Ordering smileys.
 function template_setorder()
 {
-	global $context, $theme, $options, $txt, $settings;
+	global $context, $theme, $txt, $settings;
 
 	foreach ($context['smileys'] as $location)
 	{
@@ -418,7 +418,7 @@ function template_editicons()
 // Editing an individual message icon
 function template_editicon()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $txt;
 
 	echo '
 		<form action="<URL>?action=admin;area=smileys;sa=editicon;icon=', $context['new_icon'] ? '0' : $context['icon']['id'], '" method="post" accept-charset="UTF-8">

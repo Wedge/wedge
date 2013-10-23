@@ -36,7 +36,7 @@
 // This is where we get information about who they want to send the topic to, etc.
 function template_main()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $theme, $txt;
 
 	echo '
 		<form action="<URL>?action=emailuser;sa=sendtopic;topic=', $context['current_topic'], '.', $context['start'], '" method="post" accept-charset="UTF-8">
@@ -94,7 +94,7 @@ function template_main()
 // Send an email to a user!
 function template_custom_email()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $theme, $txt;
 
 	echo '
 		<form action="<URL>?action=emailuser;sa=email" method="post" accept-charset="UTF-8">
@@ -161,7 +161,7 @@ function template_custom_email()
 
 function template_report()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $theme, $txt;
 
 	echo '
 		<form action="<URL>?action=report;topic=', $context['current_topic'], '.0" method="post" accept-charset="UTF-8">

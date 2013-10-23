@@ -1917,7 +1917,7 @@ function template_profileInfractions()
 
 function template_profileInfractions_issue()
 {
-	global $context, $txt, $theme;
+	global $context, $txt;
 
 	echo '
 		<we:cat>', $txt['issue_infraction'], '</we:cat>

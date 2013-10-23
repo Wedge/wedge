@@ -10,7 +10,7 @@
 
 function template_login()
 {
-	global $context, $theme, $options, $settings, $txt;
+	global $context, $theme, $settings, $txt;
 
 	if (empty($context['disable_login_hashing']))
 		$context['main_js_files']['scripts/sha1.js'] = true;
@@ -70,7 +70,7 @@ function template_login()
 // Tell a guest to get lost or login!
 function template_kick_guest()
 {
-	global $context, $theme, $options, $settings, $txt;
+	global $context, $theme, $settings, $txt;
 
 	// This isn't that much... just like normal login but with a message at the top.
 	if (empty($context['disable_login_hashing']))
@@ -122,7 +122,7 @@ function template_kick_guest()
 // This is for maintenance mode.
 function template_maintenance()
 {
-	global $context, $theme, $options, $txt, $settings;
+	global $context, $theme, $txt, $settings;
 
 	// Display the administrator's message at the top.
 	if (empty($context['disable_login_hashing']))
@@ -162,7 +162,7 @@ function template_maintenance()
 // This is for the security stuff - makes administrators login every so often.
 function template_admin_login()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $theme, $txt;
 
 	// Since this should redirect to whatever they were doing, send all the get data.
 	$context['main_js_files']['scripts/sha1.js'] = true;
@@ -202,7 +202,7 @@ function template_admin_login()
 // Activate your account manually?
 function template_retry_activate()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $txt;
 
 	// Just ask them for their code so they can try it again...
 	echo '
@@ -231,7 +231,7 @@ function template_retry_activate()
 // Activate your account manually?
 function template_resend()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $txt;
 
 	// Just ask them for their code so they can try it again...
 	echo '
@@ -268,7 +268,7 @@ function template_resend()
 
 function template_reagreement()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $txt;
 
 	echo '
 		<form action="<URL>?action=activate;reagree" method="post" accept-charset="UTF-8" id="registration">

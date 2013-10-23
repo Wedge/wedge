@@ -207,7 +207,7 @@ function template_thoughts_table()
 
 function template_thought_likes($id_thought)
 {
-	global $context, $txt, $user_profile, $settings;
+	global $context, $settings;
 
 	if (empty($settings['likes_enabled']) || empty($context['liked_posts'][$id_thought]))
 		return;

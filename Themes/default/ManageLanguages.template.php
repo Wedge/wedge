@@ -39,7 +39,7 @@ function template_language_home()
 // Edit some language entries?
 function template_modify_language_list()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $txt;
 
 	echo '
 		<we:cat>
@@ -314,7 +314,6 @@ function template_search_entries()
 	{
 		$use_bg2 = false;
 
-		$last_entry = '';
 		foreach ($context['results']['default'] as $file_id => $file_entries)
 		{
 			echo '
