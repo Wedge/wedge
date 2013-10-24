@@ -322,9 +322,6 @@ class we
 		// Do not print this without sanitizing first!
 		$user['url'] = (empty($_SERVER['REAL_HTTP_HOST']) ? $user['server'] : substr($user['server'], 0, strpos($user['server'], '/')) . '//' . $_SERVER['HTTP_HOST']) . $_SERVER['REQUEST_URI'];
 
-		// All users (including guests) also belong to the -3 (aka everyone) virtual membergroup.
-		$user['groups'] = array_unique(array_merge((array) -3, $user['groups']));
-
 		// Make sure that the last item in the ignore boards array is valid. If the list was too long it could have an ending comma that could cause problems.
 		if (!empty($user['ignoreboards']) && empty($user['ignoreboards'][$tmp = count($user['ignoreboards']) - 1]))
 			unset($user['ignoreboards'][$tmp]);
@@ -340,6 +337,14 @@ class we
 		}
 		elseif (!empty($settings['userLanguage']) && !empty($_SESSION['language']) && isset($languages[strtr($_SESSION['language'], './\\:', '____')]))
 			$user['language'] = strtr($_SESSION['language'], './\\:', '____');
+
+		// Build a list of privacy IDs the user can see. Yayz.
+		$privacy_list = implode(array_diff(array_map('we::negate', $user['groups']), (array) 0), ',');
+		$privacy_list .= ',' . PRIVACY_DEFAULT;
+		if ($id_member > 0)
+			$privacy_list .= ',' . PRIVACY_MEMBERS;
+		if (!empty($user['contacts']['in_lists']))
+			$privacy_list .= ',' . $user['contacts']['in_lists'];
 
 		// Just build this here, it makes it easier to change/use - administrators can see all boards.
 		if ($is['admin'])
@@ -426,7 +431,7 @@ class we
 			$user['query_see_topic'] = '1=1';
 
 		elseif ($is['guest'])
-			$user['query_see_topic'] = empty($settings['postmod_active']) ? 't.privacy = \'default\'' : '(t.approved = 1 AND t.privacy = \'default\')';
+			$user['query_see_topic'] = empty($settings['postmod_active']) ? 't.privacy = ' . PRIVACY_DEFAULT : '(t.approved = 1 AND t.privacy = ' . PRIVACY_DEFAULT . ')';
 
 		// If we're in a board, the approve_posts permission may be set for the current topic.
 		// If not in a board, rely on mod_cache to see if you can approve this specific topic.
@@ -438,30 +443,16 @@ class we
 				t.id_member_started = ' . $id_member . ' OR (' . ($user['can_skip_approval'] ? '' : (empty($user['mod_cache']['ap']) ? '
 					t.approved = 1' : '
 					(t.approved = 1 OR t.id_board IN (' . implode(', ', $user['mod_cache']['ap']) . '))') . '
-					AND') . '
-					(
-						t.privacy = \'default\'
-						OR (t.privacy = \'members\')
-						OR (
-							t.privacy = \'contacts\'
-							AND t.id_member_started != 0
-							AND FIND_IN_SET(' . $id_member . ', (SELECT buddy_list FROM ' . $db_prefix . 'members WHERE id_member = t.id_member_started))
-						)
-					)
+					AND ') . 't.privacy IN (' . $privacy_list . ')
 				)
 			)';
 		}
 
-		$user['query_see_thought'] = '
-			(' . ($is['guest'] ? '
-				' : '
-				h.id_member = ' . $id_member . '
-				OR ') . 'h.privacy = -3' . ($is['guest'] ? '' : '
-				OR h.privacy = 0
-				OR (
-					h.privacy = 3
-					AND FIND_IN_SET(' . $id_member . ', (SELECT buddy_list FROM ' . $db_prefix . 'members AS th_mem WHERE th_mem.id_member = h.id_member))
-				)') . '
+		$user['query_see_thought'] = ($is['guest'] ? '
+			(' : '
+			(
+				h.id_member = ' . $id_member . ' OR ') . '
+				h.privacy IN (' . $privacy_list . ')
 			)';
 
 		wesql::register_replacement('query_see_topic', $user['query_see_topic']);
@@ -684,6 +675,11 @@ class we
 			return self::$cache[$string] = empty(self::$os[$string]) ? false : $string;
 
 		return self::$cache[$string] = self::analyze($string);
+	}
+
+	private static function negate($arr)
+	{
+		return -$arr;
 	}
 
 	private static function protect_brackets($match)

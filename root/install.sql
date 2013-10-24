@@ -2015,9 +2015,8 @@ CREATE TABLE {$db_prefix}pretty_urls_cache (
 
 CREATE TABLE {$db_prefix}privacy_boards (
 	id_board smallint(5) unsigned NOT NULL,
-	privacy_type enum('member', 'group', 'contact') NOT NULL,
-	privacy_id mediumint(8) unsigned NOT NULL default 0,
-	PRIMARY KEY (id_board, privacy_type, privacy_id)
+	privacy int(10) NOT NULL default 0,
+	PRIMARY KEY (id_board, privacy)
 ) ENGINE=MyISAM;
 
 #
@@ -2026,9 +2025,8 @@ CREATE TABLE {$db_prefix}privacy_boards (
 
 CREATE TABLE {$db_prefix}privacy_thoughts (
 	id_thought int(10) unsigned NOT NULL,
-	privacy_type enum('member', 'group', 'contact') NOT NULL,
-	privacy_id mediumint(8) unsigned NOT NULL default 0,
-	PRIMARY KEY (id_thought, privacy_type, privacy_id)
+	privacy int(10) NOT NULL default 0,
+	PRIMARY KEY (id_thought, privacy)
 ) ENGINE=MyISAM;
 
 #
@@ -2037,9 +2035,8 @@ CREATE TABLE {$db_prefix}privacy_thoughts (
 
 CREATE TABLE {$db_prefix}privacy_topics (
 	id_topic mediumint(8) unsigned NOT NULL,
-	privacy_type enum('member', 'group', 'contact') NOT NULL,
-	privacy_id mediumint(8) unsigned NOT NULL default 0,
-	PRIMARY KEY (id_topic, privacy_type, privacy_id)
+	privacy int(10) NOT NULL default 0,
+	PRIMARY KEY (id_topic, privacy)
 ) ENGINE=MyISAM;
 
 #
@@ -2505,10 +2502,9 @@ CREATE TABLE {$db_prefix}thoughts (
 	id_member mediumint(8) unsigned NOT NULL default 0,
 	updated int(10) unsigned NOT NULL default 0,
 	thought varchar(2048) NOT NULL default '',
-	privacy varchar(255) NOT NULL default '-3',
-	PRIMARY KEY (id_thought),
-	KEY mup (id_member, updated),
-	KEY privacy (privacy(48))
+	privacy int(10) NOT NULL default 0,
+	PRIMARY KEY (id_thought, privacy),
+	KEY mup (id_member, updated)
 ) ENGINE=MyISAM;
 
 #
@@ -2532,9 +2528,8 @@ CREATE TABLE {$db_prefix}topics (
 	locked tinyint(4) NOT NULL default 0,
 	unapproved_posts smallint(5) NOT NULL default 0,
 	approved tinyint(3) NOT NULL default 1,
-	privacy enum('default', 'members', 'groups', 'contacts', 'author') NOT NULL default 'default',
-	privacy_id int(10) unsigned NOT NULL default 0,
-	PRIMARY KEY (id_topic),
+	privacy int(10) NOT NULL default 0,
+	PRIMARY KEY (id_topic, privacy),
 	UNIQUE last_message (id_last_msg, id_board),
 	UNIQUE first_message (id_first_msg, id_board),
 	UNIQUE poll (id_poll, id_topic),

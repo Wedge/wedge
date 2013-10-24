@@ -18,6 +18,10 @@ define('WEDGE_VERSION', '0.1');
 // Knock knock! We're entering through the front door.
 define('WEDGE', 1);
 
+define('PRIVACY_DEFAULT', 0);
+define('PRIVACY_MEMBERS', 1);
+define('PRIVACY_JUSTME', 99);
+
 // Get everything started up...
 if (function_exists('set_magic_quotes_runtime'))
 	@set_magic_quotes_runtime(0);
