@@ -79,21 +79,9 @@ function template_thoughts()
 
 function template_thoughts_thread()
 {
-	global $context, $txt, $privacy_icon, $settings;
+	global $context, $txt, $settings;
 
-	if (we::$is_member && (allowedTo('post_thought') || !empty($settings['likes_enabled'])))
-	{
-		$lists = '';
-		if (!empty(we::$user['contacts']['lists']))
-		{
-			$lists = array();
-			foreach (we::$user['contacts']['lists'] as $id => $clist)
-				$lists[] = $id . ': "' . str_replace('"', '\\"', generic_contacts($clist[0])) . '"';
-			$lists = ' ' . implode(', ', $lists) . ' ';
-		}
-		add_js('
-	oThought = new Thought(', PRIVACY_DEFAULT, ', ', PRIVACY_MEMBERS, ', ', PRIVACY_JUSTME, ', {', $lists, '});');
-	}
+	template_init_thoughts();
 
 	$col = 2;
 	// There will usually be one master thought, but just in case... Loop through the 'array'.
@@ -104,19 +92,15 @@ function template_thoughts_thread()
 			<tr><td class="windowbg', $col, ' thought"><ul><li id="t', $id, '">
 				<div>';
 
-		$privacy_icon = $thought['privacy'] == PRIVACY_DEFAULT ? 'public' :
-						($thought['privacy'] == PRIVACY_MEMBERS ? 'members' :
-						($thought['privacy'] < 0 ? 'group' :
-						($thought['privacy'] == PRIVACY_JUSTME ? 'author' :
-						($thought['privacy'] > 99 ? 'contacts' : ''))));
+		$privacy_icon = template_get_privacy_type($thought['privacy']);
 
 		if (empty($thought['owner_name']))
-			echo $privacy_icon ? '<div class="privacy_' . $privacy_icon . '"></div> ' : ' ', $thought['text'], '
+			echo $privacy_icon && $privacy_icon != 'public' ? '<div class="privacy_' . $privacy_icon . '"></div> ' : ' ', $thought['text'], '
 				</div>';
 		else
 			echo '
 					<a class="more_button thome" data-id="' . $id . '">' . $txt['actions_button'] . '</a>',
-					$privacy_icon ? '<div class="privacy_' . $privacy_icon . '"></div>' : '', '
+					$privacy_icon && $privacy_icon != 'public' ? '<div class="privacy_' . $privacy_icon . '"></div>' : '', '
 					<a href="<URL>?action=profile;u=', $thought['id_member'], '">', $thought['owner_name'], '</a>
 					<span class="date">(', $thought['updated'], ')</span> &raquo; ', $thought['text'], template_thought_likes($id), '
 				</div>';
@@ -131,7 +115,7 @@ function template_thoughts_thread()
 
 function template_sub_thoughts(&$thought)
 {
-	global $txt, $privacy_icon;
+	global $txt;
 
 	if (empty($thought['sub']))
 		return;
@@ -140,11 +124,12 @@ function template_sub_thoughts(&$thought)
 	echo '<ul>';
 	foreach ($thought['sub'] as $id => $tho)
 	{
+		$privacy_icon = template_get_privacy_type($tho['privacy']);
 		if (empty($tho['owner_name']))
-			echo '<li id="t', $id, '"><div>', $tho['privacy'] != -3 ? '<div class="privacy_' . @$privacy_icon[$tho['privacy']] . '"></div>' : '', $tho['text'], '</div>';
+			echo '<li id="t', $id, '"><div>', $privacy_icon && $privacy_icon != 'public' ? '<div class="privacy_' . $privacy_icon . '"></div>' : '', $tho['text'], '</div>';
 		else
 			echo '<li id="t', $id, '"><div><a class="more_button thome" data-id="', $id, '">', $txt['actions_button'], '</a>',
-			$tho['privacy'] != -3 ? '<div class="privacy_' . @$privacy_icon[$tho['privacy']] . '"></div>' : '',
+			$privacy_icon && $privacy_icon != 'public' ? '<div class="privacy_' . $privacy_icon . '"></div>' : '',
 			'<a href="<URL>?action=profile;u=', $tho['id_member'], '">', $tho['owner_name'], '</a> <span class="date">(', $tho['updated'], ')</span> &raquo; ',
 			parse_bbc($tho['text'], 'thought', array('user' => $tho['id_member'])), template_thought_likes($id), '</div>';
 
@@ -160,12 +145,7 @@ function template_thoughts_table()
 {
 	global $context, $txt, $settings;
 
-	$privacy_icon = array(
-		-3 => 'public',
-		0 => 'members',
-		3 => 'contacts',
-		5 => 'author',
-	);
+	template_init_thoughts();
 
 	// This is where we'll show the Thought postbox.
 	if (allowedTo('post_thought'))
@@ -175,22 +155,18 @@ function template_thoughts_table()
 				<td><span class="my thought" id="thought0"><span></span></span></td>
 			</tr>';
 
-	if (we::$is_member && (allowedTo('post_thought') || !empty($settings['likes_enabled'])))
-		add_js('
-	oThought = new Thought([[-3, "public", "', $txt['privacy_public'], '"], [0, "members", "', $txt['privacy_members'],
-		'"], [3, "contacts", "', $txt['privacy_contacts'], '"], [5, "author", "', $txt['privacy_author'], '"]]);');
-
 	$col = 2;
 	if (!SKIN_MOBILE)
 	{
 		foreach ($context['thoughts'] as $id => $thought)
 		{
+			$privacy_icon = template_get_privacy_type($thought['privacy']);
 			$col = empty($col) ? 2 : '';
 			echo '
 			<tr class="windowbg', $col, '">
 				<td class="bc">', $thought['updated'], '</td>
 				<td><a class="more_button thome" data-id="', $id, '">', $txt['actions_button'], '</a>',
-				$thought['privacy'] != -3 ? '<div class="privacy_' . @$privacy_icon[$thought['privacy']] . '"></div>' : '', '<a href="<URL>?action=profile;u=', $thought['id_member'], '" id="t', $id, '">',
+				$privacy_icon && $privacy_icon != 'public' ? '<div class="privacy_' . $privacy_icon . '"></div>' : '', '<a href="<URL>?action=profile;u=', $thought['id_member'], '" id="t', $id, '">',
 				$thought['owner_name'], '</a> &raquo; ', $thought['text'], template_thought_likes($id), '</td>
 			</tr>';
 		}
@@ -199,12 +175,13 @@ function template_thoughts_table()
 	{
 		foreach ($context['thoughts'] as $id => $thought)
 		{
+			$privacy_icon = template_get_privacy_type($thought['privacy']);
 			$col = empty($col) ? 2 : '';
 			echo '
 			<tr class="windowbg', $col, '">
 				<td>', $thought['updated'], '
 				<div class="more_button thome" data-id="', $id, '">', $txt['actions_button'], '</div><br>',
-				$thought['privacy'] != -3 ? '<div class="privacy_' . @$privacy_icon[$thought['privacy']] . '"></div>' : '', '<a href="<URL>?action=profile;u=', $thought['id_member'], '" id="t', $id, '">',
+				$privacy_icon && $privacy_icon != 'public' ? '<div class="privacy_' . $privacy_icon . '"></div>' : '', '<a href="<URL>?action=profile;u=', $thought['id_member'], '" id="t', $id, '">',
 				$thought['owner_name'], '</a> &raquo; ', $thought['text'], template_thought_likes($id), '</td>
 			</tr>';
 		}
@@ -229,4 +206,32 @@ function template_thought_likes($id_thought)
 	$num_likes = $other_likes + ($you_like ? 1 : 0);
 
 	echo ' <span class="like_button" title="', strip_tags($string), '"> <a href="<URL>?action=like;sa=view;type=think;cid=' . $id_thought . '" class="fadein" onclick="return reqWin(this);"><span class="note', $you_like ? 'nice' : '', '">', $num_likes, '</span></a></span>';
+}
+
+function template_init_thoughts()
+{
+	global $settings;
+
+	if (!we::$is_member || (!allowedTo('post_thought') && empty($settings['likes_enabled'])))
+		return;
+
+	$lists = '';
+	if (!empty(we::$user['contacts']['lists']))
+	{
+		$lists = array();
+		foreach (we::$user['contacts']['lists'] as $id => $clist)
+			$lists[] = $id . ': "' . str_replace('"', '\\"', generic_contacts($clist[0])) . '"';
+		$lists = ' ' . implode(', ', $lists) . ' ';
+	}
+	add_js('
+	oThought = new Thought(', PRIVACY_DEFAULT, ', ', PRIVACY_MEMBERS, ', ', PRIVACY_JUSTME, ', {', $lists, '});');
+}
+
+function template_get_privacy_type($privacy)
+{
+	return $privacy == PRIVACY_DEFAULT ? 'public' :
+		($privacy == PRIVACY_MEMBERS ? 'members' :
+		($privacy < 0 ? 'group' :
+		($privacy == PRIVACY_JUSTME ? 'author' :
+		($privacy > 99 ? 'contacts' : ''))));
 }

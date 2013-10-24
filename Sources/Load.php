@@ -156,6 +156,9 @@ function reloadSettings()
 	// Is post moderation alive and well?
 	$settings['postmod_active'] = !empty($settings['postmod_active']) || !empty($settings['postmod_rules']);
 
+	if (!empty($settings['imported_from']) && !isset($settings['imported_cleaned']))
+		importing_cleanup();
+
 	// Call pre-load hook functions.
 	call_hook('pre_load');
 }
@@ -2553,4 +2556,60 @@ function loadDatabase()
 	// If in SSI mode fix up the prefix.
 	if (WEDGE == 'SSI')
 		wesql::fix_prefix($db_prefix, $db_name);
+}
+
+function importing_cleanup()
+{
+	global $settings;
+
+	$result = wesql::query('
+		SELECT id_member, buddy_list
+		FROM {db_prefix}members
+		WHERE buddy_list != {string:empty}
+		LIMIT 20',
+		array(
+			'empty' => '',
+		)
+	);
+
+	$users = array();
+	while ($row = wesql::fetch_assoc($result))
+	{
+		$contacts = explode(',', $row['buddy_list']);
+		$users[] = $row['id_member'];
+
+		wesql::insert('ignore',
+			'{db_prefix}contact_lists',
+			array('id_owner' => 'int', 'added' => 'int'),
+			array($row['id_member'], time())
+		);
+		$cid = wesql::insert_id();
+
+		foreach ($contacts as $contact)
+			if ((int) $contact > 0)
+				wesql::insert('ignore',
+					'{db_prefix}contacts',
+					array('id_member' => 'int', 'id_owner' => 'int', 'id_list' => 'int', 'added' => 'int'),
+					array($contact, $row['id_member'], $cid, time())
+				);
+	}
+	wesql::free_result($result);
+
+	// No members left to convert..? No need to come back here, then.
+	if (count($users) == 0)
+		wesql::insert('replace',
+			'{db_prefix}settings',
+			array('variable' => 'string', 'value' => 'string'),
+			array('imported_cleaned', 1)
+		);
+	else
+		wesql::query('
+			UPDATE {db_prefix}members
+			SET buddy_list = {string:empty}
+			WHERE id_member IN ({array_int:users})',
+			array(
+				'empty' => '',
+				'users' => $users,
+			)
+		);
 }
