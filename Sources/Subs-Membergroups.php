@@ -214,6 +214,9 @@ function deleteMembergroups($groups)
 			)
 		);
 
+	// Reset auto_increment, to ensure we don't get too many gaps in the table.
+	wesql::query('ALTER TABLE {db_prefix}membergroups AUTO_INCREMENT = 1');
+
 	// Recalculate the post groups, as they likely changed.
 	updateStats('postgroups');
 

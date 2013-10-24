@@ -209,7 +209,8 @@ function fatal_lang_error($error, $log = 'general', $sprintf = array(), $header 
 	global $txt, $settings, $context;
 	static $fatal_error_called = false;
 
-	issue_http_header($header);
+	if (!AJAX)
+		issue_http_header($header);
 
 	// Try to load a theme if we don't have one.
 	if (empty($context['theme_loaded']) && empty($fatal_error_called))
@@ -218,7 +219,7 @@ function fatal_lang_error($error, $log = 'general', $sprintf = array(), $header 
 		loadTheme();
 	}
 
-	// If we have no theme stuff we can't have the language file...
+	// If we have no theme stuff, we can't have the language file...
 	if (empty($context['theme_loaded']) && !isset($txt[$error]))
 		exit($error);
 

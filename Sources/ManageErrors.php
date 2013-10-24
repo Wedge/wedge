@@ -640,6 +640,11 @@ function ViewFile()
 {
 	global $context, $txt, $boarddir, $sourcedir, $cachedir;
 
+	loadTemplate('GenericPopup');
+	loadLanguage('Help');
+	wetem::hide();
+	wetem::load('popup');
+
 	// Decode the file and get the line
 	$file = realpath(base64_decode($_REQUEST['file']));
 	$line = isset($_REQUEST['line']) ? (int) $_REQUEST['line'] : 0;
@@ -647,7 +652,7 @@ function ViewFile()
 
 	// Make sure the file we are looking for is one they are allowed to look at
 	if (strrchr($basename, '.') != '.php' || $basename == 'settings.php' || $basename == 'settings_bak.php' || (strpos($file, realpath($boarddir)) === false && strpos($file, realpath($sourcedir)) === false) || strpos($file, realpath($cachedir)) !== false || !is_readable($file))
-		fatal_lang_error('error_bad_file', true, array(htmlspecialchars($file)));
+		fatal_lang_error('error_bad_file', true, array(htmlspecialchars(base64_decode($_REQUEST['file']))));
 
 	// Get the min and max lines
 	$min = max(1, $line - 12);
@@ -690,9 +695,4 @@ function ViewFile()
 		loadLanguage('ManageMaintenance');
 		$context['popup_contents'] = $txt['file_out_of_bounds'];
 	}
-
-	loadTemplate('GenericPopup');
-	loadLanguage('Help');
-	wetem::hide();
-	wetem::load('popup');
 }

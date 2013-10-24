@@ -13,6 +13,20 @@ function template_fatal_error()
 {
 	global $context, $txt;
 
+	if (AJAX)
+	{
+		echo '
+	<header>', $context['error_title'], '</header>
+	<section class="nodrag">
+		', $context['error_message'], '
+	</section>';
+		// Is this actually a help popup..? Add the close button.
+		if (isset($txt['close_window']))
+			echo '
+	<footer><input type="button" class="delete" onclick="$(\'#popup\').fadeOut(function () { $(this).remove(); });" value="', $txt['close_window'], '" /></footer>';
+		return;
+	}
+
 	echo '
 	<br>
 	<div id="fatal_error">
@@ -24,7 +38,7 @@ function template_fatal_error()
 		</div>
 	</div>';
 
-	// Show a back button (using javascript.)
+	// Show a back button (using JavaScript.)
 	if (empty($context['no_back_link']))
 		echo '
 	<div class="center">
