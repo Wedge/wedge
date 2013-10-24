@@ -330,6 +330,7 @@ function loadBoard()
 
 			// Load privacy settings.
 			// !!! Are we still meant to be using this now we have query_see_topic..? It's going to be inaccurate!
+			// !!! @todo: update this code, with the new privacy system.
 			if ($row['member_groups'] === '0')
 				$board_info['privacy'] = 'members';
 			elseif ($row['member_groups'] === '-1,0')

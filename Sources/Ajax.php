@@ -148,7 +148,7 @@ function Thought()
 	}
 
 	// Is this a public thought?
-	$privacy = isset($_POST['privacy']) && preg_match('~-?[\d,]+~', $_POST['privacy']) ? $_POST['privacy'] : '-3';
+	$privacy = isset($_POST['privacy']) && preg_match('~^-?\d+$~', $_POST['privacy']) ? (int) $_POST['privacy'] : PRIVACY_DEFAULT;
 
 	/*
 		// Delete thoughts when they're older than 3 years...?
@@ -236,7 +236,7 @@ function Thought()
 		// Okay, so this is a new thought... Insert it, we'll cache it if it's not a comment.
 		wesql::query('
 			INSERT IGNORE INTO {db_prefix}thoughts (id_parent, id_member, id_master, privacy, updated, thought)
-			VALUES ({int:id_parent}, {int:id_member}, {int:id_master}, {string:privacy}, {int:updated}, {string:thought})', array(
+			VALUES ({int:id_parent}, {int:id_member}, {int:id_master}, {int:privacy}, {int:updated}, {string:thought})', array(
 				'id_parent' => $pid,
 				'id_member' => we::$id,
 				'id_master' => $mid,

@@ -1105,7 +1105,7 @@ function JumpTo(control)
 
 // *** Thought class.
 @if member
-	function Thought(privacies)
+	function Thought(privacy_public, privacy_members, privacy_author, contacts)
 	{
 		var
 			oid,
@@ -1125,12 +1125,20 @@ function JumpTo(control)
 				pr = '', privacy = (thought.data('prv') + '').split(','),
 
 				cur_text = is_new ? '' : (edited_thought.indexOf('<') == -1 ?
-					edited_thought.php_unhtmlspecialchars() : $.ajax(weUrl('action=ajax;sa=thought') + ';in=' + tid, { async: false }).responseText), p;
+					edited_thought.php_unhtmlspecialchars() : $.ajax(weUrl('action=ajax;sa=thought') + ';in=' + tid, { async: false }).responseText), p, lists;
 
 			oid = is_new ? 0 : thought.data('oid') || 0;
 
-			for (p in privacies)
-				pr += '<option value="' + privacies[p][0] + '"' + (in_array(privacies[p][0] + '', privacy) ? ' selected' : '') + '>&lt;div class="privacy_' + privacies[p][1] + '"&gt;&lt;/div&gt;' + privacies[p][2] + '</option>';
+			pr += '<option value="' + privacy_public + '"' + (privacy == privacy_public ? ' selected' : '') + '>&lt;div class="privacy_public"&gt;&lt;/div&gt;' + $txt['privacy_public'] + '</option>';
+			pr += '<option value="' + privacy_members + '"' + (privacy == privacy_members ? ' selected' : '') + '>&lt;div class="privacy_members"&gt;&lt;/div&gt;' + $txt['privacy_members'] + '</option>';
+			pr += '<option value="' + privacy_author + '"' + (privacy == privacy_author ? ' selected' : '') + '>&lt;div class="privacy_author"&gt;&lt;/div&gt;' + $txt['privacy_author'] + '</option>';
+			if (!$.isEmptyObject(contacts))
+			{
+				pr += '<optgroup label="' + $txt['privacy_contacts'] + '">';
+				for (p in contacts)
+					pr += '<option value="' + p + '"' + (privacy == p ? ' selected' : '') + '>&lt;div class="privacy_contacts"&gt;&lt;/div&gt;' + contacts[p] + '</option>';
+				pr += '</optgroup>';
+			}
 
 			// Hide current thought, and add tools to write new thought.
 			thought.toggle(is_new && is_new !== 1).after('<form id="thought_form"><input type="text" maxlength="255" id="ntho"><select id="npriv">'

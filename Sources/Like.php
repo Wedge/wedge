@@ -49,10 +49,6 @@ function Like()
 					AND {query_see_thought}',
 				array(
 					'tid' => $id_content,
-					'me' => we::$id,
-					'everyone' => -3,
-					'members' => 0,
-					'per_page' => 10,
 				)
 			);
 

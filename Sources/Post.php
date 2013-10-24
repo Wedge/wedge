@@ -170,7 +170,7 @@ function Post($post_errors = array())
 	}
 	else
 	{
-		$context['current_privacy'] = 'default';
+		$context['current_privacy'] = PRIVACY_DEFAULT;
 		$context['becomes_approved'] = true;
 		if (!empty($board))
 			isAllowedTo('post_new');

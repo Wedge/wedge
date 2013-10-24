@@ -1094,7 +1094,7 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 	$topicOptions['poll'] = isset($topicOptions['poll']) ? (int) $topicOptions['poll'] : null;
 	$topicOptions['lock_mode'] = isset($topicOptions['lock_mode']) ? $topicOptions['lock_mode'] : null;
 	$topicOptions['pin_mode'] = isset($topicOptions['pin_mode']) ? $topicOptions['pin_mode'] : null;
-	$topicOptions['privacy'] = isset($topicOptions['privacy']) && preg_match('~^[a-z]+$~', $topicOptions['privacy']) ? $topicOptions['privacy'] : null;
+	$topicOptions['privacy'] = isset($topicOptions['privacy']) && preg_match('~^-?\d+$~', $topicOptions['privacy']) ? $topicOptions['privacy'] : null;
 	$posterOptions['id'] = empty($posterOptions['id']) ? 0 : (int) $posterOptions['id'];
 	$posterOptions['ip'] = empty($posterOptions['ip']) ? we::$user['ip'] : $posterOptions['ip'];
 
@@ -1211,7 +1211,7 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 				'locked' => 'int',
 				'is_pinned' => 'int',
 				'id_poll' => 'int', 'num_views' => 'int',
-				'privacy' => 'string',
+				'privacy' => 'int',
 			),
 			array(
 				$topicOptions['board'],
@@ -1221,7 +1221,7 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 				$topicOptions['lock_mode'] === null ? 0 : $topicOptions['lock_mode'],
 				$topicOptions['pin_mode'] === null ? 0 : $topicOptions['pin_mode'],
 				$topicOptions['poll'] === null ? 0 : $topicOptions['poll'], 0,
-				$topicOptions['privacy'] === null ? 'default' : $topicOptions['privacy'],
+				$topicOptions['privacy'] === null ? PRIVACY_DEFAULT : $topicOptions['privacy'],
 			)
 		);
 		$topicOptions['id'] = wesql::insert_id();
@@ -1271,7 +1271,7 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 				' . $countChange . ($topicOptions['lock_mode'] === null ? '' : ',
 				locked = {int:locked}') . ($topicOptions['pin_mode'] === null ? '' : ',
 				is_pinned = {int:is_pinned}') . ($topicOptions['privacy'] === null ? '' : ',
-				privacy = {string:privacy}') . '
+				privacy = {int:privacy}') . '
 			WHERE id_topic = {int:id_topic}',
 			array(
 				'poster_id' => $posterOptions['id'],
@@ -1745,7 +1745,7 @@ function modifyPost(&$msgOptions, &$topicOptions, &$posterOptions)
 	$topicOptions['poll'] = isset($topicOptions['poll']) ? (int) $topicOptions['poll'] : null;
 	$topicOptions['lock_mode'] = isset($topicOptions['lock_mode']) ? $topicOptions['lock_mode'] : null;
 	$topicOptions['pin_mode'] = isset($topicOptions['pin_mode']) ? $topicOptions['pin_mode'] : null;
-	$topicOptions['privacy'] = isset($topicOptions['privacy']) && preg_match('~^[a-z]+$~', $topicOptions['privacy']) ? $topicOptions['privacy'] : null;
+	$topicOptions['privacy'] = isset($topicOptions['privacy']) && preg_match('~^-?\d+$~', $topicOptions['privacy']) ? $topicOptions['privacy'] : null;
 
 	// Does a plugin want to manipulate posts/topics before they're modified?
 	call_hook('modify_post_before', array(&$msgOptions, &$topicOptions, &$posterOptions));
@@ -1811,13 +1811,13 @@ function modifyPost(&$msgOptions, &$topicOptions, &$posterOptions)
 				is_pinned = {raw:is_pinned},
 				locked = {raw:locked},
 				id_poll = {raw:id_poll}' . ($topicOptions['privacy'] === null ? '' : ',
-				privacy = {string:privacy}') . '
+				privacy = {int:privacy}') . '
 			WHERE id_topic = {int:id_topic}',
 			array(
 				'is_pinned' => $topicOptions['pin_mode'] === null ? 'is_pinned' : (int) $topicOptions['pin_mode'],
 				'locked' => $topicOptions['lock_mode'] === null ? 'locked' : (int) $topicOptions['lock_mode'],
 				'id_poll' => $topicOptions['poll'] === null ? 'id_poll' : (int) $topicOptions['poll'],
-				'privacy' => $topicOptions['privacy'] === null ? 'privacy' : (string) $topicOptions['privacy'],
+				'privacy' => $topicOptions['privacy'] === null ? 'privacy' : (int) $topicOptions['privacy'],
 				'id_topic' => $topicOptions['id'],
 			)
 		);
@@ -2321,11 +2321,12 @@ function updateLastMessages($setboards, $id_msg = 0)
 			FROM {db_prefix}topics
 			WHERE id_board IN ({array_int:board_list})
 				AND approved = {int:is_approved}
-				AND privacy = {literal:default}
+				AND privacy = {int:privacy}
 			GROUP BY id_board',
 			array(
 				'board_list' => $setboards,
 				'is_approved' => 1,
+				'privacy' => PRIVACY_DEFAULT,
 			)
 		);
 		$lastMsg = array();

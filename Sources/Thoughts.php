@@ -99,7 +99,7 @@ function Thoughts()
 					'id_parent_owner' => $thoughts[$row['id_master']]['id_member'],
 					'owner_name' => '',
 					'updated' => timeformat($row['updated']),
-					'privacy' => -3,
+					'privacy' => PRIVACY_DEFAULT,
 					'text' => $txt['deleted_thought'],
 				);
 			}
@@ -415,5 +415,6 @@ function setupThoughtMenu()
 		}
 	}
 
-	template_mini_menu('thought', 'thome', true);
+	if (function_exists('template_mini_menu'))
+		template_mini_menu('thought', 'thome', true);
 }

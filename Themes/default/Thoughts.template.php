@@ -81,17 +81,19 @@ function template_thoughts_thread()
 {
 	global $context, $txt, $privacy_icon, $settings;
 
-	$privacy_icon = array(
-		-3 => 'public',
-		0 => 'members',
-		3 => 'contacts',
-		5 => 'author',
-	);
-
 	if (we::$is_member && (allowedTo('post_thought') || !empty($settings['likes_enabled'])))
+	{
+		$lists = '';
+		if (!empty(we::$user['contacts']['lists']))
+		{
+			$lists = array();
+			foreach (we::$user['contacts']['lists'] as $id => $clist)
+				$lists[] = $id . ': "' . str_replace('"', '\\"', generic_contacts($clist[0])) . '"';
+			$lists = ' ' . implode(', ', $lists) . ' ';
+		}
 		add_js('
-	oThought = new Thought([[-3, "public", "', $txt['privacy_public'], '"], [0, "members", "', $txt['privacy_members'],
-		'"], [3, "contacts", "', $txt['privacy_contacts'], '"], [5, "author", "', $txt['privacy_author'], '"]]);');
+	oThought = new Thought(', PRIVACY_DEFAULT, ', ', PRIVACY_MEMBERS, ', ', PRIVACY_JUSTME, ', {', $lists, '});');
+	}
 
 	$col = 2;
 	// There will usually be one master thought, but just in case... Loop through the 'array'.
@@ -101,13 +103,20 @@ function template_thoughts_thread()
 		echo '
 			<tr><td class="windowbg', $col, ' thought"><ul><li id="t', $id, '">
 				<div>';
+
+		$privacy_icon = $thought['privacy'] == PRIVACY_DEFAULT ? 'public' :
+						($thought['privacy'] == PRIVACY_MEMBERS ? 'members' :
+						($thought['privacy'] < 0 ? 'group' :
+						($thought['privacy'] == PRIVACY_JUSTME ? 'author' :
+						($thought['privacy'] > 99 ? 'contacts' : ''))));
+
 		if (empty($thought['owner_name']))
-			echo $thought['privacy'] != -3 ? '<div class="privacy_' . @$privacy_icon[$thought['privacy']] . '"></div> ' : ' ', $thought['text'], '
+			echo $privacy_icon ? '<div class="privacy_' . $privacy_icon . '"></div> ' : ' ', $thought['text'], '
 				</div>';
 		else
 			echo '
 					<a class="more_button thome" data-id="' . $id . '">' . $txt['actions_button'] . '</a>',
-					$thought['privacy'] != -3 ? '<div class="privacy_' . @$privacy_icon[$thought['privacy']] . '"></div>' : '', '
+					$privacy_icon ? '<div class="privacy_' . $privacy_icon . '"></div>' : '', '
 					<a href="<URL>?action=profile;u=', $thought['id_member'], '">', $thought['owner_name'], '</a>
 					<span class="date">(', $thought['updated'], ')</span> &raquo; ', $thought['text'], template_thought_likes($id), '
 				</div>';
