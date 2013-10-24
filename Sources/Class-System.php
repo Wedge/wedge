@@ -282,6 +282,7 @@ class we
 			'unread_notifications' => !empty($user_settings['unread_notifications']) ? $user_settings['unread_notifications'] : 0,
 			'media_unseen' => empty($user_settings['media_unseen']) ? 0 : $user_settings['media_unseen'],
 			'total_time_logged_in' => empty($user_settings['total_time_logged_in']) ? 0 : $user_settings['total_time_logged_in'],
+			'contacts' => array(),
 			'buddies' => !empty($settings['enable_buddylist']) && !empty($user_settings['buddy_list']) ? explode(',', $user_settings['buddy_list']) : array(),
 			'ignoreboards' => !empty($user_settings['ignore_boards']) && !empty($settings['ignorable_boards']) ? explode(',', $user_settings['ignore_boards']) : array(),
 			'ignoreusers' => !empty($user_settings['pm_ignore_list']) ? explode(',', $user_settings['pm_ignore_list']) : array(),
@@ -290,6 +291,64 @@ class we
 			'post_moderated' => false,
 			'sanctions' => !empty($user_settings['data']['sanctions']) ? $user_settings['data']['sanctions'] : array(),
 		);
+
+		$temp = array(
+			'lists' => array(),
+			'users' => array(),
+			'in_lists' => '',
+		);
+		if ($id_member)
+		{
+			$cached = cache_get_data('contacts_' . $id_member, 3000);
+			if ($cached === null)
+			{
+				// Get the member IDs in each of your contact lists.
+				$request = wesql::query('
+					SELECT id_list, id_member
+					FROM {db_prefix}contacts
+					WHERE id_owner = {int:user}',
+					array(
+						'user' => $id_member,
+					)
+				);
+				while ($row = wesql::fetch_assoc($request))
+					$temp['users'][$row['id_list']][$row['id_member']] = 1;
+				wesql::free_result($request);
+
+				// Get the list IDs of your contact lists.
+				$request = wesql::query('
+					SELECT id_list, list_type, name
+					FROM {db_prefix}contact_lists
+					WHERE id_owner = {int:user}
+					ORDER BY position, id_list',
+					array(
+						'user' => $id_member,
+					)
+				);
+				while ($row = wesql::fetch_assoc($request))
+					$temp['lists'][$row['id_list']] = array($row['name'], $row['list_type']);
+				wesql::free_result($request);
+
+				// Get the list IDs of the contact lists you're in.
+				$request = wesql::query('
+					SELECT GROUP_CONCAT(id_list SEPARATOR \',\')
+					FROM {db_prefix}contacts
+					WHERE id_member = {int:user}',
+					array(
+						'user' => $id_member,
+					)
+				);
+				while ($row = wesql::fetch_row($request))
+					$temp['in_lists'] = $row[0];
+				wesql::free_result($request);
+
+				cache_put_data('contacts_' . $id_member, $temp, 3000);
+			}
+			else
+				$temp = $cached;
+		}
+		$user['contacts'] = $temp;
+		$user['groups'] = array_flip(array_flip($user['groups']));
 
 		$is = array(
 			'guest' => $id_member == 0,
@@ -345,6 +404,7 @@ class we
 			$privacy_list .= ',' . PRIVACY_MEMBERS;
 		if (!empty($user['contacts']['in_lists']))
 			$privacy_list .= ',' . $user['contacts']['in_lists'];
+		$user['privacy_list'] = $privacy_list;
 
 		// Just build this here, it makes it easier to change/use - administrators can see all boards.
 		if ($is['admin'])

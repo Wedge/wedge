@@ -32,6 +32,9 @@ if (!defined('WEDGE'))
 	void makeCustomFieldChanges(int id_member, string area, bool sanitize = true)
 		// !!!
 
+	void editContacts(int id_member)
+		// !!!
+
 	void editBuddies(int id_member)
 		// !!!
 
@@ -1221,7 +1224,7 @@ function makeCustomFieldChanges($memID, $area, $sanitize = true)
 	}
 }
 
-// Show all the users buddies, as well as a add/delete interface.
+// Redirect to buddies or ignore list.
 function editBuddyIgnoreLists($memID)
 {
 	global $context, $txt, $settings, $user_profile;
@@ -1256,7 +1259,302 @@ function editBuddyIgnoreLists($memID)
 	$subActions[$context['list_area']][0]($memID);
 }
 
-// Show all the users buddies, as well as a add/delete interface.
+// Show all the user's contacts, as well as an add/delete interface.
+function editContacts($memID)
+{
+	global $context, $txt, $settings, $user_profile;
+
+	// Do a quick check to ensure people aren't getting here illegally!
+	if (!we::$user['is_owner'] || empty($settings['enable_buddylist']))
+		fatal_lang_error('no_access', false);
+
+	$subActions = array(
+		'new' => array('addContactList', $txt['editBuddies']),
+		'edit' => array('editContactList', $txt['editIgnoreList']),
+	);
+
+	$context['list_area'] = isset($_GET['sa'], $subActions[$_GET['sa']]) ? $_GET['sa'] : 'buddies';
+
+	// Create the tabs for the template.
+	$context[$context['profile_menu_name']]['tab_data'] = array(
+		'title' => $txt['editBuddyIgnoreLists'],
+		'description' => $txt['buddy_ignore_desc'],
+		'icon' => 'profile_sm.gif',
+		'tabs' => array(
+			'new' => array(),
+			'edit' => array(),
+		),
+	);
+
+	// Pass on to the actual function.
+	wetem::load($subActions[$context['list_area']][0]);
+	$subActions[$context['list_area']][0]($memID);
+}
+
+function addContactList($memID)
+{
+	global $txt, $context, $user_profile, $memberContext;
+
+	// For making changes!
+	$buddiesArray = array_filter(explode(',', $user_profile[$memID]['buddy_list']));
+
+	// Removing a buddy?
+	if (isset($_GET['remove']))
+	{
+		checkSession('get');
+
+		// Heh, I'm lazy, do it the easy way...
+		foreach ($buddiesArray as $key => $buddy)
+			if ($buddy == (int) $_GET['remove'])
+				unset($buddiesArray[$key]);
+
+		// Make the changes.
+		$user_profile[$memID]['buddy_list'] = implode(',', $buddiesArray);
+		updateMemberData($memID, array('buddy_list' => $user_profile[$memID]['buddy_list']));
+
+		// Redirect off the page because we don't like all this ugly query stuff to stick in the history.
+		redirectexit('action=profile;u=' . $memID . ';area=lists;sa=buddies');
+	}
+	elseif (isset($_POST['new_buddy']))
+	{
+		// Prepare the string for extraction...
+		$_POST['new_buddy'] = strtr(westr::htmlspecialchars($_POST['new_buddy'], ENT_QUOTES), array('&quot;' => '"'));
+		preg_match_all('~"([^"]+)"~', $_POST['new_buddy'], $matches);
+		$new_buddies = array_unique(array_merge($matches[1], explode(',', preg_replace('~"[^"]+"~', '', $_POST['new_buddy']))));
+
+		foreach ($new_buddies as $k => $dummy)
+		{
+			$new_buddies[$k] = strtr(trim($new_buddies[$k]), array('\'' => '&#039;'));
+
+			if (strlen($new_buddies[$k]) == 0 || in_array($new_buddies[$k], array($user_profile[$memID]['member_name'], $user_profile[$memID]['real_name'])))
+				unset($new_buddies[$k]);
+		}
+
+		if (!empty($new_buddies))
+		{
+			// Now find out the id_member of the buddy.
+			$request = wesql::query('
+				SELECT id_member
+				FROM {db_prefix}members
+				WHERE member_name IN ({array_string:new_buddies}) OR real_name IN ({array_string:new_buddies})
+				LIMIT {int:count_new_buddies}',
+				array(
+					'new_buddies' => $new_buddies,
+					'count_new_buddies' => count($new_buddies),
+				)
+			);
+
+			// Add the new member to the buddies array.
+			while ($row = wesql::fetch_assoc($request))
+				$buddiesArray[] = (int) $row['id_member'];
+			wesql::free_result($request);
+			$buddiesArray = array_flip(array_flip(array_filter($buddiesArray)));
+
+			// Now update the current users buddy list.
+			$user_profile[$memID]['buddy_list'] = implode(',', $buddiesArray);
+			updateMemberData($memID, array('buddy_list' => $user_profile[$memID]['buddy_list']));
+		}
+
+		// Back to the buddy list!
+		redirectexit('action=profile;u=' . $memID . ';area=lists;sa=buddies');
+	}
+
+	// Get all the users "buddies"...
+	$buddies = array();
+
+	if (!empty($buddiesArray))
+	{
+		$result = wesql::query('
+			SELECT id_member
+			FROM {db_prefix}members
+			WHERE id_member IN ({array_int:buddy_list})
+			ORDER BY real_name
+			LIMIT {int:buddy_list_count}',
+			array(
+				'buddy_list' => $buddiesArray,
+				'buddy_list_count' => substr_count($user_profile[$memID]['buddy_list'], ',') + 1,
+			)
+		);
+		while ($row = wesql::fetch_assoc($result))
+			$buddies[] = $row['id_member'];
+		wesql::free_result($result);
+	}
+
+	$context['buddy_count'] = count($buddies);
+
+	// Load all the members up.
+	loadMemberData($buddies, false, 'profile');
+
+	// Setup the context for each buddy.
+	$context['buddies'] = array();
+	foreach ($buddies as $buddy)
+	{
+		loadMemberContext($buddy);
+		$context['buddies'][$buddy] = $memberContext[$buddy];
+	}
+}
+
+function editContactList($memID)
+{
+	global $txt, $context, $user_profile, $memberContext;
+
+	// For making changes!
+	$buddiesArray = array_filter(explode(',', $user_profile[$memID]['buddy_list']));
+
+	// Adding or removing a contact from one or more lists, maybe..?
+	if (isset($_POST['uid']))
+	{
+		checkSession('post');
+
+		$user = (int) $_POST['uid'];
+		if (!$user)
+			fatal_lang_error('not_a_user', false);
+
+		$c = isset($_POST['c']) ? $_POST['c'] : array();
+		$c += we::$user['contacts']['lists'];
+
+		foreach ($c as $clist => $val)
+		{
+			if ((int) $clist == 0)
+			{
+				wesql::insert('ignore',
+					'{db_prefix}contact_lists',
+					array('id_owner' => 'int', 'name' => 'string', 'list_type' => 'string', 'added' => 'int'),
+					array($memID, '{' . $clist . '}', $clist, time())
+				);
+				$cid = wesql::insert_id();
+				we::$user['contacts']['lists'][$cid] = array('{' . $clist . '}', $clist);
+				$clist = $cid;
+			}
+			else
+				$clist = (int) $clist;
+
+			// $val is either 'on'/1 (add to this) or array(name, type) (existing list, not in $_POST, remove from it.)
+			// Add to a list..?
+			if (!is_array($val) && !isset(we::$user['contacts']['users'][$clist][$user]))
+				wesql::insert('ignore',
+					'{db_prefix}contacts',
+					array('id_member' => 'int', 'id_owner' => 'int', 'id_list' => 'int', 'list_type' => 'string', 'added' => 'int'),
+					array($user, $memID, $clist, we::$user['contacts']['lists'][$clist][1], time())
+				);
+
+			// Remove from a list?
+			elseif (is_array($val) && isset(we::$user['contacts']['users'][$clist][$user]))
+				wesql::query('
+					DELETE FROM {db_prefix}contacts
+					WHERE id_member = {int:user}
+					AND id_list = {int:list}
+					AND id_owner = {int:me}',
+					array(
+						'user' => $user,
+						'list' => $clist,
+						'me' => $memID, // Make sure we're the legitimate owner!
+					)
+				);
+		}
+		cache_put_data('contacts_' . $memID, null, 3000);
+		redirectexit('action=profile;u=' . $user);
+	}
+
+	// !! The rest should be removed, once it's all set and done.
+
+	// Removing a buddy?
+	if (isset($_GET['remove']))
+	{
+		checkSession('get');
+
+		// Heh, I'm lazy, do it the easy way...
+		foreach ($buddiesArray as $key => $buddy)
+			if ($buddy == (int) $_GET['remove'])
+				unset($buddiesArray[$key]);
+
+		// Make the changes.
+		$user_profile[$memID]['buddy_list'] = implode(',', $buddiesArray);
+		updateMemberData($memID, array('buddy_list' => $user_profile[$memID]['buddy_list']));
+
+		// Redirect off the page because we don't like all this ugly query stuff to stick in the history.
+		redirectexit('action=profile;u=' . $memID . ';area=lists;sa=buddies');
+	}
+	elseif (isset($_POST['new_buddy']))
+	{
+		// Prepare the string for extraction...
+		$_POST['new_buddy'] = strtr(westr::htmlspecialchars($_POST['new_buddy'], ENT_QUOTES), array('&quot;' => '"'));
+		preg_match_all('~"([^"]+)"~', $_POST['new_buddy'], $matches);
+		$new_buddies = array_unique(array_merge($matches[1], explode(',', preg_replace('~"[^"]+"~', '', $_POST['new_buddy']))));
+
+		foreach ($new_buddies as $k => $dummy)
+		{
+			$new_buddies[$k] = strtr(trim($new_buddies[$k]), array('\'' => '&#039;'));
+
+			if (strlen($new_buddies[$k]) == 0 || in_array($new_buddies[$k], array($user_profile[$memID]['member_name'], $user_profile[$memID]['real_name'])))
+				unset($new_buddies[$k]);
+		}
+
+		if (!empty($new_buddies))
+		{
+			// Now find out the id_member of the buddy.
+			$request = wesql::query('
+				SELECT id_member
+				FROM {db_prefix}members
+				WHERE member_name IN ({array_string:new_buddies}) OR real_name IN ({array_string:new_buddies})
+				LIMIT {int:count_new_buddies}',
+				array(
+					'new_buddies' => $new_buddies,
+					'count_new_buddies' => count($new_buddies),
+				)
+			);
+
+			// Add the new member to the buddies array.
+			while ($row = wesql::fetch_assoc($request))
+				$buddiesArray[] = (int) $row['id_member'];
+			wesql::free_result($request);
+			$buddiesArray = array_flip(array_flip(array_filter($buddiesArray)));
+
+			// Now update the current users buddy list.
+			$user_profile[$memID]['buddy_list'] = implode(',', $buddiesArray);
+			updateMemberData($memID, array('buddy_list' => $user_profile[$memID]['buddy_list']));
+		}
+
+		// Back to the buddy list!
+		redirectexit('action=profile;u=' . $memID . ';area=lists;sa=buddies');
+	}
+
+	// Get all the users "buddies"...
+	$buddies = array();
+
+	if (!empty($buddiesArray))
+	{
+		$result = wesql::query('
+			SELECT id_member
+			FROM {db_prefix}members
+			WHERE id_member IN ({array_int:buddy_list})
+			ORDER BY real_name
+			LIMIT {int:buddy_list_count}',
+			array(
+				'buddy_list' => $buddiesArray,
+				'buddy_list_count' => substr_count($user_profile[$memID]['buddy_list'], ',') + 1,
+			)
+		);
+		while ($row = wesql::fetch_assoc($result))
+			$buddies[] = $row['id_member'];
+		wesql::free_result($result);
+	}
+
+	$context['buddy_count'] = count($buddies);
+
+	// Load all the members up.
+	loadMemberData($buddies, false, 'profile');
+
+	// Setup the context for each buddy.
+	$context['buddies'] = array();
+	foreach ($buddies as $buddy)
+	{
+		loadMemberContext($buddy);
+		$context['buddies'][$buddy] = $memberContext[$buddy];
+	}
+}
+
+// Show all the user's buddies, as well as an add/delete interface.
 function editBuddies($memID)
 {
 	global $txt, $context, $user_profile, $memberContext;

@@ -927,9 +927,15 @@ tr.windowbg td
 /* Styles for the profile section.
 ------------------------------------------------- */
 
+#profile_home
+	display: flex
+	width: 100%
+
 // The basic user info on the left
 #basicinfo
-	margin-top: 10px
+	flex: 0 1 20%
+	margin: 10px 10px 0 0
+	min-width: 180px
 	width: 20%
 	float: left
 	h4
@@ -983,15 +989,16 @@ tr.windowbg td
 		margin, padding, border-bottom: 0
 
 #detailedinfo extends #profile_box
-	margin-top: 10px
-	width: 79.5%
+	flex: 1 1 79.5%
+	margin: 10px 0 0 0
+	width: 75%
 	float: right
 	dl.noborder
 		border-bottom: 0
 	dt.clear
 		width: 100%
 	a
-		text-decoration: underline
+		border-bottom: 1px dotted #999
 
 // Signature header
 .signature h5
@@ -1007,19 +1014,27 @@ tr.windowbg td
 	float: left
 	padding: 0 3px
 
+#contacts
+	margin-top: 20px
+	.save
+		margin-top: 8px
+
 // If the screen is too small, show the avatar on top
 @media all and (max-width: 900px)
 	.prevnext_prev
 		display: none
+	#profile_home
+		display: block
 	#basicinfo, #detailedinfo
 		width: 100%
 	#basicinfo
-		h4
+		.username
 			float: left
-			width: 35%
-		img.avatar
-			float: right
-			vertical-align: top
+	#position
+		float: right
+	img.avatar
+		float: right
+		vertical-align: top
 	#basicinfo ul, #userstatus
 		clear: left
 	#infolinks

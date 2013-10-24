@@ -906,6 +906,20 @@ function shorten_subject($subject, $len)
 }
 
 /**
+ * Just a quick function to convert generic contact list names to be human readable.
+ */
+function generic_contacts($str)
+{
+	global $txt;
+
+	if (strpos($str, '{') === false || strpos($str, '}') === false)
+		return $str;
+
+	$type = substr($str, 1, -1);
+	return isset($txt['contacts_' . $type]) ? $txt['contacts_' . $type] : '<em>' . $type . '</em>';
+}
+
+/**
  * Log the current user (even as a guest), as being online and optionally including their current location.
  *
  * - If the theme settings are set to display users in a board or topic, ensure the user is listed as being in those places (adjusting $force as necessary)

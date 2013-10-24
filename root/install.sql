@@ -679,12 +679,16 @@ CREATE TABLE {$db_prefix}collapsed_categories (
 #
 
 CREATE TABLE {$db_prefix}contact_lists (
+	id_list mediumint(8) unsigned NOT NULL auto_increment,
 	id_owner mediumint(8) unsigned NOT NULL default 0,
-	id_list mediumint(8) unsigned NOT NULL default 0,
-	name varchar(40) NOT NULL default '',
-	PRIMARY KEY (id_list, id_owner),
+	name varchar(40) NOT NULL default '{friends}',
+	list_type enum('friends', 'family', 'known', 'work', 'follow', 'restrict', 'custom') NOT NULL default 'friends',
+	visibility enum('everyone', 'all-contacts', 'just-this-group', 'just-this-member', 'just-me') NOT NULL default 'everyone',
+	added int(10) unsigned NOT NULL default 0,
+	position tinyint(4) NOT NULL default 0,
+	PRIMARY KEY (id_list),
 	KEY member (id_owner)
-) ENGINE=MyISAM;
+) AUTO_INCREMENT=100 ENGINE=MyISAM;
 
 #
 # Table structure for table `contacts`
@@ -694,12 +698,14 @@ CREATE TABLE {$db_prefix}contacts (
 	id_member mediumint(8) unsigned NOT NULL default 0,
 	id_owner mediumint(8) unsigned NOT NULL default 0,
 	id_list mediumint(8) unsigned NOT NULL default 0,
+	list_type enum('friends', 'family', 'known', 'work', 'follow', 'restrict', 'custom') NOT NULL default 'friends',
 	is_synchronous tinyint(1) unsigned NOT NULL default 0,
-	position tinyint(4) NOT NULL default 0,
-	updated int(10) unsigned NOT NULL default 0,
 	hidden tinyint(1) unsigned NOT NULL default 0,
-	PRIMARY KEY (id_member, id_owner, id_list)
-) AUTO_INCREMENT=100 ENGINE=MyISAM;
+	added int(10) unsigned NOT NULL default 0,
+	position tinyint(4) NOT NULL default 0,
+	PRIMARY KEY (id_member, id_list, list_type),
+	KEY member (id_owner)
+) ENGINE=MyISAM;
 
 #
 # Table structure for table `custom_fields`

@@ -44,82 +44,123 @@ function template_summary()
 		<img src="', $theme['images_url'], '/icons/profile_sm.gif">
 		', $txt['summary'], '
 	</we:cat>
-	<div id="basicinfo">
-		<div class="windowbg wrc">
-			<div class="flow_auto">
-				<div class="username">
-					<h4>', $context['member']['link'], '</h4>
-					<span class="position">', $context['member'][$group], '</span>';
+	<div id="profile_home">
+		<div id="basicinfo" class="windowbg wrc">
+			<div class="username">
+				<h4>', $context['member']['link'], '</h4>
+				<span class="position">', $context['member'][$group], '</span>';
 
 	if (!empty($context['member']['group_badges']))
 		echo '
-					<div>', implode('</div>
-					<div>', $context['member']['group_badges']), '</div>';
+				<div>', implode('</div>
+				<div>', $context['member']['group_badges']), '</div>';
 
 	echo '
-				</div>
-				', $context['member']['avatar']['image'], '
-				<ul class="reset">';
+			</div>
+			', $context['member']['avatar']['image'], '
+			<ul class="reset">';
 
 	// What about if we allow email only via the forum?
 	if ($context['member']['show_email'] === 'no_through_forum' || $context['member']['show_email'] === 'yes_permission_override')
 		echo '
-					<li><a href="<URL>?action=emailuser;sa=email;uid=', $context['member']['id'], '" title="', $context['member']['show_email'] == 'yes_permission_override' ? $context['member']['email'] : '', '" rel="nofollow"><img src="', $theme['images_url'], '/email_sm.gif" alt="', $txt['email'], '"></a></li>';
+				<li><a href="<URL>?action=emailuser;sa=email;uid=', $context['member']['id'], '" title="', $context['member']['show_email'] == 'yes_permission_override' ? $context['member']['email'] : '', '" rel="nofollow"><img src="', $theme['images_url'], '/email_sm.gif" alt="', $txt['email'], '"></a></li>';
 
 	// Don't show an icon if they haven't specified a website.
 	if ($context['member']['website']['url'] !== '' && !isset($context['disabled_fields']['website']))
 		echo '
-					<li><a href="', $context['member']['website']['url'], '" title="' . $context['member']['website']['title'] . '" target="_blank" class="new_win">', ($theme['use_image_buttons'] ? '<img src="' . $theme['images_url'] . '/www_sm.gif" alt="' . $context['member']['website']['title'] . '">' : $txt['website']), '</a></li>';
+				<li><a href="', $context['member']['website']['url'], '" title="' . $context['member']['website']['title'] . '" target="_blank" class="new_win">', ($theme['use_image_buttons'] ? '<img src="' . $theme['images_url'] . '/www_sm.gif" alt="' . $context['member']['website']['title'] . '">' : $txt['website']), '</a></li>';
 
 	// Are there any custom profile fields for the summary?
 	if (!empty($context['custom_fields']))
-	{
 		foreach ($context['custom_fields'] as $field)
 			if (($field['placement'] == 1 || empty($field['output_html'])) && !empty($field['value']))
 				echo '
-					<li class="custom_field">', $field['output_html'], '</li>';
-	}
+				<li class="custom_field">', $field['output_html'], '</li>';
 
 	echo '
-				</ul>
-				<span id="userstatus">', $context['can_send_pm'] ? '<a href="' . $context['member']['online']['href'] . '" title="' . $context['member']['online']['label'] . '" rel="nofollow">' : '', $theme['use_image_buttons'] ? '<img src="' . $context['member']['online']['image_href'] . '" alt="' . $context['member']['online']['text'] . '" class="middle">' : $context['member']['online']['text'], $context['can_send_pm'] ? '</a>' : '', $theme['use_image_buttons'] ? '<span class="smalltext"> ' . $context['member']['online']['text'] . '</span>' : '';
-
-	// Can they add this member as a buddy?
-	if (!empty($context['can_have_buddy']) && !we::$user['is_owner'])
-		echo '
-					<br><a href="<URL>?action=buddy;u=', $context['id_member'], ';', $context['session_query'], '">[', $txt['buddy_' . ($context['member']['is_buddy'] ? 'remove' : 'add')], ']</a>';
-
-	echo '
-				</span>
-				<p id="infolinks">';
+			</ul>
+			<span id="userstatus">', $context['can_send_pm'] ? '
+				<a href="' . $context['member']['online']['href'] . '" title="' . $context['member']['online']['label'] . '" rel="nofollow">' : '', $theme['use_image_buttons'] ? '<img src="' . $context['member']['online']['image_href'] . '" alt="' . $context['member']['online']['text'] . '" class="middle">' : $context['member']['online']['text'], $context['can_send_pm'] ? '</a>' : '', $theme['use_image_buttons'] ? '
+				<span class="smalltext"> ' . $context['member']['online']['text'] . '</span>' : '', '
+			</span>
+			<p id="infolinks">';
 
 	if (!we::$user['is_owner'] && $context['can_send_pm'])
 		echo '
-					<a href="<URL>?action=pm;sa=send;u=', $context['id_member'], '">', $txt['profile_sendpm_short'], '</a><br>';
+				<a href="<URL>?action=pm;sa=send;u=', $context['id_member'], '">', $txt['profile_sendpm_short'], '</a><br>';
 
 	if (!empty($context['member']['real_posts']))
 		echo '
-					<a href="<URL>?action=profile;u=', $context['id_member'], ';area=showposts">', $txt['showPosts'], '</a><br>';
+				<a href="<URL>?action=profile;u=', $context['id_member'], ';area=showposts">', $txt['showPosts'], '</a><br>';
 
 	echo '
-					<a href="<URL>?action=profile;u=', $context['id_member'], ';area=statistics">', $txt['statPanel'], '</a>
-				</p>
-			</div>
+				<a href="<URL>?action=profile;u=', $context['id_member'], ';area=statistics">', $txt['statPanel'], '</a>
+			</p>';
+
+	// Can they add this member as a buddy?
+	if (!empty($context['can_have_buddy']) && !we::$user['is_owner'])
+	{
+		echo '
+			<div id="contacts">
+				<h6><a href="<URL>?action=help;in=contacts" class="help" onclick="return reqWin(this);"></a> ', $txt['buddies'], '</h6>
+				<form name="contacts" method="post" action="<URL>?action=profile;area=contacts;sa=edit;', $context['session_query'], '">
+					<input type="hidden" name="uid" value="', $context['id_member'], '">
+					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">';
+
+		$lists = array_flip(array('custom', 'friends', 'family', 'known', 'work', 'follow', 'restrict'));
+		foreach ($lists as $id_list => $dummy)
+			$lists[$id_list] = array();
+
+		foreach (we::$user['contacts']['lists'] as $id_list => $user_list)
+			$lists[$user_list[1]][$id_list] = $user_list;
+
+		foreach ($lists as $list_type => $per_type)
+		{
+			if (empty($per_type))
+				$per_type = array($list_type => array('{' . $list_type . '}', $list_type));
+			foreach ($per_type as $id_list => $list)
+			{
+				$count = isset(we::$user['contacts']['users'][$id_list]) ? count(we::$user['contacts']['users'][$id_list]) : 0;
+				echo '
+					<label><input type="checkbox" name="c[', $id_list, ']"', is_integer($id_list) && isset(we::$user['contacts']['users'][$id_list][$context['id_member']]) ? ' checked' : '', '> ', generic_contacts($list[0]), $count ? ' (' . $count . ')' : '', '</label><br>';
+			}
+		}
+
+		echo '
+					<input type="submit" class="save">
+				</form>
+			</div>';
+	}
+
+	echo '
 		</div>
-	</div>
-	<div id="detailedinfo">
-		<div class="windowbg2 wrc">
+		<div id="detailedinfo" class="windowbg2 wrc">
 			<dl>';
 
 	if (we::$user['is_owner'] || we::$is_admin)
 		echo '
-				<dt>', $txt['username'], ': </dt>
+				<dt>', $txt['username'], ':</dt>
 				<dd>', $context['member']['username'], '</dd>';
 
 	if (!isset($context['disabled_fields']['posts']))
 		echo '
-				<dt>', $txt['profile_posts'], ': </dt>
-				<dd>', $context['member']['posts'], ' (', $context['member']['posts_per_day'], ' ', $txt['posts_per_day'], ')</dd>';
+				<dt>', $txt['profile_posts'], ':</dt>
+				<dd><a href="<URL>?action=profile;u=', $context['id_member'], ';area=showposts">', $context['member']['posts'], '</a> (', $context['member']['posts_per_day'], ' ', $txt['posts_per_day'], ')</dd>';
+
+	if (!isset($context['disabled_fields']['gender']) && !empty($context['member']['gender']))
+		echo '
+				<dt>', $txt['gender'], ':</dt>
+				<dd>', $txt[$context['member']['gender']], '</dd>';
+
+	if ($context['member']['age'] !== $txt['not_applicable'])
+		echo '
+				<dt>', $txt['age'], ':</dt>
+				<dd>', $context['member']['age'] . ($context['member']['today_is_birthday'] ? '<br><img src="' . $theme['images_url'] . '/cake.png">' : ''), '</dd>';
+
+	if (!isset($context['disabled_fields']['location']) && !empty($context['member']['location']))
+		echo '
+				<dt>', $txt['location'], ':</dt>
+				<dd>', $context['member']['location'], '</dd>';
 
 	// Only show the email address fully if the one looking at the profile is an admin they can see it anyway.
 	if ($context['member']['show_email'] == 'yes_permission_override')
