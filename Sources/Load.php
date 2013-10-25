@@ -1606,7 +1606,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 	{
 		loadLanguage('index');
 		$context['right_to_left'] = !empty($txt['lang_rtl']);
-		wedge_parse_skin_options(array('sidebar' => 'none', 'mobile' => 0));
+		wedge_parse_skin_options();
 	}
 	else
 	{

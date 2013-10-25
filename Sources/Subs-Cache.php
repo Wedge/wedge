@@ -1556,8 +1556,13 @@ function wedge_get_skin_options()
 	call_hook('skin_parser', array(&$set, &$skeleton, &$macros));
 }
 
-function wedge_parse_skin_options($skin_options)
+function wedge_parse_skin_options($skin_options = array())
 {
+	if (defined('SKIN_MOBILE'))
+		return;
+	if (empty($skin_options))
+		$skin_options = array('sidebar' => 'none', 'mobile' => 0);
+
 	// Skin variables can be accessed either through PHP or Wess code with a test on the SKIN_* constant.
 	define('SKIN_SIDEBAR_RIGHT', we::$is['SKIN_SIDEBAR_RIGHT'] = empty($skin_options['sidebar']) || $skin_options['sidebar'] == 'right');
 	define('SKIN_SIDEBAR_LEFT', we::$is['SKIN_SIDEBAR_LEFT'] = isset($skin_options['sidebar']) && $skin_options['sidebar'] == 'left');

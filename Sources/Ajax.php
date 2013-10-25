@@ -272,8 +272,7 @@ function return_thoughts()
 
 	loadSource(array('Thoughts', 'Subs-Cache'));
 	loadTemplate('index'); // We need template_mini_menu
-	if (!defined('SKIN_SIDEBAR_RIGHT'))
-		wedge_get_skin_options(); // Yay, another rule broken!
+	wedge_parse_skin_options(); // Yay, another rule broken!
 
 	// This is basically return_xml, but with a series of echo's in-between...
 	clean_output();
