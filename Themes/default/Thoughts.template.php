@@ -28,9 +28,6 @@ function template_showLatestThoughts()
 {
 	global $context, $txt;
 
-	if (empty($context['thoughts']))
-		return;
-
 	echo '
 		<we:cat>
 			<div class="thought_icon"></div>
@@ -52,9 +49,6 @@ function template_showLatestThoughts()
 function template_thoughts()
 {
 	global $context, $txt, $theme;
-
-	if (empty($context['thoughts']))
-		return;
 
 	if (!$context['action']) // Homepage..?
 		echo '
@@ -186,6 +180,12 @@ function template_thoughts_table()
 			</tr>';
 		}
 	}
+
+	if (empty($context['thoughts']))
+		echo '
+			<tr class="windowbg center">
+				<td colspan="2">', $txt['no_thoughts'], '</td>
+			</tr>';
 
 	if (!empty($context['header']))
 		echo '<tr class="hide"><td>', $context['header'], '</td></tr>';
