@@ -1601,11 +1601,12 @@ function loadTheme($id_theme = 0, $initialize = true)
 
 	// If output is an Ajax request, or printer-friendly
 	// page, skip the index template entirely, and don't load skeletons.
-	// Don't use macros in their templates!
+	// Don't use macros in your Ajax templates!
 	if (AJAX || $context['action'] === 'feed' || $context['action'] === 'printpage')
 	{
 		loadLanguage('index');
 		$context['right_to_left'] = !empty($txt['lang_rtl']);
+		wedge_parse_skin_options(array('sidebar' => 'none', 'mobile' => 0));
 	}
 	else
 	{

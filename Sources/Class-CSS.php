@@ -363,7 +363,7 @@ class wess_var extends wess
 			Double quotes are only required for empty strings.
 			Authors can specify conditions for the variable to be set,
 			depending on the browser, rtl, guest or member, i.e. anything
-			set in $context['css_suffixes']. Like this:
+			that can be queried with we::is(). Like this:
 
 				$variable = "rgba(2,4,6,.5)";
 				$variable {ie6,ie7,ie8} = rgb(1,2,3);

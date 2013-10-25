@@ -1993,7 +1993,6 @@ function template_install_above()
 	$theme['default_theme_url'] = $boardurl . '/Themes/default';
 	$theme['images_url'] = $boardurl . '/Themes/default/images';
 	$context['css_folders'] = array('skins');
-	$context['css_suffixes'] = array(we::$browser['agent']);
 	$settings['minify'] = 'packer';
 
 	if (!file_exists($cachedir . '/cache.lock'))

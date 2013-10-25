@@ -1468,16 +1468,7 @@ function wedge_get_skin_options()
 			$skin_options[$option[1]] = trim($option[2]);
 	}
 
-	// Skin variables can be accessed either through PHP or Wess code with a test on the SKIN_* constant.
-	define('SKIN_SIDEBAR_RIGHT', we::$is['SKIN_SIDEBAR_RIGHT'] = empty($skin_options['sidebar']) || $skin_options['sidebar'] == 'right');
-	define('SKIN_SIDEBAR_LEFT', we::$is['SKIN_SIDEBAR_LEFT'] = isset($skin_options['sidebar']) && $skin_options['sidebar'] == 'left');
-	unset($skin_options['sidebar']);
-	if (!isset($skin_options['mobile']))
-		$skin_options['mobile'] = 0;
-
-	// Any other variables, maybe..? e.g. SKIN_MOBILE
-	foreach ($skin_options as $key => $val)
-		define('SKIN_' . strtoupper($key), we::$is['SKIN_' . strtoupper($key)] = !empty($val));
+	wedge_parse_skin_options($skin_options);
 
 	// Any conditional directives inside the skin.xml or skeleton.xml files..?
 	$sources = $skeleton ? array(&$set, &$skeleton) : array(&$set);
@@ -1563,6 +1554,20 @@ function wedge_get_skin_options()
 
 	// If you write a plugin that adds new skin options, plug it into this!
 	call_hook('skin_parser', array(&$set, &$skeleton, &$macros));
+}
+
+function wedge_parse_skin_options($skin_options)
+{
+	// Skin variables can be accessed either through PHP or Wess code with a test on the SKIN_* constant.
+	define('SKIN_SIDEBAR_RIGHT', we::$is['SKIN_SIDEBAR_RIGHT'] = empty($skin_options['sidebar']) || $skin_options['sidebar'] == 'right');
+	define('SKIN_SIDEBAR_LEFT', we::$is['SKIN_SIDEBAR_LEFT'] = isset($skin_options['sidebar']) && $skin_options['sidebar'] == 'left');
+	unset($skin_options['sidebar']);
+	if (!isset($skin_options['mobile']))
+		$skin_options['mobile'] = 0;
+
+	// Any other variables, maybe..? e.g. SKIN_MOBILE
+	foreach ($skin_options as $key => $val)
+		define('SKIN_' . strtoupper($key), we::$is['SKIN_' . strtoupper($key)] = !empty($val));
 }
 
 /**

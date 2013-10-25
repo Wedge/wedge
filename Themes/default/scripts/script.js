@@ -666,7 +666,7 @@ $(function ()
 
 	$(document).on(is_firefox ? 'mouseup' : 'mousedown', function (e) {
 		// Catch the wheel button (or middle-click), and if it's not attempting to open a link, toggle the sidebar.
-		if (e.which == 2 && e.target.tagName !== 'A' && !$('#sideshow').is(':hidden') && !$.hasData(e))
+		if (e.which == 2 && e.target.tagName !== 'A' && !$('#sideshow').is(':hidden') && !$.hasData(e.target))
 		{
 			sidebar_shown ? hide_sidebar() : show_sidebar();
 			e.preventDefault();
