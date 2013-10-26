@@ -1325,14 +1325,20 @@ function trackStats($stats = array())
  * Retrieves an associative array with topic IDs and their corresponding number of unread posts.
  *
  * @param string $posts An array of topics, as returned by ssi_recentTopics() for instance.
+ * @param boolean $straight_list Set to true if you want to provide a direct array of topic IDs.
  */
-function get_unread_numbers($posts)
+function get_unread_numbers($posts, $straight_list = false)
 {
 	$has_unread = $nb_new = array();
 	if (we::$is_member)
-		foreach ($posts as $post)
-			if (!empty($post['is_new']))
-				$has_unread[] = $post['topic'];
+	{
+		if ($straight_list)
+			$has_unread = $posts;
+		else
+			foreach ($posts as $post)
+				if (!empty($post['is_new']))
+					$has_unread[] = $post['topic'];
+	}
 
 	if (empty($has_unread))
 		return array();

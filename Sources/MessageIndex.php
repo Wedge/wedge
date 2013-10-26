@@ -338,6 +338,7 @@ function MessageIndex()
 		);
 
 		// Begin 'printing' the message index for current board.
+		$has_unread = array();
 		while ($row = wesql::fetch_assoc($result))
 		{
 			if (!$pre_query)
@@ -513,8 +514,13 @@ function MessageIndex()
 				'can_reply' => !empty($row['locked']) ? $can_moderate : $can_reply_any || ($can_reply_own && $row['first_id_member'] == we::$id),
 				'style' => $color_class,
 			);
+
+			if ($context['topics'][$row['id_topic']]['new'])
+				$has_unread[] = $row['id_topic'];
 		}
 		wesql::free_result($result);
+
+		$context['nb_new'] = get_unread_numbers($has_unread, true);
 
 		// Fix the sequence of topics if they were retrieved in the wrong order. (for speed reasons...)
 		if ($fake_ascending)

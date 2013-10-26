@@ -113,7 +113,7 @@ function template_main_board()
 			// Is this topic new? (assuming they are logged in!)
 			if ($topic['new'] && we::$is_member)
 					echo '
-							<a href="', $topic['new_href'], '" id="newicon', $topic['first_post']['id'], '" class="note">', $txt['new'], '</a>';
+							<a href="', $topic['new_href'], '" id="newicon', $topic['first_post']['id'], '" class="note">', $context['nb_new'][$topic['id']], '</a>';
 
 			echo '
 							<p>', $txt['started_by'], ' ', $topic['first_post']['member']['link'], '
