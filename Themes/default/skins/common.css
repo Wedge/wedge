@@ -87,7 +87,7 @@
 .loading virtual
 	mixin: .inline-block
 	// All the cool kids get a CSS spinner.
-	@if can_animate
+	@if $can_animate
 		width, height: 11px
 		border-radius: 100%
 		border: 1px solid rgba(0,0,0,0.5)
@@ -158,3 +158,15 @@ $vmin = @is (ie9, vm, vmin)
 /* Maximum window width for the browser to trigger the low-res responsive CSS mode. */
 $responsive_max_width = 1000px
 $responsive = "all and (max-width: $responsive_max_width)"
+
+/* List of browsers that support the STANDARD flexbox model, i.e. display: flex.
+	I added IE 10 support by changing the properties on the fly, so you should be fine with it, if your code isn't too complex.
+	Chrome supports flexbox, earlier with a prefix. Opera 12.1 supports it, but in a broken way. Not worth bothering, though...
+	For reference, browsers supporting the OLD, useless model were: (firefox[2-], chrome[4-], safari[3.1-] && !ios, ios[3.2-]) */
+$can_flex = @is ("firefox[22-], chrome[26-], opera[12.1-], ie[10-], safari[7-], ios[7-]")
+
+/* List browsers that support CSS3 animations (Wedge adds prefixes automatically.) */
+$can_animate = @is ("chrome, firefox[5-], opera[12-], ie[10-], safari[4-], ios[3.2-], android[2.1-]")
+
+/* List browsers that support CSS filters (not the old IE ones!). Note that Firefox[3.5-] supports filter: url() with SVG filters. */
+$can_filter = @is ("chrome[18-], safari[6-]")

@@ -461,27 +461,13 @@ class wess_if extends wess
 
 	function process(&$css)
 	{
-		// Convert some useful capability tests.
-		if (!$this->test_vars)
-		{
-			// List of browsers that support the STANDARD flexbox model, i.e. display: flex.
-			// I added IE 10 support by changing the properties on the fly, so you should be fine with it, if your code isn't too complex.
-			// Chrome supports flexbox, earlier with a prefix. Opera 12.1 supports it, but in a broken way. Not worth bothering, though...
-			// For reference, browsers supporting the OLD, useless model were: (firefox[2-], chrome[4-], safari[3.1-] && !ios, ios[3.2-])
-			if (strpos($css, 'can_flex') !== false)
-				$css = preg_replace('~\bcan_flex\b~', '(firefox[22-], chrome[26-], opera[12.1-], ie[10-], safari[7-], ios[7-])', $css);
-
-			// List browsers that support CSS3 animations (Wedge adds prefixes automatically.)
-			if (strpos($css, 'can_animate') !== false)
-				$css = preg_replace('~\bcan_animate\b~', '(chrome, firefox[5-], opera[12-], ie[10-], safari[4-], ios[3.2-], android[2.1-])', $css);
-		}
-
-		// @is (condition, if_true[, if_false])
+		// @is (condition[, if_true[, if_false]])
+		// This function will return if_true if true, or if_false if false. It will return literal 'true' and 'false' if no true/false are set (for use in variables.)
 		// !! Note: this has got to be one of my most amusing regexes... But still, it doesn't always
 		// correctly handle brackets. Add quotes around them if you run into any, err, problems. Lazy me.
 		$pass_this = 0;
 		$strex = '\s*+("(?:[^"@]|@(?!is\h*\())*"|\'(?:[^\'@]|@(?!is\h*\())*\'|(?:[^\'",@]|@(?!is\h*\())(?:[^,@]|@(?!is\h*\())*)\s*+';
-		while (preg_match_all('~@is\h*\(' . $strex . ',' . $strex . '(?:,' . str_replace(',', ')', $strex) . ')?\)~i', $css, $matches) > $pass_this)
+		while (preg_match_all('~@is\h*\(' . $strex . '(?:,' . $strex . '(?:,' . str_replace(',', ')', $strex) . ')?)?\)~i', $css, $matches) > $pass_this)
 		{
 			foreach ($matches[1] as $i => $match)
 			{
@@ -494,6 +480,13 @@ class wess_if extends wess
 				{
 					$pass_this++;
 					continue;
+				}
+
+				// Are we doing a true/false test..?
+				if (empty($matches[2][$i]) && empty($matches[3][$i]))
+				{
+					$matches[2][$i] = 'true';
+					$matches[3][$i] = 'false';
 				}
 
 				if (we::is(we::$user['extra_tests'][] = $match) || ($this->test_vars && $this->test($match)))

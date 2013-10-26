@@ -1944,7 +1944,7 @@ h6
 @endif
 
 // Used by the Ajax loader. No need to declare it everywhere...
-@if can_animate
+@if $can_animate
 	@keyframes spin
 		to
 			transform: rotate(360deg)

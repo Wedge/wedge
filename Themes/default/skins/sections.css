@@ -238,7 +238,7 @@ img.new_posts
 ---------------------------------------------------- */
 
 .msg
-	@if !can_flex
+	@if !$can_flex
 		display: table
 		// Without this, wide code blocks will break layout.
 		table-layout: fixed
@@ -277,7 +277,7 @@ hr.sep
 // Poster and postarea + moderation area underneath
 .post_wrapper
 	width: 100%
-	@if can_flex
+	@if $can_flex
 		display: flex
 	@else
 		display: table-row
@@ -304,7 +304,7 @@ hr.sep
 
 // Poster details and list of items
 .poster
-	@if can_flex
+	@if $can_flex
 		flex: 0 0 14em
 	@else
 		display: table-cell
@@ -382,7 +382,7 @@ hr.sep
 
 .postarea
 	padding: 0 15px
-	@if can_flex
+	@if $can_flex
 		display: flex
 		flex-direction: column
 		flex: 1 0 1em
@@ -396,7 +396,7 @@ hr.sep
 
 	article
 		position: relative
-		@if can_flex
+		@if $can_flex
 			display: flex
 			flex-direction: column
 			flex: 1 0 auto
@@ -437,7 +437,7 @@ hr.sep
 
 .post
 	margin, padding: 0
-	@if can_flex
+	@if $can_flex
 		.msg &
 			flex: 1 0 auto
 		.merged &

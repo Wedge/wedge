@@ -361,6 +361,8 @@ class we
 			'admin' => in_array(1, $user['groups']),
 			'mod' => false,
 			'mobile' => $_SESSION['is_mobile'],
+			'true' => true,
+			'false' => false,
 		);
 
 		// Some clean-up.
