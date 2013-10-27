@@ -374,11 +374,13 @@ function template_post_subject()
 
 	if ($context['is_first_post'])
 	{
+		$privacy_type = get_privacy_type($context['current_privacy']);
+
 		echo '
 							<select name="privacy" id="privacy" tabindex="', $context['tabindex']++, '">';
 
 		foreach ($context['privacies'] as $priv)
-			echo '<option value="', $priv, '"', $priv == $context['current_privacy'] ? ' selected' : '', '>&lt;span class=&quot;privacy_', $priv, '&quot /&gt;&nbsp;', $txt['privacy_' . $priv], '</option>';
+			echo '<option value="', $priv, '"', $priv == $privacy_type ? ' selected' : '', '>&lt;span class=&quot;privacy_', $priv, '&quot /&gt;&nbsp;', $txt['privacy_' . $priv], '</option>';
 
 		echo '
 							</select>';

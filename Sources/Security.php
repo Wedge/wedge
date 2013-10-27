@@ -94,6 +94,10 @@ if (!defined('WEDGE'))
 			'no_through_forum': don't show the email address, but do allow
 			  things to be mailed using the built-in forum mailer.
 			'no': keep the email address hidden.
+
+	string get_privacy_type(int)
+		- returns a string determining the type of privacy associated
+		  with the supplied privacy ID. Can be members, contacts, author, etc.
 */
 
 // Check if the user is who he/she says he is
@@ -1780,4 +1784,13 @@ function userBehaviorResponse()
 	}
 
 	return array($error, $error_blocks);
+}
+
+function get_privacy_type($privacy)
+{
+	return $privacy == PRIVACY_DEFAULT ? 'public' :
+		($privacy == PRIVACY_MEMBERS ? 'members' :
+		($privacy < 0 ? 'group' :
+		($privacy == PRIVACY_AUTHOR ? 'author' :
+		($privacy > 99 ? 'contacts' : ''))));
 }

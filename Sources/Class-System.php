@@ -10,7 +10,7 @@
 
 define('PRIVACY_DEFAULT', 0);
 define('PRIVACY_MEMBERS', 1);
-define('PRIVACY_JUSTME', 99);
+define('PRIVACY_AUTHOR', 99);
 
 class we
 {
@@ -299,6 +299,7 @@ class we
 		$temp = array(
 			'lists' => array(),
 			'users' => array(),
+			'ignored' => array(),
 			'in_lists' => '',
 		);
 		if ($id_member)
@@ -308,7 +309,7 @@ class we
 			{
 				// Get the member IDs in each of your contact lists.
 				$request = wesql::query('
-					SELECT id_list, id_member
+					SELECT id_list, id_member, list_type
 					FROM {db_prefix}contacts
 					WHERE id_owner = {int:user}',
 					array(
@@ -316,7 +317,12 @@ class we
 					)
 				);
 				while ($row = wesql::fetch_assoc($request))
+				{
+					// A list of ignored users can always be useful, can't it..?
+					if ($row['list_type'] == 'restrict')
+						$temp['ignored'][$row['id_member']] = 1;
 					$temp['users'][$row['id_list']][$row['id_member']] = 1;
+				}
 				wesql::free_result($request);
 
 				// Get the list IDs of your contact lists.
@@ -335,16 +341,24 @@ class we
 
 				// Get the list IDs of the contact lists you're in.
 				$request = wesql::query('
-					SELECT GROUP_CONCAT(id_list SEPARATOR \',\')
+					SELECT id_list, id_owner, list_type
 					FROM {db_prefix}contacts
 					WHERE id_member = {int:user}',
 					array(
 						'user' => $id_member,
 					)
 				);
-				while ($row = wesql::fetch_row($request))
-					$temp['in_lists'] = $row[0];
+				$in_lists = $restrict = array();
+				while ($row = wesql::fetch_assoc($request))
+				{
+					if ($row['list_type'] == 'restrict')
+						$restrict[$row['id_owner']] = $row['id_owner'];
+					else
+						$in_lists[$row['id_list']] = $row['id_owner'];
+				}
 				wesql::free_result($request);
+				// We're relying on PHP preserving keys from $in_lists for this to work.
+				$temp['in_lists'] = implode(',', array_keys(array_diff($in_lists, $restrict)));
 
 				cache_put_data('contacts_' . $id_member, $temp, 3000);
 			}

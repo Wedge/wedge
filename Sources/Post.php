@@ -185,8 +185,7 @@ function Post($post_errors = array())
 		$context['pinned'] = !empty($_REQUEST['pin']);
 	}
 
-	// !! No support for groups for now... Or ever?
-	$context['privacies'] = array('default', 'members', /* 'groups', */ 'contacts', 'author');
+	$context['privacies'] = array('public', 'members', 'group', 'contacts', 'author');
 
 	// !!! These won't work if you're posting an event! (See above...)
 	$context['can_notify'] = allowedTo('mark_any_notify');

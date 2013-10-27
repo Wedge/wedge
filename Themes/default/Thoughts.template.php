@@ -86,7 +86,7 @@ function template_thoughts_thread()
 			<tr><td class="windowbg', $col, ' thought"><ul><li id="t', $id, '">
 				<div>';
 
-		$privacy_icon = template_get_privacy_type($thought['privacy']);
+		$privacy_icon = get_privacy_type($thought['privacy']);
 
 		if (empty($thought['owner_name']))
 			echo $privacy_icon && $privacy_icon != 'public' ? '<div class="privacy_' . $privacy_icon . '"></div> ' : ' ', $thought['text'], '
@@ -118,7 +118,7 @@ function template_sub_thoughts(&$thought)
 	echo '<ul>';
 	foreach ($thought['sub'] as $id => $tho)
 	{
-		$privacy_icon = template_get_privacy_type($tho['privacy']);
+		$privacy_icon = get_privacy_type($tho['privacy']);
 		if (empty($tho['owner_name']))
 			echo '<li id="t', $id, '"><div>', $privacy_icon && $privacy_icon != 'public' ? '<div class="privacy_' . $privacy_icon . '"></div>' : '', $tho['text'], '</div>';
 		else
@@ -154,7 +154,7 @@ function template_thoughts_table()
 	{
 		foreach ($context['thoughts'] as $id => $thought)
 		{
-			$privacy_icon = template_get_privacy_type($thought['privacy']);
+			$privacy_icon = get_privacy_type($thought['privacy']);
 			$col = empty($col) ? 2 : '';
 			echo '
 			<tr class="windowbg', $col, '">
@@ -169,7 +169,7 @@ function template_thoughts_table()
 	{
 		foreach ($context['thoughts'] as $id => $thought)
 		{
-			$privacy_icon = template_get_privacy_type($thought['privacy']);
+			$privacy_icon = get_privacy_type($thought['privacy']);
 			$col = empty($col) ? 2 : '';
 			echo '
 			<tr class="windowbg', $col, '">
@@ -224,14 +224,5 @@ function template_init_thoughts()
 		$lists = ' ' . implode(', ', $lists) . ' ';
 	}
 	add_js('
-	oThought = new Thought(', PRIVACY_DEFAULT, ', ', PRIVACY_MEMBERS, ', ', PRIVACY_JUSTME, ', {', $lists, '});');
-}
-
-function template_get_privacy_type($privacy)
-{
-	return $privacy == PRIVACY_DEFAULT ? 'public' :
-		($privacy == PRIVACY_MEMBERS ? 'members' :
-		($privacy < 0 ? 'group' :
-		($privacy == PRIVACY_JUSTME ? 'author' :
-		($privacy > 99 ? 'contacts' : ''))));
+	oThought = new Thought(', PRIVACY_DEFAULT, ', ', PRIVACY_MEMBERS, ', ', PRIVACY_AUTHOR, ', {', $lists, '});');
 }
