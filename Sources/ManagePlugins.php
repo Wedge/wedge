@@ -719,7 +719,6 @@ function EnablePlugin()
 	}
 
 	// Adding scheduled tasks
-	$this_plugindir = $pluginsdir . '/' . $_GET['plugin'];
 	if (!empty($manifest->scheduledtasks))
 	{
 		$new_tasks = array();
@@ -1448,7 +1447,7 @@ function executePluginScript($type, $file)
 			fatal_lang_error('fatal_install_' . $type . '_missing', false, empty($file) ? $txt['not_applicable'] : htmlspecialchars($file));
 
 		// This is just here as reference for what is available.
-		global $txt, $boarddir, $sourcedir, $settings, $context, $theme, $pluginsdir;
+		global $txt, $boarddir, $sourcedir, $settings, $context, $theme;
 		require($full_path);
 	}
 }

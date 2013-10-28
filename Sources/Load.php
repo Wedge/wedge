@@ -24,7 +24,7 @@ if (!defined('WEDGE'))
  */
 function reloadSettings()
 {
-	global $settings, $boarddir, $txt, $context, $sourcedir, $pluginsdir, $pluginsurl;
+	global $settings, $context, $pluginsdir, $pluginsurl;
 
 	// Most database systems have not set UTF-8 as their default input charset.
 	wesql::query('
@@ -84,7 +84,7 @@ function reloadSettings()
 			{
 				$plugin_details = @unserialize($settings['plugin_' . $plugin]);
 				$context['enabled_plugins'][$plugin_details['id']] = $plugin;
-				$this_plugindir = $context['plugins_dir'][$plugin_details['id']] = $sane_path . '/' . $plugin;
+				$context['plugins_dir'][$plugin_details['id']] = $sane_path . '/' . $plugin;
 				$context['plugins_url'][$plugin_details['id']] = $pluginsurl . '/' . $plugin;
 				if (isset($plugin_details['actions']))
 					foreach ($plugin_details['actions'] as $action)
@@ -1001,10 +1001,8 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
  */
 function loadMemberContext($user, $full_profile = false)
 {
-	global $memberContext, $user_profile, $txt;
-	global $context, $settings, $board_info, $theme;
-	static $ban_threshold = null;
-	static $dataLoaded = array();
+	global $memberContext, $user_profile, $txt, $context, $settings, $theme;
+	static $ban_threshold = null, $dataLoaded = array();
 
 	// If this person's data is already loaded, skip it.
 	if (isset($dataLoaded[$user]))
@@ -1304,7 +1302,7 @@ function we_resetTransparency($id_attach, $path, $real_name)
  */
 function loadTheme($id_theme = 0, $initialize = true)
 {
-	global $user_settings, $board_info, $boarddir, $footer_coding;
+	global $user_settings, $board_info, $boarddir, $sourcedir, $footer_coding;
 	global $txt, $boardurl, $scripturl, $mbname, $settings;
 	global $context, $theme, $options, $ssi_theme;
 
@@ -1860,7 +1858,8 @@ function loadPluginLanguage($plugin_name, $template_name, $lang = '', $fatal = t
 			$txt = !empty($txt) ? array_merge($oldtxt, $txt) : $oldtxt;
 			$helptxt = !empty($helptxt) ? array_merge($oldhelptxt, $helptxt) : $oldhelptxt;
 		}
-		log_error(sprintf($txt['theme_language_error'], '(' . $plugin_name . ') ' . $template_name . '.' . $lang, 'template'));
+		if ($fatal)
+			log_error(sprintf($txt['theme_language_error'], '(' . $plugin_name . ') ' . $template_name . '.' . $lang, 'template'));
 	}
 	// We did find it. 
 	else
@@ -1878,7 +1877,6 @@ function loadPluginLanguage($plugin_name, $template_name, $lang = '', $fatal = t
 				'lang_file' => $file_key,
 			)
 		);
-		$additions = array('txt' => array(), 'helptxt' => array());
 		while ($row = wesql::fetch_assoc($request))
 		{
 			if ($row['lang_var'] == 'txt')
@@ -1955,8 +1953,8 @@ function loadSource($source_name)
  */
 function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload = false, $fallback = false)
 {
-	global $theme, $context, $settings, $boarddir, $db_show_debug, $txt, $helptxt, $cachedir;
-	static $already_loaded = array(), $folder_date = array();
+	global $theme, $context, $settings, $db_show_debug, $txt, $helptxt, $cachedir;
+	static $already_loaded = array();
 
 	if ($force_reload === 'all')
 	{
@@ -2049,7 +2047,7 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 
 		// Now try to find the actual language file.
 		$found = false;
-		foreach ($attempts as $k => $file)
+		foreach ($attempts as $file)
 		{
 			if (file_exists($file[0] . '/languages/' . $file[1] . '.' . $file[2] . '.php'))
 			{
@@ -2347,7 +2345,7 @@ function loadSession()
 	{
 		$parsed_url = parse_url($boardurl);
 
-		if (preg_match('~^\d{1,3}(\.\d{1,3}){3}$~', $parsed_url['host']) == 0 && preg_match('~(?:[^.]+\.)?([^.]{2,}\..+)\z~i', $parsed_url['host'], $parts) == 1)
+		if (!preg_match('~^\d{1,3}(\.\d{1,3}){3}$~', $parsed_url['host']) && preg_match('~(?:[^.]+\.)?([^.]{2,}\..+)\z~i', $parsed_url['host'], $parts))
 			ini_set('session.cookie_domain', '.' . $parts[1]);
 	}
 	// !!! Set the session cookie path?
@@ -2561,8 +2559,6 @@ function loadDatabase()
 
 function importing_cleanup()
 {
-	global $settings;
-
 	$result = wesql::query('
 		SELECT id_member, buddy_list
 		FROM {db_prefix}members

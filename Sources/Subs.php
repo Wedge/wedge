@@ -847,9 +847,9 @@ function on_date($time, $upper = false)
 {
 	global $txt;
 
-	if (strpos($ret, '<strong>') === false)
-		return $upper ? ucfirst(sprintf($txt['on_date'], $ret)) : sprintf($txt['on_date'], $ret);
-	return $ret;
+	if (strpos($time, '<strong>') === false)
+		return $upper ? ucfirst(sprintf($txt['on_date'], $time)) : sprintf($txt['on_date'], $time);
+	return $time;
 }
 
 /**
@@ -1372,7 +1372,7 @@ function get_unread_numbers($posts, $straight_list = false)
  */
 function spamProtection($error_type)
 {
-	global $settings, $txt;
+	global $settings;
 
 	// Certain types take less/more time.
 	$timeOverrides = array(
@@ -1590,7 +1590,7 @@ function url_image_size($url)
  */
 function setupThemeContext($forceload = false)
 {
-	global $settings, $context, $options, $txt, $maintenance, $user_settings;
+	global $settings, $context, $options, $txt, $maintenance;
 	static $loaded = false;
 
 	// Under SSI this function can be called more then once. That can cause some problems.
@@ -1983,7 +1983,7 @@ function host_from_ip($ip)
 		{
 			$details = @dns_get_record($arpa, DNS_ALL);
 			if (is_array($details))
-				foreach ($details as $id => $contents)
+				foreach ($details as $contents)
 					if ($contents['type'] == 'PTR' && !empty($contents['target']))
 					{
 						$host = $contents['target'];
@@ -2033,29 +2033,6 @@ function host_from_ip($ip)
 }
 
 /**
- * Compares a given IP address and a domain to validate that the IP address belongs to that domain.
- *
- * Given an IP address, look up the associated fully-qualified domain, validate the supplied domain contains the FQDN, then request a list of IPs that belong to that domain to validate they tie up. (It is a method to validate that an IP address belongs to a given parent domain)
- *
- * @param string $ip An IPv4 dotted-format IP address.
- * @param string $domain A top level domain name to validate relationship to IP address (e.g. domain.com)
- * @return bool Whether the IP address could be validated as being related to that domain.
- * @todo DNS failure causes a general failure in this check. Fix this!
- */
-function test_ip_host($ip, $domain)
-{
-	// !!! DNS failure cannot be adequately detected due to a PHP bug. Until a solution is found, forcibly override this check.
-	return true;
-
-	$host = host_from_ip($ip);
-	$host_result = strpos(strrev($host), strrev($domain));
-	if ($host_result === false || $host_result > 0)
-		return false; // either the (reversed) FQDN didn't match the (reversed) supplied parent domain, or it didn't match at the end of the name
-	$addrs = gethostbynamel($host);
-	return in_array($ip, $addrs);
-}
-
-/**
  * Breaks a string up into word-units, primarily for the purposes of searching and related code.
  *
  * This function is used surprisingly often, not only for the actual business of searching, but also maintaining custom indexes on the text too.
@@ -2067,8 +2044,6 @@ function test_ip_host($ip, $domain)
  */
 function text2words($text, $max_chars = 20, $encrypt = false)
 {
-	global $context;
-
 	// Step 1: Remove entities/things we don't consider words:
 	$words = preg_replace('~(?:[\x0B\0\x{A0}\t\r\s\n(){}\\[\\]<>!@$%^*.,:+=`\~?/\\\\]+|&(?:amp|lt|gt|quot);)+~u', ' ', strtr($text, array('<br>' => ' ')));
 
@@ -2139,7 +2114,6 @@ function setupMenuContext()
 
 	$error_count = allowedTo('admin_forum') ? (!empty($settings['app_error_count']) ? $settings['app_error_count'] : '') : '';
 	$can_view_unseen = allowedTo('media_access_unseen') && isset(we::$user['media_unseen']) && we::$user['media_unseen'] > 0;
-	$has_new_pm = we::$is_member && !empty(we::$user['unread_messages']);
 	$is_b = !empty($board_info['id']);
 
 	$items = array(
@@ -2430,7 +2404,7 @@ function call_hook($hook, $parameters = array(), $plugin_id = '')
 
 function call_lang_hook($hook, $plugin_id = '')
 {
-	global $settings, $txt, $helptxt;
+	global $settings;
 
 	if (empty($settings['hooks'][$hook]))
 		return false;

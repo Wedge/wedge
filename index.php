@@ -216,7 +216,7 @@ if (!empty($context['app_error_count']))
 // The main controlling function.
 function wedge_main()
 {
-	global $context, $settings, $theme, $board, $topic, $board_info, $maintenance, $action_list;
+	global $context, $settings, $board, $topic, $board_info, $maintenance, $action_list;
 
 	$action = isset($_GET['action']) ? $_GET['action'] : '';
 

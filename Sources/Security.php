@@ -213,7 +213,7 @@ function is_not_guest($message = '')
 // Do banning related stuff. (ie. disallow access....)
 function is_not_banned($forceCheck = false)
 {
-	global $txt, $settings, $context, $cookiename, $user_settings;
+	global $txt, $settings, $cookiename, $user_settings;
 
 	// You cannot be banned if you are an admin - doesn't help if you log out.
 	if (we::$is_admin)
@@ -503,7 +503,8 @@ function banPermissions()
 // Disable a feature if they are soft-banned and their luck has run out for now.
 function soft_ban($feature)
 {
-	global $settings, $txt;
+	global $settings;
+
 	if (empty($_SESSION['ban']['soft']))
 		return;
 
@@ -705,7 +706,7 @@ function isBannedEmail($email, $error, $return = false)
 			{
 				$ban['gmail'] = true;
 				if (strpos($user, '+') !== false)
-					list ($user, $label) = explode('+', $user);
+					list ($user) = explode('+', $user);
 				if ($domain == 'gmail.com' || $domain == 'googlemail.com')
 					$user = str_replace('.', '', $user);
 			}
@@ -1784,6 +1785,29 @@ function userBehaviorResponse()
 	}
 
 	return array($error, $error_blocks);
+}
+
+/**
+ * Compares a given IP address and a domain to validate that the IP address belongs to that domain.
+ *
+ * Given an IP address, look up the associated fully-qualified domain, validate the supplied domain contains the FQDN, then request a list of IPs that belong to that domain to validate they tie up. (It is a method to validate that an IP address belongs to a given parent domain)
+ *
+ * @param string $ip An IPv4 dotted-format IP address.
+ * @param string $domain A top level domain name to validate relationship to IP address (e.g. domain.com)
+ * @return bool Whether the IP address could be validated as being related to that domain.
+ * @todo DNS failure causes a general failure in this check. Fix this!
+ */
+function test_ip_host($ip, $domain)
+{
+	// !!! DNS failure cannot be adequately detected due to a PHP bug. Until a solution is found, forcibly override this check.
+	return true;
+
+	$host = host_from_ip($ip);
+	$host_result = strpos(strrev($host), strrev($domain));
+	if ($host_result === false || $host_result > 0)
+		return false; // either the (reversed) FQDN didn't match the (reversed) supplied parent domain, or it didn't match at the end of the name.
+	$addrs = gethostbynamel($host);
+	return in_array($ip, $addrs);
 }
 
 function get_privacy_type($privacy)

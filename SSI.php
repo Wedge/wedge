@@ -243,7 +243,7 @@ function ssi_logout($redirect_to = '', $output_method = 'echo')
 // Recent post list: Board | Subject by | Poster | Date
 function ssi_recentPosts($num_recent = 8, $exclude_boards = null, $include_boards = null, $output_method = 'echo', $limit_body = true)
 {
-	global $theme, $txt, $settings;
+	global $settings;
 
 	// Excluding certain boards...
 	if ($exclude_boards === null && !empty($settings['recycle_enable']) && $settings['recycle_board'] > 0)
@@ -300,7 +300,7 @@ function ssi_fetchPosts($post_ids, $override_permissions = false, $output_method
 // This removes code duplication in other queries - don't call it direct unless you really know what you're up to.
 function ssi_queryPosts($query_where = '', $query_where_params = array(), $query_limit = '', $query_order = 'm.id_msg DESC', $output_method = 'echo', $limit_body = false)
 {
-	global $theme, $scripturl, $txt;
+	global $scripturl, $txt;
 
 	// Find all the posts. Newer ones will have higher IDs.
 	$request = wesql::query('
@@ -593,7 +593,7 @@ function ssi_topPoster($topNumber = 1, $output_method = 'echo')
 // Show boards by activity.
 function ssi_topBoards($num_top = 10, $output_method = 'echo')
 {
-	global $theme, $txt, $scripturl, $settings;
+	global $txt, $scripturl, $settings;
 
 	// Find boards with lots of posts.
 	$request = wesql::query('
@@ -842,7 +842,7 @@ function ssi_fetchGroupMembers($group_id, $output_method = 'echo')
 // Fetch some member data!
 function ssi_queryMembers($query_where, $query_where_params = array(), $query_limit = '', $query_order = 'id_member DESC', $output_method = 'echo')
 {
-	global $theme, $txt, $settings, $memberContext;
+	global $settings, $memberContext;
 
 	if (empty($settings['allow_guestAccess']) && we::$is_guest)
 		return array();
@@ -952,7 +952,7 @@ function ssi_boardStats($output_method = 'echo')
 // Shows a list of online users:  YY Guests, ZZ Users and then a list...
 function ssi_whosOnline($output_method = 'echo')
 {
-	global $txt, $theme, $settings;
+	global $txt, $settings;
 
 	if (empty($settings['allow_guestAccess']) && we::$is_guest)
 		return array();

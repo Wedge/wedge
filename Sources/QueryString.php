@@ -458,7 +458,7 @@ function cleanRequest()
 			if (is_ipv4($_SERVER['HTTP_X_FORWARDED_FOR']) && is_ipv4($_SERVER['HTTP_CLIENT_IP']))
 			{
 				$xff_octet = substr($_SERVER['HTTP_X_FORWARDED_FOR'], 24, 2);
-				if ($xff_octet !== substr($_SERVER['HTTP_CLIENT_IP'], 24, 2) && $xff_octet === substr($SERVER['HTTP_CLIENT_IP'], -2))
+				if ($xff_octet !== substr($_SERVER['HTTP_CLIENT_IP'], 24, 2) && $xff_octet === substr($_SERVER['HTTP_CLIENT_IP'], -2))
 					$_SERVER['HTTP_CLIENT_IP'] = '00000000000000000000ffff' . implode('', array_reverse(str_split(substr($_SERVER['HTTP_CLIENT_IP'], -8), 2)));
 			}
 			$_SERVER['BAN_CHECK_IP'] = $_SERVER['HTTP_CLIENT_IP'];
@@ -818,7 +818,6 @@ function format_ip($ip)
 	{
 		// It's IPv6. Part 1: re-separate the string, careful to strip any leading zeroes as we go but leaving a 0 behind if the octet were all zeroes.
 		$ipv6 = str_split($ip, 4);
-		$last_0 = false;
 		foreach ($ipv6 as $k => $v)
 			$ipv6[$k] = $v === '0000' ? '0' : ltrim($v);
 		$ipv6 = implode(':', $ipv6);
