@@ -354,7 +354,7 @@ template_ssi_below();
 
 function template_ssi_above()
 {
-	global $theme, $context, $scripturl;
+	global $context, $scripturl;
 
 	echo '<!DOCTYPE html>
 <html>

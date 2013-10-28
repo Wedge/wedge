@@ -550,6 +550,7 @@ function wedge_get_css_filename($add)
 
 	$suffix = array_flip(array_filter(array_map('we::is', is_array($add) ? $add : explode('|', $add))));
 
+	unset($suffix['true']);
 	if (isset($suffix['m' . we::$id]))
 		unset($suffix['member']);
 	if (isset($suffix[we::$os['os']]))

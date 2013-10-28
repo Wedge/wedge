@@ -438,7 +438,7 @@ class wess_if extends wess
 
 		// No operator? Test for null.
 		if (!isset($ops[2]))
-			return $ops[1] != '' && $ops[1] != '0' && ($ops[1][0] != '!' || (($val = substr($ops[1], 1)) == '' || $val == '0'));
+			return ($o = $ops[1]) !== '' && $o !== '0' && $o !== 'false' && ($o[0] !== '!' || (($val = substr($o, 1)) === '' || $val === '0' || $val === 'false'));
 
 		$op1 = intval($ops[1]);
 		$op3 = intval($ops[3]);
@@ -511,7 +511,7 @@ class wess_if extends wess
 		// and all three commands need to be on the same tab level. Respect this or crash Wess.
 		// You can nest commands inside @if and @else as well.
 
-		// PHP has too high a regex recursion limit, especially in Windows.
+		// If PHP crashes, maybe it has too high a regex recursion limit, especially in Windows. Try uncommenting this:
 		// ini_set('pcre.recursion_limit', '524');
 
 		while (preg_match_all('~(?<=\n)(\h*)@if\h+([^\n' . ($this->test_vars ? '' : '$') . ']+)(\n(?>[^@]|@(?!if\h))*?)\n\1@endif~i', $css, $matches, PREG_SET_ORDER))
@@ -1700,7 +1700,9 @@ class wess_prefixes extends wess
 		// And now for some 'easy' rules that don't need our regex machine,
 		// or custom rules that are better served individually.
 		$b = we::$browser;
+		$os = we::$os;
 		$v = $b['version'];
+		$ov = $os['version'];
 
 		// IE 6 doesn't support min-height, but 'height' behaves the same way. If you don't use both at the same time, it should be okay.
 		if ($b['ie'] && $v == 6)
@@ -1714,8 +1716,8 @@ class wess_prefixes extends wess
 		if (($b['opera'] && $v >= 11) || ($b['ie'] && $v >= 10))
 			$css = str_replace('@viewport', '@' . $this->prefix . 'viewport', $css);
 
-		// Chrome 21-28 supports the final flexbox model... But with a prefix.
-		if ($b['chrome'] && $v >= 21 && $v < 29)
+		// Chrome 21-28 and Safari 7+ support the final flexbox model... But with a prefix.
+		if (($b['safari'] && $v >= 7) || ($os['ios'] && $ov >= 7) || ($b['chrome'] && $v >= 21 && $v < 29))
 			$css = preg_replace('~\b(order|justify-content|align-(?:content|items|self)|flex(?:-[a-z]+)?)\h*:~', $this->prefix . '$1:', $css);
 
 		// IE 10 is a special case for flexboxing. It supports an older syntax, which we'll convert below,
