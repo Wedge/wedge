@@ -1555,7 +1555,7 @@ function cache_getBoardIndexReports()
 	$data = array();
 
 	$request = wesql::query('
-		SELECT lr.id_report, lr.id_member, lr.subject, lr.time_updated, 
+		SELECT lr.id_report, lr.id_member, lr.subject, lr.time_updated,
 			IFNULL(mem.real_name, lr.membername) AS author_name, IFNULL(mem.id_member, 0) AS id_author
 		FROM {db_prefix}log_reported AS lr
 			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = lr.id_member)

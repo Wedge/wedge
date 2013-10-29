@@ -228,7 +228,6 @@ class custom_search
 
 	public function createIndex($params = array())
 	{
-	
 	}
 
 	public function dropIndex($params = array())

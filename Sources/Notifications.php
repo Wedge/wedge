@@ -534,7 +534,7 @@ class weNotif
 			if (!empty($subscription['objects']))
 			{
 				$subscription['objects'] = $subscription['subscriber']->getObjects($subscription['objects']);
- 
+
 				foreach ($subscription['objects'] as $id => &$object)
 					$object['time'] = $starttimes[$subscription['type']][$id];
 			}

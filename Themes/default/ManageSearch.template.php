@@ -143,6 +143,7 @@ function template_select_search_method()
 			echo '
 						<dd>
 							<span class="smalltext">';
+
 			if ($index_details['state'] == 'none')
 				echo '
 								<strong>', $txt['search_index_label'], ':</strong> ', $txt['search_method_no_index_exists'], !empty($index_details['can_create']) ? ' [<a href="<URL>?action=admin;area=managesearch;sa=createmsgindex;type=' . $index . '">' . $txt['search_index_create_custom'] . '</a>]' : '';
@@ -154,7 +155,7 @@ function template_select_search_method()
 				echo '
 								<strong>', $txt['search_index_label'], ':</strong> ', $txt['search_method_index_already_exists'], ' [<a href="<URL>?action=admin;area=managesearch;sa=remove;index=', $index, ';', $context['session_query'], '">', $txt['search_index_custom_remove'], '</a>]<br>
 								<strong>', $txt['search_index_size'], ':</strong> ', $index_details['formatted_size'];
-			
+
 			echo '
 							</span>
 						</dd>';

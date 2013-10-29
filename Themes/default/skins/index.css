@@ -175,7 +175,7 @@ body
 		width: 5$vmin
 	@endif
 	div
-		@if mobile 
+		@if mobile
 			height: 2px
 			height: .66$vmin
 			margin: 3px 0

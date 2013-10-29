@@ -250,10 +250,12 @@ function template_edit_infraction()
 						<fieldset>
 							<legend>', $txt['for_the_duration'], '</legend>
 							<ul class="permission_groups">';
+
 	foreach ($context['infraction_levels'] as $infraction => $dummy)
 		echo '
 								<li><label><input type="checkbox" name="sanction[', $infraction, ']" value="1"', in_array($infraction, $context['infraction_details']['sanctions']) ? ' checked' : '', '> ', $txt['infraction_' . $infraction], '</label>';
-	echo '						
+
+	echo '
 							</ul>
 						</fieldset>
 					</dd>

@@ -1861,7 +1861,7 @@ function loadPluginLanguage($plugin_name, $template_name, $lang = '', $fatal = t
 		if ($fatal)
 			log_error(sprintf($txt['theme_language_error'], '(' . $plugin_name . ') ' . $template_name . '.' . $lang, 'template'));
 	}
-	// We did find it. 
+	// We did find it.
 	else
 	{
 		// Now let's get anything from the database.

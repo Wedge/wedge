@@ -348,7 +348,6 @@ function getBoardIndex($boardIndexOptions)
 					$thiscat['mod']['boards']['reported']['new'] = true;
 					$thiscat['mod']['boards']['reported']['custom_class'] = 'boardstate_on';
 				}
-				
 			}
 		}
 

@@ -2046,7 +2046,7 @@ function approvePosts($msgs, $approve = true)
 					'msg' => $msg,
 				)
 			);
-		}	
+		}
 	}
 
 	// If we were unapproving find the last msg in the topics...

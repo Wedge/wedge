@@ -593,7 +593,7 @@ function profileInfractions($memID)
 		$js = array();
 		foreach ($context['infraction_levels'] as $inf => $details)
 			$js[$inf] = array($txt['infraction_' . $inf], $details['points'], !empty($details['enabled']));
-		
+
 		$context['current_sanctions'] = !empty($cur_profile['sanctions']) ? $cur_profile['sanctions'] : array();
 		// Don't tell the user he is soft banned even if he is.
 		if (we::$id == $memID)
@@ -870,7 +870,7 @@ function profileInfractions($memID)
 		durations = ' . we_json_encode($txt['infraction_duration_types']), ',
 		no_punish = ' . we_json_encode($txt['infraction_no_punishments']), ',
 		adhoc_stuff = ' . we_json_encode($context['adhoc_stuff']) . ';');
-		
+
 		wetem::load('profileInfractions_issue');
 	}
 	// So, we're getting a list of infractions from the ol' log.

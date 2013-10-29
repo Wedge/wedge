@@ -97,7 +97,7 @@ function updateInf()
 		for (var i in durations)
 			thishtml += '<option value="' + i + '"' + (adhoc_stuff.duration.unit == i ? ' selected' : '') + '>' + durations[i] + '</option>';
 		thishtml += '</select>';
-		
+
 		$('#duration').html(thishtml);
 		$('#infraction_duration_unit').sb();
 
@@ -151,7 +151,7 @@ function updateInf()
 				for (var i in sanctions)
 					if (infraction_levels[sanctions[i]])
 						$('#sanctions ul').append('<li>' + infraction_levels[sanctions[i]][0] + '</li>');
-			}		
+			}
 		}
 		else
 			$('#sanctions').html(no_punish);

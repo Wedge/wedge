@@ -164,7 +164,7 @@ function summary($memID)
 
 		get_validated_infraction_log($memID, false);
 	}
-	
+
 	// How about, are they banned?
 	$context['member']['bans'] = array();
 	if (allowedTo('moderate_forum'))
