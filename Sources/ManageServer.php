@@ -160,7 +160,7 @@ function ModifySettings()
 	$context['sub_action'] = $_REQUEST['sa'];
 
 	// Warn the user if there's any relevant information regarding Settings.php.
-	if ($_REQUEST['sa'] != 'cache' && $_REQUEST['sa'] != 'phpinfo')
+	if ($_REQUEST['sa'] != 'phpinfo')
 	{
 		// Warn the user if the backup of Settings.php failed.
 		$settings_not_writable = !is_writable($boarddir . '/Settings.php');
@@ -383,14 +383,29 @@ function ModifyCookieSettings($return_config = false)
 // Simply modifying cache functions
 function ModifyCacheSettings($return_config = false)
 {
-	global $context, $txt, $helptxt, $settings;
+	global $context, $txt, $helptxt, $settings, $memcached_servers;
 
-	// Define the variables we want to edit.
+	// Define the variable(s) we want to edit. By default, just the one.
 	$config_vars = array(
-		// Only a couple of settings, but they are important
 		array('select', 'cache_enable', array($txt['cache_off'], $txt['cache_level1'], $txt['cache_level2'], $txt['cache_level3'])),
-		array('text', 'cache_memcached'),
 	);
+
+	// Detect an optimizer?
+	$detected = 'no_caching';
+	if (function_exists('apc_store') && is_callable('apc_store'))
+		$detected = 'APC';
+	elseif ((function_exists('output_cache_put') && is_callable('output_cache_put')) || (function_exists('zend_shm_cache_store') && is_callable('zend_shm_cache_store')))
+		$detected = 'Zend';
+	elseif (function_exists('memcache_set') && is_callable('memcache_set'))
+		$detected = 'Memcached';
+	elseif (function_exists('xcache_set') && is_callable('xcache_set'))
+		$detected = 'XCache';
+
+	if ($detected == 'Memcached' || !empty($memcached_servers))
+	{
+		$config_vars[] = array('text', 'cache_memcached');
+		$settings['cache_memcached'] = isset($memcached_servers) ? $memcached_servers : '';
+	}
 
 	if ($return_config)
 		return $config_vars;
@@ -398,11 +413,21 @@ function ModifyCacheSettings($return_config = false)
 	// Saving again?
 	if (isset($_GET['save']))
 	{
+		// A short hack to avoid having to go through the mess that is saveSettings().
+		$memcached_servers = $_POST['cache_memcached'];
+		unset($_POST['cache_memcached']);
+
 		saveDBSettings($config_vars);
 
 		// We have to manually force the clearing of the cache otherwise the changed settings might not get noticed.
 		$settings['cache_enable'] = 1;
 		cache_put_data('settings', null, 90);
+
+		if ($detected == 'Memcached')
+		{
+			loadSource('Subs-Admin');
+			updateSettingsFile(array('memcached_servers' => "'" . $memcached_servers . "'"));
+		}
 
 		redirectexit('action=admin;area=serversettings;sa=cache;' . $context['session_query']);
 	}
@@ -410,18 +435,6 @@ function ModifyCacheSettings($return_config = false)
 	$context['post_url'] = '<URL>?action=admin;area=serversettings;sa=cache;save';
 	$context['settings_title'] = $txt['caching_settings'];
 	$context['settings_message'] = $txt['caching_information'];
-
-	// Detect an optimizer?
-	if (is_callable('apc_store'))
-		$detected = 'APC';
-	elseif (is_callable('output_cache_put'))
-		$detected = 'Zend';
-	elseif (is_callable('memcache_set'))
-		$detected = 'Memcached';
-	elseif (is_callable('xcache_set'))
-		$detected = 'XCache';
-	else
-		$detected = 'no_caching';
 
 	$context['settings_message'] = sprintf($context['settings_message'], $txt['detected_' . $detected]);
 
@@ -884,7 +897,7 @@ function prepareDBSettingContext(&$config_vars)
 		unset($_SESSION['settings_saved']);
 }
 
-// Helper function. Saves settings by putting them in Settings.php or saving them in the settings table.
+// Helper function. Goes through settings and determines whether to save them in Settings.php or in the settings table.
 function saveSettings(&$config_vars)
 {
 	global $boarddir, $cookiename, $context, $cachedir;
@@ -937,7 +950,7 @@ function saveSettings(&$config_vars)
 
 	foreach ($config_vars as $config_var)
 	{
-		// We just saved the file-based settings, so skip their definitions.
+		// We only want the file-based settings for now, so skip the rest.
 		if (!is_array($config_var) || $config_var[2] != 'file')
 			continue;
 
@@ -983,7 +996,7 @@ function saveSettings(&$config_vars)
 	$new_settings = array();
 	foreach ($config_vars as $config_var)
 	{
-		// We just saved the file-based settings, so skip their definitions.
+		// We just saved the file-based settings, so skip them.
 		if (!is_array($config_var) || $config_var[2] == 'file')
 			continue;
 

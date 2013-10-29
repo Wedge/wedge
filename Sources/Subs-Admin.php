@@ -48,7 +48,7 @@ if (!defined('WEDGE'))
 
 function getServerVersions($checkFor)
 {
-	global $txt, $db_connection, $_PHPA, $memcached, $settings, $theme;
+	global $txt, $db_connection, $memcached_servers, $settings, $theme;
 
 	loadSource('media/Class-Media');
 	loadLanguage('Admin');
@@ -126,18 +126,11 @@ function getServerVersions($checkFor)
 			$versions['imagick'] = array('title' => $txt['support_imagemagick'], 'version' => $untick . ' ' . $txt['support_not_available']);
 	}
 
-	// Then all the accelerators...
-	// If we're using memcache we need the server info.
-	if (empty($memcached) && function_exists('memcache_get') && isset($settings['cache_memcached']) && trim($settings['cache_memcached']) != '')
-		get_memcached_server();
-
 	// Check to see if we have any accelerators installed...
-	if (in_array('phpa', $checkFor) && isset($_PHPA))
-		$versions['phpa'] = array('title' => 'ionCube PHP-Accelerator', 'version' => $_PHPA['VERSION']);
 	if (in_array('apc', $checkFor) && extension_loaded('apc'))
-		$versions['apc'] = array('title' => 'Alternative PHP Cache', 'version' => phpversion('apc'));
-	if (in_array('memcache', $checkFor) && function_exists('memcache_set'))
-		$versions['memcache'] = array('title' => 'Memcached', 'version' => empty($memcached) ? '???' : memcache_get_version($memcached));
+		$versions['apc'] = array('title' => 'APC (Alternative PHP Cache)', 'version' => phpversion('apc'));
+	if (in_array('memcache', $checkFor) && isset($memcached_servers) && trim($memcached_servers) != '')
+		$versions['memcache'] = array('title' => 'Memcached', 'version' => function_exists('memcache_get_version') ? memcache_get_version(get_memcached_server()) : '???');
 	if (in_array('xcache', $checkFor) && function_exists('xcache_set'))
 		$versions['xcache'] = array('title' => 'XCache', 'version' => XCACHE_VERSION);
 
@@ -350,6 +343,8 @@ function updateSettingsFile($config_vars)
 
 		foreach ($config_vars as $var => $val)
 			$settingsArray[$end++] = '$' . $var . ' = ' . $val . ';' . "\n";
+
+		$settingsArray[$end++] = "\n";
 		$settingsArray[$end] = '?' . '>';
 	}
 	else
@@ -367,20 +362,19 @@ function updateSettingsFile($config_vars)
 	// Can we even write things on this filesystem?
 	if ((empty($cachedir) || !file_exists($cachedir)) && file_exists($boarddir . '/cache'))
 		$cachedir = $boarddir . '/cache';
-	$test_fp = @fopen($cachedir . '/settings_update.tmp', "w+");
+	$test_fp = @fopen($cachedir . '/settings_update.tmp', 'w+');
 	if ($test_fp)
 	{
 		fclose($test_fp);
 
 		$test_fp = @fopen($cachedir . '/settings_update.tmp', 'r+');
-		$written_bytes = fwrite($test_fp, "test");
+		$written_bytes = fwrite($test_fp, 'test');
 		fclose($test_fp);
 		@unlink($cachedir . '/settings_update.tmp');
 
-		if ($written_bytes !== strlen("test"))
+		if ($written_bytes !== strlen('test'))
 		{
-			// Oops. Low disk space, perhaps. Don't mess with Settings.php then.
-			// No means no. :P
+			// Oops. Low disk space, perhaps..? Don't mess with Settings.php, then.
 			return;
 		}
 	}

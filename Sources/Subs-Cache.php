@@ -1579,13 +1579,13 @@ function wedge_parse_skin_options($skin_options = array())
 /**
  * Cleans some or all of the files stored in the file cache.
  *
- * @param string $extensions Optional, a comma-separated list of file extensions that should be pruned. Leave empty to clear the regular data cache (data sub-folder.)
+ * @param string $extensions Optional, a comma-separated list of file extensions that should be pruned. Leave empty to clear the regular data cache (data sub-folder), you may also use 'css' or 'js' as special values to clean the CSS or JavaScript cache folders.
  * @param string $filter Optional, designates a filter to match the files either again a name mask, or a modification date, before they can be cleared from the cache folder.
  * @param string $force_folder Optional, used internally for recursivity.
  */
 function clean_cache($extensions = 'php', $filter = '', $force_folder = '')
 {
-	global $cachedir, $cssdir, $jsdir;
+	global $cache_type, $cachedir, $cssdir, $jsdir;
 
 	$folder = $cachedir;
 	$is_recursive = false;
@@ -1619,6 +1619,26 @@ function clean_cache($extensions = 'php', $filter = '', $force_folder = '')
 		$by_date = $filter;
 	}
 	$filter_is_folder = !$filter || strpos($force_folder, $filter) !== false;
+
+	// If we're emptying the regular cache, chances are we also want to reset non-file-based cached data if possible.
+	if ($folder == $cachedir)
+	{
+		if (empty($cache_type))
+			cache_get_type();
+		if ($cache_type === 'apc')
+			apc_clear_cache('user');
+		elseif ($cache_type === 'memcached')
+			$val = memcache_flush(get_memcached_server());
+		elseif ($cache_type === 'xcache' && function_exists('xcache_clear_cache'))
+		{
+			for ($i = 0; $i < xcache_count(XC_TYPE_VAR); $i++)
+				xcache_clear_cache(XC_TYPE_VAR, $i);
+		}
+		elseif ($cache_type === 'zend' && function_exists('zend_shm_cache_clear'))
+			zend_shm_cache_clear('we');
+		elseif ($cache_type === 'zend' && ($zend_cache_folder = ini_get('zend_accelerator.output_cache_dir')))
+			clean_cache('', '', $zend_cache_folder . '/.php_cache_api');
+	}
 
 	// Remove the files in Wedge's own disk cache, if any.
 	foreach ($dh as $file)
@@ -1709,8 +1729,7 @@ function cache_quick_get($key, $file, $function, $params, $level = 1)
  */
 function cache_put_data($key, $val, $ttl = 120)
 {
-	global $settings, $memcached, $cache_type;
-	global $cache_hits, $cache_count, $db_show_debug, $cachedir;
+	global $settings, $cache_type, $cache_hits, $cache_count, $db_show_debug, $cachedir;
 
 	if (empty($settings['cache_enable']) && !empty($settings))
 		return;
@@ -1726,15 +1745,7 @@ function cache_put_data($key, $val, $ttl = 120)
 
 	// The simple yet efficient memcached.
 	if ($cache_type === 'memcached')
-	{
-		// Not connected yet?
-		if (empty($memcached))
-			get_memcached_server();
-		if (!$memcached)
-			return;
-
-		memcache_set($memcached, $key, $val, 0, $ttl);
-	}
+		memcache_set(get_memcached_server(), $key, $val, 0, $ttl);
 	elseif ($cache_type === 'apc')
 	{
 		// An extended key is needed to counteract a bug in APC.
@@ -1743,7 +1754,9 @@ function cache_put_data($key, $val, $ttl = 120)
 		else
 			apc_store($key . 'wedge', $val, $ttl);
 	}
-	elseif ($cache_type === 'zend')
+	elseif ($cache_type === 'zend' && function_exists('zend_shm_cache_store'))
+		zend_shm_cache_store('we::' . $key, $val, $ttl);
+	elseif ($cache_type === 'zend' && function_exists('output_cache_put'))
 		output_cache_put($key, $val);
 	elseif ($cache_type === 'xcache')
 	{
@@ -1782,8 +1795,7 @@ function cache_put_data($key, $val, $ttl = 120)
  */
 function cache_get_data($key, $ttl = 120)
 {
-	global $settings, $memcached, $cache_type;
-	global $cache_hits, $cache_count, $db_show_debug, $cachedir;
+	global $settings, $cache_type, $cache_hits, $cache_count, $db_show_debug, $cachedir;
 
 	if (empty($settings['cache_enable']) && !empty($settings))
 		return;
@@ -1795,18 +1807,12 @@ function cache_get_data($key, $ttl = 120)
 		cache_get_type();
 
 	if ($cache_type === 'memcached')
-	{
-		// Not connected yet?
-		if (empty($memcached))
-			get_memcached_server();
-		if (!$memcached)
-			return;
-
-		$val = memcache_get($memcached, $key);
-	}
+		$val = memcache_get(get_memcached_server(), $key);
 	elseif ($cache_type === 'apc')
 		$val = apc_fetch($key . 'wedge');
-	elseif ($cache_type === 'zend')
+	elseif ($cache_type === 'zend' && function_exists('zend_shm_cache_fetch'))
+		zend_shm_cache_fetch('we::' . $key);
+	elseif ($cache_type === 'zend' && function_exists('output_cache_get'))
 		$val = output_cache_get($key, $ttl);
 	elseif ($cache_type === 'xcache')
 		$val = xcache_get($key);
@@ -1855,18 +1861,18 @@ function cache_prepare_key($key, $val = '', $type = 'get')
 
 function cache_get_type()
 {
-	global $cache_type, $settings;
+	global $cache_type, $settings, $memcached_servers;
 
 	$cache_type = 'file';
 
 	// Okay, let's go for it memcached!
-	if (isset($settings['cache_memcached']) && function_exists('memcache_get') && function_exists('memcache_set') && trim($settings['cache_memcached']) !== '')
+	if (isset($memcached_servers) && trim($memcached_servers) !== '' && function_exists('memcache_get') && function_exists('memcache_set') && get_memcached_server())
 		$cache_type = 'memcached';
 	// Alternative PHP Cache from PECL.
 	elseif (function_exists('apc_fetch') && function_exists('apc_store'))
 		$cache_type = 'apc';
 	// Zend Platform/ZPS/pricey stuff.
-	elseif (function_exists('output_cache_get') && function_exists('output_cache_put'))
+	elseif ((function_exists('zend_shm_cache_fetch') && function_exists('zend_shm_cache_store')) || (function_exists('output_cache_get') && function_exists('output_cache_put')))
 		$cache_type = 'zend';
 	// XCache
 	elseif (function_exists('xcache_get') && function_exists('xcache_set') && ini_get('xcache.var_size') > 0)
@@ -1876,28 +1882,32 @@ function cache_get_type()
 /**
  * Attempt to connect to Memcache server for retrieving cached items.
  *
- * This function acts to attempt to connect (or persistently connect, if persistent connections are enabled) to a memcached instance, looking up the server details from $settings['cache_memcached'].
+ * This function acts to attempt to connect (or persistently connect, if persistent connections are enabled) to a memcached instance, looking up the server details from $memcached_servers.
  *
- * If connection is successful, the global $memcached will be a resource holding the connection or will be false if not successful. The function will attempt to call itself in a recursive fashion if there are more attempts remaining.
+ * If connection is successful, the static $memcached will be a resource holding the connection or will be false if not successful. The function will attempt to call itself in a recursive fashion if there are more attempts remaining.
  *
  * @param int $level The number of connection attempts that will be made, defaulting to 3, but reduced if the number of server connections is fewer than this.
  */
 function get_memcached_server($level = 3)
 {
-	global $settings, $memcached, $db_persist;
+	global $settings, $db_persist, $memcached_servers;
+	static $memcached = 0;
 
-	$servers = explode(',', $settings['cache_memcached']);
-	$server = explode(':', trim($servers[array_rand($servers)]));
+	if (!$memcached)
+	{
+		$servers = explode(',', $memcached_servers);
+		$server = explode(':', trim($servers[array_rand($servers)]));
 
-	// Don't try more times than we have servers!
-	$level = min(count($servers), $level);
+		// Don't try more times than we have servers!
+		$level = min(count($servers), $level);
 
-	// Don't wait too long: yes, we want the server, but we might be able to run the query faster!
-	if (empty($db_persist))
-		$memcached = memcache_connect($server[0], empty($server[1]) ? 11211 : $server[1]);
-	else
-		$memcached = memcache_pconnect($server[0], empty($server[1]) ? 11211 : $server[1]);
+		// Don't wait too long; we might be able to get it done faster later!
+		$func = 'memcache_' . (empty($db_persist) ? 'connect' : 'pconnect');
+		$memcached = $func($server[0], empty($server[1]) ? 11211 : $server[1]);
 
-	if (!$memcached && $level > 0)
-		get_memcached_server($level - 1);
+		if (!$memcached)
+			return $level > 0 ? get_memcached_server($level - 1) : false;
+	}
+
+	return $memcached;
 }
