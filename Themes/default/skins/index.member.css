@@ -193,28 +193,70 @@ for guests, because most of the time it won't be an option.
 	width: width($images_dir/icons/thought.gif)px
 	height: height($images_dir/icons/thought.gif)px
 
-.privacy_icons mixes .inline-block
-	background: url($images/icons/privacy.png) 0 0 no-repeat
+.privacy_default mixes .inline-block // Green
+	@if $can_filter
+		-prefix-filter: sepia(1) hue-rotate(60deg)
+		background: url($images/icons/privacy.gif) 0 center no-repeat
+		width, min-height: 10px
+	@else
+		background: url($images/icons/privacy.png) 0 -10px no-repeat
+		width, height: 10px
+	@endif
 	margin-right: 4px
-	width: 10px
-	height: 10px
 
-.privacy_default extends .privacy_icons
+@if $can_filter
+	.privacy_public extends .privacy_default // Uses the same icon.
+
+	.privacy_members extends .privacy_default // Golden
+		-prefix-filter: sepia(1) hue-rotate(0deg) saturate(5)
+
+	.privacy_group extends .privacy_default // Blue
+		-prefix-filter: sepia(1) hue-rotate(200deg)
+
+	.privacy_list extends .privacy_default // Purple
+		-prefix-filter: sepia(1) hue-rotate(270deg) saturate(2)
+
+	.privacy_author extends .privacy_default // Red
+		-prefix-filter: sepia(1) hue-rotate(300deg) saturate(5)
+@else
+	.privacy_public extends .privacy_default // Uses the same icon.
+
+	.privacy_members extends .privacy_default
+		background-position: 0 -20px
+
+	.privacy_group extends .privacy_default // Blue
+		background-position: 0 -30px
+
+	.privacy_list extends .privacy_default
+		background-position: 0 -40px
+
+	.privacy_author extends .privacy_default
+		background-position: 0 -50px
+@endif
+
+.privacy_list_friends mixes .inline-block
+	background: url($images/icons/contacts.png) 0 0 no-repeat
+	width, height: 10px
+	margin-right: 4px
+	vertical-align: 0
+
+.privacy_list_known extends .privacy_list_friends
 	background-position: 0 -10px
 
-.privacy_public extends .privacy_default // Uses the same icon.
-
-.privacy_members extends .privacy_icons
+.privacy_list_family extends .privacy_list_friends
 	background-position: 0 -20px
 
-.privacy_groups extends .privacy_icons // !! Unused for now...
+.privacy_list_work extends .privacy_list_friends
 	background-position: 0 -30px
 
-.privacy_contacts extends .privacy_icons
+.privacy_list_follow extends .privacy_list_friends
 	background-position: 0 -40px
 
-.privacy_author extends .privacy_icons
+.privacy_list_custom extends .privacy_list_friends
 	background-position: 0 -50px
+
+.privacy_list_restrict extends .privacy_list_friends
+	background-position: 0 -60px
 
 .iconbox
 	text-align: center

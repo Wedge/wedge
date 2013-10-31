@@ -122,7 +122,8 @@ function template_summary()
 			{
 				$count = isset(we::$user['contacts']['users'][$id_list]) ? count(we::$user['contacts']['users'][$id_list]) : 0;
 				echo '
-					<label><input type="checkbox" name="c[', $id_list, ']"', is_integer($id_list) && isset(we::$user['contacts']['users'][$id_list][$context['id_member']]) ? ' checked' : '', '> ', generic_contacts($list[0]), $count ? ' (' . $count . ')' : '', '</label><br>';
+					<label><input type="checkbox" name="c[', $id_list, ']"', is_integer($id_list) && isset(we::$user['contacts']['users'][$id_list][$context['id_member']]) ? ' checked' : '', '> ',
+					'<div class="privacy_list_', $list_type, '"></div>', generic_contacts($list[0]), $count ? ' (' . $count . ')' : '', '</label><br>';
 			}
 		}
 
@@ -252,7 +253,7 @@ function template_summary()
 					echo '
 					<dfn>', $txt['infraction_' . $sanction], '</dfn>';
 		}
-	
+
 		echo '
 					<br>', $txt['current_sanctions'];
 

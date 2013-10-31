@@ -369,7 +369,7 @@ class we
 					)
 				);
 				$restrict = array();
-				$in_lists = array_keys($temp['lists']);
+				$in_lists = $temp['lists'];
 				while ($row = wesql::fetch_assoc($request))
 				{
 					if ($row['list_type'] == 'restrict')
@@ -378,6 +378,7 @@ class we
 						$in_lists[$row['id_list']] = $row['id_owner'];
 				}
 				wesql::free_result($request);
+
 				// We're relying on PHP preserving keys from $in_lists for this to work.
 				$in_lists = array_keys(array_diff($in_lists, $restrict));
 
