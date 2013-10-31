@@ -215,14 +215,6 @@ function template_init_thoughts()
 	if (!we::$is_member || (!allowedTo('post_thought') && empty($settings['likes_enabled'])))
 		return;
 
-	$lists = '';
-	if (!empty(we::$user['contacts']['lists']))
-	{
-		$lists = array();
-		foreach (we::$user['contacts']['lists'] as $id => $clist)
-			$lists[] = $id . ': "' . str_replace('"', '\\"', generic_contacts($clist[0])) . '"';
-		$lists = ' ' . implode(', ', $lists) . ' ';
-	}
 	add_js('
-	oThought = new Thought(', PRIVACY_DEFAULT, ', ', PRIVACY_MEMBERS, ', ', PRIVACY_AUTHOR, ', {', $lists, '});');
+	oThought = new Thought(', PRIVACY_DEFAULT, ', ', PRIVACY_MEMBERS, ', ', PRIVACY_AUTHOR, ');');
 }

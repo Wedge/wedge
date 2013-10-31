@@ -299,9 +299,11 @@ class we
 		$temp = array(
 			'lists' => array(),
 			'users' => array(),
+			'groups' => array(),
 			'ignored' => array(),
-			'in_lists' => '',
+			'privacy' => PRIVACY_DEFAULT,
 		);
+
 		if ($id_member)
 		{
 			$cached = cache_get_data('contacts_' . $id_member, 3000);
@@ -339,6 +341,24 @@ class we
 					$temp['lists'][$row['id_list']] = array($row['name'], $row['list_type']);
 				wesql::free_result($request);
 
+				// Admins can set privacy to any membergroup, and regular members are limited
+				// to groups they belong to, and post-based groups they went through.
+				$request = wesql::query('
+					SELECT id_group, group_name, min_posts
+					FROM {db_prefix}membergroups' . (in_array(1, $user['groups']) ? '' : '
+					WHERE (' . (empty($user['groups']) ? '0=1' : 'id_group IN ({array_int:my_groups})') . ')
+						OR (min_posts != {int:non_postbased} AND min_posts <= {int:num_posts})') . '
+					ORDER BY min_posts, id_group',
+					array(
+						'my_groups' => $user['groups'],
+						'num_posts' => $user['posts'],
+						'non_postbased' => -1,
+					)
+				);
+				while ($row = wesql::fetch_assoc($request))
+					$temp['groups'][$row['id_group']] = array($row['group_name'], $row['min_posts']);
+				wesql::free_result($request);
+
 				// Get the list IDs of the contact lists you're in.
 				$request = wesql::query('
 					SELECT id_list, id_owner, list_type
@@ -348,7 +368,8 @@ class we
 						'user' => $id_member,
 					)
 				);
-				$in_lists = $restrict = array();
+				$restrict = array();
+				$in_lists = array_keys($temp['lists']);
 				while ($row = wesql::fetch_assoc($request))
 				{
 					if ($row['list_type'] == 'restrict')
@@ -358,7 +379,12 @@ class we
 				}
 				wesql::free_result($request);
 				// We're relying on PHP preserving keys from $in_lists for this to work.
-				$temp['in_lists'] = implode(',', array_keys(array_diff($in_lists, $restrict)));
+				$in_lists = array_keys(array_diff($in_lists, $restrict));
+
+				// Finally, build a list of privacy IDs the user can see. Yayz.
+				$privacy_list = array_merge(array_map('we::negate', array_keys($temp['groups'])), array(PRIVACY_DEFAULT, PRIVACY_MEMBERS), $in_lists);
+				sort($privacy_list, SORT_NUMERIC);
+				$temp['privacy'] = implode(',', array_flip(array_flip($privacy_list)));
 
 				cache_put_data('contacts_' . $id_member, $temp, 3000);
 			}
@@ -367,6 +393,7 @@ class we
 		}
 		$user['contacts'] = $temp;
 		$user['groups'] = array_flip(array_flip($user['groups']));
+		$user['privacy_list'] =& $temp['privacy'];
 
 		$is = array(
 			'guest' => $id_member == 0,
@@ -416,15 +443,6 @@ class we
 		}
 		elseif (!empty($settings['userLanguage']) && !empty($_SESSION['language']) && isset($languages[strtr($_SESSION['language'], './\\:', '____')]))
 			$user['language'] = strtr($_SESSION['language'], './\\:', '____');
-
-		// Build a list of privacy IDs the user can see. Yayz.
-		$privacy_list = implode(array_diff(array_map('we::negate', $user['groups']), (array) 0), ',');
-		$privacy_list .= ',' . PRIVACY_DEFAULT;
-		if ($id_member > 0)
-			$privacy_list .= ',' . PRIVACY_MEMBERS;
-		if (!empty($user['contacts']['in_lists']))
-			$privacy_list .= ',' . $user['contacts']['in_lists'];
-		$user['privacy_list'] = $privacy_list;
 
 		// Just build this here, it makes it easier to change/use - administrators can see all boards.
 		if ($is['admin'])
@@ -523,7 +541,7 @@ class we
 				t.id_member_started = ' . $id_member . ' OR (' . ($user['can_skip_approval'] ? '' : (empty($user['mod_cache']['ap']) ? '
 					t.approved = 1' : '
 					(t.approved = 1 OR t.id_board IN (' . implode(', ', $user['mod_cache']['ap']) . '))') . '
-					AND ') . 't.privacy IN (' . $privacy_list . ')
+					AND ') . 't.privacy IN (' . $user['privacy_list'] . ')
 				)
 			)';
 		}
@@ -532,7 +550,7 @@ class we
 			(' : '
 			(
 				h.id_member = ' . $id_member . ' OR ') . '
-				h.privacy IN (' . $privacy_list . ')
+				h.privacy IN (' . $user['privacy_list'] . ')
 			)';
 
 		wesql::register_replacement('query_see_topic', $user['query_see_topic']);

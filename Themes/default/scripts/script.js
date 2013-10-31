@@ -1103,13 +1103,40 @@ function JumpTo(control)
 }
 
 
-// *** Thought class.
 @if member
-	function Thought(privacy_public, privacy_members, privacy_author, contacts)
+	function PrivacySelector(privacy, privacy_public, privacy_members, privacy_author)
+	{
+		var s, pr = '<option value="' + privacy_public + '"' + (privacy == privacy_public ? ' selected' : '') + '>&lt;div class="privacy_public"&gt;&lt;/div&gt;' + $txt['privacy_public'] + '</option>';
+		pr += '<option value="' + privacy_members + '"' + (privacy == privacy_members ? ' selected' : '') + '>&lt;div class="privacy_members"&gt;&lt;/div&gt;' + $txt['privacy_members'] + '</option>';
+		pr += '<option value="' + privacy_author + '"' + (privacy == privacy_author ? ' selected' : '') + '>&lt;div class="privacy_author"&gt;&lt;/div&gt;' + $txt['privacy_author'] + '</option>';
+		if (!$.isEmptyObject(we_lists))
+		{
+			pr += '<optgroup label="' + $txt['privacy_list'] + '">';
+			for (p in we_lists)
+			{
+				s = we_lists[p].split('|');
+				pr += '<option value="' + s[0] + '"' + (privacy == s[0] ? ' selected' : '') + '>&lt;div class="privacy_list"&gt;&lt;/div&gt;' + s[2] + '</option>';
+			}
+			pr += '</optgroup>';
+		}
+		if (!$.isEmptyObject(we_groups))
+		{
+			pr += '<optgroup label="' + $txt['privacy_group'] + '">';
+			for (p in we_groups)
+			{
+				s = we_groups[p].split('|');
+				pr += '<option value="' + s[0] + '"' + (privacy == s[0] ? ' selected' : '') + '>&lt;div class="privacy_group"&gt;&lt;/div&gt;' + (s[1] >= 0 ? '&lt;em&gt;' + s[2] + '&lt;/em&gt; &lt;small&gt;' + s[1] + '&lt;/small&gt;' : s[2]) + '</option>';
+			}
+			pr += '</optgroup>';
+		}
+		return pr;
+	}
+
+	// *** Thought class.
+	function Thought(privacy_public, privacy_members, privacy_author)
 	{
 		var
 			oid,
-
 			// Make that personal text editable (again)!
 			cancel = function () {
 				$('#thought_form').siblings().show().end().remove();
@@ -1122,27 +1149,16 @@ function JumpTo(control)
 
 			var
 				thought = $('#thought' + tid), edited_thought = thought.find('span').first().html(),
-				pr = '', privacy = (thought.data('prv') + '').split(','),
 
 				cur_text = is_new ? '' : (edited_thought.indexOf('<') == -1 ?
 					edited_thought.php_unhtmlspecialchars() : $.ajax(weUrl('action=ajax;sa=thought') + ';in=' + tid, { async: false }).responseText), p, lists;
 
 			oid = is_new ? 0 : thought.data('oid') || 0;
 
-			pr += '<option value="' + privacy_public + '"' + (privacy == privacy_public ? ' selected' : '') + '>&lt;div class="privacy_public"&gt;&lt;/div&gt;' + $txt['privacy_public'] + '</option>';
-			pr += '<option value="' + privacy_members + '"' + (privacy == privacy_members ? ' selected' : '') + '>&lt;div class="privacy_members"&gt;&lt;/div&gt;' + $txt['privacy_members'] + '</option>';
-			pr += '<option value="' + privacy_author + '"' + (privacy == privacy_author ? ' selected' : '') + '>&lt;div class="privacy_author"&gt;&lt;/div&gt;' + $txt['privacy_author'] + '</option>';
-			if (!$.isEmptyObject(contacts))
-			{
-				pr += '<optgroup label="' + $txt['privacy_contacts'] + '">';
-				for (p in contacts)
-					pr += '<option value="' + p + '"' + (privacy == p ? ' selected' : '') + '>&lt;div class="privacy_contacts"&gt;&lt;/div&gt;' + contacts[p] + '</option>';
-				pr += '</optgroup>';
-			}
-
 			// Hide current thought, and add tools to write new thought.
 			thought.toggle(is_new && is_new !== 1).after('<form id="thought_form"><input type="text" maxlength="255" id="ntho"><select id="npriv">'
-				+ pr + '</select><input type="submit" class="save"><input type="button" class="cancel"></form>');
+				+ PrivacySelector((thought.data('prv') + '').split(','), privacy_public, privacy_members, privacy_author)
+				+ '</select><input type="submit" class="save"><input type="button" class="cancel"></form>');
 			$('#npriv')
 				.next().val(we_submit).click(function () { return oThought.submit(tid, mid || tid); })	// Save button
 				.next().val(we_cancel).click(cancel);													// Cancel button

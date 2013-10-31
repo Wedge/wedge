@@ -1816,5 +1816,5 @@ function get_privacy_type($privacy)
 		($privacy == PRIVACY_MEMBERS ? 'members' :
 		($privacy < 0 ? 'group' :
 		($privacy == PRIVACY_AUTHOR ? 'author' :
-		($privacy > 99 ? 'contacts' : ''))));
+		($privacy > 99 ? 'list' : ''))));
 }

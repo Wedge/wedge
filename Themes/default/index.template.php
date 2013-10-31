@@ -494,6 +494,12 @@ function template_insert_javascript()
 		echo '
 	we_pms = ', we::$user['unread_messages'], ';';
 
+	$groups = $lists = array();
+	foreach (we::$user['contacts']['groups'] as $id => $group)
+		$groups[] = '"' . $id . '|' . $group[1] . '|' . str_replace('|', ' ', $group[0]) . '"';
+	foreach (we::$user['contacts']['lists'] as $id => $clist)
+		$lists[] = '"' . $id . '|' . $clist[1] . '|' . str_replace('|', ' ', generic_contacts($clist[0])) . '"';
+
 	echo '
 	we_script = "<URL>";
 	we_default_theme_url = ', $theme['theme_url'] === $theme['theme_url'] ? 'we_theme_url = ' : '', '"', $theme['default_theme_url'], '";', $theme['theme_url'] === $theme['theme_url'] ? '' : '
@@ -503,7 +509,9 @@ function template_insert_javascript()
 	we_iso_case_folding = 1;' : '', empty($options['collapse_header']) ? '' : '
 	we_colhead = 1;', empty($context['current_topic']) ? '' : '
 	we_topic = ' . $context['current_topic'] . ';', empty($context['current_board']) ? '' : '
-	we_board = ' . $context['current_board'] . ';', $context['show_pm_popup'] ? '
+	we_board = ' . $context['current_board'] . ';', '
+	we_groups = [' . implode(', ', $groups) . '];
+	we_lists = [' . implode(', ', $lists) . '];', $context['show_pm_popup'] ? '
 
 	ask(' . JavaScriptEscape($txt['show_personal_messages'], '"') . ', function (yes) { yes && window.open(weUrl("action=pm")); });' : '';
 

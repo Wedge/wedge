@@ -185,7 +185,7 @@ function Post($post_errors = array())
 		$context['pinned'] = !empty($_REQUEST['pin']);
 	}
 
-	$context['privacies'] = array('public', 'members', 'group', 'contacts', 'author');
+	$context['privacies'] = array('public', 'members', 'group', 'list', 'author');
 
 	// !!! These won't work if you're posting an event! (See above...)
 	$context['can_notify'] = allowedTo('mark_any_notify');
