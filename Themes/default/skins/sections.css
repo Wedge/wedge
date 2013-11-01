@@ -1511,13 +1511,9 @@ body.waiting *
 
 @if !ie[-7]
 	@media $responsive
-		html
-			// Don't set a background directly on the body. Trust me.
-			background: #fff
 		body
 			padding: 0
 			#wedge
-				overflow-x: hidden
 				border-radius: 0
 			@if opera, ios
 				#header, #footer

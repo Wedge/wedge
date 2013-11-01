@@ -609,6 +609,7 @@ $(function ()
 			sidebar_shown = true;
 
 			$main.width(orig_wid);
+			$('#wedge').addClass('sliding');
 			$('#sidebar').css('display', $main.css('display'));
 			$('#sidebar>div').css('margin-top', $(window).scrollTop() > $('#sidebar').offset().top ? Math.min(
 				$('#sidebar').height() - $('#sidebar>div').height(),
@@ -633,6 +634,7 @@ $(function ()
 			if (!do_hardware)
 				$edge.stop(true).animate({ left: orig_sid - (sidebar_on_right ? $('#sidebar').width() : 0) }, 500);
 
+			setTimeout(function () { $('#wedge').removeClass('sliding'); }, 500);
 			$(window).on('resize.sw', function () {
 				// Fix the sidebar position if the window has just been enlarged.
 				if (sidebar_shown && $('#sideshow').is(':hidden'))
@@ -649,6 +651,7 @@ $(function ()
 			$main.width('');
 			$(window).off('.sw');
 			$(document).off('.sw');
+			$('#wedge').removeClass('sliding');
 		},
 		hide_sidebar = function ()
 		{
@@ -659,14 +662,16 @@ $(function ()
 				// setTimeout(hide_sidebar_for_real, (parseFloat($edge.css('transition-duration')) || .5) * ($edge.css('transition-duration').indexOf('m') == -1 ? 1000 : 1));
 				setTimeout(hide_sidebar_for_real, 500);
 				$edge.css({ transform: 'none' });
+				$('#wedge').addClass('sliding');
 			}
 			else
 				$edge.stop(true).animate({ left: orig_sid - (sidebar_on_right ? 0 : $('#sidebar').width())}, 500, hide_sidebar_for_real);
 		};
 
-	$(document).on(is_firefox ? 'mouseup' : 'mousedown', function (e) {
-		// Catch the wheel button (or middle-click), and if it's not attempting to open a link, toggle the sidebar.
-		if (e.which == 2 && e.target.tagName !== 'A' && !$('#sideshow').is(':hidden') && !$.hasData(e.target))
+	// Catch the wheel button (or middle-click), and if it's not attempting to open a link, toggle the sidebar.
+	$(document).on(is_firefox ? 'mouseup' : 'mousedown', function (e)
+	{
+		if (e.which == 2 && !$(e.target).closest('a').andSelf().filter('a').length && !$('#sideshow').is(':hidden') && !$.hasData(e.target))
 		{
 			sidebar_shown ? hide_sidebar() : show_sidebar();
 			e.preventDefault();
@@ -877,7 +882,8 @@ $(window).load(function ()
 							if (!that.next('.n_prev').stop(true, true).slideToggle(600).length)
 							{
 								show_ajax(this);
-								$.post(weUrl('action=notification;sa=preview;in=' + id), function (doc) {
+								$.post(weUrl('action=notification;sa=preview;in=' + id), function (doc)
+								{
 									hide_ajax();
 									$('<div/>').addClass('n_prev').html(doc).insertAfter(that).hide().slideToggle(600);
 

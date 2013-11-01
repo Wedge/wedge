@@ -22,7 +22,7 @@ if (!defined('WEDGE'))
  */
 function ViewQuery()
 {
-	global $scripturl, $theme, $context, $db_connection, $settings, $boarddir, $txt, $db_show_debug;
+	global $theme, $context, $db_connection, $settings, $boarddir, $txt, $db_show_debug;
 
 	$show_debug = isset($db_show_debug) && $db_show_debug === true;
 	// We should have debug mode enabled, as well as something to display!
@@ -79,7 +79,7 @@ function ViewQuery()
 	</style>
 </head>
 <body>
-	<div class="windowbg wrc left">';
+	<div id="junk" class="windowbg wrc left">';
 
 	foreach ($_SESSION['debug'] as $q => $query_data)
 	{
@@ -127,9 +127,9 @@ function ViewQuery()
 
 		echo '
 	<div id="qq', $q, '" style="margin-bottom: 2ex">
-		<a', $is_select_query ? ' href="' . $scripturl . '?action=viewquery;qq=' . ($q + 1) . '#qq' . $q . '"' : '', ' style="font-weight: bold; text-decoration: none">
-			', westr::nl2br(str_replace("\t", '&nbsp;&nbsp;&nbsp;', htmlspecialchars($query_data['q']))), '
-		</a>
+		<strong>', $is_select_query ? '<a href="<URL>?action=viewquery;qq=' . ($q + 1) . '#qq' . $q . '">' : '', '
+			<strong>', westr::nl2br(str_replace("\t", '&nbsp;&nbsp;&nbsp;', htmlspecialchars($query_data['q']))), '</strong>
+		', $is_select_query ? '</a>' : '', '</strong>
 		<br>';
 
 		if (!empty($query_data['f']) && !empty($query_data['l']))

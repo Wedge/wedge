@@ -50,14 +50,13 @@
 ------------------------------------------------------- */
 
 html
-	height: 100%
+	min-height: 100%
 	overflow-y: scroll
 	background: #369																			// For old browsers...
 	background: fixed linear-gradient(45deg, #505b66, #a0a6ab 500px, #505b66 1000px, #505b66)	// Fallback background for browsers that support linear gradients...
 	background: radial-gradient(circle at 50% 40%, #eee, #012)									// And this is the one we want. Phew...
 
 body
-	height: 100%
 	color: #ccc
 	font: $main_font_size $main_font
 	margin: 0
@@ -135,10 +134,11 @@ body
 ------------------------------------------------------- */
 
 #wedge
-	min-height: 100%
 	max-width: 1240px
 	border-radius: $radius
 	margin: auto
+	&.sliding
+		overflow: hidden
 
 @if opera
 	#header
@@ -319,10 +319,6 @@ ul#noava
 	@endif
 	div.frame
 		padding: 10px 20px
-	a
-		color: #679
-		border-bottom: 1px dashed #679
-		text-decoration: none
 
 	ul extends .clearfix
 		background: url($images/wefoot1.png) 0 9px no-repeat
@@ -334,6 +330,19 @@ ul#noava
 			line-height: 160%
 			&.copyright
 				clear: left
+	a
+		color: #679
+		border-bottom: 1px dashed #679
+		text-decoration: none
+
+@if member
+	#junk
+		font-size: .9em
+		margin, padding: 8px 0 0
+		border-top: 1px solid #aaa
+		a
+			border-bottom: 0
+@endif
 
 /* Styles for the general looks for the default theme.
 ------------------------------------------------------- */

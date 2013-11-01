@@ -972,7 +972,7 @@ function db_debug_junk()
 		$_SESSION['view_queries'] = 0;
 
 	$temp = '
-	<div class="smalltext padding" style="margin: 8px 0 0; border-top: 1px solid #aaa">';
+	<div id="junk">';
 
 	if ($show_debug)
 	{
@@ -1062,7 +1062,7 @@ function db_debug_junk()
 				$qq['f'] = preg_replace('~^' . preg_quote($boarddir, '~') . '~', '...', $qq['f']);
 
 			$temp .= '
-	<strong>' . ($is_select ? '<a href="' . $scripturl . '?action=viewquery;qq=' . ($q + 1) . '#qq' . $q . '" target="_blank" class="new_win" style="text-decoration: none">' : '') . westr::nl2br(str_replace("\t", '&nbsp;&nbsp;&nbsp;', htmlspecialchars(ltrim($qq['q'], "\n\r")))) . ($is_select ? '</a></strong>' : '</strong>') . '<br>
+	<strong>' . ($is_select ? '<a href="' . $scripturl . '?action=viewquery;qq=' . ($q + 1) . '#qq' . $q . '" target="_blank" class="new_win">' : '') . westr::nl2br(str_replace("\t", '&nbsp;&nbsp;&nbsp;', htmlspecialchars(ltrim($qq['q'], "\n\r")))) . ($is_select ? '</a></strong>' : '</strong>') . '<br>
 	&nbsp;&nbsp;&nbsp;';
 			if (!empty($qq['f']) && !empty($qq['l']))
 				$temp .= sprintf($txt['debug_query_in_line'], $qq['f'], $qq['l']);

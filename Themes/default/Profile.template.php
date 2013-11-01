@@ -179,25 +179,10 @@ function template_summary()
 				<dt>', $txt['personal_text'], ': </dt>
 				<dd>', $context['member']['blurb'], '</dd>';
 
-	if (!isset($context['disabled_fields']['gender']) && !empty($context['member']['gender']))
-		echo '
-				<dt>', $txt['gender'], ': </dt>
-				<dd>', $txt[$context['member']['gender']], '</dd>';
-
-	if ($context['member']['age'] !== $txt['not_applicable'])
-		echo '
-				<dt>', $txt['age'], ':</dt>
-				<dd>', $context['member']['age'] . ($context['member']['today_is_birthday'] ? '<br><img src="' . $theme['images_url'] . '/cake.png">' : ''), '</dd>';
-
 	if (!empty($context['member']['action']))
 		echo '
 				<dt>', $txt['current_action'], ':</dt>
 				<dd>', $context['member']['action'], '</dd>';
-
-	if (!isset($context['disabled_fields']['location']) && !empty($context['member']['location']))
-		echo '
-				<dt>', $txt['location'], ':</dt>
-				<dd>', $context['member']['location'], '</dd>';
 
 	echo '
 			</dl>';
