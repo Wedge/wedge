@@ -1121,7 +1121,7 @@ function JumpTo(control)
 			for (p in we_lists)
 			{
 				s = we_lists[p].split('|');
-				pr += '<option value="' + s[0] + '"' + (privacy == s[0] ? ' selected' : '') + '>&lt;div class="privacy_list"&gt;&lt;/div&gt;' + s[2] + '</option>';
+				pr += '<option value="' + s[0] + '"' + (privacy == s[0] ? ' selected' : '') + '>&lt;div class="privacy_list_' + s[1] + '"&gt;&lt;/div&gt;' + s[2] + '</option>';
 			}
 			pr += '</optgroup>';
 		}
@@ -1131,7 +1131,7 @@ function JumpTo(control)
 			for (p in we_groups)
 			{
 				s = we_groups[p].split('|');
-				pr += '<option value="' + s[0] + '"' + (privacy == s[0] ? ' selected' : '') + '>&lt;div class="privacy_group"&gt;&lt;/div&gt;' + (s[1] >= 0 ? '&lt;em&gt;' + s[2] + '&lt;/em&gt; &lt;small&gt;' + s[1] + '&lt;/small&gt;' : s[2]) + '</option>';
+				pr += '<option value="-' + s[0] + '"' + (privacy == -s[0] ? ' selected' : '') + '>&lt;div class="privacy_group"&gt;&lt;/div&gt;' + (s[1] >= 0 ? '&lt;em&gt;' + s[2] + '&lt;/em&gt; &lt;small&gt;' + s[1] + '&lt;/small&gt;' : s[2]) + '</option>';
 			}
 			pr += '</optgroup>';
 		}

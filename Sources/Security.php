@@ -1812,9 +1812,35 @@ function test_ip_host($ip, $domain)
 
 function get_privacy_type($privacy)
 {
+	// If privacy is one of your contact lists, you'll see the icon for its list type.
+	// If it's someone else's contact list, you'll see a generic icon.
 	return $privacy == PRIVACY_DEFAULT ? 'public' :
 		($privacy == PRIVACY_MEMBERS ? 'members' :
 		($privacy < 0 ? 'group' :
 		($privacy == PRIVACY_AUTHOR ? 'author' :
-		($privacy > 99 ? 'list' : ''))));
+		($privacy > 99 ? (isset(we::$user['contacts']['lists'][$privacy][1]) ? 'list_' . we::$user['contacts']['lists'][$privacy][1] : 'list') : ''))));
+}
+
+function get_privacy_options($privacy = null)
+{
+	global $txt;
+
+	$pr = '<option value="' . PRIVACY_DEFAULT . '"' . ($privacy == PRIVACY_DEFAULT ? ' selected' : '') . '>&lt;div class="privacy_public"&gt;&lt;/div&gt;' . $txt['privacy_public'] . '</option>';
+	$pr .= '<option value="' . PRIVACY_MEMBERS . '"' . ($privacy == PRIVACY_MEMBERS ? ' selected' : '') . '>&lt;div class="privacy_members"&gt;&lt;/div&gt;' . $txt['privacy_members'] . '</option>';
+	$pr .= '<option value="' . PRIVACY_AUTHOR . '"' . ($privacy == PRIVACY_AUTHOR ? ' selected' : '') . '>&lt;div class="privacy_author"&gt;&lt;/div&gt;' . $txt['privacy_author'] . '</option>';
+	if (!empty(we::$user['contacts']['lists']))
+	{
+		$pr .= '<optgroup label="' . $txt['privacy_list'] . '">';
+		foreach (we::$user['contacts']['lists'] as $id => $p)
+			$pr .= '<option value="' . $id . '"' . ($privacy == $id ? ' selected' : '') . '>&lt;div class="privacy_list_' . $p[1] . '"&gt;&lt;/div&gt;' . generic_contacts($p[0]) . '</option>';
+		$pr .= '</optgroup>';
+	}
+	if (!empty(we::$user['contacts']['groups']))
+	{
+		$pr .= '<optgroup label="' . $txt['privacy_group'] . '">';
+		foreach (we::$user['contacts']['groups'] as $id => $p)
+			$pr .= '<option value="-' . $id . '"' . ($privacy == -$id ? ' selected' : '') . '>&lt;div class="privacy_group"&gt;&lt;/div&gt;' . ($p[1] >= 0 ? '&lt;em&gt;' . $p[0] . '&lt;/em&gt; &lt;small&gt;' . $p[1] . '&lt;/small&gt;' : $p[0]) . '</option>';
+		$pr .= '</optgroup>';
+	}
+	return $pr;
 }
