@@ -552,6 +552,8 @@ function wedge_get_css_filename($add)
 
 	unset($suffix['true']);
 	if (isset($suffix['m' . we::$id]))
+		unset($suffix['member'], $suffix['admin']);
+	if (isset($suffix['admin']))
 		unset($suffix['member']);
 	if (isset($suffix[we::$os['os']]))
 		$suffix = array(str_replace('dows', '', we::$os['os'] . we::$os['version']) => true) + array_diff_key($suffix, array(we::$os['os'] => 1));
@@ -657,6 +659,9 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 		cache_put_data($cachekey, '', 60000);
 		return false;
 	}
+
+	// Resolve references to some common Wedge variables.
+	$final = preg_replace_callback('~\$(settings|theme|txt)\[([\'"])(.*?)\2]~', 'wedge_replace_theme_vars', $final);
 
 	// CSS is always minified. It takes just a sec' to do, and doesn't impair anything.
 	$final = str_replace(array("\r\n", "\r"), "\n", $final); // Always use \n line endings.
@@ -776,6 +781,13 @@ function wedge_hide_content()
 		unset($context['reset_content_counter']);
 	}
 	return 'content: wedge' . $i++;
+}
+
+function wedge_replace_theme_vars($match)
+{
+	global $settings, $theme, $txt;
+
+	return isset(${$match[1]}[$match[3]]) ? '"' . ${$match[1]}[$match[3]] . '"' : '""';
 }
 
 // This will replace {$str}, {$str}, ... in $final with successive entries in $arr

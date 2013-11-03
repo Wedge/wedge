@@ -569,6 +569,11 @@ class we
 		self::$is_member =& $is['member'];
 	}
 
+	private static function negate($arr)
+	{
+		return -$arr;
+	}
+
 	/**
 	 * Attempts to detect the browser, including version, needed for browser specific fixes and behaviours, and populates we::$browser with the findings.
 	 *
@@ -776,16 +781,6 @@ class we
 		return self::$cache[$string] = self::analyze($string);
 	}
 
-	private static function negate($arr)
-	{
-		return -$arr;
-	}
-
-	private static function protect_brackets($match)
-	{
-		return '<' . strtr($match[1], ',&|', "\x14\x15\x16") . '>';
-	}
-
 	/**
 	 * Analyzes the given array keys (or comma-separated list), and tries to determine if it encompasses the current browser version.
 	 * Can deal with relatively complex strings. e.g., "firefox, !mobile && ie[-7]" means "if browser is Firefox, or is a desktop version of IE 6 or IE 7".
@@ -797,8 +792,17 @@ class we
 		// Note that commas need to be encoded, in case you enter e.g. (ie[6,7])
 		if (!is_array($strings))
 		{
+			$protect = 0;
+			$original_strings = $strings;
 			while (strpos($strings, '(') !== false)
-				$strings = preg_replace_callback('~\(([^)]+)\)~', 'we::protect_brackets', $strings);
+			{
+				$strings = preg_replace_callback('~\(([^()]+)\)~', 'we::protect_brackets', $strings);
+				if ($protect++ > 100)
+				{
+					log_error('Can\'t parse string, due to mismatched brackets.<br><br>' . $original_strings, false);
+					return false;
+				}
+			}
 			$strings = array_flip(array_map('trim', preg_split('~[,|]+~', $strings)));
 		}
 
@@ -831,6 +835,10 @@ class we
 			if (empty($string) || $string === '!')
 				continue;
 
+			// First of all, let's look for simple tests, and replace them with a boolean value, which ::is() understands.
+			if (strpos($string, '=') !== false || strpos($string, '<') !== false || strpos($string, '>') !== false)
+				$string = preg_replace_callback('~(!?[^!={}<>\h]*)\h*(=+|!=+|<>|[<>]=?)\h*(!?[^!={}<>\h]*)~', 'we::evaluate', $string);
+
 			// Is there a && or & in the query? Meaning all parts of this one should return true.
 			$and = strpos($string, '&');
 			if ($and !== false)
@@ -845,7 +853,7 @@ class we
 			if ($string[0] === '!')
 			{
 				// If it's a group, fix its separators first.
-				$string = $string[1] === '<' ? strtr(trim($string, '!<>'), "\x14\x15\x16", ',&|') : substr($string, 1);
+				$string = $string[1] === '{' ? strtr(trim($string, '!{}'), "\x14\x15\x16", ',&|') : substr($string, 1);
 
 				if (!self::is($string))
 					return $string;
@@ -853,10 +861,10 @@ class we
 			}
 
 			// And now, positive tests.
-			if ($string[0] === '<')
+			if ($string[0] === '{')
 			{
 				// If it's a group, fix its separators and test it.
-				$string = self::is(strtr(trim($string, '<>'), "\x14\x15\x16", ',&|'));
+				$string = self::is(strtr(trim($string, '{}'), "\x14\x15\x16", ',&|'));
 				if ($string)
 					return $string;
 				continue;
@@ -882,5 +890,51 @@ class we
 		}
 
 		return false;
+	}
+
+	private static function protect_brackets($match)
+	{
+		return '{' . strtr($match[1], ',&|', "\x14\x15\x16") . '}';
+	}
+
+	// This is the variable test parser. Do not use () inside the variables to be tested. Some valid examples:
+	// $settings['my_color'] == 'red' / $color != "#000" / $color != "red" / ($number > 0 && $number < $other)
+	private static function evaluate($ops)
+	{
+		global $settings, $theme, $txt;
+
+		// $ops[1] and $ops[3] contain the variables to test, $ops[2] is the operator.
+		$ops[1] = trim($ops[1]);
+		$ops[3] = trim($ops[3]);
+
+		$ops[1] = isset(self::$is[$ops[1]]) ? self::$is[$ops[1]] : $ops[1];
+		$ops[3] = isset(self::$is[$ops[3]]) ? self::$is[$ops[3]] : $ops[3];
+
+		// Now that we've converted system variables (::is), we can unprotect quoted literals.
+		$ops[1] = trim($ops[1], "'\"");
+		$ops[3] = trim($ops[3], "'\"");
+
+		$op1 = intval($ops[1]);
+		$op3 = intval($ops[3]);
+		if (($op1 != 0 || is_numeric($ops[1])) && ($op3 != 0 || is_numeric($ops[3])))
+		{
+			$ops[1] = $op1;
+			$ops[3] = $op3;
+		}
+
+		if (($ops[2] == '==' || $ops[2] == '===') && $ops[1] == $ops[3])
+			return 'true';
+		if (($ops[2] == '!=' || $ops[2] == '!==' || $ops[2] == '<>') && $ops[1] != $ops[3])
+			return 'true';
+		if ($ops[2] == '>' && (int) $ops[1] > (int) $ops[3])
+			return 'true';
+		if ($ops[2] == '>=' && (int) $ops[1] >= (int) $ops[3])
+			return 'true';
+		if ($ops[2] == '<' && (int) $ops[1] < (int) $ops[3])
+			return 'true';
+		if ($ops[2] == '<=' && (int) $ops[1] <= (int) $ops[3])
+			return 'true';
+
+		return 'false';
 	}
 }

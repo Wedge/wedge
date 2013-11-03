@@ -143,9 +143,9 @@ $post_bg2 = $window_bg2
 			border-radius: 0 50% 50% 0
 			z-index: 1
 		:nth-last-child(even)
-			background: linear-gradient(0deg, darker(#fdfdfd, 5%), darker(#ededed, 5%))
+			background: linear-gradient(0deg, darker(#fdfdfd, 2.5%), darker(#ededed, 2.5%))
 			:after
-				background: linear-gradient(0deg, darker(#fdfdfd, 5%), darker(#ededed, 5%))
+				background: linear-gradient(0deg, darker(#fdfdfd, 2.5%), darker(#ededed, 2.5%))
 		:first-child
 			padding-left: 12px
 			border-radius: 8px 0 0 8px
@@ -239,7 +239,7 @@ $post_bg2 = $window_bg2
 	border-radius: 4px
 
 .cat final
-	background-color: #e5ece5
+	background-color: #f5fcf5
 	color: #000
 	a
 		letter-spacing: 0
@@ -249,7 +249,7 @@ $post_bg2 = $window_bg2
 			text-decoration: none
 
 .title
-	background-color: #e3e9ef
+	background-color: #f0f3f6
 	&.blog mixes .inline-block
 		border: 0
 		background, box-shadow: none

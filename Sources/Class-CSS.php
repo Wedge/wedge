@@ -427,38 +427,6 @@ class wess_if extends wess
 		$this->test_vars = $test_vars;
 	}
 
-	// This is the variable test parser. Do not use quotes, just plain CSS. Some valid examples:
-	// $color == red / $color != red / $color / !$color / $number > 0 / $number < $other
-	function test($match)
-	{
-		// !! @todo: add support for logical AND/OR (as in browser tests), as well as parenthesis
-		// (precedence) for more complex tests, e.g. '($color == red || $color == blue) && $number > 0'.
-		preg_match('~(!?[^!=<>]*)(?:([!=<>]+)(.*))?~', $match, $ops);
-		$ops = array_map('trim', $ops);
-
-		// No operator? Test for null.
-		if (!isset($ops[2]))
-			return ($o = $ops[1]) !== '' && $o !== '0' && $o !== 'false' && ($o[0] !== '!' || (($val = substr($o, 1)) === '' || $val === '0' || $val === 'false'));
-
-		$op1 = intval($ops[1]);
-		$op3 = intval($ops[3]);
-		if (($op1 != 0 || is_numeric($ops[1])) && ($op3 != 0 || is_numeric($ops[3])))
-		{
-			$ops[1] = $op1;
-			$ops[3] = $op3;
-		}
-		if ($ops[2] == '==' && $ops[1] == $ops[3])
-			return true;
-		if (($ops[2] == '!=' || $ops[2] == '<>') && $ops[1] != $ops[3])
-			return true;
-		if ($ops[2] == '>' && (int) $ops[1] > (int) $ops[3])
-			return true;
-		if ($ops[2] == '<' && (int) $ops[1] < (int) $ops[3])
-			return true;
-
-		return false;
-	}
-
 	function process(&$css)
 	{
 		// @is (condition[, if_true[, if_false]])
@@ -489,7 +457,7 @@ class wess_if extends wess
 					$matches[3][$i] = 'false';
 				}
 
-				if (we::is(we::$user['extra_tests'][] = $match) || ($this->test_vars && $this->test($match)))
+				if (we::is(we::$user['extra_tests'][] = $match))
 				{
 					if ($matches[2][$i][0] == '\'' || $matches[2][$i][0] == '"')
 						$matches[2][$i] = substr($matches[2][$i], 1, -1);
@@ -514,7 +482,8 @@ class wess_if extends wess
 		// If PHP crashes, maybe it has too high a regex recursion limit, especially in Windows. Try uncommenting this:
 		// ini_set('pcre.recursion_limit', '524');
 
-		while (preg_match_all('~(?<=\n)(\h*)@if\h+([^\n' . ($this->test_vars ? '' : '$') . ']+)(\n(?>[^@]|@(?!if\h))*?)\n\1@endif~i', $css, $matches, PREG_SET_ORDER))
+		$pass_this = 0;
+		while (preg_match_all('~(?<=\n)(\h*)@if\h+([^\n]+)(\n(?>[^@]|@(?!if\h))*?)\n\1@endif~i', $css, $matches, PREG_SET_ORDER) > $pass_this)
 		{
 			foreach ($matches as $m)
 			{
@@ -526,29 +495,25 @@ class wess_if extends wess
 				foreach ($parts as &$part)
 					$part = preg_replace('~\n\h{' . $remove_tabs . '}~', "\n", $part);
 
-				// First, remove bracket pairs that might be around our test...
-				if (($match[0] == '(' && substr($match, -1) == ')') || ($match[0] == '{' && substr($match, -1) == '}'))
-					$match = substr($match, 1, -1);
-
 				$i = -1;
 				$num = count($parts);
 				while (++$i < $num)
 				{
-					// @elseif
-					if (strtolower(substr($parts[$i], 0, 2)) == 'if')
+					if (strtolower(substr($parts[$i], 0, 2)) == 'if' || strtolower(substr($parts[$i], 0, 3)) == ' if') // An @elseif, maybe?
 					{
 						$match = preg_match('~^if\h*([^\n]+)~', $parts[$i], $newif) ? trim($newif[1]) : '';
 						$parts[$i] = substr($parts[$i], strlen($newif[0]));
-						if (($match[0] == '(' && substr($match, -1) == ')') || ($match[0] == '{' && substr($match, -1) == '}'))
-							$match = substr($match, 1, -1);
 					}
 
-					// Browser constant test.
-					if (empty($match) || we::is(we::$user['extra_tests'][] = $match))
-						break;
+					// If we're executing this before mixins, don't bother doing variables.
+					if (!$this->test_vars && strpos($match, '$') !== false)
+					{
+						$pass_this++;
+						continue 2;
+					}
 
-					// Very, very basic variable test. Please bear with me...
-					if ($this->test_vars && $this->test($match))
+					// And finally, the actual battery of tests.
+					if (empty($match) || we::is(we::$user['extra_tests'][] = $match))
 						break;
 
 					$match = '';
