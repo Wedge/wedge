@@ -1,0 +1,20 @@
+
+/* Menus and gradients
+------------------------------------------------------- */
+#navi, #header, .menu ul
+	background-image: none
+
+#main_menu
+	margin: 0
+
+/* Misc hacks
+------------- */
+#content div.frame
+	width: auto
+
+h4.hove, li.hove
+	background: #e2ebe7
+
+.cat
+	overflow: hidden
+	width: auto

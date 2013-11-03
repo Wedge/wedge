@@ -1,0 +1,358 @@
+
+/*!
+ * Wilde skin for Wedge
+ * © 2010 René-Gilles Deberdt, http://wedge.org
+ */
+
+html
+	background: #fff
+	background: repeating-linear-gradient(45deg, rgba(216, 205, 165, .5), rgba(205, 216, 185, .5) 500px, rgba(216, 205, 165, .5) 1000px), repeating-linear-gradient(-45deg, rgba(216, 205, 165, .5), rgba(205, 216, 185, .5) 800px, rgba(216, 205, 165, .5) 1600px)
+
+body
+	text-align: center
+	color: #333
+	padding: 15px
+
+#helf
+	text-align: $left
+
+$lightgrad = #fff
+$darkgrad = #f3f2f0
+$post_bg = $window_bg
+$post_bg2 = $window_bg2
+
+.lightgrad virtual
+	gradient: #eee, $lightgrad
+
+.darkgrad virtual
+	gradient: #bcbcbb, $darkgrad
+
+.wehead, .catbase
+	box-shadow: inset 0 8px 12px -8px #eee, 1px 1px 3px #aa9
+
+#sidebar .title final
+	box-shadow: inset 0 8px 12px -8px #eee, 1px 1px 3px #ccb
+
+#wedge
+	text-align: $left
+	box-shadow: 0 0 10px #aaa
+	border: 1px solid #aaa
+
+#navi
+	background: $lightgrad
+	padding, border: 0
+
+#header
+	gradient: rgb(233, 239, 227), rgba(233, 239, 227, .2)
+	border-radius: 20px
+	div.frame
+		padding: 5px 0 0
+	h2, p
+		color: #000
+	h1
+		float: right
+		margin: 32px 30px 0 0
+		letter-spacing: -2px
+		text-shadow: white 0 1px 2px
+		a
+			font: 700 3em "Segoe UI", "Trebuchet MS", Georgia, Geneva, verdana, sans-serif
+			color: #78a
+	input.search
+		background-color: rgb(235,225,215)
+		color: #000
+
+#content
+	background: $lightgrad
+
+#edge
+	padding: 16px 0
+
+#main
+	padding-bottom: 0
+
+#sidebar
+	background: $window_bg2
+	display: @is (ie[-7], block, table-cell)
+	border: 1px solid #eee
+	border-right: 0
+	border-radius: 8px 0 0 8px
+	.title
+		font-size: 1.1em
+		padding: 4px 4px 4px 8px
+	.column
+		padding: 16px 20px 16px 16px
+
+#top_section
+	background: none
+	border: 0
+	padding: 0 20px 10px
+
+#slogan
+	float: left
+	letter-spacing: -1px
+	text-shadow: #ddd 1px 1px 2px
+
+// The upper_section, float the two each way
+#upper_section
+	border, padding: 0
+	.frame
+		background-image: none
+		width, height: auto
+
+@remove #linktree ul
+	border: *
+
+@remove #linktree_bt ul
+	border-width: *
+
+#linktree li unextends .horizontal-arrow
+
+// The navigation list (i.e. linktree)
+#linktree
+	background: $lightgrad
+	margin: 0
+	padding: 15px 20px 5px // The linktree is one level up, so it needs to compensate its increased width.
+	ul
+		border-radius: 8px
+		background: linear-gradient(0deg, #fdfdfd, #efefef)
+		box-shadow: 1px 1px 3px #ccb
+		padding, margin: 0
+		overflow: hidden
+		font-size: 1.1em
+	li
+		@if firefox
+			display: inline-block
+		@elseif ie[-7]
+			mixin: .inline-block
+		@else
+			display: table-cell
+			vertical-align: middle
+		@endif
+		position: relative
+		padding: 5px 0 5px 36px
+		:after
+			content: ""
+			margin-left: -20px
+			width: 40px
+			left: 100%
+			top, bottom: 0
+			position: absolute
+			clip: rect(0, 999px, 999px, 20px) // avoid box shadow remnants on the left
+			box-shadow: 2px 0 5px #bbb
+			background: linear-gradient(0deg, #fdfdfd, #ededed)
+			border-radius: 0 50% 50% 0
+			z-index: 1
+		:nth-last-child(even)
+			background: linear-gradient(0deg, darker(#fdfdfd, 5%), darker(#ededed, 5%))
+			:after
+				background: linear-gradient(0deg, darker(#fdfdfd, 5%), darker(#ededed, 5%))
+		:first-child
+			padding-left: 12px
+			border-radius: 8px 0 0 8px
+
+#linktree_bt
+	padding: 0 20px 20px
+
+@media $responsive
+	body
+		padding: 0 15px
+		#wedge
+			border: 0
+		#header, .wrc, .msg, .poster
+			border-radius: 0
+
+// The footer with copyright links etc.
+#footer extends .lightgrad
+	border-top: 1px solid #ccc
+	border-radius: 0 0 20px 20px
+
+/* Styles for the general looks for the default theme.
+------------------------------------------------------- */
+
+.cat input[type=checkbox]
+	margin: 5px -3px 0 7px
+
+.msg
+	border-radius: 8px
+	& .merged, &.merged
+		border-radius: 0
+
+.poster
+	border-radius: 8px 0 0 8px
+
+/* Styles for the dropdown menus.
+------------------------------------------------------- */
+
+#main_menu
+	margin: 0 16px -10px
+	h4:hover, h4.hove
+		background-color: transparent
+		color: #000
+		a
+			color: #000
+	h4, h4 a
+		color: #000
+	li.chosen h4
+		color: #fff
+		a
+			color: #fff
+
+/*
+	If you want to align the main menu, add this above...
+
+#main_menu
+	text-align: center
+	li
+		text-align: $left
+*/
+
+.menu ul extends .lightgrad
+	background-color: #fff8f1
+
+
+/* Some BBC related styles.
+------------------------------------------------------- */
+
+.bbc_code code, .php_code code
+	white-space: pre
+
+
+/* Styles for section headers.
+------------------------------------------------------- */
+@remove .cat
+	letter-spacing: *
+
+@remove .cat
+	border: *
+
+@remove .title
+	border: *
+
+@remove .cat final
+	border-color: *
+
+.cat, .title
+	padding: 4px 8px
+	margin-top, margin-bottom: 8px
+	text-shadow: none
+	font: 1.2em/1.2 $head_font
+	border-radius: 4px
+
+.cat final
+	background-color: #e5ece5
+	color: #000
+	a
+		letter-spacing: 0
+		color: #555
+		:hover
+			color: #963
+			text-decoration: none
+
+.title
+	background-color: #e3e9ef
+	&.blog mixes .inline-block
+		border: 0
+		background, box-shadow: none
+		vertical-align: baseline
+		padding: 0 4px 8px
+
+.title2
+	background: none
+
+.title
+	color: #222
+	a
+		color: #777 !important
+		:hover
+			color: #53616f !important
+			text-decoration: none
+
+@if ie[-9]
+	.catbase, body, #header, #navi, #footer, #upper_section .frame, #upper_section h1
+		filter: none
+
+	// .lightgrad implies a gradient, which triggers hasLayout for IE -- not good in menus!
+	.menu ul unextends .lightgrad
+@endif
+
+/* A few more header styles...
+------------------------------------------------------- */
+
+tr.catbg
+	th, td
+		background-color: #e3e9ef
+		font: $subcat_font
+		&, a
+			color: #666
+
+tr.titlebg
+	th, td
+		background-color: #e5eee5
+		font: $subcat_font
+		&, a
+			color: #222
+
+/* More hacks.
+------------------------------------------------- */
+#forumposts .cat final
+	margin-bottom: 3px
+	@if ie
+		@if ie7
+			margin-top: 8px
+		@endif
+		clear: both
+	@endif
+
+.left_menu
+	list-style: none
+	margin: .5em 0
+	li
+		padding: 0 0 0 1em
+
+#statistics
+	.title final
+		margin: 4px 0
+	.cat final
+		text-align: center
+
+dfn
+	line-height: 140%
+
+/* These are our CSS variable and mixin definitions.
+------------------------------------------------------- */
+
+$main_font = "Segoe UI", Arial, sans-serif
+$head_font = $main_font
+$subcat_font = normal 1.1em $main_font
+$post_font = $main_font
+$post_font_size = 11pt/140%
+$board_col = #d97b33
+$radius = 20px
+
+@remove
+	border-top: .54em double #ccc
+	border-bottom: .18em solid #ccc
+
+@remove #footer, #header, #navi
+	color: #ddc
+
+@remove #footer
+	margin-top: 16px
+
+@remove #slogan
+	color: #000
+
+@remove #search_form > input[type=submit]
+	background: #938983
+	border-color: #bbb #888 #888 #bbb
+	color: white
+
+@remove #search_form > input[type=submit]:hover
+	background: #a39993
+
+@remove
+	background: url($images/theme/bg.jpg)
+
+@replace
+	wefoot1.png
+	wefoot2.png

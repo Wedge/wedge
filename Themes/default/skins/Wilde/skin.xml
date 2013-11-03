@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!--
+	See Wine/Warm/skin.xml for descriptions.
+-->
+<skin>
+
+	<name>
+		Wilde
+	</name>
+
+	<type>
+		add
+	</type>
+
+	<comment><![CDATA[
+		By Nao
+	]]></comment>
+
+	<move block="linktree" to="menu" where="after" />
+	<move block="linktree:bottom" to="content_wrap" where="after" />
+
+	<script for="ie6" include="scripts/pngfix.js scripts/ie6hover.js"><![CDATA[
+	$('input[type=checkbox], input[type=radio]').addClass('ie_check');
+	$('input[type=submit], input[type=button]').addClass('ie_button');
+	DD_belatedPNG.fix('.ping,#logo,#footer,#footer div.frame');
+	$.ie6hover();
+	]]></script>
+
+	<script for="ios"><![CDATA[
+	$('#main').insertBefore('#edge');
+	]]></script>
+
+</skin>

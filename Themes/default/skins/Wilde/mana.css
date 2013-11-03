@@ -1,0 +1,15 @@
+
+/* Styles for the admin quick search.
+------------------------------------------------------- */
+#quick_search
+	padding-top: 2px
+	line-height: 0.9em
+	img
+		margin-top: 2px
+
+/* Common admin center classes.
+------------------------------------------------------- */
+.title
+	margin-bottom: 3px
+	form
+		font-size: 80%
