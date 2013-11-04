@@ -1006,6 +1006,9 @@ function Display()
 	$context['get_message'] = 'prepareDisplayContext';
 
 	// Now set all the wonderful, wonderful permissions... like moderation ones...
+	// - allowedTo('moderate_forum') is the 'Moderate forum members' permission.
+	// - allowedTo('moderate_board') is also set for board owners even if they're not
+	//   in an allowed group, unless the admin explicitly set their permission to 'deny'.
 	$common_permissions = array(
 		'can_approve' => 'approve_posts',
 		'can_ban' => 'manage_bans',
@@ -1016,7 +1019,8 @@ function Display()
 		'can_send_topic' => 'send_topic',
 		'can_send_pm' => 'pm_send',
 		'can_report_moderator' => 'report_any',
-		'can_moderate_forum' => 'moderate_forum',
+		'can_moderate_members' => 'moderate_forum',
+		'can_moderate_board' => 'moderate_board',
 		'can_issue_warning' => 'issue_warning',
 		'can_restore_topic' => 'move_any',
 		'can_restore_msg' => 'move_any',
@@ -1041,7 +1045,7 @@ function Display()
 	$context['can_mark_notify'] &= we::$is_member;
 	$context['can_add_poll'] &= $topicinfo['id_poll'] <= 0;
 	$context['can_remove_poll'] &= $topicinfo['id_poll'] > 0;
-	$context['can_reply'] &= empty($topicinfo['locked']) || allowedTo('moderate_board');
+	$context['can_reply'] &= empty($topicinfo['locked']) || $context['can_moderate_board'];
 
 	$context['can_quote'] = $context['can_reply'] && (empty($settings['disabledBBC']) || !in_array('quote', explode(',', $settings['disabledBBC'])));
 	$context['can_mark_unread'] = we::$is_member;
@@ -1283,8 +1287,10 @@ function prepareDisplayContext($reset = false)
 	if ($messages_request == false)
 		return false;
 
+	// If you can issue bans, you should see IPs. If you can moderate members or this board,
+	// it can also be useful, to spot duplicate accounts.
 	if ($can_ip === null)
-		$can_ip = allowedTo('manage_bans');
+		$can_ip = allowedTo('manage_bans') || $context['can_moderate_members'] || $context['can_moderate_board'];
 
 	// Remember which message this is, e.g. reply #83.
 	if ($counter === null || $reset)
@@ -1306,6 +1312,9 @@ function prepareDisplayContext($reset = false)
 	$message['data'] = !empty($message['data']) ? unserialize($message['data']) : array();
 
 	call_hook('display_prepare_post', array(&$counter, &$message));
+
+	// Is this user the message author?
+	$is_me = we::$is_member && $message['id_member'] == we::$id;
 
 	// $context['icon_sources'] says where each icon should come from - here we set up the ones which will always exist!
 	if (empty($context['icon_sources']))
@@ -1390,7 +1399,7 @@ function prepareDisplayContext($reset = false)
 		'href' => '<URL>?topic=' . $topic . '.msg' . $message['id_msg'] . '#msg' . $message['id_msg'],
 		'link' => '<a href="<URL>?topic=' . $topic . '.msg' . $message['id_msg'] . '#msg' . $message['id_msg'] . '" rel="nofollow">' . $message['subject'] . '</a>',
 		'member' => &$memberContext[$message['id_member']],
-		'can_like' => we::$is_member && !empty($settings['likes_enabled']) && (!empty($settings['likes_own_posts']) || $message['id_member'] != we::$id),
+		'can_like' => we::$is_member && !empty($settings['likes_enabled']) && (!empty($settings['likes_own_posts']) || !$is_me),
 		'icon' => $message['icon'],
 		'icon_url' => $theme[$context['icon_sources'][$message['icon']]] . '/post/' . $message['icon'] . '.gif',
 		'subject' => $message['subject'],
@@ -1408,12 +1417,13 @@ function prepareDisplayContext($reset = false)
 		'edited' => $message['is_read'] && $message['id_msg_modified'] > $topicinfo['new_from'],
 		'approved' => $message['approved'],
 		'first_new' => isset($context['start_from']) && $context['start_from'] == $counter,
+		'is_message_author' => $is_me,
 		'is_ignored' => !empty($settings['enable_buddylist']) && !empty($options['posts_apply_ignore_list']) && in_array($message['id_member'], we::$user['ignoreusers']),
 		'can_approve' => !$message['approved'] && $context['can_approve'],
 		'can_unapprove' => $message['approved'] && $context['can_approve'],
-		'can_modify' => (!$context['is_locked'] || allowedTo('moderate_board')) && (allowedTo('modify_any') || (allowedTo('modify_replies') && we::$user['started']) || (allowedTo('modify_own') && $message['id_member'] == we::$id && (empty($settings['edit_disable_time']) || !$message['approved'] || $message['poster_time'] + $settings['edit_disable_time'] * 60 > time()))) && (empty($message['modified_member']) || $message['modified_member'] == we::$id || !empty($settings['allow_non_mod_edit']) || allowedTo('moderate_board')),
+		'can_modify' => (!$context['is_locked'] || $context['can_moderate_board']) && (allowedTo('modify_any') || (allowedTo('modify_replies') && we::$user['started']) || (allowedTo('modify_own') && $message['id_member'] == we::$id && (empty($settings['edit_disable_time']) || !$message['approved'] || $message['poster_time'] + $settings['edit_disable_time'] * 60 > time()))) && (empty($message['modified_member']) || $message['modified_member'] == we::$id || !empty($settings['allow_non_mod_edit']) || $context['can_moderate_board']),
 		'can_remove' => allowedTo('delete_any') || (allowedTo('delete_replies') && we::$user['started']) || (allowedTo('delete_own') && $message['id_member'] == we::$id && (empty($settings['edit_disable_time']) || $message['poster_time'] + $settings['edit_disable_time'] * 60 > time())),
-		'can_see_ip' => $can_ip,
+		'can_see_ip' => $can_ip || $is_me,
 		'can_mergeposts' => $merge_safe && !empty($context['last_user_id']) && $context['last_user_id'] == (empty($message['id_member']) ? (empty($message['poster_email']) ? $message['poster_name'] : $message['poster_email']) : $message['id_member']) && (allowedTo('modify_any') || (allowedTo('modify_own') && $message['id_member'] == we::$id)),
 		'last_post_id' => $context['last_msg_id'],
 		'unapproved_msg' => $message['approved'] && !empty($message['data']['unapproved_msg']) ? $message['data']['unapproved_msg'] : '',
@@ -1439,9 +1449,6 @@ function prepareDisplayContext($reset = false)
 		$context['last_msg_id'] = $message['id_msg'];
 		$context['last_post_length'] = $context['current_post_length'];
 	}
-
-	// Is this user the message author?
-	$output['is_message_author'] = $is_me = $message['id_member'] == we::$id;
 
 	// Now, to business. Is it not a guest, and we haven't done this before?
 	if ($output['member']['id'] != 0 && !isset($context['mini_menu']['user'][$output['member']['id']]))
@@ -1475,7 +1482,7 @@ function prepareDisplayContext($reset = false)
 			$menu[] = $memberContext[$message['id_member']]['is_buddy'] ? 'rb' : 'ab';
 
 		if ($output['can_see_ip'] && !empty($output['member']['ip']))
-			$menu[] = ($context['can_moderate_forum'] ? 'tk' : 'ip') . '/' . $output['member']['ip'];
+			$menu[] = ($context['can_moderate_members'] || $context['can_moderate_board'] ? 'tk' : 'ip') . '/' . $output['member']['ip'];
 
 		// If we can't do anything, it's not even worth recording the user's website...
 		if (count($menu))

@@ -277,7 +277,7 @@ function getMembersOnlineDetails($type = 'board')
 			$link .= ' <span class="contact"></span>';
 
 		// Add them both to the list and to the more detailed list.
-		if (!empty($row['show_online']) || allowedTo('moderate_forum'))
+		if (!empty($row['show_online']) || !empty($context['can_moderate_members']) || !empty($context['can_moderate_board']))
 			$context['view_members_list'][$row['log_time'] . $row['member_name']] = empty($row['show_online']) ? $link . ' <span class="notonline" title="' . $txt['hidden'] . '"></span>' : $link;
 		$context['view_members'][$row['log_time'] . $row['member_name']] = array(
 			'id' => $row['id_member'],

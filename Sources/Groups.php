@@ -563,7 +563,6 @@ function MembergroupMembers()
 	// Create the page index.
 	$context['page_index'] = template_page_index('<URL>?action=' . ($context['group']['can_moderate'] ? 'moderate;area=viewgroups' : 'groups') . ';sa=members;group=' . $_REQUEST['group'] . ';sort=' . $context['sort_by'] . (isset($_REQUEST['desc']) ? ';desc' : ''), $_REQUEST['start'], $context['total_members'], $settings['defaultMaxMembers']);
 	$context['start'] = $_REQUEST['start'];
-	$context['can_moderate_forum'] = allowedTo('moderate_forum');
 
 	// Load up all members of this group.
 	$request = wesql::query('

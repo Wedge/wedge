@@ -181,10 +181,12 @@ function MessageIndex()
 	$context['page_title'] = strip_tags($board_info['name']);
 
 	// Set the variables up for the template.
+	$context['owns_board'] = we::$is_admin || (we::$is_member && $board_info['owner_id'] == we::$id);
 	$context['can_mark_notify'] = allowedTo('mark_notify') && we::$is_member;
 	$context['can_post_new'] = allowedTo('post_new');
 	$context['can_post_poll'] = allowedTo('poll_post') && $context['can_post_new'];
-	$context['can_moderate_forum'] = allowedTo('moderate_forum');
+	$context['can_moderate_members'] = allowedTo('moderate_forum');
+	$context['can_moderate_board'] = allowedTo('moderate_board');
 	$context['can_approve_posts'] = allowedTo('approve_posts');
 
 	loadSource('Subs-BoardIndex');
@@ -295,7 +297,6 @@ function MessageIndex()
 
 	$can_reply_own = allowedTo('post_reply_own');
 	$can_reply_any = allowedTo('post_reply_any');
-	$can_moderate = allowedTo('moderate_board');
 
 	// Grab the appropriate topic information...
 	if (!$pre_query || !empty($topic_ids))
@@ -511,7 +512,7 @@ function MessageIndex()
 				'views' => $row['num_views'],
 				'approved' => $row['approved'],
 				'unapproved_posts' => $row['unapproved_posts'],
-				'can_reply' => !empty($row['locked']) ? $can_moderate : $can_reply_any || ($can_reply_own && $row['first_id_member'] == we::$id),
+				'can_reply' => !empty($row['locked']) ? $context['can_moderate_board'] : $can_reply_any || ($can_reply_own && $row['first_id_member'] == we::$id),
 				'style' => $color_class,
 			);
 
@@ -642,6 +643,7 @@ function MessageIndex()
 		($context['is_marked_notify'] ? 'unnotify' : 'notify') => array('test' => 'can_mark_notify', 'text' => $context['is_marked_notify'] ? 'unnotify' : 'notify', 'custom' => 'onclick="return ask(' . JavaScriptEscape($txt['notification_' . ($context['is_marked_notify'] ? 'disable_board' : 'enable_board')]) . ', e);"', 'url' => '<URL>?action=notifyboard;sa=' . ($context['is_marked_notify'] ? 'off' : 'on') . ';board=' . $context['current_board'] . '.' . $context['start'] . ';' . $context['session_query']),
 		'markread' => array('test' => 'can_mark_read', 'text' => 'mark_read_short', 'url' => '<URL>?action=markasread;sa=board;board=' . $context['current_board'] . '.0;' . $context['session_query']),
 		'order' => array('test' => 'can_order_pinned', 'text' => 'order_pinned_topic', 'url' => '<URL>?action=pin;sa=order;board=' . $context['current_board'] . '.0', 'class' => 'pin'),
+		'modify' => array('test' => 'owns_board', 'text' => 'modify', 'url' => '<URL>?action=admin;area=manageboards;sa=board;boardid=' . $context['current_board'], 'class' => 'edit'),
 	);
 
 	// Allow adding new buttons easily.

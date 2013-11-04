@@ -1471,6 +1471,7 @@ function loadAllPermissions()
 		'general',
 		'maintenance',
 		'member_admin',
+		'media',
 		'topic',
 		'post',
 	);

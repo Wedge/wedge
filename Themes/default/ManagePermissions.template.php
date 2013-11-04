@@ -339,6 +339,7 @@ function template_edit_profiles()
 					</tr>
 				</thead>
 				<tbody>';
+
 	$alternate = false;
 	foreach ($context['profiles'] as $profile)
 	{
@@ -455,7 +456,7 @@ function template_modify_group()
 	// Draw out the main bits.
 	template_modify_group_classic($context['permission_type']);
 
-	// If this is general permissions also show the default profile.
+	// If this is a general permission, also show the default profile.
 	if ($context['permission_type'] == 'membergroup')
 	{
 		echo '
@@ -484,7 +485,6 @@ function template_modify_group()
 	echo '
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 		</form>';
-
 }
 
 function template_modify_group_classic($type)

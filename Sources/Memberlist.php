@@ -289,7 +289,6 @@ function MLAll()
 	$context['start'] = $_REQUEST['start'] + 1;
 	$context['end'] = min($_REQUEST['start'] + $settings['defaultMaxMembers'], $context['num_members']);
 
-	$context['can_moderate_forum'] = allowedTo('moderate_forum');
 	$context['page_title'] = sprintf($txt['viewing_members'], $context['start'], $context['end']);
 	add_linktree($context['page_title'], '<URL>?action=mlist;sort=' . $_REQUEST['sort'] . ';start=' . $_REQUEST['start'], null, ' (' . sprintf($txt['of_total_members'], $context['num_members']) . ')');
 
@@ -396,7 +395,6 @@ function MLSearch()
 	global $txt, $context, $settings;
 
 	$context['page_title'] = $txt['mlist_search'];
-	$context['can_moderate_forum'] = allowedTo('moderate_forum');
 
 	// Can they search custom fields?
 	$request = wesql::query('

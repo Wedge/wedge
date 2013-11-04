@@ -610,18 +610,21 @@ function loadPermissions()
 				we::$user['permissions'][] = $row['permission'];
 		}
 		wesql::free_result($request);
+
+		if (!empty($board_info['owner_id']) && $board_info['owner_id'] == we::$id)
+			we::$user['permissions'][] = 'moderate_board';
 	}
 
-	// Remove all the permissions they shouldn't have ;).
-	we::$user['permissions'] = array_diff(we::$user['permissions'], $removals);
+	// Remove all the permissions they shouldn't have ;)
+	we::$user['permissions'] = array_diff(array_flip(array_flip(we::$user['permissions'])), $removals);
 
 	if (isset($cache_groups) && !empty($board) && $settings['cache_enable'] >= 2)
 		cache_put_data('permissions:' . $cache_groups . ':' . $board, array(we::$user['permissions'], null), 240);
 
-	// Banned? Watch, don't touch..
+	// Banned? Watch, don't touch...
 	banPermissions();
 
-	// Load the mod cache so we can know what additional boards they should see, but no sense in doing it for guests
+	// Load the mod cache so we can know what additional boards they should see, but no sense in doing it for guests.
 	if (we::$is_member)
 	{
 		if (!isset($_SESSION['mc']) || $_SESSION['mc']['time'] <= $settings['settings_updated'])
