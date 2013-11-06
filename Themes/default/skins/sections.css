@@ -170,7 +170,7 @@ img.new_posts
 // A generic bar, for use in polls and stats.
 .bar
 	float: left
-	gradient: lighter(#6294ce, 20%), hue(darker(#6294ce, 20%), -10)
+	gradient: luma(#6294ce, +20%), hue(luma(#6294ce, -20%), -10)
 	border-radius: 4px
 	margin: 0 4px
 	height: 16px
@@ -583,7 +583,7 @@ hr.sep
 	.actions
 		float: right
 		a
-			color: darker(#47a, 80%)
+			color: luma(#47a, -80%)
 			opacity: .6
 			transition: opacity .3s ease
 			:hover

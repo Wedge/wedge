@@ -529,6 +529,8 @@ class wess_if extends wess
  */
 class wess_color extends wess
 {
+	var $arg, $parg;
+
 	// Transforms "gradient: rgba(1,2,3,.5)" into background-color, or the equivalent IE filter.
 	// Transforms "gradient: color1, color2, [angle]" into linear-gradient([angle], color1, color2), or the equivalent IE filter. Default angle is 180deg (top to bottom).
 	// The angle parameter is optional. You can either use a direction (to left...), or the angle of the destination (0deg = from bottom to top)
@@ -561,13 +563,23 @@ class wess_color extends wess
 		);
 	}
 
+	private function op($origin, $index = 0, $reverse = false)
+	{
+		$arg = $this->arg[$index];
+		$parg = isset($this->parg[$index]) ? $this->parg[$index] : null;
+
+		if ((isset($parg) && ($parg[0] === '+' || $parg[0] === '-')) || ($arg && ($arg[0] === '+' || $arg[0] === '-')))
+			return $origin + (isset($parg) ? $origin * $parg : $arg) * ($reverse ? -1 : 1);
+		return isset($parg) ? $parg : $arg;
+	}
+
 	// Now, go with the actual color parsing.
 	function process(&$css)
 	{
 		$nodupes = array();
 
 		// No need for a recursive regex, as we shouldn't have more than one level of nested brackets...
-		while (preg_match_all('~(darker|lighter|stronger|desaturated|saturated|hue|complement|average|alpha|channels)\(((?:(?:rgb|hsl)a?\([^()]+\)|[^()])+)\)~i', $css, $matches))
+		while (preg_match_all('~(strength|brightness|luma|saturation|hue|complement|average|alpha|channels)\(((?:(?:rgb|hsl)a?\([^()]+\)|[^()])+)\)~i', $css, $matches))
 		{
 			foreach ($matches[0] as $i => $dec)
 			{
@@ -594,7 +606,7 @@ class wess_color extends wess
 				$nc = 0;
 				$color = $rgb[1];
 				$hsl = $rgb[2];
-				$arg = explode(',', substr($m, strlen($rgb[0])));
+				$arg = array_map('trim', explode(',', substr($m, strlen($rgb[0]))));
 				$parg = array();
 				while ($arg && $arg[0] === '')
 					array_shift($arg);
@@ -604,10 +616,23 @@ class wess_color extends wess
 					for ($i = 1; $i < 4; $i++)
 						$arg[$i] = isset($arg[$i]) ? $arg[$i] : 0;
 				foreach ($arg as $i => $a)
-					$parg[$i] = substr($a, -1) === '%' ? ((float) substr($a, 0, -1)) / 100 : false;
+					$parg[$i] = substr($a, -1) === '%' ? ((float) substr($a, 0, -1)) / 100 : null;
 				$hsl = $hsl ? $hsl : wess::rgb2hsl($color[0], $color[1], $color[2], $color[3]);
 
-				// This is where we run our color functions...
+				/*
+					This is where we run our color functions...
+					- 'brightness' is an alias to 'luma'.
+					- 'strength' is a version of 'luma' that makes bright colors brighter, and dark colors darker.
+					- 'luma', 'saturation', 'alpha' and 'channels' change their behavior based on the value:
+						Use '+' or '-' signs to indicate a change relative to the old value.
+							+50% on a value of .3 will transform it to .45
+							-.15 on a value of .3 will transform it to .15
+						No sign means the new value will replace the old one.
+							.3 on a value of .424242 will transform it to .3
+							30% on a value of .424242 will transform it to .3
+				*/
+				$this->arg = $arg;
+				$this->parg = $parg;
 
 				if ($code === 'average' && !empty($rgb[0]))
 				{
@@ -622,27 +647,19 @@ class wess_color extends wess
 					$hsl['a'] = ($hsl['a'] + $hsl2['a']) / 2;
 				}
 
-				// Change alpha (transparency) level
+				// Change alpha (transparency) level.
 				elseif ($code === 'alpha')
-					$hsl['a'] += $parg[0] ? $hsl['a'] * $parg[0] : $arg[0];
+					$hsl['a'] = $this->op($hsl['a']);
 
-				// Darken the color (brightness down)
-				elseif ($code === 'darker' || ($code === 'stronger' && $hsl['l'] < 0.5))
-					$hsl['l'] -= $parg[0] ? $hsl['l'] * $parg[0] : $arg[0];
+				// Change color luma, i.e. lightness, i.e. overall brightness. 'Luma' sounded better.
+				elseif ($code === 'luma' || $code === 'brightness' || $code == 'strength')
+					$hsl['l'] = $this->op($hsl['l'], 0, $code === 'strength' && $hsl['l'] < 0.5);
 
-				// Lighten the color (brightness up)
-				elseif ($code === 'lighter' || ($code === 'stronger' && $hsl['l'] >= 0.5))
-					$hsl['l'] += $parg[0] ? $hsl['l'] * $parg[0] : $arg[0];
+				// Change color saturation (if up, gets color further away from grayscale)
+				elseif ($code === 'saturation')
+					$hsl['s'] = $this->op($hsl['s']);
 
-				// Desaturize the color (saturation down, gets color closer to grayscale)
-				elseif ($code === 'desaturated')
-					$hsl['s'] -= $parg[0] ? $hsl['s'] * $parg[0] : $arg[0];
-
-				// Saturize the color (saturation up, gets color further away from grayscale)
-				elseif ($code === 'saturated')
-					$hsl['s'] += $parg[0] ? $hsl['s'] * $parg[0] : $arg[0];
-
-				// Change color hue (moves it over the virtual color wheel by X degrees)
+				// Change color hue (moves it over the virtual color wheel by X degrees or X%)
 				elseif ($code === 'hue')
 					$hsl['h'] += $parg[0] ? $parg[0] * 360 : $arg[0];
 
@@ -656,10 +673,10 @@ class wess_color extends wess
 					if ($color === 0)
 						$color = wess::hsl2rgb($hsl['h'], $hsl['s'], $hsl['l'], $hsl['a']);
 					$nc = array(
-						'r' => $color[0] + ($parg[0] ? $color[0] * $parg[0] : $arg[0]),
-						'g' => $color[1] + ($parg[1] ? $color[1] * $parg[1] : $arg[1]),
-						'b' => $color[2] + ($parg[2] ? $color[2] * $parg[2] : $arg[2]),
-						'a' => $color[3] + ($parg[3] ? $color[3] * $parg[3] : $arg[3])
+						'r' => $this->op($color[0], 0),
+						'g' => $this->op($color[1], 1),
+						'b' => $this->op($color[2], 2),
+						'a' => $this->op($color[3], 3)
 					);
 				}
 

@@ -1,7 +1,7 @@
 
 /*!
  * Warm skin for Wedge
- * © 2010 René-Gilles Deberdt, http://wedge.org
+ * Â© 2010 RenÃ©-Gilles Deberdt, http://wedge.org
  */
 
 body
@@ -26,6 +26,8 @@ h4, h5
 				margin: 0 -20px
 			.msg
 				margin, border-radius: 0
+			.poster
+				border-radius: 0
 
 			// #sideshow being part of the sidebar, we'll always move it to be a floating icon.
 			#sideshow
@@ -73,11 +75,11 @@ h4, h5
 	h1
 		margin: 28px 0 0 30px
 		text-transform: lowercase
+		font: italic 700 3em "Segoe UI", sans-serif
+		letter-spacing: -2px
+		text-shadow: white 0 1px 2px
 		a
 			color: #866
-			font: italic 700 3em "Segoe UI", "Trebuchet MS", Georgia, Geneva, verdana, sans-serif
-			letter-spacing: -2px
-			text-shadow: white 0 1px 2px
 		:first-letter
 			color: #555
 
@@ -89,14 +91,14 @@ h4, h5
 
 #upper_section
 	border-top: 0
-	border-bottom: 3px solid lighter($reddish, 3%)
+	border-bottom: 3px solid luma($reddish, +3%)
 
 #main
 	display: block
 
 #footer
 	border-top: 1px solid #c3d0de
-	gradient: darker($body_bg, 0%), darker($body_bg, 10%), 200deg
+	gradient: $body_bg, luma($body_bg, -10%), 200deg
 	color: #333
 	a
 		color: #679
@@ -133,9 +135,6 @@ dl#feed
 	margin-top: 54px
 	color: #777
 
-.keyinfo .modified
-	font-style: normal
-
 /* Restyling the linktree. For big arrow fans.
 ------------------------------------------------------- */
 #linktree li unextends .horizontal-arrow
@@ -171,9 +170,9 @@ dl#feed
 			border-left: 15px solid $main_bg
 			z-index: 1
 		:nth-last-child(even)
-			background: desaturated(darker($main_bg, 5%), 50%)
+			background: saturation(luma($main_bg, -5%), -50%)
 			:after
-				border-left: 15px solid desaturated(darker($main_bg, 5%), 50%)
+				border-left: 15px solid saturation(luma($main_bg, -5%), -50%)
 		:first-child
 			padding-left: 8px
 			border-radius: 8px 0 0 8px
@@ -202,7 +201,7 @@ dl#feed
 	h4, h4 a
 		color: #000
 	li.chosen h4
-		background-color: lighter($reddish, 3%) !important
+		background-color: luma($reddish, +3%) !important
 		color: #fff
 		a
 			color: #fff
@@ -259,16 +258,16 @@ tr.titlebg th, tr.catbg th
 
 .cat a
 	font-family: inherit
-	color: lighter(gray, 10%)
+	color: luma(gray, +10%)
 	:hover
 		color: $board_col
 
 .title
 	font-size: 1.2em
 	background: none
-	color: channels(gray, 30%)
+	color: channels(gray, +30%)
 	a
-		color: lighter(channels(gray, 30%), 10%) !important
+		color: luma(channels(gray, +30%), +10%) !important
 
 .cat final
 	color: gray
@@ -333,7 +332,7 @@ $head_bg   = rgba(233,235,186,.66)
 $body_bg   = #f6f8ef
 $side_bg   = #e8e3cb
 $side_col  = #333
-$footer_bg = lighter($side_bg, 70%)
+$footer_bg = luma($side_bg, +70%)
 $main_font = "Open Sans", Verdana, Arial, sans-serif
 $post_font = "Open Sans", Verdana, Arial, sans-serif
 $main_font_size = 88%/140%

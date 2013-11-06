@@ -9,7 +9,7 @@ $post_font_size = 9pt/140%
 
 $main_bg = #fffdfa
 $head_bg = rgba(221, 200, 137, .66)
-$window_bg = darker(#f2f3ea, 1%)
-$window_bg2 = darker(#f3f7f3, 2%)
+$window_bg = luma(#f2f3ea, -1%)
+$window_bg2 = luma(#f3f7f3, -2%)
 $post_bg = $window_bg
 $post_bg2 = $window_bg2
