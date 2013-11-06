@@ -1233,9 +1233,6 @@ function editBuddyIgnoreLists($memID)
 	if (!we::$user['is_owner'] || empty($settings['enable_buddylist']))
 		fatal_lang_error('no_access', false);
 
-	// Can we email the user direct?
-	$context['can_moderate_forum'] = allowedTo('moderate_forum');
-
 	$subActions = array(
 		'buddies' => array('editBuddies', $txt['editBuddies']),
 		'ignore' => array('editIgnoreList', $txt['editIgnoreList']),

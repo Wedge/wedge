@@ -227,18 +227,21 @@ function JSModify()
 			'body' => strtr($msgOptions['body'], array(']]>' => ']]]]><![CDATA[>')),
 		);
 		if (isset($msgOptions['modify_time']))
-			$message['modified'] = array(
-				'time' => timeformat($msgOptions['modify_time']),
-				'timestamp' => forum_time(true, $msgOptions['modify_time']),
-				'name' => '<a href="<URL>?action=profile;u=' . $msgOptions['modify_member'] . '">' . $msgOptions['modify_name'] . '</a>',
-			);
+			$message['modified'] = '<ins>' .
+				strtr(
+					$txt[$msgOptions['modify_member'] !== $row['id_member'] ? 'last_edit' : 'last_edit_mine'],
+					array(
+						'{date}' => '<time datetime="' . date(DATE_W3C, forum_time(true, $msgOptions['modify_time'])) . '">' . on_timeformat($msgOptions['modify_time']) . '</time>',
+						'{name}' => !empty($msgOptions['modify_member']) ? '<a href="<URL>?action=profile;u=' . $msgOptions['modify_member'] . '">' . $msgOptions['modify_name'] . '</a>' : $msgOptions['modify_name']
+					)
+				) . '</ins>';
 
 		censorText($message['subject']);
 		censorText($message['body']);
 
 		$message['body'] = parse_bbc($message['body'], 'post', array('smileys' => $row['smileys_enabled'], 'cache' => $row['id_msg'], 'user' => $row['id_member']));
 	}
-	// Topic?
+	// Just changing the subject?
 	elseif (empty($post_errors))
 	{
 		$message = array(
@@ -246,16 +249,19 @@ function JSModify()
 			'subject' => isset($msgOptions['subject']) ? $msgOptions['subject'] : '',
 		);
 		if (isset($msgOptions['modify_time']))
-			$message['modified'] = array(
-				'time' => timeformat($msgOptions['modify_time']),
-				'timestamp' => forum_time(true, $msgOptions['modify_time']),
-				'name' => $msgOptions['modify_name'],
-			);
+			$message['modified'] = '<ins>' .
+				strtr(
+					$txt[$msgOptions['modify_member'] !== $row['id_member'] ? 'last_edit' : 'last_edit_mine'],
+					array(
+						'{date}' => '<time datetime="' . date(DATE_W3C, forum_time(true, $msgOptions['modify_time'])) . '">' . on_timeformat($msgOptions['modify_time']) . '</time>',
+						'{name}' => !empty($msgOptions['modify_member']) ? '<a href="<URL>?action=profile;u=' . $msgOptions['modify_member'] . '">' . $msgOptions['modify_name'] . '</a>' : $msgOptions['modify_name']
+					)
+				) . '</ins>';
 
 		censorText($message['subject']);
 
 		return_xml('<we>
-	<modified><![CDATA[', empty($message['modified']['time']) ? '' : cleanXml(strtr($txt['last_edit'], array('{name}' =>  $message['modified']['name'], '{date}' => $message['modified']['time']))), ']]></modified>', empty($message['subject']) ? '' : '
+	<modified><![CDATA[', empty($message['modified']) ? '' : cleanXml($message['modified']), ']]></modified>', empty($message['subject']) ? '' : '
 	<subject><![CDATA[' . cleanXml($message['subject']) . ']]></subject>', '</we>');
 	}
 	else
@@ -270,8 +276,8 @@ function JSModify()
 		in_array(array('long_message', $settings['max_messageLength']), $post_errors) ? 'post' : ''), '"><![CDATA[', implode('<br>', $errors), ']]></error></we>');
 	}
 
-	return_xml('<we>
-	<modified><![CDATA[', empty($message['modified']['time']) ? '' : cleanXml(strtr($txt['last_edit'], array('{name}' =>  $message['modified']['name'], '{date}' => $message['modified']['time']))), ']]></modified>
+	return_xml('<we>', empty($message['modified']) ? '' : '
+	<modified><![CDATA[' . cleanXml($message['modified']), ']]></modified>', '
 	<subject', $message['first_in_topic'] ? ' is_first="1"' : '', '><![CDATA[', cleanXml($message['subject']), ']]></subject>
 	<body><![CDATA[', cleanXml($message['body']), ']]></body></we>');
 }

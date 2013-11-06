@@ -255,16 +255,15 @@ function template_msg_header_body()
 								<div class="notenice">' . $txt['edited'] . '</div>' : ($msg['new'] ? '
 								<div class="note">' . $txt['new'] . '</div>' : ''), '
 							</h5>
-							<time>
-								« ', !empty($msg['counter']) ? sprintf($txt['reply_number'], $msg['counter']) : '', ' ', $msg['on_time'], ' »
-								<span class="modified">', $theme['show_modify'] && !empty($msg['modified']['name']) ?
-									// Show "Last Edit on Date by Person" if this post was edited.
-									strtr($txt[$msg['modified']['name'] !== $msg['member']['name'] ? 'last_edit' : 'last_edit_mine'], array(
-										'{date}' => $msg['modified']['on_time'],
-										'{name}' => !empty($msg['modified']['member']) ? '<a href="<URL>?action=profile;u=' . $msg['modified']['member'] . '">' . $msg['modified']['name'] . '</a>' : $msg['modified']['name']
-									)) : '', '
-								</span>
-							</time>';
+							<div>
+								« ', !empty($msg['counter']) ? sprintf($txt['reply_number'], $msg['counter']) . ' ' : '', '<time datetime="', date(DATE_W3C, $msg['timestamp']), '">', $msg['on_time'], '</time> »',
+								// Show "Last Edit on Date by Person" if this post was edited.
+								$theme['show_modify'] && !empty($msg['modified']['name']) ? '
+								<ins>' . strtr($txt[$msg['modified']['member'] !== $msg['member']['id'] ? 'last_edit' : 'last_edit_mine'], array(
+											'{date}' => '<time datetime="' . date(DATE_W3C, $msg['modified']['timestamp']) . '">' . $msg['modified']['on_time'] . '</time>',
+											'{name}' => !empty($msg['modified']['member']) ? '<a href="<URL>?action=profile;u=' . $msg['modified']['member'] . '">' . $msg['modified']['name'] . '</a>' : $msg['modified']['name']
+										)) . '</ins>' : '', '
+							</div>';
 }
 
 function template_msg_header_after()
