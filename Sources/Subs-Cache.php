@@ -661,7 +661,7 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 	}
 
 	// Resolve references to some common Wedge variables.
-	$final = preg_replace_callback('~\$(settings|theme|txt)\[([\'"])(.*?)\2]~', 'wedge_replace_theme_vars', $final);
+	$final = preg_replace_callback('~\$(context|settings|theme|txt)\[([\'"])(.*?)\2]~', 'wedge_replace_theme_vars', $final);
 
 	// CSS is always minified. It takes just a sec' to do, and doesn't impair anything.
 	$final = str_replace(array("\r\n", "\r"), "\n", $final); // Always use \n line endings.

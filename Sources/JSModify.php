@@ -277,7 +277,7 @@ function JSModify()
 	}
 
 	return_xml('<we>', empty($message['modified']) ? '' : '
-	<modified><![CDATA[' . cleanXml($message['modified']), ']]></modified>', '
+	<modified><![CDATA[' . cleanXml($message['modified']) . ']]></modified>', '
 	<subject', $message['first_in_topic'] ? ' is_first="1"' : '', '><![CDATA[', cleanXml($message['subject']), ']]></subject>
 	<body><![CDATA[', cleanXml($message['body']), ']]></body></we>');
 }

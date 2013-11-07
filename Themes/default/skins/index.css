@@ -250,10 +250,10 @@ ul#noava
 #header h1
 	margin: 42px 0 0 30px
 	float: left
+	font: 100 2.5em/1em $big_font
 	a
 		color: #766
 		letter-spacing: -1px
-		font: 100 3em/1em $big_font
 
 // The search box, with a few hacks to allow for a drop-down menu...
 #search_form
