@@ -111,7 +111,7 @@ $(window).load(function ()
 	if (!is_touch)
 	{
 		// Once the page is loaded, we lock user box sizes, to prevent breaking the effect.
-		$('.poster>div,.poster').each(function () { $(this).width($(this).width()).css('min-height', $(this).height()); });
+		$('.poster>div,.poster').css('min-height', 0).each(function () { $(this).width($(this).width()).css('min-height', $(this).height()); });
 
 		// If user box has no padding, chances are it doesn't want this effect anyway.
 		if (!isNaN(poster_padding_top) && !is_ie6 && !is_ie7)
@@ -173,7 +173,7 @@ $(window).load(function ()
 
 			// We have to re-run the event delayer, as it has new values to insert...
 			// !! Is it worth putting it into its own function in script.js..?
-			$('[data-eve]', $new_page).each(function ()
+			$new_page.find('[data-eve]').each(function ()
 			{
 				var that = $(this);
 				$.each(that.attr('data-eve').split(' '), function () {
@@ -190,7 +190,7 @@ $(window).load(function ()
 
 			// Prepare all new posts for follow_me.
 			if (!is_touch)
-				$('.poster>div,.poster').each(function () { $(this).width($(this).width()).css('min-height', $(this).height()); });
+				$('.poster>div,.poster').css('min-height', 0).each(function () { $(this).width($(this).width()).css('min-height', $(this).height()); });
 		}
 	});
 });
@@ -241,13 +241,13 @@ function go_down()
 @if member
 	function modify_topic(topic_id, first_msg_id)
 	{
-		var cur_topic_id, cur_msg_id, cur_subject_div, buff_subject, in_edit_mode = false,
+		var cur_topic_id, cur_msg_id, $cur_subject_div, buff_subject, in_edit_mode = false,
 
 		// For templating, shown when an inline edit is made.
 		show_edit = function (subject)
 		{
 			// Just template the subject.
-			cur_subject_div.html('<input type="text" id="qm_subject" size="60" style="width: 95%" maxlength="80">');
+			$cur_subject_div.html('<input type="text" id="qm_subject" size="60" style="width: 95%" maxlength="80">');
 			$('#qm_subject')
 				.data('id', cur_topic_id)
 				.data('msg', cur_msg_id)
@@ -266,11 +266,12 @@ function go_down()
 
 		restore_subject = function ()
 		{
-			cur_subject_div.html(buff_subject);
+			$cur_subject_div.html(buff_subject);
 
 			set_hidden_topic_areas(true);
 			in_edit_mode = false;
 			$('body').off('.mt');
+
 			return false;
 		},
 
@@ -302,7 +303,7 @@ function go_down()
 						restore_subject();
 
 						// Re-template the subject!
-						cur_subject_div.find('a').html($('subject', XMLDoc).text());
+						$cur_subject_div.find('a').html($('subject', XMLDoc).text());
 					}
 
 					return false;
@@ -340,8 +341,8 @@ function go_down()
 			hide_ajax();
 			cur_msg_id = $('message', XMLDoc).attr('id');
 
-			cur_subject_div = $('#msg_' + cur_msg_id);
-			buff_subject = cur_subject_div.html();
+			$cur_subject_div = $('#msg_' + cur_msg_id);
+			buff_subject = $cur_subject_div.html();
 
 			// Here we hide any other things they want hiding on edit.
 			set_hidden_topic_areas(false);
@@ -583,9 +584,9 @@ function QuickReply(opt)
 						if ($('subject', XMLDoc).attr('is_first'))
 							$('#top_subject').html($('subject', XMLDoc).text());
 
-						// Show this message as 'modified on x by y'. If the theme doesn't support this,
-						// the request will simply be ignored because jQuery won't find the target.
-						$post.find('.modified').html($('modified', XMLDoc).text());
+						// Show the last modified date, if enabled. Make sure you have enough room to insert it!
+						$post.find('ins').remove();
+						$post.find('h5').next().append($('modified', XMLDoc).text());
 					}
 					else if ($('error', XMLDoc).length)
 					{
@@ -675,7 +676,7 @@ function QuickReply(opt)
 	// *** IconList object.
 	function IconList()
 	{
-		var $container, oIconXML, oDiv,
+		var $container, oIconXML, $div,
 
 		close_popup = function ()
 		{
@@ -686,12 +687,12 @@ function QuickReply(opt)
 		// Show the list of icons after the user clicked the original icon.
 		open_popup = function ()
 		{
-			oDiv = this;
+			$div = $(this);
 
 			// Create a container div.
 			if ($container)
 				close_popup();
-			$container = $('<div id="iconlist"/>').hide().css('width', this.offsetWidth).appendTo(this);
+			$container = $('<div id="iconlist"/>').hide().css('min-width', this.offsetWidth).appendTo(this);
 
 			// Start to fetch its contents.
 			if (!oIconXML)
@@ -717,23 +718,24 @@ function QuickReply(opt)
 						{
 							// Event handler for clicking on one of the icons.
 							close_popup();
-							var this_icon = this;
+							var $this_icon = $(this);
 							show_ajax();
 
 							$.post(
 								weUrl('action=jsmodify;' + we_sessvar + '=' + we_sessid),
 								{
 									topic: we_topic,
-									msg: $(oDiv).closest('.msg').attr('id').slice(3),
+									msg: $div.closest('.msg').attr('id').slice(3),
 									icon: $(icon_xml).attr('value')
 								},
-								function (oXMLDoc)
+								function (error_check)
 								{
 									hide_ajax();
-									if (!$('error', oXMLDoc).length)
-										$('img', oDiv).first().attr('src', $('img', this_icon).attr('src'));
+									if (!$('error', error_check).length)
+										$div.find('img').first().attr('src', $this_icon.find('img').attr('src'));
 								}
 							);
+
 							return false;
 						})
 						.append($(icon_xml).text())

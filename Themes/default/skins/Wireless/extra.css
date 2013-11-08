@@ -4,6 +4,9 @@
  * © 2010 René-Gilles Deberdt, http://wedge.org
  */
 
+#wedge
+	overflow: hidden
+
 #top_section
 	padding: 8px 15px
 
@@ -77,8 +80,8 @@
 	letter-spacing: -.25px
 
 @replace
-	font: 3.6em/1 Cochin, Georgia, serif
-	font: 2em/1 Cochin, Georgia, serif
+	font: 3.6em/1 $serif_font
+	font: 2em/1 $serif_font
 
 @if opera[11-], ie[10-]
 	@viewport

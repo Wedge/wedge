@@ -233,11 +233,13 @@ ul#noava
 #top_section
 	padding: 8px 30px
 
-#flags mixes .inline-block // Language flags
-	margin: 6px 1em 0 0
-	padding: 0
-	a
-		margin-top: -3px
+@if $context['languages']
+	#flags mixes .inline-block // Language flags
+		margin: 6px 1em 0 0
+		padding: 0
+		a
+			margin-top: -3px
+@endif
 
 @if $context['random_news_line']
 	#sitenews
@@ -247,13 +249,15 @@ ul#noava
 		span extends .horizontal-arrow
 			color: #888
 			font-weight: 700
+		+ #linktree
+			margin-top: -7px
 @endif
 
 // Main title
 #header h1
 	margin: 42px 0 0 30px
 	float: left
-	letter-spacing: -2px
+	letter-spacing: -1px
 	font: 100 2.5em/1em $big_font
 	text-shadow: 0 1px #fff
 	a
@@ -1263,7 +1267,7 @@ table
 			content: "\201c"
 			color: #999
 			height: 1px
-			font: 3.6em/1 $serif
+			font: 3.6em/1 $serif_font
 	> div
 		font-size: 92%
 		line-height: 1.4em
@@ -1400,7 +1404,7 @@ td.footnum a:target, a.fnotel:target
 	color: gray
 
 .post .headline
-	font: italic 120% $serif
+	font: italic 120% $serif_font
 	padding-bottom: 8px
 
 // Merged double posts

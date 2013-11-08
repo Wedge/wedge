@@ -585,13 +585,13 @@ hr.sep
 	border-top: 1px solid #ccc
 	.actions
 		float: right
-		a
-			color: luma(#47a, -80%)
-			opacity: .6
+	a
+		color: luma(#47a, -80%)
+		opacity: .6
+		transition: opacity .3s ease
+		:hover
+			opacity: 1
 			transition: opacity .3s ease
-			:hover
-				opacity: 1
-				transition: opacity .3s ease
 	.report
 		margin-right: 1.5em
 		img
@@ -1275,7 +1275,7 @@ tr.windowbg td
 
 @if !ie6
 	.my.thought
-		font: italic 12px $serif
+		font: italic 12px $serif_font
 @endif
 
 /* Styles for the statistics center.

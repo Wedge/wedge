@@ -786,7 +786,7 @@ function wedge_replace_theme_vars($match)
 {
 	global $context, $settings, $theme, $txt;
 
-	return isset(${$match[1]}[$match[3]]) ? '"' . ${$match[1]}[$match[3]] . '"' : '""';
+	return isset(${$match[1]}[$match[3]]) ? '"' . (is_array(${$match[1]}[$match[3]]) ? count(${$match[1]}[$match[3]]) : ${$match[1]}[$match[3]]) . '"' : '""';
 }
 
 // This will replace {$str}, {$str}, ... in $final with successive entries in $arr
