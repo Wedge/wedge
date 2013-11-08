@@ -296,6 +296,7 @@ hr.sep
 	h5 + div
 		font-size: .9em
 	ins
+		padding-left: 8px
 		text-decoration: none
 		font-style: italic
 		color: #a0aaa0
@@ -1032,11 +1033,11 @@ tr.windowbg td
 	#basicinfo
 		.username
 			float: left
+		img.avatar
+			float: right
+			vertical-align: top
 	#position
 		float: right
-	img.avatar
-		float: right
-		vertical-align: top
 	#basicinfo ul, #userstatus
 		clear: left
 	#infolinks
@@ -1274,7 +1275,7 @@ tr.windowbg td
 
 @if !ie6
 	.my.thought
-		font: italic 12px Georgia, "Trebuchet MS", Arial, sans-serif
+		font: italic 12px $serif
 @endif
 
 /* Styles for the statistics center.
@@ -1568,7 +1569,7 @@ body.waiting *
 				@endif
 			#header h1
 				margin-top: 8px
-				font-size: 75% // of 3em (see below.)
+				font-size: 2.2em
 			#upper_section
 				height: 60px
 			#slogan

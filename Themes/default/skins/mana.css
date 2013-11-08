@@ -44,8 +44,13 @@ input, textarea
 	max-height: 15em
 	margin: 1em 0
 	dt
-		padding-bottom: 5px
+		padding: 5px 0
 		border-bottom: 1px dotted #666
+		:first-child
+			padding: 0 0 5px
+		:last-child
+			padding: 5px 0 0
+			border-bottom: 0
 	dd
 		font-size: 8pt
 		line-height: 1.25

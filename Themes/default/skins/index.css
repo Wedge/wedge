@@ -253,10 +253,11 @@ ul#noava
 #header h1
 	margin: 42px 0 0 30px
 	float: left
+	letter-spacing: -2px
 	font: 100 2.5em/1em $big_font
+	text-shadow: 0 1px #fff
 	a
 		color: #766
-		letter-spacing: -1px
 
 // The search box, with a few hacks to allow for a drop-down menu...
 #search_form
@@ -1262,7 +1263,7 @@ table
 			content: "\201c"
 			color: #999
 			height: 1px
-			font: 3.6em/1 Cochin, Georgia, serif
+			font: 3.6em/1 $serif
 	> div
 		font-size: 92%
 		line-height: 1.4em
@@ -1399,7 +1400,7 @@ td.footnum a:target, a.fnotel:target
 	color: gray
 
 .post .headline
-	font: italic 120% Georgia, serif
+	font: italic 120% $serif
 	padding-bottom: 8px
 
 // Merged double posts
@@ -1589,7 +1590,7 @@ dl#feed
 	padding: 5px 10px 5px
 	margin: 4px 0
 	border: 1px solid rgba(0,0,0, .15)
-	font: @ifnull ($head_font_style, 100) @ifnull ($head_font_size, 1.5em/1.3em) $head_font
+	font: @ifnull ($head_font_style, 100) @ifnull ($head_font_size, 1.5em/1.3em) @ifnull ($cat_font, $head_font)
 	img
 		padding-right: 2px
 
@@ -1613,14 +1614,17 @@ dl#feed
 		margin: -5px
 
 .title extends .cat
+	position: relative
+	font-size: @ifnull ($title_font_size, 1.4em)
 	padding: 4px 8px
 	border, margin: 0
 	color: #777
 
+// Customize sidebar section headers; 'final' because no .title2 needed in there.
 #sidebar .title final
+	font-size: @ifnull ($sidebar_title_font_size, 1.5em)
 	margin: 0 0 15px
 	padding: 4px 0 0
-	font-size: @ifnull ($sidebar_title_font_size, 1.6em)
 
 .title2 extends .title
 	background: none
@@ -1628,13 +1632,6 @@ dl#feed
 	border-radius: 0
 	&, a
 		color: #777
-
-.cat final, .title final
-	font: @ifnull ($head_font_style, 100) @ifnull ($head_font_size, 1.5em/1.3em) @ifnull ($cat_font, $head_font)
-
-.title final
-	font-size: @ifnull ($title_font_size, 1.4em)
-	position: relative
 
 // A general table class
 .table_grid
