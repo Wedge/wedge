@@ -1569,10 +1569,10 @@ class wess_prefixes extends wess
 		$ov = $os['version'];
 
 		// IE 6-9 don't support gradients (screw 'em!), IE10 final supports them unprefixed,
-		// and Firefox 16, Chrome 26 and Safari 7 dropped the prefix. Not iOS 7.
+		// and Firefox 16, Chrome 27 and Safari 7 dropped the prefix. Not iOS 7.
 		if (strpos($matches[1], 'gradient(') !== false)
 		{
-			if (($b['chrome'] && $v >= 26) || ($b['gecko'] && $v >= 16) || ($b['opera'] && $v >= 12.1) || ($b['safari'] && $v >= 7) || ($b['ie'] && $v >= 10))
+			if (($b['chrome'] && $v >= 27) || ($b['gecko'] && $v >= 16) || ($b['opera'] && $v >= 12.1) || ($b['safari'] && $v >= 7) || ($b['ie'] && $v >= 10))
 				return $unchanged;
 
 			$prefixed = preg_replace('~(?<=[\s:])([a-z][a-z-]+-gradient\h*\()~', $this->prefix . '$1', $unchanged);
@@ -1586,7 +1586,7 @@ class wess_prefixes extends wess
 			return $prefixed;
 		}
 
-		// IE6/7/8/9 don't support transitions. IE10, Chrome 26+, Firefox 16+ and Opera 12.10+ support them unprefixed, other browsers require a prefix.
+		// IE6/7/8/9 don't support transitions. IE10, Chrome 27+, Firefox 16+ and Opera 12.10+ support them unprefixed, other browsers require a prefix.
 		if (strpos($matches[1], 'transition') !== false)
 		{
 			// In case the transition value is 'transform', we need to prefix it on browsers that need it.
@@ -1594,7 +1594,7 @@ class wess_prefixes extends wess
 				$unchanged = str_replace($matches[2], preg_replace('~\btransform\b~', $this->prefix . 'transform', $matches[2]), $unchanged);
 			if ($b['ie8down'] || $b['ie9'] || ($b['firefox'] && $v < 4))
 				return '';
-			if (($b['opera'] && $v < 12.1) || ($b['firefox'] && $v < 16) || ($b['chrome'] && $v < 26) || ($b['safari'] && $v < 7) || ($os['ios'] && $ov < 7))
+			if (($b['opera'] && $v < 12.1) || ($b['firefox'] && $v < 16) || ($b['chrome'] && $v < 27) || ($b['safari'] && $v < 7) || ($os['ios'] && $ov < 7))
 				return $this->prefix . $unchanged;
 			return $unchanged;
 		}
@@ -1626,10 +1626,10 @@ class wess_prefixes extends wess
 		if ($b['ie'] && $v < 8 && strpos($matches[1], 'rect') !== false)
 			return str_replace($matches[2], str_replace(',', ' ', $matches[2]), $matches[1]);
 
-		// IE9+/Firefox 16+/Chrome 26+ support this unprefixed, Safari 6 needs a prefix.
+		// IE9+/Firefox 16+/Chrome 27+ support this unprefixed, Safari 6 needs a prefix.
 		if (strpos($matches[1], 'calc') !== false)
 		{
-			if (($b['ie'] && $v >= 9) || ($b['chrome'] && $v >= 26) || ($b['firefox'] && $v >= 16))
+			if (($b['ie'] && $v >= 9) || ($b['chrome'] && $v >= 27) || ($b['firefox'] && $v >= 16))
 				return $matches[1];
 			if (($b['chrome'] && $v >= 19) || ($b['firefox'] && $v >= 4) || ($b['safari'] && $v == 6) || ($os['ios'] && $ov >= 6 && $ov < 7))
 				return $this->prefix . $matches[1];

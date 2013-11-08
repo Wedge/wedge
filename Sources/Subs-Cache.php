@@ -550,7 +550,6 @@ function wedge_get_css_filename($add)
 
 	$suffix = array_flip(array_filter(array_map('we::is', is_array($add) ? $add : explode('|', $add))));
 
-	unset($suffix['true']);
 	if (isset($suffix['m' . we::$id]))
 		unset($suffix['member'], $suffix['admin']);
 	if (isset($suffix['admin']))
@@ -686,8 +685,8 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 	{
 		// Okay, so there are better ways to handle these... For instance, a test on android[-4.0] will store
 		// a keyword if you're on Android, even 4.1+. But right now, it's better than what we had before.
-		preg_match_all('~[bcm][0-9]+|[a-z]+~i', implode(' ', array_flip(array_flip(array_merge($ids, we::$user['extra_tests'])))), $matches);
-		$add = array_diff(array_flip(array_flip($matches[0])), array_keys(we::$browser), array('global', 'local'));
+		preg_match_all('~[bcm][0-9]+|[a-z]+~i', preg_replace('~".*?"~', '', implode(' ', array_flip(array_flip(array_merge($ids, we::$user['extra_tests']))))), $matches);
+		$add = array_diff(array_flip(array_flip($matches[0])), array_keys(we::$browser), array('global', 'local', 'true'));
 	}
 
 	// Cache all tests.
@@ -785,7 +784,7 @@ function wedge_hide_content()
 
 function wedge_replace_theme_vars($match)
 {
-	global $settings, $theme, $txt;
+	global $context, $settings, $theme, $txt;
 
 	return isset(${$match[1]}[$match[3]]) ? '"' . ${$match[1]}[$match[3]] . '"' : '""';
 }
