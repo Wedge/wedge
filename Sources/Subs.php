@@ -533,7 +533,7 @@ function cleanXml($string)
 	global $context;
 
 	// http://www.w3.org/TR/2000/REC-xml-20001006#NT-Char
-	return preg_replace('~[\x00-\x08\x0B\x0C\x0E-\x19\x{FFFE}\x{FFFF}]~u', '', $string);
+	return str_replace(']]>', ']]]]><![CDATA[>', preg_replace('~[\x00-\x08\x0B\x0C\x0E-\x19\x{FFFE}\x{FFFF}]~u', '', $string));
 }
 
 /**
