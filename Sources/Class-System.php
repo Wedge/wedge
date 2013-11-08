@@ -788,23 +788,15 @@ class we
 	 */
 	public static function analyze($strings)
 	{
-		// If working on a string, we'll group brackets together, and split the rest.
-		// Note that commas need to be encoded, in case you enter e.g. (ie[6,7])
-		if (!is_array($strings))
+		if ($brackets_parsed = !is_array($strings))
 		{
-			$protect = 0;
-			$original_strings = $strings;
-			while (strpos($strings, '(') !== false)
-			{
-				$strings = preg_replace_callback('~\(([^()]+)\)~', 'we::protect_brackets', $strings);
-				if ($protect++ > 100)
-				{
-					log_error('Can\'t parse string, due to mismatched brackets.<br><br>' . $original_strings, false);
-					return false;
-				}
-			}
+			self::parse_brackets($strings); // Best deal with these right now, frankly.
 			$strings = array_flip(array_map('trim', preg_split('~[,|]+~', $strings)));
 		}
+
+		foreach (self::$is as $key => $val)
+			if (!empty($strings[$key]))
+				return $key;
 
 		$browser = self::$browser;
 		$a = $browser['agent'];
@@ -832,12 +824,11 @@ class we
 		// Okay, so maybe we're looking for a wider range?
 		foreach ($strings as $string => $dummy)
 		{
-			if (empty($string) || $string === '!')
+			if (empty($string))
 				continue;
 
-			// First of all, let's look for simple tests, and replace them with a boolean value, which ::is() understands.
-			if (strpos($string, '=') !== false || strpos($string, '<') !== false || strpos($string, '>') !== false)
-				$string = preg_replace_callback('~(!?[^!={}<>\h]*)\h*(=+|!=+|<>|[<>]=?)\h*(!?[^!={}<>\h]*)~', 'we::evaluate', $string);
+			if (!$brackets_parsed)
+				self::parse_brackets($string);
 
 			// Is there a && or & in the query? Meaning all parts of this one should return true.
 			$and = strpos($string, '&');
@@ -849,26 +840,20 @@ class we
 				continue;
 			}
 
-			// First, negative tests.
-			if ($string[0] === '!')
-			{
-				// If it's a group, fix its separators first.
-				$string = $string[1] === '{' ? strtr(trim($string, '!{}'), "\x14\x15\x16", ',&|') : substr($string, 1);
+			// A boolean test, which ::is() understands, for a variable comparison.
+			if (strpos($string, '=') !== false || strpos($string, '<') !== false || strpos($string, '>') !== false)
+				$string = preg_replace_callback('~(!?[^!=<>\h]*)\h*(=+|!=+|<>|[<>]=?)\h*(!?[^!=<>\h]*)~', 'we::evaluate', $string);
 
-				if (!self::is($string))
-					return $string;
-				continue;
-			}
+			// Negative tests.
+			while (strpos($string, '!') !== false)
+				$string = preg_replace_callback('~!([^\s]*)~', 'we::parse_negative', $string);
 
-			// And now, positive tests.
-			if ($string[0] === '{')
-			{
-				// If it's a group, fix its separators and test it.
-				$string = self::is(strtr(trim($string, '{}'), "\x14\x15\x16", ',&|'));
-				if ($string)
-					return $string;
-				continue;
-			}
+			// A boolean test for a stand-alone variable, i.e. != "" is implied.
+			while (strpos($string, '"') !== false)
+				$string = preg_replace_callback('~"([^"]*)"?+~', 'we::loose', $string);
+
+			if (!empty(self::$is[$string]))
+				return $string;
 
 			$bracket = strpos($string, '['); // Is there a version request?
 			$request = $bracket === false ? $string : substr($string, 0, $bracket);
@@ -892,9 +877,42 @@ class we
 		return false;
 	}
 
-	private static function protect_brackets($match)
+	private static function parse_positive($match)
 	{
-		return '{' . strtr($match[1], ',&|', "\x14\x15\x16") . '}';
+		return self::is($match[1]) ? 'true' : 'false';
+	}
+
+	private static function parse_negative($match)
+	{
+		return self::is($match[1]) ? 'false' : 'true';
+	}
+
+	private static function parse_brackets(&$string)
+	{
+		$protect = 0;
+		$original_string = $string;
+		while (strpos($string, '(') !== false)
+		{
+			$string = preg_replace_callback('~\(([^()]*)\)~', 'we::parse_positive', $string);
+			if ($protect++ > 100)
+			{
+				// Admin only, so I'm not in a hurry to add a language string for that one.
+				log_error('Can\'t parse string, due to mismatched brackets.<br><br>' . $original_string, false);
+				return 'false';
+			}
+		}
+	}
+
+	private static function no_operator_vars($var)
+	{
+		return $var[1] != '' && $var[1] != '0' && $var[1] != 'false' ? 'true' : 'false';
+	}
+
+	private static function loose($var)
+	{
+		if (is_array($var))
+			return $var[1] == '' || $var[1] == '0' ? 'false' : 'true';
+		return $var == '' || $var == '0' ? 'false' : ($var == '1' ? 'true' : (string) $var);
 	}
 
 	// This is the variable test parser. Do not use () inside the variables to be tested. Some valid examples:
@@ -922,9 +940,9 @@ class we
 			$ops[3] = $op3;
 		}
 
-		if (($ops[2] == '==' || $ops[2] == '===') && $ops[1] == $ops[3])
+		if (($ops[2] == '==' || $ops[2] == '===') && self::loose($ops[1]) == self::loose($ops[3]))
 			return 'true';
-		if (($ops[2] == '!=' || $ops[2] == '!==' || $ops[2] == '<>') && $ops[1] != $ops[3])
+		if (($ops[2] == '!=' || $ops[2] == '!==' || $ops[2] == '<>') && self::loose($ops[1]) != self::loose($ops[3]))
 			return 'true';
 		if ($ops[2] == '>' && (int) $ops[1] > (int) $ops[3])
 			return 'true';
