@@ -48,13 +48,15 @@ p.moderators
 	padding: 0 .5em
 
 // The newsfader
-#fadeScroller
-	text-align: center
-	padding: 0 2em
-	overflow: auto
-	margin: 1em 0
-	display: none
-	color: #575757 // Shouldn't be shorthand style, due to a JS bug in IE!
+@if $settings['show_newsfader']
+	#fadeScroller
+		text-align: center
+		padding: 0 2em
+		overflow: auto
+		margin: 1em 0
+		display: none
+		color: #575757 // Shouldn't be shorthand style, due to a JS bug in IE!
+@endif
 
 /* Styles for the info center on the board index.
 ---------------------------------------------------- */

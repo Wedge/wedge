@@ -239,12 +239,15 @@ ul#noava
 	a
 		margin-top: -3px
 
-#sitenews
-	padding: 7px
-	border-bottom: 1px dotted #999
-	span extends .horizontal-arrow
-		color: #888
-		font-weight: 700
+@if $context['random_news_line']
+	#sitenews
+		padding: 7px
+		margin-bottom: 7px
+		border-bottom: 1px dotted #999
+		span extends .horizontal-arrow
+			color: #888
+			font-weight: 700
+@endif
 
 // Main title
 #header h1
@@ -336,7 +339,7 @@ ul#noava
 		text-decoration: none
 
 // Behold, the power of Wess!
-$view_junk = $settings['db_show_debug_who_log']
+$view_junk = "$settings['db_show_debug_who_log']"
 
 @if $view_junk == "any" || (admin && $view_junk == "admin") || (member && ($view_junk == "regular" || $view_junk == "mod"))
 	#junk

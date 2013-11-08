@@ -136,6 +136,7 @@ function EditNews()
 				$_POST['order']['old' . $old_pos] = $item;
 		}
 		updateSettings(array('news' => implode("\n", $_POST['order'])));
+		clean_cache('css'); // No news means no need to cache related CSS.
 		cache_put_data('news_lines', null);
 	}
 	elseif (!empty($_POST['add']))
@@ -216,6 +217,7 @@ function EditNews()
 		$news_lines[$id] = $privacy . $_POST['message'];
 		updateSettings(array('news' => implode("\n", $news_lines)));
 		logAction('news');
+		clean_cache('css');
 		cache_put_data('news_lines', null);
 	}
 	elseif (!empty($_POST['delete']) && is_array($_POST['delete']))
@@ -230,6 +232,7 @@ function EditNews()
 			updateSettings(array('news' => empty($news_lines) ? '' : implode("\n", $news_lines)));
 		}
 		logAction('news');
+		clean_cache('css');
 		cache_put_data('news_lines', null);
 	}
 
@@ -833,6 +836,7 @@ function ModifyNewsSettings($return_config = false)
 	if (isset($_GET['save']))
 	{
 		checkSession();
+		clean_cache('css'); // The news needs some space in the CSS files.
 
 		saveDBSettings($config_vars);
 		redirectexit('action=admin;area=news;sa=settings');
