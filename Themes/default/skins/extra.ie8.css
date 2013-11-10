@@ -8,11 +8,6 @@
 .postheader
 	display: block
 
-.keyinfo
-	float: left
-	display: block
-	width: 47%
-
 .menu h4 strong
 	filter: none
 	background: #c74c55

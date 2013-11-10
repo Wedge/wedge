@@ -106,12 +106,6 @@ img.new_posts
 /* Styles for the topic index.
 ---------------------------------------------------- */
 
-#messageindex
-	> table
-		table-layout: fixed
-	> table > tbody > tr > td
-		width: 100%
-
 // The page navigation area
 #childboards .table_list
 	margin-bottom: 1em
@@ -1514,6 +1508,8 @@ body.waiting *
 
 @if !ie[-7]
 	@media $responsive
+		dt, dd
+			width: auto !important // Too much selectivity all around.
 		body
 			padding: 0
 			#wedge

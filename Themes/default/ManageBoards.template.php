@@ -438,7 +438,7 @@ function template_modify_board()
 							<option value="' . $subdo . '"' . (isset($m[1], $m[2]) && ($m[1] . '.' . $m[2] == $subdo || $m[2] == $subdo) ? ' selected' : '') . '>' . $subdo . '</option>' : '';
 
 		echo '
-						</select>/<input maxlength="32" name="pretty_url" value="' . (!empty($m[3]) ? $m[3] : '') . '" size="25">
+						</select>/<wbr><input maxlength="32" name="pretty_url" value="' . (!empty($m[3]) ? $m[3] : '') . '" size="20">
 					</dd>';
 	}
 

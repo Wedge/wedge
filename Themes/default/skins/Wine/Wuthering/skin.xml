@@ -26,8 +26,4 @@
 	$.ie6hover();
 	]]></script>
 
-	<script for="ios"><![CDATA[
-	$('#main').insertBefore('#edge');
-	]]></script>
-
 </skin>
