@@ -759,7 +759,7 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 
 	// If we find any empty rules, we should be able to remove them.
 	if (strpos($final, '{}') !== false)
-		$final = preg_replace('~(?<=[{}])[^{}]+{}~', '', $final);
+		$final = preg_replace('~(?<=[{}])[^{}]*{}~', '', $final);
 
 	if ($gzip)
 		$final = gzencode($final, 9);

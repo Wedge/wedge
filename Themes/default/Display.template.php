@@ -59,8 +59,11 @@ function template_display_posts()
 			if ($context['can_quote'])
 				array_unshift($menu, 'qu');
 
-			$context['mini_menu']['action'][$msg['id']] = $menu;
-			$context['mini_menu_items_show']['action'] += array_flip($menu);
+			if (!empty($menu))
+			{
+				$context['mini_menu']['action'][$msg['id']] = $menu;
+				$context['mini_menu_items_show']['action'] += array_flip($menu);
+			}
 		}
 
 		// And finally... Render the skeleton for this message!
