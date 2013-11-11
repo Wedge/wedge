@@ -303,6 +303,8 @@ class weNotif
 			if (!empty($notifications[0]))
 				$notifications[0]->markAsRead();
 
+			if (AJAX)
+				exit();
 			redirectexit();
 		}
 		elseif ($sa == 'preview' && isset($_REQUEST['in']))

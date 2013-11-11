@@ -285,7 +285,7 @@ function template_folder()
 		</div>
 		<div class="postarea">
 			<div class="postheader">
-				<div class="keyinfo">
+				<div>
 					<h5 id="subject_', $message['id'], '">
 						', $message['subject'], '
 					</h5>';
@@ -308,11 +308,11 @@ function template_folder()
 			// If we're in the sent items, show who it was sent to besides the "To:" people.
 			if (!empty($message['recipients']['bcc']))
 				echo '
-					<div class="smalltext">&#171;&nbsp;<strong> ', $txt['pm_bcc'], ':</strong> ', implode(', ', $message['recipients']['bcc']), '&nbsp;&#187;</div>';
+					<div class="smalltext">« <strong> ', $txt['pm_bcc'], ':</strong> ', implode(', ', $message['recipients']['bcc']), ' »</div>';
 
 			if (!empty($message['is_replied_to']))
 				echo '
-					<div class="smalltext">&#171;&nbsp;', $message['replied_msg'], '&nbsp;&#187;</div>';
+					<div class="smalltext">« ', $message['replied_msg'], ' »</div>';
 
 			echo '
 				</div>

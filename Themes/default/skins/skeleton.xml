@@ -75,10 +75,10 @@
 				<msg_ignored />
 				<msg_body />
 				<msg_actionbar />
-			</msg_entry>
-			<msg_bottom>
 				<msg_attachments />
 				<msg_customfields />
+			</msg_entry>
+			<msg_bottom>
 				<msg_signature />
 			</msg_bottom>
 		</msg_area>
