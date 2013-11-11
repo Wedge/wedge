@@ -4,9 +4,13 @@
  * © 2010 René-Gilles Deberdt, http://wedge.org
  */
 
+$wilde_bg1 = rgb(216, 205, 165)
+$wilde_bg2 = rgb(205, 216, 185)
+$wilde_bg3 = rgb(233, 239, 227)
+
 html
-	background: #fff
-	background: repeating-linear-gradient(45deg, rgba(216, 205, 165, .5), rgba(205, 216, 185, .5) 500px, rgba(216, 205, 165, .5) 1000px), repeating-linear-gradient(-45deg, rgba(216, 205, 165, .5), rgba(205, 216, 185, .5) 800px, rgba(216, 205, 165, .5) 1600px)
+	background: average($wilde_bg1, $wilde_bg2)
+	background: repeating-linear-gradient(45deg, alpha($wilde_bg1, .5), alpha($wilde_bg2, .5) 500px, alpha($wilde_bg1, .5) 1000px), repeating-linear-gradient(-45deg, alpha($wilde_bg1, .5), alpha($wilde_bg2, .5) 800px, alpha($wilde_bg1, .5) 1600px)
 
 body
 	text-align: center
@@ -43,7 +47,7 @@ $post_bg2 = $window_bg2
 	padding, border: 0
 
 #header
-	gradient: rgb(233, 239, 227), rgba(233, 239, 227, .2)
+	gradient: $wilde_bg3, alpha($wilde_bg3, .2)
 	border-radius: 20px 20px 0 0
 	div.frame
 		padding: 5px 0 0
@@ -54,7 +58,7 @@ $post_bg2 = $window_bg2
 		margin: 32px 30px 0 0
 		letter-spacing: -2px
 		text-shadow: white 0 1px 2px
-		font: 700 3em Tahoma, "Segoe UI", sans-serif
+		font: 700 3em $big_font
 		a
 			color: #78a
 	input.search
@@ -119,12 +123,16 @@ $post_bg2 = $window_bg2
 		padding, margin: 0
 		overflow: hidden
 		font-size: 1.1em
+		@if $can_flex
+			display: flex
+			flex-wrap: wrap
+		@endif
 	li
-		@if firefox
-			display: inline-block
-		@elseif ie[-7]
+		@if ie[-7]
 			mixin: .inline-block
-		@else
+		@elseif !$can_flex && firefox
+			display: inline-block
+		@elseif !$can_flex
 			display: table-cell
 			vertical-align: middle
 		@endif
@@ -219,6 +227,7 @@ $post_bg2 = $window_bg2
 
 /* Styles for section headers.
 ------------------------------------------------------- */
+
 @remove .cat
 	letter-spacing: *
 
@@ -240,15 +249,10 @@ $post_bg2 = $window_bg2
 
 .cat final
 	background-color: #f5fcf5
-	color: #000
-	a
-		letter-spacing: 0
-		color: #555
-		:hover
-			color: #963
-			text-decoration: none
+	color: #b77
 
-.title
+.title unextends .cat
+.title extends .catbase
 	background-color: #f0f3f6
 	&.blog mixes .inline-block
 		border: 0
