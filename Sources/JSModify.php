@@ -231,7 +231,7 @@ function JSModify()
 				strtr(
 					$txt[$msgOptions['modify_member'] !== $row['id_member'] ? 'last_edit' : 'last_edit_mine'],
 					array(
-						'{date}' => '<time datetime="' . date(DATE_W3C, forum_time(true, $msgOptions['modify_time'])) . '">' . on_timeformat($msgOptions['modify_time']) . '</time>',
+						'{date}' => time_tag($msgOptions['modify_time']),
 						'{name}' => !empty($msgOptions['modify_member']) ? '<a href="<URL>?action=profile;u=' . $msgOptions['modify_member'] . '">' . $msgOptions['modify_name'] . '</a>' : $msgOptions['modify_name']
 					)
 				) . '</ins>';
@@ -253,7 +253,7 @@ function JSModify()
 				strtr(
 					$txt[$msgOptions['modify_member'] !== $row['id_member'] ? 'last_edit' : 'last_edit_mine'],
 					array(
-						'{date}' => '<time datetime="' . date(DATE_W3C, forum_time(true, $msgOptions['modify_time'])) . '">' . on_timeformat($msgOptions['modify_time']) . '</time>',
+						'{date}' => time_tag($msgOptions['modify_time']),
 						'{name}' => !empty($msgOptions['modify_member']) ? '<a href="<URL>?action=profile;u=' . $msgOptions['modify_member'] . '">' . $msgOptions['modify_name'] . '</a>' : $msgOptions['modify_name']
 					)
 				) . '</ins>';

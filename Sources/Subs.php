@@ -832,6 +832,7 @@ function on_timeformat($log_time, $show_today = true, $offset_type = false)
 	$ret = timeformat($log_time, $show_today, $offset_type);
 	if (strpos($ret, '<strong>') === false)
 		return sprintf($txt['on_date'], $ret);
+
 	return $ret;
 }
 
@@ -849,6 +850,7 @@ function on_date($time, $upper = false)
 
 	if (strpos($time, '<strong>') === false)
 		return $upper ? ucfirst(sprintf($txt['on_date'], $time)) : sprintf($txt['on_date'], $time);
+
 	return $time;
 }
 
@@ -866,10 +868,27 @@ function forum_time($use_user_offset = true, $timestamp = null)
 
 	if ($timestamp === null)
 		$timestamp = time();
-	elseif ($timestamp == 0)
-		return 0;
 
-	return $timestamp + ($settings['time_offset'] + ($use_user_offset ? we::$user['time_offset'] : 0)) * 3600;
+	if ($use_user_offset)
+		return $timestamp + ($settings['time_offset'] + we::$user['time_offset']) * 3600;
+
+	return $timestamp + $settings['time_offset'] * 3600;
+}
+
+/**
+ * A quick helper function to avoid typing these tags everywhere.
+ *
+ * @param int $timestamp Unix timestamp to transform.
+ * @param string $on_time Date formatted through on_timeformat(), if any.
+ *
+ * @return string A valid <time> tag. Cheers.
+ */
+function time_tag($timestamp, $on_time = '')
+{
+	if (!$on_time)
+		$on_time = on_timeformat($timestamp);
+
+	return '<time datetime="' . date(DATE_W3C, forum_time(true, $timestamp)) . '">' . $on_time . '</time>';
 }
 
 /**

@@ -11,19 +11,9 @@
 
 $(function ()
 {
-	// This is a weird bug in Chrome and Firefox, due to an inconsistency in the flexbox specs.
-	// If a horizontal (but no vertical) scrollbar is set on an element inside a flex container,
-	// the scrollbar will be 'ignored' by the layout engine. Forcing the element's flex to none fixes this in Chrome,
-	// but Firefox doesn't want to know about it, and we need to disable flex on these posts.
-	if (is_chrome || is_firefox)
-		$('.post code').each(function () {
-			if (this.scrollWidth > this.offsetWidth && this.scrollHeight <= this.offsetHeight)
-			{
-				$(this).css('flex', 'none');
-				if (is_firefox)
-					$(this).parentsUntil('.post_wrapper').each(function () { if ($(this).css('display') == 'flex') $(this).css('display', 'block'); });
-			}
-		});
+	// Anything that should be run when coming back to the tab, too.
+	$(document).on('visibilitychange msvisibilitychange mozvisibilitychange webkitvisibilitychange', page_showing);
+	page_showing();
 
 	// Only execute this on MessageIndex pages.
 	if (!$('#messageindex').length)
@@ -189,11 +179,54 @@ $(window).load(function ()
 			$new_page.children().hide().fadeIn(800).first().unwrap();
 
 			// Prepare all new posts for follow_me.
-			if (!is_touch)
-				$('.poster>div,.poster').css('min-height', 0).each(function () { $(this).width($(this).width()).css('min-height', $(this).height()); });
+			page_showing();
 		}
 	});
 });
+
+function page_showing()
+{
+	if (document.hidden || document.webkitHidden || document.msHidden || document.mozHidden)
+		return;
+
+	if (!is_touch)
+		$('.poster>div,.poster').css('min-height', 0).each(function () { $(this).width($(this).width()).css('min-height', $(this).height()); });
+
+	// Relative timestamps!
+	$('time[datetime]').each(function () {
+		var time = Math.max(2, +new Date - Date.parse($(this).attr('datetime'))), str;
+		$(this).data('t', $(this).data('t') || $(this).html());
+		if (time < 12e3) // Less than 12 seconds ago?
+			str = $txt['just_now'];
+		else if (time < 12e4) // < 2 minutes
+			str = $txt['seconds_ago'].replace('{time}', Math.round(time / 1e3));
+		else if (time < 2 * 36e5) // < 2 hours
+			str = $txt['minutes_ago'].replace('{time}', Math.round(time / 6e4));
+		else if (time < 2 * 36e5 * 24) // < 2 days
+			str = $txt['hours_ago'].replace('{time}', Math.round(time / 36e5));
+		else if (time < 2 * 36e5 * 24 * 30.42) // < 2 months
+			str = $txt['days_ago'].replace('{time}', Math.round(time / 36e5 / 24));
+		else if (time < 2 * 36e5 * 24 * 365) // < 2 years
+			str = $txt['months_ago'].replace('{time}', Math.round(time / 36e5 / 24 / 30.42));
+		else // Although, we should probably just show the full date here...
+			str = $txt['years_ago'].replace('{time}', (time / 36e5 / 24 / 365).toFixed(1));
+		$(this).html(str).attr('title', $(this).data('t'));
+	});
+
+	// This is a weird bug in Chrome and Firefox, due to an inconsistency in the flexbox specs.
+	// If a horizontal (but no vertical) scrollbar is set on an element inside a flex container,
+	// the scrollbar will be 'ignored' by the layout engine. Forcing the element's flex to none fixes this in Chrome,
+	// but Firefox doesn't want to know about it, and we need to disable flex on these posts.
+	if (is_chrome || is_firefox)
+		$('.post code').each(function () {
+			if (this.scrollWidth > this.offsetWidth && this.scrollHeight <= this.offsetHeight)
+			{
+				$(this).css('flex', 'none');
+				if (is_firefox)
+					$(this).parentsUntil('.post_wrapper').each(function () { if ($(this).css('display') == 'flex') $(this).css('display', 'block'); });
+			}
+		});
+}
 
 var hide_prefixes = [];
 
@@ -587,6 +620,7 @@ function QuickReply(opt)
 						// Show the last modified date, if enabled. Make sure you have enough room to insert it!
 						$post.find('ins').remove();
 						$post.find('h5').next().append($('modified', XMLDoc).text());
+						page_showing();
 					}
 					else if ($('error', XMLDoc).length)
 					{
