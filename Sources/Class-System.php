@@ -795,7 +795,7 @@ class we
 		}
 
 		foreach (self::$is as $key => $val)
-			if (!empty($strings[$key]))
+			if (isset($strings[$key]) && !empty($val))
 				return $key;
 
 		$browser = self::$browser;
