@@ -23,13 +23,17 @@
 
 	h4
 		display: inline
-		margin-top, margin-left: 0
+		margin-top, margin-left, vertical-align: 0
 	h5
 		display: inline
-		line-height: 1.2em
+		line-height: 1.3em
 		font-weight: 400
 	h5:before
-		content: "-"
+		content: "- "
+	.pixelicons
+		margin-top: -2px
+	.mime
+		vertical-align: 0
 	div.avatar
 		float: left
 	img.avatar

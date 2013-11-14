@@ -55,8 +55,6 @@ table.cs0 final tr.windowbg:last-child td
 #sidebar
 	background: $window_bg
 	display: @is (ie[-7], block, table-cell)
-	vertical-align: top
-	width: $sidebar-width
 	border: 1px solid #ccc
 	border-left: 0
 	border-radius: 0 8px 8px 0

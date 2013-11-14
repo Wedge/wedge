@@ -242,6 +242,8 @@ span.percent
 #forumposts
 	ins
 		float: right
+		padding-left: 0
+		padding-right: 4px
 	.reportlinks
 		margin-left: 1.5em
 		text-align: left
