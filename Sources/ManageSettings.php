@@ -100,6 +100,7 @@ function ModifyBasicSettings($return_config = false)
 		'',
 			array('site_slogan', $txt['site_slogan'], 'db', 'text', 40, 'subtext' => $txt['site_slogan_desc']),
 			array('header_logo_url', $txt['header_logo_url'], 'db', 'text', 40, 'subtext' => $txt['header_logo_url_desc']),
+			array('forum_width', $txt['forum_width'], 'db', 'text', 8, 'subtext' => $txt['forum_width_desc']),
 		'',
 			// Number formatting, timezones.
 			array('todayMod', $txt['todayMod'], 'db', 'select', array(

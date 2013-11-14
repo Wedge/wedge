@@ -40,8 +40,7 @@ function template_msg_author_name()
 						<h4>';
 
 	// Show user statuses: online/offline, website, gender, is contact.
-	if ($theme['show_profile_buttons'])
-		template_user_status($msg['member']);
+	template_user_status($msg['member']);
 
 	// Show a link to the member's profile.
 	echo '
@@ -256,7 +255,7 @@ function template_msg_header_body()
 							<div>« ', !empty($msg['counter']) ? sprintf($txt['reply_number'], $msg['counter']) . ' ' : '',
 								$msg['timestamp'] < $min_rel ? $msg['on_time'] : time_tag($msg['timestamp'], $msg['on_time']), ' »',
 								// Show "Last Edit on Date by Person" if this post was edited.
-								$theme['show_modify'] && !empty($msg['modified']['name']) ? '<ins>' . strtr(
+								!empty($msg['modified']['name']) ? '<ins>' . strtr(
 									$txt[$msg['modified']['member'] !== $msg['member']['id'] ? 'last_edit' : 'last_edit_mine'], array(
 										'{date}' => $msg['modified']['timestamp'] < $min_rel ? $msg['modified']['on_time'] : time_tag($msg['modified']['timestamp'], $msg['modified']['on_time']),
 										'{name}' => !empty($msg['modified']['member']) ? '<a href="<URL>?action=profile;u=' . $msg['modified']['member'] . '">' . $msg['modified']['name'] . '</a>' : $msg['modified']['name']

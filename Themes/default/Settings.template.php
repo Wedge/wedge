@@ -19,18 +19,6 @@ function template_settings()
 			'options' => $context['smiley_sets'],
 			'type' => 'text',
 		),
-		array(
-			'id' => 'forum_width',
-			'label' => $txt['forum_width'],
-			'description' => $txt['forum_width_desc'],
-			'type' => 'text',
-			'size' => 8,
-		),
-	'',
-		array(
-			'id' => 'enable_news',
-			'label' => $txt['enable_random_news'],
-		),
 	'',
 		array(
 			'id' => 'show_stats_index',
@@ -41,14 +29,6 @@ function template_settings()
 			'label' => $txt['latest_members'],
 		),
 	'',
-		array(
-			'id' => 'show_modify',
-			'label' => $txt['last_modification'],
-		),
-		array(
-			'id' => 'show_profile_buttons',
-			'label' => $txt['show_view_profile_button'],
-		),
 		array(
 			'id' => 'show_user_images',
 			'label' => $txt['user_avatars'],

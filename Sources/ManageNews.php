@@ -808,6 +808,7 @@ function ModifyNewsSettings($return_config = false)
 			array('permissions', 'edit_news', 'help' => '', 'exclude' => array(-1)),
 			array('permissions', 'send_mail', 'exclude' => array(-1)),
 		'',
+			array('check', 'enable_news'),
 			array('check', 'show_newsfader'),
 			array('int', 'newsfader_time', 'min' => 100),
 		'',
