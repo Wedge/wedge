@@ -1508,8 +1508,9 @@ body.waiting *
 
 @if !ie[-7]
 	@media $responsive
-		dt, dd
-			width: auto !important // Too much selectivity all around.
+		dl, dd
+			clear: both
+			width: auto
 		body
 			padding: 0
 			#wedge

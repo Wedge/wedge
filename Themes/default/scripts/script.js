@@ -634,7 +634,6 @@ $(function ()
 			if (!do_hardware)
 				$edge.stop(true).animate({ left: orig_sid - (sidebar_on_right ? $('#sidebar').width() : 0) }, 500);
 
-			setTimeout(function () { $('#wedge').removeClass('sliding'); }, 500);
 			$(window).on('resize.sw', function () {
 				// Fix the sidebar position if the window has just been enlarged.
 				if (sidebar_shown && $('#sideshow').is(':hidden'))
@@ -662,7 +661,6 @@ $(function ()
 				// setTimeout(hide_sidebar_for_real, (parseFloat($edge.css('transition-duration')) || .5) * ($edge.css('transition-duration').indexOf('m') == -1 ? 1000 : 1));
 				setTimeout(hide_sidebar_for_real, 500);
 				$edge.css({ transform: 'none' });
-				$('#wedge').addClass('sliding');
 			}
 			else
 				$edge.stop(true).animate({ left: orig_sid - (sidebar_on_right ? 0 : $('#sidebar').width())}, 500, hide_sidebar_for_real);

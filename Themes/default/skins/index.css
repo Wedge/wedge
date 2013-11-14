@@ -1246,10 +1246,10 @@ table
 
 // The "Quote:" and "Code:" header parts...
 .bbc_code, .bbc_quote
-	header
+	> header
 		color: #666
 		border-bottom: 0
-		font: 400 80% "Lucida Sans Unicode", "Trebuchet MS", $main_font
+		font-size: 80%
 		padding: .3em
 
 // A quote, usually from another post.
@@ -1267,7 +1267,7 @@ table
 			content: "\201c"
 			color: #999
 			height: 1px
-			font: 3.6em/1 $serif_font
+			font: 3em/1 $serif_font
 	> div
 		font-size: 92%
 		line-height: 1.4em
