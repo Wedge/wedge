@@ -678,13 +678,8 @@ function AddSmiley()
 		}
 		wesql::insert('',
 			'{db_prefix}smileys',
-			array(
-				'code' => 'string-30', 'filename' => 'string-48', 'description' => 'string-80', 'hidden' => 'int', 'smiley_order' => 'int',
-			),
-			array(
-				$_POST['smiley_code'], $_POST['smiley_filename'], $_POST['smiley_description'], $_POST['smiley_location'], $smiley_order,
-			),
-			array('id_smiley')
+			array('code' => 'string-30', 'filename' => 'string-48', 'description' => 'string-80', 'hidden' => 'int', 'smiley_order' => 'int'),
+			array($_POST['smiley_code'], $_POST['smiley_filename'], $_POST['smiley_description'], $_POST['smiley_location'], $smiley_order)
 		);
 
 		cleanSmileyCache();
@@ -1399,11 +1394,8 @@ function ImportSmileys($smileyPath)
 	{
 		wesql::insert('',
 			'{db_prefix}smileys',
-			array(
-				'code' => 'string-30', 'filename' => 'string-48', 'description' => 'string-80', 'smiley_row' => 'int', 'smiley_order' => 'int',
-			),
-			$new_smileys,
-			array('id_smiley')
+			array('code' => 'string-30', 'filename' => 'string-48', 'description' => 'string-80', 'smiley_row' => 'int', 'smiley_order' => 'int'),
+			$new_smileys
 		);
 
 		// Make sure the smiley codes are still in the right order.
@@ -1526,8 +1518,7 @@ function EditMessageIcons()
 		wesql::insert('replace',
 			'{db_prefix}message_icons',
 			array('id_icon' => 'int', 'id_board' => 'int', 'title' => 'string-80', 'filename' => 'string-80', 'icon_order' => 'int'),
-			$iconInsert,
-			array('id_icon')
+			$iconInsert
 		);
 
 		// Sort by order, so it is quicker :)

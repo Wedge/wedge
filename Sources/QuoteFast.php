@@ -65,14 +65,14 @@ function QuoteFast()
 
 		$row['body'] = preg_replace('~<br\s*/?\>~i', "\n", $row['body']);
 
-		// Want to modify a single message by double clicking it?
+		// Want to modify a single message?
 		if (isset($_REQUEST['modify']))
 		{
 			censorText($row['subject']);
 
 			return_xml('<we>
 	<subject><![CDATA[', cleanXml(un_htmlspecialchars($row['subject'], '"')), ']]></subject>
-	<message id="', (int) $_REQUEST['quote'], '"><![CDATA[', cleanXml(un_htmlspecialchars($row['body'])), ']]></message></we>');
+	<message id="', (int) $_REQUEST['quote'], '"><![CDATA[', cleanXml(westr::entity_to_utf8($row['body'])), ']]></message></we>');
 		}
 
 		// Remove any nested quotes, if needed.
