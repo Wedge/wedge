@@ -111,7 +111,7 @@ function ManageBoards()
 // The main control panel thing.
 function ManageBoardsMain()
 {
-	global $txt, $context, $cat_tree, $boards, $boardList, $txt;
+	global $txt, $context, $cat_tree, $boards, $boardList;
 
 	loadTemplate('ManageBoards');
 

@@ -2459,7 +2459,7 @@ function sessionWrite($session_id, $data)
 		return false;
 
 	// First try to update an existing row...
-	$result = wesql::query('
+	wesql::query('
 		UPDATE {db_prefix}sessions
 		SET data = {string:data}, last_update = {int:last_update}
 		WHERE session_id = {string:session_id}',
@@ -2472,13 +2472,13 @@ function sessionWrite($session_id, $data)
 
 	// If that didn't work, try inserting a new one.
 	if (wesql::affected_rows() == 0)
-		$result = wesql::insert('ignore',
+		wesql::insert('ignore',
 			'{db_prefix}sessions',
 			array('session_id' => 'string', 'data' => 'string', 'last_update' => 'int'),
 			array($session_id, $data, time())
 		);
 
-	return $result;
+	return true;
 }
 
 /**
@@ -2493,13 +2493,12 @@ function sessionDestroy($session_id)
 		return false;
 
 	// Just delete the row...
-	return wesql::query('
+	wesql::query('
 		DELETE FROM {db_prefix}sessions
 		WHERE session_id = {string:session_id}',
-		array(
-			'session_id' => $session_id,
-		)
+		array('session_id' => $session_id)
 	);
+	return true;
 }
 
 /**
@@ -2515,14 +2514,13 @@ function sessionGC($max_lifetime)
 	if (!empty($settings['databaseSession_lifetime']) && ($max_lifetime <= 1440 || $settings['databaseSession_lifetime'] > $max_lifetime))
 		$max_lifetime = max($settings['databaseSession_lifetime'], 60);
 
-	// Clean up ;).
-	return wesql::query('
+	// Clean up ;)
+	wesql::query('
 		DELETE FROM {db_prefix}sessions
 		WHERE last_update < {int:last_update}',
-		array(
-			'last_update' => time() - $max_lifetime,
-		)
+		array('last_update' => time() - $max_lifetime)
 	);
+	return true;
 }
 
 /**

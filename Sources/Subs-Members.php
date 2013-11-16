@@ -461,8 +461,7 @@ function deleteMembers($users, $check_not_admin = false, $merge_to = false)
 
 function registerMember(&$regOptions, $return_errors = false)
 {
-	global $scripturl, $txt, $settings, $context;
-	global $options, $theme;
+	global $scripturl, $txt, $settings, $context, $theme;
 
 	loadLanguage('Login');
 

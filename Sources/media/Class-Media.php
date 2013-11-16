@@ -116,7 +116,7 @@ class media_handler
 			exit('Malformed filename... /, \\ or control code found! (' . westr::htmlspecialchars($filename) . ')');
 		if (function_exists('file_get_contents'))
 		{
-			$scan_file = @file_get_contents($this->src, FILE_BINARY, null, 0, 256);
+			$scan_file = @file_get_contents($this->src, false, null, 0, 256);
 			if (preg_match('~<(iframe|\?php|eval|body|head|html|img[^>]+src|plaintext|a[^>]+href|pre|script|table|title)[\s>]~', $scan_file, $hack) === 1)
 				die('Hacking attempt... (' . westr::htmlspecialchars($hack[0]) . ')');
 			unset($scan_file);
@@ -223,14 +223,14 @@ class media_handler
 			// Try out a temporary file, if possible...
 			if ($img = @gif_loadFile($source) && gif_outputAsPng($img, $destName))
 				if ($src_img = imagecreatefrompng($destName))
-					$success = !$this->resizeJpgImage($src_img, $destName, imagesx($src_img), imagesy($src_img), $max_width, $max_height, $source);
+					$success = $this->resizeJpgImage($src_img, $destName, imagesx($src_img), imagesy($src_img), $max_width, $max_height, $source);
 		}
 		// Or is it one of the formats supported above?
 		elseif (isset($default_formats[$sizes[2]]) && function_exists('imagecreatefrom' . $default_formats[$sizes[2]]))
 		{
 			$imagecreatefrom = 'imagecreatefrom' . $default_formats[$sizes[2]];
 			if ($src_img = @$imagecreatefrom($source))
-				$success = !$this->resizeJpgImage($src_img, $destName, imagesx($src_img), imagesy($src_img), $max_width, $max_height, $source);
+				$success = $this->resizeJpgImage($src_img, $destName, imagesx($src_img), imagesy($src_img), $max_width, $max_height, $source);
 		}
 
 		// Okay, we're done with the temporary stuff.
@@ -298,7 +298,7 @@ class media_handler
 		if (!is_numeric($jcomp) || ($jcomp < 0) || ($jcomp > 100))
 			$jcomp = 80;
 
-		// Save it! As a reminder, SMF's thumbnail compression value is 65%.
+		// Save it! As a reminder, Wedge's thumbnail compression value is 75%.
 		if ($transp)
 		{
 			if ($alpha && $dst_img == $src_img)
@@ -312,6 +312,8 @@ class media_handler
 		imagedestroy($src_img);
 		if ($dst_img != $src_img)
 			imagedestroy($dst_img);
+
+		return true;
 	}
 
 	// Creates a Image thumbnail
@@ -409,7 +411,8 @@ class media_handler
 		// Create the thumbnail
 		$gd_img = $frame->toGDImage();
 		imagejpeg($gd_img, $dest);
-		return !$this->resizeJpgImage($gd_img, $dest, imagesx($gd_img), imagesy($gd_img), $width, $height, null);
+
+		return $this->resizeJpgImage($gd_img, $dest, imagesx($gd_img), imagesy($gd_img), $width, $height, null);
 	}
 
 	function getSize()

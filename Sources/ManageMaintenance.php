@@ -341,7 +341,7 @@ function MaintainEmptyUnimportantLogs()
 // Convert both data and database tables to UTF-8 character set.
 function ConvertUtf8()
 {
-	global $context, $txt, $settings, $db_prefix;
+	global $context, $txt, $settings, $db_prefix, $db_character_set;
 
 	// Show me your badge!
 	isAllowedTo('admin_forum');

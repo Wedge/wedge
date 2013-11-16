@@ -193,7 +193,8 @@ final class weSkeleton
 			unset($this->layers[$layer][$target]);
 		// Otherwise it's a layer, make sure it's removable.
 		elseif (isset($this->layers[$layer]))
-			$this->remove_layer($target);
+			return $this->remove_layer($target);
+		return true;
 	}
 
 	/**

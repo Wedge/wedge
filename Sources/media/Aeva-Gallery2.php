@@ -1766,7 +1766,7 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 // Moves a album
 function aeva_moveAlbum()
 {
-	global $context;
+	global $context, $amSettings;
 
 	// Load all the current albums
 	aeva_getAlbums('', 0, false);

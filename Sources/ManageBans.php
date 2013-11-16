@@ -190,7 +190,7 @@ function createBanList()
 										list ($start, $end) = explode(\'-\', $rowData[\'ban_content\']);
 										return format_ip($start) . \' - \' . format_ip($end);
 								}
-								return $row[\'ban_content\'];
+								return $rowData[\'ban_content\'];
 								break;
 							case \'hostname\':
 								if (strpos($rowData[\'ban_content\'], \'*.\') === 0)
@@ -913,10 +913,8 @@ function updateBannedMembers()
 						list ($user, $label) = explode('+', $user);
 					$user = str_replace('.', '', $user);
 					if (in_array($user, $domains[$domain]))
-					{
 						if (!isset($current_banned[$row['id_member']]['new']) || $current_banned[$row['id_member']]['new'] != 'hard')
 							$current_banned[$row['id_member']]['new'] = $this_hardness;
-					}
 				}
 				wesql::free_result($request);
 			}

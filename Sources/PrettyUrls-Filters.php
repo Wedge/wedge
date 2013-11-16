@@ -78,14 +78,12 @@ function pretty_synchronize_topic_urls()
 
 	// Update the database
 	if (count($tablePretty) > 0)
-	{
 		wesql::query('
 			REPLACE INTO {db_prefix}pretty_topic_urls
 				(id_topic, pretty_url)
 			VALUES ' . implode(', ', $tablePretty),
 			array()
 		);
-	}
 }
 
 /**

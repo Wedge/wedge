@@ -330,7 +330,7 @@ function load_database()
 // This is called upon exiting the installer, for template etc.
 function installExit($fallThrough = false)
 {
-	global $incontext, $installurl, $txt;
+	global $incontext, $installurl;
 
 	// Send character set.
 	header('Content-Type: text/html; charset=UTF-8');

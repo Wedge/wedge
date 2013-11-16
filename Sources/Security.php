@@ -100,7 +100,7 @@ if (!defined('WEDGE'))
 		  with the supplied privacy ID. Can be members, contacts, author, etc.
 */
 
-// Check if the user is who he/she says he is
+// Check if the user is who he/she says he is.
 function validateSession()
 {
 	global $settings, $sc;
@@ -166,8 +166,8 @@ function is_not_guest($message = '')
 	if (we::$is_member)
 		return;
 
-	// No need to clear the action they were doing (as it used to be; not only are the odds strong that it wouldn't have been updated, this way you can see what they were trying to do and that it didn't work)
-	// But we do need to update the online log.
+	// No need to clear the action they were doing, as it used to be; not only are the odds strong that it wouldn't have been updated,
+	// this way you can see what they were trying to do and that it didn't work. But we do need to update the online log.
 	if (!empty($settings['who_enabled']))
 		$_GET['who_warn'] = 1;
 	writeLog(true);
@@ -739,7 +739,9 @@ function isBannedEmail($email, $error, $return = false)
 	// And so it begins.
 	foreach ($bans as $ban)
 	{
-		if (isset($ban['content'])) // First, we test for exact match. And if not specified, move on to the next type of test. We keep it separated otherwise things fall through when they're not supposed to.
+		// First, we test for exact match. And if not specified, move on to the next type of test.
+		// We keep it separated otherwise things fall through when they're not supposed to.
+		if (isset($ban['content']))
 		{
 			$content = !empty($ban['gmail']) ? ($domain == 'gmail.com' || $domain == 'googlemail.com' ? $gmail_user_strict : $gmail_user) : $email;
 			if ($ban['content'] != $content)
@@ -1501,7 +1503,8 @@ function checkUserRequest_request()
 	if (isset($context['http_headers']['Content-Range']))
 		return $context['behavior_error'] = 'behav_content_range';
 
-	// Referer is an optional header. If it's given it must be non-blank. Additionally all legit agents should be sending absolute URIs even though the spec says relative ones are fine.
+	// Referer is an optional header. If it's given it must be non-blank. Additionally, all legit
+	// agents should be sending absolute URIs even though the spec says relative ones are fine.
 	if (isset($context['http_headers']['Referer']))
 	{
 		if (empty($context['http_headers']['Referer']))

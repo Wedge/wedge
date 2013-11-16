@@ -532,8 +532,8 @@ function ModifyPrettyURLs($return_config = false)
 	if (isset($_REQUEST['refill']))
 	{
 		loadSource('PrettyUrls-Filters');
-		$output = pretty_synchronize_topic_urls();
-		$context['reset_output'] = $output . $txt['pretty_converted'];
+		pretty_synchronize_topic_urls();
+		$context['reset_output'] = $txt['pretty_converted'];
 	}
 	// Are we saving settings now?
 	elseif (isset($_REQUEST['save']))

@@ -109,25 +109,6 @@ class aeva_zipper
 		$this->centralDirectory[] = $addCentralRecord;
 	}
 
-	/**
-	 * Function to return the zip file
-	 *
-	 * @return zipfile (archive)
-	 */
-
-	function getZippedfile()
-	{
-		return
-			implode('', $this->compressedData) .
-			implode('', $this->centralDirectory) .
-			$this->endOfCentralDirectory .
-			pack('v', sizeof($this->centralDirectory)) .
-			pack('v', sizeof($this->centralDirectory)) .
-			pack('V', strlen($controlDirectory)) .
-			pack('V', strlen($data)) .
-			"\x00\x00";
-	}
-
 	// All three functions below are written by Shitiz Garg (Dragooon).
 	function addFileDataToCache($data, $filename, $cache)
 	{

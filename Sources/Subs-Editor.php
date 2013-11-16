@@ -94,7 +94,7 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 			'image_href' => '<URL>?action=verification;vid=' . $verificationOptions['id'] . ';rand=' . md5(mt_rand()),
 			'text_value' => '',
 			'questions' => array(),
-			'do_empty_field' => empty($verificationsOptions['no_empty_field']),
+			'do_empty_field' => empty($verificationOptions['no_empty_field']),
 			'other_vv' => array(),
 		);
 	$thisVerification =& $context['controls']['verification'][$verificationOptions['id']];

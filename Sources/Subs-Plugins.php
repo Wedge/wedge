@@ -15,9 +15,9 @@ function getWritableObject()
 {
 	global $pluginsdir, $context, $settings, $boarddir;
 
-	// Normally it'll be on the plugins folder, but there's no reason it absolutely to be.
-	if (empty($path))
-		$path = $pluginsdir;
+	// Normally it'll be on the plugins folder, but there's no reason for it to absolutely be.
+	// !! Is $path supposed to be set earlier..?
+	$path = $pluginsdir;
 
 	// Easy case, it's directly writable.
 	if (is_writable($path))
@@ -142,8 +142,8 @@ function deleteFiletree(&$class, $dir, $delete_dir = true)
 	{
 		if ($delete_dir)
 		{
-			$remote_path = !empty($_SESSION['pack_ftp']['path']) ? strtr($full_path, array($_SESSION['pack_ftp']['path'] => '')) : $full_path;
-			if (!is_writable($remote_path . '/' . $entryname))
+			$remote_path = !empty($_SESSION['pack_ftp']['path']) ? strtr($dir, array($_SESSION['pack_ftp']['path'] => '')) : $dir;
+			if (!is_writable($dir))
 				$class->chmod($remote_path, 0777);
 			$class->unlink($remote_path);
 		}
@@ -515,7 +515,7 @@ function uploadedPluginPrune()
 		$path = rtrim($_SESSION['plugin_ftp']['path'], '/');
 		foreach ($dirs as $dir)
 		{
-			$this_path = $path . dir;
+			$this_path = $path . $dir;
 			$ftp->chdir($this_path);
 			$data = $ftp->raw_list();
 			if ($data)
@@ -855,7 +855,7 @@ function get_maint_requirements($manifest)
 
 function test_hooks_conflict($manifest)
 {
-	global $context, $plugins_dir, $settings;
+	global $context, $pluginsdir, $settings;
 
 	// This could be interesting, actually. Does this plugin declare any hooks that any other active plugin uses?
 	if (!empty($manifest->hooks->provides))

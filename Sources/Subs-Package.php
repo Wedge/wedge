@@ -387,7 +387,7 @@ function deltree($dir, $delete_dir = true)
 		if ($delete_dir && isset($package_ftp))
 		{
 			$ftp_file = strtr($dir, array($_SESSION['pack_ftp']['root'] => ''));
-			if (!is_writable($dir . '/' . $entryname))
+			if (!is_writable($dir))
 				$package_ftp->chmod($ftp_file, 0777);
 			$package_ftp->unlink($ftp_file);
 		}

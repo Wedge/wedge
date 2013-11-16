@@ -140,7 +140,7 @@ function MoveTopic()
 // Execute the move.
 function MoveTopic2()
 {
-	global $txt, $board, $topic, $scripturl, $settings, $context, $board;
+	global $txt, $board, $topic, $scripturl, $settings, $context;
 
 	if (empty($topic))
 		fatal_lang_error('no_access', false);

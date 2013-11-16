@@ -20,7 +20,7 @@ if (!defined('WEDGE'))
 	void saveProfileFields()
 		// !!!
 
-	void saveProfileChanges(array &profile_variables, array &errors, int id_member)
+	void saveProfileChanges(array &profile_variables, int id_member)
 		// !!!
 
 	void makeThemeChanges(int id_member, int id_theme)
@@ -107,7 +107,7 @@ if (!defined('WEDGE'))
 	void groupMembership(int id_member)
 		// !!!
 
-	mixed groupMembership2(array profile_vars, array post_erros, int id_member)
+	mixed groupMembership2(array profile_vars, int id_member)
 		// !!!
 
 	Adding new fields to the profile:
@@ -260,7 +260,7 @@ function loadProfileFields($force_reload = false)
 			'log_change' => true,
 			'permission' => 'profile_identity',
 			'input_validate' => create_function('&$value', '
-				global $context, $old_profile, $context, $profile_vars, $settings;
+				global $context, $old_profile, $profile_vars, $settings;
 
 				if (strtolower($value) == strtolower($old_profile[\'email_address\']))
 					return false;
@@ -884,9 +884,9 @@ function saveProfileFields()
 }
 
 // Save the profile changes....
-function saveProfileChanges(&$profile_vars, &$post_errors, $memID)
+function saveProfileChanges(&$profile_vars, $memID)
 {
-	global $txt, $settings, $user_profile, $context, $theme;
+	global $settings, $user_profile;
 
 	// These make life easier....
 	$old_profile =& $user_profile[$memID];
@@ -1227,7 +1227,7 @@ function makeCustomFieldChanges($memID, $area, $sanitize = true)
 // Redirect to buddies or ignore list.
 function editBuddyIgnoreLists($memID)
 {
-	global $context, $txt, $settings, $user_profile;
+	global $context, $txt, $settings;
 
 	// Do a quick check to ensure people aren't getting here illegally!
 	if (!we::$user['is_owner'] || empty($settings['enable_buddylist']))
@@ -1259,7 +1259,7 @@ function editBuddyIgnoreLists($memID)
 // Show all the user's contacts, as well as an add/delete interface.
 function editContacts($memID)
 {
-	global $context, $txt, $settings, $user_profile;
+	global $context, $txt, $settings;
 
 	// Do a quick check to ensure people aren't getting here illegally!
 	if (!we::$user['is_owner'] || empty($settings['enable_buddylist']))
@@ -1290,7 +1290,7 @@ function editContacts($memID)
 
 function addContactList($memID)
 {
-	global $txt, $context, $user_profile, $memberContext;
+	global $context, $user_profile, $memberContext;
 
 	// For making changes!
 	$buddiesArray = array_filter(explode(',', $user_profile[$memID]['buddy_list']));
@@ -1393,7 +1393,7 @@ function addContactList($memID)
 
 function editContactList($memID)
 {
-	global $txt, $context, $user_profile, $memberContext;
+	global $context, $user_profile, $memberContext;
 
 	// For making changes!
 	$buddiesArray = array_filter(explode(',', $user_profile[$memID]['buddy_list']));
@@ -1554,7 +1554,7 @@ function editContactList($memID)
 // Show all the user's buddies, as well as an add/delete interface.
 function editBuddies($memID)
 {
-	global $txt, $context, $user_profile, $memberContext;
+	global $context, $user_profile, $memberContext;
 
 	// For making changes!
 	$buddiesArray = array_filter(explode(',', $user_profile[$memID]['buddy_list']));
@@ -1658,7 +1658,7 @@ function editBuddies($memID)
 // Allows the user to view their ignore list, as well as the option to manage members on it.
 function editIgnoreList($memID)
 {
-	global $txt, $context, $user_profile, $memberContext;
+	global $context, $user_profile, $memberContext;
 
 	// For making changes!
 	$ignoreArray = explode(',', $user_profile[$memID]['pm_ignore_list']);
@@ -3339,7 +3339,7 @@ function groupMembership($memID)
 }
 
 // This function actually makes all the group changes...
-function groupMembership2($profile_vars, $post_errors, $memID)
+function groupMembership2($profile_vars, $memID)
 {
 	global $context, $user_profile, $settings, $txt, $scripturl;
 

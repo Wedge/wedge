@@ -236,8 +236,8 @@ function show_prevnext($id, $url)
 
 	$trans = $url[3] == 'transparent' ? ' ping' : '';
 
-	echo '<div class="aea', $trans, '" style="width: ', $url[1], 'px; height: ', $url[2], 'px; background: url(', $url[0], ') 0 0">',
-			$id ? '<a href="' . $galurl . 'sa=item;in=' . $id . '">&nbsp;</a></div>' : '&nbsp;</div>';
+	return '<div class="aea' . $trans . '" style="width: ' . $url[1] . 'px; height: ' . $url[2] . 'px; background: url(' . $url[0] . ') 0 0">' .
+			($id ? '<a href="' . $galurl . 'sa=item;in=' . $id . '">&nbsp;</a></div>' : '&nbsp;</div>');
 }
 
 function template_aeva_item_init()
@@ -1749,7 +1749,7 @@ function template_aeva_multiUpload()
 // Profile summary template
 function template_aeva_profile_summary()
 {
-	global $txt, $galurl, $context, $theme, $galurl, $settings;
+	global $txt, $galurl, $context, $theme, $settings;
 
 	$member =& $context['aeva_member'];
 	$can_feed = !empty($settings['xmlnews_enable']);
@@ -2013,6 +2013,8 @@ function aeva_listFiles($items, $can_moderate = false)
 	}
 	echo '
 		</table>';
+
+	return '';
 }
 
 function template_aeva_playlist()

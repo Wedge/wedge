@@ -457,7 +457,7 @@ function BoardPermissionsReport()
 // Show what the membergroups are made of.
 function MemberGroupsReport()
 {
-	global $context, $txt, $theme, $settings;
+	global $txt, $theme, $settings;
 
 	// Fetch all the board names.
 	$request = wesql::query('
@@ -681,7 +681,7 @@ function GroupPermissionsReport()
 // Report for showing all the forum staff members - quite a feat!
 function StaffReport()
 {
-	global $context, $txt;
+	global $txt;
 
 	loadSource('Subs-Members');
 

@@ -1221,7 +1221,7 @@ function RestoreTopic()
 }
 
 // Take a load of messages from one place and stick them in a topic.
-function mergePosts($msgs = array(), $from_topic, $target_topic)
+function mergePosts($msgs, $from_topic, $target_topic)
 {
 	global $context, $settings;
 

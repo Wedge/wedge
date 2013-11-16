@@ -477,7 +477,7 @@ function ModifyProfile($post_errors = array())
 	$profile_include_data = createMenu($profile_areas, $menuOptions);
 
 	// No menu means no access.
-	if (!$profile_include_data && (we::$is_member || validateSession()))
+	if (!$profile_include_data)
 		fatal_lang_error('no_access', false);
 
 	// Make a note of the Unique ID for this menu.
@@ -580,7 +580,7 @@ function ModifyProfile($post_errors = array())
 	// Right - are we saving - if so let's save the old data first.
 	if ($context['completed_save'])
 	{
-		// If it's someone elses profile then validate the session.
+		// If it's someone else's profile, then validate the session.
 		if (!we::$user['is_owner'])
 			validateSession();
 
@@ -629,7 +629,7 @@ function ModifyProfile($post_errors = array())
 		}
 		elseif ($current_area == 'groupmembership' && empty($post_errors))
 		{
-			$msg = groupMembership2($profile_vars, $post_errors, $memID);
+			$msg = groupMembership2($profile_vars, $memID);
 
 			// Whatever we've done, we have nothing else to do here...
 			redirectexit('action=profile' . (we::$user['is_owner'] ? '' : ';u=' . $memID) . ';area=groupmembership' . (!empty($msg) ? ';msg=' . $msg : ''));
@@ -641,7 +641,7 @@ function ModifyProfile($post_errors = array())
 			$force_redirect = true;
 			// Ensure we include this.
 			loadSource('Profile-Modify');
-			saveProfileChanges($profile_vars, $post_errors, $memID);
+			saveProfileChanges($profile_vars, $memID);
 		}
 
 		// There was a problem, let them try to re-enter.
