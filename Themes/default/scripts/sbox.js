@@ -235,7 +235,7 @@
 			var
 				// Figure out if we should show above/below the display box, first by calculating the free space around it.
 				ddHeight = $dd.outerHeight(),
-				bottomSpace = $(window).scrollTop() + $(window).height() - $display.offset().top - $display.outerHeight(),
+				bottomSpace = $(window).scrollTop() + Math.min($(window).height(), $('body').height()) - $display.offset().top - $display.outerHeight(),
 				topSpace = $display.offset().top - $(window).scrollTop(),
 
 				// Show scrollbars if the dropdown is taller than 250 pixels (or the viewport height).

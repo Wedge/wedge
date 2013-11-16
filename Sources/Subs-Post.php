@@ -1846,21 +1846,17 @@ function modifyPost(&$msgOptions, &$topicOptions, &$posterOptions)
 				AND id_topic = {int:id_topic}',
 			array(
 				'current_member' => we::$id,
-				'id_msg' => $settings['maxMsgID'],
+				'id_msg' => max($msgOptions['id'], $settings['maxMsgID']),
 				'id_topic' => $topicOptions['id'],
 			)
 		);
 
-		$flag = wesql::affected_rows() != 0;
-
-		if (empty($flag))
-		{
+		if (wesql::affected_rows() == 0)
 			wesql::insert('ignore',
 				'{db_prefix}log_topics',
 				array('id_topic' => 'int', 'id_member' => 'int', 'id_msg' => 'int'),
-				array($topicOptions['id'], we::$id, $settings['maxMsgID'])
+				array($topicOptions['id'], we::$id, max($msgOptions['id'], $settings['maxMsgID']))
 			);
-		}
 	}
 
 	// Notify search backends they need updating.

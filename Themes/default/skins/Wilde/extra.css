@@ -123,19 +123,7 @@ $post_bg2 = $window_bg2
 		padding, margin: 0
 		overflow: hidden
 		font-size: 1.1em
-		@if $can_flex
-			display: flex
-			flex-wrap: wrap
-		@endif
-	li
-		@if ie[-7]
-			mixin: .inline-block
-		@elseif !$can_flex && firefox
-			display: inline-block
-		@elseif !$can_flex
-			display: table-cell
-			vertical-align: middle
-		@endif
+	li mixes .inline-block
 		position: relative
 		padding: 5px 0 5px 36px
 		:after
@@ -168,6 +156,11 @@ $post_bg2 = $window_bg2
 			border: 0
 		#header, .wrc, .msg, .poster
 			border-radius: 0
+		#linktree
+			ul
+				background: average(#fdfdfd, #efefef)
+			li:after, li:nth-last-child(even), li:nth-last-child(even):after
+				background: none
 
 // The footer with copyright links etc.
 #footer extends .lightgrad

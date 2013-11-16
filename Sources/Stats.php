@@ -255,7 +255,7 @@ function Stats()
 
 	foreach ($context['top_posters'] as $i => $poster)
 	{
-		$context['top_posters'][$i]['post_percent'] = round(($poster['num_posts'] * 100) / $max_num_posts);
+		$context['top_posters'][$i]['post_percent'] = max(5, round(($poster['num_posts'] * 100) / $max_num_posts));
 		$context['top_posters'][$i]['num_posts'] = comma_format($context['top_posters'][$i]['num_posts']);
 	}
 
@@ -291,7 +291,7 @@ function Stats()
 
 	foreach ($context['top_boards'] as $i => $board)
 	{
-		$context['top_boards'][$i]['post_percent'] = round(($board['num_posts'] * 100) / $max_num_posts);
+		$context['top_boards'][$i]['post_percent'] = max(5, round(($board['num_posts'] * 100) / $max_num_posts));
 		$context['top_boards'][$i]['num_posts'] = comma_format($context['top_boards'][$i]['num_posts']);
 	}
 
@@ -360,7 +360,7 @@ function Stats()
 
 	foreach ($context['top_topics_replies'] as $i => $topic)
 	{
-		$context['top_topics_replies'][$i]['post_percent'] = round(($topic['num_replies'] * 100) / $max_num_replies);
+		$context['top_topics_replies'][$i]['post_percent'] = max(5, round(($topic['num_replies'] * 100) / $max_num_replies));
 		$context['top_topics_replies'][$i]['num_replies'] = comma_format($context['top_topics_replies'][$i]['num_replies']);
 	}
 
@@ -428,7 +428,7 @@ function Stats()
 
 	foreach ($context['top_topics_views'] as $i => $topic)
 	{
-		$context['top_topics_views'][$i]['post_percent'] = round(($topic['num_views'] * 100) / $max_num_views);
+		$context['top_topics_views'][$i]['post_percent'] = max(5, round(($topic['num_views'] * 100) / $max_num_views));
 		$context['top_topics_views'][$i]['num_views'] = comma_format($context['top_topics_views'][$i]['num_views']);
 	}
 
@@ -487,7 +487,7 @@ function Stats()
 
 	foreach ($context['top_starters'] as $i => $topic)
 	{
-		$context['top_starters'][$i]['post_percent'] = round(($topic['num_topics'] * 100) / $max_num_topics);
+		$context['top_starters'][$i]['post_percent'] = max(5, round(($topic['num_topics'] * 100) / $max_num_topics));
 		$context['top_starters'][$i]['num_topics'] = comma_format($context['top_starters'][$i]['num_topics']);
 	}
 
@@ -541,7 +541,7 @@ function Stats()
 	wesql::free_result($members_result);
 
 	foreach ($context['top_time_online'] as $i => $member)
-		$context['top_time_online'][$i]['time_percent'] = round(($member['seconds_online'] * 100) / $max_time_online);
+		$context['top_time_online'][$i]['time_percent'] = max(5, round(($member['seconds_online'] * 100) / $max_time_online));
 
 	// Cache the ones we found for a bit, just so we don't have to look again.
 	if ($temp !== $temp2)
@@ -576,7 +576,7 @@ function Stats()
 
 	foreach ($context['top_likes'] as $i => $like)
 	{
-		$context['top_likes'][$i]['post_percent'] = round(($like['num_likes'] * 100) / $max_num_likes);
+		$context['top_likes'][$i]['post_percent'] = max(5, round(($like['num_likes'] * 100) / $max_num_likes));
 		$context['top_likes'][$i]['num_likes'] = comma_format($context['top_likes'][$i]['num_likes']);
 	}
 
@@ -607,7 +607,7 @@ function Stats()
 
 	foreach ($context['top_author_likes'] as $i => $like)
 	{
-		$context['top_author_likes'][$i]['post_percent'] = round(($like['num_likes'] * 100) / $max_num_likes);
+		$context['top_author_likes'][$i]['post_percent'] = max(5, round(($like['num_likes'] * 100) / $max_num_likes));
 		$context['top_author_likes'][$i]['num_likes'] = comma_format($context['top_author_likes'][$i]['num_likes']);
 	}
 

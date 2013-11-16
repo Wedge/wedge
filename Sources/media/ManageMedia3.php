@@ -304,6 +304,9 @@ function aeva_prepare_sites(&$original_array, $type, $is_sites, &$checkall)
 	if ($type != 'local' && ($is_sites ? empty($settings['embed_fix_html']) : empty($_POST['embed_fix_html'])))
 		$fields = array_merge($fields, array('fix-html-pattern', 'fix-html-url'));
 
+	// !! Do we need to touch more fields..?
+	$can_use_https = array('pattern', 'lookup-url', 'lookup-pattern');
+
 	// Unset video sites from arrays which are disabled
 	$array = $original_array;
 	foreach ($array as $a => $b)
@@ -331,6 +334,12 @@ function aeva_prepare_sites(&$original_array, $type, $is_sites, &$checkall)
 		if (isset($array[$a]['lookup-title']) && ($is_sites ? !empty($settings['embed_titles']) : !empty($_POST['embed_titles']))
 		&& (empty($array[$a]['lookup-title-skip']) || (!empty($settings['embed_titles']) && ($settings['embed_titles'] % 2 == 1))))
 			unset($array[$a]['lookup-title']);
+
+		// Fix links to support HTTPS.
+		foreach ($array as $a => $b)
+			foreach ($can_use_https as $key)
+				if (isset($b[$key]))
+					$array[$a][$key] = str_replace('http://', 'https?://', $b[$key]);
 
 		$checkall &= !($original_array[$a]['disabled'] = empty($array[$a]));
 	}

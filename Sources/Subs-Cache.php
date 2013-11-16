@@ -1499,6 +1499,14 @@ function wedge_get_skin_options()
 	foreach ($matches as $match)
 		$context['skeleton'][empty($match['id']) ? 'main' : $match['id']] = $match['value'];
 
+	// Gather macros here.
+	$matches = wedge_parse_skin_tags($macros, 'macro', 'name');
+	foreach ($matches as $match)
+		$context['macros'][$match['name']] = array(
+			'has_if' => strpos($match['value'], '<if:') !== false,
+			'body' => $match['value']
+		);
+
 	if (!$set)
 		return;
 
@@ -1546,14 +1554,6 @@ function wedge_get_skin_options()
 		if (!empty($match['value']))
 			add_js(rtrim($match['value'], "\t"));
 	}
-
-	// Gather macros here.
-	$matches = wedge_parse_skin_tags($macros, 'macro', 'name');
-	foreach ($matches as $match)
-		$context['macros'][$match['name']] = array(
-			'has_if' => strpos($match['value'], '<if:') !== false,
-			'body' => $match['value']
-		);
 
 	// Override template functions directly.
 	$matches = wedge_parse_skin_tags($set, 'template', array('name', 'param(?:s|eters)?', 'where'));
