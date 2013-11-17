@@ -2586,29 +2586,28 @@ function saveDraft($is_pm, $id_context = 0)
 	if ((!$is_pm && (!allowedTo('save_post_draft') || empty($settings['masterSavePostDrafts']))) || ($is_pm && (!allowedTo('save_pm_draft') || empty($settings['masterSavePmDrafts']))))
 		return false;
 
-	// Clean up what we may or may not have
-	$subject = isset($_POST['subject']) ? $_POST['subject'] : '';
-	$message = isset($_POST['message']) ? $_POST['message'] : '';
-	$icon = isset($_POST['icon']) ? preg_replace('~[./\\\\*:"\'<>]~', '', $_POST['icon']) : 'xx';
-	$is_pm = (bool) $is_pm;
-	$id_context = (int) $id_context;
+	// Clean up and sanitize what we may or may not have.
+	$subject = isset($_POST['subject']) ? westr::htmltrim(westr::htmlspecialchars($_POST['subject'])) : '';
+	$message = isset($_POST['message']) ? westr::htmlspecialchars($_POST['message'], ENT_QUOTES) : '';
 
-	// Sanitize what we do have
-	$subject = westr::htmltrim(westr::htmlspecialchars($subject));
-	$message = westr::htmlspecialchars($message, ENT_QUOTES);
-	loadSource('Class-Editor'); // just in case
-
-	// We would not have handled the WYSIWYG if we came from PM since that's done later in the PM workflow than we arrived here.
-	if ($is_pm)
-		wedit::preparseWYSIWYG('message');
-	wedit::preparsecode($message);
-
-	if (westr::htmltrim(westr::htmlspecialchars($subject)) === '' && westr::htmltrim(westr::htmlspecialchars($_POST['message']), ENT_QUOTES) === '')
+	if ($subject === '' && westr::htmltrim($message) === '')
 	{
 		if (!isset($txt['empty_draft']))
 			loadLanguage('Post');
 		fatal_lang_error('empty_draft', false);
 	}
+
+	// More cleanup...
+	$icon = isset($_POST['icon']) ? preg_replace('~[./\\\\*:"\'<>]~', '', $_POST['icon']) : 'xx';
+	$is_pm = (bool) $is_pm;
+	$id_context = (int) $id_context;
+
+	loadSource('Class-Editor'); // just in case
+
+	// We would not have handled the WYSIWYG if we came from PM since that's done later in the PM workflow than when we arrived here.
+	if ($is_pm)
+		wedit::preparseWYSIWYG('message');
+	wedit::preparsecode($message);
 
 	$extra = array();
 

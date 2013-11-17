@@ -416,5 +416,5 @@ function setupThoughtMenu()
 	}
 
 	if (function_exists('template_mini_menu'))
-		template_mini_menu('thought', 'thome', true);
+		template_mini_menu('thought', 'thome');
 }

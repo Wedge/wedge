@@ -81,7 +81,7 @@ function getServerVersions($checkFor)
 		$safe_mode = !(empty($safe_mode) || $safe_mode == 'off');
 		$versions['safe_mode'] = array(
 			'title' => $txt['support_safe_mode'],
-			'version' => ($safe_mode ? $untick2 : $tick) . ' ' . ($safe_mode ? $txt['support_safe_mode_enabled'] : $txt['support_safe_mode_disabled'])
+			'version' => ($safe_mode ? $untick : $tick) . ' ' . ($safe_mode ? $txt['support_safe_mode_enabled'] : $txt['support_safe_mode_disabled'])
 		);
 	}
 	// Is GD available?  If it is, we should show version information for it too.

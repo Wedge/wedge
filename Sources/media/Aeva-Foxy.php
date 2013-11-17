@@ -11,7 +11,6 @@
  */
 
 /*
-
 	Functions found in Foxy!
 
 	aeva_foxy_playlist()
@@ -29,8 +28,7 @@
 	aeva_foxy_get_xml_items()
 	aeva_foxy_get_xml_comments()
 	aeva_foxy_album($id, $type, $wid = 0, $details = '', $sort = 'm.id_media DESC', $field_sort = 0)
-	aeva_foxy_fill_player(&$playlist, $type = 'audio', &$details, $play = 0, $wid = 470, $hei = 430, $thei = 70)
-
+	aeva_foxy_fill_player(&$playlist, $type, &$details, $play = 0, $wid = 470, $hei = 430, $thei = 70)
 */
 
 if (!defined('WEDGE'))
@@ -251,11 +249,14 @@ function aeva_foxy_playlist()
 			);
 		}
 		else
-			$id = wesql::insert('',
+		{
+			wesql::insert('',
 				'{db_prefix}media_playlists',
 				array('name' => 'string', 'description' => 'string', 'id_member' => 'int'),
 				array($name, $desc, we::$id)
 			);
+			$id = wesql::insert_id();
+		}
 		redirectexit('action=media;sa=playlists' . ($id ? ';done=' . $id : ''));
 	}
 
@@ -1342,7 +1343,7 @@ function aeva_foxy_album($id, $type, $wid = 0, $details = '', $sort = 'm.id_medi
 	return $box . aeva_foxy_fill_player($playlist, $type, $details, 0, $pwid, 430, $thei + 20);
 }
 
-function aeva_foxy_fill_player(&$playlist, $type = 'audio', &$details, $play = 0, $wid = 470, $hei = 430, $thei = 70)
+function aeva_foxy_fill_player(&$playlist, $type, &$details, $play = 0, $wid = 470, $hei = 430, $thei = 70)
 {
 	global $scripturl, $boardurl, $amSettings, $context, $theme, $txt;
 	static $swo = 0;

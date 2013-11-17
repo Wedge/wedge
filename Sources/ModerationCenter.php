@@ -1486,7 +1486,7 @@ function list_getInfractionLog($start, $items_per_page, $sort)
 		$row['class'] = 'inf_' . $classes[$row['inf_state']];
 		$row['status'] = $txt['infraction_state_' . $classes[$row['inf_state']]];
 
-		$row['revoke'] = $row['inf_state'] == 0 && ($context['revoke_any'] || ($context['revoke_own'] && $issued_by == we::$id)) ? '<a href="<URL>?action=profile;u=' . $row['issued_to'] . ';area=infractions;revoke=' . $row['id_issue'] . ';log">' . $txt['revoke'] . '</a>' : '';
+		$row['revoke'] = $row['inf_state'] == 0 && ($context['revoke_any'] || ($context['revoke_own'] && $row['issued_by'] == we::$id)) ? '<a href="<URL>?action=profile;u=' . $row['issued_to'] . ';area=infractions;revoke=' . $row['id_issue'] . ';log">' . $txt['revoke'] . '</a>' : '';
 		$items[$row['id_issue']] = $row;
 	}
 

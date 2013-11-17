@@ -185,8 +185,8 @@ function aeva_admin_maintenance_regenerate()
 		// Are we doing embed?
 		if ($row['type'] == 'embed' && $task != 'preview')
 		{
-			// Regenerate the thumbnail (we don't need to delete the previous files, it's built in that function)
-			if (!aeva_generate_embed_thumb($row['embed_url'], $row['album_id'], $row['id_thumb'], $dest_thumb, $row['id_preview']))
+			// Regenerate the thumbnail (we don't need to delete the previous files, that function does it for us.)
+			if (!aeva_generate_embed_thumb($row['embed_url'], $row['album_id'], $row['id_thumb'], $dest_thumb))
 			{
 				if (function_exists('aeva_foxy_remote_image'))
 				{
@@ -826,7 +826,7 @@ function aeva_admin_maintenance_prune()
 		wesql::free_result($request);
 
 		// Delete the comments
-		$deleted = aeva_deleteComments($ids, false, false);
+		$deleted = aeva_deleteComments($ids, false);
 		$opts = array(
 			'type' => 'prune',
 			'subtype' => 'comment',

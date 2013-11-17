@@ -392,7 +392,7 @@ class wesql
 					{
 						$ret = self::query($db_string, false, false);
 
-						$new_errno = mysqli_errno($db_connection);
+						$new_errno = mysqli_errno(self::$_db_con);
 						if ($ret !== false || in_array($new_errno, array(1205, 1213)))
 							break;
 					}

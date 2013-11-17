@@ -129,7 +129,7 @@ function ReportsMain()
 	foreach ($context['report_types'] as $k => $temp)
 		$context['report_types'][$k] = array(
 			'id' => $k,
-			'title' => isset($txt['gr_type_' . $k]) ? $txt['gr_type_' . $k] : $type['id'],
+			'title' => isset($txt['gr_type_' . $k]) ? $txt['gr_type_' . $k] : $k,
 			'description' => isset($txt['gr_type_desc_' . $k]) ? $txt['gr_type_desc_' . $k] : null,
 			'function' => $temp,
 			'is_first' => $is_first++ == 0,
@@ -840,12 +840,11 @@ function addData($inc_data, $custom_table = null)
 		newTable();
 
 	// Specific table?
+	$table = $context['current_table'];
 	if ($custom_table !== null && !isset($context['tables'][$custom_table]))
 		return false;
 	elseif ($custom_table !== null)
 		$table = $custom_table;
-	else
-		$table = $context['current_table'];
 
 	// If we have keys, sanitize the data...
 	if (!empty($context['keys']))
@@ -853,10 +852,8 @@ function addData($inc_data, $custom_table = null)
 		// Basically, check every key exists!
 		foreach ($context['keys'] as $key => $dummy)
 		{
-			$data[$key] = array(
-				'v' => empty($inc_data[$key]) ? $context['tables'][$table]['default_value'] : $inc_data[$key],
-			);
-			// Special "hack" the adding separators when doing data by column.
+			$data[$key] = array('v' => empty($inc_data[$key]) ? $context['tables'][$table]['default_value'] : $inc_data[$key]);
+			// Special "hack" to add separators when doing data by column.
 			if (substr($key, 0, 5) == '#sep#')
 				$data[$key]['separator'] = true;
 		}
@@ -866,26 +863,19 @@ function addData($inc_data, $custom_table = null)
 		$data = $inc_data;
 		foreach ($data as $key => $value)
 		{
-			$data[$key] = array(
-				'v' => $value,
-			);
+			$data[$key] = array('v' => $value);
 			if (substr($key, 0, 5) == '#sep#')
 				$data[$key]['separator'] = true;
 		}
 	}
 
-	// Is it by row?
+	// Is it by row? Add the data!
 	if (empty($context['key_method']) || $context['key_method'] == 'rows')
-	{
-		// Add the data!
 		$context['tables'][$table]['data'][] = $data;
-	}
 	// Otherwise, tricky!
 	else
-	{
 		foreach ($data as $key => $item)
 			$context['tables'][$table]['data'][$key][] = $item;
-	}
 }
 
 // Add a separator row, only really used when adding data by rows.

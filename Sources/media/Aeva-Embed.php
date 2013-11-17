@@ -134,13 +134,13 @@ function aeva_main($message)
 //		$message,						= Content
 //		true							= If no http links remain, return non-protected and set $context['embed_skip']
 // );
-function aeva_protection($array = array(), $input, $reverse = false)
+function aeva_protection($array, $input, $reverse = false)
 {
+	global $context, $settings;
+
 	// Return if either is empty
 	if (empty($input) || empty($array))
 		return $input;
-
-	global $context, $settings;
 
 	// Protect each item
 	foreach ($array as $item => $retain)

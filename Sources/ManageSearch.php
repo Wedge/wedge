@@ -52,10 +52,6 @@ if (!defined('WEDGE'))
 		  'create_index_done' blocks of the ManageSearch template.
 		- depending on the size of the message table, the process is divided
 		  in steps.
-
-	array loadSearchAPIs()
-		- get the installed APIs.
-
 */
 
 function ManageSearch()
@@ -126,7 +122,7 @@ function EditSearchSettings($return_config = false)
 	// Perhaps the search method wants to add some settings?
 	$settings['search_index'] = empty($settings['search_index']) ? 'standard' : $settings['search_index'];
 	if (loadSearchAPI($settings['search_index']) && method_exists($settings['search_index'] . '_search', 'searchSettings'))
-		call_user_func_array($method_call, array(&$config_vars));
+		call_user_func_array(array($settings['search_index'] . '_search', 'searchSettings'), array(&$config_vars));
 
 	if ($return_config)
 		return $config_vars;
