@@ -260,7 +260,7 @@ function error_handler($error_level, $error_string, $file, $line)
 	global $theme, $db_show_debug;
 
 	// Ignore errors if default reporting behavior was overridden (e.g. through SSI.)
-	if (error_reporting() == 0)
+	if (error_reporting() === 0)
 		return;
 
 	if (strpos($file, 'eval()') !== false && !empty($theme['current_include_filename']))
@@ -322,9 +322,7 @@ function error_handler($error_level, $error_string, $file, $line)
 	if ($error_level % 255 == E_ERROR || $error_level % 255 == E_WARNING)
 		fatal_error(allowedTo('admin_forum') ? $message : $error_string, false);
 
-	// We should NEVER get to this point. Any fatal error MUST quit, or very bad things can happen.
-	if ($error_level % 255 == E_ERROR)
-		die('Hacking attempt...');
+	die('Hacking attempt...');
 }
 
 /**

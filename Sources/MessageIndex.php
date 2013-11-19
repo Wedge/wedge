@@ -467,7 +467,6 @@ function MessageIndex()
 						'link' => !empty($row['first_id_member']) ? '<a href="<URL>?action=profile;u=' . $row['first_id_member'] . '" title="' . $txt['view_profile'] . '">' . $row['first_display_name'] . '</a>' : $row['first_display_name']
 					),
 					'on_time' => on_timeformat($row['first_poster_time']),
-					// !!! The following is never actually used. Waste time on timeformat()..?
 					'timestamp' => forum_time(true, $row['first_poster_time']),
 					'subject' => $row['first_subject'],
 					'preview' => $row['first_body'],
@@ -485,15 +484,14 @@ function MessageIndex()
 						'href' => !empty($row['last_id_member']) ? '<URL>?action=profile;u=' . $row['last_id_member'] : '',
 						'link' => !empty($row['last_id_member']) ? '<a href="<URL>?action=profile;u=' . $row['last_id_member'] . '">' . $row['last_display_name'] . '</a>' : $row['last_display_name']
 					),
-					// !!! The following is never actually used. Waste time on timeformat()..?
 					'on_time' => on_timeformat($row['last_poster_time']),
 					'timestamp' => forum_time(true, $row['last_poster_time']),
 					'subject' => $row['last_subject'],
 					'preview' => $row['last_body'],
 					'icon' => $row['last_icon'],
 					'icon_url' => $theme[$context['icon_sources'][$row['last_icon']]] . '/post/' . $row['last_icon'] . '.gif',
-					'href' => '<URL>?topic=' . $row['id_topic'] . (we::$is_guest ? ('.' . (!empty($options['view_newest_first']) ? 0 : ((int) (($row['num_replies']) / $context['pageindex_multiplier'])) * $context['pageindex_multiplier']) . '#msg' . $row['id_last_msg']) : (($row['num_replies'] == 0 ? '.0' : '.msg' . $row['id_last_msg']) . '#new')),
-					'link' => '<a href="<URL>?topic=' . $row['id_topic'] . (we::$is_guest ? ('.' . (!empty($options['view_newest_first']) ? 0 : ((int) (($row['num_replies']) / $context['pageindex_multiplier'])) * $context['pageindex_multiplier']) . '#msg' . $row['id_last_msg']) : (($row['num_replies'] == 0 ? '.0' : '.msg' . $row['id_last_msg']) . '#new')) . '" ' . ($row['num_replies'] == 0 ? '' : 'rel="nofollow"') . '>' . $row['last_subject'] . '</a>'
+					'href' => '<URL>?topic=' . $row['id_topic'] . (we::$is_guest ? ('.' . (!empty($options['view_newest_first']) ? 0 : ((int) (($row['num_replies']) / $context['pageindex_multiplier'])) * $context['pageindex_multiplier']) . '#msg' . $row['id_last_msg']) : (($row['num_replies'] == 0 ? '.0' : '.msg' . $row['id_last_msg'] . '#new'))),
+					'link' => '<a href="<URL>?topic=' . $row['id_topic'] . (we::$is_guest ? ('.' . (!empty($options['view_newest_first']) ? 0 : ((int) (($row['num_replies']) / $context['pageindex_multiplier'])) * $context['pageindex_multiplier']) . '#msg' . $row['id_last_msg']) : (($row['num_replies'] == 0 ? '.0' : '.msg' . $row['id_last_msg'] . '#new'))) . '" ' . ($row['num_replies'] == 0 ? '' : 'rel="nofollow"') . '>' . $row['last_subject'] . '</a>'
 				),
 				'is_pinned' => !empty($row['is_pinned']),
 				'is_locked' => !empty($row['locked']),
@@ -504,9 +502,8 @@ function MessageIndex()
 				'subject' => $row['first_subject'],
 				'new' => $row['new_from'] <= $row['id_msg_modified'],
 				'new_from' => $row['new_from'],
-				'newtime' => $row['new_from'],
-				'new_href' => '<URL>?topic=' . $row['id_topic'] . '.msg' . $row['new_from'] . '#new',
-				'new_link' => '<a href="<URL>?topic=' . $row['id_topic'] . '.msg' . $row['new_from'] . '#new">' . $row['first_subject'] . '</a>',
+				'new_href' => '<URL>?topic=' . $row['id_topic'] . ($row['new_from'] ? '.msg' . $row['new_from'] . '#new' : '.0'),
+				'new_link' => '<a href="<URL>?topic=' . $row['id_topic'] . ($row['new_from'] ? '.msg' . $row['new_from'] . '#new' : '.0') . '">' . $row['first_subject'] . '</a>',
 				'pages' => $pages,
 				'replies' => $row['num_replies'],
 				'views' => $row['num_views'],

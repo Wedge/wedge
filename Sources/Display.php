@@ -364,9 +364,9 @@ function Display()
 	$short_prev = empty($prev_title) ? '' : westr::cut($prev_title, SKIN_MOBILE ? 20 : 60);
 	$short_next = empty($next_title) ? '' : westr::cut($next_title, SKIN_MOBILE ? 20 : 60);
 	$context['prevnext_prev'] = '
-			<div class="prevnext_prev">' . (empty($prev_topic) ? '' : '&laquo;&nbsp;<a href="<URL>?topic=' . $prev_topic . '.0#new"' . ($prev_title != $short_prev ? ' title="' . $prev_title . '"' : '') . '>' . $short_prev . '</a>') . '</div>';
+			<div class="prevnext_prev">' . (empty($prev_topic) ? '' : '&laquo;&nbsp;<a href="<URL>?topic=' . $prev_topic . '.new#new"' . ($prev_title != $short_prev ? ' title="' . $prev_title . '"' : '') . '>' . $short_prev . '</a>') . '</div>';
 	$context['prevnext_next'] = '
-			<div class="prevnext_next">' . (empty($next_topic) ? '' : '<a href="<URL>?topic=' . $next_topic . '.0#new"' . ($next_title != $short_next ? ' title="' . $next_title . '"' : '') . '>' . $short_next . '</a>&nbsp;&raquo;') . '</div>';
+			<div class="prevnext_next">' . (empty($next_topic) ? '' : '<a href="<URL>?topic=' . $next_topic . '.new#new"' . ($next_title != $short_next ? ' title="' . $next_title . '"' : '') . '>' . $short_next . '</a>&nbsp;&raquo;') . '</div>';
 	$context['no_prevnext'] = empty($prev_topic) && empty($next_topic);
 
 	// Do we need to show the visual verification image?

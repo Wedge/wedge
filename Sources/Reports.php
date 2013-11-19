@@ -59,12 +59,10 @@ if (!defined('WEDGE'))
 		- keeps track of the current table count using context variable
 		  table_count.
 
-	void addData(array inc_data, int custom_table = null)
-		- adds an array of data into an existing table.
+	void addData(array inc_data)
+		- adds an array of data into the last table created.
 		- if there are no existing tables, will create one with default
 		  attributes.
-		- if custom_table isn't specified, it will use the last table created,
-		  if it is specified and doesn't exist the function will return false.
 		- if a set of keys have been specified, the function will check each
 		  required key is present in the incoming data. If this data is missing
 		  the current tables default value will be used.
@@ -72,14 +70,10 @@ if (!defined('WEDGE'))
 		  will add a separator accross the table at this point.
 		- once the incoming data has been sanitized, it is added to the table.
 
-	void addSeparator(string title = '', int custom_table = null)
+	void addSeparator(string title = '')
 		- adds a separator with title given by attribute "title" after the
-		  current row in the table.
-		- if there are no existing tables, will create one with default
-		  attributes.
-		- if custom_table isn't specified, it will use the last table created,
-		  if it is specified and doesn't exist the function will return false.
-		- if the table is currently having data added by column this may have
+		  current row in the last table create.
+		- if the table is currently having data added by column, this may have
 		  unpredictable visual results.
 
 	void finishTables()
@@ -831,7 +825,7 @@ function newTable($title = '', $default_value = '', $shading = 'all', $width_nor
 }
 
 // Add an extra slice of data to the table
-function addData($inc_data, $custom_table = null)
+function addData($inc_data)
 {
 	global $context;
 
@@ -839,12 +833,7 @@ function addData($inc_data, $custom_table = null)
 	if (empty($context['table_count']))
 		newTable();
 
-	// Specific table?
 	$table = $context['current_table'];
-	if ($custom_table !== null && !isset($context['tables'][$custom_table]))
-		return false;
-	elseif ($custom_table !== null)
-		$table = $custom_table;
 
 	// If we have keys, sanitize the data...
 	if (!empty($context['keys']))
@@ -879,27 +868,16 @@ function addData($inc_data, $custom_table = null)
 }
 
 // Add a separator row, only really used when adding data by rows.
-function addSeparator($title = '', $custom_table = null)
+function addSeparator($title = '')
 {
 	global $context;
 
-	// No tables - return?
-	if (empty($context['table_count']))
-		return;
-
-	// Specific table?
-	if ($custom_table !== null && !isset($context['tables'][$table]))
-		return false;
-	elseif ($custom_table !== null)
-		$table = $custom_table;
-	else
-		$table = $context['current_table'];
-
-	// Plumb in the separator
-	$context['tables'][$table]['data'][] = array(0 => array(
-		'separator' => true,
-		'v' => $title
-	));
+	// If there's a current table, plumb in the separator.
+	if (!empty($context['table_count']))
+		$context['tables'][$context['current_table']]['data'][] = array(0 => array(
+			'separator' => true,
+			'v' => $title
+		));
 }
 
 // This does the necessary count of table data before displaying them.

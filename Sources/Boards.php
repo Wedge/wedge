@@ -30,7 +30,7 @@ if (!defined('WEDGE'))
  */
 function Boards()
 {
-	global $txt, $settings, $context, $theme;
+	global $txt, $settings, $context;
 
 	loadTemplate('Boards');
 	loadTemplate('InfoCenter');
@@ -97,7 +97,6 @@ function Boards()
 	if (!empty($settings['trackStats']))
 		trackStatsUsersOnline($context['num_guests'] + $context['num_spiders'] + $context['num_users_online']);
 
-	$theme['show_member_bar'] &= allowedTo('view_mlist');
 	$context['show_stats'] = allowedTo('view_stats') && !empty($settings['trackStats']);
 	$context['show_member_list'] = allowedTo('view_mlist');
 	$context['show_who'] = allowedTo('who_view') && !empty($settings['who_enabled']);

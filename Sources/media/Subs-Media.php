@@ -677,7 +677,7 @@ function allowedToAccessItem($id, $is_file_id = false)
 // Load the gallery's critical settings and variables
 function loadMediaSettings($gal_url = null, $load_template = false, $load_language = false)
 {
-	global $amSettings, $context, $txt, $galurl, $galurl2, $theme, $amOverride;
+	global $amSettings, $context, $galurl, $galurl2, $theme, $amOverride;
 	static $am_loaded = false;
 
 	if ($load_template)
@@ -820,8 +820,6 @@ function my_version_compare($v1, $v2)
 // Returns albums with selected permission.. Set details to true if you want a list of permissions associated with them.
 function albumsAllowedTo($permission, $details = false, $need_write = true)
 {
-	global $context;
-
 	if (empty($permission) || (!$details && aeva_allowedTo('moderate')))
 		return false;
 
@@ -891,7 +889,7 @@ function albumsAllowedTo($permission, $details = false, $need_write = true)
 // Loads the current album... Handles a great deal of security
 function aeva_loadAlbum($album_id = 0)
 {
-	global $context, $theme, $galurl, $txt, $amSettings;
+	global $context, $galurl, $txt, $amSettings;
 
 	// Let's see if we got anything we can get an ID from?
 	// This is gonna be complex
@@ -1263,11 +1261,9 @@ function aeva_approveItems($items, $approval)
 	}
 }
 
+// Deletes a single item or multiple items
 function aeva_deleteItems($id, $rmFiles = true, $log = true)
 {
-	// Deletes a single item or multiple items
-	global $amSettings;
-
 	$id = is_array($id) ? $id : array($id);
 
 	// Start by assigning some variables
@@ -2159,8 +2155,6 @@ function aeva_deleteFiles($id_file, $keep_id = false)
 // Create an item
 function aeva_createItem($options)
 {
-	global $amSettings;
-
 	// Do some checking
 	if (!isset($options['title']))			$options['title'] = '';
 	if (!isset($options['description']))	$options['description'] = '';
@@ -2234,8 +2228,6 @@ function aeva_createItem($options)
 // Modify an item
 function aeva_modifyItem($options)
 {
-	global $amSettings;
-
 	$update = array();
 	$params = array();
 	if (isset($options['title']))
@@ -2685,7 +2677,7 @@ function aeva_lockedAlbum(&$pass, &$id, &$owner)
 
 function aeva_showSubAlbums(&$alb)
 {
-	global $context, $galurl, $theme, $txt, $amSettings;
+	global $galurl, $txt, $amSettings;
 
 	$ret = '';
 	$co = 0;
@@ -2715,7 +2707,7 @@ function aeva_showSubAlbums(&$alb)
 // List a specific member's album -- intended for showing in a reduced space, like a profile sidebar
 function aeva_listMemberAlbums($id_member)
 {
-	global $amSettings, $galurl, $theme, $txt, $context;
+	global $amSettings, $galurl, $txt, $context;
 
 	aeva_getAlbums('a.album_of = ' . $id_member, 1, true, true, '', true, true, true);
 
@@ -2744,7 +2736,7 @@ function aeva_listMemberAlbums($id_member)
 // Block for showing children albums
 function aeva_listChildren(&$albums, $skip_table = false)
 {
-	global $amSettings, $galurl, $theme, $txt, $context;
+	global $amSettings, $galurl, $theme, $txt;
 
 	if (empty($albums))
 		return;
@@ -3515,7 +3507,7 @@ function aeva_markAllSeen()
 
 function aeva_addHeaders($autosize = true, $use_zoomedia = true)
 {
-	global $context, $txt, $amSettings;
+	global $context, $amSettings;
 	static $done = false;
 
 	if ($done)

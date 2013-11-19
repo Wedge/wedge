@@ -552,6 +552,8 @@ function Unread()
 				$context['icon_sources'][$row['last_icon']] = file_exists($theme['theme_dir'] . '/images/post/' . $row['last_icon'] . '.gif') ? 'images_url' : 'default_images_url';
 		}
 
+		$no_replies = $row['num_replies'] == 0;
+
 		// And build the array.
 		$context['topics'][$row['id_topic']] = array(
 			'id' => $row['id_topic'],
@@ -586,14 +588,12 @@ function Unread()
 				'preview' => $row['last_body'],
 				'icon' => $row['last_icon'],
 				'icon_url' => $theme[$context['icon_sources'][$row['last_icon']]] . '/post/' . $row['last_icon'] . '.gif',
-				'href' => '<URL>?topic=' . $row['id_topic'] . ($row['num_replies'] == 0 ? '.0' : '.msg' . $row['id_last_msg']) . ';seen#msg' . $row['id_last_msg'],
-				'link' => '<a href="<URL>?topic=' . $row['id_topic'] . ($row['num_replies'] == 0 ? '.0' : '.msg' . $row['id_last_msg']) . ';seen#msg' . $row['id_last_msg'] . '" rel="nofollow">' . $row['last_subject'] . '</a>'
+				'href' => '<URL>?topic=' . $row['id_topic'] . ($no_replies ? '.0;seen' : '.msg' . $row['id_last_msg'] . ';seen#new'),
+				'link' => '<a href="<URL>?topic=' . $row['id_topic'] . ($no_replies ? '.0;seen' : '.msg' . $row['id_last_msg'] . ';seen#new') . '">' . $row['last_subject'] . '</a>'
 			),
 			'new_from' => $row['new_from'],
-			'new_href' => '<URL>?topic=' . $row['id_topic'] . '.msg' . $row['new_from'] . ';seen#new',
-			'new_link' => '<a href="<URL>?topic=' . $row['id_topic'] . '.msg' . $row['new_from'] . ';seen#new">' . $row['first_subject'] . '</a>',
-			'href' => '<URL>?topic=' . $row['id_topic'] . ($row['num_replies'] == 0 ? '.0' : '.msg' . $row['new_from']) . ';seen' . ($row['num_replies'] == 0 ? '' : '#new'),
-			'link' => '<a href="<URL>?topic=' . $row['id_topic'] . ($row['num_replies'] == 0 ? '.0' : '.msg' . $row['new_from']) . ';seen#msg' . $row['new_from'] . '" rel="nofollow">' . $row['first_subject'] . '</a>',
+			'new_href' => '<URL>?topic=' . $row['id_topic'] . ($no_replies ? '.0;seen' : '.msg' . $row['new_from'] . ';seen#new'),
+			'new_link' => '<a href="<URL>?topic=' . $row['id_topic'] . ($no_replies ? '.0;seen' : '.msg' . $row['new_from'] . ';seen#new') . '">' . $row['first_subject'] . '</a>',
 			'is_pinned' => !empty($row['is_pinned']),
 			'is_locked' => !empty($row['locked']),
 			'is_poll' => $row['id_poll'] > 0,

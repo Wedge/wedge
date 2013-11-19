@@ -24,7 +24,7 @@ if (!defined('WEDGE'))
 // Welcome to the show.
 function Welcome()
 {
-	global $context, $theme, $options, $txt, $settings;
+	global $context, $options, $txt, $settings;
 
 	// Load the 'Welcome' template.
 	loadTemplate('Welcome');
@@ -80,7 +80,6 @@ function Welcome()
 	if (!empty($settings['trackStats']))
 		trackStatsUsersOnline($context['num_guests'] + $context['num_spiders'] + $context['num_users_online']);
 
-	$theme['show_member_bar'] &= allowedTo('view_mlist');
 	$context['show_stats'] = allowedTo('view_stats') && !empty($settings['trackStats']);
 	$context['show_member_list'] = allowedTo('view_mlist');
 	$context['show_who'] = allowedTo('who_view') && !empty($settings['who_enabled']);

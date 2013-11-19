@@ -24,7 +24,7 @@ if (!defined('WEDGE'))
 // Welcome to the show.
 function Home()
 {
-	global $context, $theme, $txt, $settings;
+	global $context, $txt, $settings;
 
 	// Here are a few variables to make it easy to enable or disable a feature on the default homepage...
 	$context['home_show']['topics'] = true;
@@ -110,7 +110,6 @@ function Home()
 		if (!empty($settings['trackStats']))
 			trackStatsUsersOnline($context['num_guests'] + $context['num_spiders'] + $context['num_users_online']);
 
-		$theme['show_member_bar'] &= allowedTo('view_mlist');
 		$context['show_stats'] = allowedTo('view_stats') && !empty($settings['trackStats']);
 		$context['show_member_list'] = allowedTo('view_mlist');
 		$context['show_who'] = allowedTo('who_view') && !empty($settings['who_enabled']);
