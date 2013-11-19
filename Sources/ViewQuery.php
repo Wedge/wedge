@@ -22,7 +22,7 @@ if (!defined('WEDGE'))
  */
 function ViewQuery()
 {
-	global $theme, $context, $db_connection, $settings, $boarddir, $txt, $db_show_debug;
+	global $context, $db_connection, $settings, $boarddir, $txt, $db_show_debug;
 
 	$show_debug = isset($db_show_debug) && $db_show_debug === true;
 	// We should have debug mode enabled, as well as something to display!

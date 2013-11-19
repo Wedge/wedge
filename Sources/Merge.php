@@ -817,7 +817,7 @@ function MergeDone()
 
 function MergePosts($error_report = true)
 {
-	global $settings, $txt, $theme;
+	global $settings;
 
 	loadLanguage('Errors');
 	if (!is_bool($error_report))

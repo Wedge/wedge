@@ -84,7 +84,7 @@ function deleteAccount($memID)
 
 function deleteAccount2($profile_vars, $post_errors, $memID)
 {
-	global $context, $cur_profile, $settings;
+	global $cur_profile, $settings;
 
 	// Try to get more time...
 	@set_time_limit(600);
@@ -882,7 +882,7 @@ function profileInfractions($memID)
 
 function profileBan($memID)
 {
-	global $txt, $context, $cur_profile, $user_profile;
+	global $txt, $context, $cur_profile;
 
 	isAllowedTo('manage_bans');
 	add_css_file('mana', true);

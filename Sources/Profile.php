@@ -27,7 +27,7 @@ if (!defined('WEDGE'))
 function ModifyProfile($post_errors = array())
 {
 	global $txt, $context, $user_profile, $cur_profile;
-	global $settings, $memberContext, $profile_vars, $post_errors, $options;
+	global $settings, $memberContext, $profile_vars, $post_errors;
 
 	// Don't reload this as we may have processed error strings.
 	if (empty($post_errors))
@@ -778,7 +778,7 @@ function loadCustomFields($memID, $area = 'summary')
 		{
 			$value = westr::htmlspecialchars($_POST['customfield'][$row['col_name']]);
 			if (in_array($row['field_type'], array('select', 'radio')))
-				$value = ($options = explode(',', $row['field_options'])) && isset($options[$value]) ? $options[$value] : '';
+				$value = ($opts = explode(',', $row['field_options'])) && isset($opts[$value]) ? $opts[$value] : '';
 		}
 
 		// HTML for the input form.
@@ -792,8 +792,8 @@ function loadCustomFields($memID, $area = 'summary')
 		elseif ($row['field_type'] == 'select')
 		{
 			$input_html = '<select name="customfield[' . $row['col_name'] . ']"><option value="-1"></option>';
-			$options = explode(',', $row['field_options']);
-			foreach ($options as $k => $v)
+			$opts = explode(',', $row['field_options']);
+			foreach ($opts as $k => $v)
 			{
 				$true = (!$exists && $row['default_value'] == $v) || $value == $v;
 				$input_html .= '<option value="' . $k . '"' . ($true ? ' selected' : '') . '>' . $v . '</option>';
@@ -806,8 +806,7 @@ function loadCustomFields($memID, $area = 'summary')
 		elseif ($row['field_type'] == 'radio')
 		{
 			$input_html = '<fieldset>';
-			$options = explode(',', $row['field_options']);
-			foreach ($options as $k => $v)
+			foreach (explode(',', $row['field_options']) as $k => $v)
 			{
 				$true = (!$exists && $row['default_value'] == $v) || $value == $v;
 				$input_html .= '<label><input type="radio" name="customfield[' . $row['col_name'] . ']" value="' . $k . '"' . ($true ? ' checked' : '') . '> ' . $v . '</label><br>';

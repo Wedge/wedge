@@ -30,7 +30,7 @@ if (!defined('WEDGE'))
 // Show the moderation log
 function ViewModlog()
 {
-	global $txt, $context, $theme;
+	global $txt, $context;
 
 	// Are we looking at the moderation log or the administration log.
 	$context['log_type'] = isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'adminlog' ? 3 : 1;

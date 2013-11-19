@@ -24,7 +24,7 @@ if (!defined('WEDGE'))
 // Welcome to the show.
 function Welcome()
 {
-	global $context, $options, $txt, $settings;
+	global $context, $txt, $settings;
 
 	// Load the 'Welcome' template.
 	loadTemplate('Welcome');

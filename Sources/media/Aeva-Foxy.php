@@ -40,7 +40,7 @@ if (!defined('WEDGE'))
 
 function aeva_foxy_playlist()
 {
-	global $context, $scripturl, $txt, $galurl, $theme;
+	global $context, $txt, $galurl, $theme;
 
 	$context['page_title'] = '<span class="mg_item_type">' . $txt['media_playlist'] . '</span>';
 	$id = empty($_GET['in']) ? 0 : (int) $_GET['in'];
@@ -52,7 +52,7 @@ function aeva_foxy_playlist()
 		return;
 	}
 
-	$context['aeva_form_url'] = $scripturl . '?action=media;sa=playlists' . ($id ? ';in=' . $id . ';edit' : ';new') . ';' . $context['session_query'];
+	$context['aeva_form_url'] = '<URL>?action=media;sa=playlists' . ($id ? ';in=' . $id . ';edit' : ';new') . ';' . $context['session_query'];
 	$pname = $txt['media_new_playlist'];
 	$pdesc = '';
 
@@ -265,7 +265,7 @@ function aeva_foxy_playlist()
 
 function aeva_foxy_playlists()
 {
-	global $amSettings, $context, $txt, $scripturl, $theme, $galurl;
+	global $amSettings, $context, $txt, $theme, $galurl;
 
 	$context['page_title'] = $txt['media_playlists'];
 
@@ -459,7 +459,7 @@ function aeva_foxy_my_playlists()
 
 function aeva_foxy_item_page_playlists($item)
 {
-	global $context, $txt, $theme, $galurl;
+	global $context, $galurl;
 
 	// Any playlist being deleted?
 	if (isset($_GET['premove']))
@@ -919,8 +919,7 @@ function aeva_foxy_feed()
 
 function aeva_foxy_get_xml_items()
 {
-	global $settings, $galurl, $amSettings;
-	global $query_this, $theme, $context, $txt;
+	global $settings, $galurl, $amSettings, $query_this, $txt;
 
 	$postmod = isset($settings['postmod_active']) ? $settings['postmod_active'] : false;
 	$request = wesql::query('
@@ -967,8 +966,7 @@ function aeva_foxy_get_xml_items()
 
 function aeva_foxy_get_xml_comments()
 {
-	global $settings, $galurl, $amSettings;
-	global $query_this, $theme, $context, $txt;
+	global $settings, $galurl, $amSettings, $query_this, $txt;
 
 	$postmod = isset($settings['postmod_active']) ? $settings['postmod_active'] : false;
 	$request = wesql::query('
@@ -1345,7 +1343,7 @@ function aeva_foxy_album($id, $type, $wid = 0, $details = '', $sort = 'm.id_medi
 
 function aeva_foxy_fill_player(&$playlist, $type, &$details, $play = 0, $wid = 470, $hei = 430, $thei = 70)
 {
-	global $scripturl, $boardurl, $amSettings, $context, $theme, $txt;
+	global $boardurl, $amSettings, $context, $theme, $txt;
 	static $swo = 0;
 
 	$swo++;

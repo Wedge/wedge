@@ -14,8 +14,6 @@ if (!defined('WEDGE'))
 // Get one of the admin information files from Wedge.org.
 function ViewRemote()
 {
-	global $context;
-
 	wetem::hide();
 	ini_set('memory_limit', '32M');
 

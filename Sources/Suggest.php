@@ -72,7 +72,7 @@ function suggest_xml_recursive($xml_data, $parent_ident, $child_ident, $level)
 // Search for a member - by real_name or member_name by default.
 function suggest_search_member()
 {
-	global $txt, $context;
+	global $context;
 
 	$_REQUEST['search'] = trim(westr::strtolower($_REQUEST['search'])) . '*';
 	$_REQUEST['search'] = strtr($_REQUEST['search'], array('%' => '\%', '_' => '\_', '*' => '%', '?' => '_', '&#038;' => '&amp;'));

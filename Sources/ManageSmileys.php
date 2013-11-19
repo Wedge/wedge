@@ -111,7 +111,7 @@ function ManageSmileys()
 
 function EditSmileySettings($return_config = false)
 {
-	global $settings, $context, $theme, $txt, $boarddir;
+	global $settings, $context, $txt;
 
 	// The directories...
 	$context['smileys_dir'] = $settings['smileys_dir'];
@@ -173,7 +173,7 @@ function EditSmileySettings($return_config = false)
 
 function EditSmileySets()
 {
-	global $settings, $context, $theme, $txt, $boarddir;
+	global $settings, $context, $txt;
 
 	// Set the right tab to be selected.
 	$context[$context['admin_menu_name']]['current_subsection'] = 'editsets';
@@ -489,7 +489,7 @@ function list_getNumSmileySets()
 
 function AddSmiley()
 {
-	global $settings, $context, $theme, $txt, $boarddir;
+	global $settings, $context, $txt;
 
 	// Get a list of all known smiley sets.
 	$context['smileys_dir'] = $settings['smileys_dir'];
@@ -727,7 +727,7 @@ function AddSmiley()
 
 function EditSmileys()
 {
-	global $settings, $context, $theme, $txt, $boarddir;
+	global $settings, $context, $txt;
 
 	// Force the correct tab to be displayed.
 	$context[$context['admin_menu_name']]['current_subsection'] = 'editsmileys';
@@ -1152,7 +1152,7 @@ function list_getNumSmileys()
 
 function EditSmileyOrder()
 {
-	global $context, $theme, $txt, $boarddir;
+	global $context, $txt;
 
 	// Move smileys to another position.
 	if (isset($_REQUEST['reorder']))
@@ -1407,7 +1407,7 @@ function ImportSmileys($smileyPath)
 
 function EditMessageIcons()
 {
-	global $context, $theme, $txt, $boarddir;
+	global $context, $theme, $txt;
 
 	// Get a list of icons.
 	$context['icons'] = array();

@@ -524,15 +524,13 @@ function array_insert($input, $to, $array, $after = false)
  * Prunes non-valid XML/XHTML characters from a string intended for XML/XHTML transport use.
  *
  * Primarily this function removes non-printable control codes from an XML output (tab, CR, LF are preserved), including non-valid UTF-8 character signatures if appropriate.
+ * See http://www.w3.org/TR/2000/REC-xml-20001006#NT-Char
  *
  * @param string $string A string of potential output.
  * @return string The sanitized string.
  */
 function cleanXml($string)
 {
-	global $context;
-
-	// http://www.w3.org/TR/2000/REC-xml-20001006#NT-Char
 	return str_replace(']]>', ']]]]><![CDATA[>', preg_replace('~[\x00-\x08\x0B\x0C\x0E-\x19\x{FFFE}\x{FFFF}]~u', '', $string));
 }
 

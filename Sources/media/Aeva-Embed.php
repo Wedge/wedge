@@ -223,7 +223,7 @@ function aeva_reverse_protection($input)
 // Callback, only build the embed on each match
 function aeva_match(&$message, $for_real = false)
 {
-	global $context, $sites, $upto, $boardurl, $settings;
+	global $sites, $upto, $boardurl, $settings;
 	static $local_done = false;
 
 	// Prevent stupid loop/crash. Also, if loading full version, return if disabled.
@@ -684,8 +684,6 @@ function aeva_autolink_urls($input)
 // Known issue: anchor settings remain visible when video isn't embedded. No known "good" solution?
 function aeva_protect_recursive($input)
 {
-	global $context;
-
 	// Prevent error if null or empty
 	if (empty($input))
 		return false;
@@ -744,7 +742,7 @@ function aeva_lookup_and_match($regex, $url, $fetch_title = '')
 // Callback, only build the embed on each match
 function embed_lookups_obtain_callback($input)
 {
-	global $context, $sites, $upto, $settings;
+	global $sites, $upto, $settings;
 
 	$arr =& $sites[$upto];
 
@@ -859,7 +857,7 @@ function embed_lookups_match($input)
 // Called on both quick reply and full posting
 function aeva_onposting($input)
 {
-	global $settings, $context, $sites, $sourcedir;
+	global $settings, $sites, $sourcedir;
 
 	// Exit if all three are disabled:
 	// - Lookups (retrieve final URL, check whether embeds are allowed, etc.)
@@ -914,7 +912,7 @@ function aeva_onposting($input)
 // Noobs might use the full embed code provided by the site, so try to fix it on posting (replace with an embeddable link and save some db space as well)
 function aeva_fix_html($input)
 {
-	global $sites, $context;
+	global $sites;
 
 	// If no sites, return
 	if (empty($sites))
@@ -1095,7 +1093,7 @@ function aeva_fetch($url, $test_connection = false)
 
 function aeva_embed_video($message, $id_media = 0, $id_preview = 0)
 {
-	global $context, $sites, $settings;
+	global $context;
 
 	$msg = '<a href="' . preg_replace(array('~\[url=([^]]*)][^[]*\[/url]~', '~\[url]([^[]*)\[/url]~'), '$1', $message) . '"></a>';
 
@@ -1111,7 +1109,7 @@ function aeva_embed_video($message, $id_media = 0, $id_preview = 0)
 
 function aeva_check_embed_link($link)
 {
-	global $context, $sites, $boardurl, $settings, $sourcedir;
+	global $sites, $boardurl, $settings, $sourcedir;
 
 	if (empty($settings['embed_enabled']))
 		return false;
@@ -1153,7 +1151,7 @@ function aeva_check_embed_link($link)
 // Generates thumbnail for site if possible
 function aeva_generate_embed_thumb($link, $id_album, $id_file = 0, $folder = '')
 {
-	global $embed_album, $embed_folder, $context, $force_id;
+	global $embed_album, $embed_folder, $force_id;
 
 	$link = preg_replace(array('~\[url=([^]]*)]([^[]*)\[/url]~', '~\[url]([^[]*)\[/url]~'), array('$1', '$1'), $link);
 	$thumbs = array(
@@ -1213,7 +1211,7 @@ function googleCreateThumb($link, $regexp)
 
 function gmapsCreateThumb($link, $regexp)
 {
-	global $amSettings, $embed_folder, $embed_album;
+	global $amSettings;
 
 	aeva_download_to_string(str_replace('&amp;', '&', $link), $page);
 	preg_match('`center:({lat:\d+\.\d+,lng:\d+\.\d+}|\[\d+\.\d+,\d+\.\d+\])`i', $page, $center);

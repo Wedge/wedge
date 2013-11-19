@@ -1007,7 +1007,7 @@ function Post2()
  */
 function notifyMembersBoard(&$topicData)
 {
-	global $txt, $scripturl, $settings, $board, $context;
+	global $scripturl, $settings;
 
 	loadSource('Subs-Post');
 

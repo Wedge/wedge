@@ -229,7 +229,7 @@ function summary($memID)
 // Show the user's drafts.
 function showDrafts($memID)
 {
-	global $context, $memberContext, $txt, $settings, $user_profile;
+	global $context, $memberContext, $txt, $settings;
 
 	// Attempt to load the member's profile data.
 	if (!loadMemberContext($memID) || !isset($memberContext[$memID]))
@@ -753,7 +753,7 @@ function showPosts($memID)
 // Show all the attachments of a user.
 function showAttachments($memID)
 {
-	global $txt, $settings, $board, $context, $user_profile;
+	global $settings, $board, $context;
 
 	// OBEY permissions!
 	$boardsAllowed = boardsAllowedTo('view_attachments');
@@ -1362,8 +1362,6 @@ function list_getIPMessageCount($where, $where_vars = array())
 
 function list_getIPMessages($start, $items_per_page, $sort, $where, $where_vars = array())
 {
-	global $txt;
-
 	// Get all the messages fitting this where clause.
 	// !!! SLOW This query is using a filesort.
 	$request = wesql::query('

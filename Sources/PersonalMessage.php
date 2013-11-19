@@ -426,7 +426,7 @@ function PersonalMessage()
 // A sidebar to easily access different areas of the section
 function messageIndexBar($area)
 {
-	global $txt, $context, $theme, $options;
+	global $txt, $context;
 
 	$pm_areas = array(
 		'folders' => array(
@@ -570,7 +570,7 @@ function messageIndexBar($area)
 function MessageFolder()
 {
 	global $txt, $settings, $context, $subjects_request;
-	global $messages_request, $recipients, $options, $memberContext, $user_settings;
+	global $messages_request, $recipients, $options, $user_settings;
 
 	// Changing view? 0 = all at once, 1 = one at a time, 2 = conversation mode
 	if (isset($_GET['view']))
@@ -2502,7 +2502,7 @@ function getPmRecipients(&$recipientList, &$namedRecipientList, &$namesNotFound)
 // This function performs all additional stuff...
 function MessageActionsApply()
 {
-	global $txt, $context, $options;
+	global $context, $options;
 
 	checkSession('request');
 
@@ -3781,7 +3781,7 @@ function isAccessiblePM($pmID, $validFor = 'in_or_outbox')
 
 function MessageDrafts()
 {
-	global $context, $memberContext, $txt, $settings, $user_profile;
+	global $context, $txt, $settings, $user_profile;
 
 	loadLanguage('PersonalMessage');
 

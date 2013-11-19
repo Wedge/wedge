@@ -36,10 +36,10 @@ if (!defined('WEDGE'))
 		- does not check permissions. (assumes they have been checked!)
 */
 
-// Move a topic.  Give the moderator a chance to post a reason.
+// Move a topic. Give the moderator a chance to post a reason.
 function MoveTopic()
 {
-	global $txt, $board, $topic, $context, $theme, $settings;
+	global $txt, $board, $topic, $context, $settings;
 
 	if (empty($topic))
 		fatal_lang_error('no_access', false);
@@ -560,7 +560,7 @@ function moveTopics($topics, $toBoard)
 		)
 	);
 
-	// Move the topic.  Done.  :P
+	// Move the topic. Done. :P
 	wesql::query('
 		UPDATE {db_prefix}topics
 		SET id_board = {int:id_board}' . ($isRecycleDest ? ',

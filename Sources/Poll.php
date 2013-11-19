@@ -92,7 +92,7 @@ function Poll()
 // Allow the user to vote.
 function Vote()
 {
-	global $topic, $txt, $settings;
+	global $topic, $settings;
 
 	// Make sure you can vote.
 	isAllowedTo('poll_vote');

@@ -65,8 +65,7 @@ if (!defined('WEDGE'))
  */
 function Post($post_errors = array())
 {
-	global $txt, $topic, $topic_info, $settings, $board;
-	global $board_info, $context, $theme, $options;
+	global $txt, $topic, $settings, $board, $context, $theme, $options;
 
 	$context['form_fields'] = array(
 		'text' => array('subject', 'icon', 'guestname', 'email', 'evtitle', 'question', 'topic'),
