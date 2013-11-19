@@ -61,12 +61,8 @@ function template_main()
 		<we:title>
 			', $txt['results'], '
 		</we:title>
-		<div id="report_buttons">';
-
-	if (!empty($report_buttons))
-		template_button_strip($report_buttons);
-
-	echo '
+		<div id="report_buttons">',
+			template_button_strip($report_buttons), '
 		</div>';
 
 	// Go through each table!

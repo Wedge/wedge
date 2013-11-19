@@ -2472,7 +2472,7 @@ function sessionWrite($session_id, $data)
 
 	// If that didn't work, try inserting a new one.
 	if (wesql::affected_rows() == 0)
-		wesql::insert('ignore',
+		return wesql::insert('ignore',
 			'{db_prefix}sessions',
 			array('session_id' => 'string', 'data' => 'string', 'last_update' => 'int'),
 			array($session_id, $data, time())

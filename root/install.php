@@ -8,19 +8,22 @@
  * @author see contributors.txt
  */
 
-define('WEDGE_INSTALLER', 1);
+define('WEDGE_VERSION', '0.1');
+define('REQUIRED_PHP_VERSION', '5.2.4');
+define('REQUIRED_PCRE_VERSION', '7.2');
+define('REQUIRED_MYSQL_SERVER_VERSION', '5.0.3');
+define('REQUIRED_MYSQL_CLIENT_VERSION', '5.0.0');
 
-$GLOBALS['current_wedge_version'] = '0.1';
-$GLOBALS['required_php_version'] = '5.2.4';
-$GLOBALS['required_pcre_version'] = '7.2';
+// Some constants we might need later.
+define('INVALID_IP', '00000000000000000000000000000000');
+define('WEDGE_INSTALLER', 1);
+define('WEDGE', 1);
 
 // Don't have PHP support, do you?
 // ><html dir="ltr"><head><title>Error!</title></head><body>Sorry, this installer requires PHP!<div style="display: none">
 
 // Database info.
 $db = array(
-	'required_server' => '5.0.3',
-	'required_client' => '5.0.0',
 	'default_user' => 'mysql.default_user',
 	'default_password' => 'mysql.default_password',
 	'default_host' => 'mysql.default_host',
@@ -37,8 +40,6 @@ load_lang_file();
 
 // This is what we are.
 $installurl = $_SERVER['PHP_SELF'];
-// This is where Wedge is.
-$wedgesite = 'http://wedge.org/files';
 
 // All the steps in detail.
 // Number, Name, Function, Progress Weight.
@@ -311,8 +312,6 @@ function load_database()
 
 	// Need this to check whether we need the database password.
 	require(dirname(__FILE__) . '/Settings.php');
-	if (!defined('WEDGE'))
-		define('WEDGE', 1);
 
 	$settings['disableQueryCheck'] = true;
 
@@ -379,7 +378,7 @@ function checkGD2()
 
 function Welcome()
 {
-	global $incontext, $txt, $db, $installurl;
+	global $incontext, $txt, $installurl;
 
 	$incontext['page_title'] = $txt['install_welcome'];
 	$incontext['block'] = 'welcome_message';
@@ -389,9 +388,9 @@ function Welcome()
 		return true;
 
 	// Check the PHP version.
-	if (!function_exists('version_compare') || (version_compare($GLOBALS['required_php_version'], PHP_VERSION) > 0))
+	if (!function_exists('version_compare') || (version_compare(REQUIRED_PHP_VERSION, PHP_VERSION) > 0))
 		$incontext['warning'] = $txt['error_php_too_low'];
-	elseif (version_compare($GLOBALS['required_pcre_version'], PCRE_VERSION) > 0) // PCRE_VERSION was introduced in PHP 5.2.4. Lucky.
+	elseif (version_compare(REQUIRED_PCRE_VERSION, PCRE_VERSION) > 0) // PCRE_VERSION was introduced in PHP 5.2.4. Lucky.
 		$incontext['warning'] = $txt['error_pcre_too_low'];
 
 	// See if we think they have already installed it?
@@ -739,9 +738,7 @@ function DatabaseSettings()
 			return false;
 		}
 
-		// Now include it for database functions!
-		if (!defined('WEDGE'))
-			define('WEDGE', 1);
+		// Now include it, for database functions!
 		$settings['disableQueryCheck'] = true;
 		require_once($sourcedir . '/Class-DB.php');
 
@@ -769,7 +766,7 @@ function DatabaseSettings()
 		}
 
 		// Do they meet the install requirements?
-		if ((version_compare($db['required_client'], preg_replace('~^\D*|\-.+?$~', '', mysqli_get_client_info())) > 0) || (version_compare($db['required_server'], preg_replace('~^\D*|\-.+?$~', '', mysqli_get_server_info($db_connection))) > 0))
+		if ((version_compare(REQUIRED_MYSQL_CLIENT_VERSION, preg_replace('~^\D*|\-.+?$~', '', mysqli_get_client_info())) > 0) || (version_compare(REQUIRED_MYSQL_SERVER_VERSION, preg_replace('~^\D*|\-.+?$~', '', mysqli_get_server_info($db_connection))) > 0))
 		{
 			$incontext['error'] = sprintf($txt['error_db_too_low'], 'Server: ' . mysqli_get_server_info() . ' / Client: ' . mysqli_get_client_info());
 			return false;
@@ -823,7 +820,7 @@ function DatabaseSettings()
 // Let's start with basic forum type settings.
 function ForumSettings()
 {
-	global $txt, $incontext, $db;
+	global $txt, $incontext;
 
 	$incontext['block'] = 'forum_settings';
 	$incontext['page_title'] = $txt['install_settings'];
@@ -880,7 +877,7 @@ function ForumSettings()
 // Step one: Do the SQL thang.
 function DatabasePopulation()
 {
-	global $txt, $db_connection, $db, $settings, $sourcedir, $db_prefix, $incontext, $db_name, $boardurl;
+	global $txt, $db_connection, $settings, $sourcedir, $db_prefix, $incontext, $db_name, $boardurl;
 
 	$incontext['block'] = 'populate_database';
 	$incontext['page_title'] = $txt['db_populate'];
@@ -911,7 +908,7 @@ function DatabasePopulation()
 
 		// Do they match? If so, this is just a refresh so charge on!
 		// !!! @todo: This won't work anyway -- the upgrader. Remove this code.
-		if (!isset($settings['weVersion']) || $settings['weVersion'] != $GLOBALS['current_wedge_version'])
+		if (!isset($settings['weVersion']) || $settings['weVersion'] != WEDGE_VERSION)
 		{
 			$incontext['error'] = $txt['error_versions_do_not_match'];
 			return false;
@@ -934,7 +931,7 @@ function DatabasePopulation()
 		'{$enableCompressedOutput}' => isset($_POST['compress']) ? '1' : '0',
 		'{$enableCompressedData}' => isset($_POST['compress']) && isset($_SERVER['SERVER_SOFTWARE']) && strpos($_SERVER['SERVER_SOFTWARE'], 'Apache') !== false ? '1' : '0',
 		'{$databaseSession_enable}' => isset($_POST['dbsession']) ? '1' : '0',
-		'{$wedge_version}' => $GLOBALS['current_wedge_version'],
+		'{$wedge_version}' => WEDGE_VERSION,
 		'{$current_time}' => time(),
 		'{$sched_task_offset}' => 82800 + mt_rand(0, 86399),
 		'{$language}' => substr($_SESSION['installer_temp_lang'], 8, -4),
@@ -1041,13 +1038,11 @@ function DatabasePopulation()
 			$rows[] = array('localCookies', '1');
 
 		if (!empty($rows))
-		{
 			wesql::insert('replace',
 				$db_prefix . 'settings',
 				array('variable' => 'string-255', 'value' => 'string-65534'),
 				$rows
 			);
-		}
 	}
 
 	// Setting a timezone is required.
@@ -1156,11 +1151,7 @@ function AdminAccount()
 	require(dirname(__FILE__) . '/Settings.php');
 
 	// We need this for some of the IP stuff.
-	if (!defined('WEDGE'))
-		define('WEDGE', 1);
 	@include(dirname(__FILE__) . '/Sources/QueryString.php');
-	if (!defined('INVALID_IP'))
-		define('INVALID_IP', '00000000000000000000000000000000');
 
 	load_database();
 
@@ -1289,10 +1280,10 @@ function AdminAccount()
 			);
 
 			// Awww, crud!
-			if ($request === false)
+			if (!$request)
 			{
 				$incontext['error'] = $txt['error_user_settings_query'] . '<br>
-				<div style="margin: 2ex">' . nl2br(htmlspecialchars(wesql::error($db_connection)), false) . '</div>';
+				<div style="margin: 2ex">' . nl2br(htmlspecialchars(wesql::error($db_connection))) . '</div>';
 				return false;
 			}
 
@@ -1353,7 +1344,7 @@ function AdminAccount()
 // Final step, clean up and a complete message!
 function DeleteInstall()
 {
-	global $txt, $incontext, $context, $current_wedge_version, $sourcedir, $settings;
+	global $txt, $incontext, $sourcedir, $settings;
 
 	$incontext['page_title'] = $txt['congratulations'];
 	$incontext['block'] = 'delete_install';
@@ -1467,7 +1458,6 @@ function DeleteInstall()
 	// Sanity check that they loaded earlier!
 	if (isset($settings['recycle_board']))
 	{
-		define('WEDGE_VERSION', $current_wedge_version); // The variable is usually defined in index.php so let's just use our variable to do it for us.
 		scheduled_fetchRemoteFiles(); // Now go get those files!
 
 		// We've just installed!
@@ -1961,12 +1951,10 @@ function fixModSecurity()
 
 function template_install_above()
 {
-	global $incontext, $txt, $installurl, $boardurl, $cachedir, $cssdir, $jsdir;
-	global $boarddir, $sourcedir, $wedgesite, $theme, $context, $settings;
+	global $incontext, $txt, $boardurl, $cachedir, $cssdir, $jsdir;
+	global $boarddir, $sourcedir, $theme, $context, $settings;
 
 	// Load Wedge's default paths and pray that it works...
-	if (!defined('WEDGE'))
-		define('WEDGE', 1);
 	$boarddir = dirname(__FILE__);
 	$cachedir = $boarddir . '/cache';
 	$cssdir = $boarddir . '/css';
@@ -2113,14 +2101,14 @@ function template_welcome_message()
 	}
 
 	echo '
-	<script src="http://wedge.org/files/current-version.js?version=' . urlencode($GLOBALS['current_wedge_version']) . '"></script>
+	<script src="http://wedge.org/files/current-version.js?version=' . urlencode(WEDGE_VERSION) . '"></script>
 	<form action="', $incontext['form_url'], '" method="post">
-		<p>', sprintf($txt['install_welcome_desc'], 'Wedge ' . $GLOBALS['current_wedge_version']), '</p>
+		<p>', sprintf($txt['install_welcome_desc'], 'Wedge ' . WEDGE_VERSION), '</p>
 		<div id="version_warning">
 			<div style="float: left; width: 2ex; font-size: 2em; color: red">!!</div>
 			<strong style="text-decoration: underline">', $txt['error_warning_notice'], '</strong><br>
 			<div style="padding-left: 6ex">
-				', sprintf($txt['error_script_outdated'], '<em id="wedgeVersion" style="white-space: nowrap">??</em>', '<em id="yourVersion" style="white-space: nowrap">' . $GLOBALS['current_wedge_version'] . '</em>'), '
+				', sprintf($txt['error_script_outdated'], '<em id="wedgeVersion" style="white-space: nowrap">??</em>', '<em id="yourVersion" style="white-space: nowrap">' . WEDGE_VERSION . '</em>'), '
 			</div>
 		</div>';
 
@@ -2246,7 +2234,7 @@ function template_chmod_files()
 // Get the database settings prepared.
 function template_database_settings()
 {
-	global $incontext, $installurl, $txt;
+	global $incontext, $txt;
 
 	echo '
 	<form action="', $incontext['form_url'], '" method="post">
@@ -2295,7 +2283,7 @@ function template_database_settings()
 // Stick in their forum settings.
 function template_forum_settings()
 {
-	global $incontext, $installurl, $txt, $boardurl;
+	global $incontext, $txt, $boardurl;
 
 	echo '
 	<form action="', $incontext['form_url'], '" method="post">
@@ -2338,7 +2326,7 @@ function template_forum_settings()
 // Show results of the database population.
 function template_populate_database()
 {
-	global $incontext, $installurl, $txt;
+	global $incontext, $txt;
 
 	echo '
 	<form action="', $incontext['form_url'], '" method="post">
@@ -2378,7 +2366,7 @@ function template_populate_database()
 // Create the admin account.
 function template_admin_account()
 {
-	global $incontext, $installurl, $txt;
+	global $incontext, $txt;
 
 	echo '
 	<form action="', $incontext['form_url'], '" method="post">

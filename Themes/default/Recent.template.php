@@ -107,12 +107,8 @@ function template_unread($replies = false)
 	if (!empty($context['topics']))
 	{
 		echo '
-		<div class="pagesection">';
-
-		if (!empty($mark_read))
-			template_button_strip($mark_read);
-
-		echo '
+		<div class="pagesection">',
+			template_button_strip($mark_read), '
 			<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>
 		</div>';
 
@@ -205,8 +201,8 @@ function template_unread($replies = false)
 				</tbody>
 			</table>
 		</div>
-		<div class="pagesection">', !empty($mark_read) ?
-			template_button_strip($mark_read) : '', '
+		<div class="pagesection">',
+			template_button_strip($mark_read), '
 			<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>
 		</div>';
 	}

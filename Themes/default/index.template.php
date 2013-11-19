@@ -830,13 +830,13 @@ function template_button_strip($button_strip, $direction = 'right', $extra = '')
 
 	// No buttons? No button strip either.
 	if (empty($buttons))
-		return;
+		return '';
 
 	// Make the last one, as easy as possible.
 	$buttons[count($buttons) - 1] = str_replace('<li>', '<li class="last">', $buttons[count($buttons) - 1]);
 
-	echo '
-			<ul class="buttonlist', !empty($direction) ? ' float' . $direction : '', empty($buttons) ? ' hide' : '', '"', $extra ? ' ' . ltrim($extra) : '', '>',
-				implode('', $buttons), '
+	return '
+			<ul class="buttonlist' . (!empty($direction) ? ' float' . $direction : '') . (empty($buttons) ? ' hide' : '') . '"' . ($extra ? ' ' . ltrim($extra) : '') . '>' .
+				implode('', $buttons) . '
 			</ul>';
 }

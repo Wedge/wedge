@@ -437,7 +437,7 @@ class wesql
 
 		// With nothing to insert, simply return.
 		if (empty($data))
-			return;
+			return false;
 
 		// Replace the prefix holder with the actual prefix.
 		$table = str_replace('{db_prefix}', $db_prefix, $table);
@@ -475,11 +475,11 @@ class wesql
 		foreach ($data as $dataRow)
 			$insertRows[] = self::quote($insertData, array_combine($indexed_columns, $dataRow), $connection);
 
-		// Determine the method of insertion.
+		// Determine the method.
 		$queryTitle = $method == 'replace' ? 'REPLACE' : ($method == 'ignore' ? 'INSERT IGNORE' : 'INSERT');
 
-		// Do the insert.
-		self::query('
+		// Do the insert, and return a success bool.
+		return !!self::query('
 			' . $queryTitle . ' INTO ' . $table . '(`' . implode('`, `', $indexed_columns) . '`)
 			VALUES
 				' . implode(',

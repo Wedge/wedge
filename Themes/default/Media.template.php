@@ -65,9 +65,6 @@ function template_aeva_tabs()
 	if (empty($context['aeva_header']['subtabs']))
 		return;
 
-	echo '
-		<div class="pagesection">';
-
 	$buttons = array();
 	foreach ($context['aeva_header']['subtabs'] as $key => $tab)
 		$buttons[$key] = array(
@@ -75,9 +72,10 @@ function template_aeva_tabs()
 			'url' => $tab['url'],
 			'class' => $tab['class']
 		);
-	template_button_strip($buttons, '');
 
 	echo '
+		<div class="pagesection">',
+			template_button_strip($buttons, ''), '
 		</div>';
 }
 
@@ -1196,7 +1194,7 @@ function template_aeva_unseen()
 		if (strpos($context['aeva_page_index'], '<a') !== false)
 			$mark_seen['pageread'] = array('text' => 'media_page_seen', 'url' => $galurl . 'sa=unseen;' . (isset($_GET['start']) ? 'start=' . $_GET['start'] . ';' : '') . 'pageseen=' . implode(',', array_keys($context['aeva_items'])) . ';' . $context['session_query']);
 		$mark_seen['markread'] = array('text' => 'media_mark_as_seen', 'url' => $galurl . 'sa=unseen;markseen;' . $context['session_query']);
-		template_button_strip($mark_seen);
+		echo template_button_strip($mark_seen);
 	}
 
 	echo '
