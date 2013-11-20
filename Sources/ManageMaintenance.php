@@ -194,10 +194,9 @@ function ManageMaintenance()
 
 // Supporting function for the database maintenance area.
 // !!! We don't do anything here any more; there's no logic for this function any longer because the only branches it used to make are to do with
-//	setting up for the conversions (non-UTF-8 to UTF-8 and entities to UTF-8 chars) which are no longer relevant. Leaving this here for now though!
+//	setting up for the conversions (non-UTF-8 to UTF-8 and entities to UTF-8 chars) which are no longer relevant. Leaving this here for now, though!
 function MaintainDatabase()
 {
-	global $context, $txt;
 }
 
 // Supporting function for the routine maintenance area.
@@ -876,7 +875,7 @@ function ConvertEntities()
 // Optimize the database's tables.
 function OptimizeTables()
 {
-	global $db_name, $db_prefix, $txt, $context;
+	global $db_prefix, $txt, $context;
 
 	isAllowedTo('admin_forum');
 
@@ -1619,7 +1618,7 @@ function MaintainPurgeInactiveMembers()
 
 function MaintainRecountPosts()
 {
-	global $txt, $context, $settings, $time_start;
+	global $txt, $context, $settings;
 
 	isAllowedTo('admin_forum');
 	checkSession('request');

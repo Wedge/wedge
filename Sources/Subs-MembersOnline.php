@@ -22,7 +22,7 @@ if (!defined('WEDGE'))
 // Retrieve a list and several other statistics of the users currently online.
 function getMembersOnlineStats($membersOnlineOptions)
 {
-	global $context, $settings, $txt;
+	global $settings, $txt;
 
 	// The list can be sorted in several ways.
 	$allowed_sort_options = array(

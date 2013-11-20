@@ -76,8 +76,7 @@ function checkActivation()
 
 function DoLogin()
 {
-	global $txt, $user_settings;
-	global $cookiename, $maintenance, $settings, $context;
+	global $user_settings, $maintenance, $settings, $context;
 
 	// Load cookie authentication stuff.
 	loadSource('Subs-Auth');

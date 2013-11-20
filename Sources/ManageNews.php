@@ -254,7 +254,7 @@ function EditNews()
 
 function SelectMailingMembers()
 {
-	global $txt, $context, $settings;
+	global $txt, $context;
 
 	$context['page_title'] = $txt['admin_newsletters'];
 

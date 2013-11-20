@@ -145,7 +145,7 @@ function aeva_modCP_submissions()
 // Approves an unapproved item
 function aeva_modCP_submissions_approve()
 {
-	global $context, $galurl;
+	global $galurl;
 
 	$items = isset($_POST['items']) && isset($_POST['submit_aeva']) && is_array($_POST['items']) ? $_POST['items'] : array((int) @$_REQUEST['in']);
 	$type = $_REQUEST['type'];
@@ -349,7 +349,7 @@ function aeva_modCP_submissions_approve()
 // Basically deletes a item or a comment.
 function aeva_modCP_submissions_delete()
 {
-	global $context, $galurl;
+	global $galurl;
 
 	$type = isset($_REQUEST['type']) ? $_REQUEST['type'] : '';
 
@@ -412,7 +412,7 @@ function aeva_modCP_submissions_delete()
 // Handles the reported items page
 function aeva_modCP_reports()
 {
-	global $context, $galurl, $txt, $amSettings;
+	global $context, $txt, $amSettings;
 
 	// DOs
 	$do = array(
@@ -585,7 +585,7 @@ function aeva_modCP_reports_deleteItem()
 // Handles the moderation log
 function aeva_modCP_modLog()
 {
-	global $context, $galurl, $txt, $amSettings;
+	global $context, $galurl, $txt;
 
 	// Deleting something?
 	if (isset($_POST['delete']) && !empty($_POST['delete']))

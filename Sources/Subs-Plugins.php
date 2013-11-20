@@ -307,7 +307,7 @@ function uploadedPluginValidate()
 
 function uploadedPluginConnection()
 {
-	global $cachedir, $boarddir, $settings, $context, $pluginsdir, $txt;
+	global $cachedir, $settings, $context, $pluginsdir, $txt;
 
 	// If we already have details, pass through to the next stage.
 	if (isset($_SESSION['plugin_ftp']))
@@ -456,7 +456,7 @@ function uploadedPluginConnection()
 
 function uploadedPluginPrune()
 {
-	global $context, $txt, $pluginsdir;
+	global $context, $txt;
 
 	// So, this is primarily to deal with plugins that need dealing with.
 	if (empty($_SESSION['uploadplugin']['delete']) || empty($_SESSION['uploadplugin']['id']) || empty($context['plugins_dir'][$_SESSION['uploadplugin']['id']]))
@@ -654,7 +654,7 @@ function uploadedPluginFolders()
 
 function uploadedPluginFiles()
 {
-	global $context, $txt, $cachedir, $pluginsdir;
+	global $context, $txt, $cachedir;
 
 	if (isset($_SESSION['uploadplugin']['flist']) && empty($_SESSION['uploadplugin']['flist']))
 	{
@@ -855,7 +855,7 @@ function get_maint_requirements($manifest)
 
 function test_hooks_conflict($manifest)
 {
-	global $context, $pluginsdir, $settings;
+	global $pluginsdir, $settings;
 
 	// This could be interesting, actually. Does this plugin declare any hooks that any other active plugin uses?
 	if (!empty($manifest->hooks->provides))

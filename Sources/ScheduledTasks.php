@@ -195,7 +195,7 @@ function AutoTask()
 // Function to sending out approval notices to moderators etc.
 function scheduled_approval_notification()
 {
-	global $scripturl, $mbname, $txt;
+	global $scripturl, $txt;
 
 	// Grab all the items awaiting approval and sort type then board - clear up any things that are no longer relevant.
 	$request = wesql::query('
@@ -1209,7 +1209,7 @@ function loadEssentialThemeData()
 
 function scheduled_fetchRemoteFiles()
 {
-	global $txt, $theme, $settings;
+	global $txt, $settings;
 
 	// What files do we want to get
 	$request = wesql::query('
@@ -1468,7 +1468,7 @@ FileETag none');
 // Perform the standard checks on expiring/near expiring subscriptions.
 function scheduled_paid_subscriptions()
 {
-	global $txt, $scripturl, $settings;
+	global $scripturl, $settings;
 
 	// Start off by checking for removed subscriptions.
 	$request = wesql::query('

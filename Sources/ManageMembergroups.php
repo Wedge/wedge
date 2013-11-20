@@ -1176,7 +1176,7 @@ function EditMembergroup()
 // Set general membergroup settings.
 function ModifyMembergroupSettings($return_config = false)
 {
-	global $context, $settings, $txt, $theme;
+	global $context, $txt, $theme;
 
 	// !! Show we add a hook for plugins to add to these options...?
 	$which_groups = array(

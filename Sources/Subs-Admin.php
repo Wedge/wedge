@@ -48,7 +48,7 @@ if (!defined('WEDGE'))
 
 function getServerVersions($checkFor)
 {
-	global $txt, $db_connection, $memcached_servers, $settings, $theme;
+	global $txt, $memcached_servers, $theme;
 
 	loadSource('media/Class-Media');
 	loadLanguage('Admin');

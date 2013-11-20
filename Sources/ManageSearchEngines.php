@@ -760,7 +760,7 @@ function list_getNumSpiderLogs()
 // Show the spider statistics.
 function SpiderStats()
 {
-	global $context, $txt;
+	global $txt;
 
 	loadLanguage('Search');
 	loadTemplate('ManageSearch');

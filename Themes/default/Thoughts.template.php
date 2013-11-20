@@ -73,7 +73,7 @@ function template_thoughts()
 
 function template_thoughts_thread()
 {
-	global $context, $txt, $settings;
+	global $context, $txt;
 
 	template_init_thoughts();
 
@@ -137,7 +137,7 @@ function template_sub_thoughts(&$thought)
 
 function template_thoughts_table()
 {
-	global $context, $txt, $settings;
+	global $context, $txt;
 
 	template_init_thoughts();
 

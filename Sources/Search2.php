@@ -34,8 +34,8 @@ if (!defined('WEDGE'))
 // Gather the results and show them.
 function Search2()
 {
-	global $settings, $sourcedir, $txt, $db_connection;
-	global $context, $options, $messages_request, $boards_can;
+	global $settings, $txt, $context;
+	global $messages_request, $boards_can;
 	global $excludedWords, $participants;
 
 	// Search may be disabled if they're softly banned.
@@ -1484,8 +1484,8 @@ function Search2()
 // !!! Fix this, update it, whatever... from Display.php mainly.
 function prepareSearchContext($reset = false)
 {
-	global $txt, $settings;
-	global $memberContext, $context, $theme, $options, $messages_request;
+	global $txt, $settings, $context, $theme;
+	global $memberContext, $messages_request;
 	global $boards_can, $participants;
 
 	// Remember which message this is.  (ie. reply #83)

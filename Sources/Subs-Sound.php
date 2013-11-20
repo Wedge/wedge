@@ -21,7 +21,7 @@ if (!defined('WEDGE'))
  */
 function createWaveFile($word)
 {
-	global $theme, $context;
+	global $theme;
 
 	// Allow max 2 requests per 20 seconds.
 	if (($ip = cache_get_data('wave_file/' . we::$user['ip'], 20)) > 2 || ($ip2 = cache_get_data('wave_file/' . we::$user['ip2'], 20)) > 2)

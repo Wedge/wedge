@@ -39,8 +39,7 @@ if (!defined('WEDGE'))
 
 function RepairBoards()
 {
-	global $txt, $db_connection, $context;
-	global $salvageCatID, $salvageBoardID, $errorTests;
+	global $txt, $context, $salvageBoardID;
 
 	isAllowedTo('admin_forum');
 

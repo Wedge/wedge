@@ -30,7 +30,7 @@ if (!defined('WEDGE'))
 // Completely remove an entire topic.
 function RemoveTopic2()
 {
-	global $topic, $board, $context, $settings;
+	global $topic, $board, $settings;
 
 	// Make sure they aren't being lead around by someone. (:@)
 	checkSession('get');
@@ -567,7 +567,7 @@ function removeTopics($topics, $decreasePostCount = true, $ignoreRecycling = fal
 // Remove a specific message, including permission checks.
 function removeMessage($message, $decreasePostCount = true)
 {
-	global $board, $settings, $context;
+	global $board, $settings;
 
 	if (empty($message) || !is_numeric($message))
 		return false;
@@ -993,7 +993,7 @@ function removeMessage($message, $decreasePostCount = true)
 
 function RestoreTopic()
 {
-	global $context, $settings;
+	global $settings;
 
 	// Check session.
 	checkSession('get');
@@ -1223,7 +1223,7 @@ function RestoreTopic()
 // Take a load of messages from one place and stick them in a topic.
 function mergePosts($msgs, $from_topic, $target_topic)
 {
-	global $context, $settings;
+	global $settings;
 
 	// !! This really needs to be rewritten to take a load of messages from ANY topic, it's also inefficient.
 

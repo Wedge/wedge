@@ -1147,7 +1147,7 @@ function parsesmileys(&$message)
 	// If the smiley array hasn't been set, do it now.
 	if (empty($smileyPregSearch))
 	{
-		global $settings, $txt, $context, $cssdir;
+		global $settings, $context, $cssdir;
 
 		// Use the default smileys if custom smileys are disabled. (Better for "portability".)
 		if (empty($settings['smiley_enable']))
@@ -1242,7 +1242,7 @@ function replace_smileys($match)
 	{
 		if (empty($smiley_css_done))
 		{
-			global $boardurl, $settings, $context;
+			global $boardurl, $context;
 
 			$smiley_css_done = true;
 			$context['header'] .= '
@@ -1279,8 +1279,6 @@ function parse_footnotes($match)
  */
 function highlight_php_code($code)
 {
-	global $context;
-
 	// Remove special characters.
 	$code = un_htmlspecialchars(strtr($code, array('<br>' => "\n", "\t" => 'WEDGE_TAB();', '&#91;' => '[')));
 

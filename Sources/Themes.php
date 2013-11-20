@@ -403,12 +403,13 @@ function SetThemeSettings()
 			}
 		}
 
-		// Set up the sql query.
+		// Set up the SQL query.
 		$inserts = array();
 		foreach ($_POST['options'] as $opt => $val)
 			$inserts[] = array(0, $_GET['th'], $opt, is_array($val) ? implode(',', $val) : $val);
 		foreach ($_POST['default_options'] as $opt => $val)
 			$inserts[] = array(0, 1, $opt, is_array($val) ? implode(',', $val) : $val);
+
 		// If we're actually inserting something..
 		if (!empty($inserts))
 		{
@@ -969,7 +970,7 @@ function ThemeInstall()
 
 function EditTheme()
 {
-	global $context, $theme, $boarddir;
+	global $context, $boarddir;
 
 	// !!! Should this be removed?
 	if (isset($_REQUEST['preview']))
@@ -1410,8 +1411,6 @@ function CopyTemplate()
  */
 function wedge_get_skin_list($dir, $files = array(), &$root = array())
 {
-	global $theme;
-
 	$skins = array();
 	$is_root = empty($root);
 	if ($is_root)

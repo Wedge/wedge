@@ -96,7 +96,7 @@ function getBaseRuleVars($admin = false)
 
 function checkPostModeration($subject, $body)
 {
-	global $settings, $topic, $context;
+	global $settings, $topic;
 
 	$returnActions = array();
 

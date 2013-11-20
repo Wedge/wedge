@@ -429,7 +429,7 @@ function ModifyDraftSettings($return_config = false)
 
 function ModifyMergeSettings($return_config = false)
 {
-	global $txt, $context, $theme;
+	global $txt, $context;
 
 	$context['page_title'] = $context['settings_title'] = $txt['merge_post_header'];
 

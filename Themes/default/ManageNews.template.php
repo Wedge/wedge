@@ -115,7 +115,7 @@ function template_edit_news_item()
 
 function template_email_members()
 {
-	global $context, $theme, $txt;
+	global $context, $txt;
 
 	// This is some javascript for the simple/advanced toggling stuff.
 	add_js('

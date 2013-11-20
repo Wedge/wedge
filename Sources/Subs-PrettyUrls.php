@@ -14,16 +14,6 @@ if (!defined('WEDGE'))
 // Generate a pretty URL from a given text
 function pretty_generate_url($text, $is_board = false, $slash = false)
 {
-	global $txt;
-
-	if (strpos(strtolower($text), '[en]') !== false)
-	{
-		$lang = we::$user['language'];
-		we::$user['language'] = 'english';
-		parse_lang($text);
-		we::$user['language'] = $lang;
-	}
-
 	// Do you know your ABCs?
 	$characterHash = array(
 		'-' =>	array('`', '«', '»', '"', ';-)', ';)', ';o)', ':-)', ':)', ':o)', '^^', '^_^', ';-p',

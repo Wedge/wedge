@@ -589,7 +589,7 @@ function template_not_done()
 // Template for showing settings (of any kind, really!)
 function template_show_settings()
 {
-	global $context, $txt, $theme;
+	global $context, $txt;
 
 	if ($context['was_saved'])
 		echo '

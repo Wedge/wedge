@@ -379,7 +379,7 @@ function AddMailQueue($flush = false, $to_array = array(), $subject = '', $messa
 // Send off a personal message.
 function sendpm($recipients, $subject, $message, $store_outbox = true, $from = null, $pm_head = 0)
 {
-	global $context, $scripturl, $txt, $settings;
+	global $scripturl, $txt, $settings;
 
 	// Make sure the PM language file is loaded, we might need something out of it.
 	loadLanguage('PersonalMessage');
@@ -706,8 +706,6 @@ function sendpm($recipients, $subject, $message, $store_outbox = true, $from = n
 // Prepare text strings for sending as email body or header.
 function mimespecialchars($string, $with_charset = true, $hotmail_fix = false, $br = "\r\n")
 {
-	global $context;
-
 	// This is the fun part....
 	if (preg_match('~&#\d{3,8};~', $string) && !$hotmail_fix)
 		$string = westr::entity_to_utf8($string);
@@ -888,7 +886,7 @@ function server_parse($message, $socket, $response)
 // Notify members that something has happened to a topic they marked!
 function sendNotifications($topics, $type, $exclude = array(), $members_only = array())
 {
-	global $txt, $scripturl, $settings, $context;
+	global $scripturl, $settings;
 
 	// Can't do it if there's no topics.
 	if (empty($topics))
@@ -1081,7 +1079,7 @@ function sendNotifications($topics, $type, $exclude = array(), $members_only = a
 // - Mandatory parameters are set.
 function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 {
-	global $txt, $settings, $context;
+	global $txt, $settings;
 
 	// Set optional parameters to the default value.
 	$msgOptions['icon'] = empty($msgOptions['icon']) ? 'xx' : $msgOptions['icon'];
@@ -1418,7 +1416,7 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 // !!! @todo: replace with Media Gallery
 function createAttachment(&$attachmentOptions)
 {
-	global $settings, $context;
+	global $settings;
 
 	loadSource('Subs-Graphics');
 
@@ -1740,7 +1738,7 @@ function createAttachment(&$attachmentOptions)
 // !!!
 function modifyPost(&$msgOptions, &$topicOptions, &$posterOptions)
 {
-	global $settings, $context;
+	global $settings;
 
 	$topicOptions['poll'] = isset($topicOptions['poll']) ? (int) $topicOptions['poll'] : null;
 	$topicOptions['lock_mode'] = isset($topicOptions['lock_mode']) ? $topicOptions['lock_mode'] : null;
@@ -2174,7 +2172,7 @@ function approveTopics($topics, $approve = true)
 // A special function for handling the hell which is sending approval notifications.
 function sendApprovalNotifications(&$topicData)
 {
-	global $txt, $scripturl, $settings, $context;
+	global $scripturl, $settings;
 
 	// Clean up the data...
 	if (!is_array($topicData) || empty($topicData))
@@ -2428,7 +2426,7 @@ function updateLastMessages($setboards, $id_msg = 0)
 // This simple function gets a list of all administrators and sends them an email to let them know a new member has joined.
 function adminNotify($type, $memberID, $member_name = null)
 {
-	global $txt, $settings, $scripturl, $context;
+	global $settings, $scripturl;
 
 	// If the setting isn't enabled then just exit.
 	$notify_list = !empty($settings['notify_new_registration']) ? unserialize($settings['notify_new_registration']) : array();
@@ -2576,7 +2574,7 @@ function user_info_callback($matches)
  */
 function saveDraft($is_pm, $id_context = 0)
 {
-	global $context, $txt, $board, $settings;
+	global $txt, $board, $settings;
 
 	// Do the basics first.
 	if (we::$is_guest || !empty($_REQUEST['msg']))

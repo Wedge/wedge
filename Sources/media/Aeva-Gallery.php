@@ -569,7 +569,7 @@ function aeva_home()
 
 function aeva_sortBox($current_album, $count_items, $start, $per_page, $persort = 'm.id_media DESC')
 {
-	global $amSettings, $context, $galurl;
+	global $context, $galurl;
 
 	$urlmore = $current_album ? ($current_album['view'] == $current_album['options']['view'] ? '' : ($current_album['view'] == 'normal' ? ';nw' : ';fw')) : (isset($_REQUEST['fw']) ? ';fw' : '');
 	$urlmore .= ';sort=' . (isset($_REQUEST['sort']) ? (int) $_REQUEST['sort'] : 0) . (isset($_REQUEST['asc']) ? ';asc' : '') . (isset($_REQUEST['desc']) ? ';desc' : '');
@@ -730,7 +730,7 @@ function aeva_prevNextThumb($myurl, &$prev)
 function aeva_viewItem()
 {
 	// Comes into play when you're viewing a single item
-	global $galurl, $txt, $amSettings, $context, $memberContext, $theme, $boarddir;
+	global $galurl, $txt, $amSettings, $context, $memberContext, $boarddir;
 
 	// Set the item ID
 	$item = isset($_REQUEST['in']) ? (int) $_REQUEST['in'] : 0;
@@ -2194,7 +2194,7 @@ function aeva_mgEditCom()
 // A common function to delete comments and items
 function aeva_delete()
 {
-	global $galurl, $amSettings, $txt;
+	global $galurl, $amSettings;
 
 	if (empty($_GET['type']))
 	{
@@ -2245,7 +2245,7 @@ function aeva_delete()
 // Quick moderation inside album pages...
 function aeva_quickmodAlbum()
 {
-	global $galurl, $amSettings, $txt;
+	global $galurl, $amSettings;
 
 	checkSession('post');
 
@@ -2307,7 +2307,7 @@ function aeva_quickmodAlbum()
 // A common function to approve/unapprove items
 function aeva_mgApprove()
 {
-	global $galurl, $amSettings, $txt;
+	global $galurl, $amSettings;
 
 	$approval = isset($_GET['sa']) && $_GET['sa'] == 'approve' ? 1 : 0;
 	if (empty($_GET['type']))

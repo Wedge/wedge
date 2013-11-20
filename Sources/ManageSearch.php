@@ -100,7 +100,7 @@ function ManageSearch()
 
 function EditSearchSettings($return_config = false)
 {
-	global $txt, $context, $sourcedir, $settings;
+	global $txt, $context, $settings;
 
 	loadLanguage('ManageSettings');
 
@@ -528,7 +528,7 @@ function CreateMessageIndex()
 // Get the installed APIs.
 function loadAllSearchAPIs()
 {
-	global $sourcedir, $txt;
+	global $sourcedir;
 
 	$apis = array();
 	if ($dh = scandir($sourcedir))

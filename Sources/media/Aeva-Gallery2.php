@@ -645,7 +645,7 @@ function aeva_mgSearch()
 function aeva_listAlbums()
 {
 	// Handles viewing of all the albums out there
-	global $txt, $amSettings, $galurl, $context;
+	global $txt, $galurl, $context;
 
 	// Just load it!
 	$start = isset($_REQUEST['start']) ? (int) $_REQUEST['start'] : 0;
@@ -869,7 +869,7 @@ function aeva_editAlbum()
 
 function aeva_addAlbum($is_admin = false, $is_add = true)
 {
-	global $context, $galurl, $amSettings, $txt, $theme;
+	global $context, $galurl, $amSettings, $txt;
 
 	$is_edit = !$is_add;
 
@@ -1824,7 +1824,7 @@ function aeva_moveAlbum()
 // Deletes an album and the items/comments in it
 function aeva_deleteAlbum($id = 0, $from_approval = false)
 {
-	global $context, $amSettings;
+	global $amSettings;
 
 	$id = empty($id) ? (int) $_GET['in'] : $id;
 
@@ -1980,7 +1980,7 @@ function aeva_deleteAlbum($id = 0, $from_approval = false)
 // Handles the Mass Upload page
 function aeva_massUpload()
 {
-	global $amSettings, $txt, $context, $theme, $galurl, $cookiename;
+	global $amSettings, $txt, $context, $galurl, $cookiename;
 
 	// Modifying item's title?
 	if (isset($_POST['submit_title_update']))
@@ -2188,7 +2188,7 @@ function aeva_massUpload()
 // Modifying item's title?
 function aeva_massUploadFinish()
 {
-	global $context, $amSettings, $galurl, $sourcedir;
+	global $galurl, $sourcedir;
 
 	// Unset it
 	unset($_POST['submit_title_update']);
@@ -2265,7 +2265,7 @@ function aeva_massUploadFinish()
 // Profile area for our gallery
 function aeva_profileSummary($memID)
 {
-	global $amSettings, $context, $txt, $theme;
+	global $amSettings, $context, $txt;
 
 	loadSource('media/Subs-Media');
 
@@ -2338,7 +2338,7 @@ function aeva_profileSummary($memID)
 // Viewing all items
 function aeva_profileItems($memID)
 {
-	global $amSettings, $context, $txt, $theme;
+	global $context, $txt;
 
 	loadSource('media/Subs-Media');
 
@@ -2362,7 +2362,7 @@ function aeva_profileItems($memID)
 // Viewing all comments
 function aeva_profileComments($memID)
 {
-	global $amSettings, $context, $txt, $theme;
+	global $context, $txt;
 
 	loadSource('media/Subs-Media');
 
@@ -2385,7 +2385,7 @@ function aeva_profileComments($memID)
 // Viewing all comments
 function aeva_profileVotes($memID)
 {
-	global $amSettings, $context, $txt, $theme;
+	global $context, $txt;
 
 	loadSource('media/Subs-Media');
 
@@ -2703,7 +2703,7 @@ function aeva_massDownloadCreate()
 // Downloading the archive...
 function aeva_massDownloadSend()
 {
-	global $context, $amSettings;
+	global $amSettings;
 
 	if (!file_exists($amSettings['data_dir_path'] . '/tmp/' . we::$id . '_' . $_SESSION['aeva_mdl']['album'] . '_data'))
 		die('Hacking attempt...');

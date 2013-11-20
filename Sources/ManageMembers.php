@@ -1037,7 +1037,7 @@ function MembersAwaitingActivation()
 // Do the approve/activate/delete stuff
 function AdminApprove()
 {
-	global $txt, $context, $scripturl, $settings;
+	global $scripturl, $settings;
 
 	// First, check our session.
 	checkSession();

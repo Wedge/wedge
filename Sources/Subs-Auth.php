@@ -410,7 +410,7 @@ function findMembers($names, $use_wildcards = false, $buddies_only = false, $max
 // This function generates a random password for a user and emails it to them.
 function resetPassword($memID, $username = null)
 {
-	global $context, $txt, $settings;
+	global $settings;
 
 	// Language... and a required file.
 	loadLanguage('Login');

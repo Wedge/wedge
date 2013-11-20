@@ -1288,7 +1288,7 @@ function RemovePlugin()
 // This ugly function deals with actually removing a plugin.
 function commitRemovePlugin($fullclean, &$manifest, &$remote_class)
 {
-	global $txt, $context, $pluginsdir;
+	global $pluginsdir;
 
 	// So, as far as we know, it's valid to remove, because RemovePlugin() should have checked all this for us, even writability.
 

@@ -318,7 +318,7 @@ function ModifyFilterRule()
 
 function SaveFilterRule()
 {
-	global $context, $txt, $settings;
+	global $context, $settings;
 
 	checkSession();
 
@@ -549,7 +549,8 @@ function displayRow_body($rule)
 
 function simpleRegex_displayRow($rule, $type)
 {
-	global $context, $txt;
+	global $txt;
+
 	$apply = !empty($rule['apply']) && in_array((string) $rule['apply'], array('begins', 'ends', 'contains', 'matches')) ? (string) $rule['apply'] : 'regex';
 	$case_ins = !empty($rule['case-ins']) && (string) $rule['case-ins'] == 'yes';
 	$content = htmlspecialchars((string) $rule);
@@ -579,7 +580,8 @@ function displayRow_links($rule)
 
 function simpleRange_displayRow($rule, $type)
 {
-	global $context, $txt;
+	global $txt;
+
 	$array = array(
 		'rule' => $txt['modfilter_cond_' . $type],
 	);

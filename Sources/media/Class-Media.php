@@ -384,8 +384,6 @@ class media_handler
 	// Currently only supports FFMpeg
 	function createVideoThumb($dest, $width, $height)
 	{
-		global $amSettings;
-
 		// FFMPEG handler not there?
 		if ($this->video_handler != 1)
 			return false;

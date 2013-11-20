@@ -24,7 +24,7 @@ if (!defined('WEDGE'))
 // Begin the registration process.
 function Register($reg_errors = array())
 {
-	global $txt, $boarddir, $context, $theme, $settings, $cur_profile;
+	global $txt, $context, $settings, $cur_profile;
 
 	if (isset($_GET['reagree']) && we::$user['activated'] == 6)
 	{
@@ -190,8 +190,6 @@ function Register($reg_errors = array())
 function Register2()
 {
 	global $txt, $settings, $context;
-	global $options, $theme;
-
 	// Start collecting together any errors.
 	$reg_errors = array();
 
@@ -486,7 +484,7 @@ function Register2()
 // See if a username already exists.
 function RegisterCheckUsername()
 {
-	global $context, $txt;
+	global $txt;
 
 	$checked_username = isset($_GET['username']) ? $_GET['username'] : '';
 	$valid_username = true;

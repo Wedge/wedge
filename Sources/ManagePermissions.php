@@ -130,7 +130,7 @@ function ModifyPermissions()
 
 function PermissionIndex()
 {
-	global $txt, $context, $theme, $settings;
+	global $txt, $context, $settings;
 
 	$context['page_title'] = $txt['permissions_title'];
 

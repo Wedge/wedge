@@ -14,7 +14,7 @@ if (!defined('WEDGE'))
 // Entry point for the moderation center.
 function ModerationCenter($dont_call = false)
 {
-	global $txt, $context, $settings, $theme, $options;
+	global $txt, $context, $settings;
 
 	// Don't run this twice... and don't conflict with the admin bar.
 	if (isset($context['admin_area']))
@@ -151,7 +151,7 @@ function ModerationCenter($dont_call = false)
 // This function basically is the home page of the moderation center.
 function ModerationHome()
 {
-	global $txt, $context, $user_settings;
+	global $txt, $context;
 
 	loadTemplate('ModerationCenter');
 
@@ -622,7 +622,7 @@ function ReportedPosts()
 //!!! As for most things in this file, this needs to be moved somewhere appropriate.
 function ModerateGroups()
 {
-	global $txt, $context;
+	global $context;
 
 	// You need to be allowed to moderate groups...
 	if (we::$user['mod_cache']['gq'] == '0=1')
@@ -1167,7 +1167,7 @@ function list_getWatchedUserCount($approve_query)
 
 function list_getWatchedUsers($start, $items_per_page, $sort, $approve_query, $dummy)
 {
-	global $txt, $settings, $context;
+	global $txt, $settings;
 
 	$request = wesql::query('
 		SELECT id_member, real_name, last_login, posts, warning
@@ -1277,8 +1277,6 @@ function list_getWatchedUserPostsCount($approve_query)
 
 function list_getWatchedUserPosts($start, $items_per_page, $sort, $approve_query, $delete_boards)
 {
-	global $txt;
-
 	$request = wesql::query('
 		SELECT m.id_msg, m.id_topic, m.id_board, m.id_member, m.subject, m.body, m.poster_time,
 			m.approved, mem.real_name, m.smileys_enabled
@@ -1506,7 +1504,7 @@ function list_getInfractionLogCount()
 
 function ModBlockPrefs()
 {
-	global $context, $txt, $user_settings;
+	global $context, $user_settings;
 
 	// Does the user have any settings yet?
 	if (empty($user_settings['mod_prefs']))

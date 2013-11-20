@@ -672,8 +672,6 @@ function cache_getMembergroupList()
 
 function list_getMembergroups($start, $items_per_page, $sort, $membergroup_type)
 {
-	global $txt, $context, $theme;
-
 	$groups = array();
 
 	// Get the basic group data.

@@ -278,7 +278,7 @@ function ModifyGeneralSettings($return_config = false)
 // Basic database and paths settings - database name, host, etc.
 function ModifyDatabaseSettings($return_config = false)
 {
-	global $context, $theme, $txt, $boarddir;
+	global $context, $txt;
 
 	/* If you're writing a mod, it's a bad idea to add things here....
 	For each option:
@@ -383,7 +383,7 @@ function ModifyCookieSettings($return_config = false)
 // Simply modifying cache functions
 function ModifyCacheSettings($return_config = false)
 {
-	global $context, $txt, $helptxt, $settings, $memcached_servers;
+	global $context, $txt, $settings, $memcached_servers;
 
 	// Define the variable(s) we want to edit. By default, just the one.
 	$config_vars = array(
@@ -444,7 +444,7 @@ function ModifyCacheSettings($return_config = false)
 
 function ModifyLoadBalancingSettings($return_config = false)
 {
-	global $txt, $context, $theme, $settings;
+	global $txt, $context, $settings;
 
 	// Setup a warning message, but disabled by default.
 	$disabled = true;
@@ -518,7 +518,7 @@ function ModifyLoadBalancingSettings($return_config = false)
 
 function ModifyProxySettings($return_config = false)
 {
-	global $context, $txt, $helptxt, $settings;
+	global $context, $txt, $settings;
 
 	// Define the variables we want to edit.
 	$config_vars = array(
@@ -558,7 +558,7 @@ function ModifyProxySettings($return_config = false)
 
 function ModifyDebugSettings($return_config = false)
 {
-	global $context, $txt, $cachedir;
+	global $context, $txt;
 
 	add_js('
 	function update_show_debug()
@@ -900,7 +900,7 @@ function prepareDBSettingContext(&$config_vars)
 // Helper function. Goes through settings and determines whether to save them in Settings.php or in the settings table.
 function saveSettings(&$config_vars)
 {
-	global $boarddir, $cookiename, $context, $cachedir;
+	global $context;
 
 	// Fix the darn stupid cookiename! (more may not be allowed, but these for sure!)
 	if (isset($_POST['cookiename']))

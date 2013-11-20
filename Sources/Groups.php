@@ -44,7 +44,7 @@ if (!defined('WEDGE'))
 // Entry point, permission checks, admin bars, etc.
 function Groups()
 {
-	global $context, $txt;
+	global $txt;
 
 	// The sub-actions that we can do. Format "Function Name, Mod Bar Index if appropriate".
 	$subActions = array(
@@ -83,7 +83,7 @@ function Groups()
 // This very simply lists the groups, nothing snazy.
 function GroupList()
 {
-	global $txt, $user_profile, $context, $theme;
+	global $txt, $context, $theme;
 
 	// Yep, find the groups...
 	$request = wesql::query('
@@ -238,7 +238,7 @@ function GroupList()
 // Get the group information for the list.
 function list_getGroups($start, $items_per_page, $sort)
 {
-	global $txt, $theme;
+	global $theme;
 
 	// Yep, find the groups...
 	$request = wesql::query('
@@ -917,8 +917,6 @@ function list_getGroupRequestCount($where, $where_parameters)
 
 function list_getGroupRequests($start, $items_per_page, $sort, $where, $where_parameters)
 {
-	global $txt;
-
 	$request = wesql::query('
 		SELECT lgr.id_request, lgr.id_member, lgr.id_group, lgr.time_applied, lgr.reason,
 			mem.member_name, mg.group_name, mg.online_color, mem.real_name

@@ -161,7 +161,7 @@ function template_custom_email()
 
 function template_report()
 {
-	global $context, $theme, $txt;
+	global $context, $txt;
 
 	echo '
 		<form action="<URL>?action=report;topic=', $context['current_topic'], '.0" method="post" accept-charset="UTF-8">

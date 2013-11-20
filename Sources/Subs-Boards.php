@@ -454,7 +454,7 @@ function getMsgMemberID($messageID)
 // Modify the settings and position of a board.
 function modifyBoard($board_id, &$boardOptions)
 {
-	global $cat_tree, $boards, $boardList, $context;
+	global $cat_tree, $boards, $context;
 
 	// Get some basic information about all boards and categories.
 	getBoardTree();
@@ -1101,7 +1101,7 @@ function fixChildren($parent, $newLevel, $newParent)
 // Restrict to their own boards anyone who's not an admin
 function getBoardTree($restrict = false)
 {
-	global $cat_tree, $boards, $boardList, $txt;
+	global $cat_tree, $boards, $boardList;
 
 	$restriction = we::$is_admin || !$restrict ? '' : '
 				AND b.id_owner = ' . (int) we::$id;

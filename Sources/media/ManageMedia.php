@@ -80,7 +80,7 @@ if (!defined('WEDGE'))
 // Gallery admin initializer
 function aeva_admin_init()
 {
-	global $context, $txt, $theme, $amSettings;
+	global $context, $txt, $amSettings;
 
 	// Let's call our friends
 	// Admin2 = maintenance & ban, Admin3 = embedder
@@ -144,7 +144,7 @@ function aeva_admin_settings()
 
 	$context['current_area'] = isset($_REQUEST['sa']) && in_array($_REQUEST['sa'], array('meta', 'layout')) ? $_REQUEST['sa'] : 'config';
 
-	$theme = array(
+	$th = array(
 		'media_enabled' => array('yesno', 'config'),
 
 		'title_main' => array('title', 'config'),
@@ -217,41 +217,41 @@ function aeva_admin_settings()
 	}
 
 	$info = array('datetime', 'copyright', 'xposuretime', 'flash', 'duration', 'make', 'model', 'xres', 'yres', 'resunit', 'focal_length', 'orientation', 'iso', 'meteringMode', 'digitalZoom', 'exifVersion', 'contrast', 'sharpness', 'focusType', 'fnumber','frame_count', 'bit_rate', 'audio_codec', 'video_codec');
-	$theme['show_info'] = array('checkbox', 'meta', array());
+	$th['show_info'] = array('checkbox', 'meta', array());
 	foreach ($info as $in)
-		$theme['show_info'][2]['show_info_'.$in] = array($txt['media_meta_'.$in], !empty($amSettings['show_info_'.$in]), 'force_name' => 'show_info_'.$in);
+		$th['show_info'][2]['show_info_'.$in] = array($txt['media_meta_'.$in], !empty($amSettings['show_info_'.$in]), 'force_name' => 'show_info_'.$in);
 
 	$sho = isset($_POST['prev_next']) ? $_POST['prev_next'] : (empty($amSettings['prev_next']) ? 0 : $amSettings['prev_next']);
-	$theme['prev_next'][2][0] = array($txt['media_prevnext_small'], $sho == 0);
-	$theme['prev_next'][2][1] = array($txt['media_prevnext_big'], $sho == 1);
-	$theme['prev_next'][2][2] = array($txt['media_prevnext_text'], $sho == 2);
-	$theme['prev_next'][2][3] = array($txt['media_prevnext_none'], $sho == 3);
+	$th['prev_next'][2][0] = array($txt['media_prevnext_small'], $sho == 0);
+	$th['prev_next'][2][1] = array($txt['media_prevnext_big'], $sho == 1);
+	$th['prev_next'][2][2] = array($txt['media_prevnext_text'], $sho == 2);
+	$th['prev_next'][2][3] = array($txt['media_prevnext_none'], $sho == 3);
 
 	$sho = isset($_POST['default_tag_type']) ? $_POST['default_tag_type'] : (empty($amSettings['default_tag_type']) ? 'normal' : $amSettings['default_tag_type']);
-	$theme['default_tag_type'][2]['normal'] = array($txt['media_default_tag_normal'], $sho == 'normal');
-	$theme['default_tag_type'][2]['preview'] = array($txt['media_default_tag_preview'], $sho == 'preview');
-	$theme['default_tag_type'][2]['full'] = array($txt['media_default_tag_full'], $sho == 'full');
+	$th['default_tag_type'][2]['normal'] = array($txt['media_default_tag_normal'], $sho == 'normal');
+	$th['default_tag_type'][2]['preview'] = array($txt['media_default_tag_preview'], $sho == 'preview');
+	$th['default_tag_type'][2]['full'] = array($txt['media_default_tag_full'], $sho == 'full');
 
 	if (!ini_get('safe_mode'))
-		unset($theme['ftp_file']);
+		unset($th['ftp_file']);
 	elseif (empty($amSettings['ftp_file']))
 		$amSettings['ftp_file'] = dirname(dirname(__FILE__)) . '/MGallerySafeMode.php';
 
 	$test = new media_handler;
 	if ($test->testGD2() === true)
-		$theme['image_handler'][2][1] = $txt['media_gd2'];
+		$th['image_handler'][2][1] = $txt['media_gd2'];
 	if ($test->testIMagick() === true)
-		$theme['image_handler'][2][2] = $txt['media_imagick'];
+		$th['image_handler'][2][2] = $txt['media_imagick'];
 	if ($test->testMW() === true)
-		$theme['image_handler'][2][3] = $txt['media_MW'];
+		$th['image_handler'][2][3] = $txt['media_MW'];
 	if ($test->testImageMagick() !== false)
-		$theme['image_handler'][2][4] = $txt['media_imagemagick'];
+		$th['image_handler'][2][4] = $txt['media_imagemagick'];
 	if ($test->testFFmpeg() === true)
 		$context['aeva_extra_data'] = '<div style="padding: 8px 8px 0 8px">' . $txt['media_admin_settings_ffmpeg_installed'] . '</div>';
 	unset($test);
 
-	if (count($theme['image_handler'][2]) < 2)
-		unset($theme['image_handler']);
+	if (count($th['image_handler'][2]) < 2)
+		unset($th['image_handler']);
 
 	// Doc types...
 	$default_docs = 'txt,rtf,pdf,xls,doc,ppt,docx,xlsx,pptx,xml,html,htm,php,css,js,zip,rar,ace,arj,7z,gz,tar,tgz,bz,bzip2,sit';
@@ -269,7 +269,7 @@ function aeva_admin_settings()
 	// because this would need to be set at the admin menu level, which was earlier. We can all live with that.
 
 	if ($context['current_area'] === 'config' && empty($_POST['media_enabled']) && (isset($_POST['submit_aeva']) || empty($settings['media_enabled'])))
-		$theme = array('media_enabled' => array('yesno', 'config'));
+		$th = array('media_enabled' => array('yesno', 'config'));
 
 	// Submitting?
 	if (isset($_POST['submit_aeva']))
@@ -287,7 +287,7 @@ function aeva_admin_settings()
 			$_POST['my_docs'] = trim(implode(', ', $new_docs), ', ');
 		}
 
-		foreach ($theme as $setting => $options)
+		foreach ($th as $setting => $options)
 		{
 			if ($options[1] !== $context['current_area'])
 				continue;
@@ -307,7 +307,7 @@ function aeva_admin_settings()
 				{
 					aeva_updateSettings($sub_setting, isset($_POST[$sub_setting]) ? 1 : 0, true);
 					if ($setting === 'show_info')
-						$theme['show_info'][2][$sub_setting][1] = !empty($amSettings[$sub_setting]);
+						$th['show_info'][2][$sub_setting][1] = !empty($amSettings[$sub_setting]);
 				}
 			}
 			else
@@ -328,7 +328,7 @@ function aeva_admin_settings()
 	// Render the form
 	$context['aeva_form_url'] = '<URL>?action=admin;area=aeva_settings;sa=' . $context['current_area'] . ';' . $context['session_query'];
 
-	foreach ($theme as $setting => $options)
+	foreach ($th as $setting => $options)
 	{
 		if ($options[1] != $context['current_area'])
 			continue;
@@ -410,7 +410,7 @@ function aeva_admin_albums_delete()
 // Handles the FTP import area
 function aeva_admin_FTPImport()
 {
-	global $amSettings, $context, $txt, $scripturl, $time_start;
+	global $amSettings, $context, $scripturl, $time_start;
 
 	// Load the map
 	list ($context['ftp_map'], $context['ftp_folder_list']) = aeva_get_dir_map($amSettings['data_dir_path'] . '/ftp');
@@ -822,7 +822,7 @@ function aeva_admin_perms_quick()
 // A not so hefty function to add permission profiles
 function aeva_admin_perms_add()
 {
-	global $context, $txt;
+	global $context;
 
 	if (empty($_POST['name']) || empty($_POST['submit_aeva']))
 		fatal_lang_error('media_name_empty');
@@ -1033,7 +1033,7 @@ function aeva_admin_perms_edit()
 
 function aeva_admin_perms_albums()
 {
-	global $context, $txt, $settings, $galurl;
+	global $txt, $galurl;
 
 	// Ensure we can access this profile...
 	if ($_POST['prof'] != 1)
@@ -1194,7 +1194,7 @@ function aeva_admin_quotas()
 // Adding a profile?
 function aeva_admin_quotas_add()
 {
-	global $context, $txt;
+	global $context;
 
 	// Name not being submitted?
 	if (empty($_POST['name']))
@@ -1392,7 +1392,7 @@ function aeva_admin_quotas_edit()
 
 function aeva_admin_quotas_albums()
 {
-	global $context, $txt, $galurl;
+	global $txt, $galurl;
 
 	// Ensure we can access this profile...
 	if ($_POST['prof'] != 1)
@@ -1440,7 +1440,7 @@ function aeva_admin_quotas_albums()
 // Custom fields main area
 function aeva_admin_fields()
 {
-	global $context, $txt;
+	global $context;
 
 	$sa = array(
 		'edit' => 'aeva_admin_fields_edit',

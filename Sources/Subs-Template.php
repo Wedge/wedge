@@ -33,7 +33,7 @@ if (!defined('WEDGE'))
  */
 function obExit($start = null, $do_finish = null, $from_index = false, $from_fatal_error = false)
 {
-	global $context, $theme, $settings, $txt;
+	global $context, $theme, $settings;
 	static $start_done = false, $level = 0, $has_fatal_error = false;
 
 	// Attempt to prevent a recursive loop.
@@ -138,7 +138,7 @@ function obExit($start = null, $do_finish = null, $from_index = false, $from_fat
 function ob_sessrewrite($buffer)
 {
 	global $scripturl, $settings, $context, $db_prefix, $session_var, $board_info;
-	global $txt, $time_start, $db_count, $db_show_debug, $cached_urls, $use_cache, $members_groups;
+	global $txt, $time_start, $db_count, $cached_urls, $use_cache, $members_groups;
 
 	// Just quit if $scripturl is set to nothing, or the SID is not defined. (SSI?)
 	if ($scripturl == '' || !defined('SID'))
@@ -1089,7 +1089,7 @@ function db_debug_junk()
  */
 function template_include($filename, $once = false)
 {
-	global $context, $theme, $txt, $helptxt, $settings, $scripturl;
+	global $context, $theme, $txt, $settings, $scripturl;
 	global $boardurl, $boarddir, $maintenance, $mtitle, $mmessage;
 	static $templates = array();
 
@@ -1347,7 +1347,7 @@ function loadTemplate($template_name, $fatal = true)
  */
 function execBlock($block_name, $fatal = false)
 {
-	global $context, $theme, $txt, $db_show_debug;
+	global $context, $txt, $db_show_debug;
 
 	if (empty($block_name))
 		return;

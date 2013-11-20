@@ -65,7 +65,7 @@ if (!defined('WEDGE'))
 // The controller; doesn't do anything, just delegates.
 function ManageBoards()
 {
-	global $context, $txt, $boards;
+	global $context, $txt;
 
 	// Everything's gonna need this.
 	loadLanguage('ManageBoards');
@@ -773,7 +773,7 @@ function EditBoard()
 // Make changes to/delete a board.
 function EditBoard2()
 {
-	global $txt, $settings, $context;
+	global $settings, $context;
 
 	checkSession();
 

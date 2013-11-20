@@ -1176,7 +1176,7 @@ function aeva_admin_maintenance_checkorphans()
 // Handles the ban homepage
 function aeva_admin_bans()
 {
-	global $context, $txt, $galurl;
+	global $context, $txt;
 
 	// Sub-actions
 	$sa = array(
@@ -1242,7 +1242,7 @@ function aeva_admin_bans()
 // Adds a ban
 function aeva_admin_bans_add()
 {
-	global $context, $txt, $theme;
+	global $context, $txt;
 
 	// Any "u"s we are getting?
 	$context['aeva_curr_members'] = array();
@@ -1435,7 +1435,7 @@ function aeva_admin_bans_delete()
 // Edits a ban entry
 function aeva_admin_bans_edit()
 {
-	global $context, $txt, $theme;
+	global $context, $txt;
 
 	// Get this item's data
 	$request = wesql::query('

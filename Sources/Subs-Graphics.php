@@ -311,8 +311,6 @@ function resizeImageFile($source, $destination, $max_width, $max_height, $prefer
 
 function resizeImage($src_img, $destName, $src_width, $src_height, $max_width, $max_height, $force_resize = false, $preferred_format = 0)
 {
-	global $settings;
-
 	$success = false;
 
 	// Determine whether to resize to max width or to max height (depending on the limits.)

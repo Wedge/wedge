@@ -22,7 +22,7 @@ if (!defined('WEDGE'))
 
 function getBoardIndex($boardIndexOptions)
 {
-	global $settings, $txt, $theme, $context;
+	global $settings, $txt, $context;
 
 	// We'll need this.
 	loadLanguage('Boards');

@@ -454,7 +454,7 @@ function aeva_generate_sites(&$array)
 // Fills the admin settings for each type of site
 function aeva_settings(&$dest, &$array, $type, $checkall)
 {
-	global $txt, $settings, $theme;
+	global $txt, $settings;
 
 	$dest['embed_' . $type] = array('title', 'sites', null, null, null, 'force_title' => $txt['embed_' . $type . '_sites'] . ' (' . count($array) . ') - <label><input type="checkbox" id="checkall_' . $type . '" onclick="invertAll(this, this.form, \'embed_' . $type . '\');" ' . (!empty($checkall[$type]) ? ' checked' : '') . '>&nbsp; <em>' . $txt['media_select'] . '</em></label>');
 	$dest['embed_' . $type . '_items'] = array('checkbox_line', 'sites', array(), true, null, 'skip_left' => true);

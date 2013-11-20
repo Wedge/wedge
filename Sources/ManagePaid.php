@@ -672,7 +672,7 @@ function ModifySubscription()
 // View all the users subscribed to a particular subscription!
 function ViewSubscribedUsers()
 {
-	global $context, $txt, $options;
+	global $context, $txt;
 
 	// Setup the template.
 	$context['page_title'] = $txt['viewing_users_subscribed'];

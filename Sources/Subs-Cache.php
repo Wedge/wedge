@@ -156,7 +156,7 @@ function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow =
  */
 function add_plugin_js_file($plugin_name, $files = array(), $is_direct_url = false, $is_out_of_flow = false)
 {
-	global $context, $pluginsdir, $jsdir, $boardurl, $settings, $footer_coding;
+	global $context, $jsdir, $boardurl, $settings, $footer_coding;
 	static $done_files = array();
 
 	if (empty($context['plugins_dir'][$plugin_name]))
@@ -234,7 +234,7 @@ function add_plugin_js_file($plugin_name, $files = array(), $is_direct_url = fal
  */
 function add_jquery_ui()
 {
-	global $settings, $context;
+	global $settings;
 	static $done = false;
 
 	if ($done)
@@ -429,7 +429,7 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 
 function add_plugin_css_file($plugin_name, $original_files = array(), $add_link = false, $ignore_files = array())
 {
-	global $context, $settings, $theme, $boardurl, $pluginsdir, $board_info;
+	global $context, $settings, $boardurl;
 
 	if (empty($context['plugins_dir'][$plugin_name]))
 		return;
@@ -784,7 +784,7 @@ function wedge_hide_content()
 
 function wedge_replace_theme_vars($match)
 {
-	global $context, $settings, $theme, $txt;
+	global ${$match[1]};
 
 	return isset(${$match[1]}[$match[3]]) ? '"' . (is_array(${$match[1]}[$match[3]]) ? count(${$match[1]}[$match[3]]) : ${$match[1]}[$match[3]]) . '"' : '""';
 }
@@ -834,8 +834,6 @@ function dynamic_language_flags()
 // Dynamic function to cache group colors into index.css
 function dynamic_group_colors()
 {
-	global $context;
-
 	// If the database isn't ready yet, skip this...
 	if (defined('WEDGE_INSTALLER'))
 		return '';
@@ -901,7 +899,7 @@ function dynamic_group_colors()
 // Dynamic function to cache admin menu icons into admenu.css
 function dynamic_admin_menu_icons()
 {
-	global $context, $admin_areas, $ina;
+	global $admin_areas, $ina;
 
 	function array_search_key($needle, &$arr)
 	{
@@ -1261,7 +1259,7 @@ function wedge_cache_smileys($set, $smileys, $extra)
  */
 function theme_base_css()
 {
-	global $context, $boardurl, $settings, $cssdir;
+	global $context, $boardurl, $settings;
 
 	// First, let's purge the cache if any files are over a month old. This ensures we don't waste space for IE6 & co. when they die out.
 	$one_month_ago = time() - 30 * 24 * 3600;
@@ -1872,7 +1870,7 @@ function cache_prepare_key($key, $val = '', $type = 'get')
 
 function cache_get_type()
 {
-	global $cache_type, $settings, $memcached_servers;
+	global $cache_type, $memcached_servers;
 
 	$cache_type = 'file';
 
@@ -1901,7 +1899,7 @@ function cache_get_type()
  */
 function get_memcached_server($level = 3)
 {
-	global $settings, $db_persist, $memcached_servers;
+	global $db_persist, $memcached_servers;
 	static $memcached = 0;
 
 	if (!$memcached)

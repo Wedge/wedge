@@ -24,7 +24,7 @@ if (!defined('WEDGE'))
  */
 function log_error($error_message, $error_type = 'general', $file = null, $line = null, $referrer = null)
 {
-	global $txt, $settings, $scripturl, $last_error, $context, $pluginsdir;
+	global $settings, $scripturl, $last_error, $context, $pluginsdir;
 	static $plugin_dir = null;
 
 	// Check if error logging is actually on.
@@ -175,7 +175,7 @@ function log_error($error_message, $error_type = 'general', $file = null, $line 
  */
 function fatal_error($error, $log = 'general', $header = 403)
 {
-	global $txt, $context, $settings;
+	global $txt, $settings;
 
 	issue_http_header($header);
 

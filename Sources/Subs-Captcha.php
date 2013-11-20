@@ -24,7 +24,7 @@ if (!defined('WEDGE'))
 // Create the image for the visual verification code.
 function showCodeImage($code)
 {
-	global $theme, $context;
+	global $context;
 
 	// Determine what types are available.
 	$context['captcha_types'] = loadCaptchaTypes();

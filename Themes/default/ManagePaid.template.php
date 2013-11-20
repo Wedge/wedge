@@ -11,7 +11,7 @@
 // The template for adding or editing a subscription.
 function template_modify_subscription()
 {
-	global $context, $theme, $options, $txt, $settings;
+	global $context, $txt, $settings;
 
 	// JavaScript for the duration stuff.
 	add_js('
@@ -271,7 +271,7 @@ function template_delete_subscription()
 // Add or edit an existing subscriber.
 function template_modify_user_subscription()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $txt;
 
 	// Some quickly stolen javascript from Post, could do with being more efficient :)
 	if (!$context['current_subscription']['lifetime'])

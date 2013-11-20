@@ -26,7 +26,7 @@ if (!defined('WEDGE'))
 
 function getMessageIcons($board_id)
 {
-	global $context, $txt, $theme;
+	global $theme;
 
 	if (($temp = cache_get_data('posting_icons-' . $board_id, 480)) == null)
 	{
@@ -64,7 +64,7 @@ function getMessageIcons($board_id)
 // Create a anti-bot verification control?
 function create_control_verification(&$verificationOptions, $do_test = false)
 {
-	global $txt, $settings, $options, $context;
+	global $settings, $context;
 
 	// First verification means we need to set up some bits...
 	if (empty($context['controls']['verification']))

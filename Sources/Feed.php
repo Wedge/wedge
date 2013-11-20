@@ -456,7 +456,7 @@ function getXmlMembers($xml_format)
 function getXmlNews($xml_format)
 {
 	global $scripturl, $settings;
-	global $board, $query_this, $theme, $context;
+	global $board, $query_this, $context;
 
 	/* Find the latest posts that:
 		- are the first post in their topic.
@@ -565,7 +565,7 @@ function getXmlNews($xml_format)
 function getXmlRecent($xml_format)
 {
 	global $scripturl, $settings;
-	global $board, $query_this, $theme, $context;
+	global $board, $query_this, $context;
 
 	$done = false;
 	$loops = 0;
