@@ -21,15 +21,15 @@ function PluginsHome()
 	loadSource('Subs-Plugins');
 	define('WEDGE_PLUGIN', 1); // Any scripts that are run from here, should *really* test that this is defined and exit if not.
 
+	if (isset($_GET['area']) && $_GET['area'] == 'addplugin')
+		return AddPlugin();
+
 	// Because our good friend the GenericMenu complains otherwise.
 	$context[$context['admin_menu_name']]['tab_data'] = array(
 		'title' => $txt['plugin_manager'],
 		'description' => $txt['plugin_manager_desc'],
 		'tabs' => array(
 			'plugins' => array(
-			),
-			'add' => array(
-				'description' => $txt['plugins_add_desc'],
 			),
 		),
 	);
@@ -40,7 +40,6 @@ function PluginsHome()
 		'enable' => 'EnablePlugin',
 		'disable' => 'DisablePlugin',
 		'remove' => 'RemovePlugin',
-		'add' => 'AddPlugin',
 	);
 
 	// By default do the basic settings.
@@ -1465,6 +1464,17 @@ function AddPlugin()
 {
 	global $txt, $context;
 
+	// Because our good friend the GenericMenu complains otherwise.
+	$context[$context['admin_menu_name']]['tab_data'] = array(
+		'title' => $txt['plugin_manager'],
+		'description' => $txt['plugin_manager_desc'],
+		'tabs' => array(
+			'add' => array(
+				'description' => $txt['plugins_add_desc'],
+			),
+		),
+	);
+
 	// Both uploading and downloading require gzinflate. If it isn't there, none of this stuff will work, and there's no point in trying it.
 	if (!is_callable('gzinflate'))
 		fatal_lang_error('plugins_no_gzinflate', false);
@@ -1487,9 +1497,11 @@ function AddPlugin()
 
 		// OK, so let's get the details of the repos to list.
 		$context['plugin_repositories'] = array();
+/*
+		// !!! @todo: Add working repositories here.
 		$query = wesql::query('
 			SELECT id_server, name, username, password, status
-			FROM {db_prefix}package_servers
+			FROM {db_prefix}plugin_servers
 			ORDER BY name');
 		while ($row = wesql::fetch_assoc($query))
 			$context['plugin_repositories'][$row['id_server']] = array(
@@ -1498,6 +1510,7 @@ function AddPlugin()
 				'status' => $row['status'],
 			);
 		wesql::free_result($query);
+*/
 	}
 }
 
@@ -1510,7 +1523,7 @@ function browsePluginRepo()
 	{
 		$query = wesql::query('
 			SELECT id_server, name, url, username, password
-			FROM {db_prefix}package_servers
+			FROM {db_prefix}plugin_servers
 			WHERE id_server = {int:repo}',
 			array(
 				'repo' => $repo_id,
@@ -1547,7 +1560,7 @@ function editPluginRepo()
 		$repo_id = (int) $_GET['editrepo'];
 		if ($repo_id > 0)
 			wesql::query('
-				DELETE FROM {db_prefix}package_servers
+				DELETE FROM {db_prefix}plugin_servers
 				WHERE id_server = {int:repo}',
 				array(
 					'repo' => $repo_id,
@@ -1555,7 +1568,7 @@ function editPluginRepo()
 			);
 
 		// Whether we deleted it, or if it wasn't valid and it was just nonsense, go back to the repo listing.
-		redirectexit('action=admin;area=plugins;sa=add');
+		redirectexit('action=admin;area=addplugin');
 	}
 
 	// Are we saving?
@@ -1568,7 +1581,7 @@ function editPluginRepo()
 		{
 			$query = wesql::query('
 				SELECT id_server, name, url, username, password, status
-				FROM {db_prefix}package_servers
+				FROM {db_prefix}plugin_servers
 				WHERE id_server = {int:repo}',
 				array(
 					'repo' => $repo_id,
@@ -1614,23 +1627,23 @@ function editPluginRepo()
 			$context['repository']['status'] = REPO_ACTIVE;
 
 		// Username/password is tricky. If password's given, username should be too.
-		if (!empty($_POST['password']))
+		if (!empty($_POST['repo_password']))
 		{
-			if (empty($_POST['username']) || trim($_POST['username']) == '')
+			if (empty($_POST['repo_username']) || trim($_POST['repo_username']) == '')
 				fatal_lang_error('plugins_auth_pwd_nouser', false);
-			$context['repository']['username'] = htmlspecialchars($_POST['username']);
-			$context['repository']['password'] = sha1(strtolower($context['repository']['username']) . $_POST['password']);
+			$context['repository']['username'] = htmlspecialchars($_POST['repo_username']);
+			$context['repository']['password'] = sha1(strtolower($context['repository']['username']) . $_POST['repo_password']);
 		}
 		else
 		{
 			// We didn't get a password. Did we get a username?
-			if (empty($_POST['username']))
+			if (empty($_POST['repo_username']))
 			{
 				$context['repository']['username'] = '';
 				$context['repository']['password'] = '';
 			}
 			// We didn't get a password, and the username is different. Since the password is hashed using the username... we need a new password too.
-			elseif (htmlspecialchars($_POST['username']) != $context['repository']['username'])
+			elseif (htmlspecialchars($_POST['repo_username']) != $context['repository']['username'])
 				fatal_lang_error('plugins_auth_diffuser', false);
 		}
 
@@ -1640,12 +1653,12 @@ function editPluginRepo()
 			$columns[$k] = $k == 'id_server' || $k == 'status' ? 'int' : 'string';
 
 		wesql::insert(isset($columns['id_server']) ? 'replace' : 'insert',
-			'{db_prefix}package_servers',
+			'{db_prefix}plugin_servers',
 			$columns,
 			$context['repository']
 		);
 
-		redirectexit('action=admin;area=plugins;sa=add');
+		redirectexit('action=admin;area=addplugin');
 	}
 
 	// We're reusing the same tab but it has a different description now.
@@ -1658,7 +1671,7 @@ function editPluginRepo()
 		{
 			$query = wesql::query('
 				SELECT id_server, name, url, username, password, status
-				FROM {db_prefix}package_servers
+				FROM {db_prefix}plugin_servers
 				WHERE id_server = {int:repo}',
 				array(
 					'repo' => $repo_id,

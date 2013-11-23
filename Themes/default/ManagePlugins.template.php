@@ -228,8 +228,8 @@ function template_add_plugins()
 			}
 
 			echo '</td>
-					<td class="center"><a href="<URL>?action=admin;area=plugins;sa=add;browserepo=', $repo_id, '">', $txt['plugins_browse'], '</a></td>
-					<td class="center"><a href="<URL>?action=admin;area=plugins;sa=add;editrepo=', $repo_id, '">', $txt['plugins_modify'], '</a></td>
+					<td class="center"><a href="<URL>?action=admin;area=addplugin;browserepo=', $repo_id, '">', $txt['plugins_browse'], '</a></td>
+					<td class="center"><a href="<URL>?action=admin;area=addplugin;editrepo=', $repo_id, '">', $txt['plugins_modify'], '</a></td>
 				</tr>';
 
 			$use_bg2 = !$use_bg2;
@@ -239,7 +239,7 @@ function template_add_plugins()
 	echo '
 			</tbody>
 		</table>
-		<form action="<URL>?action=admin;area=plugins;sa=add;editrepo=add" method="post">
+		<form action="<URL>?action=admin;area=addplugin;editrepo=add" method="post">
 			<div class="floatright">
 				<div class="additional_row" style="text-align: right"><input type="submit" name="new" value="', $txt['plugins_add_repo'], '" class="new"></div>
 			</div>
@@ -252,7 +252,7 @@ function template_add_plugins()
 		<we:cat>', $txt['plugins_add_upload'], '</we:cat>
 		<p class="description">', $txt['plugins_add_upload_desc'], '</p>
 		<div class="windowbg wrc">
-			<form action="<URL>?action=admin;area=plugins;sa=add;upload" method="post" accept-charset="UTF-8" enctype="multipart/form-data" style="margin-bottom: 0">
+			<form action="<URL>?action=admin;area=addplugin;upload" method="post" accept-charset="UTF-8" enctype="multipart/form-data" style="margin-bottom: 0">
 				<dl class="settings">
 					<dt>
 						<strong>', $txt['plugins_add_upload_file'], '</strong>
@@ -281,7 +281,7 @@ function template_edit_repo()
 	echo '
 		<we:cat>', $txt['plugins_repo_details'], '</we:cat>
 		<p class="description">', $txt['plugins_repo_details_desc'], '</p>
-		<form action="<URL>?action=admin;area=plugins;sa=add;editrepo=', $context['repository']['id'], ';save" method="post" accept-charset="UTF-8" enctype="multipart/form-data">
+		<form action="<URL>?action=admin;area=addplugin;editrepo=', $context['repository']['id'], ';save" method="post" accept-charset="UTF-8" enctype="multipart/form-data">
 			<div class="windowbg2 wrc">
 				<fieldset>
 					<legend>', $txt['plugins_repo_details'], '</legend>
@@ -302,12 +302,12 @@ function template_edit_repo()
 					<p>', $txt['plugins_repo_auth_desc'], '</p>
 					<dl class="settings">
 						<dt>', $txt['plugins_repo_username'], '</dt>
-						<dd><input name="username" size="44" value="', $context['repository']['username'], '">
+						<dd><input name="repo_username" size="44" value="', $context['repository']['username'], '">
 						<dt>
 							', $txt['plugins_repo_password'], !empty($context['repository']['password']) ? '
 							<span class="smalltext">(<a href="<URL>?action=help;in=plugins_password_blank" onclick="return reqWin(this);">' . $txt['plugins_repo_password_blank'] . '</a>)' : '', '
 						</dt>
-						<dd><input type="password" name="password" size="44" value=""></dd>
+						<dd><input type="repo_password" name="password" size="44" value=""></dd>
 					</dl>
 				</fieldset>
 				<div class="right">
@@ -345,7 +345,7 @@ function template_upload_duplicate_detected()
 
 	echo '
 	<we:cat>', $txt['plugin_duplicate_detected_title'], '</we:cat>
-	<form action="<URL>?action=admin;area=plugins;sa=add;upload;stage=1;duplicate" method="post">
+	<form action="<URL>?action=admin;area=addplugin;upload;stage=1;duplicate" method="post">
 		<div class="windowbg2 wrc">
 			<p>', sprintf($txt['plugin_duplicate_detected'], $context['new_plugin'], $context['existing_plugin']), '</p>
 			<fieldset>

@@ -602,10 +602,13 @@ function Admin()
 					'permission' => array('admin_forum'),
 					'icon' => 'packages.gif',
 					'bigicon' => 'plugin_manager.png',
-					'subsections' => array(
-						'plugins' => array($txt['plugin_manager']),
-						'add' => array($txt['plugins_add_plugins']),
-					),
+				),
+				'addplugin' => array(
+					'label' => $txt['plugins_add_plugins'],
+					'file' => 'ManagePlugins',
+					'function' => 'PluginsHome',
+					'permission' => array('admin_forum'),
+					'icon' => 'packages_add.gif',
 				),
 			),
 		),
