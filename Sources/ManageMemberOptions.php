@@ -30,7 +30,7 @@ if (!defined('WEDGE'))
 // This function passes control through to the relevant tab.
 function ManageMemberOptions()
 {
-	global $context, $txt, $theme;
+	global $context, $txt;
 
 	// You need to be an admin to edit settings!
 	isAllowedTo('admin_forum');
@@ -45,9 +45,8 @@ function ManageMemberOptions()
 	$context['page_title'] = $txt['member_options_title'];
 
 	$subActions = array(
-		'options' => 'ModifyMemberSettings',
+		'options' => 'ModifyMemberOptions',
 		'sig' => 'ModifySignatureSettings',
-		'prefs' => 'ModifyMemberPreferences',
 		'profile' => 'ShowCustomProfiles',
 		'profileedit' => 'EditCustomProfiles',
 		'whosonline' => 'ModifyWhosOnline',
@@ -68,9 +67,6 @@ function ManageMemberOptions()
 			'sig' => array(
 				'description' => $txt['signature_settings_desc'],
 			),
-			'prefs' => array(
-				'description' => $txt['member_prefs_desc'],
-			),
 			'profile' => array(
 				'description' => $txt['custom_profile_desc'],
 			),
@@ -84,48 +80,10 @@ function ManageMemberOptions()
 	$subActions[$_REQUEST['sa']]();
 }
 
-function ModifyMemberSettings($return_config = false)
-{
-	global $txt, $context, $theme;
-
-	$context['page_title'] = $txt['member_options_title'] . ' - ' . $txt['mods_cat_features'];
-
-	$config_vars = array(
-			// Basic stuff, titles, flash, permissions...
-			array('check', 'allow_guestAccess'),
-		'',
-			array('check', 'enable_buddylist'),
-			array('check', 'allow_editDisplayName'),
-			array('check', 'titlesEnable'),
-			array('check', 'approveAccountDeletion'),
-		'',
-			array('check', 'allow_disableAnnounce'),
-	);
-
-	if ($return_config)
-		return $config_vars;
-
-	// Saving?
-	if (isset($_GET['save']))
-	{
-		checkSession();
-
-		saveDBSettings($config_vars);
-
-		writeLog();
-		redirectexit('action=admin;area=memberoptions;sa=options');
-	}
-
-	$context['post_url'] = '<URL>?action=admin;area=memberoptions;save;sa=options';
-	$context['settings_title'] = $txt['mods_cat_features'];
-
-	prepareDBSettingContext($config_vars);
-}
-
 // You'll never guess what this function does...
 function ModifySignatureSettings($return_config = false)
 {
-	global $context, $txt, $settings, $sig_start, $helptxt;
+	global $context, $txt, $settings, $sig_start;
 
 	$context['page_title'] = $txt['signature_settings'];
 	// Need this for the bbc options.
@@ -496,7 +454,7 @@ function pauseSignatureApplySettings()
 // Show all the custom profile fields available to the user.
 function ShowCustomProfiles()
 {
-	global $txt, $context, $theme;
+	global $txt, $context;
 
 	$context['page_title'] = $txt['custom_profile_title'];
 	wetem::load('show_custom_profile');
@@ -650,7 +608,7 @@ function list_getProfileFields($start, $items_per_page, $sort)
 // Edit some profile fields?
 function EditCustomProfiles()
 {
-	global $txt, $context, $theme;
+	global $txt, $context;
 
 	if (isset($_POST['saveorder'], $_POST['order']) && is_array($_POST['order']))
 	{
@@ -1254,7 +1212,7 @@ function updateProfileFieldsCache()
 
 function ModifyWhosOnline($return_config = false)
 {
-	global $txt, $context, $theme;
+	global $txt, $context;
 
 	$context['page_title'] = $txt['member_options_title'] . ' - ' . $txt['admin_whos_online'];
 
@@ -1287,11 +1245,11 @@ function ModifyWhosOnline($return_config = false)
 	prepareDBSettingContext($config_vars);
 }
 
-function ModifyMemberPreferences($return_config = false)
+function ModifyMemberOptions($return_config = false)
 {
 	global $context, $txt, $settings;
 
-	loadLanguage('Profile');
+	loadLanguage(array('Profile', 'ManageSettings', 'PersonalMessage'));
 
 	// This array is structurally similar to the ones we see elsewhere. Type is the first item, name/id the second.
 	// 'disabled' speaks for itself, 'display' is where it should be displayed in the profile area.
@@ -1299,7 +1257,7 @@ function ModifyMemberPreferences($return_config = false)
 	$config_vars = array(
 		array('check', 'show_board_desc', 'display' => 'looklayout'),
 		array('check', 'show_children', 'display' => 'looklayout'),
-		array('check', 'show_avatars', 'display' => 'looklayout'),
+		array('check', 'show_avatars', 'display' => 'looklayout', 'disabled' => empty($settings['show_avatars'])),
 		array('check', 'show_signatures', 'display' => 'looklayout'),
 		array('check', 'show_no_censored', 'display' => 'looklayout', 'disabled' => empty($settings['allow_no_censored'])),
 		array('check', 'return_to_post', 'display' => 'looklayout'),
@@ -1335,7 +1293,7 @@ function ModifyMemberPreferences($return_config = false)
 		), 'display' => 'looklayout'),
 	);
 
-	call_hook('member_prefs', array(&$config_vars, &$return_config));
+	call_hook('member_options', array(&$config_vars, &$return_config));
 
 	// This isn't the usual setup for this page, but since we still want it to be searchable and it isn't any extra effort
 	// to make it so (since we still need a list of options, ultimately...) we may as well.
@@ -1496,5 +1454,5 @@ function ModifyMemberPreferences($return_config = false)
 	}
 
 	loadTemplate('ManageMembers');
-	wetem::load('admin_member_prefs');
+	wetem::load('admin_member_defaults');
 }

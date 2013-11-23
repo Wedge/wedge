@@ -297,7 +297,7 @@ function template_admin_browse()
 	}
 }
 
-function template_admin_member_prefs()
+function template_admin_member_defaults()
 {
 	global $context, $txt;
 
@@ -308,8 +308,8 @@ function template_admin_member_prefs()
 		</div>';
 
 	echo '
-		<we:cat>', $txt['admin_member_prefs'], '</we:cat>
-		<form action="<URL>?action=admin;area=memberoptions;sa=prefs;save" method="post">
+		<we:cat>', $txt['admin_member_defaults'], '</we:cat>
+		<form action="<URL>?action=admin;area=memberoptions;sa=options;save" method="post">
 			<div class="windowbg2 wrc">
 				<dl class="settings">';
 
@@ -325,7 +325,7 @@ function template_admin_member_prefs()
 
 			echo '
 					<dt id="dt_', $key, '">', isset($txt[$key]) ? $txt[$key] : $key, '</dt>
-					<dd id="dd_', $key, '" class="memberopt">', $txt['member_prefs_default'], '
+					<dd id="dd_', $key, '" class="memberopt">', $txt['member_options_default'], '
 						';
 			if ($config_var[0] == 'check')
 				echo '<strong>', !empty($config_var['current']) ? $txt['yes'] : $txt['no'], '</strong>';
@@ -365,18 +365,18 @@ function template_admin_member_prefs()
 		</form>';
 
 	add_js('
-	str_default = ' . JavaScriptEscape($txt['member_prefs_default']) . ';
-	str_change = ' . JavaScriptEscape($txt['member_prefs_change']) . ';
-	str_guests = ' . JavaScriptEscape($txt['member_prefs_guest']) . ';
-	str_members = ' . JavaScriptEscape($txt['member_prefs_members']) . ';
-	str_override = ' . JavaScriptEscape($txt['member_prefs_override']) . ';
+	str_default = ' . JavaScriptEscape($txt['member_options_default']) . ';
+	str_change = ' . JavaScriptEscape($txt['member_options_change']) . ';
+	str_guests = ' . JavaScriptEscape($txt['member_options_guest']) . ';
+	str_members = ' . JavaScriptEscape($txt['member_options_members']) . ';
+	str_override = ' . JavaScriptEscape($txt['member_options_override']) . ';
 	str_nochange = ' . JavaScriptEscape($txt['no_change']) . ';
 	str_leavealone = ' . JavaScriptEscape($txt['leave_alone']) . ';
-	str_yes = ' . JavaScriptEscape($txt['yes']) . ';
-	str_no = ' . JavaScriptEscape($txt['no']) . ';
+	str_yes = \'&lt;strong style="color: green"&gt;\' + ' . JavaScriptEscape($txt['yes']) . ' + \'&lt;/strong&gt;\';
+	str_no = \'&lt;strong style="color: red"&gt;\' + ' . JavaScriptEscape($txt['no']) . ' + \'&lt;/strong&gt;\';
 	items = {' . implode(',', $context['js_opts']) . '};
 	$.each(items, function (idx, val) {
-		$("#dd_" + idx).append(\'<input type="button" class="modify membopt" value="\' + str_change + \'" onclick="modifyItem(\\\'\' + idx + \'\\\');">\');
+		modifyItem(idx);
 	});
 
 	function modifyItem(index)
@@ -387,7 +387,7 @@ function template_admin_member_prefs()
 			this_html = str_guests + " <select name=\"guests[" + index + "]\">";
 			var choices = { 0: str_no, 1: str_yes };
 			$.each(choices, function (idx, val) {
-				this_html += "<option value=\"" + idx + "\"" + (this_item[1] == idx ? " selected>" + str_nochange.replace("%s", val) : ">" + val) + "</option>";
+				this_html += "<option value=\"" + idx + "\"" + (this_item[1] == idx ? " selected>" + str_nochange.replace("%s", "&lt;strong&gt;" + val + "&lt;/strong&gt;") : ">" + val) + "</option>";
 			});
 			this_html += "</select><br>";
 			this_html += str_members + " <select name=\"members[" + index + "]\">";
@@ -403,7 +403,7 @@ function template_admin_member_prefs()
 		{
 			this_html = str_guests + " <select name=\"guests[" + index + "]\">";
 			$.each(this_item[2], function (idx, val) {
-				this_html += "<option value=\"" + idx + "\"" + (this_item[1] == idx ? " selected>" + str_nochange.replace("%s", val) : ">" + val) + "</option>";
+				this_html += "<option value=\"" + idx + "\"" + (this_item[1] == idx ? " selected>" + str_nochange.replace("%s", "&lt;strong&gt;" + val + "&lt;/strong&gt;") : ">" + val) + "</option>";
 			});
 			this_html += "</select><br>";
 			this_html += str_members + " <select name=\"members[" + index + "]\">";

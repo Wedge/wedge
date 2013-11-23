@@ -45,15 +45,12 @@ if (!defined('WEDGE'))
 	void ModifyLoadBalancingSettings()
 		// !!!
 
-	void prepareServerSettingsContext(array config_vars)
-		// !!!
-
 	void prepareDBSettingContext(array config_vars)
 		// !!!
 
 	void saveSettings(array config_vars)
-		- saves those settings set from ?action=admin;area=serversettings to the
-		  Settings.php file and the database.
+		- saves those settings set from ?action=admin;area=serversettings
+		  to the Settings.php file and the database.
 		- requires the admin_forum permission.
 		- contains arrays of the types of data to save into Settings.php.
 
@@ -62,7 +59,8 @@ if (!defined('WEDGE'))
 
 */
 
-/*	Most of the admin panel pages use this standardized setup.
+/*
+	Most of the admin panel pages use this standardized setup.
 	If you're building a plugin, very often you just need to use <settings-page> in your plugin-info.xml
 	file. You only need to worry about this if you have a reason to do any of it manually, and if you
 	do, this is how it works.
@@ -72,7 +70,7 @@ if (!defined('WEDGE'))
 		array('check', 'nameInSettingsAndSQL'),
 
 	And for a text box:
-		array('text', 'nameInSettingsAndSQL')
+		array('text', 'nameInSettingsAndSQL'),
 
 	In these cases, it will look for $txt['nameInSettingsAndSQL'] as the description,
 	and $helptxt['nameInSettingsAndSQL'] as the help popup description.
@@ -80,18 +78,18 @@ if (!defined('WEDGE'))
 	Here's a quick explanation of how to add a new item:
 
 	* A text input box. For textual values.
-	ie.	array('text', 'nameInSettingsAndSQL', 'OptionalInputBoxWidth'),
+	ie.	array('text', 'nameInSettingsAndSQL', optionalInputBoxWidth),
 
 	* A text input box. For numerical values.
-	ie.	array('int', 'nameInSettingsAndSQL', 'OptionalInputBoxWidth', 'min' => optional min, 'max' => optional max, 'step' => optional stepping value),
+	ie.	array('int', 'nameInSettingsAndSQL', optionalInputBoxWidth, 'min' => optionalMin, 'max' => optionalMax, 'step' => optionalSteppingValue),
 	The stepping value is if you want a value to be stepped in increments that aren't 1.
 	!!! Stepping is only in supported browsers, not actually enforced in code at this time.
 
 	* A text input box. For floating point values.
-	ie.	array('float', 'nameInSettingsAndSQL', 'OptionalInputBoxWidth'),
+	ie.	array('float', 'nameInSettingsAndSQL', optionalInputBoxWidth),
 
 	* A large text input box. Used for textual values spanning multiple lines.
-	ie.	array('large_text', 'nameInSettingsAndSQL', 'OptionalNumberOfRows'),
+	ie.	array('large_text', 'nameInSettingsAndSQL', optionalNumberOfRows),
 
 	* A check box. Either one or zero (boolean.)
 	ie.	array('check', 'nameInSettingsAndSQL'),
@@ -99,9 +97,11 @@ if (!defined('WEDGE'))
 	* A selection box. Used for the selection of something from a list.
 	ie.	array('select', 'nameInSettingsAndSQL', array('valueForSQL' => $txt['displayedValue'])),
 	Note that just saying array('first', 'second') will put 0 in the SQL for 'first'.
+	You can add groups by using a slightly more complex array format:
+	array(dummyKey => array('', '', groupName), firstKey => array(firstKey, entryName), secondKey => array(firstKey, entryName)...)
 
-	* A password input box. Used for passwords, no less!
-	ie.	array('password', 'nameInSettingsAndSQL', 'OptionalInputBoxWidth'),
+	* A password input box. Used for passwords, no kidding!
+	ie.	array('password', 'nameInSettingsAndSQL', optionalInputBoxWidth),
 
 	* A permission - for picking groups who have a permission.
 	ie.	array('permissions', 'manage_groups'),
@@ -110,13 +110,16 @@ if (!defined('WEDGE'))
 	ie.	array('bbc', 'sig_bbc'),
 
 	For each option:
-		type (see above), variable name, size/possible values.
-	OR	make type '' for an empty string for a horizontal rule.
+		array(type (see above), variable name, size/possible values)
+	OR	replace the array with just '' for a horizontal rule.
 	SET	preinput - to put some HTML prior to the input box.
 	SET	postinput - to put some HTML following the input box.
 	SET	invalid - to mark the data as invalid.
 	PLUS	You can override label and help parameters by forcing their keys in the array, for example:
-		array('text', 'invalidlabel', 3, 'label' => 'Actual Label') */
+		array('text', 'invalidlabel', 3, 'label' => 'Actual Label')
+
+	There are also other types available, such as message, warning, desc, title, etc. but let's not get carried away.
+*/
 
 // This is the main pass through function, it creates tabs and the like.
 function ModifySettings()
@@ -163,15 +166,13 @@ function ModifySettings()
 	if ($_REQUEST['sa'] != 'phpinfo')
 	{
 		// Warn the user if the backup of Settings.php failed.
-		$settings_not_writable = !is_writable($boarddir . '/Settings.php');
+		$context['settings_not_writable'] = !is_writable($boarddir . '/Settings.php');
 		$settings_backup_fail = !@is_writable($boarddir . '/Settings_bak.php') || !@copy($boarddir . '/Settings.php', $boarddir . '/Settings_bak.php');
 
-		if ($settings_not_writable)
+		if ($context['settings_not_writable'])
 			$context['settings_message'] = '<p class="center"><strong>' . $txt['settings_not_writable'] . '</strong></p><br>';
 		elseif ($settings_backup_fail)
 			$context['settings_message'] = '<p class="center"><strong>' . $txt['admin_backup_fail'] . '</strong></p><br>';
-
-		$context['settings_not_writable'] = $settings_not_writable;
 	}
 
 	// Call the right function for this sub-action.
@@ -187,34 +188,34 @@ function ModifyGeneralSettings($return_config = false)
 
 	/* If you're writing a mod, it's a BAD idea to add anything here....
 	For each option:
-		variable name, description, type (constant), size/possible values, helptext.
+		variable name, target (db/file), type (constant), size/possible values, helptext.
 	OR	an empty string for a horizontal rule.
 	OR	a string for a titled section. */
 	$config_vars = array(
-		array('maintenance', $txt['maintenance'], 'file', 'check'),
-		array('mtitle', $txt['setting_mtitle'], 'file', 'text', 36),
-		array('mmessage', $txt['setting_mmessage'], 'file', 'text', 36),
+		array('check', 'maintenance', 'file' => true),
+		array('text', 'mtitle', 36, 'file' => true),
+		array('text', 'mmessage', 36, 'file' => true),
 		'',
-		array('time_offset', $txt['setting_time_offset'], 'db', 'float', null, 'time_offset', 'subtext' => $txt['setting_time_offset_subtext']),
-		'default_timezone' => array('default_timezone', $txt['setting_default_timezone'], 'db', 'select', array()),
+		array('float', 'time_offset', 'subtext' => $txt['time_offset_subtext']),
+		'default_timezone' => array('select', 'default_timezone', array()),
 		'',
-		array('enableCompressedOutput', $txt['enableCompressedOutput'], 'db', 'check', null, 'enableCompressedOutput'),
-		array('enableCompressedData', $txt['enableCompressedData'], 'db', 'check', null, 'enableCompressedData'),
-		array('obfuscate_filenames', $txt['obfuscate_filenames'], 'db', 'check', null, 'obfuscate_filenames'),
-		array('minify', $txt['minify'], 'db', 'select', array(
-			'none' => array('none', $txt['minify_none']),
-			'jsmin' => array('jsmin', $txt['minify_jsmin']),
-			'closure' => array('closure', $txt['minify_closure']),
-			'packer' => array('packer', $txt['minify_packer']),
-		), 'minify'),
-		array('jquery_origin', $txt['jquery_origin'], 'db', 'select', array(
-			'local' => array('local', $txt['jquery_local']),
-			'jquery' => array('jquery', $txt['jquery_jquery']),
-			'google' => array('google', $txt['jquery_google']),
-			'microsoft' => array('microsoft', $txt['jquery_microsoft']),
-		), 'jquery_origin'),
+		array('check', 'enableCompressedOutput'),
+		array('check', 'enableCompressedData'),
+		array('check', 'obfuscate_filenames'),
+		array('select', 'minify', array(
+			'none' => $txt['minify_none'],
+			'jsmin' => $txt['minify_jsmin'],
+			'closure' => $txt['minify_closure'],
+			'packer' => $txt['minify_packer'],
+		)),
+		array('select', 'jquery_origin', array(
+			'local' => $txt['jquery_local'],
+			'jquery' => $txt['jquery_jquery'],
+			'google' => $txt['jquery_google'],
+			'microsoft' => $txt['jquery_microsoft'],
+		)),
 		'',
-		array('disableHostnameLookup', $txt['disableHostnameLookup'], 'db', 'check', null, 'disableHostnameLookup'),
+		array('check', 'disableHostnameLookup'),
 	);
 
 	// PHP can give us a list of all the time zones. Yay.
@@ -232,14 +233,14 @@ function ModifyGeneralSettings($return_config = false)
 		if (!isset($useful_regions[$region]))
 			continue;
 		if ($region !== $last_region)
-			$config_vars['default_timezone'][4][$zone] = array('', '', $region);
+			$config_vars['default_timezone'][2][$zone] = array('', '', $region);
 		else
-			$config_vars['default_timezone'][4][$zone] = array($zone, strtr($place, '_', ' '));
+			$config_vars['default_timezone'][2][$zone] = array($zone, strtr($place, '_', ' '));
 		$last_region = $region;
 	}
 	// Don't forget UTC!
-	$config_vars['default_timezone'][4]['UTC_group'] = array('', '', 'UTC');
-	$config_vars['default_timezone'][4]['UTC'] = array('UTC', 'UTC');
+	$config_vars['default_timezone'][2]['UTC_group'] = array('', '', 'UTC');
+	$config_vars['default_timezone'][2]['UTC'] = array('UTC', 'UTC');
 
 	if ($return_config)
 		return $config_vars;
@@ -272,7 +273,7 @@ function ModifyGeneralSettings($return_config = false)
 	}
 
 	// Fill the config array.
-	prepareServerSettingsContext($config_vars);
+	prepareDBSettingContext($config_vars);
 }
 
 // Basic database and paths settings - database name, host, etc.
@@ -286,25 +287,25 @@ function ModifyDatabaseSettings($return_config = false)
 	OR	an empty string for a horizontal rule.
 	OR	a string for a titled section. */
 	$config_vars = array(
-		array('db_server', $txt['database_server'], 'file', 'text'),
-		array('db_user', $txt['database_user'], 'file', 'text'),
-		array('db_passwd', $txt['database_password'], 'file', 'password'),
-		array('db_name', $txt['database_name'], 'file', 'text'),
-		array('db_prefix', $txt['database_prefix'], 'file', 'text'),
-		array('db_persist', $txt['db_persist'], 'file', 'check', null, 'db_persist'),
-		array('db_error_send', $txt['db_error_send'], 'file', 'check'),
-		array('ssi_db_user', $txt['ssi_db_user'], 'file', 'text', null, 'ssi_db_user'),
-		array('ssi_db_passwd', $txt['ssi_db_passwd'], 'file', 'password'),
+		array('text', 'db_server', 'file' => true),
+		array('text', 'db_user', 'file' => true),
+		array('password', 'db_passwd', 'file' => true),
+		array('text', 'db_name', 'file' => true),
+		array('text', 'db_prefix', 'file' => true),
+		array('check', 'db_persist', 'file' => true),
+		array('check', 'db_error_send', 'file' => true),
+		array('text', 'ssi_db_user', 'file' => true),
+		array('password', 'ssi_db_passwd', 'file' => true),
 		'',
-		array('autoFixDatabase', $txt['autoFixDatabase'], 'db', 'check', false, 'autoFixDatabase'),
-		array('autoOptMaxOnline', $txt['autoOptMaxOnline'], 'db', 'int', 'subtext' => $txt['autoOptMaxOnline_subtext']),
+		array('check', 'autoFixDatabase'),
+		array('int', 'autoOptMaxOnline', 'subtext' => $txt['autoOptMaxOnline_subtext']),
 		'',
-		array('boardurl', $txt['admin_url'], 'file', 'text', 36),
-		array('boarddir', $txt['boarddir'], 'file', 'text', 36),
-		array('sourcedir', $txt['sourcesdir'], 'file', 'text', 36),
-		array('cachedir', $txt['cachedir'], 'file', 'text', 36),
-		array('pluginsdir', $txt['pluginsdir'], 'file', 'text', 36),
-		array('pluginsurl', $txt['pluginsurl'], 'file', 'text', 36),
+		array('text', 'boardurl', 36, 'file' => true),
+		array('text', 'boarddir', 36, 'file' => true),
+		array('text', 'sourcedir', 36, 'file' => true),
+		array('text', 'cachedir', 36, 'file' => true),
+		array('text', 'pluginsdir', 36, 'file' => true),
+		array('text', 'pluginsurl', 36, 'file' => true),
 	);
 
 	if ($return_config)
@@ -323,7 +324,7 @@ function ModifyDatabaseSettings($return_config = false)
 	}
 
 	// Fill the config array.
-	prepareServerSettingsContext($config_vars);
+	prepareDBSettingContext($config_vars);
 }
 
 // This function basically edits anything which is configuration and stored in the database, except for caching.
@@ -334,16 +335,16 @@ function ModifyCookieSettings($return_config = false)
 	// Define the variables we want to edit.
 	$config_vars = array(
 		// Cookies...
-		array('cookiename', $txt['cookie_name'], 'file', 'text', 20),
-		array('cookieTime', $txt['cookieTime'], 'db', 'int'),
-		array('localCookies', $txt['localCookies'], 'db', 'check', false, 'localCookies', 'subtext' => $txt['localCookies_subtext']),
-		array('globalCookies', $txt['globalCookies'], 'db', 'check', false, 'globalCookies', 'subtext' => $txt['globalCookies_subtext']),
-		array('secureCookies', $txt['secureCookies'], 'db', 'check', false, 'secureCookies', 'disabled' => !isset($_SERVER['HTTPS']) || !($_SERVER['HTTPS'] == '1' || strtolower($_SERVER['HTTPS']) == 'on'), 'subtext' => $txt['secureCookies_subtext']),
+		array('text', 'cookiename', 20, 'file' => true),
+		array('int', 'cookieTime'),
+		array('check', 'localCookies', 'subtext' => $txt['localCookies_subtext']),
+		array('check', 'globalCookies', 'subtext' => $txt['globalCookies_subtext']),
+		array('check', 'secureCookies', 'disabled' => !isset($_SERVER['HTTPS']) || !($_SERVER['HTTPS'] == '1' || strtolower($_SERVER['HTTPS']) == 'on'), 'subtext' => $txt['secureCookies_subtext']),
 		'',
 		// Sessions
-		array('databaseSession_enable', $txt['databaseSession_enable'], 'db', 'check', false, 'databaseSession_enable'),
-		array('databaseSession_loose', $txt['databaseSession_loose'], 'db', 'check', false, 'databaseSession_loose'),
-		array('databaseSession_lifetime', $txt['databaseSession_lifetime'], 'db', 'int', false, 'databaseSession_lifetime'),
+		array('check', 'databaseSession_enable'),
+		array('check', 'databaseSession_loose'),
+		array('int', 'databaseSession_lifetime'),
 	);
 
 	if ($return_config)
@@ -377,7 +378,7 @@ function ModifyCookieSettings($return_config = false)
 	}
 
 	// Fill the config array.
-	prepareServerSettingsContext($config_vars);
+	prepareDBSettingContext($config_vars);
 }
 
 // Simply modifying cache functions
@@ -568,25 +569,24 @@ function ModifyDebugSettings($return_config = false)
 	update_show_debug();');
 
 	$config_vars = array(
-		array('disableTemplateEval', $txt['disableTemplateEval'], 'db', 'check', null, 'disableTemplateEval'),
-		array('timeLoadPageEnable', $txt['timeLoadPageEnable'], 'db', 'check', null, 'timeLoadPageEnable'),
+		array('check', 'disableTemplateEval'),
+		array('check', 'timeLoadPageEnable'),
 		'',
-		array('db_show_debug', $txt['db_show_debug'], 'file', 'check', null, 'db_show_debug', 'onclick' => 'update_show_debug()'),
-		array('db_show_debug_who', $txt['db_show_debug_who'], 'db', 'select', array(
-			// !!! Hideous long format to cope with the lack of preparsing done by preparseServerSettingsContext and template expectations
-			'none' => array('none', $txt['db_show_debug_none']),
-			'admin' => array('admin', $txt['db_show_debug_admin']),
-			'mod' => array('mod', $txt['db_show_debug_admin_mod']),
-			'regular' => array('regular', $txt['db_show_debug_regular']),
-			'any' => array('any', $txt['db_show_debug_any']),
-		), 'db_show_debug_who'),
-		array('db_show_debug_who_log', $txt['db_show_debug_who_log'], 'db', 'select', array(
-			'none' => array('none', $txt['db_show_debug_none']),
-			'admin' => array('admin', $txt['db_show_debug_admin']),
-			'mod' => array('mod', $txt['db_show_debug_admin_mod']),
-			'regular' => array('regular', $txt['db_show_debug_regular']),
-			'any' => array('any', $txt['db_show_debug_any']),
-		), 'db_show_debug_who_log'),
+		array('check', 'db_show_debug', 'file' => true, 'onclick' => 'update_show_debug()'),
+		array('select', 'db_show_debug_who', array(
+			'none' => $txt['db_show_debug_none'],
+			'admin' => $txt['db_show_debug_admin'],
+			'mod' => $txt['db_show_debug_admin_mod'],
+			'regular' => $txt['db_show_debug_regular'],
+			'any' => $txt['db_show_debug_any'],
+		)),
+		array('select', 'db_show_debug_who_log', array(
+			'none' => $txt['db_show_debug_none'],
+			'admin' => $txt['db_show_debug_admin'],
+			'mod' => $txt['db_show_debug_admin_mod'],
+			'regular' => $txt['db_show_debug_regular'],
+			'any' => $txt['db_show_debug_any'],
+		)),
 	);
 
 	if ($return_config)
@@ -604,7 +604,7 @@ function ModifyDebugSettings($return_config = false)
 	}
 
 	// Fill the config array.
-	prepareServerSettingsContext($config_vars);
+	prepareDBSettingContext($config_vars);
 }
 
 function FetchPHPInfo($return_config = false)
@@ -679,59 +679,7 @@ function FetchPHPInfo($return_config = false)
 	wetem::load('phpinfo');
 }
 
-// Helper function, it sets up the context for the manage server settings.
-function prepareServerSettingsContext(&$config_vars)
-{
-	global $context, $settings;
-
-	$context['config_vars'] = array();
-	foreach ($config_vars as $identifier => $config_var)
-	{
-		if (!is_array($config_var) || !isset($config_var[1]))
-			$context['config_vars'][] = $config_var;
-		else
-		{
-			$varname = $config_var[0];
-			global $$varname;
-
-			$item = array(
-				'label' => $config_var[1],
-				'help' => isset($config_var[5]) ? $config_var[5] : '',
-				'type' => $config_var[3],
-				'size' => empty($config_var[4]) ? 0 : $config_var[4],
-				'data' => isset($config_var[4]) && is_array($config_var[4]) ? $config_var[4] : array(),
-				'name' => $config_var[0],
-				'value' => $config_var[2] == 'file' ? htmlspecialchars($$varname) : (isset($settings[$config_var[0]]) ? htmlspecialchars($settings[$config_var[0]]) : (in_array($config_var[3], array('int', 'float')) ? 0 : '')),
-				'disabled' => !empty($context['settings_not_writable']) || !empty($config_var['disabled']),
-				'invalid' => false,
-				'javascript' => '',
-				'preinput' => '',
-				'postinput' => '',
-				'subtext' => !empty($config_var['subtext']) ? $config_var['subtext'] : '',
-			);
-
-			// If it's an int, there may be extra stuff.
-			if ($config_var[3] == 'int')
-			{
-				if (isset($config_var['min']))
-					$item['min'] = $config_var['min'];
-				if (isset($config_var['max']))
-					$item['max'] = $config_var['max'];
-				$item['step'] = isset($config_var['step']) ? $config_var['step'] : 1;
-			}
-			if (isset($config_var['onclick']))
-				$item['javascript'] = ' onclick="' . $config_var['onclick'] . '"';
-
-			$context['config_vars'][] = $item;
-		}
-	}
-
-	$context['was_saved'] = !empty($_SESSION['settings_saved']);
-	if (empty($context['was_saved_this_page']))
-		unset($_SESSION['settings_saved']);
-}
-
-// Helper function, it sets up the context for database settings.
+// Set simplified setting arrays into more helpful ones.
 function prepareDBSettingContext(&$config_vars)
 {
 	global $txt, $helptxt, $context, $settings;
@@ -746,93 +694,108 @@ function prepareDBSettingContext(&$config_vars)
 	$boardChoice = array();
 	foreach ($config_vars as $config_var)
 	{
-		// HR?
+		// <hr>?
 		if (!is_array($config_var))
-			$context['config_vars'][] = $config_var;
-		else
 		{
-			// If it has no name it doesn't have any purpose!
-			if (empty($config_var[1]))
-				continue;
-
-			if ($config_var[0] == 'boards')
-				$boardChoice[] = $config_var[1];
-
-			// Special case for inline permissions
-			if ($config_var[0] == 'permissions' && allowedTo('manage_permissions'))
-				$inlinePermissions[$config_var[1]] = isset($config_var['exclude']) ? $config_var['exclude'] : array();
-			elseif ($config_var[0] == 'permissions')
-				continue;
-
-			// Are we showing the BBC selection box?
-			if ($config_var[0] == 'bbc')
-				$bbcChoice[] = $config_var[1];
-
-			$context['config_vars'][$config_var[1]] = array(
-				'label' => isset($config_var['text_label']) ? $config_var['text_label'] : (isset($txt[$config_var[1]]) ? $txt[$config_var[1]] : (isset($config_var[3]) && !is_array($config_var[3]) ? $config_var[3] : '')),
-				'help' => isset($helptxt[$config_var[1]]) ? $config_var[1] : '',
-				'type' => $config_var[0],
-				'size' => !empty($config_var[2]) && !is_array($config_var[2]) ? $config_var[2] : (in_array($config_var[0], array('int', 'float')) ? 6 : 0),
-				'data' => array(),
-				'name' => $config_var[1],
-				'value' => !isset($config_var['value']) ? (isset($settings[$config_var[1]]) ? ($config_var[0] == 'select' || $config_var[0] == 'multi_select' || $config_var[0] == 'boards' ? $settings[$config_var[1]] : htmlspecialchars($settings[$config_var[1]])) : (in_array($config_var[0], array('int', 'float', 'percent')) ? 0 : '')) : $config_var['value'],
-				'disabled' => false,
-				'invalid' => !empty($config_var['invalid']),
-				'javascript' => '',
-				'var_message' => !empty($config_var['message']) && isset($txt[$config_var['message']]) ? $txt[$config_var['message']] : '',
-				'preinput' => isset($config_var['preinput']) ? $config_var['preinput'] : '',
-				'postinput' => isset($config_var['postinput']) ? $config_var['postinput'] : '',
-			);
-
-			// If it's an int, there may be extra stuff.
-			if ($config_var[0] == 'int')
-			{
-				if (isset($config_var['min']))
-					$context['config_vars'][$config_var[1]]['min'] = $config_var['min'];
-				if (isset($config_var['max']))
-					$context['config_vars'][$config_var[1]]['max'] = $config_var['max'];
-				$context['config_vars'][$config_var[1]]['step'] = isset($config_var['step']) ? $config_var['step'] : 1;
-			}
-
-			// We need to do a little pre-emptive clean-up for boards.
-			if ($config_var[0] == 'boards')
-				$context['config_vars'][$config_var[1]]['value'] = !empty($context['config_vars'][$config_var[1]]['value']) ? unserialize($context['config_vars'][$config_var[1]]['value']) : array();
-
-			// If this is a select box handle any data.
-			if (!empty($config_var[2]) && is_array($config_var[2]))
-			{
-				// If we allow multiple selections, we need to adjust a few things.
-				if ($config_var[0] == 'multi_select')
-					$context['config_vars'][$config_var[1]]['value'] = !empty($context['config_vars'][$config_var[1]]['value']) ? unserialize($context['config_vars'][$config_var[1]]['value']) : array();
-
-				// If it's associative
-				if (isset($config_var[2][0]) && is_array($config_var[2][0]))
-					$context['config_vars'][$config_var[1]]['data'] = $config_var[2];
-				else
-				{
-					foreach ($config_var[2] as $key => $item)
-						$context['config_vars'][$config_var[1]]['data'][] = array($key, $item);
-				}
-			}
-
-			// Finally allow overrides - and some final cleanups.
-			foreach ($config_var as $k => $v)
-			{
-				if (!is_numeric($k))
-				{
-					if (substr($k, 0, 2) == 'on')
-						$context['config_vars'][$config_var[1]]['javascript'] .= ' ' . $k . '="' . $v . '"';
-					else
-						$context['config_vars'][$config_var[1]][$k] = $v;
-				}
-
-				// See if there are any other labels that might fit?
-				if (isset($txt['setting_' . $config_var[1]]))
-					$context['config_vars'][$config_var[1]]['label'] = $txt['setting_' . $config_var[1]];
-				elseif (isset($txt['groups_' . $config_var[1]]))
-					$context['config_vars'][$config_var[1]]['label'] = $txt['groups_' . $config_var[1]];
-			}
+			$context['config_vars'][] = $config_var;
+			continue;
 		}
+
+		// If it has no name, it doesn't have any purpose!
+		if (empty($config_var[1]))
+			continue;
+
+		$type = $config_var[0];
+		$name = $config_var[1];
+
+		if ($type == 'boards')
+			$boardChoice[] = $name;
+
+		// Special case for inline permissions.
+		if ($type == 'permissions' && allowedTo('manage_permissions'))
+			$inlinePermissions[$name] = isset($config_var['exclude']) ? $config_var['exclude'] : array();
+		elseif ($type == 'permissions')
+			continue;
+
+		// Are we showing the BBC selection box?
+		if ($type == 'bbc')
+			$bbcChoice[] = $name;
+
+		$var = array(
+			'label' => isset($config_var['text_label']) ? $config_var['text_label'] : (isset($txt[$name]) ? $txt[$name] : (isset($config_var[3]) && !is_array($config_var[3]) ? $config_var[3] : '')),
+			'help' => isset($helptxt[$name]) ? $name : '',
+			'type' => $type,
+			'size' => !empty($config_var[2]) && !is_array($config_var[2]) ? $config_var[2] : ($type == 'int' || $type == 'float' ? 6 : 0),
+			'data' => array(),
+			'name' => $name,
+			'disabled' => (!empty($config_var['file']) && !empty($context['settings_not_writable'])) || !empty($config_var['disabled']),
+			'invalid' => !empty($config_var['invalid']),
+			'javascript' => '',
+			'var_message' => !empty($config_var['message']) && isset($txt[$config_var['message']]) ? $txt[$config_var['message']] : '',
+			'preinput' => isset($config_var['preinput']) ? $config_var['preinput'] : '', // Not used.
+			'postinput' => isset($config_var['postinput']) ? $config_var['postinput'] : '',
+			'subtext' => !empty($config_var['subtext']) ? $config_var['subtext'] : '',
+		);
+
+		if (!empty($config_var['file']))
+		{
+			global $$name;
+			$var['value'] = htmlspecialchars($$name);
+		}
+		elseif (isset($config_var['value']))
+			$var['value'] = $config_var['value'];
+		elseif (isset($settings[$name]))
+			$var['value'] = in_array($type, array('select', 'multi_select', 'boards')) ? $settings[$name] : htmlspecialchars($settings[$name]);
+		else
+			$var['value'] = in_array($type, array('int', 'float', 'percent')) ? 0 : '';
+
+		// If it's an int, there may be extra stuff.
+		if ($type == 'int')
+		{
+			if (isset($config_var['min']))
+				$var['min'] = $config_var['min'];
+			if (isset($config_var['max']))
+				$var['max'] = $config_var['max'];
+			$var['step'] = isset($config_var['step']) ? $config_var['step'] : 1;
+		}
+
+		// We need to do a little pre-emptive clean-up for boards.
+		if ($type == 'boards')
+			$var['value'] = !empty($var['value']) ? unserialize($var['value']) : array();
+
+		// If this is a select box handle any data.
+		if (!empty($config_var[2]) && is_array($config_var[2]))
+		{
+			// If we allow multiple selections, we need to adjust a few things.
+			if ($type == 'multi_select')
+				$var['value'] = !empty($var['value']) ? unserialize($var['value']) : array();
+
+			// If it's associative...
+			if (is_array(reset($config_var[2])))
+				$var['data'] = $config_var[2];
+			else
+				foreach ($config_var[2] as $key => $item)
+					$var['data'][] = array($key, $item);
+		}
+
+		// Finally allow overrides - and some final cleanups.
+		foreach ($config_var as $k => $v)
+		{
+			if (!is_numeric($k))
+			{
+				if (substr($k, 0, 2) == 'on')
+					$var['javascript'] .= ' ' . $k . '="' . $v . '"';
+				else
+					$var[$k] = $v;
+			}
+
+			// See if there are any other labels that might fit?
+			if (isset($txt['setting_' . $name]))
+				$var['label'] = $txt['setting_' . $name];
+			elseif (isset($txt['groups_' . $name]))
+				$var['label'] = $txt['groups_' . $name];
+		}
+		$context['config_vars'][$name] = $var;
 	}
 
 	// If we have inline permissions we need to prep them.
@@ -917,75 +880,29 @@ function saveSettings(&$config_vars)
 			$_POST['boardurl'] = 'http://' . $_POST['boardurl'];
 	}
 
-	// Any passwords?
-	$config_passwords = array(
-		'db_passwd',
-		'ssi_db_passwd',
-	);
-
-	// All the strings to write.
-	$config_strs = array(
-		'mtitle', 'mmessage',
-		'language', 'mbname', 'boardurl',
-		'cookiename',
-		'webmaster_email',
-		'db_name', 'db_user', 'db_server', 'db_prefix', 'ssi_db_user',
-		'boarddir', 'sourcedir', 'cachedir', 'pluginsdir',
-	);
-	// All the numeric variables.
-	$config_ints = array(
-	);
-	// All the checkboxes.
-	$config_bools = array(
-		'db_persist', 'db_error_send',
-		'maintenance',
-	);
-	// Values that explicitly require bool true/false
-	$config_truebools = array(
-		'db_show_debug',
-	);
-
 	// Now sort everything into a big array, and figure out arrays and etc.
 	$new_settings = array();
 
 	foreach ($config_vars as $config_var)
 	{
 		// We only want the file-based settings for now, so skip the rest.
-		if (!is_array($config_var) || $config_var[2] != 'file')
+		if (empty($config_var['file']))
 			continue;
 
-		$this_var = $config_var[0];
+		$type = $config_var[0];
+		$name = $config_var[1];
 
-		switch ($config_var[3])
-		{
-			case 'password':
-				if (in_array($this_var, $config_passwords))
-				{
-					if (isset($_POST[$this_var][1]) && $_POST[$this_var][0] == $_POST[$this_var][1]);
-						$new_settings[$this_var] = '\'' . addcslashes($_POST[$this_var][0], '\'\\') . '\'';
-				}
-				break;
-			case 'text':
-				if (in_array($this_var, $config_strs))
-				{
-					if (isset($_POST[$this_var]))
-						$new_settings[$this_var] = '\'' . addcslashes($_POST[$this_var], '\'\\') . '\'';
-				}
-				break;
-			case 'int':
-				if (in_array($this_var, $config_ints))
-				{
-					if (isset($_POST[$this_var]))
-						$new_settings[$this_var] = (int) $_POST[$this_var];
-				}
-				break;
-			case 'check':
-				if (in_array($this_var, $config_bools))
-					$new_settings[$this_var] = !empty($_POST[$this_var]) ? '1' : '0';
-				elseif (in_array($this_var, $config_truebools))
-					$new_settings[$this_var] = !empty($_POST[$this_var]) ? 'true' : 'false';
-				break;
-		}
+		if ($type == 'password' && isset($_POST[$name][1]) && $_POST[$name][0] == $_POST[$name][1])
+			$new_settings[$name] = '\'' . addcslashes($_POST[$name][0], '\'\\') . '\'';
+
+		elseif (($type == 'text' || $type == 'email') && isset($_POST[$name]))
+			$new_settings[$name] = '\'' . addcslashes($_POST[$name], '\'\\') . '\'';
+
+		elseif ($type == 'int' && isset($_POST[$name])) // None so far.
+			$new_settings[$name] = (int) $_POST[$name];
+
+		elseif ($type == 'check')
+			$new_settings[$name] = !empty($_POST[$name]) ? '1' : '0';
 	}
 
 	// Save the relevant settings in the Settings.php file.
@@ -997,23 +914,26 @@ function saveSettings(&$config_vars)
 	foreach ($config_vars as $config_var)
 	{
 		// We just saved the file-based settings, so skip them.
-		if (!is_array($config_var) || $config_var[2] == 'file')
+		if (!is_array($config_var) || isset($config_var['file']))
 			continue;
 
+		$type = $config_var[0];
+		$name = $config_var[1];
+
 		// Rewrite the definition a bit.
-		if ($config_var[3] == 'int')
+		if ($type == 'int')
 		{
-			$array = array($config_var[3], $config_var[0]);
+			$array = array($type, $name);
 			if (isset($config_var['min']))
 				$array['min'] = $config_var['min'];
 			if (isset($config_var['max']))
 				$array['max'] = $config_var['max'];
 			$new_settings[] = $array;
 		}
-		elseif ($config_var[3] != 'select')
-			$new_settings[] = array($config_var[3], $config_var[0]);
+		elseif ($type != 'select')
+			$new_settings[] = array($type, $name);
 		else
-			$new_settings[] = array($config_var[3], $config_var[0], $config_var[4]);
+			$new_settings[] = array($type, $name, $config_var[2]);
 	}
 
 	// Save the new database-based settings, if any.

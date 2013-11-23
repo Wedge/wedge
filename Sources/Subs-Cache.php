@@ -357,7 +357,7 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 			else
 				$found_suffixes[] = $found_suffix;
 
-			if ($db_show_debug === true)
+			if (!empty($db_show_debug))
 				$context['debug']['sheets'][] = $file . ' (' . basename($theme[$target . 'url']) . ')';
 			$latest_date = max($latest_date, filemtime($fold . $file));
 		}
@@ -386,7 +386,7 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 
 			$css[] = $fold . $file;
 
-			if ($db_show_debug === true)
+			if (!empty($db_show_debug))
 				$context['debug']['sheets'][] = $file . ' (' . basename($theme[$target . 'url']) . ')';
 			$latest_date = max($latest_date, filemtime($fold . $file));
 		}
@@ -1789,7 +1789,7 @@ function cache_put_data($key, $val, $ttl = 120)
 		}
 	}
 
-	if (isset($db_show_debug) && $db_show_debug === true)
+	if (!empty($db_show_debug))
 		$cache_hits[$cache_count]['t'] = microtime(true) - $st;
 }
 
@@ -1833,7 +1833,7 @@ function cache_get_data($key, $ttl = 120)
 			@unlink($cachedir . '/' . $key . '.php');
 	}
 
-	if (isset($db_show_debug) && $db_show_debug === true)
+	if (!empty($db_show_debug))
 	{
 		$cache_hits[$cache_count]['t'] = microtime(true) - $st;
 		$cache_hits[$cache_count]['s'] = isset($val) ? strlen($val) : 0;
@@ -1850,7 +1850,7 @@ function cache_prepare_key($key, $val = '', $type = 'get')
 	global $boardurl, $settings, $cache_hits, $cache_count, $db_show_debug, $cachedir;
 
 	$cache_count = isset($cache_count) ? $cache_count + 1 : 1;
-	if (isset($db_show_debug) && $db_show_debug === true)
+	if (!empty($db_show_debug))
 	{
 		if ($type == 'get')
 			$cache_hits[$cache_count] = array('k' => $key, 'd' => 'get');

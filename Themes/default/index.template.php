@@ -128,10 +128,8 @@ function template_body_before()
 // The main content should go here.
 function template_wrapper_before()
 {
-	global $settings;
-
 	echo '
-<div id="wedge">', !empty($settings['forum_width']) ? '<div id="wrapper" style="width: ' . $settings['forum_width'] . '">' : '';
+<div id="wedge">';
 }
 
 // Start the header layer.
@@ -438,9 +436,7 @@ function template_content_wrap_after()
 
 function template_wrapper_after()
 {
-	global $theme;
-
-	echo !empty($theme['forum_width']) ? '</div>' : '', '
+	echo '
 </div>';
 }
 

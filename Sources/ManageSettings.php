@@ -39,7 +39,7 @@ if (!defined('WEDGE'))
 // This just avoids some repetition.
 function loadGeneralSettingParameters($subActions = array(), $defaultAction = '')
 {
-	global $context, $txt;
+	global $context;
 
 	// You need to be an admin to edit settings!
 	isAllowedTo('admin_forum');
@@ -94,27 +94,41 @@ function ModifyBasicSettings($return_config = false)
 	global $txt, $context;
 
 	$config_vars = array(
-			array('mbname', $txt['setting_mbname'], 'file', 'text', 30),
-			array('home_url', $txt['home_url'], 'db', 'text', 40, 'subtext' => $txt['home_url_subtext']),
-			array('home_link', $txt['home_link'], 'db', 'check', 'subtext' => $txt['home_link_subtext']),
+			array('text', 'mbname', 30, 'file' => true),
+			array('text', 'home_url', 40, 'subtext' => $txt['home_url_subtext']),
+			array('check', 'home_link', 'subtext' => $txt['home_link_subtext']),
 		'',
-			array('site_slogan', $txt['site_slogan'], 'db', 'text', 40, 'subtext' => $txt['site_slogan_desc']),
-			array('header_logo_url', $txt['header_logo_url'], 'db', 'text', 40, 'subtext' => $txt['header_logo_url_desc']),
-			array('forum_width', $txt['forum_width'], 'db', 'text', 8, 'subtext' => $txt['forum_width_desc']),
-		'',
-			// Number formatting, timezones.
-			array('todayMod', $txt['todayMod'], 'db', 'select', array(
-				0 => array(0, $txt['today_disabled']),
-				1 => array(1, $txt['today_only']),
-				2 => array(2, $txt['yesterday_today'])
-			), 'todayMod'),
+			array('text', 'site_slogan', 40, 'subtext' => $txt['site_slogan_desc']),
+			array('text', 'header_logo_url', 40, 'subtext' => $txt['header_logo_url_desc']),
 		'',
 			// Statistics.
-			array('trackStats', $txt['trackStats'], 'db', 'check', null, 'trackStats'),
-			array('hitStats', $txt['hitStats'], 'db', 'check'),
+			array('check', 'trackStats'),
+			array('check', 'hitStats'),
+		'',
+			array('select', 'todayMod', array(
+				$txt['today_disabled'],
+				$txt['today_only'],
+				$txt['yesterday_today'],
+			)),
 		'',
 			// Option-ish things... miscellaneous sorta.
-			array('disallow_sendBody', $txt['disallow_sendBody'], 'db', 'check', 'null', 'disallow_sendBody'),
+			array('check', 'disallow_sendBody'),
+
+		array('title', 'member_options_title', 'icon' => 'memberoptions.png'),
+
+			array('check', 'allow_guestAccess'),
+		'',
+			array('check', 'enable_buddylist'),
+			array('check', 'allow_editDisplayName'),
+			array('check', 'titlesEnable'),
+			array('check', 'approveAccountDeletion'),
+		'',
+			array('check', 'allow_disableAnnounce'),
+
+		array('title', 'admin_likes', 'icon' => 'likes.png'),
+
+			array('check', 'likes_enabled'),
+			array('check', 'likes_own_posts'),
 	);
 
 	if ($return_config)
@@ -133,13 +147,13 @@ function ModifyBasicSettings($return_config = false)
 	$context['post_url'] = '<URL>?action=admin;area=featuresettings;save;sa=basic';
 	$context['settings_title'] = $txt['mods_cat_features'];
 
-	prepareServerSettingsContext($config_vars);
+	prepareDBSettingContext($config_vars);
 }
 
 // Let's try keep the spam to a minimum ah Thantos?
 function ModifySpamSettings($return_config = false)
 {
-	global $txt, $context, $settings, $theme;
+	global $txt, $context, $settings;
 
 	isAllowedTo('admin_forum');
 
@@ -414,7 +428,8 @@ function ModifyPmSettings($return_config = false)
 			array('permissions', 'save_pm_draft', 'exclude' => array(-1)),
 			array('check', 'masterAutoSavePmDrafts'),
 			array('permissions', 'auto_save_pm_draft', 'exclude' => array(-1)),
-			$txt['pm_draft_other_settings'],
+			'',
+			array('message', 'pm_draft_other_settings'),
 		));
 
 	if ($return_config)
@@ -446,46 +461,8 @@ function ModifyPmSettings($return_config = false)
 
 	$context['post_url'] = '<URL>?action=admin;area=pm;save';
 
-	// Hacky mess for PM settings
+	// Hacky mess for PM settings.
 	list ($settings['max_pm_recipients'], $settings['pm_posts_verification'], $settings['pm_posts_per_hour']) = explode(',', $settings['pm_spam_settings']);
-
-	wetem::load('show_settings');
-	prepareDBSettingContext($config_vars);
-}
-
-function ModifyLikeSettings($return_config = false)
-{
-	global $context, $txt, $settings;
-	$config_vars = array(
-		array('check', 'likes_enabled'),
-	);
-
-	loadLanguage('ManageSettings');
-
-	$context['page_title'] = $context['settings_title'] = $txt['admin_likes'];
-
-	if (!empty($settings['likes_enabled']))
-		$config_vars = array_merge($config_vars, array(
-			'',
-			array('check', 'likes_own_posts'),
-		));
-
-	if ($return_config)
-		return $config_vars;
-
-	loadSource('ManageServer');
-
-	// Saving?
-	if (isset($_GET['save']))
-	{
-		checkSession();
-
-		saveDBSettings($config_vars);
-
-		redirectexit('action=admin;area=likes');
-	}
-
-	$context['post_url'] = '<URL>?action=admin;area=likes;save';
 
 	wetem::load('show_settings');
 	prepareDBSettingContext($config_vars);

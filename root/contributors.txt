@@ -100,16 +100,20 @@ Also see these files for more contributor credits:
 
 FamFamFam Flags, FamFamFam Silk icons
 	-- © Mark James 2005, http://famfamfam.com/
-	-- Silk used under the Creative Commons Attribution 3.0 license, http://creativecommons.org/licenses/by/3.0/
+	-- Silk used under the CC BY 3.0 license, http://creativecommons.org/licenses/by/3.0/
 
 Diagona, Fugue
 	-- © Yusuke Kamiyamane 2013, http://p.yusukekamiyamane.com/
-	-- used under the Creative Commons Attribution 3.0 license, http://creativecommons.org/licenses/by/3.0/
+	-- used under the CC BY 3.0 license, http://creativecommons.org/licenses/by/3.0/
 
 Crystal Clear
 	-- © Crystal Project 2001-2012, http://commons.wikimedia.org/wiki/Crystal_Clear
 	-- used under the LGPLv3, http://www.gnu.org/licenses/lgpl.html
 	-- no code linkage, some images renamed.
+
+FatCow-Farm Fresh Icons
+	-- © FatCow 2009-2013, http://www.fatcow.com/free-icons
+	-- used under the CC BY 3.0 US license, http://creativecommons.org/licenses/by/3.0/us/
 
 FancyUpload (mass uploader progress bars)
 	-- © Harald Kirschner 2008-2009, http://digitarald.de/project/fancyupload/

@@ -294,23 +294,20 @@ function ModifyMailSettings($return_config = false)
 
 	$config_vars = array(
 			// Master email settings
-			array('webmaster_email', $txt['webmaster_email'], 'file', 'email', 30, 'webmaster_email'),
-			array('mail_from', $txt['mail_from'], 'db', 'email', 30, 'mail_from'),
+			array('email', 'webmaster_email', 30, 'file' => true),
+			array('email', 'mail_from', 30),
 		'',
 			// Mail queue stuff, this rocks ;)
-			array('mail_queue', $txt['mail_queue'], 'db', 'check'),
-			array('mail_limit', $txt['mail_limit'], 'db', 'int'),
-			array('mail_quantity', $txt['mail_quantity'], 'db', 'int'),
+			array('check', 'mail_queue'),
+			array('int', 'mail_limit'),
+			array('int', 'mail_quantity'),
 		'',
 			// SMTP stuff.
-			array('mail_type', $txt['mail_type'], 'db', 'select', array(
-				0 => array(0, $txt['mail_type_default']),
-				1 => array(1, 'SMTP'),
-			)),
-			array('smtp_host', $txt['smtp_host'], 'db', 'text', 30),
-			array('smtp_port', $txt['smtp_port'], 'db', 'int', 30, 'min' => 1, 'max' => 65535), // port 0 is officially marked reserved
-			array('smtp_username', $txt['smtp_username'], 'db', 'text', 30),
-			array('smtp_password', $txt['smtp_password'], 'db', 'password', 30),
+			array('select', 'mail_type', array($txt['mail_type_default'], 'SMTP')),
+			array('text', 'smtp_host', 30),
+			array('int', 'smtp_port', 30, 'min' => 1, 'max' => 65535), // port 0 is officially marked reserved
+			array('text', 'smtp_username', 30),
+			array('password', 'smtp_password', 30),
 	);
 
 	if ($return_config)
@@ -334,8 +331,7 @@ function ModifyMailSettings($return_config = false)
 	$context['post_url'] = '<URL>?action=admin;area=mailqueue;save;sa=settings';
 	$context['settings_title'] = $txt['mailqueue_settings'];
 
-	// We need to use this instead of prepareDBSettingsContext because some of this stuff goes in Settings.php itself.
-	prepareServerSettingsContext($config_vars);
+	prepareDBSettingContext($config_vars);
 }
 
 function ModifyEmailTemplates()

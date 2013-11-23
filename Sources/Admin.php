@@ -79,6 +79,29 @@ function Admin()
 					'bigicon' => 'moderation_filters.png',
 				),
 				'',
+				'pm' => array(
+					'label' => $txt['admin_personal_messages'],
+					'file' => 'ManageSettings',
+					'icon' => 'members.gif',
+					'bigicon' => !empty($settings['pm_enabled']) ? 'personal_messages_on.png' : 'personal_messages_off.png',
+					'function' => 'ModifyPmSettings',
+					'permission' => 'admin_forum',
+				),
+				'',
+				'paidsubscribe' => array(
+					'label' => $txt['paid_subscriptions'],
+					'file' => 'ManagePaid',
+					'icon' => 'paid.gif',
+					'bigicon' => !empty($settings['paid_enabled']) ? 'paid_subs_on.png' : 'paid_subs_off.png',
+					'function' => 'ManagePaidSubscriptions',
+					'permission' => 'admin_forum',
+					'subsections' => array(
+						'view' => array($txt['paid_subs_view'], 'enabled' => !empty($settings['paid_enabled'])),
+						'',
+						'settings' => array($txt['settings']),
+					),
+				),
+				'',
 				'languages' => array(
 					'label' => $txt['language_configuration'],
 					'file' => 'ManageLanguages',
@@ -111,7 +134,7 @@ function Admin()
 		),
 		'layout' => array(
 			'title' => $txt['layout_controls'],
-			'permission' => array('manage_boards', 'admin_forum', 'manage_smileys', 'manage_attachments', 'moderate_forum', 'edit_news', 'send_mail'),
+			'permission' => array('manage_boards', 'admin_forum', 'manage_attachments', 'manage_smileys', 'moderate_forum', 'edit_news', 'send_mail'),
 			'areas' => array(
 				'manageboards' => array(
 					'label' => $txt['admin_boards'],
@@ -172,17 +195,6 @@ function Admin()
 						'maintenance' => array($txt['attachment_manager_maintenance']),
 					),
 				),
-				'aeva_embed' => array(
-					'label' => $txt['media_admin_labels_embed'],
-					'icon' => 'aeva.png',
-					'bigicon' => !empty($settings['embed_enabled']) ? 'autoembed_on.png' : 'autoembed_off.png',
-					'file' => 'media/ManageMedia',
-					'function' => 'aeva_admin_init',
-					'subsections' => array(
-						'config' => array($txt['media_admin_settings_config']),
-						'sites' => array($txt['media_admin_settings_sites']),
-					),
-				),
 				'smileys' => array(
 					'label' => $txt['smileys_manage'],
 					'file' => 'ManageSmileys',
@@ -213,22 +225,6 @@ function Admin()
 						'mailingmembers' => array($txt['admin_newsletters'], 'send_mail'),
 						'',
 						'settings' => array($txt['settings'], 'admin_forum'),
-					),
-				),
-				'',
-				'sengines' => array(
-					'label' => $txt['search_engines'],
-					'file' => 'ManageSearchEngines',
-					'icon' => 'engines.gif',
-					'bigicon' => !empty($settings['spider_mode']) ? 'search_engines_on.png' : 'search_engines_off.png',
-					'function' => 'SearchEngines',
-					'permission' => 'admin_forum',
-					'subsections' => array(
-						'stats' => array($txt['spider_stats'], 'enabled' => !empty($settings['spider_mode'])),
-						'logs' => array($txt['spider_log'], 'enabled' => !empty($settings['spider_mode'])),
-						'spiders' => array($txt['spiders'], 'enabled' => !empty($settings['spider_mode'])),
-						'',
-						'settings' => array($txt['settings']),
 					),
 				),
 			),
@@ -262,6 +258,17 @@ function Admin()
 						'featured' => array($txt['media_admin_filter_featured_albums']),
 						'',
 						'add' => array($txt['media_admin_add_album']),
+					),
+				),
+				'aeva_embed' => array(
+					'label' => $txt['media_admin_labels_embed'],
+					'icon' => 'aeva.png',
+					'bigicon' => !empty($settings['embed_enabled']) ? 'autoembed_on.png' : 'autoembed_off.png',
+					'file' => 'media/ManageMedia',
+					'function' => 'aeva_admin_init',
+					'subsections' => array(
+						'config' => array($txt['media_admin_settings_config']),
+						'sites' => array($txt['media_admin_settings_sites']),
 					),
 				),
 				'',
@@ -373,6 +380,21 @@ function Admin()
 						'settings' => array($txt['settings'], 'admin_forum'),
 					),
 				),
+				'memberoptions' => array(
+					'label' => $txt['member_options_title'],
+					'file' => 'ManageMemberOptions',
+					'function' => 'ManageMemberOptions',
+					'icon' => 'settings.gif',
+					'bigicon' => 'memberoptions.png',
+					'permission' => 'admin_forum',
+					'subsections' => array(
+						'options' => array($txt['admin_member_defaults']),
+						'',
+						'sig' => array($txt['signature_settings_short']),
+						'profile' => array($txt['custom_profile_shorttitle']),
+						'whosonline' => array($txt['admin_whos_online']),
+					),
+				),
 				'permissions' => array(
 					'label' => $txt['edit_permissions'],
 					'file' => 'ManagePermissions',
@@ -414,52 +436,6 @@ function Admin()
 						'edit' => array($txt['ban_edit'], 'enabled' => isset($_REQUEST['ban'])),
 						'',
 						'settings' => array($txt['ban_settings']),
-					),
-				),
-				'memberoptions' => array(
-					'label' => $txt['member_options_title'],
-					'file' => 'ManageMemberOptions',
-					'function' => 'ManageMemberOptions',
-					'icon' => 'settings.gif',
-					'bigicon' => 'memberoptions.png',
-					'permission' => 'admin_forum',
-					'subsections' => array(
-						'options' => array($txt['configure_options']),
-						'',
-						'sig' => array($txt['signature_settings_short']),
-						'prefs' => array($txt['admin_member_prefs']),
-						'profile' => array($txt['custom_profile_shorttitle']),
-						'whosonline' => array($txt['admin_whos_online']),
-					),
-				),
-				'likes' => array(
-					'label' => $txt['admin_likes'],
-					'file' => 'ManageSettings',
-					'function' => 'ModifyLikeSettings',
-					'icon' => 'settings.gif',
-					'bigicon' => 'likes.png',
-					'permission' => 'admin_forum',
-				),
-				'pm' => array(
-					'label' => $txt['admin_personal_messages'],
-					'file' => 'ManageSettings',
-					'function' => 'ModifyPmSettings',
-					'icon' => 'members.gif',
-					'bigicon' => !empty($settings['pm_enabled']) ? 'personal_messages_on.png' : 'personal_messages_off.png',
-					'permission' => 'admin_forum',
-				),
-				'',
-				'paidsubscribe' => array(
-					'label' => $txt['paid_subscriptions'],
-					'file' => 'ManagePaid',
-					'icon' => 'paid.gif',
-					'bigicon' => !empty($settings['paid_enabled']) ? 'paid_subs_on.png' : 'paid_subs_off.png',
-					'function' => 'ManagePaidSubscriptions',
-					'permission' => 'admin_forum',
-					'subsections' => array(
-						'view' => array($txt['paid_subs_view'], 'enabled' => !empty($settings['paid_enabled'])),
-						'',
-						'settings' => array($txt['settings']),
 					),
 				),
 				'',
@@ -565,6 +541,21 @@ function Admin()
 					),
 				),
 				'',
+				'sengines' => array(
+					'label' => $txt['search_engines'],
+					'file' => 'ManageSearchEngines',
+					'icon' => 'engines.gif',
+					'bigicon' => !empty($settings['spider_mode']) ? 'search_engines_on.png' : 'search_engines_off.png',
+					'function' => 'SearchEngines',
+					'permission' => 'admin_forum',
+					'subsections' => array(
+						'settings' => array($txt['settings']),
+						'',
+						'stats' => array($txt['spider_stats'], 'enabled' => !empty($settings['spider_mode'])),
+						'logs' => array($txt['spider_log'], 'enabled' => !empty($settings['spider_mode'])),
+						'spiders' => array($txt['spiders'], 'enabled' => !empty($settings['spider_mode'])),
+					),
+				),
 				'logs' => array(
 					'label' => $txt['logs'],
 					'function' => 'AdminLogs',
@@ -896,42 +887,40 @@ function AdminSearchInternal()
 	// This is a special array of functions that contain setting data - we query all these to simply pull all setting bits!
 	$search = array(
 		'settings' => array(
-			array('ModifyBasicSettings', 'area=featuresettings;sa=basic'),
-			array('ModifyPrettyURLs', 'area=featuresettings;sa=pretty'),
-			array('ModifyMemberSettings', 'area=memberoptions;sa=options'),
-			array('ModifySignatureSettings', 'area=memberoptions;sa=sig'),
-			array('ModifyWhosOnline', 'area=memberoptions;sa=whosonline'),
-			array('ModifySpamSettings', 'area=antispam'),
-			array('ModifyInfractionSettings', 'area=infractions;sa=settings'),
-			array('ManageAttachmentSettings', 'area=manageattachments;sa=attachments'),
-			array('ManageAvatarSettings', 'area=manageattachments;sa=avatars'),
-			array('EditBoardSettings', 'area=manageboards;sa=settings'),
-			array('ModifyMailSettings', 'area=mailqueue;sa=settings'),
-			array('ModifyNewsSettings', 'area=news;sa=settings'),
-			array('GeneralPermissionSettings', 'area=permissions;sa=settings'),
-			array('ModifyPostSettings', 'area=postsettings;sa=posts'),
-			array('ModifyBBCSettings', 'area=postsettings;sa=bbc'),
-			array('ModifyPostEditorSettings', 'area=postsettings;sa=editor'),
-			array('ModifyTopicSettings', 'area=postsettings;sa=topics'),
-			array('ModifyMergeSettings', 'area=postsettings;sa=merge'),
-			array('ModifyDraftSettings', 'area=postsettings;sa=drafts'),
-			array('EditSearchSettings', 'area=managesearch;sa=settings'),
-			array('EditSmileySettings', 'area=smileys;sa=settings'),
-			array('ModifyGeneralSettings', 'area=serversettings;sa=general'),
-			array('ModifyDatabaseSettings', 'area=serversettings;sa=database'),
-			array('ModifyCookieSettings', 'area=serversettings;sa=cookie'),
-			array('ModifyCacheSettings', 'area=serversettings;sa=cache'),
-			array('ModifyRegistrationSettings', 'area=regcenter;sa=settings'),
-			array('ManageSearchEngineSettings', 'area=sengines;sa=settings'),
-			array('ModifySubscriptionSettings', 'area=paidsubscribe;sa=settings'),
-			array('ModifyLogSettings', 'area=logs;sa=settings'),
-			array('ModifyPmSettings', 'area=pm'),
-			array('ModifyLikeSettings', 'area=likes'),
-			array('BanListSettings', 'area=bans;sa=settings'),
-			array('ModifyMembergroupSettings', 'area=membergroups;sa=settings'),
+			array('ModifyBasicSettings',		'area=featuresettings;sa=basic'),
+			array('ModifyPrettyURLs',			'area=featuresettings;sa=pretty'),
+			array('ModifySignatureSettings',	'area=memberoptions;sa=sig'),
+			array('ModifyWhosOnline',			'area=memberoptions;sa=whosonline'),
+			array('ModifySpamSettings',			'area=antispam'),
+			array('ModifyInfractionSettings',	'area=infractions;sa=settings'),
+			array('ManageAttachmentSettings',	'area=manageattachments;sa=attachments'),
+			array('ManageAvatarSettings',		'area=manageattachments;sa=avatars'),
+			array('EditBoardSettings',			'area=manageboards;sa=settings'),
+			array('ModifyMailSettings',			'area=mailqueue;sa=settings'),
+			array('ModifyNewsSettings',			'area=news;sa=settings'),
+			array('GeneralPermissionSettings',	'area=permissions;sa=settings'),
+			array('ModifyPostSettings',			'area=postsettings;sa=posts'),
+			array('ModifyBBCSettings',			'area=postsettings;sa=bbc'),
+			array('ModifyPostEditorSettings',	'area=postsettings;sa=editor'),
+			array('ModifyTopicSettings',		'area=postsettings;sa=topics'),
+			array('ModifyMergeSettings',		'area=postsettings;sa=merge'),
+			array('ModifyDraftSettings',		'area=postsettings;sa=drafts'),
+			array('EditSearchSettings',			'area=managesearch;sa=settings'),
+			array('EditSmileySettings',			'area=smileys;sa=settings'),
+			array('ModifyGeneralSettings',		'area=serversettings;sa=general'),
+			array('ModifyDatabaseSettings',		'area=serversettings;sa=database'),
+			array('ModifyCookieSettings',		'area=serversettings;sa=cookie'),
+			array('ModifyCacheSettings',		'area=serversettings;sa=cache'),
+			array('ModifyRegistrationSettings',	'area=regcenter;sa=settings'),
+			array('ManageSearchEngineSettings',	'area=sengines;sa=settings'),
+			array('ModifySubscriptionSettings',	'area=paidsubscribe;sa=settings'),
+			array('ModifyLogSettings',			'area=logs;sa=settings'),
+			array('ModifyPmSettings',			'area=pm'),
+			array('BanListSettings',			'area=bans;sa=settings'),
+			array('ModifyMembergroupSettings',	'area=membergroups;sa=settings'),
 		),
 		'preferences' => array(
-			array('ModifyMemberPreferences', 'area=memberoptions;sa=prefs'),
+			array('ModifyMemberOptions', 'area=memberoptions;sa=options'),
 		),
 		'tasks' => array(
 			array('MaintainRoutine', 'area=maintain'),
@@ -955,48 +944,36 @@ function AdminSearchInternal()
 	foreach ($search as $setting_type => $search_places)
 	{
 		if ($setting_type == 'tasks')
+		{
 			foreach ($search_places as $setting_area)
 			{
 				$tasks = $setting_area[0](true);
 				foreach ($tasks as $id => $task)
 					$search_data[$setting_type][] = array($id, $setting_area[1]);
 			}
+		}
 		else
+		{
 			foreach ($search_places as $setting_area)
 			{
 				$context['page_title'] = '';
 				// Get a list of their variables.
-				if (isset($setting_area[2]))
-					$config_vars = $setting_area[0](true, $setting_area[2]);
-				else
-					$config_vars = $setting_area[0](true);
+				$config_vars = isset($setting_area[2]) ? $setting_area[0](true, $setting_area[2]) : $setting_area[0](true);
 
 				foreach ($config_vars as $var)
-					if (!empty($var[1]) && !in_array($var[0], array('permissions', 'switch', 'desc', 'warning', 'callback')))
+				{
+					if (!empty($var[1]) && !in_array($var[0], array('permissions', 'desc', 'message', 'warning', 'callback')))
 					{
-						// Using the construction of prepareServerSettingsContext?
-						if (isset($var[2]) && in_array($var[2], array('file', 'db')))
-						{
-							$item = array($var[0], $setting_area[1]);
-							if (isset($var[5], $helptxt[$var[5]]))
-								$item[2] = $var[5];
-							if (!empty($context['page_title']))
-								$item[3] = $context['page_title'];
-
-							$search_data[$setting_type][] = $item;
-						}
-						// Then it's prepareDBSettingsContext style.
-						else
-						{
-							$item = array(isset($var['text_label']) ? $var['text_label'] : $var[1], $setting_area[1]);
-							if (isset($var['help'], $helptxt[$var['help']]))
-								$item[2] = $var['help'];
-							if (!empty($context['page_title']))
-								$item[3] = $context['page_title'];
-							$search_data[$setting_type][] = $item;
-						}
+						$item = array(isset($var['text_label']) ? $var['text_label'] : $var[1], $setting_area[1]);
+						if (isset($var['help'], $helptxt[$var['help']]))
+							$item[2] = $var['help'];
+						if (!empty($context['page_title']))
+							$item[3] = $context['page_title'];
+						$search_data[$setting_type][] = $item;
 					}
+				}
 			}
+		}
 	}
 
 	$context['page_title'] = $txt['admin_search_results'];

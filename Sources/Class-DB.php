@@ -151,7 +151,7 @@ class wesql
 		}
 
 		// Debugging.
-		if (isset($db_show_debug) && $db_show_debug === true)
+		if (!empty($db_show_debug))
 		{
 			// Get the file and line number this function was called.
 			list ($file, $line) = self::error_backtrace('', '', 'return', __FILE__, __LINE__);
@@ -228,7 +228,7 @@ class wesql
 			$ret = self::serious_error($db_string, $connection);
 
 		// Debugging.
-		if (isset($db_show_debug) && $db_show_debug === true)
+		if (!empty($db_show_debug))
 			$db_cache[$db_count]['t'] = microtime(true) - $st;
 
 		return $ret;
@@ -422,7 +422,7 @@ class wesql
 		if (allowedTo('admin_forum') && defined('WEDGE_VERSION') && WEDGE_VERSION != @$settings['weVersion'] && strpos(WEDGE_VERSION, 'SVN') === false)
 			$context['error_message'] .= '<br><br>' . sprintf($txt['database_error_versions'], WEDGE_VERSION, @$settings['weVersion']);
 
-		if (allowedTo('admin_forum') && isset($db_show_debug) && $db_show_debug === true)
+		if (allowedTo('admin_forum') && !empty($db_show_debug))
 			$context['error_message'] .= '<br><br>' . preg_replace('~(\r\n|\r|\n)~', '<br>$1', $db_string);
 
 		// It's already been logged... don't log it again.

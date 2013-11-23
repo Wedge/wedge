@@ -24,7 +24,7 @@ function ViewQuery()
 {
 	global $context, $db_connection, $settings, $boarddir, $txt, $db_show_debug;
 
-	$show_debug = isset($db_show_debug) && $db_show_debug === true;
+	$show_debug = !empty($db_show_debug);
 	// We should have debug mode enabled, as well as something to display!
 	if (!$show_debug || !isset($_SESSION['debug']))
 		fatal_lang_error('no_access', false);

@@ -1770,7 +1770,7 @@ function knownHooks()
 			'repair_errors_tests',
 			'repair_errors_finished',
 			'theme_settings',
-			'member_prefs',
+			'member_options',
 			'maintenance_routine',
 
 			// User related

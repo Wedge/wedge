@@ -935,7 +935,7 @@ function db_debug_junk()
 	global $db_cache, $db_count, $db_show_debug, $cache_count, $cache_hits;
 
 	// Is debugging on? (i.e. it is set, and it is true, and we're not on action=viewquery or an help popup.
-	$show_debug = $show_debug_query = isset($db_show_debug) && $db_show_debug === true && $context['action'] !== 'viewquery' && $context['action'] !== 'help';
+	$show_debug = $show_debug_query = !empty($db_show_debug) && $context['action'] !== 'viewquery' && $context['action'] !== 'help';
 
 	// Check groups
 	if (empty($settings['db_show_debug_who']) || $settings['db_show_debug_who'] == 'admin')
@@ -1299,7 +1299,7 @@ function loadTemplate($template_name, $fatal = true)
 
 	if ($loaded)
 	{
-		if ($db_show_debug === true)
+		if (!empty($db_show_debug))
 			$context['debug']['templates'][] = $template_name . ' (' . basename($template_dir) . ')';
 
 		// If they have specified an initialization function for this template, go ahead and call it now.
@@ -1352,7 +1352,7 @@ function execBlock($block_name, $fatal = false)
 	if (empty($block_name))
 		return;
 
-	if ($db_show_debug === true)
+	if (!empty($db_show_debug))
 		$context['debug']['blocks'][$block_name] = isset($context['debug']['blocks'][$block_name]) ? $context['debug']['blocks'][$block_name] + 1 : 1;
 
 	if (strpos($block_name, ':') !== false)

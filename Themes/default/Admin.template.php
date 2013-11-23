@@ -589,7 +589,7 @@ function template_not_done()
 // Template for showing settings (of any kind, really!)
 function template_show_settings()
 {
-	global $context, $txt;
+	global $context, $txt, $theme;
 
 	if ($context['was_saved'])
 		echo '
@@ -618,7 +618,7 @@ function template_show_settings()
 	$is_open = false;
 	foreach ($context['config_vars'] as $config_var)
 	{
-		// Is it a title or a description?
+		// Is it a title or a description, something that forces the div to end?
 		if (is_array($config_var) && ($config_var['type'] == 'title' || $config_var['type'] == 'desc'))
 		{
 			// Not a list yet?
@@ -634,12 +634,15 @@ function template_show_settings()
 			if ($config_var['type'] == 'title')
 				echo '
 
-			<we:cat>
-				<div', !empty($config_var['class']) ? ' class="' . $config_var['class'] . '"' : '', !empty($config_var['force_div_id']) ? ' id="' . $config_var['force_div_id'] . '"' : '', '>', $config_var['help'] ? '
+			<we:title>
+				<div', !empty($config_var['class']) ? ' class="' . $config_var['class'] . '"' : '', !empty($config_var['force_div_id']) ? ' id="' . $config_var['force_div_id'] . '"' : '', '>',
+					!empty($config_var['icon']) ? '
+					<img src="' . $theme['default_images_url'] . '/admin/' . $config_var['icon'] . '" style="vertical-align: -8px; margin-right: 8px">' : '',
+					!empty($config_var['help']) ? '
 					<a href="<URL>?action=help;in=' . $config_var['help'] . '" onclick="return reqWin(this);" class="help" title="' . $txt['help'] . '"></a>' : '', '
 					', $config_var['label'], '
 				</div>
-			</we:cat>';
+			</we:title>';
 
 			// A description?
 			else
@@ -943,17 +946,13 @@ function template_show_settings()
 
 	if ($is_open)
 		echo '
-				</dl>';
+				</dl>
+			</div>';
 
 	if (empty($context['settings_save_dont_show']))
 		echo '
-				<hr>
-				<div class="right">
-					<input type="submit" value="', $txt['save'], '"', !empty($context['save_disabled']) ? ' disabled' : '', !empty($context['settings_save_onclick']) ? ' onclick="' . $context['settings_save_onclick'] . '"' : '', ' class="submit">
-				</div>';
-
-	if ($is_open)
-		echo '
+			<div class="right padding">
+				<input type="submit" value="', $txt['save'], '"', !empty($context['save_disabled']) ? ' disabled' : '', !empty($context['settings_save_onclick']) ? ' onclick="' . $context['settings_save_onclick'] . '"' : '', ' class="submit">
 			</div>';
 
 	echo '
