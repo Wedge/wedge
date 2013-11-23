@@ -63,7 +63,7 @@ function aeva_admin_embed()
 
 	$test = $txt['embed_lookups_desc'] . '<br><span style="font-weight: bold; color: ' . (empty($settings['embed_lookup_result']) ? 'red' : 'green') . '">' . $test . '</span>';
 
-	$theme = array(
+	$th = array(
 		'embed_enabled'				=> array('yesno', 'config'),
 		'media_admin_labels_embed'	=> array('title', 'config'),
 		'embed_lookups'				=> array('yesno', 'config', 'subtext' => $test, 'disabled' => !empty($settings['embed_lookup_result']) ? 0 : 1),
@@ -91,7 +91,7 @@ function aeva_admin_embed()
 	);
 
 	foreach (array('mp3','mp4','flv','avi','divx','mov','wmp','real','swf') as $ext)
-		$theme['embed_ext'][2]['embed_' . $ext] = array($txt['embed_' . $ext], !empty($settings['embed_' . $ext]), 'force_name' => 'embed_' . $ext);
+		$th['embed_ext'][2]['embed_' . $ext] = array($txt['embed_' . $ext], !empty($settings['embed_' . $ext]), 'force_name' => 'embed_' . $ext);
 
 	// Clear sites that may have already been loaded (possibly for news and such)
 	$sites = array();
@@ -204,24 +204,24 @@ function aeva_admin_embed()
 				$_POST['embed_max_per_post'] = min(min(1000, max(1, (int) $_POST['embed_max_per_post'])), $_POST['embed_max_per_page']);
 			}
 
-			foreach ($theme as $setting => $options)
+			foreach ($th as $setting => $opt)
 			{
 				// Skip if we're not in the right page...
-				if ($options[1] != $context['current_area'])
+				if ($opt[1] != $context['current_area'])
 					continue;
-				if ($options[0] != 'title' && isset($_POST[$setting]))
+				if ($opt[0] != 'title' && isset($_POST[$setting]))
 					$new_value = is_array($_POST[$setting]) ? $_POST[$setting] : westr::htmlspecialchars($_POST[$setting]);
-				elseif ($options[0] == 'checkbox' && !isset($_POST[$setting]))
+				elseif ($opt[0] == 'checkbox' && !isset($_POST[$setting]))
 					$new_value = 0;
-				elseif ($options[0] !== 'checkbox_line')
+				elseif ($opt[0] !== 'checkbox_line')
 					continue;
 
-				if (!empty($options[2]) && is_array($options[2]) && !in_array($options[0], array('radio', 'select')))
+				if (!empty($opt[2]) && is_array($opt[2]) && !in_array($opt[0], array('radio', 'select')))
 				{
-					foreach ($options[2] as $sub_setting => $dummy)
+					foreach ($opt[2] as $sub_setting => $dummy)
 					{
 						updateSettings(array($sub_setting => isset($_POST[$sub_setting]) ? 1 : 0));
-						$theme[$setting][2][$sub_setting][1] = !empty($settings[$sub_setting]);
+						$th[$setting][2][$sub_setting][1] = !empty($settings[$sub_setting]);
 					}
 				}
 				else
@@ -237,11 +237,11 @@ function aeva_admin_embed()
 
 	foreach ($stypes as $stype)
 		if ($is_sites && !empty($sitelist[$stype]))
-			aeva_settings($theme, $sitelist[$stype], $stype, $checkall);
+			aeva_settings($th, $sitelist[$stype], $stype, $checkall);
 
 	// Only show the MASTER setting, if it's disabled
 	if (empty($settings['embed_enabled']))
-		$theme = array(
+		$th = array(
 			'media_title' => array('title', $context['current_area']),
 			'embed_enabled' => array('yesno', $context['current_area']),
 		);
@@ -251,28 +251,28 @@ function aeva_admin_embed()
 	if (!empty($warning_message))
 		$context['aeva_form']['warning'] = array('type' => 'info', 'label' => '', 'fieldname' => 'info', 'value' => $warning_message, 'options' => array(), 'multi' => false, 'next' => null, 'subtext' => '', 'skip_left' => true);
 
-	foreach ($theme as $setting => $options)
+	foreach ($th as $setting => $opt)
 	{
-		if ($options[1] != $context['current_area'])
+		if ($opt[1] != $context['current_area'])
 			continue;
 
 		// Options
-		if (!empty($options[2]))
-			foreach ($options[2] as $k => $v)
+		if (!empty($opt[2]))
+			foreach ($opt[2] as $k => $v)
 				if (isset($settings[$setting]) && $settings[$setting] == $k)
-					$options[2][$k] = array($v, true);
+					$opt[2][$k] = array($v, true);
 
 		$context['aeva_form'][$setting] = array(
-			'type' => $options[0],
-			'label' => !isset($options['force_title']) ? (isset($txt[$setting]) ? $txt[$setting] : $setting) : $options['force_title'],
+			'type' => $opt[0],
+			'label' => !isset($opt['force_title']) ? (isset($txt[$setting]) ? $txt[$setting] : $setting) : $opt['force_title'],
 			'fieldname' => $setting,
 			'value' => isset($settings[$setting]) ? $settings[$setting] : '',
-			'options' => !empty($options[2]) ? $options[2] : array(),
-			'multi' => !empty($options[3]) && $options[3] == true,
-			'next' => !empty($options[4]) ? ' ' . $options[4] : null,
-			'subtext' => isset($options['subtext']) ? $options['subtext'] : (isset($txt[$setting . '_desc']) ? $txt[$setting . '_desc'] : ''),
-			'disabled' => !empty($options['disabled']),
-			'skip_left' => !empty($options['skip_left']),
+			'options' => !empty($opt[2]) ? $opt[2] : array(),
+			'multi' => !empty($opt[3]) && $opt[3] == true,
+			'next' => !empty($opt[4]) ? ' ' . $opt[4] : null,
+			'subtext' => isset($opt['subtext']) ? $opt['subtext'] : (isset($txt[$setting . '_desc']) ? $txt[$setting . '_desc'] : ''),
+			'disabled' => !empty($opt['disabled']),
+			'skip_left' => !empty($opt['skip_left']),
 		);
 	}
 }

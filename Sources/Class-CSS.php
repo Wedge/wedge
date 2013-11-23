@@ -710,7 +710,7 @@ class wess_func extends wess
 	{
 		global $boardurl, $boarddir;
 
-		if (!preg_match_all('~(width|height)\(([^)]+)\)~i', $css, $matches))
+		if (!preg_match_all('~\b(width|height)\(([^)]+)\)~i', $css, $matches))
 			return;
 
 		$done = array();
@@ -1324,29 +1324,35 @@ class wess_nesting extends wess
 	}
 }
 
-// Simple math functions. For instance, width: math((2px * 8px)/4) should return width: 4px
+// Simple math functions. For instance, width: math((2px * 8px) / min(4, intval($this_var_says_8px))) should return width: 4px
 // Don't mix different unit types in the same operation, Wedge won't bother.
 class wess_math extends wess
 {
 	function process(&$css)
 	{
-		if (!preg_match_all('~(["\']?)math\(((?:[\t ()\d.+/*%-]|(?<=\d)([a-z]{2,4})|\b(?:math|round|ceil|floor|abs|fmod|min|max|rand)\()+)\)\\1~i', $css, $matches))
-			return;
-
+		$limit = 0;
 		$done = array();
-		foreach ($matches[2] as $i => $math)
+		while (preg_match_all('~\b(?:math\h*(\(((?>[\h\d.+/*%-]+|(?<=\d)([a-z]{2,4}))|(?1))*\))|(abs|boolval|ceil|floatval|floor|fmod|intval|max|min|rand|round)\h*\(([^()]*)\))~', $css, $matches, PREG_SET_ORDER) && $limit++ < 50)
 		{
-			if (isset($done[$math]))
-				continue;
-			$done[$math] = true;
+			foreach ($matches as $val)
+			{
+				if (isset($done[$val[0]]))
+					continue;
+				$done[$val[0]] = true;
 
-			if (strpos(strtolower($math), 'math(') !== false)
-				$this->process($math);
+				if (isset($val[4])) // not math()?
+				{
+					$params = explode(',', $val[5]);
+					$css = str_replace($val[0], call_user_func_array($val[4], array_map('trim', $params, array_fill(0, count($params), '"\' '))), $css);
+					continue;
+				}
 
-			if (isset($matches[3][$i]))
-				$math = preg_replace('~(?<=\d)' . $matches[3][$i] . '~', '', $math);
-
-			$css = str_replace($matches[0][$i], eval('return (' . $math . ');') . $matches[3][$i], $css);
+				// Get the first unit from '12px * 2em', i.e. 'px', and clean it up into '12 * 2'.
+				if (preg_match('~\d([a-z]{2,4})~', $val[1], $unit))
+					$val[1] = preg_replace('~(?<=\d)([a-z]{2,4})~', '', $val[1]);
+				// We now have a perfectly harmless operation here, so don't fear the eval. (return 12 * 2) + unit = 24px.
+				$css = str_replace($val[0], eval('return (' . $val[1] . ');') . (isset($unit[1]) ? $unit[1] : ''), $css);
+			}
 		}
 	}
 }

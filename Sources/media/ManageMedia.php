@@ -287,13 +287,13 @@ function aeva_admin_settings()
 			$_POST['my_docs'] = trim(implode(', ', $new_docs), ', ');
 		}
 
-		foreach ($th as $setting => $options)
+		foreach ($th as $setting => $opt)
 		{
-			if ($options[1] !== $context['current_area'])
+			if ($opt[1] !== $context['current_area'])
 				continue;
-			if ($options[0] !== 'title' && isset($_POST[$setting]))
+			if ($opt[0] !== 'title' && isset($_POST[$setting]))
 				$new_value = westr::htmlspecialchars($_POST[$setting]);
-			elseif ($options[0] === 'checkbox' && !isset($_POST[$setting]) && !isset($options['skip_check_null']))
+			elseif ($opt[0] === 'checkbox' && !isset($_POST[$setting]) && !isset($opt['skip_check_null']))
 				$new_value = 0;
 			else
 				continue;
@@ -301,9 +301,9 @@ function aeva_admin_settings()
 			if ($setting == 'clear_thumbnames' && (int) @$amSettings[$setting] !== (int) $new_value)
 				$update_thumbnames = true;
 
-			if (!empty($options[2]) && is_array($options[2]) && !in_array($options[0], array('radio', 'select')))
+			if (!empty($opt[2]) && is_array($opt[2]) && !in_array($opt[0], array('radio', 'select')))
 			{
-				foreach ($options[2] as $sub_setting => $dummy)
+				foreach ($opt[2] as $sub_setting => $dummy)
 				{
 					aeva_updateSettings($sub_setting, isset($_POST[$sub_setting]) ? 1 : 0, true);
 					if ($setting === 'show_info')
@@ -328,30 +328,30 @@ function aeva_admin_settings()
 	// Render the form
 	$context['aeva_form_url'] = '<URL>?action=admin;area=aeva_settings;sa=' . $context['current_area'] . ';' . $context['session_query'];
 
-	foreach ($th as $setting => $options)
+	foreach ($th as $setting => $opt)
 	{
-		if ($options[1] != $context['current_area'])
+		if ($opt[1] != $context['current_area'])
 			continue;
 
 		// Options
-		if (!empty($options[2]) && $options[0] != 'select')
+		if (!empty($opt[2]) && $opt[0] != 'select')
 		{
-			foreach ($options[2] as $k => $v)
+			foreach ($opt[2] as $k => $v)
 				if (isset($amSettings[$setting]) && $amSettings[$setting] == $k)
-					$options[2][$k] = array($v, true);
+					$opt[2][$k] = array($v, true);
 		}
 
 		$context['aeva_form'][$setting] = array(
-			'type' => $options[0],
-			'label' => !isset($options['force_title']) ? $txt['media_admin_settings_' . $setting] : $options['force_title'],
+			'type' => $opt[0],
+			'label' => !isset($opt['force_title']) ? $txt['media_admin_settings_' . $setting] : $opt['force_title'],
 			'fieldname' => $setting,
 			'value' => isset($amSettings[$setting]) ? $amSettings[$setting] : '',
-			'options' => !empty($options[2]) ? $options[2] : array(),
-			'multi' => !empty($options[3]) && $options[3] == true,
-			'next' => !empty($options[4]) ? ' ' . $options[4] : null,
+			'options' => !empty($opt[2]) ? $opt[2] : array(),
+			'multi' => !empty($opt[3]) && $opt[3] == true,
+			'next' => !empty($opt[4]) ? ' ' . $opt[4] : null,
 			'subtext' => isset($txt['media_admin_settings_' . $setting . '_desc']) ? $txt['media_admin_settings_' . $setting . '_desc'] : '',
 		);
-		if ($options[0] == 'textbox')
+		if ($opt[0] == 'textbox')
 			$context['aeva_form'][$setting]['custom'] = 'rows="6" class="w100"';
 		if ($setting == 'max_file_size')
 		{
@@ -1593,22 +1593,22 @@ function aeva_admin_fields_edit()
 			fatal_lang_error('media_name_left_empty');
 
 		// Options?
-		$options = array();
+		$opt = array();
 		if (in_array($field_type, array('checkbox', 'radio', 'select')))
 		{
-			$options = explode(',', $_POST['options']);
-			foreach ($options as $k => $v)
+			$opt = explode(',', $_POST['options']);
+			foreach ($opt as $k => $v)
 			{
 				if (trim($v) == '')
-					unset($options[$k]);
+					unset($opt[$k]);
 
-				$options[$k] = westr::htmlspecialchars($options[$k]);
+				$opt[$k] = westr::htmlspecialchars($opt[$k]);
 			}
 
-			if (empty($options))
+			if (empty($opt))
 				fatal_lang_error('media_cf_options_empty');
 		}
-		$options = implode(',', $options);
+		$opt = implode(',', $opt);
 
 		// Albums
 		$albums = in_array('all_albums', $_POST['albums']) ? 'all_albums' : $_POST['albums'];
@@ -1643,7 +1643,7 @@ function aeva_admin_fields_edit()
 					'name' => $field_name,
 					'desc' => $field_desc,
 					'albums' => $albums,
-					'options' => $options,
+					'options' => $opt,
 					'type' => $field_type,
 					'bbc' => $field_bbc,
 					'required' => $field_req,
@@ -1655,7 +1655,7 @@ function aeva_admin_fields_edit()
 			wesql::insert('',
 				'{db_prefix}media_fields',
 				array('name', 'description', 'albums', 'options', 'type', 'bbc', 'required', 'searchable'),
-				array($field_name, $field_desc, $albums, $options, $field_type, $field_bbc, $field_req, $field_searchable)
+				array($field_name, $field_desc, $albums, $opt, $field_type, $field_bbc, $field_req, $field_searchable)
 			);
 
 		redirectexit('action=admin;area=aeva_fields;' . $context['session_query']);

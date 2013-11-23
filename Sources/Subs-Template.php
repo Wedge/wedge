@@ -916,7 +916,7 @@ function while_we_re_here()
 }
 
 /**
- * Display the debug data at the foot of the page if debug mode ($db_show_debug) is set to boolean true (only) and not in the query viewer page.
+ * Display the debug data at the foot of the page if debug mode ($db_show_debug) is set, and not in the query viewer page.
  *
  * Lots of interesting debug information is collated through workflow and displayed in this function, called from the footer.
  * - Check if the current user is on the list of people who can see the debug (and query debug) information, and clear information if not appropriate.
@@ -1089,7 +1089,7 @@ function db_debug_junk()
  */
 function template_include($filename, $once = false)
 {
-	global $context, $theme, $txt, $settings, $scripturl;
+	global $context, $theme, $txt, $helptxt, $settings, $scripturl;
 	global $boardurl, $boarddir, $maintenance, $mtitle, $mmessage;
 	static $templates = array();
 
