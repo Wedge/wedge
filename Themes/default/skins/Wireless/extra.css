@@ -15,7 +15,6 @@
 
 .postheader extends .clearfix
 	display: block
-	box-sizing: border-box
 	width: auto
 	padding: 8px 12px
 	min-height: 60px

@@ -8,7 +8,6 @@
 	padding: 2px
 	margin: 0
 	text-align: left
-	box-sizing: border-box
 	@if ie[-10]
 		/* IE forces a scrollbar otherwise. */
 		overflow: auto
@@ -20,7 +19,6 @@
 
 // And the WYSIWYG version.
 iframe.rich
-	box-sizing: border-box
 	border: 1px solid black
 	margin, padding: 0
 
@@ -48,14 +46,12 @@ body.rich extends .editor
 	padding: @is (ie, 0, 0 2px)
 	font-size: 0
 	background: #eee url($images/bbc/resize-handle.gif) no-repeat 50% 1px
-	box-sizing: border-box
 	border: 1px solid #ddd
 	border-top-width: 0
 	cursor: s-resize
 
 .writer
 	width: 100%
-	box-sizing: border-box
 
 /* Styles for edit/new post section
 ----------------------------------- */

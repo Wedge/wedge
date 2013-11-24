@@ -184,7 +184,6 @@ for guests, because most of the time it won't be an option.
 #thought0
 	display: block
 	cursor: pointer
-	box-sizing: border-box
 	padding: 4px
 
 .thought_icon mixes .inline-block

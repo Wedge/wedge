@@ -8,7 +8,6 @@
 
 // The board title!
 #board_list, .board_list
-	box-sizing: border-box
 	margin-bottom: 10px
 	td.info a.subject
 		font: 400 120%/120% $subject_font
@@ -128,7 +127,6 @@ img.new_posts
 // Topic title and Quick access
 .posthead
 	width: 100%
-	box-sizing: border-box
 	padding: 8px
 	border-radius: 12px
 	background: rgba(0,0,0, .015)
@@ -322,7 +320,7 @@ hr.sep
 
 	ul.info extends ul.reset
 		margin: 0 12px 0 20px
-		line-height: 1.2em
+		line-height: 1.3em
 		font-size: 90%
 
 		// Custom fields
@@ -1508,9 +1506,9 @@ body.waiting *
 
 @if !ie[-7]
 	@media $responsive
-		dl, dd
+		dt, dd
 			clear: both
-			width: auto
+			width: auto !important
 		body
 			padding: 0
 			#wedge
@@ -1556,7 +1554,7 @@ body.waiting *
 				input.search
 					max-width: 100%
 				.mimenu
-					min-width: math(@ifnull($responsive_search_min_width, 300px) + 100px)
+					min-width: math(@ifnull($responsive_search_min_width, 250px) + 50px)
 			.menu > li > span
 				margin-top: 8px
 			#upshrink

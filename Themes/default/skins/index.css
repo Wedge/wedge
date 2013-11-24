@@ -81,6 +81,7 @@ body
 *
 	@if !ie6
 		word-wrap: break-word
+		box-sizing: border-box
 	@endif
 
 /* Mobile Chrome 25+ adds a 'font boosting' feature that's
@@ -110,7 +111,6 @@ body
 	background-color: $window_bg3
 
 .two-columns mixes .inline-block
-	box-sizing: border-box
 	vertical-align: top
 	width: 48.8%
 	margin: 0 .4%
@@ -434,7 +434,6 @@ em
 	margin-top: 2px
 	margin-bottom: 4px
 	border-radius: 6px
-	box-sizing: border-box
 	padding: .9em 1.2em
 	p
 		margin: 0 0 .5em
@@ -545,7 +544,6 @@ select.sb
 		color: #000
 		cursor: default
 		font-weight: 400
-		height: 1.46em
 		line-height: 1.5em
 		overflow: hidden
 		position: relative
@@ -749,7 +747,6 @@ input, select, textarea
 	font: 95%/1.15 $main_font
 	color: #000
 	background: $main_bg
-	box-sizing: border-box
 	border-radius: 5px
 	border: 1px solid #bbb
 	padding: 4px 5px
