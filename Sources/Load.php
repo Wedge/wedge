@@ -1911,7 +1911,7 @@ function loadPluginLanguage($plugin_name, $template_name, $lang = '', $fatal = t
 	}
 
 	// Keep track of what we're up to soldier.
-	if ($db_show_debug === true)
+	if (!empty($db_show_debug))
 		$context['debug']['language_files'][] = $template_name . '.' . $lang . ' (' . $plugin_name . ')';
 
 	// Remember what we have loaded, and in which language.
@@ -2134,7 +2134,10 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 					$val['txt'] = $txt;
 				}
 				if (!empty($helptxt))
+				{
+					$helptxt = array_map('westr::entity_to_utf8', $helptxt);
 					$val['helptxt'] = $helptxt;
+				}
 				$cache_data = '<' . '?php if(defined(\'WEDGE\'))$val=\'' . addcslashes(serialize($val), '\\\'') . '\';?' . '>';
 				if (file_put_contents($filename, $cache_data, LOCK_EX) !== strlen($cache_data))
 					@unlink($filename);
@@ -2156,7 +2159,7 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 		}
 
 		// Keep track of what we're up to, soldier.
-		if ($db_show_debug === true)
+		if (!empty($db_show_debug))
 			$context['debug']['language_files'][] = $template . '.' . $lang . ' (' . $theme_name . ')';
 
 		// Remember what we have loaded, and in which language.
@@ -2271,9 +2274,9 @@ function getLanguages($use_cache = true)
 		$langs = !empty($settings['langsAvailable']) ? explode(',', $settings['langsAvailable']) : array();
 		if (empty($langs))
 			$langs[] = $settings['language'];
-		foreach($context['languages'] as $lang => $dummy)
+		foreach ($context['languages'] as $lang => $dummy)
 			if (!in_array($lang, $langs))
-				unset ($context['languages'][$lang]);
+				unset($context['languages'][$lang]);
 
 		return $context['languages'];
 	}

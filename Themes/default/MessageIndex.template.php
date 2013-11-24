@@ -259,7 +259,7 @@ function template_main_blog()
 			// Is this topic new? (assuming they are logged in!)
 			if ($topic['new'] && we::$is_member)
 					echo '
-							<a href="', $topic['new_href'], '" id="newicon', $topic['first_post']['id'], '" class="note">', $txt['new'], '</a>';
+							<a href="', $topic['new_href'], '" id="newicon', $topic['first_post']['id'], '" class="note">', $context['nb_new'][$topic['id']], '</a>';
 
 			// Show the quick moderation options?
 			if (!empty($context['quick_moderation']))

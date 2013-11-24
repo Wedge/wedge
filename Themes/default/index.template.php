@@ -221,20 +221,15 @@ function template_language_selector()
 	if (empty($context['languages']) || count($context['languages']) < 2)
 		return;
 
-	$qmark = strpos(we::$user['url'], '?');
-	$lng = $qmark === false ? substr(strrchr(we::$user['url'], '/'), 1) . '?' : substr(we::$user['url'], strrpos(substr(we::$user['url'], 0, $qmark), '/') + 1) . ';';
-	if (strpos($lng, 'language=') !== false)
-		$lng = preg_replace('~([;&?])language=[a-z-]+[;&]~i', '$1', $lng);
-
 	echo '
-			<div id="flags">';
+			<form id="flags" method="get"><select name="language" onchange="this.form.submit();">';
 
-	foreach ($context['languages'] as $language)
+	foreach ($context['languages'] as $id => $language)
 		echo '
-				<a href="', $lng, 'language=', $language['filename'], '"', $language['code'] ? ' rel="alternate" hreflang="' . $language['code'] . '"' : '', ' class="flag_', $language['filename'], '" title="', westr::htmlspecialchars($language['name']), '"></a>';
+				<option value="', $id, '"', we::$user['language'] == $id ? ' selected' : '', '>&lt;span class="flag_', $language['filename'], '"&gt;', westr::htmlspecialchars($language['name']), '&lt;/span&gt;</option>';
 
 	echo '
-			</div>';
+			</select></form>';
 }
 
 function template_logo_toggler()
@@ -266,7 +261,7 @@ function template_sidebar_wrap_before()
 	<we:sidebar>';
 }
 
-function template_sidebar_before()
+function template_side_user_before()
 {
 	global $txt, $context, $settings;
 
@@ -298,15 +293,7 @@ function template_sidebar_before()
 		echo '
 			</ul>
 			<p class="now">', $context['current_time'], '</p>
-		</div>
-	</section>';
-
-		// Is the forum in maintenance mode?
-		if ($context['in_maintenance'] && we::$is_admin)
-			echo '
-	<section>
-		<p class="notice">', $txt['maintain_mode_on'], '</p>
-	</section>';
+		</div>';
 	}
 	// Otherwise they're a guest - this time ask them to either register or login - lazy bums...
 	elseif (!empty($context['show_login_bar']))
@@ -326,7 +313,24 @@ function template_sidebar_before()
 				<div class="info">', $txt['quick_login_desc'], '</div>
 				<input type="hidden" name="hash_passwrd" value="">
 			</form>
-		</div>
+		</div>';
+}
+
+function template_side_user_after()
+{
+	echo '
+	</section>';
+}
+
+function template_side_maintenance()
+{
+	global $context;
+
+	// Is the forum in maintenance mode?
+	if ($context['in_maintenance'] && we::$is_admin)
+		echo '
+	<section>
+		<p class="notice">', $txt['maintain_mode_on'], '</p>
 	</section>';
 }
 

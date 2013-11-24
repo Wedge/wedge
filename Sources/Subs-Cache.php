@@ -823,10 +823,10 @@ function dynamic_language_flags()
 	{
 		$icon = '/languages/Flag.' . $language['filename'] . '.png';
 		$rep .= '
-.flag_' . $language['filename'] . ' mixes .inline-block
-	background: url($theme'. $icon . ') no-repeat
-	width: width($theme_dir'. $icon . ')px
-	height: height($theme_dir'. $icon . ')px';
+.flag_' . $language['filename'] . ' mixes .inline-block("")
+	background: url($theme'. $icon . ') no-repeat 0 center
+	padding-left: math(width($theme_dir'. $icon . ') + 6px)
+	min-height: height($theme_dir'. $icon . ')px';
 	}
 	return $rep;
 }

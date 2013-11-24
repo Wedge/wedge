@@ -18,7 +18,9 @@
 						<search_box />
 						<notifications />
 						<pm_notifications />
-						<language_selector />
+						<if !SKIN_MOBILE>
+							<language_selector />
+						</if>
 					</top_bar>
 				</header>
 				<menu />
@@ -35,7 +37,14 @@
 						</main_wrap>
 					</offside_wrap>
 					<sidebar_wrap>
-						<sidebar></sidebar>
+						<sidebar>
+							<side_user>
+								<if SKIN_MOBILE>
+									<language_selector indent="-1" />
+								</if>
+							</side_user>
+							<side_maintenance />
+						</sidebar>
 					</sidebar_wrap>
 				</content_wrap>
 				<footer />

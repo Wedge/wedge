@@ -72,7 +72,7 @@ function QuoteFast()
 
 			return_xml('<we>
 	<subject><![CDATA[', cleanXml(un_htmlspecialchars($row['subject'], '"')), ']]></subject>
-	<message id="', (int) $_REQUEST['quote'], '"><![CDATA[', cleanXml(westr::entity_to_utf8($row['body'])), ']]></message></we>');
+	<message id="', (int) $_REQUEST['quote'], '"><![CDATA[', cleanXml(un_htmlspecialchars(westr::entity_to_utf8($row['body']))), ']]></message></we>');
 		}
 
 		// Remove any nested quotes, if needed.

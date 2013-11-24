@@ -1810,7 +1810,7 @@ function account($memID)
 
 function forumProfile($memID)
 {
-	global $context, $user_profile, $txt;
+	global $context, $txt;
 
 	loadThemeOptions($memID);
 	if (allowedTo(array('profile_extra_own', 'profile_extra_any')))
@@ -1953,7 +1953,7 @@ function options($memID)
 // Display the notifications and settings for changes.
 function notification($memID)
 {
-	global $txt, $user_profile, $context, $settings, $theme;
+	global $txt, $user_profile, $context, $settings;
 
 	// Gonna want this for the list.
 	loadSource('Subs-List');
@@ -2162,8 +2162,6 @@ function notification($memID)
 
 function list_getTopicNotificationCount($memID)
 {
-	global $context;
-
 	$request = wesql::query('
 		SELECT COUNT(*)
 		FROM {db_prefix}log_notify AS ln' . (we::$user['query_see_topic'] === '1=1' ? '' : '
@@ -2182,8 +2180,6 @@ function list_getTopicNotificationCount($memID)
 
 function list_getTopicNotifications($start, $items_per_page, $sort, $memID)
 {
-	global $txt, $context;
-
 	// All the topics with notification on...
 	$request = wesql::query('
 		SELECT
@@ -2238,8 +2234,6 @@ function list_getTopicNotifications($start, $items_per_page, $sort, $memID)
 
 function list_getBoardNotifications($start, $items_per_page, $sort, $memID)
 {
-	global $txt;
-
 	$request = wesql::query('
 		SELECT b.id_board, b.name, IFNULL(lb.id_msg, 0) AS board_read, b.id_msg_updated
 		FROM {db_prefix}log_notify AS ln
@@ -2319,7 +2313,7 @@ function loadThemeOptions($memID)
 
 function ignoreboards($memID)
 {
-	global $txt, $context, $settings, $cur_profile;
+	global $context, $settings, $cur_profile;
 
 	// Have the admins enabled this option?
 	if (empty($settings['ignorable_boards']))
@@ -2422,7 +2416,7 @@ function processMemberPrefs($type)
 // Load all the languages for the profile.
 function profileLoadLanguages()
 {
-	global $context, $theme, $cur_profile;
+	global $context;
 
 	$context['profile_languages'] = array();
 
@@ -2431,7 +2425,7 @@ function profileLoadLanguages()
 
 	// Setup our languages. There's no funny business, we only have one set of language files per language these days.
 	foreach ($context['languages'] as $lang)
-		$context['profile_languages'][$lang['filename']] = '&lt;span class="flag_' . $lang['filename'] . '"&gt;&lt;/span&gt; ' . $lang['name'];
+		$context['profile_languages'][$lang['filename']] = '&lt;span class="flag_' . $lang['filename'] . '"&gt;' . $lang['name'] . '&lt;/span&gt;';
 
 	ksort($context['profile_languages']);
 
@@ -3148,8 +3142,6 @@ function profileValidateSignature(&$value)
 // Validate an email address.
 function profileValidateEmail($email, $memID = 0)
 {
-	global $context;
-
 	$email = trim(strtr($email, array('&#039;' => '\'')));
 
 	// Check the name and email for validity.
@@ -3180,7 +3172,7 @@ function profileValidateEmail($email, $memID = 0)
 // Reload a users settings.
 function profileReloadUser()
 {
-	global $settings, $context, $cur_profile, $profile_vars;
+	global $settings, $context, $cur_profile;
 
 	// Log them back in - using the verify password as they must have matched and this one doesn't get changed by anyone!
 	if (isset($_POST['passwrd2']) && $_POST['passwrd2'] != '')
@@ -3341,7 +3333,7 @@ function groupMembership($memID)
 // This function actually makes all the group changes...
 function groupMembership2($profile_vars, $memID)
 {
-	global $context, $user_profile, $settings, $txt, $scripturl;
+	global $context, $user_profile, $settings, $scripturl;
 
 	// Let's be extra cautious...
 	if (!we::$user['is_owner'] || empty($settings['show_group_membership']))

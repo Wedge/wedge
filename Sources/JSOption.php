@@ -13,16 +13,14 @@ if (!defined('WEDGE'))
 
 /*	This file concerns itself almost completely with theme administration.
 	Its tasks include changing theme settings, installing and removing
-	themes, choosing the current theme, and editing themes.  This is done in:
+	themes, choosing the current theme, and editing themes. This is done in:
 
 	void JSOption()
 		- sets a theme option without outputting anything.
-		- can be used with javascript, via a dummy image... (which doesn't
-		  require the page to reload.)
-		- requires someone who is logged in.
+		- can be used with JavaScript, via a dummy image, avoiding a page reload.
 		- accessed via ?action=jsoption;var=variable;val=value;session_var=sess_id.
-		- does not log access to the Who's Online log. (in index.php..)
-
+		- does not log access to the Who's Online log.
+		- requires user to be logged in.
 */
 
 // Set an option via javascript.

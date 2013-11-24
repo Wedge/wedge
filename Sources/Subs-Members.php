@@ -461,7 +461,7 @@ function deleteMembers($users, $check_not_admin = false, $merge_to = false)
 
 function registerMember(&$regOptions, $return_errors = false)
 {
-	global $scripturl, $txt, $settings, $context, $theme;
+	global $scripturl, $txt, $settings;
 
 	loadLanguage('Login');
 
@@ -873,7 +873,7 @@ function registerMember(&$regOptions, $return_errors = false)
 // Check if a name is in the reserved words list. (name, current member id, name/username?.)
 function isReservedName($name, $current_id_member = 0, $is_name = true, $fatal = true)
 {
-	global $settings, $context;
+	global $settings;
 	static $rules = null;
 
 	if ($rules === null)

@@ -10,10 +10,12 @@
 -------------------------------------------------------------------------- */
 
 // A common inline-block hack (for old IE compatibility.)
-@mixin .inline-block
+@mixin .inline-block($vertical_align = middle)
 
 	display: inline-block
-	vertical-align: middle
+	@if $vertical_align
+		vertical-align: $vertical_align
+	@endif
 
 	// IE6/7 need layout to enable inline-block on a block element... And a default right margin, from my experience.
 	@if ie[-7]

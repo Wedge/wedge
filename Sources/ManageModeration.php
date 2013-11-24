@@ -598,7 +598,7 @@ function simpleRange_displayRow($rule, $type)
 }
 
 // There's no easy way to delete nodes in SimpleXML. But we can do it if we can target the node precisely from its root, which we can.
-// Note that you can't do it even if you foreach($sxml as &$element) and then unset the element, because you just unset the ref, not the actual element.
+// Note that you can't do it even if you foreach ($sxml as &$element) and then unset the element, because you just unset the ref, not the actual element.
 // Once we've done that, we do need to make sure that we clean up any stray branches.
 // Returns a SimpleXMLElement if there's something there, or bool false if not.
 function deleteRuleNode(&$rules, $parent_branch, $node_position)

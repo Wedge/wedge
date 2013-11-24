@@ -1512,7 +1512,7 @@ function template_callback_question_answer_list()
 
 			foreach ($context['languages'] as $lang_id => $lang)
 				echo '
-								<option value="', $lang_id, '"', $question['lang'] == $lang_id ? ' selected' : '', '>&lt;div class="flag_', $lang_id, '"&gt;&lt;/div&gt;', $lang['name'], '</option>';
+								<option value="', $lang_id, '"', $question['lang'] == $lang_id ? ' selected' : '', '>&lt;span class="flag_', $lang_id, '"&gt;', $lang['name'], '&lt;/span&gt;</option>';
 
 			echo '
 							</select>
@@ -1551,8 +1551,8 @@ function template_callback_question_answer_list()
 		var row_id = \'row\' + nextrow;
 		$(\'#antispam\').append(\'<tr id="\' + row_id + \'"></tr>\');
 		var lang_select = \'<td class="lang"><select name="lang_select[\' + nextrow + \']" id="lang_select[\' + nextrow + \']">\';
-		$.each(langs, function(key, value) {
-			lang_select += \'<option value="\' + key + \'">&lt;div class="flag_\' + key + \'"&gt;&lt;/div&gt;\' + value + \'</option>\';
+		$.each(langs, function (key, value) {
+			lang_select += \'<option value="\' + key + \'">&lt;span class="flag_\' + key + \'"&gt;\' + value + \'&lt;/span&gt;</option>\';
 		});
 		lang_select += \'</select></td>\';
 		$(\'#\' + row_id).append(lang_select);

@@ -241,6 +241,7 @@ function Admin()
 					'function' => 'aeva_admin_init',
 					'subsections' => array(
 						'config' => array($txt['media_admin_settings_config']),
+						'',
 						'meta' => array($txt['media_admin_settings_meta'], 'enabled' => !empty($settings['media_enabled'])),
 						'layout' => array($txt['media_admin_settings_layout'], 'enabled' => !empty($settings['media_enabled'])),
 					),
@@ -268,6 +269,7 @@ function Admin()
 					'function' => 'aeva_admin_init',
 					'subsections' => array(
 						'config' => array($txt['media_admin_settings_config']),
+						'',
 						'sites' => array($txt['media_admin_settings_sites']),
 					),
 				),
@@ -419,6 +421,7 @@ function Admin()
 					'subsections' => array(
 						'infractions' => array($txt['preset_infractions']),
 						'infractionlevels' => array($txt['infraction_levels']),
+						'',
 						'settings' => array($txt['settings']),
 					),
 				),
@@ -478,9 +481,10 @@ function Admin()
 					'icon' => 'mail.gif',
 					'bigicon' => 'mail_settings.png',
 					'subsections' => array(
+						'settings' => array($txt['mailqueue_settings'], 'admin_forum'),
+						'',
 						'browse' => array($txt['mailqueue_browse'], 'admin_forum', 'enabled' => !empty($settings['mail_queue'])),
 						'',
-						'settings' => array($txt['mailqueue_settings'], 'admin_forum'),
 						'templates' => array($txt['mailqueue_templates'], 'admin_forum'),
 					),
 				),
