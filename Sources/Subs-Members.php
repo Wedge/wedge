@@ -606,7 +606,6 @@ function registerMember(&$regOptions, $return_errors = false)
 		'default_theme_url',
 		'default_template',
 		'images_url',
-		'smiley_sets_default',
 		'theme_dir',
 		'theme_id',
 		'theme_templates',

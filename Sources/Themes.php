@@ -331,7 +331,7 @@ function ThemeList()
 // Administrative global settings.
 function SetThemeSettings()
 {
-	global $txt, $context, $theme, $settings;
+	global $txt, $context, $theme;
 
 	if (empty($_GET['th']) && empty($_GET['id']))
 		return ThemeAdmin();
@@ -346,15 +346,6 @@ function SetThemeSettings()
 	// Validate inputs/user.
 	if (empty($_GET['th']))
 		fatal_lang_error('no_theme', false);
-
-	// Fetch the smiley sets...
-	$sets = explode(',', 'none,' . $settings['smiley_sets_known']);
-	$set_names = explode("\n", $txt['smileys_none'] . "\n" . $settings['smiley_sets_names']);
-	$context['smiley_sets'] = array(
-		'' => $txt['smileys_no_default']
-	);
-	foreach ($sets as $i => $set)
-		$context['smiley_sets'][$set] = htmlspecialchars($set_names[$i]);
 
 	$old_id = $theme['theme_id'];
 	$old_settings = $theme;

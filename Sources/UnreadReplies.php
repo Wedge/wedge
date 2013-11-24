@@ -429,7 +429,7 @@ function UnreadReplies()
 	{
 		$topic_ids[] = $row['id_topic'];
 
-		if (!empty($theme['message_index_preview']))
+		if (!empty($context['message_index_preview']))
 		{
 			// Limit them to 128 characters - do this FIRST because it's a lot of wasted censoring otherwise.
 			$row['first_body'] = strip_tags(strtr(parse_bbc($row['first_body'], 'post-preview', array('smileys' => $row['first_smileys'], 'cache' => $row['id_first_msg'], 'user' => $row['id_first_member'])), array('<br>' => '&#10;')));

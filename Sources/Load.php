@@ -1425,7 +1425,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 		while ($row = wesql::fetch_assoc($result))
 		{
 			// There are just things we shouldn't be able to change as members.
-			if ($row['id_member'] != 0 && in_array($row['variable'], array('actual_theme_url', 'actual_images_url', 'default_images_url', 'default_theme_dir', 'default_theme_url', 'default_template', 'images_url', 'smiley_sets_default', 'theme_dir', 'theme_id', 'theme_templates', 'theme_url')))
+			if ($row['id_member'] != 0 && in_array($row['variable'], array('actual_theme_url', 'actual_images_url', 'default_images_url', 'default_theme_dir', 'default_theme_url', 'default_template', 'images_url', 'theme_dir', 'theme_id', 'theme_templates', 'theme_url')))
 				continue;
 
 			// If this is the theme_dir of the default theme, store it.
@@ -1544,7 +1544,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 	}
 
 	// Determine the current smiley set
-	we::$user['smiley_set'] = (!in_array(we::$user['smiley_set'], explode(',', $settings['smiley_sets_known'])) && we::$user['smiley_set'] != 'none') || empty($settings['smiley_sets_enable']) ? (!empty($theme['smiley_sets_default']) ? $theme['smiley_sets_default'] : $settings['smiley_sets_default']) : we::$user['smiley_set'];
+	we::$user['smiley_set'] = (!in_array(we::$user['smiley_set'], explode(',', $settings['smiley_sets_known'])) && we::$user['smiley_set'] != 'none') || empty($settings['smiley_sets_enable']) ? $settings['smiley_sets_default'] : we::$user['smiley_set'];
 
 	// Some basic information...
 	if (!isset($context['header']))

@@ -39,7 +39,7 @@ function template_init()
 	$theme['use_buttons'] = true;
 
 	/* Does this theme use post previews on the message index? */
-	$theme['message_index_preview'] = false;
+	// $context['message_index_preview'] = true;
 
 	/* Set the following variable to true if this theme requires the optional theme strings file to be loaded. */
 	$theme['require_theme_strings'] = false;

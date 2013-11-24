@@ -2321,11 +2321,6 @@ VALUES
 	('enable_news', '1'),
 	('show_newsfader', '0'),
 	('newsfader_time', '5000'),
-	('show_stats_index', '1'),
-	('show_latest_member', '1'),
-	('show_avatars', '1'),
-	('show_blurb', '1'),
-	('show_gender', '1'),
 	('additional_options_collapsable', '1'),
 	('likes_enable', '1'),
 	('notifications_prune_days', '7'),
@@ -2469,7 +2464,6 @@ CREATE TABLE {$db_prefix}themes (
 # Dumping data for table `themes`
 #
 
-# Theme options
 INSERT INTO {$db_prefix}themes
 	(id_theme, variable, value)
 VALUES
@@ -2477,26 +2471,24 @@ VALUES
 	(1, 'theme_url', '{$boardurl}/Themes/default'),
 	(1, 'images_url', '{$boardurl}/Themes/default/images'),
 	(1, 'theme_dir', '{$boarddir}/Themes/default'),
+	(1, 'show_bbc', '1'),
+	(1, 'show_latest_member', '1'),
+	(1, 'show_user_images', '1'),
+	(1, 'show_blurb', '1'),
+	(1, 'show_gender', '1'),
+	(1, 'show_member_bar', '1'),
+	(1, 'linktree_link', '1'),
+	(1, 'show_stats_index', '1'),
+	(1, 'show_board_desc', '1'),
 	(1, 'use_image_buttons', '1'),
+	(1, 'view_newest_pm_first', '1'),
 	(1, 'pm_remove_inbox_label', '1');
 
-# Default member options
-INSERT INTO {$db_prefix}themes
-	(id_theme, variable, value)
-VALUES
-	(1, 'display_quick_reply', '2'),
-	(1, 'return_to_post', '1'),
-	(1, 'show_signatures', '1'),
-	(1, 'show_avatars', '1'),
-	(1, 'new_reply_warning', '1'),
-	(1, 'posts_apply_ignore_list', '1'),
-	(1, 'view_newest_pm_first', '1'),
-
-# Default guest options
 INSERT INTO {$db_prefix}themes
 	(id_member, id_theme, variable, value)
 VALUES
 	(-1, 1, 'display_quick_reply', '2'),
+	(-1, 1, 'posts_apply_ignore_list', '1'),
 	(-1, 1, 'return_to_post', '1'),
 	(-1, 1, 'show_signatures', '1'),
 	(-1, 1, 'show_avatars', '1'),

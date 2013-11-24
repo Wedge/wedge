@@ -354,7 +354,7 @@ function MessageIndex()
 				$row['first_body'] = parse_bbc($row['first_body'], 'post-preview', array('smileys' => $row['first_smileys'], 'cache' => $row['id_first_msg']));
 
 				// Is the theme requesting previews? Better set up the last post for them too. Not likely, but hey.
-				if (!empty($theme['message_index_preview']))
+				if (!empty($context['message_index_preview']))
 				{
 					censorText($row['last_subject']);
 					censorText($row['last_body']);
@@ -367,7 +367,7 @@ function MessageIndex()
 					$row['last_body'] = '';
 			}
 			// So it's a forum board, do they still want previews?
-			elseif (!empty($theme['message_index_preview']))
+			elseif (!empty($context['message_index_preview']))
 			{
 				// Censor the subject and message preview.
 				censorText($row['first_subject']);
