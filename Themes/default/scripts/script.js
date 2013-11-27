@@ -14,6 +14,7 @@ var
 	weEditors = [],
 	_formSubmitted,
 	_modalDone = false,
+	notload,
 
 	we_confirm = $txt['generic_confirm_request'],
 	we_loading = $txt['ajax_in_progress'],
@@ -822,33 +823,9 @@ $(window).load(function ()
 									$.post(weUrl('action=pm;sa=ajax;preview=' + id), function (doc) {
 										hide_ajax();
 										$('<div/>').addClass('n_prev').html(doc).insertAfter(that).hide().slideToggle(600);
-
-										if (that.hasClass('n_new'))
-										{
-											that.removeClass('n_new');
-											we_pms--;
-											$pmshade.prev().attr('class', we_pms > 0 ? 'note' : 'notevoid').text(we_pms);
-										}
+										that.removeClass('n_new');
 									});
 								}
-							})
-
-							.find('.n_read')
-							.hover(function () { $(this).toggleClass('windowbg'); })
-							.click(function (e)
-							{
-								var was_new = that.hasClass('n_new');
-
-								that.removeClass('n_new').next('.n_prev').andSelf().hide(300, function () { $(this).remove(); });
-								if (was_new)
-								{
-									we_pms--;
-									$pmshade.prev().attr('class', we_pms > 0 ? 'note' : 'notevoid').text(we_pms);
-								}
-
-								// Cancel the implied click on the parent.
-								e.stopImmediatePropagation();
-								return false;
 							});
 					});
 
@@ -1110,7 +1087,7 @@ function JumpTo(control)
 @if member
 	function PrivacySelector(privacy, privacy_public, privacy_members, privacy_author)
 	{
-		var s, pr = '<option value="' + privacy_public + '"' + (privacy == privacy_public ? ' selected' : '') + '>&lt;div class="privacy_public"&gt;&lt;/div&gt;' + $txt['privacy_public'] + '</option>';
+		var s, p, pr = '<option value="' + privacy_public + '"' + (privacy == privacy_public ? ' selected' : '') + '>&lt;div class="privacy_public"&gt;&lt;/div&gt;' + $txt['privacy_public'] + '</option>';
 		pr += '<option value="' + privacy_members + '"' + (privacy == privacy_members ? ' selected' : '') + '>&lt;div class="privacy_members"&gt;&lt;/div&gt;' + $txt['privacy_members'] + '</option>';
 		pr += '<option value="' + privacy_author + '"' + (privacy == privacy_author ? ' selected' : '') + '>&lt;div class="privacy_author"&gt;&lt;/div&gt;' + $txt['privacy_author'] + '</option>';
 		if (!$.isEmptyObject(we_lists))

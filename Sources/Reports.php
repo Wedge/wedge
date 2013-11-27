@@ -106,7 +106,7 @@ function ReportsMain()
 
 	// Let's get our things running...
 	loadTemplate('Reports');
-	loadLanguage('Reports');
+	loadLanguage(array('Reports', 'ManagePermissions'));
 
 	$context['page_title'] = $txt['generate_reports'];
 
@@ -164,7 +164,6 @@ function BoardReport()
 
 	// Load the permission profiles.
 	loadSource('ManagePermissions');
-	loadLanguage('ManagePermissions');
 	loadPermissionProfiles();
 
 	// Get every moderator.
@@ -385,7 +384,7 @@ function BoardPermissionsReport()
 		{
 			// This will be reused on other boards.
 			$permissions[$row['permission']] = array(
-				'title' => isset($txt['board_perms_name_' . $row['permission']]) ? $txt['board_perms_name_' . $row['permission']] : $row['permission'],
+				'title' => isset($txt['board_perms_name_' . $row['permission']]) ? $txt['board_perms_name_' . $row['permission']] : (isset($txt['permissionname_' . $row['permission']]) ? $txt['permissionname_' . $row['permission']] : $row['permission']),
 			);
 		}
 	}
@@ -564,9 +563,6 @@ function MemberGroupsReport()
 function GroupPermissionsReport()
 {
 	global $context, $txt, $settings;
-
-	// We might need some of the other permissions strings
-	loadLanguage('ManagePermissions');
 
 	// Make sure that any plugins' language files are loaded.
 	// !! libxml_use_internal_errors(true); ??

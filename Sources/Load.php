@@ -1752,13 +1752,12 @@ function weInitJS()
 		);
 	else
 	{
-		$protocol = !empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) != 'off' ? 'https://' : 'http://';
 		$remote = array(
-			'google' =>		$protocol . 'ajax.googleapis.com/ajax/libs/jquery/' . $version . '/jquery.min.js',
-			'microsoft' =>	$protocol . 'ajax.aspnetcdn.com/ajax/jquery/jquery-' . $version . '.min.js',
-			'jquery' =>		'http://code.jquery.com/jquery-' . $version . '.min.js', // Doesn't support HTTPS.
+			'google' =>		'ajax.googleapis.com/ajax/libs/jquery/' . $version . '/jquery.min.js',
+			'microsoft' =>	'ajax.aspnetcdn.com/ajax/jquery/jquery-' . $version . '.min.js',
+			'jquery' =>		'code.jquery.com/jquery-' . $version . '.min.js',
 		);
-		$context['remote_js_files'] = array($remote[$origin]);
+		$context['remote_js_files'] = array('//' . $remote[$origin]);
 		$context['main_js_files'] = array(
 			'scripts/script.js' => true,
 			'scripts/sbox.js' => false,

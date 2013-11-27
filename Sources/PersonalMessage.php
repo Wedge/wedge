@@ -125,6 +125,7 @@ function PersonalMessage()
 
 	// Are we just getting AJAXy things?
 	if (AJAX && isset($_GET['sa']) && $_GET['sa'] == 'ajax')
+	{
 		if (!isset($_GET['preview']))
 		{
 			// We're getting the list of unread PMs.
@@ -212,42 +213,41 @@ function PersonalMessage()
 			list ($body) = wesql::fetch_row($request);
 			wesql::free_result($request);
 
-			// While we're at it we could, I guess, mark it read.
-			wesql::query('
-				UPDATE {db_prefix}pm_recipients
-				SET is_read = 1
-				WHERE id_pm = {int:pm}
-					AND id_member = {int:member}
-					AND is_read = 0',
-				array(
-					'pm' => $pmsg,
-					'member' => we::$id,
-				)
-			);
-			$request = wesql::query('
-				SELECT COUNT(id_pm)
-				FROM {db_prefix}pm_recipients
-				WHERE id_member = {int:current_member}
-					AND is_read = {int:new}
-				ORDER BY id_pm',
-				array(
-					'current_member' => we::$id,
-					'new' => 0,
-				)
-			);
-			list ($count) = wesql::fetch_row($request);
-			wesql::free_result($request);
-			updateMemberData(
-				we::$id,
-				array(
-					'unread_messages' => $count,
-				)
-			);
-			// And next time we actually enter the inbox certain things need to be recalculated.
-			cache_put_data('labelCounts:' . we::$id, null);
+			/*
+				// While we're at it we could, I guess, mark it read.
+				// !! Well, I guess not. A PM usually invites for an answer.
+				wesql::query('
+					UPDATE {db_prefix}pm_recipients
+					SET is_read = 1
+					WHERE id_pm = {int:pm}
+						AND id_member = {int:member}
+						AND is_read = 0',
+					array(
+						'pm' => $pmsg,
+						'member' => we::$id,
+					)
+				);
+				$request = wesql::query('
+					SELECT COUNT(id_pm)
+					FROM {db_prefix}pm_recipients
+					WHERE id_member = {int:current_member}
+						AND is_read = {int:new}
+					ORDER BY id_pm',
+					array(
+						'current_member' => we::$id,
+						'new' => 0,
+					)
+				);
+				list ($count) = wesql::fetch_row($request);
+				wesql::free_result($request);
+				updateMemberData(we::$id, array('unread_messages' => $count));
+				// And next time we actually enter the inbox certain things need to be recalculated.
+				cache_put_data('labelCounts:' . we::$id, null);
+			*/
 
-			return_raw ($context['header'] . parse_bbc($body, 'pm', array('cache' => 'pm' . $pmsg)));
+			return_raw($context['header'] . parse_bbc($body, 'pm', array('cache' => 'pm' . $pmsg)));
 		}
+	}
 
 	// Load up the members maximum message capacity.
 	if (we::$is_admin)

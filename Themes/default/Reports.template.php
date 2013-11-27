@@ -111,7 +111,7 @@ function template_main()
 				if ($column_number == 0 && !empty($table['shading']['left']))
 					echo '
 					<td class="', $table['align']['shaded'], ' table_caption"', $table['width']['shaded'] != 'auto' ? ' style="width: ' . $table['width']['shaded'] . 'px"' : '', '>
-						', $data['v'] == $table['default_value'] ? '' : ($data['v'] . (empty($data['v']) ? '' : ':')), '
+						', $data['v'] == $table['default_value'] ? '' : $data['v'], '
 					</td>';
 				else
 					echo '
@@ -198,7 +198,7 @@ function template_print()
 				if ($column_number == 0 && !empty($table['shading']['left']))
 					echo '
 				<td class="', $table['align']['shaded'], ' titleback"', $table['width']['shaded'] != 'auto' ? ' style="width: ' . $table['width']['shaded'] . 'px"' : '', '>
-					', $data['v'] == $table['default_value'] ? '' : ($data['v'] . (empty($data['v']) ? '' : ':')), '
+					', $data['v'] == $table['default_value'] ? '' : $data['v'], '
 				</td>';
 				else
 					echo '

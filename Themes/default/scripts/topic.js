@@ -219,12 +219,10 @@ function page_showing()
 	// but Firefox doesn't want to know about it, and we need to disable flex on these posts.
 	if (is_chrome || is_firefox)
 		$('.post code').each(function () {
-			if (this.scrollWidth > this.offsetWidth && this.scrollHeight <= this.offsetHeight)
-			{
+			if (is_firefox)
+				$(this).parentsUntil('.post_wrapper').each(function () { if ($(this).css('display') == 'flex') $(this).css('display', 'block'); });
+			else if (this.scrollWidth > this.offsetWidth && this.scrollHeight <= this.offsetHeight)
 				$(this).css('flex', 'none');
-				if (is_firefox)
-					$(this).parentsUntil('.post_wrapper').each(function () { if ($(this).css('display') == 'flex') $(this).css('display', 'block'); });
-			}
 		});
 }
 

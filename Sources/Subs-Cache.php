@@ -78,7 +78,7 @@ function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow =
 	if (empty($files))
 		return;
 
-	if ($is_direct_url || strpos($files[0], '://') !== false)
+	if ($is_direct_url || strpos($files[0], '://') !== false || strpos($files[0], '//') === 0)
 	{
 		if (!empty($footer_coding))
 		{
@@ -244,19 +244,16 @@ function add_jquery_ui()
 	// !! Note: should we add an $add_css flag to add the CSS file?
 	// http://code.jquery.com/ui/$version/themes/base/jquery-ui.css
 	$version = '1.10.0';
+	$remote = array(
+		'google' =>		'ajax.googleapis.com/ajax/libs/jqueryui/' . $version . '/jquery-ui.min.js',
+		'microsoft' =>	'ajax.aspnetcdn.com/ajax/jquery.ui/' . $version . '/jquery-ui.min.js',
+		'jquery' =>		'code.jquery.com/ui/' . $version . '/jquery-ui.min.js',
+	);
 
 	if (empty($settings['jquery_origin']) || $settings['jquery_origin'] === 'local')
 		add_js_file('scripts/jquery-ui-' . $version . '.min.js');
 	else
-	{
-		$protocol = !empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) != 'off' ? 'https://' : 'http://';
-		$remote = array(
-			'google' =>		$protocol . 'ajax.googleapis.com/ajax/libs/jqueryui/' . $version . '/jquery-ui.min.js',
-			'microsoft' =>	$protocol . 'ajax.aspnetcdn.com/ajax/jquery.ui/' . $version . '/jquery-ui.min.js',
-			'jquery' =>		'http://code.jquery.com/ui/' . $version . '/jquery-ui.min.js', // Doesn't support HTTPS.
-		);
-		add_js_file($remote[$settings['jquery_origin']], true);
-	}
+		add_js_file('//' . $remote[$settings['jquery_origin']]);
 }
 
 /**
