@@ -537,7 +537,7 @@ function MemberGroupsReport()
 	wesql::free_result($request);
 
 	if (empty($settings['allow_guestAccess']))
-		unset ($rows[0]);
+		unset($rows[0]);
 
 	foreach ($rows as $row)
 	{

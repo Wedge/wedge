@@ -433,9 +433,9 @@ class wess_if extends wess
 		// This function will return if_true if true, or if_false if false. It will return literal 'true' and 'false' if no true/false are set (for use in variables.)
 		// !! Note: this has got to be one of my most amusing regexes... But still, it doesn't always
 		// correctly handle brackets. Add quotes around them if you run into any, err, problems. Lazy me.
-		$pass_this = 0;
+		$skipped = 0;
 		$strex = '\s*+("(?:[^"@]|@(?!is\h*\())*"|\'(?:[^\'@]|@(?!is\h*\())*\'|(?:[^\'",@]|@(?!is\h*\())(?:[^,@]|@(?!is\h*\())*)\s*+';
-		while (preg_match_all('~@is\h*\(' . $strex . '(?:,' . $strex . '(?:,' . str_replace(',', ')', $strex) . ')?)?\)~i', $css, $matches) > $pass_this)
+		while (preg_match_all('~@is\h*\(' . $strex . '(?:,' . $strex . '(?:,' . str_replace(',', ')', $strex) . ')?)?\)~i', $css, $matches) > $skipped)
 		{
 			foreach ($matches[1] as $i => $match)
 			{
@@ -446,7 +446,7 @@ class wess_if extends wess
 				// If we're executing this before mixins, don't bother doing variables.
 				if (!$this->test_vars && strpos($match, '$') !== false)
 				{
-					$pass_this++;
+					$skipped++;
 					continue;
 				}
 
@@ -482,8 +482,8 @@ class wess_if extends wess
 		// If PHP crashes, maybe it has too high a regex recursion limit, especially in Windows. Try uncommenting this:
 		// ini_set('pcre.recursion_limit', '524');
 
-		$pass_this = 0;
-		while (preg_match_all('~(?<=\n)(\h*)@if\h+([^\n]+)(\n(?>[^@]|@(?!if\h))*?)\n\1@endif~i', $css, $matches, PREG_SET_ORDER) > $pass_this)
+		$skipped = 0;
+		while (preg_match_all('~(?<=\n)(\h*)@if\h+([^\n]+)(\n(?>[^@]|@(?!if\h))*?)\n\1@endif~i', $css, $matches, PREG_SET_ORDER) > $skipped)
 		{
 			foreach ($matches as $m)
 			{
@@ -508,7 +508,7 @@ class wess_if extends wess
 					// If we're executing this before mixins, don't bother doing variables.
 					if (!$this->test_vars && strpos($match, '$') !== false)
 					{
-						$pass_this++;
+						$skipped++;
 						continue 2;
 					}
 

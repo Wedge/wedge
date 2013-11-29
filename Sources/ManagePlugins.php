@@ -1038,7 +1038,7 @@ function EnablePlugin()
 		if (!empty($settings['plugins_admin']))
 		{
 			$admin_cache = unserialize($settings['plugins_admin']);
-			unset ($admin_cache[$manifest_id]);
+			unset($admin_cache[$manifest_id]);
 		}
 		else
 			$admin_cache = array();
@@ -1168,7 +1168,7 @@ function DisablePlugin($manifest = null, $plugin = null)
 	if (!empty($settings['plugins_admin']))
 	{
 		$admin_cache = unserialize($settings['plugins_admin']);
-		unset ($admin_cache[$manifest_id]);
+		unset($admin_cache[$manifest_id]);
 		$admin_cache = !empty($admin_cache) ? serialize($admin_cache) : '';
 	}
 	else

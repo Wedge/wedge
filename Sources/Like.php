@@ -223,7 +223,7 @@ function DisplayLike()
 
 	// If we're ignoring someone, spirit them away.
 	foreach (we::$user['ignoreusers'] as $ignored)
-		unset ($likes[$ignored]);
+		unset($likes[$ignored]);
 
 	$members = array_keys($likes);
 	$members_actual = loadMemberData($members);

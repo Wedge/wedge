@@ -2009,7 +2009,7 @@ function approvePosts($msgs, $approve = true)
 		if (!$approve || !isset($data['unapproved_msg']))
 		{
 			$easy_msg[] = $msg;
-			unset ($msgs[$msg]);
+			unset($msgs[$msg]);
 		}
 
 	if (!empty($easy_msg))
@@ -2028,7 +2028,7 @@ function approvePosts($msgs, $approve = true)
 	{
 		foreach ($msgs as $msg => $data)
 		{
-			unset ($data['unapproved_msg']);
+			unset($data['unapproved_msg']);
 			wesql::query('
 				UPDATE {db_prefix}messages
 				SET approved = {int:approved_state},

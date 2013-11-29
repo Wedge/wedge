@@ -543,7 +543,7 @@ function uploadedPluginPrune()
 		}
 	}
 
-	unset ($_SESSION['uploadplugin']['delete']);
+	unset($_SESSION['uploadplugin']['delete']);
 	$context['page_title'] = $txt['plugin_files_pruned_title'];
 	$context['form_url'] = '<URL>?action=admin;area=plugins;sa=add;upload;stage=3';
 	$context['description'] = $txt['plugin_files_pruned'];

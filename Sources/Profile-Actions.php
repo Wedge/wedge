@@ -549,7 +549,7 @@ function profileInfractions($memID)
 				continue;
 
 			// Don't need this any more.
-			unset ($row['issuing_groups']);
+			unset($row['issuing_groups']);
 
 			$context['preset_infractions'][$row['id_infraction']] = $row;
 		}
@@ -597,7 +597,7 @@ function profileInfractions($memID)
 		$context['current_sanctions'] = !empty($cur_profile['sanctions']) ? $cur_profile['sanctions'] : array();
 		// Don't tell the user he is soft banned even if he is.
 		if (we::$id == $memID)
-			unset ($context['current_sanctions']['soft_ban']);
+			unset($context['current_sanctions']['soft_ban']);
 
 		if (isset($_REQUEST['for']) && strpos($_REQUEST['for'], ':') !== false)
 		{
@@ -696,7 +696,7 @@ function profileInfractions($memID)
 				{
 					// We don't need to store everything in issuing_for into the database as well.
 					$because_of = !empty($context['issuing_for']) ? $context['issuing_for'] : array();
-					unset ($because_of['repl'], $because_of['note'], $because_of['var']);
+					unset($because_of['repl'], $because_of['note'], $because_of['var']);
 
 					$infraction_details = array(
 						'issued_by' => we::$id,
@@ -738,7 +738,7 @@ function profileInfractions($memID)
 
 					// We don't need to store everything in issuing_for into the database as well.
 					$because_of = !empty($context['issuing_for']) ? $context['issuing_for'] : array();
-					unset ($because_of['repl'], $because_of['note'], $because_of['var']);
+					unset($because_of['repl'], $because_of['note'], $because_of['var']);
 
 					$infraction_details = array(
 						'issued_by' => we::$id,
@@ -778,7 +778,7 @@ function profileInfractions($memID)
 							$sanctions = explode(',', $infraction_details['sanctions']);
 							foreach ($sanctions as $k => $v)
 								if (!isset($txt['pun_infraction_' . $v]) || $v == 'soft_ban')
-									unset ($sanctions[$k]);
+									unset($sanctions[$k]);
 
 							if (!empty($sanctions))
 							{

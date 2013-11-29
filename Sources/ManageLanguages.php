@@ -649,7 +649,7 @@ function ModifyLanguageEntries()
 			clean_cache('js');
 
 			// OK, so we've removed this one, we can clear the current entry of it then let it fall back to original procedure.
-			unset ($context['entries'][$_GET['eid']]['current']);
+			unset($context['entries'][$_GET['eid']]['current']);
 			wetem::load('modify_entries');
 			return;
 		}
@@ -732,7 +732,7 @@ function ModifyLanguageEntries()
 		$context['entry'] = $context['entries'][$_GET['eid']];
 		$context['entry']['id'] = $_GET['eid'];
 
-		unset ($context['entries']);
+		unset($context['entries']);
 		wetem::load('modify_individual_entry');
 	}
 	else

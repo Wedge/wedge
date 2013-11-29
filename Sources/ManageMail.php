@@ -91,7 +91,7 @@ function BrowseMailQueue()
 		$ids = (array) $_REQUEST['delete'];
 		foreach ($ids as $k => $v)
 			if (empty($v))
-				unset ($ids[$k]);
+				unset($ids[$k]);
 			else
 				$ids[$k] = (int) $v;
 

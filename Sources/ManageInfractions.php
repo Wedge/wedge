@@ -92,7 +92,7 @@ function InfractionsHome()
 			if (isset($txt['infraction_' . $v]))
 				$row['sanctions'][$k] = $txt['infraction_' . $v];
 			else
-				unset ($row['sanctions'][$k]);
+				unset($row['sanctions'][$k]);
 
 		$context['infractions'][$row['id_infraction']] = $row;
 	}
@@ -139,7 +139,7 @@ function InfractionsHome()
 
 		// We want to save but to save space we don't need to note that group 1 is magic. Admins are all powerful, always.
 		$temp = $context['infractions_adhoc'];
-		unset ($temp[1]);
+		unset($temp[1]);
 		updateSettings(array('infraction_adhoc' => serialize($temp)));
 	}
 
@@ -497,7 +497,7 @@ function getInfractionLevels()
 
 	foreach ($context['infraction_levels'] as $infraction => $details)
 		if (!isset($txt['infraction_' . $infraction]))
-			unset ($context['infraction_levels'][$infraction]);
+			unset($context['infraction_levels'][$infraction]);
 }
 
 function getIssuerGroups()
@@ -657,13 +657,13 @@ function get_validated_infraction_log($memID, $keep_all = true)
 
 		// We might only want active warnings.
 		if ($context['infraction_log'][$row['id_issue']]['inf_state'] != 0 && !$keep_all)
-			unset ($context['infraction_log'][$row['id_issue']]);
+			unset($context['infraction_log'][$row['id_issue']]);
 	}
 
 	// Now, we've ensured we have the correct state of play. Let's make sure the user has that too.
 	$data = !empty($user_profile[$memID]['data']) ? $user_profile[$memID]['data'] : array();
 	if (empty($context['current_sanctions']) && !empty($data['sanctions']))
-		unset ($data['sanctions']);
+		unset($data['sanctions']);
 	else
 	{
 		$data['sanctions'] = $context['current_sanctions'];
@@ -681,7 +681,7 @@ function get_validated_infraction_log($memID, $keep_all = true)
 	// There are certain things we do not wish to... let slip.
 	if ($memID == we::$id)
 	{
-		unset ($context['current_sanctions']['soft_ban'], $context['current_sanctions_levels']['soft_ban']);
+		unset($context['current_sanctions']['soft_ban'], $context['current_sanctions_levels']['soft_ban']);
 		$context['can_issue_warning'] = false;
 	}
 }

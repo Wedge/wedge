@@ -239,7 +239,7 @@ function EditSearchMethod()
 
 	// I'd quite like 'no index' to be the first option but we probably don't have it as such.
 	$standard_index = $context['search_apis']['standard'];
-	unset ($context['search_apis']['standard']);
+	unset($context['search_apis']['standard']);
 	$context['search_apis'] = array_merge(
 		array('standard' => $standard_index),
 		$context['search_apis']

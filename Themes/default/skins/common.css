@@ -13,7 +13,7 @@
 @mixin .inline-block($vertical_align = middle)
 
 	display: inline-block
-	@if $vertical_align
+	@if "$vertical_align"
 		vertical-align: $vertical_align
 	@endif
 

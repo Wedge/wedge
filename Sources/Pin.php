@@ -125,7 +125,7 @@ function OrderPin()
 				$info['new'] = 1;
 			// While we're at it, is this one actually changing? Don't query it if it isn't.
 			if ($info['old'] == $info['new'])
-				unset ($topics[$id]);
+				unset($topics[$id]);
 		}
 
 		if (!empty($topics))

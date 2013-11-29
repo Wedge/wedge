@@ -851,7 +851,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 			if (!empty($row['sanctions']))
 				foreach ($row['sanctions'] as $infraction => $expiry)
 					if ($expiry != 1 && $expiry < time())
-						unset ($row['sanctions'][$infraction]);
+						unset($row['sanctions'][$infraction]);
 
 			// No signature sanction?
 			if (!empty($row['sanctions']['no_sig']))

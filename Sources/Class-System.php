@@ -414,7 +414,7 @@ class we
 			if (!empty($user['sanctions']))
 				foreach ($user['sanctions'] as $infraction => $expiry)
 					if ($expiry != 1 && $expiry < time())
-						unset ($user['sanctions'][$infraction]);
+						unset($user['sanctions'][$infraction]);
 
 		// Some more data for we::is test flexibility...
 		if (!empty($_GET['category']) && (int) $_GET['category'])
@@ -851,6 +851,10 @@ class we
 			// A boolean test for a stand-alone variable, i.e. != "" is implied.
 			while (strpos($string, '"') !== false)
 				$string = preg_replace_callback('~"([^"]*)"?+~', 'we::loose', $string);
+
+			// If we forgot/ignored quotes on numbers, we'll still try to detect them.
+			if (strpos($string, ' ') === false && preg_match('~^[-.]*\d~', $string))
+				$string = preg_replace_callback('~(.+)~', 'we::loose', $string);
 
 			if (!empty(self::$is[$string]))
 				return $string;

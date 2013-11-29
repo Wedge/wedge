@@ -544,6 +544,7 @@ select.sb
 		color: #000
 		cursor: default
 		font-weight: 400
+		max-height: 1.9em
 		line-height: 1.5em
 		overflow: hidden
 		position: relative
@@ -1987,16 +1988,19 @@ $alphamix = $main_bg
 	border: 0
 
 /*
-	// This example is here to showcase the mixin power. You can use : or = in param lists.
+	This example is here to showcase the power of mixins.
+	- You may use a regular selector and omit the @mixin keyword if you don't need params.
+	- You can do any kinds of comparisons on params inside the mixin.
+	- You can use : or = in param lists.
 
 	@mixin example($border, $width: 777px, $co: #888)
 		width: $width
 		font-size: 1em
 		background: $main_bg
+		@if $border
+			border: $border
+		@endif
 		a
-			@if $border > 0
-				border: $border
-			@endif
 			color: $board_col
 
 	.class
