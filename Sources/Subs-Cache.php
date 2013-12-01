@@ -1029,7 +1029,7 @@ function wedge_cache_js($id, &$lang_name, $latest_date, $ext, $js, $gzip = false
 
 		// The following will store $txt strings into the JS file, processing them in that order:
 		// - Replace &#8239; (in UTF-8 bytes) to &#160; (&nbsp;) in UTF-8 bytes,
-		// - Escape JS-incompatible strings,
+		// - Escape JS-incompatible strings (unless it's an array),
 		// - Turn all 'named' entities and UTF-8 characters to numeric entities,
 		// - Then turn these to \u0000 strings in return (they gzip better),
 		// - And finally, convert \x0f and \x10 hacks back to their unescaped values, i.e. quotes.
@@ -1041,6 +1041,13 @@ function wedge_cache_js($id, &$lang_name, $latest_date, $ext, $js, $gzip = false
 						strtr(
 							westr::entity_to_js_code(
 								westr::utf8_to_entity(
+									is_array($txt[$str[2]]) ?
+										html_entity_decode(
+											str_replace("\xe2\x80\xaf", "\xc2\xa0", we_json_encode($txt[$str[2]])),
+											ENT_NOQUOTES,
+											'UTF-8'
+										)
+									:
 									JavaScriptEscape(
 										html_entity_decode(
 											str_replace("\xe2\x80\xaf", "\xc2\xa0", $txt[$str[2]]),

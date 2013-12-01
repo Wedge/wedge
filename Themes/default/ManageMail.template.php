@@ -56,7 +56,7 @@ function template_email_template_list()
 
 	foreach ($context['languages'] as $lang)
 		echo '
-				<li><span class="flag_', $lang['filename'], '"></span> <a href="<URL>?action=admin;area=mailqueue;sa=templates;emaillang=', $lang['filename'], '">', $lang['name'], '</a></li>';
+				<li><span class="flag_', $lang['filename'], '"><a href="<URL>?action=admin;area=mailqueue;sa=templates;emaillang=', $lang['filename'], '">', $lang['name'], '</a></span></li>';
 
 	echo '
 			</ul>

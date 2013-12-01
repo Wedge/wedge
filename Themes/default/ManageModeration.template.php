@@ -264,7 +264,7 @@ function template_modfilter_edit()
 
 	foreach ($context['lang_msg'] as $lang => $entry)
 		echo '
-					<dt><span class="flag_', $lang, '"></span> ', $entry['name'], '</dt>
+					<dt><span class="flag_', $lang, '">', $entry['name'], '</span></dt>
 					<dd><textarea name="msg_', $lang, '">', $entry['msg'], '</textarea></dd>';
 
 	echo '

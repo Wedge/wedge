@@ -2710,7 +2710,6 @@ class wedit
 				<span id="draft_lastautosave"></span>';
 	}
 
-	// This is essentially a dirty form of json_encode, except that json_encode still isn't present on all 5.2 setups >_<
 	public function saveEntityFields()
 	{
 		foreach ($this->editorOptions['entity_fields'] as $field)
