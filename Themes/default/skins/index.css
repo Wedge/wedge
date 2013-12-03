@@ -169,7 +169,7 @@ body
 	cursor: pointer
 	padding: 2px 0 0 1em
 	float: right
-	width: 16px
+	width: 2.5em
 	// These will still need a px-based fallback, for a few years at least.
 	@if mobile
 		width: 5$vmin
@@ -553,9 +553,12 @@ select.sb
 		border-radius: 6px
 
 		.text
+			overflow: visible !important
+			box-sizing: content-box
 			padding: 0 3px
 
 		.btn
+			box-sizing: content-box
 			position: absolute
 			border: 1px solid #707070
 			border-radius: 4px

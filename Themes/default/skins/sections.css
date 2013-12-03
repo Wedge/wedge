@@ -397,7 +397,7 @@ hr.sep
 			flex: 1 0 auto
 			@if firefox
 			.actionbar
-				flex: 0 0 1.5em
+				flex: 0 0 2.5em
 			@endif
 		.merged
 			flex: none
@@ -1307,24 +1307,6 @@ dl.stats
 
 div.top_row dd
 	width: auto
-
-#stats_history
-	margin-top: 5px
-	td
-		text-align: center
-	tbody th
-		border-radius: 0
-	th
-		width: 15%
-	.day
-		padding: 0 0 0 3em
-		text-align: left
-	.year, .month
-		width: 25%
-		padding: .3em 0 .3em .75em
-		text-align: left
-	.month
-		padding: .3em 0 .3em 1.5em
 
 /* Styles for the memberlist section.
 ------------------------------------------------- */

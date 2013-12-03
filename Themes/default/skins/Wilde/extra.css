@@ -251,7 +251,9 @@ $post_bg2 = $window_bg2
 		border: 0
 		background, box-shadow: none
 		vertical-align: baseline
-		padding: 0 4px 8px
+		padding: 0 8px
+		font-size: 2.2em
+		line-height: 1.3em
 
 .title2
 	background: none
@@ -305,6 +307,15 @@ tr.titlebg
 	margin: .5em 0
 	li
 		padding: 0 0 0 1em
+
+.description_board
+	font-size: 1.2em
+	border: 0
+	background: none
+
+.subject .padding
+	font-size: 1.1em
+	line-height: 1.4em
 
 #statistics
 	.title final
