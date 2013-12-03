@@ -195,7 +195,7 @@ function page_showing()
 	// Relative timestamps!
 	$('time[datetime]').each(function () {
 		var time = Math.max(2, +new Date - Date.parse($(this).attr('datetime'))), str;
-		$(this).data('t', $(this).data('t') || $(this).html());
+		$(this).data('t', $(this).data('t') || $(this).text());
 		if (time < 12e3) // Less than 12 seconds ago?
 			str = $txt['just_now'];
 		else if (time < 12e4) // < 2 minutes

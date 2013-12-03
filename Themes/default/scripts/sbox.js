@@ -390,7 +390,7 @@
 			// Spaces should open or close the dropdown, cancelling the latest selection. Requires e.which instead of e.keyCode... confusing.
 			else if (e.which == 32)
 			{
-				$sb.hasClass('open') ? closeAndUnbind() : openSB();
+				$sb.hasClass('open') ? closeAndUnbind() : (openSB(), centerOnSelected());
 				focusSB();
 				e.preventDefault();
 			}
@@ -404,26 +404,30 @@
 			}
 			else if (e.keyCode == 35) // end
 			{
-				selectItem($enabled.last());
+				selectItem($enabled.last(), true);
 				centerOnSelected();
+				updateOriginal();
 				e.preventDefault();
 			}
 			else if (e.keyCode == 36) // home
 			{
-				selectItem($enabled.first());
+				selectItem($enabled.first(), true);
 				centerOnSelected();
+				updateOriginal();
 				e.preventDefault();
 			}
 			else if (e.keyCode == 38) // up
 			{
-				selectItem($enabled.eq($enabled.index($selected) - 1));
+				selectItem($enabled.eq($enabled.index($selected) - 1), true);
 				centerOnSelected();
+				updateOriginal();
 				e.preventDefault();
 			}
 			else if (e.keyCode == 40) // down
 			{
-				selectItem($enabled.eq(($enabled.index($selected) + 1) % $enabled.length));
+				selectItem($enabled.eq(($enabled.index($selected) + 1) % $enabled.length), true);
 				centerOnSelected();
+				updateOriginal();
 				e.preventDefault();
 			}
 			// Also, try finding the next element that starts with the pressed letter. if found, select it.
