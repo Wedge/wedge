@@ -37,57 +37,24 @@ function Stats()
 	if (empty($settings['trackStats']))
 		fatal_lang_error('cannot_view_stats', false);
 
-	if (!empty($_REQUEST['expand']))
-	{
-		$context['robot_no_index'] = true;
+	// Get averages...
+	$result = wesql::query('
+		SELECT
+			SUM(posts) AS posts, SUM(topics) AS topics, SUM(registers) AS registers,
+			SUM(most_on) AS most_on, MIN(date) AS date, SUM(hits) AS hits
+		FROM {db_prefix}log_activity'
+	);
+	$row = wesql::fetch_assoc($result);
+	wesql::free_result($result);
 
-		$month = (int) substr($_REQUEST['expand'], 4);
-		$year = (int) substr($_REQUEST['expand'], 0, 4);
-		if ($year > 1900 && $year < 2200 && $month >= 1 && $month <= 12)
-			$_SESSION['expanded_stats'][$year][] = $month;
-	}
-	elseif (!empty($_REQUEST['collapse']))
-	{
-		$context['robot_no_index'] = true;
-
-		$month = (int) substr($_REQUEST['collapse'], 4);
-		$year = (int) substr($_REQUEST['collapse'], 0, 4);
-		if (!empty($_SESSION['expanded_stats'][$year]))
-			$_SESSION['expanded_stats'][$year] = array_diff($_SESSION['expanded_stats'][$year], array($month));
-	}
-
-	// Handle the Ajax request.
-	if (AJAX)
-	{
-		// Collapsing stats only needs adjustments of the session variables.
-		if (!empty($_REQUEST['collapse']))
-			obExit(false);
-
-		getDailyStats('YEAR(date) = {int:year} AND MONTH(date) = {int:month}', array('year' => $year, 'month' => $month));
-		$context['yearly'][$year]['months'][$month]['date'] = array(
-			'month' => sprintf('%02d', $month),
-			'year' => $year,
-		);
-
-		$stats = '';
-		foreach ($context['yearly'] as $year)
-			foreach ($year['months'] as $month)
-			{
-				$stats .= '<month id="' . $month['date']['year'] . $month['date']['month'] . '">';
-
-				foreach ($month['days'] as $day)
-					$stats .= '<day date="' . $day['year'] . '-' . $day['month'] . '-' . $day['day'] . '" new_topics="' . $day['new_topics'] . '" new_posts="'
-							. $day['new_posts'] . '" new_members="' . $day['new_members'] . '"'
-							. ($can_view_most_online ? ' most_members_online="' . $day['most_members_online'] . '"' : '')
-							. (empty($settings['hitStats']) ? '' : ' hits="' . $day['hits'] . '"') . ' />';
-
-				$stats .= '</month>';
-			}
-
-		return_xml('<we>', $stats, '</we>');
-	}
+	// This would be the amount of time the forum has been up... in days...
+	$total_days_up = ceil((time() - strtotime($row['date'])) / (60 * 60 * 24));
+	$context['first_stats'] = $row['date'];
 
 	loadLanguage('Stats');
+
+	getStats();
+
 	loadTemplate('Stats');
 
 	if (empty($settings['trackStats']))
@@ -99,25 +66,10 @@ function Stats()
 
 	$context['show_member_list'] = allowedTo('view_mlist');
 
-	// Get averages...
-	$result = wesql::query('
-		SELECT
-			SUM(posts) AS posts, SUM(topics) AS topics, SUM(registers) AS registers,
-			SUM(most_on) AS most_on, MIN(date) AS date, SUM(hits) AS hits
-		FROM {db_prefix}log_activity',
-		array(
-		)
-	);
-	$row = wesql::fetch_assoc($result);
-	wesql::free_result($result);
-
-	// This would be the amount of time the forum has been up... in days...
-	$total_days_up = ceil((time() - strtotime($row['date'])) / (60 * 60 * 24));
-
 	$context['average_posts'] = comma_format(round($row['posts'] / $total_days_up, 2));
 	$context['average_topics'] = comma_format(round($row['topics'] / $total_days_up, 2));
-	$context['average_members'] = comma_format(round($row['registers'] / $total_days_up, 2));
-	$context['average_online'] = comma_format(round($row['most_on'] / $total_days_up, 2));
+	$context['average_registers'] = comma_format(round($row['registers'] / $total_days_up, 2));
+	$context['average_most_on'] = comma_format(round($row['most_on'] / $total_days_up, 2));
 	$context['average_hits'] = comma_format(round($row['hits'] / $total_days_up, 2));
 
 	$context['num_hits'] = comma_format($row['hits'], 0);
@@ -125,9 +77,7 @@ function Stats()
 	// How many users are online now.
 	$result = wesql::query('
 		SELECT COUNT(*)
-		FROM {db_prefix}log_online',
-		array(
-		)
+		FROM {db_prefix}log_online'
 	);
 	list ($context['users_online']) = wesql::fetch_row($result);
 	wesql::free_result($result);
@@ -146,9 +96,7 @@ function Stats()
 
 	$result = wesql::query('
 		SELECT COUNT(*)
-		FROM {db_prefix}categories AS c',
-		array(
-		)
+		FROM {db_prefix}categories AS c'
 	);
 	list ($context['num_categories']) = wesql::fetch_row($result);
 	wesql::free_result($result);
@@ -164,7 +112,7 @@ function Stats()
 	$context['latest_member'] =& $context['common_stats']['latest_member'];
 
 	if ($can_view_most_online)
-		$context['most_members_online'] = array(
+		$context['most_online'] = array(
 			'number' => comma_format($settings['mostOnline']),
 			'date' => timeformat($settings['mostDate'])
 		);
@@ -175,17 +123,13 @@ function Stats()
 		$result = wesql::query('
 			SELECT COUNT(*) AS total_members, gender
 			FROM {db_prefix}members
-			GROUP BY gender',
-			array(
-			)
+			GROUP BY gender'
 		);
 		$context['gender'] = array();
+		// Assuming we're telling... male or female?
 		while ($row = wesql::fetch_assoc($result))
-		{
-			// Assuming we're telling... male or female?
 			if (!empty($row['gender']))
 				$context['gender'][$row['gender'] == 2 ? 'females' : 'males'] = $row['total_members'];
-		}
 		wesql::free_result($result);
 
 		// Set these two zero if the didn't get set at all.
@@ -195,15 +139,13 @@ function Stats()
 			$context['gender']['females'] = 0;
 
 		// Try and come up with some "sensible" default states in case of a non-mixed board.
-		if ($context['gender']['males'] == $context['gender']['females'])
-			$context['gender']['ratio'] = '1:1';
-		elseif ($context['gender']['males'] == 0)
-			$context['gender']['ratio'] = '0:1';
-		elseif ($context['gender']['females'] == 0)
+		if (!$context['gender']['males'])
+			$context['gender']['ratio'] = $context['gender']['females'] ? '0:1' : $txt['not_applicable'];
+		elseif (!$context['gender']['females'])
 			$context['gender']['ratio'] = '1:0';
 		elseif ($context['gender']['males'] > $context['gender']['females'])
 			$context['gender']['ratio'] = round($context['gender']['males'] / $context['gender']['females'], 1) . ':1';
-		elseif ($context['gender']['females'] > $context['gender']['males'])
+		else
 			$context['gender']['ratio'] = '1:' . round($context['gender']['females'] / $context['gender']['males'], 1);
 
 		cache_put_data('stats_gender', $context['gender'], 240);
@@ -226,16 +168,13 @@ function Stats()
 
 	$context['online_today'] = comma_format((int) $context['online_today']);
 
-	// Poster top 10.
+	// Top 10 posters.
 	$members_result = wesql::query('
 		SELECT id_member, real_name, posts
 		FROM {db_prefix}members
-		WHERE posts > {int:no_posts}
+		WHERE posts > {literal:0}
 		ORDER BY posts DESC
-		LIMIT 10',
-		array(
-			'no_posts' => 0,
-		)
+		LIMIT 10'
 	);
 	$context['top_posters'] = array();
 	$max_num_posts = 1;
@@ -259,7 +198,7 @@ function Stats()
 		$context['top_posters'][$i]['num_posts'] = comma_format($context['top_posters'][$i]['num_posts']);
 	}
 
-	// Board top 10.
+	// Top 10 active boards.
 	$boards_result = wesql::query('
 		SELECT id_board, name, num_posts
 		FROM {db_prefix}boards AS b
@@ -301,13 +240,10 @@ function Stats()
 		$request = wesql::query('
 			SELECT id_topic
 			FROM {db_prefix}topics AS t
-			WHERE num_replies != {int:no_replies}
+			WHERE num_replies != {literal:0}
 				AND {query_see_topic}
 			ORDER BY num_replies DESC
-			LIMIT 100',
-			array(
-				'no_replies' => 0,
-			)
+			LIMIT 100'
 		);
 		$topic_ids = array();
 		while ($row = wesql::fetch_assoc($request))
@@ -317,7 +253,7 @@ function Stats()
 	else
 		$topic_ids = array();
 
-	// Topic replies top 10.
+	// Top 10 active topics.
 	$topic_reply_result = wesql::query('
 		SELECT m.subject, t.num_replies, t.id_board, t.id_topic, b.name
 		FROM {db_prefix}topics AS t
@@ -370,12 +306,9 @@ function Stats()
 		$request = wesql::query('
 			SELECT id_topic
 			FROM {db_prefix}topics
-			WHERE num_views != {int:no_views}
+			WHERE num_views != {literal:0}
 			ORDER BY num_views DESC
-			LIMIT 100',
-			array(
-				'no_views' => 0,
-			)
+			LIMIT 100'
 		);
 		$topic_ids = array();
 		while ($row = wesql::fetch_assoc($request))
@@ -385,7 +318,7 @@ function Stats()
 	else
 		$topic_ids = array();
 
-	// Topic views top 10.
+	// Top 10 viewed topics.
 	$topic_view_result = wesql::query('
 		SELECT m.subject, t.num_views, t.id_board, t.id_topic, b.name
 		FROM {db_prefix}topics AS t
@@ -457,7 +390,7 @@ function Stats()
 	if (empty($members))
 		$members = array(0 => 0);
 
-	// Topic poster top 10.
+	// Top 10 topic creators.
 	$members_result = wesql::query('
 		SELECT id_member, real_name
 		FROM {db_prefix}members
@@ -491,7 +424,7 @@ function Stats()
 		$context['top_starters'][$i]['num_topics'] = comma_format($context['top_starters'][$i]['num_topics']);
 	}
 
-	// Time online top 10.
+	// Top 10 time spent online.
 	$temp = cache_get_data('stats_total_time_members', 600);
 	$members_result = wesql::query('
 		SELECT id_member, real_name, total_time_logged_in
@@ -547,7 +480,7 @@ function Stats()
 	if ($temp !== $temp2)
 		cache_put_data('stats_total_time_members', $temp2, 480);
 
-	// Liked posts top 10.
+	// Top 10 liked posts.
 	$likes_result = wesql::query('
 		SELECT COUNT(k.id_member) AS likes, m.id_member, m.real_name, msg.id_msg, msg.id_topic, msg.subject
 		FROM {db_prefix}likes AS k
@@ -580,7 +513,7 @@ function Stats()
 		$context['top_likes'][$i]['num_likes'] = comma_format($context['top_likes'][$i]['num_likes']);
 	}
 
-	// Liked authors top 10.
+	// Top 10 liked authors.
 	$likes_result = wesql::query('
 		SELECT COUNT(k.id_content) AS likes, m.id_member, m.real_name
 		FROM {db_prefix}likes AS k
@@ -610,126 +543,187 @@ function Stats()
 		$context['top_author_likes'][$i]['post_percent'] = max(5, round(($like['num_likes'] * 100) / $max_num_likes));
 		$context['top_author_likes'][$i]['num_likes'] = comma_format($context['top_author_likes'][$i]['num_likes']);
 	}
-
-	// Activity by month.
-	$months_result = wesql::query('
-		SELECT
-			YEAR(date) AS stats_year, MONTH(date) AS stats_month, SUM(hits) AS hits, SUM(registers) AS registers, SUM(topics) AS topics, SUM(posts) AS posts, MAX(most_on) AS most_on, COUNT(*) AS num_days
-		FROM {db_prefix}log_activity
-		GROUP BY stats_year, stats_month',
-		array()
-	);
-
-	$context['yearly'] = array();
-	while ($row_months = wesql::fetch_assoc($months_result))
-	{
-		$id_month = $row_months['stats_year'] . sprintf('%02d', $row_months['stats_month']);
-		$expanded = !empty($_SESSION['expanded_stats'][$row_months['stats_year']]) && in_array($row_months['stats_month'], $_SESSION['expanded_stats'][$row_months['stats_year']]);
-
-		if (!isset($context['yearly'][$row_months['stats_year']]))
-			$context['yearly'][$row_months['stats_year']] = array(
-				'year' => $row_months['stats_year'],
-				'new_topics' => 0,
-				'new_posts' => 0,
-				'new_members' => 0,
-				'most_members_online' => 0,
-				'hits' => 0,
-				'num_months' => 0,
-				'months' => array(),
-				'expanded' => false,
-				'current_year' => $row_months['stats_year'] == date('Y'),
-			);
-
-		$context['yearly'][$row_months['stats_year']]['months'][(int) $row_months['stats_month']] = array(
-			'id' => $id_month,
-			'date' => array(
-				'month' => sprintf('%02d', $row_months['stats_month']),
-				'year' => $row_months['stats_year']
-			),
-			'href' => '<URL>?action=stats;' . ($expanded ? 'collapse' : 'expand') . '=' . $id_month . '#m' . $id_month,
-			'link' => '<a href="<URL>?action=stats;' . ($expanded ? 'collapse' : 'expand') . '=' . $id_month . '#m' . $id_month . '">' . $txt['months'][(int) $row_months['stats_month']] . ' ' . $row_months['stats_year'] . '</a>',
-			'month' => $txt['months'][(int) $row_months['stats_month']],
-			'year' => $row_months['stats_year'],
-			'new_topics' => comma_format($row_months['topics']),
-			'new_posts' => comma_format($row_months['posts']),
-			'new_members' => comma_format($row_months['registers']),
-			'most_members_online' => comma_format($row_months['most_on']),
-			'hits' => comma_format($row_months['hits']),
-			'num_days' => $row_months['num_days'],
-			'days' => array(),
-			'expanded' => $expanded
-		);
-
-		$context['yearly'][$row_months['stats_year']]['new_topics'] += $row_months['topics'];
-		$context['yearly'][$row_months['stats_year']]['new_posts'] += $row_months['posts'];
-		$context['yearly'][$row_months['stats_year']]['new_members'] += $row_months['registers'];
-		$context['yearly'][$row_months['stats_year']]['hits'] += $row_months['hits'];
-		$context['yearly'][$row_months['stats_year']]['num_months']++;
-		$context['yearly'][$row_months['stats_year']]['expanded'] |= $expanded;
-		$context['yearly'][$row_months['stats_year']]['most_members_online'] = max($context['yearly'][$row_months['stats_year']]['most_members_online'], $row_months['most_on']);
-	}
-
-	krsort($context['yearly']);
-
-	$context['collapsed_years'] = array();
-	foreach ($context['yearly'] as $year => $data)
-	{
-		// This gets rid of the filesort on the query ;).
-		krsort($context['yearly'][$year]['months']);
-
-		$context['yearly'][$year]['new_topics'] = comma_format($data['new_topics']);
-		$context['yearly'][$year]['new_posts'] = comma_format($data['new_posts']);
-		$context['yearly'][$year]['new_members'] = comma_format($data['new_members']);
-		$context['yearly'][$year]['most_members_online'] = comma_format($data['most_members_online']);
-		$context['yearly'][$year]['hits'] = comma_format($data['hits']);
-
-		// Keep a list of collapsed years.
-		if (!$data['expanded'] && !$data['current_year'])
-			$context['collapsed_years'][] = $year;
-	}
-
-	if (empty($_SESSION['expanded_stats']))
-		return;
-
-	$condition_text = array();
-	$condition_params = array();
-	foreach ($_SESSION['expanded_stats'] as $year => $months)
-		if (!empty($months))
-		{
-			$condition_text[] = 'YEAR(date) = {int:year_' . $year . '} AND MONTH(date) IN ({array_int:months_' . $year . '})';
-			$condition_params['year_' . $year] = $year;
-			$condition_params['months_' . $year] = $months;
-		}
-
-	// No daily stats to even look at?
-	if (empty($condition_text))
-		return;
-
-	getDailyStats(implode(' OR ', $condition_text), $condition_params);
 }
 
-function getDailyStats($condition_string, $condition_parameters = array())
+function getStats()
 {
-	global $context;
+	global $context, $txt, $settings;
 
-	// Activity by day.
-	$days_result = wesql::query('
-		SELECT YEAR(date) AS stats_year, MONTH(date) AS stats_month, DAYOFMONTH(date) AS stats_day, topics, posts, registers, most_on, hits
+	$where = '1=1';
+	$range = isset($_REQUEST['range']) ? $_REQUEST['range'] : (isset($_SESSION['stat_charts'], $_SESSION['stat_charts']['range']) ? $_SESSION['stat_charts']['range'] : 'last_month');
+	// Hits, posts and topics are sorted in decreasing order of magniture, to ensure the biggest stat gets a 'filled' area.
+	$possible_names = array('hits', 'posts', 'topics', 'registers', 'most_on');
+	if (empty($settings['hitStats']))
+		array_shift($possible_names);
+	list ($starting_year, $starting_month, $starting_day) = explode('-', $context['first_stats']);
+	$available_months = date('m') + (date('m') >= $starting_month ? 0 : 12) - $starting_month + (date('Y') - $starting_year) * 12;
+
+	$filter = isset($_REQUEST['filter']) ? $_REQUEST['filter'] : (isset($_SESSION['stat_charts'], $_SESSION['stat_charts']['filter']) ? $_SESSION['stat_charts']['filter'] : 'posts');
+	$varnames = array_intersect($possible_names, explode(',', $filter));
+	if (empty($varnames))
+		$varnames = $possible_names;
+	$_SESSION['stat_charts'] = array(
+		'range' => $range,
+		'filter' => $filter
+	);
+
+	if (strpos($range, '-') !== false)
+		list ($month, $year) = explode('-', $range);
+	$month = isset($month) ? max(0, min((int) $month, 12)) : 0;
+	$year = isset($year) ? max(1900, min((int) $year, date('Y'))) : 0;
+
+	if (!$year && !$month)
+	{
+		if ($range == 'last_decade')
+		{
+			if ($available_months < 2)
+				$stats = getDailyStats($varnames);
+			elseif ($available_months < 50)
+				$stats = getMonthlyStats($varnames);
+			elseif ($available_months < 150) // Okay, so that's ~12 years, let's not fight about it...
+				$stats = getQuarterlyStats($varnames);
+			else
+				$stats = getQuarterlyStats($varnames, 'date >= {string:date}', array('date' => (date('Y') - 12) . '-01-01'));
+		}
+		elseif ($range == 'last_year')
+		{
+			$yearago = time() - 60 * 60 * 24 * 365;
+			$year = date('Y', $yearago);
+			$month = date('n', $yearago) + 1;
+			if ($month == 13)
+			{
+				$month = 1;
+				$year++;
+			}
+			$stats = getMonthlyStats($varnames, 'date >= {string:date}', array('date' => $year . '-' . substr(100 + $month, 1) . '-01'));
+		}
+		else // last_month, i.e. the default?
+		{
+			$_SESSION['stat_charts']['range'] = $range = 'last_month';
+			$monthago = time() - 60 * 60 * 24 * 30;
+			$stats = getDailyStats(
+				$varnames,
+				'date >= {string:date}',
+				array('date' => date('Y', $monthago) . '-' . date('m', $monthago) . '-' . date('d', $monthago))
+			);
+		}
+	}
+	else
+	{
+		$params = array('year' => $year, 'month' => $month);
+		$where = $year ? 'YEAR(date) = {int:year}' : '1=1';
+		if ($month)
+			$where .= ' AND MONTH(date) = {int:month}';
+		$stats = $month ? getDailyStats($varnames, $where, $params) : getMonthlyStats($varnames, $where, $params);
+	}
+
+	// Handle the Ajax request.
+	if (AJAX)
+		return_json($stats);
+
+	add_js('
+	first_stats = "', $context['first_stats'], '";
+	current_range = "', $range, '";');
+	// !! Could also add: current_filter = "', $filter, '";
+
+	// And, all the data the template needs to deal with.
+	$context['full_chart'] = $stats;
+	$context['available_filters'] = $possible_names;
+}
+
+function getQuarterlyStats($what, $condition_string = '1=1', $condition_parameters = array())
+{
+	global $txt;
+
+	// Activity by quarter.
+	$result = wesql::query('
+		SELECT
+			YEAR(date) AS stats_year,
+			CEIL(MONTH(date) / 3) AS stats_quarter,
+			COUNT(*) AS num_days,
+			SUM(hits) AS hits,
+			SUM(posts) AS posts,
+			SUM(topics) AS topics,
+			MAX(most_on) AS most_on,
+			SUM(registers) AS registers
 		FROM {db_prefix}log_activity
 		WHERE ' . $condition_string . '
-		ORDER BY stats_day DESC',
+		GROUP BY stats_year, stats_quarter',
 		$condition_parameters
 	);
-	while ($row_days = wesql::fetch_assoc($days_result))
-		$context['yearly'][$row_days['stats_year']]['months'][(int) $row_days['stats_month']]['days'][] = array(
-			'day' => sprintf('%02d', $row_days['stats_day']),
-			'month' => sprintf('%02d', $row_days['stats_month']),
-			'year' => $row_days['stats_year'],
-			'new_topics' => comma_format($row_days['topics']),
-			'new_posts' => comma_format($row_days['posts']),
-			'new_members' => comma_format($row_days['registers']),
-			'most_members_online' => comma_format($row_days['most_on']),
-			'hits' => comma_format($row_days['hits'])
-		);
-	wesql::free_result($days_result);
+
+	$quarterly = array();
+	while ($row = wesql::fetch_assoc($result))
+	{
+		$quarterly['labels'][] = sprintf('%04d (%d)', $row['stats_year'], $row['stats_quarter']);
+		$quarterly['long_labels'][] = sprintf('%s-%s %04d', $txt['months'][$row['stats_quarter'] * 3 - 2], $txt['months'][$row['stats_quarter'] * 3], $row['stats_year']);
+		foreach ($what as $type)
+			$quarterly[$type][] = (float) $row[$type];
+	}
+	wesql::free_result($result);
+
+	return $quarterly;
+}
+
+function getMonthlyStats($what, $condition_string = '1=1', $condition_parameters = array())
+{
+	global $txt;
+
+	// Activity by month.
+	$result = wesql::query('
+		SELECT
+			YEAR(date) AS stats_year,
+			MONTH(date) AS stats_month,
+			COUNT(*) AS num_days,
+			SUM(hits) AS hits,
+			SUM(posts) AS posts,
+			SUM(topics) AS topics,
+			MAX(most_on) AS most_on,
+			SUM(registers) AS registers
+		FROM {db_prefix}log_activity
+		WHERE ' . $condition_string . '
+		GROUP BY stats_year, stats_month',
+		$condition_parameters
+	);
+
+	$monthly = array();
+	while ($row = wesql::fetch_assoc($result))
+	{
+		$monthly['labels'][] = sprintf('%s %04d', $txt['months_short'][(int) $row['stats_month']], $row['stats_year']);
+		$monthly['long_labels'][] = sprintf('%s %04d', $txt['months'][(int) $row['stats_month']], $row['stats_year']);
+		foreach ($what as $type)
+			$monthly[$type][] = (float) $row[$type];
+	}
+	wesql::free_result($result);
+
+	return $monthly;
+}
+
+function getDailyStats($what, $condition_string = '1=1', $condition_parameters = array())
+{
+	global $txt;
+
+	// Activity by day.
+	$result = wesql::query('
+		SELECT
+			YEAR(date) AS stats_year, MONTH(date) AS stats_month, DAYOFMONTH(date) AS stats_day,
+			hits, posts, topics, most_on, registers
+		FROM {db_prefix}log_activity
+		WHERE ' . $condition_string . '
+		ORDER BY date',
+		$condition_parameters
+	);
+
+	$daily = array();
+	$this_year = date('Y');
+	while ($row = wesql::fetch_assoc($result))
+	{
+		$daily['labels'][] = $row['stats_day'] == 1 ? $txt['months_short'][$row['stats_month']] : (int) $row['stats_day'];
+		$daily['long_labels'][] = timeformat(mktime(0, 0, 0, $row['stats_month'], $row['stats_day'], $row['stats_year']), $txt[$row['stats_year'] == $this_year ? 'date_format_this_year' : 'date_format']);
+		foreach ($what as $type)
+			$daily[$type][] = (float) $row[$type];
+	}
+	wesql::free_result($result);
+
+	return $daily;
 }

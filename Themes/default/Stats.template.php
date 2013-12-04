@@ -15,15 +15,85 @@ function template_main()
 	echo '
 		<we:cat>
 			', $context['page_title'], '
-		</we:cat>
-		<we:title2 style="margin-bottom: 8px">
+		</we:cat>';
+
+	if (we::is('!ie[-8]'))
+	{
+		echo '
+		<div class="flow_hidden clear">
+			<we:title2>
+				<img src="', $theme['images_url'], '/stats_history.gif">
+				', $txt['forum_history'], '
+			</we:title2>
+			<div id="ranges" class="padding">
+				<select id="range"></select>
+				<select id="filter">';
+
+		$filters = array();
+		foreach ($txt['charts'] as $key => $name)
+		{
+			if (empty($name))
+				echo '
+					<option class="hr"></option>';
+			elseif (count(array_intersect(explode(',', $key), $context['available_filters'])) == substr_count($key, ',') + 1)
+			{
+				$filters[] = $key;
+				echo '
+					<option value="', $key, '">', $name, '</option>';
+			}
+		}
+
+		echo '
+				</select>
+			</div>
+			<canvas id="wraph" height="', we::is('mobile') ? 200 : 300, '"></canvas>
+			<div id="labels" style="text-align: center"></div>
+		</div>';
+
+		$col = array(
+			'hits' => '200,180,140',
+			'posts' => '151,187,205',
+			'topics' => '120,210,180',
+			'registers' => '200,150,180',
+			'most_on' => '220,160,160',
+			'205,151,187',
+		);
+
+		$i = 0;
+		$colors = array();
+		$names = array();
+		foreach ($filters as $type)
+		{
+			if (!$type || strpos($type, ',') !== false)
+				continue;
+			$colors[$type] = array(
+				'fillColor' => $type != 'hits' && $type != 'posts' ? 'transparent' : 'rgba(' . $col[$type] . ',0.5)',
+				'strokeColor' => 'rgb(' . $col[$type] . ')',
+				'pointColor' => 'rgb(' . $col[$type] . ')',
+				'pointStrokeColor' => '#fff',
+			);
+			$names[$type] = isset($txt['charts'][$type]) ? $txt['charts'][$type] : $type;
+		}
+
+		add_js('
+	lineChartData = ', we_json_encode($context['full_chart']), ';
+	nameData = ', we_json_encode($names), ';
+	colorData = ', we_json_encode($colors), ';');
+
+		// And now, we can prepare to show that data.
+		add_js_file(array('scripts/wraph.js', 'scripts/stats.js'));
+	}
+
+	echo '
+
+		<we:title2 style="margin: 8px 0">
 			<img src="', $theme['images_url'], '/stats_info.gif">
 			', $txt['general_stats'], '
 		</we:title2>
 
 		<div class="two-columns"><div class="windowbg wrc top_row">
 			<dl class="stats">
-				<dt>', $txt['total_members'], ':</dt>
+				<dt>', $txt['total_registers'], ':</dt>
 				<dd>', $context['show_member_list'] ? '<a href="<URL>?action=mlist">' . $context['num_members'] . '</a>' : $context['num_members'], '</dd>
 				<dt>', $txt['total_posts'], ':</dt>
 				<dd>', $context['num_posts'], '</dd>
@@ -49,14 +119,14 @@ function template_main()
 
 		<div class="two-columns"><div class="windowbg2 wrc top_row">
 			<dl class="stats">
-				<dt>', $txt['average_members'], ':</dt>
-				<dd>', $context['average_members'], '</dd>
+				<dt>', $txt['average_registers'], ':</dt>
+				<dd>', $context['average_registers'], '</dd>
 				<dt>', $txt['average_posts'], ':</dt>
 				<dd>', $context['average_posts'], '</dd>
 				<dt>', $txt['average_topics'], ':</dt>
 				<dd>', $context['average_topics'], '</dd>
-				<dt>', $txt['average_online'], ':</dt>
-				<dd>', $context['average_online'], '</dd>
+				<dt>', $txt['average_most_on'], ':</dt>
+				<dd>', $context['average_most_on'], '</dd>
 				<dt>', $txt['users_online_today'], ':</dt>
 				<dd>', $context['online_today'], '</dd>
 				<dt>', $txt['users_online'], ':</dt>
@@ -65,7 +135,7 @@ function template_main()
 	if (allowedTo('moderate_forum'))
 		echo '
 				<dt>', $txt['most_online_ever'], ':</dt>
-				<dd>', $context['most_members_online']['number'], ' (', $context['most_members_online']['date'], ')</dd>';
+				<dd>', $context['most_online']['number'], ' (', $context['most_online']['date'], ')</dd>';
 
 	if (!empty($settings['hitStats']))
 		echo '
@@ -295,149 +365,5 @@ function template_main()
 
 	echo '
 			</dl>
-		</div></div>
-
-		<br>
-		<div class="flow_hidden clear">
-			<we:title2>
-				<img src="', $theme['images_url'], '/stats_history.gif">
-				', $txt['forum_history'], '
-			</we:title2>';
-
-	if (!empty($context['yearly']))
-	{
-		echo '
-			<table class="table_grid w100 cs0 cp4" id="stats_history">
-				<thead>
-					<tr class="titlebg">
-						<th class="w25">', $txt['yearly_summary'], '</th>
-						<th>', $txt['stats_new_topics'], '</th>
-						<th>', $txt['stats_new_posts'], '</th>
-						<th>', $txt['stats_new_members'], '</th>';
-
-		if (allowedTo('moderate_forum'))
-			echo '
-						<th>', $txt['most_online'], '</th>';
-
-		if (!empty($settings['hitStats']))
-			echo '
-						<th>', $txt['page_views'], '</th>';
-
-		echo '
-					</tr>
-				</thead>
-				<tbody>';
-
-		foreach ($context['yearly'] as $id => $year)
-		{
-			echo '
-					<tr class="windowbg2" id="year_', $id, '">
-						<th class="year">
-							<span class="foldable fold" id="year_img_', $id, '"></span>
-							<a href="#year_', $id, '" id="year_link_', $id, '">', $year['year'], '</a>
-						</th>
-						<th>', $year['new_topics'], '</th>
-						<th>', $year['new_posts'], '</th>
-						<th>', $year['new_members'], '</th>';
-
-			if (allowedTo('moderate_forum'))
-				echo '
-						<th>', $year['most_members_online'], '</th>';
-
-			if (!empty($settings['hitStats']))
-				echo '
-						<th>', $year['hits'], '</th>';
-
-			echo '
-					</tr>';
-
-			foreach ($year['months'] as $month)
-			{
-				echo '
-					<tr class="windowbg2" id="tr_month_', $month['id'], '">
-						<th class="month">
-							<span class="foldable', $month['expanded'] ? ' fold' : '', '" id="img_', $month['id'], '"></span>
-							<a id="m', $month['id'], '" href="', $month['href'], '">', $month['month'], ' ', $month['year'], '</a>
-						</th>
-						<th>', $month['new_topics'], '</th>
-						<th>', $month['new_posts'], '</th>
-						<th>', $month['new_members'], '</th>';
-
-			if (allowedTo('moderate_forum'))
-				echo '
-						<th>', $month['most_members_online'], '</th>';
-
-				if (!empty($settings['hitStats']))
-					echo '
-						<th>', $month['hits'], '</th>';
-
-				echo '
-					</tr>';
-
-				if ($month['expanded'])
-				{
-					foreach ($month['days'] as $day)
-					{
-						echo '
-					<tr class="windowbg2" id="tr_day_', $day['year'], '-', $day['month'], '-', $day['day'], '">
-						<td class="day">', $day['year'], '-', $day['month'], '-', $day['day'], '</td>
-						<td>', $day['new_topics'], '</td>
-						<td>', $day['new_posts'], '</td>
-						<td>', $day['new_members'], '</td>';
-
-						if (allowedTo('moderate_forum'))
-							echo '
-						<td>', $day['most_members_online'], '</td>';
-
-						if (!empty($settings['hitStats']))
-							echo '
-						<td>', $day['hits'], '</td>';
-
-						echo '
-					</tr>';
-					}
-				}
-			}
-		}
-
-		echo '
-				</tbody>
-			</table>
-		</div>';
-
-		add_js_file('scripts/stats.js');
-
-		add_js('
-	var oStatsCenter = new weStatsCenter({
-		reYearPattern: /year_(\d+)/,
-		sYearImageIdPrefix: \'year_img_\',
-		sYearLinkIdPrefix: \'year_link_\',
-
-		reMonthPattern: /tr_month_(\d+)/,
-		sMonthImageIdPrefix: \'img_\',
-		sMonthLinkIdPrefix: \'m\',
-
-		reDayPattern: /tr_day_(\d+-\d+-\d+)/,
-		sDayRowClassname: \'windowbg2\',
-		sDayRowIdPrefix: \'tr_day_\',
-
-		aCollapsedYears: [');
-
-		foreach ($context['collapsed_years'] as $id => $year)
-			add_js('
-			\'' . $year . '\'' . ($id != count($context['collapsed_years']) - 1 ? ',' : ''));
-
-		add_js('
-		],
-
-		aDataCells: [
-			\'date\',
-			\'new_topics\',
-			\'new_posts\',
-			\'new_members\'' . (!allowedTo('moderate_forum') ? '' : ',
-			\'most_members_online\'') . (empty($settings['hitStats']) ? '' : ',
-			\'hits\'') . '
-		]
-	});');
-	}
+		</div></div>';
 }
