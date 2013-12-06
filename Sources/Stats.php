@@ -550,7 +550,7 @@ function getStats()
 	global $context, $txt, $settings;
 
 	$where = '1=1';
-	$range = isset($_REQUEST['range']) ? $_REQUEST['range'] : (isset($_SESSION['stat_charts'], $_SESSION['stat_charts']['range']) ? $_SESSION['stat_charts']['range'] : 'last_month');
+	$range = isset($_REQUEST['range']) ? $_REQUEST['range'] : (isset($_SESSION['stat_charts'], $_SESSION['stat_charts']['range']) ? $_SESSION['stat_charts']['range'] : 'all');
 	// Hits, posts and topics are sorted in decreasing order of magniture, to ensure the biggest stat gets a 'filled' area.
 	$possible_names = array('hits', 'posts', 'topics', 'registers', 'most_on');
 	if (empty($settings['hitStats']))
@@ -567,54 +567,73 @@ function getStats()
 		'filter' => $filter
 	);
 
+	$end_range = $month = $year = $end_month = $end_year = '';
+	if (strpos($range, ',') !== false)
+		list ($range, $end_range) = explode(',', $range);
 	if (strpos($range, '-') !== false)
 		list ($month, $year) = explode('-', $range);
-	$month = isset($month) ? max(0, min((int) $month, 12)) : 0;
-	$year = isset($year) ? max(1900, min((int) $year, date('Y'))) : 0;
+	if (strpos($end_range, '-') !== false)
+		list ($end_month, $end_year) = explode('-', $end_range);
+	if ($month && $month[0] == 'Q')
+		$month = substr($month, 1) * 3 - 2;
+	if ($end_month && $end_month[0] == 'Q')
+		$end_month = substr($end_month, 1) * 3 + 1;
+	$month = $month ? max(0, min((int) $month, 12)) : 0;
+	$year = $year ? max(1900, min((int) $year, date('Y'))) : 0;
+	$end_month = $end_month ? max(0, min((int) $end_month, 12)) : $month;
+	$end_year = $end_year ? max(1900, min((int) $end_year, date('Y'))) : $year;
+
+	if (!$month && $year)
+	{
+		$month = 1;
+		$end_month = 1;
+		$end_year = $year + 1;
+	}
+	if ($month == $end_month && $year == $end_year)
+	{
+		$end_month = ($month % 12) + 1;
+		$end_year = $month == 12 ? $year + 1 : $year;
+	}
 
 	if (!$year && !$month)
 	{
-		if ($range == 'last_decade')
-		{
-			if ($available_months < 2)
-				$stats = getDailyStats($varnames);
-			elseif ($available_months < 50)
-				$stats = getMonthlyStats($varnames);
-			elseif ($available_months < 150) // Okay, so that's ~12 years, let's not fight about it...
-				$stats = getQuarterlyStats($varnames);
-			else
-				$stats = getQuarterlyStats($varnames, 'date >= {string:date}', array('date' => (date('Y') - 12) . '-01-01'));
-		}
-		elseif ($range == 'last_year')
+		if ($range == 'last_year')
 		{
 			$yearago = time() - 60 * 60 * 24 * 365;
 			$year = date('Y', $yearago);
-			$month = date('n', $yearago) + 1;
-			if ($month == 13)
-			{
-				$month = 1;
-				$year++;
-			}
-			$stats = getMonthlyStats($varnames, 'date >= {string:date}', array('date' => $year . '-' . substr(100 + $month, 1) . '-01'));
+			$month = date('n', $yearago);
+			$stats = getMonthlyStats(
+				$varnames,
+				'date >= {string:date}',
+				array('date' => sprintf('%04d-%02d-%02d', $month == 12 ? $year + 1 : $year, ($month % 12) + 1, 1))
+			);
 		}
-		else // last_month, i.e. the default?
+		elseif ($range == 'last_month')
 		{
 			$_SESSION['stat_charts']['range'] = $range = 'last_month';
 			$monthago = time() - 60 * 60 * 24 * 30;
 			$stats = getDailyStats(
 				$varnames,
 				'date >= {string:date}',
-				array('date' => date('Y', $monthago) . '-' . date('m', $monthago) . '-' . date('d', $monthago))
+				array('date' => sprintf('%04d-%02d-%02d', date('Y', $monthago), date('m', $monthago), date('d', $monthago)))
 			);
+		}
+		else // all time, i.e. the default?
+		{
+			if ($available_months < (we::is('mobile') ? 2 : 4))
+				$stats = getDailyStats($varnames);
+			elseif ($available_months < (we::is('mobile') ? 25 : 50))
+				$stats = getMonthlyStats($varnames);
+			else
+				$stats = getQuarterlyStats($varnames);
 		}
 	}
 	else
 	{
-		$params = array('year' => $year, 'month' => $month);
-		$where = $year ? 'YEAR(date) = {int:year}' : '1=1';
-		if ($month)
-			$where .= ' AND MONTH(date) = {int:month}';
-		$stats = $month ? getDailyStats($varnames, $where, $params) : getMonthlyStats($varnames, $where, $params);
+		$params = array('from' => sprintf('%04d-%02d-%02d', $year, $month, 1), 'to' => sprintf('%04d-%02d-%02d', $end_year, $end_month, 1));
+		$where = 'date >= {string:from} AND date < {string:to}';
+		$stats = $month && (($end_year - $year) * 12 + $end_month - $month < (we::is('mobile') ? 2 : 4)) ?
+			getDailyStats($varnames, $where, $params) : getMonthlyStats($varnames, $where, $params);
 	}
 
 	// Handle the Ajax request.
@@ -623,7 +642,7 @@ function getStats()
 
 	add_js('
 	first_stats = "', $context['first_stats'], '";
-	current_range = "', $range, '";');
+	current_range = "', $_SESSION['stat_charts']['range'], '";');
 	// !! Could also add: current_filter = "', $filter, '";
 
 	// And, all the data the template needs to deal with.
@@ -655,7 +674,8 @@ function getQuarterlyStats($what, $condition_string = '1=1', $condition_paramete
 	$quarterly = array();
 	while ($row = wesql::fetch_assoc($result))
 	{
-		$quarterly['labels'][] = sprintf('%04d (%d)', $row['stats_year'], $row['stats_quarter']);
+		$quarterly['range'][] = sprintf('Q%d-%04d', $row['stats_quarter'], $row['stats_year']);
+		$quarterly['labels'][] = ($row['stats_quarter'] == 1 ? '*' : '') . sprintf('%04d (%d)', $row['stats_year'], $row['stats_quarter']);
 		$quarterly['long_labels'][] = sprintf('%s-%s %04d', $txt['months'][$row['stats_quarter'] * 3 - 2], $txt['months'][$row['stats_quarter'] * 3], $row['stats_year']);
 		foreach ($what as $type)
 			$quarterly[$type][] = (float) $row[$type];
@@ -689,7 +709,8 @@ function getMonthlyStats($what, $condition_string = '1=1', $condition_parameters
 	$monthly = array();
 	while ($row = wesql::fetch_assoc($result))
 	{
-		$monthly['labels'][] = sprintf('%s %04d', $txt['months_short'][(int) $row['stats_month']], $row['stats_year']);
+		$monthly['range'][] = sprintf('%02d-%04d', $row['stats_month'], $row['stats_year']);
+		$monthly['labels'][] = ($row['stats_month'] == 1 ? '*' : '') . sprintf('%s %04d', $txt['months_short'][(int) $row['stats_month']], $row['stats_year']);
 		$monthly['long_labels'][] = sprintf('%s %04d', $txt['months'][(int) $row['stats_month']], $row['stats_year']);
 		foreach ($what as $type)
 			$monthly[$type][] = (float) $row[$type];
@@ -718,7 +739,7 @@ function getDailyStats($what, $condition_string = '1=1', $condition_parameters =
 	$this_year = date('Y');
 	while ($row = wesql::fetch_assoc($result))
 	{
-		$daily['labels'][] = $row['stats_day'] == 1 ? $txt['months_short'][$row['stats_month']] : (int) $row['stats_day'];
+		$daily['labels'][] = $row['stats_day'] == 1 ? '*' . $txt['months_short'][$row['stats_month']] : (int) $row['stats_day'];
 		$daily['long_labels'][] = timeformat(mktime(0, 0, 0, $row['stats_month'], $row['stats_day'], $row['stats_year']), $txt[$row['stats_year'] == $this_year ? 'date_format_this_year' : 'date_format']);
 		foreach ($what as $type)
 			$daily[$type][] = (float) $row[$type];

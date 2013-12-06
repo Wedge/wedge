@@ -32,14 +32,20 @@ $(function ()
 		},
 		build_chart = function (new_data)
 		{
+			hide_ajax();
+
 			var i = 0, name, labels = '', sums = [], avgs = [],
 				newChartData = {
 					longlabels: new_data.long_labels,
 					labels: new_data.labels,
+					range: new_data.range || false,
 					datasets: []
 				};
+
 			delete new_data.long_labels;
 			delete new_data.labels;
+			delete new_data.range;
+
 			$.each(new_data, function (key, val) {
 				newChartData.datasets[i] = $.extend(true, {}, colorData[key]);
 				newChartData.datasets[i].data = val;
@@ -73,11 +79,35 @@ $(function ()
 				width: $('#labels').width(),
 				height: is_touch ? 200 : 300
 			});
-			weGraph = new Wraph(canvas.getContext('2d'));
+			var new_canvas = $('#wraph').clone().insertAfter('#wraph');
+			$('#wraph').remove();
+			canvas = $('#wraph')[0];
+			weGraph = new Wraph(canvas.getContext('2d'), {}, updateRangeFilter);
 			weGraph.Line(newChartData);
 		},
-		updateRangeFilter = function () {
-			$.get(weUrl('action=stats;range=' + $('#range').val() + ';filter=' + $('#filter').val()), build_chart);
+		updateRangeFilter = function (custom_start, custom_end, undef) {
+			show_ajax('#wraph');
+			if (custom_end !== undef)
+			{
+				current_range = custom_start + ',' + custom_end;
+				addCustomRanges();
+				$('#range').sb();
+			}
+			else
+				current_range = $('#range').val();
+			$.get(weUrl('action=stats;range=' + current_range + ';filter=' + $('#filter').val()), build_chart);
+		},
+		addCustomRanges = function ()
+		{
+			if (current_range.indexOf(',') < 0)
+				return;
+
+			var range = current_range.split(','), r1 = range[0].split('-'), r2 = range[1].split('-'), r1_str = '', r2_str = '';
+
+			// !! Range ends are not exactly correct, as they won't show up in the stats. Needs some more work.
+			r1_str = r1[0][0] == 'Q' ? month_names[r1[0][1] * 3 - 2] + ' ' + r1[1] : (r1[0] ? month_names[+r1[0]] + ' ' + r1[1] : r1[1]);
+			r2_str = r2[0][0] == 'Q' ? month_names[r2[0][1] * 3]     + ' ' + r2[1] : (r2[0] ? month_names[+r2[0]] + ' ' + r2[1] : r2[1]);
+			$('#range').prepend('<option value="' + current_range + '" selected>' + (r1_str == r2_str ? r1_str : r1_str + ' - ' + r2_str) + '</option>');
 		};
 
 	if (!canvas.getContext)
@@ -91,13 +121,14 @@ $(function ()
 			year = new Date().getFullYear(),
 			target_month = +first_stats.slice(5, 7),
 			target_year = +first_stats.slice(0, 4),
-			$recent_group = $('<optgroup label="' + $txt['group_recent'] + '"/>'),
+			$select = $(this),
 			$month_group = $('<optgroup label="' + $txt['group_daily'] + '"/>'),
 			$year_group = $('<optgroup label="' + $txt['group_monthly'] + '"/>');
 
-		$recent_group.append('<option value="last_month"' + (current_range == 'last_month' ? ' selected' : '') + '>' + $txt['last_month'] + '</option>');
-		$recent_group.append('<option value="last_year"' + (current_range == 'last_year' ? ' selected' : '') + '>' + $txt['last_year'] + '</option>');
-		$recent_group.append('<option value="last_decade"' + (current_range == 'last_decade' ? ' selected' : '') + '>' + $txt['last_decade'] + '</option>');
+		addCustomRanges();
+		$select.append('<option value="last_month"' + (current_range == 'last_month' ? ' selected' : '') + '>' + $txt['last_month'] + '</option>');
+		$select.append('<option value="last_year"' + (current_range == 'last_year' ? ' selected' : '') + '>' + $txt['last_year'] + '</option>');
+		$select.append('<option value="all"' + (current_range == 'all' ? ' selected' : '') + '>' + $txt['lifetime'] + '</option>');
 
 		while (year > target_year || month >= target_month)
 		{
@@ -115,7 +146,7 @@ $(function ()
 				);
 			}
 		}
-		$(this).append($recent_group).append($year_group).append($month_group).sb();
+		$select.append($year_group).append($month_group).sb();
 	});
 
 	build_chart(lineChartData);

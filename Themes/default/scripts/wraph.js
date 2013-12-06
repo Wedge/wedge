@@ -13,7 +13,9 @@
  */
 
 // Define the global Wraph variable as a class.
-window.Wraph = function (context, options) {
+// It expects a canvas context as its first parameter.
+window.Wraph = function (cx, options, zoom_hook)
+{
 	var chart = this;
 
 	// Easing functions adapted from Robert Penner's easing equations
@@ -27,7 +29,7 @@ window.Wraph = function (context, options) {
 			return t*t;
 		},
 		easeOutQuad: function (t) {
-			return -1 *t*(t-2);
+			return -1*t*(t-2);
 		},
 		easeInOutQuad: function (t) {
 			if ((t/=1/2) < 1) return 1/2*t*t;
@@ -160,8 +162,8 @@ window.Wraph = function (context, options) {
 	defaults = {
 		tooltips: {
 			background: 'rgba(255,255,255,.7)',
-			fontFamily: "'Arial'",
-			fontStyle: "normal",
+			fontFamily: 'sans-serif',
+			fontStyle: 'normal',
 			fontColor: 'black',
 			fontSize: '12px',
 			labelTemplate: '<%=label%>\n<%=name%>: <%=value%>',
@@ -193,7 +195,7 @@ window.Wraph = function (context, options) {
 			highlight: {
 				stroke: {
 					width: 1,
-					color: 'rgba(230,230,230,.25)'
+					color: 'rgba(130,130,130,.25)'
 				},
 				fill: 'rgba(255,255,255,.25)'
 			}
@@ -201,27 +203,29 @@ window.Wraph = function (context, options) {
 	},
 	options = options ? mergeChartConfig(defaults, options) : defaults;
 
-	function registerTooltip(ctx,areaObj,data,type) {
+	function registerTooltip(areaObj, dat, type)
+	{
 		chart.tooltips.push(new Tooltip(
-			ctx,
 			areaObj,
-			data,
+			dat,
 			type
 		));
 	}
 
-	var Tooltip = function (ctx, areaObj, data, type) {
-		this.ctx = ctx;
+	var Tooltip = function (areaObj, dat, type)
+	{
 		this.areaObj = areaObj;
-		this.data = data;
-		this.savedState = null;
+		this.data = dat;
 		this.highlightState = null;
 		this.x = null;
 		this.y = null;
 
-		this.inRange = function (x,y) {
-			if (this.areaObj.type) {
-				switch (this.areaObj.type) {
+		this.inRange = function (x, y)
+		{
+			if (this.areaObj.type)
+			{
+				switch (this.areaObj.type)
+				{
 					case 'rect':
 						return (x >= this.areaObj.x && x <= this.areaObj.x + this.areaObj.width) &&
 							   (y >= this.areaObj.y && y <= this.areaObj.y + this.areaObj.height);
@@ -241,72 +245,74 @@ window.Wraph = function (context, options) {
 			}
 		};
 
-		this.render = function (x,y) {
-			this.ctx.shadowColor = undefined;
-			this.ctx.shadowBlur = 0;
-			this.ctx.shadowOffsetX = 0;
-			this.ctx.shadowOffsetY = 0;
-			if (this.savedState == null) {
-				this.ctx.putImageData(chart.savedState,0,0);
-				this.savedState = this.ctx.getImageData(0,0,this.ctx.canvas.width,this.ctx.canvas.height);
-			}
-			this.ctx.putImageData(this.savedState,0,0);
-			if (options.tooltips.showHighlight) {
-				if (this.highlightState == null) {
-					this.ctx.strokeStyle = options.tooltips.highlight.stroke.color;
-					this.ctx.lineWidth = options.tooltips.highlight.stroke.width;
-					this.ctx.fillStyle = options.tooltips.highlight.fill;
-					switch (this.areaObj.type) {
+		this.render = function (x, y)
+		{
+			cx.shadowColor = undefined;
+			cx.shadowBlur = 0;
+			cx.shadowOffsetX = 0;
+			cx.shadowOffsetY = 0;
+			if (options.tooltips.showHighlight)
+			{
+				if (this.highlightState == null)
+				{
+					cx.putImageData(chart.savedState, 0, 0);
+					cx.strokeStyle = options.tooltips.highlight.stroke.color;
+					cx.lineWidth = options.tooltips.highlight.stroke.width;
+					cx.fillStyle = options.tooltips.highlight.fill;
+					switch (this.areaObj.type)
+					{
 						case 'rect':
-							this.ctx.strokeRect(this.areaObj.x, this.areaObj.y, this.areaObj.width, this.areaObj.height);
-							this.ctx.fillStyle = options.tooltips.highlight.fill;
-							this.ctx.fillRect(this.areaObj.x, this.areaObj.y, this.areaObj.width, this.areaObj.height);
+							cx.strokeRect(this.areaObj.x, this.areaObj.y, this.areaObj.width, this.areaObj.height);
+							cx.fillStyle = options.tooltips.highlight.fill;
+							cx.fillRect(this.areaObj.x, this.areaObj.y, this.areaObj.width, this.areaObj.height);
 							break;
 						case 'circle':
-							this.ctx.beginPath();
-							this.ctx.arc(this.areaObj.x, this.areaObj.y, this.areaObj.r, 0, 2*Math.PI, false);
-							this.ctx.stroke();
-							this.ctx.fill();
+							cx.beginPath();
+							cx.arc(this.areaObj.x, this.areaObj.y, this.areaObj.r, 0, 2 * Math.PI, false);
+							cx.stroke();
+							cx.fill();
 							break;
 						case 'shape':
-							this.ctx.beginPath();
-							this.ctx.moveTo(this.areaObj.points[0].x, this.areaObj.points[0].y);
-							for (var p in this.areaObj.points) {
-								this.ctx.lineTo(this.areaObj.points[p].x, this.areaObj.points[p].y);
-							}
-							this.ctx.stroke();
-							this.ctx.fill();
+							cx.beginPath();
+							cx.moveTo(this.areaObj.points[0].x, this.areaObj.points[0].y);
+							for (var p in this.areaObj.points)
+								cx.lineTo(this.areaObj.points[p].x, this.areaObj.points[p].y);
+							cx.stroke();
+							cx.fill();
 							break;
 					}
-					this.highlightState = this.ctx.getImageData(0,0,this.ctx.canvas.width,this.ctx.canvas.height);
-				} else {
-					this.ctx.putImageData(this.highlightState,0,0);
-				}
+					this.highlightState = cx.getImageData(0, 0, cx.canvas.width, cx.canvas.height);
+				} else
+					cx.putImageData(this.highlightState, 0, 0);
 			}
-			this.ctx.font = options.tooltips.fontStyle + " " + options.tooltips.fontSize + " " + options.tooltips.fontFamily;
-			var labs = options.tooltips.labelTemplate.split("\n"), tpl = [], max_width = 0;
+			else
+				cx.putImageData(chart.savedState, 0, 0);
+
+			cx.font = options.tooltips.fontStyle + ' ' + options.tooltips.fontSize + ' ' + options.tooltips.fontFamily;
+			var labs = options.tooltips.labelTemplate.split('\n'), tpl = [], max_width = 0;
 			for (var i in labs)
 			{
 				tpl[i] = tmpl(labs[i], this.data);
-				max_width = Math.max(max_width, this.ctx.measureText(tpl[i]).width);
+				max_width = Math.max(max_width, cx.measureText(tpl[i]).width);
 			}
 
-			var posX = x+options.tooltips.offset.left,
-				posY = y+options.tooltips.offset.top,
-				rectWidth = options.tooltips.padding.left+max_width+options.tooltips.padding.right,
-				position = options.tooltips.position.split(" "),
+			var posX = x + options.tooltips.offset.left,
+				posY = y + options.tooltips.offset.top,
+				rectWidth = options.tooltips.padding.left + max_width + options.tooltips.padding.right,
+				position = options.tooltips.position.split(' '),
 				line_height = options.tooltips.height,
 				height;
 
 			// adjust height on fontsize
-			if (options.tooltips.fontSize.match(/[0-9]+(.[0-9]+)?px/)) {
+			if (options.tooltips.fontSize.match(/[0-9]+(.[0-9]+)?px/))
 				line_height = parseInt(options.tooltips.fontSize);
-			}
-			else if (options.tooltips.fontSize.match(/[0-9]+(.[0-9]+)?(\%|em)/)) {
-				function getDefaultFontSize(pa) {
+			else if (options.tooltips.fontSize.match(/[0-9]+(.[0-9]+)?(\%|em)/))
+			{
+				function getDefaultFontSize(pa)
+				{
 					pa = pa || document.body;
 					var who = document.createElement('div');
-					who.style.cssText='display:inline-block; padding:0; line-height:1; position:absolute; visibility:hidden; font-size:1em';
+					who.style.cssText = 'display:inline-block; padding:0; line-height:1; position:absolute; visibility:hidden; font-size:1em';
 					who.appendChild(document.createTextNode('M')); // The M letter's width usually matches its font's height.
 
 					pa.appendChild(who);
@@ -315,88 +321,96 @@ window.Wraph = function (context, options) {
 					return fs;
 				}
 				var size = parseFloat(options.tooltips.fontSize);
-				if (options.tooltips.fontSize.match(/[0-9]+(.[0-9]+)?\%/)) {
+				if (options.tooltips.fontSize.match(/[0-9]+(.[0-9]+)?\%/))
 					size /= 100;
-				}
-				line_height = size * getDefaultFontSize(this.ctx.canvas.parentNode);
+				line_height = size * getDefaultFontSize(cx.canvas.parentNode);
 			}
 
 			line_height += options.tooltips.padding.top;
 			height = line_height * tpl.length +  + options.tooltips.padding.bottom;
 
 			// check relative position
-			for (i in position) {
-				if (i == 0) {
-					if (position[i] == "bottom") {
+			for (i in position)
+			{
+				if (i == 0)
+				{
+					if (position[i] == 'bottom')
 						posY -= height;
-					} else if (position[i] == "center") {
+					else if (position[i] == 'center')
+					{
 						posY -= height / 2;
-						if (position.length == 1) {
+						if (position.length == 1)
 							posX -= rectWidth / 2;
-						}
 					}
 				}
-				if (i == 1) {
-					if (position[i] == "right") {
+				if (i == 1)
+				{
+					if (position[i] == 'right')
 						posX -= rectWidth;
-					} else if (position[i] == "center") {
+					else if (position[i] == 'center')
 						posX -= rectWidth / 2;
-					}
 				}
 			}
 
 			// check edges
-			if (posX + rectWidth > ctx.canvas.width) {
-				posX -= posX + rectWidth - ctx.canvas.width;
-			}
-			if (posX < 0) {
+			if (posX + rectWidth > cx.canvas.width)
+				posX -= posX + rectWidth - cx.canvas.width;
+
+			if (posX < 0)
 				posX = 0;
-			}
-			if (posY + height > ctx.canvas.height) {
-				posY -= posY + height - ctx.canvas.height;
-			}
-			if (posY < 0) {
+
+			if (posY + height > cx.canvas.height)
+				posY -= posY + height - cx.canvas.height;
+
+			if (posY < 0)
 				posY = 0;
+
+			cx.fillStyle = options.tooltips.background;
+			if (options.tooltips.showShadow)
+			{
+				cx.shadowColor = options.tooltips.shadow.color;
+				cx.shadowBlur = options.tooltips.shadow.blur;
+				cx.shadowOffsetX = options.tooltips.shadow.offsetX;
+				cx.shadowOffsetY = options.tooltips.shadow.offsetY;
 			}
-			this.ctx.fillStyle = options.tooltips.background;
-			if (options.tooltips.showShadow) {
-				this.ctx.shadowColor = options.tooltips.shadow.color;
-				this.ctx.shadowBlur = options.tooltips.shadow.blur;
-				this.ctx.shadowOffsetX = options.tooltips.shadow.offsetX;
-				this.ctx.shadowOffsetY = options.tooltips.shadow.offsetY;
-			}
-			if (!options.tooltips.border.radius) {
-				this.ctx.fillRect(posX, posY, rectWidth, height);
-				if (options.tooltips.border.width > 0) {
-					this.ctx.fillStyle = options.tooltips.border.color;
-					this.ctx.lineWidth = options.tooltips.border.width;
-					this.ctx.strokeRect(posX, posY, rectWidth, height);
+			if (!options.tooltips.border.radius)
+			{
+				cx.fillRect(posX, posY, rectWidth, height);
+				if (options.tooltips.border.width > 0)
+				{
+					cx.fillStyle = options.tooltips.border.color;
+					cx.lineWidth = options.tooltips.border.width;
+					cx.strokeRect(posX, posY, rectWidth, height);
 				}
-			} else {
+			}
+			else
+			{
 				var radius = options.tooltips.border.radius > 12 ? 12 : options.tooltips.border.radius;
-				this.ctx.beginPath();
-				this.ctx.moveTo(posX + radius, posY);
-				this.ctx.lineTo(posX + rectWidth - radius, posY);
-				this.ctx.quadraticCurveTo(posX + rectWidth, posY, posX + rectWidth, posY + radius);
-				this.ctx.lineTo(posX + rectWidth, posY + height-radius);
-				this.ctx.quadraticCurveTo(posX + rectWidth, posY + height, posX + rectWidth-radius, posY + height);
-				this.ctx.lineTo(posX + radius, posY + height);
-				this.ctx.quadraticCurveTo(posX, posY + height, posX, posY + height-radius);
-				this.ctx.lineTo(posX, posY + radius);
-				this.ctx.quadraticCurveTo(posX, posY, posX + radius, posY);
-				this.ctx.fill();
-				if (options.tooltips.border.width > 0) {
-					this.ctx.strokeStyle = options.tooltips.border.color;
-					this.ctx.lineWidth = options.tooltips.border.width;
-					this.ctx.stroke();
+				cx.beginPath();
+				cx.moveTo(posX + radius, posY);
+				cx.lineTo(posX + rectWidth - radius, posY);
+				cx.quadraticCurveTo(posX + rectWidth, posY, posX + rectWidth, posY + radius);
+				cx.lineTo(posX + rectWidth, posY + height-radius);
+				cx.quadraticCurveTo(posX + rectWidth, posY + height, posX + rectWidth-radius, posY + height);
+				cx.lineTo(posX + radius, posY + height);
+				cx.quadraticCurveTo(posX, posY + height, posX, posY + height-radius);
+				cx.lineTo(posX, posY + radius);
+				cx.quadraticCurveTo(posX, posY, posX + radius, posY);
+				cx.fill();
+				if (options.tooltips.border.width > 0)
+				{
+					cx.strokeStyle = options.tooltips.border.color;
+					cx.lineWidth = options.tooltips.border.width;
+					cx.stroke();
 				}
-				this.ctx.closePath();
+				cx.closePath();
 			}
-			this.ctx.fillStyle = options.tooltips.fontColor;
-			this.ctx.textAlign = 'center';
-			this.ctx.textBaseline = 'middle';
-			for (i in tpl) {
-				this.ctx.fillText(
+			cx.fillStyle = options.tooltips.fontColor;
+			cx.textAlign = 'center';
+			cx.textBaseline = 'middle';
+			for (i in tpl)
+			{
+				cx.fillText(
 					tpl[i],
 					posX + rectWidth / 2,
 					posY + (line_height + options.tooltips.padding.bottom) / 2 + line_height * i
@@ -408,98 +422,65 @@ window.Wraph = function (context, options) {
 	};
 
 	// Variables global to the chart
-	var width = context.canvas.width,
-		height = context.canvas.height;
+	var width = cx.canvas.width,
+		height = cx.canvas.height,
+		position = $(cx.canvas).offset(),
+		dragStartX, yAxisPosX, xAxisPosY,
+		calculatedScale,
+		scaleHop, valueHop,
+		animPc, data,
+		shownTooltips = 0,
 
-	this.savedState = null;
+		// In order, we'll get pageX (mousedown, mousemove, mouseup), touches[0].pageX (touchstart, touchmove), and changedTouched[0].pageX (touchend). Uh.
+		pageXY = function (e, p) { return p in e ? e[p] : (e = e.originalEvent, e.touches[0] ? e.touches[0][p] : (e.changedTouches[0] ? e.changedTouches[0][p] : -1000)); },
+		pageX = function (e) { return pageXY(e, 'pageX') - position.left; },
+		pageY = function (e) { return pageXY(e, 'pageY') - position.top; },
 
-	function getPosition(e) {
-		var xPosition = 0;
-		var yPosition = 0;
+		render_tooltips = function (e)
+		{
+			if (!chart.tooltips.length)
+				return 0;
 
-		while (e) {
-			xPosition += (e.offsetLeft + e.clientLeft);
-			yPosition += (e.offsetTop + e.clientTop);
-			e = e.offsetParent;
-		}
-		if (window.pageXOffset > 0 || window.pageYOffset > 0) {
-			xPosition -= window.pageXOffset;
-			yPosition -= window.pageYOffset;
-		} else if (document.documentElement.scrollLeft > 0 || document.documentElement.scrollTop > 0) {
-			xPosition -= document.documentElement.scrollLeft;
-			yPosition -= document.documentElement.scrollTop;
-		}
-		return { x: xPosition, y: yPosition };
-	}
-
-	function tooltipEventHandler(e) {
-		if (chart.tooltips.length > 0) {
-			chart.savedState = chart.savedState == null ? context.getImageData(0,0,context.canvas.width,context.canvas.height) : chart.savedState;
-			var rendered = 0;
-			for (var i in chart.tooltips) {
-				var position = getPosition(context.canvas),
-					mx = (e.clientX)-position.x,
-					my = (e.clientY)-position.y;
-				if (chart.tooltips[i].inRange(mx,my)) {
-					chart.tooltips[i].render(mx,my);
+			var rendered = 0, i;
+			for (i in chart.tooltips)
+			{
+				if (chart.tooltips[i].inRange(pageX(e), pageY(e)))
+				{
+					chart.tooltips[i].render(pageX(e), pageY(e));
 					rendered++;
 				}
 			}
-			if (rendered == 0) {
-				context.putImageData(chart.savedState,0,0);
-			}
-		}
-	}
-
-	if ("touchstart" in window) {
-		context.canvas.ontouchstart = function (e) {
-			e.clientX = e.targetTouches[0].clientX;
-			e.clientY = e.targetTouches[0].clientY;
-			tooltipEventHandler(e);
+			return rendered;
 		};
-		context.canvas.ontouchmove = function (e) {
-			e.clientX = e.targetTouches[0].clientX;
-			e.clientY = e.targetTouches[0].clientY;
-			tooltipEventHandler(e);
-		};
-	} else {
-		context.canvas.onmousemove = function (e) {
-			tooltipEventHandler(e);
-		};
-	}
-	context.canvas.onmouseout = function (e) {
-		if (chart.savedState != null) {
-			context.putImageData(chart.savedState,0,0);
-		}
-	};
 
 	// High pixel density displays - multiply the size of the canvas height/width by the device pixel ratio, then scale.
-	if (window.devicePixelRatio) {
-		context.canvas.style.width = width + "px";
-		context.canvas.style.height = height + "px";
-		context.canvas.height = height * window.devicePixelRatio;
-		context.canvas.width = width * window.devicePixelRatio;
-		context.scale(window.devicePixelRatio, window.devicePixelRatio);
+	if (window.devicePixelRatio)
+	{
+		cx.canvas.style.width = width + 'px';
+		cx.canvas.style.height = height + 'px';
+		cx.canvas.height = height * window.devicePixelRatio;
+		cx.canvas.width = width * window.devicePixelRatio;
+		cx.scale(window.devicePixelRatio, window.devicePixelRatio);
 	}
 
-	this.Line = function (data,options) {
-
+	this.Line = function (dat, options)
+	{
 		chart.Line.defaults = {
 			scaleOverlay: false,
 			scaleOverride: false,
 			scaleSteps: null,
 			scaleStepWidth: null,
 			scaleStartValue: null,
-			scaleLineColor: "rgba(0,0,0,.2)",
+			scaleLineColor: 'rgba(0,0,0,.2)',
 			scaleLineWidth: 1,
 			scaleShowLabels: true,
-			scaleLabel: "<%=value%>",
-			scaleFontFamily: "'Arial'",
+			scaleLabel: '<%=value%>',
+			scaleFontFamily: 'sans-serif',
 			scaleFontSize: 12,
-			scaleFontStyle: "normal",
-			scaleFontColor: "#666",
+			scaleFontStyle: 'normal',
+			scaleFontColor: '#666',
 			scaleShowGridLines: true,
-			scaleGridLineColor: "rgba(0,0,0,.05)",
+			scaleGridLineColor: 'rgba(0,0,0,.05)',
 			scaleGridLineWidth: 1,
 			bezierCurve: true,
 			pointDot: true,
@@ -510,21 +491,22 @@ window.Wraph = function (context, options) {
 			datasetFill: true,
 			animation: true,
 			animationSteps: 60,
-			animationEasing: "easeOutQuart",
+			animationEasing: 'easeOutQuart',
 			onAnimationComplete: null,
 			showTooltips: true
 		};
-		var config = options ? mergeChartConfig(chart.Line.defaults,options) : chart.Line.defaults;
+		var config = options ? mergeChartConfig(chart.Line.defaults, options) : chart.Line.defaults;
+		data = dat;
 
-		return new Line(data,config,context);
+		return new Line(config);
 	};
 
-	var clear = function (c) {
-		c.clearRect(0, 0, width, height);
-	};
-
-	var Line = function (data,config,ctx) {
-		var maxSize, scaleHop, calculatedScale, labelHeight, scaleHeight, valueBounds, labelTemplateString, valueHop, widestXLabel, xAxisLength, yAxisPosX, xAxisPosY, rotateLabels = 0;
+	var Line = function (config)
+	{
+		var
+			maxSize, labelHeight, scaleHeight,
+			valueBounds, labelTemplateString, widestXLabel,
+			xAxisLength, rotateLabels = 0;
 
 		// Mark tooltips as dirty, in case we're re-calling this.
 		chart.tooltips = [];
@@ -532,11 +514,11 @@ window.Wraph = function (context, options) {
 
 		valueBounds = getValueBounds();
 		// Check and set the scale
-		labelTemplateString = config.scaleShowLabels ? config.scaleLabel : "";
-		if (!config.scaleOverride) {
+		labelTemplateString = config.scaleShowLabels ? config.scaleLabel : '';
+		if (!config.scaleOverride)
 			calculatedScale = calculateScale(scaleHeight, valueBounds.maxSteps, valueBounds.minSteps, valueBounds.maxValue, valueBounds.minValue, labelTemplateString);
-		}
-		else {
+		else
+		{
 			calculatedScale = {
 				steps: config.scaleSteps,
 				stepValue: config.scaleStepWidth,
@@ -548,29 +530,31 @@ window.Wraph = function (context, options) {
 
 		scaleHop = Math.floor(scaleHeight / calculatedScale.steps);
 		calculateXAxisSize();
-		animationLoop(config, drawScale, drawLines, ctx);
+		animationLoop(config, drawScale, drawLines, cx);
 
-		function drawLines(animPc) {
-			for (var i = 0; i < data.datasets.length; i++) {
-				ctx.strokeStyle = data.datasets[i].strokeColor;
-				ctx.lineWidth = config.datasetStrokeWidth;
-				ctx.beginPath();
-				ctx.moveTo(yAxisPosX, xAxisPosY - animPc * (calculateOffset(data.datasets[i].data[0], calculatedScale, scaleHop)));
+		function drawLines(animPc)
+		{
+			for (var i = 0, j, k; i < data.datasets.length; i++)
+			{
+				cx.strokeStyle = data.datasets[i].strokeColor;
+				cx.lineWidth = config.datasetStrokeWidth;
+				cx.beginPath();
+				cx.moveTo(yAxisPosX, yPos(i, 0));
 
-				for (var j = 1; j < data.datasets[i].data.length; j++) {
-					if (config.bezierCurve) {
-						ctx.bezierCurveTo(xPos(j - .5), yPos(i, j - 1), xPos(j - .5), yPos(i, j), xPos(j), yPos(i, j));
-					}
-					else {
-						ctx.lineTo(xPos(j), yPos(i, j));
-					}
+				for (j = 1; j < data.datasets[i].data.length; j++)
+				{
+					if (config.bezierCurve)
+						cx.bezierCurveTo(xPos(j - .5), yPos(i, j - 1), xPos(j - .5), yPos(i, j), xPos(j), yPos(i, j));
+					else
+						cx.lineTo(xPos(j), yPos(i, j));
 				}
 				var pointRadius = config.pointDot ? config.pointDotRadius + config.pointDotStrokeWidth : 10;
-				for (var j = 0; j < data.datasets[i].data.length; j++) {
-					if (animPc >= 1 && config.showTooltips) {
+				for (j = 0; j < data.datasets[i].data.length; j++)
+				{
+					if (animPc >= 1 && config.showTooltips)
+					{
 						// register tooltips
 						registerTooltip(
-							ctx,
 							{
 								type: 'circle',
 								x: xPos(j),
@@ -586,120 +570,137 @@ window.Wraph = function (context, options) {
 						);
 					}
 				}
-				ctx.stroke();
-				if (config.datasetFill) {
-					ctx.lineTo(yAxisPosX + (valueHop * (data.datasets[i].data.length-1)), xAxisPosY);
-					ctx.lineTo(yAxisPosX, xAxisPosY);
-					ctx.closePath();
-					ctx.fillStyle = data.datasets[i].fillColor;
-					ctx.fill();
+				cx.stroke();
+				if (config.datasetFill)
+				{
+					cx.lineTo(xPos(data.datasets[i].data.length - 1), xAxisPosY);
+					cx.lineTo(yAxisPosX, xAxisPosY);
+					cx.closePath();
+					cx.fillStyle = data.datasets[i].fillColor;
+					cx.fill();
 				}
-				else {
-					ctx.closePath();
-				}
-				if (config.pointDot) {
-					ctx.fillStyle = data.datasets[i].pointColor;
-					ctx.strokeStyle = data.datasets[i].pointStrokeColor;
-					ctx.lineWidth = config.pointDotStrokeWidth;
-					for (var k = 0; k < data.datasets[i].data.length; k++) {
-						ctx.beginPath();
-						ctx.arc(
-							yAxisPosX + (valueHop *k),
-							xAxisPosY - animPc * (calculateOffset(data.datasets[i].data[k],calculatedScale, scaleHop)),
+				else
+					cx.closePath();
+
+				if (config.pointDot)
+				{
+					cx.fillStyle = data.datasets[i].pointColor;
+					cx.strokeStyle = data.datasets[i].pointStrokeColor;
+					cx.lineWidth = config.pointDotStrokeWidth;
+					for (k = 0; k < data.datasets[i].data.length; k++)
+					{
+						cx.beginPath();
+						cx.arc(
+							xPos(k),
+							yPos(i, k),
 							config.pointDotRadius,
 							0,
-							Math.PI*2,
+							Math.PI * 2,
 							true
 						);
-						ctx.fill();
-						ctx.stroke();
+						cx.fill();
+						cx.stroke();
 					}
 				}
 			}
-
-			function yPos(dataSet,iteration) {
-				return xAxisPosY - animPc * (calculateOffset(data.datasets[dataSet].data[iteration], calculatedScale, scaleHop));
-			}
-			function xPos(iteration) {
-				return yAxisPosX + (valueHop * iteration);
-			}
 		}
-		function drawScale() {
+		function drawScale()
+		{
 			// X axis line
-			ctx.lineWidth = config.scaleLineWidth;
-			ctx.strokeStyle = config.scaleLineColor;
-			ctx.beginPath();
-			ctx.moveTo(width - widestXLabel / 2 + 5, xAxisPosY);
-			ctx.lineTo(width - widestXLabel / 2 - xAxisLength - 5, xAxisPosY);
-			ctx.stroke();
+			cx.lineWidth = config.scaleLineWidth;
+			cx.strokeStyle = config.scaleLineColor;
+			cx.beginPath();
+			cx.moveTo(width - widestXLabel / 2 + 5, xAxisPosY);
+			cx.lineTo(width - widestXLabel / 2 - xAxisLength - 5, xAxisPosY);
+			cx.stroke();
 
-			if (rotateLabels > 0) {
-				ctx.save();
-				ctx.textAlign = "right";
+			if (rotateLabels > 0)
+			{
+				cx.save();
+				cx.textAlign = 'right';
 			}
-			else {
-				ctx.textAlign = "center";
-			}
-			ctx.fillStyle = config.scaleFontColor;
-			for (var i = 0, j = data.labels.length; i < j; i++) {
+			else
+				cx.textAlign = 'center';
+
+			cx.fillStyle = config.scaleFontColor;
+			cx.font = config.scaleFontStyle + ' ' + config.scaleFontSize + 'px ' + config.scaleFontFamily;
+			for (var i = 0, j = data.labels.length, bold = false, label; i < j; i++)
+			{
 				if (!data.labels[i])
 					continue;
-				ctx.save();
-				if (rotateLabels > 0) {
-					ctx.translate(yAxisPosX + i * valueHop, xAxisPosY + config.scaleFontSize);
-					ctx.rotate(-rotateLabels);
-					ctx.fillText(data.labels[i], 0, 0);
-					ctx.restore();
+				cx.save();
+				label = data.labels[i] + '';
+				if (label[0] == '*')
+				{
+					bold = true;
+					label = label.slice(1);
+					cx.font = 'bold ' + config.scaleFontSize + 'px ' + config.scaleFontFamily;
 				}
-				else {
-					ctx.fillText(data.labels[i], yAxisPosX + i * valueHop, xAxisPosY + config.scaleFontSize + 3);
+				if (rotateLabels > 0)
+				{
+					cx.translate(yAxisPosX + i * valueHop, xAxisPosY + config.scaleFontSize);
+					cx.rotate(-rotateLabels);
+					cx.fillText(label, 0, 0);
+					cx.restore();
 				}
+				else
+					cx.fillText(label, yAxisPosX + i * valueHop, xAxisPosY + config.scaleFontSize + 3);
 
 				// Check i isn't 0, so we don't go over the Y axis twice.
-				if (config.scaleShowGridLines && i > 0) {
-					ctx.beginPath();
-					ctx.moveTo(yAxisPosX + i * valueHop, xAxisPosY + 4);
-					ctx.lineTo(yAxisPosX + i * valueHop, xAxisPosY);
-					ctx.stroke();
-					ctx.lineWidth = config.scaleGridLineWidth;
-					ctx.strokeStyle = config.scaleGridLineColor;
-					ctx.lineTo(yAxisPosX + i * valueHop, 5);
-					ctx.stroke();
+				if (config.scaleShowGridLines && i > 0)
+				{
+					cx.beginPath();
+					cx.moveTo(yAxisPosX + i * valueHop, xAxisPosY + 4);
+					cx.lineTo(yAxisPosX + i * valueHop, xAxisPosY);
+					cx.stroke();
+					cx.lineWidth = config.scaleGridLineWidth;
+					cx.strokeStyle = config.scaleGridLineColor;
+					cx.lineTo(yAxisPosX + i * valueHop, 5);
+					cx.stroke();
+				}
+				if (bold)
+				{
+					bold = false;
+					cx.font = config.scaleFontStyle + ' ' + config.scaleFontSize + 'px ' + config.scaleFontFamily;
 				}
 			}
 
 			// Y axis
-			ctx.lineWidth = config.scaleLineWidth;
-			ctx.strokeStyle = config.scaleLineColor;
-			ctx.beginPath();
-			ctx.moveTo(yAxisPosX, xAxisPosY + 5);
-			ctx.lineTo(yAxisPosX, 5);
-			ctx.stroke();
+			cx.lineWidth = config.scaleLineWidth;
+			cx.strokeStyle = config.scaleLineColor;
+			cx.beginPath();
+			cx.moveTo(yAxisPosX, xAxisPosY + 5);
+			cx.lineTo(yAxisPosX, 5);
+			cx.stroke();
 
-			ctx.textAlign = "right";
-			ctx.textBaseline = "middle";
-			for (j = 0; j < calculatedScale.steps; j++) {
-				ctx.beginPath();
-				ctx.moveTo(yAxisPosX - 3, xAxisPosY - ((j + 1) * scaleHop));
-				if (config.scaleShowGridLines) {
-					ctx.lineWidth = config.scaleGridLineWidth;
-					ctx.strokeStyle = config.scaleGridLineColor;
-					ctx.lineTo(yAxisPosX + xAxisLength + 5, xAxisPosY - ((j + 1) * scaleHop));
+			cx.textAlign = 'right';
+			cx.textBaseline = 'middle';
+			for (j = 0; j < calculatedScale.steps; j++)
+			{
+				cx.beginPath();
+				cx.moveTo(yAxisPosX - 3, xAxisPosY - ((j + 1) * scaleHop));
+				if (config.scaleShowGridLines)
+				{
+					cx.lineWidth = config.scaleGridLineWidth;
+					cx.strokeStyle = config.scaleGridLineColor;
+					cx.lineTo(yAxisPosX + xAxisLength + 5, xAxisPosY - ((j + 1) * scaleHop));
 				}
-				ctx.stroke();
+				cx.stroke();
 
-				if (config.scaleShowLabels) {
-					ctx.fillText(calculatedScale.labels[j], yAxisPosX - 8, xAxisPosY - ((j + 1) * scaleHop));
-				}
+				if (config.scaleShowLabels)
+					cx.fillText(calculatedScale.labels[j], yAxisPosX - 8, xAxisPosY - ((j + 1) * scaleHop));
 			}
 		}
-		function calculateXAxisSize() {
+		function calculateXAxisSize()
+		{
 			var longestText = 1;
 			// if we are showing the labels
-			if (config.scaleShowLabels) {
-				ctx.font = config.scaleFontStyle + " " + config.scaleFontSize + "px " + config.scaleFontFamily;
-				for (var i=0; i<calculatedScale.labels.length; i++) {
-					var measuredText = ctx.measureText(calculatedScale.labels[i]).width;
+			if (config.scaleShowLabels)
+			{
+				cx.font = config.scaleFontStyle + ' ' + config.scaleFontSize + 'px ' + config.scaleFontFamily;
+				for (var i = 0; i < calculatedScale.labels.length; i++)
+				{
+					var measuredText = cx.measureText(calculatedScale.labels[i]).width;
 					longestText = measuredText > longestText ? measuredText : longestText;
 				}
 				// Add a little extra padding from the y axis
@@ -711,18 +712,21 @@ window.Wraph = function (context, options) {
 			yAxisPosX = width - widestXLabel / 2 - xAxisLength;
 			xAxisPosY = scaleHeight + config.scaleFontSize / 2;
 		}
-		function calculateDrawingSizes() {
+		function calculateDrawingSizes()
+		{
 			maxSize = height;
 
 			// Need to check the X axis first - measure the length of each text metric, and figure out if we need to rotate by 45 degrees.
-			ctx.font = config.scaleFontStyle + " " + config.scaleFontSize+"px " + config.scaleFontFamily;
+			cx.font = config.scaleFontStyle + ' ' + config.scaleFontSize + 'px ' + config.scaleFontFamily;
 			widestXLabel = 1;
-			for (var i = 0; i < data.labels.length; i++) {
-				var textLength = ctx.measureText(data.labels[i]).width;
+			for (var i = 0; i < data.labels.length; i++)
+			{
+				var textLength = cx.measureText(data.labels[i]).width;
 				// If the text length is longer - make that equal to longest text!
 				widestXLabel = textLength > widestXLabel ? textLength : widestXLabel;
 			}
-			if (width / data.labels.length < widestXLabel) {
+			if (width / data.labels.length < widestXLabel)
+			{
 				var
 					skip = 0,
 					deg = Math.PI / 180,
@@ -746,10 +750,25 @@ window.Wraph = function (context, options) {
 				rotateLabels = Math.min(maxRotation, rotateLabels);
 				// Increase maxSize by the rotated label width.
 				maxSize -= Math.sin(rotateLabels) * widestXLabel;
+				var bold_next = false;
 				if (skip)
+				{
 					for (i in data.labels)
+					{
 						if (i % 2 || (skip > 1 && i % 4))
+						{
+							if (data.labels[i][0] == '*')
+								bold_next = true;
 							delete data.labels[i];
+						}
+						else if (bold_next)
+						{
+							if (data.labels[i][0] != '*')
+								data.labels[i] = '*' + data.labels[i];
+							bold_next = false;
+						}
+					}
+				}
 			}
 
 			// Set 5 pixels greater than the font size to allow for a little padding from the X axis.
@@ -759,22 +778,28 @@ window.Wraph = function (context, options) {
 			maxSize -= labelHeight;
 			scaleHeight = maxSize;
 		}
-		function getValueBounds() {
-			var upperValue = Number.MIN_VALUE;
-			var lowerValue = Number.MAX_VALUE;
-			for (var i = 0; i < data.datasets.length; i++) {
-				for (var j = 0, k = data.datasets[i].data.length; j < k; j++) {
-					if (data.datasets[i].data[j] > upperValue) { upperValue = data.datasets[i].data[j] };
-					if (data.datasets[i].data[j] < lowerValue) { lowerValue = data.datasets[i].data[j] };
+		function getValueBounds()
+		{
+			var	upperValue = Number.MIN_VALUE,
+				lowerValue = Number.MAX_VALUE,
+				i, j, k, maxSteps, minSteps;
+
+			for (i = 0; i < data.datasets.length; i++)
+			{
+				for (j = 0, k = data.datasets[i].data.length; j < k; j++)
+				{
+					if (data.datasets[i].data[j] > upperValue)
+						upperValue = data.datasets[i].data[j];
+					if (data.datasets[i].data[j] < lowerValue)
+						lowerValue = data.datasets[i].data[j];
 				}
 			};
 
-			upperValue = Math.max(10, upperValue);
-			var maxSteps = Math.floor((scaleHeight / (labelHeight * .66)));
-			var minSteps = Math.floor((scaleHeight / labelHeight * .5));
+			maxSteps = Math.floor(scaleHeight / labelHeight);
+			minSteps = Math.floor(scaleHeight / labelHeight * .4);
 
 			return {
-				maxValue: upperValue,
+				maxValue: Math.max(5, upperValue),
 				minValue: lowerValue,
 				maxSteps: maxSteps,
 				minSteps: minSteps
@@ -782,45 +807,133 @@ window.Wraph = function (context, options) {
 		}
 	};
 
-	function calculateOffset(val,calculatedScale,scaleHop) {
-		var outerValue = calculatedScale.steps * calculatedScale.stepValue;
-		var adjustedValue = val - calculatedScale.graphMin;
-		var scalingFactor = CapValue(adjustedValue/outerValue,1,0);
+	// xPos requires data normally available only to the Line class. Sorry about that.
+	function goToRange(low, high)
+	{
+		for (var i = 0, j = data.datasets[0].data.length, start = null, current; i < j; i++)
+		{
+			current = xPos(i);
+			if (start === null && current > low)
+				start = Math.max(0, i);
+			if (current >= high)
+			{
+				zoom_hook.call(this, data.range[start], data.range[i] || '');
+				return;
+			}
+		}
+		zoom_hook.call(this, data.range[start], data.range[i - 1] || '');
+	}
+
+	function initActivity()
+	{
+		// Now that the animation is finished, put the chart into cache, once and for all.
+		chart.savedState = cx.getImageData(0, 0, cx.canvas.width, cx.canvas.height);
+
+		$(cx.canvas)
+			.on(is_touch ? 'touchstart' : 'mousedown', function (e)
+			{
+				// Catch button clicks, but only if they're not on a chart dot.
+				position = $(cx.canvas).offset();
+				if (!render_tooltips(e) && !!data.range)
+					dragStartX = pageX(e);
+			})
+			.on(is_touch ? 'touchmove' : 'mousemove', function (e)
+			{
+				// Render the tooltips. If none of them are shown, we'll restore
+				// the chart as needed after showing the (potential) selection box.
+				position = $(cx.canvas).offset();
+				var rendered = render_tooltips(e);
+				if (dragStartX !== null && Math.abs(pageX(e) - dragStartX) > 10)
+				{
+					if (!rendered && chart.savedState !== null)
+						cx.putImageData(chart.savedState, 0, 0);
+					// Render the zoom selection.
+					cx.beginPath();
+					cx.fillStyle = 'rgba(0,0,0,.1)';
+					cx.strokeStyle = 'rgba(0,0,0,.8)';
+					cx.lineWidth = 2;
+					cx.rect(dragStartX, 0, pageX(e) - dragStartX, xAxisPosY);
+					cx.fill();
+				}
+				else if (!rendered && shownTooltips && chart.savedState !== null && !is_touch)
+					cx.putImageData(chart.savedState, 0, 0);
+				shownTooltips = rendered;
+				e.preventDefault();
+			})
+			.on(is_touch ? 'touchend' : 'mouseup', function (e)
+			{
+				var dragEndX = pageX(e);
+				if (dragStartX !== null && Math.abs(dragEndX - dragStartX) > 10)
+					goToRange(Math.min(dragStartX, dragEndX), Math.max(dragStartX, dragEndX));
+
+				if (chart.savedState !== null && (!is_touch || dragStartX !== null))
+					cx.putImageData(chart.savedState, 0, 0);
+				dragStartX = null;
+			})
+			.on('mouseout', function (e)
+			{
+				if (chart.savedState !== null)
+					cx.putImageData(chart.savedState, 0, 0);
+				dragStartX = null;
+			});
+	}
+
+	function calculateOffset(val, calculatedScale, scaleHop)
+	{
+		var	outerValue = calculatedScale.steps * calculatedScale.stepValue,
+			adjustedValue = val - calculatedScale.graphMin,
+			scalingFactor = Math.max(Math.min(adjustedValue / outerValue, 1), 0);
+
 		return (scaleHop * calculatedScale.steps) * scalingFactor;
 	}
 
-	function animationLoop(config,drawScale,drawData,ctx) {
-		var animFrameAmount = config.animation ? 1 / CapValue(config.animationSteps,Number.MAX_VALUE,1) : 1,
+	function yPos(dataSet, iteration) {
+		return xAxisPosY - animPc * (calculateOffset(data.datasets[dataSet].data[iteration], calculatedScale, scaleHop));
+	}
+
+	function xPos(iteration) {
+		return yAxisPosX + (valueHop * iteration);
+	}
+
+	function animationLoop(config, drawScale, drawData)
+	{
+		var	animFrameAmount = config.animation ? 1 / Math.max(config.animationSteps, 1) : 1,
 			easingFunction = animationOptions[config.animationEasing],
 			percentAnimComplete = config.animation ? 0 : 1;
 
-		if (typeof drawScale !== "function") drawScale = function () {};
+		if (typeof drawScale != 'function')
+			drawScale = function () {};
 
 		requestAnimFrame(animLoop);
 
-		function animateFrame() {
-			var easeAdjustedAnimationPercent = config.animation ? CapValue(easingFunction(percentAnimComplete),null,0) : 1;
-			clear(ctx);
-			if (config.scaleOverlay) {
-				drawData(easeAdjustedAnimationPercent);
+		function animateFrame()
+		{
+			animPc = config.animation ? Math.max(easingFunction(percentAnimComplete), 0) : 1;
+			cx.clearRect(0, 0, width, height);
+			if (config.scaleOverlay)
+			{
+				drawData(animPc);
 				drawScale();
-			} else {
+			}
+			else
+			{
 				drawScale();
-				drawData(easeAdjustedAnimationPercent);
+				drawData(animPc);
 			}
 		}
-		function animLoop() {
+		function animLoop()
+		{
 			// We need to check if the animation is incomplete (less than 1), or complete (1).
 			percentAnimComplete += animFrameAmount;
 			animateFrame();
 			// Stop the loop continuing forever
-			if (percentAnimComplete <= 1) {
+			if (percentAnimComplete <= 1)
 				requestAnimFrame(animLoop);
-			}
-			else {
-				// Mark the rendered chart as dirty.
-				chart.savedState = null;
-				if (typeof config.onAnimationComplete == "function") config.onAnimationComplete();
+			else
+			{
+				if (typeof config.onAnimationComplete == 'function')
+					config.onAnimationComplete();
+				initActivity();
 			}
 		}
 	}
@@ -839,23 +952,36 @@ window.Wraph = function (context, options) {
 			};
 	})();
 
-	function calculateScale(drawingHeight, maxSteps, minSteps, maxValue, minValue, labelTemplateString) {
+	function calculateScale(drawingHeight, maxSteps, minSteps, maxValue, minValue, labelTemplateString)
+	{
 		var graphMin, graphMax, graphRange, stepValue, numberOfSteps, valueRange, rangeOrderOfMagnitude, decimalNum;
 		valueRange = maxValue - minValue;
-		rangeOrderOfMagnitude = calculateOrderOfMagnitude(valueRange);
+		rangeOrderOfMagnitude = Math.floor(Math.log(valueRange) / Math.LN10),
 		graphMin = Math.floor(minValue / (1 * Math.pow(10, rangeOrderOfMagnitude))) * Math.pow(10, rangeOrderOfMagnitude);
 		graphMax = Math.ceil(maxValue / (1 * Math.pow(10, rangeOrderOfMagnitude))) * Math.pow(10, rangeOrderOfMagnitude);
 		graphRange = graphMax - graphMin;
 		stepValue = Math.pow(10, rangeOrderOfMagnitude);
 		numberOfSteps = Math.round(graphRange / stepValue);
 
+		// A quick fix for things like maxValue being at 101, resulting in a graphMax of 200, which is too high...
+		while (graphMax > maxValue * 1.25)
+		{
+			graphMax /= 1.25;
+			graphMin /= 1.25;
+			graphRange = graphMax - graphMin;
+			numberOfSteps = Math.round(graphRange / stepValue);
+		}
+
 		// Compare number of steps to the max and min for that size graph, and add in half steps if need be.
-		while (numberOfSteps < minSteps || numberOfSteps > maxSteps) {
-			if (numberOfSteps < minSteps) {
+		while (numberOfSteps < minSteps || numberOfSteps > maxSteps)
+		{
+			if (numberOfSteps < minSteps)
+			{
 				stepValue /= 2;
 				numberOfSteps = Math.round(graphRange / stepValue);
 			}
-			else {
+			else
+			{
 				stepValue *= 2;
 				numberOfSteps = Math.round(graphRange / stepValue);
 			}
@@ -870,59 +996,29 @@ window.Wraph = function (context, options) {
 			graphMin: graphMin,
 			labels: labels
 		};
-
-		function calculateOrderOfMagnitude(val) {
-			return Math.floor(Math.log(val) / Math.LN10);
-		}
 	}
 
-    // Populate an array of all the labels by interpolating the string.
-    function populateLabels(labelTemplateString, labels, numberOfSteps, graphMin, stepValue) {
-        if (labelTemplateString) {
-            // Fix floating point errors by setting toFixed on the same decimal as the stepValue.
-            for (var i = 1; i < numberOfSteps + 1; i++) {
-                labels.push(tmpl(labelTemplateString, { value: (graphMin + (stepValue * i)).toFixed(getDecimalPlaces(stepValue)) }));
-            }
-        }
-    }
-
-	// Is a number function
-	function isNumber(n) {
-		return !isNaN(parseFloat(n)) && isFinite(n);
-	}
-	// Apply cap a value at a high or low number
-	function CapValue(valueToCap, maxValue, minValue) {
-		if (isNumber(maxValue)) {
-			if (valueToCap > maxValue) {
-				return maxValue;
-			}
-		}
-		if (isNumber(minValue)) {
-			if (valueToCap < minValue) {
-				return minValue;
-			}
-		}
-		return valueToCap;
-	}
-	function getDecimalPlaces(num) {
-		var numberOfDecimalPlaces;
-		if (num % 1 != 0) {
-			return num.toString().split(".")[1].length
-		}
-		else {
-			return 0;
-		}
+	// Populate an array of all the labels by interpolating the string.
+	function populateLabels(labelTemplateString, labels, numberOfSteps, graphMin, stepValue)
+	{
+		if (labelTemplateString)
+			for (var i = 1; i < numberOfSteps + 1; i++)
+				labels.push(tmpl(labelTemplateString, {
+					value: (graphMin + (stepValue * i)).toFixed((stepValue % 1) ? ('' + stepValue).split('.')[1].length : 0)
+				}));
 	}
 
-	function mergeChartConfig(defaults,userDefined) {
-		var returnObj = {};
-		for (var attrname in defaults) { returnObj[attrname] = defaults[attrname]; }
-		for (var attrname in userDefined) {
-			if (typeof(userDefined[attrname]) === "object" && defaults[attrname]) {
+	function mergeChartConfig(defaults, userDefined)
+	{
+		var returnObj = {}, attrname;
+		for (attrname in defaults)
+			returnObj[attrname] = defaults[attrname];
+		for (attrname in userDefined)
+		{
+			if (typeof(userDefined[attrname]) == 'object' && defaults[attrname])
 				returnObj[attrname] = mergeChartConfig(defaults[attrname], userDefined[attrname]);
-			} else {
+			else
 				returnObj[attrname] = userDefined[attrname];
-			}
 		}
 		return returnObj;
 	}
@@ -930,7 +1026,8 @@ window.Wraph = function (context, options) {
 	// Javascript micro templating by John Resig - source at http://ejohn.org/blog/javascript-micro-templating/
 	var cache = {};
 
-	function tmpl(str, data) {
+	function tmpl(str, dat)
+	{
 		// Figure out if we're getting a template, or if we need to
 		// load the template - and be sure to cache the result.
 		var fn = !/\W/.test(str) ?
@@ -959,6 +1056,6 @@ window.Wraph = function (context, options) {
 			);
 
 		// Provide some basic currying to the user
-		return data ? fn(data) : fn;
+		return dat ? fn(dat) : fn;
 	};
 };
