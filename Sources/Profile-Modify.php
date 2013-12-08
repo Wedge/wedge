@@ -1936,7 +1936,7 @@ function options($memID)
 
 	// Now we need to load the remainder of the member options.
 	loadSource('ManageMemberOptions');
-	$context['member_options'] = ModifyMemberPreferences(true);
+	$context['member_options'] = ModifyMemberOptions(true);
 	// We will need to do some work on these before displaying, however.
 	processMemberPrefs('looklayout');
 

@@ -810,12 +810,9 @@ function start_output()
 
 	$context['show_load_time'] = !empty($settings['timeLoadPageEnable']);
 
-	if (isset($theme['use_default_images'], $theme['default_template']) && $theme['use_default_images'] == 'defaults')
-	{
-		$theme['theme_url'] = $theme['default_theme_url'];
-		$theme['images_url'] = $theme['default_images_url'];
-		$theme['theme_dir'] = $theme['default_theme_dir'];
-	}
+	$theme['theme_url'] = $theme['default_theme_url'];
+	$theme['images_url'] = $theme['default_images_url'];
+	$theme['theme_dir'] = $theme['default_theme_dir'];
 }
 
 /**

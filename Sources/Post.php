@@ -29,7 +29,7 @@ if (!defined('WEDGE'))
  * - Perform other checks, such as whether we can receive notifications, whether it can be announced.
  * - If the topic is locked and you do not have moderate_board, you cannot post. (Need to unlock first otherwise.)
  * - Are polls enabled and user trying to post a poll? Check permissions in that case (e.g. coming from add poll button) and if all allowed, set up the default empty choices, plus grab anything that's in $_POST (e.g. coming from Post2()) or use blank defaults.
- * - If we have a topic and no message, we're replying. Time to check two things: one, that there's been no replies since we started writing (and if there was, check whether the user cares from $options['new_reply_warning']) and log that as a warning if they do care; two, whether this topic is older than the 'default old' topics without a reply, typically 120 days.
+ * - If we have a topic and no message, we're replying. Time to check two things: one, that there's been no replies since we started writing (and if there was, warn the user); two, whether this topic is older than the 'default old' topics without a reply, typically 120 days.
  * - Work out what the response prefix would be (the Re: in front of replies), in the default forum language, and cache it.
  * - Work out whether we have post content to work with (or an error) - if not, set up the subject, message and icon as defaults. Otherwise... if there's no error thus far but we have content, check for no subject, no message, over-long message, if it's a guest attempt to make some sense of guest name and email (like in Post2()), if it's a poll check for a question - but note that the user was actually attempting to preview if they came here without any actual errors previously known about.
  * - Check on approval status from any previous form.
@@ -244,7 +244,7 @@ function Post($post_errors = array())
 	// See if any new replies have come along.
 	if (empty($_REQUEST['msg']) && !empty($topic))
 	{
-		if (!empty($options['new_reply_warning']) && isset($_REQUEST['last']) && $context['topic_last_message'] > $_REQUEST['last'])
+		if (isset($_REQUEST['last']) && $context['topic_last_message'] > $_REQUEST['last'])
 		{
 			$request = wesql::query('
 				SELECT COUNT(*)

@@ -63,7 +63,7 @@ if (!defined('WEDGE'))
  */
 function Post2()
 {
-	global $board, $topic, $txt, $settings, $context, $board_info, $options;
+	global $board, $topic, $txt, $settings, $context, $board_info;
 
 	// Sneaking off, are we?
 	if (empty($_POST) && empty($topic))
@@ -233,7 +233,7 @@ function Post2()
 		}
 
 		// If the number of replies has changed, if the setting is enabled, go back to Post() - which handles the error.
-		if (!empty($options['new_reply_warning']) && isset($_POST['last']) && $topic_info['id_last_msg'] > $_POST['last'])
+		if (isset($_POST['last']) && $topic_info['id_last_msg'] > $_POST['last'])
 		{
 			$_REQUEST['preview'] = true;
 			loadSource('Post');

@@ -11,7 +11,7 @@
 // The only template in the file.
 function template_main()
 {
-	global $context, $theme, $txt;
+	global $context, $txt;
 
 	// Display the table header and linktree.
 	echo '
@@ -60,7 +60,7 @@ function template_main()
 		if (!$member['is_guest'])
 			echo '
 								<span class="contact_info floatright">
-									', $context['can_send_pm'] ? '<a href="' . $member['online']['href'] . '" title="' . $member['online']['label'] . '">' : '', $theme['use_image_buttons'] ? '<img src="' . $member['online']['image_href'] . '" alt="' . $member['online']['text'] . '">' : $member['online']['text'], $context['can_send_pm'] ? '</a>' : '', '
+									', $context['can_send_pm'] ? '<a href="' . $member['online']['href'] . '" title="' . $member['online']['label'] . '">' : '', '<img src="' . $member['online']['image_href'] . '" alt="' . $member['online']['text'] . '">', $context['can_send_pm'] ? '</a>' : '', '
 								</span>';
 
 		echo '

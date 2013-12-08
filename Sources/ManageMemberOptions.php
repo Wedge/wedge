@@ -1255,13 +1255,10 @@ function ModifyMemberOptions($return_config = false)
 	// 'disabled' speaks for itself, 'display' is where it should be displayed in the profile area.
 	// IMPORTANT: If type is 'select', the third item MUST be the list of options.
 	$config_vars = array(
-		array('check', 'show_board_desc', 'display' => 'looklayout'),
-		array('check', 'show_children', 'display' => 'looklayout'),
 		array('check', 'show_avatars', 'display' => 'looklayout', 'disabled' => empty($settings['show_avatars'])),
 		array('check', 'show_signatures', 'display' => 'looklayout'),
 		array('check', 'show_no_censored', 'display' => 'looklayout', 'disabled' => empty($settings['allow_no_censored'])),
 		array('check', 'return_to_post', 'display' => 'looklayout'),
-		array('check', 'new_reply_warning', 'display' => 'looklayout'),
 		array('check', 'view_newest_first', 'display' => 'looklayout'),
 		array('check', 'posts_apply_ignore_list', 'display' => 'looklayout', 'disabled' => empty($settings['enable_buddylist'])),
 		array('check', 'wysiwyg_default', 'display' => 'looklayout', 'disabled' => !empty($settings['disable_wysiwyg'])),

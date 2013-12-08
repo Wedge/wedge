@@ -615,7 +615,7 @@ function template_group_members()
 		echo '
 					<tr class="windowbg2">
 						<td>', $member['name'], '</td>
-						<td', $member['show_email'] == 'no_through_forum' && $theme['use_image_buttons'] ? ' class="center"' : '', '>';
+						<td', $member['show_email'] == 'no_through_forum' ? ' class="center"' : '', '>';
 
 		// Is it totally hidden?
 		if ($member['show_email'] == 'no')
@@ -628,7 +628,7 @@ function template_group_members()
 		// ... otherwise it's visible - but only via an image?
 		elseif ($member['show_email'] == 'no_through_forum')
 			echo '
-							<a href="<URL>?action=emailuser;sa=email;uid=', $member['id'], '" rel="nofollow">', ($theme['use_image_buttons'] ? '<img src="' . $theme['images_url'] . '/email_sm.gif" alt="' . $txt['email'] . '" title="' . $txt['email'] . '">' : $txt['email']), '</a>';
+							<a href="<URL>?action=emailuser;sa=email;uid=', $member['id'], '" rel="nofollow"><img src="', $theme['images_url'], '/email_sm.gif" alt="', $txt['email'], '" title="', $txt['email'], '"></a>';
 
 		echo '
 						</td>

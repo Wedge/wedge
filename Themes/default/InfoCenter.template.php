@@ -13,7 +13,7 @@ function template_info_center_statistics()
 {
 	global $context, $theme, $txt, $settings;
 
-	if (empty($theme['show_stats_index']))
+	if (empty($settings['show_stats_index']))
 		return;
 
 	echo '
@@ -31,7 +31,7 @@ function template_info_center_statistics()
 			', $txt['forum_stats'], '
 		</we:title>
 		<ul class="stats">
-			<li>', $context['common_stats']['total_posts'], ' ', $txt['posts_made'], ' ', $txt['in'], ' ', $context['common_stats']['total_topics'], ' ', $txt['topics'], ' ', $txt['by'], ' ', $context['common_stats']['total_members'], ' ', $txt['members'], '.</li>', !empty($theme['show_latest_member']) ? '
+			<li>', $context['common_stats']['total_posts'], ' ', $txt['posts_made'], ' ', $txt['in'], ' ', $context['common_stats']['total_topics'], ' ', $txt['topics'], ' ', $txt['by'], ' ', $context['common_stats']['total_members'], ' ', $txt['members'], '.</li>', !empty($settings['show_latest_member']) ? '
 			<li>' . $txt['latest_member'] . ': <strong> ' . $context['common_stats']['latest_member']['link'] . '</strong></li>' : '', !empty($context['latest_post']) ? '
 			<li>' . $txt['latest_post'] . ': <strong>&quot;' . $context['latest_post']['link'] . '&quot;</strong> (' . $context['latest_post']['on_time'] . ')</li>' : '', '
 			<li><a href="<URL>?action=recent">', $txt['recent_view'], '</a></li>', $context['show_stats'] ? '
@@ -99,9 +99,9 @@ function template_info_center_usersonline()
 // If user is logged in but stats are off, show them a PM bar.
 function template_info_center_personalmsg()
 {
-	global $context, $theme, $txt;
+	global $context, $settings, $theme, $txt;
 
-	if (we::$is_guest || $theme['show_stats_index'])
+	if (we::$is_guest || !empty($settings['show_stats_index']))
 		return;
 
 	echo '

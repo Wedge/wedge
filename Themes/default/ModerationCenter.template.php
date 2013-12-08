@@ -206,10 +206,10 @@ function template_reported_posts()
 			</div>';
 
 	// Make the buttons.
-	$close_button = create_button('close.gif', $context['view_closed'] ? 'mc_reportedp_open' : 'mc_reportedp_close', $context['view_closed'] ? 'mc_reportedp_open' : 'mc_reportedp_close', 'class="middle"');
-	$details_button = create_button('details.gif', 'mc_reportedp_details', 'mc_reportedp_details', 'class="middle"');
-	$ignore_button = create_button('ignore.gif', 'mc_reportedp_ignore', 'mc_reportedp_ignore', 'class="middle"');
-	$unignore_button = create_button('ignore.gif', 'mc_reportedp_unignore', 'mc_reportedp_unignore', 'class="middle"');
+	$close_button = create_button('close.gif', $context['view_closed'] ? 'mc_reportedp_open' : 'mc_reportedp_close', $context['view_closed'] ? 'mc_reportedp_open' : 'mc_reportedp_close');
+	$details_button = create_button('details.gif', 'mc_reportedp_details', 'mc_reportedp_details');
+	$ignore_button = create_button('ignore.gif', 'mc_reportedp_ignore', 'mc_reportedp_ignore');
+	$unignore_button = create_button('ignore.gif', 'mc_reportedp_unignore', 'mc_reportedp_unignore');
 
 	foreach ($context['reports'] as $report)
 	{
@@ -300,13 +300,10 @@ function template_unapproved_posts()
 
 				if ($item['can_delete'])
 					echo '
-					', $context['menu_separator'], '
 					<a href="<URL>?action=moderate;area=postmod;sa=', $context['current_view'], ';start=', $context['start'], ';', $context['session_query'], ';delete=', $item['id'], '" class="remove_button">', $txt['remove_message'], '</a>';
 
 				echo '
-					<input type="checkbox" name="item[]" value="', $item['id'], '" checked> ';
-
-				echo '
+					<input type="checkbox" name="item[]" value="', $item['id'], '" checked>
 				</span>
 				<br class="clear">
 			</div>';
@@ -348,9 +345,9 @@ function template_viewmodreport()
 			<div class="windowbg2 wrc">';
 
 	// Make the buttons.
-	$close_button = create_button('close.gif', $context['report']['closed'] ? 'mc_reportedp_open' : 'mc_reportedp_close', $context['report']['closed'] ? 'mc_reportedp_open' : 'mc_reportedp_close', 'class="middle"');
-	$ignore_button = create_button('ignore.gif', 'mc_reportedp_ignore', 'mc_reportedp_ignore', 'class="middle"');
-	$unignore_button = create_button('ignore.gif', 'mc_reportedp_unignore', 'mc_reportedp_unignore', 'class="middle"');
+	$close_button = create_button('close.gif', $context['report']['closed'] ? 'mc_reportedp_open' : 'mc_reportedp_close', $context['report']['closed'] ? 'mc_reportedp_open' : 'mc_reportedp_close');
+	$ignore_button = create_button('ignore.gif', 'mc_reportedp_ignore', 'mc_reportedp_ignore');
+	$unignore_button = create_button('ignore.gif', 'mc_reportedp_unignore', 'mc_reportedp_unignore');
 
 	echo '
 				<span class="floatright"><a href="<URL>?action=moderate;area=reports;ignore=', (int) !$context['report']['ignore'], ';rid=', $context['report']['id'], ';', $context['session_query'], '"', !$context['report']['ignore'] ? ' onclick="return ask(' . JavaScriptEscape($txt['mc_reportedp_ignore_confirm']) . ', e);"' : '', '>', $context['report']['ignore'] ? $unignore_button : $ignore_button, '</a></span>
@@ -535,18 +532,11 @@ function template_prefs()
  * @param string $name Name of the button, which is also the base of the filename of the image to be used.
  * @param string $alt The key within $txt to use as the alt-text of the image, or the textual caption if there is no image.
  * @param string $label The key within $txt to use in the event of image/text composite buttons.
- * @param string $custom Any additional custom parameters to attach to the img item in the HTML, perhaps an HTML class, inline style or similar.
- * @param bool $force_use By default, this function will transfer control of creating buttons to the theme if it provides for such; setting this value to true forces this to override the theme.
  * @return string The HTML for the given button.
  */
-function create_button($name, $alt, $label = '', $custom = '')
+function create_button($name, $alt, $label)
 {
 	global $theme, $txt;
 
-	if (!$theme['use_image_buttons'])
-		return $txt[$alt];
-	elseif (!empty($theme['use_buttons']))
-		return '<img src="' . $theme['images_url'] . '/buttons/' . $name . '" alt="' . $txt[$alt] . '" ' . $custom . '>' . (isset($txt[$label]) ? '&nbsp;' . $txt[$label] : '');
-	else
-		return '<img src="' . $theme['lang_images_url'] . '/' . $name . '" alt="' . $txt[$alt] . '" ' . $custom . '>';
+	return '<img src="' . $theme['images_url'] . '/buttons/' . $name . '" alt="' . $txt[$alt] . '" class="middle">' . (isset($txt[$label]) ? '&nbsp;' . $txt[$label] : '');
 }

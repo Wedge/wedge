@@ -8,6 +8,7 @@
 
 // The board title!
 #board_list, .board_list
+	box-sizing: border-box
 	margin-bottom: 10px
 	td.info a.subject
 		font: 400 120%/120% $subject_font
@@ -130,6 +131,7 @@ img.new_posts
 	padding: 8px
 	border-radius: 12px
 	background: rgba(0,0,0, .015)
+	box-sizing: border-box
 	@if ie[-7]
 		div mixes .inline-block
 	@else
@@ -397,7 +399,7 @@ hr.sep
 			flex: 1 0 auto
 			@if firefox
 			.actionbar
-				flex: 0 0 2.5em
+				flex: 0 0 1.5em
 			@endif
 		.merged
 			flex: none
@@ -956,8 +958,9 @@ tr.windowbg td
 #userstatus
 	display: block
 	clear: both
+	font-size: .9em
 	img
-		vertical-align: middle
+		vertical-align: -1px
 
 #profile_box
 	dl

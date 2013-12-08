@@ -19,30 +19,20 @@
 // Initialize the template... mainly little settings.
 function template_init()
 {
-	global $context, $theme;
+	global $context, $settings;
 
 	// Add the theme-specific JavaScript files to our priority cache list.
 	if (!empty($context['main_js_files']))
 	{
 		$context['main_js_files']['scripts/theme.js'] = false;
-		if (we::$is_guest && empty($context['disable_login_hashing']) && !empty($context['show_login_bar']))
+		if (we::$is_guest && empty($context['disable_login_hashing']) && !empty($settings['enable_quick_login']))
 			$context['main_js_files']['scripts/sha1.js'] = true;
 	}
 
-	/* Use images from default theme when using templates from the default theme?
-		- 'always': images from the default theme will be used.
-		- 'defaults': images from the default theme will only be used with default templates.
-		- 'never' or nothing: images from the default theme will not be used. */
-	$theme['use_default_images'] = 'never';
-
-	/* Use plain buttons - as opposed to text buttons? */
-	$theme['use_buttons'] = true;
-
-	/* Does this theme use post previews on the message index? */
-	// $context['message_index_preview'] = true;
-
-	/* Set the following variable to true if this theme requires the optional theme strings file to be loaded. */
-	$theme['require_theme_strings'] = false;
+	// A couple of settings you might want to set:
+	// $context['message_index_preview'] = true; // Does this theme use post previews on the message index?
+	// $context['page_separator'] = '&nbsp;' // Custom separator between page index and up/down link.
+	// $context['require_theme_strings'] = false; // Force loading of ThemeStrings.language.php file
 }
 
 // The main block above the content.
@@ -265,7 +255,7 @@ function template_side_user_before()
 {
 	global $txt, $context, $settings;
 
-	if (we::$is_guest && empty($context['show_login_bar']))
+	if (we::$is_guest && empty($settings['enable_quick_login']))
 		return;
 
 	echo '
@@ -296,7 +286,7 @@ function template_side_user_before()
 		</div>';
 	}
 	// Otherwise they're a guest - this time ask them to either register or login - lazy bums...
-	elseif (!empty($context['show_login_bar']))
+	elseif (!empty($settings['enable_quick_login']))
 		echo '
 			<form id="guest_form" action="<URL>?action=login2" method="post" accept-charset="UTF-8" ', empty($context['disable_login_hashing']) ? ' onsubmit="hashLoginPassword(this, \'' . $context['session_id'] . '\');"' : '', '>
 				<div class="info">', (empty($settings['registration_method']) || $settings['registration_method'] != 3) ? $txt['login_or_register'] : $txt['please_login'], '</div>

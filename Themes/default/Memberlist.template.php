@@ -67,7 +67,7 @@ function template_main()
 			echo '
 				<tr class="windowbg center"', empty($member['sort_letter']) ? '' : ' id="letter' . $member['sort_letter'] . '"', '>
 					<td class="windowbg2">
-						', $context['can_send_pm'] ? '<a href="' . $member['online']['href'] . '" title="' . $member['online']['text'] . '">' : '', $theme['use_image_buttons'] ? '<img src="' . $member['online']['image_href'] . '" alt="' . $member['online']['text'] . '">' : $member['online']['label'], $context['can_send_pm'] ? '</a>' : '', '
+						', $context['can_send_pm'] ? '<a href="' . $member['online']['href'] . '" title="' . $member['online']['text'] . '">' : '', '<img src="', $member['online']['image_href'], '" alt="', $member['online']['text'], '">', $context['can_send_pm'] ? '</a>' : '', '
 					</td>
 					<td class="left">', $member['link'], '</td>
 					<td class="windowbg2">', $member['show_email'] == 'no' ? '' : '<a href="<URL>?action=emailuser;sa=email;uid=' . $member['id'] . '" rel="nofollow"><img src="' . $theme['images_url'] . '/email_sm.gif" alt="' . $txt['email'] . '" title="' . $txt['email'] . ' ' . $member['name'] . '"></a>', '</td>';
@@ -150,8 +150,8 @@ function template_search()
 	echo '
 	<form action="<URL>?action=mlist;sa=search" method="post" accept-charset="UTF-8">
 		<div id="memberlist">
-			<we:cat>', !empty($theme['use_buttons']) ? '
-				<img src="' . $theme['images_url'] . '/buttons/search.gif">' : '', '
+			<we:cat>
+				<img src="' . $theme['images_url'] . '/buttons/search.gif">
 				', $txt['mlist_search'], '
 			</we:cat>
 			<div class="pagesection">',

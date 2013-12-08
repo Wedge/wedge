@@ -224,7 +224,7 @@ function template_folder()
 				</li>';
 
 				// Show avatars, images, etc.?
-				if (!empty($theme['show_user_images']) && !empty($options['show_avatars']) && !empty($message['member']['avatar']['image']))
+				if (!empty($settings['show_avatars']) && !empty($options['show_avatars']) && !empty($message['member']['avatar']['image']))
 					echo '
 				<li class="avatar">
 					<a href="<URL>?action=profile;u=', $message['member']['id'], '">
@@ -238,7 +238,7 @@ function template_folder()
 				<li class="postcount">', $txt['member_postcount'], ': ', $message['member']['posts'], '</li>';
 
 				// Show their personal text?
-				if (!empty($theme['show_blurb']) && $message['member']['blurb'] !== '')
+				if (!empty($settings['show_blurb']) && $message['member']['blurb'] !== '')
 					echo '
 				<li class="blurb">', $message['member']['blurb'], '</li>';
 
@@ -726,12 +726,12 @@ function template_search_results()
 				// You can only reply if they are not a guest...
 				if (!$message['member']['is_guest'])
 					echo '
-						<a href="<URL>?action=pm;sa=send;f=', $context['folder'], $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';pmsg=', $message['id'], ';quote;u=', $context['folder'] == 'sent' ? '' : $message['member']['id'], '" class="quote_button">', $txt['quote'], '</a>', $context['menu_separator'], '
-						<a href="<URL>?action=pm;sa=send;f=', $context['folder'], $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';pmsg=', $message['id'], ';u=', $message['member']['id'], '" class="reply_button">', $txt['reply'], '</a>', $context['menu_separator'];
+						<a href="<URL>?action=pm;sa=send;f=', $context['folder'], $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';pmsg=', $message['id'], ';quote;u=', $context['folder'] == 'sent' ? '' : $message['member']['id'], '" class="quote_button">', $txt['quote'], '</a>
+						<a href="<URL>?action=pm;sa=send;f=', $context['folder'], $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';pmsg=', $message['id'], ';u=', $message['member']['id'], '" class="reply_button">', $txt['reply'], '</a>';
 				// This is for "forwarding" - even if the member is gone.
 				else
 					echo '
-						<a href="<URL>?action=pm;sa=send;f=', $context['folder'], $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';pmsg=', $message['id'], ';quote" class="quote_button">', $txt['quote'], '</a>', $context['menu_separator'];
+						<a href="<URL>?action=pm;sa=send;f=', $context['folder'], $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';pmsg=', $message['id'], ';quote" class="quote_button">', $txt['quote'], '</a>';
 			}
 
 			echo '

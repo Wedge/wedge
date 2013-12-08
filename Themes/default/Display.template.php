@@ -151,7 +151,7 @@ function template_topic_poll_before()
 
 function template_topic_poll_results()
 {
-	global $context, $txt;
+	global $context;
 
 	$bar_num = 1;
 	echo '
@@ -372,7 +372,7 @@ function template_postlist_before()
 	echo '
 		<div class="pagesection">',
 			template_button_strip($context['nav_buttons']['normal']), '
-			<nav>', $txt['pages'], ': ', $context['page_index'], $context['menu_separator'], '<a href="#" class="updown" onclick="return go_down();">', $txt['go_down'], '</a></nav>
+			<nav>', $txt['pages'], ': ', $context['page_index'], $context['page_separator'], '<a href="#" class="updown" onclick="return go_down();">', $txt['go_down'], '</a></nav>
 		</div>', we::is('ie6') ? '
 		<div class="clear"></div>' : '';
 }
@@ -384,7 +384,7 @@ function template_postlist_after()
 	echo '
 		<div class="pagesection">',
 			template_button_strip($context['nav_buttons']['normal']), '
-			<nav>', $txt['pages'], ': ', $context['page_index'], $context['menu_separator'], '<a href="#" class="updown" onclick="return go_up();">', $txt['go_up'], '</a></nav>
+			<nav>', $txt['pages'], ': ', $context['page_index'], $context['page_separator'], '<a href="#" class="updown" onclick="return go_up();">', $txt['go_up'], '</a></nav>
 		</div>';
 }
 
@@ -445,9 +445,9 @@ function template_display_whoviewing()
 // Show statistical style information...
 function template_display_statistics()
 {
-	global $context, $txt, $theme;
+	global $context, $settings, $txt, $theme;
 
-	if (!$theme['show_stats_index'])
+	if (empty($settings['show_stats_index']))
 		return;
 
 	echo '

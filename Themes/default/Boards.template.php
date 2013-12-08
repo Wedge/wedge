@@ -198,14 +198,14 @@ function template_boards()
 
 function template_boards_ministats()
 {
-	global $context, $theme, $txt;
+	global $context, $settings, $txt;
 
 	// Show some statistics if stat info is off.
-	if (!$theme['show_stats_index'])
+	if (empty($settings['show_stats_index']))
 		echo '
 	<div id="index_common_stats">
 		', $txt['members'], ': ', $context['common_stats']['total_members'], ' &nbsp;&#8226;&nbsp; ', $txt['posts_made'], ': ', $context['common_stats']['total_posts'], ' &nbsp;&#8226;&nbsp; ', $txt['topics'], ': ', $context['common_stats']['total_topics'], '
-		', $theme['show_latest_member'] ? ' &nbsp;&#8226;&nbsp; ' . sprintf($txt['welcome_member'], '<strong>' . $context['common_stats']['latest_member']['link'] . '</strong>') : '', '
+		', !empty($settings['show_latest_member']) ? ' &nbsp;&#8226;&nbsp; ' . sprintf($txt['welcome_member'], '<strong>' . $context['common_stats']['latest_member']['link'] . '</strong>') : '', '
 	</div>';
 }
 

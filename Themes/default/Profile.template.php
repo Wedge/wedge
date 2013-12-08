@@ -68,7 +68,7 @@ function template_summary()
 	// Don't show an icon if they haven't specified a website.
 	if ($context['member']['website']['url'] !== '' && !isset($context['disabled_fields']['website']))
 		echo '
-				<li><a href="', $context['member']['website']['url'], '" title="' . $context['member']['website']['title'] . '" target="_blank" class="new_win">', ($theme['use_image_buttons'] ? '<img src="' . $theme['images_url'] . '/www_sm.gif" alt="' . $context['member']['website']['title'] . '">' : $txt['website']), '</a></li>';
+				<li><a href="', $context['member']['website']['url'], '" title="', $context['member']['website']['title'], '" target="_blank" class="new_win"><img src="' . $theme['images_url'] . '/www_sm.gif" alt="', $context['member']['website']['title'], '"></a></li>';
 
 	// Are there any custom profile fields for the summary?
 	if (!empty($context['custom_fields']))
@@ -80,8 +80,10 @@ function template_summary()
 	echo '
 			</ul>
 			<span id="userstatus">', $context['can_send_pm'] ? '
-				<a href="' . $context['member']['online']['href'] . '" title="' . $context['member']['online']['label'] . '" rel="nofollow">' : '', $theme['use_image_buttons'] ? '<img src="' . $context['member']['online']['image_href'] . '" alt="' . $context['member']['online']['text'] . '" class="middle">' : $context['member']['online']['text'], $context['can_send_pm'] ? '</a>' : '', $theme['use_image_buttons'] ? '
-				<span class="smalltext"> ' . $context['member']['online']['text'] . '</span>' : '', '
+				<a href="' . $context['member']['online']['href'] . '" title="' . $context['member']['online']['label'] . '" rel="nofollow">' : '',
+				'<img src="' . $context['member']['online']['image_href'] . '" alt="' . $context['member']['online']['text'] . '">',
+				$context['can_send_pm'] ? '</a>' : '', '
+				<span>', $context['member']['online']['text'], '</span>
 			</span>
 			<p id="infolinks">';
 

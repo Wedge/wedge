@@ -10,14 +10,14 @@
 
 function template_main_board()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $theme, $settings, $txt;
 
 	echo '
 	<a id="top"></a>';
 
 	template_messageindex_childboards();
 
-	if (!empty($options['show_board_desc']) && $context['description'] != '')
+	if (!empty($settings['show_board_desc']) && $context['description'] != '')
 		echo '
 	<p class="description_board">', $context['description'], '</p>';
 
@@ -25,7 +25,7 @@ function template_main_board()
 	{
 		echo '
 	<div class="pagesection">
-		<nav>', $txt['pages'], ': ', $context['page_index'], $context['menu_separator'], '&nbsp;&nbsp;<a href="#bot"><strong>', $txt['go_down'], '</strong></a></nav>',
+		<nav>', $txt['pages'], ': ', $context['page_index'], $context['page_separator'], '<a href="#bot"><strong>', $txt['go_down'], '</strong></a></nav>',
 		empty($context['button_list']) ? '' : template_button_strip($context['button_list']), '
 	</div>';
 
@@ -169,7 +169,7 @@ function template_main_board()
 		echo '
 	<div class="pagesection">', empty($context['button_list']) ? '' :
 		template_button_strip($context['button_list']), '
-		<nav>', $txt['pages'], ': ', $context['page_index'], $context['menu_separator'], '&nbsp;&nbsp;<a href="#top"><strong>', $txt['go_up'], '</strong></a></nav>
+		<nav>', $txt['pages'], ': ', $context['page_index'], $context['page_separator'], '<a href="#top"><strong>', $txt['go_up'], '</strong></a></nav>
 	</div>';
 	}
 
@@ -186,14 +186,14 @@ function template_main_board()
 
 function template_main_blog()
 {
-	global $context, $options, $txt, $board_info;
+	global $context, $options, $settings, $txt, $board_info;
 
 	echo '
 	<a id="top"></a>';
 
 	template_messageindex_childboards();
 
-	if (!empty($options['show_board_desc']) && $context['description'] != '')
+	if (!empty($settings['show_board_desc']) && $context['description'] != '')
 		echo '
 	<p class="description_board">', $context['description'], '</p>';
 
@@ -204,7 +204,7 @@ function template_main_blog()
 		', $board_info['name'], '
 	</we:cat>
 	<div class="pagesection">
-		<nav>', $txt['pages'], ': ', $context['page_index'], $context['menu_separator'], '&nbsp;&nbsp;<a href="#bot"><strong>', $txt['go_down'], '</strong></a></nav>',
+		<nav>', $txt['pages'], ': ', $context['page_index'], $context['page_separator'], '<a href="#bot"><strong>', $txt['go_down'], '</strong></a></nav>',
 		empty($context['button_list']) ? '' : template_button_strip($context['button_list']), '
 	</div>';
 
@@ -256,20 +256,22 @@ function template_main_blog()
 							!$context['can_approve_posts'] && !$topic['approved'] ? '&nbsp;<em>(' . $txt['awaiting_approval'] . ')</em>' : '',
 							'</span>', $topic['is_pinned'] ? '</strong>' : '';
 
+			// Show the quick moderation options?
+			if (!empty($context['quick_moderation']))
+				echo '
+							<input type="checkbox" name="topics[]" class="floatright" value="', $topic['id'], '">';
+
+			echo '
+							<p>', $txt['posted_by'], ' ', $topic['first_post']['member']['link'], ', ', $topic['first_post']['on_time'], '
+							&nbsp; (', number_context('num_views', $topic['views']), ')
+								<small id="pages', $topic['first_post']['id'], '">', $topic['pages'], '</small>';
+
 			// Is this topic new? (assuming they are logged in!)
 			if ($topic['new'] && we::$is_member)
 					echo '
 							<a href="', $topic['new_href'], '" id="newicon', $topic['first_post']['id'], '" class="note">', $context['nb_new'][$topic['id']], '</a>';
 
-			// Show the quick moderation options?
-			if (!empty($context['quick_moderation']))
-				echo '
-						<input type="checkbox" name="topics[]" class="floatright" value="', $topic['id'], '">';
-
 			echo '
-							<p>', $txt['posted_by'], ' ', $topic['first_post']['member']['link'], ', ', $topic['first_post']['on_time'], '
-							&nbsp; (', number_context('num_views', $topic['views']), ')
-								<small id="pages', $topic['first_post']['id'], '">', $topic['pages'], '</small>
 							</p>
 						</div>
 						<div class="padding">
@@ -320,7 +322,7 @@ function template_main_blog()
 		echo '
 	<div class="pagesection">', empty($context['button_list']) ? '' :
 		template_button_strip($context['button_list']), '
-		<nav>', $txt['pages'], ': ', $context['page_index'], $context['menu_separator'], '&nbsp;&nbsp;<a href="#top"><strong>', $txt['go_up'], '</strong></a></nav>
+		<nav>', $txt['pages'], ': ', $context['page_index'], $context['page_separator'], '<a href="#top"><strong>', $txt['go_up'], '</strong></a></nav>
 	</div>';
 	}
 
@@ -476,9 +478,9 @@ function template_messageindex_sortlink($sort, $caption)
 	global $context;
 
 	if (empty($context['can_reorder']))
-		echo $caption; // !!! If we want the direction indicator: , $context['sort_by'] == $sort ? ' <span class="sort_' . $context['sort_direction'] . '></span>' : '';
+		return $caption; // !!! If we want the direction indicator: . ($context['sort_by'] == $sort ? ' <span class="sort_' . $context['sort_direction'] . '></span>' : '');
 	else
-		echo '<a href="<URL>?board=', $context['current_board'], '.', $context['start'], ';sort=', $sort, $context['sort_by'] == $sort && $context['sort_direction'] == 'up' ? ';desc' : '', '">', $caption, $context['sort_by'] == $sort ? ' <span class="sort_' . $context['sort_direction'] . '"></span>' : '', '</a>';
+		return '<a href="<URL>?board=' . $context['current_board'] . '.' . $context['start'] . ';sort=' . $sort . ($context['sort_by'] == $sort && $context['sort_direction'] == 'up' ? ';desc' : '') . '">' . $caption . ($context['sort_by'] == $sort ? ' <span class="sort_' . $context['sort_direction'] . '"></span>' : '') . '</a>';
 }
 
 function template_messageindex_whoviewing()
@@ -526,9 +528,9 @@ function template_messageindex_legend()
 // !!! it based on !empty($context['current_board']) or something?
 function template_messageindex_statistics()
 {
-	global $context, $theme, $txt, $board_info;
+	global $context, $settings, $theme, $txt, $board_info;
 
-	if (!$theme['show_stats_index'])
+	if (empty($settings['show_stats_index']))
 		return;
 
 	$type = $board_info['type'] == 'board' ? 'board' : 'blog';

@@ -19,7 +19,8 @@ function template_main()
 	echo '
 	<form action="<URL>?action=search2" method="post" accept-charset="UTF-8" name="searchform" id="searchform">
 		<we:cat>
-			', !empty($theme['use_buttons']) ? '<img src="' . $theme['images_url'] . '/buttons/search.gif">' : '', $txt['search'], '
+			<img src="' . $theme['images_url'] . '/buttons/search.gif">
+			', $txt['search'], '
 		</we:cat>
 		<div class="windowbg wrc">
 			<fieldset id="simple_search">

@@ -34,7 +34,7 @@ function template_msg_author_before()
 
 function template_msg_author_name()
 {
-	global $msg, $theme;
+	global $msg;
 
 	echo '
 						<h4>';
@@ -109,10 +109,10 @@ function template_msg_author_badge()
 
 function template_msg_author_avatar()
 {
-	global $msg, $theme, $options;
+	global $msg, $settings;
 
 	// Show avatars, images, etc.?
-	if (!empty($theme['show_user_images']) && !empty($options['show_avatars']) && !empty($msg['member']['avatar']['image']))
+	if (!empty($settings['show_avatars']) && !empty($options['show_avatars']) && !empty($msg['member']['avatar']['image']))
 		echo '
 							<we:msg_author_avatar>
 								<a href="<URL>?action=profile;u=', $msg['member']['id'], '">
@@ -123,10 +123,10 @@ function template_msg_author_avatar()
 
 function template_msg_author_blurb()
 {
-	global $msg, $theme;
+	global $msg, $settings;
 
 	// Show their personal text?
-	if (!$msg['member']['is_guest'] && !empty($theme['show_blurb']) && $msg['member']['blurb'] !== '')
+	if (!$msg['member']['is_guest'] && !empty($settings['show_blurb']) && $msg['member']['blurb'] !== '')
 		echo '
 							<li class="blurb">', $msg['member']['blurb'], '</li>';
 }
@@ -198,7 +198,7 @@ function template_msg_author_email()
 
 	if ($msg['member']['is_guest'] && !SKIN_MOBILE && !empty($msg['member']['email']) && in_array($msg['member']['show_email'], array('yes_permission_override', 'no_through_forum')))
 		echo '
-							<li class="email"><a href="<URL>?action=emailuser;sa=email;msg=', $msg['id'], '" rel="nofollow">', $theme['use_image_buttons'] ? '<img src="' . $theme['images_url'] . '/email_sm.gif" alt="' . $txt['email'] . '" title="' . $txt['email'] . '">' : $txt['email'], '</a></li>';
+							<li class="email"><a href="<URL>?action=emailuser;sa=email;msg=', $msg['id'], '" rel="nofollow"><img src="', $theme['images_url'], '/email_sm.gif" alt="', $txt['email'], '" title="', $txt['email'], '"></a></li>';
 }
 
 function template_msg_author_details_after()
@@ -235,7 +235,7 @@ function template_msg_header_before()
 
 function template_msg_header_body()
 {
-	global $msg, $theme, $txt;
+	global $msg, $txt;
 
 	// Show a checkbox for quick moderation?
 	if ($msg['can_remove'])
@@ -459,7 +459,7 @@ function template_msg_wrap_after()
 
 function template_user_status(&$member)
 {
-	global $context, $theme, $txt;
+	global $context, $settings, $txt;
 
 	if ($member['is_guest'])
 		return;
@@ -476,7 +476,7 @@ function template_user_status(&$member)
 								<i', $member['website']['url'] != '' && !isset($context['disabled_fields']['website']) ? ' class="website"' : '', ' title="', $txt['website'], '"></i>';
 
 	// Indicate their gender, if filled in and allowed.
-	$gender = empty($theme['show_gender']) || isset($context['disabled_fields']['gender']) ? '' : (empty($member['gender']) ? '' : $member['gender']);
+	$gender = empty($settings['show_gender']) || isset($context['disabled_fields']['gender']) ? '' : (empty($member['gender']) ? '' : $member['gender']);
 	echo '
 								<i', $gender ? ' class="' . $gender . '" title="' . $txt[$gender] . '"' : '', '></i>';
 

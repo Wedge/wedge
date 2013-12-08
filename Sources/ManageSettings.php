@@ -125,6 +125,16 @@ function ModifyBasicSettings($return_config = false)
 		'',
 			array('check', 'allow_disableAnnounce'),
 
+		array('title', 'look_layout_title', 'icon' => 'current_theme.png'),
+
+			array('check', 'show_stats_index'),
+			array('check', 'show_latest_member'),
+			array('check', 'show_board_desc'),
+			array('check', 'show_children'),
+			array('check', 'show_avatars'),
+			array('check', 'show_gender'),
+			array('check', 'show_blurb'),
+
 		array('title', 'admin_likes', 'icon' => 'likes.png'),
 
 			array('check', 'likes_enabled'),

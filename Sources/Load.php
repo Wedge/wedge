@@ -1560,7 +1560,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 	// open for sending JS code without <script> tags.
 	$footer_coding = true;
 
-	$context['menu_separator'] = !empty($theme['use_image_buttons']) ? ' ' : ' | ';
+	$context['page_separator'] = !empty($context['page_separator']) ? $context['page_separator'] : '&nbsp;&nbsp;';
 	$context['session_var'] = $_SESSION['session_var'];
 	$context['session_id'] = $_SESSION['session_value'];
 	$context['session_query'] = $context['session_var'] . '=' . $context['session_id'];
@@ -1571,9 +1571,6 @@ function loadTheme($id_theme = 0, $initialize = true)
 	$context['site_slogan'] = empty($settings['site_slogan']) ? '<div id="logo"></div>' : '<div id="slogan">' . $settings['site_slogan'] . '</div>';
 	if (isset($settings['load_average']))
 		$context['load_average'] = $settings['load_average'];
-
-	// Set some permission related settings
-	$context['show_login_bar'] = we::$is_guest && !empty($settings['enable_quick_login']);
 
 	// This determines the server... not used in many places, except for login fixing.
 	$context['server'] = array(
@@ -1650,7 +1647,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 	wetem::createMainSkeleton();
 
 	// Any theme-related strings that need to be loaded?
-	if (!empty($theme['require_theme_strings']))
+	if (!empty($context['require_theme_strings']))
 		loadLanguage('ThemeStrings', '', false);
 
 	// Allow overriding the board wide time/number formats.
@@ -1660,12 +1657,10 @@ function loadTheme($id_theme = 0, $initialize = true)
 	if (empty(we::$user['name']) && !empty($txt['guest_title']))
 		we::$user['name'] = $txt['guest_title'];
 
-	if (isset($theme['use_default_images']) && $theme['use_default_images'] == 'always')
-	{
-		$theme['theme_url'] = $theme['default_theme_url'];
-		$theme['images_url'] = $theme['default_images_url'];
-		$theme['theme_dir'] = $theme['default_theme_dir'];
-	}
+	$theme['theme_url'] = $theme['default_theme_url'];
+	$theme['images_url'] = $theme['default_images_url'];
+	$theme['theme_dir'] = $theme['default_theme_dir'];
+
 	// Make a special URL for the language.
 	// !!! $txt['image_lang'] isn't defined anywhere...
 	$theme['lang_images_url'] = $theme['images_url'] . '/' . (!empty($txt['image_lang']) ? $txt['image_lang'] : we::$user['language']);

@@ -547,7 +547,7 @@ function Stats()
 
 function getStats()
 {
-	global $context, $txt, $settings;
+	global $context, $settings;
 
 	$where = '1=1';
 	$range = isset($_REQUEST['range']) ? $_REQUEST['range'] : (isset($_SESSION['stat_charts'], $_SESSION['stat_charts']['range']) ? $_SESSION['stat_charts']['range'] : 'all');
