@@ -41,6 +41,7 @@ table.aextbox
 		margin: 0
 
 img.aext
+	box-sizing: border-box
 	padding: 4px
 	border: 1px solid #aaa
 	background: #f3f8f3
@@ -161,6 +162,7 @@ img.aext
 		text-align: right
 
 #item-area
+	box-sizing: border-box
 	padding: 16px 0
 
 #media-details

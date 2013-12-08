@@ -172,7 +172,7 @@ for guests, because most of the time it won't be an option.
 	font-size: 9.5pt
 	margin-left: 8px
 	border: 1px solid transparent
-	width: 230px
+	width: 300px
 	outline: 0
 
 #thought_form input[type="text"], #thought0:hover
@@ -184,6 +184,7 @@ for guests, because most of the time it won't be an option.
 #thought0
 	display: block
 	cursor: pointer
+	box-sizing: border-box
 	padding: 4px
 
 .thought_icon mixes .inline-block

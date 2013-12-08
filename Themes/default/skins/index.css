@@ -81,7 +81,6 @@ body
 *
 	@if !ie6
 		word-wrap: break-word
-		box-sizing: border-box
 	@endif
 
 /* Mobile Chrome 25+ adds a 'font boosting' feature that's
@@ -111,6 +110,7 @@ body
 	background-color: $window_bg3
 
 .two-columns mixes .inline-block
+	box-sizing: border-box
 	vertical-align: top
 	width: 48.8%
 	margin: 0 .4%
@@ -169,7 +169,7 @@ body
 	cursor: pointer
 	padding: 2px 0 0 1em
 	float: right
-	width: 2.5em
+	width: 16px
 	// These will still need a px-based fallback, for a few years at least.
 	@if mobile
 		width: 5$vmin
@@ -434,6 +434,7 @@ em
 	margin-top: 2px
 	margin-bottom: 4px
 	border-radius: 6px
+	box-sizing: border-box
 	padding: .9em 1.2em
 	p
 		margin: 0 0 .5em
@@ -535,7 +536,7 @@ select.sb
 		font-size: .9em
 		padding: 3px
 		clear: left
-		color: #666
+		color: #999
 
 	/* Display area (always visible) */
 	.display
@@ -554,11 +555,9 @@ select.sb
 
 		.text
 			overflow: visible !important
-			box-sizing: content-box
 			padding: 0 3px
 
 		.btn
-			box-sizing: content-box
 			position: absolute
 			border: 1px solid #707070
 			border-radius: 4px
@@ -751,6 +750,7 @@ input, select, textarea
 	font: 95%/1.15 $main_font
 	color: #000
 	background: $main_bg
+	box-sizing: border-box
 	border-radius: 5px
 	border: 1px solid #bbb
 	padding: 4px 5px
@@ -1521,7 +1521,7 @@ a.moderation_link
 	text-transform: uppercase
 	border: 1px solid #fff
 	font: 700 12px/15px Arial, sans-serif
-	height: 31px
+	height: 15px
 	border-radius, padding: 8px
 	position: absolute
 	cursor: pointer
