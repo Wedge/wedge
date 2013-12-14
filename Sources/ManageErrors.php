@@ -42,7 +42,7 @@ if (!defined('WEDGE'))
 // View the forum's error log.
 function ViewErrorLog()
 {
-	global $scripturl, $txt, $context, $settings, $user_profile, $filter;
+	global $txt, $context, $settings, $user_profile, $filter;
 
 	// Only admins can view error logs and files.
 	isAllowedTo('admin_forum');
@@ -147,7 +147,7 @@ function ViewErrorLog()
 			'time' => timeformat($row['log_time']),
 			'timestamp' => $row['log_time'],
 			'url' => array(
-				'html' => htmlspecialchars(($row['url'][0] === '?' ? $scripturl : '') . $row['url']),
+				'html' => htmlspecialchars(($row['url'][0] === '?' ? SCRIPT : '') . $row['url']),
 				'href' => base64_encode(wesql::escape_wildcard_string($row['url']))
 			),
 			'message' => array(
@@ -238,7 +238,7 @@ function ViewErrorLog()
 		elseif ($filter['variable'] == 'error_type')
 			$context['filter']['value']['html'] = '&quot;' . strtr(westr::safe($filter['value']['sql']), array("\n" => '<br>', '&lt;br&gt;' => '<br>', "\t" => '&nbsp;&nbsp;&nbsp;', '\_' => '_', '\\%' => '%', '\\\\' => '\\')) . '&quot;';
 		elseif ($filter['variable'] == 'url')
-			$context['filter']['value']['html'] = '&quot;' . strtr(westr::safe((substr($filter['value']['sql'], 0, 1) == '?' ? $scripturl : '') . $filter['value']['sql']), array('\_' => '_')) . '&quot;';
+			$context['filter']['value']['html'] = '&quot;' . strtr(westr::safe((substr($filter['value']['sql'], 0, 1) == '?' ? SCRIPT : '') . $filter['value']['sql']), array('\_' => '_')) . '&quot;';
 		elseif ($filter['variable'] == 'ip')
 			$context['filter']['value']['html'] = $context['filtering_ip']; // we already stored this earlier!
 		else
@@ -279,7 +279,7 @@ function ViewErrorLog()
 	// Update the all errors tab with the total number of errors
 	$context['error_types']['all']['label'] .= ' (' . $sum . ')';
 
-	if (!isset($settings['app_error_count']) || ($settings['app_error_count'] != $sum))
+	if (!isset($settings['app_error_count']) || $settings['app_error_count'] != $sum)
 		updateErrorCount($sum);
 
 	// And this is pretty basic ;)
@@ -339,7 +339,7 @@ function deleteErrors()
 
 function ViewIntrusionLog()
 {
-	global $scripturl, $txt, $context, $settings, $user_profile, $filter;
+	global $txt, $context, $settings, $user_profile, $filter;
 
 	// Check for the administrative permission to do this.
 	isAllowedTo('admin_forum');
@@ -435,7 +435,7 @@ function ViewIntrusionLog()
 			'timestamp' => $row['event_time'],
 			'http_method' => $row['http_method'],
 			'request_uri' => array(
-				'html' => htmlspecialchars(($row['request_uri'][0] === '?' ? $scripturl : '') . $row['request_uri']),
+				'html' => htmlspecialchars(($row['request_uri'][0] === '?' ? SCRIPT : '') . $row['request_uri']),
 				'href' => base64_encode(wesql::escape_wildcard_string($row['request_uri']))
 			),
 			'protocol' => array(
@@ -522,7 +522,7 @@ function ViewIntrusionLog()
 			$context['filter']['value']['html'] = '<a href="<URL>?action=profile;u=' . $id . '">' . $user_profile[$id]['real_name'] . '</a>';
 		}
 		elseif ($filter['variable'] == 'request_uri')
-			$context['filter']['value']['html'] = '&quot;' . strtr(westr::safe((substr($filter['value']['sql'], 0, 1) == '?' ? $scripturl : '') . $filter['value']['sql']), array('\_' => '_')) . '&quot;';
+			$context['filter']['value']['html'] = '&quot;' . strtr(westr::safe((substr($filter['value']['sql'], 0, 1) == '?' ? SCRIPT : '') . $filter['value']['sql']), array('\_' => '_')) . '&quot;';
 		elseif ($filter['variable'] == 'error_type')
 			$context['filter']['value']['html'] = '&quot;' . (isset($txt['behav_' . $_GET['value'] . '_log']) ? $txt['behav_' . $_GET['value'] . '_log'] : $_GET['value']) . '&quot;';
 		elseif ($filter['variable'] == 'ip')
@@ -624,16 +624,11 @@ function updateErrorCount($count = 0)
 			FROM {db_prefix}log_errors',
 			array()
 		);
-
 		list ($count) = wesql::fetch_row($request);
 		wesql::free_result($request);
 	}
 
-	updateSettings(
-		array(
-			'app_error_count' => $count,
-		)
-	);
+	updateSettings(array('app_error_count' => $count));
 }
 
 function ViewFile()

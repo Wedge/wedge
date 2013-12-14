@@ -10,7 +10,7 @@
 
 function template_browse()
 {
-	global $context, $theme, $txt;
+	global $context, $txt;
 
 	// Showing the filtering.
 	$items = array();
@@ -94,7 +94,7 @@ function template_browse()
 				echo '
 			<div class="plugin_item floatright">
 				<a href="', $icons[$id][$i]['url'], '">
-					<img src="', $theme['images_url'], '/admin/', $icons[$id][$i]['icon'], '"', !empty($icons[$id][$i]['title']) ? ' title="' . $icons[$id][$i]['title'] . '"' : '', '>
+					<img src="', ASSETS, '/admin/', $icons[$id][$i]['icon'], '"', !empty($icons[$id][$i]['title']) ? ' title="' . $icons[$id][$i]['title'] . '"' : '', '>
 				</a>
 			</div>';
 		}
@@ -114,15 +114,15 @@ function template_browse()
 		<div class="plugin_from">', $txt['plugin_written_by'], ': ', $plugin['author'];
 		if (!empty($plugin['author_url']))
 			echo '
-		&nbsp;<a href="', $plugin['author_url'], '" target="_blank"><img src="', $theme['images_url'], '/icons/profile_sm.gif" title="', $txt['plugin_author_url'], '"></a>';
+		&nbsp;<a href="', $plugin['author_url'], '" target="_blank"><img src="', ASSETS, '/icons/profile_sm.gif" title="', $txt['plugin_author_url'], '"></a>';
 
 		if (!empty($plugin['website']))
 			echo '
-		&nbsp;<a href="', $plugin['website'], '" target="_blank"><img src="', $theme['images_url'], '/www.gif" title="', sprintf($txt['plugin_website'], $plugin['name']), '"></a>';
+		&nbsp;<a href="', $plugin['website'], '" target="_blank"><img src="', ASSETS, '/www.gif" title="', sprintf($txt['plugin_website'], $plugin['name']), '"></a>';
 
 		if (!empty($plugin['author_email']))
 			echo '
-		&nbsp;<a href="mailto:', $plugin['author_email'], '"><img src="', $theme['images_url'], '/email_sm.gif" title="', $txt['plugin_author_email'], '"></a>';
+		&nbsp;<a href="mailto:', $plugin['author_email'], '"><img src="', ASSETS, '/email_sm.gif" title="', $txt['plugin_author_email'], '"></a>';
 
 		echo '</div>';
 
@@ -133,7 +133,7 @@ function template_browse()
 		<div class="smalltext floatleft inline-block">', $txt['plugin_readmes'], ':';
 
 			foreach ($plugin['readmes'] as $readme => $state)
-				echo ' &nbsp;<a href="<URL>?action=admin;area=plugins;sa=readme;plugin=', rawurlencode($plugin['folder']), ';lang=', $readme, '" onclick="return reqWin(this);"><img src="', $theme['theme_url'], '/languages/Flag.', $readme, '.png"></a>';
+				echo ' &nbsp;<a href="<URL>?action=admin;area=plugins;sa=readme;plugin=', rawurlencode($plugin['folder']), ';lang=', $readme, '" onclick="return reqWin(this);"><img src="', TEMPLATES, '/languages/Flag.', $readme, '.png"></a>';
 
 			echo '
 		</div>';

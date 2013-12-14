@@ -25,7 +25,7 @@ if (!defined('WEDGE'))
 
 function Activate()
 {
-	global $context, $txt, $settings, $scripturl;
+	global $context, $txt, $settings;
 
 	loadLanguage('Login');
 	loadTemplate('Login');
@@ -135,10 +135,10 @@ function Activate()
 		$replacements = array(
 			'REALNAME' => $row['real_name'],
 			'USERNAME' => $row['member_name'],
-			'ACTIVATIONLINK' => $scripturl . '?action=activate;u=' . $row['id_member'] . ';code=' . $row['validation_code'],
-			'ACTIVATIONLINKWITHOUTCODE' => $scripturl . '?action=activate;u=' . $row['id_member'],
+			'ACTIVATIONLINK' => SCRIPT . '?action=activate;u=' . $row['id_member'] . ';code=' . $row['validation_code'],
+			'ACTIVATIONLINKWITHOUTCODE' => SCRIPT . '?action=activate;u=' . $row['id_member'],
 			'ACTIVATIONCODE' => $row['validation_code'],
-			'FORGOTPASSWORDLINK' => $scripturl . '?action=reminder',
+			'FORGOTPASSWORDLINK' => SCRIPT . '?action=reminder',
 		);
 
 		$emaildata = loadEmailTemplate('resend_activate_message', $replacements, empty($row['lngfile']) || empty($settings['userLanguage']) ? $settings['language'] : $row['lngfile']);

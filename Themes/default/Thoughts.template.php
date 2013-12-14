@@ -48,7 +48,7 @@ function template_showLatestThoughts()
 
 function template_thoughts()
 {
-	global $context, $txt, $theme;
+	global $context, $txt;
 
 	if (!$context['action']) // Homepage..?
 		echo '
@@ -59,7 +59,7 @@ function template_thoughts()
 	else
 		echo '
 		<we:cat>
-			<img src="', $theme['images_url'], '/icons/profile_sm.gif">
+			<img src="', ASSETS, '/icons/profile_sm.gif">
 			', $txt['thoughts'], empty($context['member']) ? '' : ' - ' . $context['member']['name'], ' (', $context['total_thoughts'], ')';
 
 	echo '

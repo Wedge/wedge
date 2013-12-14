@@ -195,7 +195,7 @@ function AutoTask()
 // Function to sending out approval notices to moderators etc.
 function scheduled_approval_notification()
 {
-	global $scripturl, $txt;
+	global $txt;
 
 	// Grab all the items awaiting approval and sort type then board - clear up any things that are no longer relevant.
 	$request = wesql::query('
@@ -224,7 +224,7 @@ function scheduled_approval_notification()
 		// Add it to the array otherwise.
 		$notices[$row['id_board']][$type][] = array(
 			'subject' => $row['subject'],
-			'href' => $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['id_msg'] . '#msg' . $row['id_msg'],
+			'href' => SCRIPT . '?topic=' . $row['id_topic'] . '.msg' . $row['id_msg'] . '#msg' . $row['id_msg'],
 		);
 
 		// Store the profile for a bit later.
@@ -513,7 +513,7 @@ function scheduled_auto_optimize()
 // Send out a daily email of all subscribed topics.
 function scheduled_daily_digest()
 {
-	global $is_weekly, $txt, $mbname, $scripturl, $context;
+	global $is_weekly, $txt, $mbname;
 
 	// We'll want this...
 	loadEssentialThemeData();
@@ -670,7 +670,7 @@ function scheduled_daily_digest()
 			'move' => $txt['digest_mod_act_move'],
 			'merge' => $txt['digest_mod_act_merge'],
 			'split' => $txt['digest_mod_act_split'],
-			'bye' => str_replace('{FORUMNAME}', $context['forum_name'], $txt['regards_team']),
+			'bye' => str_replace('{FORUMNAME}', $mbname, $txt['regards_team']),
 		);
 	}
 
@@ -681,7 +681,7 @@ function scheduled_daily_digest()
 		// Do the start stuff!
 		$email = array(
 			'subject' => $mbname . ' - ' . $langtxt[$member['lang']]['subject'],
-			'body' => $member['name'] . ',' . "\n\n" . $langtxt[$member['lang']]['intro'] . "\n" . $scripturl . '?action=profile;u=' . $member['id'] . ";area=notification\n",
+			'body' => $member['name'] . ',' . "\n\n" . $langtxt[$member['lang']]['intro'] . "\n" . SCRIPT . '?action=profile;u=' . $member['id'] . ";area=notification\n",
 			'email' => $member['email'],
 		);
 
@@ -1161,41 +1161,11 @@ function next_time($regularity, $unit, $offset)
 // This loads the bare minimum data to allow us to load language files!
 function loadEssentialThemeData()
 {
-	global $theme, $settings, $mbname, $context;
-
-	// Get all the default theme variables.
-	$result = wesql::query('
-		SELECT id_theme, variable, value
-		FROM {db_prefix}themes
-		WHERE id_member = {int:no_member}
-			AND id_theme IN (1, {int:theme_guests})',
-		array(
-			'no_member' => 0,
-			'theme_guests' => $settings['theme_guests'],
-		)
-	);
-	while ($row = wesql::fetch_assoc($result))
-	{
-		$theme[$row['variable']] = $row['value'];
-
-		// Is this the default theme?
-		if (in_array($row['variable'], array('theme_dir', 'theme_url', 'images_url')) && $row['id_theme'] == '1')
-			$theme['default_' . $row['variable']] = $row['value'];
-	}
-	wesql::free_result($result);
+	global $settings, $sourcedir;
 
 	// Check we have some directories setup.
-	if (empty($theme['template_dirs']))
-	{
-		$theme['template_dirs'] = array($theme['theme_dir']);
-
-		// Then the default theme.
-		if ($theme['theme_dir'] != $theme['default_theme_dir'])
-			$theme['template_dirs'][] = $theme['default_theme_dir'];
-	}
-
-	// Assume we want this.
-	$context['forum_name'] = $mbname;
+	if (empty($settings['template_dirs']))
+		$settings['template_dirs'] = array($settings['theme_dir']);
 
 	// Check loadLanguage actually exists! Can't use loadSource if Load.php hasn't already been loaded.
 	if (!function_exists('loadLanguage'))
@@ -1468,7 +1438,7 @@ FileETag none');
 // Perform the standard checks on expiring/near expiring subscriptions.
 function scheduled_paid_subscriptions()
 {
-	global $scripturl, $settings;
+	global $settings;
 
 	// Start off by checking for removed subscriptions.
 	$request = wesql::query('
@@ -1524,7 +1494,7 @@ function scheduled_paid_subscriptions()
 		$subs_reminded[] = $row['id_sublog'];
 
 		$replacements = array(
-			'PROFILELINKSUBS' => $scripturl . '?action=profile;u=' . $row['id_member'] . ';area=subscriptions',
+			'PROFILELINKSUBS' => SCRIPT . '?action=profile;u=' . $row['id_member'] . ';area=subscriptions',
 			'REALNAME' => $row['member_name'],
 			'SUBSCRNAME' => $row['name'],
 			'END_DATE' => strip_tags(timeformat($row['end_time'])),

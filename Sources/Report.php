@@ -93,7 +93,7 @@ function Report()
  */
 function ReportToModerator2()
 {
-	global $txt, $scripturl, $topic, $board, $settings, $context;
+	global $txt, $topic, $board, $settings, $context;
 
 	// Make sure they aren't spamming.
 	spamProtection('report');
@@ -259,7 +259,7 @@ function ReportToModerator2()
 					'member_ip' => 'int', 'comment' => 'string', 'time_sent' => 'int',
 				),
 				array(
-					$id_report, we::$id, we::$user['name'], we::$user['email'],
+					$id_report, MID, we::$user['name'], we::$user['email'],
 					get_ip_identifier(we::$user['ip']), $poster_comment, time(),
 				)
 			);
@@ -295,8 +295,8 @@ function ReportToModerator2()
 			'TOPICSUBJECT' => $subject,
 			'POSTERNAME' => $poster_name,
 			'REPORTERNAME' => $reporterName,
-			'TOPICLINK' => $scripturl . '?topic=' . $topic . '.msg' . $_POST['msg'] . '#msg' . $_POST['msg'],
-			'REPORTLINK' => !empty($id_report) ? $scripturl . '?action=moderate;area=reports;report=' . $id_report : '',
+			'TOPICLINK' => SCRIPT . '?topic=' . $topic . '.msg' . $_POST['msg'] . '#msg' . $_POST['msg'],
+			'REPORTLINK' => !empty($id_report) ? SCRIPT . '?action=moderate;area=reports;report=' . $id_report : '',
 			'COMMENT' => $_POST['comment'],
 		);
 

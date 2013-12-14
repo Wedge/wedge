@@ -34,14 +34,14 @@ function template_profile_top()
 // This template displays users details without any option to edit them.
 function template_summary()
 {
-	global $context, $theme, $settings, $txt;
+	global $context, $settings, $txt;
 
 	$group = !empty($context['member']['group']) ? 'group' : 'post_group';
 
 	// Display the basic information about the user
 	echo '
 	<we:cat>
-		<img src="', $theme['images_url'], '/icons/profile_sm.gif">
+		<img src="', ASSETS, '/icons/profile_sm.gif">
 		', $txt['summary'], '
 	</we:cat>
 	<div id="profile_home">
@@ -63,12 +63,12 @@ function template_summary()
 	// What about if we allow email only via the forum?
 	if ($context['member']['show_email'] === 'no_through_forum' || $context['member']['show_email'] === 'yes_permission_override')
 		echo '
-				<li><a href="<URL>?action=emailuser;sa=email;uid=', $context['member']['id'], '" title="', $context['member']['show_email'] == 'yes_permission_override' ? $context['member']['email'] : '', '" rel="nofollow"><img src="', $theme['images_url'], '/email_sm.gif" alt="', $txt['email'], '"></a></li>';
+				<li><a href="<URL>?action=emailuser;sa=email;uid=', $context['member']['id'], '" title="', $context['member']['show_email'] == 'yes_permission_override' ? $context['member']['email'] : '', '" rel="nofollow"><img src="', ASSETS, '/email_sm.gif" alt="', $txt['email'], '"></a></li>';
 
 	// Don't show an icon if they haven't specified a website.
 	if ($context['member']['website']['url'] !== '' && !isset($context['disabled_fields']['website']))
 		echo '
-				<li><a href="', $context['member']['website']['url'], '" title="', $context['member']['website']['title'], '" target="_blank" class="new_win"><img src="' . $theme['images_url'] . '/www_sm.gif" alt="', $context['member']['website']['title'], '"></a></li>';
+				<li><a href="', $context['member']['website']['url'], '" title="', $context['member']['website']['title'], '" target="_blank" class="new_win"><img src="' . ASSETS . '/www_sm.gif" alt="', $context['member']['website']['title'], '"></a></li>';
 
 	// Are there any custom profile fields for the summary?
 	if (!empty($context['custom_fields']))
@@ -158,7 +158,7 @@ function template_summary()
 	if ($context['member']['age'] !== $txt['not_applicable'])
 		echo '
 				<dt>', $txt['age'], ':</dt>
-				<dd>', $context['member']['age'] . ($context['member']['today_is_birthday'] ? '<br><img src="' . $theme['images_url'] . '/cake.png">' : ''), '</dd>';
+				<dd>', $context['member']['age'] . ($context['member']['today_is_birthday'] ? '<br><img src="' . ASSETS . '/cake.png">' : ''), '</dd>';
 
 	if (!isset($context['disabled_fields']['location']) && !empty($context['member']['location']))
 		echo '
@@ -359,11 +359,11 @@ function template_summary()
 // Template for showing all the user's drafts.
 function template_showDrafts()
 {
-	global $context, $theme, $settings, $txt;
+	global $context, $settings, $txt;
 
 	echo '
 		<we:cat>
-			<img src="', $theme['images_url'], '/icons/im_newmsg.gif">
+			<img src="', ASSETS, '/icons/im_newmsg.gif">
 			', $txt['showDrafts'], ' - ', $context['member']['name'], '
 		</we:cat>
 		<p class="description">
@@ -439,11 +439,11 @@ function template_showDrafts()
 // Template for showing all the posts of the user, in chronological order.
 function template_showPosts()
 {
-	global $context, $theme, $txt, $settings;
+	global $context, $txt, $settings;
 
 	echo '
 		<we:cat>
-			<img src="', $theme['images_url'], '/icons/profile_sm.gif">
+			<img src="', ASSETS, '/icons/profile_sm.gif">
 			', !isset($context['attachments']) && empty($context['is_topics']) ? $txt['showMessages'] : (!empty($context['is_topics']) ? $txt['showTopics'] : $txt['showAttachments']), ' - ', !empty($_GET['guest']) ? base64_decode($_GET['guest']) : $context['member']['name'], '
 		</we:cat>
 		<div class="pagesection">
@@ -594,11 +594,11 @@ function template_showPosts()
 // Template for showing all the buddies of the current user.
 function template_editBuddies()
 {
-	global $context, $theme, $txt;
+	global $context, $txt;
 
 	echo '
 		<we:cat>
-			<img src="', $theme['images_url'], '/icons/profile_sm.gif">', $txt['editBuddies'], '
+			<img src="', ASSETS, '/icons/profile_sm.gif">', $txt['editBuddies'], '
 		</we:cat>
 
 		<table class="table_grid w100 cs1 cp4 center">
@@ -624,7 +624,7 @@ function template_editBuddies()
 			<tr class="', $alternate ? 'windowbg' : 'windowbg2', ' center">
 				<td class="left">', $buddy['link'], '</td>
 				<td><a href="', $buddy['online']['href'], '"><img src="', $buddy['online']['image_href'], '" alt="', $buddy['online']['label'], '" title="', $buddy['online']['label'], '"></a></td>
-				<td>', ($buddy['show_email'] == 'no' ? '' : '<a href="<URL>?action=emailuser;sa=email;uid=' . $buddy['id'] . '" rel="nofollow"><img src="' . $theme['images_url'] . '/email_sm.gif" alt="' . $txt['email'] . '" title="' . $txt['email'] . ' ' . $buddy['name'] . '"></a>'), '</td>
+				<td>', ($buddy['show_email'] == 'no' ? '' : '<a href="<URL>?action=emailuser;sa=email;uid=' . $buddy['id'] . '" rel="nofollow"><img src="' . ASSETS . '/email_sm.gif" alt="' . $txt['email'] . '" title="' . $txt['email'] . ' ' . $buddy['name'] . '"></a>'), '</td>
 				<td><a href="<URL>?action=profile;u=', $context['id_member'], ';area=lists;sa=buddies;remove=', $buddy['id'], ';', $context['session_query'], '"><span class="remove_button" style="display: inline-block"></span></a></td>
 			</tr>';
 
@@ -663,11 +663,11 @@ function template_editBuddies()
 // Template for showing the ignore list of the current user.
 function template_editIgnoreList()
 {
-	global $context, $theme, $txt;
+	global $context, $txt;
 
 	echo '
 		<we:cat>
-			<img src="', $theme['images_url'], '/icons/profile_sm.gif">', $txt['editIgnoreList'], '
+			<img src="', ASSETS, '/icons/profile_sm.gif">', $txt['editIgnoreList'], '
 		</we:cat>
 		<table class="table_grid w100 cs1 cp4 center">
 			<tr class="catbg">
@@ -692,7 +692,7 @@ function template_editIgnoreList()
 			<tr class="windowbg', $alternate ? '' : '2', '">
 				<td class="left">', $member['link'], '</td>
 				<td><a href="', $member['online']['href'], '"><img src="', $member['online']['image_href'], '" alt="', $member['online']['label'], '" title="', $member['online']['label'], '"></a></td>
-				<td>', ($member['show_email'] == 'no' ? '' : '<a href="<URL>?action=emailuser;sa=email;uid=' . $member['id'] . '" rel="nofollow"><img src="' . $theme['images_url'] . '/email_sm.gif" alt="' . $txt['email'] . '" title="' . $txt['email'] . ' ' . $member['name'] . '"></a>'), '</td>
+				<td>', ($member['show_email'] == 'no' ? '' : '<a href="<URL>?action=emailuser;sa=email;uid=' . $member['id'] . '" rel="nofollow"><img src="' . ASSETS . '/email_sm.gif" alt="' . $txt['email'] . '" title="' . $txt['email'] . ' ' . $member['name'] . '"></a>'), '</td>
 				<td><a href="<URL>?action=profile;u=', $context['id_member'], ';area=lists;sa=ignore;remove=', $member['id'], ';', $context['session_query'], '"><span class="remove_button" style="display: inline-block"></span></a></td>
 			</tr>';
 
@@ -917,11 +917,11 @@ function template_trackReported()
 
 function template_showPermissions()
 {
-	global $context, $theme, $txt;
+	global $context, $txt;
 
 	echo '
 		<we:cat>
-			<img src="', $theme['images_url'], '/icons/profile_sm.gif">
+			<img src="', ASSETS, '/icons/profile_sm.gif">
 			', $txt['showPermissions'], '
 		</we:cat>';
 
@@ -1064,13 +1064,13 @@ function template_showPermissions()
 // Template for user statistics, showing graphs and the like.
 function template_statPanel()
 {
-	global $context, $theme, $txt;
+	global $context, $txt;
 
 	// First, show a few text statistics such as post/topic count.
 	echo '
 		<div id="generalstats">
 			<we:cat>
-				<img src="', $theme['images_url'], '/stats_info.gif">
+				<img src="', ASSETS, '/stats_info.gif">
 				', $txt['statPanel_generalStats'], ' - ', $context['member']['name'], '
 			</we:cat>
 			<div class="windowbg2 wrc">
@@ -1093,7 +1093,7 @@ function template_statPanel()
 	echo '
 		<div id="activitytime" class="flow_hidden">
 			<we:cat>
-				<img src="', $theme['images_url'], '/stats_history.gif">
+				<img src="', ASSETS, '/stats_history.gif">
 				', $txt['statPanel_activityTime'], '
 			</we:cat>
 			<div class="windowbg2 wrc">';
@@ -1134,7 +1134,7 @@ function template_statPanel()
 		<div class="flow_hidden">
 			<div id="popularposts">
 				<we:cat>
-					<img src="', $theme['images_url'], '/stats_replies.gif">
+					<img src="', ASSETS, '/stats_replies.gif">
 					', $txt['statPanel_topBoards'], '
 				</we:cat>
 				<div class="windowbg2 wrc">';
@@ -1168,7 +1168,7 @@ function template_statPanel()
 	echo '
 			<div id="popularactivity">
 				<we:cat>
-					<img src="', $theme['images_url'], '/stats_replies.gif">
+					<img src="', ASSETS, '/stats_replies.gif">
 					', $txt['statPanel_topBoardsActivity'], '
 				</we:cat>
 				<div class="windowbg2 wrc">';
@@ -1205,13 +1205,13 @@ function template_statPanel()
 // Template for editing profile options.
 function template_edit_options()
 {
-	global $context, $theme, $txt;
+	global $context, $txt;
 
 	// The main header!
 	echo '
 		<form action="', (!empty($context['profile_custom_submit_url']) ? $context['profile_custom_submit_url'] : '<URL>?action=profile;u=' . $context['id_member'] . ';area=' . $context['menu_item_selected'] . ';save'), '" method="post" accept-charset="UTF-8" name="creator" id="creator" enctype="multipart/form-data" onsubmit="return checkProfileSubmit();">
 			<we:cat>
-				<img src="', $theme['images_url'], '/icons/profile_sm.gif">';
+				<img src="', ASSETS, '/icons/profile_sm.gif">';
 
 		// Don't say "Profile" if this isn't the profile...
 		if (!empty($context['profile_header_text']))
@@ -1549,12 +1549,12 @@ function template_profile_display_prefslist()
 
 function template_notification()
 {
-	global $context, $theme, $txt, $settings;
+	global $context, $txt, $settings;
 
 	// The main containing header.
 	echo '
 			<we:cat>
-				<img src="', $theme['images_url'], '/icons/profile_sm.gif">
+				<img src="', ASSETS, '/icons/profile_sm.gif">
 				', $txt['profile'], '
 			</we:cat>
 			<p class="description">', $txt['notification_info'], '</p>
@@ -1617,13 +1617,13 @@ function template_notification()
 // Template for choosing group membership.
 function template_groupMembership()
 {
-	global $context, $theme, $txt;
+	global $context, $txt;
 
 	// The main containing header.
 	echo '
 		<form action="<URL>?action=profile;area=groupmembership;save" method="post" accept-charset="UTF-8" name="creator" id="creator">
 			<we:cat>
-				<img src="', $theme['images_url'], '/icons/profile_sm.gif">
+				<img src="', ASSETS, '/icons/profile_sm.gif">
 				', $txt['profile'], '
 			</we:cat>
 			<p class="description">', $txt['groupMembership_info'], '</p>';
@@ -1777,13 +1777,13 @@ function template_groupMembership()
 
 function template_ignoreboards()
 {
-	global $context, $txt, $theme;
+	global $context, $txt;
 
 	// The main containing header.
 	echo '
 	<form action="<URL>?action=profile;area=ignoreboards;save" method="post" accept-charset="UTF-8" name="creator" id="creator">
 		<we:cat>
-			<img src="', $theme['images_url'], '/icons/profile_sm.gif">
+			<img src="', ASSETS, '/icons/profile_sm.gif">
 			', $txt['profile'], '
 		</we:cat>
 		<p class="description">', $txt['ignoreboards_info'], '</p>
@@ -1843,7 +1843,7 @@ function template_ignoreboards()
 
 function template_profileInfractions()
 {
-	global $txt, $context, $theme;
+	global $txt, $context;
 
 	echo '
 		<we:cat>', $txt['profile_infractions'], '</we:cat>
@@ -1926,7 +1926,7 @@ function template_profileInfractions()
 					<td class="small">', $infraction['expire_date_format'], '</td>
 					<td class="center">', $infraction['points'], '</td>
 					<td class="center">', $txt['infraction_state_' . $infraction['row_class']], '</td>
-					<td class="center"><a href="<URL>?action=profile;u=', $context['member']['id'], ';area=infractions;view=', $id_issue, '" onclick="return reqWin(this);"><img src="', $theme['images_url'], '/filter.gif"></a></td>
+					<td class="center"><a href="<URL>?action=profile;u=', $context['member']['id'], ';area=infractions;view=', $id_issue, '" onclick="return reqWin(this);"><img src="', ASSETS, '/filter.gif"></a></td>
 					<td class="center">', !empty($infraction['can_revoke']) ? '<a href="<URL>?action=profile;u=' . $context['member']['id'] . ';area=infractions;revoke=' . $id_issue . '">' . $txt['revoke'] . '</a>' : '', '</td>
 				</tr>';
 
@@ -2172,7 +2172,7 @@ function template_profileInfractions_issue()
 
 function template_profileInfractions_revoke()
 {
-	global $context, $txt, $theme;
+	global $context, $txt;
 
 	echo '
 		<we:cat>', $txt['revoke_infraction'], '</we:cat>
@@ -2199,7 +2199,7 @@ function template_profileInfractions_revoke()
 					<dd>', $context['infraction_details']['expire_date_format'], '</dd>
 					<dt>', $txt['infraction_reason_given'], '</dt>
 					<dd>', $context['infraction_details']['reason'], '</dd>
-					<dt><a href="<URL>?action=profile;u=', $context['member']['id'], ';area=infractions;view=', $context['infraction_details']['id_issue'], '" onclick="return reqWin(this);"><img src="', $theme['images_url'], '/filter.gif"> ', $txt['view_full_details'], '</a></dt>
+					<dt><a href="<URL>?action=profile;u=', $context['member']['id'], ';area=infractions;view=', $context['infraction_details']['id_issue'], '" onclick="return reqWin(this);"><img src="', ASSETS, '/filter.gif"> ', $txt['view_full_details'], '</a></dt>
 				</dl>
 				<hr>
 				<dl class="settings">
@@ -2328,13 +2328,13 @@ function template_profileBan()
 // Template to show for deleting a user's account - now with added delete post capability!
 function template_deleteAccount()
 {
-	global $context, $theme, $txt;
+	global $context, $txt;
 
 	// The main containing header.
 	echo '
 		<form action="<URL>?action=profile;area=deleteaccount;save" method="post" accept-charset="UTF-8" name="creator" id="creator">
 			<we:cat>
-				<img src="', $theme['images_url'], '/icons/profile_sm.gif">', $txt['deleteAccount'], '
+				<img src="', ASSETS, '/icons/profile_sm.gif">', $txt['deleteAccount'], '
 			</we:cat>';
 
 	// If deleting another account give them a lovely info box.
@@ -2792,14 +2792,14 @@ function template_profile_timeoffset_modify()
 // Smiley set picker.
 function template_profile_smiley_pick()
 {
-	global $txt, $context, $settings, $theme;
+	global $txt, $context, $settings;
 
 	echo '
 					<dt>
 						<strong>', $txt['smileys_current'], ':</strong>
 					</dt>
 					<dd>
-						<select name="smiley_set" onchange="$(\'#smileypr\').attr(\'src\', this.selectedIndex == 0 ? \'', $theme['images_url'], '/blank.gif\' : \'', $settings['smileys_url'], '/\' + (this.selectedIndex != 1 ? $(this).val() : \'', $settings['smiley_sets_default'], '\') + \'/smiley.gif\');">';
+						<select name="smiley_set" onchange="$(\'#smileypr\').attr(\'src\', this.selectedIndex == 0 ? \'', ASSETS, '/blank.gif\' : \'', $settings['smileys_url'], '/\' + (this.selectedIndex != 1 ? $(this).val() : \'', $settings['smiley_sets_default'], '\') + \'/smiley.gif\');">';
 
 	foreach ($context['smiley_sets'] as $set)
 		echo '
@@ -2807,6 +2807,6 @@ function template_profile_smiley_pick()
 
 	echo '
 						</select>
-						<img id="smileypr" src="', $context['member']['smiley_set']['id'] != 'none' ? $settings['smileys_url'] . '/' . ($context['member']['smiley_set']['id'] != '' ? $context['member']['smiley_set']['id'] : $settings['smiley_sets_default']) . '/smiley.gif' : $theme['images_url'] . '/blank.gif', '" alt=":)" class="top" style="padding-left: 20px">
+						<img id="smileypr" src="', $context['member']['smiley_set']['id'] != 'none' ? $settings['smileys_url'] . '/' . ($context['member']['smiley_set']['id'] != '' ? $context['member']['smiley_set']['id'] : $settings['smiley_sets_default']) . '/smiley.gif' : ASSETS . '/blank.gif', '" alt=":)" class="top" style="padding-left: 20px">
 					</dd>';
 }

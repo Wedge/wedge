@@ -99,7 +99,7 @@ function markBoardsRead($boards, $unread = false)
 			WHERE id_board IN ({array_int:board_list})
 				AND id_member = {int:current_member}',
 			array(
-				'current_member' => we::$id,
+				'current_member' => MID,
 				'board_list' => $boards,
 			)
 		);
@@ -108,7 +108,7 @@ function markBoardsRead($boards, $unread = false)
 			WHERE id_board IN ({array_int:board_list})
 				AND id_member = {int:current_member}',
 			array(
-				'current_member' => we::$id,
+				'current_member' => MID,
 				'board_list' => $boards,
 			)
 		);
@@ -118,7 +118,7 @@ function markBoardsRead($boards, $unread = false)
 	{
 		$markRead = array();
 		foreach ($boards as $board)
-			$markRead[] = array($settings['maxMsgID'], we::$id, $board);
+			$markRead[] = array($settings['maxMsgID'], MID, $board);
 
 		// Update log_mark_read and log_boards.
 		wesql::insert('replace',
@@ -140,7 +140,7 @@ function markBoardsRead($boards, $unread = false)
 		FROM {db_prefix}log_topics
 		WHERE id_member = {int:current_member}',
 		array(
-			'current_member' => we::$id,
+			'current_member' => MID,
 		)
 	);
 	list ($lowest_topic) = wesql::fetch_row($result);
@@ -158,7 +158,7 @@ function markBoardsRead($boards, $unread = false)
 		WHERE lt.id_member = {int:current_member}
 			AND lt.id_topic >= {int:lowest_topic}',
 		array(
-			'current_member' => we::$id,
+			'current_member' => MID,
 			'board_list' => $boards,
 			'lowest_topic' => $lowest_topic,
 		)
@@ -174,7 +174,7 @@ function markBoardsRead($boards, $unread = false)
 			WHERE id_member = {int:current_member}
 				AND id_topic IN ({array_int:topic_list})',
 			array(
-				'current_member' => we::$id,
+				'current_member' => MID,
 				'topic_list' => $topics,
 			)
 		);
@@ -225,7 +225,7 @@ function MarkRead()
 
 		$markRead = array();
 		foreach ($topics as $id_topic)
-			$markRead[] = array($settings['maxMsgID'], we::$id, (int) $id_topic);
+			$markRead[] = array($settings['maxMsgID'], MID, (int) $id_topic);
 
 		wesql::insert('replace',
 			'{db_prefix}log_topics',
@@ -306,7 +306,7 @@ function MarkRead()
 		wesql::insert('replace',
 			'{db_prefix}log_topics',
 			array('id_msg' => 'int', 'id_member' => 'int', 'id_topic' => 'int'),
-			array($earlyMsg, we::$id, $topic)
+			array($earlyMsg, MID, $topic)
 		);
 
 		if (AJAX)
@@ -413,7 +413,7 @@ function MarkRead()
 		{
 			$logBoardInserts = '';
 			while ($row = wesql::fetch_assoc($result))
-				$logBoardInserts[] = array($settings['maxMsgID'], we::$id, $row['id_board']);
+				$logBoardInserts[] = array($settings['maxMsgID'], MID, $row['id_board']);
 
 			wesql::insert('replace',
 				'{db_prefix}log_boards',
@@ -1104,7 +1104,7 @@ function getBoardTree($restrict = false)
 	global $cat_tree, $boards, $boardList;
 
 	$restriction = we::$is_admin || !$restrict ? '' : '
-				AND b.id_owner = ' . (int) we::$id;
+				AND b.id_owner = ' . (int) MID;
 
 	// Getting all the board and category information you'd ever wanted.
 	$request = wesql::query('

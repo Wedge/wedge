@@ -267,7 +267,7 @@ function Who()
 
 function determineActions($urls, $preferred_prefix = false, $override_mem = false)
 {
-	global $context, $txt, $settings, $theme;
+	global $context, $txt, $settings;
 
 	if (!allowedTo('who_view'))
 		return array();
@@ -304,7 +304,7 @@ function determineActions($urls, $preferred_prefix = false, $override_mem = fals
 	call_hook('who_allowed', array(&$allowedActions));
 
 	if (!is_array($urls))
-		$url_list = array(array($urls, $override_mem ? $override_mem : we::$id));
+		$url_list = array(array($urls, $override_mem ? $override_mem : MID));
 	else
 		$url_list = $urls;
 
@@ -546,7 +546,7 @@ function determineActions($urls, $preferred_prefix = false, $override_mem = fals
 		while ($row = wesql::fetch_assoc($result))
 		{
 			// If they aren't allowed to view this person's profile, skip it.
-			if (!allowedTo('profile_view_any') && we::$id != $row['id_member'])
+			if (!allowedTo('profile_view_any') && MID != $row['id_member'])
 				continue;
 
 			// Set their action on each - session/text to sprintf.
@@ -570,7 +570,7 @@ function determineActions($urls, $preferred_prefix = false, $override_mem = fals
 		);
 		// If we're allowed to view someone's profile, set their action - session/text to sprintf.
 		while ($row = wesql::fetch_assoc($result))
-			if (($view_any || we::$id == $row['id_member']) && !empty($profile_names[$row['member_name']]))
+			if (($view_any || MID == $row['id_member']) && !empty($profile_names[$row['member_name']]))
 				foreach ($profile_names[$row['member_name']] as $k => $session_text)
 					$data[$k] = sprintf($session_text, $row['id_member'], $row['real_name']);
 	}
@@ -595,7 +595,7 @@ function determineActions($urls, $preferred_prefix = false, $override_mem = fals
 				$error_message = str_replace('"', '&quot;', $txt['who_guest_login']);
 
 			if (!empty($error_message))
-				$data[$k] = '<img src="' . $theme['images_url'] . '/' . ($is_warn ? 'who_warn' : 'who_error') . '.gif" title="' . $error_message . '" alt="' . $error_message . '"> ' . $data[$k];
+				$data[$k] = '<img src="' . ASSETS . '/' . ($is_warn ? 'who_warn' : 'who_error') . '.gif" title="' . $error_message . '" alt="' . $error_message . '"> ' . $data[$k];
 
 			// !!! Should we store the full URL into the session, � la Noisen?
 			$data[$k] .= ' (<abbr title="' . htmlspecialchars(var_export($actions, true), ENT_QUOTES) . '">?</abbr>)';

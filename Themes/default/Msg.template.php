@@ -109,10 +109,10 @@ function template_msg_author_badge()
 
 function template_msg_author_avatar()
 {
-	global $msg, $settings;
+	global $msg, $settings, $options;
 
 	// Show avatars, images, etc.?
-	if (!empty($settings['show_avatars']) && !empty($options['show_avatars']) && !empty($msg['member']['avatar']['image']))
+	if (!empty($settings['show_avatars']) && empty($options['hide_avatars']) && !empty($msg['member']['avatar']['image']))
 		echo '
 							<we:msg_author_avatar>
 								<a href="<URL>?action=profile;u=', $msg['member']['id'], '">
@@ -194,11 +194,11 @@ function template_msg_author_warning()
 
 function template_msg_author_email()
 {
-	global $msg, $txt, $theme;
+	global $msg, $txt;
 
 	if ($msg['member']['is_guest'] && !SKIN_MOBILE && !empty($msg['member']['email']) && in_array($msg['member']['show_email'], array('yes_permission_override', 'no_through_forum')))
 		echo '
-							<li class="email"><a href="<URL>?action=emailuser;sa=email;msg=', $msg['id'], '" rel="nofollow"><img src="', $theme['images_url'], '/email_sm.gif" alt="', $txt['email'], '" title="', $txt['email'], '"></a></li>';
+							<li class="email"><a href="<URL>?action=emailuser;sa=email;msg=', $msg['id'], '" rel="nofollow"><img src="', ASSETS, '/email_sm.gif" alt="', $txt['email'], '" title="', $txt['email'], '"></a></li>';
 }
 
 function template_msg_author_details_after()
@@ -301,7 +301,7 @@ function template_msg_body()
 {
 	global $msg, $txt;
 
-	if (!$msg['approved'] && $msg['member']['id'] != 0 && $msg['member']['id'] == we::$id)
+	if (!$msg['approved'] && $msg['member']['id'] != 0 && $msg['member']['id'] == MID)
 		echo '
 							<div class="approve_post errorbox">
 								', $txt['post_awaiting_approval'], !empty($msg['unapproved_msg']) ? '<ul><li>' . implode('</li><li>', $msg['unapproved_msg']) . '</li></ul>' : '', '
@@ -375,7 +375,7 @@ function template_msg_actionbar_after()
 
 function template_msg_attachments()
 {
-	global $msg, $theme;
+	global $msg;
 
 	// Assuming there are attachments...
 	if (empty($msg['attachment']))
@@ -396,7 +396,7 @@ function template_msg_attachments()
 							<div><img src="', $attachment['href'], ';image" width="', $attachment['width'], '" height="', $attachment['height'], '"></div>';
 		}
 		echo '
-							<p><a href="', $attachment['href'], '"><img src="', $theme['images_url'], '/icons/clip.gif" class="middle">&nbsp;', $attachment['name'], '</a>
+							<p><a href="', $attachment['href'], '"><img src="', ASSETS, '/icons/clip.gif" class="middle">&nbsp;', $attachment['name'], '</a>
 							- ', $attachment['size'], $attachment['is_image'] ? ', ' . $attachment['real_width'] . 'x' . $attachment['real_height'] : '', ', ', number_context($attachment['is_image'] ? 'attach_viewed' : 'attach_downloaded', $attachment['downloads']), '</p>';
 	}
 
@@ -435,10 +435,10 @@ function template_msg_customfields()
 
 function template_msg_signature()
 {
-	global $msg, $context, $options;
+	global $msg, $context, $settings, $options;
 
 	// Show the member's signature?
-	if (!empty($msg['member']['signature']) && !empty($options['show_signatures']) && $context['signature_enabled'])
+	if (!empty($msg['member']['signature']) && !empty($settings['show_signatures']) && empty($options['hide_signatures']) && $context['signature_enabled'])
 		echo '
 						<we:msg_signature>', $msg['member']['signature'], '</we:msg_signature>';
 }

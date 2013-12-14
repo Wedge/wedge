@@ -10,12 +10,12 @@
 
 function template_main()
 {
-	global $context, $theme, $txt, $settings;
+	global $context, $txt, $settings;
 
 	echo '
 	<div class="main_section">
 		<we:cat>
-			<img src="', $theme['images_url'], '/post/xx.gif" class="middle">
+			<img src="', ASSETS, '/post/xx.gif" class="middle">
 			', $txt['recent_posts'], '
 		</we:cat>
 		<div class="pagesection">
@@ -83,7 +83,7 @@ function template_main()
 
 function template_unread($replies = false)
 {
-	global $context, $theme, $txt;
+	global $context, $txt;
 
 	// JavaScript for generating topic status icons.
 	add_js_file('scripts/topic.js');
@@ -178,7 +178,7 @@ function template_unread($replies = false)
 							', $topic['views'], ' ', $txt['views'], '
 						</td>
 						<td class="lastpost ', $alternate_class, '">
-							<p><a href="', $topic['last_post']['href'], '"><img src="', $theme['images_url'], '/icons/last_post.gif" alt="', $txt['last_post'], '" title="', $txt['last_post'], '" class="right"></a>
+							<p><a href="', $topic['last_post']['href'], '"><img src="', ASSETS, '/icons/last_post.gif" alt="', $txt['last_post'], '" title="', $txt['last_post'], '" class="right"></a>
 							', strtr($txt['last_post_time_author'], array(
 								'{time}' => $topic['last_post']['time'],
 								'{author}' => $topic['last_post']['member']['link']

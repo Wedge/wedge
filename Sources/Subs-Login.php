@@ -97,6 +97,7 @@ function DoLogin()
 
 	we::$cache = array();
 	we::$is_guest = false;
+	we::$is_member = true;
 	$user_settings['additional_groups'] = explode(',', $user_settings['additional_groups']);
 	we::$is_admin = $user_settings['id_group'] == 1 || in_array(1, $user_settings['additional_groups']);
 

@@ -57,7 +57,7 @@ function MoveTopic()
 	list ($id_member_started, $context['subject'], $context['is_approved']) = wesql::fetch_row($request);
 	wesql::free_result($request);
 
-	$context['is_own_topic'] = $id_member_started == we::$id;
+	$context['is_own_topic'] = $id_member_started == MID;
 
 	// Can they see it - if not approved?
 	if ($settings['postmod_active'] && !$context['is_approved'])
@@ -65,7 +65,7 @@ function MoveTopic()
 
 	// Permission check!
 	if (!allowedTo('move_any'))
-		isAllowedTo($id_member_started == we::$id ? 'move_own' : 'move_any');
+		isAllowedTo($id_member_started == MID ? 'move_own' : 'move_any');
 
 	// Where can they move it to?
 	$boards = empty($settings['ignoreMoveVsNew']) ? boardsAllowedTo('post_new') : array(0);
@@ -140,7 +140,7 @@ function MoveTopic()
 // Execute the move.
 function MoveTopic2()
 {
-	global $txt, $board, $topic, $scripturl, $settings, $context;
+	global $txt, $board, $topic, $settings, $context;
 
 	if (empty($topic))
 		fatal_lang_error('no_access', false);
@@ -172,7 +172,7 @@ function MoveTopic2()
 
 	// Permission check!
 	if (!allowedTo('move_any'))
-		isAllowedTo($id_member_started == we::$id ? 'move_own' : 'move_any');
+		isAllowedTo($id_member_started == MID ? 'move_own' : 'move_any');
 
 	// Where can they move it to?
 	$boards = empty($settings['ignoreMoveVsNew']) ? boardsAllowedTo('post_new') : array(0);
@@ -276,8 +276,8 @@ function MoveTopic2()
 
 		// Add a URL onto the message.
 		$_POST['reason'] = strtr($_POST['reason'], array(
-			$txt['movetopic_auto_board'] => '[url=' . $scripturl . '?board=' . $_POST['toboard'] . '.0]' . $board_name . '[/url]',
-			$txt['movetopic_auto_topic'] => '[iurl]' . $scripturl . '?topic=' . $topic . '.0[/iurl]'
+			$txt['movetopic_auto_board'] => '[url=' . SCRIPT . '?board=' . $_POST['toboard'] . '.0]' . $board_name . '[/url]',
+			$txt['movetopic_auto_topic'] => '[iurl]' . SCRIPT . '?topic=' . $topic . '.0[/iurl]'
 		));
 
 		$msgOptions = array(
@@ -299,7 +299,7 @@ function MoveTopic2()
 			'mark_as_read' => true,
 		);
 		$posterOptions = array(
-			'id' => we::$id,
+			'id' => MID,
 			'update_post_count' => empty($pcounter),
 		);
 		createPost($msgOptions, $topicOptions, $posterOptions);
@@ -328,7 +328,7 @@ function MoveTopic2()
 	// Even though we store msg id (for the preview), we create id_object against the topic for performance.
 	// Note that we also set up the notification here rather than in moveTopics, because we
 	// already needed to get some of the details here in the first place *for* moveTopics.
-	if (!empty($id_member_started) && $id_member_started != we::$id)
+	if (!empty($id_member_started) && $id_member_started != MID)
 		Notification::issue(
 			'move',
 			$id_member_started,
@@ -336,7 +336,7 @@ function MoveTopic2()
 			array(
 				'member' => array(
 					'name' => we::$user['name'],
-					'id' => we::$id
+					'id' => MID
 				),
 				'subject' => shorten_subject($subject, 25),
 				'id_msg' => $id_msg,
@@ -394,7 +394,7 @@ function MoveTopic2()
 	moveTopics($topic, $_POST['toboard']);
 
 	// Log that they moved this topic.
-	if (!allowedTo('move_own') || $id_member_started != we::$id)
+	if (!allowedTo('move_own') || $id_member_started != MID)
 		logAction('move', array('topic' => $topic, 'board_from' => $board, 'board_to' => $_POST['toboard']));
 	// Notify people that this topic has been moved?
 	sendNotifications($topic, 'move');
@@ -683,7 +683,7 @@ function moveTopics($topics, $toBoard)
 			LEFT JOIN {db_prefix}log_boards AS lb ON (lb.id_board = b.id_board AND lb.id_member = {int:current_member})
 		WHERE b.id_board = {int:id_board}',
 		array(
-			'current_member' => we::$id,
+			'current_member' => MID,
 			'id_board' => $toBoard,
 		)
 	);
@@ -695,7 +695,7 @@ function moveTopics($topics, $toBoard)
 		wesql::insert('replace',
 			'{db_prefix}log_boards',
 			array('id_board' => 'int', 'id_member' => 'int', 'id_msg' => 'int'),
-			array($toBoard, we::$id, $settings['maxMsgID'])
+			array($toBoard, MID, $settings['maxMsgID'])
 		);
 	}
 

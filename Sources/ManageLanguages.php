@@ -228,7 +228,7 @@ function list_getNumLanguages()
 	- Also figures out how many users are using a particular language. */
 function list_getLanguages()
 {
-	global $theme, $context, $txt, $settings;
+	global $context, $txt, $settings;
 
 	$langsAvailable = isset($settings['langsAvailable']) ? explode(',', $settings['langsAvailable']) : array();
 	if (empty($langsAvailable))
@@ -237,19 +237,12 @@ function list_getLanguages()
 	$languages = array();
 	// Keep our old entries.
 	$old_txt = $txt;
-	$backup_actual_theme_dir = $theme['actual_theme_dir'];
-
-	// Override these for now.
-	$theme['actual_theme_dir'] = $theme['default_theme_dir'];
-
-	// Put them back.
-	$theme['actual_theme_dir'] = $backup_actual_theme_dir;
 
 	// Get the language files and data...
 	foreach ($context['languages'] as $lang)
 	{
 		// Load the file to get the character set.
-		require($theme['default_theme_dir'] . '/languages/index.' . $lang['filename'] . '.php');
+		require(LANGUAGES_DIR . '/index.' . $lang['filename'] . '.php');
 
 		$languages[$lang['filename']] = array(
 			'id' => $lang['filename'],
@@ -257,7 +250,7 @@ function list_getLanguages()
 			'available' => $settings['language'] == $lang['filename'] || in_array($lang['filename'], $langsAvailable),
 			'default' => $settings['language'] == $lang['filename'] || ($settings['language'] == '' && $lang['filename'] == 'english'),
 			'locale' => $txt['lang_locale'],
-			'name' => '<img src="' . $theme['default_theme_url'] . '/languages/Flag.' . $lang['filename'] . '.png" style="margin-right: 8px">' . $txt['lang_name'],
+			'name' => '<img src="' . LANGUAGES . '/Flag.' . $lang['filename'] . '.png" style="margin-right: 8px">' . $txt['lang_name'],
 			'dictionary' => $txt['lang_dictionary'] . ' (' . $txt['lang_spelling'] . ')',
 			'rtl' => $txt['lang_rtl'],
 		);
@@ -294,7 +287,7 @@ function list_getLanguages()
 // Edit a particular set of language entries.
 function ModifyLanguage()
 {
-	global $theme, $context, $txt;
+	global $context, $txt, $settings;
 
 	// First up, validate the language selected.
 	getLanguages(false);
@@ -358,45 +351,24 @@ function ModifyLanguage()
 		$path = '';
 	$path .= '/';
 
-	// Get all the theme data.
+	// Before doing plugins, we'll get the regular languages folder.
 	$themes = array(
 		1 => array(
 			'name' => $txt['dvc_default'],
-			'theme_dir' => $theme['default_theme_dir'],
+			'theme_dir' => $settings['theme_dir'],
 		),
 	);
-	$request = wesql::query('
-		SELECT id_theme, variable, value
-		FROM {db_prefix}themes
-		WHERE id_theme != {int:default_theme}
-			AND id_member = {int:no_member}
-			AND variable IN ({literal:name}, {literal:theme_dir})',
-		array(
-			'default_theme' => 1,
-			'no_member' => 0,
-		)
-	);
-	while ($row = wesql::fetch_assoc($request))
-	{
-		$themes[$row['id_theme']][$row['variable']] = $row['value'];
-		$context['language_files']['themes'][$row['id_theme']][$row['variable']] = $row['value'];
-	}
-	wesql::free_result($request);
 
-	// This will be where we look
-	$lang_dirs = array();
-	// Check we have themes with a path and a name - just in case - and add the path.
-	foreach ($themes as $id => $data)
-	{
-		if (count($data) != 2)
-			unset($themes[$id]);
-		elseif (is_dir($data['theme_dir'] . '/languages'))
-			$lang_dirs[$id] = $data['theme_dir'] . '/languages';
+	// This will be where we look. (Right now we only have one folder to retrieve, so... Do that.)
+	$lang_dirs = $images_dirs = array();
 
-		// How about image directories?
-		if (is_dir($data['theme_dir'] . '/images/' . $context['lang_id']))
-			$images_dirs[$id] = $data['theme_dir'] . '/images/' . $context['lang_id'];
-	}
+	// Check our languages folder exists, and add the path.
+	if (is_dir(LANGUAGES_DIR))
+		$lang_dirs[$id] = LANGUAGES_DIR;
+
+	// How about image directories? (Unused for now...)
+	if (is_dir(ASSETS_DIR . '/' . $context['lang_id']))
+		$images_dirs[$id] = ASSETS_DIR . '/' . $context['lang_id'];
 
 	// Now add the possible permutations for plugins. This is pretty hairy stuff.
 	// To avoid lots of rewriting that really isn't that necessary, we can reuse the code given here, just with a little crafty manipulation.

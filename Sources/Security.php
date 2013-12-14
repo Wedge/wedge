@@ -160,7 +160,7 @@ function validateSession()
 // Require a user who is logged in. (not a guest.)
 function is_not_guest($message = '')
 {
-	global $txt, $context, $scripturl, $settings;
+	global $txt, $context, $settings;
 
 	// Luckily, this person isn't a guest.
 	if (we::$is_member)
@@ -190,7 +190,7 @@ function is_not_guest($message = '')
 	// Apparently we're not in a position to handle this now. Let's go to a safer location for now.
 	if (!wetem::has_layer('default'))
 	{
-		$_SESSION['login_url'] = $scripturl . '?' . $_SERVER['QUERY_STRING'];
+		$_SESSION['login_url'] = SCRIPT . '?' . $_SERVER['QUERY_STRING'];
 		redirectexit('action=login');
 	}
 	else
@@ -220,12 +220,12 @@ function is_not_banned($forceCheck = false)
 		return;
 
 	// Only check the ban every so often, to reduce load.
-	if ($forceCheck || !isset($_SESSION['ban']) || empty($settings['banLastUpdated']) || ($_SESSION['ban']['last_checked'] < $settings['banLastUpdated']) || $_SESSION['ban']['id_member'] != we::$id || $_SESSION['ban']['ip'] != we::$user['ip'] || $_SESSION['ban']['ip2'] != we::$user['ip2'] || (isset(we::$user['email'], $_SESSION['ban']['email']) && $_SESSION['ban']['email'] != we::$user['email']))
+	if ($forceCheck || !isset($_SESSION['ban']) || empty($settings['banLastUpdated']) || ($_SESSION['ban']['last_checked'] < $settings['banLastUpdated']) || $_SESSION['ban']['id_member'] != MID || $_SESSION['ban']['ip'] != we::$user['ip'] || $_SESSION['ban']['ip2'] != we::$user['ip2'] || (isset(we::$user['email'], $_SESSION['ban']['email']) && $_SESSION['ban']['email'] != we::$user['email']))
 	{
 		// Innocent until proven guilty. (But we know you are! :P)
 		$_SESSION['ban'] = array(
 			'last_checked' => time(),
-			'id_member' => we::$id,
+			'id_member' => MID,
 			'ip' => we::$user['ip'],
 			'ip2' => we::$user['ip2'],
 			'email' => we::$user['email'],
@@ -235,9 +235,9 @@ function is_not_banned($forceCheck = false)
 
 		$ban_list = array();
 		// Check the user id first of all.
-		if (we::$id)
+		if (MID)
 		{
-			$member_check = check_banned_member(we::$id);
+			$member_check = check_banned_member(MID);
 			if (!empty($member_check))
 				$ban_list = array_merge($ban_list, $member_check);
 		}
@@ -277,7 +277,7 @@ function is_not_banned($forceCheck = false)
 		}
 
 		// If for whatever reason the is_activated flag seems wrong, do a little work to clear it up. But we're not going to go mad and re-evaluate all the bans - just the ones for this person.
-		if (we::$id)
+		if (MID)
 		{
 			$update = 0;
 			if ($user_settings['is_activated'] >= 20)
@@ -299,7 +299,7 @@ function is_not_banned($forceCheck = false)
 			}
 			if (!empty($update))
 			{
-				updateMemberData(we::$id, array('is_activated' => $user_settings['is_activated'] + $update));
+				updateMemberData(MID, array('is_activated' => $user_settings['is_activated'] + $update));
 				updateStats('member');
 			}
 		}
@@ -362,13 +362,7 @@ function is_not_banned($forceCheck = false)
 	{
 		// We don't wanna see you!
 		if (we::$is_member)
-			wesql::query('
-				DELETE FROM {db_prefix}log_online
-				WHERE id_member = {int:current_member}',
-				array(
-					'current_member' => we::$id,
-				)
-			);
+			wesql::query('DELETE FROM {db_prefix}log_online WHERE id_member = {int:current_member}', array('current_member' => MID));
 
 		// 'Log' the user out. Can't have any funny business... (save the name!)
 		$old_name = isset(we::$user['name']) && we::$user['name'] != '' ? we::$user['name'] : $txt['guest_title'];
@@ -386,9 +380,7 @@ function is_not_banned($forceCheck = false)
 		setcookie($cookiename . '_', implode(',', $_SESSION['ban']['cannot_access']['ids']), time() + 3153600, $cookie_url[1], $cookie_url[0], 0, true);
 
 		// Don't scare anyone, now.
-		$_GET['action'] = '';
-		$_GET['board'] = '';
-		$_GET['topic'] = '';
+		$_GET['action'] = $_GET['board'] = $_GET['topic'] = '';
 		writeLog(true);
 
 		// You banned, sucka!
@@ -477,7 +469,7 @@ function banPermissions()
 
 	// !! Find a better place to call this? Needs to be after permissions loaded!
 	// Finally, some bits we cache in the session because it saves queries.
-	if (isset($_SESSION['mc']) && $_SESSION['mc']['time'] > $settings['settings_updated'] && $_SESSION['mc']['id'] == we::$id)
+	if (isset($_SESSION['mc']) && $_SESSION['mc']['time'] > $settings['settings_updated'] && $_SESSION['mc']['id'] == MID)
 		we::$user['mod_cache'] = $_SESSION['mc'];
 	else
 	{
@@ -486,7 +478,7 @@ function banPermissions()
 	}
 
 	// Now that we have the mod cache taken care of, let's setup a cache for the number of mod reports still open
-	if (isset($_SESSION['rc']) && $_SESSION['rc']['time'] > $settings['last_mod_report_action'] && $_SESSION['rc']['id'] == we::$id)
+	if (isset($_SESSION['rc']) && $_SESSION['rc']['time'] > $settings['last_mod_report_action'] && $_SESSION['rc']['id'] == MID)
 	{
 		$context['open_mod_reports'] = $_SESSION['rc']['reports'];
 		$context['closed_mod_reports'] = $_SESSION['rc']['closed'];
@@ -988,7 +980,7 @@ function allowedTo($permissions, $boards = null)
 			AND (mods.id_member IS NOT NULL OR bp.id_group != {int:moderator_group})
 		GROUP BY b.id_board',
 		array(
-			'current_member' => we::$id,
+			'current_member' => MID,
 			'board_list' => $boards,
 			'group_list' => we::$user['groups'],
 			'moderator_group' => 3,
@@ -1090,7 +1082,7 @@ function boardsAllowedTo($permissions, $check_access = true)
 				AND (mods.id_member IS NOT NULL OR bp.id_group != {int:moderator_group})' .
 				($check_access ? ' AND {query_see_board}' : ''),
 			array(
-				'current_member' => we::$id,
+				'current_member' => MID,
 				'group_list' => $groups,
 				'moderator_group' => 3,
 				'permissions' => $permissions,
@@ -1143,7 +1135,7 @@ function boardsAllowedTo($permissions, $check_access = true)
 				AND (mods.id_member IS NOT NULL OR bp.id_group != {int:moderator_group})' .
 				($check_access ? ' AND {query_see_board}' : ''),
 			array(
-				'current_member' => we::$id,
+				'current_member' => MID,
 				'group_list' => $groups,
 				'moderator_group' => 3,
 				'permissions' => $permissions,
@@ -1186,7 +1178,7 @@ function boardsAllowedTo($permissions, $check_access = true)
  */
 function showEmailAddress($userProfile_hideEmail, $userProfile_id)
 {
-	return we::$is_guest || we::$user['post_moderated'] ? 'no' : ((we::$is_member && we::$id == $userProfile_id && !$userProfile_hideEmail) || allowedTo('moderate_forum') ? 'yes_permission_override' : ($userProfile_hideEmail ? 'no' : 'no_through_forum'));
+	return we::$is_guest || we::$user['post_moderated'] ? 'no' : ((we::$is_member && MID == $userProfile_id && !$userProfile_hideEmail) || allowedTo('moderate_forum') ? 'yes_permission_override' : ($userProfile_hideEmail ? 'no' : 'no_through_forum'));
 }
 
 /**
@@ -1272,7 +1264,7 @@ function checkUserBehavior()
 				'request_uri' => 'string', 'protocol' => 'string', 'user_agent' => 'string', 'headers' => 'string', 'request_entity' => 'string',
 			),
 			array(
-				we::$id, substr($context['behavior_error'], 6), get_ip_identifier($_SERVER['REMOTE_ADDR']), time(), $_SERVER['REQUEST_METHOD'],
+				MID, substr($context['behavior_error'], 6), get_ip_identifier($_SERVER['REMOTE_ADDR']), time(), $_SERVER['REQUEST_METHOD'],
 				isset($_SERVER['REAL_REQUEST_URI']) ? $_SERVER['REAL_REQUEST_URI'] : $_SERVER['REQUEST_URI'], $_SERVER['SERVER_PROTOCOL'], $context['http_headers']['User-Agent'], $headers, $entity,
 			)
 		);

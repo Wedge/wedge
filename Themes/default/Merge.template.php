@@ -35,7 +35,7 @@ function template_merge_done()
 
 function template_merge()
 {
-	global $context, $txt, $theme;
+	global $context, $txt;
 
 	echo '
 		<div id="merge_topics">
@@ -119,7 +119,7 @@ function template_merge()
 	foreach ($context['topics'] as $topic)
 		echo '
 					<li>
-						<a href="<URL>?topic=', $context['origin_topic'], ';action=mergetopics;sa=options;to=', $topic['id'], ';', $context['session_query'], '"><img src="', $theme['images_url'], '/buttons/merge.gif" alt="', $txt['merge'], '" class="middle"></a>&nbsp;
+						<a href="<URL>?topic=', $context['origin_topic'], ';action=mergetopics;sa=options;to=', $topic['id'], ';', $context['session_query'], '"><img src="', ASSETS, '/buttons/merge.gif" alt="', $txt['merge'], '" class="middle"></a>&nbsp;
 						<a href="<URL>?topic=', $topic['id'], '.0" target="_blank" class="new_win">', $topic['subject'], '</a> ', $txt['started_by'], ' ', $topic['poster']['link'], '
 					</li>';
 

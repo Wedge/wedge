@@ -60,12 +60,8 @@ function template_main()
 
 	// Same thing, this time for changing the theme of everyone.
 	foreach ($context['themes'] as $th)
-	{
-		echo '
-							<option value="', $th['id'], '">', $th['name'], '</option>';
 		if (!empty($th['skins']))
-			echo wedge_show_skins($th, $th['skins']);
-	}
+			echo wedge_show_skins($th['skins']);
 
 	echo '
 						</select>
@@ -178,11 +174,8 @@ function template_guest_selector($is_mobile = false)
 
 	// Put an option for each theme in the select box.
 	foreach ($context['themes'] as $th)
-	{
-		echo '<option value="', $th['id'], '"', $settings['theme_' . $guests] == $th['id'] && $skin == 'skins' ? ' selected' : '', '>', $th['name'], '</option>';
 		if (!empty($th['skins']))
-			echo wedge_show_skins($th, $th['skins'], $settings['theme_' . $guests], $skin);
-	}
+			echo wedge_show_skins($th['skins'], $skin);
 
 	echo '
 						</select>
@@ -254,157 +247,6 @@ function template_list_themes()
 		</form>';
 }
 
-function template_set_settings()
-{
-	global $context, $theme, $txt;
-
-	echo '
-		<form action="<URL>?action=admin;area=theme;sa=settings;th=', $context['theme_settings']['theme_id'], '" method="post" accept-charset="UTF-8">
-			<we:title>
-				<a href="<URL>?action=help;in=theme_settings" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
-				', $txt['theme_settings'], ' - ', $context['theme_settings']['name'], '
-			</we:title>';
-
-	// !!! Why can't I edit the default theme popup.
-	if ($context['theme_settings']['theme_id'] != 1)
-		echo '
-			<we:cat>
-				<img src="', $theme['images_url'], '/icons/config_sm.gif">
-				', $txt['theme_edit'], '
-			</we:cat>
-			<div class="windowbg wrc">
-				<ul class="reset">
-					<li>
-						<a href="<URL>?action=admin;area=theme;th=', $context['theme_settings']['theme_id'], ';', $context['session_query'], ';sa=edit;filename=index.template.php">', $txt['theme_edit_index'], '</a>
-					</li>
-					<li>
-						<a href="<URL>?action=admin;area=theme;th=', $context['theme_settings']['theme_id'], ';', $context['session_query'], ';sa=edit;directory=skins">', $txt['theme_edit_style'], '</a>
-					</li>
-				</ul>
-			</div>';
-
-	echo '
-			<we:cat>
-				<img src="', $theme['images_url'], '/icons/config_sm.gif">
-				', $txt['theme_url_config'], '
-			</we:cat>
-			<div class="windowbg2 wrc">
-				<dl class="settings">
-					<dt>
-						<label for="theme_name">', $txt['actual_theme_name'], '</label>
-					</dt>
-					<dd>
-						<input id="theme_name" name="options[name]" value="', $context['theme_settings']['name'], '" size="32">
-					</dd>
-					<dt>
-						<label for="theme_url">', $txt['actual_theme_url'], '</label>
-					</dt>
-					<dd>
-						<input id="theme_url" name="options[theme_url]" value="', $context['theme_settings']['actual_theme_url'], '" size="50" style="max-width: 100%; width: 50ex">
-					</dd>
-					<dt>
-						<label for="images_url">', $txt['actual_images_url'], '</label>
-					</dt>
-					<dd>
-						<input id="images_url" name="options[images_url]" value="', $context['theme_settings']['actual_images_url'], '" size="50" style="max-width: 100%; width: 50ex">
-					</dd>
-					<dt>
-						<label for="theme_dir">', $txt['actual_theme_dir'], '</label>
-					</dt>
-					<dd>
-						<input id="theme_dir" name="options[theme_dir]" value="', $context['theme_settings']['actual_theme_dir'], '" size="50" style="max-width: 100%; width: 50ex">
-					</dd>
-				</dl>
-			</div>
-			<we:cat>
-				<img src="', $theme['images_url'], '/icons/config_sm.gif">
-				', $txt['theme_options'], '
-			</we:cat>
-			<div class="windowbg wrc">
-				<dl class="settings flow_auto">';
-
-	foreach ($context['settings'] as $setting)
-	{
-		// Is this a separator?
-		if (empty($setting))
-			echo '
-				</dl>
-				<hr>
-				<dl class="settings flow_auto">';
-
-		// A checkbox?
-		elseif ($setting['type'] == 'checkbox')
-		{
-			echo '
-					<dt>
-						<label for="', $setting['id'], '">', $setting['label'], '</label>:';
-
-			if (isset($setting['description']))
-				echo '
-						<dfn>', $setting['description'], '</dfn>';
-
-			echo '
-					</dt>
-					<dd>
-						<input type="hidden" name="', !empty($setting['default']) ? 'default_' : '', 'options[', $setting['id'], ']" value="0">
-						<input type="checkbox" name="', !empty($setting['default']) ? 'default_' : '', 'options[', $setting['id'], ']" id="', $setting['id'], '"', !empty($setting['value']) ? ' checked' : '', ' value="1">
-					</dd>';
-		}
-
-		// A list with options?
-		elseif ($setting['type'] == 'list')
-		{
-			echo '
-					<dt>
-						<label for="', $setting['id'], '">', $setting['label'], '</label>:';
-
-			if (isset($setting['description']))
-				echo '
-						<dfn>', $setting['description'], '</dfn>';
-
-			echo '
-					</dt>
-					<dd>
-						<select name="', !empty($setting['default']) ? 'default_' : '', 'options[', $setting['id'], ']" id="', $setting['id'], '">';
-
-			foreach ($setting['options'] as $value => $label)
-				echo '
-						<option value="', $value, '"', $value == $setting['value'] ? ' selected' : '', '>', $label, '</option>';
-
-			echo '
-						</select>
-					</dd>';
-		}
-
-		// A regular input box, then?
-		else
-		{
-			echo '
-					<dt>
-						<label for="', $setting['id'], '">', $setting['label'], '</label>:';
-
-			if (isset($setting['description']))
-				echo '
-						<dfn>', $setting['description'], '</dfn>';
-
-			echo '
-					</dt>
-					<dd>
-						<input name="', !empty($setting['default']) ? 'default_' : '', 'options[', $setting['id'], ']" id="', $setting['id'], '" value="', $setting['value'], '" size="', $setting['type'] == 'number' ? '5' : (empty($setting['size']) ? '40' : $setting['size']), '">
-					</dd>';
-		}
-	}
-
-	echo '
-				</dl>
-				<div class="right">
-					<input type="submit" name="save" value="', $txt['save'], '" class="save">
-				</div>
-			</div>
-			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-		</form>';
-}
-
 // This template allows for the selection of different themes ;)
 function template_pick()
 {
@@ -466,21 +308,21 @@ function template_pick()
 	</div>';
 }
 
-function template_list_skins(&$th, $theme_id, $theme_url = '', $theme_dir = '', $is_child = false, $alt_level = '')
+function template_list_skins(&$th, $theme_url = '', $theme_dir = '', $is_child = false, $alt_level = '')
 {
-	global $txt, $context, $settings;
+	global $txt, $context;
 
 	if (empty($theme_url))
 	{
-		$theme_dir = $th['theme_dir'];
-		$theme_url = $th['theme_url'];
+		$theme_dir = TEMPLATES_DIR;
+		$theme_url = TEMPLATES;
 	}
 
 	foreach ($th['skins'] as $sty)
 	{
-		$target = $theme_id . '_' . base64_encode($sty['dir']);
+		$target = base64_encode($sty['dir']);
 		$thumbnail_href = file_exists($theme_dir . '/' . $sty['dir'] . '/thumbnail.jpg') ? $theme_url . '/' . $sty['dir'] . '/thumbnail.jpg' : '';
-		$is_current_skin = $context['current_skin'] == $sty['dir'] && ($context['current_theme'] == $theme_id || (empty($context['current_theme']) && $settings['theme_guests'] == $theme_id));
+		$is_current_skin = $context['current_skin'] == $sty['dir'];
 
 		echo '
 				<fieldset class="wrc windowbg', $alt_level, ' clear_right', $is_current_skin ? ' current_skin' : '', '" style="margin: 12px 8px 8px">
@@ -506,7 +348,7 @@ function template_list_skins(&$th, $theme_id, $theme_url = '', $theme_dir = '', 
 					</ul>';
 
 		if (!empty($sty['skins']))
-			template_list_skins($sty, $theme_id, $theme_url, $theme_dir, true, $alt_level ? '' : '2');
+			template_list_skins($sty, $theme_url, $theme_dir, true, $alt_level ? '' : '2');
 
 		echo '
 				</fieldset>';
@@ -525,7 +367,7 @@ function template_installed()
 		</we:cat>
 		<div class="windowbg wrc">
 			<p>
-				<a href="<URL>?action=admin;area=theme;sa=settings;th=', $context['installed_theme']['id'], ';', $context['session_query'], '">', $context['installed_theme']['name'], '</a> ', $txt['theme_installed_message'], '
+				', $context['installed_theme']['name'], ' ', $txt['theme_installed_message'], '
 			</p>
 			<p>
 				<a href="<URL>?action=admin;area=theme;sa=admin;', $context['session_query'], '">', $txt['back'], '</a>

@@ -473,8 +473,7 @@ function ComposeMailing()
 // Send out the mailing!
 function SendMailing($clean_only = false)
 {
-	global $txt, $context;
-	global $scripturl, $settings;
+	global $txt, $context, $boardurl, $settings;
 
 	// How many to send at once? Quantity depends on whether we are queueing or not.
 	$num_at_once = empty($settings['mail_queue']) ? 60 : 1000;
@@ -603,15 +602,15 @@ function SendMailing($clean_only = false)
 	// Replace in all the standard things.
 	$_POST['message'] = str_replace($variables,
 		array(
-			!empty($_POST['send_html']) ? '<a href="' . $scripturl . '">' . $scripturl . '</a>' : $scripturl,
+			!empty($_POST['send_html']) ? '<a href="' . $boardurl . '">' . $boardurl . '</a>' : $boardurl,
 			timeformat(forum_time(), false),
-			!empty($_POST['send_html']) ? '<a href="' . $scripturl . '?action=profile;u=' . $settings['latestMember'] . '">' . $cleanLatestMember . '</a>' : ($context['send_pm'] ? '[url=' . $scripturl . '?action=profile;u=' . $settings['latestMember'] . ']' . $cleanLatestMember . '[/url]' : $cleanLatestMember),
+			!empty($_POST['send_html']) ? '<a href="' . SCRIPT . '?action=profile;u=' . $settings['latestMember'] . '">' . $cleanLatestMember . '</a>' : ($context['send_pm'] ? '[url=' . SCRIPT . '?action=profile;u=' . $settings['latestMember'] . ']' . $cleanLatestMember . '[/url]' : $cleanLatestMember),
 			$settings['latestMember'],
 			$cleanLatestMember
 		), $_POST['message']);
 	$_POST['subject'] = str_replace($variables,
 		array(
-			$scripturl,
+			$boardurl,
 			timeformat(forum_time(), false),
 			$settings['latestRealName'],
 			$settings['latestMember'],
@@ -746,7 +745,7 @@ function SendMailing($clean_only = false)
 			$message = str_replace($from_member,
 				array(
 					$row['email_address'],
-					!empty($_POST['send_html']) ? '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $cleanMemberName . '</a>' : ($context['send_pm'] ? '[url=' . $scripturl . '?action=profile;u=' . $row['id_member'] . ']' . $cleanMemberName . '[/url]' : $cleanMemberName),
+					!empty($_POST['send_html']) ? '<a href="' . SCRIPT . '?action=profile;u=' . $row['id_member'] . '">' . $cleanMemberName . '</a>' : ($context['send_pm'] ? '[url=' . SCRIPT . '?action=profile;u=' . $row['id_member'] . ']' . $cleanMemberName . '[/url]' : $cleanMemberName),
 					$row['id_member'],
 					$cleanMemberName,
 				), $_POST['message']);

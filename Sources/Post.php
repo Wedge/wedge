@@ -65,7 +65,7 @@ if (!defined('WEDGE'))
  */
 function Post($post_errors = array())
 {
-	global $txt, $topic, $settings, $board, $context, $theme, $options;
+	global $txt, $topic, $settings, $board, $context, $options;
 
 	$context['form_fields'] = array(
 		'text' => array('subject', 'icon', 'guestname', 'email', 'evtitle', 'question', 'topic'),
@@ -131,7 +131,7 @@ function Post($post_errors = array())
 			WHERE t.id_topic = {int:current_topic}
 			LIMIT 1',
 			array(
-				'current_member' => we::$id,
+				'current_member' => MID,
 				'current_topic' => $topic,
 			)
 		);
@@ -153,7 +153,7 @@ function Post($post_errors = array())
 
 			// By default the reply will be approved...
 			$context['becomes_approved'] = true;
-			if ($id_member_poster != we::$id)
+			if ($id_member_poster != MID)
 				isAllowedTo('post_reply_any');
 			elseif (!allowedTo('post_reply_any'))
 				isAllowedTo('post_reply_own');
@@ -161,7 +161,7 @@ function Post($post_errors = array())
 		else
 			$context['becomes_approved'] = true;
 
-		$context['can_lock'] = allowedTo('lock_any') || (we::$id == $id_member_poster && allowedTo('lock_own'));
+		$context['can_lock'] = allowedTo('lock_any') || (MID == $id_member_poster && allowedTo('lock_own'));
 		$context['can_pin'] = allowedTo('pin_topic');
 
 		$context['notify'] = !empty($context['notify']);
@@ -210,7 +210,7 @@ function Post($post_errors = array())
 		if (empty($topic))
 			isAllowedTo('poll_post');
 		// This is an old topic - but it is yours! Can you add to it?
-		elseif (we::$id == $id_member_poster && !allowedTo('poll_add_any'))
+		elseif (MID == $id_member_poster && !allowedTo('poll_add_any'))
 			isAllowedTo('poll_add_own');
 		// If you're not the owner, can you add to any poll?
 		else
@@ -507,23 +507,23 @@ function Post($post_errors = array())
 				$attachment_stuff[] = $row2;
 			wesql::free_result($request);
 
-			if ($row['id_member'] == we::$id && !allowedTo('modify_any'))
+			if ($row['id_member'] == MID && !allowedTo('modify_any'))
 			{
 				// Give an extra five minutes over the disable time threshold, so they can type - assuming the post is public.
 				if ($row['approved'] && !empty($settings['edit_disable_time']) && $row['poster_time'] + ($settings['edit_disable_time'] + 5) * 60 < time())
 					fatal_lang_error('modify_post_time_passed', false);
-				elseif ($row['id_member_poster'] == we::$id && !allowedTo('modify_own'))
+				elseif ($row['id_member_poster'] == MID && !allowedTo('modify_own'))
 					isAllowedTo('modify_replies');
 				else
 					isAllowedTo('modify_own');
 			}
-			elseif ($row['id_member_poster'] == we::$id && !allowedTo('modify_any'))
+			elseif ($row['id_member_poster'] == MID && !allowedTo('modify_any'))
 				isAllowedTo('modify_replies');
 			else
 				isAllowedTo('modify_any');
 
 			// Hmm. What about if this message was previously modified and not by us?
-			if (!empty($row['modified_member']) && $row['modified_member'] != we::$id && empty($settings['allow_non_mod_edit']) && !allowedTo('moderate_board'))
+			if (!empty($row['modified_member']) && $row['modified_member'] != MID && empty($settings['allow_non_mod_edit']) && !allowedTo('moderate_board'))
 				fatal_lang_error('cannot_modify_mod_post', false);
 
 			if (!empty($settings['attachmentEnable']))
@@ -607,17 +607,17 @@ function Post($post_errors = array())
 			$attachment_stuff[] = $row2;
 		wesql::free_result($request);
 
-		if ($row['id_member'] == we::$id && !allowedTo('modify_any'))
+		if ($row['id_member'] == MID && !allowedTo('modify_any'))
 		{
 			// Give an extra five minutes over the disable time threshold, so they can type - assuming the post is public.
 			if ($row['approved'] && !empty($settings['edit_disable_time']) && $row['poster_time'] + ($settings['edit_disable_time'] + 5) * 60 < time())
 				fatal_lang_error('modify_post_time_passed', false);
-			elseif ($row['id_member_poster'] == we::$id && !allowedTo('modify_own'))
+			elseif ($row['id_member_poster'] == MID && !allowedTo('modify_own'))
 				isAllowedTo('modify_replies');
 			else
 				isAllowedTo('modify_own');
 		}
-		elseif ($row['id_member_poster'] == we::$id && !allowedTo('modify_any'))
+		elseif ($row['id_member_poster'] == MID && !allowedTo('modify_any'))
 			isAllowedTo('modify_replies');
 		else
 			isAllowedTo('modify_any');
@@ -804,7 +804,7 @@ function Post($post_errors = array())
 			{
 				$temp_start++;
 
-				if (preg_match('~^post_tmp_' . we::$id . '_\d+$~', $attachID) == 0)
+				if (preg_match('~^post_tmp_' . MID . '_\d+$~', $attachID) == 0)
 				{
 					unset($_SESSION['temp_attachments'][$attachID]);
 					continue;
@@ -895,7 +895,7 @@ function Post($post_errors = array())
 				if (!is_writable($current_attach_dir))
 					fatal_lang_error('attachments_no_write', 'critical');
 
-				$attachID = 'post_tmp_' . we::$id . '_' . $temp_start++;
+				$attachID = 'post_tmp_' . MID . '_' . $temp_start++;
 				$_SESSION['temp_attachments'][$attachID] = basename($_FILES['attachment']['name'][$n]);
 				$context['current_attachments'][$attachID] = array('name' => htmlspecialchars(basename($_FILES['attachment']['name'][$n])));
 
@@ -954,7 +954,7 @@ function Post($post_errors = array())
 
 	// Hang on, we might be loading a draft.
 	$_REQUEST['draft_id'] = isset($_REQUEST['draft_id']) ? (int) $_REQUEST['draft_id'] : 0;
-	if (!empty($_REQUEST['draft_id']) && !empty(we::$id) && allowedTo('save_post_draft') && empty($_POST['subject']) && empty($_POST['message']))
+	if (!empty($_REQUEST['draft_id']) && MID && allowedTo('save_post_draft') && empty($_POST['subject']) && empty($_POST['message']))
 	{
 		$query = wesql::query('
 			SELECT subject, body, extra
@@ -965,7 +965,7 @@ function Post($post_errors = array())
 			LIMIT 1',
 			array(
 				'draft' => $_REQUEST['draft_id'],
-				'member' => we::$id,
+				'member' => MID,
 				'not_pm' => 0,
 			)
 		);
@@ -1038,7 +1038,7 @@ function Post($post_errors = array())
 	}
 	if (empty($context['icon_url']))
 	{
-		$context['icon_url'] = $theme[file_exists($theme['theme_dir'] . '/images/post/' . $context['icon'] . '.gif') ? 'images_url' : 'default_images_url'] . '/post/' . $context['icon'] . '.gif';
+		$context['icon_url'] = ASSETS . '/post/' . $context['icon'] . '.gif';
 		array_unshift($context['icons'], array(
 			'value' => $context['icon'],
 			'name' => $txt['current_icon'],

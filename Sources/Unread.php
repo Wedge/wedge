@@ -13,7 +13,7 @@ if (!defined('WEDGE'))
 
 function Unread()
 {
-	global $board, $txt, $context, $theme, $settings, $options;
+	global $board, $txt, $context, $settings, $options;
 
 	// Guests can't have unread things, we don't know anything about them.
 	is_not_guest();
@@ -211,12 +211,6 @@ function Unread()
 	loadTemplate('Recent');
 	wetem::load('unread');
 
-	// Setup the default topic icons... for checking they exist and the like ;)
-	$stable_icons = stable_icons();
-	$context['icon_sources'] = array();
-	foreach ($stable_icons as $icon)
-		$context['icon_sources'][$icon] = 'images_url';
-
 	// This part is the same for each query.
 	$select_clause = '
 				ms.subject AS first_subject, ms.poster_time AS first_poster_time, ms.id_topic, t.id_board, b.name AS bname,
@@ -236,7 +230,7 @@ function Unread()
 				AND id_board = {int:current_board}',
 			array(
 				'current_board' => $board,
-				'current_member' => we::$id,
+				'current_member' => MID,
 			)
 		);
 		list ($earliest_msg) = wesql::fetch_row($request);
@@ -250,7 +244,7 @@ function Unread()
 				LEFT JOIN {db_prefix}log_mark_read AS lmr ON (lmr.id_board = b.id_board AND lmr.id_member = {int:current_member})
 			WHERE {query_see_board}',
 			array(
-				'current_member' => we::$id,
+				'current_member' => MID,
 			)
 		);
 		list ($earliest_msg) = wesql::fetch_row($request);
@@ -273,7 +267,7 @@ function Unread()
 				FROM {db_prefix}log_topics
 				WHERE id_member = {int:current_member}',
 				array(
-					'current_member' => we::$id,
+					'current_member' => MID,
 				)
 			);
 			list ($earliest_msg2) = wesql::fetch_row($request);
@@ -312,7 +306,7 @@ function Unread()
 				AND t.id_last_msg > {int:earliest_msg}') . '
 				AND {query_see_topic}',
 			array_merge($query_parameters, array(
-				'current_member' => we::$id,
+				'current_member' => MID,
 				'earliest_msg' => !empty($earliest_msg) ? $earliest_msg : 0,
 				'db_error_skip' => true,
 			))
@@ -333,7 +327,7 @@ function Unread()
 				AND IFNULL(lt.id_msg, IFNULL(lmr.id_msg, 0)) < t.id_last_msg
 				AND {query_see_topic}',
 			array_merge($query_parameters, array(
-				'current_member' => we::$id,
+				'current_member' => MID,
 				'earliest_msg' => !empty($earliest_msg) ? $earliest_msg : 0,
 			))
 		);
@@ -382,7 +376,7 @@ function Unread()
 			ORDER BY {raw:sort}
 			LIMIT {int:offset}, {int:limit}',
 			array_merge($query_parameters, array(
-				'current_member' => we::$id,
+				'current_member' => MID,
 				'min_message' => $min_message,
 				'is_approved' => 1,
 				'sort' => $_REQUEST['sort'] . ($ascending ? '' : ' DESC'),
@@ -404,7 +398,7 @@ function Unread()
 				AND IFNULL(lt.id_msg, IFNULL(lmr.id_msg, 0)) < t.id_last_msg
 				AND {query_see_topic}',
 			array_merge($query_parameters, array(
-				'current_member' => we::$id,
+				'current_member' => MID,
 				'earliest_msg' => !empty($earliest_msg) ? $earliest_msg : 0,
 				'id_msg_last_visit' => $_SESSION['id_msg_last_visit'],
 			))
@@ -455,7 +449,7 @@ function Unread()
 			ORDER BY {raw:order}
 			LIMIT {int:offset}, {int:limit}',
 			array_merge($query_parameters, array(
-				'current_member' => we::$id,
+				'current_member' => MID,
 				'min_message' => $min_message,
 				'is_approved' => 1,
 				'order' => $_REQUEST['sort'] . ($ascending ? '' : ' DESC'),
@@ -541,17 +535,6 @@ function Unread()
 		else
 			$pages = '';
 
-		// We need to check the topic icons exist... you can never be too sure!
-		if (!empty($settings['messageIconChecks_enable']))
-		{
-			// First icon first... as you'd expect.
-			if (!isset($context['icon_sources'][$row['first_icon']]))
-				$context['icon_sources'][$row['first_icon']] = file_exists($theme['theme_dir'] . '/images/post/' . $row['first_icon'] . '.gif') ? 'images_url' : 'default_images_url';
-			// Last icon... last... duh.
-			if (!isset($context['icon_sources'][$row['last_icon']]))
-				$context['icon_sources'][$row['last_icon']] = file_exists($theme['theme_dir'] . '/images/post/' . $row['last_icon'] . '.gif') ? 'images_url' : 'default_images_url';
-		}
-
 		$no_replies = $row['num_replies'] == 0;
 
 		// And build the array.
@@ -570,7 +553,7 @@ function Unread()
 				'subject' => $row['first_subject'],
 				'preview' => $row['first_body'],
 				'icon' => $row['first_icon'],
-				'icon_url' => $theme[$context['icon_sources'][$row['first_icon']]] . '/post/' . $row['first_icon'] . '.gif',
+				'icon_url' => ASSETS . '/post/' . $row['first_icon'] . '.gif',
 				'href' => '<URL>?topic=' . $row['id_topic'] . '.0;seen',
 				'link' => '<a href="<URL>?topic=' . $row['id_topic'] . '.0;seen">' . $row['first_subject'] . '</a>'
 			),
@@ -587,7 +570,7 @@ function Unread()
 				'subject' => $row['last_subject'],
 				'preview' => $row['last_body'],
 				'icon' => $row['last_icon'],
-				'icon_url' => $theme[$context['icon_sources'][$row['last_icon']]] . '/post/' . $row['last_icon'] . '.gif',
+				'icon_url' => ASSETS . '/post/' . $row['last_icon'] . '.gif',
 				'href' => '<URL>?topic=' . $row['id_topic'] . ($no_replies ? '.0;seen' : '.msg' . $row['id_last_msg'] . ';seen#new'),
 				'link' => '<a href="<URL>?topic=' . $row['id_topic'] . ($no_replies ? '.0;seen' : '.msg' . $row['id_last_msg'] . ';seen#new') . '">' . $row['last_subject'] . '</a>'
 			),
@@ -599,7 +582,7 @@ function Unread()
 			'is_poll' => $row['id_poll'] > 0,
 			'is_posted_in' => false,
 			'icon' => $row['first_icon'],
-			'icon_url' => $theme[$context['icon_sources'][$row['first_icon']]] . '/post/' . $row['first_icon'] . '.gif',
+			'icon_url' => ASSETS . '/post/' . $row['first_icon'] . '.gif',
 			'subject' => $row['first_subject'],
 			'pages' => $pages,
 			'replies' => comma_format($row['num_replies']),
@@ -628,7 +611,7 @@ function Unread()
 			GROUP BY id_topic
 			LIMIT ' . count($topic_ids),
 			array(
-				'current_member' => we::$id,
+				'current_member' => MID,
 				'topic_list' => $topic_ids,
 			)
 		);

@@ -775,7 +775,7 @@ function aeva_admin_maintenance_prune()
 			'type' => 'prune',
 			'subtype' => 'item',
 			'action_by' => array(
-				'id' => we::$id,
+				'id' => MID,
 				'name' => we::$user['name'],
 			),
 			'extra_info' => array(
@@ -831,7 +831,7 @@ function aeva_admin_maintenance_prune()
 			'type' => 'prune',
 			'subtype' => 'comment',
 			'action_by' => array(
-				'id' => we::$id,
+				'id' => MID,
 				'name' => we::$user['name'],
 			),
 			'extra' => array(
@@ -1370,7 +1370,7 @@ function aeva_admin_bans_add()
 				'name' => $mems,
 			),
 			'action_by' => array(
-				'id' => we::$id,
+				'id' => MID,
 				'name' => we::$user['name'],
 			),
 			'extra_info' => array(
@@ -1422,7 +1422,7 @@ function aeva_admin_bans_delete()
 			'name' => $mem_name,
 		),
 		'action_by' => array(
-			'id' => we::$id,
+			'id' => MID,
 			'name' => we::$user['name'],
 		),
 		'extra_info' => array(

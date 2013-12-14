@@ -36,7 +36,7 @@ function template_aeva_admin_enclose_table_after()
 
 function template_aeva_admin_submissions()
 {
-	global $context, $txt, $galurl, $theme, $amSettings;
+	global $context, $txt, $galurl, $amSettings;
 
 	$filter = $context['aeva_filter'];
 
@@ -76,10 +76,10 @@ function template_aeva_admin_submissions()
 					<td><a href="', $item['item_link'], '">', $item['title'], '</a></td>
 					<td>', $item['poster'], '</td>
 					<td>
-						<img src="', $theme['images_aeva'], '/tick.png" title="', $txt['media_admin_approve'], '"> <a href="#" onclick="return doSubAction(\'<URL>?action=media;area=moderate;sa=submissions;do=approve;in=', $item['id'], ';type=', $filter, ';', $context['session_query'], '\');">', $txt['media_admin_approve'], '</a>
-						<img src="', $theme['images_aeva'], '/folder_edit.png" title="', $txt['media_admin_edit'], '"> <a href="', $item['edit_link'], '">', $txt['media_admin_edit'], '</a>
-						<img src="', $theme['images_aeva'], '/folder_delete.png" title="', $txt['media_admin_delete'], '"> <a href="#" onclick="return ask(we_confirm, e) && doSubAction(\'', $item['del_link'], '\');">', $txt['media_admin_delete'], '</a>', $filter == 'items' ? '
-						<a href="' . $galurl . 'sa=media;in=' . $item['id'] . ';preview"' . ($amSettings['use_zoom'] ? ' class="zoom"' : '') . '><img src="' . $theme['images_aeva'] . '/magnifier.png"> ' . $txt['media_admin_view_image'] . '</a>' : '', '
+						<img src="', ASSETS, '/aeva/tick.png" title="', $txt['media_admin_approve'], '"> <a href="#" onclick="return doSubAction(\'<URL>?action=media;area=moderate;sa=submissions;do=approve;in=', $item['id'], ';type=', $filter, ';', $context['session_query'], '\');">', $txt['media_admin_approve'], '</a>
+						<img src="', ASSETS, '/aeva/folder_edit.png" title="', $txt['media_admin_edit'], '"> <a href="', $item['edit_link'], '">', $txt['media_admin_edit'], '</a>
+						<img src="', ASSETS, '/aeva/folder_delete.png" title="', $txt['media_admin_delete'], '"> <a href="#" onclick="return ask(we_confirm, e) && doSubAction(\'', $item['del_link'], '\');">', $txt['media_admin_delete'], '</a>', $filter == 'items' ? '
+						<a href="' . $galurl . 'sa=media;in=' . $item['id'] . ';preview"' . ($amSettings['use_zoom'] ? ' class="zoom"' : '') . '><img src="' . ASSETS . '/aeva/magnifier.png"> ' . $txt['media_admin_view_image'] . '</a>' : '', '
 					</td>', $filter != 'albums' ? '
 					<td>' . $item['posted_on'] . '</td>' : '', '
 					<td><input type="checkbox" name="items[]" value="', $item['id'], '" id="items[]"></td>
@@ -674,7 +674,7 @@ function template_aeva_admin_fields()
 // FTP Import template
 function template_aeva_admin_ftpimport()
 {
-	global $context, $txt, $theme;
+	global $context, $txt;
 
 	$albumOpts_str = '
 	<option class="hr"></option>';
@@ -711,7 +711,7 @@ function template_aeva_admin_ftpimport()
 		echo '
 			<tr>
 				<td class="windowbg2 smalltext" style="padding-left: ', (30 * $context['ftp_map'][$folder]['child_level']), 'px">
-					&nbsp;<img src="', $theme['images_aeva'], '/album.png"> ', $context['ftp_map'][$folder]['fname'], ' (', count($context['ftp_map'][$folder]['files']), ' ', $txt['media_files'], ')
+					&nbsp;<img src="', ASSETS, '/aeva/album.png"> ', $context['ftp_map'][$folder]['fname'], ' (', count($context['ftp_map'][$folder]['files']), ' ', $txt['media_files'], ')
 					&nbsp;<select name="aeva_folder_', $folder, '">', $albumOpts_str, '</select>
 				</td>
 			</tr>';

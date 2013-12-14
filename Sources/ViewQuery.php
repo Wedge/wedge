@@ -127,7 +127,7 @@ function ViewQuery()
 
 		echo '
 	<div id="qq', $q, '" style="margin-bottom: 2ex">
-		<strong>', $is_select_query ? '<a href="<URL>?action=viewquery;qq=' . ($q + 1) . '#qq' . $q . '">' : '', '
+		<strong>', $is_select_query ? '<a href="' . SCRIPT . '?action=viewquery;qq=' . ($q + 1) . '#qq' . $q . '">' : '', '
 			<strong>', westr::nl2br(str_replace("\t", '&nbsp;&nbsp;&nbsp;', htmlspecialchars($query_data['q']))), '</strong>
 		', $is_select_query ? '</a>' : '', '</strong>
 		<br>';

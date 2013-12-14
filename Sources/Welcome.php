@@ -118,7 +118,7 @@ function Welcome()
 		WHERE {query_see_thought}
 		ORDER BY h.id_thought DESC LIMIT ' . ($page * 30) . ', ' . $limit,
 		array(
-			'me' => we::$id
+			'me' => MID
 		)
 	);
 	$is_touch = we::is('android,ios');

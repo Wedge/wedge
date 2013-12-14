@@ -33,7 +33,7 @@ if (!defined('WEDGE'))
 // Turn on/off notifications...
 function Notify()
 {
-	global $scripturl, $txt, $topic, $context;
+	global $txt, $topic, $context;
 
 	// Make sure they aren't a guest or something - guests can't really receive notifications!
 	is_not_guest();
@@ -57,7 +57,7 @@ function Notify()
 				AND id_topic = {int:current_topic}
 			LIMIT 1',
 			array(
-				'current_member' => we::$id,
+				'current_member' => MID,
 				'current_topic' => $topic,
 			)
 		);
@@ -65,7 +65,7 @@ function Notify()
 		wesql::free_result($request);
 
 		// Set the template variables...
-		$context['topic_href'] = $scripturl . '?topic=' . $topic . '.' . $_REQUEST['start'];
+		$context['topic_href'] = SCRIPT . '?topic=' . $topic . '.' . $_REQUEST['start'];
 		$context['start'] = $_REQUEST['start'];
 		$context['page_title'] = $txt['notification'];
 
@@ -79,7 +79,7 @@ function Notify()
 		wesql::insert('ignore',
 			'{db_prefix}log_notify',
 			array('id_member' => 'int', 'id_topic' => 'int'),
-			array(we::$id, $topic)
+			array(MID, $topic)
 		);
 	}
 	else
@@ -92,7 +92,7 @@ function Notify()
 			WHERE id_member = {int:current_member}
 				AND id_topic = {int:current_topic}',
 			array(
-				'current_member' => we::$id,
+				'current_member' => MID,
 				'current_topic' => $topic,
 			)
 		);
@@ -104,7 +104,7 @@ function Notify()
 
 function BoardNotify()
 {
-	global $scripturl, $txt, $board, $context;
+	global $txt, $board, $context;
 
 	// Permissions are an important part of anything ;).
 	is_not_guest();
@@ -129,14 +129,14 @@ function BoardNotify()
 			LIMIT 1',
 			array(
 				'current_board' => $board,
-				'current_member' => we::$id,
+				'current_member' => MID,
 			)
 		);
 		$context['notification_set'] = wesql::num_rows($request) != 0;
 		wesql::free_result($request);
 
 		// Set the template variables...
-		$context['board_href'] = $scripturl . '?board=' . $board . '.' . $_REQUEST['start'];
+		$context['board_href'] = SCRIPT . '?board=' . $board . '.' . $_REQUEST['start'];
 		$context['start'] = $_REQUEST['start'];
 		$context['page_title'] = $txt['notification'];
 		wetem::load('notify_board');
@@ -152,7 +152,7 @@ function BoardNotify()
 		wesql::insert('ignore',
 			'{db_prefix}log_notify',
 			array('id_member' => 'int', 'id_board' => 'int'),
-			array(we::$id, $board)
+			array(MID, $board)
 		);
 	}
 	// ...or off?
@@ -167,7 +167,7 @@ function BoardNotify()
 				AND id_board = {int:current_board}',
 			array(
 				'current_board' => $board,
-				'current_member' => we::$id,
+				'current_member' => MID,
 			)
 		);
 	}

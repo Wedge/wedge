@@ -77,7 +77,7 @@ function MergeTopics()
 // Merge two topics together.
 function MergeIndex()
 {
-	global $txt, $board, $topic, $context, $scripturl, $settings;
+	global $txt, $board, $topic, $context, $settings;
 
 	if (!isset($topic))
 		fatal_lang_error('no_access', false);
@@ -204,7 +204,7 @@ function MergeIndex()
 			'poster' => array(
 				'id' => $row['id_member'],
 				'name' => $row['poster_name'],
-				'href' => empty($row['id_member']) ? '' : $scripturl . '?action=profile;u=' . $row['id_member'],
+				'href' => empty($row['id_member']) ? '' : SCRIPT . '?action=profile;u=' . $row['id_member'],
 				'link' => empty($row['id_member']) ? $row['poster_name'] : '<a href="<URL>?action=profile;u=' . $row['id_member'] . '" target="_blank" class="new_win">' . $row['poster_name'] . '</a>'
 			),
 			'subject' => $row['subject'],
@@ -222,7 +222,7 @@ function MergeIndex()
 // Now that the topic IDs are known, do the proper merging.
 function MergeExecute($topics = array())
 {
-	global $txt, $context, $scripturl, $settings, $topic;
+	global $txt, $context, $settings, $topic;
 
 	// Check the session.
 	checkSession('request');
@@ -306,13 +306,13 @@ function MergeExecute($topics = array())
 			'started' => array(
 				'time' => timeformat($row['time_started']),
 				'timestamp' => forum_time(true, $row['time_started']),
-				'href' => empty($row['id_member_started']) ? '' : $scripturl . '?action=profile;u=' . $row['id_member_started'],
+				'href' => empty($row['id_member_started']) ? '' : SCRIPT . '?action=profile;u=' . $row['id_member_started'],
 				'link' => empty($row['id_member_started']) ? $row['name_started'] : '<a href="<URL>?action=profile;u=' . $row['id_member_started'] . '">' . $row['name_started'] . '</a>'
 			),
 			'updated' => array(
 				'time' => timeformat($row['time_updated']),
 				'timestamp' => forum_time(true, $row['time_updated']),
-				'href' => empty($row['id_member_updated']) ? '' : $scripturl . '?action=profile;u=' . $row['id_member_updated'],
+				'href' => empty($row['id_member_updated']) ? '' : SCRIPT . '?action=profile;u=' . $row['id_member_updated'],
 				'link' => empty($row['id_member_updated']) ? $row['name_updated'] : '<a href="<URL>?action=profile;u=' . $row['id_member_updated'] . '">' . $row['name_updated'] . '</a>'
 			)
 		);
@@ -883,9 +883,9 @@ function MergePosts($error_report = true)
 			return;
 	}
 
-	if (((!empty($msn['0']['id_member']) && !empty($msn['1']['id_member'])) || we::$id == 1) && $msn['0']['id_board'] == $msn['1']['id_board'])
+	if (((!empty($msn['0']['id_member']) && !empty($msn['1']['id_member'])) || MID == 1) && $msn['0']['id_board'] == $msn['1']['id_board'])
 	{
-		if ($msn['0']['common_id'] == $msn['1']['common_id'] && (allowedTo('modify_any') || (allowedTo('modify_own') && $msn['0']['id_member'] == we::$id)))
+		if ($msn['0']['common_id'] == $msn['1']['common_id'] && (allowedTo('modify_any') || (allowedTo('modify_own') && $msn['0']['id_member'] == MID)))
 		{
 			// Let's merge it and use a separator
 			if (!empty($settings['merge_post_custom_separator']))

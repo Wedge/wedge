@@ -308,7 +308,7 @@ class westr extends westr_mb
 	 */
 	static function cut($string, $max_length = 255, $check_multibyte = true, $cut_long_words = true, $ellipsis = true, $preparse = false, $hard_limit = 0)
 	{
-		global $entities, $replace_counter, $context;
+		global $entities, $replace_counter;
 		static $test_mb = false, $strlen;
 
 		if (empty($string))

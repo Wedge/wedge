@@ -1448,7 +1448,7 @@ function Search2()
 				GROUP BY id_topic
 				LIMIT ' . count($participants),
 				array(
-					'current_member' => we::$id,
+					'current_member' => MID,
 					'topic_list' => array_keys($participants),
 				)
 			);
@@ -1463,15 +1463,9 @@ function Search2()
 
 	// Consider the search complete!
 	if (!empty($settings['cache_enable']) && $settings['cache_enable'] >= 2)
-		cache_put_data('search_start:' . (we::$is_guest ? we::$user['ip'] : we::$id), null, 90);
+		cache_put_data('search_start:' . (we::$is_guest ? we::$user['ip'] : MID), null, 90);
 
 	$context['key_words'] =& $searchArray;
-
-	// Setup the default topic icons... for checking they exist and the like!
-	$stable_icons = stable_icons();
-	$context['icon_sources'] = array();
-	foreach ($stable_icons as $icon)
-		$context['icon_sources'][$icon] = 'images_url';
 
 	loadTemplate('Search');
 	wetem::load('results');
@@ -1484,7 +1478,7 @@ function Search2()
 // !!! Fix this, update it, whatever... from Display.php mainly.
 function prepareSearchContext($reset = false)
 {
-	global $txt, $settings, $context, $theme;
+	global $txt, $settings, $context;
 	global $memberContext, $messages_request;
 	global $boards_can, $participants;
 
@@ -1585,32 +1579,12 @@ function prepareSearchContext($reset = false)
 	// Make sure we don't end up with a practically empty message body.
 	$message['body'] = preg_replace('~^(?:&nbsp;)+$~', '', $message['body']);
 
-	// Sadly, we need to check the icon ain't broke.
-	if (!empty($settings['messageIconChecks_enable']))
-	{
-		if (!isset($context['icon_sources'][$message['first_icon']]))
-			$context['icon_sources'][$message['first_icon']] = file_exists($theme['theme_dir'] . '/images/post/' . $message['first_icon'] . '.gif') ? 'images_url' : 'default_images_url';
-		if (!isset($context['icon_sources'][$message['last_icon']]))
-			$context['icon_sources'][$message['last_icon']] = file_exists($theme['theme_dir'] . '/images/post/' . $message['last_icon'] . '.gif') ? 'images_url' : 'default_images_url';
-		if (!isset($context['icon_sources'][$message['icon']]))
-			$context['icon_sources'][$message['icon']] = file_exists($theme['theme_dir'] . '/images/post/' . $message['icon'] . '.gif') ? 'images_url' : 'default_images_url';
-	}
-	else
-	{
-		if (!isset($context['icon_sources'][$message['first_icon']]))
-			$context['icon_sources'][$message['first_icon']] = 'images_url';
-		if (!isset($context['icon_sources'][$message['last_icon']]))
-			$context['icon_sources'][$message['last_icon']] = 'images_url';
-		if (!isset($context['icon_sources'][$message['icon']]))
-			$context['icon_sources'][$message['icon']] = 'images_url';
-	}
-
 	// Do we have quote tag enabled?
 	$quote_enabled = empty($settings['disabledBBC']) || !in_array('quote', explode(',', $settings['disabledBBC']));
 
 	$body_highlighted = $message['body'];
 	$subject_highlighted = $message['subject'];
-	$started = $message['first_member_id'] == we::$id;
+	$started = $message['first_member_id'] == MID;
 	$id_board = $message['id_board'];
 
 	$output = array_merge($context['topics'][$message['id_msg']], array(
@@ -1670,7 +1644,7 @@ function prepareSearchContext($reset = false)
 		'alternate' => $counter % 2,
 		'member' => &$memberContext[$message['id_member']],
 		'icon' => $message['icon'],
-		'icon_url' => $theme[$context['icon_sources'][$message['icon']]] . '/post/' . $message['icon'] . '.gif',
+		'icon_url' => ASSETS . '/post/' . $message['icon'] . '.gif',
 		'subject' => $message['subject'],
 		'subject_highlighted' => $subject_highlighted,
 		'on_time' => on_timeformat($message['poster_time']),

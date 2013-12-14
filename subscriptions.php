@@ -163,7 +163,7 @@ if ($gatewayClass->isRefund())
 			'SUBSCRNAME' => $subscription_info['name'],
 			'REFUNDNAME' => $member_info['member_name'],
 			'REFUNDUSER' => $member_info['real_name'],
-			'PROFILELINK' => $scripturl . '?action=profile;u=' . $member_id,
+			'PROFILELINK' => SCRIPT . '?action=profile;u=' . $member_id,
 			'DATE' => timeformat(time(), false),
 		);
 
@@ -249,7 +249,7 @@ elseif ($gatewayClass->isPayment() || $gatewayClass->isSubscription())
 			'SUBUSER' => $member_info['real_name'],
 			'SUBEMAIL' => $member_info['email_address'],
 			'PRICE' => sprintf($settings['paid_currency_symbol'], $total_cost),
-			'PROFILELINK' => $scripturl . '?action=profile;u=' . $member_id,
+			'PROFILELINK' => SCRIPT . '?action=profile;u=' . $member_id,
 			'DATE' => timeformat(time(), false),
 		);
 

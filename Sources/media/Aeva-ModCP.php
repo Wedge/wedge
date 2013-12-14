@@ -193,7 +193,7 @@ function aeva_modCP_submissions_approve()
 					'name' => $name,
 				),
 				'action_by' => array(
-					'id' => we::$id,
+					'id' => MID,
 					'name' => we::$user['name'],
 				),
 				'extra_info' => array(
@@ -256,7 +256,7 @@ function aeva_modCP_submissions_approve()
 					'name' => $name,
 				),
 				'action_by' => array(
-					'id' => we::$id,
+					'id' => MID,
 					'name' => we::$user['name'],
 				),
 				'extra_info' => array(
@@ -320,7 +320,7 @@ function aeva_modCP_submissions_approve()
 					'name' => $name,
 				),
 				'action_by' => array(
-					'id' => we::$id,
+					'id' => MID,
 					'name' => we::$user['name'],
 				),
 				'extra_info' => array(
@@ -386,7 +386,7 @@ function aeva_modCP_submissions_delete()
 				'name' => $row['title'],
 			),
 			'action_by' => array(
-				'id' => we::$id,
+				'id' => MID,
 				'name' => we::$user['name'],
 			),
 			'extra_info' => array(
@@ -529,7 +529,7 @@ function aeva_modCP_reports_delete()
 			'name' => $report['val5'],
 		),
 		'action_by' => array(
-			'id' => we::$id,
+			'id' => MID,
 			'name' => we::$user['name'],
 		),
 		'extra_info' => array(
@@ -572,7 +572,7 @@ function aeva_modCP_reports_deleteItem()
 			'name' => $report['val5'],
 		),
 		'action_by' => array(
-			'id' => we::$id,
+			'id' => MID,
 			'name' => we::$user['name'],
 		),
 		'extra_info' => array(

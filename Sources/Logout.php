@@ -49,7 +49,7 @@ function Logout($internal = false, $redirect = true)
 			DELETE FROM {db_prefix}log_online
 			WHERE id_member = {int:current_member}',
 			array(
-				'current_member' => we::$id,
+				'current_member' => MID,
 			)
 		);
 	}

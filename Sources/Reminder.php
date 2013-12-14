@@ -58,7 +58,7 @@ function RemindMe()
 // Pick a reminder type.
 function RemindPick()
 {
-	global $context, $txt, $scripturl, $webmaster_email, $settings;
+	global $context, $txt, $webmaster_email, $settings;
 
 	checkSession();
 
@@ -119,9 +119,9 @@ function RemindPick()
 	{
 		// Awaiting approval...
 		if (trim($row['validation_code']) == '')
-			fatal_lang_error('registration_not_approved', false, array($scripturl . '?action=activate;user=' . $_POST['user']));
+			fatal_lang_error('registration_not_approved', false, array(SCRIPT . '?action=activate;user=' . $_POST['user']));
 		else
-			fatal_lang_error('registration_not_activated', false, array($scripturl . '?action=activate;user=' . $_POST['user']));
+			fatal_lang_error('registration_not_activated', false, array(SCRIPT . '?action=activate;user=' . $_POST['user']));
 	}
 
 	// You can't get emailed if you have no email address.
@@ -139,7 +139,7 @@ function RemindPick()
 
 		$replacements = array(
 			'REALNAME' => $row['real_name'],
-			'REMINDLINK' => $scripturl . '?action=reminder;sa=setpassword;u=' . $row['id_member'] . ';code=' . $password,
+			'REMINDLINK' => SCRIPT . '?action=reminder;sa=setpassword;u=' . $row['id_member'] . ';code=' . $password,
 			'IP' => format_ip(we::$user['ip']),
 			'USERNAME' => $row['member_name'],
 		);

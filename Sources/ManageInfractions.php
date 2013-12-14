@@ -652,7 +652,7 @@ function get_validated_infraction_log($memID, $keep_all = true)
 					$context['current_sanctions'][$sanction] = $context['infraction_log'][$row['id_issue']]['expire_date'];
 			}
 
-			$context['infraction_log'][$row['id_issue']]['can_revoke'] = $context['revoke_any'] || ($context['revoke_own'] && $row['issued_by'] == we::$id);
+			$context['infraction_log'][$row['id_issue']]['can_revoke'] = $context['revoke_any'] || ($context['revoke_own'] && $row['issued_by'] == MID);
 		}
 
 		// We might only want active warnings.
@@ -679,7 +679,7 @@ function get_validated_infraction_log($memID, $keep_all = true)
 				$context['current_sanctions_levels'][$infraction] = true;
 
 	// There are certain things we do not wish to... let slip.
-	if ($memID == we::$id)
+	if ($memID == MID)
 	{
 		unset($context['current_sanctions']['soft_ban'], $context['current_sanctions_levels']['soft_ban']);
 		$context['can_issue_warning'] = false;

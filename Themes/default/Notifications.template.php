@@ -53,7 +53,7 @@ function template_notifications_list()
 
 function template_notification_subs_profile()
 {
-	global $txt, $context, $theme;
+	global $txt, $context;
 
 	echo '
 		<we:cat>
@@ -88,7 +88,7 @@ function template_notification_subs_profile()
 					<td>', $object['time'], '</td>
 					<td class="center">
 						<a href="<URL>?action=notification;sa=unsubscribe;object=', $object['id'], ';type=', $subscription['type'], ';', $context['session_query'], '">
-							<img src="', $theme['images_url'], '/small_delete.gif" alt="x">
+							<img src="', ASSETS, '/small_delete.gif" alt="x">
 						</a>
 					</td>
 				</tr>';

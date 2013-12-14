@@ -10,11 +10,11 @@
 
 function template_main()
 {
-	global $context, $theme, $txt;
+	global $context, $txt;
 
 	echo '
 		<we:cat>
-			<img src="', $theme['images_url'], '/email_sm.gif">
+			<img src="', ASSETS, '/email_sm.gif">
 			', $txt['notify'], '
 		</we:cat>
 		<div class="roundframe">
@@ -27,11 +27,11 @@ function template_main()
 
 function template_notify_board()
 {
-	global $context, $theme, $txt;
+	global $context, $txt;
 
 	echo '
 		<we:cat>
-			<img src="', $theme['images_url'], '/email_sm.gif">
+			<img src="', ASSETS, '/email_sm.gif">
 			', $txt['notify'], '
 		</we:cat>
 		<div class="roundframe">

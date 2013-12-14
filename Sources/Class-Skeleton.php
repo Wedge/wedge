@@ -437,8 +437,8 @@ final class weSkeleton
 			// Has this layer/block got any options? (Wedge only accepts indent="x" as of now.)
 			if (!empty($tag[3]))
 			{
-				preg_match_all('~(\w+)="([^"]+)"?~', $tag[3], $options, PREG_SET_ORDER);
-				foreach ($options as $option)
+				preg_match_all('~(\w+)="([^"]+)"?~', $tag[3], $opts, PREG_SET_ORDER);
+				foreach ($opts as $option)
 					$this->opt[$option[1]][$tag[2]] = $option[2];
 			}
 		}
@@ -817,8 +817,6 @@ final class wetem
 	// Bootstrap's bootstraps
 	static function createMainSkeleton()
 	{
-		global $context;
-
 		// Squeletto ergo sum
 		if (self::$main != null)
 			return;

@@ -1407,7 +1407,7 @@ function ImportSmileys($smileyPath)
 
 function EditMessageIcons()
 {
-	global $context, $theme, $txt;
+	global $context, $txt, $settings;
 
 	// Get a list of icons.
 	$context['icons'] = array();
@@ -1427,7 +1427,7 @@ function EditMessageIcons()
 			'id' => $row['id_icon'],
 			'title' => $row['title'],
 			'filename' => $row['filename'],
-			'image_url' => $theme[file_exists($theme['theme_dir'] . '/images/post/' . $row['filename'] . '.gif') ? 'actual_images_url' : 'default_images_url'] . '/post/' . $row['filename'] . '.gif',
+			'image_url' => ASSETS . '/post/' . $row['filename'] . '.gif',
 			'board_id' => $row['id_board'],
 			'board' => empty($row['board_name']) ? $txt['icons_edit_icons_all_boards'] : $row['board_name'],
 			'order' => $row['icon_order'],
@@ -1474,7 +1474,7 @@ function EditMessageIcons()
 		// Do some preperation with the data... like check the icon exists *somewhere*
 		if (strpos($_POST['icon_filename'], '.gif') !== false)
 			$_POST['icon_filename'] = substr($_POST['icon_filename'], 0, -4);
-		if (!file_exists($theme['default_theme_dir'] . '/images/post/' . $_POST['icon_filename'] . '.gif'))
+		if (!file_exists($settings['theme_dir'] . '/images/post/' . $_POST['icon_filename'] . '.gif'))
 			fatal_lang_error('icon_not_found');
 		// There is a 16 character limit on message icons...
 		elseif (strlen($_POST['icon_filename']) > 16)
@@ -1546,13 +1546,10 @@ function EditMessageIcons()
 			'icon' => array(
 				'data' => array(
 					'function' => create_function('$rowData', '
-						global $theme;
-
-						$images_url = $theme[file_exists(sprintf(\'%1$s/images/post/%2$s.gif\', $theme[\'theme_dir\'], $rowData[\'filename\'])) ? \'actual_images_url\' : \'default_images_url\'];
-						return sprintf(\'<img src="%1$s/post/%2$s.gif" alt="%3$s">\', $images_url, $rowData[\'filename\'], htmlspecialchars($rowData[\'title\']));
+						return sprintf(\'<img src="%1$s/post/%2$s.gif" alt="%3$s">\', ASSETS, $rowData[\'filename\'], htmlspecialchars($rowData[\'title\']));
 					'),
 				),
-				'style' => 'text-align: center;',
+				'style' => 'text-align: center',
 			),
 			'filename' => array(
 				'header' => array(

@@ -22,7 +22,7 @@ class wedit
 
 	public function __construct($editorOptions)
 	{
-		global $settings, $options, $theme;
+		global $settings, $options;
 
 		if (!is_array($editorOptions))
 			$editorOptions = array($editorOptions);
@@ -62,12 +62,9 @@ class wedit
 		if (!self::$editorLoaded)
 		{
 			self::$editorLoaded = true;
-
 			loadLanguage('Post');
+
 			add_css_file('editor', true);
-
-			$theme['smileys_url'] = $settings['smileys_url'] . '/' . we::$user['smiley_set'];
-
 			add_js_file(array(
 				'scripts/editor.js',
 				'scripts/editor-func.js',
@@ -91,8 +88,7 @@ class wedit
 
 	private static function parse_smileys($a)
 	{
-		global $theme;
-		return '<img alt="' . htmlspecialchars($a[2]) . '" class="smiley ' . $a[1] . '" src="' . $theme['images_url'] . '/blank.gif" onresizestart="return false;">';
+		return '<img alt="' . htmlspecialchars($a[2]) . '" class="smiley ' . $a[1] . '" src="' . ASSETS . '/blank.gif" onresizestart="return false;">';
 	}
 
 	private static function unparse_smileys($a)
@@ -205,7 +201,7 @@ class wedit
 
 	public static function html_to_bbc($text)
 	{
-		global $scripturl, $context;
+		global $context;
 
 		// Replace newlines with spaces, as that's how browsers usually interpret them.
 		$text = preg_replace("~\s*[\r\n]+\s*~", ' ', $text);
@@ -757,7 +753,7 @@ class wedit
 			if (!empty($src))
 			{
 				// Attempt to fix the path in case it's not present.
-				if (preg_match('~^https?://~i', $src) === 0 && is_array($parsedURL = parse_url($scripturl)) && isset($parsedURL['host']))
+				if (preg_match('~^https?://~i', $src) === 0 && is_array($parsedURL = parse_url(SCRIPT)) && isset($parsedURL['host']))
 				{
 					$baseURL = (isset($parsedURL['scheme']) ? $parsedURL['scheme'] : 'http') . '://' . $parsedURL['host'] . (empty($parsedURL['port']) ? '' : ':' . $parsedURL['port']);
 
@@ -855,7 +851,7 @@ class wedit
 					}
 
 					// No http(s), so attempt to fix this potential relative URL.
-					elseif (preg_match('~^https?://~i', $href) === 0 && is_array($parsedURL = parse_url($scripturl)) && isset($parsedURL['host']))
+					elseif (preg_match('~^https?://~i', $href) === 0 && is_array($parsedURL = parse_url(SCRIPT)) && isset($parsedURL['host']))
 					{
 						$baseURL = (isset($parsedURL['scheme']) ? $parsedURL['scheme'] : 'http') . '://' . $parsedURL['host'] . (empty($parsedURL['port']) ? '' : ':' . $parsedURL['port']);
 
@@ -2154,7 +2150,7 @@ class wedit
 	// Fix a specific class of tag - ie. url with =.
 	public static function fixTag(&$message, $myTag, $protocols, $embeddedUrl = false, $hasEqualSign = false, $hasExtra = false)
 	{
-		global $boardurl, $scripturl;
+		global $boardurl;
 
 		if (preg_match('~^([^:]+://[^/]+)~', $boardurl, $match) != 0)
 			$domain_url = $match[1];
@@ -2188,7 +2184,7 @@ class wedit
 				if ($replace[0] === '/')
 					$replace = $domain_url . $replace;
 				elseif ($replace[0] === '?')
-					$replace = $scripturl . $replace;
+					$replace = SCRIPT . $replace;
 				elseif ($replace[0] === '#' && $embeddedUrl)
 				{
 					$replace = '#' . preg_replace('~[^A-Za-z0-9_\-#]~', '', substr($replace, 1));
@@ -2445,7 +2441,7 @@ class wedit
 
 	public function outputEditor()
 	{
-		global $context, $theme, $txt, $settings, $boarddir, $boardurl, $smiley_css_done;
+		global $context, $txt, $settings, $boarddir, $boardurl, $smiley_css_done;
 
 		$smileycontainer = empty($this->editorOptions['custom_smiley_div']) ? 'smileyBox_' . $this->id : $this->editorOptions['custom_smiley_div'];
 		$bbccontainer = empty($this->editorOptions['custom_bbc_div']) ? 'bbcBox_' . $this->id : $this->editorOptions['custom_bbc_div'];
@@ -2556,7 +2552,7 @@ class wedit
 						$js .= '
 				[' .
 					'\'button\', ' . (empty($this->disabled_tags[$tag['code']]) ? '1, ' : '0, ') . (!is_array($tag['image']) ?
-					(strpos($tag['image'], '//') !== false ? JavaScriptEscape($tag['image']) : JavaScriptEscape($theme['images_url'] . '/bbc/' . $tag['image'] . '.gif')) . ', ' :
+					(strpos($tag['image'], '//') !== false ? JavaScriptEscape($tag['image']) : JavaScriptEscape(ASSETS . '/bbc/' . $tag['image'] . '.gif')) . ', ' :
 					'[' . ($tag['image'][0] + 1) * 23 . ', ' . $tag['image'][1] * 22 . '], ') .
 					JavaScriptEscape($tag['code']) . ', ' .
 					JavaScriptEscape($tag['before']) . ', ' .

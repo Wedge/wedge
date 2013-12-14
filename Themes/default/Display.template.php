@@ -134,7 +134,7 @@ function template_display_posts()
 
 function template_topic_poll_before()
 {
-	global $theme, $context, $txt;
+	global $context, $txt;
 
 	$show_voters = ($context['poll']['show_results'] || !$context['allow_vote']) && $context['allow_poll_view'];
 	echo '
@@ -144,7 +144,7 @@ function template_topic_poll_before()
 			($context['poll']['is_expired'] ? $txt['poll_expired_on'] : $txt['poll_expires_on']) . ': ' . $context['poll']['expire_time'] . ($show_voters ? ' - ' : ''),
 			$show_voters ? $txt['poll_total_voters'] . ': ' . $context['poll']['total_votes'] : '', '">
 			<h4>
-				<img src="', $theme['images_url'], '/topic/', $context['poll']['is_locked'] ? 'normal_poll_locked' : 'normal_poll', '.png" style="vertical-align: -4px">
+				<img src="', ASSETS, '/topic/', $context['poll']['is_locked'] ? 'normal_poll_locked' : 'normal_poll', '.png" style="vertical-align: -4px">
 				', $context['poll']['question'], '
 			</h4>';
 }
@@ -420,12 +420,12 @@ function template_mod_buttons()
 
 function template_display_whoviewing()
 {
-	global $context, $txt, $theme, $settings;
+	global $context, $txt, $settings;
 
 	echo '
 	<section>
 		<we:title>
-			<img src="', $theme['images_url'], '/icons/online.gif" alt="', $txt['online_users'], '">', $txt['who_title'], '
+			<img src="', ASSETS, '/icons/online.gif" alt="', $txt['online_users'], '">', $txt['who_title'], '
 		</we:title>
 		<p class="onlineinfo">';
 
@@ -445,7 +445,7 @@ function template_display_whoviewing()
 // Show statistical style information...
 function template_display_statistics()
 {
-	global $context, $settings, $txt, $theme;
+	global $context, $txt, $settings;
 
 	if (empty($settings['show_stats_index']))
 		return;
@@ -453,7 +453,7 @@ function template_display_statistics()
 	echo '
 	<section>
 		<we:title>
-			<img src="', $theme['images_url'], '/icons/info.gif" alt="', $txt['topic_stats'], '" class="top" style="padding-right: 0">
+			<img src="', ASSETS, '/icons/info.gif" alt="', $txt['topic_stats'], '" class="top" style="padding-right: 0">
 			', $txt['topic_stats'], '
 		</we:title>
 		<p>

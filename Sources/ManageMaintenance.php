@@ -1415,15 +1415,12 @@ function AdminBoardRecount()
 // Perform a detailed version check. A very good thing ;)
 function VersionDetail()
 {
-	global $txt, $context, $theme;
+	global $txt, $context;
 
 	isAllowedTo('admin_forum');
 
 	// Call the function that'll get all the version info we need.
 	loadSource('Subs-Admin');
-
-	// Because we use pretty images from here.
-	$theme['images_aeva'] = file_exists($theme['theme_dir'] . '/images/aeva') ? $theme['images_url'] . '/aeva' : $theme['default_images_url'] . '/aeva';
 
 	// Get a list of current server versions.
 	$checkFor = array(

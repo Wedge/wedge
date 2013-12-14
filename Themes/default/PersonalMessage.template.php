@@ -90,7 +90,7 @@ function template_pm_popup()
 
 function template_folder()
 {
-	global $context, $theme, $options, $settings, $txt;
+	global $context, $options, $settings, $txt;
 
 	$is_mobile = SKIN_MOBILE;
 
@@ -184,7 +184,7 @@ function template_folder()
 			$window_class = $message['alternate'] == 0 ? '' : '2';
 
 			echo '
-	<div class="msg', $window_class, $message['member']['id'] === we::$id ? ' self' : '', ' pm"><div class="post_wrapper">
+	<div class="msg', $window_class, $message['member']['id'] === MID ? ' self' : '', ' pm"><div class="post_wrapper">
 		<div class="poster">
 			<a id="msg', $message['id'], '"></a>
 			<h4>';
@@ -224,7 +224,7 @@ function template_folder()
 				</li>';
 
 				// Show avatars, images, etc.?
-				if (!empty($settings['show_avatars']) && !empty($options['show_avatars']) && !empty($message['member']['avatar']['image']))
+				if (!empty($settings['show_avatars']) && empty($options['hide_avatars']) && !empty($message['member']['avatar']['image']))
 					echo '
 				<li class="avatar">
 					<a href="<URL>?action=profile;u=', $message['member']['id'], '">
@@ -276,7 +276,7 @@ function template_folder()
 				// Are we showing the warning status?
 				if ($message['member']['can_see_warning'])
 				echo '
-				<li class="warning">', $context['can_issue_warning'] && $message['member']['warning_status'] != 'hard_ban' ? '<a href="<URL>?action=profile;u=' . $message['member']['id'] . ';area=issuewarning">' : '', '<img src="', $theme['images_url'], '/warning_', $message['member']['warning_status'], '.gif" alt="', $txt['user_warn_' . $message['member']['warning_status']], '">', $context['can_issue_warning'] && $message['member']['warning_status'] != 'hard_ban' ? '</a>' : '', '<span class="warn_', $message['member']['warning_status'], '">', $txt['warn_' . $message['member']['warning_status']], '</span></li>';
+				<li class="warning">', $context['can_issue_warning'] && $message['member']['warning_status'] != 'hard_ban' ? '<a href="<URL>?action=profile;u=' . $message['member']['id'] . ';area=issuewarning">' : '', '<img src="', ASSETS, '/warning_', $message['member']['warning_status'], '.gif" alt="', $txt['user_warn_' . $message['member']['warning_status']], '">', $context['can_issue_warning'] && $message['member']['warning_status'] != 'hard_ban' ? '</a>' : '', '<span class="warn_', $message['member']['warning_status'], '">', $txt['warn_' . $message['member']['warning_status']], '</span></li>';
 			}
 
 			// Done with the information about the poster... on to the post itself.
@@ -392,7 +392,7 @@ function template_folder()
 			}
 
 			// Show the member's signature?
-			if (!empty($message['member']['signature']) && !empty($options['show_signatures']) && $context['signature_enabled'])
+			if (!empty($message['member']['signature']) && !empty($settings['show_signatures']) && empty($options['hide_signatures']) && $context['signature_enabled'])
 				echo '
 				<div class="signature">', $message['member']['signature'], '</div>';
 
@@ -482,7 +482,7 @@ function template_folder()
 // Just list all the personal message subjects - to make templates easier.
 function template_subject_list()
 {
-	global $context, $theme, $txt;
+	global $context, $txt;
 
 	echo '
 	<table class="table_grid w100 cs0">
@@ -543,9 +543,9 @@ function template_subject_list()
 		echo '
 		<tr class="', $next_alternate ? 'windowbg' : 'windowbg2', '">
 			<td class="center" style="width: 4%">
-				', $message['is_replied_to'] ? '<img src="' . $theme['images_url'] . '/icons/pm_replied.gif" style="margin-right: 4px" alt="' . $txt['pm_replied'] . '">' : '<img src="' . $theme['images_url'] . '/icons/pm_read.gif" style="margin-right: 4px" alt="' . $txt['pm_read'] . '">', '</td>
+				', $message['is_replied_to'] ? '<img src="' . ASSETS . '/icons/pm_replied.gif" style="margin-right: 4px" alt="' . $txt['pm_replied'] . '">' : '<img src="' . ASSETS . '/icons/pm_read.gif" style="margin-right: 4px" alt="' . $txt['pm_read'] . '">', '</td>
 			<td>', $message['on_time'], '</td>
-			<td>', ($context['display_mode'] != 0 && $context['current_pm'] == $message['id'] ? '<img src="' . $theme['images_url'] . '/selected.gif">' : ''), '<a href="', ($context['display_mode'] == 0 || $context['current_pm'] == $message['id'] ? '' : ('<URL>?action=pm;pmid=' . $message['id'] . ';kstart;f=' . $context['folder'] . ';start=' . $context['start'] . ';sort=' . $context['sort_by'] . ($context['sort_direction'] == 'up' ? ';' : ';desc') . ($context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : ''))), '#msg', $message['id'], '">', $message['subject'], '</a>', $message['is_unread'] ? '&nbsp;<div class="note">' . $txt['new'] . '</div>' : '', '</td>
+			<td>', ($context['display_mode'] != 0 && $context['current_pm'] == $message['id'] ? '<img src="' . ASSETS . '/selected.gif">' : ''), '<a href="', ($context['display_mode'] == 0 || $context['current_pm'] == $message['id'] ? '' : ('<URL>?action=pm;pmid=' . $message['id'] . ';kstart;f=' . $context['folder'] . ';start=' . $context['start'] . ';sort=' . $context['sort_by'] . ($context['sort_direction'] == 'up' ? ';' : ';desc') . ($context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : ''))), '#msg', $message['id'], '">', $message['subject'], '</a>', $message['is_unread'] ? '&nbsp;<div class="note">' . $txt['new'] . '</div>' : '', '</td>
 			<td>', ($context['from_or_to'] == 'from' ? $message['member']['link'] : (empty($message['recipients']['to']) ? '' : implode(', ', $message['recipients']['to']))), '</td>
 			<td class="center" style="width: 4%"><input type="checkbox" name="pms[]" id="deletelisting', $message['id'], '" value="', $message['id'], '"', $message['is_selected'] ? ' checked' : '', ' onclick="$(\'#deletedisplay', $message['id'], '\').prop(\'checked\', this.checked);"></td>
 		</tr>';
@@ -775,7 +775,7 @@ function template_search_results()
 
 function template_send()
 {
-	global $context, $theme, $txt;
+	global $context, $txt;
 
 	// Show which messages were sent successfully and which failed.
 	if (!empty($context['send_log']))
@@ -815,7 +815,7 @@ function template_send()
 	// Main message editing box.
 	echo '
 	<we:cat>
-		<img src="', $theme['images_url'], '/icons/im_newmsg.gif" alt="', $txt['new_message'], '" title="', $txt['new_message'], '">
+		<img src="', ASSETS, '/icons/im_newmsg.gif" alt="', $txt['new_message'], '" title="', $txt['new_message'], '">
 		', $txt['new_message'], '
 	</we:cat>';
 
@@ -1574,11 +1574,11 @@ function template_add_rule()
 // For displaying the saved drafts.
 function template_pm_drafts()
 {
-	global $context, $theme, $settings, $txt;
+	global $context, $settings, $txt;
 
 	echo '
 		<we:cat>
-			<img src="', $theme['images_url'], '/icons/im_newmsg.gif">
+			<img src="', ASSETS, '/icons/im_newmsg.gif">
 			', $txt['showDrafts'], '
 		</we:cat>
 		<p class="description">

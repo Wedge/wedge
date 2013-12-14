@@ -1255,8 +1255,8 @@ function ModifyMemberOptions($return_config = false)
 	// 'disabled' speaks for itself, 'display' is where it should be displayed in the profile area.
 	// IMPORTANT: If type is 'select', the third item MUST be the list of options.
 	$config_vars = array(
-		array('check', 'show_avatars', 'display' => 'looklayout', 'disabled' => empty($settings['show_avatars'])),
-		array('check', 'show_signatures', 'display' => 'looklayout'),
+		array('check', 'hide_avatars', 'display' => 'looklayout', 'disabled' => empty($settings['show_avatars'])),
+		array('check', 'hide_signatures', 'display' => 'looklayout', 'disabled' => empty($settings['show_signatures'])),
 		array('check', 'show_no_censored', 'display' => 'looklayout', 'disabled' => empty($settings['allow_no_censored'])),
 		array('check', 'return_to_post', 'display' => 'looklayout'),
 		array('check', 'view_newest_first', 'display' => 'looklayout'),
@@ -1377,11 +1377,11 @@ function ModifyMemberOptions($return_config = false)
 		{
 			$setValues = array();
 			foreach ($changes['guests'] as $variable => $value)
-				$setValues[] = array(-1, 1, $variable, $value);
+				$setValues[] = array(-1, $variable, $value);
 
 			wesql::insert('replace',
 				'{db_prefix}themes',
-				array('id_member' => 'int', 'id_theme' => 'int', 'variable' => 'string-255', 'value' => 'string-65534'),
+				array('id_member' => 'int', 'variable' => 'string-255', 'value' => 'string-65534'),
 				$setValues
 			);
 		}
@@ -1414,8 +1414,8 @@ function ModifyMemberOptions($return_config = false)
 			foreach ($changes['members'] as $variable => $value)
 				wesql::query('
 					INSERT INTO {db_prefix}themes
-						(id_member, id_theme, variable, value)
-					SELECT id_member, 1, SUBSTRING({string:variable}, 1, 255), SUBSTRING({string:value}, 1, 65534)
+						(id_member, variable, value)
+					SELECT id_member, SUBSTRING({string:variable}, 1, 255), SUBSTRING({string:value}, 1, 65534)
 					FROM {db_prefix}members',
 					array(
 						'variable' => $variable,

@@ -46,7 +46,7 @@ function getBaseRuleVars($admin = false)
 		),
 		'userid' => array(
 			'type' => 'id',
-			'current' => (string) we::$id,
+			'current' => (string) MID,
 		),
 		'postcount' => array(
 			'type' => 'range',

@@ -275,7 +275,7 @@ function template_view_versions()
 						</td>
 					</tr>';
 
-	// Now list all the source file versions, starting with the overall version (if all match!).
+	// Now list all the source file versions, starting with the overall version (if all match!)
 	echo '
 					<tr>
 						<td class="windowbg">
@@ -589,7 +589,7 @@ function template_not_done()
 // Template for showing settings (of any kind, really!)
 function template_show_settings()
 {
-	global $context, $txt, $theme;
+	global $context, $txt;
 
 	if ($context['was_saved'])
 		echo '
@@ -637,7 +637,7 @@ function template_show_settings()
 			<we:title>
 				<div', !empty($config_var['class']) ? ' class="' . $config_var['class'] . '"' : '', !empty($config_var['force_div_id']) ? ' id="' . $config_var['force_div_id'] . '"' : '', '>',
 					!empty($config_var['icon']) ? '
-					<img src="' . $theme['default_images_url'] . '/admin/' . $config_var['icon'] . '" style="vertical-align: -8px; margin-right: 8px">' : '',
+					<img src="' . ASSETS . '/admin/' . $config_var['icon'] . '" style="vertical-align: -8px; margin-right: 8px">' : '',
 					!empty($config_var['help']) ? '
 					<a href="<URL>?action=help;in=' . $config_var['help'] . '" onclick="return reqWin(this);" class="help" title="' . $txt['help'] . '"></a>' : '', '
 					', $config_var['label'], '

@@ -10,7 +10,7 @@
 
 function template_main()
 {
-	global $context, $theme, $txt, $settings;
+	global $context, $txt, $settings;
 
 	echo '
 		<we:cat>
@@ -22,7 +22,7 @@ function template_main()
 		echo '
 		<div class="flow_hidden clear">
 			<we:title2>
-				<img src="', $theme['images_url'], '/stats_history.gif">
+				<img src="', ASSETS, '/stats_history.gif">
 				', $txt['forum_history'], '
 			</we:title2>
 			<div id="ranges" class="padding">
@@ -87,7 +87,7 @@ function template_main()
 	echo '
 
 		<we:title2 style="margin: 8px 0">
-			<img src="', $theme['images_url'], '/stats_info.gif">
+			<img src="', ASSETS, '/stats_info.gif">
 			', $txt['general_stats'], '
 		</we:title2>
 
@@ -148,7 +148,7 @@ function template_main()
 
 		<div class="two-columns"><div class="windowbg2 wrc">
 			<h6>
-				<img src="', $theme['images_url'], '/stats_posters.gif">
+				<img src="', ASSETS, '/stats_posters.gif">
 				', $txt['top_posters'], '
 			</h6>
 			<dl class="stats">';
@@ -176,7 +176,7 @@ function template_main()
 
 		<div class="two-columns"><div class="windowbg wrc">
 			<h6>
-				<img src="', $theme['images_url'], '/stats_board.gif">
+				<img src="', ASSETS, '/stats_board.gif">
 				', $txt['top_boards'], '
 			</h6>
 			<dl class="stats">';
@@ -204,7 +204,7 @@ function template_main()
 
 		<div class="two-columns"><div class="windowbg wrc">
 			<h6>
-				<img src="', $theme['images_url'], '/stats_replies.gif">
+				<img src="', ASSETS, '/stats_replies.gif">
 				', $txt['top_topics_replies'], '
 			</h6>
 			<dl class="stats">';
@@ -231,7 +231,7 @@ function template_main()
 
 		<div class="two-columns"><div class="windowbg2 wrc">
 			<h6>
-				<img src="', $theme['images_url'], '/stats_views.gif">
+				<img src="', ASSETS, '/stats_views.gif">
 				', $txt['top_topics_views'], '
 			</h6>
 			<dl class="stats">';
@@ -257,7 +257,7 @@ function template_main()
 
 		<div class="two-columns"><div class="windowbg2 wrc">
 			<h6>
-				<img src="', $theme['images_url'], '/stats_replies.gif">
+				<img src="', ASSETS, '/stats_replies.gif">
 				', $txt['top_starters'], '
 			</h6>
 			<dl class="stats">';
@@ -285,7 +285,7 @@ function template_main()
 
 		<div class="two-columns"><div class="windowbg wrc">
 			<h6>
-				<img src="', $theme['images_url'], '/stats_views.gif">
+				<img src="', ASSETS, '/stats_views.gif">
 				', $txt['most_time_online'], '
 			</h6>
 			<dl class="stats">';

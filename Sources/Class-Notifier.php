@@ -188,7 +188,7 @@ class Notifier
 	 */
 	public function getPrefs($id_member = null)
 	{
-		$all_prefs = weNotif::getPrefs($id_member ? $id_member : we::$id);
+		$all_prefs = weNotif::getPrefs($id_member ? $id_member : MID);
 		return $all_prefs[$this->getName()];
 	}
 
@@ -217,14 +217,14 @@ class Notifier
 	 */
 	public function savePref($key, $value, $id_member = null)
 	{
-		$prefs = weNotif::getPrefs($id_member ? $id_member : we::$id);
+		$prefs = weNotif::getPrefs($id_member ? $id_member : MID);
 
 		if (empty($prefs[$this->getName()]))
 			$prefs[$this->getName()] = array();
 
 		$prefs[$this->getName()][$key] = $value;
 
-		weNotif::savePrefs($id_member ? $id_member : we::$id, $prefs);
+		weNotif::savePrefs($id_member ? $id_member : MID, $prefs);
 	}
 
 	/**

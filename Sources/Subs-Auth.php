@@ -21,11 +21,12 @@ if (!defined('WEDGE'))
 		- when logging out, if the globalCookies setting is enabled, attempts
 		  to clear the subdomain's cookie too.
 
-	array url_parts(bool local, bool global)
+	array url_parts(bool local, bool global, string force_url)
 		- returns the path and domain to set the cookie on.
 		- normally, local and global should be the localCookies and
 		  globalCookies settings, respectively.
 		- uses boardurl to determine these two things.
+		- you may override boardurl with force_url
 		- returns an array with domain and path in it, in that order.
 
 	void KickGuest()
@@ -90,7 +91,7 @@ if (!defined('WEDGE'))
 // Actually set the login cookie...
 function setLoginCookie($cookie_length, $id, $password = '')
 {
-	global $cookiename, $boardurl, $settings;
+	global $cookiename, $settings;
 
 	// If changing state force them to re-address some permission caching.
 	$_SESSION['mc']['time'] = 0;
@@ -120,27 +121,22 @@ function setLoginCookie($cookie_length, $id, $password = '')
 	if (empty($id) && !empty($settings['globalCookies']))
 		setcookie($cookiename, $data, time() + $cookie_length, $cookie_url[1], '', !empty($settings['secureCookies']), true);
 
-	// Any alias URLs?  This is mainly for use with frames, etc.
+	// Any alias URLs? This is mainly for use with frames, etc.
 	if (!empty($settings['forum_alias_urls']))
 	{
 		$aliases = explode(',', $settings['forum_alias_urls']);
 
-		$temp = $boardurl;
 		foreach ($aliases as $alias)
 		{
 			// Fake the $boardurl so we can set a different cookie.
 			$alias = strtr(trim($alias), array('http://' => '', 'https://' => ''));
-			$boardurl = 'http://' . $alias;
-
-			$cookie_url = url_parts(!empty($settings['localCookies']), !empty($settings['globalCookies']));
+			$cookie_url = url_parts(!empty($settings['localCookies']), !empty($settings['globalCookies']), 'http://' . $alias);
 
 			if ($cookie_url[0] == '')
 				$cookie_url[0] = strtok($alias, '/');
 
 			setcookie($cookiename, $data, time() + $cookie_length, $cookie_url[1], $cookie_url[0], !empty($settings['secureCookies']), true);
 		}
-
-		$boardurl = $temp;
 	}
 
 	$_COOKIE[$cookiename] = $data;
@@ -163,12 +159,12 @@ function setLoginCookie($cookie_length, $id, $password = '')
 }
 
 // Get the domain and path for the cookie...
-function url_parts($local, $global)
+function url_parts($local, $global, $force_url = '')
 {
 	global $boardurl;
 
 	// Parse the URL with PHP to make life easier.
-	$parsed_url = parse_url($boardurl);
+	$parsed_url = parse_url(empty($url) ? $boardurl : $force_url);
 
 	// Is local cookies off?
 	if (empty($parsed_url['path']) || !$local)
@@ -300,19 +296,17 @@ function adminLogin_outputPostVars($k, $v)
 
 function construct_query_string($get)
 {
-	global $scripturl;
-
 	$query_string = '';
 
-	// Awww, darn. The $scripturl contains GET stuff!
-	$q = strpos($scripturl, '?');
+	// Awww, darn. The SCRIPT contains GET stuff!
+	$q = strpos(SCRIPT, '?');
 	if ($q !== false)
 	{
-		parse_str(preg_replace('/&(\w+)(?=&|$)/', '&$1=', strtr(substr($scripturl, $q + 1), ';', '&')), $temp);
+		parse_str(preg_replace('/&(\w+)(?=&|$)/', '&$1=', strtr(substr(SCRIPT, $q + 1), ';', '&')), $temp);
 
 		foreach ($get as $k => $v)
 		{
-			// Only if it's not already in the $scripturl!
+			// Only if it's not already in the SCRIPT!
 			if (!isset($temp[$k]))
 				$query_string .= urlencode($k) . '=' . urlencode($v) . ';';
 			// If it changed, put it out there, but with an ampersand.
@@ -534,7 +528,7 @@ function rebuildModCache()
 			FROM {db_prefix}group_moderators
 			WHERE id_member = {int:current_member}',
 			array(
-				'current_member' => we::$id,
+				'current_member' => MID,
 			)
 		);
 		$groups = array();
@@ -570,7 +564,7 @@ function rebuildModCache()
 			FROM {db_prefix}moderators
 			WHERE id_member = {int:current_member}',
 			array(
-				'current_member' => we::$id,
+				'current_member' => MID,
 			)
 		);
 		while ($row = wesql::fetch_assoc($request))
@@ -583,7 +577,7 @@ function rebuildModCache()
 	$_SESSION['mc'] = array(
 		'time' => time(),
 		// This looks a bit funny but protects against the login redirect.
-		'id' => we::$id && we::$user['name'] ? we::$id : 0,
+		'id' => MID && we::$user['name'] ? MID : 0,
 		'gq' => $group_query,
 		'bq' => $board_query,
 		'ap' => boardsAllowedTo('approve_posts'),

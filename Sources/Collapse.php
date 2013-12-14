@@ -37,7 +37,7 @@ function Collapse()
 	{
 		// And collapse/expand/toggle the category.
 		loadSource('Subs-Categories');
-		collapseCategories(array((int) $_REQUEST['c']), $_REQUEST['sa'], array(we::$id));
+		collapseCategories(array((int) $_REQUEST['c']), $_REQUEST['sa'], array(MID));
 	}
 
 	// And go back to the board list.

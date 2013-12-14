@@ -397,15 +397,13 @@ function Welcome()
 	if (is_readable(dirname(__FILE__) . '/Settings.php'))
 	{
 		$probably_installed = 0;
-		foreach (file(dirname(__FILE__) . '/Settings.php') as $line)
-		{
-			if (preg_match('~^\$db_passwd\s=\s\'([^\']+)\';$~', $line))
-				$probably_installed++;
-			if (preg_match('~^\$boardurl\s=\s\'([^\']+)\';~', $line) && !preg_match('~^\$boardurl\s=\s\'http://127\.0\.0\.1/wedge\';~', $line))
-				$probably_installed++;
-		}
+		$test_set = @file_get_contents(dirname(__FILE__) . '/Settings.php');
+		if (preg_match('~^\$db_passwd\s=\s\'[^\']+\';$~m', $test_set))
+			$probably_installed++;
+		if (preg_match('~^\$boardurl\s=\s\'(?:[^\'h]|h(?!ttp://127\.0\.0\.1/wedge))+\';$~m', $test_set))
+			$probably_installed++;
 
-		if ($probably_installed == 2)
+		if ($probably_installed)
 			$incontext['warning'] = $txt['error_already_installed'];
 	}
 
@@ -1099,7 +1097,7 @@ function DatabasePopulation()
 	}
 
 	// Check for the ALTER privilege.
-	if (wesql::query("ALTER TABLE {$db_prefix}boards ORDER BY id_board", array('security_override' => true, 'db_error_skip' => true)) === false)
+	if (wesql::query('ALTER TABLE {db_prefix}boards ORDER BY id_board', array('security_override' => true, 'db_error_skip' => true)) === false)
 	{
 		$incontext['error'] = $txt['error_db_alter_priv'];
 		return false;
@@ -1463,6 +1461,7 @@ function DeleteInstall()
 		// We've just installed!
 		we::$user['ip'] = $_SERVER['REMOTE_ADDR'];
 		we::$id = isset($incontext['member_id']) ? $incontext['member_id'] : 0;
+		define('MID', we::$id);
 		$_SERVER['BAN_CHECK_IP'] = $_SERVER['REMOTE_ADDR'];
 		logAction('install', array('version' => WEDGE_VERSION), 'admin');
 	}
@@ -1952,7 +1951,7 @@ function fixModSecurity()
 function template_install_above()
 {
 	global $incontext, $txt, $boardurl, $cachedir, $cssdir, $jsdir;
-	global $boarddir, $sourcedir, $theme, $context, $settings;
+	global $boarddir, $sourcedir, $context, $settings;
 
 	// Load Wedge's default paths and pray that it works...
 	$boarddir = dirname(__FILE__);
@@ -1975,11 +1974,10 @@ function template_install_above()
 	$boardurl = 'http' . (!empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) != 'off' ? 's' : '') . '://' . $host;
 	$boardurl .= substr($_SERVER['REQUEST_URI'], 0, strrpos($_SERVER['REQUEST_URI'], '/'));
 
-	$theme['theme_dir'] = $boarddir . '/Themes/default';
-	$theme['theme_url'] = $boardurl . '/Themes/default';
-	$theme['default_theme_dir'] = $boarddir . '/Themes/default';
-	$theme['default_theme_url'] = $boardurl . '/Themes/default';
-	$theme['images_url'] = $boardurl . '/Themes/default/images';
+	define('TEMPLATES_DIR', $settings['theme_dir'] = $boarddir . '/Themes/default');
+	define('TEMPLATES', $settings['theme_url'] = $boardurl . '/Themes/default');
+	define('IMAGES', $boardurl . '/Themes/default/images');
+	define('ASSETS', $boardurl . '/Themes/default/images');
 	$context['css_folders'] = array('skins');
 	$settings['minify'] = 'packer';
 

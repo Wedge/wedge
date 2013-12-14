@@ -105,7 +105,7 @@ function ModifyMembergroups()
 // An overview of the current membergroups.
 function MembergroupIndex()
 {
-	global $txt, $context, $theme;
+	global $txt, $context;
 
 	$context['page_title'] = $txt['membergroups_title'];
 
@@ -155,7 +155,7 @@ function MembergroupIndex()
 				),
 				'data' => array(
 					'function' => create_function('$rowData', '
-						global $theme;
+						global $settings;
 
 						$stars = explode(\'#\', $rowData[\'stars\']);
 
@@ -166,7 +166,7 @@ function MembergroupIndex()
 						// Otherwise repeat the image a given number of times.
 						else
 						{
-							$image = sprintf(\'<img src="%1$s/%2$s">\', $theme[\'images_url\'], $stars[1]);
+							$image = sprintf(\'<img src="%1$s/%2$s">\', $settings[\'images_url\'], $stars[1]);
 							return str_repeat($image, $stars[0]);
 						}
 					'),
@@ -259,7 +259,7 @@ function MembergroupIndex()
 				),
 				'data' => array(
 					'function' => create_function('$rowData', '
-						global $theme;
+						global $settings;
 
 						$stars = explode(\'#\', $rowData[\'stars\']);
 
@@ -267,7 +267,7 @@ function MembergroupIndex()
 							return \'\';
 						else
 						{
-							$star_image = sprintf(\'<img src="%1$s/%2$s">\', $theme[\'images_url\'], $stars[1]);
+							$star_image = sprintf(\'<img src="%1$s/%2$s">\', $settings[\'images_url\'], $stars[1]);
 							return str_repeat($star_image, $stars[0]);
 						}
 					'),
@@ -1176,7 +1176,7 @@ function EditMembergroup()
 // Set general membergroup settings.
 function ModifyMembergroupSettings($return_config = false)
 {
-	global $context, $txt, $theme;
+	global $context, $txt;
 
 	// !! Show we add a hook for plugins to add to these options...?
 	$which_groups = array(
@@ -1234,7 +1234,7 @@ function ModifyMembergroupSettings($return_config = false)
 	{
 		$stars = explode('#', $row['stars']);
 		if (!empty($stars[0]) && !empty($stars[1]))
-			$row['badge'] = str_repeat('<img src="' . str_replace('$language', we::$user['language'], $theme['images_url'] . '/' . $stars[1]) . '">', $stars[0]);
+			$row['badge'] = str_repeat('<img src="' . str_replace('$language', we::$user['language'], ASSETS . '/' . $stars[1]) . '">', $stars[0]);
 		$context['badges'][$row['id_group']] = $row;
 	}
 	wesql::free_result($request);

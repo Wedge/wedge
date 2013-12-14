@@ -56,7 +56,7 @@ class we
 	 */
 	protected static function init_user()
 	{
-		global $context, $settings, $user_settings, $cookiename, $db_prefix, $boardurl;
+		global $context, $settings, $user_settings, $cookiename, $boardurl;
 
 		$id_member = 0;
 
@@ -567,6 +567,8 @@ class we
 		self::$is_admin =& $is['admin'];
 		self::$is_guest =& $is['guest'];
 		self::$is_member =& $is['member'];
+
+		define('MID', $id_member);
 	}
 
 	private static function negate($arr)
@@ -923,8 +925,6 @@ class we
 	// $settings['my_color'] == 'red' / $color != "#000" / $color != "red" / ($number > 0 && $number < $other)
 	private static function evaluate($ops)
 	{
-		global $settings, $theme, $txt;
-
 		// $ops[1] and $ops[3] contain the variables to test, $ops[2] is the operator.
 		$ops[1] = trim($ops[1]);
 		$ops[3] = trim($ops[3]);

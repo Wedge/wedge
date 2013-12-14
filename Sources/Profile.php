@@ -57,7 +57,7 @@ function ModifyProfile($post_errors = array())
 		$memberResult = loadMemberData((int) $_REQUEST['u'], false, 'profile');
 	// If it was just ?action=profile, edit your own profile.
 	else
-		$memberResult = loadMemberData(we::$id, false, 'profile');
+		$memberResult = loadMemberData(MID, false, 'profile');
 
 	// Check if loadMemberData() has returned a valid result.
 	if (!is_array($memberResult))
@@ -73,7 +73,7 @@ function ModifyProfile($post_errors = array())
 	$context['member'] = $memberContext[$memID];
 
 	// Is this the profile of the user himself or herself?
-	we::$user['is_owner'] = $memID == we::$id;
+	we::$user['is_owner'] = $memID == MID;
 
 	/* Define all the sections within the profile area!
 		We start by defining the permission required - then Wedge takes this and turns it into the relevant context ;)
@@ -557,13 +557,13 @@ function ModifyProfile($post_errors = array())
 	}
 
 	// Build the link tree.
-	add_linktree(sprintf($txt['profile_of_username'], $context['member']['name']), '<URL>?action=profile' . ($memID != we::$id ? ';u=' . $memID : ''));
+	add_linktree(sprintf($txt['profile_of_username'], $context['member']['name']), '<URL>?action=profile' . ($memID != MID ? ';u=' . $memID : ''));
 
 	if (!empty($profile_include_data['label']))
-		add_linktree($profile_include_data['label'], '<URL>?action=profile' . ($memID != we::$id ? ';u=' . $memID : '') . ';area=' . $profile_include_data['current_area']);
+		add_linktree($profile_include_data['label'], '<URL>?action=profile' . ($memID != MID ? ';u=' . $memID : '') . ';area=' . $profile_include_data['current_area']);
 
 	if (!empty($profile_include_data['current_subsection']) && $profile_include_data['subsections'][$profile_include_data['current_subsection']][0] != $profile_include_data['label'])
-		add_linktree($profile_include_data['subsections'][$profile_include_data['current_subsection']][0], '<URL>?action=profile' . ($memID != we::$id ? ';u=' . $memID : '') . ';area=' . $profile_include_data['current_area'] . ';sa=' . $profile_include_data['current_subsection']);
+		add_linktree($profile_include_data['subsections'][$profile_include_data['current_subsection']][0], '<URL>?action=profile' . ($memID != MID ? ';u=' . $memID : '') . ';area=' . $profile_include_data['current_area'] . ';sa=' . $profile_include_data['current_subsection']);
 
 	// Set the template for this area and add the profile layer.
 	wetem::load($profile_include_data['function']);
@@ -676,7 +676,7 @@ function ModifyProfile($post_errors = array())
 						'log_time' => time(),
 						'id_member' => $memID,
 						'ip' => get_ip_identifier(we::$user['ip']),
-						'extra' => serialize(array_merge($v, array('applicator' => we::$id))),
+						'extra' => serialize(array_merge($v, array('applicator' => MID))),
 					);
 
 				wesql::insert('',
@@ -726,7 +726,7 @@ function ModifyProfile($post_errors = array())
 // Load any custom fields for this area... no area means load all, 'summary' loads all public ones.
 function loadCustomFields($memID, $area = 'summary')
 {
-	global $context, $txt, $user_profile, $theme, $scripturl;
+	global $context, $txt, $user_profile;
 
 	// Get the right restrictions in place...
 	$where = 'active = 1';
@@ -765,7 +765,7 @@ function loadCustomFields($memID, $area = 'summary')
 				continue;
 
 			// Now we check the owner too.
-			if ($memID == we::$id && !in_array(-2, $group_privacy))
+			if ($memID == MID && !in_array(-2, $group_privacy))
 				continue;
 		}
 
@@ -835,9 +835,8 @@ function loadCustomFields($memID, $area = 'summary')
 		// Enclosing the user input within some other text?
 		if (!empty($row['enclose']) && !empty($output_html))
 			$output_html = strtr($row['enclose'], array(
-				'{SCRIPTURL}' => $scripturl,
-				'{IMAGES_URL}' => $theme['images_url'],
-				'{DEFAULT_IMAGES_URL}' => $theme['default_images_url'],
+				'{SCRIPTURL}' => SCRIPT,
+				'{IMAGES_URL}' => ASSETS,
 				'{INPUT}' => $output_html,
 			));
 

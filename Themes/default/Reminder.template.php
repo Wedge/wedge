@@ -77,7 +77,7 @@ function template_sent()
 
 function template_set_password()
 {
-	global $context, $theme, $txt, $settings;
+	global $context, $txt, $settings;
 
 	echo '
 	<br>
@@ -92,14 +92,14 @@ function template_set_password()
 					<dd>
 						<input type="password" name="passwrd1" id="we_autov_pwmain" size="22">
 						<span id="we_autov_pwmain_div" class="hide">
-							<img id="we_autov_pwmain_img" src="', $theme['images_url'], '/icons/field_invalid.gif">
+							<img id="we_autov_pwmain_img" src="', ASSETS, '/icons/field_invalid.gif">
 						</span>
 					</dd>
 					<dt>', $txt['verify_pass'], ': </dt>
 					<dd>
 						<input type="password" name="passwrd2" id="we_autov_pwverify" size="22">
 						<span id="we_autov_pwverify_div" class="hide">
-							<img id="we_autov_pwverify_img" src="', $theme['images_url'], '/icons/field_invalid.gif">
+							<img id="we_autov_pwverify_img" src="', ASSETS, '/icons/field_invalid.gif">
 						</span>
 					</dd>
 				</dl>
@@ -119,7 +119,7 @@ function template_set_password()
 
 function template_ask()
 {
-	global $context, $theme, $txt, $settings;
+	global $context, $txt, $settings;
 
 	echo '
 	<br>
@@ -139,14 +139,14 @@ function template_ask()
 					<dd>
 						<input type="password" name="passwrd1" id="we_autov_pwmain" size="22">
 						<span id="we_autov_pwmain_div" class="hide">
-							<img id="we_autov_pwmain_img" src="', $theme['images_url'], '/icons/field_invalid.gif">
+							<img id="we_autov_pwmain_img" src="', ASSETS, '/icons/field_invalid.gif">
 						</span>
 					</dd>
 					<dt>', $txt['verify_pass'], ': </dt>
 					<dd>
 						<input type="password" name="passwrd2" id="we_autov_pwverify" size="22">
 						<span id="we_autov_pwverify_div" class="hide">
-							<img id="we_autov_pwverify_img" src="', $theme['images_url'], '/icons/field_valid.gif">
+							<img id="we_autov_pwverify_img" src="', ASSETS, '/icons/field_valid.gif">
 						</span>
 					</dd>
 				</dl>

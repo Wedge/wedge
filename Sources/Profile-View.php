@@ -476,7 +476,7 @@ function showPosts($memID)
 		removeMessage((int) $_GET['delete']);
 
 		// Add it to the mod log.
-		if (allowedTo('delete_any') && (!allowedTo('delete_own') || $info[1] != we::$id))
+		if (allowedTo('delete_any') && (!allowedTo('delete_own') || $info[1] != MID))
 			logAction('delete', array('topic' => $info[2], 'subject' => $info[0], 'member' => $info[1], 'board' => $info[3]));
 
 		// Back to... where we are now ;).
@@ -672,7 +672,7 @@ function showPosts($memID)
 			'approved' => $row['approved'],
 		);
 
-		if (we::$id == $row['id_member_started'])
+		if (MID == $row['id_member_started'])
 			$board_ids['own'][$row['id_board']][] = $counter;
 		$board_ids['any'][$row['id_board']][] = $counter;
 	}

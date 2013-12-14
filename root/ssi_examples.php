@@ -354,8 +354,6 @@ template_ssi_below();
 
 function template_ssi_above()
 {
-	global $scripturl;
-
 	echo '<!DOCTYPE html>
 <html>
 <head>
@@ -422,7 +420,7 @@ function template_ssi_above()
 	</style>',
 	theme_base_js(1), '
 	<script><!-- // --><![CDATA[
-		var we_script = "', $scripturl, '";
+		var we_script = "', SCRIPT, '";
 
 		// Sets all ssi_preview class to hidden, then shows the one requested.
 		function showSSIBlock(elementID)
@@ -571,6 +569,7 @@ function template_homepage_sample1_html()
 {
 	$result = '
 <' . '?php
+global $txt;
 // Using array method to show shorter display style.
 $topics = ssi_recentTopics(8, null, null, \'array\');
 

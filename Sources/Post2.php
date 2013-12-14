@@ -171,7 +171,7 @@ function Post2()
 			unset($_REQUEST['poll']);
 
 		// Do the permissions stuff...
-		isAllowedTo($topic_info['id_member_started'] != we::$id ? 'post_reply_any' : array('post_reply_own', 'post_reply_any'));
+		isAllowedTo($topic_info['id_member_started'] != MID ? 'post_reply_any' : array('post_reply_own', 'post_reply_any'));
 
 		// If the script provided a parent ID, make sure it's in the current topic...
 		if (!empty($_REQUEST['parent']))
@@ -202,7 +202,7 @@ function Post2()
 			if ((empty($topic_info['locked']) && empty($_POST['lock'])) || (!empty($_POST['lock']) && !empty($topic_info['locked'])))
 				unset($_POST['lock']);
 			// You're have no permission to lock this topic.
-			elseif (!allowedTo(array('lock_any', 'lock_own')) || (!allowedTo('lock_any') && we::$id != $topic_info['id_member_started']))
+			elseif (!allowedTo(array('lock_any', 'lock_own')) || (!allowedTo('lock_any') && MID != $topic_info['id_member_started']))
 				unset($_POST['lock']);
 			// You are allowed to (un)lock your own topic only.
 			elseif (!allowedTo('lock_any'))
@@ -308,7 +308,7 @@ function Post2()
 			if ((empty($_POST['lock']) && empty($topic_info['locked'])) || (!empty($_POST['lock']) && !empty($topic_info['locked'])))
 				unset($_POST['lock']);
 			// You're simply not allowed to (un)lock this.
-			elseif (!allowedTo(array('lock_any', 'lock_own')) || (!allowedTo('lock_any') && we::$id != $topic_info['id_member_started']))
+			elseif (!allowedTo(array('lock_any', 'lock_own')) || (!allowedTo('lock_any') && MID != $topic_info['id_member_started']))
 				unset($_POST['lock']);
 			// You're only allowed to lock your own topics.
 			elseif (!allowedTo('lock_any'))
@@ -329,16 +329,16 @@ function Post2()
 		if (isset($_POST['pin']) && (!allowedTo('pin_topic') || (empty($_POST['pin']) == empty($topic_info['is_pinned']))))
 			unset($_POST['pin']);
 
-		if ($row['id_member'] == we::$id && !allowedTo('modify_any'))
+		if ($row['id_member'] == MID && !allowedTo('modify_any'))
 		{
 			if ((!$settings['postmod_active'] || $row['approved']) && !empty($settings['edit_disable_time']) && $row['poster_time'] + ($settings['edit_disable_time'] + 5) * 60 < time())
 				fatal_lang_error('modify_post_time_passed', false);
-			elseif ($topic_info['id_member_started'] == we::$id && !allowedTo('modify_own'))
+			elseif ($topic_info['id_member_started'] == MID && !allowedTo('modify_own'))
 				isAllowedTo('modify_replies');
 			else
 				isAllowedTo('modify_own');
 		}
-		elseif ($topic_info['id_member_started'] == we::$id && !allowedTo('modify_any'))
+		elseif ($topic_info['id_member_started'] == MID && !allowedTo('modify_any'))
 		{
 			isAllowedTo('modify_replies');
 
@@ -350,11 +350,11 @@ function Post2()
 			isAllowedTo('modify_any');
 
 			// Log it, assuming you're not modifying your own post.
-			if ($row['id_member'] != we::$id)
+			if ($row['id_member'] != MID)
 				$moderationAction = true;
 		}
 
-		if (!empty($row['modified_member']) && $row['modified_member'] != we::$id && empty($settings['allow_non_mod_edit']) && !allowedTo('moderate_board'))
+		if (!empty($row['modified_member']) && $row['modified_member'] != MID && empty($settings['allow_non_mod_edit']) && !allowedTo('moderate_board'))
 			fatal_lang_error('cannot_modify_mod_post', false);
 
 		$msgData = !empty($row['data']) ? unserialize($row['data']) : array();
@@ -453,7 +453,7 @@ function Post2()
 		if (empty($topic))
 			isAllowedTo('poll_post');
 		// Can you add to your own topics?
-		elseif (we::$id == $topic_info['id_member_started'] && !allowedTo('poll_add_any'))
+		elseif (MID == $topic_info['id_member_started'] && !allowedTo('poll_add_any'))
 			isAllowedTo('poll_add_own');
 		// Can you add polls to any topic, then?
 		else
@@ -683,7 +683,7 @@ function Post2()
 		if (!empty($_SESSION['temp_attachments']))
 			foreach ($_SESSION['temp_attachments'] as $attachID => $name)
 			{
-				if (preg_match('~^post_tmp_' . we::$id . '_\d+$~', $attachID) == 0)
+				if (preg_match('~^post_tmp_' . MID . '_\d+$~', $attachID) == 0)
 					continue;
 
 				if (!empty($_POST['attach_del']) && !in_array($attachID, $_POST['attach_del']))
@@ -728,7 +728,7 @@ function Post2()
 
 			$attachmentOptions = array(
 				'post' => isset($_REQUEST['msg']) ? $_REQUEST['msg'] : 0,
-				'poster' => we::$id,
+				'poster' => MID,
 				'name' => $_FILES['attachment']['name'][$n],
 				'tmp_name' => $_FILES['attachment']['tmp_name'][$n],
 				'size' => $_FILES['attachment']['size'][$n],
@@ -792,7 +792,7 @@ function Post2()
 				'poster_name' => 'string-255', 'change_vote' => 'int', 'guest_vote' => 'int'
 			),
 			array(
-				$_POST['question'], $_POST['poll_hide'], $_POST['poll_max_votes'], (empty($_POST['poll_expire']) ? 0 : time() + $_POST['poll_expire'] * 3600 * 24), we::$id,
+				$_POST['question'], $_POST['poll_hide'], $_POST['poll_max_votes'], (empty($_POST['poll_expire']) ? 0 : time() + $_POST['poll_expire'] * 3600 * 24), MID,
 				$_POST['guestname'], $_POST['poll_change_vote'], $_POST['poll_guest_vote'],
 			)
 		);
@@ -854,7 +854,7 @@ function Post2()
 		'is_approved' => !$settings['postmod_active'] || empty($topic) || !empty($board_info['cur_topic_approved']),
 	);
 	$posterOptions = array(
-		'id' => we::$id,
+		'id' => MID,
 		'name' => $_POST['guestname'],
 		'email' => $_POST['email'],
 		'update_post_count' => we::$is_member && !isset($_REQUEST['msg']) && $board_info['posts_count'],
@@ -864,11 +864,11 @@ function Post2()
 	if (!empty($_REQUEST['msg']))
 	{
 		// Have admins allowed people to hide their screwups?
-		if (time() - $row['poster_time'] > $settings['edit_wait_time'] || we::$id != $row['id_member'])
+		if (time() - $row['poster_time'] > $settings['edit_wait_time'] || MID != $row['id_member'])
 		{
 			$msgOptions['modify_time'] = time();
 			$msgOptions['modify_name'] = we::$user['name'];
-			$msgOptions['modify_member'] = we::$id;
+			$msgOptions['modify_member'] = MID;
 		}
 
 		// This will save some time...
@@ -896,7 +896,7 @@ function Post2()
 			WHERE id_member = {int:current_member}
 				AND id_board IN ({array_int:board_list})',
 			array(
-				'current_member' => we::$id,
+				'current_member' => MID,
 				'board_list' => empty($_REQUEST['goback']) ? array_keys($board_info['parent_boards']) : array_merge(array_keys($board_info['parent_boards']), array($board)),
 				'id_msg' => $settings['maxMsgID'],
 			)
@@ -909,7 +909,7 @@ function Post2()
 		wesql::insert('ignore',
 			'{db_prefix}log_notify',
 			array('id_member' => 'int', 'id_topic' => 'int', 'id_board' => 'int'),
-			array(we::$id, $topic, 0)
+			array(MID, $topic, 0)
 		);
 	}
 	elseif (!$newTopic)
@@ -918,7 +918,7 @@ function Post2()
 			WHERE id_member = {int:current_member}
 				AND id_topic = {int:current_topic}',
 			array(
-				'current_member' => we::$id,
+				'current_member' => MID,
 				'current_topic' => $topic,
 			)
 		);
@@ -942,7 +942,7 @@ function Post2()
 				'body' => $_POST['message'],
 				'subject' => $_POST['subject'],
 				'name' => we::$user['name'],
-				'poster' => we::$id,
+				'poster' => MID,
 				'msg' => $msgOptions['id'],
 				'board' => $board,
 				'topic' => $topic,
@@ -960,7 +960,7 @@ function Post2()
 	}
 
 	// Um, did this come from a draft? If so, bye bye.
-	if (!empty($_POST['draft_id']) && !empty(we::$id))
+	if (!empty($_POST['draft_id']) && MID)
 		wesql::query('
 			DELETE FROM {db_prefix}drafts
 			WHERE id_draft = {int:draft}
@@ -968,7 +968,7 @@ function Post2()
 			LIMIT 1',
 			array(
 				'draft' => (int) $_POST['draft_id'],
-				'member' => we::$id,
+				'member' => MID,
 			)
 		);
 
@@ -1007,7 +1007,7 @@ function Post2()
  */
 function notifyMembersBoard(&$topicData)
 {
-	global $scripturl, $settings;
+	global $settings;
 
 	loadSource('Subs-Post');
 
@@ -1044,7 +1044,7 @@ function notifyMembersBoard(&$topicData)
 	// Yea, we need to add this to the digest queue.
 	$digest_insert = array();
 	foreach ($topicData as $id => $data)
-		$digest_insert[] = array($data['topic'], $data['msg'], 'topic', we::$id);
+		$digest_insert[] = array($data['topic'], $data['msg'], 'topic', MID);
 	wesql::insert('',
 		'{db_prefix}log_digest',
 		array(
@@ -1069,7 +1069,7 @@ function notifyMembersBoard(&$topicData)
 			AND mem.notify_regularity < {int:notify_regularity}
 		ORDER BY mem.lngfile',
 		array(
-			'current_member' => we::$id,
+			'current_member' => MID,
 			'board_list' => $board_index,
 			'is_activated' => 1,
 			'notify_types' => 4,
@@ -1108,9 +1108,9 @@ function notifyMembersBoard(&$topicData)
 
 			$replacements = array(
 				'TOPICSUBJECT' => $topicData[$key]['subject'],
-				'TOPICLINK' => $scripturl . '?topic=' . $topicData[$key]['topic'] . '.new#new',
+				'TOPICLINK' => SCRIPT . '?topic=' . $topicData[$key]['topic'] . '.new#new',
 				'MESSAGE' => $topicData[$key]['body'],
-				'UNSUBSCRIBELINK' => $scripturl . '?action=notifyboard;board=' . $topicData[$key]['board'] . '.0',
+				'UNSUBSCRIBELINK' => SCRIPT . '?action=notifyboard;board=' . $topicData[$key]['board'] . '.0',
 			);
 
 			if (!$send_body)
@@ -1144,7 +1144,7 @@ function notifyMembersBoard(&$topicData)
 		WHERE id_board IN ({array_int:board_list})
 			AND id_member != {int:current_member}',
 		array(
-			'current_member' => we::$id,
+			'current_member' => MID,
 			'board_list' => $board_index,
 			'is_sent' => 1,
 		)

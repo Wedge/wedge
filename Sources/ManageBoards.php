@@ -517,7 +517,7 @@ function EditBoard()
 		SELECT url
 		FROM {db_prefix}boards
 		WHERE id_owner = {int:user_id}',
-		array('user_id' => (int) we::$id)
+		array('user_id' => (int) MID)
 	);
 	$subdomains = array(0 => $_SERVER['HTTP_HOST']);
 	while ($row = wesql::fetch_row($request))
@@ -735,28 +735,8 @@ function EditBoard()
 	// Get all the languages
 	getLanguages();
 
-	// Get all the themes...
-	$request = wesql::query('
-		SELECT id_theme AS id, value AS name
-		FROM {db_prefix}themes
-		WHERE variable = {literal:name}'
-	);
-	$context['themes'] = array();
-	while ($row = wesql::fetch_assoc($request))
-		$context['themes'][$row['id']] = $row;
-	wesql::free_result($request);
-
-	// Get theme dir for all themes
 	loadSource('Themes');
-
-	$request = wesql::query('
-		SELECT id_theme AS id, value AS dir
-		FROM {db_prefix}themes
-		WHERE variable = {literal:theme_dir}'
-	);
-	while ($row = wesql::fetch_assoc($request))
-		$context['themes'][$row['id']]['skins'] = wedge_get_skin_list($row['dir'] . '/skins');
-	wesql::free_result($request);
+	$context['skin_list'] = wedge_get_skin_list(SKINS_DIR);
 
 	if (!isset($_REQUEST['delete']))
 	{

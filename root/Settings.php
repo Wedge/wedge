@@ -34,13 +34,13 @@ $db_show_debug = false;
 
 ########## Directories/Files ##########
 # Note: These directories do not have to be changed unless you move things.
-$boarddir = dirname(__FILE__);					# The absolute path to the forum's folder. (not just '.'!)
-$sourcedir = dirname(__FILE__) . '/Sources';	# Path to the Sources directory.
-$cachedir = dirname(__FILE__) . '/cache';		# Path to the cache directory.
-$cssdir = dirname(__FILE__) . '/css';			# Path to the CSS cache directory.
-$jsdir = dirname(__FILE__) . '/js';				# Path to the JS cache directory.
-$pluginsdir = dirname(__FILE__) . '/Plugins';	# Path to the plugins directory.
-$pluginsurl = $boardurl . '/Plugins';			# URL to the Plugins area root.
+$boarddir = dirname(__FILE__);			# The absolute path to the forum's folder. Not just '.'!
+$sourcedir = $boarddir . '/Sources';	# Path to the Sources directory.
+$cachedir = $boarddir . '/cache';		# Path to the cache directory.
+$cssdir = $boarddir . '/css';			# Path to the CSS cache directory.
+$jsdir = $boarddir . '/js';				# Path to the JS cache directory.
+$pluginsdir = $boarddir . '/Plugins';	# Path to the plugins directory.
+$pluginsurl = $boardurl . '/Plugins';	# URL to the Plugins area root.
 
 ########## Error-Catching ##########
 # Note: You shouldn't touch these settings.

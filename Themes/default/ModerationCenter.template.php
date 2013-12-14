@@ -150,7 +150,7 @@ function template_watched_users()
 // Little section for making... notes.
 function template_notes()
 {
-	global $theme, $context, $txt;
+	global $context, $txt;
 
 	echo '
 		<form action="<URL>?action=moderate;area=index" method="post">
@@ -168,7 +168,7 @@ function template_notes()
 			// Cycle through the notes.
 			foreach ($context['notes'] as $note)
 				echo '
-						<li class="smalltext"><a href="', $note['delete_href'], '"><img src="', $theme['images_url'], '/pm_recipient_delete.gif"></a> <strong>', $note['author']['link'], ':</strong> ', $note['text'], '</li>';
+						<li class="smalltext"><a href="', $note['delete_href'], '"><img src="', ASSETS, '/pm_recipient_delete.gif"></a> <strong>', $note['author']['link'], ':</strong> ', $note['text'], '</li>';
 
 			echo '
 					</ul>
@@ -536,7 +536,7 @@ function template_prefs()
  */
 function create_button($name, $alt, $label)
 {
-	global $theme, $txt;
+	global $txt;
 
-	return '<img src="' . $theme['images_url'] . '/buttons/' . $name . '" alt="' . $txt[$alt] . '" class="middle">' . (isset($txt[$label]) ? '&nbsp;' . $txt[$label] : '');
+	return '<img src="' . ASSETS . '/buttons/' . $name . '" alt="' . $txt[$alt] . '" class="middle imb">' . (isset($txt[$label]) ? '&nbsp;' . $txt[$label] : '');
 }

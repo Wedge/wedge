@@ -17,8 +17,6 @@ class captcha_silhouette
 
 	public function render($code)
 	{
-		global $theme;
-
 		// Create a background
 		$width = 500;
 		$height = 100;
@@ -40,7 +38,7 @@ class captcha_silhouette
 		}
 
 		for ($i = 0, $n = strlen($code); $i < $n; $i++)
-			imagettftext($this->image, 50, 0, $i * 80 + mt_rand(18, 22), mt_rand(70, 90), $black, $theme['default_theme_dir'] . '/fonts/wecaptcha1.ttf', substr($code, $i, 1));
+			imagettftext($this->image, 50, 0, $i * 80 + mt_rand(18, 22), mt_rand(70, 90), $black, ASSETS_DIR . '/fonts/wecaptcha1.ttf', substr($code, $i, 1));
 
 		return $this->image;
 	}

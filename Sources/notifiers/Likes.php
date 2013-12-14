@@ -15,11 +15,11 @@ class Likes_Notifier extends Notifier
 {
 	public function getText(Notification $notification, $is_email = false)
 	{
-		global $txt, $scripturl;
+		global $txt;
 
 		$data = $notification->getData();
 		$url = $notification->getURL();
-		$member_url = $scripturl . '?action=profile;u=' . $data['member']['id'];
+		$member_url = SCRIPT . '?action=profile;u=' . $data['member']['id'];
 
 		return strtr(
 			$txt[$is_email ? 'notifier_likes_text' : 'notifier_likes_html'],

@@ -16,7 +16,7 @@ if (!defined('WEDGE'))
  *
  * By the time we're done, everything should have slashes (regardless of php.ini).
  *
- * - Defines $scripturl ($boardurl + index.php if needed)
+ * - Defines SCRIPT ($boardurl + index.php if needed)
  * - Identifies which function to run to handle magic_quotes.
  * - Removes $HTTP_POST_* if set.
  * - Aborts if someone is trying to set $GLOBALS via $_REQUEST or the cookies (in the case of register_globals being on)
@@ -32,7 +32,7 @@ if (!defined('WEDGE'))
  */
 function cleanRequest()
 {
-	global $board, $topic, $boardurl, $scripturl, $settings, $context, $action_list;
+	global $board, $topic, $boardurl, $boarddir, $settings, $context, $action_list;
 
 	// While we're here cleaning the request, try and clean the headers that we'll send back.
 	header('X-Powered-By: ');
@@ -52,6 +52,85 @@ function cleanRequest()
 	// $scripturl is your board URL if you asked to remove index.php or the user visits for the first time
 	// (in which case they'll get the annoying PHPSESSID stuff in their URL and we need index.php in them.)
 	$scripturl = $boardurl . (!empty($settings['pretty_remove_index']) && isset($_COOKIE[session_name()]) ? '/' : '/index.php');
+
+	// Check to see if they're accessing it from the wrong place.
+	if (isset($_SERVER['HTTP_HOST']) || isset($_SERVER['SERVER_NAME']))
+	{
+		$detected_url = isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == 'on' ? 'https://' : 'http://';
+		$detected_url .= empty($_SERVER['HTTP_HOST']) ? $_SERVER['SERVER_NAME'] . (empty($_SERVER['SERVER_PORT']) || $_SERVER['SERVER_PORT'] == '80' ? '' : ':' . $_SERVER['SERVER_PORT']) : $_SERVER['HTTP_HOST'];
+		$temp = preg_replace('~/' . basename($scripturl) . '(/.+)?$~', '', strtr(dirname($_SERVER['PHP_SELF']), '\\', '/'));
+		if ($temp != '/')
+			$detected_url .= $temp;
+	}
+
+	// Is everything all right, URL-wise..? Then waste no more.
+	if (isset($detected_url) && $detected_url != $boardurl)
+	{
+		// Try #1 - check if it's in a list of alias addresses
+		if (!empty($settings['forum_alias_urls']))
+		{
+			$aliases = explode(',', $settings['forum_alias_urls']);
+
+			// Rip off all the boring parts, spaces, etc.
+			foreach ($aliases as $alias)
+				if ($detected_url == trim($alias) || strtr($detected_url, array('http://' => '', 'https://' => '')) == trim($alias))
+					$do_fix = true;
+		}
+
+		// Hmm... check #2 - is it just different by a www? Send them to the correct place!!
+		if (empty($do_fix) && strtr($detected_url, array('://' => '://www.')) == $boardurl && (empty($_GET) || count($_GET) == 1) && WEDGE != 'SSI')
+		{
+			// Okay, this seems weird, but we don't want an endless loop - this will make $_GET not empty ;)
+			if (empty($_GET))
+				redirectexit('wwwRedirect');
+			elseif (key($_GET) != 'wwwRedirect')
+				redirectexit('wwwRedirect;' . key($_GET) . '=' . current($_GET));
+		}
+
+		// #3 is just a check for SSL...
+		if (strtr($detected_url, array('https://' => 'http://')) == $boardurl)
+			$do_fix = true;
+
+		// Okay, #4 - perhaps it's an IP address? We're gonna want to use that one, then. (assuming it's the IP or something...)
+		if (!empty($do_fix) || preg_match('~^http[s]?://(?:[\d.:]+|\[[\d:]+\](?::\d+)?)(?:$|/)~', $detected_url) == 1)
+		{
+			// Caching is good ;)
+			define('NEEDS_URL_FIX', $oldurl = $boardurl);
+
+			// Fix $boardurl and $scripturl
+			$boardurl = $detected_url;
+			$scripturl = strtr($scripturl, array($oldurl => $boardurl));
+			$_SERVER['REQUEST_URL'] = strtr($_SERVER['REQUEST_URL'], array($oldurl => $boardurl));
+
+			// Fix the theme urls...
+			$settings['theme_url'] = strtr($settings['theme_url'], array($oldurl => $boardurl));
+
+			// And just a few mod settings :)
+			$settings['smileys_url'] = strtr($settings['smileys_url'], array($oldurl => $boardurl));
+			$settings['avatar_url'] = strtr($settings['avatar_url'], array($oldurl => $boardurl));
+		}
+	}
+
+	// All done? No changin' the URLs? Okay, we can now define our constants...
+	define('ROOT', $boardurl);
+	define('SCRIPT', $scripturl);
+	define('ROOT_DIR', $boarddir);
+	define('TEMPLATES', $settings['theme_url']);			// !! Temporary.
+	define('TEMPLATES_DIR', $settings['theme_dir']);		// !! Temporary.
+	define('SKINS', TEMPLATES . '/skins');					// !! Temporary.
+	define('SKINS_DIR', TEMPLATES_DIR . '/skins');			// !! Temporary.
+	define('LANGUAGES', TEMPLATES . '/languages');			// !! Temporary.
+	define('LANGUAGES_DIR', TEMPLATES_DIR . '/languages');	// !! Temporary.
+	define('ASSETS', TEMPLATES . '/images');				// !! Temporary
+	define('ASSETS_DIR', TEMPLATES_DIR . '/images');		// !! Temporary
+
+	define('SMILEYS', $settings['smileys_url']);
+	define('AVATARS', $settings['avatar_url']);
+
+	// Some aliases, if you prefer these.
+	define('SCRIPT_DIR', ROOT_DIR);
+	define('IMAGES', ASSETS);
+	define('IMAGES_DIR', ASSETS_DIR);
 
 	// What function to use to reverse magic quotes - if sybase is on we assume that the database sensibly has the right unescape function!
 	$removeMagicQuoteFunction = ini_get('magic_quotes_sybase') || strtolower(ini_get('magic_quotes_sybase')) == 'on' ? 'unescapestring__recursive' : 'stripslashes__recursive';
@@ -247,7 +326,6 @@ function cleanRequest()
 			if (preg_match($regex, $full_request, $filename))
 			{
 				// There are probably faster ways to retrieve an 'existing' cached version.
-				global $boarddir;
 				$matches = glob($boarddir . '/' . $filename[1] . $filename[2] . '*.' . $filename[3]);
 				if (!empty($matches) && preg_match($regex, (string) reset($matches), $new_filename))
 				{

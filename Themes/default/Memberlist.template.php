@@ -11,7 +11,7 @@
 // Displays a sortable listing of all members registered on the forum.
 function template_main()
 {
-	global $context, $theme, $txt;
+	global $context, $txt;
 
 	// Build the memberlist button array.
 	$memberlist_buttons = array(
@@ -70,11 +70,11 @@ function template_main()
 						', $context['can_send_pm'] ? '<a href="' . $member['online']['href'] . '" title="' . $member['online']['text'] . '">' : '', '<img src="', $member['online']['image_href'], '" alt="', $member['online']['text'], '">', $context['can_send_pm'] ? '</a>' : '', '
 					</td>
 					<td class="left">', $member['link'], '</td>
-					<td class="windowbg2">', $member['show_email'] == 'no' ? '' : '<a href="<URL>?action=emailuser;sa=email;uid=' . $member['id'] . '" rel="nofollow"><img src="' . $theme['images_url'] . '/email_sm.gif" alt="' . $txt['email'] . '" title="' . $txt['email'] . ' ' . $member['name'] . '"></a>', '</td>';
+					<td class="windowbg2">', $member['show_email'] == 'no' ? '' : '<a href="<URL>?action=emailuser;sa=email;uid=' . $member['id'] . '" rel="nofollow"><img src="' . ASSETS . '/email_sm.gif" alt="' . $txt['email'] . '" title="' . $txt['email'] . ' ' . $member['name'] . '"></a>', '</td>';
 
 		if (!isset($context['disabled_fields']['website']))
 			echo '
-					<td>', $member['website']['url'] != '' ? '<a href="' . $member['website']['url'] . '" target="_blank" class="new_win"><img src="' . $theme['images_url'] . '/www.gif" alt="' . $member['website']['title'] . '" title="' . $member['website']['title'] . '"></a>' : '', '</td>';
+					<td>', $member['website']['url'] != '' ? '<a href="' . $member['website']['url'] . '" target="_blank" class="new_win"><img src="' . ASSETS . '/www.gif" alt="' . $member['website']['title'] . '" title="' . $member['website']['title'] . '"></a>' : '', '</td>';
 
 		// Custom Fields
 		foreach ($context['custom_fields'] as $field_name => $details)
@@ -138,7 +138,7 @@ function template_main()
 // A page allowing people to search the member list.
 function template_search()
 {
-	global $context, $theme, $txt;
+	global $context, $txt;
 
 	// Build the memberlist button array.
 	$memberlist_buttons = array(
@@ -151,7 +151,7 @@ function template_search()
 	<form action="<URL>?action=mlist;sa=search" method="post" accept-charset="UTF-8">
 		<div id="memberlist">
 			<we:cat>
-				<img src="' . $theme['images_url'] . '/buttons/search.gif">
+				<img src="' . ASSETS . '/buttons/search.gif">
 				', $txt['mlist_search'], '
 			</we:cat>
 			<div class="pagesection">',

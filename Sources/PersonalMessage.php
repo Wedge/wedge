@@ -142,7 +142,7 @@ function PersonalMessage()
 					AND is_read = {int:new}
 				ORDER BY id_pm',
 				array(
-					'current_member' => we::$id,
+					'current_member' => MID,
 					'new' => 0,
 				)
 			);
@@ -154,7 +154,7 @@ function PersonalMessage()
 			// For reasons not entirely clear, this could sometimes get out of sync.
 			if (count($context['personal_messages']) != we::$user['unread_messages'])
 				updateMemberData(
-					we::$id,
+					MID,
 					array(
 						'unread_messages' => count($context['personal_messages']),
 					)
@@ -224,7 +224,7 @@ function PersonalMessage()
 						AND is_read = 0',
 					array(
 						'pm' => $pmsg,
-						'member' => we::$id,
+						'member' => MID,
 					)
 				);
 				$request = wesql::query('
@@ -234,15 +234,15 @@ function PersonalMessage()
 						AND is_read = {int:new}
 					ORDER BY id_pm',
 					array(
-						'current_member' => we::$id,
+						'current_member' => MID,
 						'new' => 0,
 					)
 				);
 				list ($count) = wesql::fetch_row($request);
 				wesql::free_result($request);
-				updateMemberData(we::$id, array('unread_messages' => $count));
+				updateMemberData(MID, array('unread_messages' => $count));
 				// And next time we actually enter the inbox certain things need to be recalculated.
-				cache_put_data('labelCounts:' . we::$id, null);
+				cache_put_data('labelCounts:' . MID, null);
 			*/
 
 			return_raw($context['header'] . parse_bbc($body, 'pm', array('cache' => 'pm' . $pmsg)));
@@ -252,7 +252,7 @@ function PersonalMessage()
 	// Load up the members maximum message capacity.
 	if (we::$is_admin)
 		$context['message_limit'] = 0;
-	elseif (($context['message_limit'] = cache_get_data('msgLimit:' . we::$id, 360)) === null)
+	elseif (($context['message_limit'] = cache_get_data('msgLimit:' . MID, 360)) === null)
 	{
 		// !!! Why do we do this? It seems like if they have any limit we should use it.
 		$request = wesql::query('
@@ -269,7 +269,7 @@ function PersonalMessage()
 		$context['message_limit'] = $minMessage == 0 ? 0 : $maxMessage;
 
 		// Save us doing it again!
-		cache_put_data('msgLimit:' . we::$id, $context['message_limit'], 360);
+		cache_put_data('msgLimit:' . MID, $context['message_limit'], 360);
 	}
 
 	// Prepare the context for the capacity bar.
@@ -313,20 +313,20 @@ function PersonalMessage()
 		);
 
 		applyRules();
-		updateMemberData(we::$id, array('new_pm' => 0));
+		updateMemberData(MID, array('new_pm' => 0));
 		wesql::query('
 			UPDATE {db_prefix}pm_recipients
 			SET is_new = {int:not_new}
 			WHERE id_member = {int:current_member}',
 			array(
-				'current_member' => we::$id,
+				'current_member' => MID,
 				'not_new' => 0,
 			)
 		);
 	}
 
 	// Load the label data.
-	if ($user_settings['new_pm'] || ($context['labels'] = cache_get_data('labelCounts:' . we::$id, 720)) === null)
+	if ($user_settings['new_pm'] || ($context['labels'] = cache_get_data('labelCounts:' . MID, 720)) === null)
 	{
 		$context['labels'] = $user_settings['message_labels'] == '' ? array() : explode(',', $user_settings['message_labels']);
 		foreach ($context['labels'] as $id_label => $label_name)
@@ -351,7 +351,7 @@ function PersonalMessage()
 				AND deleted = {int:not_deleted}
 			GROUP BY labels, is_read',
 			array(
-				'current_member' => we::$id,
+				'current_member' => MID,
 				'not_deleted' => 0,
 			)
 		);
@@ -368,7 +368,7 @@ function PersonalMessage()
 		wesql::free_result($result);
 
 		// Store it please!
-		cache_put_data('labelCounts:' . we::$id, $context['labels'], 720);
+		cache_put_data('labelCounts:' . MID, $context['labels'], 720);
 	}
 
 	// This determines if we have more labels than just the standard inbox.
@@ -579,7 +579,7 @@ function MessageFolder()
 		if ($view >= 0 && $view <= 2)
 		{
 			$context['display_mode'] = $view;
-			updateMemberData(we::$id, array('pm_prefs' => ($user_settings['pm_prefs'] & 252) | $context['display_mode']));
+			updateMemberData(MID, array('pm_prefs' => ($user_settings['pm_prefs'] & 252) | $context['display_mode']));
 		}
 	}
 	$context['view_select_types'] = array(
@@ -656,7 +656,7 @@ function MessageFolder()
 			WHERE pm.id_member_from = {int:current_member}
 				AND pm.deleted_by_sender = {int:not_deleted}',
 			array(
-				'current_member' => we::$id,
+				'current_member' => MID,
 				'not_deleted' => 0,
 			)
 		);
@@ -668,7 +668,7 @@ function MessageFolder()
 			WHERE pmr.id_member = {int:current_member}
 				AND pmr.deleted = {int:not_deleted}' . $labelQuery,
 			array(
-				'current_member' => we::$id,
+				'current_member' => MID,
 				'not_deleted' => 0,
 			)
 		);
@@ -714,7 +714,7 @@ function MessageFolder()
 						AND deleted_by_sender = {int:not_deleted}
 						AND id_pm ' . ($descending ? '>' : '<') . ' {int:id_pm}',
 					array(
-						'current_member' => we::$id,
+						'current_member' => MID,
 						'not_deleted' => 0,
 						'id_pm' => $pmID,
 					)
@@ -728,7 +728,7 @@ function MessageFolder()
 						AND pmr.deleted = {int:not_deleted}' . $labelQuery . '
 						AND pmr.id_pm ' . ($descending ? '>' : '<') . ' {int:id_pm}',
 					array(
-						'current_member' => we::$id,
+						'current_member' => MID,
 						'not_deleted' => 0,
 						'id_pm' => $pmID,
 					)
@@ -780,7 +780,7 @@ function MessageFolder()
 			ORDER BY ' . ($_GET['sort'] == 'pm.id_pm' && $context['folder'] != 'sent' ? 'id_pm' : '{raw:sort}') . ($descending ? ' DESC' : ' ASC') . (empty($_GET['pmsg']) ? '
 			LIMIT ' . $_GET['start'] . ', ' . $settings['defaultMaxMessages'] : ''),
 			array(
-				'current_member' => we::$id,
+				'current_member' => MID,
 				'deleted_by' => 0,
 				'sort' => $_GET['sort'],
 				'pm_member' => $context['folder'] == 'sent' ? 'pmr.id_member' : 'pm.id_member_from',
@@ -807,7 +807,7 @@ function MessageFolder()
 			ORDER BY ' . ($_GET['sort'] == 'pm.id_pm' && $context['folder'] != 'sent' ? 'pmr.id_pm' : '{raw:sort}') . ($descending ? ' DESC' : ' ASC') . (empty($pmsg) ? '
 			LIMIT ' . $_GET['start'] . ', ' . $settings['defaultMaxMessages'] : ''),
 			array(
-				'current_member' => we::$id,
+				'current_member' => MID,
 				'is_deleted' => 0,
 				'sort' => $_GET['sort'],
 				'pm_member' => $context['folder'] == 'sent' ? 'pmr.id_member' : 'pm.id_member_from',
@@ -818,7 +818,7 @@ function MessageFolder()
 	// Load the id_pms and initialize recipients.
 	$pms = array();
 	$lastData = array();
-	$posters = $context['folder'] == 'sent' ? array(we::$id) : array();
+	$posters = $context['folder'] == 'sent' ? array(MID) : array();
 	$recipients = array();
 
 	while ($row = wesql::fetch_assoc($request))
@@ -871,7 +871,7 @@ function MessageFolder()
 						OR (pmr.id_member = {int:current_member} AND pmr.deleted = {int:not_deleted}))
 				ORDER BY pm.id_pm',
 				array(
-					'current_member' => we::$id,
+					'current_member' => MID,
 					'id_pm_head' => $lastData['head'],
 					'not_deleted' => 0,
 				)
@@ -879,9 +879,9 @@ function MessageFolder()
 			while ($row = wesql::fetch_assoc($request))
 			{
 				// This is, frankly, a joke. We will put in a workaround for people sending to themselves - yawn!
-				if ($context['folder'] == 'sent' && $row['id_member_from'] == we::$id && $row['deleted_by_sender'] == 1)
+				if ($context['folder'] == 'sent' && $row['id_member_from'] == MID && $row['deleted_by_sender'] == 1)
 					continue;
-				elseif ($row['id_member'] == we::$id & $row['deleted'] == 1)
+				elseif ($row['id_member'] == MID & $row['deleted'] == 1)
 					continue;
 
 				if (!isset($recipients[$row['id_pm']]))
@@ -918,9 +918,9 @@ function MessageFolder()
 			if ($context['folder'] == 'sent' || empty($row['bcc']))
 				$recipients[$id][empty($row['bcc']) ? 'to' : 'bcc'][] = empty($row['id_member_to']) ? $txt['guest_title'] : '<a href="<URL>?action=profile;u=' . $row['id_member_to'] . '">' . $row['to_name'] . '</a>';
 
-			if ($context['folder'] == 'sent' && isset($posters[$id]) && $posters[$id] == we::$id)
+			if ($context['folder'] == 'sent' && isset($posters[$id]) && $posters[$id] == MID)
 				$context['message_replied'][$id] = (isset($context['message_replied'][$id]) ? $context['message_replied'][$id] : 0) + (($row['is_read'] & 2) >> 1);
-			elseif (we::$id == $row['id_member_to'])
+			elseif (MID == $row['id_member_to'])
 			{
 				$context['message_replied'][$id] = $row['is_read'] & 2;
 				$context['message_unread'][$id] = ($row['is_read'] & 1) == 0; // other bits can be used for other stuff but bit 0 (value 1) = message is read.
@@ -1104,8 +1104,8 @@ function prepareMessageContext($type = 'subject', $reset = false)
 	}
 	else
 	{
-		$memberContext[$message['id_member_from']]['can_view_profile'] = allowedTo('profile_view_any') || ($message['id_member_from'] == we::$id && allowedTo('profile_view_own'));
-		$memberContext[$message['id_member_from']]['can_see_warning'] = !empty($settings['warning_show']) && $memberContext[$message['id_member_from']]['warning_status'] && ($settings['warning_show'] == 3 || allowedTo('issue_warning') || ($settings['warning_show'] == 2 && $message['id_member_from'] == we::$id));
+		$memberContext[$message['id_member_from']]['can_view_profile'] = allowedTo('profile_view_any') || ($message['id_member_from'] == MID && allowedTo('profile_view_own'));
+		$memberContext[$message['id_member_from']]['can_see_warning'] = !empty($settings['warning_show']) && $memberContext[$message['id_member_from']]['warning_status'] && ($settings['warning_show'] == 3 || allowedTo('issue_warning') || ($settings['warning_show'] == 2 && $message['id_member_from'] == MID));
 	}
 
 	// Censor all the important text...
@@ -1161,13 +1161,13 @@ function MarkUnread()
 			AND is_read & 1 = 1',
 		array(
 			'id_pm' => $id_pm,
-			'id_member' => we::$id,
+			'id_member' => MID,
 		)
 	);
 
 	// If something wasn't marked as read, get the number of unread messages remaining.
 	if (wesql::affected_rows() > 0)
-		recalculateUnread(we::$id);
+		recalculateUnread(MID);
 
 	redirectexit('action=pm');
 }
@@ -1517,7 +1517,7 @@ function MessageSearch2()
 			' . $userQuery . $labelQuery . $timeQuery . '
 			AND (' . $searchQuery . ')',
 		array_merge($searchq_parameters, array(
-			'current_member' => we::$id,
+			'current_member' => MID,
 			'not_deleted' => 0,
 		))
 	);
@@ -1540,7 +1540,7 @@ function MessageSearch2()
 		ORDER BY ' . $search_params['sort'] . ' ' . $search_params['sort_dir'] . '
 		LIMIT ' . $context['start'] . ', ' . $settings['search_results_per_page'],
 		array_merge($searchq_parameters, array(
-			'current_member' => we::$id,
+			'current_member' => MID,
 			'not_deleted' => 0,
 		))
 	);
@@ -1569,7 +1569,7 @@ function MessageSearch2()
 			LIMIT {int:limit}',
 			array(
 				'head_pms' => array_unique($head_pms),
-				'current_member' => we::$id,
+				'current_member' => MID,
 				'not_deleted' => 0,
 				'limit' => count($head_pms),
 			)
@@ -1611,7 +1611,7 @@ function MessageSearch2()
 			if ($context['folder'] == 'sent' || empty($row['bcc']))
 				$recipients[$row['id_pm']][empty($row['bcc']) ? 'to' : 'bcc'][] = empty($row['id_member_to']) ? $txt['guest_title'] : '<a href="<URL>?action=profile;u=' . $row['id_member_to'] . '">' . $row['to_name'] . '</a>';
 
-			if ($row['id_member_to'] == we::$id && $context['folder'] != 'sent')
+			if ($row['id_member_to'] == MID && $context['folder'] != 'sent')
 			{
 				$context['message_replied'][$row['id_pm']] = $row['is_read'] & 2;
 
@@ -1729,7 +1729,7 @@ function MessagePost()
 			WHERE pm.id_member_from = {int:current_member}
 				AND pm.msgtime > {int:msgtime}',
 			array(
-				'current_member' => we::$id,
+				'current_member' => MID,
 				'msgtime' => time() - 3600,
 			)
 		);
@@ -1758,7 +1758,7 @@ function MessagePost()
 				AND id_member = {int:current_member}
 			LIMIT 1',
 			array(
-				'current_member' => we::$id,
+				'current_member' => MID,
 				'id_pm' => $pmsg,
 			)
 		);
@@ -1779,7 +1779,7 @@ function MessagePost()
 				AND pmr.id_member = {int:current_member}') . '
 			LIMIT 1',
 			array(
-				'current_member' => we::$id,
+				'current_member' => MID,
 				'id_pm_head_empty' => 0,
 				'id_pm' => $pmsg,
 			)
@@ -1853,7 +1853,7 @@ function MessagePost()
 		if ($_REQUEST['u'] == 'all' && isset($row_quoted))
 		{
 			// Firstly, to reply to all we clearly already have $row_quoted - so have the original member from.
-			if ($row_quoted['id_member'] != we::$id)
+			if ($row_quoted['id_member'] != MID)
 				$context['recipients']['to'][] = array(
 					'id' => $row_quoted['id_member'],
 					'name' => htmlspecialchars($row_quoted['real_name']),
@@ -1868,7 +1868,7 @@ function MessagePost()
 					AND pmr.id_member != {int:current_member}
 					AND pmr.bcc = {int:not_bcc}',
 				array(
-					'current_member' => we::$id,
+					'current_member' => MID,
 					'id_pm' => $pmsg,
 					'not_bcc' => 0,
 				)
@@ -1926,7 +1926,7 @@ function MessagePost()
 			LIMIT 1',
 			array(
 				'draft' => $_REQUEST['draft_id'],
-				'member' => we::$id,
+				'member' => MID,
 				'is_pm' => 1,
 			)
 		);
@@ -2027,7 +2027,7 @@ function MessagePost()
 // An error in the message...
 function messagePostError($error_types, $named_recipients, $recipient_ids = array())
 {
-	global $txt, $context, $settings;
+	global $txt, $context, $settings, $options;
 
 	$context['menu_data_' . $context['pm_menu_id']]['current_area'] = 'send';
 
@@ -2087,7 +2087,7 @@ function messagePostError($error_types, $named_recipients, $recipient_ids = arra
 				AND pmr.id_member = {int:current_member}') . '
 			LIMIT 1',
 			array(
-				'current_member' => we::$id,
+				'current_member' => MID,
 				'no_id_pm_head' => 0,
 				'replied_to' => $_REQUEST['replied_to'],
 			)
@@ -2233,7 +2233,7 @@ function MessagePost2()
 			WHERE pm.id_member_from = {int:current_member}
 				AND pm.msgtime > {int:msgtime}',
 			array(
-				'current_member' => we::$id,
+				'current_member' => MID,
 				'msgtime' => time() - 3600,
 			)
 		);
@@ -2398,14 +2398,14 @@ function MessagePost2()
 			WHERE id_pm = {int:replied_to}
 				AND id_member = {int:current_member}',
 			array(
-				'current_member' => we::$id,
+				'current_member' => MID,
 				'replied_to' => (int) $_REQUEST['replied_to'],
 			)
 		);
 	}
 
 	// Um, did this come from a draft? If so, bye bye.
-	if (!empty($_POST['draft_id']) && !empty(we::$id))
+	if (!empty($_POST['draft_id']) && MID)
 		wesql::query('
 			DELETE FROM {db_prefix}drafts
 			WHERE id_draft = {int:draft}
@@ -2413,7 +2413,7 @@ function MessagePost2()
 			LIMIT 1',
 			array(
 				'draft' => (int) $_POST['draft_id'],
-				'member' => we::$id,
+				'member' => MID,
 			)
 		);
 
@@ -2602,7 +2602,7 @@ function MessageActionsApply()
 				AND id_pm IN ({array_int:to_label})
 			LIMIT ' . count($to_label),
 			array(
-				'current_member' => we::$id,
+				'current_member' => MID,
 				'to_label' => array_keys($to_label),
 			)
 		);
@@ -2635,7 +2635,7 @@ function MessageActionsApply()
 					WHERE id_pm = {int:id_pm}
 						AND id_member = {int:current_member}',
 					array(
-						'current_member' => we::$id,
+						'current_member' => MID,
 						'id_pm' => $row['id_pm'],
 						'labels' => $set,
 					)
@@ -2711,7 +2711,7 @@ function MessagePrune()
 				AND id_member_from = {int:current_member}
 				AND msgtime < {int:msgtime}',
 			array(
-				'current_member' => we::$id,
+				'current_member' => MID,
 				'not_deleted' => 0,
 				'msgtime' => $deleteTime,
 			)
@@ -2729,7 +2729,7 @@ function MessagePrune()
 				AND pmr.id_member = {int:current_member}
 				AND pm.msgtime < {int:msgtime}',
 			array(
-				'current_member' => we::$id,
+				'current_member' => MID,
 				'not_deleted' => 0,
 				'msgtime' => $deleteTime,
 			)
@@ -2756,7 +2756,7 @@ function MessagePrune()
 function deleteMessages($personal_messages, $folder = null, $owner = null)
 {
 	if ($owner === null)
-		$owner = array(we::$id);
+		$owner = array(MID);
 	elseif (empty($owner))
 		return;
 	elseif (!is_array($owner))
@@ -2815,7 +2815,7 @@ function deleteMessages($personal_messages, $folder = null, $owner = null)
 				updateMemberData($row['id_member'], array('instant_messages' => $where == '' ? 0 : 'instant_messages - ' . $row['num_deleted_messages'], 'unread_messages' => $where == '' ? 0 : 'unread_messages - ' . $row['num_deleted_messages']));
 
 			// If this is the current member we need to make their message count correct.
-			if (we::$id == $row['id_member'])
+			if (MID == $row['id_member'])
 			{
 				we::$user['messages'] -= $row['num_deleted_messages'];
 				if (!($row['is_read']))
@@ -2879,14 +2879,14 @@ function deleteMessages($personal_messages, $folder = null, $owner = null)
 	}
 
 	// Any cached numbers may be wrong now.
-	cache_put_data('labelCounts:' . we::$id, null, 720);
+	cache_put_data('labelCounts:' . MID, null, 720);
 }
 
 // Mark personal messages read.
 function markMessages($personal_messages = null, $label = null, $owner = null)
 {
 	if ($owner === null)
-		$owner = we::$id;
+		$owner = MID;
 
 	wesql::query('
 		UPDATE {db_prefix}pm_recipients
@@ -2911,7 +2911,7 @@ function recalculateUnread($owner)
 {
 	global $context;
 
-	if ($owner == we::$id)
+	if ($owner == MID)
 		foreach ($context['labels'] as $label)
 			$context['labels'][(int) $label['id']]['unread_messages'] = 0;
 
@@ -2932,7 +2932,7 @@ function recalculateUnread($owner)
 	{
 		$total_unread += $row['num'];
 
-		if ($owner != we::$id)
+		if ($owner != MID)
 			continue;
 
 		$this_labels = explode(',', $row['labels']);
@@ -2946,7 +2946,7 @@ function recalculateUnread($owner)
 	updateMemberData($owner, array('unread_messages' => $total_unread));
 
 	// If it was for the current member, reflect this in the we::$user array too.
-	if ($owner == we::$id)
+	if ($owner == MID)
 		we::$user['unread_messages'] = $total_unread;
 }
 
@@ -3040,7 +3040,7 @@ function ManageLabels()
 		}
 
 		// Save the label status.
-		updateMemberData(we::$id, array('message_labels' => implode(',', $the_labels)));
+		updateMemberData(MID, array('message_labels' => implode(',', $the_labels)));
 
 		// Update all the messages currently with any label changes in them!
 		if (!empty($message_changes))
@@ -3060,7 +3060,7 @@ function ManageLabels()
 				WHERE FIND_IN_SET({raw:find_label_implode}, labels) != 0
 					AND id_member = {int:current_member}',
 				array(
-					'current_member' => we::$id,
+					'current_member' => MID,
 					'find_label_implode' => '\'' . implode('\', labels) != 0 OR FIND_IN_SET(\'', $searchArray) . '\'',
 				)
 			);
@@ -3088,7 +3088,7 @@ function ManageLabels()
 					WHERE id_pm = {int:id_pm}
 						AND id_member = {int:current_member}',
 					array(
-						'current_member' => we::$id,
+						'current_member' => MID,
 						'id_pm' => $row['id_pm'],
 						'new_labels' => implode(',', array_unique($toChange)),
 					)
@@ -3129,7 +3129,7 @@ function ManageLabels()
 						WHERE id_rule = {int:id_rule}
 							AND id_member = {int:current_member}',
 						array(
-							'current_member' => we::$id,
+							'current_member' => MID,
 							'id_rule' => $id,
 							'actions' => serialize($context['rules'][$id]['actions']),
 						)
@@ -3144,14 +3144,14 @@ function ManageLabels()
 					WHERE id_rule IN ({array_int:rule_list})
 							AND id_member = {int:current_member}',
 					array(
-						'current_member' => we::$id,
+						'current_member' => MID,
 						'rule_list' => $rule_changes,
 					)
 				);
 		}
 
 		// Make sure we're not caching this!
-		cache_put_data('labelCounts:' . we::$id, null, 720);
+		cache_put_data('labelCounts:' . MID, null, 720);
 
 		// To make the changes appear right away, redirect.
 		redirectexit('action=pm;sa=manlabels');
@@ -3169,15 +3169,15 @@ function MessageSettings()
 	// We want them to submit back to here.
 	$context['profile_custom_submit_url'] = '<URL>?action=pm;sa=settings;save';
 
-	loadMemberData(we::$id, false, 'profile');
-	$cur_profile = $user_profile[we::$id];
+	loadMemberData(MID, false, 'profile');
+	$cur_profile = $user_profile[MID];
 
 	loadLanguage('Profile');
 	loadTemplate('Profile');
 
 	we::$user['is_owner'] = true;
 	$context['page_title'] = $txt['pm_settings'];
-	$context['id_member'] = we::$id;
+	$context['id_member'] = MID;
 	$context['require_password'] = false;
 	$context['menu_item_selected'] = 'settings';
 	$context['submit_button_text'] = $txt['pm_settings'];
@@ -3199,17 +3199,17 @@ function MessageSettings()
 		saveProfileFields();
 
 		if (!empty($profile_vars))
-			updateMemberData(we::$id, $profile_vars);
+			updateMemberData(MID, $profile_vars);
 	}
 
 	// Load up the fields.
-	pmprefs(we::$id);
+	pmprefs(MID);
 }
 
 // Allows a user to report a personal message they receive to the administrator.
 function ReportMessage()
 {
-	global $txt, $context, $scripturl, $settings;
+	global $txt, $context, $settings;
 
 	// Check that this feature is even enabled!
 	if (empty($_REQUEST['pmsg']))
@@ -3264,7 +3264,7 @@ function ReportMessage()
 				AND pmr.deleted = {int:not_deleted}
 			LIMIT 1',
 			array(
-				'current_member' => we::$id,
+				'current_member' => MID,
 				'id_pm' => $context['pm_id'],
 				'not_deleted' => 0,
 			)
@@ -3286,7 +3286,7 @@ function ReportMessage()
 			WHERE pmr.id_pm = {int:id_pm}
 				AND pmr.id_member != {int:current_member}',
 			array(
-				'current_member' => we::$id,
+				'current_member' => MID,
 				'id_pm' => $context['pm_id'],
 			)
 		);
@@ -3298,7 +3298,7 @@ function ReportMessage()
 			if ($row['bcc'])
 				$hidden_recipients++;
 			else
-				$recipients[] = '[url=' . $scripturl . '?action=profile;u=' . $row['id_member_to'] . ']' . $row['to_name'] . '[/url]';
+				$recipients[] = '[url=' . SCRIPT . '?action=profile;u=' . $row['id_member_to'] . ']' . $row['to_name'] . '[/url]';
 		}
 		wesql::free_result($request);
 
@@ -3396,7 +3396,7 @@ function ManageRules()
 			AND mg.hidden = {int:not_hidden}
 		ORDER BY mg.group_name',
 		array(
-			'current_member' => we::$id,
+			'current_member' => MID,
 			'min_posts' => -1,
 			'moderator_group' => 3,
 			'not_hidden' => 0,
@@ -3547,7 +3547,7 @@ function ManageRules()
 					'delete_pm' => 'int', 'is_or' => 'int',
 				),
 				array(
-					we::$id, $ruleName, $criteria, $actions, $doDelete, $isOr,
+					MID, $ruleName, $criteria, $actions, $doDelete, $isOr,
 				)
 			);
 		else
@@ -3558,7 +3558,7 @@ function ManageRules()
 				WHERE id_rule = {int:id_rule}
 					AND id_member = {int:current_member}',
 				array(
-					'current_member' => we::$id,
+					'current_member' => MID,
 					'delete_pm' => $doDelete,
 					'is_or' => $isOr,
 					'id_rule' => $context['rid'],
@@ -3584,7 +3584,7 @@ function ManageRules()
 				WHERE id_rule IN ({array_int:delete_list})
 					AND id_member = {int:current_member}',
 				array(
-					'current_member' => we::$id,
+					'current_member' => MID,
 					'delete_list' => $toDelete,
 				)
 			);
@@ -3620,7 +3620,7 @@ function applyRules($all_messages = false)
 			AND pmr.deleted = {int:not_deleted}
 			' . $ruleQuery,
 		array(
-			'current_member' => we::$id,
+			'current_member' => MID,
 			'not_deleted' => 0,
 		)
 	);
@@ -3687,7 +3687,7 @@ function applyRules($all_messages = false)
 				WHERE id_pm = {int:id_pm}
 					AND id_member = {int:current_member}',
 				array(
-					'current_member' => we::$id,
+					'current_member' => MID,
 					'id_pm' => $pm,
 					'new_labels' => empty($realLabels) ? '' : implode(',', $realLabels),
 				)
@@ -3710,7 +3710,7 @@ function loadRules($reload = false)
 		FROM {db_prefix}pm_rules
 		WHERE id_member = {int:current_member}',
 		array(
-			'current_member' => we::$id,
+			'current_member' => MID,
 		)
 	);
 	$context['rules'] = array();
@@ -3745,7 +3745,7 @@ function isAccessiblePM($pmID, $validFor = 'in_or_outbox')
 			AND ((pm.id_member_from = {int:id_current_member} AND pm.deleted_by_sender = {int:not_deleted}) OR pmr.id_pm IS NOT NULL)',
 		array(
 			'id_pm' => $pmID,
-			'id_current_member' => we::$id,
+			'id_current_member' => MID,
 			'not_deleted' => 0,
 		)
 	);
@@ -3795,7 +3795,7 @@ function MessageDrafts()
 				AND id_member = {int:member}',
 			array(
 				'is_pm' => 1,
-				'member' => we::$id,
+				'member' => MID,
 			)
 		);
 
@@ -3813,7 +3813,7 @@ function MessageDrafts()
 			LIMIT 1',
 			array(
 				'draft' => $draft_id,
-				'member' => we::$id,
+				'member' => MID,
 			)
 		);
 
@@ -3838,7 +3838,7 @@ function MessageDrafts()
 		WHERE id_member = {int:member}
 			AND is_pm = {int:is_pm}',
 		array(
-			'member' => we::$id,
+			'member' => MID,
 			'is_pm' => 1,
 		)
 	);
@@ -3871,7 +3871,7 @@ function MessageDrafts()
 		ORDER BY d.post_time ' . ($reverse ? 'ASC' : 'DESC') . '
 		LIMIT ' . $start . ', ' . $maxIndex,
 		array(
-			'current_member' => we::$id,
+			'current_member' => MID,
 			'is_pm' => 1,
 		)
 	);

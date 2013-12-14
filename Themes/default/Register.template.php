@@ -41,7 +41,7 @@ function template_registration_agreement()
 // Before registering - get their information.
 function template_registration_form()
 {
-	global $context, $theme, $txt, $settings;
+	global $context, $txt, $settings;
 
 	add_js_file('scripts/register.js');
 
@@ -82,7 +82,7 @@ function template_registration_form()
 							<input name="user" id="we_autov_username" size="30" tabindex="', $context['tabindex']++, '" maxlength="25" value="', isset($context['username']) ? $context['username'] : '', '" required>
 							<span id="we_autov_username_div" class="hide">
 								<a id="we_autov_username_link" href="#">
-									<img id="we_autov_username_img" src="', $theme['images_url'], '/icons/field_check.gif">
+									<img id="we_autov_username_img" src="', ASSETS, '/icons/field_check.gif">
 								</a>
 							</span>
 						</dd>
@@ -100,7 +100,7 @@ function template_registration_form()
 						<dd>
 							<input type="password" name="passwrd1" id="we_autov_pwmain" size="30" tabindex="', $context['tabindex']++, '">
 							<span id="we_autov_pwmain_div" class="hide">
-								<img id="we_autov_pwmain_img" src="', $theme['images_url'], '/icons/field_invalid.gif">
+								<img id="we_autov_pwmain_img" src="', ASSETS, '/icons/field_invalid.gif">
 							</span>
 						</dd>
 					</dl>
@@ -109,7 +109,7 @@ function template_registration_form()
 						<dd>
 							<input type="password" name="passwrd2" id="we_autov_pwverify" size="30" tabindex="', $context['tabindex']++, '">
 							<span id="we_autov_pwverify_div" class="hide">
-								<img id="we_autov_pwverify_img" src="', $theme['images_url'], '/icons/field_valid.gif">
+								<img id="we_autov_pwverify_img" src="', ASSETS, '/icons/field_valid.gif">
 							</span>
 						</dd>
 					</dl>

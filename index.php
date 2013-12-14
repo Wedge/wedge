@@ -1,11 +1,11 @@
 <?php
 /**
- * Bootstrap for Wedge, where all forum access will begin and all go through the same setup and security.
- * This also lists the master set of actions. Just add your custom entries to the $action_list array:
+ * Welcome to Wedge. All forum access and actions go through this file.
+ * You may add custom actions to to the $action_list array this way:
  *
- *	'action-in-url' => array('Source-File.php', 'FunctionToCall'),
+ *	'my-action' => array('MyFile.php', 'MyFunction'),
  *
- * Then, you can access the FunctionToCall() function from Source-File.php with the URL index.php?action=action-in-url.
+ * Then, the URL index.php?action=my-action will load call MyFile.php and call MyFunction().
  *
  * @package Wedge
  * @copyright 2010 René-Gilles Deberdt, wedge.org
@@ -40,22 +40,16 @@ require_once($sourcedir . '/Subs.php');
 require_once($sourcedir . '/Errors.php');
 require_once($sourcedir . '/Load.php');
 require_once($sourcedir . '/Security.php');
-
+echo microtime(true)-$time_start;
 // If $maintenance is set specifically to 2, then we're upgrading or something.
 if (!empty($maintenance) && $maintenance == 2)
 	show_db_error();
 
-// Initiate the database connection and define some database functions to use.
+// Initiate the database connection.
 loadDatabase();
 
-// Unserialize the array of pretty board URLs
-$context = array(
-	'pretty' => array('db_count' => 0),
-	'app_error_count' => 0,
-);
-
 // Load the settings from the settings table, and perform operations like optimizing.
-reloadSettings();
+loadSettings();
 
 // Here's the monstrous $action array - $action => array($file, [[$function], $plugin_id]).
 // If the function name is the same as the loadSource file name, e.g. Admin.php, to run Admin(), you can declare it as a string.
@@ -280,7 +274,7 @@ function wedge_main()
 
 	// If we are in a topic and don't have permission to approve it then duck out now.
 	if (!empty($topic) && $action !== 'feed' && empty($board_info['cur_topic_approved']) && !allowedTo('approve_posts'))
-		if (we::$id != $board_info['cur_topic_starter'] || we::$is_guest)
+		if (MID != $board_info['cur_topic_starter'] || we::$is_guest)
 			fatal_lang_error('not_a_topic', false);
 
 	// Is the forum in maintenance mode? (doesn't apply to administrators.)

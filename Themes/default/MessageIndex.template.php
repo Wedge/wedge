@@ -10,7 +10,7 @@
 
 function template_main_board()
 {
-	global $context, $theme, $settings, $txt;
+	global $context, $settings, $txt;
 
 	echo '
 	<a id="top"></a>';
@@ -132,7 +132,7 @@ function template_main_board()
 
 			echo '
 						<p>
-							<a href="', $topic['last_post']['href'], '"><img src="', $theme['images_url'], '/icons/last_post.gif" alt="', $txt['last_post'], '" title="', $txt['last_post'], '"></a>
+							<a href="', $topic['last_post']['href'], '"><img src="', ASSETS, '/icons/last_post.gif" alt="', $txt['last_post'], '" title="', $txt['last_post'], '"></a>
 							', strtr($txt['last_post_time_author'], array(
 								'{time}' => $topic['last_post']['on_time'],
 								'{author}' => $topic['last_post']['member']['link']
@@ -339,7 +339,7 @@ function template_main_blog()
 
 function template_messageindex_childboards()
 {
-	global $context, $theme, $options, $settings, $txt;
+	global $context, $options, $settings, $txt;
 
 	if (!empty($context['boards']) && (!empty($options['show_children']) || $context['start'] == 0))
 	{
@@ -380,7 +380,7 @@ function template_messageindex_childboards()
 						</a>
 					</td>
 					<td class="info">
-						', $settings['display_flags'] == 'all' || ($settings['display_flags'] == 'specified' && !empty($board['language'])) ? '<img src="' . $theme['default_theme_url'] . '/languages/Flag.' . (empty($board['language']) ? $settings['language'] : $board['language']) . '.png"> ': '', '<a', $board['redirect_newtab'] ? ' target="_blank"' : '', ' class="subject" href="', $board['href'], '" id="b', $board['id'], '">', $board['name'], '</a>';
+						', $settings['display_flags'] == 'all' || ($settings['display_flags'] == 'specified' && !empty($board['language'])) ? '<img src="' . LANGUAGES . '/Flag.' . (empty($board['language']) ? $settings['language'] : $board['language']) . '.png"> ': '', '<a', $board['redirect_newtab'] ? ' target="_blank"' : '', ' class="subject" href="', $board['href'], '" id="b', $board['id'], '">', $board['name'], '</a>';
 
 			// Has it outstanding posts for approval?
 			if ($board['can_approve_posts'] && ($board['unapproved_posts'] || $board['unapproved_topics']))
@@ -485,12 +485,12 @@ function template_messageindex_sortlink($sort, $caption)
 
 function template_messageindex_whoviewing()
 {
-	global $txt, $context, $theme, $settings;
+	global $txt, $context, $settings;
 
 	echo '
 	<section>
 		<we:title>
-			<img src="', $theme['images_url'], '/icons/online.gif" alt="', $txt['online_users'], '">', $txt['who_title'], '
+			<img src="', ASSETS, '/icons/online.gif" alt="', $txt['online_users'], '">', $txt['who_title'], '
 		</we:title>
 		<p class="onlineinfo">';
 
@@ -506,12 +506,12 @@ function template_messageindex_whoviewing()
 
 function template_messageindex_legend()
 {
-	global $theme, $txt, $settings;
+	global $txt, $settings;
 
 	echo '
 	<section>
 		<we:title>
-			<img src="', $theme['images_url'], '/icons/field_invalid.gif">
+			<img src="', ASSETS, '/icons/field_invalid.gif">
 			', $txt['legend'], '
 		</we:title>
 		<p class="legend">
@@ -528,7 +528,7 @@ function template_messageindex_legend()
 // !!! it based on !empty($context['current_board']) or something?
 function template_messageindex_statistics()
 {
-	global $context, $settings, $theme, $txt, $board_info;
+	global $context, $settings, $txt, $board_info;
 
 	if (empty($settings['show_stats_index']))
 		return;
@@ -538,7 +538,7 @@ function template_messageindex_statistics()
 	echo '
 	<section>
 		<we:title>
-			<a href="<URL>?board=', $context['current_board'], ';action=stats"><img src="', $theme['images_url'], '/icons/info.gif" alt="', $txt[$type . '_stats'], '"></a>
+			<a href="<URL>?board=', $context['current_board'], ';action=stats"><img src="', ASSETS, '/icons/info.gif" alt="', $txt[$type . '_stats'], '"></a>
 			', $txt[$type . '_stats'], '
 		</we:title>
 		<p>

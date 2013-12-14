@@ -410,7 +410,7 @@ function aeva_admin_albums_delete()
 // Handles the FTP import area
 function aeva_admin_FTPImport()
 {
-	global $amSettings, $context, $scripturl, $time_start;
+	global $amSettings, $context, $time_start;
 
 	// Load the map
 	list ($context['ftp_map'], $context['ftp_folder_list']) = aeva_get_dir_map($amSettings['data_dir_path'] . '/ftp');
@@ -522,7 +522,7 @@ function aeva_admin_FTPImport()
 				'title' => $name,
 				'time' => $time,
 				'album' => $context['ftp_folder_albums'][$file[1]],
-				'id_member' => we::$id,
+				'id_member' => MID,
 				'approved' => 1,
 				'mem_name' => we::$user['name'],
 			);
@@ -540,7 +540,7 @@ function aeva_admin_FTPImport()
 			media_resetUnseen();
 			$context['is_halted'] = true;
 			$context['total_files'] = $amSettings['tmp_ftp_num_files'];
-			aeva_refreshPage($scripturl . '?action=admin;area=aeva_ftp;start=' . $context['ftp_done'] . ';' . $context['session_query']);
+			aeva_refreshPage(SCRIPT . '?action=admin;area=aeva_ftp;start=' . $context['ftp_done'] . ';' . $context['session_query']);
 		}
 		else
 			wesql::query('
@@ -723,7 +723,7 @@ function aeva_admin_perms_quick()
 		FROM {db_prefix}membergroups AS g
 		WHERE (g.id_group > 3 OR g.id_group = 2)
 		ORDER BY g.min_posts, g.id_group ASC',
-		array('user_id' => we::$id)
+		array('user_id' => MID)
 	);
 	while ($row = wesql::fetch_assoc($request))
 		$groups[] = $row['id'];
@@ -1684,7 +1684,7 @@ function aeva_getMembergroups($perms = false)
 		FROM {db_prefix}membergroups AS g
 		WHERE ' . ($perms ? 'g.id_group > 3 OR g.id_group = 2' : 'g.id_group != 3') . '
 		ORDER BY g.min_posts, g.id_group ASC',
-		array('user_id' => we::$id)
+		array('user_id' => MID)
 	);
 	$separated = false;
 	$normalGroups = array();

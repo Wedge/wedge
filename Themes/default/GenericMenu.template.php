@@ -140,7 +140,7 @@ function template_generic_menu_dropdown()
 // Some code for showing a tabbed view.
 function template_generic_tabs()
 {
-	global $context, $theme, $txt;
+	global $context, $txt;
 
 	// Search for the current area. Make sure we're playing with the correct menu!
 	$menu_context =& $context['menu_data_' . (isset($context['cur_menu_id']) ? $context['cur_menu_id'] : 0)];
@@ -204,7 +204,7 @@ function template_generic_tabs()
 	// Show an icon and/or a help item?
 	if (!empty($selected_tab['icon']) || !empty($tab_context['icon']))
 		echo '
-		<img src="', $theme['images_url'], '/icons/', !empty($selected_tab['icon']) ? $selected_tab['icon'] : $tab_context['icon'], '">';
+		<img src="', ASSETS, '/icons/', !empty($selected_tab['icon']) ? $selected_tab['icon'] : $tab_context['icon'], '">';
 
 	if (!empty($selected_tab['help']) || !empty($tab_context['help']))
 		echo '

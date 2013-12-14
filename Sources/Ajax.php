@@ -65,11 +65,11 @@ function GetJumpTo()
 		$json[] = array(
 			'name' => un_htmlspecialchars(strip_tags($cat['name'])),
 		);
-		foreach ($cat['boards'] as $board)
+		foreach ($cat['boards'] as $bdata)
 			$json[] = array(
-				'level' => (int) $board['child_level'],
-				'id' => $board['id'] == $skip_this ? 'skip' : ($url ? $url . $board['id'] . '.0' : $board['id']),
-				'name' => un_htmlspecialchars(strip_tags($board['name'])),
+				'level' => (int) $bdata['child_level'],
+				'id' => $bdata['id'] == $skip_this ? 'skip' : ($url ? $url . $bdata['id'] . '.0' : $bdata['id']),
+				'name' => un_htmlspecialchars(strip_tags($bdata['name'])),
 			);
 	}
 
@@ -170,7 +170,7 @@ function Thought()
 			AND id_member = {int:id_member}
 			LIMIT 1'),
 			array(
-				'id_member' => we::$id,
+				'id_member' => MID,
 				'original_id' => $_GET['in'],
 			)
 		);
@@ -190,7 +190,7 @@ function Thought()
 			WHERE t.id_thought = {int:original_id}' . (allowedTo('moderate_forum') ? '' : '
 			AND t.id_member = {int:id_member}'),
 			array(
-				'id_member' => we::$id,
+				'id_member' => MID,
 				'original_id' => $oid,
 			)
 		);
@@ -238,7 +238,7 @@ function Thought()
 			INSERT IGNORE INTO {db_prefix}thoughts (id_parent, id_member, id_master, privacy, updated, thought)
 			VALUES ({int:id_parent}, {int:id_member}, {int:id_master}, {int:privacy}, {int:updated}, {string:thought})', array(
 				'id_parent' => $pid,
-				'id_member' => we::$id,
+				'id_member' => MID,
 				'id_master' => $mid,
 				'privacy' => $privacy,
 				'updated' => time(),
@@ -247,7 +247,7 @@ function Thought()
 		);
 		$last_thought = wesql::insert_id();
 
-		$user_id = $pid ? (empty($last_member) ? we::$id : $last_member) : 0;
+		$user_id = $pid ? (empty($last_member) ? MID : $last_member) : 0;
 		$user_name = empty($last_name) ? we::$user['name'] : $last_name;
 
 		call_hook('thought_add', array(&$privacy, &$text, &$pid, &$mid, &$last_thought, &$user_id, &$user_name));
@@ -272,7 +272,7 @@ function return_thoughts()
 
 	loadSource(array('Thoughts', 'Subs-Cache'));
 	loadTemplate('index'); // We need template_mini_menu
-	wedge_parse_skin_options(); // Yay, another rule broken!
+	wedge_get_skin_options(); // Yay, another rule broken! We need the SKIN_MOBILE status.
 
 	// This is basically return_xml, but with a series of echo's in-between...
 	clean_output();
@@ -315,7 +315,7 @@ function ThoughtPersonal()
 		AND id_thought = {int:thought}
 		LIMIT 1',
 		array(
-			'member' => we::$id,
+			'member' => MID,
 			'thought' => $_REQUEST['in'],
 		)
 	);
@@ -324,7 +324,7 @@ function ThoughtPersonal()
 
 	// Update their user data to use the new valid thought.
 	if (!empty($personal_id_thought))
-		updateMemberData(we::$id, array('personal_text' => parse_bbc_inline($personal_thought, 'thought', array('user' => we::$id))));
+		updateMemberData(MID, array('personal_text' => parse_bbc_inline($personal_thought, 'thought', array('user' => MID))));
 
 	exit;
 }

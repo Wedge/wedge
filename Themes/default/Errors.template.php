@@ -48,7 +48,7 @@ function template_fatal_error()
 
 function template_error_log()
 {
-	global $context, $theme, $txt;
+	global $context, $txt;
 
 	echo '
 	<form action="<URL>?action=admin;area=logs;sa=errorlog', $context['sort_direction'] == 'down' ? ';desc' : '', ';start=', $context['start'], $context['has_filter'] ? $context['filter']['href'] : '', '" method="post" accept-charset="UTF-8">
@@ -79,7 +79,7 @@ function template_error_log()
 
 	$error_types = array();
 	foreach ($context['error_types'] as $type => $details)
-		$error_types[] = ($details['is_selected'] ? '<img src="' . $theme['images_url'] . '/selected.gif"> ' : '') . '<a href="' . $details['url'] . '"' . ($details['is_selected'] ? ' style="font-weight: bold"' : '') . ' title="' . $details['description'] . '">' . $details['label'] . '</a>';
+		$error_types[] = ($details['is_selected'] ? '<img src="' . ASSETS . '/selected.gif"> ' : '') . '<a href="' . $details['url'] . '"' . ($details['is_selected'] ? ' style="font-weight: bold"' : '') . ' title="' . $details['description'] . '">' . $details['label'] . '</a>';
 
 	echo '
 					', implode('&nbsp;|&nbsp;', $error_types), '
@@ -115,11 +115,11 @@ function template_error_log()
 					<input type="checkbox" name="delete[]" value="', $error['id'], '">
 				</td>
 				<td class="w50">
-					<a href="<URL>?action=admin;area=logs;sa=errorlog', $context['sort_direction'] == 'down' ? ';desc' : '', ';filter=id_member;value=', $error['member']['id'], '" title="', $txt['apply_filter'], ': ', $txt['filter_only_member'], '"><img src="', $theme['images_url'], '/filter.gif" alt="', $txt['apply_filter'], ': ', $txt['filter_only_member'], '"></a>
+					<a href="<URL>?action=admin;area=logs;sa=errorlog', $context['sort_direction'] == 'down' ? ';desc' : '', ';filter=id_member;value=', $error['member']['id'], '" title="', $txt['apply_filter'], ': ', $txt['filter_only_member'], '"><img src="', ASSETS, '/filter.gif" alt="', $txt['apply_filter'], ': ', $txt['filter_only_member'], '"></a>
 					<strong>', $error['member']['link'], '</strong><br>';
 		if (!empty($error['member']['display_ip']))
 			echo '
-					<a href="<URL>?action=admin;area=logs;sa=errorlog', $context['sort_direction'] == 'down' ? ';desc' : '', ';filter=ip;value=', $error['member']['ip'], '" title="', $txt['apply_filter'], ': ', $txt['filter_only_ip'], '"><img src="', $theme['images_url'], '/filter.gif" alt="', $txt['apply_filter'], ': ', $txt['filter_only_ip'], '"></a>
+					<a href="<URL>?action=admin;area=logs;sa=errorlog', $context['sort_direction'] == 'down' ? ';desc' : '', ';filter=ip;value=', $error['member']['ip'], '" title="', $txt['apply_filter'], ': ', $txt['filter_only_ip'], '"><img src="', ASSETS, '/filter.gif" alt="', $txt['apply_filter'], ': ', $txt['filter_only_ip'], '"></a>
 					<strong><a href="<URL>?action=trackip;searchip=', $error['member']['display_ip'], '">', $error['member']['display_ip'], '</a></strong>&nbsp;&nbsp;';
 
 		echo '
@@ -129,23 +129,23 @@ function template_error_log()
 						<span class="sort_', $context['sort_direction'], '" title="', $txt['reverse_direction'], '"></span>
 					</a>
 					', $error['time'], '<br>
-					<a href="<URL>?action=admin;area=logs;sa=errorlog', $context['sort_direction'] == 'down' ? ';desc' : '', ';filter=error_type;value=', $error['error_type']['type'], '" title="', $txt['apply_filter'], ': ', $txt['filter_only_type'], '"><img src="', $theme['images_url'], '/filter.gif" alt="', $txt['apply_filter'], ': ', $txt['filter_only_type'], '"></a>
+					<a href="<URL>?action=admin;area=logs;sa=errorlog', $context['sort_direction'] == 'down' ? ';desc' : '', ';filter=error_type;value=', $error['error_type']['type'], '" title="', $txt['apply_filter'], ': ', $txt['filter_only_type'], '"><img src="', ASSETS, '/filter.gif" alt="', $txt['apply_filter'], ': ', $txt['filter_only_type'], '"></a>
 					', $txt['error_type'], ': ', $error['error_type']['name'], '
 				</td>
 			</tr>
 			<tr class="windowbg', $error['alternate'] ? '2' : '', '">
 				<td colspan="2" class="middle">
-					<a href="<URL>?action=admin;area=logs;sa=errorlog', $context['sort_direction'] == 'down' ? ';desc' : '', ';filter=url;value=', $error['url']['href'], '" title="', $txt['apply_filter'], ': ', $txt['filter_only_url'], '"><img src="', $theme['images_url'], '/filter.gif" alt="', $txt['apply_filter'], ': ', $txt['filter_only_url'], '"></a>
+					<a href="<URL>?action=admin;area=logs;sa=errorlog', $context['sort_direction'] == 'down' ? ';desc' : '', ';filter=url;value=', $error['url']['href'], '" title="', $txt['apply_filter'], ': ', $txt['filter_only_url'], '"><img src="', ASSETS, '/filter.gif" alt="', $txt['apply_filter'], ': ', $txt['filter_only_url'], '"></a>
 					', strlen($error['url']['html']) > 80 ? '<a href="' . $error['url']['html'] . '" title="' . $error['url']['html'] . '">' . westr::cut($error['url']['html'], 80) . '</a>'
 					 : '<a href="' . $error['url']['html'] . '">' . $error['url']['html'] . '</a>', '
 					<br class="clear">
-					<a href="<URL>?action=admin;area=logs;sa=errorlog', $context['sort_direction'] == 'down' ? ';desc' : '', ';filter=message;value=', $error['message']['href'], '" title="', $txt['apply_filter'], ': ', $txt['filter_only_message'], '"><img src="', $theme['images_url'], '/filter.gif" alt="', $txt['apply_filter'], ': ', $txt['filter_only_message'], '"></a>
+					<a href="<URL>?action=admin;area=logs;sa=errorlog', $context['sort_direction'] == 'down' ? ';desc' : '', ';filter=message;value=', $error['message']['href'], '" title="', $txt['apply_filter'], ': ', $txt['filter_only_message'], '"><img src="', ASSETS, '/filter.gif" alt="', $txt['apply_filter'], ': ', $txt['filter_only_message'], '"></a>
 					', $error['message']['html'];
 
 		if (!empty($error['file']))
 			echo '
 					<br class="clear">
-					<a href="<URL>?action=admin;area=logs;sa=errorlog', $context['sort_direction'] == 'down' ? ';desc' : '', ';filter=file;value=', $error['file']['search'], '" title="', $txt['apply_filter'], ': ', $txt['filter_only_file'], '"><img src="', $theme['images_url'], '/filter.gif" alt="', $txt['apply_filter'], ': ', $txt['filter_only_file'], '"></a>
+					<a href="<URL>?action=admin;area=logs;sa=errorlog', $context['sort_direction'] == 'down' ? ';desc' : '', ';filter=file;value=', $error['file']['search'], '" title="', $txt['apply_filter'], ': ', $txt['filter_only_file'], '"><img src="', ASSETS, '/filter.gif" alt="', $txt['apply_filter'], ': ', $txt['filter_only_file'], '"></a>
 					', $txt['file'], ': ', $error['file']['link'], '<br>
 					', $txt['line'], ': ', $error['file']['line'];
 
@@ -179,7 +179,7 @@ function template_error_log()
 
 function template_intrusion_log()
 {
-	global $context, $theme, $txt;
+	global $context, $txt;
 
 	echo '
 	<form action="<URL>?action=admin;area=logs;sa=intrusionlog', $context['sort_direction'] == 'down' ? ';desc' : '', ';start=', $context['start'], $context['has_filter'] ? $context['filter']['href'] : '', '" method="post" accept-charset="UTF-8">
@@ -194,10 +194,9 @@ function template_intrusion_log()
 					&nbsp;&nbsp;', $txt['apply_filter_of_type'], ':
 					<ul>';
 
-
 	foreach ($context['error_types'] as $type => $details)
 		echo '
-						<li>', $details['is_selected'] ? '<img src="' . $theme['images_url'] . '/selected.gif"> ' : '', '<a href="', $details['url'], '"', $details['is_selected'] ? ' style="font-weight: bold"' : '', '">', $details['label'], '</a></li>';
+						<li>', $details['is_selected'] ? '<img src="' . ASSETS . '/selected.gif"> ' : '', '<a href="', $details['url'], '"', $details['is_selected'] ? ' style="font-weight: bold"' : '', '">', $details['label'], '</a></li>';
 
 	echo '
 					</ul>
@@ -234,12 +233,12 @@ function template_intrusion_log()
 					<input type="checkbox" name="delete[]" value="', $error['id'], '">
 				</td>
 				<td class="w50">
-					<a href="<URL>?action=admin;area=logs;sa=intrusionlog', $context['sort_direction'] == 'down' ? ';desc' : '', ';filter=id_member;value=', $error['member']['id'], '" title="', $txt['apply_filter'], ': ', $txt['filter_only_member'], '"><img src="', $theme['images_url'], '/filter.gif" alt="', $txt['apply_filter'], ': ', $txt['filter_only_member'], '"></a>
+					<a href="<URL>?action=admin;area=logs;sa=intrusionlog', $context['sort_direction'] == 'down' ? ';desc' : '', ';filter=id_member;value=', $error['member']['id'], '" title="', $txt['apply_filter'], ': ', $txt['filter_only_member'], '"><img src="', ASSETS, '/filter.gif" alt="', $txt['apply_filter'], ': ', $txt['filter_only_member'], '"></a>
 					<strong>', $error['member']['link'], '</strong><br>';
 
 		if (!empty($error['member']['display_ip']))
 			echo '
-					<a href="<URL>?action=admin;area=logs;sa=intrusionlog', $context['sort_direction'] == 'down' ? ';desc' : '', ';filter=ip;value=', $error['member']['ip'], '" title="', $txt['apply_filter'], ': ', $txt['filter_only_ip'], '"><img src="', $theme['images_url'], '/filter.gif" alt="', $txt['apply_filter'], ': ', $txt['filter_only_ip'], '"></a>
+					<a href="<URL>?action=admin;area=logs;sa=intrusionlog', $context['sort_direction'] == 'down' ? ';desc' : '', ';filter=ip;value=', $error['member']['ip'], '" title="', $txt['apply_filter'], ': ', $txt['filter_only_ip'], '"><img src="', ASSETS, '/filter.gif" alt="', $txt['apply_filter'], ': ', $txt['filter_only_ip'], '"></a>
 					<strong><a href="<URL>?action=trackip;searchip=', $error['member']['display_ip'], '">', $error['member']['display_ip'], '</a></strong>';
 
 		echo '
@@ -249,20 +248,20 @@ function template_intrusion_log()
 						<span class="sort_', $context['sort_direction'], '" title="', $txt['reverse_direction'], '"></span>
 					</a>
 					', $error['time'], '<br>
-					<a href="<URL>?action=admin;area=logs;sa=intrusionlog', $context['sort_direction'] == 'down' ? ';desc' : '', ';filter=protocol;value=', $error['protocol']['href'], '" title="', $txt['apply_filter'], ': ', $txt['filter_only_type'], '"><img src="', $theme['images_url'], '/filter.gif" alt="', $txt['apply_filter'], ': ', $txt['filter_only_type'], '"></a> ', $txt['request_protocol'], ': ', $error['protocol']['html'], '
+					<a href="<URL>?action=admin;area=logs;sa=intrusionlog', $context['sort_direction'] == 'down' ? ';desc' : '', ';filter=protocol;value=', $error['protocol']['href'], '" title="', $txt['apply_filter'], ': ', $txt['filter_only_type'], '"><img src="', ASSETS, '/filter.gif" alt="', $txt['apply_filter'], ': ', $txt['filter_only_type'], '"></a> ', $txt['request_protocol'], ': ', $error['protocol']['html'], '
 				</td>
 			</tr>';
 
 	echo '
 			<tr class="windowbg', $error['alternate'] ? '2' : '', '">
 				<td colspan="2" class="middle">
-					<a href="<URL>?action=admin;area=logs;sa=intrusionlog', $context['sort_direction'] == 'down' ? ';desc' : '', ';filter=http_method;value=', $error['http_method'], '" title="', $txt['apply_filter'], ': ', $txt['filter_only_type'], '"><img src="', $theme['images_url'], '/filter.gif" alt="', $txt['apply_filter'], ': ', $txt['filter_only_type'], '"></a>
+					<a href="<URL>?action=admin;area=logs;sa=intrusionlog', $context['sort_direction'] == 'down' ? ';desc' : '', ';filter=http_method;value=', $error['http_method'], '" title="', $txt['apply_filter'], ': ', $txt['filter_only_type'], '"><img src="', ASSETS, '/filter.gif" alt="', $txt['apply_filter'], ': ', $txt['filter_only_type'], '"></a>
 					', $error['http_method'], '
-					<a href="<URL>?action=admin;area=logs;sa=intrusionlog', $context['sort_direction'] == 'down' ? ';desc' : '', ';filter=request_uri;value=', $error['request_uri']['href'], '" title="', $txt['apply_filter'], ': ', $txt['filter_only_url'], '"><img src="', $theme['images_url'], '/filter.gif" alt="', $txt['apply_filter'], ': ', $txt['filter_only_url'], '"></a>
+					<a href="<URL>?action=admin;area=logs;sa=intrusionlog', $context['sort_direction'] == 'down' ? ';desc' : '', ';filter=request_uri;value=', $error['request_uri']['href'], '" title="', $txt['apply_filter'], ': ', $txt['filter_only_url'], '"><img src="', ASSETS, '/filter.gif" alt="', $txt['apply_filter'], ': ', $txt['filter_only_url'], '"></a>
 					', $error['request_uri']['html'], '<br><br>
-					<a href="<URL>?action=admin;area=logs;sa=intrusionlog', $context['sort_direction'] == 'down' ? ';desc' : '', ';filter=error_type;value=', $error['error_type']['type'], '" title="', $txt['apply_filter'], ': ', $txt['filter_only_type'], '"><img src="', $theme['images_url'], '/filter.gif" alt="', $txt['apply_filter'], ': ', $txt['filter_only_type'], '"></a>
+					<a href="<URL>?action=admin;area=logs;sa=intrusionlog', $context['sort_direction'] == 'down' ? ';desc' : '', ';filter=error_type;value=', $error['error_type']['type'], '" title="', $txt['apply_filter'], ': ', $txt['filter_only_type'], '"><img src="', ASSETS, '/filter.gif" alt="', $txt['apply_filter'], ': ', $txt['filter_only_type'], '"></a>
 					', $txt['error_type'], ': ', $error['error_type']['name'], '<br>
-					<a href="<URL>?action=admin;area=logs;sa=intrusionlog', $context['sort_direction'] == 'down' ? ';desc' : '', ';filter=user_agent;value=', $error['user_agent']['href'], '" title="', $txt['apply_filter'], ': ', $txt['filter_only_ua'], '"><img src="', $theme['images_url'], '/filter.gif" alt="', $txt['apply_filter'], ': ', $txt['filter_only_ua'], '"></a> ', $txt['user_agent'], ': ', $error['user_agent']['html'], '<br><br>
+					<a href="<URL>?action=admin;area=logs;sa=intrusionlog', $context['sort_direction'] == 'down' ? ';desc' : '', ';filter=user_agent;value=', $error['user_agent']['href'], '" title="', $txt['apply_filter'], ': ', $txt['filter_only_ua'], '"><img src="', ASSETS, '/filter.gif" alt="', $txt['apply_filter'], ': ', $txt['filter_only_ua'], '"></a> ', $txt['user_agent'], ': ', $error['user_agent']['html'], '<br><br>
 					', $txt['http_headers'], '<br>', $error['headers'], '
 				</td>
 			</tr>';

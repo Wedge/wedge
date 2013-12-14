@@ -275,7 +275,7 @@ function updateMyData($data)
 
 	// @todo: should we add a hook for individual variables in the data field?
 	updateMemberData(
-		we::$id,
+		MID,
 		array(
 			'data' => serialize(we::$user['data'])
 		)
@@ -338,7 +338,7 @@ function updateMemberData($members, $data)
 		if (count($vars_to_integrate) != 0)
 		{
 			// Fetch a list of member_names if necessary
-			if ((array) $members === (array) we::$id)
+			if ((array) $members === (array) MID)
 				$member_names = array(we::$user['username']);
 			else
 			{
@@ -614,7 +614,7 @@ function we_json_encode($str)
  *
  * Multiple instances of scripts will need to be adjusted through the codebase if passed to JavaScript through the template. This function will handle quoting of the string's contents, including providing the encapsulating quotes (so no need to echo '"', JavaScriptEscape($var), '"'; but simply echo JavaScriptEscape($var); instead.)
  *
- * Other protections include dealing with newlines, carriage returns (through suppression), single quotes, links, inline script tags, and $scripturl. (Probably to prevent search bots from indexing JS-only URLs.)
+ * Other protections include dealing with newlines, carriage returns (through suppression), single quotes, links, inline script tags, and SCRIPT. (Probably to prevent search bots from indexing JS-only URLs.)
  *
  * @param string $string A string whose contents to be quoted.
  * @param string $q (for quote) The quote character to use around the string. Defaults to ". Can be useful to switch to ' for gzip compression in JS files.
@@ -622,12 +622,10 @@ function we_json_encode($str)
  */
 function JavaScriptEscape($string, $q = "'")
 {
-	global $scripturl;
-
 	$xq = $q == '"' ? "\x0f" : "\x10";
 	return $xq . str_replace(
-		array('\\',   "\n",   'script',   'href=',   '"' . $scripturl,         "'" . $scripturl,         $q == '"' ? "'" : '"',       $q),
-		array('\\\\', "\\\n", 'scr\\ipt', 'hr\\ef=', '"' . $scripturl . '"+"', "'" . $scripturl . "'+'", $q == '"' ? "\x10" : "\x0f", '\\' . $xq),
+		array('\\',   "\n",   'script',   'href=',   '"' . SCRIPT,         "'" . SCRIPT,         $q == '"' ? "'" : '"',       $q),
+		array('\\\\', "\\\n", 'scr\\ipt', 'hr\\ef=', '"' . SCRIPT . '"+"', "'" . SCRIPT . "'+'", $q == '"' ? "\x10" : "\x0f", '\\' . $xq),
 		$string
 	) . $xq;
 }
@@ -1097,23 +1095,23 @@ function writeLog($force = false)
  */
 function redirectexit($setLocation = '', $refresh = false, $permanent = false)
 {
-	global $scripturl, $context, $db_show_debug, $db_cache;
+	global $context, $db_show_debug, $db_cache;
 
 	// In case we have mail to send, better do that - as obExit doesn't always quite make it...
 	if (!empty($context['flush_mail']))
 		AddMailQueue(true);
 
-	$setLocation = str_replace('<URL>', $scripturl, $setLocation);
+	$setLocation = str_replace('<URL>', SCRIPT, $setLocation);
 
 	if (!preg_match('~^(?:http|ftp)s?://~', $setLocation))
-		$setLocation = $scripturl . ($setLocation != '' ? '?' . $setLocation : '');
+		$setLocation = SCRIPT . ($setLocation != '' ? '?' . $setLocation : '');
 
 	// Put the session ID in.
 	if (defined('SID') && SID != '')
-		$setLocation = preg_replace('/^' . preg_quote($scripturl, '/') . '(?!\?' . preg_quote(SID, '/') . ')\\??/', $scripturl . '?' . SID . ';', $setLocation);
+		$setLocation = preg_replace('/^' . preg_quote(SCRIPT, '/') . '(?!\?' . preg_quote(SID, '/') . ')\\??/', SCRIPT . '?' . SID . ';', $setLocation);
 	// Keep that debug in their for template debugging!
 	elseif (isset($_GET['debug']))
-		$setLocation = preg_replace('/^' . preg_quote($scripturl, '/') . '\\??/', $scripturl . '?debug;', $setLocation);
+		$setLocation = preg_replace('/^' . preg_quote(SCRIPT, '/') . '\\??/', SCRIPT . '?debug;', $setLocation);
 
 	// Redirections should be prettified too
 	$setLocation = prettify_urls($setLocation);
@@ -1145,7 +1143,7 @@ function redirectexit($setLocation = '', $refresh = false, $permanent = false)
  */
 function prettify_urls($inputs)
 {
-	global $settings, $scripturl;
+	global $settings;
 
 	if (empty($settings['pretty_enable_filters']))
 		return $inputs;
@@ -1155,7 +1153,7 @@ function prettify_urls($inputs)
 	$inputs = (array) $inputs;
 	foreach ($inputs as &$input)
 	{
-		$url = array(0 => array('url' => str_replace($scripturl, '', $input)));
+		$url = array(0 => array('url' => str_replace(SCRIPT, '', $input)));
 		foreach ($settings['pretty_filters'] as $id => $enabled)
 		{
 			$func = 'pretty_filter_' . $id;
@@ -1271,7 +1269,7 @@ function logAction($action, $extra = array(), $log_type = 'moderate')
 			'id_board' => 'int', 'id_topic' => 'int', 'id_msg' => 'int', 'extra' => 'string-65534',
 		),
 		array(
-			time(), $log_types[$log_type], we::$id, get_ip_identifier(we::$user['ip']), $action,
+			time(), $log_types[$log_type], MID, get_ip_identifier(we::$user['ip']), $action,
 			$board_id, $topic_id, $msg_id, serialize($extra),
 		)
 	);
@@ -1369,7 +1367,7 @@ function get_unread_numbers($posts, $straight_list = false)
 			AND (m.id_msg > IFNULL(lt.id_msg, IFNULL(lmr.id_msg, 0)))
 		GROUP BY m.id_topic',
 		array(
-			'id_member' => we::$id,
+			'id_member' => MID,
 			'has_unread' => $has_unread
 		)
 	);
@@ -2339,9 +2337,6 @@ function setupMenuContext()
 	$context['menu_items'] =& $menu_items;
 
 	// Figure out which action we are doing so we can set the active tab.
-	// Default to home.
-	$current_action = 'home';
-
 	if (isset($menu_items[$context['action']]))
 		$current_action = $context['action'];
 	elseif ($context['action'] == 'theme')
@@ -2354,6 +2349,10 @@ function setupMenuContext()
 		$current_action = 'admin';
 	elseif ($context['action'] == 'moderate' && $context['allow_moderation_center'])
 		$current_action = 'admin';
+
+	// Default to home.
+	if (empty($current_action) || empty($menu_items[$current_action]))
+		$current_action = 'home';
 
 	$menu_items[$current_action]['active_item'] = true;
 }
@@ -2625,12 +2624,4 @@ function issue_http_header($header)
 	if (!empty($_SERVER['SERVER_PROTOCOL']))
 		header($_SERVER['SERVER_PROTOCOL'] . ' ' . $header . ' ' . $codes[$header]);
 	header('Status: ' . $header . ' ' . $codes[$header]);
-}
-
-/**
- * Return the list of message icons that we can rely on having.
- */
-function stable_icons()
-{
-	return array('xx', 'thumbup', 'thumbdown', 'exclamation', 'question', 'lamp', 'smiley', 'angry', 'cheesy', 'grin', 'sad', 'wink', 'moved', 'recycled', 'clip', 'wireless', 'android', 'iphone', 'tablet');
 }

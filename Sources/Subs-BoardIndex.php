@@ -61,7 +61,7 @@ function getBoardIndex($boardIndexOptions)
 			AND b.child_level BETWEEN ' . $boardIndexOptions['base_level'] . ' AND ' . ($boardIndexOptions['base_level'] + 1)) . (empty($boardIndexOptions['category']) ? '' : '
 			ORDER BY b.board_order'),
 		array(
-			'current_member' => we::$id,
+			'current_member' => MID,
 			'child_level' => $boardIndexOptions['base_level'],
 			'category' => $boardIndexOptions['category'],
 			'blank_string' => '',

@@ -172,7 +172,7 @@ function ViewMemberlist()
 		{
 			$_POST['delete'][$key] = (int) $value;
 			// Don't delete yourself, idiot.
-			if ($value == we::$id)
+			if ($value == MID)
 				unset($_POST['delete'][$key]);
 		}
 
@@ -588,7 +588,7 @@ function ViewMemberlist()
 				),
 				'data' => array(
 					'function' => create_function('$rowData', '
-						return \'<input type="checkbox" name="delete[]" value="\' . $rowData[\'id_member\'] . \'"\' . ($rowData[\'id_member\'] == we::$id || $rowData[\'id_group\'] == 1 || in_array(1, explode(\',\', $rowData[\'additional_groups\'])) ? \' disabled\' : \'\') . \'>\';
+						return \'<input type="checkbox" name="delete[]" value="\' . $rowData[\'id_member\'] . \'"\' . ($rowData[\'id_member\'] == MID || $rowData[\'id_group\'] == 1 || in_array(1, explode(\',\', $rowData[\'additional_groups\'])) ? \' disabled\' : \'\') . \'>\';
 					'),
 					'class' => 'center',
 				),
@@ -1037,7 +1037,7 @@ function MembersAwaitingActivation()
 // Do the approve/activate/delete stuff
 function AdminApprove()
 {
-	global $scripturl, $settings;
+	global $settings;
 
 	// First, check our session.
 	checkSession();
@@ -1143,8 +1143,8 @@ function AdminApprove()
 				$replacements = array(
 					'REALNAME' => $member['name'],
 					'USERNAME' => $member['username'],
-					'PROFILELINK' => $scripturl . '?action=profile;u=' . $member['id'],
-					'FORGOTPASSWORDLINK' => $scripturl . '?action=reminder',
+					'PROFILELINK' => SCRIPT . '?action=profile;u=' . $member['id'],
+					'FORGOTPASSWORDLINK' => SCRIPT . '?action=reminder',
 				);
 
 				$emaildata = loadEmailTemplate('admin_approve_accept', $replacements, $member['language']);
@@ -1182,8 +1182,8 @@ function AdminApprove()
 
 			$replacements = array(
 				'REALNAME' => $member['name'],
-				'ACTIVATIONLINK' => $scripturl . '?action=activate;u=' . $member['id'] . ';code=' . $validation_code,
-				'ACTIVATIONLINKWITHOUTCODE' => $scripturl . '?action=activate;u=' . $member['id'],
+				'ACTIVATIONLINK' => SCRIPT . '?action=activate;u=' . $member['id'] . ';code=' . $validation_code,
+				'ACTIVATIONLINKWITHOUTCODE' => SCRIPT . '?action=activate;u=' . $member['id'],
 				'ACTIVATIONCODE' => $validation_code,
 			);
 
@@ -1238,8 +1238,8 @@ function AdminApprove()
 		{
 			$replacements = array(
 				'REALNAME' => $member['name'],
-				'ACTIVATIONLINK' => $scripturl . '?action=activate;u=' . $member['id'] . ';code=' . $member['code'],
-				'ACTIVATIONLINKWITHOUTCODE' => $scripturl . '?action=activate;u=' . $member['id'],
+				'ACTIVATIONLINK' => SCRIPT . '?action=activate;u=' . $member['id'] . ';code=' . $member['code'],
+				'ACTIVATIONLINKWITHOUTCODE' => SCRIPT . '?action=activate;u=' . $member['id'],
 				'ACTIVATIONCODE' => $member['code'],
 			);
 
@@ -1264,7 +1264,7 @@ function AdminApprove()
 		foreach ($member_info as $member)
 		{
 			$log_inserts[] = array(
-				time(), 3, we::$id, $our_ip, $log_action,
+				time(), 3, MID, $our_ip, $log_action,
 				0, 0, 0, serialize(array('member' => $member['id'])),
 			);
 		}

@@ -118,7 +118,7 @@ if (!defined('WEDGE'))
 // This defines every profile field known to man.
 function loadProfileFields($force_reload = false)
 {
-	global $context, $profile_fields, $txt, $settings, $old_profile, $cur_profile;
+	global $context, $profile_fields, $txt, $settings, $cur_profile;
 
 	// Don't load this twice!
 	if (!empty($profile_fields) && !$force_reload)
@@ -970,20 +970,6 @@ function makeThemeChanges($memID, $id_theme)
 {
 	global $settings, $context;
 
-	$reservedVars = array(
-		'actual_theme_url',
-		'actual_images_url',
-		'default_images_url',
-		'default_theme_dir',
-		'default_theme_url',
-		'default_template',
-		'images_url',
-		'theme_dir',
-		'theme_id',
-		'theme_templates',
-		'theme_url',
-	);
-
 	// Can't change reserved vars.
 	foreach (array('options', 'default_options') as $item)
 		if (isset($_POST[$item]) && is_array($_POST[$item]))
@@ -1018,7 +1004,7 @@ function makeThemeChanges($memID, $id_theme)
 			if ($opt == 'topics_per_page' || $opt == 'messages_per_page')
 				$val = max(0, min($val, 50));
 
-			$themeSetArray[] = array($memID, $id_theme, $opt, is_array($val) ? implode(',', $val) : $val);
+			$themeSetArray[] = array($memID, $opt, is_array($val) ? implode(',', $val) : $val);
 		}
 	}
 
@@ -1033,7 +1019,7 @@ function makeThemeChanges($memID, $id_theme)
 			if ($opt == 'topics_per_page' || $opt == 'messages_per_page')
 				$val = max(0, min($val, 50));
 
-			$themeSetArray[] = array($memID, 1, $opt, is_array($val) ? implode(',', $val) : $val);
+			$themeSetArray[] = array($memID, $opt, is_array($val) ? implode(',', $val) : $val);
 			$erase_options[] = $opt;
 		}
 
@@ -1044,7 +1030,7 @@ function makeThemeChanges($memID, $id_theme)
 		{
 			wesql::insert('replace',
 				'{db_prefix}themes',
-				array('id_member' => 'int', 'id_theme' => 'int', 'variable' => 'string-255', 'value' => 'string-65534'),
+				array('id_member' => 'int', 'variable' => 'string-255', 'value' => 'string-65534'),
 				$themeSetArray
 			);
 		}
@@ -1053,11 +1039,10 @@ function makeThemeChanges($memID, $id_theme)
 		{
 			wesql::query('
 				DELETE FROM {db_prefix}themes
-				WHERE id_theme != {int:id_theme}
-					AND variable IN ({array_string:erase_variables})
+				WHERE
+					variable IN ({array_string:erase_variables})
 					AND id_member = {int:id_member}',
 				array(
-					'id_theme' => 1,
 					'id_member' => $memID,
 					'erase_variables' => $erase_options
 				)
@@ -1150,7 +1135,7 @@ function makeCustomFieldChanges($memID, $area, $sanitize = true)
 			// So if the user has no matching groups, skip it.
 			if (count(array_intersect(we::$user['groups'], $privacy_groups)) == 0)
 				continue;
-			elseif ($memID == we::$id && !in_array(-2, $privacy_groups))
+			elseif ($memID == MID && !in_array(-2, $privacy_groups))
 				continue;
 		}
 
@@ -1195,9 +1180,9 @@ function makeCustomFieldChanges($memID, $area, $sanitize = true)
 				'log_time' => time(),
 				'id_member' => $memID,
 				'ip' => get_ip_identifier(we::$user['ip']),
-				'extra' => serialize(array('previous' => !empty($user_profile[$memID]['options'][$row['col_name']]) ? $user_profile[$memID]['options'][$row['col_name']] : '', 'new' => $value, 'applicator' => we::$id)),
+				'extra' => serialize(array('previous' => !empty($user_profile[$memID]['options'][$row['col_name']]) ? $user_profile[$memID]['options'][$row['col_name']] : '', 'new' => $value, 'applicator' => MID)),
 			);
-			$changes[] = array(1, $row['col_name'], $value, $memID);
+			$changes[] = array($row['col_name'], $value, $memID);
 			$user_profile[$memID]['options'][$row['col_name']] = $value;
 		}
 	}
@@ -1208,7 +1193,7 @@ function makeCustomFieldChanges($memID, $area, $sanitize = true)
 	{
 		wesql::insert('replace',
 			'{db_prefix}themes',
-			array('id_theme' => 'int', 'variable' => 'string-255', 'value' => 'string-65534', 'id_member' => 'int'),
+			array('variable' => 'string-255', 'value' => 'string-65534', 'id_member' => 'int'),
 			$changes
 		);
 		if (!empty($log_changes) && !empty($settings['log_enabled_profile']))
@@ -2199,7 +2184,7 @@ function list_getTopicNotifications($start, $items_per_page, $sort, $memID)
 		ORDER BY {raw:sort}
 		LIMIT {int:offset}, {int:items_per_page}',
 		array(
-			'current_member' => we::$id,
+			'current_member' => MID,
 			'selected_member' => $memID,
 			'sort' => $sort,
 			'offset' => $start,
@@ -2242,7 +2227,7 @@ function list_getBoardNotifications($start, $items_per_page, $sort, $memID)
 			AND {query_see_board}
 		ORDER BY ' . $sort,
 		array(
-			'current_member' => we::$id,
+			'current_member' => MID,
 			'selected_member' => $memID,
 		)
 	);
@@ -2262,7 +2247,7 @@ function list_getBoardNotifications($start, $items_per_page, $sort, $memID)
 
 function loadThemeOptions($memID)
 {
-	global $context, $options, $cur_profile;
+	global $context, $options;
 
 	if (isset($_POST['default_options']))
 		$_POST['options'] = isset($_POST['options']) ? $_POST['options'] + $_POST['default_options'] : $_POST['default_options'];
@@ -2279,10 +2264,8 @@ function loadThemeOptions($memID)
 		$request = wesql::query('
 			SELECT id_member, variable, value
 			FROM {db_prefix}themes
-			WHERE id_theme IN (1, {int:member_theme})
-				AND id_member IN (-1, {int:selected_member})',
+			WHERE id_member IN (-1, {int:selected_member})',
 			array(
-				'member_theme' => (int) $cur_profile['id_theme'],
 				'selected_member' => $memID,
 			)
 		);
@@ -2435,7 +2418,7 @@ function profileLoadLanguages()
 // Load all the group info for the profile.
 function profileLoadGroups()
 {
-	global $cur_profile, $txt, $context, $user_settings, $theme;
+	global $cur_profile, $txt, $context, $user_settings;
 
 	$context['member_groups'] = array(
 		0 => array(
@@ -2477,7 +2460,7 @@ function profileLoadGroups()
 		{
 			$stars = explode('#', $row['stars']);
 			if (!empty($stars[0]) && !empty($stars[1]))
-				$badge = str_repeat('<img src="' . str_replace('$language', $lng, $theme['images_url'] . '/' . $stars[1]) . '">', $stars[0]);
+				$badge = str_repeat('<img src="' . str_replace('$language', $lng, ASSETS . '/' . $stars[1]) . '">', $stars[0]);
 		}
 
 		$context['member_groups'][$row['id_group']] = array(
@@ -3187,7 +3170,7 @@ function profileReloadUser()
 // Send the user a new activation email if they need to reactivate!
 function profileSendActivation()
 {
-	global $profile_vars, $txt, $context, $scripturl, $cookiename, $cur_profile, $settings;
+	global $profile_vars, $txt, $context, $cookiename, $cur_profile, $settings;
 
 	loadSource('Subs-Post');
 
@@ -3196,9 +3179,9 @@ function profileSendActivation()
 		return;
 
 	$replacements = array(
-		'ACTIVATIONLINK' => $scripturl . '?action=activate;u=' . $context['id_member'] . ';code=' . $profile_vars['validation_code'],
+		'ACTIVATIONLINK' => SCRIPT . '?action=activate;u=' . $context['id_member'] . ';code=' . $profile_vars['validation_code'],
 		'ACTIVATIONCODE' => $profile_vars['validation_code'],
-		'ACTIVATIONLINKWITHOUTCODE' => $scripturl . '?action=activate;u=' . $context['id_member'],
+		'ACTIVATIONLINKWITHOUTCODE' => SCRIPT . '?action=activate;u=' . $context['id_member'],
 	);
 
 	// Send off the email.
@@ -3332,7 +3315,7 @@ function groupMembership($memID)
 // This function actually makes all the group changes...
 function groupMembership2($profile_vars, $memID)
 {
-	global $context, $user_profile, $settings, $scripturl;
+	global $context, $user_profile, $settings;
 
 	// Let's be extra cautious...
 	if (!we::$user['is_owner'] || empty($settings['show_group_membership']))
@@ -3530,7 +3513,7 @@ function groupMembership2($profile_vars, $memID)
 					'APPYNAME' => $old_profile['member_name'],
 					'GROUPNAME' => $group_name,
 					'REASON' => $_POST['reason'],
-					'MODLINK' => $scripturl . '?action=moderate;area=groups;sa=requests',
+					'MODLINK' => SCRIPT . '?action=moderate;area=groups;sa=requests',
 				);
 
 				$emaildata = loadEmailTemplate('request_membership', $replacements, empty($row['lngfile']) || empty($settings['userLanguage']) ? $settings['language'] : $row['lngfile']);

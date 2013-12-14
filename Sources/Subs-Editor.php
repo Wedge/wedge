@@ -26,8 +26,6 @@ if (!defined('WEDGE'))
 
 function getMessageIcons($board_id)
 {
-	global $theme;
-
 	if (($temp = cache_get_data('posting_icons-' . $board_id, 480)) == null)
 	{
 		$request = wesql::query('
@@ -54,7 +52,7 @@ function getMessageIcons($board_id)
 		$icons[$icon['filename']] = array(
 			'value' => $icon['filename'],
 			'name' => $icon['title'],
-			'url' => $theme[file_exists($theme['theme_dir'] . '/images/post/' . $icon['filename'] . '.gif') ? 'images_url' : 'default_images_url'] . '/post/' . $icon['filename'] . '.gif',
+			'url' => ASSETS . '/post/' . $icon['filename'] . '.gif',
 		);
 	}
 

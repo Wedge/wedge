@@ -15,8 +15,8 @@ if (defined('WEDGE'))
 define('WEDGE', 'SSI');
 
 // We're going to want a few globals... these are all set later.
+global $settings, $context, $sc, $topic, $board, $txt;
 global $time_start, $maintenance, $msubject, $mmessage, $mbname;
-global $settings, $context, $sc, $topic, $board, $txt, $scripturl;
 global $boardurl, $boarddir, $sourcedir, $webmaster_email, $cookiename;
 global $db_server, $db_connection, $db_name, $db_user, $db_prefix, $db_persist;
 global $db_error_send, $db_last_error, $ssi_db_user, $ssi_db_passwd, $db_passwd;
@@ -59,18 +59,9 @@ require_once($sourcedir . '/Load.php');
 require_once($sourcedir . '/Security.php');
 require_once($sourcedir . '/Class-System.php');
 
-// Initate the database connection and define some database functions to use.
+// Initiate the database connection and load $settings data.
 loadDatabase();
-
-// Initialize pretty URLs debug code and current actions.
-$context = array(
-	'pretty' => array('db_count' => 0),
-	'action' => '',
-	'subaction' => '',
-);
-
-// Load installed 'Mods' settings.
-reloadSettings();
+loadSettings();
 
 // Clean the request variables.
 cleanRequest();
@@ -223,7 +214,7 @@ function ssi_menubar($output_method = 'echo')
 // Show a logout link.
 function ssi_logout($redirect_to = '', $output_method = 'echo')
 {
-	global $context, $txt, $scripturl;
+	global $context, $txt;
 
 	if ($redirect_to != '')
 		$_SESSION['logout_url'] = $redirect_to;
@@ -232,7 +223,7 @@ function ssi_logout($redirect_to = '', $output_method = 'echo')
 	if (we::$is_guest)
 		return false;
 
-	$link = '<a href="' . $scripturl . '?action=logout;' . $context['session_query'] . '">' . $txt['logout'] . '</a>';
+	$link = '<a href="' . SCRIPT . '?action=logout;' . $context['session_query'] . '">' . $txt['logout'] . '</a>';
 
 	if ($output_method == 'echo')
 		echo $link;
@@ -300,7 +291,7 @@ function ssi_fetchPosts($post_ids, $override_permissions = false, $output_method
 // This removes code duplication in other queries - don't call it direct unless you really know what you're up to.
 function ssi_queryPosts($query_where = '', $query_where_params = array(), $query_limit = '', $query_order = 'm.id_msg DESC', $output_method = 'echo', $limit_body = false)
 {
-	global $scripturl, $txt;
+	global $txt;
 
 	// Find all the posts. Newer ones will have higher IDs.
 	$request = wesql::query('
@@ -318,7 +309,7 @@ function ssi_queryPosts($query_where = '', $query_where_params = array(), $query
 		ORDER BY ' . $query_order . '
 		' . ($query_limit == '' ? '' : 'LIMIT ' . $query_limit),
 		array_merge($query_where_params, array(
-			'current_member' => we::$id,
+			'current_member' => MID,
 		))
 	);
 	$posts = array();
@@ -338,15 +329,15 @@ function ssi_queryPosts($query_where = '', $query_where_params = array(), $query
 			'board' => array(
 				'id' => $row['id_board'],
 				'name' => $row['board_name'],
-				'href' => $scripturl . '?board=' . $row['id_board'] . '.0',
-				'link' => '<a href="' . $scripturl . '?board=' . $row['id_board'] . '.0">' . $row['board_name'] . '</a>'
+				'href' => SCRIPT . '?board=' . $row['id_board'] . '.0',
+				'link' => '<a href="' . SCRIPT . '?board=' . $row['id_board'] . '.0">' . $row['board_name'] . '</a>'
 			),
 			'topic' => $row['id_topic'],
 			'poster' => array(
 				'id' => $row['id_member'],
 				'name' => $row['poster_name'],
-				'href' => empty($row['id_member']) ? '' : $scripturl . '?action=profile;u=' . $row['id_member'],
-				'link' => empty($row['id_member']) ? $row['poster_name'] : '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['poster_name'] . '</a>'
+				'href' => empty($row['id_member']) ? '' : SCRIPT . '?action=profile;u=' . $row['id_member'],
+				'link' => empty($row['id_member']) ? $row['poster_name'] : '<a href="' . SCRIPT . '?action=profile;u=' . $row['id_member'] . '">' . $row['poster_name'] . '</a>'
 			),
 			'subject' => $row['subject'],
 			'short_subject' => shorten_subject($row['subject'], 25),
@@ -354,8 +345,8 @@ function ssi_queryPosts($query_where = '', $query_where_params = array(), $query
 			'body' => $row['body'],
 			'time' => timeformat($row['poster_time']),
 			'timestamp' => forum_time(true, $row['poster_time']),
-			'href' => $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['id_msg'] . ($row['is_read'] ? '' : ';seen') . '#new',
-			'link' => '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['id_msg'] . '#msg' . $row['id_msg'] . '" rel="nofollow">' . $row['subject'] . '</a>',
+			'href' => SCRIPT . '?topic=' . $row['id_topic'] . '.msg' . $row['id_msg'] . ($row['is_read'] ? '' : ';seen') . '#new',
+			'link' => '<a href="' . SCRIPT . '?topic=' . $row['id_topic'] . '.msg' . $row['id_msg'] . '#msg' . $row['id_msg'] . '" rel="nofollow">' . $row['subject'] . '</a>',
 			'new' => !empty($row['is_read']),
 			'is_new' => empty($row['is_read']),
 			'new_from' => $row['new_from'],
@@ -379,7 +370,7 @@ function ssi_queryPosts($query_where = '', $query_where_params = array(), $query
 				<td class="top">
 					<a href="', $post['href'], '">', $post['subject'], '</a>
 					', $txt['by'], ' ', $post['poster']['link'], '
-					', $post['is_new'] ? '<a href="' . $scripturl . '?topic=' . $post['topic'] . '.msg' . $post['new_from'] . ($post['is_new'] ? ';seen' : '') . '#new" rel="nofollow" class="note">' . $txt['new'] . '</a>' : '', '
+					', $post['is_new'] ? '<a href="' . SCRIPT . '?topic=' . $post['topic'] . '.msg' . $post['new_from'] . ($post['is_new'] ? ';seen' : '') . '#new" rel="nofollow" class="note">' . $txt['new'] . '</a>' : '', '
 				</td>
 				<td class="right nowrap">
 					', $post['time'], '
@@ -393,7 +384,7 @@ function ssi_queryPosts($query_where = '', $query_where_params = array(), $query
 // Recent topic list: [Board] | Subject by | Poster | Date
 function ssi_recentTopics($num_recent = 8, $exclude_boards = null, $include_boards = null, $output_method = 'echo', $just_titles = false)
 {
-	global $settings, $theme, $scripturl, $txt;
+	global $settings, $txt;
 
 	if ($exclude_boards === null && !empty($settings['recycle_enable']) && $settings['recycle_board'] > 0)
 		$exclude_boards = array($settings['recycle_board']);
@@ -408,11 +399,6 @@ function ssi_recentTopics($num_recent = 8, $exclude_boards = null, $include_boar
 		$output_method = $include_boards;
 		$include_boards = array();
 	}
-
-	$stable_icons = array('xx', 'thumbup', 'thumbdown', 'exclamation', 'question', 'lamp', 'smiley', 'angry', 'cheesy', 'grin', 'sad', 'wink', 'moved', 'clip', 'recycled', 'wireless', 'android', 'iphone', 'tablet');
-	$icon_sources = array();
-	foreach ($stable_icons as $icon)
-		$icon_sources[$icon] = 'images_url';
 
 	// Find all the posts in distinct topics. Newer ones will have higher IDs.
 	$request = wesql::query('
@@ -460,7 +446,7 @@ function ssi_recentTopics($num_recent = 8, $exclude_boards = null, $include_boar
 		WHERE t.id_topic IN ({array_int:topic_list})
 		ORDER BY t.id_last_msg DESC',
 		array(
-			'current_member' => we::$id,
+			'current_member' => MID,
 			'topic_list' => array_keys($topics),
 		)
 	);
@@ -480,24 +466,21 @@ function ssi_recentTopics($num_recent = 8, $exclude_boards = null, $include_boar
 		if (!$just_titles)
 			censorText($row['body']);
 
-		if (!empty($settings['messageIconChecks_enable']) && !isset($icon_sources[$row['icon']]))
-			$icon_sources[$row['icon']] = file_exists($theme['theme_dir'] . '/images/post/' . $row['icon'] . '.gif') ? 'images_url' : 'default_images_url';
-
 		// Build the array.
 		$posts[] = array(
 			'board' => array(
 				'id' => $topics[$row['id_topic']]['id_board'],
 				'name' => $topics[$row['id_topic']]['board_name'],
 				'url' => $topics[$row['id_topic']]['url'],
-				'href' => $scripturl . '?board=' . $topics[$row['id_topic']]['id_board'] . '.0',
-				'link' => '<a href="' . $scripturl . '?board=' . $topics[$row['id_topic']]['id_board'] . '.0">' . $topics[$row['id_topic']]['board_name'] . '</a>',
+				'href' => SCRIPT . '?board=' . $topics[$row['id_topic']]['id_board'] . '.0',
+				'link' => '<a href="' . SCRIPT . '?board=' . $topics[$row['id_topic']]['id_board'] . '.0">' . $topics[$row['id_topic']]['board_name'] . '</a>',
 			),
 			'topic' => $row['id_topic'],
 			'poster' => array(
 				'id' => $row['id_member'],
 				'name' => $row['poster_name'],
-				'href' => empty($row['id_member']) ? '' : $scripturl . '?action=profile;u=' . $row['id_member'],
-				'link' => empty($row['id_member']) ? $row['poster_name'] : '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['poster_name'] . '</a>'
+				'href' => empty($row['id_member']) ? '' : SCRIPT . '?action=profile;u=' . $row['id_member'],
+				'link' => empty($row['id_member']) ? $row['poster_name'] : '<a href="' . SCRIPT . '?action=profile;u=' . $row['id_member'] . '">' . $row['poster_name'] . '</a>'
 			),
 			'subject' => $row['subject'],
 			'replies' => $row['num_replies'],
@@ -506,13 +489,13 @@ function ssi_recentTopics($num_recent = 8, $exclude_boards = null, $include_boar
 			'preview' => $just_titles ? '' : $row['body'],
 			'time' => timeformat($row['poster_time']),
 			'timestamp' => forum_time(true, $row['poster_time']),
-			'href' => $scripturl . '?topic=' . $row['id_topic'] . '.msg' . (we::$is_guest ? $row['id_msg'] : $row['new_from']) . ($row['is_read'] ? '' : ';seen') . '#new',
-			'link' => '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.msg' . (we::$is_guest ? $row['id_msg'] : $row['new_from']) . '#new" rel="nofollow">' . $row['subject'] . '</a>',
+			'href' => SCRIPT . '?topic=' . $row['id_topic'] . '.msg' . (we::$is_guest ? $row['id_msg'] : $row['new_from']) . ($row['is_read'] ? '' : ';seen') . '#new',
+			'link' => '<a href="' . SCRIPT . '?topic=' . $row['id_topic'] . '.msg' . (we::$is_guest ? $row['id_msg'] : $row['new_from']) . '#new" rel="nofollow">' . $row['subject'] . '</a>',
 			// Retained for compatibility - is technically incorrect!
 			'new' => !empty($row['is_read']),
 			'is_new' => empty($row['is_read']),
 			'new_from' => $row['new_from'],
-			'icon' => '<img src="' . $theme[$icon_sources[$row['icon']]] . '/post/' . $row['icon'] . '.gif" class="middle" alt="' . $row['icon'] . '" />',
+			'icon' => '<img src="' . ASSETS . '/post/' . $row['icon'] . '.gif" class="middle" alt="' . $row['icon'] . '" />',
 		);
 	}
 	wesql::free_result($request);
@@ -533,7 +516,7 @@ function ssi_recentTopics($num_recent = 8, $exclude_boards = null, $include_boar
 				<td class="top">
 					<a href="', $post['href'], '">', $post['subject'], '</a>
 					', $txt['by'], ' ', $post['poster']['link'], '
-					', !$post['is_new'] ? '' : '<a href="' . $scripturl . '?topic=' . $post['topic'] . '.msg' . $post['new_from'] . ($post['is_new'] ? ';seen' : '') . '#new" rel="nofollow" class="note">' . $txt['new'] . '</a>', '
+					', !$post['is_new'] ? '' : '<a href="' . SCRIPT . '?topic=' . $post['topic'] . '.msg' . $post['new_from'] . ($post['is_new'] ? ';seen' : '') . '#new" rel="nofollow" class="note">' . $txt['new'] . '</a>', '
 				</td>
 				<td class="top right nowrap">
 					', $post['time'], '
@@ -553,7 +536,7 @@ function ssi_recentTopicTitles($num_recent = 8, $exclude_boards = null, $include
 // Show the top poster's name and profile link.
 function ssi_topPoster($topNumber = 1, $output_method = 'echo')
 {
-	global $scripturl, $settings;
+	global $settings;
 
 	if (empty($settings['allow_guestAccess']) && we::$is_guest)
 		return array();
@@ -572,8 +555,8 @@ function ssi_topPoster($topNumber = 1, $output_method = 'echo')
 		$return[] = array(
 			'id' => $row['id_member'],
 			'name' => $row['real_name'],
-			'href' => $scripturl . '?action=profile;u=' . $row['id_member'],
-			'link' => '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>',
+			'href' => SCRIPT . '?action=profile;u=' . $row['id_member'],
+			'link' => '<a href="' . SCRIPT . '?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>',
 			'posts' => $row['posts']
 		);
 	wesql::free_result($request);
@@ -593,7 +576,7 @@ function ssi_topPoster($topNumber = 1, $output_method = 'echo')
 // Show boards by activity.
 function ssi_topBoards($num_top = 10, $output_method = 'echo')
 {
-	global $txt, $scripturl, $settings;
+	global $txt, $settings;
 
 	// Find boards with lots of posts.
 	$request = wesql::query('
@@ -607,7 +590,7 @@ function ssi_topBoards($num_top = 10, $output_method = 'echo')
 		ORDER BY b.num_posts DESC
 		LIMIT ' . $num_top,
 		array(
-			'current_member' => we::$id,
+			'current_member' => MID,
 			'recycle_board' => (int) $settings['recycle_board'],
 		)
 	);
@@ -619,8 +602,8 @@ function ssi_topBoards($num_top = 10, $output_method = 'echo')
 			'num_topics' => $row['num_topics'],
 			'name' => $row['name'],
 			'new' => empty($row['is_read']),
-			'href' => $scripturl . '?board=' . $row['id_board'] . '.0',
-			'link' => '<a href="' . $scripturl . '?board=' . $row['id_board'] . '.0">' . $row['name'] . '</a>'
+			'href' => SCRIPT . '?board=' . $row['id_board'] . '.0',
+			'link' => '<a href="' . SCRIPT . '?board=' . $row['id_board'] . '.0">' . $row['name'] . '</a>'
 		);
 	wesql::free_result($request);
 
@@ -636,12 +619,12 @@ function ssi_topBoards($num_top = 10, $output_method = 'echo')
 				<th>', $txt['posts'], '</th>
 			</tr>';
 
-	foreach ($boards as $board)
+	foreach ($boards as $bdata)
 		echo '
 			<tr>
-				<td>', $board['link'], $board['new'] ? ' <a href="' . $board['href'] . '" class="note">' . $txt['new'] . '</a>' : '', '</td>
-				<td class="right">', comma_format($board['num_topics']), '</td>
-				<td class="right">', comma_format($board['num_posts']), '</td>
+				<td>', $bdata['link'], $bdata['new'] ? ' <a href="' . $bdata['href'] . '" class="note">' . $txt['new'] . '</a>' : '', '</td>
+				<td class="right">', comma_format($bdata['num_topics']), '</td>
+				<td class="right">', comma_format($bdata['num_posts']), '</td>
 			</tr>';
 
 	echo '
@@ -651,7 +634,7 @@ function ssi_topBoards($num_top = 10, $output_method = 'echo')
 // Shows the top topics.
 function ssi_topTopics($type = 'replies', $num_topics = 10, $output_method = 'echo')
 {
-	global $txt, $scripturl, $settings;
+	global $txt, $settings;
 
 	if ($settings['totalMessages'] > 100000)
 	{
@@ -703,8 +686,8 @@ function ssi_topTopics($type = 'replies', $num_topics = 10, $output_method = 'ec
 			'subject' => $row['subject'],
 			'num_replies' => $row['num_replies'],
 			'num_views' => $row['num_views'],
-			'href' => $scripturl . '?topic=' . $row['id_topic'] . '.0',
-			'link' => '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.0">' . $row['subject'] . '</a>',
+			'href' => SCRIPT . '?topic=' . $row['id_topic'] . '.0',
+			'link' => '<a href="' . SCRIPT . '?topic=' . $row['id_topic'] . '.0">' . $row['subject'] . '</a>',
 		);
 	}
 	wesql::free_result($request);
@@ -720,14 +703,14 @@ function ssi_topTopics($type = 'replies', $num_topics = 10, $output_method = 'ec
 				<th>', $txt['replies'], '</th>
 			</tr>';
 
-	foreach ($topics as $topic)
+	foreach ($topics as $topic_data)
 		echo '
 			<tr>
 				<td class="left">
-					', $topic['link'], '
+					', $topic_data['link'], '
 				</td>
-				<td class="right">', comma_format($topic['num_views']), '</td>
-				<td class="right">', comma_format($topic['num_replies']), '</td>
+				<td class="right">', comma_format($topic_data['num_views']), '</td>
+				<td class="right">', comma_format($topic_data['num_replies']), '</td>
 			</tr>';
 
 	echo '
@@ -907,7 +890,7 @@ function ssi_queryMembers($query_where, $query_where_params = array(), $query_li
 // Show some basic stats:  Total This: XXXX, etc.
 function ssi_boardStats($output_method = 'echo')
 {
-	global $txt, $scripturl, $settings;
+	global $txt, $settings;
 
 	if (empty($settings['allow_guestAccess']) && we::$is_guest)
 		return array();
@@ -942,7 +925,7 @@ function ssi_boardStats($output_method = 'echo')
 	loadLanguage('Stats');
 
 	echo '
-		', $txt['total_members'], ': <a href="', $scripturl . '?action=mlist">', comma_format($totals['members']), '</a><br />
+		', $txt['total_members'], ': <a href="', SCRIPT . '?action=mlist">', comma_format($totals['members']), '</a><br />
 		', $txt['total_posts'], ': ', comma_format($totals['posts']), '<br />
 		', $txt['total_topics'], ': ', comma_format($totals['topics']), ' <br />
 		', $txt['total_cats'], ': ', comma_format($totals['categories']), '<br />
@@ -1013,7 +996,7 @@ function ssi_logOnline($output_method = 'echo')
 // Shows a login box.
 function ssi_login($redirect_to = '', $output_method = 'echo')
 {
-	global $scripturl, $txt;
+	global $txt;
 
 	if ($redirect_to != '')
 		$_SESSION['login_url'] = $redirect_to;
@@ -1022,7 +1005,7 @@ function ssi_login($redirect_to = '', $output_method = 'echo')
 		return we::$is_guest;
 
 	echo '
-		<form action="', $scripturl, '?action=login2" method="post" accept-charset="UTF-8">
+		<form action="', SCRIPT, '?action=login2" method="post" accept-charset="UTF-8">
 			<table class="ssi_table cs1 cp0">
 				<tr>
 					<td class="right"><label for="user">', $txt['username'], ':</label>&nbsp;</td>
@@ -1050,7 +1033,7 @@ function ssi_topPoll($output_method = 'echo')
 // Show the most recently posted poll.
 function ssi_recentPoll($topPollInstead = false, $output_method = 'echo')
 {
-	global $txt, $theme, $boardurl, $context, $settings;
+	global $txt, $boardurl, $context, $settings;
 
 	$boardsAllowed = array_intersect(boardsAllowedTo('poll_view'), boardsAllowedTo('poll_vote'));
 
@@ -1073,7 +1056,7 @@ function ssi_recentPoll($topPollInstead = false, $output_method = 'echo')
 		ORDER BY ' . ($topPollInstead ? 'pc.votes' : 'p.id_poll') . ' DESC
 		LIMIT 1',
 		array(
-			'current_member' => we::$id,
+			'current_member' => MID,
 			'boards_allowed_list' => $boardsAllowed,
 			'guest_vote_allowed' => 1,
 			'no_member' => 0,
@@ -1113,12 +1096,12 @@ function ssi_recentPoll($topPollInstead = false, $output_method = 'echo')
 			'current_poll' => $row['id_poll'],
 		)
 	);
-	$options = array();
+	$opts = array();
 	while ($rowChoice = wesql::fetch_assoc($request))
 	{
 		censorText($rowChoice['label']);
 
-		$options[$rowChoice['id_choice']] = array($rowChoice['label'], $rowChoice['votes']);
+		$opts[$rowChoice['id_choice']] = array($rowChoice['label'], $rowChoice['votes']);
 	}
 	wesql::free_result($request);
 
@@ -1139,20 +1122,20 @@ function ssi_recentPoll($topPollInstead = false, $output_method = 'echo')
 
 	// Calculate the percentages and bar lengths...
 	$divisor = $return['total_votes'] == 0 ? 1 : $return['total_votes'];
-	foreach ($options as $i => $option)
+	foreach ($opts as $i => $option)
 	{
 		$bar = floor(($option[1] * 100) / $divisor);
 		$barWide = $bar == 0 ? 1 : floor(($bar * 5) / 3);
 		$return['options'][$i] = array(
 			'percent' => $bar,
 			'votes' => $option[1],
-			'bar' => '<span class="nowrap"><img src="' . $theme['images_url'] . '/poll_' . ($context['right_to_left'] ? 'right' : 'left') . '.gif" /><img src="' . $theme['images_url'] . '/poll_middle.gif" width="' . $barWide . '" height="12" alt="-" /><img src="' . $theme['images_url'] . '/poll_' . ($context['right_to_left'] ? 'left' : 'right') . '.gif" /></span>',
+			'bar' => '<span class="nowrap"><img src="' . ASSETS . '/poll_' . ($context['right_to_left'] ? 'right' : 'left') . '.gif" /><img src="' . ASSETS . '/poll_middle.gif" width="' . $barWide . '" height="12" alt="-" /><img src="' . ASSETS . '/poll_' . ($context['right_to_left'] ? 'left' : 'right') . '.gif" /></span>',
 			'option' => parse_bbc($option[0], 'poll-option'),
 			'vote_button' => '<input type="' . ($row['max_votes'] > 1 ? 'checkbox' : 'radio') . '" name="options[]" value="' . $i . '">'
 		);
 	}
 
-	$return['allowed_warning'] = $row['max_votes'] > 1 ? sprintf($txt['poll_options6'], min(count($options), $row['max_votes'])) : '';
+	$return['allowed_warning'] = $row['max_votes'] > 1 ? sprintf($txt['poll_options6'], min(count($opts), $row['max_votes'])) : '';
 
 	if ($output_method != 'echo')
 		return $return;
@@ -1178,19 +1161,19 @@ function ssi_recentPoll($topPollInstead = false, $output_method = 'echo')
 		echo $txt['poll_cannot_see'];
 }
 
-function ssi_showPoll($topic = null, $output_method = 'echo')
+function ssi_showPoll($id_topic = null, $output_method = 'echo')
 {
-	global $txt, $theme, $boardurl, $context;
+	global $txt, $boardurl, $context;
 
 	$boardsAllowed = boardsAllowedTo('poll_view');
 
 	if (empty($boardsAllowed))
 		return array();
 
-	if ($topic === null && isset($_REQUEST['ssi_topic']))
-		$topic = (int) $_REQUEST['ssi_topic'];
+	if ($id_topic === null && isset($_REQUEST['ssi_topic']))
+		$id_topic = (int) $_REQUEST['ssi_topic'];
 	else
-		$topic = (int) $topic;
+		$id_topic = (int) $id_topic;
 
 	$request = wesql::query('
 		SELECT
@@ -1204,7 +1187,7 @@ function ssi_showPoll($topic = null, $output_method = 'echo')
 			AND b.id_board IN ({array_int:boards_allowed_see})' : '') . '
 		LIMIT 1',
 		array(
-			'current_topic' => $topic,
+			'current_topic' => $id_topic,
 			'boards_allowed_see' => $boardsAllowed,
 		)
 	);
@@ -1234,7 +1217,7 @@ function ssi_showPoll($topic = null, $output_method = 'echo')
 				AND id_member = {int:current_member}
 			LIMIT 1',
 			array(
-				'current_member' => we::$id,
+				'current_member' => MID,
 				'current_poll' => $row['id_poll'],
 			)
 		);
@@ -1265,13 +1248,13 @@ function ssi_showPoll($topic = null, $output_method = 'echo')
 			'current_poll' => $row['id_poll'],
 		)
 	);
-	$options = array();
+	$opts = array();
 	$total_votes = 0;
 	while ($rowChoice = wesql::fetch_assoc($request))
 	{
 		censorText($rowChoice['label']);
 
-		$options[$rowChoice['id_choice']] = array($rowChoice['label'], $rowChoice['votes']);
+		$opts[$rowChoice['id_choice']] = array($rowChoice['label'], $rowChoice['votes']);
 		$total_votes += $rowChoice['votes'];
 	}
 	wesql::free_result($request);
@@ -1284,25 +1267,25 @@ function ssi_showPoll($topic = null, $output_method = 'echo')
 		'is_locked' => !empty($row['voting_locked']),
 		'allow_vote' => $allow_vote,
 		'allow_view_results' => $allow_view_results,
-		'topic' => $topic
+		'topic' => $id_topic
 	);
 
 	// Calculate the percentages and bar lengths...
 	$divisor = $total_votes == 0 ? 1 : $total_votes;
-	foreach ($options as $i => $option)
+	foreach ($opts as $i => $option)
 	{
 		$bar = floor(($option[1] * 100) / $divisor);
 		$barWide = $bar == 0 ? 1 : floor(($bar * 5) / 3);
 		$return['options'][$i] = array(
 			'percent' => $bar,
 			'votes' => $option[1],
-			'bar' => '<span class="nowrap"><img src="' . $theme['images_url'] . '/poll_' . ($context['right_to_left'] ? 'right' : 'left') . '.gif" alt="" /><img src="' . $theme['images_url'] . '/poll_middle.gif" width="' . $barWide . '" height="12" alt="-" /><img src="' . $theme['images_url'] . '/poll_' . ($context['right_to_left'] ? 'left' : 'right') . '.gif" alt="" /></span>',
+			'bar' => '<span class="nowrap"><img src="' . ASSETS . '/poll_' . ($context['right_to_left'] ? 'right' : 'left') . '.gif" alt="" /><img src="' . ASSETS . '/poll_middle.gif" width="' . $barWide . '" height="12" alt="-" /><img src="' . ASSETS . '/poll_' . ($context['right_to_left'] ? 'left' : 'right') . '.gif" alt="" /></span>',
 			'option' => parse_bbc($option[0], 'poll-option'),
 			'vote_button' => '<input type="' . ($row['max_votes'] > 1 ? 'checkbox' : 'radio') . '" name="options[]" value="' . $i . '">'
 		);
 	}
 
-	$return['allowed_warning'] = $row['max_votes'] > 1 ? sprintf($txt['poll_options6'], min(count($options), $row['max_votes'])) : '';
+	$return['allowed_warning'] = $row['max_votes'] > 1 ? sprintf($txt['poll_options6'], min(count($opts), $row['max_votes'])) : '';
 
 	if ($output_method != 'echo')
 		return $return;
@@ -1386,7 +1369,7 @@ function ssi_pollVote()
 		WHERE p.id_poll = {int:current_poll}
 		LIMIT 1',
 		array(
-			'current_member' => we::$id,
+			'current_member' => MID,
 			'current_poll' => $_POST['poll'],
 		)
 	);
@@ -1413,14 +1396,14 @@ function ssi_pollVote()
 			redirectexit('topic=' . $row['id_topic'] . '.0');
 	}
 
-	$options = array();
+	$opts = array();
 	$inserts = array();
 	foreach ($_REQUEST['options'] as $id)
 	{
 		$id = (int) $id;
 
-		$options[] = $id;
-		$inserts[] = array($_POST['poll'], we::$id, $id);
+		$opts[] = $id;
+		$inserts[] = array($_POST['poll'], MID, $id);
 	}
 
 	// Add their vote in to the tally.
@@ -1435,7 +1418,7 @@ function ssi_pollVote()
 		WHERE id_poll = {int:current_poll}
 			AND id_choice IN ({array_int:option_list})',
 		array(
-			'option_list' => $options,
+			'option_list' => $opts,
 			'current_poll' => $_POST['poll'],
 		)
 	);
@@ -1456,16 +1439,16 @@ function ssi_pollVote()
 // Show a search box.
 function ssi_quickSearch($output_method = 'echo')
 {
-	global $scripturl, $txt;
+	global $txt;
 
 	if (!allowedTo('search_posts'))
 		return '';
 
 	if ($output_method != 'echo')
-		return $scripturl . '?action=search';
+		return SCRIPT . '?action=search';
 
 	echo '
-		<form action="', $scripturl, '?action=search2" method="post" accept-charset="UTF-8">
+		<form action="', SCRIPT, '?action=search2" method="post" accept-charset="UTF-8">
 			<input type="search" class="search" name="search" size="30" /> <input type="submit" class="submit" value="', $txt['search'], '" />
 		</form>';
 }
@@ -1485,9 +1468,9 @@ function ssi_news($output_method = 'echo')
 }
 
 // Show the latest news, with a template... by board.
-function ssi_boardNews($board = null, $limit = null, $start = null, $length = null, $output_method = 'echo')
+function ssi_boardNews($id_board = null, $limit = null, $start = null, $length = null, $output_method = 'echo')
 {
-	global $scripturl, $txt, $theme, $settings;
+	global $txt, $settings;
 
 	if (empty($settings['allow_guestAccess']) && we::$is_guest)
 		return array();
@@ -1505,10 +1488,10 @@ function ssi_boardNews($board = null, $limit = null, $start = null, $length = nu
 	else
 		$start = (int) $start;
 
-	if ($board !== null)
-		$board = (int) $board;
+	if ($id_board !== null)
+		$id_board = (int) $id_board;
 	elseif (isset($_GET['board']))
-		$board = (int) $_GET['board'];
+		$id_board = (int) $_GET['board'];
 
 	if ($length === null)
 		$length = isset($_GET['length']) ? (int) $_GET['length'] : 0;
@@ -1522,11 +1505,11 @@ function ssi_boardNews($board = null, $limit = null, $start = null, $length = nu
 	$request = wesql::query('
 		SELECT id_board
 		FROM {db_prefix}boards
-		WHERE ' . ($board === null ? '' : 'id_board = {int:current_board}
+		WHERE ' . ($id_board === null ? '' : 'id_board = {int:current_board}
 			AND ') . 'FIND_IN_SET(-1, member_groups)
 		LIMIT 1',
 		array(
-			'current_board' => $board,
+			'current_board' => $id_board,
 		)
 	);
 	if (wesql::num_rows($request) == 0)
@@ -1539,14 +1522,8 @@ function ssi_boardNews($board = null, $limit = null, $start = null, $length = nu
 		else
 			return array();
 	}
-	list ($board) = wesql::fetch_row($request);
+	list ($id_board) = wesql::fetch_row($request);
 	wesql::free_result($request);
-
-	// Load the message icons - the usual suspects.
-	$stable_icons = stable_icons();
-	$icon_sources = array();
-	foreach ($stable_icons as $icon)
-		$icon_sources[$icon] = 'images_url';
 
 	// Find the post ids.
 	$request = wesql::query('
@@ -1557,7 +1534,7 @@ function ssi_boardNews($board = null, $limit = null, $start = null, $length = nu
 		ORDER BY id_first_msg DESC
 		LIMIT ' . $start . ', ' . $limit,
 		array(
-			'current_board' => $board,
+			'current_board' => $id_board,
 		)
 	);
 	$posts = array();
@@ -1601,32 +1578,28 @@ function ssi_boardNews($board = null, $limit = null, $start = null, $length = nu
 
 		$row['body'] = parse_bbc($row['body'], 'post', array('smileys' => $row['smileys_enabled'], 'cache' => $row['id_msg'], 'user' => $row['id_member']));
 
-		// Check that this message icon is there...
-		if (!empty($settings['messageIconChecks_enable']) && !isset($icon_sources[$row['icon']]))
-			$icon_sources[$row['icon']] = file_exists($theme['theme_dir'] . '/images/post/' . $row['icon'] . '.gif') ? 'images_url' : 'default_images_url';
-
 		censorText($row['subject']);
 		censorText($row['body']);
 
 		$return[] = array(
 			'id' => $row['id_topic'],
 			'message_id' => $row['id_msg'],
-			'icon' => '<img src="' . $theme[$icon_sources[$row['icon']]] . '/post/' . $row['icon'] . '.gif" alt="' . $row['icon'] . '" />',
+			'icon' => '<img src="' . ASSETS . '/post/' . $row['icon'] . '.gif" alt="' . $row['icon'] . '" />',
 			'subject' => $row['subject'],
 			'time' => timeformat($row['poster_time']),
 			'timestamp' => forum_time(true, $row['poster_time']),
 			'body' => $row['body'],
-			'href' => $scripturl . '?topic=' . $row['id_topic'] . '.0',
-			'link' => '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.0">' . $row['num_replies'] . ' ' . ($row['num_replies'] == 1 ? $txt['ssi_comment'] : $txt['ssi_comments']) . '</a>',
+			'href' => SCRIPT . '?topic=' . $row['id_topic'] . '.0',
+			'link' => '<a href="' . SCRIPT . '?topic=' . $row['id_topic'] . '.0">' . $row['num_replies'] . ' ' . ($row['num_replies'] == 1 ? $txt['ssi_comment'] : $txt['ssi_comments']) . '</a>',
 			'replies' => $row['num_replies'],
-			'comment_href' => !empty($row['locked']) ? '' : $scripturl . '?action=post;topic=' . $row['id_topic'] . '.' . $row['num_replies'] . ';last=' . $row['id_last_msg'],
-			'comment_link' => !empty($row['locked']) ? '' : '<a href="' . $scripturl . '?action=post;topic=' . $row['id_topic'] . '.' . $row['num_replies'] . ';last=' . $row['id_last_msg'] . '">' . $txt['ssi_write_comment'] . '</a>',
-			'new_comment' => !empty($row['locked']) ? '' : '<a href="' . $scripturl . '?action=post;topic=' . $row['id_topic'] . '.' . $row['num_replies'] . '">' . $txt['ssi_write_comment'] . '</a>',
+			'comment_href' => !empty($row['locked']) ? '' : SCRIPT . '?action=post;topic=' . $row['id_topic'] . '.' . $row['num_replies'] . ';last=' . $row['id_last_msg'],
+			'comment_link' => !empty($row['locked']) ? '' : '<a href="' . SCRIPT . '?action=post;topic=' . $row['id_topic'] . '.' . $row['num_replies'] . ';last=' . $row['id_last_msg'] . '">' . $txt['ssi_write_comment'] . '</a>',
+			'new_comment' => !empty($row['locked']) ? '' : '<a href="' . SCRIPT . '?action=post;topic=' . $row['id_topic'] . '.' . $row['num_replies'] . '">' . $txt['ssi_write_comment'] . '</a>',
 			'poster' => array(
 				'id' => $row['id_member'],
 				'name' => $row['poster_name'],
-				'href' => !empty($row['id_member']) ? $scripturl . '?action=profile;u=' . $row['id_member'] : '',
-				'link' => !empty($row['id_member']) ? '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['poster_name'] . '</a>' : $row['poster_name']
+				'href' => !empty($row['id_member']) ? SCRIPT . '?action=profile;u=' . $row['id_member'] : '',
+				'link' => !empty($row['id_member']) ? '<a href="' . SCRIPT . '?action=profile;u=' . $row['id_member'] . '">' . $row['poster_name'] . '</a>' : $row['poster_name']
 			),
 			'locked' => !empty($row['locked']),
 			'is_last' => false
@@ -1686,7 +1659,7 @@ function ssi_checkPassword($id = null, $password = null, $is_username = false)
 // We want to show the recent attachments outside of the forum.
 function ssi_recentAttachments($num_attachments = 10, $attachment_ext = array(), $output_method = 'echo')
 {
-	global $settings, $scripturl, $txt, $theme;
+	global $settings, $txt;
 
 	// We want to make sure that we only get attachments for boards that we can see *if* any.
 	$attachments_boards = boardsAllowedTo('view_attachments');
@@ -1736,21 +1709,21 @@ function ssi_recentAttachments($num_attachments = 10, $attachment_ext = array(),
 			'member' => array(
 				'id' => $row['id_member'],
 				'name' => $row['poster_name'],
-				'link' => empty($row['id_member']) ? $row['poster_name'] : '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['poster_name'] . '</a>',
+				'link' => empty($row['id_member']) ? $row['poster_name'] : '<a href="' . SCRIPT . '?action=profile;u=' . $row['id_member'] . '">' . $row['poster_name'] . '</a>',
 			),
 			'file' => array(
 				'filename' => $filename,
 				'filesize' => round($row['filesize'] /1024, 2) . $txt['kilobyte'],
 				'downloads' => $row['downloads'],
-				'href' => $scripturl . '?action=dlattach;topic=' . $row['id_topic'] . '.0;attach=' . $row['id_attach'],
-				'link' => '<img src="' . $theme['images_url'] . '/icons/clip.gif" alt="" /> <a href="' . $scripturl . '?action=dlattach;topic=' . $row['id_topic'] . '.0;attach=' . $row['id_attach'] . '">' . $filename . '</a>',
+				'href' => SCRIPT . '?action=dlattach;topic=' . $row['id_topic'] . '.0;attach=' . $row['id_attach'],
+				'link' => '<img src="' . ASSETS . '/icons/clip.gif" alt="" /> <a href="' . SCRIPT . '?action=dlattach;topic=' . $row['id_topic'] . '.0;attach=' . $row['id_attach'] . '">' . $filename . '</a>',
 				'is_image' => !empty($row['width']) && !empty($row['height']) && !empty($settings['attachmentShowImages']),
 			),
 			'topic' => array(
 				'id' => $row['id_topic'],
 				'subject' => $row['subject'],
-				'href' => $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['id_msg'] . '#msg' . $row['id_msg'],
-				'link' => '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['id_msg'] . '#msg' . $row['id_msg'] . '">' . $row['subject'] . '</a>',
+				'href' => SCRIPT . '?topic=' . $row['id_topic'] . '.msg' . $row['id_msg'] . '#msg' . $row['id_msg'],
+				'link' => '<a href="' . SCRIPT . '?topic=' . $row['id_topic'] . '.msg' . $row['id_msg'] . '#msg' . $row['id_msg'] . '">' . $row['subject'] . '</a>',
 				'time' => timeformat($row['poster_time']),
 			),
 		);
@@ -1763,10 +1736,10 @@ function ssi_recentAttachments($num_attachments = 10, $attachment_ext = array(),
 				'id' => $id_thumb,
 				'width' => $row['width'],
 				'height' => $row['height'],
-				'img' => '<img src="' . $scripturl . '?action=dlattach;topic=' . $row['id_topic'] . '.0;attach=' . $row['id_attach'] . ';image" alt="' . $filename . '" />',
-				'thumb' => '<img src="' . $scripturl . '?action=dlattach;topic=' . $row['id_topic'] . '.0;attach=' . $id_thumb . ';image" alt="' . $filename . '" />',
-				'href' => $scripturl . '?action=dlattach;topic=' . $row['id_topic'] . '.0;attach=' . $id_thumb . ';image',
-				'link' => '<a href="' . $scripturl . '?action=dlattach;topic=' . $row['id_topic'] . '.0;attach=' . $row['id_attach'] . ';image"><img src="' . $scripturl . '?action=dlattach;topic=' . $row['id_topic'] . '.0;attach=' . $id_thumb . ';image" alt="' . $filename . '" /></a>',
+				'img' => '<img src="' . SCRIPT . '?action=dlattach;topic=' . $row['id_topic'] . '.0;attach=' . $row['id_attach'] . ';image" alt="' . $filename . '" />',
+				'thumb' => '<img src="' . SCRIPT . '?action=dlattach;topic=' . $row['id_topic'] . '.0;attach=' . $id_thumb . ';image" alt="' . $filename . '" />',
+				'href' => SCRIPT . '?action=dlattach;topic=' . $row['id_topic'] . '.0;attach=' . $id_thumb . ';image',
+				'link' => '<a href="' . SCRIPT . '?action=dlattach;topic=' . $row['id_topic'] . '.0;attach=' . $row['id_attach'] . ';image"><img src="' . SCRIPT . '?action=dlattach;topic=' . $row['id_topic'] . '.0;attach=' . $id_thumb . ';image" alt="' . $filename . '" /></a>',
 			);
 		}
 	}

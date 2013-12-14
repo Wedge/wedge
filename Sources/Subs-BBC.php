@@ -1339,7 +1339,7 @@ function bbc_permute($array)
  */
 function &censorText(&$text, $force = false)
 {
-	global $settings, $options, $theme, $txt;
+	global $settings, $options, $txt;
 	static $censor_vulgar = null, $censor_proper;
 
 	if ((!empty($options['show_no_censored']) && $settings['allow_no_censored'] && !$force) || empty($settings['censor_vulgar']))

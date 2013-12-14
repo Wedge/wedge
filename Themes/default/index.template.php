@@ -9,14 +9,14 @@
  */
 
 /*
-	This template is probably the most important one in the theme. It defines
-	the functions to be called by the layers and blocks defined in the main
-	skeleton. Some layers of interest are: html, body, main and sidebar.
+	This template is probably the most important one. It defines the functions
+	to be called by the layers and blocks defined in the main skeleton.
+	Some layers of interest are: html, body, main and sidebar.
 	Blocks of interest include linktree (which displays the navigation
 	hierarchy), menu (for the main menu), or button_strip.
 */
 
-// Initialize the template... mainly little settings.
+// Initialize the template... mainly minor settings.
 function template_init()
 {
 	global $context, $settings;
@@ -232,10 +232,10 @@ function template_logo_toggler()
 
 function template_random_news()
 {
-	global $txt, $context, $theme;
+	global $txt, $context, $settings;
 
 	// Show a random news item? (or you could pick one from news_lines...)
-	if (empty($theme['enable_news']) || empty($context['random_news_line']))
+	if (empty($settings['enable_news']) || empty($context['random_news_line']))
 		return;
 
 	echo '
@@ -314,7 +314,7 @@ function template_side_user_after()
 
 function template_side_maintenance()
 {
-	global $context;
+	global $context, $txt;
 
 	// Is the forum in maintenance mode?
 	if ($context['in_maintenance'] && we::$is_admin)
@@ -444,7 +444,7 @@ function template_body_after()
 
 function template_insert_javascript()
 {
-	global $context, $options, $theme, $txt, $settings;
+	global $context, $options, $txt, $settings;
 
 	// Include postponed inline JS, postponed HTML, and then kickstart the main
 	// JavaScript section -- files to include, main vars and functions to start.
@@ -492,8 +492,7 @@ function template_insert_javascript()
 
 	echo '
 	we_script = "<URL>";
-	we_default_theme_url = ', $theme['theme_url'] === $theme['theme_url'] ? 'we_theme_url = ' : '', '"', $theme['default_theme_url'], '";', $theme['theme_url'] === $theme['theme_url'] ? '' : '
-	we_theme_url = "' . $theme['theme_url'] . '";', '
+	we_theme_url = "', TEMPLATES, '";', '
 	we_sessid = "', $context['session_id'], '";
 	we_sessvar = "', $context['session_var'], '";', $context['server']['iso_case_folding'] && isset($context['main_js_files']['scripts/sha1.js']) ? '
 	we_iso_case_folding = 1;' : '', empty($options['collapse_header']) ? '' : '

@@ -245,7 +245,7 @@ class Notification
 			// Create the row
 			wesql::insert('', '{db_prefix}notifications',
 				array('id_member' => 'int', 'id_member_from' => 'int', 'notifier' => 'string-50', 'id_object' => 'int', 'time' => 'int', 'unread' => 'int', 'data' => 'string'),
-				array($id_member, we::$id, $notifier_name, $id_object, $time, 1, serialize((array) $data))
+				array($id_member, MID, $notifier_name, $id_object, $time, 1, serialize((array) $data))
 			);
 			$id_notification = wesql::insert_id();
 
@@ -254,7 +254,7 @@ class Notification
 				$notifications[$id_member] = new self(array(
 					'id_notification' => $id_notification,
 					'id_member' => $id_member,
-					'id_member_from' => we::$id,
+					'id_member_from' => MID,
 					'id_object' => $id_object,
 					'time' => $time,
 					'unread' => 1,

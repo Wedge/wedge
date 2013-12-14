@@ -13,8 +13,7 @@ if (!defined('WEDGE'))
 
 function MessageIndex()
 {
-	global $txt, $board, $settings, $context;
-	global $options, $theme, $board_info;
+	global $context, $txt, $board, $settings, $options, $board_info;
 
 	// If this is a redirection board head off.
 	if ($board_info['redirect'])
@@ -116,7 +115,7 @@ function MessageIndex()
 		wesql::insert('replace',
 			'{db_prefix}log_boards',
 			array('id_msg' => 'int', 'id_member' => 'int', 'id_board' => 'int'),
-			array($settings['maxMsgID'], we::$id, $board)
+			array($settings['maxMsgID'], MID, $board)
 		);
 
 		if (!empty($board_info['parent_boards']))
@@ -127,7 +126,7 @@ function MessageIndex()
 				WHERE id_member = {int:current_member}
 					AND id_board IN ({array_int:board_list})',
 				array(
-					'current_member' => we::$id,
+					'current_member' => MID,
 					'board_list' => array_keys($board_info['parent_boards']),
 					'id_msg' => $settings['maxMsgID'],
 				)
@@ -150,7 +149,7 @@ function MessageIndex()
 			LIMIT 1',
 			array(
 				'current_board' => $board,
-				'current_member' => we::$id,
+				'current_member' => MID,
 			)
 		);
 		$context['is_marked_notify'] = wesql::num_rows($request) != 0;
@@ -166,7 +165,7 @@ function MessageIndex()
 						AND id_member = {int:current_member}',
 					array(
 						'current_board' => $board,
-						'current_member' => we::$id,
+						'current_member' => MID,
 						'is_sent' => 0,
 					)
 				);
@@ -181,7 +180,7 @@ function MessageIndex()
 	$context['page_title'] = strip_tags($board_info['name']);
 
 	// Set the variables up for the template.
-	$context['owns_board'] = we::$is_admin || (we::$is_member && $board_info['owner_id'] == we::$id);
+	$context['owns_board'] = we::$is_admin || (we::$is_member && $board_info['owner_id'] == MID);
 	$context['can_mark_notify'] = allowedTo('mark_notify') && we::$is_member;
 	$context['can_post_new'] = allowedTo('post_new');
 	$context['can_post_poll'] = allowedTo('poll_post') && $context['can_post_new'];
@@ -258,12 +257,6 @@ function MessageIndex()
 	else
 		$fake_ascending = false;
 
-	// Setup the default topic icons...
-	$stable_icons = stable_icons();
-	$context['icon_sources'] = array();
-	foreach ($stable_icons as $icon)
-		$context['icon_sources'][$icon] = 'images_url';
-
 	$topic_ids = array();
 	$context['topics'] = array();
 
@@ -284,7 +277,7 @@ function MessageIndex()
 			LIMIT {int:start}, {int:maxindex}',
 			array(
 				'current_board' => $board,
-				'current_member' => we::$id,
+				'current_member' => MID,
 				'id_member_guest' => 0,
 				'start' => $start,
 				'maxindex' => $maxindex,
@@ -330,7 +323,7 @@ function MessageIndex()
 			array(
 				'first_body' => $board_info['type'] == 'blog' ? 'mf.body AS first_body' : 'SUBSTRING(mf.body, 1, 385) AS first_body',
 				'current_board' => $board,
-				'current_member' => we::$id,
+				'current_member' => MID,
 				'topic_list' => $topic_ids,
 				'find_set_topics' => implode(',', $topic_ids),
 				'start' => $start,
@@ -424,22 +417,6 @@ function MessageIndex()
 			else
 				$pages = '';
 
-			// We need to check the topic icons exist...
-			if (!empty($settings['messageIconChecks_enable']))
-			{
-				if (!isset($context['icon_sources'][$row['first_icon']]))
-					$context['icon_sources'][$row['first_icon']] = file_exists($theme['theme_dir'] . '/images/post/' . $row['first_icon'] . '.gif') ? 'images_url' : 'default_images_url';
-				if (!isset($context['icon_sources'][$row['last_icon']]))
-					$context['icon_sources'][$row['last_icon']] = file_exists($theme['theme_dir'] . '/images/post/' . $row['last_icon'] . '.gif') ? 'images_url' : 'default_images_url';
-			}
-			else
-			{
-				if (!isset($context['icon_sources'][$row['first_icon']]))
-					$context['icon_sources'][$row['first_icon']] = 'images_url';
-				if (!isset($context['icon_sources'][$row['last_icon']]))
-					$context['icon_sources'][$row['last_icon']] = 'images_url';
-			}
-
 			$color_class = '';
 			// Is this topic pending approval, or does it have any posts pending approval?
 			if ($context['can_approve_posts'] && $row['unapproved_posts'])
@@ -471,7 +448,7 @@ function MessageIndex()
 					'subject' => $row['first_subject'],
 					'preview' => $row['first_body'],
 					'icon' => $row['first_icon'],
-					'icon_url' => $theme[$context['icon_sources'][$row['first_icon']]] . '/post/' . $row['first_icon'] . '.gif',
+					'icon_url' => ASSETS . '/post/' . $row['first_icon'] . '.gif',
 					'href' => '<URL>?topic=' . $row['id_topic'] . '.0',
 					'link' => '<a href="<URL>?topic=' . $row['id_topic'] . '.0">' . $row['first_subject'] . '</a>'
 				),
@@ -489,7 +466,7 @@ function MessageIndex()
 					'subject' => $row['last_subject'],
 					'preview' => $row['last_body'],
 					'icon' => $row['last_icon'],
-					'icon_url' => $theme[$context['icon_sources'][$row['last_icon']]] . '/post/' . $row['last_icon'] . '.gif',
+					'icon_url' => ASSETS . '/post/' . $row['last_icon'] . '.gif',
 					'href' => '<URL>?topic=' . $row['id_topic'] . (we::$is_guest ? ('.' . (!empty($options['view_newest_first']) ? 0 : ((int) (($row['num_replies']) / $context['pageindex_multiplier'])) * $context['pageindex_multiplier']) . '#msg' . $row['id_last_msg']) : (($row['num_replies'] == 0 ? '.0' : '.msg' . $row['id_last_msg'] . '#new'))),
 					'link' => '<a href="<URL>?topic=' . $row['id_topic'] . (we::$is_guest ? ('.' . (!empty($options['view_newest_first']) ? 0 : ((int) (($row['num_replies']) / $context['pageindex_multiplier'])) * $context['pageindex_multiplier']) . '#msg' . $row['id_last_msg']) : (($row['num_replies'] == 0 ? '.0' : '.msg' . $row['id_last_msg'] . '#new'))) . '" ' . ($row['num_replies'] == 0 ? '' : 'rel="nofollow"') . '>' . $row['last_subject'] . '</a>'
 				),
@@ -498,7 +475,7 @@ function MessageIndex()
 				'is_poll' => $row['id_poll'] > 0,
 				'is_posted_in' => false,
 				'icon' => $row['first_icon'],
-				'icon_url' => $theme[$context['icon_sources'][$row['first_icon']]] . '/post/' . $row['first_icon'] . '.gif',
+				'icon_url' => ASSETS . '/post/' . $row['first_icon'] . '.gif',
 				'subject' => $row['first_subject'],
 				'new' => $row['new_from'] <= $row['id_msg_modified'],
 				'new_from' => $row['new_from'],
@@ -509,7 +486,7 @@ function MessageIndex()
 				'views' => $row['num_views'],
 				'approved' => $row['approved'],
 				'unapproved_posts' => $row['unapproved_posts'],
-				'can_reply' => !empty($row['locked']) ? $context['can_moderate_board'] : $can_reply_any || ($can_reply_own && $row['first_id_member'] == we::$id),
+				'can_reply' => !empty($row['locked']) ? $context['can_moderate_board'] : $can_reply_any || ($can_reply_own && $row['first_id_member'] == MID),
 				'style' => $color_class,
 			);
 
@@ -534,7 +511,7 @@ function MessageIndex()
 				GROUP BY id_topic
 				LIMIT ' . count($topic_ids),
 				array(
-					'current_member' => we::$id,
+					'current_member' => MID,
 					'topic_list' => $topic_ids,
 				)
 			);
@@ -565,7 +542,7 @@ function MessageIndex()
 		// Set permissions for all the topics.
 		foreach ($context['topics'] as $t => $topic)
 		{
-			$started = $topic['first_post']['member']['id'] == we::$id;
+			$started = $topic['first_post']['member']['id'] == MID;
 			$context['topics'][$t]['quick_mod'] = array(
 				'lock' => allowedTo('lock_any') || ($started && allowedTo('lock_own')),
 				'pin' => allowedTo('pin_topic'),

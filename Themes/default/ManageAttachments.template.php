@@ -28,7 +28,7 @@ function template_avatar_settings_after()
 
 function template_browse()
 {
-	global $context, $theme, $txt;
+	global $context, $txt;
 
 	echo '
 	<div id="manage_attachments">
@@ -36,9 +36,9 @@ function template_browse()
 			', $txt['attachment_manager_browse_files'], '
 		</we:cat>
 		<div class="windowbg2 wrc">
-			<a href="<URL>?action=admin;area=manageattachments;sa=browse">', $context['browse_type'] === 'attachments' ? '<img src="' . $theme['images_url'] . '/selected.gif" alt="&gt;"> ' : '', $txt['attachment_manager_attachments'], '</a> |
-			<a href="<URL>?action=admin;area=manageattachments;sa=browse;avatars">', $context['browse_type'] === 'avatars' ? '<img src="' . $theme['images_url'] . '/selected.gif" alt="&gt;"> ' : '', $txt['attachment_manager_avatars'], '</a> |
-			<a href="<URL>?action=admin;area=manageattachments;sa=browse;thumbs">', $context['browse_type'] === 'thumbs' ? '<img src="' . $theme['images_url'] . '/selected.gif" alt="&gt;"> ' : '', $txt['attachment_manager_thumbs'], '</a>
+			<a href="<URL>?action=admin;area=manageattachments;sa=browse">', $context['browse_type'] === 'attachments' ? '<img src="' . ASSETS . '/selected.gif" alt="&gt;"> ' : '', $txt['attachment_manager_attachments'], '</a> |
+			<a href="<URL>?action=admin;area=manageattachments;sa=browse;avatars">', $context['browse_type'] === 'avatars' ? '<img src="' . ASSETS . '/selected.gif" alt="&gt;"> ' : '', $txt['attachment_manager_avatars'], '</a> |
+			<a href="<URL>?action=admin;area=manageattachments;sa=browse;thumbs">', $context['browse_type'] === 'thumbs' ? '<img src="' . ASSETS . '/selected.gif" alt="&gt;"> ' : '', $txt['attachment_manager_thumbs'], '</a>
 		</div>
 	</div>';
 

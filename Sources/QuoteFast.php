@@ -43,7 +43,7 @@ function QuoteFast()
 			AND (t.locked = {int:not_locked}' . (empty($moderate_boards) ? '' : ' OR b.id_board IN ({array_int:moderation_board_list})') . ')') . '
 		LIMIT 1',
 		array(
-			'current_member' => we::$id,
+			'current_member' => MID,
 			'moderation_board_list' => $moderate_boards,
 			'id_msg' => (int) $_REQUEST['quote'],
 			'not_locked' => 0,
@@ -53,7 +53,7 @@ function QuoteFast()
 	wesql::free_result($request);
 
 	if (!empty($row))
-		$can_view_post = $row['approved'] || ($row['id_member'] != 0 && $row['id_member'] == we::$id) || allowedTo('approve_posts', $row['id_board']);
+		$can_view_post = $row['approved'] || ($row['id_member'] != 0 && $row['id_member'] == MID) || allowedTo('approve_posts', $row['id_board']);
 
 	if (!empty($can_view_post))
 	{

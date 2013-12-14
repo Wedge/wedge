@@ -577,7 +577,7 @@ function BanListEdit()
 					),
 					array(
 						$context['ban_details']['hardness'] == 'hard' ? 1 : 0, $context['ban_details']['ban_type'], $context['ban_details']['ban_content'], $context['ban_details']['ban_reason'],
-						!empty($context['ban_details']['extra']) ? serialize($context['ban_details']['extra']) : '', time(), we::$id,
+						!empty($context['ban_details']['extra']) ? serialize($context['ban_details']['extra']) : '', time(), MID,
 					)
 				);
 			}
@@ -591,7 +591,7 @@ function BanListEdit()
 					),
 					array(
 						$context['ban_details']['id_ban'], $context['ban_details']['hardness'] == 'hard' ? 1 : 0, $context['ban_details']['ban_type'], $context['ban_details']['ban_content'],
-						$context['ban_details']['ban_reason'], !empty($context['ban_details']['extra']) ? serialize($context['ban_details']['extra']) : '', time(), we::$id,
+						$context['ban_details']['ban_reason'], !empty($context['ban_details']['extra']) ? serialize($context['ban_details']['extra']) : '', time(), MID,
 					)
 				);
 			}

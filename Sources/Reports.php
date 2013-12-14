@@ -211,13 +211,13 @@ function BoardReport()
 	setKeys('cols');
 
 	// Go through each board!
+	// !!! @todo: record custom skin names as well.
 	$request = wesql::query('
 		SELECT b.id_board, b.name, b.num_posts, b.num_topics, b.count_posts, b.member_groups, b.override_theme, b.id_profile,
-			c.name AS cat_name, IFNULL(par.name, {string:text_none}) AS parent_name, IFNULL(th.value, {string:text_none}) AS theme_name
+			c.name AS cat_name, IFNULL(par.name, {string:text_none}) AS parent_name
 		FROM {db_prefix}boards AS b
 			LEFT JOIN {db_prefix}categories AS c ON (c.id_cat = b.id_cat)
-			LEFT JOIN {db_prefix}boards AS par ON (par.id_board = b.id_parent)
-			LEFT JOIN {db_prefix}themes AS th ON (th.id_theme = b.id_theme AND th.variable = {literal:name})',
+			LEFT JOIN {db_prefix}boards AS par ON (par.id_board = b.id_parent)',
 		array(
 			'text_none' => $txt['none'],
 		)
@@ -241,7 +241,6 @@ function BoardReport()
 			'num_posts' => $row['num_posts'],
 			'num_topics' => $row['num_topics'],
 			'count_posts' => empty($row['count_posts']) ? $txt['yes'] : $txt['no'],
-			'theme' => $row['theme_name'],
 			'profile' => $profile_name,
 			'override_theme' => $row['override_theme'] ? $txt['yes'] : $txt['no'],
 			'moderators' => empty($moderators[$row['id_board']]) ? $txt['none'] : implode(', ', $moderators[$row['id_board']]),
@@ -450,7 +449,7 @@ function BoardPermissionsReport()
 // Show what the membergroups are made of.
 function MemberGroupsReport()
 {
-	global $txt, $theme, $settings;
+	global $txt, $settings;
 
 	// Fetch all the board names.
 	$request = wesql::query('
@@ -548,7 +547,7 @@ function MemberGroupsReport()
 			'color' => empty($row['online_color']) ? '-' : '<span style="color: ' . $row['online_color'] . '">' . $row['online_color'] . '</span>',
 			'min_posts' => $row['min_posts'] == -1 ? 'N/A' : $row['min_posts'],
 			'max_messages' => $row['max_messages'],
-			'stars' => !empty($row['stars'][0]) && !empty($row['stars'][1]) ? str_repeat('<img src="' . $theme['images_url'] . '/' . $row['stars'][1] . '">', $row['stars'][0]) : '',
+			'stars' => !empty($row['stars'][0]) && !empty($row['stars'][1]) ? str_repeat('<img src="' . ASSETS . '/' . $row['stars'][1] . '">', $row['stars'][0]) : '',
 		);
 
 		// Board permissions.

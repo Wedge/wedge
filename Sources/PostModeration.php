@@ -134,13 +134,13 @@ function UnapprovedPosts()
 			elseif ($curAction == 'delete')
 			{
 				// Own post is easy!
-				if ($row['id_member'] == we::$id && ($delete_own_boards == array(0) || in_array($row['id_board'], $delete_own_boards)))
+				if ($row['id_member'] == MID && ($delete_own_boards == array(0) || in_array($row['id_board'], $delete_own_boards)))
 					$can_add = true;
 				// Is it a reply to their own topic?
 				elseif ($row['id_member'] == $row['id_member_started'] && $row['id_msg'] != $row['id_first_msg'] && ($delete_own_replies == array(0) || in_array($row['id_board'], $delete_own_replies)))
 					$can_add = true;
 				// Someone else's?
-				elseif ($row['id_member'] != we::$id && ($delete_any_boards == array(0) || in_array($row['id_board'], $delete_any_boards)))
+				elseif ($row['id_member'] != MID && ($delete_any_boards == array(0) || in_array($row['id_board'], $delete_any_boards)))
 					$can_add = true;
 			}
 
@@ -242,13 +242,13 @@ function UnapprovedPosts()
 	for ($i = 1; $row = wesql::fetch_assoc($request); $i++)
 	{
 		// Can delete is complicated, let's solve it first... is it their own post?
-		if ($row['id_member'] == we::$id && ($delete_own_boards == array(0) || in_array($row['id_board'], $delete_own_boards)))
+		if ($row['id_member'] == MID && ($delete_own_boards == array(0) || in_array($row['id_board'], $delete_own_boards)))
 			$can_delete = true;
 		// Is it a reply to their own topic?
 		elseif ($row['id_member'] == $row['id_member_started'] && $row['id_msg'] != $row['id_first_msg'] && ($delete_own_replies == array(0) || in_array($row['id_board'], $delete_own_replies)))
 			$can_delete = true;
 		// Someone elses?
-		elseif ($row['id_member'] != we::$id && ($delete_any_boards == array(0) || in_array($row['id_board'], $delete_any_boards)))
+		elseif ($row['id_member'] != MID && ($delete_any_boards == array(0) || in_array($row['id_board'], $delete_any_boards)))
 			$can_delete = true;
 		else
 			$can_delete = false;
@@ -319,14 +319,14 @@ function ApproveMessage()
 	{
 		approveTopics($topic, !$approved);
 
-		if ($starter != we::$id)
+		if ($starter != MID)
 			logAction('approve_topic', array('topic' => $topic, 'subject' => $subject, 'member' => $starter, 'board' => $board));
 	}
 	else
 	{
 		approvePosts($_REQUEST['msg'], !$approved);
 
-		if ($poster != we::$id)
+		if ($poster != MID)
 			logAction('approve', array('topic' => $topic, 'subject' => $subject, 'member' => $poster, 'board' => $board));
 	}
 

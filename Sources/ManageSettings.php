@@ -60,12 +60,13 @@ function loadGeneralSettingParameters($subActions = array(), $defaultAction = ''
 // This function passes control through to the relevant tab.
 function ModifyFeatureSettings()
 {
-	global $context, $txt, $theme;
+	global $context, $txt;
 
 	$context['page_title'] = $txt['settings_title'];
 
 	$subActions = array(
 		'basic' => 'ModifyBasicSettings',
+		'paths' => 'ModifyPathSettings',
 		'pretty' => 'ModifyPrettyURLs',
 	);
 
@@ -75,9 +76,11 @@ function ModifyFeatureSettings()
 	$context[$context['admin_menu_name']]['tab_data'] = array(
 		'title' => $txt['settings_title'],
 		'help' => 'featuresettings',
-		'description' => sprintf($txt['settings_desc'], $theme['theme_id'], $context['session_query'], '<URL>'),
+		'description' => $txt['settings_desc'],
 		'tabs' => array(
 			'basic' => array(
+			),
+			'paths' => array(
 			),
 			'pretty' => array(
 				'description' => $txt['pretty_urls_desc'],
@@ -134,6 +137,7 @@ function ModifyBasicSettings($return_config = false)
 			array('check', 'show_avatars'),
 			array('check', 'show_gender'),
 			array('check', 'show_blurb'),
+			array('check', 'show_signatures'),
 
 		array('title', 'admin_likes', 'icon' => 'likes.png'),
 
@@ -157,6 +161,42 @@ function ModifyBasicSettings($return_config = false)
 	$context['post_url'] = '<URL>?action=admin;area=featuresettings;save;sa=basic';
 	$context['settings_title'] = $txt['mods_cat_features'];
 
+	prepareDBSettingContext($config_vars);
+}
+
+// Basic path settings - absolute locations for main folders.
+function ModifyPathSettings($return_config = false)
+{
+	global $context, $txt;
+
+	$config_vars = array(
+		array('text', 'boardurl', 36, 'file' => true),
+		array('text', 'boarddir', 36, 'file' => true),
+		array('text', 'sourcedir', 36, 'file' => true),
+		array('text', 'cachedir', 36, 'file' => true),
+		array('text', 'pluginsdir', 36, 'file' => true),
+		array('text', 'pluginsurl', 36, 'file' => true),
+		'',
+		array('text', 'theme_url', 36),
+		array('text', 'theme_dir', 36),
+		array('text', 'images_url', 36),
+	);
+
+	if ($return_config)
+		return $config_vars;
+
+	// Setup the template stuff.
+	$context['post_url'] = '<URL>?action=admin;area=featuresettings;sa=paths;save';
+	$context['settings_title'] = $txt['path_settings'];
+
+	// Saving settings?
+	if (isset($_REQUEST['save']))
+	{
+		saveSettings($config_vars);
+		redirectexit('action=admin;area=featuresettings;sa=paths;' . $context['session_query']);
+	}
+
+	// Fill the config array.
 	prepareDBSettingContext($config_vars);
 }
 

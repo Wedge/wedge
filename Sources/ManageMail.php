@@ -336,7 +336,7 @@ function ModifyMailSettings($return_config = false)
 
 function ModifyEmailTemplates()
 {
-	global $context, $txt, $mbname, $theme, $cachedir;
+	global $context, $txt, $mbname, $cachedir;
 
 	getLanguages();
 
@@ -440,9 +440,7 @@ function ModifyEmailTemplates()
 		$items = array(
 			'forumname' => $mbname,
 			'scripturl' => '<URL>',
-			'themeurl' => $theme['theme_url'],
-			'imagesurl' => $theme['images_url'],
-			'default_themeurl' => $theme['default_theme_url'],
+			'imagesurl' => ASSETS,
 			'regards' => str_replace('{FORUMNAME}', $context['forum_name'], $txt['regards_team']),
 		);
 		foreach ($items as $k => $v)
@@ -455,7 +453,7 @@ function ModifyEmailTemplates()
 			'subject' => westr::safe($txt['emailtemplate_' . $_GET['email']]['subject'], ENT_QUOTES),
 			'body' => westr::safe($txt['emailtemplate_' . $_GET['email']]['body'], ENT_QUOTES),
 			'replacement_items' => array_merge(
-				array('forumname', 'scripturl', 'themeurl', 'imagesurl', 'default_themeurl', 'regards'),
+				array('forumname', 'scripturl', 'imagesurl', 'regards'),
 				$context['email_templates'][$_GET['email']][1]
 			)
 		);

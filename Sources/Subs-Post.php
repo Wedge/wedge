@@ -119,7 +119,7 @@ if (!defined('WEDGE'))
 // Send off an email.
 function sendmail($to, $subject, $message, $from = null, $message_id = null, $send_html = false, $priority = 3, $hotmail_fix = null, $is_private = false)
 {
-	global $webmaster_email, $context, $settings, $txt, $scripturl;
+	global $webmaster_email, $context, $settings, $txt;
 
 	// Use sendmail if it's set or if no SMTP server is set.
 	$use_sendmail = empty($settings['mail_type']) || $settings['smtp_host'] == '';
@@ -141,15 +141,15 @@ function sendmail($to, $subject, $message, $from = null, $message_id = null, $se
 		if (!empty($settings['pretty_enable_filters']))
 		{
 			// Prettify all Wedge-generated URLs found in the message.
-			$message = str_replace('<URL>', $scripturl, $message);
-			preg_match_all('~' . preg_quote($scripturl, '~') . '[^\s]*~', $message, $urls);
+			$message = str_replace('<URL>', SCRIPT, $message);
+			preg_match_all('~' . preg_quote(SCRIPT, '~') . '[^\s]*~', $message, $urls);
 			$message = str_replace($urls[0], prettify_urls($urls[0]), $message);
 
 			// If this is a HTML message, we also need to run through the raw text. Yes, it's a waste of time...
 			if (is_string($send_html))
 			{
-				$send_html = str_replace('<URL>', $scripturl, $send_html);
-				preg_match_all('~' . preg_quote($scripturl, '~') . '[^\s]*~', $send_html, $urls);
+				$send_html = str_replace('<URL>', SCRIPT, $send_html);
+				preg_match_all('~' . preg_quote(SCRIPT, '~') . '[^\s]*~', $send_html, $urls);
 				$send_html = str_replace($urls[0], prettify_urls($urls[0]), $send_html);
 			}
 		}
@@ -186,7 +186,7 @@ function sendmail($to, $subject, $message, $from = null, $message_id = null, $se
 	{
 		$send_html = true;
 		$message = strtr($message, array($br => '<br>' . $br));
-		$message = preg_replace('~(' . preg_quote($scripturl, '~') . '(?:[?/][\w%.,?&;=#-]+)?)~', '<a href="$1">$1</a>', $message);
+		$message = preg_replace('~(' . preg_quote(SCRIPT, '~') . '(?:[?/][\w%.,?&;=#-]+)?)~', '<a href="$1">$1</a>', $message);
 	}
 
 	list ($from_name) = mimespecialchars(addcslashes($from !== null ? $from : $context['forum_name'], '<>()\'\\"'), true, $hotmail_fix, $br);
@@ -199,7 +199,7 @@ function sendmail($to, $subject, $message, $from = null, $message_id = null, $se
 	$headers .= 'Date: ' . gmdate('D, d M Y H:i:s') . ' -0000' . $br;
 
 	if ($message_id !== null && empty($settings['mail_no_message_id']))
-		$headers .= 'Message-ID: <' . md5($scripturl . microtime()) . '-' . $message_id . strstr(empty($settings['mail_from']) ? $webmaster_email : $settings['mail_from'], '@') . '>' . $br;
+		$headers .= 'Message-ID: <' . md5(SCRIPT . microtime()) . '-' . $message_id . strstr(empty($settings['mail_from']) ? $webmaster_email : $settings['mail_from'], '@') . '>' . $br;
 	$headers .= 'X-Mailer: Wedge' . $br;
 
 	// Pass this to the hook before we start modifying the output -- it'll make it easier later.
@@ -379,7 +379,7 @@ function AddMailQueue($flush = false, $to_array = array(), $subject = '', $messa
 // Send off a personal message.
 function sendpm($recipients, $subject, $message, $store_outbox = true, $from = null, $pm_head = 0)
 {
-	global $scripturl, $txt, $settings;
+	global $txt, $settings;
 
 	// Make sure the PM language file is loaded, we might need something out of it.
 	loadLanguage('PersonalMessage');
@@ -395,7 +395,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = true, $from = n
 
 	if ($from === null)
 		$from = array(
-			'id' => we::$id,
+			'id' => MID,
 			'name' => we::$user['name'],
 			'username' => we::$user['username']
 		);
@@ -683,7 +683,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = true, $from = n
 		'SENDERNAME' => un_htmlspecialchars($from['name']),
 		'SUBJECT' => $subject,
 		'MESSAGE' => $message,
-		'REPLYLINK' => $scripturl . '?action=pm;sa=send;f=inbox;pmsg=' . $id_pm . ';quote;u=' . $from['id'],
+		'REPLYLINK' => SCRIPT . '?action=pm;sa=send;f=inbox;pmsg=' . $id_pm . ';quote;u=' . $from['id'],
 	);
 
 	foreach ($notifications as $lang => $notification_list)
@@ -886,7 +886,7 @@ function server_parse($message, $socket, $response)
 // Notify members that something has happened to a topic they marked!
 function sendNotifications($topics, $type, $exclude = array(), $members_only = array())
 {
-	global $scripturl, $settings;
+	global $settings;
 
 	// Can't do it if there's no topics.
 	if (empty($topics))
@@ -973,7 +973,7 @@ function sendNotifications($topics, $type, $exclude = array(), $members_only = a
 			(empty($members_only) ? '' : ' AND ln.id_member IN ({array_int:members_only})') . '
 		ORDER BY mem.lngfile',
 		array(
-			'current_member' => we::$id,
+			'current_member' => MID,
 			'topic_list' => $topics,
 			'notify_types' => $type == 'reply' ? '4' : '3',
 			'notify_regularity' => 2,
@@ -1011,8 +1011,8 @@ function sendNotifications($topics, $type, $exclude = array(), $members_only = a
 		$replacements = array(
 			'TOPICSUBJECT' => $topicData[$row['id_topic']]['subject'],
 			'POSTERNAME' => un_htmlspecialchars($topicData[$row['id_topic']]['name']),
-			'TOPICLINK' => $scripturl . '?topic=' . $row['id_topic'] . '.new;seen#new',
-			'UNSUBSCRIBELINK' => $scripturl . '?action=notify;topic=' . $row['id_topic'] . '.0',
+			'TOPICLINK' => SCRIPT . '?topic=' . $row['id_topic'] . '.new;seen#new',
+			'UNSUBSCRIBELINK' => SCRIPT . '?action=notify;topic=' . $row['id_topic'] . '.0',
 		);
 
 		if ($type == 'remove')
@@ -1047,7 +1047,7 @@ function sendNotifications($topics, $type, $exclude = array(), $members_only = a
 			WHERE id_topic IN ({array_int:topic_list})
 				AND id_member != {int:current_member}',
 			array(
-				'current_member' => we::$id,
+				'current_member' => MID,
 				'topic_list' => $topics,
 				'is_sent' => 1,
 			)
@@ -1123,7 +1123,7 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 			$posterOptions['name'] = $txt['guest_title'];
 			$posterOptions['email'] = '';
 		}
-		elseif ($posterOptions['id'] != we::$id)
+		elseif ($posterOptions['id'] != MID)
 		{
 			$request = wesql::query('
 				SELECT member_name, email_address
@@ -1384,7 +1384,7 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 	if (!empty($posterOptions['update_post_count']) && !empty($posterOptions['id']) && $msgOptions['approved'])
 	{
 		// Are you the one that happened to create this post?
-		if (we::$id == $posterOptions['id'])
+		if (MID == $posterOptions['id'])
 			we::$user['posts']++;
 		updateMemberData($posterOptions['id'], array('posts' => '+'));
 	}
@@ -1843,7 +1843,7 @@ function modifyPost(&$msgOptions, &$topicOptions, &$posterOptions)
 			WHERE id_member = {int:current_member}
 				AND id_topic = {int:id_topic}',
 			array(
-				'current_member' => we::$id,
+				'current_member' => MID,
 				'id_msg' => max($msgOptions['id'], $settings['maxMsgID']),
 				'id_topic' => $topicOptions['id'],
 			)
@@ -1853,7 +1853,7 @@ function modifyPost(&$msgOptions, &$topicOptions, &$posterOptions)
 			wesql::insert('ignore',
 				'{db_prefix}log_topics',
 				array('id_topic' => 'int', 'id_member' => 'int', 'id_msg' => 'int'),
-				array($topicOptions['id'], we::$id, max($msgOptions['id'], $settings['maxMsgID']))
+				array($topicOptions['id'], MID, max($msgOptions['id'], $settings['maxMsgID']))
 			);
 	}
 
@@ -2172,7 +2172,7 @@ function approveTopics($topics, $approve = true)
 // A special function for handling the hell which is sending approval notifications.
 function sendApprovalNotifications(&$topicData)
 {
-	global $scripturl, $settings;
+	global $settings;
 
 	// Clean up the data...
 	if (!is_array($topicData) || empty($topicData))
@@ -2189,7 +2189,7 @@ function sendApprovalNotifications(&$topicData)
 		$topicData[$topic][$msgKey]['body'] = trim(un_htmlspecialchars(strip_tags(strtr(parse_bbc($topicData[$topic][$msgKey]['body'], 'post-notify', array('smileys' => false)), array('<br>' => "\n", '</div>' => "\n", '</li>' => "\n", '&#91;' => '[', '&#93;' => ']')))));
 
 		$topics[] = $msg['id'];
-		$digest_insert[] = array($msg['topic'], $msg['id'], 'reply', we::$id);
+		$digest_insert[] = array($msg['topic'], $msg['id'], 'reply', MID);
 	}
 
 	// These need to go into the digest too...
@@ -2249,8 +2249,8 @@ function sendApprovalNotifications(&$topicData)
 			$replacements = array(
 				'TOPICSUBJECT' => $topicData[$row['id_topic']]['subject'],
 				'POSTERNAME' => un_htmlspecialchars($topicData[$row['id_topic']]['name']),
-				'TOPICLINK' => $scripturl . '?topic=' . $row['id_topic'] . '.new;seen#new',
-				'UNSUBSCRIBELINK' => $scripturl . '?action=notify;topic=' . $row['id_topic'] . '.0',
+				'TOPICLINK' => SCRIPT . '?topic=' . $row['id_topic'] . '.new;seen#new',
+				'UNSUBSCRIBELINK' => SCRIPT . '?action=notify;topic=' . $row['id_topic'] . '.0',
 			);
 
 			$message_type = 'notification_reply';
@@ -2287,7 +2287,7 @@ function sendApprovalNotifications(&$topicData)
 			WHERE id_topic IN ({array_int:topic_list})
 				AND id_member != {int:current_member}',
 			array(
-				'current_member' => we::$id,
+				'current_member' => MID,
 				'topic_list' => $topics,
 				'is_sent' => 1,
 			)
@@ -2408,16 +2408,16 @@ function updateLastMessages($setboards, $id_msg = 0)
 			)
 		);
 	}
-	foreach ($board_updates as $board_data)
+	foreach ($board_updates as $bdata)
 	{
 		wesql::query('
 			UPDATE {db_prefix}boards
 			SET id_last_msg = {int:id_last_msg}, id_msg_updated = {int:id_msg_updated}
 			WHERE id_board IN ({array_int:board_list})',
 			array(
-				'board_list' => $board_data['boards'],
-				'id_last_msg' => $board_data['id'],
-				'id_msg_updated' => $board_data['updated'],
+				'board_list' => $bdata['boards'],
+				'id_last_msg' => $bdata['id'],
+				'id_msg_updated' => $bdata['updated'],
 			)
 		);
 	}
@@ -2426,7 +2426,7 @@ function updateLastMessages($setboards, $id_msg = 0)
 // This simple function gets a list of all administrators and sends them an email to let them know a new member has joined.
 function adminNotify($type, $memberID, $member_name = null)
 {
-	global $settings, $scripturl;
+	global $settings;
 
 	// If the setting isn't enabled then just exit.
 	$notify_list = !empty($settings['notify_new_registration']) ? unserialize($settings['notify_new_registration']) : array();
@@ -2469,14 +2469,14 @@ function adminNotify($type, $memberID, $member_name = null)
 	{
 		$replacements = array(
 			'USERNAME' => $member_name,
-			'PROFILELINK' => $scripturl . '?action=profile;u=' . $memberID
+			'PROFILELINK' => SCRIPT . '?action=profile;u=' . $memberID
 		);
 		$emailtype = 'admin_notify';
 
 		// If they need to be approved add more info...
 		if ($type == 'approval')
 		{
-			$replacements['APPROVALLINK'] = $scripturl . '?action=admin;area=viewmembers;sa=browse;type=approve';
+			$replacements['APPROVALLINK'] = SCRIPT . '?action=admin;area=viewmembers;sa=browse;type=approve';
 			$emailtype .= '_approval';
 		}
 
@@ -2493,7 +2493,7 @@ function adminNotify($type, $memberID, $member_name = null)
 
 function loadEmailTemplate($template, $replacements = array(), $lang = '', $loadLang = true)
 {
-	global $txt, $mbname, $scripturl, $theme, $context;
+	global $txt, $mbname, $context;
 
 	// First things first, load up the email templates language file, if we need to.
 	if ($loadLang)
@@ -2508,10 +2508,8 @@ function loadEmailTemplate($template, $replacements = array(), $lang = '', $load
 	// Add in the default replacements.
 	$replacements += array(
 		'FORUMNAME' => $mbname,
-		'SCRIPTURL' => $scripturl,
-		'THEMEURL' => $theme['theme_url'],
-		'IMAGESURL' => $theme['images_url'],
-		'DEFAULT_THEMEURL' => $theme['default_theme_url'],
+		'SCRIPTURL' => SCRIPT,
+		'IMAGESURL' => ASSETS,
 		'REGARDS' => str_replace('{FORUMNAME}', $context['forum_name'], $txt['regards_team']),
 	);
 
@@ -2625,7 +2623,7 @@ function saveDraft($is_pm, $id_context = 0)
 				'draft' => $_REQUEST['draft_id'],
 				'is_pm' => $is_pm ? 1 : 0,
 				'id_context' => $id_context,
-				'id_member' => we::$id,
+				'id_member' => MID,
 			)
 		);
 
@@ -2679,7 +2677,7 @@ function saveDraft($is_pm, $id_context = 0)
 				'post_time' => time(),
 				'extra' => $extra,
 				'id_draft' => $_REQUEST['draft_id'],
-				'id_member' => we::$id,
+				'id_member' => MID,
 				'is_pm' => !empty($is_pm) ? 1 : 0,
 				'id_context' => $id_context,
 			)
@@ -2703,7 +2701,7 @@ function saveDraft($is_pm, $id_context = 0)
 			'extra' => 'string',
 		),
 		array(
-			we::$id,
+			MID,
 			$subject,
 			$message,
 			time(),

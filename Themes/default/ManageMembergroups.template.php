@@ -138,7 +138,7 @@ function template_new_group()
 
 function template_edit_group()
 {
-	global $context, $theme, $txt;
+	global $context, $txt;
 
 	echo '
 		<form action="<URL>?action=admin;area=membergroups;sa=edit;group=', $context['group']['id'], '" method="post" accept-charset="UTF-8" name="groupForm" id="groupForm">
@@ -282,7 +282,7 @@ function template_edit_group()
 					<dd>
 						', $txt['membergroups_images_url'], '
 						<input name="star_image" id="star_image_input" value="', $context['group']['star_image'], '" onchange="if (this.value && this.form.star_count.value == 0) this.form.star_count.value = 1; else if (!this.value) this.form.star_count.value = 0; $(\'#star_preview\').attr(\'src\', we_theme_url + \'/images/\' + (this.value && this.form.star_count.value > 0 ? this.value.replace(/\$language/g, \'', we::$user['language'], '\') : \'blank.gif\'));" size="20">
-						<img id="star_preview" src="', $theme['images_url'], '/', $context['group']['star_image'] == '' ? 'blank.gif' : $context['group']['star_image'], '">
+						<img id="star_preview" src="', ASSETS, '/', $context['group']['star_image'] == '' ? 'blank.gif' : $context['group']['star_image'], '">
 					</dd>
 				</dl>
 				<hr>
@@ -526,7 +526,7 @@ function template_group_board_selection()
 // Templating for viewing the members of a group.
 function template_group_members()
 {
-	global $context, $theme, $txt;
+	global $context, $txt;
 
 	echo '
 		<form action="<URL>?action=', $context['action'], isset($context['admin_area']) ? ';area=' . $context['admin_area'] : '', ';sa=members;group=', $context['group']['id'], '" method="post" accept-charset="UTF-8">
@@ -628,7 +628,7 @@ function template_group_members()
 		// ... otherwise it's visible - but only via an image?
 		elseif ($member['show_email'] == 'no_through_forum')
 			echo '
-							<a href="<URL>?action=emailuser;sa=email;uid=', $member['id'], '" rel="nofollow"><img src="', $theme['images_url'], '/email_sm.gif" alt="', $txt['email'], '" title="', $txt['email'], '"></a>';
+							<a href="<URL>?action=emailuser;sa=email;uid=', $member['id'], '" rel="nofollow"><img src="', ASSETS, '/email_sm.gif" alt="', $txt['email'], '" title="', $txt['email'], '"></a>';
 
 		echo '
 						</td>
@@ -637,7 +637,7 @@ function template_group_members()
 						<td', empty($context['group']['assignable']) ? ' colspan="2"' : '', '>', $member['posts'], '</td>';
 		if (!empty($context['group']['assignable']))
 			echo '
-						<td class="center" style="width: 4%"><input type="checkbox" name="rem[]" value="', $member['id'], '"', (we::$id == $member['id'] && $context['group']['id'] == 1 ? ' onclick="return !this.checked || ask(' . JavaScriptEscape($txt['membergroups_members_deadmin_confirm']) . ', e);"' : ''), '></td>';
+						<td class="center" style="width: 4%"><input type="checkbox" name="rem[]" value="', $member['id'], '"', (MID == $member['id'] && $context['group']['id'] == 1 ? ' onclick="return !this.checked || ask(' . JavaScriptEscape($txt['membergroups_members_deadmin_confirm']) . ', e);"' : ''), '></td>';
 		echo '
 					</tr>';
 	}

@@ -83,7 +83,7 @@ function Thoughts()
 				'updated' => timeformat($row['updated']),
 				'privacy' => $row['privacy'],
 				'text' => $row['thought'],
-				'can_like' => we::$is_member && !empty($settings['likes_enabled']) && (!empty($settings['likes_own_posts']) || $row['id_member'] != we::$id),
+				'can_like' => we::$is_member && !empty($settings['likes_enabled']) && (!empty($settings['likes_own_posts']) || $row['id_member'] != MID),
 			);
 
 			if (empty($row['id_parent_owner']) && !empty($thoughts))
@@ -187,7 +187,7 @@ function embedThoughts($to_show = 10)
 			'privacy' => $row['privacy'],
 			'updated' => timeformat($row['updated']),
 			'text' => $row['posts'] < 10 ? preg_replace('~\</?a(?:\s[^>]+)?\>(?:https?://)?~', '', $row['thought']) : $row['thought'],
-			'can_like' => we::$is_member && !empty($settings['likes_enabled']) && (!empty($settings['likes_own_posts']) || $row['id_member'] != we::$id),
+			'can_like' => we::$is_member && !empty($settings['likes_enabled']) && (!empty($settings['likes_own_posts']) || $row['id_member'] != MID),
 		);
 
 		$thought =& $thoughts[$row['id_thought']];
@@ -224,7 +224,7 @@ function latestThoughts($memID = 0)
 	$request = wesql::query('
 		SELECT COUNT(h.id_thought)
 		FROM {db_prefix}thoughts AS h
-		WHERE ' . (!$memID ? '1=1' : 'h.id_member = {int:id_member}') . ($memID && (we::$id == $memID) ? '' : '
+		WHERE ' . (!$memID ? '1=1' : 'h.id_member = {int:id_member}') . ($memID && (MID == $memID) ? '' : '
 		AND {query_see_thought}') . '
 		LIMIT 1',
 		array(
@@ -244,7 +244,7 @@ function latestThoughts($memID = 0)
 	$request = wesql::query('
 		SELECT h.id_thought
 		FROM {db_prefix}thoughts AS h
-		WHERE ' . (!$memID ? '1=1' : 'h.id_member = {int:id_member}') . ($memID && (we::$id == $memID) ? '' : '
+		WHERE ' . (!$memID ? '1=1' : 'h.id_member = {int:id_member}') . ($memID && (MID == $memID) ? '' : '
 		AND {query_see_thought}') . '
 		ORDER BY h.id_thought DESC
 		LIMIT {int:start}, {int:per_page}',
@@ -301,7 +301,7 @@ function latestThoughts($memID = 0)
 				'text' => $row['posts'] < 10 ? preg_replace('~\</?a(?:\s[^>]+)?\>(?:https?://)?~', '', $row['thought']) : $row['thought'],
 				'privacy' => $row['privacy'],
 				'has_children' => $row['has_children'],
-				'can_like' => we::$is_member && !empty($settings['likes_enabled']) && (!empty($settings['likes_own_posts']) || $row['id_member'] != we::$id),
+				'can_like' => we::$is_member && !empty($settings['likes_enabled']) && (!empty($settings['likes_own_posts']) || $row['id_member'] != MID),
 			);
 
 			$thought['text'] = '<span class="thought" id="thought' . $row['id_thought'] . '" data-oid="' . $row['id_thought'] . '" data-prv="' . $row['privacy'] . '"><span>' . $thought['text'] . '</span></span>';
@@ -395,12 +395,12 @@ function setupThoughtMenu()
 			$menu[] = 're/' . $tho['id_master'];
 
 		// Can we edit, delete and blurbify?
-		if ($tho['id_member'] == we::$id || we::$is_admin)
+		if ($tho['id_member'] == MID || we::$is_admin)
 		{
 			$menu[] = 'mo/' . $tho['id_master'];
 			$menu[] = 'de';
 			// Admins can only select their own thoughts for posterity...
-			if ($tho['id_member'] == we::$id)
+			if ($tho['id_member'] == MID)
 				$menu[] = 'bl';
 		}
 

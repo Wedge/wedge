@@ -2109,6 +2109,9 @@ INSERT INTO {$db_prefix}settings
 VALUES
 	('weVersion', '{$wedge_version}'),
 	('language', '{$language}'),
+	('theme_url', '{$boardurl}/Themes/default'),
+	('images_url', '{$boardurl}/Themes/default/images'),
+	('theme_dir', '{$boarddir}/Themes/default'),
 	('news', 'e{$default_news}'),
 	('todayMod', '2'),
 	('enablePreviousNext', '1'),
@@ -2449,27 +2452,16 @@ CREATE TABLE {$db_prefix}themes (
 
 #
 # Dumping data for table `themes`
-#
-
-# Theme options.
-INSERT INTO {$db_prefix}themes
-	(id_member, id_theme, variable, value)
-VALUES
-	(0, 1, 'name', '{$default_theme_name}'),
-	(0, 1, 'theme_url', '{$boardurl}/Themes/default'),
-	(0, 1, 'images_url', '{$boardurl}/Themes/default/images'),
-	(0, 1, 'theme_dir', '{$boarddir}/Themes/default'),
-
 # Default options for guests and new members.
 # Guests ignore PM-related options, of course.
+#
+
 INSERT INTO {$db_prefix}themes
 	(id_member, id_theme, variable, value)
 VALUES
 	(-1, 1, 'display_quick_reply', '2'),
 	(-1, 1, 'posts_apply_ignore_list', '1'),
 	(-1, 1, 'return_to_post', '1'),
-	(-1, 1, 'show_signatures', '1'),
-	(-1, 1, 'show_avatars', '1'),
 	(-1, 1, 'view_newest_pm_first', '1'),
 	(-1, 1, 'pm_remove_inbox_label', '1');
 # --------------------------------------------------------

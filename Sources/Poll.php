@@ -109,7 +109,7 @@ function Vote()
 		WHERE t.id_topic = {int:current_topic}
 		LIMIT 1',
 		array(
-			'current_member' => we::$id,
+			'current_member' => MID,
 			'current_topic' => $topic,
 			'not_guest' => 0,
 		)
@@ -173,7 +173,7 @@ function Vote()
 			WHERE id_member = {int:current_member}
 				AND id_poll = {int:id_poll}',
 			array(
-				'current_member' => we::$id,
+				'current_member' => MID,
 				'id_poll' => $row['id_poll'],
 			)
 		);
@@ -204,7 +204,7 @@ function Vote()
 				WHERE id_member = {int:current_member}
 					AND id_poll = {int:id_poll}',
 				array(
-					'current_member' => we::$id,
+					'current_member' => MID,
 					'id_poll' => $row['id_poll'],
 				)
 			);
@@ -232,7 +232,7 @@ function Vote()
 		$id = (int) $id;
 
 		$pollOptions[] = $id;
-		$inserts[] = array($row['id_poll'], we::$id, $id);
+		$inserts[] = array($row['id_poll'], MID, $id);
 	}
 
 	// Add their vote to the tally.
@@ -302,7 +302,7 @@ function LockVoting()
 
 	// If the user _can_ modify the poll....
 	if (!allowedTo('poll_lock_any'))
-		isAllowedTo('poll_lock_' . (we::$id == $memberID ? 'own' : 'any'));
+		isAllowedTo('poll_lock_' . (MID == $memberID ? 'own' : 'any'));
 
 	// It's been locked by a non-moderator.
 	if ($voting_locked == '1')
@@ -377,9 +377,9 @@ function EditPoll()
 
 	// Can you do this?
 	if ($context['is_edit'] && !allowedTo('poll_edit_any'))
-		isAllowedTo('poll_edit_' . (we::$id == $pollinfo['id_member_started'] || ($pollinfo['poll_starter'] != 0 && we::$id == $pollinfo['poll_starter']) ? 'own' : 'any'));
+		isAllowedTo('poll_edit_' . (MID == $pollinfo['id_member_started'] || ($pollinfo['poll_starter'] != 0 && MID == $pollinfo['poll_starter']) ? 'own' : 'any'));
 	elseif (!$context['is_edit'] && !allowedTo('poll_add_any'))
-		isAllowedTo('poll_add_' . (we::$id == $pollinfo['id_member_started'] ? 'own' : 'any'));
+		isAllowedTo('poll_add_' . (MID == $pollinfo['id_member_started'] ? 'own' : 'any'));
 
 	// Do we enable guest voting?
 	loadSource('Subs-Members');
@@ -649,9 +649,9 @@ function EditPoll2()
 
 	// Check if they have the power to add or edit the poll.
 	if ($isEdit && !allowedTo('poll_edit_any'))
-		isAllowedTo('poll_edit_' . (we::$id == $bcinfo['id_member_started'] || ($bcinfo['poll_starter'] != 0 && we::$id == $bcinfo['poll_starter']) ? 'own' : 'any'));
+		isAllowedTo('poll_edit_' . (MID == $bcinfo['id_member_started'] || ($bcinfo['poll_starter'] != 0 && MID == $bcinfo['poll_starter']) ? 'own' : 'any'));
 	elseif (!$isEdit && !allowedTo('poll_add_any'))
-		isAllowedTo('poll_add_' . (we::$id == $bcinfo['id_member_started'] ? 'own' : 'any'));
+		isAllowedTo('poll_add_' . (MID == $bcinfo['id_member_started'] ? 'own' : 'any'));
 
 	$optionCount = 0;
 	// Ensure the user is leaving a valid amount of options - there must be at least two.
@@ -761,7 +761,7 @@ function EditPoll2()
 				'poster_name' => 'string-255', 'change_vote' => 'int', 'guest_vote' => 'int'
 			),
 			array(
-				$_POST['question'], $_POST['poll_hide'], $_POST['poll_voters_visible'], $_POST['poll_max_votes'], $_POST['poll_expire'], we::$id,
+				$_POST['question'], $_POST['poll_hide'], $_POST['poll_voters_visible'], $_POST['poll_max_votes'], $_POST['poll_expire'], MID,
 				we::$user['username'], $_POST['poll_change_vote'], $_POST['poll_guest_vote'],
 			)
 		);
@@ -924,7 +924,7 @@ function RemovePoll()
 		list ($topicStarter, $pollStarter) = wesql::fetch_row($request);
 		wesql::free_result($request);
 
-		isAllowedTo('poll_remove_' . ($topicStarter == we::$id || ($pollStarter != 0 && we::$id == $pollStarter) ? 'own' : 'any'));
+		isAllowedTo('poll_remove_' . ($topicStarter == MID || ($pollStarter != 0 && MID == $pollStarter) ? 'own' : 'any'));
 	}
 
 	// Retrieve the poll ID.

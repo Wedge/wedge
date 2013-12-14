@@ -143,7 +143,7 @@ function AnnouncementSelectMembergroup()
  */
 function AnnouncementSend()
 {
-	global $topic, $board, $context, $settings, $scripturl;
+	global $topic, $board, $context, $settings;
 
 	checkSession();
 
@@ -197,7 +197,7 @@ function AnnouncementSend()
 		ORDER BY mem.id_member
 		LIMIT ' . $chunkSize,
 		array(
-			'current_member' => we::$id,
+			'current_member' => MID,
 			'group_list' => $_POST['who'],
 			'notify_announcements' => 1,
 			'is_activated' => 1,
@@ -228,7 +228,7 @@ function AnnouncementSend()
 			$replacements = array(
 				'TOPICSUBJECT' => $context['topic_subject'],
 				'MESSAGE' => $message,
-				'TOPICLINK' => $scripturl . '?topic=' . $topic . '.0',
+				'TOPICLINK' => SCRIPT . '?topic=' . $topic . '.0',
 			);
 
 			$emaildata = loadEmailTemplate('new_announcement', $replacements, $cur_language);

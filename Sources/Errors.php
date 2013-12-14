@@ -24,7 +24,7 @@ if (!defined('WEDGE'))
  */
 function log_error($error_message, $error_type = 'general', $file = null, $line = null, $referrer = null)
 {
-	global $settings, $scripturl, $last_error, $context, $pluginsdir;
+	global $settings, $last_error, $context, $pluginsdir;
 	static $plugin_dir = null;
 
 	// Check if error logging is actually on.
@@ -88,7 +88,7 @@ function log_error($error_message, $error_type = 'general', $file = null, $line 
 		$query_string = $referrer;
 
 	// Are we using shortened or pretty URLs here?
-	$is_short = strpos($query_string, $scripturl . '?');
+	$is_short = strpos($query_string, SCRIPT . '?');
 	$has_protocol = strpos($query_string, '://') > 0;
 
 	// Just so we know what board error messages are from. If it's a pretty URL, we already know that.
@@ -96,7 +96,7 @@ function log_error($error_message, $error_type = 'general', $file = null, $line 
 		$query_string .= ($query_string == '' ? 'board=' : ';board=') . $_POST['board'];
 
 	if ($is_short === 0)
-		$query_string = substr($query_string, strlen($scripturl));
+		$query_string = substr($query_string, strlen(SCRIPT));
 	if ($is_short === false && !$has_protocol)
 		$is_short = 0;
 	if ($is_short === 0 && !empty($query_string) && $query_string[0] === '?')
@@ -154,8 +154,6 @@ function log_error($error_message, $error_type = 'general', $file = null, $line 
 		);
 		$last_error = $error_info;
 
-		if (!isset($context['app_error_count']))
-			$context['app_error_count'] = 0;
 		$context['app_error_count']++;
 	}
 
@@ -257,13 +255,13 @@ function fatal_lang_error($error, $log = 'general', $sprintf = array(), $header 
  */
 function error_handler($error_level, $error_string, $file, $line)
 {
-	global $theme, $db_show_debug;
+	global $settings, $db_show_debug;
 
 	// Ignore errors if default reporting behavior was overridden (e.g. through SSI.)
 	if (error_reporting() === 0)
 		return;
 
-	if (strpos($file, 'eval()') !== false && !empty($theme['current_include_filename']))
+	if (strpos($file, 'eval()') !== false && !empty($settings['current_include_filename']))
 	{
 		$array = debug_backtrace();
 		for ($i = 0; $i < count($array); $i++)
@@ -278,9 +276,9 @@ function error_handler($error_level, $error_string, $file, $line)
 		}
 
 		if (isset($array[$i]) && !empty($array[$i]['args']))
-			$file = realpath($theme['current_include_filename']) . ' (' . $array[$i]['args'][0] . ' block - eval?)';
+			$file = realpath($settings['current_include_filename']) . ' (' . $array[$i]['args'][0] . ' block - eval?)';
 		else
-			$file = realpath($theme['current_include_filename']) . ' (eval?)';
+			$file = realpath($settings['current_include_filename']) . ' (eval?)';
 	}
 
 	if (!empty($db_show_debug))

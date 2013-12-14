@@ -136,7 +136,7 @@ function QuickModeration()
 				// 2b, verify what they want to do against whether they have permission. Some qmod actions might need to do their own specific checks. That's fine, but they can do them themselves.
 				if ($thisAction[0])
 				{
-					if ((count(array_intersect($board_intersect, $boards_can[$thisAction[1] . '_any'])) == 0) && ($row['id_member_started'] != we::$id || (count(array_intersect($board_intersect, $boards_can[$thisAction[1] . '_own'])) == 0)))
+					if ((count(array_intersect($board_intersect, $boards_can[$thisAction[1] . '_any'])) == 0) && ($row['id_member_started'] != MID || (count(array_intersect($board_intersect, $boards_can[$thisAction[1] . '_own'])) == 0)))
 						continue;
 				}
 				else
@@ -200,7 +200,7 @@ function QuickInTopicModeration()
 		list ($starter) = wesql::fetch_row($request);
 		wesql::free_result($request);
 
-		$allowed_all = $starter == we::$id;
+		$allowed_all = $starter == MID;
 	}
 	else
 		$allowed_all = false;
@@ -218,7 +218,7 @@ function QuickInTopicModeration()
 			AND id_member = {int:current_member}' : '') . '
 		LIMIT ' . count($messages),
 		array(
-			'current_member' => we::$id,
+			'current_member' => MID,
 			'current_topic' => $topic,
 			'message_list' => $messages,
 		)
@@ -259,7 +259,7 @@ function QuickInTopicModeration()
 		removeMessage($message);
 
 		// Log this moderation action ;).
-		if (allowedTo('delete_any') && (!allowedTo('delete_own') || $info[1] != we::$id))
+		if (allowedTo('delete_any') && (!allowedTo('delete_own') || $info[1] != MID))
 			logAction('delete', array('topic' => $topic, 'subject' => $info[0], 'member' => $info[1], 'board' => $board));
 	}
 
@@ -317,7 +317,7 @@ function quickMod_move($topic_data, $boards_can)
 			if (!in_array($this_topic['id_board'], $boards_can['move_any']))
 			{
 				// So they can't just (un)lock *any* topic. That makes things more complicated. It needs to be their topic and they have to have permission
-				if ($this_topic['id_member_started'] != we::$id || !in_array($this_topic['id_board'], $boards_can['move_own']))
+				if ($this_topic['id_member_started'] != MID || !in_array($this_topic['id_board'], $boards_can['move_own']))
 					unset($topic_data[$topic]);
 			}
 		}
@@ -354,7 +354,7 @@ function quickMod_move($topic_data, $boards_can)
 
 		// For reporting...
 		$moveCache[] = array($row['id_topic'], $row['id_board'], $_REQUEST['move_to']);
-		if ($row['id_member_started'] != 0 && $row['id_member_started'] != we::$id)
+		if ($row['id_member_started'] != 0 && $row['id_member_started'] != MID)
 			$notifications[] = $row;
 	}
 	wesql::free_result($request);
@@ -396,7 +396,7 @@ function quickMod_move($topic_data, $boards_can)
 
 	if (!empty($board_name) && !empty($notifications))
 		foreach ($notifications as $notif)
-			Notification::issue('move', $notif['id_member_started'], $notif['id_topic'], array('member' => array('name' => we::$user['name'], 'id' => we::$id), 'id_msg' => $notif['id_msg'], 'subject' => $notif['subject'], 'id_board' => $_REQUEST['move_to'], 'board' => $board_name));
+			Notification::issue('move', $notif['id_member_started'], $notif['id_topic'], array('member' => array('name' => we::$user['name'], 'id' => MID), 'id_msg' => $notif['id_msg'], 'subject' => $notif['subject'], 'id_board' => $_REQUEST['move_to'], 'board' => $board_name));
 
 	if (!empty($topicRecounts))
 	{
@@ -446,7 +446,7 @@ function quickMod_remove($topic_data, $boards_can)
 			if (!in_array($this_topic['id_board'], $boards_can['remove_any']))
 			{
 				// So they can't just (un)lock *any* topic. That makes things more complicated. It needs to be their topic and they have to have permission
-				if ($this_topic['id_member_started'] != we::$id || !in_array($this_topic['id_board'], $boards_can['remove_own']))
+				if ($this_topic['id_member_started'] != MID || !in_array($this_topic['id_board'], $boards_can['remove_own']))
 					unset($topic_data[$topic]);
 			}
 		}
@@ -478,7 +478,7 @@ function quickMod_lock($topic_data, $boards_can)
 			if (!in_array($this_topic['id_board'], $boards_can['lock_any']))
 			{
 				// So they can't just (un)lock *any* topic. That makes things more complicated. It needs to be their topic, not locked by a moderator and they have to have permission
-				if ($this_topic['id_member_started'] != we::$id || $this_topic['locked'] == 1 || !in_array($this_topic['id_board'], $boards_can['lock_own']))
+				if ($this_topic['id_member_started'] != MID || $this_topic['locked'] == 1 || !in_array($this_topic['id_board'], $boards_can['lock_own']))
 					unset($topic_data[$topic]);
 			}
 		}
@@ -529,7 +529,7 @@ function quickMod_approve($topic_data, $boards_can)
 			if (!in_array($this_topic['id_board'], $boards_can['move_any']))
 			{
 				// So they can't just (un)lock *any* topic. That makes things more complicated. It needs to be their topic and they have to have permission
-				if ($this_topic['id_member_started'] != we::$id || !in_array($this_topic['id_board'], $boards_can['move_own']))
+				if ($this_topic['id_member_started'] != MID || !in_array($this_topic['id_board'], $boards_can['move_own']))
 					unset($topic_data[$topic]);
 			}
 		}
@@ -557,7 +557,7 @@ function quickMod_markread($topic_data, $boards_can)
 
 	$markArray = array();
 	foreach ($topic_data as $topic => $data)
-		$markArray[] = array($settings['maxMsgID'], we::$id, $topic);
+		$markArray[] = array($settings['maxMsgID'], MID, $topic);
 
 	wesql::insert('replace',
 		'{db_prefix}log_topics',

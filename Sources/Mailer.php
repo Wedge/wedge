@@ -54,7 +54,7 @@ function Mailer()
 // Send a topic to a friend.
 function SendTopic()
 {
-	global $topic, $txt, $context, $scripturl, $settings;
+	global $topic, $txt, $context, $settings;
 
 	// Check permissions...
 	isAllowedTo('send_topic');
@@ -130,7 +130,7 @@ function SendTopic()
 		'TOPICSUBJECT' => $row['subject'],
 		'SENDERNAMEMANUAL' => $_POST['y_name'],
 		'RECPNAMEMANUAL' => $_POST['r_name'],
-		'TOPICLINK' => $scripturl . '?topic=' . $topic . '.0',
+		'TOPICLINK' => SCRIPT . '?topic=' . $topic . '.0',
 	);
 
 	$emailtemplate = 'send_topic';

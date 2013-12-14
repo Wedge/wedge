@@ -224,7 +224,7 @@ function EditAgreement()
 		checkSession();
 
 		// So, did we want to exclude anyone from this fun and games?
-		$exclude = array(we::$id);
+		$exclude = array(MID);
 		$groups = array();
 		if (!empty($_POST['exclude']) && is_array($_POST['exclude']))
 			foreach ($_POST['exclude'] as $k => $v)

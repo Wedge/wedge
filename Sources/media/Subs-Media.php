@@ -221,7 +221,7 @@ function media_is_not_banned()
 		FROM {db_prefix}media_variables
 		WHERE type = {literal:ban}
 		AND val1 = {int:id_member}', array(
-			'id_member' => we::$id
+			'id_member' => MID
 		)
 	);
 	if (wesql::num_rows($request) == 0)
@@ -345,7 +345,7 @@ function aeva_getAlbumChildren($current)
 // This function returns file path to a media, also checks security unless security_override is true
 function getMediaPath($mid, $type = 'main', $security_override = false)
 {
-	global $amSettings, $theme;
+	global $amSettings, $settings;
 
 	// Get the item's filename
 	$galdir = $amSettings['data_dir_path'];
@@ -372,8 +372,8 @@ function getMediaPath($mid, $type = 'main', $security_override = false)
 			IFNULL(lm.time, IFNULL(lm_all.time, 0)) < m.log_last_access_time AS is_new' : ($type == 'thumb' || $type == 'thumba' ? ',
 			forig.filename AS original_filename' : '')) . '
 		FROM {db_prefix}media_items AS m' . (we::$is_member && ($type == 'preview' || $type == 'main') ? '
-			LEFT JOIN {db_prefix}media_log_media AS lm ON (lm.id_media = m.id_media AND lm.id_member = ' . we::$id . ')
-			LEFT JOIN {db_prefix}media_log_media AS lm_all ON (lm_all.id_media = 0 AND lm_all.id_member = ' . we::$id . ')' : ($type == 'thumba' ? '
+			LEFT JOIN {db_prefix}media_log_media AS lm ON (lm.id_media = m.id_media AND lm.id_member = ' . MID . ')
+			LEFT JOIN {db_prefix}media_log_media AS lm_all ON (lm_all.id_media = 0 AND lm_all.id_member = ' . MID . ')' : ($type == 'thumba' ? '
 			INNER JOIN {db_prefix}media_albums AS albicon ON (albicon.id_album = m.album_id)' : '')) . '
 			INNER JOIN {db_prefix}media_files AS f
 				ON ('
@@ -388,7 +388,7 @@ function getMediaPath($mid, $type = 'main', $security_override = false)
 		AND (f.id_file < 5 OR {query_see_album_hidden})
 		AND (m.approved = 1 OR m.id_member = {int:user_id})');
 
-	$result = wesql::query($req . ' LIMIT 1', array('media_id' => $mid, 'user_id' => we::$id));
+	$result = wesql::query($req . ' LIMIT 1', array('media_id' => $mid, 'user_id' => MID));
 
 	// Not found?
 	if (wesql::num_rows($result) > 0)
@@ -411,7 +411,7 @@ function getMediaPath($mid, $type = 'main', $security_override = false)
 	}
 	else
 	{
-		$path = $type == 'icon' ? $theme['default_theme_dir'] . '/images/blank.gif' : $theme['theme_dir'] . '/images/aeva/denied.png';
+		$path = $type == 'icon' ? $settings['theme_dir'] . '/images/blank.gif' : $settings['theme_dir'] . '/images/aeva/denied.png';
 		$filename = 'denied.png';
 		$is_new = false;
 	}
@@ -628,13 +628,13 @@ function allowedToAccessAlbum($albumid, $row = null)
 		wesql::free_result($result);
 	}
 
-	if (($row['album_of'] == we::$id) && we::$is_member)
+	if (($row['album_of'] == MID) && we::$is_member)
 		return true;
 
-	if (!empty($row['allowed_members']) && in_array(we::$id, explode(',', $row['allowed_members'])))
+	if (!empty($row['allowed_members']) && in_array(MID, explode(',', $row['allowed_members'])))
 		return true;
 
-	if (!empty($row['denied_members']) && in_array(we::$id, explode(',', $row['denied_members'])))
+	if (!empty($row['denied_members']) && in_array(MID, explode(',', $row['denied_members'])))
 		return false;
 
 	if (empty($row['approved']))
@@ -665,7 +665,7 @@ function allowedToAccessItem($id, $is_file_id = false)
 		AND {query_see_album_hidden}',
 		array(
 			'id' => $id,
-			'approved' => !aeva_allowedTo('moderate') ? 'AND (m.approved = 1 OR m.id_member = ' . we::$id . ')' : ''
+			'approved' => !aeva_allowedTo('moderate') ? 'AND (m.approved = 1 OR m.id_member = ' . MID . ')' : ''
 		)
 	);
 
@@ -677,7 +677,7 @@ function allowedToAccessItem($id, $is_file_id = false)
 // Load the gallery's critical settings and variables
 function loadMediaSettings($gal_url = null, $load_template = false, $load_language = false)
 {
-	global $amSettings, $context, $galurl, $galurl2, $theme, $amOverride;
+	global $amSettings, $context, $galurl, $galurl2, $amOverride;
 	static $am_loaded = false;
 
 	if ($load_template)
@@ -720,16 +720,16 @@ function loadMediaSettings($gal_url = null, $load_template = false, $load_langua
 	elseif (we::$is_guest)
 		we::$user['query_see_album'] = 'FIND_IN_SET(-1, a.access)';
 	else
-		we::$user['query_see_album'] = '(FIND_IN_SET(' . implode(', a.access) OR FIND_IN_SET(', we::$user['groups']) . ', a.access) OR (a.album_of = ' . (int) we::$id . ') OR FIND_IN_SET(' . we::$id . ', a.allowed_members))
-		AND (NOT FIND_IN_SET(' . we::$id . ', a.denied_members))';
+		we::$user['query_see_album'] = '(FIND_IN_SET(' . implode(', a.access) OR FIND_IN_SET(', we::$user['groups']) . ', a.access) OR (a.album_of = ' . (int) MID . ') OR FIND_IN_SET(' . MID . ', a.allowed_members))
+		AND (NOT FIND_IN_SET(' . MID . ', a.denied_members))';
 
 	we::$user['query_see_album_hidden'] = we::$user['query_see_album'];
-	we::$user['query_see_album'] .= we::$is_guest ? ' AND (a.hidden = 0)' : ' AND (a.hidden = 0 OR a.album_of = ' . (int) we::$id . ')';
+	we::$user['query_see_album'] .= we::$is_guest ? ' AND (a.hidden = 0)' : ' AND (a.hidden = 0 OR a.album_of = ' . (int) MID . ')';
 
 	we::$user['query_see_album_nocheck'] = we::$user['query_see_album'];
 
 	if (!aeva_allowedTo('moderate'))
-		we::$user['query_see_album'] .= ' AND (CHAR_LENGTH(a.passwd) = 0' . (we::$is_guest ? '' : ' OR a.album_of = ' . (int) we::$id) . (empty($_SESSION['aeva_access']) ? '' : ' OR a.id_album IN (' . implode(',', $_SESSION['aeva_access']) . ')') . ')';
+		we::$user['query_see_album'] .= ' AND (CHAR_LENGTH(a.passwd) = 0' . (we::$is_guest ? '' : ' OR a.album_of = ' . (int) MID) . (empty($_SESSION['aeva_access']) ? '' : ' OR a.id_album IN (' . implode(',', $_SESSION['aeva_access']) . ')') . ')';
 
 	wesql::register_replacement('query_see_album', we::$user['query_see_album']);
 	wesql::register_replacement('query_see_album_hidden', we::$user['query_see_album_hidden']);
@@ -767,7 +767,6 @@ function loadMediaSettings($gal_url = null, $load_template = false, $load_langua
 		if ($context['media_ftp']['media'] != '/' && substr($context['media_ftp']['media'], -1) == '/')
 			$context['media_ftp']['media'] = substr($context['media_ftp']['media'], 0, -1);
 	}
-	$theme['images_aeva'] = file_exists($theme['theme_dir'] . '/images/aeva') ? $theme['images_url'] . '/aeva' : $theme['default_images_url'] . '/aeva';
 
 	// $galurl holds the URL to gallery for subactions, and $galurl2 is the URL for its home page.
 	$galurl = empty($gal_url) ? '<URL>?action=media;' : $gal_url;
@@ -789,12 +788,12 @@ function loadMediaSettings($gal_url = null, $load_template = false, $load_langua
 				AND IFNULL(lm.time, IFNULL(lm_all.time, 0)) < m.log_last_access_time' . (!aeva_allowedTo('moderate') ? '
 				AND m.approved = 1' : '') . '
 				LIMIT 1',
-				array('user' => we::$id)
+				array('user' => MID)
 			);
 			list ($media_unseen) = wesql::fetch_row($request);
 			wesql::free_result($request);
 		}
-		updateMemberData(we::$id, array('media_unseen' => $media_unseen));
+		updateMemberData(MID, array('media_unseen' => $media_unseen));
 		we::$user['media_unseen'] = $media_unseen;
 		// If unseen counter if set to 0, make sure to clean up the database!
 		if ($can_unseen && empty($media_unseen))
@@ -862,9 +861,9 @@ function albumsAllowedTo($permission, $details = false, $need_write = true)
 
 	if ($need_write && !aeva_allowedTo('moderate'))
 		$query .= '
-			AND (a.album_of = ' . we::$id . ' OR FIND_IN_SET(' . we::$id . ', a.allowed_write)
+			AND (a.album_of = ' . MID . ' OR FIND_IN_SET(' . MID . ', a.allowed_write)
 				OR FIND_IN_SET(' . implode(', a.access_write) OR FIND_IN_SET(', we::$user['groups']) . ', a.access_write))
-			AND NOT FIND_IN_SET(' . we::$id . ', a.denied_write)';
+			AND NOT FIND_IN_SET(' . MID . ', a.denied_write)';
 
 	$request = wesql::query($query, array(
 		'groups' => we::$user['groups'],
@@ -998,8 +997,8 @@ function aeva_loadAlbum($album_id = 0)
 			$permissions[] = $row['permission'];
 	wesql::free_result($request);
 
-	$can_upload = in_array(we::$id, explode(',', $album_info['allowed_write'])) || count(array_intersect(we::$user['groups'], explode(',', $album_info['access_write']))) > 0;
-	$can_upload &= !in_array(we::$id, explode(',', $album_info['denied_write']));
+	$can_upload = in_array(MID, explode(',', $album_info['allowed_write'])) || count(array_intersect(we::$user['groups'], explode(',', $album_info['access_write']))) > 0;
+	$can_upload &= !in_array(MID, explode(',', $album_info['denied_write']));
 
 	$icon_url = !empty($album_info['icon_dir']) && !empty($amSettings['clear_thumbnames']) ?
 		$clearurl . '/' . str_replace('%2F', '/', urlencode($album_info['icon_dir'])) . '/' . aeva_getEncryptedFilename($album_info['icon_file'], $album_info['icon'], true)
@@ -1043,7 +1042,7 @@ function aeva_loadAlbum($album_id = 0)
 		'overall_total' => 0,
 		'passwd' => $album_info['passwd'],
 		'permissions' => $permissions,
-		'can_upload' => aeva_allowedTo('moderate') || $album_info['album_of'] == we::$id || $can_upload,
+		'can_upload' => aeva_allowedTo('moderate') || $album_info['album_of'] == MID || $can_upload,
 		'id_quota_prof' => $album_info['id_quota_profile'],
 		'hidden' => $album_info['hidden'],
 		'options' => unserialize($album_info['options']),
@@ -1073,7 +1072,7 @@ function aeva_getAlbums($custom = '', $security_level = 2, $approved = true, $or
 	$albums = $raw_albums = array();
 	// We'll need to apply the hidden treatment to sub-albums that didn't go through it already.
 	$can_moderate = aeva_allowedTo('moderate');
-	$temp_hidden = $can_moderate ? '' : (we::$is_guest ? ' AND (a.hidden = 0)' : ' AND (a.hidden = 0 OR a.album_of = ' . (int) we::$id . ')');
+	$temp_hidden = $can_moderate ? '' : (we::$is_guest ? ' AND (a.hidden = 0)' : ' AND (a.hidden = 0 OR a.album_of = ' . (int) MID . ')');
 
 	// Gets the album tree
 	$request = wesql::query('
@@ -1232,17 +1231,17 @@ function aeva_approveItems($items, $approval)
 {
 	foreach ($items as $item => $title)
 	{
-		$options = array(
+		$ops = array(
 			'id' => $item,
 			'approved' => $approval,
 			'skip_log' => true,
 		);
 
 		// Update item
-		aeva_modifyItem($options);
+		aeva_modifyItem($ops);
 
 		// Log item approval/unapproval
-		$opts = array(
+		$ops = array(
 			'type' => 'approval',
 			'subtype' => empty($approval) ? 'unapproved' : 'approved',
 			'action_on' => array(
@@ -1250,14 +1249,14 @@ function aeva_approveItems($items, $approval)
 				'name' => $title,
 			),
 			'action_by' => array(
-				'id' => we::$id,
+				'id' => MID,
 				'name' => we::$user['name'],
 			),
 			'extra_info' => array(
 				'val8' => 'item',
 			),
 		);
-		aeva_logModAction($opts);
+		aeva_logModAction($ops);
 	}
 }
 
@@ -1318,11 +1317,11 @@ function aeva_deleteItems($id, $rmFiles = true, $log = true)
 		// Do we need to log?
 		if ($log)
 		{
-			$opts = array(
+			$ops = array(
 				'type' => 'delete',
 				'subtype' => 'item',
 				'action_by' => array(
-					'id' => we::$id,
+					'id' => MID,
 					'name' => we::$user['name'],
 				),
 				'action_on' => array(
@@ -1330,7 +1329,7 @@ function aeva_deleteItems($id, $rmFiles = true, $log = true)
 					'name' => $row['title'],
 				),
 			);
-			aeva_logModAction($opts);
+			aeva_logModAction($ops);
 		}
 	}
 	wesql::free_result($request);
@@ -1469,11 +1468,11 @@ function aeva_deleteComments($id, $log = true)
 		// Do we need to log?
 		if ($log)
 		{
-			$opts = array(
+			$ops = array(
 				'type' => 'delete',
 				'subtype' => 'comment',
 				'action_by' => array(
-					'id' => we::$id,
+					'id' => MID,
 					'name' => we::$user['name'],
 				),
 				'action_on' => array(
@@ -1484,7 +1483,7 @@ function aeva_deleteComments($id, $log = true)
 					'val8' => $row['id_media'],
 				),
 			);
-			aeva_logModAction($opts);
+			aeva_logModAction($ops);
 		}
 	}
 	wesql::free_result($request);
@@ -1554,28 +1553,28 @@ function aeva_deleteComments($id, $log = true)
 }
 
 // Logs a moderation action
-function aeva_logModAction(&$options, $return_boolean = false)
+function aeva_logModAction(&$ops, $return_boolean = false)
 {
 	// Type -- Val1
-	$type = $options['type'];
+	$type = $ops['type'];
 	if (!in_array($type, array('approval', 'delete', 'report', 'prune', 'ban')))
 		return false;
 	// SubType Val 2
 	// Like type(approval)-subtype(approved/delete), type(delete)-subtype(album/item/comment), type(report)-subtype(deleted_item/deleted_report)
-	$subtype = isset($options['subtype']) ? $options['subtype'] : '';
+	$subtype = isset($ops['subtype']) ? $ops['subtype'] : '';
 	// Action-on-id(val3)
-	$action_on_id = isset($options['action_on']['id']) ? $options['action_on']['id'] : 0;
+	$action_on_id = isset($ops['action_on']['id']) ? $ops['action_on']['id'] : 0;
 	// Action-on-name(val4)
-	$action_on_name = isset($options['action_on']['name']) ? $options['action_on']['name'] : '';
+	$action_on_name = isset($ops['action_on']['name']) ? $ops['action_on']['name'] : '';
 	// Action-by-id(val5)
-	$action_by_id = isset($options['action_by']['id']) ? $options['action_by']['id'] : 0;
+	$action_by_id = isset($ops['action_by']['id']) ? $ops['action_by']['id'] : 0;
 	// Action-by-name(val6)
-	$action_by_name = isset($options['action_by']['name']) ? $options['action_by']['name'] : '';
+	$action_by_name = isset($ops['action_by']['name']) ? $ops['action_by']['name'] : '';
 	// Action time(val7)
-	$action_time = isset($options['action_time']) ? $options['action_time'] : time();
+	$action_time = isset($ops['action_time']) ? $ops['action_time'] : time();
 	// Maybe some extra info?
-	$val8 = isset($options['extra_info']['val8']) ? $options['extra_info']['val8'] : '';
-	$val9 = isset($options['extra_info']['val9']) ? $options['extra_info']['val9'] : '';
+	$val8 = isset($ops['extra_info']['val8']) ? $ops['extra_info']['val8'] : '';
+	$val9 = isset($ops['extra_info']['val9']) ? $ops['extra_info']['val9'] : '';
 
 	// Log it!
 	wesql::insert('',
@@ -1872,51 +1871,51 @@ function aeva_loadQuotas($pre = array())
 }
 
 // Creates a file
-function aeva_createFile(&$options)
+function aeva_createFile(&$ops)
 {
 	global $amSettings, $context;
 
 	// Initialize
-	$options['is_uploading'] = isset($options['is_uploading']) && $options['is_uploading'] == true ? true : false;
-	$options['destination'] = isset($options['destination']) ? $options['destination'] : '';
-	$options['cur_dest'] = substr($options['destination'], strlen($amSettings['data_dir_path']) + 1);
-	$options['album'] = isset($options['album']) ? $options['album'] : 0;
-	$options['max_width'] = isset($options['max_width']) ? $options['max_width'] : $amSettings['max_width'];
-	$options['max_height'] = isset($options['max_height']) ? $options['max_height'] : $amSettings['max_height'];
-	$options['allow_over_max'] = isset($options['allow_over_max']) ? $options['allow_over_max'] : $amSettings['allow_over_max'];
-	$options['max_file_size'] = isset($options['max_file_size']) ? $options['max_file_size'] : (isset($context['aeva_max_file_size']) ? $context['aeva_max_file_size'] : $amSettings['max_file_size']);
+	$ops['is_uploading'] = isset($ops['is_uploading']) && $ops['is_uploading'] == true ? true : false;
+	$ops['destination'] = isset($ops['destination']) ? $ops['destination'] : '';
+	$ops['cur_dest'] = substr($ops['destination'], strlen($amSettings['data_dir_path']) + 1);
+	$ops['album'] = isset($ops['album']) ? $ops['album'] : 0;
+	$ops['max_width'] = isset($ops['max_width']) ? $ops['max_width'] : $amSettings['max_width'];
+	$ops['max_height'] = isset($ops['max_height']) ? $ops['max_height'] : $amSettings['max_height'];
+	$ops['allow_over_max'] = isset($ops['allow_over_max']) ? $ops['allow_over_max'] : $amSettings['allow_over_max'];
+	$ops['max_file_size'] = isset($ops['max_file_size']) ? $ops['max_file_size'] : (isset($context['aeva_max_file_size']) ? $context['aeva_max_file_size'] : $amSettings['max_file_size']);
 	$ret = array();
 
 	// Do some checking
-	if (!isset($options['filepath']) || (($options['is_uploading'] && !is_uploaded_file($options['filepath'])) || (!$options['is_uploading'] && !file_exists($options['filepath']))))
-		return array('error' => 'file_not_found', 'error_context' => array('file_not_found (' . westr::htmlspecialchars($options['filepath']) . ')'));
+	if (!isset($ops['filepath']) || (($ops['is_uploading'] && !is_uploaded_file($ops['filepath'])) || (!$ops['is_uploading'] && !file_exists($ops['filepath']))))
+		return array('error' => 'file_not_found', 'error_context' => array('file_not_found (' . westr::htmlspecialchars($ops['filepath']) . ')'));
 
 	// Is the destination empty?
-	if (empty($options['destination']))
+	if (empty($ops['destination']))
 		return array('error' => 'dest_empty', 'error_context' => '(folder variable is empty)');
 
 	// Does the directory exist?
-	if (!file_exists($options['destination']))
-		return array('error' => 'dest_not_found', 'error_context' => array('dest_not_found (' . westr::htmlspecialchars($options['destination']) . ')'));
+	if (!file_exists($ops['destination']))
+		return array('error' => 'dest_not_found', 'error_context' => array('dest_not_found (' . westr::htmlspecialchars($ops['destination']) . ')'));
 
 	// Rename the file for now
-	if ($options['is_uploading'])
+	if ($ops['is_uploading'])
 	{
-		@move_uploaded_file($options['filepath'], $amSettings['data_dir_path'] . '/tmp/' . $options['filename']);
-		$options['filepath'] = $amSettings['data_dir_path'] . '/tmp/' . $options['filename'];
+		@move_uploaded_file($ops['filepath'], $amSettings['data_dir_path'] . '/tmp/' . $ops['filename']);
+		$ops['filepath'] = $amSettings['data_dir_path'] . '/tmp/' . $ops['filename'];
 	}
 
 	// Open the handler anyway
 	$file = new media_handler;
-	$file->init($options['filepath']);
-	$file->securityCheck($options['filename']);
+	$file->init($ops['filepath']);
+	$file->securityCheck($ops['filename']);
 
 	// Width and height
 	list ($width, $height) = $file->getSize();
 	if (empty($width))
-		$width = isset($options['width']) ? $options['width'] : 0;
+		$width = isset($ops['width']) ? $ops['width'] : 0;
 	if (empty($height))
-		$height = isset($options['height']) ? $options['height'] : 0;
+		$height = isset($ops['height']) ? $ops['height'] : 0;
 
 	$metaInfo = $file->getInfo();
 	if ($amSettings['use_metadata_date'] && !empty($metaInfo['datetime']))
@@ -1928,49 +1927,49 @@ function aeva_createFile(&$options)
 	$mtype = $file->media_type();
 
 	// If we have an array in max file sizes... We need to choose the correct one
-	if (is_array($options['max_file_size']))
-		$options['max_file_size'] = isset($options['max_file_size'][$mtype]) ? $options['max_file_size'][$mtype] : $amSettings['max_file_size'];
+	if (is_array($ops['max_file_size']))
+		$ops['max_file_size'] = isset($ops['max_file_size'][$mtype]) ? $ops['max_file_size'][$mtype] : $amSettings['max_file_size'];
 
 	// Do we need to make the checks?
-	if (empty($options['security_override']))
+	if (empty($ops['security_override']))
 	{
 		// Is it of invalid extension?
-		$ext = aeva_getExt($options['filename']);
+		$ext = aeva_getExt($ops['filename']);
 		if (!in_array($ext, aeva_allowed_types(true)))
 			return array('error' => 'invalid_extension', 'error_context' => array(westr::htmlspecialchars($ext)));
-		elseif (empty($options['allow_over_max']))
+		elseif (empty($ops['allow_over_max']))
 		{
 			// Is the size too large?
-			if ($fsize > $options['max_file_size'] * 1024)
+			if ($fsize > $ops['max_file_size'] * 1024)
 				return array('error' => 'size_too_big', 'error_context' => array(round($fsize/1024)));
 			// Are the width or height too large?
-			if ($width > $options['max_width'])
+			if ($width > $ops['max_width'])
 				return array('error' => 'width_bigger', 'error_context' => array((int) $width));
-			if ($height > $options['max_height'])
+			if ($height > $ops['max_height'])
 				return array('error' => 'height_bigger', 'error_context' => array((int) $height));
 		}
 	}
 
-	if ((empty($options['security_override']) && !empty($options['allow_over_max']))
-	&& (($fsize > $options['max_file_size'] * 1024) || ($width > $options['max_width']) || ($height > $options['max_height'])))
+	if ((empty($ops['security_override']) && !empty($ops['allow_over_max']))
+	&& (($fsize > $ops['max_file_size'] * 1024) || ($width > $ops['max_width']) || ($height > $ops['max_height'])))
 	{
 		// If the picture is too large, resize it. If the file itself is too large, try to create a lighter file with the same dimensions.
 		// Does not apply if you're converting from an older gallery.
-		$resizeddest = $amSettings['data_dir_path'] . '/tmp/resized_' . $options['filename'];
-		if ($resizedpic = $file->createThumbnail($resizeddest, min($width, $options['max_width']), min($height, $options['max_height'])))
+		$resizeddest = $amSettings['data_dir_path'] . '/tmp/resized_' . $ops['filename'];
+		if ($resizedpic = $file->createThumbnail($resizeddest, min($width, $ops['max_width']), min($height, $ops['max_height'])))
 		{
-			if (!isset($options['skip_preview_unlink']))
-				@unlink($options['filepath']);
-			$options['filepath'] = $resizeddest;
+			if (!isset($ops['skip_preview_unlink']))
+				@unlink($ops['filepath']);
+			$ops['filepath'] = $resizeddest;
 			list ($width, $height) = $resizedpic->getSize();
 			if (empty($width))
-				$width = isset($options['width']) ? $options['width'] : 0;
+				$width = isset($ops['width']) ? $ops['width'] : 0;
 			if (empty($height))
-				$height = isset($options['height']) ? $options['height'] : 0;
+				$height = isset($ops['height']) ? $ops['height'] : 0;
 			$fsize = $resizedpic->getFileSize();
 			$resizedpic->close();
 			// Is the new picture still too large? Well, we did what we could!
-			if ($fsize > $options['max_file_size'] * 1024)
+			if ($fsize > $ops['max_file_size'] * 1024)
 				return array('error' => 'size_too_big', 'error_context' => array((int) $fsize));
 		}
 	}
@@ -1980,29 +1979,29 @@ function aeva_createFile(&$options)
 
 	// Done with security checks, now on with creating the file
 	$ret['file'] = $id_file = aeva_insertFileID(
-		isset($options['force_id_file']) ? $options['force_id_file'] : 0, $fsize, $options['filename'],
-		$width, $height, $options['cur_dest'], $options['album'], $meta
+		isset($ops['force_id_file']) ? $ops['force_id_file'] : 0, $fsize, $ops['filename'],
+		$width, $height, $ops['cur_dest'], $ops['album'], $meta
 	);
 
 	// Move the file
-	if ($options['is_uploading'])
-		@rename($options['filepath'], $options['destination'] . '/' . aeva_getEncryptedFilename($options['filename'], $id_file));
+	if ($ops['is_uploading'])
+		@rename($ops['filepath'], $ops['destination'] . '/' . aeva_getEncryptedFilename($ops['filename'], $id_file));
 	else
-		@copy($options['filepath'], $options['destination'] . '/' . aeva_getEncryptedFilename($options['filename'], $id_file));
+		@copy($ops['filepath'], $ops['destination'] . '/' . aeva_getEncryptedFilename($ops['filename'], $id_file));
 
-	$options['new_dest'] = $options['destination'] . '/' . aeva_getEncryptedFilename($options['filename'], $id_file);
+	$ops['new_dest'] = $ops['destination'] . '/' . aeva_getEncryptedFilename($ops['filename'], $id_file);
 
 	// Re-open it
 	$file = new media_handler;
-	$file->init($options['new_dest']);
+	$file->init($ops['new_dest']);
 
 	// Do we need to create a thumbnail?
-	if (empty($options['skip_thumb']))
-		$ret['thumb'] = aeva_createThumbFile($id_file, $file, $options);
+	if (empty($ops['skip_thumb']))
+		$ret['thumb'] = aeva_createThumbFile($id_file, $file, $ops);
 
 	// Do we have to create a preview?
-	if (empty($options['skip_preview']) && (($mtype == 'video' && $file->testFFMpeg()) || (!empty($amSettings['max_preview_width']) && !empty($amSettings['max_preview_height']))))
-		$ret['preview'] = aeva_createPreviewFile($id_file, $file, $options, $width, $height);
+	if (empty($ops['skip_preview']) && (($mtype == 'video' && $file->testFFMpeg()) || (!empty($amSettings['max_preview_width']) && !empty($amSettings['max_preview_height']))))
+		$ret['preview'] = aeva_createPreviewFile($id_file, $file, $ops, $width, $height);
 
 	// Close the handler
 	$file->close();
@@ -2011,24 +2010,24 @@ function aeva_createFile(&$options)
 	return $ret;
 }
 
-function aeva_createThumbFile($id_file, $file, &$options)
+function aeva_createThumbFile($id_file, $file, &$ops)
 {
 	global $amSettings;
 
-	$options['max_thumb_width'] = isset($options['max_thumb_width']) ? $options['max_thumb_width'] : $amSettings['max_thumb_width'];
-	$options['max_thumb_height'] = isset($options['max_thumb_height']) ? $options['max_thumb_height'] : $amSettings['max_thumb_height'];
-	$options['cur_dest'] = substr($options['destination'], strlen($amSettings['data_dir_path']) + 1);
+	$ops['max_thumb_width'] = isset($ops['max_thumb_width']) ? $ops['max_thumb_width'] : $amSettings['max_thumb_width'];
+	$ops['max_thumb_height'] = isset($ops['max_thumb_height']) ? $ops['max_thumb_height'] : $amSettings['max_thumb_height'];
+	$ops['cur_dest'] = substr($ops['destination'], strlen($amSettings['data_dir_path']) + 1);
 
 	$mtype = $file->media_type();
 	$ext = aeva_getExt($file->src);
 	$ext = $ext == 'gif' || $ext == 'png' ? 'png' : 'jpg';
-	$thumb = $file->createThumbnail($amSettings['data_dir_path'] . '/tmp/tmp_thumb_' . $id_file . '.' . $ext, $options['max_thumb_width'], $options['max_thumb_height']);
+	$thumb = $file->createThumbnail($amSettings['data_dir_path'] . '/tmp/tmp_thumb_' . $id_file . '.' . $ext, $ops['max_thumb_width'], $ops['max_thumb_height']);
 	if (!$thumb)
 	{
 		if ($mtype != 'doc')
 			return $mtype == 'image' ? 3 : ($mtype == 'video' ? 2 : 1);
 		$ext = 'png';
-		$ext2 = !empty($options['filename']) ? strtolower(substr(strrchr($options['filename'], '.'), 1)) : '';
+		$ext2 = !empty($ops['filename']) ? strtolower(substr(strrchr($ops['filename'], '.'), 1)) : '';
 		$allowed_types = aeva_allowed_types(false, true);
 		if (in_array($ext2, $allowed_types['do']))
 		{
@@ -2036,65 +2035,65 @@ function aeva_createThumbFile($id_file, $file, &$options)
 			$filename = (!file_exists($path . $ext2 . '.png') ? 'default' : $ext2) . '.png';
 			$file2 = new media_handler;
 			$file2->init($path . $filename);
-			$thumb = $file2->createThumbnail($amSettings['data_dir_path'] . '/tmp/tmp_thumb_' . $id_file . '.png', $options['max_thumb_width'], $options['max_thumb_height']);
+			$thumb = $file2->createThumbnail($amSettings['data_dir_path'] . '/tmp/tmp_thumb_' . $id_file . '.png', $ops['max_thumb_width'], $ops['max_thumb_height']);
 			$file2->close();
 			if (!$thumb)
 				return 3;
-			$options['filename'] = $id_file . '_' . $ext2 . '.png';
+			$ops['filename'] = $id_file . '_' . $ext2 . '.png';
 		}
 	}
 
 	list ($twidth, $theight) = $thumb->getSize();
 	if (empty($twidth))
-		$twidth = $options['max_thumb_width'];
+		$twidth = $ops['max_thumb_width'];
 	if (empty($theight))
-		$theight = $options['max_thumb_height'];
+		$theight = $ops['max_thumb_height'];
 
-	$new_filename = 'thumb_' . preg_replace('~^preview_~', '', $options['filename']) . ($mtype == 'video' ? '.jpg' : ($ext == 'png' && substr($options['filename'], -4) != '.png' ? '.png' : ''));
+	$new_filename = 'thumb_' . preg_replace('~^preview_~', '', $ops['filename']) . ($mtype == 'video' ? '.jpg' : ($ext == 'png' && substr($ops['filename'], -4) != '.png' ? '.png' : ''));
 	$id_thumb = aeva_insertFileID(
-		isset($options['force_id_thumb']) && $options['force_id_thumb'] > 4 ? $options['force_id_thumb'] : 0, $thumb->getFileSize(),
-		$new_filename, $twidth, $theight, $options['cur_dest'], $options['album']
+		isset($ops['force_id_thumb']) && $ops['force_id_thumb'] > 4 ? $ops['force_id_thumb'] : 0, $thumb->getFileSize(),
+		$new_filename, $twidth, $theight, $ops['cur_dest'], $ops['album']
 	);
 
 	// Move the file
-	rename($amSettings['data_dir_path'] . '/tmp/tmp_thumb_' . $id_file . '.' . $ext, $options['destination'] . '/' . aeva_getEncryptedFilename($new_filename, $id_thumb, true));
+	rename($amSettings['data_dir_path'] . '/tmp/tmp_thumb_' . $id_file . '.' . $ext, $ops['destination'] . '/' . aeva_getEncryptedFilename($new_filename, $id_thumb, true));
 	$thumb->close();
 
 	return $id_thumb;
 }
 
-function aeva_createPreviewFile($id_file, $file, &$options, $width, $height)
+function aeva_createPreviewFile($id_file, $file, &$ops, $width, $height)
 {
 	global $amSettings;
 
-	$options['max_preview_width'] = isset($options['max_preview_width']) ? $options['max_preview_width'] : $amSettings['max_preview_width'];
-	$options['max_preview_height'] = isset($options['max_preview_height']) ? $options['max_preview_height'] : $amSettings['max_preview_height'];
-	$options['cur_dest'] = substr($options['destination'], strlen($amSettings['data_dir_path']) + 1);
+	$ops['max_preview_width'] = isset($ops['max_preview_width']) ? $ops['max_preview_width'] : $amSettings['max_preview_width'];
+	$ops['max_preview_height'] = isset($ops['max_preview_height']) ? $ops['max_preview_height'] : $amSettings['max_preview_height'];
+	$ops['cur_dest'] = substr($ops['destination'], strlen($amSettings['data_dir_path']) + 1);
 
 	$mtype = $file->media_type();
-	if ($mtype != 'video' && $width <= $options['max_preview_width'] && $height <= $options['max_preview_height'])
+	if ($mtype != 'video' && $width <= $ops['max_preview_width'] && $height <= $ops['max_preview_height'])
 		return 0;
 
 	$ext = aeva_getExt($file->src);
 	$ext = $ext == 'gif' || $ext == 'png' ? 'png' : 'jpg';
-	$preview = $file->createThumbnail($amSettings['data_dir_path'] . '/tmp/tmp_preview_' . $id_file . '.' . $ext, $options['max_preview_width'], $options['max_preview_height']);
+	$preview = $file->createThumbnail($amSettings['data_dir_path'] . '/tmp/tmp_preview_' . $id_file . '.' . $ext, $ops['max_preview_width'], $ops['max_preview_height']);
 	if (!$preview)
 		return 0;
 
 	list ($pwidth, $pheight) = $preview->getSize();
 	if (empty($pwidth))
-		$pwidth = $options['max_preview_width'];
+		$pwidth = $ops['max_preview_width'];
 	if (empty($pheight))
-		$pheight = $options['max_preview_height'];
+		$pheight = $ops['max_preview_height'];
 
-	$new_filename = 'preview_' . $options['filename'] . ($mtype == 'video' ? '.jpg' : '');
+	$new_filename = 'preview_' . $ops['filename'] . ($mtype == 'video' ? '.jpg' : '');
 	$id_preview = aeva_insertFileID(
-		isset($options['force_id_preview']) ? $options['force_id_preview'] : 0, $preview->getFileSize(),
-		$new_filename, $pwidth, $pheight, $options['cur_dest'], $options['album']
+		isset($ops['force_id_preview']) ? $ops['force_id_preview'] : 0, $preview->getFileSize(),
+		$new_filename, $pwidth, $pheight, $ops['cur_dest'], $ops['album']
 	);
 
 	// Move the file
-	@rename($amSettings['data_dir_path'] . '/tmp/tmp_preview_' . $id_file . '.' . $ext, $options['destination'] . '/' . aeva_getEncryptedFilename($new_filename, $id_preview));
+	@rename($amSettings['data_dir_path'] . '/tmp/tmp_preview_' . $id_file . '.' . $ext, $ops['destination'] . '/' . aeva_getEncryptedFilename($new_filename, $id_preview));
 	$preview->close();
 
 	return $id_preview;
@@ -2153,31 +2152,31 @@ function aeva_deleteFiles($id_file, $keep_id = false)
 }
 
 // Create an item
-function aeva_createItem($options)
+function aeva_createItem($ops)
 {
 	// Do some checking
-	if (!isset($options['title']))			$options['title'] = '';
-	if (!isset($options['description']))	$options['description'] = '';
-	if (!isset($options['id_file']))		$options['id_file'] = 0;
-	if (!isset($options['id_member']))		$options['id_member'] = we::$id;
-	if (!isset($options['embed_url']))		$options['embed_url'] = '';
-	if (!isset($options['id_thumb']))		$options['id_thumb'] = 0;
-	if (!isset($options['id_preview']))		$options['id_preview'] = 0;
-	if (!isset($options['album']))			$options['album'] = 0;
-	if (!isset($options['keywords']))		$options['keywords'] = '';
-	if (!isset($options['approved']))		$options['approved'] = 1;
-	if (!isset($options['mem_name']))		$options['mem_name'] = '';
-	if (empty($options['time']))			$options['time'] = time();
+	if (!isset($ops['title']))			$ops['title'] = '';
+	if (!isset($ops['description']))	$ops['description'] = '';
+	if (!isset($ops['id_file']))		$ops['id_file'] = 0;
+	if (!isset($ops['id_member']))		$ops['id_member'] = MID;
+	if (!isset($ops['embed_url']))		$ops['embed_url'] = '';
+	if (!isset($ops['id_thumb']))		$ops['id_thumb'] = 0;
+	if (!isset($ops['id_preview']))		$ops['id_preview'] = 0;
+	if (!isset($ops['album']))			$ops['album'] = 0;
+	if (!isset($ops['keywords']))		$ops['keywords'] = '';
+	if (!isset($ops['approved']))		$ops['approved'] = 1;
+	if (!isset($ops['mem_name']))		$ops['mem_name'] = '';
+	if (empty($ops['time']))			$ops['time'] = time();
 
 	// Get its type
-	if (empty($options['embed_url']))
+	if (empty($ops['embed_url']))
 	{
 		$request = wesql::query('
 			SELECT filename
 			FROM {db_prefix}media_files
 			WHERE id_file = {int:file}',
 			array(
-				'file' => $options['id_file'],
+				'file' => $ops['id_file'],
 			)
 		);
 		list ($filename) = wesql::fetch_row($request);
@@ -2185,76 +2184,76 @@ function aeva_createItem($options)
 
 		$file = new media_handler;
 		$file->force_mime = $file->getMimeFromExt($filename);
-		$options['type'] = $file->media_type();
+		$ops['type'] = $file->media_type();
 		$file->close();
 	}
 	else
 	{
-		$options['type'] = 'embed';
-		$options['id_thumb'] = empty($options['id_thumb']) ? 2 : $options['id_thumb'];
+		$ops['type'] = 'embed';
+		$ops['id_thumb'] = empty($ops['id_thumb']) ? 2 : $ops['id_thumb'];
 	}
 
 	// Insert it
 	wesql::insert('',
 		'{db_prefix}media_items',
 		array('title', 'description', 'id_file', 'id_thumb', 'id_preview', 'keywords', 'embed_url', 'type', 'album_id', 'approved', 'time_added', 'member_name', 'log_last_access_time', 'id_member', 'last_edited_name'),
-		array($options['title'], $options['description'], $options['id_file'], $options['id_thumb'], $options['id_preview'], $options['keywords'], $options['embed_url'], $options['type'], $options['album'], $options['approved'], $options['time'], $options['mem_name'], time(), $options['id_member'], '')
+		array($ops['title'], $ops['description'], $ops['id_file'], $ops['id_thumb'], $ops['id_preview'], $ops['keywords'], $ops['embed_url'], $ops['type'], $ops['album'], $ops['approved'], $ops['time'], $ops['mem_name'], time(), $ops['id_member'], '')
 	);
 	$id_media = wesql::insert_id();
 
 	// If approved, update album and uploader stats
-	if ($options['approved'])
+	if ($ops['approved'])
 	{
 		wesql::query('
 			UPDATE {db_prefix}media_albums
 			SET num_items = num_items + 1, id_last_media = {int:media}
 			WHERE id_album = {int:album_id}',
-			array('album_id' => $options['album'], 'media' => $id_media)
+			array('album_id' => $ops['album'], 'media' => $id_media)
 		);
 
 		wesql::query('
 			UPDATE {db_prefix}members
 			SET media_items = media_items + 1
 			WHERE id_member = {int:mem}',
-			array('mem' => $options['id_member'])
+			array('mem' => $ops['id_member'])
 		);
 	}
-	aeva_increaseSettings($options['approved'] ? 'total_items' : 'num_unapproved_items');
+	aeva_increaseSettings($ops['approved'] ? 'total_items' : 'num_unapproved_items');
 
 	// Return the newly created item's ID
 	return $id_media;
 }
 
 // Modify an item
-function aeva_modifyItem($options)
+function aeva_modifyItem($ops)
 {
 	$update = array();
 	$params = array();
-	if (isset($options['title']))
+	if (isset($ops['title']))
 	{
 		$update[] = 'title = {string:title}';
-		$params['title'] = $options['title'];
+		$params['title'] = $ops['title'];
 	}
-	if (isset($options['description']))
+	if (isset($ops['description']))
 	{
 		$update[] = 'description = {string:desc}';
-		$params['desc'] = $options['description'];
+		$params['desc'] = $ops['description'];
 	}
-	if (isset($options['id_file']))
+	if (isset($ops['id_file']))
 	{
 		$update[] = 'id_file = {int:id_file}';
-		$params['id_file'] = (int) $options['id_file'];
+		$params['id_file'] = (int) $ops['id_file'];
 		$update[] = 'type = {string:type}';
 
 		// Get the new type
-		if (empty($options['embed_url']))
+		if (empty($ops['embed_url']))
 		{
 			$request = wesql::query('
 				SELECT filename
 				FROM {db_prefix}media_files
 				WHERE id_file = {int:file}',
 				array(
-					'file' => $options['id_file'],
+					'file' => $ops['id_file'],
 				)
 			);
 			list ($filename) = wesql::fetch_row($request);
@@ -2268,43 +2267,43 @@ function aeva_modifyItem($options)
 		else
 			$params['type'] = 'embed';
 	}
-	if (isset($options['id_thumb']))
+	if (isset($ops['id_thumb']))
 	{
 		$update[] = 'id_thumb = {int:id_thumb}';
-		$params['id_thumb'] = (int) $options['id_thumb'];
+		$params['id_thumb'] = (int) $ops['id_thumb'];
 	}
-	if (isset($options['id_preview']))
+	if (isset($ops['id_preview']))
 	{
 		$update[] = 'id_preview = {int:id_preview}';
-		$params['id_preview'] = (int) $options['id_preview'];
+		$params['id_preview'] = (int) $ops['id_preview'];
 	}
-	if (isset($options['keywords']))
+	if (isset($ops['keywords']))
 	{
 		$update[] = 'keywords = {string:keywords}';
-		$params['keywords'] = $options['keywords'];
+		$params['keywords'] = $ops['keywords'];
 	}
-	if (isset($options['embed_url']))
+	if (isset($ops['embed_url']))
 	{
 		$update[] = 'embed_url = {string:embed_url}';
-		$params['embed_url'] = $options['embed_url'];
+		$params['embed_url'] = $ops['embed_url'];
 	}
 
 	// Last updated
-	if (!isset($options['skip_log']))
+	if (!isset($ops['skip_log']))
 	{
 		$update[] = 'last_edited = {int:time}';
 		$update[] = 'last_edited_by = {int:id_mem}';
 		$update[] = 'last_edited_name = {string:mem_name}';
 		$update[] = 'log_last_access_time = {int:time}';
 		$params['time'] = time();
-		$params['id_mem'] = $options['id_member'];
-		$params['mem_name'] = $options['mem_name'];
+		$params['id_mem'] = $ops['id_member'];
+		$params['mem_name'] = $ops['mem_name'];
 
 		media_resetUnseen();
 	}
 
 	// Approved
-	if (isset($options['approved']))
+	if (isset($ops['approved']))
 	{
 		// Load some data for stats
 		$request = wesql::query('
@@ -2313,22 +2312,22 @@ function aeva_modifyItem($options)
 				INNER JOIN {db_prefix}media_albums AS a ON (a.id_album = m.album_id)
 			WHERE m.id_media = {int:media}',
 			array(
-				'media' => (int) $options['id'],
+				'media' => (int) $ops['id'],
 			)
 		);
 		list ($id_last_media, $id_album, $previous_approved) = wesql::fetch_row($request);
 		wesql::free_result($request);
 
 		// Are we really going to change the approved flag?
-		if ($options['approved'] != $previous_approved)
+		if ($ops['approved'] != $previous_approved)
 		{
 			$update[] = 'approved = {int:is_approved}';
-			$params['is_approved'] = $options['approved'];
+			$params['is_approved'] = $ops['approved'];
 
 			// Handle the id_last_media
-			if ($options['approved'] && $id_last_media < $options['id'])
-				$new_id_last_media = $options['id'];
-			elseif (!$options['approved'] && $id_last_media == $options['id'])
+			if ($ops['approved'] && $id_last_media < $ops['id'])
+				$new_id_last_media = $ops['id'];
+			elseif (!$ops['approved'] && $id_last_media == $ops['id'])
 			{
 				$request = wesql::query('
 					SELECT MAX(id_media)
@@ -2346,7 +2345,7 @@ function aeva_modifyItem($options)
 			// Update the album data
 			wesql::query('
 				UPDATE {db_prefix}media_albums
-				SET num_items = num_items '.(empty($options['approved']) ? '-' : '+').' 1'.(isset($new_id_last_media) ? ', id_last_media = {int:media}' : '').'
+				SET num_items = num_items '.(empty($ops['approved']) ? '-' : '+').' 1'.(isset($new_id_last_media) ? ', id_last_media = {int:media}' : '').'
 				WHERE id_album = {int:album}',
 				array(
 					'album' => $id_album,
@@ -2355,15 +2354,15 @@ function aeva_modifyItem($options)
 			);
 
 			// Update the settings
-			aeva_increaseSettings(empty($options['approved']) ? 'num_unapproved_items' : 'total_items');
-			aeva_increaseSettings(empty($options['approved']) ? 'total_items' : 'num_unapproved_items', -1);
+			aeva_increaseSettings(empty($ops['approved']) ? 'num_unapproved_items' : 'total_items');
+			aeva_increaseSettings(empty($ops['approved']) ? 'total_items' : 'num_unapproved_items', -1);
 		}
 	}
 
 	// Do it!
 	if (!empty($update))
 	{
-		$params['media'] = $options['id'];
+		$params['media'] = $ops['id'];
 		wesql::query('
 			UPDATE {db_prefix}media_items
 			SET '.implode(',', $update).'
@@ -2589,7 +2588,7 @@ function aeva_showThumbnail($data)
 			$file->close();
 		}
 		if ($resun)
-			media_resetUnseen(we::$id);
+			media_resetUnseen(MID);
 		if (count($ids) == 1)
 			$inside_caption = '<div class="aeva_inside_caption"><div class="aelink"><a href="<URL>?action=media;sa=item;in=' . $id . '">' . $txt['media_gotolink'] . '</a></div>' . ($caption != $txt['media_gotolink'] ? $caption : '') . '</div>';
 	}
@@ -2668,11 +2667,11 @@ function aeva_loadCustomFields($id_media = null, $albums = array(), $custom = ''
 
 function aeva_lockedAlbum(&$pass, &$id, &$owner)
 {
-	global $theme, $txt;
+	global $txt;
 
 	$name = array('', 'locked', 'unlocked');
-	$locked = empty($pass) ? 0 : ((empty($_SESSION['aeva_access']) || !in_array($id, $_SESSION['aeva_access'])) && ($owner != we::$id || we::$is_guest) ? 1 : 2);
-	return ' <img src="' . $theme['images_aeva'] . '/' . $name[$locked] . '.png" title="' . ($locked ? $txt['media_passwd_' . ($locked == 2 ? 'un' : '') . 'locked'] : '') . '" class="aevera"> ';
+	$locked = empty($pass) ? 0 : ((empty($_SESSION['aeva_access']) || !in_array($id, $_SESSION['aeva_access'])) && ($owner != MID || we::$is_guest) ? 1 : 2);
+	return ' <img src="' . ASSETS . '/aeva/' . $name[$locked] . '.png" title="' . ($locked ? $txt['media_passwd_' . ($locked == 2 ? 'un' : '') . 'locked'] : '') . '" class="aevera"> ';
 }
 
 function aeva_showSubAlbums(&$alb)
@@ -2736,7 +2735,7 @@ function aeva_listMemberAlbums($id_member)
 // Block for showing children albums
 function aeva_listChildren(&$albums, $skip_table = false)
 {
-	global $amSettings, $galurl, $theme, $txt;
+	global $amSettings, $galurl, $txt;
 
 	if (empty($albums))
 		return;
@@ -2758,7 +2757,7 @@ function aeva_listChildren(&$albums, $skip_table = false)
 		$it2 = $album['overall_total'] - $it1;
 		$totals = $it1 == 0 ? ($it2 == 0 ? $txt['media_no_items'] : $it2 . ' ' . $txt['media_lower_item' . ($it2 == 1 ? '' : 's')]) : $it1 . ' ' . $txt['media_lower_item' . ($it1 == 1 ? '' : 's')];
 		$totals .= $it2 == 0 ? '' : sprintf($it1 == 0 ? $txt['media_items_only_in_children'] : $txt['media_items_also_in_children'], $it2);
-		$can_moderate_here = $can_moderate || (we::$is_member && we::$id == $album['owner']['id']);
+		$can_moderate_here = $can_moderate || (we::$is_member && MID == $album['owner']['id']);
 
 		if ($i++ % $cols === 0)
 			echo '<tr>';
@@ -2767,10 +2766,10 @@ function aeva_listChildren(&$albums, $skip_table = false)
 		<td style="width: 5%" class="top right">', $album['icon']['src'], '</td>
 		<td', $i <= $cols ? ' style="width: ' . $w45 . '%"' : '', ' class="top">
 			<div class="mg_large">', $can_moderate_here ? '
-				<a href="' . $galurl . 'area=mya;sa=edit;in=' . $album['id'] . '"><img src="' . $theme['images_aeva'] . '/folder_edit.png" title="' . $txt['media_edit_this_item'] . '"></a>' : '',
+				<a href="' . $galurl . 'area=mya;sa=edit;in=' . $album['id'] . '"><img src="' . ASSETS . '/aeva/folder_edit.png" title="' . $txt['media_edit_this_item'] . '"></a>' : '',
 				!empty($album['passwd']) ? aeva_lockedAlbum($album['passwd'], $album['id'], $album['owner']['id']) : '',
 				!empty($album['featured']) ? '
-				<img src="' . $theme['images_aeva'] . '/star.gif" title="' . $txt['media_featured_album'] . '">' : '', '
+				<img src="' . ASSETS . '/aeva/star.gif" title="' . $txt['media_featured_album'] . '">' : '', '
 				<a href="', $galurl, 'sa=album;in=', $album['id'], '">', $album['name'], '</a>
 			</div>
 			<div>', $totals, $album['hidden'] ? ' (<span class="unbrowsable">' . $txt['media_unbrowsable'] . '</span>)' : '', '</div>', empty($album['description']) || $album['description'] === '&hellip;' ? '' : '
@@ -2805,7 +2804,7 @@ function aeva_listChildren(&$albums, $skip_table = false)
 // Block for showing item lists
 function aeva_listItems($items, $in_album = false, $align = '', $can_moderate = false)
 {
-	global $txt, $galurl, $theme, $context, $amSettings, $settings;
+	global $txt, $galurl, $settings, $context, $amSettings;
 	static $in_page = 0;
 
 	if (empty($items))
@@ -2817,7 +2816,7 @@ function aeva_listItems($items, $in_album = false, $align = '', $can_moderate = 
 	$main_user = $in_album && !empty($context['aeva_album']['owner']['id']) ? (int) $context['aeva_album']['owner']['id'] : 0;
 	$mtl = !empty($amSettings['max_title_length']) && is_numeric($amSettings['max_title_length']) ? $amSettings['max_title_length'] : 30;
 	$icourl = '
-			<img style="width: 10px; height: 10px" src="' . $theme['images_aeva'] . '/';
+			<img style="width: 10px; height: 10px" src="' . ASSETS . '/aeva/';
 	$new_icon = '<div class="note">' . $txt['new'] . '</div>';
 	// If we're in an external embed, we might not have all the space we would like...
 	$ico = !empty($amSettings['icons_only']);
@@ -2853,7 +2852,7 @@ function aeva_listItems($items, $in_album = false, $align = '', $can_moderate = 
 				<div class="aelink">' . ($i['has_preview'] ? '
 					<a class="fullsize" href="' . ($i['type'] == 'embed' ? $i['embed_url'] : $galurl . 'sa=media;in=' . $i['id']) . '">' . $txt['media_zoom'] . '</a> <span style="font-weight: bold; font-size: 1.2em">&oplus;</span>' : '') . '
 					<a href="' . $galurl . 'sa=item;in=' . $i['id'] . $urlmore . '">' . $txt['media_gotolink'] . '</a>' . (!empty($i['comments']) ? '
-					<img src="' . $theme['images_aeva'] . '/comment.gif"> ' . $i['comments'] : '') . '
+					<img src="' . ASSETS . '/aeva/comment.gif"> ' . $i['comments'] : '') . '
 				</div>
 				' . $i['title'] . (empty($i['desc']) ? '' : '
 				<div class="smalltext mg_desc">
@@ -2866,7 +2865,7 @@ function aeva_listItems($items, $in_album = false, $align = '', $can_moderate = 
 			$album_name = empty($i['album_name']) ? '&hellip;' : (strlen($i['album_name']) < $mtl ? $i['album_name'] : westr::cut($i['album_name'], $mtl));
 		$ex_album_id = $i['id_album'];
 
-		$check = $can_moderate && ($i['poster_id'] == we::$id || $can_moderate_here) ? '
+		$check = $can_moderate && ($i['poster_id'] == MID || $can_moderate_here) ? '
 			<div class="aeva_quickmod"><input type="checkbox" name="mod_item[' . $i['id'] . ']"></div>' : '';
 		$dest_link = $is_image && $i['type'] == 'embed' && !$i['has_preview'] ? $i['embed_url'] : $galurl . 'sa=' . ($is_image ? 'media' : 'item') . ';in=' . $i['id'] . ($is_image ? ';preview' : '');
 		$re .= '
@@ -2997,11 +2996,11 @@ function aeva_getMediaItems($start = 0, $limit = 1, $sort = '', $all_albums = tr
 		ORDER BY {raw:sort}' : '') . '
 		LIMIT ' . (!empty($start) ? '{int:start},' : '') . '{int:limit}',
 		array(
-			'user_id' => we::$id,
+			'user_id' => MID,
 			'album' => $all_albums ? 0 : (int) $context['aeva_album']['id'],
 			'albums_in' => count($albums) > 0 ? ' AND a.id_album IN (' . implode(',', $albums) . ')' : '',
 			'author' => isset($author) ? $author : 0,
-			'approvals' => !aeva_allowedTo('moderate') ? ' AND (m.approved = 1 OR m.id_member = ' . (int) we::$id . ')' : '',
+			'approvals' => !aeva_allowedTo('moderate') ? ' AND (m.approved = 1 OR m.id_member = ' . (int) MID . ')' : '',
 			'start' => (int) $start,
 			'limit' => (int) $limit,
 			'sort' => $sort,
@@ -3031,7 +3030,7 @@ function aeva_getMediaComments($start, $limit, $random = false, $albums = array(
 		ORDER BY ' . ($random ? 'RAND()' : 'com.id_comment DESC') . '
 		LIMIT ' . (!empty($start) ? '{int:start},' : '') . '{int:limit}',
 		array(
-			'id_member' => we::$id,
+			'id_member' => MID,
 			'start' => $start,
 			'limit' => $limit,
 			'albums' => implode(',', $albums)
@@ -3392,10 +3391,7 @@ function aeva_increaseSettings($setting, $add = 1)
 
 function aeva_theme_url($file)
 {
-	global $theme;
-
-	return file_exists($theme['default_theme_dir'] . '/aeva/' . $file) ?
-		$theme['default_theme_url'] . '/aeva/' . $file : $theme['theme_url'] . '/aeva/' . $file;
+	return ASSETS . '/aeva/' . $file;
 }
 
 function aeva_profile($id, $name, $func = 'aeva')
@@ -3405,16 +3401,16 @@ function aeva_profile($id, $name, $func = 'aeva')
 	return empty($id) ? (empty($name) ? $txt['guest'] : $name) : ('<a href="<URL>?action=profile;u=' . $id . ';area=' . $func . '">' . $name .'</a>');
 }
 
-function media_markSeen($id, $options = '', $user = -1)
+function media_markSeen($id, $ops = '', $user = -1)
 {
 	if ($user == -1)
-		$user = we::$id;
+		$user = MID;
 
 	if (empty($user))
 		return false;
 
 	// Update the unseen tracker!
-	if ($options != 'force_insert')
+	if ($ops != 'force_insert')
 		wesql::query('
 			UPDATE {db_prefix}media_log_media
 			SET time = {int:time}
@@ -3423,7 +3419,7 @@ function media_markSeen($id, $options = '', $user = -1)
 			array('time' => time(), 'mem' => $user, 'media' => $id)
 		);
 
-	if ($options == 'force_insert' || wesql::affected_rows() == 0)
+	if ($ops == 'force_insert' || wesql::affected_rows() == 0)
 	{
 		// Never seen this item before? OK, let's INSERT IGNORE a new entry
 		wesql::insert('ignore',
@@ -3486,17 +3482,17 @@ function aeva_markAllSeen()
 {
 	wesql::query('
 		DELETE FROM {db_prefix}media_log_media WHERE id_member = {int:member}',
-		array('member' => we::$id)
+		array('member' => MID)
 	);
 	wesql::query('
 		INSERT INTO {db_prefix}media_log_media
 			(id_media, id_member, time)
 		VALUES (0, {int:member}, UNIX_TIMESTAMP())',
-		array('member' => we::$id)
+		array('member' => MID)
 	);
 
 	if (!empty(we::$user['media_unseen']))
-		updateMemberData(we::$id, array('media_unseen' => 0));
+		updateMemberData(MID, array('media_unseen' => 0));
 	we::$user['media_unseen'] = 0;
 
 	// Optimize the table from time to time... Only 33% of the time should be okay,
@@ -3622,8 +3618,8 @@ function aeva_getItemData($item)
 		LIMIT 1',
 		array(
 			'id_media' => $item,
-			'id_member' => we::$id,
-			'approvals' => !aeva_allowedTo('moderate') ? 'AND (m.approved = 1 OR m.id_member = ' . we::$id . ')' : '',
+			'id_member' => MID,
+			'approvals' => !aeva_allowedTo('moderate') ? 'AND (m.approved = 1 OR m.id_member = ' . MID . ')' : '',
 		)
 	);
 	if (wesql::num_rows($request) == 0)
@@ -3635,8 +3631,6 @@ function aeva_getItemData($item)
 
 function aeva_showStars($rating, $class = 'aevera')
 {
-	global $theme;
-
 	$nrating = sprintf('%.2f', $rating);
 	$rating = $nrating[0];
 	$endr = substr($nrating, 2, 2);
@@ -3647,5 +3641,5 @@ function aeva_showStars($rating, $class = 'aevera')
 	if (strlen($title_star) > 1)
 		$title_star = $rating . '.5';
 
-	return '<img src="' . $theme['images_aeva'] . '/star' . $star . '.gif"' . ($class ? ' class="' . $class . '"' : '') . ' alt="' . $title_star . '" title="' . $title_star . '">';
+	return '<img src="' . ASSETS . '/aeva/star' . $star . '.gif"' . ($class ? ' class="' . $class . '"' : '') . ' alt="' . $title_star . '" title="' . $title_star . '">';
 }

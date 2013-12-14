@@ -22,8 +22,6 @@ class captcha_simpleanim
 
 	public function render($code)
 	{
-		global $theme;
-
 		loadSource('Class-GifAnimator');
 		$anim = new GIF_Animator();
 
@@ -51,7 +49,7 @@ class captcha_simpleanim
 				imagefilledrectangle($image, 0, 0, $width, $height, $purple);
 				imagecolortransparent($image, $purple);
 
-				imagettftext($image, $size, 0, ($i-1) * 36 + mt_rand(12, 15), $height - mt_rand(3, 5), -$white, $theme['default_theme_dir'] . '/fonts/wecaptcha1.ttf', substr($code, $i - 1, 1));
+				imagettftext($image, $size, 0, ($i-1) * 36 + mt_rand(12, 15), $height - mt_rand(3, 5), -$white, ASSETS_DIR . '/fonts/wecaptcha1.ttf', substr($code, $i - 1, 1));
 				// ^^ Note the slightly odd -$white syntax above. This is because for some reason you have to do this to turn off antialiasing.
 				$anim->AddFrame($image, mt_rand(25,40), $purple);
 				imagedestroy($image);

@@ -87,7 +87,7 @@ function Dlattach()
 	wesql::free_result($request);
 
 	// If the post isn't yet approved, do they have permission to view it?
-	if (!$is_approved && ($id_member == 0 || we::$id != $id_member) && ($attachment_type == 0 || $attachment_type == 3))
+	if (!$is_approved && ($id_member == 0 || MID != $id_member) && ($attachment_type == 0 || $attachment_type == 3))
 		isAllowedTo('approve_posts');
 
 	// Update the download counter (unless it's a thumbnail, or a preview in the admin area.)

@@ -66,7 +66,7 @@ function add_js_inline()
  */
 function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow = false, $ignore_files = array())
 {
-	global $context, $settings, $theme, $jsdir, $boardurl, $footer_coding;
+	global $context, $settings, $jsdir, $footer_coding;
 	static $done_files = array();
 
 	if (!is_array($files))
@@ -94,20 +94,14 @@ function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow =
 
 	$id = '';
 	$latest_date = 0;
-	$is_default_theme = true;
-	$not_default = $theme['theme_dir'] !== $theme['default_theme_dir'];
 
 	foreach ($files as $fid => $file)
 	{
-		$target = $not_default && file_exists($theme['theme_dir'] . '/' . $file) ? 'theme_' : (file_exists($theme['default_theme_dir'] . '/' . $file) ? 'default_theme_' : false);
-		if (!$target)
+		if (!file_exists($add = TEMPLATES_DIR . '/' . $file))
 		{
 			unset($files[$fid]);
 			continue;
 		}
-
-		$is_default_theme &= $target === 'default_theme_';
-		$add = $theme[$target . 'dir'] . '/' . $file;
 
 		// Turn scripts/name.min.js into 'name', and plugin/other.js into 'plugin_other' for the final filename.
 		// Don't add theme.js, sbox.js and custom.js files to the final filename, to save a few bytes on all pages.
@@ -118,7 +112,7 @@ function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow =
 	}
 
 	// Add the 'm' keyword for member files -- using 'member' would add an extra couple of bytes per page for no reason.
-	$id = ($is_default_theme ? $id : substr(strrchr($theme['theme_dir'], '/'), 1) . '-' . $id) . (we::$is_guest ? '' : 'm-');
+	$id .= (we::$is_guest ? '' : 'm-');
 	$id = !empty($settings['obfuscate_filenames']) ? md5(substr($id, 0, -1)) . '-' : $id;
 	$latest_date %= 1000000;
 
@@ -129,7 +123,7 @@ function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow =
 	if (!file_exists($jsdir . '/' . $id . $lang_name . $latest_date . $ext))
 		wedge_cache_js($id, $lang_name, $latest_date, $ext, $files, $can_gzip);
 
-	$final_script = $boardurl . '/js/' . $id . $lang_name . $latest_date . $ext;
+	$final_script = ROOT . '/js/' . $id . $lang_name . $latest_date . $ext;
 
 	// Do we just want the URL?
 	if ($is_out_of_flow)
@@ -156,7 +150,7 @@ function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow =
  */
 function add_plugin_js_file($plugin_name, $files = array(), $is_direct_url = false, $is_out_of_flow = false)
 {
-	global $context, $jsdir, $boardurl, $settings, $footer_coding;
+	global $context, $jsdir, $settings, $footer_coding;
 	static $done_files = array();
 
 	if (empty($context['plugins_dir'][$plugin_name]))
@@ -210,7 +204,7 @@ function add_plugin_js_file($plugin_name, $files = array(), $is_direct_url = fal
 	if (!file_exists($jsdir . '/' . $id . $lang_name . $latest_date . $ext))
 		wedge_cache_js($id, $lang_name, $latest_date, $ext, $files, $can_gzip, true);
 
-	$final_script = $boardurl . '/js/' . $id . $lang_name . $latest_date . $ext;
+	$final_script = ROOT . '/js/' . $id . $lang_name . $latest_date . $ext;
 
 	// Do we just want the URL?
 	if ($is_out_of_flow)
@@ -282,7 +276,7 @@ function add_css()
  */
 function add_css_file($original_files = array(), $add_link = false, $is_main = false, $ignore_files = array())
 {
-	global $theme, $settings, $context, $db_show_debug, $boardurl, $files;
+	global $settings, $context, $db_show_debug, $files;
 	static $cached_files = array();
 
 	// Delete all duplicates and ensure $original_files is an array.
@@ -294,7 +288,7 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 	if (!isset($context['skin_folders']))
 		wedge_get_skin_options();
 
-	$fallback_folder = $deep_folder = $theme[$context['skin_uses_default_theme'] ? 'default_theme_dir' : 'theme_dir'] . '/';
+	$fallback_folder = $deep_folder = TEMPLATES_DIR . '/';
 	$fallback_folder .= reset($context['css_folders']) . '/';
 	$deep_folder .= end($context['css_folders']) . '/';
 	$found_suffixes = array();
@@ -306,10 +300,8 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 
 	// !! @todo: the following is quite resource intensive... Maybe we should cache the results somehow?
 	// !! e.g. cache for several minutes, but delete cache if the filemtime for current folder or its parent folders was updated.
-	foreach ($context['skin_folders'] as $folder)
+	foreach ($context['skin_folders'] as $fold)
 	{
-		$fold = $folder[0];
-		$target = $folder[1];
 		if ($fold === $fallback_folder)
 			$fallback_folder = '';
 
@@ -355,7 +347,7 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 				$found_suffixes[] = $found_suffix;
 
 			if (!empty($db_show_debug))
-				$context['debug']['sheets'][] = $file . ' (' . basename($theme[$target . 'url']) . ')';
+				$context['debug']['sheets'][] = $file . ' (' . basename(TEMPLATES) . ')';
 			$latest_date = max($latest_date, filemtime($fold . $file));
 		}
 	}
@@ -384,7 +376,7 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 			$css[] = $fold . $file;
 
 			if (!empty($db_show_debug))
-				$context['debug']['sheets'][] = $file . ' (' . basename($theme[$target . 'url']) . ')';
+				$context['debug']['sheets'][] = $file . ' (' . basename(TEMPLATES) . ')';
 			$latest_date = max($latest_date, filemtime($fold . $file));
 		}
 	}
@@ -393,8 +385,7 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 	usort($css, 'sort_skin_files');
 
 	$folder = end($context['css_folders']);
-	$id = $context['skin_uses_default_theme'] || (!$is_main && $theme['theme_dir'] === 'default') ? '' : substr(strrchr($theme['theme_dir'], '/'), 1) . '-';
-	$id = $folder === 'skins' ? substr($id, 0, -1) : $id . str_replace('/', '-', strpos($folder, 'skins/') === 0 ? substr($folder, 6) : $folder);
+	$id = $folder === 'skins' ? '' : str_replace('/', '-', strpos($folder, 'skins/') === 0 ? substr($folder, 6) : $folder);
 	$latest_date %= 1000000;
 
 	$can_gzip = !empty($settings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
@@ -408,9 +399,9 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 	$target_folder = trim($id . '-' . implode('-', array_filter(array_diff($files, (array) 'common', $ignore_files))), '-');
 
 	// Cache final file and retrieve its name.
-	$final_script = $boardurl . '/css/' . wedge_cache_css_files($target_folder . ($target_folder ? '/' : ''), $found_suffixes, $latest_date, $css, $can_gzip, $ext);
+	$final_script = ROOT . '/css/' . wedge_cache_css_files($target_folder . ($target_folder ? '/' : ''), $found_suffixes, $latest_date, $css, $can_gzip, $ext);
 
-	if ($final_script == $boardurl . '/css/')
+	if ($final_script == ROOT . '/css/')
 		return false;
 
 	if ($is_main)
@@ -426,7 +417,7 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 
 function add_plugin_css_file($plugin_name, $original_files = array(), $add_link = false, $ignore_files = array())
 {
-	global $context, $settings, $boardurl;
+	global $context, $settings;
 
 	if (empty($context['plugins_dir'][$plugin_name]))
 		return;
@@ -463,7 +454,7 @@ function add_plugin_css_file($plugin_name, $original_files = array(), $add_link 
 		$latest_date = max($latest_date, filemtime($full_path));
 	}
 
-	$pluginurl = '..' . str_replace($boardurl, '', $context['plugins_url'][$plugin_name]);
+	$pluginurl = '..' . str_replace(ROOT, '', $context['plugins_url'][$plugin_name]);
 
 	// We need to cache different versions for different browsers, even if we don't have overrides available.
 	// This is because Wedge also transforms regular CSS to add vendor prefixes and the like.
@@ -481,10 +472,10 @@ function add_plugin_css_file($plugin_name, $original_files = array(), $add_link 
 	$target_folder = trim(implode('-', array_filter(array_diff($original_files, (array) 'common', $ignore_files))), '-');
 
 	// Cache final file and retrieve its name.
-	$final_script = $boardurl . '/css/' . wedge_cache_css_files($target_folder . ($target_folder ? '/' : ''), $id, $latest_date, $files, $can_gzip, $ext, array('$plugindir' => $context['plugins_url'][$plugin_name]));
-	$final_script = $boardurl . '/css/' . wedge_cache_css_files('', $id, $latest_date, $files, $can_gzip, $ext, array('$plugindir' => $context['plugins_url'][$plugin_name]));
+	$final_script = ROOT . '/css/' . wedge_cache_css_files($target_folder . ($target_folder ? '/' : ''), $id, $latest_date, $files, $can_gzip, $ext, array('$plugindir' => $context['plugins_url'][$plugin_name]));
+	$final_script = ROOT . '/css/' . wedge_cache_css_files('', $id, $latest_date, $files, $can_gzip, $ext, array('$plugindir' => $context['plugins_url'][$plugin_name]));
 
-	if ($final_script == $boardurl . '/css/')
+	if ($final_script == ROOT . '/css/')
 		return false;
 
 	// Do we just want the URL?
@@ -547,7 +538,7 @@ function wedge_get_css_filename($add)
 
 	$suffix = array_flip(array_filter(array_map('we::is', is_array($add) ? $add : explode('|', $add))));
 
-	if (isset($suffix['m' . we::$id]))
+	if (isset($suffix['m' . MID]))
 		unset($suffix['member'], $suffix['admin']);
 	if (isset($suffix['admin']))
 		unset($suffix['member']);
@@ -574,7 +565,7 @@ function wedge_get_css_filename($add)
  */
 function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false, $ext = '.css', $additional_vars = array())
 {
-	global $theme, $css_vars, $context, $cssdir, $boarddir, $boardurl;
+	global $css_vars, $context, $cssdir;
 
 	$final_folder = substr($cssdir . '/' . $folder, 0, -1);
 	$cachekey = 'css_files-' . $folder . implode('-', $ids);
@@ -601,7 +592,7 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 	}
 
 	$final = '';
-	$discard_dir = strlen($boarddir) + 1;
+	$discard_dir = strlen(ROOT_DIR) + 1;
 
 	// Load Wess, our sweet, short and fast CSS parser :)
 	loadSource('Class-CSS');
@@ -632,14 +623,14 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 	// Default CSS variables (paths are set relative to the cache folder)
 	// !!! If subdomains are allowed, should we use absolute paths instead?
 	$relative_root = '..' . str_repeat('/..', substr_count($folder, '/'));
-	$images_url = $relative_root . str_replace($boardurl, '', $theme['images_url']);
 	$languages = isset($context['skin_available_languages']) ? $context['skin_available_languages'] : array('english');
 	$css_vars = array(
 		'$language' => isset(we::$user['language']) && in_array(we::$user['language'], $languages) ? we::$user['language'] : $languages[0],
-		'$images_dir' => $theme['theme_dir'] . '/images',
-		'$images' => $images_url,
-		'$theme_dir' => $theme['theme_dir'],
-		'$theme' => $relative_root . str_replace($boardurl, '', $theme['theme_url']),
+		'$images_dir' => ASSETS_DIR,
+		'$theme_dir' => TEMPLATES_DIR,
+		'$root_dir' => ROOT_DIR,
+		'$images' => $relative_root . str_replace(ROOT, '', ASSETS),
+		'$theme' => $relative_root . str_replace(ROOT, '', TEMPLATES),
 		'$root' => $relative_root,
 	);
 	if (!empty($additional_vars))
@@ -648,7 +639,7 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 
 	// Load all CSS files in order, and replace $here with the current folder while we're at it.
 	foreach ((array) $css as $file)
-		$final .= str_replace('$here', $relative_root . str_replace('\\', '/', str_replace($boarddir, '', dirname($file))), file_get_contents($file));
+		$final .= str_replace('$here', $relative_root . str_replace('\\', '/', str_replace(ROOT_DIR, '', dirname($file))), file_get_contents($file));
 
 	if (empty($final)) // Nothing loaded...?
 	{
@@ -696,7 +687,7 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 	$final_file = $final_folder . '/' . $full_name;
 
 	// Delete cached versions, unless they have the same timestamp (i.e. up to date.)
-	if (is_array($files = glob($final_folder . '/' . ($id ? $id . '-*' : '[0-9]*') . $ext)))
+	if (is_array($files = glob($final_folder . '/' . ($id ? $id . '-*' : '[0-9]*') . $ext, GLOB_NOSORT)))
 		foreach ($files as $del)
 			if (($id || preg_match('~/\d+\.~', $del)) && strpos($del, (string) $latest_date) === false)
 				@unlink($del);
@@ -818,6 +809,7 @@ function dynamic_language_flags()
 	$rep = '';
 	foreach ($context['languages'] as $language)
 	{
+		// !! @todo: replace $theme with $root
 		$icon = '/languages/Flag.' . $language['filename'] . '.png';
 		$rep .= '
 .flag_' . $language['filename'] . ' mixes .inline-block("")
@@ -920,12 +912,12 @@ function dynamic_admin_menu_icons()
 	foreach ($ina as $val)
 	{
 		$is_abs = isset($val[1]) && ($val[1][0] == '/' || strpos($val[1], '://') !== false);
-		$icon = $is_abs ? $val[1] : '/images/admin/' . $val[1];
+		$icon = $is_abs ? $val[1] : '/admin/' . $val[1];
 		$rep .= '
 .admenu_icon_' . $val[0] . ' mixes .inline-block
-	background: url('. ($is_abs ? $icon : '$theme' . $icon) . ') no-repeat
-	width: width('. ($is_abs ? $icon : '$theme_dir' . $icon) . ')px
-	height: height('. ($is_abs ? $icon : '$theme_dir' . $icon) . ')px';
+	background: url('. ($is_abs ? $icon : '$images' . $icon) . ') no-repeat
+	width: width('. ($is_abs ? $icon : '$images_dir' . $icon) . ')px
+	height: height('. ($is_abs ? $icon : '$images_dir' . $icon) . ')px';
 	}
 	unset($ina);
 
@@ -951,15 +943,15 @@ function wedge_js_replace_ifs($match)
  */
 function wedge_cache_js($id, &$lang_name, $latest_date, $ext, $js, $gzip = false, $full_path = false)
 {
-	global $theme, $settings, $comments, $jsdir, $txt;
+	global $settings, $comments, $jsdir, $txt;
 	static $closure_failed = false;
 
 	$final = '';
-	$dir = $full_path ? '' : $theme['theme_dir'] . '/';
+	$dir = $full_path ? '' : TEMPLATES_DIR . '/';
 	$no_packing = array();
 
 	// Delete cached versions, unless they have the same timestamp (i.e. up to date.)
-	if (is_array($files = glob($jsdir . '/' . $id. '*' . $ext)))
+	if (is_array($files = glob($jsdir . '/' . $id. '*' . $ext, GLOB_NOSORT)))
 		foreach ($files as $del)
 			if (strpos($del, (string) $latest_date) === false)
 				@unlink($del);
@@ -1225,11 +1217,11 @@ function wedge_cache_js($id, &$lang_name, $latest_date, $ext, $js, $gzip = false
  */
 function wedge_cache_smileys($set, $smileys, $extra)
 {
-	global $cssdir, $context, $settings, $boardurl;
+	global $cssdir, $context, $settings;
 
 	$final_gzip = $final_raw = '';
 	$path = $settings['smileys_dir'] . '/' . $set . '/';
-	$url  = '..' . str_replace($boardurl, '', $settings['smileys_url']) . '/' . $set . '/';
+	$url  = '..' . str_replace(ROOT, '', $settings['smileys_url']) . '/' . $set . '/';
 
 	// Delete other cached versions, if they exist.
 	clean_cache($context['smiley_ext'], 'smileys' . $extra, $cssdir);
@@ -1263,7 +1255,7 @@ function wedge_cache_smileys($set, $smileys, $extra)
  */
 function theme_base_css()
 {
-	global $context, $boardurl, $settings;
+	global $context, $settings;
 
 	// First, let's purge the cache if any files are over a month old. This ensures we don't waste space for IE6 & co. when they die out.
 	$one_month_ago = time() - 30 * 24 * 3600;
@@ -1292,8 +1284,8 @@ function theme_base_css()
 	{
 		// Replace $behavior with the forum's root URL in context, because pretty URLs complicate things in IE.
 		if (strpos($context['header_css'], '$behavior') !== false)
-			$context['header_css'] = str_replace('$behavior', strpos($boardurl, '://' . we::$user['host']) !== false ? $boardurl
-				: preg_replace('~(?<=://)([^/]+)~', we::$user['host'], $boardurl), $context['header_css']);
+			$context['header_css'] = str_replace('$behavior', strpos(ROOT, '://' . we::$user['host']) !== false ? ROOT
+				: preg_replace('~(?<=://)([^/]+)~', we::$user['host'], ROOT), $context['header_css']);
 	}
 
 	return '
@@ -1425,23 +1417,20 @@ function wedge_parse_skin_tags(&$file, $name, $params = array())
 /**
  * Parses the current skin's skin.xml and skeleton.xml files, and those above them.
  */
-function wedge_get_skin_options()
+function wedge_get_skin_options($options_only = false)
 {
-	global $theme, $context;
+	global $context;
 
 	$skin_options = array();
-	$is_default_theme = true;
-	$not_default = $theme['theme_dir'] !== $theme['default_theme_dir'];
 	$skeleton = $macros = $set = '';
 
 	// We will rebuild the css folder list, in case we have a replace-type skin in our path.
 	$context['skin_folders'] = array();
 
+	$root_dir = TEMPLATES_DIR;
 	foreach ($context['css_folders'] as &$folder)
 	{
-		$target = $not_default && file_exists($theme['theme_dir'] . '/' . $folder) ? 'theme_' : 'default_theme_';
-		$is_default_theme &= $target === 'default_theme_';
-		$fold = $theme[$target . 'dir'] . '/' . $folder . '/';
+		$fold = $root_dir . '/' . $folder . '/';
 		$set = '';
 
 		// Remember all of the skeletons we can find.
@@ -1468,21 +1457,22 @@ function wedge_get_skin_options()
 		if ($set && $folder !== 'skins' && strpos($set, '</type>') !== false && preg_match('~<type>([^<]+)</type>~', $set, $match) && strtolower(trim($match[1])) === 'replace')
 			$context['skin_folders'] = array();
 
-		$context['skin_folders'][] = array($fold, $target);
+		$context['skin_folders'][] = $fold;
 	}
-
-	$context['skin_uses_default_theme'] = $is_default_theme;
 
 	// $set should now contain the local skin's settings.
 	// First get the skin options, such as <sidebar> position.
 	if (strpos($set, '</options>') !== false && preg_match('~<options>(.*?)</options>~s', $set, $match))
 	{
-		preg_match_all('~<([\w-]+)>(.*?)</\\1>~s', $match[1], $options, PREG_SET_ORDER);
-		foreach ($options as $option)
+		preg_match_all('~<([\w-]+)>(.*?)</\\1>~s', $match[1], $opts, PREG_SET_ORDER);
+		foreach ($opts as $option)
 			$skin_options[$option[1]] = trim($option[2]);
 	}
 
 	wedge_parse_skin_options($skin_options);
+
+	if ($options_only)
+		return;
 
 	// Any conditional directives inside the skin.xml or skeleton.xml files..?
 	$sources = $skeleton ? array(&$set, &$skeleton) : array(&$set);
@@ -1551,7 +1541,7 @@ function wedge_get_skin_options()
 			$includes = array_map('trim', explode(' ', $match['include']));
 			$has_here = strpos($match['include'], '$here') !== false;
 			foreach ($includes as $val)
-				add_js_file($has_here ? str_replace('$here', str_replace($theme['theme_dir'] . '/', '', $folder), $val) : $val);
+				add_js_file($has_here ? str_replace('$here', str_replace($root_dir . '/', '', $folder), $val) : $val);
 		}
 		if (!empty($match['value']))
 			add_js(rtrim($match['value'], "\t"));
@@ -1570,12 +1560,10 @@ function wedge_get_skin_options()
 	call_hook('skin_parser', array(&$set, &$skeleton, &$macros));
 }
 
-function wedge_parse_skin_options($skin_options = array())
+function wedge_parse_skin_options($skin_options)
 {
 	if (defined('SKIN_MOBILE'))
 		return;
-	if (empty($skin_options))
-		$skin_options = array('sidebar' => 'none', 'mobile' => 0);
 
 	// Skin variables can be accessed either through PHP or Wess code with a test on the SKIN_* constant.
 	define('SKIN_SIDEBAR_RIGHT', we::$is['SKIN_SIDEBAR_RIGHT'] = empty($skin_options['sidebar']) || $skin_options['sidebar'] == 'right');
@@ -1851,7 +1839,7 @@ function cache_get_data($key, $ttl = 120)
 
 function cache_prepare_key($key, $val = '', $type = 'get')
 {
-	global $boardurl, $settings, $cache_hits, $cache_count, $db_show_debug, $cachedir;
+	global $settings, $cache_hits, $cache_count, $db_show_debug, $cachedir;
 
 	$cache_count = isset($cache_count) ? $cache_count + 1 : 1;
 	if (!empty($db_show_debug))
@@ -1866,7 +1854,7 @@ function cache_prepare_key($key, $val = '', $type = 'get')
 	{
 		if (!file_exists($cachedir . '/cache.lock'))
 			@fclose(@fopen($cachedir . '/cache.lock', 'w'));
-		$settings['cache_hash'] = md5($boardurl . filemtime($cachedir . '/cache.lock'));
+		$settings['cache_hash'] = md5(ROOT . filemtime($cachedir . '/cache.lock'));
 	}
 
 	return $settings['cache_hash'] . '-' . bin2hex($key);

@@ -41,7 +41,7 @@ if (!defined('WEDGE'))
 // The main admin handling function.
 function Admin()
 {
-	global $txt, $context, $settings, $theme, $options, $admin_areas;
+	global $txt, $context, $settings, $options, $admin_areas;
 
 	// Load the language strings for use in the menu...
 	loadLanguage('Admin');
@@ -67,6 +67,8 @@ function Admin()
 					'icon' => 'features.gif',
 					'subsections' => array(
 						'basic' => array($txt['mods_cat_features']),
+						'',
+						'paths' => array($txt['path_settings']),
 						'',
 						'pretty' => array($txt['pretty_urls']),
 					),
@@ -110,14 +112,6 @@ function Admin()
 					'bigicon' => 'languages.png',
 				),
 				'',
-				'current_theme' => array(
-					'label' => $txt['theme_current_settings'],
-					'file' => 'Themes',
-					'function' => 'Themes',
-					'custom_url' => '<URL>?action=admin;area=theme;sa=settings;th=' . $theme['theme_id'],
-					'icon' => 'current_theme.gif',
-					'bigicon' => 'current_theme.png',
-				),
 				'theme' => array(
 					'label' => $txt['theme_admin'],
 					'file' => 'Themes',
@@ -463,7 +457,7 @@ function Admin()
 					'bigicon' => 'server_settings.png',
 					'subsections' => array(
 						'general' => array($txt['general_settings']),
-						'database' => array($txt['database_paths_settings']),
+						'database' => array($txt['database_settings']),
 						'cookie' => array($txt['cookies_sessions_settings']),
 						'',
 						'cache' => array($txt['caching_settings']),
@@ -892,6 +886,7 @@ function AdminSearchInternal()
 	$search = array(
 		'settings' => array(
 			array('ModifyBasicSettings',		'area=featuresettings;sa=basic'),
+			array('ModifyPathSettings',			'area=featuresettings;sa=paths'),
 			array('ModifyPrettyURLs',			'area=featuresettings;sa=pretty'),
 			array('ModifySignatureSettings',	'area=memberoptions;sa=sig'),
 			array('ModifyWhosOnline',			'area=memberoptions;sa=whosonline'),

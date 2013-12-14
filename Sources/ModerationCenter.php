@@ -241,7 +241,7 @@ function ModBlockNotes()
 					'body' => 'string', 'log_time' => 'int',
 				),
 				array(
-					we::$id, we::$user['name'], 'modnote', '', $_POST['new_note'], time(),
+					MID, we::$user['name'], 'modnote', '', $_POST['new_note'], time(),
 				)
 			);
 
@@ -683,7 +683,7 @@ function recountOpenReports()
 	wesql::free_result($request);
 
 	$_SESSION['rc'] = array(
-		'id' => we::$id,
+		'id' => MID,
 		'time' => time(),
 		'reports' => $open_reports,
 		'closed' => $closed_reports,
@@ -743,7 +743,7 @@ function ModReport()
 					'id_notice' => 'int', 'body' => 'string', 'log_time' => 'int',
 				),
 				array(
-					we::$id, we::$user['name'], 'reportc', '',
+					MID, we::$user['name'], 'reportc', '',
 					$_REQUEST['report'], $newComment, time(),
 				)
 			);
@@ -1313,7 +1313,7 @@ function list_getWatchedUserPosts($start, $items_per_page, $sort, $approve_query
 
 function ViewInfractionLog()
 {
-	global $context, $txt, $settings, $theme;
+	global $context, $txt, $settings;
 
 	loadTemplate('ModerationCenter');
 	loadLanguage('Profile');
@@ -1421,7 +1421,7 @@ function ViewInfractionLog()
 			'view' => array(
 				'data' => array(
 					'sprintf' => array(
-						'format' => '<a href="<URL>?action=profile;u=%1$d;area=infractions;view=%2$d" onclick="return reqWin(this);"><img src="' . $theme['images_url'] . '/filter.gif"></a>',
+						'format' => '<a href="<URL>?action=profile;u=%1$d;area=infractions;view=%2$d" onclick="return reqWin(this);"><img src="' . ASSETS . '/filter.gif"></a>',
 						'params' => array(
 							'issued_to' => false,
 							'id_issue' => false,
@@ -1484,7 +1484,7 @@ function list_getInfractionLog($start, $items_per_page, $sort)
 		$row['class'] = 'inf_' . $classes[$row['inf_state']];
 		$row['status'] = $txt['infraction_state_' . $classes[$row['inf_state']]];
 
-		$row['revoke'] = $row['inf_state'] == 0 && ($context['revoke_any'] || ($context['revoke_own'] && $row['issued_by'] == we::$id)) ? '<a href="<URL>?action=profile;u=' . $row['issued_to'] . ';area=infractions;revoke=' . $row['id_issue'] . ';log">' . $txt['revoke'] . '</a>' : '';
+		$row['revoke'] = $row['inf_state'] == 0 && ($context['revoke_any'] || ($context['revoke_own'] && $row['issued_by'] == MID)) ? '<a href="<URL>?action=profile;u=' . $row['issued_to'] . ';area=infractions;revoke=' . $row['id_issue'] . ';log">' . $txt['revoke'] . '</a>' : '';
 		$items[$row['id_issue']] = $row;
 	}
 
@@ -1535,7 +1535,7 @@ function ModBlockPrefs()
 		if ($context['can_moderate_boards'] && !empty($_POST['mod_notify_report']))
 			$pref_binary |= ($_POST['mod_notify_report'] == 2 ? 1 : 2);
 
-		updateMemberData(we::$id, array('mod_prefs' => '|' . $pref_binary));
+		updateMemberData(MID, array('mod_prefs' => '|' . $pref_binary));
 	}
 
 	// What blocks does the user currently have selected?

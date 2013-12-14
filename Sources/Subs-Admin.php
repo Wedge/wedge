@@ -48,13 +48,13 @@ if (!defined('WEDGE'))
 
 function getServerVersions($checkFor)
 {
-	global $txt, $memcached_servers, $theme;
+	global $txt, $memcached_servers;
 
 	loadSource('media/Class-Media');
 	loadLanguage('Admin');
 
-	$tick = '<img src="' . $theme['images_aeva'] . '/tick.png" class="middle">';
-	$untick = '<img src="' . $theme['images_aeva'] . '/untick2.png" class="middle">';
+	$tick = '<img src="' . ASSETS . '/aeva/tick.png" class="middle">';
+	$untick = '<img src="' . ASSETS . '/aeva/untick2.png" class="middle">';
 
 	$versions = array();
 
@@ -140,16 +140,15 @@ function getServerVersions($checkFor)
 // Search through source, theme and language files to determine their version.
 function getFileVersions(&$versionOptions)
 {
-	global $boarddir, $sourcedir, $theme;
+	global $boarddir, $sourcedir;
 
 	// Default place to find the languages would be the default theme dir.
-	$lang_dir = $theme['default_theme_dir'] . '/languages';
+	$lang_dir = LANGUAGES_DIR;
 
 	$version_info = array(
 		'file_versions' => array(),
-		'default_template_versions' => array(),
 		'template_versions' => array(),
-		'default_language_versions' => array(),
+		'language_versions' => array(),
 	);
 
 	// Find the version in SSI.php's file header.
@@ -203,33 +202,27 @@ function getFileVersions(&$versionOptions)
 	}
 	$sources_dir->close();
 
-	// Load all the files in the default template directory - and the current theme if applicable.
-	$directories = array('default_template_versions' => $theme['default_theme_dir']);
-	if ($theme['theme_id'] != 1)
-		$directories += array('template_versions' => $theme['theme_dir']);
-
-	foreach ($directories as $type => $dirname)
+	// Load all the files in the template folder.
+	$dirname = TEMPLATES_DIR;
+	$this_dir = dir($dirname);
+	while ($entry = $this_dir->read())
 	{
-		$this_dir = dir($dirname);
-		while ($entry = $this_dir->read())
+		if (substr($entry, -12) == 'template.php' && !is_dir($dirname . '/' . $entry))
 		{
-			if (substr($entry, -12) == 'template.php' && !is_dir($dirname . '/' . $entry))
-			{
-				// Read the first 768 bytes from the file.... enough for the header.
-				$fp = fopen($dirname . '/' . $entry, 'rb');
-				$header = fread($fp, 768);
-				fclose($fp);
+			// Read the first 768 bytes from the file.... enough for the header.
+			$fp = fopen($dirname . '/' . $entry, 'rb');
+			$header = fread($fp, 768);
+			fclose($fp);
 
-				// Look for the version comment in the file header.
-				if (preg_match('~\*\s@version\s+(.+)[\s]{2}~i', $header, $match) == 1)
-					$version_info[$type][$entry] = $match[1];
-				// It wasn't found, but the file was... show a '??'.
-				else
-					$version_info[$type][$entry] = '??';
-			}
+			// Look for the version comment in the file header.
+			if (preg_match('~\*\s@version\s+(.+)[\s]{2}~i', $header, $match) == 1)
+				$version_info['template_versions'][$entry] = $match[1];
+			// It wasn't found, but the file was... show a '??'.
+			else
+				$version_info['template_versions'][$entry] = '??';
 		}
-		$this_dir->close();
 	}
+	$this_dir->close();
 
 	// Load up all the files in the default language directory and sort by language.
 	$this_dir = dir($lang_dir);
@@ -247,10 +240,10 @@ function getFileVersions(&$versionOptions)
 
 			// Look for the version comment in the file header.
 			if (preg_match('~(?://|/\*)\s*Version:\s+(.+?);\s*' . preg_quote($name, '~') . '(?:[\s]{2}|\*/)~i', $header, $match) == 1)
-				$version_info['default_language_versions'][$language][$name] = $match[1];
+				$version_info['language_versions'][$language][$name] = $match[1];
 			// It wasn't found, but the file was... show a '??'.
 			else
-				$version_info['default_language_versions'][$language][$name] = '??';
+				$version_info['language_versions'][$language][$name] = '??';
 		}
 	}
 	$this_dir->close();
@@ -259,13 +252,12 @@ function getFileVersions(&$versionOptions)
 	if (!empty($versionOptions['sort_results']))
 	{
 		ksort($version_info['file_versions']);
-		ksort($version_info['default_template_versions']);
 		ksort($version_info['template_versions']);
-		ksort($version_info['default_language_versions']);
+		ksort($version_info['language_versions']);
 
 		// For languages sort each language too.
-		foreach ($version_info['default_language_versions'] as $language => $dummy)
-			ksort($version_info['default_language_versions'][$language]);
+		foreach ($version_info['language_versions'] as $language => $dummy)
+			ksort($version_info['language_versions'][$language]);
 	}
 	return $version_info;
 }
@@ -402,7 +394,7 @@ function updateSettingsFile($config_vars)
 
 function updateAdminPreferences()
 {
-	global $options, $context, $theme;
+	global $options, $context;
 
 	// This must exist!
 	if (!isset($context['admin_preferences']))
@@ -411,25 +403,15 @@ function updateAdminPreferences()
 	// This is what we'll be saving.
 	$options['admin_preferences'] = serialize($context['admin_preferences']);
 
-	// Just check we haven't ended up with something theme exclusive somehow.
-	wesql::query('
-		DELETE FROM {db_prefix}themes
-		WHERE id_theme != {int:default_theme}
-		AND variable = {literal:admin_preferences}',
-		array(
-			'default_theme' => 1,
-		)
-	);
-
-	// Update the themes table.
+	// Update the options table.
 	wesql::insert('replace',
 		'{db_prefix}themes',
-		array('id_member' => 'int', 'id_theme' => 'int', 'variable' => 'string-255', 'value' => 'string-65534'),
-		array(we::$id, 1, 'admin_preferences', $options['admin_preferences'])
+		array('id_member' => 'int', 'variable' => 'string-255', 'value' => 'string-65534'),
+		array(MID, 'admin_preferences', $options['admin_preferences'])
 	);
 
-	// Make sure we invalidate any cache.
-	cache_put_data('theme_settings-' . $theme['theme_id'] . ':' . we::$id, null, 0);
+	// Make sure we invalidate the cache.
+	cache_put_data('theme_settings:' . MID, null, 60);
 }
 
 // Send all the administrators a lovely email.

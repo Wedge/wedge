@@ -270,7 +270,7 @@ function uploadedPluginValidate()
 
 	// What we do need to do, though, is check against plugins that we have currently enabled. (Not enabled... they can fix that themselves from the main listing.)
 	// And we need to store this and make sure it won't be automatically garbage collected.
-	$new_file = 'post_plugin_' . we::$id . '.zip';
+	$new_file = 'post_plugin_' . MID . '.zip';
 	if (!move_uploaded_file($_FILES['plugin']['tmp_name'], $cachedir . '/' . $new_file))
 		fatal_lang_error('plugins_invalid_upload', false);
 

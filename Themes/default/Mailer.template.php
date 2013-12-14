@@ -36,12 +36,12 @@
 // This is where we get information about who they want to send the topic to, etc.
 function template_main()
 {
-	global $context, $theme, $txt;
+	global $context, $txt;
 
 	echo '
 		<form action="<URL>?action=emailuser;sa=sendtopic;topic=', $context['current_topic'], '.', $context['start'], '" method="post" accept-charset="UTF-8">
 			<we:cat>
-				<img src="', $theme['images_url'], '/email_sm.gif">', $context['page_title'], '
+				<img src="', ASSETS, '/email_sm.gif">', $context['page_title'], '
 			</we:cat>
 			<div class="windowbg2 wrc">
 				<fieldset id="sender" class="send_topic">
@@ -94,12 +94,12 @@ function template_main()
 // Send an email to a user!
 function template_custom_email()
 {
-	global $context, $theme, $txt;
+	global $context, $txt;
 
 	echo '
 		<form action="<URL>?action=emailuser;sa=email" method="post" accept-charset="UTF-8">
 			<we:cat>
-				<img src="', $theme['images_url'], '/email_sm.gif">', $context['page_title'], '
+				<img src="', ASSETS, '/email_sm.gif">', $context['page_title'], '
 			</we:cat>
 			<div class="windowbg wrc">
 				<dl class="settings send_mail">

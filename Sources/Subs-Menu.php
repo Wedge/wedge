@@ -14,10 +14,10 @@ if (!defined('WEDGE'))
 // Create a menu...
 function createMenu($menuData, $menuOptions = array())
 {
-	global $context, $theme, $txt;
+	global $context, $txt;
 
 	// Work out where we should get our images from.
-	$context['menu_image_path'] = isset($context['menu_image_path']) ? $context['menu_image_path'] : (file_exists($theme['theme_dir'] . '/images/admin/change_menu.png') ? $theme['images_url'] . '/admin' : $theme['default_images_url'] . '/admin');
+	$context['menu_image_path'] = isset($context['menu_image_path']) ? $context['menu_image_path'] : ASSETS . '/admin';
 
 	/* Note menuData is an array of form:
 

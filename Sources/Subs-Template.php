@@ -33,7 +33,7 @@ if (!defined('WEDGE'))
  */
 function obExit($start = null, $do_finish = null, $from_index = false, $from_fatal_error = false)
 {
-	global $context, $theme, $settings;
+	global $context, $settings;
 	static $start_done = false, $level = 0, $has_fatal_error = false;
 
 	// Attempt to prevent a recursive loop.
@@ -64,11 +64,11 @@ function obExit($start = null, $do_finish = null, $from_index = false, $from_fat
 		if (!defined('WEDGE') || WEDGE != 'SSI')
 			ob_start('ob_sessrewrite');
 
-		// Run any possible extra output buffers as provided by mods.
-		if (!empty($theme['output_buffers']) && is_string($theme['output_buffers']))
-			$buffers = explode(',', $theme['output_buffers']);
-		elseif (!empty($theme['output_buffers']))
-			$buffers = $theme['output_buffers'];
+		// Run any possible extra output buffers as provided by plugins.
+		if (!empty($context['output_buffers']) && is_string($context['output_buffers']))
+			$buffers = explode(',', $context['output_buffers']);
+		elseif (!empty($context['output_buffers']))
+			$buffers = $context['output_buffers'];
 		else
 			$buffers = array();
 
@@ -128,7 +128,7 @@ function obExit($start = null, $do_finish = null, $from_index = false, $from_fat
 /**
  * Rewrites URLs in the page to include the session ID if the user is using a normal browser and is not accepting cookies.
  *
- * - If $scripturl is empty, or no session id (e.g. SSI), exit.
+ * - If SCRIPT is empty, or no session id (e.g. SSI), exit.
  * - If ?debug has been specified previously, re-inject it back into the page's canonical reference.
  * - We also do our Pretty URLs voodoo here...
  *
@@ -137,11 +137,11 @@ function obExit($start = null, $do_finish = null, $from_index = false, $from_fat
  */
 function ob_sessrewrite($buffer)
 {
-	global $scripturl, $settings, $context, $db_prefix, $session_var, $board_info;
+	global $settings, $context, $db_prefix, $session_var, $board_info;
 	global $txt, $time_start, $db_count, $cached_urls, $use_cache, $members_groups;
 
-	// Just quit if $scripturl is set to nothing, or the SID is not defined. (SSI?)
-	if ($scripturl == '' || !defined('SID'))
+	// Just quit if SCRIPT is set to nothing, or the SID is not defined. (SSI?)
+	if (SCRIPT == '' || !defined('SID'))
 		return $buffer;
 
 	if (!empty($context['show_load_time']))
@@ -151,13 +151,13 @@ function ob_sessrewrite($buffer)
 	}
 
 	// Very fast on-the-fly replacement of <URL>...
-	$buffer = str_replace('<URL>', $scripturl, $buffer);
+	$buffer = str_replace('<URL>', SCRIPT, $buffer);
 
 	if (isset($context['meta_description'], $context['meta_description_repl']))
 		$buffer = str_replace($context['meta_description'], $context['meta_description_repl'], $buffer);
 
-	// A regex-ready $scripturl, useful later.
-	$preg_scripturl = preg_quote($scripturl, '~');
+	// A regex-ready SCRIPT, useful later.
+	$preg_scripturl = preg_quote(SCRIPT, '~');
 
 	call_hook('dynamic_rewrite', array(&$buffer));
 
@@ -388,7 +388,7 @@ function ob_sessrewrite($buffer)
 	}
 
 	// And a second replacement, in case macros added <URL> again.
-	$buffer = str_replace('<URL>', $scripturl, $buffer);
+	$buffer = str_replace('<URL>', SCRIPT, $buffer);
 
 	if (isset($context['ob_replacements']))
 		$buffer = str_replace(array_keys($context['ob_replacements']), array_values($context['ob_replacements']), $buffer);
@@ -481,12 +481,12 @@ function ob_sessrewrite($buffer)
 	// If the session is not cookied, or they are a crawler, add the session ID to all URLs.
 	if (empty($_COOKIE) && SID != '' && empty($context['no_sid_thank_you']) && !we::$browser['possibly_robot'])
 	{
-		$buffer = preg_replace('~(?<!<link rel="canonical" href=")' . $preg_scripturl . '(?!\?' . preg_quote(SID, '~') . ')(?:\?|(?="))~', $scripturl . '?' . SID . ';', $buffer);
-		$buffer = str_replace('"' . $scripturl . '?' . SID . ';"', '"' . $scripturl . '?' . SID . '"', $buffer);
+		$buffer = preg_replace('~(?<!<link rel="canonical" href=")' . $preg_scripturl . '(?!\?' . preg_quote(SID, '~') . ')(?:\?|(?="))~', SCRIPT . '?' . SID . ';', $buffer);
+		$buffer = str_replace('"' . SCRIPT . '?' . SID . ';"', '"' . SCRIPT . '?' . SID . '"', $buffer);
 	}
 	// Debugging templates, are we?
 	elseif (isset($_GET['debug']))
-		$buffer = preg_replace('~(?<!<link rel="canonical" href=")"' . $preg_scripturl . '\??~', $scripturl . '?debug;', $buffer);
+		$buffer = preg_replace('~(?<!<link rel="canonical" href=")"' . $preg_scripturl . '\??~', SCRIPT . '?debug;', $buffer);
 
 	// Rewrite the buffer with pretty URLs!
 	if (!empty($settings['pretty_enable_filters']))
@@ -710,7 +710,7 @@ function wedge_indenazi($match)
 // A callback function to replace the buffer's URLs with their cached URLs
 function pretty_buffer_callback($matches)
 {
-	global $cached_urls, $scripturl, $use_cache, $session_var;
+	global $cached_urls, $use_cache, $session_var;
 	static $immediate_cache = array();
 
 	if (isset($immediate_cache[$matches[0]]))
@@ -747,7 +747,7 @@ function pretty_buffer_callback($matches)
 
 	$immediate_cache[$matches[0]] = $replacement;
 	if (empty($replacement) || $replacement[0] == '?')
-		$replacement = $scripturl . $replacement;
+		$replacement = SCRIPT . $replacement;
 	return $replacement;
 }
 
@@ -791,7 +791,7 @@ function clean_output($skip_full = false)
  */
 function start_output()
 {
-	global $settings, $context, $theme;
+	global $settings, $context;
 
 	if (!AJAX)
 		setupThemeContext();
@@ -809,10 +809,6 @@ function start_output()
 	header('Content-Type: text/' . (AJAX ? 'xml' : 'html') . '; charset=UTF-8');
 
 	$context['show_load_time'] = !empty($settings['timeLoadPageEnable']);
-
-	$theme['theme_url'] = $theme['default_theme_url'];
-	$theme['images_url'] = $theme['default_images_url'];
-	$theme['theme_dir'] = $theme['default_theme_dir'];
 }
 
 /**
@@ -928,7 +924,7 @@ function while_we_re_here()
  */
 function db_debug_junk()
 {
-	global $context, $scripturl, $boarddir, $settings, $txt;
+	global $context, $boarddir, $settings, $txt;
 	global $db_cache, $db_count, $db_show_debug, $cache_count, $cache_hits;
 
 	// Is debugging on? (i.e. it is set, and it is true, and we're not on action=viewquery or an help popup.
@@ -1029,7 +1025,7 @@ function db_debug_junk()
 	}
 
 	if ($show_debug_query)
-		$temp .= '<a href="' . $scripturl . '?action=viewquery" target="_blank" class="new_win">' . sprintf($txt['debug_queries_used' . ($warnings == 0 ? '' : '_and_warnings')], $db_count, $warnings) . '</a> - <a href="' . $scripturl . '?action=viewquery;sa=hide">' . $txt['debug_' . (empty($_SESSION['view_queries']) ? 'show' : 'hide') . '_queries'] . '</a>';
+		$temp .= '<a href="' . SCRIPT . '?action=viewquery" target="_blank" class="new_win">' . sprintf($txt['debug_queries_used' . ($warnings == 0 ? '' : '_and_warnings')], $db_count, $warnings) . '</a> - <a href="' . SCRIPT . '?action=viewquery;sa=hide">' . $txt['debug_' . (empty($_SESSION['view_queries']) ? 'show' : 'hide') . '_queries'] . '</a>';
 	else
 		$temp .= sprintf($txt['debug_queries_used'], $db_count);
 
@@ -1059,7 +1055,7 @@ function db_debug_junk()
 				$qq['f'] = preg_replace('~^' . preg_quote($boarddir, '~') . '~', '...', $qq['f']);
 
 			$temp .= '
-	<strong>' . ($is_select ? '<a href="' . $scripturl . '?action=viewquery;qq=' . ($q + 1) . '#qq' . $q . '" target="_blank" class="new_win">' : '') . westr::nl2br(str_replace("\t", '&nbsp;&nbsp;&nbsp;', htmlspecialchars(ltrim($qq['q'], "\n\r")))) . ($is_select ? '</a></strong>' : '</strong>') . '<br>
+	<strong>' . ($is_select ? '<a href="' . SCRIPT . '?action=viewquery;qq=' . ($q + 1) . '#qq' . $q . '" target="_blank" class="new_win">' : '') . westr::nl2br(str_replace("\t", '&nbsp;&nbsp;&nbsp;', htmlspecialchars(ltrim($qq['q'], "\n\r")))) . ($is_select ? '</a></strong>' : '</strong>') . '<br>
 	&nbsp;&nbsp;&nbsp;';
 			if (!empty($qq['f']) && !empty($qq['l']))
 				$temp .= sprintf($txt['debug_query_in_line'], $qq['f'], $qq['l']);
@@ -1086,7 +1082,7 @@ function db_debug_junk()
  */
 function template_include($filename, $once = false)
 {
-	global $context, $theme, $txt, $helptxt, $settings, $scripturl;
+	global $context, $txt, $helptxt, $settings;
 	global $boardurl, $boarddir, $maintenance, $mtitle, $mmessage;
 	static $templates = array();
 
@@ -1104,7 +1100,7 @@ function template_include($filename, $once = false)
 	if (empty($settings['disableTemplateEval']))
 	{
 		$file_found = file_exists($filename) && eval('?' . '>' . rtrim(file_get_contents($filename))) !== false;
-		$theme['current_include_filename'] = $filename;
+		$settings['current_include_filename'] = $filename;
 	}
 	else
 	{
@@ -1132,7 +1128,7 @@ function template_include($filename, $once = false)
 		{
 			$txt['template_parse_error'] = 'Template Parse Error!';
 			$txt['template_parse_error_message'] = 'It seems something has gone sour on the forum with the template system. This problem should only be temporary, so please come back later and try again. If you continue to see this message, please contact the administrator.<br><br>You can also try <a href="javascript:location.reload();">refreshing this page</a>.';
-			$txt['template_parse_error_details'] = 'There was a problem loading the <tt><strong>%1$s</strong></tt> template or language file. Please check the syntax and try again - remember, single quotes (<tt>\'</tt>) often have to be escaped with a slash (<tt>\\</tt>). To see more specific error information from PHP, try <a href="{board_url}%1$s" class="extern">accessing the file directly</a>.<br><br>You may want to try to <a href="javascript:location.reload();">refresh this page</a> or <a href="' . $scripturl . '?theme=1">use the default theme</a>.';
+			$txt['template_parse_error_details'] = 'There was a problem loading the <tt><strong>%1$s</strong></tt> template or language file. Please check the syntax and try again - remember, single quotes (<tt>\'</tt>) often have to be escaped with a slash (<tt>\\</tt>). To see more specific error information from PHP, try <a href="{board_url}%1$s" class="extern">accessing the file directly</a>.<br><br>You may want to try to <a href="javascript:location.reload();">refresh this page</a>.';
 		}
 
 		$txt['template_parse_error_details'] = str_replace('{board_url}', $boardurl, $txt['template_parse_error_details']);
@@ -1277,14 +1273,14 @@ function template_include($filename, $once = false)
  */
 function loadTemplate($template_name, $fatal = true)
 {
-	global $context, $theme, $txt, $scripturl, $boarddir, $db_show_debug;
+	global $context, $settings, $txt, $boarddir, $db_show_debug;
 
 	// No template to load?
 	if ($template_name === false)
 		return true;
 
 	$loaded = false;
-	foreach ($theme['template_dirs'] as $template_dir)
+	foreach ($settings['template_dirs'] as $template_dir)
 	{
 		if (file_exists($template_dir . '/' . $template_name . '.template.php'))
 		{
@@ -1304,17 +1300,17 @@ function loadTemplate($template_name, $fatal = true)
 			call_user_func('template_' . $template_name . '_init');
 	}
 	// Hmmm... doesn't exist?! I don't suppose the directory is wrong, is it?
-	elseif (!file_exists($theme['default_theme_dir']) && file_exists($boarddir . '/Themes/default'))
+	elseif (!file_exists($settings['theme_dir']) && file_exists($boarddir . '/Themes/default'))
 	{
-		$theme['default_theme_dir'] = $boarddir . '/Themes/default';
-		$theme['template_dirs'][] = $theme['default_theme_dir'];
+		$settings['theme_dir'] = $boarddir . '/Themes/default';
+		$settings['template_dirs'][] = $settings['theme_dir'];
 
 		if (we::$is_admin && !isset($_GET['th']))
 		{
 			loadLanguage('Errors');
 			echo '
 <div class="alert errorbox">
-	<a href="', $scripturl . '?action=admin;area=theme;sa=settings;th=1;' . $context['session_query'], '" class="alert">', $txt['theme_dir_wrong'], '</a>
+	<a href="<URL>?action=admin;area=featuresettings;sa=paths;', $context['session_query'], '" class="alert">', $txt['theme_dir_wrong'], '</a>
 </div>';
 		}
 

@@ -299,13 +299,6 @@ function ModifyDatabaseSettings($return_config = false)
 		'',
 		array('check', 'autoFixDatabase'),
 		array('int', 'autoOptMaxOnline', 'subtext' => $txt['autoOptMaxOnline_subtext']),
-		'',
-		array('text', 'boardurl', 36, 'file' => true),
-		array('text', 'boarddir', 36, 'file' => true),
-		array('text', 'sourcedir', 36, 'file' => true),
-		array('text', 'cachedir', 36, 'file' => true),
-		array('text', 'pluginsdir', 36, 'file' => true),
-		array('text', 'pluginsurl', 36, 'file' => true),
 	);
 
 	if ($return_config)
@@ -313,7 +306,7 @@ function ModifyDatabaseSettings($return_config = false)
 
 	// Setup the template stuff.
 	$context['post_url'] = '<URL>?action=admin;area=serversettings;sa=database;save';
-	$context['settings_title'] = $txt['database_paths_settings'];
+	$context['settings_title'] = $txt['database_settings'];
 	$context['save_disabled'] = $context['settings_not_writable'];
 
 	// Saving settings?
@@ -875,10 +868,12 @@ function saveSettings(&$config_vars)
 		if (substr($_POST['boardurl'], -10) == '/index.php')
 			$_POST['boardurl'] = substr($_POST['boardurl'], 0, -10);
 		elseif (substr($_POST['boardurl'], -1) == '/')
-			$_POST['boardurl'] = substr($_POST['boardurl'], 0, -1);
+			$_POST['boardurl'] = rtrim($_POST['boardurl'], '/');
 		if (substr($_POST['boardurl'], 0, 7) != 'http://' && substr($_POST['boardurl'], 0, 7) != 'file://' && substr($_POST['boardurl'], 0, 8) != 'https://')
 			$_POST['boardurl'] = 'http://' . $_POST['boardurl'];
 	}
+
+	foreach ($config_vars as $setting)
 
 	// Now sort everything into a big array, and figure out arrays and etc.
 	$new_settings = array();

@@ -128,7 +128,7 @@ function deleteAccount2($profile_vars, $post_errors, $memID)
 	loadSource('Subs-Members');
 
 	// Do you have permission to delete others profiles, or is that your profile you wanna delete?
-	if ($memID != we::$id)
+	if ($memID != MID)
 	{
 		isAllowedTo('profile_remove_any');
 
@@ -355,7 +355,7 @@ function profileInfractions($memID)
 		$context['return_to_log'] = isset($_GET['log']);
 
 		// Zerothly, if this is a warning issued to us, we can't go near it. While we::$user['is_owner'] is shorter, it's actually less clear.
-		if ($memID == we::$id)
+		if ($memID == MID)
 			fatal_lang_error('cannot_revoke_warning_self', false);
 
 		// First, get this one's details.
@@ -389,7 +389,7 @@ function profileInfractions($memID)
 			fatal_lang_error('cannot_revoke_already_revoked', false);
 
 		// Now check that we have permission to revoke it.
-		if (!$context['revoke_any'] && (!$context['revoke_own'] || $row['issued_by'] != we::$id))
+		if (!$context['revoke_any'] && (!$context['revoke_own'] || $row['issued_by'] != MID))
 			fatal_lang_error('cannot_revoke_warning', false);
 
 		// Setting up for later.
@@ -444,7 +444,7 @@ function profileInfractions($memID)
 					array(
 						'id_issue' => $_GET['revoke'],
 						'revoked' => 2,
-						'current_user' => we::$id,
+						'current_user' => MID,
 						'current_name' => we::$user['name'],
 						'time' => $time,
 						'reason' => westr::safe(westr::cut($_POST['revoke_reason']), ENT_QUOTES),
@@ -510,7 +510,7 @@ function profileInfractions($memID)
 				WHERE issued_by = {int:issued_by}
 					AND issue_date >= {int:time}',
 				array(
-					'issued_by' => we::$id,
+					'issued_by' => MID,
 					'time' => time() - 86400,
 				)
 			);
@@ -596,7 +596,7 @@ function profileInfractions($memID)
 
 		$context['current_sanctions'] = !empty($cur_profile['sanctions']) ? $cur_profile['sanctions'] : array();
 		// Don't tell the user he is soft banned even if he is.
-		if (we::$id == $memID)
+		if (MID == $memID)
 			unset($context['current_sanctions']['soft_ban']);
 
 		if (isset($_REQUEST['for']) && strpos($_REQUEST['for'], ':') !== false)
@@ -699,7 +699,7 @@ function profileInfractions($memID)
 					unset($because_of['repl'], $because_of['note'], $because_of['var']);
 
 					$infraction_details = array(
-						'issued_by' => we::$id,
+						'issued_by' => MID,
 						'issued_by_name' => we::$user['name'],
 						'issue_date' => time(),
 						'issued_to' => $context['member']['id'],
@@ -741,7 +741,7 @@ function profileInfractions($memID)
 					unset($because_of['repl'], $because_of['note'], $because_of['var']);
 
 					$infraction_details = array(
-						'issued_by' => we::$id,
+						'issued_by' => MID,
 						'issued_by_name' => we::$user['name'],
 						'issue_date' => time(),
 						'issued_to' => $context['member']['id'],
@@ -958,7 +958,7 @@ function profileBan($memID)
 
 		// Ban on user id?
 		if (!empty($_POST['ban_type_acct']))
-			$ban_criteria[] = array($hardness_flag, 'id_member', (string) $memID, $context['ban_details']['ban_reason'], $extra_serialized, $time, we::$id);
+			$ban_criteria[] = array($hardness_flag, 'id_member', (string) $memID, $context['ban_details']['ban_reason'], $extra_serialized, $time, MID);
 
 		// Ban on email?
 		$context['ban_details']['ban_on_email'] = !empty($_POST['ban_type_on_email']);
@@ -1027,7 +1027,7 @@ function profileBan($memID)
 			{
 				$extra = $context['ban_details']['extra'];
 				$extra['gmail_style'] = !empty($_POST['ban_gmail_style']);
-				$ban_criteria[] = array($hardness_flag, 'email', $context['ban_details']['ban_email'], $context['ban_details']['ban_reason'], !empty($extra) ? serialize($extra) : '', $time, we::$id);
+				$ban_criteria[] = array($hardness_flag, 'email', $context['ban_details']['ban_email'], $context['ban_details']['ban_reason'], !empty($extra) ? serialize($extra) : '', $time, MID);
 			}
 			else
 				$context['errors']['ban_invalid_email'] = 'ban_invalid_email';
@@ -1036,7 +1036,7 @@ function profileBan($memID)
 		// We did actually get the IP address business earlier.
 		foreach ($context['ban_details']['ip'] as $ip => $is_checked)
 			if ($is_checked)
-				$ban_criteria[] = array($hardness_flag, 'ip_address', $ip, $context['ban_details']['ban_reason'], $extra_serialized, $time, we::$id);
+				$ban_criteria[] = array($hardness_flag, 'ip_address', $ip, $context['ban_details']['ban_reason'], $extra_serialized, $time, MID);
 
 		if (empty($ban_criteria) && empty($context['errors']))
 			$context['errors']['ban_nothing_to_ban'] = $txt['ban_nothing_to_ban'];
@@ -1062,7 +1062,7 @@ function profileBan($memID)
 // Function for doing all the paid subscription stuff - kinda.
 function subscriptions($memID)
 {
-	global $context, $txt, $settings, $scripturl, $user_profile;
+	global $context, $txt, $settings, $user_profile;
 
 	// Load the paid template anyway.
 	loadTemplate('ManagePaid');
@@ -1277,7 +1277,7 @@ function subscriptions($memID)
 		$context['gateways'] = array();
 		foreach ($gateways as $id => $gateway)
 		{
-			$fields = $gateways[$id]->fetchGatewayFields($context['sub']['id'] . '+' . $memID, $context['sub'], $context['value'], $period, $scripturl . '?action=profile;u=' . $memID . ';area=subscriptions;sub_id=' . $context['sub']['id'] . ';done');
+			$fields = $gateways[$id]->fetchGatewayFields($context['sub']['id'] . '+' . $memID, $context['sub'], $context['value'], $period, SCRIPT . '?action=profile;u=' . $memID . ';area=subscriptions;sub_id=' . $context['sub']['id'] . ';done');
 			if (!empty($fields['form']))
 				$context['gateways'][] = $fields;
 			if (!empty($fields['javascript']))

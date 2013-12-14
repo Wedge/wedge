@@ -10,7 +10,7 @@
 
 function template_main()
 {
-	global $context, $theme, $txt;
+	global $context, $txt;
 
 	if (!empty($context['search_errors']))
 		echo '
@@ -19,7 +19,7 @@ function template_main()
 	echo '
 	<form action="<URL>?action=search2" method="post" accept-charset="UTF-8" name="searchform" id="searchform">
 		<we:cat>
-			<img src="' . $theme['images_url'] . '/buttons/search.gif">
+			<img src="' . ASSETS . '/buttons/search.gif">
 			', $txt['search'], '
 		</we:cat>
 		<div class="windowbg wrc">
@@ -114,7 +114,7 @@ function template_main()
 							<a href="#" onclick="selectBoards([', implode(', ', $category['child_ids']), ']); return false;">', $category['name'], '</a>
 							<ul>';
 
-			foreach ($category['boards'] as $board)
+			foreach ($category['boards'] as $bdata)
 			{
 				if ($i++ == $limit)
 					echo '
@@ -126,8 +126,8 @@ function template_main()
 							<ul>';
 
 				echo '
-								<li class="board" style="margin-', $context['right_to_left'] ? 'right' : 'left', ': ', $board['child_level'], 'em">
-									<label><input type="checkbox" id="brd', $board['id'], '" name="brd[', $board['id'], ']" value="', $board['id'], '"', $board['selected'] ? ' checked' : '', '> ', $board['name'], '</label>
+								<li class="board" style="margin-', $context['right_to_left'] ? 'right' : 'left', ': ', $bdata['child_level'], 'em">
+									<label><input type="checkbox" id="brd', $bdata['id'], '" name="brd[', $bdata['id'], ']" value="', $bdata['id'], '"', $bdata['selected'] ? ' checked' : '', '> ', $bdata['name'], '</label>
 								</li>';
 			}
 
@@ -235,7 +235,7 @@ function template_search_ajax()
 
 function template_results()
 {
-	global $context, $theme, $txt, $message;
+	global $context, $txt, $message;
 
 	if (isset($context['did_you_mean']) || empty($context['topics']))
 	{
@@ -283,7 +283,7 @@ function template_results()
 
 		echo '
 		<we:cat>
-			<img src="', $theme['images_url'], '/buttons/search.gif">', $txt['mlist_search_results'], ':&nbsp;', $context['search_params']['search'], '
+			<img src="', ASSETS, '/buttons/search.gif">', $txt['mlist_search_results'], ':&nbsp;', $context['search_params']['search'], '
 		</we:cat>
 		<div class="pagesection">
 			<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>
@@ -359,9 +359,9 @@ function template_results()
 							echo '
 					<optgroup label="', $category['name'], '">';
 
-							foreach ($category['boards'] as $board)
+							foreach ($category['boards'] as $bdata)
 									echo '
-					<option value="', $board['id'], '"', $board['selected'] ? ' selected' : '', '>', $board['child_level'] > 0 ? str_repeat('==', $board['child_level'] - 1) . '=&gt;' : '', ' ', $board['name'], '</option>';
+					<option value="', $bdata['id'], '"', $bdata['selected'] ? ' selected' : '', '>', $bdata['child_level'] > 0 ? str_repeat('==', $bdata['child_level'] - 1) . '=&gt;' : '', ' ', $bdata['name'], '</option>';
 
 							echo '
 					</optgroup>';
@@ -386,7 +386,7 @@ function template_results()
 	{
 		echo '
 		<we:cat>
-			<img src="' . $theme['images_url'] . '/buttons/search.gif">&nbsp;', $txt['mlist_search_results'], ':&nbsp;', $context['search_params']['search'], '
+			<img src="' . ASSETS . '/buttons/search.gif">&nbsp;', $txt['mlist_search_results'], ':&nbsp;', $context['search_params']['search'], '
 		</we:cat>
 		<div class="pagesection">
 			<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>

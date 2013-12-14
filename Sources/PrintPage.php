@@ -74,7 +74,7 @@ function PrintPage()
 		array(
 			'current_topic' => $topic,
 			'is_approved' => 1,
-			'current_member' => we::$id,
+			'current_member' => MID,
 		)
 	);
 	$context['posts'] = array();

@@ -96,7 +96,7 @@ function deleteMembers($users, $check_not_admin = false, $merge_to = false)
 	{
 		list ($user) = $users;
 
-		if ($user == we::$id)
+		if ($user == MID)
 			isAllowedTo('profile_remove_own');
 		else
 			isAllowedTo('profile_remove_any');
@@ -135,7 +135,7 @@ function deleteMembers($users, $check_not_admin = false, $merge_to = false)
 		return;
 
 	// Make sure they aren't trying to delete administrators if they aren't one.  But don't bother checking if it's just themself.
-	if (!empty($admins) && ($check_not_admin || (!allowedTo('admin_forum') && (count($users) != 1 || $users[0] != we::$id))))
+	if (!empty($admins) && ($check_not_admin || (!allowedTo('admin_forum') && (count($users) != 1 || $users[0] != MID))))
 	{
 		$users = array_diff($users, $admins);
 		foreach ($admins as $id)
@@ -158,7 +158,7 @@ function deleteMembers($users, $check_not_admin = false, $merge_to = false)
 
 		// Add it to the administration log for future reference. Straight deletion first.
 		$log_inserts[] = array(
-			time(), 3, we::$id, get_ip_identifier(we::$user['ip']), empty($merge_to) ? 'delete_member' : 'merge_member',
+			time(), 3, MID, get_ip_identifier(we::$user['ip']), empty($merge_to) ? 'delete_member' : 'merge_member',
 			0, 0, 0, serialize(array('member' => empty($merge_to) ? $user[0] : $merge_to, 'name' => $user[1], 'member_acted' => we::$user['name'])),
 		);
 
@@ -413,7 +413,7 @@ function deleteMembers($users, $check_not_admin = false, $merge_to = false)
 		)
 	);
 
-	// Remove individual theme settings.
+	// Remove individual user settings.
 	wesql::query('
 		DELETE FROM {db_prefix}themes
 		WHERE id_member IN ({array_int:users})',
@@ -461,7 +461,7 @@ function deleteMembers($users, $check_not_admin = false, $merge_to = false)
 
 function registerMember(&$regOptions, $return_errors = false)
 {
-	global $scripturl, $txt, $settings;
+	global $txt, $settings;
 
 	loadLanguage('Login');
 
@@ -598,24 +598,6 @@ function registerMember(&$regOptions, $return_errors = false)
 	if (!empty($reg_errors))
 		return $reg_errors;
 
-	$reservedVars = array(
-		'actual_theme_url',
-		'actual_images_url',
-		'default_images_url',
-		'default_theme_dir',
-		'default_theme_url',
-		'default_template',
-		'images_url',
-		'theme_dir',
-		'theme_id',
-		'theme_templates',
-		'theme_url',
-	);
-
-	// Can't change reserved vars.
-	if (isset($regOptions['theme_vars']) && array_intersect($regOptions['theme_vars'], $reservedVars) != array())
-		fatal_lang_error('no_theme');
-
 	// Some of these might be overwritten. (the lower ones that are in the arrays below.)
 	$regOptions['register_vars'] = array(
 		'member_name' => $regOptions['username'],
@@ -751,7 +733,7 @@ function registerMember(&$regOptions, $return_errors = false)
 	else
 		updateStats('member');
 
-	// Theme variables too?
+	// User settings too?
 	if (!empty($theme_vars))
 	{
 		$inserts = array();
@@ -781,9 +763,9 @@ function registerMember(&$regOptions, $return_errors = false)
 				'REALNAME' => $regOptions['register_vars']['real_name'],
 				'USERNAME' => $regOptions['username'],
 				'PASSWORD' => $regOptions['password'],
-				'FORGOTPASSWORDLINK' => $scripturl . '?action=reminder',
-				'ACTIVATIONLINK' => $scripturl . '?action=activate;u=' . $memberID . ';code=' . $validation_code,
-				'ACTIVATIONLINKWITHOUTCODE' => $scripturl . '?action=activate;u=' . $memberID,
+				'FORGOTPASSWORDLINK' => SCRIPT . '?action=reminder',
+				'ACTIVATIONLINK' => SCRIPT . '?action=activate;u=' . $memberID . ';code=' . $validation_code,
+				'ACTIVATIONLINKWITHOUTCODE' => SCRIPT . '?action=activate;u=' . $memberID,
 				'ACTIVATIONCODE' => $validation_code,
 			);
 
@@ -805,7 +787,7 @@ function registerMember(&$regOptions, $return_errors = false)
 				'REALNAME' => $regOptions['register_vars']['real_name'],
 				'USERNAME' => $regOptions['username'],
 				'PASSWORD' => $regOptions['password'],
-				'FORGOTPASSWORDLINK' => $scripturl . '?action=reminder',
+				'FORGOTPASSWORDLINK' => SCRIPT . '?action=reminder',
 			);
 			$emaildata = loadEmailTemplate('register_immediate', $replacements);
 			sendmail($regOptions['email'], $emaildata['subject'], $emaildata['body'], null, null, false, 0);
@@ -821,18 +803,18 @@ function registerMember(&$regOptions, $return_errors = false)
 			'REALNAME' => $regOptions['register_vars']['real_name'],
 			'USERNAME' => $regOptions['username'],
 			'PASSWORD' => $regOptions['password'],
-			'FORGOTPASSWORDLINK' => $scripturl . '?action=reminder',
+			'FORGOTPASSWORDLINK' => SCRIPT . '?action=reminder',
 		);
 
 		if ($regOptions['require'] == 'activation' || $regOptions['require'] == 'both')
 			$replacements += array(
-				'ACTIVATIONLINK' => $scripturl . '?action=activate;u=' . $memberID . ';code=' . $validation_code,
-				'ACTIVATIONLINKWITHOUTCODE' => $scripturl . '?action=activate;u=' . $memberID,
+				'ACTIVATIONLINK' => SCRIPT . '?action=activate;u=' . $memberID . ';code=' . $validation_code,
+				'ACTIVATIONLINKWITHOUTCODE' => SCRIPT . '?action=activate;u=' . $memberID,
 				'ACTIVATIONCODE' => $validation_code,
 			);
 		else
 			$replacements += array(
-				'COPPALINK' => $scripturl . '?action=coppa;u=' . $memberID,
+				'COPPALINK' => SCRIPT . '?action=coppa;u=' . $memberID,
 			);
 
 		if ($regOptions['require'] == 'both')
@@ -852,7 +834,7 @@ function registerMember(&$regOptions, $return_errors = false)
 			'REALNAME' => $regOptions['register_vars']['real_name'],
 			'USERNAME' => $regOptions['username'],
 			'PASSWORD' => $regOptions['password'],
-			'FORGOTPASSWORDLINK' => $scripturl . '?action=reminder',
+			'FORGOTPASSWORDLINK' => SCRIPT . '?action=reminder',
 		);
 
 		$emaildata = loadEmailTemplate('register_pending', $replacements);

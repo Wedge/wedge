@@ -83,7 +83,7 @@ function Groups()
 // This very simply lists the groups, nothing snazy.
 function GroupList()
 {
-	global $txt, $context, $theme;
+	global $txt, $context;
 
 	// Yep, find the groups...
 	$request = wesql::query('
@@ -96,7 +96,7 @@ function GroupList()
 			AND mg.group_type != {int:is_protected}') . '
 		ORDER BY group_name',
 		array(
-			'current_member' => we::$id,
+			'current_member' => MID,
 			'min_posts' => -1,
 			'mod_group' => 3,
 			'is_protected' => 1,
@@ -121,7 +121,7 @@ function GroupList()
 			'color' => $row['online_color'],
 			'type' => $row['group_type'],
 			'num_members' => 0,
-			'stars' => !empty($row['stars'][0]) && !empty($row['stars'][1]) ? str_repeat('<img src="' . $theme['images_url'] . '/' . $row['stars'][1] . '">', $row['stars'][0]) : '',
+			'stars' => !empty($row['stars'][0]) && !empty($row['stars'][1]) ? str_repeat('<img src="' . ASSETS . '/' . $row['stars'][1] . '">', $row['stars'][0]) : '',
 		);
 
 		$context['can_moderate'] |= $row['can_moderate'];
@@ -238,8 +238,6 @@ function GroupList()
 // Get the group information for the list.
 function list_getGroups($start, $items_per_page, $sort)
 {
-	global $theme;
-
 	// Yep, find the groups...
 	$request = wesql::query('
 		SELECT mg.id_group, mg.group_name, mg.description, mg.group_type, mg.online_color, mg.hidden,
@@ -251,7 +249,7 @@ function list_getGroups($start, $items_per_page, $sort)
 			AND mg.group_type != {int:is_protected}') . '
 		ORDER BY group_name',
 		array(
-			'current_member' => we::$id,
+			'current_member' => MID,
 			'min_posts' => -1,
 			'mod_group' => 3,
 			'is_protected' => 1,
@@ -277,7 +275,7 @@ function list_getGroups($start, $items_per_page, $sort)
 			'type' => $row['group_type'],
 			'num_members' => 0,
 			'moderators' => array(),
-			'stars' => !empty($row['stars'][0]) && !empty($row['stars'][1]) ? str_repeat('<img src="' . $theme['images_url'] . '/' . $row['stars'][1] . '">', $row['stars'][0]) : '',
+			'stars' => !empty($row['stars'][0]) && !empty($row['stars'][1]) ? str_repeat('<img src="' . ASSETS . '/' . $row['stars'][1] . '">', $row['stars'][0]) : '',
 		);
 
 		$context['can_moderate'] |= $row['can_moderate'];
@@ -368,7 +366,7 @@ function list_getGroupCount()
 // Display members of a group, and allow adding of members to a group. Silly function name though ;)
 function MembergroupMembers()
 {
-	global $txt, $context, $settings, $theme;
+	global $txt, $context, $settings;
 
 	$_REQUEST['group'] = isset($_REQUEST['group']) ? (int) $_REQUEST['group'] : 0;
 
@@ -397,7 +395,7 @@ function MembergroupMembers()
 
 	// Fix the stars.
 	$context['group']['stars'] = explode('#', $context['group']['stars']);
-	$context['group']['stars'] = !empty($context['group']['stars'][0]) && !empty($context['group']['stars'][1]) ? str_repeat('<img src="' . $theme['images_url'] . '/' . $context['group']['stars'][1] . '">', $context['group']['stars'][0]) : '';
+	$context['group']['stars'] = !empty($context['group']['stars'][0]) && !empty($context['group']['stars'][1]) ? str_repeat('<img src="' . ASSETS . '/' . $context['group']['stars'][1] . '">', $context['group']['stars'][0]) : '';
 	$context['group']['can_moderate'] = allowedTo('manage_membergroups') && (allowedTo('admin_forum') || $context['group']['group_type'] != 1);
 
 	add_linktree($context['group']['name'], '<URL>?action=groups;sa=members;group=' . $context['group']['id']);
@@ -420,7 +418,7 @@ function MembergroupMembers()
 			'name' => $row['real_name']
 		);
 
-		if (we::$id == $row['id_member'] && $context['group']['group_type'] != 1)
+		if (MID == $row['id_member'] && $context['group']['group_type'] != 1)
 			$context['group']['can_moderate'] = true;
 	}
 	wesql::free_result($request);

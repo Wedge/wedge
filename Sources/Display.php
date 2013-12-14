@@ -46,7 +46,7 @@ if (!defined('WEDGE'))
 // The central part of the board - topic display.
 function Display()
 {
-	global $txt, $settings, $context, $theme;
+	global $txt, $context, $settings;
 	global $options, $board_info, $topic, $board;
 	global $attachments, $messages_request, $topicinfo;
 
@@ -110,7 +110,7 @@ function Display()
 		WHERE t.id_topic = {int:current_topic}
 		LIMIT 1',
 		array(
-			'current_member' => we::$id,
+			'current_member' => MID,
 			'current_topic' => $topic,
 			'current_board' => $board,
 		)
@@ -174,7 +174,7 @@ function Display()
 				AND approved = 0',
 			array(
 				'current_topic' => $topic,
-				'current_member' => we::$id,
+				'current_member' => MID,
 			)
 		);
 		list ($myUnapprovedPosts) = wesql::fetch_row($request);
@@ -206,7 +206,7 @@ function Display()
 					LIMIT 1',
 					array(
 						'current_board' => $board,
-						'current_member' => we::$id,
+						'current_member' => MID,
 						'current_topic' => $topic,
 					)
 				);
@@ -236,7 +236,7 @@ function Display()
 						AND id_topic = {int:current_topic}' . ($settings['postmod_active'] && $topicinfo['unapproved_posts'] && !allowedTo('approve_posts') ? '
 						AND (approved = {int:is_approved}' . (we::$is_guest ? '' : ' OR id_member = {int:current_member}') . ')' : ''),
 					array(
-						'current_member' => we::$id,
+						'current_member' => MID,
 						'current_topic' => $topic,
 						'virtual_msg' => $virtual_msg,
 						'is_approved' => 1,
@@ -338,7 +338,7 @@ function Display()
 			)',
 			array(
 				'current_board' => $board,
-				'current_member' => we::$id,
+				'current_member' => MID,
 				'current_topic' => $topic,
 				'current_subject' => $topicinfo['subject'],
 				'current_replies' => $topicinfo['num_replies'],
@@ -468,7 +468,7 @@ function Display()
 	$context['is_poll'] = $topicinfo['id_poll'] > 0 && allowedTo('poll_view');
 
 	// Did this user start the topic or not?
-	we::$user['started'] = we::$id == $topicinfo['id_member_started'] && we::$is_member;
+	we::$user['started'] = MID == $topicinfo['id_member_started'] && we::$is_member;
 	$context['topic_starter_id'] = $topicinfo['id_member_started'];
 
 	// Set the topic's information for the template.
@@ -523,7 +523,7 @@ function Display()
 				LEFT JOIN {db_prefix}log_polls AS lp ON (lp.id_choice = pc.id_choice AND lp.id_poll = {int:id_poll} AND lp.id_member = {int:current_member} AND lp.id_member != {int:not_guest})
 			WHERE pc.id_poll = {int:id_poll}',
 			array(
-				'current_member' => we::$id,
+				'current_member' => MID,
 				'id_poll' => $topicinfo['id_poll'],
 				'not_guest' => 0,
 			)
@@ -681,7 +681,7 @@ function Display()
 				'votes' => $option['votes'],
 				'voters' => $option['voters'],
 				'voted_this' => $option['voted_this'] != -1,
-				'bar' => '<span class="nowrap"><img src="' . $theme['images_url'] . '/poll_' . ($context['right_to_left'] ? 'right' : 'left') . '.gif"><img src="' . $theme['images_url'] . '/poll_middle.gif" width="' . $barWide . '" height="12"><img src="' . $theme['images_url'] . '/poll_' . ($context['right_to_left'] ? 'left' : 'right') . '.gif"></span>',
+				'bar' => '<span class="nowrap"><img src="' . ASSETS . '/poll_' . ($context['right_to_left'] ? 'right' : 'left') . '.gif"><img src="' . ASSETS . '/poll_middle.gif" width="' . $barWide . '" height="12"><img src="' . ASSETS . '/poll_' . ($context['right_to_left'] ? 'left' : 'right') . '.gif"></span>',
 				'bar_ndt' => $bar > 0 ? '<div class="bar' . ($option['voted_this'] != -1 ? ' voted' : '') . '" style="width: ' . ($bar * .75) . '%"></div>' : '',
 				'bar_width' => $barWide,
 				'option' => parse_bbc($option['label'], 'poll-option'),
@@ -754,7 +754,7 @@ function Display()
 		ORDER BY id_msg' . ($ascending ? '' : ' DESC') . ($context['messages_per_page'] == -1 ? '' : '
 		LIMIT ' . $start . ', ' . $limit),
 		array(
-			'current_member' => we::$id,
+			'current_member' => MID,
 			'current_topic' => $topic,
 			'is_approved' => 1,
 			'blank_id_member' => 0,
@@ -830,7 +830,7 @@ function Display()
 			wesql::insert($topicinfo['new_from'] == 0 ? 'ignore' : 'replace',
 				'{db_prefix}log_topics',
 				array('id_member' => 'int', 'id_topic' => 'int', 'id_msg' => 'int'),
-				array(we::$id, $topic, $mark_at_msg)
+				array(MID, $topic, $mark_at_msg)
 			);
 
 		// Check for notifications on this topic OR board.
@@ -842,7 +842,7 @@ function Display()
 			LIMIT 2',
 			array(
 				'current_board' => $board,
-				'current_member' => we::$id,
+				'current_member' => MID,
 				'current_topic' => $topic,
 			)
 		);
@@ -863,7 +863,7 @@ function Display()
 						AND id_member = {int:current_member}',
 					array(
 						'current_board' => $board,
-						'current_member' => we::$id,
+						'current_member' => MID,
 						'current_topic' => $topic,
 						'is_not_sent' => 0,
 					)
@@ -891,7 +891,7 @@ function Display()
 					AND t.id_last_msg > {int:id_msg_last_visit}'),
 				array(
 					'current_board' => $board,
-					'current_member' => we::$id,
+					'current_member' => MID,
 					'id_msg_last_visit' => (int) $_SESSION['id_msg_last_visit'],
 				)
 			);
@@ -914,7 +914,7 @@ function Display()
 			wesql::insert('replace',
 				'{db_prefix}log_boards',
 				array('id_msg' => 'int', 'id_member' => 'int', 'id_board' => 'int'),
-				array($settings['maxMsgID'], we::$id, $board)
+				array($settings['maxMsgID'], MID, $board)
 			);
 		}
 	}
@@ -1278,7 +1278,7 @@ function Display()
 // Callback for the message display.
 function prepareDisplayContext($reset = false)
 {
-	global $theme, $txt, $settings, $options, $board_info;
+	global $txt, $settings, $options, $board_info;
 	global $memberContext, $context, $messages_request, $topic, $topicinfo;
 
 	static $counter = null, $can_ip = null, $can_pm = null, $profile_own = null, $profile_any = null, $buddy = null, $ignore = null, $is_new = false;
@@ -1314,32 +1314,13 @@ function prepareDisplayContext($reset = false)
 	call_hook('display_prepare_post', array(&$counter, &$message));
 
 	// Is this user the message author?
-	$is_me = we::$is_member && $message['id_member'] == we::$id;
-
-	// $context['icon_sources'] says where each icon should come from - here we set up the ones which will always exist!
-	if (empty($context['icon_sources']))
-	{
-		$stable_icons = stable_icons();
-		$context['icon_sources'] = array();
-		foreach ($stable_icons as $icon)
-			$context['icon_sources'][$icon] = 'images_url';
-	}
-
-	// Message Icon Management... check the images exist.
-	if (!empty($settings['messageIconChecks_enable']))
-	{
-		// If the current icon isn't known, then we need to do something...
-		if (!isset($context['icon_sources'][$message['icon']]))
-			$context['icon_sources'][$message['icon']] = file_exists($theme['theme_dir'] . '/images/post/' . $message['icon'] . '.gif') ? 'images_url' : 'default_images_url';
-	}
-	elseif (!isset($context['icon_sources'][$message['icon']]))
-		$context['icon_sources'][$message['icon']] = 'images_url';
+	$is_me = we::$is_member && $message['id_member'] == MID;
 
 	// If you're a lazy bum, you probably didn't give a subject...
 	$message['subject'] = $message['subject'] !== '' ? $message['subject'] : $txt['no_subject'];
 
 	// Are you allowed to remove at least a single reply?
-	$context['can_remove_post'] |= allowedTo('delete_own') && (empty($settings['edit_disable_time']) || $message['poster_time'] + $settings['edit_disable_time'] * 60 >= time()) && $message['id_member'] == we::$id;
+	$context['can_remove_post'] |= allowedTo('delete_own') && (empty($settings['edit_disable_time']) || $message['poster_time'] + $settings['edit_disable_time'] * 60 >= time()) && $message['id_member'] == MID;
 
 	// If it couldn't load, or the user was a guest.... someday may be done with a guest table.
 	if (!loadMemberContext($message['id_member'], true))
@@ -1357,9 +1338,9 @@ function prepareDisplayContext($reset = false)
 	}
 	else
 	{
-		$memberContext[$message['id_member']]['can_view_profile'] = allowedTo('profile_view_any') || ($message['id_member'] == we::$id && allowedTo('profile_view_own'));
+		$memberContext[$message['id_member']]['can_view_profile'] = allowedTo('profile_view_any') || ($message['id_member'] == MID && allowedTo('profile_view_own'));
 		$memberContext[$message['id_member']]['is_topic_starter'] = $message['id_member'] == $context['topic_starter_id'];
-		$memberContext[$message['id_member']]['can_see_warning'] = !empty($settings['warning_show']) && we::$is_member && $memberContext[$message['id_member']]['warning_status'] && ($settings['warning_show'] == 3 || allowedTo('issue_warning') || ($settings['warning_show'] == 2 && $message['id_member'] == we::$id));
+		$memberContext[$message['id_member']]['can_see_warning'] = !empty($settings['warning_show']) && we::$is_member && $memberContext[$message['id_member']]['warning_status'] && ($settings['warning_show'] == 3 || allowedTo('issue_warning') || ($settings['warning_show'] == 2 && $message['id_member'] == MID));
 	}
 
 	$memberContext[$message['id_member']]['ip'] = format_ip($message['poster_ip']);
@@ -1401,7 +1382,7 @@ function prepareDisplayContext($reset = false)
 		'member' => &$memberContext[$message['id_member']],
 		'can_like' => we::$is_member && !empty($settings['likes_enabled']) && (!empty($settings['likes_own_posts']) || !$is_me),
 		'icon' => $message['icon'],
-		'icon_url' => $theme[$context['icon_sources'][$message['icon']]] . '/post/' . $message['icon'] . '.gif',
+		'icon_url' => ASSETS . '/post/' . $message['icon'] . '.gif',
 		'subject' => $message['subject'],
 		'on_time' => on_timeformat($message['poster_time']),
 		'timestamp' => $message['poster_time'], // Don't apply time offset here. This isn't used, but doesn't cost anything to include here, so...
@@ -1421,10 +1402,10 @@ function prepareDisplayContext($reset = false)
 		'is_ignored' => !empty($settings['enable_buddylist']) && !empty($options['posts_apply_ignore_list']) && in_array($message['id_member'], we::$user['ignoreusers']),
 		'can_approve' => !$message['approved'] && $context['can_approve'],
 		'can_unapprove' => $message['approved'] && $context['can_approve'],
-		'can_modify' => (!$context['is_locked'] || $context['can_moderate_board']) && (allowedTo('modify_any') || (allowedTo('modify_replies') && we::$user['started']) || (allowedTo('modify_own') && $message['id_member'] == we::$id && (empty($settings['edit_disable_time']) || !$message['approved'] || $message['poster_time'] + $settings['edit_disable_time'] * 60 > time()))) && (empty($message['modified_member']) || $message['modified_member'] == we::$id || !empty($settings['allow_non_mod_edit']) || $context['can_moderate_board']),
-		'can_remove' => allowedTo('delete_any') || (allowedTo('delete_replies') && we::$user['started']) || (allowedTo('delete_own') && $message['id_member'] == we::$id && (empty($settings['edit_disable_time']) || $message['poster_time'] + $settings['edit_disable_time'] * 60 > time())),
+		'can_modify' => (!$context['is_locked'] || $context['can_moderate_board']) && (allowedTo('modify_any') || (allowedTo('modify_replies') && we::$user['started']) || (allowedTo('modify_own') && $message['id_member'] == MID && (empty($settings['edit_disable_time']) || !$message['approved'] || $message['poster_time'] + $settings['edit_disable_time'] * 60 > time()))) && (empty($message['modified_member']) || $message['modified_member'] == MID || !empty($settings['allow_non_mod_edit']) || $context['can_moderate_board']),
+		'can_remove' => allowedTo('delete_any') || (allowedTo('delete_replies') && we::$user['started']) || (allowedTo('delete_own') && $message['id_member'] == MID && (empty($settings['edit_disable_time']) || $message['poster_time'] + $settings['edit_disable_time'] * 60 > time())),
 		'can_see_ip' => $can_ip || $is_me,
-		'can_mergeposts' => $merge_safe && !empty($context['last_user_id']) && $context['last_user_id'] == (empty($message['id_member']) ? (empty($message['poster_email']) ? $message['poster_name'] : $message['poster_email']) : $message['id_member']) && (allowedTo('modify_any') || (allowedTo('modify_own') && $message['id_member'] == we::$id)),
+		'can_mergeposts' => $merge_safe && !empty($context['last_user_id']) && $context['last_user_id'] == (empty($message['id_member']) ? (empty($message['poster_email']) ? $message['poster_name'] : $message['poster_email']) : $message['id_member']) && (allowedTo('modify_any') || (allowedTo('modify_own') && $message['id_member'] == MID)),
 		'last_post_id' => $context['last_msg_id'],
 		'unapproved_msg' => $message['approved'] && !empty($message['data']['unapproved_msg']) ? $message['data']['unapproved_msg'] : '',
 		'warn_msg' => !empty($message['data']['warn_msg']) ? $message['data']['warn_msg'] : '',
@@ -1745,7 +1726,7 @@ function prepareLikeContext($messages, $type = 'post')
 			continue;
 
 		// If it's us, log it as being us.
-		if ($row['id_member'] == we::$id)
+		if ($row['id_member'] == MID)
 			$context['liked_posts'][$row['id_content']]['you'] = true;
 		elseif (empty($context['liked_posts'][$row['id_content']]['others']))
 			$context['liked_posts'][$row['id_content']]['others'] = 1;

@@ -18,7 +18,7 @@ function Like()
 	if (isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'view')
 		return DisplayLike();
 
-	if (empty(we::$id) || empty($settings['likes_enabled']))
+	if (!MID || empty($settings['likes_enabled']))
 		fatal_lang_error('no_access', false);
 
 	// We might be doing a topic.
@@ -59,7 +59,7 @@ function Like()
 				$valid = true;
 			}
 			wesql::free_result($request);
-			if (!$valid || (empty($settings['likes_own_posts']) && $id_author == we::$id))
+			if (!$valid || (empty($settings['likes_own_posts']) && $id_author == MID))
 				fatal_lang_error('no_access', false);
 
 			$context['redirect_from_like'] = '#thought' . $id_content;
@@ -84,7 +84,7 @@ function Like()
 				$in_topic = $id_topic == $topic;
 			}
 			wesql::free_result($request);
-			if (!$in_topic || (empty($settings['likes_own_posts']) && $id_author == we::$id))
+			if (!$in_topic || (empty($settings['likes_own_posts']) && $id_author == MID))
 				fatal_lang_error('not_a_topic', false);
 
 			$context['redirect_from_like'] = 'topic=' . $topic . '.msg' . $_REQUEST['msg'] . '#msg' . $_REQUEST['msg'];
@@ -104,7 +104,7 @@ function Like()
 		array(
 			'id_content' => $id_content,
 			'content_type' => $content_type,
-			'user' => we::$id,
+			'user' => MID,
 		)
 	);
 
@@ -120,7 +120,7 @@ function Like()
 			array(
 				'id_content' => $id_content,
 				'content_type' => $content_type,
-				'user' => we::$id,
+				'user' => MID,
 			)
 		);
 		$now_liked = false;
@@ -131,7 +131,7 @@ function Like()
 		wesql::insert('',
 			'{db_prefix}likes',
 			array('id_content' => 'int', 'content_type' => 'string-6', 'id_member' => 'int', 'like_time' => 'int'),
-			array($id_content, $content_type, we::$id, $like_time)
+			array($id_content, $content_type, MID, $like_time)
 		);
 		$now_liked = true;
 
@@ -141,7 +141,7 @@ function Like()
 				'topic' => $topic,
 				'subject' => $subject,
 				'member' => array(
-					'id' => we::$id,
+					'id' => MID,
 					'name' => we::$user['name'],
 				),
 			));
@@ -174,7 +174,7 @@ function Like()
 		while ($row = wesql::fetch_assoc($request))
 		{
 			// If it's us, log it as being us.
-			if ($row['id_member'] == we::$id)
+			if ($row['id_member'] == MID)
 				$context['liked_posts'][$row['id_content']]['you'] = true;
 			elseif (empty($context['liked_posts'][$row['id_content']]['others']))
 				$context['liked_posts'][$row['id_content']]['others'] = 1;

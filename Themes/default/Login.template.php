@@ -10,7 +10,7 @@
 
 function template_login()
 {
-	global $context, $theme, $settings, $txt;
+	global $context, $settings, $txt;
 
 	if (empty($context['disable_login_hashing']))
 		$context['main_js_files']['scripts/sha1.js'] = true;
@@ -19,7 +19,7 @@ function template_login()
 		<form action="<URL>?action=login2" name="frmLogin" id="frmLogin" method="post" accept-charset="UTF-8" ', empty($context['disable_login_hashing']) ? ' onsubmit="hashLoginPassword(this, \'' . $context['session_id'] . '\');"' : '', '>
 		<div class="login">
 			<we:cat>
-				<img src="', $theme['images_url'], '/icons/online.gif">
+				<img src="', ASSETS, '/icons/online.gif">
 				', $txt['login'], '
 			</we:cat>
 			<div class="roundframe"><br class="clear">';
@@ -70,7 +70,7 @@ function template_login()
 // Tell a guest to get lost or login!
 function template_kick_guest()
 {
-	global $context, $theme, $settings, $txt;
+	global $context, $settings, $txt;
 
 	// This isn't that much... just like normal login but with a message at the top.
 	if (empty($context['disable_login_hashing']))
@@ -93,7 +93,7 @@ function template_kick_guest()
 	// And now the login information.
 	echo '
 			<we:cat>
-				<img src="', $theme['images_url'], '/icons/online.gif">
+				<img src="', ASSETS, '/icons/online.gif">
 				', $txt['login'], '
 			</we:cat>
 			<div class="roundframe">
@@ -122,7 +122,7 @@ function template_kick_guest()
 // This is for maintenance mode.
 function template_maintenance()
 {
-	global $context, $theme, $txt, $settings;
+	global $context, $txt, $settings;
 
 	// Display the administrator's message at the top.
 	if (empty($context['disable_login_hashing']))
@@ -135,7 +135,7 @@ function template_maintenance()
 			', $context['title'], '
 		</we:cat>
 		<p class="description">
-			<img class="floatleft" src="', $theme['images_url'], '/construction.png" width="40" height="40" alt="', $txt['in_maintain_mode'], '">
+			<img class="floatleft" src="', ASSETS, '/construction.png" width="40" height="40" alt="', $txt['in_maintain_mode'], '">
 			', $context['description'], '<br class="clear">
 		</p>
 		<we:title2>
@@ -162,7 +162,7 @@ function template_maintenance()
 // This is for the security stuff - makes administrators login every so often.
 function template_admin_login()
 {
-	global $context, $theme, $txt;
+	global $context, $txt;
 
 	// Since this should redirect to whatever they were doing, send all the get data.
 	$context['main_js_files']['scripts/sha1.js'] = true;
@@ -171,7 +171,7 @@ function template_admin_login()
 <form action="<URL>', $context['get_data'], '" method="post" accept-charset="UTF-8" name="frmLogin" id="frmLogin" onsubmit="hashAdminPassword(this, \'', we::$user['username'], '\', \'', $context['session_id'], '\');">
 	<div class="login" id="admin_login">
 		<we:cat>
-			<img src="', $theme['images_url'], '/icons/online.gif">
+			<img src="', ASSETS, '/icons/online.gif">
 			', $txt['login'], '
 		</we:cat>
 		<div class="roundframe center">';
@@ -282,7 +282,7 @@ function template_reagreement()
 			<div id="confirm_buttons">
 				<input type="submit" name="accept_agreement" value="', $txt['agreement_agree'], '" class="submit">
 			</div>
-			<input type="hidden" name="u" value="', we::$id, '">
+			<input type="hidden" name="u" value="', MID, '">
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 		</form>';
 }

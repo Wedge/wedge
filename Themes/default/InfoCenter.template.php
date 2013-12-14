@@ -11,7 +11,7 @@
 // Show statistical style information...
 function template_info_center_statistics()
 {
-	global $context, $theme, $txt, $settings;
+	global $context, $txt, $settings;
 
 	if (empty($settings['show_stats_index']))
 		return;
@@ -22,10 +22,10 @@ function template_info_center_statistics()
 
 	if (empty($settings['trackStats']))
 		echo '
-			<img src="', $theme['images_url'], '/icons/info.gif" alt="', $txt['forum_stats'], '">';
+			<img src="', ASSETS, '/icons/info.gif" alt="', $txt['forum_stats'], '">';
 	else
 		echo '
-			<a href="<URL>?action=stats"><img src="', $theme['images_url'], '/icons/info.gif" alt="', $txt['forum_stats'], '"></a>';
+			<a href="<URL>?action=stats"><img src="', ASSETS, '/icons/info.gif" alt="', $txt['forum_stats'], '"></a>';
 
 	echo '
 			', $txt['forum_stats'], '
@@ -42,13 +42,13 @@ function template_info_center_statistics()
 
 function template_info_center_usersonline()
 {
-	global $context, $theme, $txt, $settings;
+	global $context, $txt, $settings;
 
 	// "Users online" - in order of activity.
 	echo '
 	<section class="ic">
 		<we:title>
-			', $context['show_who'] ? '<a href="<URL>?action=who">' : '', '<img src="', $theme['images_url'], '/icons/online.gif', '" alt="', $txt['online_users'], '">', $context['show_who'] ? '</a>' : '', '
+			', $context['show_who'] ? '<a href="<URL>?action=who">' : '', '<img src="', ASSETS, '/icons/online.gif', '" alt="', $txt['online_users'], '">', $context['show_who'] ? '</a>' : '', '
 			', $txt['online_users'], '
 		</we:title>
 		<p class="inline stats">
@@ -99,7 +99,7 @@ function template_info_center_usersonline()
 // If user is logged in but stats are off, show them a PM bar.
 function template_info_center_personalmsg()
 {
-	global $context, $settings, $theme, $txt;
+	global $context, $txt, $settings;
 
 	if (we::$is_guest || !empty($settings['show_stats_index']))
 		return;
@@ -107,7 +107,7 @@ function template_info_center_personalmsg()
 	echo '
 	<section class="ic">
 		<we:title>
-			', $context['allow_pm'] ? '<a href="<URL>?action=pm">' : '', '<img src="', $theme['images_url'], '/message_sm.gif" alt="', $txt['personal_message'], '">', $context['allow_pm'] ? '</a>' : '', '
+			', $context['allow_pm'] ? '<a href="<URL>?action=pm">' : '', '<img src="', ASSETS, '/message_sm.gif" alt="', $txt['personal_message'], '">', $context['allow_pm'] ? '</a>' : '', '
 			', $txt['personal_messages'], '
 		</we:title>
 		<p class="pminfo">

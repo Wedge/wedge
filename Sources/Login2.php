@@ -19,7 +19,6 @@ if (!defined('WEDGE'))
 		- upgrades password encryption on login, if necessary.
 		- after successful login, redirects you to $_SESSION['login_url'].
 		- accessed from ?action=login2, by forms.
-
 */
 
 // Perform the actual logging-in.
@@ -40,17 +39,17 @@ function Login2()
 			trigger_error('Login2(): Cannot be logged in without a session or cookie', E_USER_ERROR);
 
 		$user_settings['password_salt'] = substr(md5(mt_rand()), 0, 4);
-		updateMemberData(we::$id, array('password_salt' => $user_settings['password_salt']));
+		updateMemberData(MID, array('password_salt' => $user_settings['password_salt']));
 
-		setLoginCookie($timeout - time(), we::$id, sha1($user_settings['passwd'] . $user_settings['password_salt']));
+		setLoginCookie($timeout - time(), MID, sha1($user_settings['passwd'] . $user_settings['password_salt']));
 
-		redirectexit('action=login2;sa=check;member=' . we::$id, $context['server']['needs_login_fix']);
+		redirectexit('action=login2;sa=check;member=' . MID, $context['server']['needs_login_fix']);
 	}
 	// Double check the cookie...
 	elseif (isset($_GET['sa']) && $_GET['sa'] == 'check')
 	{
 		// Strike! You're outta there!
-		if ($_GET['member'] != we::$id)
+		if ($_GET['member'] != MID)
 			fatal_lang_error('login_cookie_error', false);
 
 		// Some whitelisting for login_url...
@@ -66,7 +65,7 @@ function Login2()
 		}
 	}
 
-	// Beyond this point you are assumed to be a guest trying to login.
+	// Beyond this point, you are assumed to be a guest trying to login.
 	if (we::$is_member)
 		redirectexit();
 

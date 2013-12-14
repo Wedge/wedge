@@ -30,7 +30,7 @@ class NotifSubscription
 	public static function get(NotifSubscriber $subs, $object, $member = null)
 	{
 		if ($member == null)
-			$member = we::$id;
+			$member = MID;
 
 		$query = wesql::query('
 			SELECT id_member, id_object
@@ -67,7 +67,7 @@ class NotifSubscription
 	public static function store(NotifSubscriber $subs, $object, $member = null)
 	{
 		if ($member == null)
-			$member = we::$id;
+			$member = MID;
 
 		wesql::insert('', '{db_prefix}notif_subs',
 			array('id_member' => 'int', 'id_object' => 'int', 'type' => 'string', 'starttime' => 'int'),
@@ -109,7 +109,7 @@ class NotifSubscription
 		$members = array();
 
 		while ($row = wesql::fetch_row($query))
-			if ($row[0] != we::$id)
+			if ($row[0] != MID)
 				$members[] = $row[0];
 
 		wesql::free_result($query);
