@@ -1839,7 +1839,7 @@ function cache_get_data($key, $ttl = 120)
 
 function cache_prepare_key($key, $val = '', $type = 'get')
 {
-	global $settings, $cache_hits, $cache_count, $db_show_debug, $cachedir;
+	global $boardurl, $settings, $cache_hits, $cache_count, $db_show_debug, $cachedir;
 
 	$cache_count = isset($cache_count) ? $cache_count + 1 : 1;
 	if (!empty($db_show_debug))
@@ -1854,7 +1854,7 @@ function cache_prepare_key($key, $val = '', $type = 'get')
 	{
 		if (!file_exists($cachedir . '/cache.lock'))
 			@fclose(@fopen($cachedir . '/cache.lock', 'w'));
-		$settings['cache_hash'] = md5(ROOT . filemtime($cachedir . '/cache.lock'));
+		$settings['cache_hash'] = md5($boardurl . filemtime($cachedir . '/cache.lock'));
 	}
 
 	return $settings['cache_hash'] . '-' . bin2hex($key);
