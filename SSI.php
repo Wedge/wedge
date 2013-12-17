@@ -10,7 +10,7 @@
 
 // Don't do anything if Wedge is already loaded.
 if (defined('WEDGE'))
-	return true;
+	return;
 
 define('WEDGE', 'SSI');
 
@@ -32,6 +32,7 @@ unset($GLOBALS['cachedir']);
 
 // Get the forum's settings for database and file paths.
 require_once(dirname(__FILE__) . '/Settings.php');
+require_once(dirname(__FILE__) . '/index.php');
 
 $ssi_error_reporting = error_reporting(E_ALL | E_STRICT);
 /*
@@ -52,12 +53,14 @@ if ($sourcedir[0] === '.' && $sourcedir[1] !== '.')
 	$sourcedir = dirname(__FILE__) . substr($sourcedir, 1);
 
 // Load the important includes.
-require_once($sourcedir . '/QueryString.php');
-require_once($sourcedir . '/Subs.php');
-require_once($sourcedir . '/Errors.php');
-require_once($sourcedir . '/Load.php');
-require_once($sourcedir . '/Security.php');
-require_once($sourcedir . '/Class-System.php');
+loadSource(array(
+	'Class-System',
+	'QueryString',
+	'Subs',
+	'Errors',
+	'Load',
+	'Security',
+));
 
 // Initiate the database connection and load $settings data.
 loadDatabase();

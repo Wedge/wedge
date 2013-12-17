@@ -1797,26 +1797,6 @@ function loadPluginLanguage($plugin_name, $template_name, $lang = '', $fatal = t
 }
 
 /**
- * Loads a named source file for later use.
- *
- * This function does not do any error handling as if this breaks, something is usually seriously wrong that error catching isn't going to solve.
- *
- * @param mixed $source_name Either a string holding the name of a file in the source directory, or an array of the same, without .php extension to load.
- */
-function loadSource($source_name)
-{
-	global $sourcedir;
-	static $done = array();
-
-	foreach ((array) $source_name as $file)
-		if (!isset($done[$file]))
-		{
-			require_once($sourcedir . '/' . $file . '.php');
-			$done[$file] = true;
-		}
-}
-
-/**
  * Attempt to load a language file.
  * Tries the current and default themes as well as the user and global languages.
  *

@@ -13,6 +13,9 @@
  * @author see contributors.txt
  */
 
+if (defined('WEDGE'))
+	return;
+
 define('WEDGE_VERSION', '0.1');
 
 // Knock knock! We're entering through the front door.
@@ -33,14 +36,16 @@ unset($GLOBALS['cachedir']);
 // Load the settings...
 require_once(dirname(__FILE__) . '/Settings.php');
 
-// And important includes.
-require_once($sourcedir . '/Class-System.php');
-require_once($sourcedir . '/QueryString.php');
-require_once($sourcedir . '/Subs.php');
-require_once($sourcedir . '/Errors.php');
-require_once($sourcedir . '/Load.php');
-require_once($sourcedir . '/Security.php');
-echo microtime(true)-$time_start;
+// And important files.
+loadSource(array(
+	'Class-System',
+	'QueryString',
+	'Subs',
+	'Errors',
+	'Load',
+	'Security',
+));
+
 // If $maintenance is set specifically to 2, then we're upgrading or something.
 if (!empty($maintenance) && $maintenance == 2)
 	show_db_error();
@@ -207,6 +212,28 @@ if (!isset($settings['app_error_count']))
 if (!empty($context['app_error_count']))
 	updateSettings(array('app_error_count' => $settings['app_error_count'] + $context['app_error_count']));
 
+// Loads a named file from the Sources folder. Uses cache if possible.
+// $source_name can be a string or an array of strings.
+function loadSource($source_name)
+{
+	global $sourcedir, $cachedir;
+	static $done = array();
+
+	foreach ((array) $source_name as $file)
+	{
+		if (isset($done[$file]))
+			continue;
+		$done[$file] = true;
+		$cache = $cachedir . '/php/' . str_replace(array('/', '..'), array('_', 'UP'), $file) . '.php';
+		if (!file_exists($cache) || filemtime($cache) < filemtime($sourcedir . '/' . $file . '.php'))
+		{
+			copy($sourcedir . '/' . $file . '.php', $cache);
+			minify_php($cache);
+		}
+		require_once($cache);
+	}
+}
+
 // The main controlling function.
 function wedge_main()
 {
@@ -230,10 +257,10 @@ function wedge_main()
 	// Get rid of ?PHPSESSID for robots.
 	if (we::$user['possibly_robot'] && strpos(we::$user['url'], 'PHPSESSID=') !== false)
 	{
-		$correcturl = preg_replace('/([\?&]PHPSESSID=[^&]*)/', '', we::$user['url']);
+		$correcturl = preg_replace('~([?&]PHPSESSID=[^&]*)~', '', we::$user['url']);
 		$correcturl = str_replace(array('index.php&', 'index.php??'), 'index.php?', $correcturl);
 		$correcturl = str_replace(array('/&?', '/??', '/&'), '/?', $correcturl);
-		$correcturl = preg_replace('/&$|\?$/', '', $correcturl);
+		$correcturl = preg_replace('~&$|\?$~', '', $correcturl);
 
 		if ($correcturl != we::$user['url'])
 		{
@@ -362,4 +389,112 @@ function index_action($hook_action = 'default_action')
 
 	loadSource('Boards');
 	return 'Boards';
+}
+
+// Cache a minified PHP file.
+function minify_php($file)
+{
+	global $save_strings;
+
+	$php = preg_replace('~\s+~', ' ', clean_me_up($file));
+	$php = preg_replace('~(?<=[^a-zA-Z0-9_.])\s+|\s+(?=[^$a-zA-Z0-9_.])~', '', $php);
+	$php = preg_replace('~(?<=[^0-9.])\s+\.|\.\s+(?=[^0-9.])~', '.', $php); // 2 . 1 != 2.1
+	$php = str_replace(',)', ')', $php);
+	$pos = 0;
+
+	foreach ($save_strings as $str)
+		if (($pos = strpos($php, "\x0f", $pos)) !== false)
+			$php = substr_replace($php, $str, $pos, 1);
+
+	file_put_contents($file, $php);
+}
+
+// Remove comments and protect strings.
+function clean_me_up($file, $remove_comments = false)
+{
+	global $save_strings, $is_output_buffer;
+
+	// Set this to true if calling loadSource within an output buffer handler.
+	if (empty($is_output_buffer))
+	{
+		$php = php_strip_whitespace($file);
+		$search_for = array("'", '"');
+	}
+	else
+	{
+		$php = file_get_contents($file);
+		$search_for = array('/*', '//', "'", '"');
+	}
+
+	$save_strings = array();
+	$pos = 0;
+
+	while (true)
+	{
+		$pos = find_next($php, $pos, $search_for);
+		if ($pos === false)
+			return $php;
+
+		$look_for = $php[$pos];
+		if ($look_for === '/')
+		{
+			if ($php[$pos + 1] === '/') // Remove //
+				$look_for = array("\r", "\n", "\r\n");
+			else // Remove /* ... */
+				$look_for = '*/';
+		}
+		else
+		{
+			$next = find_next($php, $pos + 1, $look_for);
+			if ($next === false) // Shouldn't be happening.
+				return $php;
+			if ($php[$next] === "\r" && $php[$next + 1] === "\n")
+				$next++;
+			$save_strings[] = substr($php, $pos, $next + 1 - $pos);
+			$php = substr_replace($php, "\x0f", $pos, $next + 1 - $pos);
+			continue;
+		}
+
+		$end = find_next($php, $pos + 1, $look_for);
+		if ($end === false)
+			return $php;
+		if (!is_array($look_for))
+			$end += strlen($look_for);
+		$temp = substr($php, $pos, $end - $pos);
+
+		$breaks = substr_count($temp, "\n") + substr_count($temp, "\r") - substr_count($temp, "\r\n");
+		$php = substr_replace($php, str_pad(str_repeat("\n", $breaks), $end - $pos), $pos, $end - $pos);
+		$pos = $end + 1;
+	}
+}
+
+function find_next(&$php, $pos, $search_for)
+{
+	if (is_array($search_for))
+	{
+		$positions = array();
+		foreach ((array) $search_for as $item)
+		{
+			$position = strpos($php, $item, $pos);
+			if ($position !== false)
+				$positions[] = $position;
+		}
+		if (empty($positions))
+			return false;
+		$next = min($positions);
+	}
+	else
+	{
+		$next = strpos($php, $search_for, $pos);
+		if ($next === false)
+			return false;
+	}
+
+	$check_before = $next;
+	$escaped = false;
+	while (--$check_before >= 0 && $php[$check_before] == '\\')
+		$escaped = !$escaped;
+	if ($escaped)
+		return find_next($php, ++$next, $search_for);
+	return $next;
 }

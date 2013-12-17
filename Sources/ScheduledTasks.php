@@ -1161,18 +1161,15 @@ function next_time($regularity, $unit, $offset)
 // This loads the bare minimum data to allow us to load language files!
 function loadEssentialThemeData()
 {
-	global $settings, $sourcedir;
+	global $settings;
 
 	// Check we have some directories setup.
 	if (empty($settings['template_dirs']))
 		$settings['template_dirs'] = array($settings['theme_dir']);
 
-	// Check loadLanguage actually exists! Can't use loadSource if Load.php hasn't already been loaded.
+	// Check loadLanguage actually exists!
 	if (!function_exists('loadLanguage'))
-	{
-		require_once($sourcedir . '/Load.php');
-		require_once($sourcedir . '/Subs.php');
-	}
+		loadSource(array('Load', 'Subs'));
 
 	loadLanguage('index');
 }
