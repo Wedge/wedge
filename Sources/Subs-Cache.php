@@ -1639,6 +1639,9 @@ function clean_cache($extensions = 'php', $filter = '', $force_folder = '')
 			zend_shm_cache_clear('we');
 		elseif ($cache_type === 'zend' && ($zend_cache_folder = ini_get('zend_accelerator.output_cache_dir')))
 			clean_cache('', '', $zend_cache_folder . '/.php_cache_api');
+
+		// Also get the source cache!
+		clean_cache('php', '', $cachedir . '/php');
 	}
 
 	// Remove the files in Wedge's own disk cache, if any.
