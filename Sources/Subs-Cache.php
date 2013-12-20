@@ -1582,9 +1582,10 @@ function wedge_parse_skin_options($skin_options)
  *
  * @param string $extensions Optional, a comma-separated list of file extensions that should be pruned. Leave empty to clear the regular data cache (data sub-folder), you may also use 'css' or 'js' as special values to clean the CSS or JavaScript cache folders.
  * @param string $filter Optional, designates a filter to match the files either again a name mask, or a modification date, before they can be cleared from the cache folder.
- * @param string $force_folder Optional, used internally for recursivity.
+ * @param string $force_folder Optional, specifies folder to clean.
+ * @param boolean $remove_folder Try to remove the folder after cleanup?
  */
-function clean_cache($extensions = 'php', $filter = '', $force_folder = '')
+function clean_cache($extensions = 'php', $filter = '', $force_folder = '', $remove_folder = false)
 {
 	global $cache_type, $cachedir, $cssdir, $jsdir;
 
@@ -1651,7 +1652,7 @@ function clean_cache($extensions = 'php', $filter = '', $force_folder = '')
 			continue;
 		$path = $folder . '/' . $file;
 		if (is_dir($path))
-			$is_recursive && clean_cache($extensions, $filter, $path);
+			$is_recursive && clean_cache($extensions, $filter, $path, true);
 		elseif (($by_date && filemtime($path) < $by_date) || !$filter || $filter_is_folder || strpos($path, $filter) !== false)
 		{
 			if (!$extensions || isset($exts[wedge_get_extension($file)]))
@@ -1668,7 +1669,7 @@ function clean_cache($extensions = 'php', $filter = '', $force_folder = '')
 		@fclose(@fopen($cachedir . '/cache.lock', 'w'));
 		clearstatcache();
 	}
-	elseif ($force_folder && !$there_is_another)
+	elseif ($remove_folder && !$there_is_another)
 	{
 		@unlink($folder . '/index.php');
 		@rmdir($force_folder);

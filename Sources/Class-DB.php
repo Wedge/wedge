@@ -125,7 +125,7 @@ class wesql
 		$db_count = !isset($db_count) ? 1 : $db_count + 1;
 
 		if (empty($settings['disableQueryCheck']) && strpos($db_string, '\'') !== false && empty($db_values['security_override']))
-			wesql::error_backtrace('Hacking attempt...', 'Illegal character (\') used in query...', true, __FILE__, __LINE__);
+			wesql::error_backtrace('Hacking attempt...', 'Illegal character (\') used in query...', true);
 
 		// Use "ORDER BY null" to prevent Mysql doing filesorts for Group By clauses without an Order By
 		if (strpos($db_string, 'GROUP BY') !== false && strpos($db_string, 'ORDER BY') === false && strpos($db_string, 'INSERT') === false && strpos($db_string, 'REPLACE') === false)
@@ -154,7 +154,7 @@ class wesql
 		if (!empty($db_show_debug))
 		{
 			// Get the file and line number this function was called.
-			list ($file, $line) = self::error_backtrace('', '', 'return', __FILE__, __LINE__);
+			list ($file, $line) = self::error_backtrace('', '', 'return');
 
 			// Initialize $db_cache if not already initialized.
 			if (!isset($db_cache))
@@ -219,7 +219,7 @@ class wesql
 				$fail = true;
 
 			if (!empty($fail) && function_exists('log_error'))
-				self::error_backtrace('Hacking attempt...', 'Hacking attempt...' . "\n" . $db_string, E_USER_ERROR, __FILE__, __LINE__);
+				self::error_backtrace('Hacking attempt...', 'Hacking attempt...' . "\n" . $db_string, E_USER_ERROR);
 		}
 
 		$ret = @mysqli_query($connection, $db_string, empty($db_unbuffered) ? MYSQLI_STORE_RESULT : MYSQLI_USE_RESULT);
@@ -271,11 +271,14 @@ class wesql
 		global $txt, $context, $webmaster_email, $settings, $db_last_error, $db_persist, $cachedir;
 		global $db_server, $db_user, $db_passwd, $db_name, $db_show_debug, $ssi_db_user, $ssi_db_passwd;
 
-		if (isset($txt) && !isset($txt['mysql_error_space']))
-			loadLanguage('Errors');
+		if (isset($txt) && !isset($txt['mysql_error_space'], $txt['file']))
+			loadLanguage(array('index', 'Errors'), '', false, true);
+
+		if (!isset($txt['lang_name'])) // Still nothing?
+			$txt = array();
 
 		// Get the file and line numbers.
-		list ($file, $line) = self::error_backtrace('', '', 'return', __FILE__, __LINE__);
+		list ($file, $line) = self::error_backtrace('', '', 'return');
 
 		// Decide which connection to use
 		$connection = $connection === null ? self::$_db_con : $connection;
@@ -418,10 +421,6 @@ class wesql
 		else
 			$context['error_message'] = $txt['try_again'];
 
-		// A database error is often the sign of a database in need of upgrade. Check forum versions, and if not identical suggest an upgrade... (not for SVN versions!)
-		if (allowedTo('admin_forum') && defined('WEDGE_VERSION') && WEDGE_VERSION != @$settings['weVersion'] && strpos(WEDGE_VERSION, 'SVN') === false)
-			$context['error_message'] .= '<br><br>' . sprintf($txt['database_error_versions'], WEDGE_VERSION, @$settings['weVersion']);
-
 		if (allowedTo('admin_forum') && !empty($db_show_debug))
 			$context['error_message'] .= '<br><br>' . preg_replace('~(\r\n|\r|\n)~', '<br>$1', $db_string);
 
@@ -512,13 +511,13 @@ class wesql
 			return self::$callback_values[$matches[1]];
 
 		if (!isset($matches[2]))
-			self::error_backtrace('Invalid value inserted or no type specified.', '', E_USER_ERROR, __FILE__, __LINE__);
+			self::error_backtrace('Invalid value inserted or no type specified.', '', E_USER_ERROR);
 
 		if ($matches[1] == 'literal')
 			return sprintf('\'%1$s\'', mysqli_real_escape_string($connection, $matches[2]));
 
 		if (!isset($values[$matches[2]]))
-			self::error_backtrace('The database value you\'re trying to insert does not exist: ' . htmlspecialchars($matches[2]), '', E_USER_ERROR, __FILE__, __LINE__);
+			self::error_backtrace('The database value you\'re trying to insert does not exist: ' . htmlspecialchars($matches[2]), '', E_USER_ERROR);
 
 		$replacement = $values[$matches[2]];
 
@@ -526,7 +525,7 @@ class wesql
 		{
 			case 'int':
 				if (!is_numeric($replacement) || (string) $replacement !== (string) (int) $replacement)
-					self::error_backtrace('Wrong value type sent to the database. Integer expected. (' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
+					self::error_backtrace('Wrong value type sent to the database. Integer expected. (' . $matches[2] . ')', '', E_USER_ERROR);
 				return (string) (int) $replacement;
 			break;
 
@@ -539,12 +538,12 @@ class wesql
 				if (is_array($replacement))
 				{
 					if (empty($replacement))
-						self::error_backtrace('Database error, given array of integer values is empty. (' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
+						self::error_backtrace('Database error, given array of integer values is empty. (' . $matches[2] . ')', '', E_USER_ERROR);
 
 					foreach ($replacement as $key => $value)
 					{
 						if (!is_numeric($value) || (string) $value !== (string) (int) $value)
-							self::error_backtrace('Wrong value type sent to the database. Array of integers expected. (' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
+							self::error_backtrace('Wrong value type sent to the database. Array of integers expected. (' . $matches[2] . ')', '', E_USER_ERROR);
 
 						$replacement[$key] = (string) (int) $value;
 					}
@@ -552,7 +551,7 @@ class wesql
 					return implode(', ', $replacement);
 				}
 				else
-					self::error_backtrace('Wrong value type sent to the database. Array of integers expected. (' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
+					self::error_backtrace('Wrong value type sent to the database. Array of integers expected. (' . $matches[2] . ')', '', E_USER_ERROR);
 
 			break;
 
@@ -560,7 +559,7 @@ class wesql
 				if (is_array($replacement))
 				{
 					if (empty($replacement))
-						self::error_backtrace('Database error, given array of string values is empty. (' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
+						self::error_backtrace('Database error, given array of string values is empty. (' . $matches[2] . ')', '', E_USER_ERROR);
 
 					foreach ($replacement as $key => $value)
 						$replacement[$key] = sprintf('\'%1$s\'', mysqli_real_escape_string($connection, $value));
@@ -568,19 +567,19 @@ class wesql
 					return implode(', ', $replacement);
 				}
 				else
-					self::error_backtrace('Wrong value type sent to the database. Array of strings expected. (' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
+					self::error_backtrace('Wrong value type sent to the database. Array of strings expected. (' . $matches[2] . ')', '', E_USER_ERROR);
 			break;
 
 			case 'date':
 				if (preg_match('~^(\d{4})-([0-1]?\d)-([0-3]?\d)$~', $replacement, $date_matches) === 1)
 					return sprintf('\'%04d-%02d-%02d\'', $date_matches[1], $date_matches[2], $date_matches[3]);
 				else
-					self::error_backtrace('Wrong value type sent to the database. Date expected. (' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
+					self::error_backtrace('Wrong value type sent to the database. Date expected. (' . $matches[2] . ')', '', E_USER_ERROR);
 			break;
 
 			case 'float':
 				if (!is_numeric($replacement))
-					self::error_backtrace('Wrong value type sent to the database. Floating point number expected. (' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
+					self::error_backtrace('Wrong value type sent to the database. Floating point number expected. (' . $matches[2] . ')', '', E_USER_ERROR);
 				return (string) (float) $replacement;
 			break;
 
@@ -594,7 +593,7 @@ class wesql
 			break;
 
 			default:
-				self::error_backtrace('Undefined type used in the database query. (' . $matches[1] . ':' . $matches[2] . ')', '', false, __FILE__, __LINE__);
+				self::error_backtrace('Undefined type used in the database query. (' . $matches[1] . ':' . $matches[2] . ')');
 			break;
 		}
 	}

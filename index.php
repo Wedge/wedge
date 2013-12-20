@@ -216,7 +216,7 @@ if (!empty($context['app_error_count']))
 // $source_name can be a string or an array of strings.
 function loadSource($source_name)
 {
-	global $sourcedir, $cachedir;
+	global $sourcedir, $cachedir, $db_show_debug;
 	static $done = array();
 
 	foreach ((array) $source_name as $file)
@@ -228,7 +228,8 @@ function loadSource($source_name)
 		if (!file_exists($cache) || filemtime($cache) < filemtime($sourcedir . '/' . $file . '.php'))
 		{
 			copy($sourcedir . '/' . $file . '.php', $cache);
-			minify_php($cache);
+			if (empty($db_show_debug)) // !! Temporary. Disabling to get proper line numbers when debugging.
+				minify_php($cache);
 		}
 		require_once($cache);
 	}

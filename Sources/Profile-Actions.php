@@ -565,7 +565,7 @@ function profileInfractions($memID)
 		$lang_try = array(we::$user['language'], $settings['language'], 'english');
 		foreach ($context['preset_infractions'] as $infraction => $details)
 		{
-			// If the warning uses one of the preset templates, fetch that for the issuing user's language
+			// If the warning uses one of the preset templates, fetch that for the issuing user's language.
 			if (strpos($details['infraction_msg'], 'template') === 0)
 			{
 				$tpl = $txt['tpl_infraction_' . substr($details['infraction_msg'], 9)];
@@ -579,7 +579,7 @@ function profileInfractions($memID)
 				foreach ($lang_try as $lang)
 					if (isset($tpl[$lang]))
 					{
-						// This should already have been sanitised when saving.
+						// This should already have been sanitized when saving.
 						$context['preset_infractions'][$infraction]['infraction_msg'] = $tpl[$lang];
 						$found = true;
 						break;
