@@ -1467,7 +1467,7 @@ class wess_prefixes extends wess
 		{
 			if ($ie && $v < 11)
 				return '';
-			if ($ie || ($chrome && $v >= 16) || ($ios && $ov >= 6) || ($safari && $v >= 6) || ($firefox && $v >= 15))
+			if ($ie || $chrome || ($ios && $ov >= 6) || ($safari && $v >= 6) || ($firefox && $v >= 15))
 				return $unchanged;
 			return $prefixed;
 		}
@@ -1551,7 +1551,7 @@ class wess_prefixes extends wess
 		{
 			if (($ie && $v >= 10) || ($firefox && $v >= 16))
 				return $unchanged;
-			if (($firefox && $v >= 10) || ($chrome && $v >= 12) || $webkit)
+			if (($firefox && $v >= 15) || $chrome || $webkit)
 				return $prefixed;
 			return '';
 		}

@@ -331,10 +331,10 @@ class we
 				$request = wesql::query('
 					SELECT id_list, list_type, name
 					FROM {db_prefix}contact_lists
-					WHERE id_owner = {int:user}
+					WHERE id_owner = {int:me}
 					ORDER BY position, id_list',
 					array(
-						'user' => $id_member,
+						'me' => $id_member,
 					)
 				);
 				while ($row = wesql::fetch_assoc($request))
@@ -363,16 +363,16 @@ class we
 				$request = wesql::query('
 					SELECT id_list, id_owner, list_type
 					FROM {db_prefix}contacts
-					WHERE id_member = {int:user}',
+					WHERE id_member = {int:me}',
 					array(
-						'user' => $id_member,
+						'me' => $id_member,
 					)
 				);
 				$restrict = array();
-				$in_lists = $temp['lists'];
+				$in_lists = array_combine(array_keys($temp['lists']), array_fill(0, count($temp['lists']), $id_member));
 				while ($row = wesql::fetch_assoc($request))
 				{
-					if ($row['list_type'] == 'restrict')
+					if ($row['list_type'] === 'restrict')
 						$restrict[$row['id_owner']] = $row['id_owner'];
 					else
 						$in_lists[$row['id_list']] = $row['id_owner'];

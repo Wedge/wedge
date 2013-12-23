@@ -382,6 +382,7 @@ function Welcome()
 
 	$incontext['page_title'] = $txt['install_welcome'];
 	$incontext['block'] = 'welcome_message';
+	$incontext['continue'] = 1;
 
 	// Done the submission?
 	if (isset($_POST['contbutt']))
@@ -398,13 +399,13 @@ function Welcome()
 	{
 		$probably_installed = 0;
 		$test_set = @file_get_contents(dirname(__FILE__) . '/Settings.php');
-		if (preg_match('~^\$db_passwd\s=\s\'[^\']+\';$~m', $test_set))
+		if (preg_match('~^\$db_passwd\s=\s\'[^\']+\';~m', $test_set))
 			$probably_installed++;
-		if (preg_match('~^\$boardurl\s=\s\'(?:[^\'h]|h(?!ttp://127\.0\.0\.1/wedge))+\';$~m', $test_set))
+		if (preg_match('~^\$boardurl\s=\s\'(?:[^\'h]|h(?!ttp://127\.0\.0\.1/wedge))+\';~m', $test_set))
 			$probably_installed++;
 
 		if ($probably_installed)
-			$incontext['warning'] = $txt['error_already_installed'];
+			$incontext['error'] = $txt['error_already_installed'];
 	}
 
 	// Is some database support even compiled in?
@@ -822,6 +823,7 @@ function ForumSettings()
 
 	$incontext['block'] = 'forum_settings';
 	$incontext['page_title'] = $txt['install_settings'];
+	$incontext['continue'] = 1;
 
 	// What host and port are we on?
 	$host = empty($_SERVER['HTTP_HOST']) ? $_SERVER['SERVER_NAME'] . (empty($_SERVER['SERVER_PORT']) || $_SERVER['SERVER_PORT'] == '80' ? '' : ':' . $_SERVER['SERVER_PORT']) : $_SERVER['HTTP_HOST'];
@@ -831,8 +833,6 @@ function ForumSettings()
 
 	// Check if the database sessions will even work.
 	$incontext['test_dbsession'] = ini_get('session.auto_start') != 1;
-
-	$incontext['continue'] = 1;
 
 	// Submitting?
 	if (isset($_POST['boardurl']))
@@ -890,36 +890,21 @@ function DatabasePopulation()
 	load_database();
 
 	// Before running any of the queries, let's make sure another version isn't already installed.
+	// SMF allows 'refreshes' of the database, but Wedge will handle these by itself, so no need
+	// to continue past this point.
 	$result = wesql::query('
 		SELECT variable, value
 		FROM {db_prefix}settings',
-		array(
-			'db_error_skip' => true,
-		)
+		array('db_error_skip' => true)
 	);
-	$settings = array();
 	if ($result !== false)
 	{
-		while ($row = wesql::fetch_assoc($result))
-			$settings[$row['variable']] = $row['value'];
-		wesql::free_result($result);
-
-		// Do they match? If so, this is just a refresh so charge on!
-		// !!! @todo: This won't work anyway -- the upgrader. Remove this code.
-		if (!isset($settings['weVersion']) || $settings['weVersion'] != WEDGE_VERSION)
-		{
-			$incontext['error'] = $txt['error_versions_do_not_match'];
-			return false;
-		}
+		$incontext['error'] = $txt['error_already_installed'];
+		return false;
 	}
 
 	// We're doing UTF8, select it.
-	wesql::query('
-		SET NAMES utf8',
-		array(
-			'db_error_skip' => true,
-		)
-	);
+	wesql::query('SET NAMES utf8', array('db_error_skip' => true));
 
 	$replaces = array(
 		'{$db_prefix}' => $db_prefix,
@@ -929,7 +914,6 @@ function DatabasePopulation()
 		'{$enableCompressedOutput}' => isset($_POST['compress']) ? '1' : '0',
 		'{$enableCompressedData}' => isset($_POST['compress']) && isset($_SERVER['SERVER_SOFTWARE']) && strpos($_SERVER['SERVER_SOFTWARE'], 'Apache') !== false ? '1' : '0',
 		'{$databaseSession_enable}' => isset($_POST['dbsession']) ? '1' : '0',
-		'{$wedge_version}' => WEDGE_VERSION,
 		'{$current_time}' => time(),
 		'{$sched_task_offset}' => 82800 + mt_rand(0, 86399),
 		'{$language}' => substr($_SESSION['installer_temp_lang'], 8, -4),
@@ -1365,12 +1349,7 @@ function DeleteInstall()
 	if (!empty($incontext['account_existed']))
 		$incontext['warning'] = $incontext['account_existed'];
 
-	wesql::query('
-		SET NAMES utf8',
-		array(
-			'db_error_skip' => true,
-		)
-	);
+	wesql::query('SET NAMES utf8', array('db_error_skip' => true));
 
 	// As track stats is by default enabled let's add some activity.
 	wesql::insert('ignore',
@@ -1404,12 +1383,8 @@ function DeleteInstall()
 
 		wesql::insert('replace',
 			'{db_prefix}sessions',
-			array(
-				'session_id' => 'string', 'last_update' => 'int', 'data' => 'string',
-			),
-			array(
-				session_id(), time(), 'USER_AGENT|s:' . strlen($_SERVER['HTTP_USER_AGENT']) . ':"' . $_SERVER['HTTP_USER_AGENT'] . '";admin_time|i:' . time() . ';',
-			)
+			array('session_id' => 'string', 'last_update' => 'int', 'data' => 'string'),
+			array(session_id(), time(), 'USER_AGENT|s:' . strlen($_SERVER['HTTP_USER_AGENT']) . ':"' . $_SERVER['HTTP_USER_AGENT'] . '";admin_time|i:' . time() . ';')
 		);
 	}
 
@@ -1417,9 +1392,7 @@ function DeleteInstall()
 	$request = wesql::query('
 		SELECT variable, value
 		FROM {db_prefix}settings',
-		array(
-			'db_error_skip' => true,
-		)
+		array('db_error_skip' => true)
 	);
 	// Only proceed if we can load the data.
 	if ($request)
@@ -1932,20 +1905,14 @@ function fixModSecurity()
 			return true;
 	}
 	elseif (file_exists(dirname(__FILE__) . '/.htaccess'))
-		return strpos(implode('', file(dirname(__FILE__) . '/.htaccess')), '<IfModule mod_security.c>') !== false;
-	elseif (is_writable(dirname(__FILE__)))
+		return strpos(@file_get_contents(dirname(__FILE__) . '/.htaccess'), '<IfModule mod_security.c>') !== false;
+	elseif (is_writable(dirname(__FILE__)) && ($ht_handle = fopen(dirname(__FILE__) . '/.htaccess', 'w')))
 	{
-		if ($ht_handle = fopen(dirname(__FILE__) . '/.htaccess', 'w'))
-		{
-			fwrite($ht_handle, $htaccess_addition);
-			fclose($ht_handle);
-			return true;
-		}
-		else
-			return false;
+		fwrite($ht_handle, $htaccess_addition);
+		fclose($ht_handle);
+		return true;
 	}
-	else
-		return false;
+	return false;
 }
 
 function template_install_above()
@@ -1959,13 +1926,17 @@ function template_install_above()
 	$cssdir = $boarddir . '/css';
 	$jsdir = $boarddir . '/js';
 	$sourcedir = $boarddir . '/Sources';
-	require_once($sourcedir . '/Load.php');
+	$scripturl = $boarddir . '/index.php';
 	// !!! Dunno if we need to load all of these. Better safe than sorry.
-	loadSource(array(
-		'QueryString', 'Subs',
-		'Errors', 'Security', 'Subs-Auth',
-		'Class-String', 'Class-System',
-	));
+	require_once($scripturl);
+	require_once($sourcedir . '/Load.php');
+	require_once($sourcedir . '/Subs-Auth.php');
+	require_once($sourcedir . '/Class-String.php');
+	require_once($sourcedir . '/Class-System.php');
+	require_once($sourcedir . '/QueryString.php');
+	require_once($sourcedir . '/Subs.php');
+	require_once($sourcedir . '/Errors.php');
+	require_once($sourcedir . '/Security.php');
 	westr::getInstance();
 	we::getInstance(false);
 
@@ -1974,10 +1945,25 @@ function template_install_above()
 	$boardurl = 'http' . (!empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) != 'off' ? 's' : '') . '://' . $host;
 	$boardurl .= substr($_SERVER['REQUEST_URI'], 0, strrpos($_SERVER['REQUEST_URI'], '/'));
 
-	define('TEMPLATES_DIR', $settings['theme_dir'] = $boarddir . '/Themes/default');
-	define('TEMPLATES', $settings['theme_url'] = $boardurl . '/Themes/default');
-	define('IMAGES', $boardurl . '/Themes/default/images');
-	define('ASSETS', $boardurl . '/Themes/default/images');
+	$settings['theme_dir'] = $boarddir . '/Themes/default';
+	$settings['theme_url'] = $boardurl . '/Themes/default';
+
+	// Define our constants. (cf. QueryString.php)
+	define('ROOT', $boardurl);
+	define('SCRIPT', $scripturl);
+	define('ROOT_DIR', $boarddir);
+	define('TEMPLATES', $settings['theme_url']);			// !! Temporary.
+	define('TEMPLATES_DIR', $settings['theme_dir']);		// !! Temporary.
+	define('SKINS', TEMPLATES . '/skins');					// !! Temporary.
+	define('SKINS_DIR', TEMPLATES_DIR . '/skins');			// !! Temporary.
+	define('LANGUAGES', TEMPLATES . '/languages');			// !! Temporary.
+	define('LANGUAGES_DIR', TEMPLATES_DIR . '/languages');	// !! Temporary.
+	define('ASSETS', TEMPLATES . '/images');				// !! Temporary
+	define('ASSETS_DIR', TEMPLATES_DIR . '/images');		// !! Temporary
+
+	if (empty($incontext['enable_update_settings'])) // Last step also defines MID, so avoid that...
+		define('MID', we::$id = 0);
+
 	$context['css_folders'] = array('skins');
 	$settings['minify'] = 'packer';
 
@@ -2041,7 +2027,7 @@ function template_install_below()
 {
 	global $incontext, $txt;
 
-	if (!empty($incontext['continue']) || !empty($incontext['skip']))
+	if ((!empty($incontext['continue']) && empty($incontext['error'])) || !empty($incontext['skip']))
 	{
 		echo '
 		<div class="right" style="margin: 1ex">';
@@ -2105,7 +2091,7 @@ function template_welcome_message()
 		<div id="version_warning">
 			<div style="float: left; width: 2ex; font-size: 2em; color: red">!!</div>
 			<strong style="text-decoration: underline">', $txt['error_warning_notice'], '</strong><br>
-			<div style="padding-left: 6ex">
+			<div style="padding-left: 6ex; padding-top: 2ex">
 				', sprintf($txt['error_script_outdated'], '<em id="wedgeVersion" style="white-space: nowrap">??</em>', '<em id="yourVersion" style="white-space: nowrap">' . WEDGE_VERSION . '</em>'), '
 			</div>
 		</div>';
@@ -2117,10 +2103,6 @@ function template_welcome_message()
 
 	echo '
 		<div style="height: 100px"></div>';
-
-	// Say we want the continue button!
-	if (empty($incontext['error']))
-		$incontext['continue'] = 1;
 
 	// For the latest version stuff.
 	echo '
@@ -2146,7 +2128,7 @@ function template_warning_divs()
 		<div style="margin: 2ex; padding: 2ex; border: 2px dashed #cc3344; color: black; background-color: #ffe4e9">
 			<div style="float: left; width: 2ex; font-size: 2em; color: red">!!</div>
 			<strong style="text-decoration: underline">', $txt['upgrade_critical_error'], '</strong><br>
-			<div style="padding-left: 6ex">
+			<div style="padding-left: 6ex; padding-top: 2ex">
 				', $incontext['error'], '
 			</div>
 		</div>';
@@ -2156,7 +2138,7 @@ function template_warning_divs()
 		<div style="margin: 2ex; padding: 2ex; border: 2px dashed #cc3344; color: black; background-color: #ffe4e9">
 			<div style="float: left; width: 2ex; font-size: 2em; color: red">!!</div>
 			<strong style="text-decoration: underline">', $txt['upgrade_warning'], '</strong><br>
-			<div style="padding-left: 6ex">
+			<div style="padding-left: 6ex; padding-top: 2ex">
 				', $incontext['warning'], '
 			</div>
 		</div>';

@@ -87,33 +87,33 @@ function template_main()
 	{
 		echo '
 							<dt>
-								<label for="poll_max_votes">', $txt['poll_max_votes'], ':</label>
+								<label>
+									', $txt['poll_max_votes'], ':
+									<input name="poll_max_votes" id="poll_max_votes" size="2" value="', $context['poll']['max_votes'], '">
+								</label>
 							</dt>
-							<dd>
-								<input name="poll_max_votes" id="poll_max_votes" size="2" value="', $context['poll']['max_votes'], '">
-							</dd>
 							<dt>
-								<label for="poll_expire">', $txt['poll_run'], ':</label><br>
-								<em class="smalltext">', $txt['poll_run_limit'], '</em>
+								<label>
+									', $txt['poll_run'], ':
+									<input name="poll_expire" id="poll_expire" size="2" value="', $context['poll']['expiration'], '" onchange="this.form.poll_hide[2].disabled = $.trim(this.value) == 0; if (this.form.poll_hide[2].checked) this.form.poll_hide[1].checked = true;" maxlength="4"> ', $txt['days_word'], '
+									<br><em class="smalltext">', $txt['poll_run_limit'], '</em>
+								</label>
 							</dt>
-							<dd>
-								<input name="poll_expire" id="poll_expire" size="2" value="', $context['poll']['expiration'], '" onchange="this.form.poll_hide[2].disabled = $.trim(this.value) == 0; if (this.form.poll_hide[2].checked) this.form.poll_hide[1].checked = true;" maxlength="4"> ', $txt['days_word'], '
-							</dd>
 							<dt>
-								<label for="poll_change_vote">', $txt['poll_do_change_vote'], ':</label>
-							</dt>
-							<dd>
-								<input type="checkbox" id="poll_change_vote" name="poll_change_vote"', !empty($context['poll']['change_vote']) ? ' checked' : '', '>
-							</dd>';
+								<label>
+									<input type="checkbox" id="poll_change_vote" name="poll_change_vote"', !empty($context['poll']['change_vote']) ? ' checked' : '', '>
+									', $txt['poll_do_change_vote'], '
+								</label>
+							</dt>';
 
 		if ($context['poll']['guest_vote_allowed'])
 			echo '
 							<dt>
-								<label for="poll_guest_vote">', $txt['poll_guest_vote'], ':</label>
-							</dt>
-							<dd>
-								<input type="checkbox" id="poll_guest_vote" name="poll_guest_vote"', !empty($context['poll']['guest_vote']) ? ' checked' : '', '>
-							</dd>';
+								<label>
+									<input type="checkbox" id="poll_guest_vote" name="poll_guest_vote"', !empty($context['poll']['guest_vote']) ? ' checked' : '', '>
+									', $txt['poll_guest_vote'], '
+								</label>
+							</dt>';
 	}
 
 	echo '
