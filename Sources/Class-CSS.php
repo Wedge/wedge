@@ -737,16 +737,6 @@ class wess_nesting extends wess
 		return strlen($b[0]) - strlen($a[0]);
 	}
 
-	private static function indentation($a)
-	{
-		return strlen($a[1]) . ':';
-	}
-
-	private static function protect_colons($a)
-	{
-		return str_replace(':', '#wedge-colon#', $a[0]);
-	}
-
 	function process(&$css)
 	{
 		/******************************************************************************
@@ -768,7 +758,7 @@ class wess_nesting extends wess
 				You must conform. It is my sworn duty to see that you do conform.
 			*/
 			$tree = preg_replace("~\n\s*\n~", "\n", $tree); // Delete blank lines
-			$tree = preg_replace_callback('~^(\h*)~m', 'wess_nesting::indentation', $tree);
+			$tree = preg_replace_callback('~^(\h*)~m', function ($a) { return strlen($a[1]) . ':'; }, $tree); // Count indentation levels
 			$branches = explode("\n", $tree);
 			$tree = $ex_string = '';
 			$level = 0;
@@ -840,7 +830,7 @@ class wess_nesting extends wess
 		*/
 		$tree = preg_replace('~^(@(?:import|charset)\h+[^{}\n]*);?$~mi', '<rule selector="$1"></rule>', $tree); // Transform single-line @rules into selectors
 		$tree = preg_replace('~^([!+>&#*@:.a-z0-9][^{};]*?\h*reset);~mi', '<rule selector="$1"></rule>', $tree); // Transform single-line resets into selectors
-		$tree = preg_replace_callback('~\burl\([^)]+\)~', 'wess_nesting::protect_colons', $tree); // Protect colons (:) inside URLs
+		$tree = preg_replace_callback('~\burl\([^)]+\)~', function ($a) { return str_replace(':', '#wedge-colon#', $a[0]); }, $tree); // Protect colons (:) inside URLs
 		$tree = preg_replace('~([a-z-, ]+)\h*:(?!//)\h*([^;}{' . ($css_syntax ? '' : '\n') . ']+?);*\h*(?=[\n}])~i', '<property name="$1" value="$2">', $tree); // Transform properties
 		$tree = preg_replace('~^([!+>&#*@:.a-z0-9](?:[^{\n]|(?=,)\n)*?)\s*{~mi', '<rule selector="$1">', $tree); // Transform selectors. Strings starting with a digit are only allowed because of keyframes.
 		$tree = preg_replace(array('~ {2,}~'), array(' '), $tree); // Remove extra spaces
@@ -1361,47 +1351,49 @@ class wess_math extends wess
 // The only exception is the gradient function, because it accepts a #aarrggbb value.
 class wess_rgba extends wess
 {
-	// Converts from a string (possibly rgba) value to a rgb string
-	private static function rgba2rgb($input)
-	{
-		global $alphamix;
-		static $cache = array();
-
-		if (isset($cache[$input[0]]))
-			return $cache[$input[0]];
-
-		$str = wess::string2color($input[2]);
-		if (empty($str))
-			return $cache[$input[0]] = 'red';
-		list ($r, $g, $b, $a) = $str[1] ? $str[1] : wess::hsl2rgb($str[2]['h'], $str[2]['s'], $str[2]['l'], $str[2]['a']);
-
-		if ($a == 1)
-			return $cache[$input[0]] = $input[1] . wess::rgb2hex($r, $g, $b);
-		if (!empty($input[1]))
-			return $cache[$input[0]] = $input[1] . '#' . sprintf('%02x%02x%02x%02x', round($a * 255), $r, $g, $b);
-
-		// We're going to assume the matte color is white, otherwise, well, too bad.
-		if (isset($alphamix) && !is_array($alphamix))
-		{
-			$rgb = wess::string2color($alphamix);
-			if (empty($rgb[1]) && !empty($rgb[2]))
-				$rgb[1] = hsl2rgb($rgb[2]['h'], $rgb[2]['s'], $rgb[2]['l'], $rgb[2]['a']);
-			$alphamix = $rgb[1];
-		}
-		elseif (!isset($alphamix))
-			$alphamix = array(255, 255, 255);
-
-		$ma = 1 - $a;
-		$r = $a * $r + $ma * $alphamix[0];
-		$g = $a * $g + $ma * $alphamix[1];
-		$b = $a * $b + $ma * $alphamix[2];
-
-		return $cache[$input[0]] = wess::rgb2hex($r, $g, $b);
-	}
-
 	function process(&$css)
 	{
-		$css = preg_replace_callback('~(colorstr=)' . (we::is('ie8down') ? '?' : '') . '((?:rgb|hsl)a?\([^()]*\))~i', 'wess_rgba::rgba2rgb', $css);
+		$css = preg_replace_callback(
+			'~(colorstr=)' . (we::is('ie8down') ? '?' : '') . '((?:rgb|hsl)a?\([^()]*\))~i',
+			function ($input)
+			{
+				// Converts from a string (possibly rgba) value to a rgb string
+				global $alphamix;
+				static $cache = array();
+
+				if (isset($cache[$input[0]]))
+					return $cache[$input[0]];
+
+				$str = wess::string2color($input[2]);
+				if (empty($str))
+					return $cache[$input[0]] = 'red';
+				list ($r, $g, $b, $a) = $str[1] ? $str[1] : wess::hsl2rgb($str[2]['h'], $str[2]['s'], $str[2]['l'], $str[2]['a']);
+
+				if ($a == 1)
+					return $cache[$input[0]] = $input[1] . wess::rgb2hex($r, $g, $b);
+				if (!empty($input[1]))
+					return $cache[$input[0]] = $input[1] . '#' . sprintf('%02x%02x%02x%02x', round($a * 255), $r, $g, $b);
+
+				// We're going to assume the matte color is white, otherwise, well, too bad.
+				if (isset($alphamix) && !is_array($alphamix))
+				{
+					$rgb = wess::string2color($alphamix);
+					if (empty($rgb[1]) && !empty($rgb[2]))
+						$rgb[1] = hsl2rgb($rgb[2]['h'], $rgb[2]['s'], $rgb[2]['l'], $rgb[2]['a']);
+					$alphamix = $rgb[1];
+				}
+				elseif (!isset($alphamix))
+					$alphamix = array(255, 255, 255);
+
+				$ma = 1 - $a;
+				$r = $a * $r + $ma * $alphamix[0];
+				$g = $a * $g + $ma * $alphamix[1];
+				$b = $a * $b + $ma * $alphamix[2];
+
+				return $cache[$input[0]] = wess::rgb2hex($r, $g, $b);
+			},
+			$css
+		);
 	}
 }
 
@@ -1416,17 +1408,6 @@ class wess_prefixes extends wess
 	public function __construct()
 	{
 		$this->prefix = we::is('opera') ? '-o-' : (we::is('webkit') ? '-webkit-' : (we::is('gecko') ? '-moz-' : (we::is('ie') ? '-ms-' : '')));
-	}
-
-	// This is a little trick to convert degrees between prefixed and unprefixed gradients. I even shared: http://tinyurl.com/pcnfk27
-	private static function degrees($a)
-	{
-		return $a[1] . (90 - $a[2]);
-	}
-
-	private static function radial($a)
-	{
-		return $a[2] . ($a[1] != '' ? ', ' . $a[1] : '');
 	}
 
 	/**
@@ -1583,11 +1564,12 @@ class wess_prefixes extends wess
 
 			$prefixed = preg_replace('~(?<=[\s:])([a-z][a-z-]+-gradient\h*\()~', $this->prefix . '$1', $unchanged);
 
+			// This is a little trick to convert degrees between prefixed and unprefixed gradients. I even shared: http://tinyurl.com/pcnfk27
 			if (strpos($prefixed, 'deg') !== false)
-				$prefixed = preg_replace_callback('~(gradient\h*\(\s*)(-?(?:\d+|\d*\.\d+))(?=deg\b)~', 'wess_prefixes::degrees', $prefixed);
+				$prefixed = preg_replace_callback('~(gradient\h*\(\s*)(-?(?:\d+|\d*\.\d+))(?=deg\b)~', function ($a) { return $a[1] . (90 - $a[2]); }, $prefixed);
 
 			if (strpos($prefixed, 'radial-gradient') !== false && $b['webkit']) // Pretty much Safari-specific...
-				$prefixed = preg_replace_callback('~(?<=radial-gradient\()([\sa-z-]+\s+)?at\s([^,]+)(?=,)~', 'wess_prefixes::radial', $prefixed);
+				$prefixed = preg_replace_callback('~(?<=radial-gradient\()([\sa-z-]+\s+)?at\s([^,]+)(?=,)~', function ($a) { return $a[2] . ($a[1] != '' ? ', ' . $a[1] : ''); }, $prefixed);
 
 			return $prefixed;
 		}

@@ -8,10 +8,6 @@
  * @author see contributors.txt
  */
 
-define('PRIVACY_DEFAULT', 0);
-define('PRIVACY_MEMBERS', 1);
-define('PRIVACY_AUTHOR', 99);
-
 class we
 {
 	static $ua, $browser, $os;		// User agent string (we::$ua) and subsequent browser array, and OS.

@@ -323,7 +323,7 @@ class westr extends westr_mb
 		$work = preg_replace('~(?:&[^&;]+;|<[^>]+>)~', chr(20), $string);
 
 		if (!$test_mb)
-			$strlen = self::$can_mb ? 'mb_strlen' : create_function('$str', 'return strlen(preg_replace(\'~.~us\', \'_\', $str));');
+			$strlen = self::$can_mb ? 'mb_strlen' : function ($str) { return strlen(preg_replace('~.~us', '_', $str)); };
 
 		$test_mb = true;
 

@@ -12,7 +12,7 @@
 if (defined('WEDGE'))
 	return;
 
-define('WEDGE', 'SSI');
+const WEDGE = 'SSI';
 
 // We're going to want a few globals... these are all set later.
 global $settings, $context, $sc, $topic, $board, $txt;
@@ -21,10 +21,13 @@ global $boardurl, $boarddir, $sourcedir, $webmaster_email, $cookiename;
 global $db_server, $db_connection, $db_name, $db_user, $db_prefix, $db_persist;
 global $db_error_send, $db_last_error, $ssi_db_user, $ssi_db_passwd, $db_passwd;
 
-// Remember the current configuration so it can be set back.
-$ssi_magic_quotes_runtime = function_exists('get_magic_quotes_gpc') && get_magic_quotes_runtime();
-if (function_exists('set_magic_quotes_runtime'))
+if (function_exists('set_magic_quotes_runtime') && version_compare('5.4.0', PHP_VERSION) > 0)
+{
+	// Remember the current configuration so it can be set back.
+	$ssi_magic_quotes_runtime = function_exists('get_magic_quotes_runtime') && @get_magic_quotes_runtime();
 	@set_magic_quotes_runtime(0);
+}
+
 $time_start = microtime(true);
 
 // Just being safe...
@@ -74,13 +77,10 @@ if (empty($settings['rand_seed']) || mt_rand(1, 250) == 42)
 	we_seed_generator();
 
 // Check on any hacking attempts.
-if (isset($_REQUEST['GLOBALS']) || isset($_COOKIE['GLOBALS']))
-	die('Hacking attempt...');
-elseif (isset($_REQUEST['ssi_theme']) && (int) $_REQUEST['ssi_theme'] == (int) $ssi_theme)
-	die('Hacking attempt...');
-elseif (isset($_COOKIE['ssi_theme']) && (int) $_COOKIE['ssi_theme'] == (int) $ssi_theme)
-	die('Hacking attempt...');
-if (isset($_REQUEST['context']))
+if (isset($_REQUEST['GLOBALS']) || isset($_COOKIE['GLOBALS'])
+|| (isset($_REQUEST['ssi_theme']) && (int) $_REQUEST['ssi_theme'] == (int) $ssi_theme)
+|| (isset($_COOKIE['ssi_theme']) && (int) $_COOKIE['ssi_theme'] == (int) $ssi_theme)
+|| (isset($_REQUEST['context'])))
 	die('Hacking attempt...');
 
 // Gzip output? Because it must be boolean and true, this can't be hacked.
@@ -173,7 +173,7 @@ elseif (basename($_SERVER['PHP_SELF']) == 'SSI.php')
 }
 
 error_reporting($ssi_error_reporting);
-if (function_exists('set_magic_quotes_runtime'))
+if (function_exists('set_magic_quotes_runtime') && isset($ssi_magic_quotes_runtime))
 	@set_magic_quotes_runtime($ssi_magic_quotes_runtime);
 
 return true;

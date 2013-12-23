@@ -1,11 +1,6 @@
 <?php
 /**
- * Welcome to Wedge. All forum access and actions go through this file.
- * You may add custom actions to to the $action_list array this way:
- *
- *	'my-action' => array('MyFile.php', 'MyFunction'),
- *
- * Then, the URL index.php?action=my-action will load call MyFile.php and call MyFunction().
+ * Welcome to Wedge.
  *
  * @package Wedge
  * @copyright 2010 René-Gilles Deberdt, wedge.org
@@ -16,14 +11,18 @@
 if (defined('WEDGE'))
 	return;
 
-define('WEDGE_VERSION', '0.1');
+const WEDGE_VERSION = '0.1';
 
 // Knock knock! We're entering through the front door.
-define('WEDGE', 1);
+const WEDGE = 1;
+const PRIVACY_DEFAULT = 0;
+const PRIVACY_MEMBERS = 1;
+const PRIVACY_AUTHOR = 99;
 
 // Get everything started up...
-if (function_exists('set_magic_quotes_runtime'))
+if (function_exists('set_magic_quotes_runtime') && version_compare('5.4.0', PHP_VERSION) > 0)
 	@set_magic_quotes_runtime(0);
+
 error_reporting(E_ALL | E_STRICT);
 $time_start = microtime(true);
 
@@ -56,9 +55,19 @@ loadDatabase();
 // Load the settings from the settings table, and perform operations like optimizing.
 loadSettings();
 
-// Here's the monstrous $action array - $action => array($file, [[$function], $plugin_id]).
-// If the function name is the same as the loadSource file name, e.g. Admin.php, to run Admin(), you can declare it as a string.
-// Only add $plugin_id if it's for a plugin, otherwise just have (one or) two items in the list.
+/*
+	I am the Gatekeeper. Are you the Keymaster?
+
+	Here's the monstrous $action array - $action => array($file, [[$function], $plugin_id]).
+	If the function name is the same as the loadSource file name, e.g. Admin.php, to run Admin(), you can declare it as a string.
+	Only add $plugin_id if it's for a plugin, otherwise just have (one or) two items in the list.
+
+	Add custom actions to to the $action_list array this way:
+
+	'my-action' => array('MyFile.php', 'MyFunction'),
+
+	Then, the URL index.php?action=my-action will load call MyFile.php and call MyFunction().
+*/
 $action_list = array(
 	'activate' =>		'Activate',
 	'admin' =>			'Admin',

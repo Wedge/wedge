@@ -9,8 +9,7 @@
  */
 
 define('WEDGE_VERSION', '0.1');
-define('REQUIRED_PHP_VERSION', '5.2.4');
-define('REQUIRED_PCRE_VERSION', '7.2');
+define('REQUIRED_PHP_VERSION', '5.3.0');
 define('REQUIRED_MYSQL_SERVER_VERSION', '5.0.3');
 define('REQUIRED_MYSQL_CLIENT_VERSION', '5.0.0');
 
@@ -391,8 +390,6 @@ function Welcome()
 	// Check the PHP version.
 	if (!function_exists('version_compare') || (version_compare(REQUIRED_PHP_VERSION, PHP_VERSION) > 0))
 		$incontext['warning'] = $txt['error_php_too_low'];
-	elseif (version_compare(REQUIRED_PCRE_VERSION, PCRE_VERSION) > 0) // PCRE_VERSION was introduced in PHP 5.2.4. Lucky.
-		$incontext['warning'] = $txt['error_pcre_too_low'];
 
 	// See if we think they have already installed it?
 	if (is_readable(dirname(__FILE__) . '/Settings.php'))
