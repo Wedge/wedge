@@ -572,7 +572,7 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 
 	// Get the list of tests that shall be done within the CSS files,
 	// and quickly run them to get relevant suffixes. MAGIC!
-	if (($add = cache_get_data($cachekey, 60000)) !== null)
+	if (($add = cache_get_data($cachekey, 'forever')) !== null)
 	{
 		$id = wedge_get_css_filename($add);
 
@@ -643,7 +643,7 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 
 	if (empty($final)) // Nothing loaded...?
 	{
-		cache_put_data($cachekey, '', 60000);
+		cache_put_data($cachekey, '', 'forever');
 		return false;
 	}
 
@@ -678,7 +678,7 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 	}
 
 	// Cache all tests.
-	cache_put_data($cachekey, implode('|', empty($add) ? $ids : $add), 60000);
+	cache_put_data($cachekey, implode('|', empty($add) ? $ids : $add), 'forever');
 
 	// And we've finally got our full, working filename...
 	$id = wedge_get_css_filename(isset($add) ? $add : array());
@@ -1261,7 +1261,6 @@ function theme_base_css()
 	$one_month_ago = time() - 30 * 24 * 3600;
 	if (empty($settings['last_cache_purge']) || $settings['last_cache_purge'] < $one_month_ago)
 	{
-		$search_extensions = array('.gz', '.css', '.js', '.cgz', '.jgz');
 		clean_cache('css', $one_month_ago);
 		updateSettings(array('last_cache_purge' => time()));
 	}
@@ -1683,7 +1682,7 @@ function clean_cache($extensions = 'php', $filter = '', $force_folder = '', $rem
  * - data, required, which is the content of the item to be cached
  * - expires, required, the timestamp at which the item should expire
  * - refresh_eval, optional, a string containing a piece of code to be evaluated that returns boolean as to whether some external factor may trigger a refresh
- * - post_retri_eval, optional, a string containing a piece of code to be evaluated after the data has been updated and cached
+ * - after_run, optional, a callback containing code to be run after the data has been updated and cached
  *
  * Refresh the cache if either:
  * - Caching is disabled.
@@ -1694,7 +1693,7 @@ function clean_cache($extensions = 'php', $filter = '', $force_folder = '', $rem
  */
 function cache_quick_get($key, $file, $function, $params, $level = 1)
 {
-	global $settings;
+	global $settings, $cache_block;
 
 	if (empty($settings['cache_enable']) || $settings['cache_enable'] < $level || !is_array($cache_block = cache_get_data($key, 3600)) || (!empty($cache_block['refresh_eval']) && eval($cache_block['refresh_eval'])) || (!empty($cache_block['expires']) && $cache_block['expires'] < time()))
 	{
@@ -1710,8 +1709,8 @@ function cache_quick_get($key, $file, $function, $params, $level = 1)
 	}
 
 	// Some cached data may need a freshening up after retrieval.
-	if (!empty($cache_block['post_retri_eval']))
-		eval($cache_block['post_retri_eval']);
+	if (!empty($cache_block['after_run']))
+		$cache_block['after_run']($params);
 
 	return $cache_block['data'];
 }
@@ -1741,6 +1740,8 @@ function cache_put_data($key, $val, $ttl = 120)
 
 	$st = microtime(true);
 	$key = cache_prepare_key($key, $val, 'put');
+	if ($ttl === 'forever')
+		$ttl = PHP_INT_MAX;
 
 	if ($val !== null)
 		$val = serialize($val);
@@ -1757,7 +1758,7 @@ function cache_put_data($key, $val, $ttl = 120)
 		if ($val === null)
 			apc_delete($key . 'wedge');
 		else
-			apc_store($key . 'wedge', $val, $ttl);
+			apc_store($key . 'wedge', $val, $ttl === PHP_INT_MAX ? 0 : $ttl);
 	}
 	elseif ($cache_type === 'zend' && function_exists('zend_shm_cache_store'))
 		zend_shm_cache_store('we::' . $key, $val, $ttl);
@@ -1777,7 +1778,7 @@ function cache_put_data($key, $val, $ttl = 120)
 			@unlink($cachedir . '/' . $key . '.php');
 		else
 		{
-			$cache_data = '<' . '?php if(defined(\'WEDGE\')&&$valid=time()<' . (time() + $ttl) . ')$val=\'' . addcslashes($val, '\\\'') . '\';';
+			$cache_data = '<' . '?php if(defined(\'WEDGE\')&&$valid=' . ($ttl === PHP_INT_MAX ? '1' : 'time()<' . (time() + $ttl)) . ')$val=\'' . addcslashes($val, '\\\'') . '\';';
 
 			// Check that the cache write was successful. If it fails due to low diskspace, remove the cache file.
 			if (file_put_contents($cachedir . '/' . $key . '.php', $cache_data, LOCK_EX) !== strlen($cache_data))
@@ -1795,7 +1796,7 @@ function cache_put_data($key, $val, $ttl = 120)
  * This function supports all of the same cache systems that {@link cache_put_data()} does, and with the same caveat that cache misses can occur so content should not be relied upon to exist.
  *
  * @param string $key A string denoting the identity of the key to be retrieved.
- * @param int $ttl The maximum age in seconds that the data can be; if more than the specified time to live, no data will be returned even if it is in cache.
+ * @param int $ttl Expiration date for the data, in seconds; after that delay, no data will be returned even if it is in cache.
  * @return mixed If retrieving from cache was not possible, null will be returned, otherwise the item will be unserialized and passed back.
  */
 function cache_get_data($key, $ttl = 120)
@@ -1807,6 +1808,8 @@ function cache_get_data($key, $ttl = 120)
 
 	$st = microtime(true);
 	$key = cache_prepare_key($key);
+	if ($ttl === 'forever')
+		$ttl = PHP_INT_MAX;
 
 	if (empty($cache_type))
 		cache_get_type();

@@ -666,6 +666,26 @@ class wesql
 		return mysqli_fetch_row($result);
 	}
 
+	public static function fetch_all($result)
+	{
+		if (function_exists('mysqli_fetch_all')) // mysqlnd enabled?
+			return (array) mysqli_fetch_all($result, MYSQLI_ASSOC);
+		$arr = array();
+		while ($row = mysqli_fetch_assoc($result))
+			$arr[] = $row;
+		return $arr;
+	}
+
+	public static function fetch_rows($result)
+	{
+		if (function_exists('mysqli_fetch_all'))
+			return (array) mysqli_fetch_all($result, MYSQLI_NUM);
+		$arr = array();
+		while ($row = mysqli_fetch_row($result))
+			$arr[] = $row;
+		return $arr;
+	}
+
 	public static function free_result($result)
 	{
 		return mysqli_free_result($result);

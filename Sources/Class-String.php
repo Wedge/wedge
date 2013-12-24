@@ -76,56 +76,55 @@ class westr_foundation
 	// Converts entities (&#224;) to their equivalent UTF-8 characters.
 	static function entity_to_utf8($string)
 	{
-		return preg_replace_callback('~&#(\d{2,8});~', 'westr_foundation::entity_to_utf8_process', $string);
+		return preg_replace_callback(
+			'~&#(\d{2,8});~',
+			function ($n)
+			{
+				if (is_array($n))
+					$n = $n[1];
+
+				if ($n < 128)
+					return chr($n);
+				elseif ($n < 2048)
+					return chr(192 | $n >> 6) . chr(128 | $n & 63);
+				elseif ($n < 65536)
+					return chr(224 | $n >> 12) . chr(128 | $n >> 6 & 63) . chr(128 | $n & 63);
+				return chr(240 | $n >> 18) . chr(128 | $n >> 12 & 63) . chr(128 | $n >> 6 & 63) . chr(128 | $n & 63);
+			},
+			$string
+		);
 	}
 
 	// Converts UTF-8 characters to their equivalent entities (&#224;).
 	static function utf8_to_entity($string)
 	{
-		return preg_replace_callback('~([\x80-\x{10FFFF}])~u', 'westr_foundation::utf8_to_entity_process', $string);
+		return preg_replace_callback(
+			'~([\x80-\x{10FFFF}])~u',
+			function ($c)
+			{
+				if (is_array($c))
+					$c = $c[1];
+
+				$len = strlen($c);
+				$cc = ord($c[0]);
+				if ($len === 1 && $cc < 128)
+					return $c;
+				elseif ($len === 2 && $cc >= 192 && $cc < 224)
+					return '&#' . ((($cc ^ 192) << 6) + (ord($c[1]) ^ 128)) . ';';
+				elseif ($len === 3 && $cc >= 224 && $cc < 240)
+					return '&#' . ((($cc ^ 224) << 12) + ((ord($c[1]) ^ 128) << 6) + (ord($c[2]) ^ 128)) . ';';
+				elseif ($len === 4 && $cc >= 240 && $cc < 248)
+					return '&#' . ((($cc ^ 240) << 18) + ((ord($c[1]) ^ 128) << 12) + ((ord($c[2]) ^ 128) << 6) + (ord($c[3]) ^ 128)) . ';';
+				return '';
+			},
+			$string
+		);
 	}
 
 	// Converts &#224; to \u00e0, for use in JavaScript notation. Gzip likes these, you know..?
 	static function entity_to_js_code($string)
 	{
-		return preg_replace_callback('~&#(\d+);~', 'westr_foundation::ucode', $string);
-	}
-
-	static function ucode($entstring)
-	{
-		return '\u' . str_pad(dechex($entstring[1]), 4, '0', STR_PAD_LEFT);
-	}
-
-	static function entity_to_utf8_process($n)
-	{
-		if (is_array($n))
-			$n = $n[1];
-
-		if ($n < 128)
-			return chr($n);
-		elseif ($n < 2048)
-			return chr(192 | $n >> 6) . chr(128 | $n & 63);
-		elseif ($n < 65536)
-			return chr(224 | $n >> 12) . chr(128 | $n >> 6 & 63) . chr(128 | $n & 63);
-		return chr(240 | $n >> 18) . chr(128 | $n >> 12 & 63) . chr(128 | $n >> 6 & 63) . chr(128 | $n & 63);
-	}
-
-	static function utf8_to_entity_process($c)
-	{
-		if (is_array($c))
-			$c = $c[1];
-
-		$len = strlen($c);
-		$cc = ord($c[0]);
-		if ($len === 1 && $cc < 128)
-			return $c;
-		elseif ($len === 2 && $cc >= 192 && $cc < 224)
-			return '&#' . ((($cc ^ 192) << 6) + (ord($c[1]) ^ 128)) . ';';
-		elseif ($len === 3 && $cc >= 224 && $cc < 240)
-			return '&#' . ((($cc ^ 224) << 12) + ((ord($c[1]) ^ 128) << 6) + (ord($c[2]) ^ 128)) . ';';
-		elseif ($len === 4 && $cc >= 240 && $cc < 248)
-			return '&#' . ((($cc ^ 240) << 18) + ((ord($c[1]) ^ 128) << 12) + ((ord($c[2]) ^ 128) << 6) + (ord($c[3]) ^ 128)) . ';';
-		return '';
+		return preg_replace_callback('~&#(\d+);~', function ($str) { return '\u' . str_pad(dechex($str[1]), 4, '0', STR_PAD_LEFT); }, $string);
 	}
 }
 

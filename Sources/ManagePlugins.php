@@ -1420,11 +1420,7 @@ function commitRemovePlugin($fullclean, &$manifest, &$remote_class)
 		)
 	);
 
-	updateSettings(
-		array(
-			'settings_updated' => time(),
-		)
-	);
+	updateSettings(array('settings_updated' => time()));
 
 	// Lastly, actually do the delete.
 	$result = deleteFiletree($remote_class, $pluginsdir . '/' . $_GET['plugin'], true);

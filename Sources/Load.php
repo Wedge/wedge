@@ -38,13 +38,11 @@ function loadSettings()
 	wesql::query('SET NAMES utf8');
 
 	// Try to load settings from the cache first; they'll never get cached if the setting is off.
-	if (($settings = cache_get_data('settings', 90)) == null)
+	if (($settings = cache_get_data('settings', 'forever')) == null)
 	{
 		$request = wesql::query('
 			SELECT variable, value
-			FROM {db_prefix}settings',
-			array(
-			)
+			FROM {db_prefix}settings'
 		);
 		$settings = array();
 		if (!$request)
@@ -69,7 +67,7 @@ function loadSettings()
 		$settings['pretty_filters'] = unserialize($settings['pretty_filters']);
 
 		if (!empty($settings['cache_enable']))
-			cache_put_data('settings', $settings, 90);
+			cache_put_data('settings', $settings, 'forever');
 	}
 
 	// Deal with loading plugins.
@@ -2431,11 +2429,14 @@ function importing_cleanup()
 
 	// No members left to convert..? No need to come back here, then.
 	if (count($users) == 0)
+	{
 		wesql::insert('replace',
 			'{db_prefix}settings',
 			array('variable' => 'string', 'value' => 'string'),
 			array('imported_cleaned', 1)
 		);
+		cache_put_data('settings', null, 'forever');
+	}
 	else
 		wesql::query('
 			UPDATE {db_prefix}members

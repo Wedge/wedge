@@ -2107,7 +2107,6 @@ CREATE TABLE {$db_prefix}settings (
 INSERT INTO {$db_prefix}settings
 	(variable, value)
 VALUES
-	('weVersion', '{$wedge_version}'),
 	('language', '{$language}'),
 	('theme_url', '{$boardurl}/Themes/default'),
 	('images_url', '{$boardurl}/Themes/default/images'),

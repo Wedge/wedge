@@ -187,16 +187,16 @@ function GroupList()
 					'value' => $txt['name'],
 				),
 				'data' => array(
-					'function' => create_function('$group', '
+					'function' => function ($group) {
 						global $context;
 
-						$output = \'<a href="<URL>?action=\' . $context[\'action\'] . (isset($context[\'admin_area\']) ? \';area=\' . $context[\'admin_area\'] : \'\') . \';sa=members;group=\' . $group[\'id\'] . \'" \' . ($group[\'color\'] ? \'style="color: \' . $group[\'color\'] . \'"\' : \'\') . \'>\' . $group[\'name\'] . \'</a>\';
+						$output = '<a href="<URL>?action=' . $context['action'] . (isset($context['admin_area']) ? ';area=' . $context['admin_area'] : '') . ';sa=members;group=' . $group['id'] . '" ' . ($group['color'] ? 'style="color: ' . $group['color'] . '"' : '') . '>' . $group['name'] . '</a>';
 
-						if ($group[\'desc\'])
-							$output .= \'<div class="smalltext">\' . $group[\'desc\'] . \'</div>\';
+						if ($group['desc'])
+							$output .= '<div class="smalltext">' . $group['desc'] . '</div>';
 
 						return $output;
-					'),
+					},
 					'style' => 'width: 50%;',
 				),
 			),
@@ -213,11 +213,11 @@ function GroupList()
 					'value' => $txt['moderators'],
 				),
 				'data' => array(
-					'function' => create_function('$group', '
+					'function' => function ($group) {
 						global $txt;
 
-						return empty($group[\'moderators\']) ? \'<em>\' . $txt[\'membergroups_new_copy_none\'] . \'</em>\' : implode(\', \', $group[\'moderators\']);
-					'),
+						return empty($group['moderators']) ? '<em>' . $txt['membergroups_new_copy_none'] . '</em>' : implode(', ', $group['moderators']);
+					},
 				),
 			),
 			'members' => array(
@@ -238,6 +238,8 @@ function GroupList()
 // Get the group information for the list.
 function list_getGroups($start, $items_per_page, $sort)
 {
+	global $context;
+
 	// Yep, find the groups...
 	$request = wesql::query('
 		SELECT mg.id_group, mg.group_name, mg.description, mg.group_type, mg.online_color, mg.hidden,

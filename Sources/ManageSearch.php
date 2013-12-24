@@ -517,11 +517,11 @@ function CreateMessageIndex()
 	{
 		wetem::load('create_index_done');
 
-		updateSettings(array('search_index' => 'custom', 'search_custom_index_config' => serialize($context['index_settings'])));
 		wesql::query('
 			DELETE FROM {db_prefix}settings
 			WHERE variable = {literal:search_custom_index_resume}'
 		);
+		updateSettings(array('search_index' => 'custom', 'search_custom_index_config' => serialize($context['index_settings'])));
 	}
 }
 

@@ -79,7 +79,7 @@ function createList($listOptions)
 	foreach ($listOptions['columns'] as $column_id => $column)
 		$list_context['headers'][] = array(
 			'id' => $column_id,
-			'label' => isset($column['header']['eval']) ? eval($column['header']['eval']) : (isset($column['header']['value']) ? $column['header']['value'] : ''),
+			'label' => isset($column['header']['value']) ? $column['header']['value'] : '',
 			'href' => empty($listOptions['default_sort_col']) || empty($column['sort']) ? '' : $listOptions['base_href'] . ';' . $request_var_sort . '=' . $column_id . ($column_id === $list_context['sort']['id'] && !$list_context['sort']['desc'] && isset($column['sort']['reverse']) ? ';' . $request_var_desc : '') . (empty($list_context['start']) ? '' : ';' . $list_context['start_var_name'] . '=' . $list_context['start']),
 			'sort_image' => empty($listOptions['default_sort_col']) || empty($column['sort']) || $column_id !== $list_context['sort']['id'] ? null : ($list_context['sort']['desc'] ? 'down' : 'up'),
 			'class' => isset($column['header']['class']) ? $column['header']['class'] : '',
@@ -127,10 +127,6 @@ function createList($listOptions)
 			// The most flexible way probably is applying a custom function.
 			elseif (isset($column['data']['function']))
 				$cur_data['value'] = $column['data']['function']($list_item);
-
-			// A modified value (inject the database values).
-			elseif (isset($column['data']['eval']))
-				$cur_data['value'] = eval(preg_replace('~%([a-zA-Z0-9_-]+)%~', '$list_item[\'$1\']', $column['data']['eval']));
 
 			// A nicely formatted number.
 			elseif (isset($column['data']['comma_format']))

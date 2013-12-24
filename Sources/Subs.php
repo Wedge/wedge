@@ -289,7 +289,7 @@ function updateMyData($data)
  * - The change_member_data hook where any of the common values are updated.
  * - {@link updateStats() is also called so that if we have updated post count, post count groups will also be managed automatically.
  * - This function should always be called for updating member data rather than updating the members table directly.
- * - All string data should have been processed with htmlspecialchars for security; no sanitisation is performed on the data.
+ * - All string data should have been processed with htmlspecialchars for security; no sanitization is performed on the data.
  *
  * @param mixed $members The member or members that are to be updated. null for all members, an integer for an individual user, or an array of integers for multiple users to be affected.
  * @param array $data A key/value pair array that contains the field to be updated and the new value. Additionally, if the field is known to be an integer (of which a list of known columns is stated), supplying a value of + or - will allow the column to be incremented or decremented without explicitly specifying the new value.
@@ -468,7 +468,7 @@ function updateSettings($changeArray, $update = false)
 		}
 
 		// Clean out the cache and make sure the cobwebs are gone too.
-		cache_put_data('settings', null, 90);
+		cache_put_data('settings', null, 'forever');
 
 		return;
 	}
@@ -498,8 +498,8 @@ function updateSettings($changeArray, $update = false)
 		$replaceArray
 	);
 
-	// Kill the cache - it needs redoing now, but we won't bother ourselves with that here.
-	cache_put_data('settings', null, 90);
+	// Kill the cache.
+	cache_put_data('settings', null, 'forever');
 }
 
 /**
@@ -1457,7 +1457,7 @@ function getRePrefix()
 {
 	global $context, $settings, $txt;
 
-	if (!isset($context['response_prefix']) && !($context['response_prefix'] = cache_get_data('response_prefix', 600)))
+	if (!isset($context['response_prefix']) && ($context['response_prefix'] = cache_get_data('response_prefix', 600)) === null)
 	{
 		if ($settings['language'] === we::$user['language'])
 			$context['response_prefix'] = $txt['response_prefix'];

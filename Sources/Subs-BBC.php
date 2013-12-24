@@ -1161,7 +1161,7 @@ function parsesmileys(&$message)
 		else
 		{
 			// Load the smileys in reverse order by length so they don't get parsed wrong.
-			if (($temp = cache_get_data('smiley_parser', 480)) === null || !isset($temp[2]) || !is_array($temp[2]))
+			if (($temp = cache_get_data('smiley_parser', 'forever')) === null || !isset($temp[2]) || !is_array($temp[2]))
 			{
 				$result = wesql::query('
 					SELECT code, filename, hidden
@@ -1181,7 +1181,7 @@ function parsesmileys(&$message)
 				}
 				wesql::free_result($result);
 
-				cache_put_data('smiley_parser', array($smileysfrom, $smileysto, $smileysdiv), 480);
+				cache_put_data('smiley_parser', array($smileysfrom, $smileysto, $smileysdiv), 'forever');
 			}
 			else
 				list ($smileysfrom, $smileysto, $smileysdiv) = $temp;

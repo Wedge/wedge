@@ -1124,9 +1124,7 @@ function list_getSmileys($start, $items_per_page, $sort)
 	$request = wesql::query('
 		SELECT id_smiley, code, filename, description, smiley_row, smiley_order, hidden
 		FROM {db_prefix}smileys
-		ORDER BY ' . $sort,
-		array(
-		)
+		ORDER BY ' . $sort
 	);
 	$smileys = array();
 	while ($row = wesql::fetch_assoc($request))
@@ -1138,12 +1136,7 @@ function list_getSmileys($start, $items_per_page, $sort)
 
 function list_getNumSmileys()
 {
-	$request = wesql::query('
-		SELECT COUNT(*)
-		FROM {db_prefix}smileys',
-		array(
-		)
-	);
+	$request = wesql::query('SELECT COUNT(*) FROM {db_prefix}smileys');
 	list ($numSmileys) = wesql::fetch_row($request);
 	wesql::free_result($request);
 
@@ -1218,8 +1211,6 @@ function EditSmileyOrder()
 				'current_smiley' => $_GET['source'],
 			)
 		);
-
-		cleanSmileyCache();
 	}
 
 	$request = wesql::query('
@@ -1302,6 +1293,8 @@ function EditSmileyOrder()
 					);
 		}
 	}
+
+	cleanSmileyCache();
 }
 
 function InstallSmileySet()
@@ -1679,9 +1672,7 @@ function sortSmileyTable()
 	// Set the contents of this column.
 	wesql::query('
 		UPDATE {db_prefix}smileys
-		SET temp_order = LENGTH(code)',
-		array(
-		)
+		SET temp_order = LENGTH(code)'
 	);
 
 	// Order the table by this column.
@@ -1695,12 +1686,14 @@ function sortSmileyTable()
 
 	// Remove the sorting column.
 	wedbPackages::remove_column('{db_prefix}smileys', 'temp_order');
+	cleanSmileyCache(false);
 }
 
 // A helper function to easily wipe out the smiley cache, both in the file cache and in the CSS cache.
-function cleanSmileyCache()
+function cleanSmileyCache($clean_cache = true)
 {
-	cache_put_data('smiley_parser', null, 480);
-	cache_put_data('smiley_poster', null, 480);
-	clean_cache('css', 'smileys');
+	cache_put_data('smiley_parser', null, 'forever');
+	cache_put_data('smiley_poster', null, 'forever');
+	if ($clean_cache)
+		clean_cache('css', 'smileys');
 }

@@ -1734,15 +1734,13 @@ class wedit
 		}
 		elseif (we::$user['smiley_set'] != 'none')
 		{
-			if (($temp = cache_get_data('smiley_poster', 480)) == null)
+			if (($temp = cache_get_data('smiley_poster', 'forever')) == null)
 			{
 				$request = wesql::query('
 					SELECT code, filename, description, smiley_row, hidden
 					FROM {db_prefix}smileys
 					WHERE hidden IN (0, 2)
-					ORDER BY smiley_row, smiley_order',
-					array(
-					)
+					ORDER BY smiley_row, smiley_order'
 				);
 				while ($row = wesql::fetch_assoc($request))
 				{
@@ -1762,7 +1760,7 @@ class wedit
 						$this->smileys[$section][count($smileyRows) - 1]['isLast'] = true;
 				}
 
-				cache_put_data('smiley_poster', $this->smileys, 480);
+				cache_put_data('smiley_poster', $this->smileys, 'forever');
 			}
 			else
 				$this->smileys = $temp;

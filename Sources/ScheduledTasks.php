@@ -856,6 +856,8 @@ function ReduceMailQueue($number = false, $override_limit = false, $force_send =
 		if (wesql::affected_rows() == 0)
 			return false;
 		$settings['mail_next_send'] = time() + $delay;
+
+		cache_put_data('settings', null, 'forever');
 	}
 
 	// If we're not overriding how many are we allow to send?
@@ -949,6 +951,8 @@ function ReduceMailQueue($number = false, $override_limit = false, $force_send =
 				'last_mail_send' => $settings['mail_next_send'],
 			)
 		);
+
+		cache_put_data('settings', null, 'forever');
 	}
 
 	if (empty($ids))
@@ -1008,6 +1012,8 @@ function ReduceMailQueue($number = false, $override_limit = false, $force_send =
 					'last_send' => $settings['mail_next_send'],
 			));
 
+		cache_put_data('settings', null, 'forever');
+
 		// Add our email back to the queue, manually.
 		wesql::insert('',
 			'{db_prefix}mail_queue',
@@ -1019,6 +1025,7 @@ function ReduceMailQueue($number = false, $override_limit = false, $force_send =
 	}
 	// We where unable to send the email, clear our failed attempts.
 	elseif (!empty($settings['mail_failed_attempts']))
+	{
 		wesql::query('
 			UPDATE {db_prefix}settings
 			SET value = {string:zero}
@@ -1026,6 +1033,9 @@ function ReduceMailQueue($number = false, $override_limit = false, $force_send =
 			array(
 				'zero' => '0',
 		));
+
+		cache_put_data('settings', null, 'forever');
+	}
 
 	// Had something to send...
 	return true;
@@ -1271,7 +1281,9 @@ function scheduled_weekly_maintenance()
 		)
 	);
 
-	// Ok should we prune the logs?
+	cache_put_data('settings', null, 'forever');
+
+	// OK, should we prune the logs?
 	if (!empty($settings['pruningOptions']))
 	{
 		if (!empty($settings['pruningOptions']) && strpos($settings['pruningOptions'], ',') !== false)

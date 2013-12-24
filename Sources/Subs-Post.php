@@ -334,6 +334,7 @@ function AddMailQueue($flush = false, $to_array = array(), $subject = '', $messa
 				'no_outstanding' => '0',
 			)
 		);
+		cache_put_data('settings', null, 'forever');
 
 		return true;
 	}

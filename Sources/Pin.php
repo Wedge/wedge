@@ -156,7 +156,6 @@ function OrderPin()
 		);
 
 		// So we're displaying the list of topics. Suppose we'd better get everything ready.
-		$context['pinned_topics'] = array();
 		$request = wesql::query('
 			SELECT t.id_topic, t.is_pinned, mf.subject, ml.poster_time, mf.id_member AS starter_id, IFNULL(memf.real_name, mf.poster_name) AS starter_name,
 				ml.id_member AS updated_id, IFNULL(meml.real_name, ml.poster_name) AS updated_name
@@ -172,9 +171,8 @@ function OrderPin()
 				'board' => $board,
 			)
 		);
-		while ($row = wesql::fetch_assoc($request))
-			$context['pinned_topics'][] = $row;
-		wesql::fetch_assoc($request);
+		$context['pinned_topics'] = wesql::fetch_all($request);
+		wesql::free_result($request);
 
 		if (empty($context['pinned_topics']))
 			fatal_lang_error('no_pinned_order', false);
