@@ -1059,9 +1059,9 @@ function ViewWatchedUsers()
 					'value' => $txt['mc_warned_users_points'],
 				),
 				'data' => array(
-					'function' => create_function('$member', '
-						return allowedTo(\'issue_warning\') ? \'<a href="<URL>?action=profile;u=\' . $member[\'id\'] . \';area=infractions">\' . $member[\'warning\'] . \'</a>\' : $member[\'warning\'];
-					'),
+					'function' => function ($member) {
+						return allowedTo('issue_warning') ? '<a href="<URL>?action=profile;u=' . $member['id'] . ';area=infractions">' . $member['warning'] . '</a>' : $member['warning'];
+					},
 				),
 				'sort' => array(
 					'default' => 'warning',
@@ -1103,12 +1103,12 @@ function ViewWatchedUsers()
 					'value' => $txt['mc_warned_users_last_post'],
 				),
 				'data' => array(
-					'function' => create_function('$member', '
-						if ($member[\'last_post_id\'])
-							return \'<a href="<URL>?msg=\' . $member[\'last_post_id\'] . \'">\' . $member[\'last_post\'] . \'</a>\';
+					'function' => function ($member) {
+						if ($member['last_post_id'])
+							return '<a href="<URL>?msg=' . $member['last_post_id'] . '">' . $member['last_post'] . '</a>';
 						else
-							return $member[\'last_post\'];
-					'),
+							return $member['last_post'];
+					},
 				),
 			),
 		),
@@ -1137,9 +1137,9 @@ function ViewWatchedUsers()
 		$listOptions['columns'] = array(
 			'posts' => array(
 				'data' => array(
-					'function' => create_function('$post', '
+					'function' => function ($post) {
 						return template_user_watch_post_callback($post);
-					'),
+					},
 				),
 			),
 		);

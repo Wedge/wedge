@@ -179,10 +179,10 @@ function Dlattach()
 	}
 
 	// Set up sending the file with its headers. The filename should be in UTF-8 but of course, browsers don't always expect that...
-	$fixchar = create_function('$matches', '
+	$fixchar = function ($matches) {
 		$n = $matches[1];
 		if ($n < 32)
-			return \'\';
+			return '';
 		elseif ($n < 128)
 			return chr($n);
 		elseif ($n < 2048)
@@ -190,7 +190,8 @@ function Dlattach()
 		elseif ($n < 65536)
 			return chr(224 | $n >> 12) . chr(128 | $n >> 6 & 63) . chr(128 | $n & 63);
 		else
-			return chr(240 | $n >> 18) . chr(128 | $n >> 12 & 63) . chr(128 | $n >> 6 & 63) . chr(128 | $n & 63);');
+			return chr(240 | $n >> 18) . chr(128 | $n >> 12 & 63) . chr(128 | $n >> 6 & 63) . chr(128 | $n & 63);
+	};
 
 	$disposition = !isset($_REQUEST['image']) ? 'attachment' : 'inline';
 
@@ -218,11 +219,11 @@ function Dlattach()
 	if (!empty($settings['attachmentRecodeLineEndings']) && !isset($_REQUEST['image']) && in_array($file_ext, array('txt', 'css', 'htm', 'html', 'php', 'xml')))
 	{
 		if (strpos($_SERVER['HTTP_USER_AGENT'], 'Windows') !== false)
-			$callback = create_function('$buffer', 'return preg_replace(\'~[\r]?\n~\', "\r\n", $buffer);');
+			$callback = function ($buffer) { return preg_replace('~[\r]?\n~', "\r\n", $buffer); };
 		elseif (strpos($_SERVER['HTTP_USER_AGENT'], 'Mac') !== false)
-			$callback = create_function('$buffer', 'return preg_replace(\'~[\r]?\n~\', "\r", $buffer);');
+			$callback = function ($buffer) { return preg_replace('~[\r]?\n~', "\r", $buffer); };
 		else
-			$callback = create_function('$buffer', 'return preg_replace(\'~[\r]?\n~\', "\n", $buffer);');
+			$callback = function ($buffer) { return preg_replace('~[\r]?\n~', "\n", $buffer); };
 	}
 
 	// Since we don't do output compression for files this large...

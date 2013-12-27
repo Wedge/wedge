@@ -70,12 +70,12 @@ function ManageSearchEngineSettings($return_config = false)
 	$javascript_function = '
 		function disableFields()
 		{
-			disabledState = $(\'#spider_mode\').val() == 0;';
+			disabledState = $("#spider_mode").val() == 0;';
 
 	foreach ($config_vars as $variable)
 		if ($variable[1] != 'spider_mode')
 			$javascript_function .= '
-			$(\'#' . $variable[1] . '\').prop(\'disabled\', disabledState);';
+			$("#' . $variable[1] . '").prop("disabled", disabledState);';
 
 	$javascript_function .= '
 		}
@@ -210,9 +210,9 @@ function ViewSpiders()
 					'value' => $txt['spider_name'],
 				),
 				'data' => array(
-					'function' => create_function('$rowData', '
-						return sprintf(\'<a href="<URL>?action=admin;area=sengines;sa=editspiders;sid=%1$d">%2$s</a>\', $rowData[\'id_spider\'], htmlspecialchars($rowData[\'spider_name\']));
-					'),
+					'function' => function ($rowData) {
+						return sprintf('<a href="<URL>?action=admin;area=sengines;sa=editspiders;sid=%1$d">%2$s</a>', $rowData['id_spider'], htmlspecialchars($rowData['spider_name']));
+					},
 				),
 				'sort' => array(
 					'default' => 'spider_name',
@@ -224,11 +224,11 @@ function ViewSpiders()
 					'value' => $txt['spider_last_seen'],
 				),
 				'data' => array(
-					'function' => create_function('$rowData', '
+					'function' => function ($rowData) {
 						global $context, $txt;
 
-						return isset($context[\'spider_last_seen\'][$rowData[\'id_spider\']]) ? timeformat($context[\'spider_last_seen\'][$rowData[\'id_spider\']]) : $txt[\'spider_last_never\'];
-					'),
+						return isset($context['spider_last_seen'][$rowData['id_spider']]) ? timeformat($context['spider_last_seen'][$rowData['id_spider']]) : $txt['spider_last_never'];
+					},
 				),
 			),
 			'user_agent' => array(
@@ -668,9 +668,9 @@ function SpiderLog()
 					'value' => $txt['spider_time'],
 				),
 				'data' => array(
-					'function' => create_function('$rowData', '
-						return timeformat($rowData[\'log_time\']);
-					'),
+					'function' => function ($rowData) {
+						return timeformat($rowData['log_time']);
+					},
 				),
 				'sort' => array(
 					'default' => 'sl.id_hit DESC',

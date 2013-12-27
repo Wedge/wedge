@@ -27,10 +27,6 @@ $db = array(
 	'default_password' => 'mysql.default_password',
 	'default_host' => 'mysql.default_host',
 	'default_port' => 'mysql.default_port',
-	'validate_prefix' => create_function('&$value', '
-		$value = preg_replace(\'~[^A-Za-z0-9_\$]~\', \'\', $value);
-		return true;
-	'),
 );
 
 // Initialize everything and load the language files.
@@ -692,14 +688,12 @@ function DatabaseSettings()
 	// Are we submitting?
 	if (isset($_POST['db_name']))
 	{
-		// What type are they trying?
-		$db_prefix = $_POST['db_prefix'];
 		// Validate the prefix.
-		$valid_prefix = $db['validate_prefix']($db_prefix);
+		$db_prefix = preg_replace('~[^A-Za-z0-9_$]~', '', $_POST['db_prefix']);
 
-		if ($valid_prefix !== true)
+		if (empty($db_prefix))
 		{
-			$incontext['error'] = $valid_prefix;
+			$incontext['error'] = $txt['error_db_prefix_invalid'];
 			return false;
 		}
 

@@ -518,11 +518,11 @@ function ShowCustomProfiles()
 					'value' => $txt['custom_edit_active'],
 				),
 				'data' => array(
-					'function' => create_function('$rowData', '
-						$isChecked = $rowData[\'disabled\'] ? \'\' : \' checked\';
-						$onClickHandler = $rowData[\'can_show_register\'] ? sprintf(\' onclick="document.getElementById(\\\'reg_%1$s\\\').disabled = !this.checked;"\', $rowData[\'id\']) : \'\';
-						return sprintf(\'<input type="checkbox" name="active[]" id="active_%1$s" value="%1$s"%2$s%3$s>\', $rowData[\'id\'], $isChecked, $onClickHandler);
-					'),
+					'function' => function ($rowData) {
+						$isChecked = $rowData[\'disabled'] ? '' : ' checked';
+						$onClickHandler = $rowData['can_show_register'] ? sprintf(' onclick="document.getElementById(\\\'reg_%1$s\\\').disabled = !this.checked;"', $rowData['id']) : '';
+						return sprintf('<input type="checkbox" name="active[]" id="active_%1$s" value="%1$s"%2$s%3$s>', $rowData['id'], $isChecked, $onClickHandler);
+					},
 					'style' => 'width: 20%; text-align: center;',
 				),
 			),
@@ -531,11 +531,11 @@ function ShowCustomProfiles()
 					'value' => $txt['custom_edit_registration'],
 				),
 				'data' => array(
-					'function' => create_function('$rowData', '
-						$isChecked = $rowData[\'on_register\'] && !$rowData[\'disabled\'] ? \' checked\' : \'\';
-						$isDisabled = $rowData[\'can_show_register\'] ? \'\' : \' disabled\';
-						return sprintf(\'<input type="checkbox" name="reg[]" id="reg_%1$s" value="%1$s"%2$s%3$s>\', $rowData[\'id\'], $isChecked, $isDisabled);
-					'),
+					'function' => function ($rowData) {
+						$isChecked = $rowData['on_register'] && !$rowData['disabled'] ? ' checked' : '';
+						$isDisabled = $rowData['can_show_register'] ? '' : ' disabled';
+						return sprintf('<input type="checkbox" name="reg[]" id="reg_%1$s" value="%1$s"%2$s%3$s>', $rowData['id'], $isChecked, $isDisabled);
+					},
 					'style' => 'width: 20%; text-align: center;',
 				),
 			),

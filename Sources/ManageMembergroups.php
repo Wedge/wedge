@@ -128,21 +128,21 @@ function MembergroupIndex()
 					'value' => $txt['membergroups_name'],
 				),
 				'data' => array(
-					'function' => create_function('$rowData', '
+					'function' => function ($rowData) {
 						// Since the moderator group has no explicit members, no link is needed.
-						if ($rowData[\'id_group\'] == 3)
-							$group_name = $rowData[\'group_name\'];
+						if ($rowData['id_group'] == 3)
+							$group_name = $rowData['group_name'];
 						else
-							$group_name = sprintf(\'<a href="<URL>?action=admin;area=membergroups;sa=members;group=%1$d" class="group%1$s">%2$s</a>\', $rowData[\'id_group\'], $rowData[\'group_name\']);
+							$group_name = sprintf('<a href="<URL>?action=admin;area=membergroups;sa=members;group=%1$d" class="group%1$s">%2$s</a>', $rowData['id_group'], $rowData['group_name']);
 
 						// Add a help option for moderator and administrator.
-						if ($rowData[\'id_group\'] == 1)
-							$group_name .= \' (<a href="<URL>?action=help;in=membergroup_administrator" onclick="return reqWin(this);">?</a>)\';
-						elseif ($rowData[\'id_group\'] == 3)
-							$group_name .= \' (<a href="<URL>?action=help;in=membergroup_moderator" onclick="return reqWin(this);">?</a>)\';
+						if ($rowData['id_group'] == 1)
+							$group_name .= ' (<a href="<URL>?action=help;in=membergroup_administrator" onclick="return reqWin(this);">?</a>)';
+						elseif ($rowData['id_group'] == 3)
+							$group_name .= ' (<a href="<URL>?action=help;in=membergroup_moderator" onclick="return reqWin(this);">?</a>)';
 
 						return $group_name;
-					'),
+					},
 				),
 				'sort' => array(
 					'default' => 'CASE WHEN id_group < 4 THEN id_group ELSE 4 END, group_name',
@@ -154,22 +154,22 @@ function MembergroupIndex()
 					'value' => $txt['membergroups_stars'],
 				),
 				'data' => array(
-					'function' => create_function('$rowData', '
+					'function' => function ($rowData) {
 						global $settings;
 
-						$stars = explode(\'#\', $rowData[\'stars\']);
+						$stars = explode('#', $rowData['stars']);
 
 						// In case no stars are setup, return with nothing
 						if (empty($stars[0]) || empty($stars[1]))
-							return \'\';
+							return '';
 
 						// Otherwise repeat the image a given number of times.
 						else
 						{
-							$image = sprintf(\'<img src="%1$s/%2$s">\', $settings[\'images_url\'], $stars[1]);
+							$image = sprintf('<img src="%1$s/%2$s">', ASSETS, $stars[1]);
 							return str_repeat($image, $stars[0]);
 						}
-					'),
+					},
 
 				),
 				'sort' => array(
@@ -182,12 +182,12 @@ function MembergroupIndex()
 					'value' => $txt['membergroups_members_top'],
 				),
 				'data' => array(
-					'function' => create_function('$rowData', '
+					'function' => function ($rowData) {
 						global $txt;
 
 						// No explicit members for the moderator group.
-						return $rowData[\'id_group\'] == 3 ? $txt[\'membergroups_guests_na\'] : $rowData[\'num_members\'];
-					'),
+						return $rowData['id_group'] == 3 ? $txt['membergroups_guests_na'] : $rowData['num_members'];
+					},
 					'style' => 'text-align: center',
 				),
 				'sort' => array(
@@ -244,9 +244,9 @@ function MembergroupIndex()
 					'value' => $txt['membergroups_name'],
 				),
 				'data' => array(
-					'function' => create_function('$rowData', '
-						return sprintf(\'<a href="<URL>?action=moderate;area=viewgroups;sa=members;group=%1$d" class="group%1$d">%2$s</a>\', $rowData[\'id_group\'], $rowData[\'group_name\']);
-					'),
+					'function' => function ($rowData) {
+						return sprintf('<a href="<URL>?action=moderate;area=viewgroups;sa=members;group=%1$d" class="group%1$d">%2$s</a>', $rowData['id_group'], $rowData['group_name']);
+					},
 				),
 				'sort' => array(
 					'default' => 'group_name',
@@ -258,19 +258,19 @@ function MembergroupIndex()
 					'value' => $txt['membergroups_stars'],
 				),
 				'data' => array(
-					'function' => create_function('$rowData', '
+					'function' => function ($rowData) {
 						global $settings;
 
-						$stars = explode(\'#\', $rowData[\'stars\']);
+						$stars = explode('#', $rowData['stars']);
 
 						if (empty($stars[0]) || empty($stars[1]))
-							return \'\';
+							return '';
 						else
 						{
-							$star_image = sprintf(\'<img src="%1$s/%2$s">\', $settings[\'images_url\'], $stars[1]);
+							$star_image = sprintf('<img src="%1$s/%2$s">', ASSETS, $stars[1]);
 							return str_repeat($star_image, $stars[0]);
 						}
-					'),
+					},
 				),
 				'sort' => array(
 					'default' => 'CASE WHEN id_group < 4 THEN id_group ELSE 4 END, stars',

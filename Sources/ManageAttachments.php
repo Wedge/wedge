@@ -326,31 +326,31 @@ function BrowseFiles()
 					'value' => $txt['attachment_name'],
 				),
 				'data' => array(
-					'function' => create_function('$rowData', '
+					'function' => function ($rowData) {
 						global $settings, $context;
 
 						// In case of a custom avatar URL attachments have a fixed directory.
-						if ($rowData[\'attachment_type\'] == 1)
-							$url = sprintf(\'%1$s/%2$s\', $settings[\'custom_avatar_url\'], $rowData[\'filename\']);
+						if ($rowData['attachment_type'] == 1)
+							$url = sprintf('%1$s/%2$s', $settings['custom_avatar_url'], $rowData['filename']);
 
 						// By default avatars are downloaded almost as attachments.
-						elseif ($context[\'browse_type\'] == \'avatars\')
-							$url = sprintf(\'<URL>?action=dlattach;type=avatar;attach=%1$d\', $rowData[\'id_attach\']);
+						elseif ($context['browse_type'] == 'avatars')
+							$url = sprintf('<URL>?action=dlattach;type=avatar;attach=%1$d', $rowData['id_attach']);
 
 						// Normal attachments are always linked to a topic ID.
 						else
-							$url = sprintf(\'<URL>?action=dlattach;topic=%1$d.0;attach=%2$d\', $rowData[\'id_topic\'], $rowData[\'id_attach\']);
+							$url = sprintf('<URL>?action=dlattach;topic=%1$d.0;attach=%2$d', $rowData['id_topic'], $rowData['id_attach']);
 
-						// Show a 50x50 (or smaller) thumbnail if it\'s a picture, and we know its dimensions.
-						$link = \'\';
-						if (!empty($rowData[\'width\']) && !empty($rowData[\'height\']))
-							$link .= \'<img style="float: left; margin-right: 8px; max-width: 50px; max-height: 50px" src="\' . $url . \';image;nh">\'
-								  . sprintf(\'<span class="tinytext">%1$dx%2$d</span> \', $rowData[\'width\'], $rowData[\'height\']);
+						// Show a 50x50 (or smaller) thumbnail if it's a picture, and we know its dimensions.
+						$link = '';
+						if (!empty($rowData['width']) && !empty($rowData['height']))
+							$link .= '<img style="float: left; margin-right: 8px; max-width: 50px; max-height: 50px" src="' . $url . ';image;nh">'
+								  . sprintf('<span class="tinytext">%1$dx%2$d</span> ', $rowData['width'], $rowData['height']);
 
-						$link .= sprintf(\'<a href="%1$s" class="smalltext">%2$s</a>\', $url, westr::htmlspecialchars($rowData[\'filename\']));
+						$link .= sprintf('<a href="%1$s" class="smalltext">%2$s</a>', $url, westr::htmlspecialchars($rowData['filename']));
 
 						return $link;
-					'),
+					},
 				),
 				'sort' => array(
 					'default' => 'a.filename',
@@ -362,11 +362,11 @@ function BrowseFiles()
 					'value' => $txt['attachment_file_size'],
 				),
 				'data' => array(
-					'function' => create_function('$rowData','
+					'function' => function ($rowData) {
 						global $txt;
 
-						return sprintf(\'%1$s%2$s\', round($rowData[\'size\'] / 1024, 2), $txt[\'kilobyte\']);
-					'),
+						return sprintf('%1$s%2$s', round($rowData['size'] / 1024, 2), $txt['kilobyte']);
+					},
 				),
 				'sort' => array(
 					'default' => 'a.size',
@@ -378,15 +378,14 @@ function BrowseFiles()
 					'value' => $context['browse_type'] == 'avatars' ? $txt['attachment_manager_member'] : $txt['posted_by'],
 				),
 				'data' => array(
-					'function' => create_function('$rowData', '
+					'function' => function ($rowData) {
 						// In case of an attachment, return the poster of the attachment.
-						if (empty($rowData[\'id_member\']))
-							return htmlspecialchars($rowData[\'poster_name\']);
-
+						if (empty($rowData['id_member']))
+							return htmlspecialchars($rowData['poster_name']);
 						// Otherwise it must be an avatar, return the link to the owner of it.
 						else
-							return sprintf(\'<a href=<URL>?action=profile;u=%1$d">%2$s</a>\', $rowData[\'id_member\'], $rowData[\'poster_name\']);
-					'),
+							return sprintf('<a href=<URL>?action=profile;u=%1$d">%2$s</a>', $rowData['id_member'], $rowData['poster_name']);
+					},
 				),
 				'sort' => array(
 					'default' => 'mem.real_name',
@@ -398,18 +397,18 @@ function BrowseFiles()
 					'value' => $context['browse_type'] == 'avatars' ? $txt['attachment_manager_last_active'] : $txt['date'],
 				),
 				'data' => array(
-					'function' => create_function('$rowData', '
+					'function' => function ($rowData) {
 						global $txt, $context;
 
 						// The date the message containing the attachment was posted or the owner of the avatar was active.
-						$date = empty($rowData[\'poster_time\']) ? $txt[\'never\'] : timeformat($rowData[\'poster_time\']);
+						$date = empty($rowData['poster_time']) ? $txt['never'] : timeformat($rowData['poster_time']);
 
 						// Add a link to the topic in case of an attachment.
-						if ($context[\'browse_type\'] !== \'avatars\')
-							$date .= sprintf(\'<br>%1$s <a href="%2$s?topic=%3$d.0.msg%4$d#msg%4$d">%5$s</a>\', $txt[\'in\'], \'<URL>\', $rowData[\'id_topic\'], $rowData[\'id_msg\'], $rowData[\'subject\']);
+						if ($context['browse_type'] !== 'avatars')
+							$date .= sprintf('<br>%1$s <a href="%2$s?topic=%3$d.0.msg%4$d#msg%4$d">%5$s</a>', $txt['in'], '<URL>', $rowData['id_topic'], $rowData['id_msg'], $rowData['subject']);
 
 						return $date;
-						'),
+					},
 				),
 				'sort' => array(
 					'default' => $context['browse_type'] === 'avatars' ? 'mem.last_login' : 'm.id_msg',
@@ -421,11 +420,9 @@ function BrowseFiles()
 					'value' => $txt['downloads'],
 				),
 				'data' => array(
-					'function' => create_function('$rowData','
-						global $txt;
-
-						return comma_format($rowData[\'downloads\']);
-					'),
+					'function' => function ($rowData) {
+						return comma_format($rowData['downloads']);
+					},
 				),
 				'sort' => array(
 					'default' => 'a.downloads',
@@ -1518,9 +1515,9 @@ function ManageAttachmentPaths()
 					'value' => $txt['attach_current_dir'],
 				),
 				'data' => array(
-					'function' => create_function('$rowData', '
-						return \'<input type="radio" name="current_dir" value="\' . $rowData[\'id\'] . \'" \' . ($rowData[\'current\'] ? \'checked\' : \'\') . \'>\';
-					'),
+					'function' => function ($rowData) {
+						return '<input type="radio" name="current_dir" value="' . $rowData['id'] . '" ' . ($rowData['current'] ? 'checked' : '') . '>';
+					},
 					'style' => 'text-align: center; width: 15%;',
 				),
 			),
@@ -1529,9 +1526,9 @@ function ManageAttachmentPaths()
 					'value' => $txt['attach_path'],
 				),
 				'data' => array(
-					'function' => create_function('$rowData', '
-						return \'<input size="30" name="dirs[\' . $rowData[\'id\'] . \']" value="\' . $rowData[\'path\'] . \'" style="width: 100%">\';
-					'),
+					'function' => function ($rowData) {
+						return '<input size="30" name="dirs[' . $rowData['id'] . ']" value="' . $rowData['path'] . '" style="width: 100%">';
+					},
 					'style' => 'text-align: center; width: 30%;',
 				),
 			),

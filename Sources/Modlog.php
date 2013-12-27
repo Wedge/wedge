@@ -256,9 +256,9 @@ function ViewModlog()
 					'value' => '<input type="checkbox" name="all" onclick="invertAll(this, this.form);">',
 				),
 				'data' => array(
-					'function' => create_function('$entry', '
-						return \'<input type="checkbox" name="delete[]" value="\' . $entry[\'id\'] . \'"\' . ($entry[\'editable\'] ? \'\' : \' disabled\') . \'>\';
-					'),
+					'function' => function ($entry) {
+						return '<input type="checkbox" name="delete[]" value="' . $entry['id'] . '"' . ($entry['editable'] ? '' : ' disabled') . '>';
+					},
 					'style' => 'text-align: center',
 				),
 			),

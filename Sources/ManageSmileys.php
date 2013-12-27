@@ -358,10 +358,10 @@ function EditSmileySets()
 					'value' => $txt['smiley_sets_default'],
 				),
 				'data' => array(
-					'function' => create_function('$rowData', '
-						return $rowData[\'selected\'] ? \'<strong>*</strong>\' : \'\';
-					'),
-					'style' => 'text-align: center;',
+					'function' => function ($rowData) {
+						return $rowData['selected'] ? '<strong>*</strong>' : '';
+					},
+					'style' => 'text-align: center',
 				),
 				'sort' => array(
 					'default' => 'selected DESC',
@@ -409,7 +409,7 @@ function EditSmileySets()
 							'id' => true,
 						),
 					),
-					'style' => 'text-align: center;',
+					'style' => 'text-align: center',
 				),
 			),
 			'check' => array(
@@ -417,9 +417,9 @@ function EditSmileySets()
 					'value' => '<input type="checkbox" onclick="invertAll(this, this.form);">',
 				),
 				'data' => array(
-					'function' => create_function('$rowData', '
-						return $rowData[\'id\'] == 0 ? \'\' : sprintf(\'<input type="checkbox" name="smiley_set[%1$d]">\', $rowData[\'id\']);
-					'),
+					'function' => function ($rowData) {
+						return $rowData['id'] == 0 ? '' : sprintf('<input type="checkbox" name="smiley_set[%1$d]">', $rowData['id']);
+					},
 					'style' => 'text-align: center',
 				),
 			),
@@ -896,7 +896,7 @@ function EditSmileys()
 								'description' => true,
 							),
 						),
-						'style' => 'text-align: center;',
+						'style' => 'text-align: center',
 					),
 				),
 				'code' => array(
@@ -928,16 +928,16 @@ function EditSmileys()
 						'value' => $txt['smileys_location'],
 					),
 					'data' => array(
-						'function' => create_function('$rowData', '
+						'function' => function ($rowData) {
 							global $txt;
 
-							if (empty($rowData[\'hidden\']))
-								return $txt[\'smileys_location_form\'];
-							elseif ($rowData[\'hidden\'] == 1)
-								return $txt[\'smileys_location_hidden\'];
+							if (empty($rowData['hidden']))
+								return $txt['smileys_location_form'];
+							elseif ($rowData['hidden'] == 1)
+								return $txt['smileys_location_hidden'];
 							else
-								return $txt[\'smileys_location_popup\'];
-						'),
+								return $txt['smileys_location_popup'];
+						},
 					),
 					'sort' => array(
 						'default' => 'FIND_IN_SET(hidden, \'' . implode(',', array_keys($smiley_locations)) . '\')',
@@ -949,24 +949,25 @@ function EditSmileys()
 						'value' => $txt['smileys_description'],
 					),
 					'data' => array(
-						'function' => create_function('$rowData', !is_dir($settings['smileys_dir']) ? '
-							return htmlspecialchars($rowData[\'description\']);
-						' : '
+						'function' => function ($rowData) {
 							global $context, $txt, $settings;
+
+							if (!is_dir($settings['smileys_dir']))
+								return htmlspecialchars($rowData['description']);
 
 							// Check if there are smileys missing in some sets.
 							$missing_sets = array();
-							foreach ($context[\'smiley_sets\'] as $smiley_set)
-								if (!file_exists(sprintf(\'%1$s/%2$s/%3$s\', $settings[\'smileys_dir\'], $smiley_set[\'path\'], $rowData[\'filename\'])))
-									$missing_sets[] = $smiley_set[\'path\'];
+							foreach ($context['smiley_sets'] as $smiley_set)
+								if (!file_exists(sprintf('%1$s/%2$s/%3$s', $settings['smileys_dir'], $smiley_set['path'], $rowData['filename'])))
+									$missing_sets[] = $smiley_set['path'];
 
-							$description = htmlspecialchars($rowData[\'description\']);
+							$description = htmlspecialchars($rowData['description']);
 
 							if (!empty($missing_sets))
-								$description .= sprintf(\'<div class="smalltext"><strong>%1$s:</strong> %2$s</div>\', $txt[\'smileys_not_found_in_set\'], implode(\', \', $missing_sets));
+								$description .= sprintf('<div class="smalltext"><strong>%1$s:</strong> %2$s</div>', $txt['smileys_not_found_in_set'], implode(', ', $missing_sets));
 
 							return $description;
-						'),
+						},
 					),
 					'sort' => array(
 						'default' => 'description',
@@ -984,7 +985,7 @@ function EditSmileys()
 								'id_smiley' => false,
 							),
 						),
-						'style' => 'text-align: center;',
+						'style' => 'text-align: center',
 					),
 				),
 				'check' => array(
@@ -1010,7 +1011,7 @@ function EditSmileys()
 				array(
 					'position' => 'above_column_headers',
 					'value' => $smileyset_option_list,
-					'style' => 'text-align: right;',
+					'style' => 'text-align: right',
 				),
 				array(
 					'position' => 'below_table_data',
@@ -1023,15 +1024,15 @@ function EditSmileys()
 							<option value="delete">' . $txt['remove'] . '</option>
 						</select>
 						<noscript><input type="submit" name="perform_action" value="' . $txt['go'] . '"></noscript>',
-					'style' => 'text-align: right;',
+					'style' => 'text-align: right',
 				),
 			),
 			'javascript' => '
 	function makeChanges(e, action)
 	{
-		if (action == \'-1\')
+		if (action == "-1")
 			return false;
-		if (action != \'delete\' || ask(' . JavaScriptEscape($txt['smileys_confirm']) . ', e))
+		if (action != "delete" || ask(' . JavaScriptEscape($txt['smileys_confirm']) . ', e))
 			document.forms.smileyForm.submit();
 		return true;
 	}
@@ -1041,7 +1042,7 @@ function EditSmileys()
 
 		if (knownSmileys.length == 0)
 			for (i = 0, n = document.images.length; i < n; i++)
-				if (document.images[i].id.slice(0, 6) == \'smiley\')
+				if (document.images[i].id.slice(0, 6) == "smiley")
 					knownSmileys.push(document.images[i].id.slice(6));
 
 		for (i = 0; i < knownSmileys.length; i++)
@@ -1538,9 +1539,9 @@ function EditMessageIcons()
 		'columns' => array(
 			'icon' => array(
 				'data' => array(
-					'function' => create_function('$rowData', '
-						return sprintf(\'<img src="%1$s/post/%2$s.gif" alt="%3$s">\', ASSETS, $rowData[\'filename\'], htmlspecialchars($rowData[\'title\']));
-					'),
+					'function' => function ($rowData) {
+						return sprintf('<img src="%1$s/post/%2$s.gif" alt="%3$s">', ASSETS, $rowData['filename'], htmlspecialchars($rowData['title']));
+					},
 				),
 				'style' => 'text-align: center',
 			),
@@ -1570,11 +1571,11 @@ function EditMessageIcons()
 					'value' => $txt['icons_board'],
 				),
 				'data' => array(
-					'function' => create_function('$rowData', '
+					'function' => function ($rowData) {
 						global $txt;
 
-						return empty($rowData[\'board_name\']) ? $txt[\'icons_edit_icons_all_boards\'] : $rowData[\'board_name\'];
-					'),
+						return empty($rowData['board_name']) ? $txt['icons_edit_icons_all_boards'] : $rowData['board_name'];
+					},
 				),
 			),
 			'modify' => array(

@@ -1281,7 +1281,8 @@ function scheduled_weekly_maintenance()
 		)
 	);
 
-	cache_put_data('settings', null, 'forever');
+	if (wesql::affected_rows() > 0)
+		cache_put_data('settings', null, 'forever');
 
 	// OK, should we prune the logs?
 	if (!empty($settings['pruningOptions']))

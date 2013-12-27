@@ -17,7 +17,7 @@ if (!defined('WEDGE'))
 	void RepairBoards()
 		- finds or repairs errors in the database to fix possible problems.
 		- requires the admin_forum permission.
-		- calls createSalvageArea() to create a new board, if necesary.
+		- calls createSalvageArea() to create a new board, if necessary.
 		- accessed by ?action=admin;area=repairboards.
 
 	void pauseRepairProcess(array to_fix, string current_step_desc, int max_substep = none, force = false)
@@ -228,54 +228,54 @@ function loadForumTests()
 					LEFT JOIN {db_prefix}topics AS t ON (t.id_topic = m.id_topic)
 				WHERE t.id_topic IS NULL
 				GROUP BY m.id_topic, m.id_board',
-			'fix_processing' => create_function('$row', '
+			'fix_processing' => function ($row) {
 				global $salvageBoardID;
 
-				// Only if we don\'t have a reasonable idea of where to put it.
-				if ($row[\'id_board\'] == 0)
+				// Only if we don't have a reasonable idea of where to put it.
+				if ($row['id_board'] == 0)
 				{
 					createSalvageArea();
-					$row[\'id_board\'] = (int) $salvageBoardID;
+					$row['id_board'] = (int) $salvageBoardID;
 				}
 
 				// Make sure that no topics claim the first/last message as theirs.
-				wesql::query(\'
+				wesql::query('
 					UPDATE {db_prefix}topics
 					SET id_first_msg = 0
-					WHERE id_first_msg = {int:id_first_msg}\',
+					WHERE id_first_msg = {int:id_first_msg}',
 					array(
-						\'id_first_msg\' => $row[\'myid_first_msg\'],
+						'id_first_msg' => $row['myid_first_msg'],
 					)
 				);
-				wesql::query(\'
+				wesql::query('
 					UPDATE {db_prefix}topics
 					SET id_last_msg = 0
-					WHERE id_last_msg = {int:id_last_msg}\',
+					WHERE id_last_msg = {int:id_last_msg}',
 					array(
-						\'id_last_msg\' => $row[\'myid_last_msg\'],
+						'id_last_msg' => $row['myid_last_msg'],
 					)
 				);
 
-				$memberStartedID = (int) getMsgMemberID($row[\'myid_first_msg\']);
-				$memberUpdatedID = (int) getMsgMemberID($row[\'myid_last_msg\']);
+				$memberStartedID = (int) getMsgMemberID($row['myid_first_msg']);
+				$memberUpdatedID = (int) getMsgMemberID($row['myid_last_msg']);
 
-				wesql::insert(\'\',
-					\'{db_prefix}topics\',
+				wesql::insert('',
+					'{db_prefix}topics',
 					array(
-						\'id_board\' => \'int\',
-						\'id_member_started\' => \'int\',
-						\'id_member_updated\' => \'int\',
-						\'id_first_msg\' => \'int\',
-						\'id_last_msg\' => \'int\',
-						\'num_replies\' => \'int\'
+						'id_board' => 'int',
+						'id_member_started' => 'int',
+						'id_member_updated' => 'int',
+						'id_first_msg' => 'int',
+						'id_last_msg' => 'int',
+						'num_replies' => 'int'
 					),
 					array(
-						$row[\'id_board\'],
+						$row['id_board'],
 						$memberStartedID,
 						$memberUpdatedID,
-						$row[\'myid_first_msg\'],
-						$row[\'myid_last_msg\'],
-						$row[\'my_num_replies\']
+						$row['myid_first_msg'],
+						$row['myid_last_msg'],
+						$row['my_num_replies']
 					)
 				);
 
@@ -288,7 +288,7 @@ function loadForumTests()
 					array(
 					)
 				);
-				'),
+			},
 			'force_fix' => array('stats_topics'),
 			'messages' => array('repair_missing_topics', 'id_msg', 'id_topic'),
 		),
@@ -310,22 +310,22 @@ function loadForumTests()
 			// Remove all topics that have zero messages in the messages table.
 			'fix_collect' => array(
 				'index' => 'id_topic',
-				'process' => create_function('$topics', '
-					wesql::query("
+				'process' => function ($topics) {
+					wesql::query('
 						DELETE FROM {db_prefix}topics
-						WHERE id_topic IN ({array_int:topics})",
+						WHERE id_topic IN ({array_int:topics})',
 						array(
-							\'topics\' => $topics
+							'topics' => $topics
 						)
 					);
-					wesql::query("
+					wesql::query('
 						DELETE FROM {db_prefix}log_topics
-						WHERE id_topic IN ({array_int:topics})",
+						WHERE id_topic IN ({array_int:topics})',
 						array(
-							\'topics\' => $topics
+							'topics' => $topics
 						)
 					);
-				'),
+				},
 			),
 			'messages' => array('repair_missing_messages', 'id_topic'),
 		),
@@ -342,68 +342,68 @@ function loadForumTests()
 					LEFT JOIN {db_prefix}topics AS t ON (t.id_poll = p.id_poll)
 				WHERE p.id_poll BETWEEN {STEP_LOW} AND {STEP_HIGH}
 					AND t.id_poll IS NULL',
-			'fix_processing' => create_function('$row', '
+			'fix_processing' => function ($row) {
 				global $salvageBoardID, $txt;
 
-				// Only if we don\'t have a reasonable idea of where to put it.
-				if ($row[\'id_board\'] == 0)
+				// Only if we don't have a reasonable idea of where to put it.
+				if ($row['id_board'] == 0)
 				{
 					createSalvageArea();
-					$row[\'id_board\'] = (int) $salvageBoardID;
+					$row['id_board'] = (int) $salvageBoardID;
 				}
 
-				$row[\'poster_name\'] = !empty($row[\'poster_name\']) ? $row[\'poster_name\'] : $txt[\'guest\'];
+				$row['poster_name'] = !empty($row['poster_name']) ? $row['poster_name'] : $txt['guest'];
 
-				wesql::insert(\'\',
-					\'{db_prefix}messages\',
+				wesql::insert('',
+					'{db_prefix}messages',
 					array(
-						\'id_board\' => \'int\',
-						\'id_topic\' => \'int\',
-						\'poster_time\' => \'int\',
-						\'id_member\' => \'int\',
-						\'subject\' => \'string-255\',
-						\'poster_name\' => \'string-255\',
-						\'poster_email\' => \'string-255\',
-						\'poster_ip\' => \'string-16\',
-						\'smileys_enabled\' => \'int\',
-						\'body\' => \'string-65534\',
-						\'icon\' => \'string-16\',
-						\'approved\' => \'int\',
+						'id_board' => 'int',
+						'id_topic' => 'int',
+						'poster_time' => 'int',
+						'id_member' => 'int',
+						'subject' => 'string-255',
+						'poster_name' => 'string-255',
+						'poster_email' => 'string-255',
+						'poster_ip' => 'string-16',
+						'smileys_enabled' => 'int',
+						'body' => 'string-65534',
+						'icon' => 'string-16',
+						'approved' => 'int',
 					),
 					array(
-						$row[\'id_board\'],
+						$row['id_board'],
 						0,
 						time(),
-						$row[\'id_member\'],
-						$txt[\'salvaged_poll_topic_name\'],
-						$row[\'poster_name\'],
-						\'\',
-						\'127.0.0.1\',
+						$row['id_member'],
+						$txt['salvaged_poll_topic_name'],
+						$row['poster_name'],
+						'',
+						'127.0.0.1',
 						1,
-						$txt[\'salvaged_poll_message_body\'],
-						\'xx\',
+						$txt['salvaged_poll_message_body'],
+						'xx',
 						1,
 					)
 				);
 
 				$newMessageID = wesql::insert_id();
 
-				wesql::insert(\'\',
-					\'{db_prefix}topics\',
+				wesql::insert('',
+					'{db_prefix}topics',
 					array(
-						\'id_board\' => \'int\',
-						\'id_poll\' => \'int\',
-						\'id_member_started\' => \'int\',
-						\'id_member_updated\' => \'int\',
-						\'id_first_msg\' => \'int\',
-						\'id_last_msg\' => \'int\',
-						\'num_replies\' => \'int\',
+						'id_board' => 'int',
+						'id_poll' => 'int',
+						'id_member_started' => 'int',
+						'id_member_updated' => 'int',
+						'id_first_msg' => 'int',
+						'id_last_msg' => 'int',
+						'num_replies' => 'int',
 					),
 					array(
-						$row[\'id_board\'],
-						$row[\'id_poll\'],
-						$row[\'id_member\'],
-						$row[\'id_member\'],
+						$row['id_board'],
+						$row['id_poll'],
+						$row['id_member'],
+						$row['id_member'],
 						$newMessageID,
 						$newMessageID,
 						0,
@@ -420,9 +420,8 @@ function loadForumTests()
 					)
 				);
 
-				updateStats(\'subject\', $newTopicID, $txt[\'salvaged_poll_topic_name\']);
-
-				'),
+				updateStats('subject', $newTopicID, $txt['salvaged_poll_topic_name']);
+			},
 			'force_fix' => array('stats_topics'),
 			'messages' => array('repair_polls_missing_topics', 'id_poll', 'id_topic'),
 		),
@@ -450,17 +449,17 @@ function loadForumTests()
 				WHERE t.id_topic BETWEEN {STEP_LOW} AND {STEP_HIGH}
 				GROUP BY t.id_topic, t.id_first_msg, t.id_last_msg, t.approved, mf.approved
 				ORDER BY t.id_topic',
-			'fix_processing' => create_function('$row', '
-				$row[\'firstmsg_approved\'] = (int) $row[\'firstmsg_approved\'];
-				$row[\'myid_first_msg\'] = (int) $row[\'myid_first_msg\'];
-				$row[\'myid_last_msg\'] = (int) $row[\'myid_last_msg\'];
+			'fix_processing' => function ($row) {
+				$row['firstmsg_approved'] = (int) $row['firstmsg_approved'];
+				$row['myid_first_msg'] = (int) $row['myid_first_msg'];
+				$row['myid_last_msg'] = (int) $row['myid_last_msg'];
 
 				// Not really a problem?
-				if ($row[\'myid_first_msg\'] == $row[\'myid_first_msg\'] && $row[\'myid_first_msg\'] == $row[\'myid_first_msg\'] && $row[\'approved\'] == $row[\'firstmsg_approved\'])
+				if ($row['myid_first_msg'] == $row['myid_first_msg'] && $row['myid_first_msg'] == $row['myid_first_msg'] && $row['approved'] == $row['firstmsg_approved'])
 					return false;
 
-				$memberStartedID = (int) getMsgMemberID($row[\'myid_first_msg\']);
-				$memberUpdatedID = (int) getMsgMemberID($row[\'myid_last_msg\']);
+				$memberStartedID = (int) getMsgMemberID($row['myid_first_msg']);
+				$memberUpdatedID = (int) getMsgMemberID($row['myid_last_msg']);
 
 				wesql::query("
 					UPDATE {db_prefix}topics
@@ -471,23 +470,23 @@ function loadForumTests()
 					array(
 					)
 				);
-			'),
-			'message_function' => create_function('$row', '
+			},
+			'message_function' => function ($row) {
 				global $txt, $context;
 
 				// A pretend error?
-				if ($row[\'myid_first_msg\'] == $row[\'myid_first_msg\'] && $row[\'myid_first_msg\'] == $row[\'myid_first_msg\'] && $row[\'approved\'] == $row[\'firstmsg_approved\'])
+				if ($row['myid_first_msg'] == $row['myid_first_msg'] && $row['myid_first_msg'] == $row['myid_first_msg'] && $row['approved'] == $row['firstmsg_approved'])
 					return false;
 
-				if ($row[\'id_first_msg\'] != $row[\'myid_first_msg\'])
-					$context[\'repair_errors\'][] = sprintf($txt[\'repair_stats_topics_1\'], $row[\'id_topic\'], $row[\'id_first_msg\']);
-				if ($row[\'id_last_msg\'] != $row[\'myid_last_msg\'])
-					$context[\'repair_errors\'][] = sprintf($txt[\'repair_stats_topics_2\'], $row[\'id_topic\'], $row[\'id_last_msg\']);
-				if ($row[\'approved\'] != $row[\'firstmsg_approved\'])
-					$context[\'repair_errors\'][] = sprintf($txt[\'repair_stats_topics_5\'], $row[\'id_topic\']);
+				if ($row['id_first_msg'] != $row['myid_first_msg'])
+					$context['repair_errors'][] = sprintf($txt['repair_stats_topics_1'], $row['id_topic'], $row['id_first_msg']);
+				if ($row['id_last_msg'] != $row['myid_last_msg'])
+					$context['repair_errors'][] = sprintf($txt['repair_stats_topics_2'], $row['id_topic'], $row['id_last_msg']);
+				if ($row['approved'] != $row['firstmsg_approved'])
+					$context['repair_errors'][] = sprintf($txt['repair_stats_topics_5'], $row['id_topic']);
 
 				return true;
-			'),
+			},
 		),
 		// Find topics with incorrect num_replies.
 		'stats_topics2' => array(
@@ -507,11 +506,11 @@ function loadForumTests()
 				WHERE t.id_topic BETWEEN {STEP_LOW} AND {STEP_HIGH}
 				GROUP BY t.id_topic, t.num_replies, mf.approved
 				ORDER BY t.id_topic',
-			'fix_processing' => create_function('$row', '
-				$row[\'my_num_replies\'] = (int) $row[\'my_num_replies\'];
+			'fix_processing' => function ($row) {
+				$row['my_num_replies'] = (int) $row['my_num_replies'];
 
 				// Not really a problem?
-				if ($row[\'my_num_replies\'] == $row[\'num_replies\'])
+				if ($row['my_num_replies'] == $row['num_replies'])
 					return false;
 
 				wesql::query("
@@ -521,19 +520,19 @@ function loadForumTests()
 					array(
 					)
 				);
-			'),
-			'message_function' => create_function('$row', '
+			},
+			'message_function' => function ($row) {
 				global $txt, $context;
 
 				// Just joking?
-				if ($row[\'my_num_replies\'] == $row[\'num_replies\'])
+				if ($row['my_num_replies'] == $row['num_replies'])
 					return false;
 
-				if ($row[\'num_replies\'] != $row[\'my_num_replies\'])
-					$context[\'repair_errors\'][] = sprintf($txt[\'repair_stats_topics_3\'], $row[\'id_topic\'], $row[\'num_replies\']);
+				if ($row['num_replies'] != $row['my_num_replies'])
+					$context['repair_errors'][] = sprintf($txt['repair_stats_topics_3'], $row['id_topic'], $row['num_replies']);
 
 				return true;
-			'),
+			},
 		),
 		// Find topics with incorrect unapproved_posts.
 		'stats_topics3' => array(
@@ -552,8 +551,8 @@ function loadForumTests()
 				GROUP BY t.id_topic, t.unapproved_posts
 				HAVING unapproved_posts != COUNT(mu.id_msg)
 				ORDER BY t.id_topic',
-			'fix_processing' => create_function('$row', '
-				$row[\'my_unapproved_posts\'] = (int) $row[\'my_unapproved_posts\'];
+			'fix_processing' => function ($row) {
+				$row['my_unapproved_posts'] = (int) $row['my_unapproved_posts'];
 
 				wesql::query("
 					UPDATE {db_prefix}topics
@@ -562,7 +561,7 @@ function loadForumTests()
 					array(
 					)
 				);
-			'),
+			},
 			'messages' => array('repair_stats_topics_4', 'id_topic', 'unapproved_posts'),
 		),
 		// Find topics with nonexistent boards.
@@ -588,18 +587,18 @@ function loadForumTests()
 				WHERE b.id_board IS NULL
 					AND t.id_topic BETWEEN {STEP_LOW} AND {STEP_HIGH}
 				GROUP BY t.id_board',
-			'fix_processing' => create_function('$row', '
+			'fix_processing' => function ($row) {
 				global $salvageCatID;
 				createSalvageArea();
 
-				$row[\'my_num_topics\'] = (int) $row[\'my_num_topics\'];
-				$row[\'my_num_posts\'] = (int) $row[\'my_num_posts\'];
+				$row['my_num_topics'] = (int) $row['my_num_topics'];
+				$row['my_num_posts'] = (int) $row['my_num_posts'];
 
-				wesql::db_insert(\'\',
-					\'{db_prefix}boards\',
-					array(\'id_cat\' => \'int\', \'name\' => \'string\', \'description\' => \'string\', \'num_topics\' => \'int\', \'num_posts\' => \'int\', \'member_groups\' => \'string\'),
-					array($salvageCatID, \'Salvaged board\', \'\', $row[\'my_num_topics\'], $row[\'my_num_posts\'], \'1\'),
-					array(\'id_board\')
+				wesql::db_insert('',
+					'{db_prefix}boards',
+					array('id_cat' => 'int', 'name' => 'string', 'description' => 'string', 'num_topics' => 'int', 'num_posts' => 'int', 'member_groups' => 'string'),
+					array($salvageCatID, 'Salvaged board', '', $row['my_num_topics'], $row['my_num_posts'], '1'),
+					array('id_board')
 				);
 				$newBoardID = wesql::insert_id();
 
@@ -617,7 +616,7 @@ function loadForumTests()
 					array(
 					)
 				);
-			'),
+			},
 			'messages' => array('repair_missing_boards', 'id_topic', 'id_board'),
 		),
 		// Find boards with nonexistent categories.
@@ -630,7 +629,7 @@ function loadForumTests()
 				ORDER BY b.id_cat, b.id_board',
 			'fix_collect' => array(
 				'index' => 'id_cat',
-				'process' => create_function('$cats', '
+				'process' => function ($cats) {
 					global $salvageCatID;
 					createSalvageArea();
 					wesql::query("
@@ -638,10 +637,10 @@ function loadForumTests()
 						SET id_cat = $salvageCatID
 						WHERE id_cat IN ({array_int:categories})",
 						array(
-							\'categories\' => $cats
+							'categories' => $cats
 						)
 					);
-				'),
+				},
 			),
 			'messages' => array('repair_missing_categories', 'id_board', 'id_cat'),
 		),
@@ -664,16 +663,16 @@ function loadForumTests()
 			// Last step-make sure all non-guest posters still exist.
 			'fix_collect' => array(
 				'index' => 'id_msg',
-				'process' => create_function('$msgs', '
-					wesql::query("
+				'process' => function ($msgs) {
+					wesql::query('
 						UPDATE {db_prefix}messages
 						SET id_member = 0
-						WHERE id_msg IN ({array_int:msgs})",
+						WHERE id_msg IN ({array_int:msgs})',
 						array(
-							\'msgs\' => $msgs
+							'msgs' => $msgs
 						)
 					);
-				'),
+				},
 			),
 			'messages' => array('repair_missing_posters', 'id_msg', 'id_member'),
 		),
@@ -688,7 +687,7 @@ function loadForumTests()
 				ORDER BY b.id_parent, b.id_board',
 			'fix_collect' => array(
 				'index' => 'id_parent',
-				'process' => create_function('$parents', '
+				'process' => function ($parents) {
 					global $salvageBoardID, $salvageCatID;
 					createSalvageArea();
 					wesql::query("
@@ -696,10 +695,10 @@ function loadForumTests()
 						SET id_parent = $salvageBoardID, id_cat = $salvageCatID, child_level = 1
 						WHERE id_parent IN ({array_int:parents})",
 						array(
-							\'parents\' => $parents
+							'parents' => $parents
 						)
 					);
-				'),
+				},
 			),
 			'messages' => array('repair_missing_parents', 'id_board', 'id_parent'),
 		),
@@ -719,16 +718,16 @@ function loadForumTests()
 					AND p.id_poll IS NULL',
 			'fix_collect' => array(
 				'index' => 'id_poll',
-				'process' => create_function('$polls', '
-					wesql::query("
+				'process' => function ($polls) {
+					wesql::query('
 						UPDATE {db_prefix}topics
 						SET id_poll = 0
-						WHERE id_poll IN ({array_int:polls})",
+						WHERE id_poll IN ({array_int:polls})',
 						array(
-							\'polls\' => $polls
+							'polls' => $polls
 						)
 					);
-				'),
+				},
 			),
 			'messages' => array('repair_missing_polls', 'id_topic', 'id_poll'),
 		),
@@ -747,15 +746,15 @@ function loadForumTests()
 					AND lt.id_member BETWEEN {STEP_LOW} AND {STEP_HIGH}',
 			'fix_collect' => array(
 				'index' => 'id_topic',
-				'process' => create_function('$topics', '
-					wesql::query("
+				'process' => function ($topics) {
+					wesql::query('
 						DELETE FROM {db_prefix}log_topics
-						WHERE id_topic IN ({array_int:topics})",
+						WHERE id_topic IN ({array_int:topics})',
 						array(
-							\'topics\' => $topics
+							'topics' => $topics
 						)
 					);
-				'),
+				},
 			),
 			'messages' => array('repair_missing_log_topics', 'id_topic'),
 		),
@@ -775,15 +774,15 @@ function loadForumTests()
 				GROUP BY lt.id_member',
 			'fix_collect' => array(
 				'index' => 'id_member',
-				'process' => create_function('$members', '
-					wesql::query("
+				'process' => function ($members) {
+					wesql::query('
 						DELETE FROM {db_prefix}log_topics
-						WHERE id_member IN ({array_int:members})",
+						WHERE id_member IN ({array_int:members})',
 						array(
-							\'members\' => $members
+							'members' => $members
 						)
 					);
-				'),
+				},
 			),
 			'messages' => array('repair_missing_log_topics_members', 'id_member'),
 		),
@@ -803,15 +802,15 @@ function loadForumTests()
 				GROUP BY lb.id_board',
 			'fix_collect' => array(
 				'index' => 'id_board',
-				'process' => create_function('$boards', '
-					wesql::query("
+				'process' => function ($boards) {
+					wesql::query('
 						DELETE FROM {db_prefix}log_boards
-						WHERE id_board IN ({array_int:boards})",
+						WHERE id_board IN ({array_int:boards})',
 						array(
-							\'boards\' => $boards
+							'boards' => $boards
 						)
 					);
-				'),
+				},
 			),
 			'messages' => array('repair_missing_log_boards', 'id_board'),
 		),
@@ -831,15 +830,15 @@ function loadForumTests()
 				GROUP BY lb.id_member',
 			'fix_collect' => array(
 				'index' => 'id_member',
-				'process' => create_function('$members', '
-					wesql::query("
+				'process' => function ($members) {
+					wesql::query('
 						DELETE FROM {db_prefix}log_boards
-						WHERE id_member IN ({array_int:members})",
+						WHERE id_member IN ({array_int:members})',
 						array(
-							\'members\' => $members
+							'members' => $members
 						)
 					);
-				'),
+				},
 			),
 			'messages' => array('repair_missing_log_boards_members', 'id_member'),
 		),
@@ -859,15 +858,15 @@ function loadForumTests()
 				GROUP BY lmr.id_board',
 			'fix_collect' => array(
 				'index' => 'id_board',
-				'process' => create_function('$boards', '
-					wesql::query("
+				'process' => function ($boards) {
+					wesql::query('
 						DELETE FROM {db_prefix}log_mark_read
-						WHERE id_board IN ({array_int:boards})",
+						WHERE id_board IN ({array_int:boards})',
 						array(
-							\'boards\' => $boards
+							'boards' => $boards
 						)
 					);
-				'),
+				},
 			),
 			'messages' => array('repair_missing_log_mark_read', 'id_board'),
 		),
@@ -887,15 +886,15 @@ function loadForumTests()
 				GROUP BY lmr.id_member',
 			'fix_collect' => array(
 				'index' => 'id_member',
-				'process' => create_function('$members', '
-					wesql::query("
+				'process' => function ($members) {
+					wesql::query('
 						DELETE FROM {db_prefix}log_mark_read
-						WHERE id_member IN ({array_int:members})",
+						WHERE id_member IN ({array_int:members})',
 						array(
-							\'members\' => $members
+							'members' => $members
 						)
 					);
-				'),
+				},
 			),
 			'messages' => array('repair_missing_log_mark_read_members', 'id_member'),
 		),
@@ -915,15 +914,15 @@ function loadForumTests()
 				GROUP BY pmr.id_pm',
 			'fix_collect' => array(
 				'index' => 'id_pm',
-				'process' => create_function('$pms', '
-					wesql::query("
+				'process' => function ($pms) {
+					wesql::query('
 						DELETE FROM {db_prefix}pm_recipients
-						WHERE id_pm IN ({array_int:pms})",
+						WHERE id_pm IN ({array_int:pms})',
 						array(
-							\'pms\' => $pms
+							'pms' => $pms
 						)
 					);
-				'),
+				},
 			),
 			'messages' => array('repair_missing_pms', 'id_pm'),
 		),
@@ -944,15 +943,15 @@ function loadForumTests()
 				GROUP BY pmr.id_member',
 			'fix_collect' => array(
 				'index' => 'id_member',
-				'process' => create_function('$members', '
-					wesql::query("
+				'process' => function ($members) {
+					wesql::query('
 						DELETE FROM {db_prefix}pm_recipients
-						WHERE id_member IN ({array_int:members})",
+						WHERE id_member IN ({array_int:members})',
 						array(
-							\'members\' => $members
+							'members' => $members
 						)
 					);
-				'),
+				},
 			),
 			'messages' => array('repair_missing_recipients', 'id_member'),
 		),
@@ -972,15 +971,15 @@ function loadForumTests()
 					AND mem.id_member IS NULL',
 			'fix_collect' => array(
 				'index' => 'id_pm',
-				'process' => create_function('$guestMessages', '
-					wesql::query("
+				'process' => function ($guestMessages) {
+					wesql::query('
 						UPDATE {db_prefix}personal_messages
 						SET id_member_from = 0
-						WHERE id_pm IN ({array_int:guestMessages})",
+						WHERE id_pm IN ({array_int:guestMessages})',
 						array(
-							\'guestMessages\' => $guestMessages
+							'guestMessages' => $guestMessages
 						));
-				'),
+				},
 			),
 			'messages' => array('repair_missing_senders', 'id_pm', 'id_member_from'),
 		),
@@ -1000,15 +999,15 @@ function loadForumTests()
 				GROUP BY ln.id_member',
 			'fix_collect' => array(
 				'index' => 'id_member',
-				'process' => create_function('$members', '
-					wesql::query("
+				'process' => function ($members) {
+					wesql::query('
 						DELETE FROM {db_prefix}log_notify
-						WHERE id_member IN ({array_int:members})",
+						WHERE id_member IN ({array_int:members})',
 						array(
-							\'members\' => $members
+							'members' => $members
 						)
 					);
-				'),
+				},
 			),
 			'messages' => array('repair_missing_notify_members', 'id_member'),
 		),
@@ -1026,17 +1025,17 @@ function loadForumTests()
 					LEFT JOIN {db_prefix}log_search_subjects AS lss ON (lss.id_topic = t.id_topic)
 				WHERE t.id_topic BETWEEN {STEP_LOW} AND {STEP_HIGH}
 					AND lss.id_topic IS NULL',
-			'fix_full_processing' => create_function('$result', '
+			'fix_full_processing' => function ($result) {
 				$inserts = array();
 				while ($row = wesql::fetch_assoc($result))
 				{
-					foreach (text2words($row[\'subject\']) as $word)
-						$inserts[] = array($word, $row[\'id_topic\']);
+					foreach (text2words($row['subject']) as $word)
+						$inserts[] = array($word, $row['id_topic']);
 					if (count($inserts) > 500)
 					{
-						wesql::insert(\'ignore\',
-							"{db_prefix}log_search_subjects",
-							array(\'word\' => \'string\', \'id_topic\' => \'int\'),
+						wesql::insert('ignore',
+							'{db_prefix}log_search_subjects',
+							array('word' => 'string', 'id_topic' => 'int'),
 							$inserts
 						);
 						$inserts = array();
@@ -1045,23 +1044,23 @@ function loadForumTests()
 				}
 
 				if (!empty($inserts))
-					wesql::insert(\'ignore\',
-						"{db_prefix}log_search_subjects",
-						array(\'word\' => \'string\', \'id_topic\' => \'int\'),
+					wesql::insert('ignore',
+						'{db_prefix}log_search_subjects',
+						array('word' => 'string', 'id_topic' => 'int'),
 						$inserts
 					);
-			'),
-			'message_function' => create_function('$row', '
+			},
+			'message_function' => function ($row) {
 				global $txt, $context;
 
-				if (count(text2words($row[\'subject\'])) != 0)
+				if (count(text2words($row['subject'])) != 0)
 				{
-					$context[\'repair_errors\'][] = sprintf($txt[\'repair_missing_cached_subject\'], $row[\'id_topic\']);
+					$context['repair_errors'][] = sprintf($txt['repair_missing_cached_subject'], $row['id_topic']);
 					return true;
 				}
 
 				return false;
-			'),
+			},
 		),
 		'missing_topic_for_cache' => array(
 			'substeps' => array(
@@ -1078,15 +1077,15 @@ function loadForumTests()
 					AND t.id_topic IS NULL',
 			'fix_collect' => array(
 				'index' => 'id_topic',
-				'process' => create_function('$deleteTopics', '
-					wesql::query("
+				'process' => function ($deleteTopics) {
+					wesql::query('
 						DELETE FROM {db_prefix}log_search_subjects
-						WHERE id_topic IN ({array_int:deleteTopics})",
+						WHERE id_topic IN ({array_int:deleteTopics})',
 						array(
-							\'deleteTopics\' => $deleteTopics
+							'deleteTopics' => $deleteTopics
 						)
 					);
-				'),
+				},
 			),
 			'messages' => array('repair_missing_topic_for_cache', 'word'),
 		),
@@ -1106,15 +1105,15 @@ function loadForumTests()
 					AND mem.id_member IS NULL',
 			'fix_collect' => array(
 				'index' => 'id_member',
-				'process' => create_function('$members', '
-					wesql::query("
+				'process' => function ($members) {
+					wesql::query('
 						DELETE FROM {db_prefix}log_polls
-						WHERE id_member IN ({array_int:members})",
+						WHERE id_member IN ({array_int:members})',
 						array(
-							\'members\' => $members
+							'members' => $members
 						)
 					);
-				'),
+				},
 			),
 			'messages' => array('repair_missing_log_poll_member', 'id_poll', 'id_member'),
 		),
@@ -1133,15 +1132,15 @@ function loadForumTests()
 					AND p.id_poll IS NULL',
 			'fix_collect' => array(
 				'index' => 'id_poll',
-				'process' => create_function('$polls', '
-					wesql::query("
+				'process' => function ($polls) {
+					wesql::query('
 						DELETE FROM {db_prefix}log_polls
-						WHERE id_poll IN ({array_int:polls})",
+						WHERE id_poll IN ({array_int:polls})',
 						array(
-							\'polls\' => $polls
+							'polls' => $polls
 						)
 					);
-				'),
+				},
 			),
 			'messages' => array('repair_missing_log_poll_vote', 'id_member', 'id_poll'),
 		),
@@ -1160,15 +1159,15 @@ function loadForumTests()
 					AND lrc.id_report IS NULL',
 			'fix_collect' => array(
 				'index' => 'id_report',
-				'process' => create_function('$reports', '
-					wesql::query("
+				'process' => function ($reports) {
+					wesql::query('
 						DELETE FROM {db_prefix}log_reported
-						WHERE id_report IN ({array_int:reports})",
+						WHERE id_report IN ({array_int:reports})',
 						array(
-							\'reports\' => $reports
+							'reports' => $reports
 						)
 					);
-				'),
+				},
 			),
 			'messages' => array('repair_report_missing_comments', 'id_report', 'subject'),
 		),
@@ -1187,15 +1186,15 @@ function loadForumTests()
 					AND lr.id_report IS NULL',
 			'fix_collect' => array(
 				'index' => 'id_report',
-				'process' => create_function('$reports', '
-					wesql::query("
+				'process' => function ($reports) {
+					wesql::query('
 						DELETE FROM {db_prefix}log_reported_comments
-						WHERE id_report IN ({array_int:reports})",
+						WHERE id_report IN ({array_int:reports})',
 						array(
-							\'reports\' => $reports
+							'reports' => $reports
 						)
 					);
-				'),
+				},
 			),
 			'messages' => array('repair_comments_missing_report', 'id_report', 'membername'),
 		),
@@ -1215,15 +1214,15 @@ function loadForumTests()
 				GROUP BY lgr.id_member',
 			'fix_collect' => array(
 				'index' => 'id_member',
-				'process' => create_function('$members', '
-					wesql::query("
+				'process' => function ($members) {
+					wesql::query('
 						DELETE FROM {db_prefix}log_group_requests
-						WHERE id_member IN ({array_int:members})",
+						WHERE id_member IN ({array_int:members})',
 						array(
-							\'members\' => $members
+							'members' => $members
 						)
 					);
-				'),
+				},
 			),
 			'messages' => array('repair_group_request_missing_member', 'id_member'),
 		),
@@ -1243,15 +1242,15 @@ function loadForumTests()
 				GROUP BY lgr.id_group',
 			'fix_collect' => array(
 				'index' => 'id_group',
-				'process' => create_function('$groups', '
-					wesql::query(\'
+				'process' => function ($groups) {
+					wesql::query('
 						DELETE FROM {db_prefix}log_group_requests
-						WHERE id_group IN ({array_int:groups})\',
+						WHERE id_group IN ({array_int:groups})',
 						array(
-							\'groups\' => $groups
+							'groups' => $groups
 						)
 					);
-				'),
+				},
 			),
 			'messages' => array('repair_group_request_missing_group', 'id_group'),
 		),

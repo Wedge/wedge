@@ -734,10 +734,14 @@ function ConvertEntities()
 	$context['num_tables'] = count($tables);
 
 	// This function will do the conversion later on.
-	$entity_replace = create_function('$matches', '
+	$entity_replace = function ($matches) {
 		$string = $matches[1];
-		$num = $string[0] === \'x\' ? hexdec(substr($string, 1)) : (int) $string;
-		return $num < 0x20 || $num > 0x10FFFF || ($num >= 0xD800 && $num <= 0xDFFF) ? \'\' : ($num < 0x80 ? \'&#\' . $num . \';\' : ($num < 0x800 ? chr(192 | $num >> 6) . chr(128 | $num & 63) : ($num < 0x10000 ? chr(224 | $num >> 12) . chr(128 | $num >> 6 & 63) . chr(128 | $num & 63) : chr(240 | $num >> 18) . chr(128 | $num >> 12 & 63) . chr(128 | $num >> 6 & 63) . chr(128 | $num & 63))));');
+		$num = $string[0] === 'x' ? hexdec(substr($string, 1)) : (int) $string;
+		return $num < 0x20 || $num > 0x10FFFF || ($num >= 0xD800 && $num <= 0xDFFF) ? '' :
+			($num < 0x80 ? '&#' . $num . ';' : ($num < 0x800 ? chr(192 | $num >> 6) . chr(128 | $num & 63) :
+			($num < 0x10000 ? chr(224 | $num >> 12) . chr(128 | $num >> 6 & 63) . chr(128 | $num & 63) :
+			chr(240 | $num >> 18) . chr(128 | $num >> 12 & 63) . chr(128 | $num >> 6 & 63) . chr(128 | $num & 63))));
+	};
 
 	// Loop through all tables that need converting.
 	for (; $context['table'] < $context['num_tables']; $context['table']++)

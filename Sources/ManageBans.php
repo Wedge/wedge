@@ -127,10 +127,10 @@ function createBanList()
 					'value' => $txt['ban_type'],
 				),
 				'data' => array(
-					'function' => create_function('$rowData', '
+					'function' => function ($rowData) {
 						global $txt;
-						return \'<div class="ban_items ban_items_\' . $rowData[\'ban_type\'] . \'" title="\' . $txt[\'ban_type_\' . $rowData[\'ban_type\']] . \'"></div>\';
-					'),
+						return '<div class="ban_items ban_items_' . $rowData['ban_type'] . '" title="' . $txt['ban_type_' . $rowData['ban_type']] . '"></div>';
+					},
 				),
 				'sort' => array(
 					'default' => 'ban_type',
@@ -143,73 +143,73 @@ function createBanList()
 					'class' => 'left',
 				),
 				'data' => array(
-					'function' => create_function('$rowData', '
+					'function' => function ($rowData) {
 						global $user_profile, $txt, $settings;
-						$extra = !empty($rowData[\'extra\']) ? @unserialize($rowData[\'extra\']) : array();
+						$extra = !empty($rowData['extra']) ? @unserialize($rowData['extra']) : array();
 
-						switch($rowData[\'ban_type\'])
+						switch($rowData['ban_type'])
 						{
-							case \'id_member\':
-								$uid = (int) $rowData[\'ban_content\'];
+							case 'id_member':
+								$uid = (int) $rowData['ban_content'];
 								if (isset($user_profile[$uid]))
-									return sprintf($txt[\'ban_id_member_is\'], \'<URL>?action=profile;u=\' . $uid, $user_profile[$uid][\'real_name\']);
+									return sprintf($txt['ban_id_member_is'], '<URL>?action=profile;u=' . $uid, $user_profile[$uid]['real_name']);
 								else
-									return \'<em>\' . sprintf($txt[\'ban_invalid_member\'], $uid) . \'</em>\';
+									return '<em>' . sprintf($txt['ban_invalid_member'], $uid) . '</em>';
 								break;
-							case \'member_name\':
-								$case_sens = !empty($extra[\'case_sens\']) ? $txt[\'ban_member_names_case_matters\'] : \'\';
-								$type = !empty($extra[\'type\']) && in_array($extra[\'type\'], array(\'beginning\', \'containing\', \'ending\')) ? $extra[\'type\'] : \'matching\';
-								return sprintf($txt[\'ban_member_names_\' . $type], $rowData[\'ban_content\'], $case_sens);
+							case 'member_name':
+								$case_sens = !empty($extra['case_sens']) ? $txt['ban_member_names_case_matters'] : '';
+								$type = !empty($extra['type']) && in_array($extra['type'], array('beginning', 'containing', 'ending')) ? $extra['type'] : 'matching';
+								return sprintf($txt['ban_member_names_' . $type], $rowData['ban_content'], $case_sens);
 								break;
-							case \'email\':
-								if (strpos($rowData[\'ban_content\'], \'*@\') === 0)
-									return sprintf($txt[\'ban_entire_domain\'], substr($rowData[\'ban_content\'], 2));
-								elseif (strpos($rowData[\'ban_content\'], \'@*\') === 0)
-									return sprintf($txt[\'ban_entire_tld\'], substr($rowData[\'ban_content\'], 2));
+							case 'email':
+								if (strpos($rowData['ban_content'], '*@') === 0)
+									return sprintf($txt['ban_entire_domain'], substr($rowData['ban_content'], 2));
+								elseif (strpos($rowData['ban_content'], '@*') === 0)
+									return sprintf($txt['ban_entire_tld'], substr($rowData['ban_content'], 2));
 								else
 								{
-									if (!empty($extra[\'gmail_style\']))
+									if (!empty($extra['gmail_style']))
 									{
-										list ($user, $domain) = explode(\'@\', $rowData[\'ban_content\']);
-										if (strpos($user, \'+\') !== false)
-											list ($user, $label) = explode(\'+\', $user);
+										list ($user, $domain) = explode('@', $rowData['ban_content']);
+										if (strpos($user, '+') !== false)
+											list ($user, $label) = explode('+', $user);
 
-										$user = str_replace(\'.\', \'\', $user);
-										return sprintf($txt[\'ban_gmail_style_email\'], $user, $domain) . \' <a href="<URL>?action=help;in=ban_gmail_style" onclick="return reqWin(this);" class="help"></a>\';
+										$user = str_replace('.', '', $user);
+										return sprintf($txt['ban_gmail_style_email'], $user, $domain) . ' <a href="<URL>?action=help;in=ban_gmail_style" onclick="return reqWin(this);" class="help"></a>';
 									}
 									else
-										return $rowData[\'ban_content\'];
+										return $rowData['ban_content'];
 								}
 								break;
-							case \'ip_address\':
-								switch (strlen($rowData[\'ban_content\']))
+							case 'ip_address':
+								switch (strlen($rowData['ban_content']))
 								{
 									case 32: // single address
-										return format_ip($rowData[\'ban_content\']);
+										return format_ip($rowData['ban_content']);
 									case 65: // range
-										list ($start, $end) = explode(\'-\', $rowData[\'ban_content\']);
-										return format_ip($start) . \' - \' . format_ip($end);
+										list ($start, $end) = explode('-', $rowData['ban_content']);
+										return format_ip($start) . ' - ' . format_ip($end);
 								}
-								return $rowData[\'ban_content\'];
+								return $rowData['ban_content'];
 								break;
-							case \'hostname\':
-								if (strpos($rowData[\'ban_content\'], \'*.\') === 0)
+							case 'hostname':
+								if (strpos($rowData['ban_content'], '*.') === 0)
 								{
-									$domain = substr($rowData[\'ban_content\'], 2);
+									$domain = substr($rowData['ban_content'], 2);
 									// We might have stripped too much, let us check
-									if (strpos($domain, \'.\') === false)
-										$domain = \'*.\' . $domain;
-									$response = sprintf($txt[\'ban_entire_hostname\'], $domain);
+									if (strpos($domain, '.') === false)
+										$domain = '*.' . $domain;
+									$response = sprintf($txt['ban_entire_hostname'], $domain);
 								}
 								else
-									$response = $rowData[\'ban_content\'];
+									$response = $rowData['ban_content'];
 
-								if (!empty($settings[\'disableHostnameLookup\']))
-									$response = \'<span class="error">\' . $response . \'</span> <a href="<URL>?action=help;in=no_hostname_ban" class="help" onclick="return reqWin(this);"></a>\';
+								if (!empty($settings['disableHostnameLookup']))
+									$response = '<span class="error">' . $response . '</span> <a href="<URL>?action=help;in=no_hostname_ban" class="help" onclick="return reqWin(this);"></a>';
 								return $response;
 								break;
 						}
-					'),
+					},
 				),
 			),
 			'reason' => array(
@@ -243,10 +243,10 @@ function createBanList()
 					'value' => $txt['ban_added_by'],
 				),
 				'data' => array(
-					'function' => create_function('$rowData', '
+					'function' => function ($rowData) {
 						global $txt;
-						return empty($rowData[\'member_added\']) ? $txt[\'not_applicable\'] : \'<a href="<URL>?action=profile;u=\' . $rowData[\'member_added\'] . \'">\' . $rowData[\'member_name\'] . \'</a>\';'
-					),
+						return empty($rowData['member_added']) ? $txt['not_applicable'] : '<a href="<URL>?action=profile;u=' . $rowData['member_added'] . '">' . $rowData['member_name'] . '</a>';
+					},
 				),
 				'sort' => array(
 					'default' => 'member_added',
@@ -258,14 +258,14 @@ function createBanList()
 					'value' => '',
 				),
 				'data' => array(
-					'function' => create_function('$rowData', '
+					'function' => function ($rowData) {
 						global $settings, $txt;
-						if (empty($settings[\'disableHostnameLookup\']) || $rowData[\'ban_type\'] != \'hostname\')
-							return sprintf(\'<a href="<URL>?action=admin;area=ban;sa=edit;ban=%1$d">%2$s</a>\', $rowData[\'id_ban\'], $txt[\'modify\']);
+						if (empty($settings['disableHostnameLookup']) || $rowData['ban_type'] != 'hostname')
+							return sprintf('<a href="<URL>?action=admin;area=ban;sa=edit;ban=%1$d">%2$s</a>', $rowData['id_ban'], $txt['modify']);
 						else
-							return \'\';
-					'),
-					'style' => 'text-align: center;',
+							return '';
+					},
+					'style' => 'text-align: center',
 				),
 			),
 			'check' => array(
@@ -290,7 +290,7 @@ function createBanList()
 			array(
 				'position' => 'below_table_data',
 				'value' => '<input type="submit" name="removeBans" value="' . $txt['ban_remove_selected'] . '" onclick="return ask(' . JavaScriptEscape($txt['ban_remove_selected_confirm']) . ', e);" class="delete">',
-				'style' => 'text-align: right;',
+				'style' => 'text-align: right',
 			),
 		),
 	);
@@ -327,8 +327,8 @@ function BanListAdd()
 	new weAutoSuggest({
 		', min_chars(), ',
 		bItemList: true,
-		sControlId: \'ban_id_member_content\',
-		sPostName: \'ban_id_member_content\',
+		sControlId: "ban_id_member_content",
+		sPostName: "ban_id_member_content",
 		bItemList: false
 	});');
 }
