@@ -37,9 +37,10 @@ function template_main()
 					<dd>
 						<div id="known_themes_list">';
 
-	foreach ($context['themes'] as $th)
+	// !!! @todo: fix this, get a flattened list of all skins.
+	foreach ($context['themes'][1]['skins']['skins'] as $th)
 		echo '
-							<label><input type="checkbox" name="options[known_themes][]" id="options-known_themes_', $th['id'], '" value="', $th['id'], '"', !empty($th['known']) ? ' checked' : '', '> ', $th['name'], '</label><br>';
+							<label><input type="checkbox" name="options[known_themes][]" id="options-known_themes_', westr::safe($th['name']), '" value="', $th['dir'], '"', !empty($th['known']) ? ' checked' : '', '> ', $th['name'], '</label><br>';
 
 	echo '
 						</div>
@@ -59,13 +60,13 @@ function template_main()
 							<option value="0">', $txt['theme_forum_default'], '</option>';
 
 	// Same thing, this time for changing the theme of everyone.
-	foreach ($context['themes'] as $th)
+	foreach ($context['themes'][1] as $th)
 		if (!empty($th['skins']))
 			echo wedge_show_skins($th['skins']);
 
 	echo '
 						</select>
-						<span class="smalltext pick_theme"><a href="<URL>?action=theme;sa=pick;u=0;', $context['session_query'], '">', $txt['theme_select'], '</a></span>
+						&nbsp;<span class="smalltext pick_theme"><a href="<URL>?action=theme;sa=pick;u=0;', $context['session_query'], '">', $txt['theme_select'], '</a></span>
 					</dd>
 				</dl>
 				<div class="right">
@@ -156,30 +157,27 @@ function template_guest_selector($is_mobile = false)
 {
 	global $context, $settings, $txt;
 
-	$guests = $is_mobile ? 'guests_mobile' : 'guests';
+	$guests = $is_mobile ? 'theme_guests_mobile' : 'theme_guests';
 
 	echo '
 					<dt>
-						<label for="theme_', $guests, '">', $txt['theme_' . $guests], ':</label>
+						<label for="', $guests, '">', $txt[$guests], ':</label>
 					</dt>
 					<dd>
-						<select name="options[theme_', $guests, ']" id="theme_', $guests, '">
-							';
+						<select name="options[', $guests, ']" id="', $guests, '">';
 
 	add_js('
 	$("#known_themes_list").hide();
 	$("#known_themes_link").show();');
 
-	$skin = empty($settings['theme_skin_' . $guests]) ? ($is_mobile ? 'skins/Wireless' : 'skins') : $settings['theme_skin_' . $guests];
-
 	// Put an option for each theme in the select box.
-	foreach ($context['themes'] as $th)
+	foreach ($context['themes'][1] as $th)
 		if (!empty($th['skins']))
-			echo wedge_show_skins($th['skins'], $skin);
+			echo wedge_show_skins($th['skins']);
 
 	echo '
 						</select>
-						<span class="smalltext pick_theme"><a href="<URL>?action=theme;sa=pick;u=-1;', $context['session_query'], '">', $txt['theme_select'], '</a></span>
+						&nbsp;<span class="smalltext pick_theme"><a href="<URL>?action=theme;sa=pick;u=-1;', $context['session_query'], '">', $txt['theme_select'], '</a></span>
 					</dd>';
 }
 
@@ -260,44 +258,42 @@ function template_pick()
 		<form action="<URL>?action=skin', $context['specify_member'], ';', $context['session_query'], '" method="post" accept-charset="UTF-8">';
 
 	// Just go through each theme and show its information - thumbnail, etc.
-	foreach ($context['available_themes'] as $th)
-	{
-		$id_extra = $settings['theme_guests'] === $th['id'] ? '_' . base64_encode($settings['theme_skin_guests']) : '';
-		$thumbnail = '/' . (empty($th['id']) || $id_extra ? $settings['theme_skin_guests'] : 'skins') . '/thumbnail.jpg';
-		$thumbnail_href = file_exists($th['theme_dir'] . $thumbnail) ? $th['theme_url'] . $thumbnail : '';
+	$th = $context['available_themes'];
+	$default_skin = get_default_skin();
+	$is_default_skin = $context['skin_actual'] == '';
+	$thumbnail = ($default_skin === '/' ? '' : '/' . $default_skin) . '/thumbnail.jpg';
+	$thumbnail_href = file_exists(SKINS_DIR . $thumbnail) ? SKINS . $thumbnail : '';
 
-		echo '
+	echo '
 			<div style="margin: 8px 0"></div>
 			<we:title>
-				', $context['current_theme'] == $th['id'] ? '<span style="font-family: sans-serif">&#10004;</span> ' : '', '<a href="<URL>?action=skin', $context['specify_member'], ';th=', $th['id'], $id_extra, ';', $context['session_query'], '">', $th['name'], '</a>', $context['current_theme'] == $th['id'] ? '
-				(' . $txt['current_theme'] . ')' : '', '
+				', $is_default_skin ? '<span style="font-family: sans-serif">&#10004;</span> ' : '', '<a href="<URL>?action=skin', $context['specify_member'], ';skin=;', $context['session_query'], '">', $th['name'], '</a>', $is_default_skin ? ' (' . $txt['current_theme'] . ')' : '', '
 			</we:title>
 			<div class="', $th['selected'] ? 'windowbg' : 'windowbg2', ' wrc flow_hidden">', $thumbnail_href ? '
 				<div class="floatright">
-					<a href="<URL>?action=skin' . $context['specify_member'] . ';theme=' . $th['id'] . $id_extra . ';' . $context['session_query'] . '" id="theme_thumb_preview_' . $th['id'] . '" title="' . $txt['theme_preview'] . '"><img src="' . $thumbnail_href . '" id="theme_thumb_' . $th['id'] . '" class="padding"></a>
+					<a href="<URL>?action=skin' . $context['specify_member'] . ';skin=;' . $context['session_query'] . '" id="theme_thumb_preview_default" title="' . $txt['theme_skin_preview'] . '"><img src="' . $thumbnail_href . '" id="theme_thumb_default" class="padding"></a>
 				</div>' : '', '
 				<p>
 					', $th['description'], '
 				</p>
 				<p>
-					<em class="smalltext">', number_context('theme_users', $th['num_users']), '</em>
+					<em class="smalltext">', number_context('skin_users', $th['num_users']), '</em>
 				</p>
 				<ul style="padding-left: 20px">
-					<li><a href="<URL>?action=skin', $context['specify_member'], ';th=', $th['id'], $id_extra, ';', $context['session_query'], '" id="theme_use_', $th['id'], '">', $txt['theme_set'], '</a></li>
-					<li><a href="<URL>?action=skin', $context['specify_member'], ';theme=', $th['id'], $id_extra, ';', $context['session_query'], '" id="theme_preview_', $th['id'], '">', $txt['theme_preview'], '</a></li>
-				</ul>';
+					<li><a href="<URL>?action=skin', $context['specify_member'], ';skin;', $context['session_query'], '" id="theme_use_default">', $txt['theme_set'], '</a></li>
+					<li><a href="<URL>?action=skin', $context['specify_member'], ';presk;', $context['session_query'], '" id="theme_preview_default">', $txt['theme_skin_preview'], '</a></li>
+				</ul>
+			</div>';
 
-		if ($th['id'] !== 0 && !empty($th['skins']))
-		{
-			echo '
-				<div style="margin-top: 8px; clear: right">
-					<we:title>
-						', $txt['theme_skins'], '
-					</we:title>
-				</div>';
+	if (!empty($th['skins']))
+	{
+		echo '
+			<div style="margin-top: 8px; clear: right">
+				<we:title>
+					', $txt['theme_skins'], '
+				</we:title>';
 
-			template_list_skins($th, $th['id'], '', '', false, $th['selected'] ? '2' : '');
-		}
+		template_list_skins($th, false, $th['selected'] ? '2' : '');
 
 		echo '
 			</div>';
@@ -308,21 +304,16 @@ function template_pick()
 	</div>';
 }
 
-function template_list_skins(&$th, $theme_url = '', $theme_dir = '', $is_child = false, $alt_level = '')
+function template_list_skins(&$th, $is_child = false, $alt_level = '')
 {
 	global $txt, $context;
 
-	if (empty($theme_url))
-	{
-		$theme_dir = TEMPLATES_DIR;
-		$theme_url = TEMPLATES;
-	}
-
 	foreach ($th['skins'] as $sty)
 	{
-		$target = base64_encode($sty['dir']);
-		$thumbnail_href = file_exists($theme_dir . '/' . $sty['dir'] . '/thumbnail.jpg') ? $theme_url . '/' . $sty['dir'] . '/thumbnail.jpg' : '';
-		$is_current_skin = $context['current_skin'] == $sty['dir'];
+		$target = westr::safe($sty['dir']);
+		$dir = $sty['dir'] === '/' ? '' : '/' . $sty['dir'];
+		$thumbnail_href = file_exists(SKINS_DIR . $dir . '/thumbnail.jpg') ? SKINS . $dir . '/thumbnail.jpg' : '';
+		$is_current_skin = $context['skin_actual'] == $sty['dir'];
 
 		echo '
 				<fieldset class="wrc windowbg', $alt_level, ' clear_right', $is_current_skin ? ' current_skin' : '', '" style="margin: 12px 8px 8px">
@@ -330,25 +321,25 @@ function template_list_skins(&$th, $theme_url = '', $theme_dir = '', $is_child =
 						', $is_current_skin ? '<span style="font-family: sans-serif">&#10004;</span> ' : '', $sty['name'], '
 					</legend>', $thumbnail_href ? '
 					<div class="floatright">
-						<a href="<URL>?action=skin' . $context['specify_member'] . ';theme=' . $target . ';' . $context['session_query'] . '" id="theme_thumb_preview_' . $target . '" title="' . $txt['theme_preview'] . '"><img src="' . $thumbnail_href . '" id="theme_thumb_' . $target . '" class="padding"' . ($is_child ? ' style="max-width: 75px"' : '') . '></a>
+						<a href="<URL>?action=skin' . $context['specify_member'] . ';skin=' . $target . ';' . $context['session_query'] . '" id="theme_thumb_preview_' . $target . '" title="' . $txt['theme_skin_preview'] . '"><img src="' . $thumbnail_href . '" id="theme_thumb_' . $target . '" class="padding"' . ($is_child ? ' style="max-width: 75px"' : '') . '></a>
 					</div>' : '', '
 					<p>', $sty['comment'], '</p>';
 
 		if (!empty($sty['num_users']))
 			echo '
 					<p>
-						<em class="smalltext">', number_context('theme_users', $sty['num_users']), '</em>
+						<em class="smalltext">', number_context('skin_users', $sty['num_users']), '</em>
 					</p>';
 
 		if (!$is_current_skin)
 			echo '
 					<ul style="padding-left: 20px">
-						<li><a href="<URL>?action=skin', $context['specify_member'], ';th=', $target, ';', $context['session_query'], '" id="theme_use_', $target, '_', '">', $txt['theme_skin_set'], '</a></li>
-						<li><a href="<URL>?action=skin', $context['specify_member'], ';theme=', $target, ';', $context['session_query'], '" id="theme_preview_', $target, '_', '">', $txt['theme_skin_preview'], '</a></li>
+						<li><a href="<URL>?action=skin', $context['specify_member'], ';skin=', $target, ';', $context['session_query'], '" id="theme_use_', $target, '_', '">', $txt['theme_skin_set'], '</a></li>
+						<li><a href="<URL>?action=skin', $context['specify_member'], ';presk=', $target, ';', $context['session_query'], '" id="theme_preview_', $target, '_', '">', $txt['theme_skin_preview'], '</a></li>
 					</ul>';
 
 		if (!empty($sty['skins']))
-			template_list_skins($sty, $theme_url, $theme_dir, true, $alt_level ? '' : '2');
+			template_list_skins($sty, true, $alt_level ? '' : '2');
 
 		echo '
 				</fieldset>';
@@ -430,7 +421,7 @@ function template_copy_template()
 					<span class="floatright">';
 
 		if ($template['can_copy'])
-			echo '<a href="<URL>?action=admin;area=theme;th=', $context['theme_id'], ';', $context['session_query'], ';sa=copy;template=', $template['value'], '" onclick="return ask(', JavaScriptEscape($template['already_exists'] ? $txt['themeadmin_edit_overwrite_confirm'] : $txt['themeadmin_edit_copy_confirm']), ', e);">', $txt['themeadmin_edit_do_copy'], '</a>';
+			echo '<a href="<URL>?action=admin;area=theme;', $context['session_query'], ';sa=copy;template=', $template['value'], '" onclick="return ask(', JavaScriptEscape($template['already_exists'] ? $txt['themeadmin_edit_overwrite_confirm'] : $txt['themeadmin_edit_copy_confirm']), ', e);">', $txt['themeadmin_edit_do_copy'], '</a>';
 		else
 			echo $txt['themeadmin_edit_no_copy'];
 
@@ -516,14 +507,14 @@ function template_edit_style()
 		}
 
 		$.get(
-			url + (url.indexOf("?") == -1 ? "?" : ";") + "theme=', $context['theme_id'], '_', base64_encode(dirname($context['edit_filename'])), '" + anchor,
+			url + (url.indexOf("?") == -1 ? "?" : ";") + "theme=', dirname($context['edit_filename']), '" + anchor,
 			function (response)
 			{
 				previewData = response;
 				$("#css_preview_box").show();
 
 				// Revert to the theme they actually use.
-				$.get(weUrl("action=admin;area=theme;sa=edit;theme=', $context['theme_id'], !empty(we::$user['skin']) ? '_' . base64_encode(we::$user['skin']) : '', ';preview;" + $.now()));
+				$.get(weUrl("action=admin;area=theme;sa=edit;theme=', we::$user['skin'], ';preview;" + $.now()));
 
 				refreshPreviewCache = null;
 				refreshPreview(false);
@@ -607,7 +598,7 @@ function template_edit_style()
 
 	// Just show a big box.... gray out the Save button if it's not saveable... (ie. not 777.)
 	echo '
-		<form action="<URL>?action=admin;area=theme;th=', $context['theme_id'], ';sa=edit" method="post" accept-charset="UTF-8" name="stylesheetForm" id="stylesheetForm">
+		<form action="<URL>?action=admin;area=theme;sa=edit" method="post" accept-charset="UTF-8" name="stylesheetForm" id="stylesheetForm">
 			<we:cat>
 				', $txt['theme_edit'], ' - ', $context['edit_filename'], '
 			</we:cat>
@@ -649,7 +640,7 @@ function template_edit_template()
 
 	// Just show a big box.... gray out the Save button if it's not saveable... (ie. not 777.)
 	echo '
-		<form action="<URL>?action=admin;area=theme;th=', $context['theme_id'], ';sa=edit" method="post" accept-charset="UTF-8">
+		<form action="<URL>?action=admin;area=theme;sa=edit" method="post" accept-charset="UTF-8">
 			<we:cat>
 				', $txt['theme_edit'], ' - ', $context['edit_filename'], '
 			</we:cat>
@@ -695,7 +686,7 @@ function template_edit_file()
 
 	// Just show a big box.... gray out the Save button if it's not saveable... (ie. not 777.)
 	echo '
-		<form action="<URL>?action=admin;area=theme;th=', $context['theme_id'], ';sa=edit" method="post" accept-charset="UTF-8">
+		<form action="<URL>?action=admin;area=theme;sa=edit" method="post" accept-charset="UTF-8">
 			<we:cat>
 				', $txt['theme_edit'], ' - ', $context['edit_filename'], '
 			</we:cat>

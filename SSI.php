@@ -76,12 +76,8 @@ cleanRequest();
 if (empty($settings['rand_seed']) || mt_rand(1, 250) == 42)
 	we_seed_generator();
 
-// Check on any hacking attempts.
-if (isset($_REQUEST['GLOBALS']) || isset($_COOKIE['GLOBALS'])
-|| (isset($_REQUEST['ssi_theme']) && (int) $_REQUEST['ssi_theme'] == (int) $ssi_theme)
-|| (isset($_COOKIE['ssi_theme']) && (int) $_COOKIE['ssi_theme'] == (int) $ssi_theme)
-|| (isset($_REQUEST['context'])))
-	die('Hacking attempt...');
+// Avoid any hacking attempts. Shouldn't work anyway though, due to register_globals being off.
+unset($_REQUEST['GLOBALS'], $_COOKIE['GLOBALS'], $_REQUEST['ssi_skin'], $_COOKIE['ssi_skin'], $_REQUEST['context']);
 
 // Gzip output? Because it must be boolean and true, this can't be hacked.
 if (isset($ssi_gzip) && $ssi_gzip === true && (int) ini_get('zlib.output_compression') < 1 && ini_get('output_handler') != 'ob_gzhandler')
@@ -132,8 +128,8 @@ if (empty($settings['allow_guestAccess']) && we::$is_guest)
 	we::$user['query_wanna_see_board'] = '0=1';
 }
 
-// Load the current or SSI theme. (just use $ssi_theme = id_theme;)
-loadTheme(isset($ssi_theme) ? (int) $ssi_theme : 0);
+// Load the current or SSI theme. (Just use $ssi_skin = 'custom_skin';)
+loadTheme(isset($ssi_skin) && strpos($ssi_skin, '..') === false ? $ssi_skin : '');
 
 // Deal with anything that SSI (only) wants.
 call_hook('ssi');

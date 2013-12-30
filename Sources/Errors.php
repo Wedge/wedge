@@ -472,6 +472,52 @@ function show_db_error($loadavg = false)
 }
 
 /**
+ * Outputs the correct HTTP header, typically to be used in error handling cases.
+ *
+ * @param int $header The HTTP status code to be used, e.g. 403, 404.
+ */
+function issue_http_header($header)
+{
+	// All the codes we might want to send. They should not be translated.
+	// There are some extensions such as those supplied by nginx and WebDAV, but only standard HTTP and standards-proposed extensions that are relevant are present here.
+	$codes = array(
+		200 => 'OK', // supplied in case someone wants to issue an error page for some reason but send it with a 200 OK header
+		400 => 'Bad Request',
+		403 => 'Forbidden',
+		404 => 'Not Found',
+		405 => 'Method Not Allowed',
+		406 => 'Not Acceptable',
+		407 => 'Proxy Authentication Required',
+		408 => 'Request Timeout',
+		409 => 'Conflict',
+		410 => 'Gone',
+		411 => 'Length Required',
+		412 => 'Precondition Failed',
+		413 => 'Request Entity Too Large',
+		414 => 'Request-URI Too Long',
+		415 => 'Unsupported Media Type',
+		416 => 'Requested Range Not Satisfiable',
+		417 => 'Expectation Failed',
+		429 => 'Too Many Requests', // standards-proposed
+		431 => 'Request Header Fields Too Large', // standards-proposed
+		500 => 'Internal Server Error',
+		501 => 'Not Implemented',
+		502 => 'Bad Gateway',
+		503 => 'Service Unavailable',
+		504 => 'Gateway Timeout',
+		505 => 'HTTP Version Not Supported',
+	);
+
+	if (!isset($codes[$header]))
+		$header = 403;
+
+	// Certain configurations need one, certain configurations need the other.
+	if (!empty($_SERVER['SERVER_PROTOCOL']))
+		header($_SERVER['SERVER_PROTOCOL'] . ' ' . $header . ' ' . $codes[$header]);
+	header('Status: ' . $header . ' ' . $codes[$header]);
+}
+
+/**
  * Update the user online log if there has been an error.
  *
  * The function will abort early if Who's Online is not enabled, since this operation becomes redundant.

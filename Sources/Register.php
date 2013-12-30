@@ -262,7 +262,6 @@ function Register2()
 		'pm_email_notify',
 		'notify_types',
 		'gender',
-		'id_theme',
 	);
 	$possible_floats = array(
 	);

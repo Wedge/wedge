@@ -111,8 +111,8 @@ function DoLogin()
 		unset($_SESSION['just_registered']);
 	}
 
-	// Don't stick the language or theme after this point.
-	unset($_SESSION['language'], $_SESSION['id_theme']);
+	// Don't stick the language after this point.
+	unset($_SESSION['language']);
 
 	// First login?
 	$request = wesql::query('

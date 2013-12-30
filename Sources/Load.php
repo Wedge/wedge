@@ -38,7 +38,7 @@ function loadSettings()
 	wesql::query('SET NAMES utf8');
 
 	// Try to load settings from the cache first; they'll never get cached if the setting is off.
-	if (($settings = cache_get_data('settings', 'forever')) == null)
+	if (($settings = cache_get_data('settings', 'forever')) === null)
 	{
 		$request = wesql::query('
 			SELECT variable, value
@@ -137,7 +137,7 @@ function loadSettings()
 	// Check the load averages?
 	if (!empty($settings['loadavg_enable']))
 	{
-		if (($settings['load_average'] = cache_get_data('loadavg', 90)) == null)
+		if (($settings['load_average'] = cache_get_data('loadavg', 90)) === null)
 		{
 			$settings['load_average'] = @file_get_contents('/proc/loadavg');
 			if (!empty($settings['load_average']) && preg_match('~^([^ ]+?) ([^ ]+?) ([^ ]+)~', $settings['load_average'], $matches) != 0)
@@ -269,7 +269,7 @@ function loadBoard()
 				c.id_cat, b.name AS bname, b.url, b.id_owner, b.description, b.num_topics, b.member_groups,
 				b.num_posts, b.id_parent, c.name AS cname, IFNULL(mem.id_member, 0) AS id_moderator,
 				mem.real_name' . (!empty($topic) ? ', b.id_board' : '') . ', b.child_level, b.skin,
-				b.id_theme, b.override_theme, b.count_posts, b.id_profile, b.redirect, b.language, bm.permission = \'deny\' AS banned,
+				b.override_theme, b.count_posts, b.id_profile, b.redirect, b.language, bm.permission = \'deny\' AS banned,
 				bm.permission = {literal:access} AS allowed, mco.real_name AS owner_name, mco.buddy_list AS contacts, b.board_type, b.sort_method,
 				b.sort_override, b.unapproved_topics, b.unapproved_posts' . (!empty($topic) ? ', t.approved, t.id_member_started' : '') . '
 			FROM {db_prefix}boards AS b' . (!empty($topic) ? '
@@ -317,7 +317,7 @@ function loadBoard()
 				'parent' => $row['id_parent'],
 				'child_level' => $row['child_level'],
 				'skin' => $row['skin'],
-				'theme' => $row['id_theme'],
+				'theme' => 1,
 				'override_theme' => !empty($row['override_theme']),
 				'profile' => $row['id_profile'],
 				'redirect' => $row['redirect'],
@@ -718,7 +718,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 
 			mem.additional_groups,
 
-			mem.id_theme, mem.pm_ignore_list, mem.pm_email_notify, mem.pm_receive_from,
+			mem.pm_ignore_list, mem.pm_email_notify, mem.pm_receive_from,
 			mem.time_format, mem.timezone, mem.secret_question, mem.smiley_set, mem.total_time_logged_in,
 			mem.ignore_boards, mem.notify_announcements, mem.notify_regularity, mem.notify_send_body,
 			mem.notify_types, lo.url, mem.password_salt, mem.pm_prefs';
@@ -865,7 +865,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 	// Are we loading any moderators? If so, fix their group data...
 	if (!empty($loaded_ids) && !empty($board_info['moderators']) && ($set === 'normal' || $set === 'userbox') && count($temp_mods = array_intersect($loaded_ids, array_keys($board_info['moderators']))) > 0)
 	{
-		if (($row = cache_get_data('moderator_group_info', 480)) == null)
+		if (($row = cache_get_data('moderator_group_info', 480)) === null)
 		{
 			$request = wesql::query('
 				SELECT group_name AS member_group, stars
@@ -1254,105 +1254,52 @@ function we_resetTransparency($id_attach, $path, $real_name)
 }
 
 /**
- * Load all the details of a theme, given its ID.
+ * Load all the details of a skin, given its name.
  *
- * - Identify the theme to be loaded, from parameter or an external source: theme parameter in the URL, previously theme parameter in the URL and now in session, the user's preference, a board specific theme, and lastly the forum's default theme.
- * - Validate that the supplied theme is a valid id and that permission to use such theme (e.g. admin allows users to choose own theme, etc) is available.
- * - Load data from the themes table for this theme, both the user's preferences for this theme, plus the global settings for it, and load into $options (user's specific settings.)
- * - Save details to cache as appropriate.
- * - Prepare the list of folders to examine in priority for template loading (i.e. this theme's folder first, then default, but can include others)
- * - Identify if the user has come to the board from the wrong place (e.g. a www in the URL that shouldn't be there) so it can be fixed.
- * - Identify what smiley set should be used.
+ * - Identify the skin to be loaded, either from parameter (specified by $ssi_skin for instance) or an external source: skin parameter in the URL, user's preference, board-specific skin, and lastly the default skin.
+ * - Validate that the supplied skin is valid and that permission to use it is available, e.g. admin allows users to choose their own skin.
+ * - Load data user settings into $options.
+ * - Save details to cache as needed.
+ * - Prepare the list of folders to examine in priority for template loading.
+ * - Identify what smiley set to use.
  * - Initialize $context['header'] and $context['footer'] for later use, as well as some paths, some global $context values, $txt initially.
  * - Set up common server-side settings for later reference (in case of server configuration specific tweaks)
  * - Ensure the forum name is the first item in the link tree.
- * - Load the index template (plus any templates the theme has specified it uses), and do not initialize template layers if we are using a 'simple' action that does not need them.
- * - Initialize the theme by calling the init block.
- * - Load any theme specific language files.
+ * - Load the index template (plus any templates the skin has specified it uses), and skip template layers if using a 'simple' action that does not need them.
+ * - Call the template's init block, in case it wants to set something up.
+ * - Load any skin-specific language files.
  * - See if scheduled tasks need to be loaded, if so add the call into the HTML header so they will be triggered next page load.
  * - Call the load_theme hook.
  */
-function loadTheme($id_theme = 0, $initialize = true)
+function loadTheme($skin = '', $initialize = true)
 {
 	global $user_settings, $board_info, $boarddir, $sourcedir, $footer_coding;
-	global $txt, $boardurl, $mbname, $settings;
-	global $context, $options, $ssi_theme;
+	global $txt, $boardurl, $mbname, $settings, $context, $options;
 
-	// The theme was specified by parameter.
-	if (!empty($id_theme))
+	// First, determine our current skin, if not forced.
+	if (!$skin)
 	{
-		$id_theme = (int) $id_theme;
-		if (!empty(we::$user['theme']) && we::$user['theme'] == $id_theme)
-			$skin = we::$user['skin'];
-	}
-	// The theme was specified by REQUEST.
-	elseif (!empty($_REQUEST['theme']) && (!empty($settings['theme_allow']) || allowedTo('admin_forum')))
-	{
-		$id_theme = $_SESSION['id_theme'] = 1;
-		$skin = $_SESSION['skin'] = base64_decode($_REQUEST['theme']);
-	}
-	// The theme was specified by REQUEST... previously.
-	elseif (!empty($_SESSION['id_theme']) && (!empty($settings['theme_allow']) || allowedTo('admin_forum')))
-	{
-		$id_theme = (int) $_SESSION['id_theme'];
-		$skin = !empty($_SESSION['skin']) ? $_SESSION['skin'] : '';
-	}
-	// The theme is just the user's choice. (Might use ?board=1;theme=0 to force board theme.)
-	elseif (!empty(we::$user['theme']) && !isset($_REQUEST['theme']) && (!empty($settings['theme_allow']) || allowedTo('admin_forum')))
-	{
-		$id_theme = we::$user['theme'];
-		$skin = we::$user['skin'];
-	}
-	// The theme is the forum's mobile default.
-	elseif (we::$is['mobile'])
-	{
-		$id_theme = $settings['theme_guests_mobile'];
-		$skin = $settings['theme_skin_guests_mobile'];
-	}
-	// The theme was specified by the board.
-	elseif (!empty($board_info['theme']))
-	{
-		$id_theme = $board_info['theme'];
-		$skin = isset($board_info['skin']) ? $board_info['skin'] : '';
-	}
-	// The theme is the forum's default.
-	else
-	{
-		$id_theme = $settings['theme_guests'];
-		$skin = $settings['theme_skin_guests'];
+		// Are we allowed to request a preview, or to choose our own preferred skin?
+		if (!empty($settings['theme_allow']) || allowedTo('admin_forum'))
+			$skin = empty($_REQUEST['presk']) ? we::$user['skin'] : $_REQUEST['presk'];
+
+		// Always allow board-specific themes, if they are overriding.
+		// !! @todo: add support for skin_mobile.
+		if (!empty($board_info['skin']) && $board_info['override_theme'])
+			$skin = isset($board_info['skin']) ? $board_info['skin'] : '';
 	}
 
-	// Verify the id_theme... no foul play.
-	// Always allow the board specific theme, if they are overriding.
-	if (!empty($board_info['theme']) && $board_info['override_theme'])
-	{
-		$id_theme = $board_info['theme'];
-		$skin = isset($board_info['skin']) ? $board_info['skin'] : '';
-	}
-	// If they have specified a particular theme to use with SSI allow it to be used.
-	elseif (!empty($ssi_theme) && $id_theme == $ssi_theme)
-		$id_theme = (int) $id_theme;
-	elseif (!empty($settings['knownThemes']) && !allowedTo('admin_forum'))
-	{
-		$themes = explode(',', $settings['knownThemes']);
-		$id_theme = in_array($id_theme, $themes) ? (int) $id_theme : $settings['theme_guests'];
-	}
-	else
-		$id_theme = (int) $id_theme;
-
-	// Time to determine our CSS list...
-	// First, load our requested skin folder.
-	$context['skin'] = empty($skin) ? (empty($id_theme) ?
-		(we::$is['mobile'] ? $settings['theme_skin_guests_mobile'] : $settings['theme_skin_guests']) :
-		(we::$is['mobile'] ? 'skins/Wireless' : 'skins')) :
-		($skin === 'skins' || strpos($skin, 'skins/') === 0 ? '' : 'skins/') . $skin;
+	// Time to determine our CSS folder list... (SKINS_DIR . $context['skin'] will give you the skin folder.)
+	$context['skin_actual'] = $skin;
+	$context['skin'] = '/' . ($skin ? ltrim($skin, '/') : get_default_skin());
 	$folders = explode('/', $context['skin']);
 	$context['css_folders'] = array();
 	$current_folder = '';
+	$skins_folder_name = basename(SKINS_DIR);
 	foreach ($folders as $folder)
 	{
 		$current_folder .= '/' . $folder;
-		$context['css_folders'][] = substr($current_folder, 1);
+		$context['css_folders'][] = $skins_folder_name . substr($current_folder, 1);
 	}
 
 	// Then, we need to list the CSS files that will be part of our main CSS file.
@@ -1366,12 +1313,12 @@ function loadTheme($id_theme = 0, $initialize = true)
 
 	$member = MID ? MID : -1;
 
-	if (!empty($settings['cache_enable']) && $settings['cache_enable'] >= 2 && ($temp = cache_get_data('theme_settings-' . $id_theme . ':' . $member, 60)) != null && time() - 60 > $settings['settings_updated'])
+	if (!empty($settings['cache_enable']) && $settings['cache_enable'] >= 2 && ($temp = cache_get_data('theme_settings:' . $member, 60)) !== null && time() - 60 > $settings['settings_updated'])
 	{
 		$themeData = $temp;
 		$flag = true;
 	}
-	elseif (($temp = cache_get_data('theme_settings-' . $id_theme, 90)) != null && time() - 60 > $settings['settings_updated'])
+	elseif (($temp = cache_get_data('theme_settings', 90)) !== null && time() - 60 > $settings['settings_updated'])
 		$themeData = $temp + array($member => array());
 	else
 		$themeData = array(-1 => array(), 0 => array(), $member => array());
@@ -1380,7 +1327,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 	{
 		// Load member options for good.
 		$result = wesql::query('
-			SELECT variable, value, id_member, id_theme
+			SELECT variable, value, id_member
 			FROM {db_prefix}themes
 			WHERE id_member' . (empty($themeData[0]) ? ' IN (-1, 0, {int:id_member})' : ' = {int:id_member}'),
 			array(
@@ -1388,7 +1335,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 			)
 		);
 		while ($row = wesql::fetch_assoc($result))
-			if (!isset($themeData[$row['id_member']][$row['variable']]) || $row['id_theme'] != '1')
+			if (!isset($themeData[$row['id_member']][$row['variable']]))
 				$themeData[$row['id_member']][$row['variable']] = substr($row['variable'], 0, 5) == 'show_' ? $row['value'] == '1' : $row['value'];
 		wesql::free_result($result);
 
@@ -1398,18 +1345,16 @@ function loadTheme($id_theme = 0, $initialize = true)
 					$themeData[$member][$k] = $v;
 
 		if (!empty($settings['cache_enable']) && $settings['cache_enable'] >= 2)
-			cache_put_data('theme_settings-' . $id_theme . ':' . $member, $themeData, 60);
+			cache_put_data('theme_settings:' . $member, $themeData, 60);
 		// Only if we didn't already load that part of the cache...
 		elseif (!isset($temp))
-			cache_put_data('theme_settings-' . $id_theme, array(-1 => $themeData[-1], 0 => $themeData[0]), 90);
+			cache_put_data('theme_settings', array(-1 => $themeData[-1], 0 => $themeData[0]), 90);
 	}
 
 	$options = $themeData[$member];
 
-	$settings['theme_id'] = $id_theme;
-
-	// Only one theme really, this is Wedge, not SMF. Themes are too complicated.
-	$settings['template_dirs'] = array($settings['theme_dir']);
+	// Only one template folder for now.
+	$settings['template_dirs'] = array(TEMPLATES_DIR);
 
 	if (!$initialize)
 		return;
@@ -1505,24 +1450,23 @@ function loadTheme($id_theme = 0, $initialize = true)
 		else
 			$templates = array('index');
 
+		// Users may also add a Custom.template.php file (and associated language files) to their theme,
+		// to override or add code before or after a specific function, e.g. in the index template, without
+		// having to create a new theme. If it's not there, we'll just ignore that.
+		$templates[] = 'Custom';
+
 		// Load each template...
 		foreach ($templates as $template)
-			loadTemplate($template);
-
-		// Users may also add a Custom.template.php file to their theme folder, to help them override
-		// or add code before or after a specific function, e.g. in the index template, without
-		// having to create a new theme. If it's not there, we'll just ignore that.
-		loadTemplate('Custom', false);
+			loadTemplate($template, $template !== 'Custom');
 
 		// ...and attempt to load their associated language files.
-		$required_files = implode('+', $templates);
-		loadLanguage($required_files, '', false);
+		loadLanguage($templates, '', false);
 		we::$is['rtl'] = $context['right_to_left'] = !empty($txt['lang_rtl']); // May be needed in we::is tests.
 
 		// Initialize our JS files to cache right before we run template_init().
 		weInitJS();
 
-		// Initialize the theme.
+		// Run template_init()
 		execBlock('init', 'ignore');
 
 		// Now we'll override all of these...
@@ -1744,11 +1688,9 @@ function loadPluginLanguage($plugin_name, $template_name, $lang = '', $fatal = t
 		$request = wesql::query('
 			SELECT lang_var, lang_key, lang_string, serial
 			FROM {db_prefix}language_changes
-			WHERE id_theme = {int:theme}
-				AND id_lang = {string:lang}
+			WHERE id_lang = {string:lang}
 				AND lang_file = {string:lang_file}',
 			array(
-				'theme' => 0, // Plugins always have that.
 				'lang' => $lang,
 				'lang_file' => $file_key,
 			)
@@ -1835,9 +1777,8 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 
 		if (!defined('WEDGE_INSTALLER'))
 		{
-			$tid = !empty($settings['theme_id']) ? $settings['theme_id'] : 1;
 			// So, firstly try to get this from the file cache.
-			$filename = $cachedir . '/lang_' . $tid . '_' . $lang . '_' . $template . '.php';
+			$filename = $cachedir . '/lang_' . $lang . '_' . $template . '.php';
 			if (file_exists($filename))
 			{
 				@include($filename);
@@ -1869,17 +1810,18 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 
 		// There can be only one theme.
 		$attempts = array(
-			array($settings['theme_dir'], $template, $lang, TEMPLATES),
+			array($settings['theme_dir'], $template, $lang),
 		);
 
 		// Fall back on the default language if necessary.
 		if ($settings['language'] != 'english')
-			$attempts[] = array($settings['theme_dir'], $template, $settings['language'], TEMPLATES);
+			$attempts[] = array($settings['theme_dir'], $template, $settings['language']);
 
 		// First, try to ensure we have the English US version loaded first. We do not need to record whether we succeeded or not though.
 		$fallbacks = array(
 			array($settings['theme_dir'], $template),
 		);
+
 		foreach ($fallbacks as $file)
 			if (file_exists($file[0] . '/languages/' . $file[1] . '.english.php'))
 				template_include($file[0] . '/languages/' . $file[1] . '.english.php');
@@ -1920,18 +1862,15 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 
 		if (!defined('WEDGE_INSTALLER'))
 		{
-			$tid = !empty($settings['theme_id']) ? $settings['theme_id'] : 1;
 			if ($found)
 			{
 				// So, now we need to get from the DB.
 				$request = wesql::query('
-					SELECT id_theme, lang_var, lang_key, lang_string, serial
+					SELECT lang_var, lang_key, lang_string, serial
 					FROM {db_prefix}language_changes
-					WHERE id_theme IN ({array_int:theme})
-						AND id_lang = {string:lang}
+					WHERE id_lang = {string:lang}
 						AND lang_file = {string:lang_file}',
 					array(
-						'theme' => ($tid == 1 ? array(1) : array(1, (int) $tid)),
 						'lang' => $lang,
 						'lang_file' => $template,
 					)
@@ -1943,7 +1882,7 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 					// If we don't have it already, use it. If we do have it already but it's not the default theme we're adding, replace it.
 					if ($row['lang_var'] == 'txt')
 					{
-						if (!isset($additions['txt'][$row['lang_key']]) || $row['id_theme'] != 1)
+						if (!isset($additions['txt'][$row['lang_key']]))
 						{
 							$txt[$row['lang_key']] = !empty($row['serial']) ? @unserialize($row['lang_string']) : $row['lang_string'];
 							$additions['txt'][$row['lang_key']] = true;
@@ -1951,7 +1890,7 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 					}
 					elseif ($row['lang_var'] == 'helptxt')
 					{
-						if (!isset($additions['helptxt'][$row['lang_key']]) || $row['id_theme'] != 1)
+						if (!isset($additions['helptxt'][$row['lang_key']]))
 						{
 							$helptxt[$row['lang_key']] = !empty($row['serial']) ? @unserialize($row['lang_string']) : $row['lang_string'];
 							$additions['helptxt'][$row['lang_key']] = true;
@@ -1961,7 +1900,7 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 				wesql::free_result($request);
 
 				// Now cache this sucker.
-				$filename = $cachedir . '/lang_' . $tid . '_' . $lang . '_' . $template . '.php';
+				$filename = $cachedir . '/lang_' . $lang . '_' . $template . '.php';
 				$val = array();
 				if (!empty($txt))
 				{

@@ -554,7 +554,6 @@ function EditBoard()
 			'count_posts' => 1,
 			'posts' => 0,
 			'topics' => 0,
-			'theme' => 0,
 			'skin' => '',
 			'profile' => 1,
 			'override_theme' => 0,
@@ -782,9 +781,7 @@ function EditBoard2()
 			$boardOptions['target_board'] = (int) $_POST['board_order'];
 		}
 
-		$theme_array = explode('_', $_POST['boardtheme']);
-		$boardOptions['board_theme'] = (int) $theme_array[0];
-		$boardOptions['board_skin'] = empty($theme_array[1]) ? 'skins' : base64_decode($theme_array[1]);
+		$boardOptions['board_skin'] = empty($_POST['boardskin']) ? '' : $_POST['boardskin'];
 
 		// Checkboxes....
 		$boardOptions['posts_count'] = isset($_POST['count']);

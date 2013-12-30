@@ -588,9 +588,9 @@ CREATE TABLE {$db_prefix}boards (
 	num_members mediumint(8) unsigned NOT NULL default 0,
 	check_members_date datetime NOT NULL default '0000-00-00 00:00:00',
 	count_posts tinyint(4) NOT NULL default 0,
-	id_theme tinyint(4) unsigned NOT NULL default 0,
 	override_theme tinyint(4) unsigned NOT NULL default 0,
 	skin varchar(255) NOT NULL default '',
+	skin_mobile varchar(255) NOT NULL default '',
 	board_type enum('board', 'blog', 'site') NOT NULL default 'board',
 	unapproved_posts smallint(5) NOT NULL default 0,
 	unapproved_topics smallint(5) NOT NULL default 0,
@@ -769,15 +769,14 @@ CREATE TABLE {$db_prefix}infractions (
 #
 
 CREATE TABLE {$db_prefix}language_changes (
-	id_theme tinyint(3) unsigned NOT NULL,
 	id_lang varchar(32) NOT NULL,
 	lang_file varchar(64) NOT NULL,
 	lang_var varchar(8) NOT NULL,
 	lang_key varchar(64) NOT NULL,
 	lang_string text NOT NULL,
 	serial tinyint(3) unsigned NOT NULL,
-	PRIMARY KEY (id_theme, id_lang, lang_file, lang_var, lang_key),
-	KEY lang_file (id_theme, id_lang, lang_file)
+	PRIMARY KEY (id_lang, lang_file, lang_var, lang_key),
+	KEY lang_file (id_lang, lang_file)
 ) ENGINE=MyISAM;
 
 #
@@ -1619,8 +1618,6 @@ CREATE TABLE {$db_prefix}members (
 	notify_types tinyint(4) NOT NULL default 2,
 	member_ip varchar(32) NOT NULL default '',
 	member_ip2 varchar(32) NOT NULL default '',
-	id_theme tinyint(4) unsigned NOT NULL default 0,
-	id_theme_mobile tinyint(4) unsigned NOT NULL default 0,
 	skin varchar(255) NOT NULL default '',
 	skin_mobile varchar(255) NOT NULL default '',
 	is_activated tinyint(3) unsigned NOT NULL default 1,
@@ -1652,7 +1649,7 @@ CREATE TABLE {$db_prefix}members (
 	KEY id_post_group (id_post_group),
 	KEY warning (warning),
 	KEY total_time_logged_in (total_time_logged_in),
-	KEY id_theme (id_theme)
+	KEY skin (skin(20))
 ) ENGINE=MyISAM;
 
 #
@@ -2158,11 +2155,8 @@ VALUES
 	('allow_no_censored', '0'),
 	('enablePostHTML', '0'),
 	('theme_allow', '1'),
-	('theme_default', '1'),
-	('theme_guests', '1'),
-	('theme_guests_mobile', '1'),
-	('theme_skin_guests', 'skins'),
-	('theme_skin_guests_mobile', 'skins/Wireless'),
+	('theme_skin_guests', 'Wilde'),
+	('theme_skin_guests_mobile', 'Wireless'),
 	('enableEmbeddedFlash', '0'),
 	('xmlnews_enable', '1'),
 	('xmlnews_maxlen', '255'),
@@ -2253,8 +2247,6 @@ VALUES
 	('use_captcha_images', '1'),
 	('use_animated_captcha', '1'),
 	('enable_buddylist', '1'),
-	('dont_repeat_smileys_20', '1'),
-	('dont_repeat_buddylists', '1'),
 	('attachment_image_reencode', '1'),
 	('attachment_image_paranoid', '0'),
 	('attachment_thumb_png', '1'),
@@ -2442,10 +2434,9 @@ CREATE TABLE {$db_prefix}subscriptions_groups (
 
 CREATE TABLE {$db_prefix}themes (
 	id_member mediumint(8) NOT NULL default 0,
-	id_theme tinyint(4) unsigned NOT NULL default 1,
 	variable varchar(255) NOT NULL default '',
 	value text NOT NULL,
-	PRIMARY KEY (id_theme, id_member, variable(30)),
+	PRIMARY KEY (id_member, variable(30)),
 	KEY id_member (id_member)
 ) ENGINE=MyISAM;
 
@@ -2456,13 +2447,13 @@ CREATE TABLE {$db_prefix}themes (
 #
 
 INSERT INTO {$db_prefix}themes
-	(id_member, id_theme, variable, value)
+	(id_member, variable, value)
 VALUES
-	(-1, 1, 'display_quick_reply', '2'),
-	(-1, 1, 'posts_apply_ignore_list', '1'),
-	(-1, 1, 'return_to_post', '1'),
-	(-1, 1, 'view_newest_pm_first', '1'),
-	(-1, 1, 'pm_remove_inbox_label', '1');
+	(-1, 'display_quick_reply', '2'),
+	(-1, 'posts_apply_ignore_list', '1'),
+	(-1, 'return_to_post', '1'),
+	(-1, 'view_newest_pm_first', '1'),
+	(-1, 'pm_remove_inbox_label', '1');
 # --------------------------------------------------------
 
 #

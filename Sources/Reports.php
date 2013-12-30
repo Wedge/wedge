@@ -200,7 +200,7 @@ function BoardReport()
 		'num_topics' => $txt['board_num_topics'],
 		'num_posts' => $txt['board_num_posts'],
 		'count_posts' => $txt['board_count_posts'],
-		'theme' => $txt['board_theme'],
+		'skin' => $txt['board_skin'],
 		'override_theme' => $txt['board_override_theme'],
 		'profile' => $txt['board_profile'],
 		'moderators' => $txt['board_moderators'],

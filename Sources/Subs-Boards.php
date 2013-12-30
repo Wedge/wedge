@@ -582,13 +582,6 @@ function modifyBoard($board_id, &$boardOptions)
 		$boardUpdateParameters['count_posts'] = $boardOptions['posts_count'] ? 0 : 1;
 	}
 
-	// Set the theme for this board.
-	if (isset($boardOptions['board_theme']))
-	{
-		$boardUpdates[] = 'id_theme = {int:id_theme}';
-		$boardUpdateParameters['id_theme'] = (int) $boardOptions['board_theme'];
-	}
-
 	// Set the skin for this board.
 	if (isset($boardOptions['board_skin']))
 	{
@@ -836,7 +829,6 @@ function createBoard($boardOptions)
 	$boardOptions += array(
 		'posts_count' => true,
 		'override_theme' => false,
-		'board_theme' => 0,
 		'board_skin' => '',
 		'board_description' => '',
 		'profile' => 1,
@@ -1110,7 +1102,7 @@ function getBoardTree($restrict = false)
 	$request = wesql::query('
 		SELECT
 			IFNULL(b.id_board, 0) AS id_board, b.id_parent, b.name AS board_name, b.description, b.child_level, b.url,
-			b.board_order, b.count_posts, b.member_groups, b.id_theme, b.skin, b.override_theme, b.id_profile, b.redirect,
+			b.board_order, b.count_posts, b.member_groups, b.skin, b.override_theme, b.id_profile, b.redirect,
 			b.redirect_newtab, b.num_posts, b.language, b.num_topics, b.offlimits_msg, c.id_cat, c.name AS cat_name, c.cat_order, c.can_collapse
 		FROM {db_prefix}categories AS c
 			LEFT JOIN {db_prefix}boards AS b ON (b.id_cat = c.id_cat)' . $restriction . '
@@ -1157,7 +1149,6 @@ function getBoardTree($restrict = false)
 				'count_posts' => empty($row['count_posts']),
 				'posts' => $row['num_posts'],
 				'topics' => $row['num_topics'],
-				'theme' => $row['id_theme'],
 				'skin' => $row['skin'],
 				'override_theme' => $row['override_theme'],
 				'profile' => $row['id_profile'],

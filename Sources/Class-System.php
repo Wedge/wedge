@@ -47,7 +47,7 @@ class we
 	 * - Check whether the user is attempting to flood the login with requests, and deal with it as appropriate.
 	 * - Assuming the member is correct, check and update the last-visit information if appropriate.
 	 * - Ensure the user groups are sanitized; or if not a logged in user, perform 'is this a spider' checks.
-	 * - Populate we::$user with lots of useful information (id, username, email, password, language, whether the user is a guest or admin, theme information, post count, IP address, time format/offset, avatar, smileys, PM counts, buddy list, ignore user/board preferences, warning level, URL and user groups)
+	 * - Populate we::$user with lots of useful information (id, username, email, password, language, whether the user is a guest or admin, skin information, post count, IP address, time format/offset, avatar, smileys, PM counts, buddy list, ignore user/board preferences, warning level, URL and user groups)
 	 * - Establish board access rights based as an SQL clause (based on user groups) in we::$user['query_see_board'], and a subset of this to include ignore boards preferences into we::$user['query_wanna_see_board'].
 	 */
 	protected static function init_user()
@@ -91,7 +91,7 @@ class we
 		if ($id_member != 0)
 		{
 			// Is the member data cached?
-			if (empty($settings['cache_enable']) || $settings['cache_enable'] < 2 || ($user_settings = cache_get_data('user_settings-' . $id_member, 60)) == null)
+			if (empty($settings['cache_enable']) || $settings['cache_enable'] < 2 || ($user_settings = cache_get_data('user_settings-' . $id_member, 60)) === null)
 			{
 				$request = wesql::query('
 					SELECT
@@ -140,14 +140,13 @@ class we
 		}
 
 		// Found 'im, let's set up the variables.
-		if ($id_member != 0)
+		if ($id_member)
 		{
 			// Let's not update the last visit time in these cases...
-			// 1. SSI doesn't count as visiting the forum.
-			// 2. XML feeds and Ajax requests don't count either.
-			// 3. If it was set within this session, no need to set it again.
-			// 4. New session, yet updated < five hours ago? Maybe cache can help.
-			if (WEDGE != 'SSI' && !AJAX && ($context['action'] !== 'feed') && empty($_SESSION['id_msg_last_visit']) && (empty($settings['cache_enable']) || ($_SESSION['id_msg_last_visit'] = cache_get_data('user_last_visit-' . $id_member, 5 * 3600)) === null))
+			// 1. Pages called by SSI, XML feeds and Ajax requests don't count as visiting the forum.
+			// 2. If it was set within this session, no need to set it again.
+			// 3. New session, yet updated less than 5 hours ago? Maybe cache can help.
+			if (WEDGE != 'SSI' && !AJAX && ($context['action'] !== 'feed') && empty($_SESSION['id_msg_last_visit']) && (empty($settings['cache_enable']) || ($_SESSION['id_msg_last_visit'] = cache_get_data('user_last_visit-' . $id_member, 18000)) === null))
 			{
 				// Do a quick query to make sure this isn't a mistake.
 				$result = wesql::query('
@@ -164,8 +163,8 @@ class we
 
 				$_SESSION['id_msg_last_visit'] = $user_settings['id_msg_last_visit'];
 
-				// If it was *at least* five hours ago...
-				if ($visitTime < time() - 5 * 3600)
+				// If it was *at least* 5 hours ago...
+				if ($visitTime < time() - 18000)
 				{
 					updateMemberData($id_member, array('id_msg_last_visit' => (int) $settings['maxMsgID'], 'last_login' => time(), 'member_ip' => $_SERVER['REMOTE_ADDR'], 'member_ip2' => $_SERVER['BAN_CHECK_IP']));
 					$user_settings['last_login'] = time();
@@ -174,7 +173,7 @@ class we
 						cache_put_data('user_settings-' . $id_member, $user_settings, 60);
 
 					if (!empty($settings['cache_enable']))
-						cache_put_data('user_last_visit-' . $id_member, $_SESSION['id_msg_last_visit'], 5 * 3600);
+						cache_put_data('user_last_visit-' . $id_member, $_SESSION['id_msg_last_visit'], 18000);
 				}
 			}
 			elseif (empty($_SESSION['id_msg_last_visit']))
@@ -259,8 +258,7 @@ class we
 			'activated' => !empty($user_settings['is_activated']) ? $user_settings['is_activated'] : 0,
 			'passwd' => isset($user_settings['passwd']) ? $user_settings['passwd'] : '',
 			'language' => empty($user_settings['lngfile']) || empty($settings['userLanguage']) ? $settings['language'] : $user_settings['lngfile'],
-			'theme' => $_SESSION['is_mobile'] ? (empty($user_settings['id_theme_mobile']) ? 0 : $user_settings['id_theme_mobile']) : (empty($user_settings['id_theme']) ? 0 : $user_settings['id_theme']),
-			'skin' => $_SESSION['is_mobile'] ? (empty($user_settings['id_theme_mobile']) ? '' : $user_settings['skin_mobile']) : (empty($user_settings['id_theme']) ? '' : $user_settings['skin']),
+			'skin' => $_SESSION['is_mobile'] ? (empty($user_settings['skin_mobile']) ? '' : $user_settings['skin_mobile']) : (empty($user_settings['skin']) ? '' : $user_settings['skin']),
 			'last_login' => empty($user_settings['last_login']) ? 0 : $user_settings['last_login'],
 			'ip' => $_SERVER['REMOTE_ADDR'],
 			'ip2' => $_SERVER['BAN_CHECK_IP'],

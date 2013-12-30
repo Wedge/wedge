@@ -56,25 +56,25 @@ function template_main()
 		$alternate = false;
 
 		// List through every board in the category, printing its name and link to modify the board.
-		foreach ($category['boards'] as $board)
+		foreach ($category['boards'] as $bdata)
 		{
 			$alternate = !$alternate;
 
 			echo '
-					<li', !empty($settings['recycle_board']) && !empty($settings['recycle_enable']) && $settings['recycle_board'] == $board['id'] ? ' id="recycle_board"' : '', ' class="windowbg', $alternate ? '' : '2', '" style="padding-', $context['right_to_left'] ? 'right' : 'left', ': ', 5 + 30 * $board['child_level'], 'px', $board['move'] ? '; color: red' : '', '"><span class="floatleft"><img src="', TEMPLATES, '/languages/Flag.', empty($board['language']) ? $settings['language'] : $board['language'], '.png"> <a href="<URL>?board=', $board['id'], '">', $board['name'], '</a>', !empty($settings['recycle_board']) && !empty($settings['recycle_enable']) && $settings['recycle_board'] == $board['id'] ? '<a href="<URL>?action=admin;area=manageboards;sa=settings"> <img src="' . ASSETS . '/post/recycled.gif" alt="' . $txt['recycle_board'] . '"></a></span>' : '</span>', '
-						<span class="floatright">', $context['can_manage_permissions'] ? '<span class="modify_boards"><a href="<URL>?action=admin;area=permissions;sa=index;pid=' . $board['permission_profile'] . ';' . $context['session_query'] . '">' . $txt['mboards_permissions'] . '</a></span>' : '', '
-						<span class="modify_boards"><a href="<URL>?action=admin;area=manageboards;move=', $board['id'], '">', $txt['mboards_move'], '</a></span>
-						<span class="modify_boards"><a href="<URL>?action=admin;area=manageboards;sa=board;boardid=', $board['id'], '">', $txt['mboards_modify'], '</a></span></span><br class="clear_right">
+					<li', !empty($settings['recycle_board']) && !empty($settings['recycle_enable']) && $settings['recycle_board'] == $bdata['id'] ? ' id="recycle_board"' : '', ' class="windowbg', $alternate ? '' : '2', '" style="padding-', $context['right_to_left'] ? 'right' : 'left', ': ', 5 + 30 * $bdata['child_level'], 'px', $bdata['move'] ? '; color: red' : '', '"><span class="floatleft"><img src="', TEMPLATES, '/languages/Flag.', empty($bdata['language']) ? $settings['language'] : $bdata['language'], '.png"> <a href="<URL>?board=', $bdata['id'], '">', $bdata['name'], '</a>', !empty($settings['recycle_board']) && !empty($settings['recycle_enable']) && $settings['recycle_board'] == $bdata['id'] ? '<a href="<URL>?action=admin;area=manageboards;sa=settings"> <img src="' . ASSETS . '/post/recycled.gif" alt="' . $txt['recycle_board'] . '"></a></span>' : '</span>', '
+						<span class="floatright">', $context['can_manage_permissions'] ? '<span class="modify_boards"><a href="<URL>?action=admin;area=permissions;sa=index;pid=' . $bdata['permission_profile'] . ';' . $context['session_query'] . '">' . $txt['mboards_permissions'] . '</a></span>' : '', '
+						<span class="modify_boards"><a href="<URL>?action=admin;area=manageboards;move=', $bdata['id'], '">', $txt['mboards_move'], '</a></span>
+						<span class="modify_boards"><a href="<URL>?action=admin;area=manageboards;sa=board;boardid=', $bdata['id'], '">', $txt['mboards_modify'], '</a></span></span><br class="clear_right">
 					</li>';
 
-			if (!empty($board['move_links']))
+			if (!empty($bdata['move_links']))
 			{
 				$alternate = !$alternate;
 
 				echo '
-					<li class="windowbg', $alternate ? '' : '2', '" style="padding-', $context['right_to_left'] ? 'right' : 'left', ': ', 5 + 30 * $board['move_links'][0]['child_level'], 'px">';
+					<li class="windowbg', $alternate ? '' : '2', '" style="padding-', $context['right_to_left'] ? 'right' : 'left', ': ', 5 + 30 * $bdata['move_links'][0]['child_level'], 'px">';
 
-				foreach ($board['move_links'] as $link)
+				foreach ($bdata['move_links'] as $link)
 					echo '
 						<a href="', $link['href'], '" class="move_links" title="', $link['label'], '"><img src="', ASSETS, '/board_select_spot', $link['child_level'] > 0 ? '_child' : '', '.gif" alt="', $link['label'], '" style="padding: 0; margin: 0"></a>';
 
@@ -670,18 +670,18 @@ function template_modify_board()
 					</dl>
 				</div>';
 
-	// Here the user can choose to force this board to use a theme other than the default theme for the forum.
+	// Here the user can choose to force this board to use a skin other than the default skin for the forum.
 	echo '
-				<div id="board_theme_div">
+				<div id="board_skin_div">
 					<dl class="settings">
 						<dt>
-							<strong>', $txt['mboards_theme'], ':</strong>
-							<dfn>', $txt['mboards_theme_desc'], '</dfn>
+							<strong>', $txt['mboards_skin'], ':</strong>
+							<dfn>', $txt['mboards_skin_desc'], '</dfn>
 						</dt>
 						<dd>
-							<select name="boardtheme" id="boardtheme" onchange="refreshOptions();">
-								<option value="0"', $context['board']['theme'] == 0 ? ' selected' : '', '>', $txt['mboards_theme_default'], '</option>',
-								wedge_show_skins($context['skin_list'], $context['board']['skin']), '
+							<select name="boardskin" id="boardskin" onchange="refreshOptions();">
+								<option value=""', $context['board']['skin'] == '' ? ' selected' : '', '>', $txt['mboards_skin_default'], '</option>',
+								wedge_show_skins($context['skin_list']['skins'], false, $context['board']['skin']), '
 							</select>
 						</dd>
 					</dl>
@@ -713,7 +713,7 @@ function template_modify_board()
 		$langset = array_merge(
 			array(
 				'' => array(
-					'name' => $context['languages'][$settings['language']]['name'] . ' ' . $txt['mboards_theme_default'],
+					'name' => $context['languages'][$settings['language']]['name'] . ' ' . $txt['mboards_skin_default'],
 				)
 			),
 			$context['languages']
@@ -798,11 +798,11 @@ function template_modify_board()
 	{
 		var redirect = document.getElementById("redirect_enable");
 		var redirectEnabled = redirect ? redirect.checked : false;
-		var nonDefaultTheme = document.getElementById("boardtheme").value == 0 ? false : true;
+		var nonDefaultTheme = document.getElementById("boardskin").value == 0 ? false : true;
 
 		// What to show?
 		document.getElementById("override_theme_div").style.display = redirectEnabled || !nonDefaultTheme ? "none" : "";
-		document.getElementById("board_theme_div").style.display = redirectEnabled ? "none" : "";
+		document.getElementById("board_skin_div").style.display = redirectEnabled ? "none" : "";
 		document.getElementById("count_posts_div").style.display = redirectEnabled ? "none" : "";');
 
 	if (!$context['board']['topics'] && empty($context['board']['is_recycle']))
@@ -855,10 +855,10 @@ function template_confirm_board_delete()
 					<label><input type="radio" id="delete_action1" name="delete_action" value="1"', empty($context['can_move_children']) ? ' disabled' : '', '>', $txt['mboards_delete_board_option2'], '</label>:
 					<select name="board_to"', empty($context['can_move_children']) ? ' disabled' : '', '>';
 
-	foreach ($context['board_order'] as $board)
-		if ($board['id'] != $context['board']['id'] && empty($board['is_child']))
+	foreach ($context['board_order'] as $bdata)
+		if ($bdata['id'] != $context['board']['id'] && empty($bdata['is_child']))
 			echo '
-						<option value="', $board['id'], '">', $board['name'], '</option>';
+						<option value="', $bdata['id'], '">', $bdata['name'], '</option>';
 
 	echo '
 					</select>

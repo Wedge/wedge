@@ -598,7 +598,7 @@ function registerMember(&$regOptions, $return_errors = false)
 	if (!empty($reg_errors))
 		return $reg_errors;
 
-	// Some of these might be overwritten. (the lower ones that are in the arrays below.)
+	// Some of these might be overwritten.
 	$regOptions['register_vars'] = array(
 		'member_name' => $regOptions['username'],
 		'email_address' => $regOptions['email'],
@@ -612,7 +612,6 @@ function registerMember(&$regOptions, $return_errors = false)
 		'real_name' => $regOptions['username'],
 		'personal_text' => '',
 		'pm_email_notify' => 1,
-		'id_theme' => 0,
 		'id_post_group' => 4,
 		'lngfile' => '',
 		'buddy_list' => '',
@@ -692,7 +691,7 @@ function registerMember(&$regOptions, $return_errors = false)
 		'date_registered', 'posts', 'id_group', 'last_login', 'instant_messages', 'unread_messages',
 		'new_pm', 'pm_prefs', 'gender', 'hide_email', 'show_online', 'pm_email_notify',
 		'notify_announcements', 'notify_send_body', 'notify_regularity', 'notify_types',
-		'id_theme', 'is_activated', 'id_msg_last_visit', 'id_post_group', 'total_time_logged_in', 'warning',
+		'is_activated', 'id_msg_last_visit', 'id_post_group', 'total_time_logged_in', 'warning',
 	);
 	$knownFloats = array(
 		'time_offset',

@@ -201,7 +201,7 @@ function updateStats($type, $parameter1 = null, $parameter2 = null)
 		if ($parameter2 !== null && !in_array('posts', $parameter2))
 			return;
 
-		if (($postgroups = cache_get_data('updateStats:postgroups', 360)) == null)
+		if (($postgroups = cache_get_data('updateStats:postgroups', 360)) === null)
 		{
 			// Fetch the postgroups!
 			$request = wesql::query('
@@ -364,7 +364,7 @@ function updateMemberData($members, $data)
 		'date_registered', 'posts', 'id_group', 'last_login', 'instant_messages', 'unread_messages',
 		'new_pm', 'pm_prefs', 'gender', 'hide_email', 'show_online', 'pm_email_notify', 'pm_receive_from',
 		'notify_announcements', 'notify_send_body', 'notify_regularity', 'notify_types',
-		'id_theme', 'is_activated', 'id_msg_last_visit', 'id_post_group', 'total_time_logged_in', 'warning',
+		'is_activated', 'id_msg_last_visit', 'id_post_group', 'total_time_logged_in', 'warning',
 	);
 	$knownFloats = array(
 		'time_offset',
@@ -2580,47 +2580,10 @@ function get_gravatar_url($email_address)
 }
 
 /**
- * Outputs the correct HTTP header, typically to be used in error handling cases.
- *
- * @param int $header The HTTP status code to be used, e.g. 403, 404.
+ * Get the current device's default skin (desktop or mobile).
  */
-function issue_http_header($header)
+function get_default_skin()
 {
-	// All the codes we might want to send. They should not be translated.
-	// There are some extensions such as those supplied by nginx and WebDAV, but only standard HTTP and standards-proposed extensions that are relevant are present here.
-	$codes = array(
-		200 => 'OK', // supplied in case someone wants to issue an error page for some reason but send it with a 200 OK header
-		400 => 'Bad Request',
-		403 => 'Forbidden',
-		404 => 'Not Found',
-		405 => 'Method Not Allowed',
-		406 => 'Not Acceptable',
-		407 => 'Proxy Authentication Required',
-		408 => 'Request Timeout',
-		409 => 'Conflict',
-		410 => 'Gone',
-		411 => 'Length Required',
-		412 => 'Precondition Failed',
-		413 => 'Request Entity Too Large',
-		414 => 'Request-URI Too Long',
-		415 => 'Unsupported Media Type',
-		416 => 'Requested Range Not Satisfiable',
-		417 => 'Expectation Failed',
-		429 => 'Too Many Requests', // standards-proposed
-		431 => 'Request Header Fields Too Large', // standards-proposed
-		500 => 'Internal Server Error',
-		501 => 'Not Implemented',
-		502 => 'Bad Gateway',
-		503 => 'Service Unavailable',
-		504 => 'Gateway Timeout',
-		505 => 'HTTP Version Not Supported',
-	);
-
-	if (!isset($codes[$header]))
-		$header = 403;
-
-	// Certain configurations need one, certain configurations need the other.
-	if (!empty($_SERVER['SERVER_PROTOCOL']))
-		header($_SERVER['SERVER_PROTOCOL'] . ' ' . $header . ' ' . $codes[$header]);
-	header('Status: ' . $header . ' ' . $codes[$header]);
+	global $settings;
+	return $settings[we::is('mobile') ? 'theme_skin_guests_mobile' : 'theme_skin_guests'];
 }

@@ -26,7 +26,7 @@ if (!defined('WEDGE'))
 	void ThemeAdmin()
 		- administrates themes and their settings, as well as global theme
 		  settings.
-		- sets the settings theme_allow, theme_guests, and knownThemes.
+		- sets the settings theme_allow, theme_skin_guests, and knownThemes.
 		- loads the template Themes.
 		- requires the admin_forum permission.
 		- accessed with ?action=admin;area=theme;sa=admin.
@@ -38,8 +38,8 @@ if (!defined('WEDGE'))
 	void SetThemeOptions()
 		// !!!
 
-	void RemoveTheme()
-		- removes an installed theme.
+	void RemoveSkin()
+		- removes an installed skin.
 		- requires an administrator.
 		- accessed with ?action=admin;area=theme;sa=remove.
 
@@ -99,7 +99,7 @@ function Themes()
 		'admin' => 'ThemeAdmin',
 		'list' => 'ThemeList',
 		'install' => 'ThemeInstall',
-		'remove' => 'RemoveTheme',
+		'remove' => 'RemoveSkin',
 		'pick' => 'PickTheme',
 		'edit' => 'EditTheme',
 		'copy' => 'CopyTemplate',
@@ -148,39 +148,14 @@ function ThemeAdmin()
 		// Make our known themes a little easier to work with.
 		$knownThemes = !empty($settings['knownThemes']) ? explode(',', $settings['knownThemes']) : array();
 
-		// Load up all the themes.
-		$request = wesql::query('
-			SELECT id_theme, value AS name
-			FROM {db_prefix}themes
-			WHERE variable = {literal:name}
-				AND id_member = 0
-			ORDER BY id_theme'
-		);
-		$context['themes'] = array();
-		while ($row = wesql::fetch_assoc($request))
-			$context['themes'][$row['id_theme']] = array(
-				'id' => $row['id_theme'],
-				'name' => $row['name'],
-				'known' => in_array($row['id_theme'], $knownThemes),
-			);
-		wesql::free_result($request);
-
-		// While we're at it, get all skins...
-		$request = wesql::query('
-			SELECT id_theme, value AS dir
-			FROM {db_prefix}themes
-			WHERE variable = {literal:theme_dir}
-				AND id_member = 0'
-		);
-		while ($row = wesql::fetch_assoc($request))
-			$context['themes'][$row['id_theme']]['skins'] = wedge_get_skin_list($row['dir'] . '/skins');
-		wesql::free_result($request);
+		// Get all skins...
+		$context['themes'][1]['skins'] = wedge_get_skin_list(SKINS_DIR);
 
 		// Can we create a new theme?
 		$context['can_create_new'] = is_writable($boarddir . '/Themes');
 		$context['new_theme_dir'] = substr(realpath($boarddir . '/Themes/default'), 0, -7);
 
-		// Look for a non existent theme directory. (i.e. theme87.)
+		// Look for a non-existent theme directory. (i.e. theme87.)
 		$theme_dir = $boarddir . '/Themes/theme';
 		$i = 1;
 		while (file_exists($theme_dir . $i))
@@ -191,6 +166,8 @@ function ThemeAdmin()
 	{
 		checkSession();
 
+/*
+		// !!! @todo: fix this.
 		if (isset($_POST['options']['known_themes']))
 			foreach ($_POST['options']['known_themes'] as $key => $id)
 				$_POST['options']['known_themes'][$key] = (int) $id;
@@ -199,19 +176,18 @@ function ThemeAdmin()
 
 		if (!in_array($_POST['options']['theme_guests'], $_POST['options']['known_themes']))
 				fatal_lang_error('themes_default_selectable', false);
+*/
 
 		// Commit the new settings.
 		updateSettings(array(
 			'theme_allow' => $_POST['options']['theme_allow'],
-			'theme_guests' => 1,
-			'theme_guests_mobile' => 1,
-			'theme_skin_guests' => isset($_POST['options']['theme_guests']) ? base64_decode($_POST['options']['theme_guests']) : 'skins',
-			'theme_skin_guests_mobile' => isset($_POST['options']['theme_guests_mobile']) ? base64_decode($_POST['options']['theme_guests_mobile']) : 'skins/Wireless',
-			'knownThemes' => implode(',', $_POST['options']['known_themes']),
+			'theme_skin_guests' => isset($_POST['options']['theme_guests']) ? $_POST['options']['theme_guests'] : $settings['theme_skin_guests'],
+			'theme_skin_guests_mobile' => isset($_POST['options']['theme_guests_mobile']) ? $_POST['options']['theme_guests_mobile'] : $settings['theme_skin_guests_mobile'],
+//			'knownThemes' => implode(',', $_POST['options']['known_themes']),
 		));
 
 		if (!empty($_POST['theme_reset']))
-			wedge_update_skin(null, base64_decode($_POST['theme_reset']));
+			wedge_update_skin(null, $_POST['theme_reset']);
 
 		redirectexit('action=admin;area=theme;' . $context['session_query'] . ';sa=admin');
 	}
@@ -249,8 +225,8 @@ function ThemeList()
 	wetem::load('list_themes');
 }
 
-// Remove a theme from the database.
-function RemoveTheme()
+// Remove a skin from the database.
+function RemoveSkin()
 {
 	global $settings, $context;
 
@@ -258,54 +234,38 @@ function RemoveTheme()
 
 	isAllowedTo('admin_forum');
 
-	// The theme's ID must be an integer.
-	$_GET['th'] = isset($_GET['th']) ? (int) $_GET['th'] : (int) $_GET['id'];
+	$_GET['skin'] = !empty($_GET['skin']) ? $_GET['skin'] : get_default_skin();
 
-	// You can't delete the default theme!
-	if ($_GET['th'] == 1)
+	// You can't delete the root skin!
+	if ($_GET['skin'] == '/')
 		fatal_lang_error('no_access', false);
-
-	$known = explode(',', $settings['knownThemes']);
-	for ($i = 0, $n = count($known); $i < $n; $i++)
-		if ($known[$i] == $_GET['th'])
-			unset($known[$i]);
-
-	wesql::query('
-		DELETE FROM {db_prefix}themes
-		WHERE id_theme = {int:current_theme}',
-		array(
-			'current_theme' => $_GET['th'],
-		)
-	);
 
 	wesql::query('
 		UPDATE {db_prefix}members
-		SET id_theme = {int:default_theme}
-		WHERE id_theme = {int:current_theme}',
+		SET skin = {string:default_skin}
+		WHERE skin = {string:current_skin}',
 		array(
-			'default_theme' => 0,
-			'current_theme' => $_GET['th'],
+			'default_skin' => '',
+			'current_skin' => $_GET['skin'],
 		)
 	);
 
 	wesql::query('
 		UPDATE {db_prefix}boards
-		SET id_theme = {int:default_theme}
-		WHERE id_theme = {int:current_theme}',
+		SET skin = {string:default_skin}
+		WHERE skin = {string:current_skin}',
 		array(
-			'default_theme' => 0,
-			'current_theme' => $_GET['th'],
+			'default_skin' => '',
+			'current_skin' => $_GET['skin'],
 		)
 	);
 
-	$known = strtr(implode(',', $known), array(',,' => ','));
-
-	// Fix it if the theme was the overall default theme.
-	$upd = array('knownThemes' => $known);
-	if ($settings['theme_guests'] == $_GET['th'])
-		$upd['theme_guests'] = '1';
-	if ($settings['theme_guests_mobile'] == $_GET['th'])
-		$upd['theme_guests_mobile'] = '1';
+	// Fix it if the skin was the overall default skin.
+	$upd = array();
+	if ($settings['theme_skin_guests'] == $_GET['skin'])
+		$upd['theme_skin_guests'] = '';
+	if ($settings['theme_skin_guests_mobile'] == $_GET['skin'])
+		$upd['theme_skin_guests_mobile'] = '';
 
 	updateSettings($upd);
 
@@ -325,20 +285,17 @@ function PickTheme()
 	// Build the link tree.
 	add_linktree($txt['change_skin'], $u === null ? '<URL>?action=skin' : ('<URL>' . ($u > 0 ? '?action=skin;u=' : '?action=theme;sa=pick;u=') . (int) $u));
 
-	$_SESSION['id_theme'] = 0;
-	$_SESSION['skin'] = '';
-
 	// Have we made a decision, or are we just browsing?
-	if (isset($_GET['th']))
+	if (isset($_GET['skin']))
 	{
 		checkSession('get');
 
-		$css = isset($_GET['th']) ? base64_decode($_GET['th']) : '';
+		$skin = file_exists(SKINS_DIR . '/' . ltrim($_GET['skin'], '/')) ? $_GET['skin'] : '';
 
 		// Save for this user.
 		if ($u === null || !allowedTo('admin_forum'))
 		{
-			wedge_update_skin(MID, $css);
+			wedge_update_skin(MID, $skin);
 			// Redirect to the last page visited, if available -- useful for a skin selector :)
 			redirectexit(isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : 'action=skin');
 		}
@@ -346,7 +303,7 @@ function PickTheme()
 		// For everyone.
 		if ($u == '0')
 		{
-			wedge_update_skin(null, $css);
+			wedge_update_skin(null, $skin);
 			redirectexit('action=admin;area=theme;sa=admin;' . $context['session_query']);
 		}
 		// Change the default/guest theme.
@@ -355,18 +312,18 @@ function PickTheme()
 			// Let's assume the admin is in mobile mode. Meaning they want to change the default mobile skin...
 			if (we::is('mobile'))
 				updateSettings(array(
-					'theme_skin_guests_mobile' => $css
+					'theme_skin_guests_mobile' => $skin
 				));
 			else
 				updateSettings(array(
-					'theme_skin_guests' => $css
+					'theme_skin_guests' => $skin
 				));
 			redirectexit('action=admin;area=theme;sa=admin;' . $context['session_query']);
 		}
 		// Change a specific member's theme.
 		else
 		{
-			wedge_update_skin((int) $u, $css);
+			wedge_update_skin((int) $u, $skin);
 			redirectexit('action=skin;u=' . (int) $u);
 		}
 	}
@@ -375,22 +332,19 @@ function PickTheme()
 	if ($u === null || !allowedTo('admin_forum'))
 	{
 		$context['specify_member'] = '';
-		$context['current_theme'] = we::$user['theme'];
-		$context['current_skin'] = empty(we::$user['theme']) ? '' : we::$user['skin'];
+		$context['current_skin'] = empty(we::$user['skin']) ? get_default_skin() : we::$user['skin'];
 	}
 	// Everyone can't choose just one.
 	elseif ($u == '0')
 	{
 		$context['specify_member'] = ';u=0';
-		$context['current_theme'] = 0;
 		$context['current_skin'] = '';
 	}
 	// Guests and such...
 	elseif ($u == '-1')
 	{
 		$context['specify_member'] = ';u=-1';
-		$context['current_theme'] = we::is('mobile') ? $settings['theme_guests_mobile'] : $settings['theme_guests'];
-		$context['current_skin'] = we::is('mobile') ? $settings['theme_skin_guests_mobile'] : $settings['theme_skin_guests'];
+		$context['current_skin'] = get_default_skin();
 	}
 	// Someone else :P
 	else
@@ -398,7 +352,7 @@ function PickTheme()
 		$context['specify_member'] = ';u=' . (int) $u;
 
 		$request = wesql::query('
-			SELECT ' . (we::is('mobile') ? 'id_theme_mobile, skin_mobile' : 'id_theme, skin') . '
+			SELECT ' . (we::is('mobile') ? 'skin_mobile' : 'skin') . '
 			FROM {db_prefix}members
 			WHERE id_member = {int:current_member}
 			LIMIT 1',
@@ -406,112 +360,30 @@ function PickTheme()
 				'current_member' => (int) $u,
 			)
 		);
-		list ($context['current_theme'], $context['current_skin']) = wesql::fetch_row($request);
+		list ($context['current_skin']) = wesql::fetch_row($request);
 		wesql::free_result($request);
 	}
 
-	// Get the theme name and descriptions.
-	$context['available_themes'] = array();
-	if (!empty($settings['knownThemes']))
-	{
-		$request = wesql::query('
-			SELECT id_theme, variable, value
-			FROM {db_prefix}themes
-			WHERE variable IN ({literal:name}, {literal:theme_url}, {literal:theme_dir}, {literal:images_url})' . (!allowedTo('admin_forum') ? '
-				AND id_theme IN ({array_string:known_themes})' : '') . '
-				AND id_theme != {int:default_theme}
-				AND id_member = {int:no_member}',
-			array(
-				'default_theme' => 0,
-				'no_member' => 0,
-				'known_themes' => explode(',', $settings['knownThemes']),
-			)
-		);
-		while ($row = wesql::fetch_assoc($request))
-		{
-			if (!isset($context['available_themes'][$row['id_theme']]))
-				$context['available_themes'][$row['id_theme']] = array(
-					'id' => $row['id_theme'],
-					'selected' => $context['current_theme'] == $row['id_theme'],
-					'num_users' => 0
-				);
-			$context['available_themes'][$row['id_theme']][$row['variable']] = $row['value'];
-			if ($row['variable'] == 'theme_dir')
-				$context['available_themes'][$row['id_theme']]['skins'] = wedge_get_skin_list($row['value'] . '/skins');
-		}
-		wesql::free_result($request);
-	}
-
-	// Okay, this is a complicated problem: the default theme is 1, but they aren't allowed to access 1!
-	if (!isset($context['available_themes'][$settings['theme_guests']]))
-	{
-		$context['available_themes'][0] = array(
-			'num_users' => 0
-		);
-		$guest_theme = 0;
-	}
-	else
-		$guest_theme = $settings['theme_guests'];
-
-	$request = wesql::query('
-		SELECT id_theme, skin, COUNT(*) AS the_count
-		FROM {db_prefix}members
-		GROUP BY id_theme, skin
-		ORDER BY id_theme, skin DESC',
-		array()
-	);
-	while ($row = wesql::fetch_assoc($request))
-	{
-		// Figure out which theme it is they are REALLY using.
-		if (!empty($settings['knownThemes']) && !in_array($row['id_theme'], explode(',', $settings['knownThemes'])))
-			$row['id_theme'] = $guest_theme;
-		elseif (empty($settings['theme_allow']))
-			$row['id_theme'] = $guest_theme;
-
-		if (isset($context['available_themes'][$row['id_theme']]))
-		{
-			// Empty $row['skin'] = user didn't change their (desktop) skin to begin with, so we'll consider it to be the default.
-			if (empty($row['skin']))
-				$row['skin'] = $settings['theme_skin_guests'];
-			$skin =& wedge_find_skin($row['skin'], $context['available_themes'][$row['id_theme']]);
-			$context['available_themes'][$row['id_theme']]['num_users'] += $row['the_count'];
-			if (!empty($skin))
-				$skin['num_users'] += $row['the_count'];
-		}
-		else
-			$context['available_themes'][$guest_theme]['num_users'] += $row['the_count'];
-	}
+	$request = wesql::query('SELECT skin, COUNT(*) FROM {db_prefix}members GROUP BY skin ORDER BY skin DESC');
+	$context['skin_user_counts'] = array();
+	while ($row = wesql::fetch_row($request))
+		$context['skin_user_counts'][$row[0]] = $row[1];
 	wesql::free_result($request);
 
-	foreach ($context['available_themes'] as $id_theme => $theme_data)
-	{
-		// Don't try to load the forum or board default theme's data... it doesn't have any!
-		if ($id_theme == 0)
-			continue;
+	$context['available_themes'] = wedge_get_skin_list(SKINS_DIR);
+	unset($context['skin_user_counts']);
 
-		if (file_exists($theme_data['theme_dir'] . '/languages/Settings.' . we::$user['language'] . '.php'))
-			include($theme_data['theme_dir'] . '/languages/Settings.' . we::$user['language'] . '.php');
-		elseif (file_exists($theme_data['theme_dir'] . '/languages/Settings.' . $settings['language'] . '.php'))
-			include($theme_data['theme_dir'] . '/languages/Settings.' . $settings['language'] . '.php');
-		else
-			$txt['theme_description'] = '';
+	if (file_exists(LANGUAGES_DIR . '/Settings.' . we::$user['language'] . '.php'))
+		include(LANGUAGES_DIR . '/Settings.' . we::$user['language'] . '.php');
+	elseif (file_exists(LANGUAGES_DIR . '/Settings.' . $settings['language'] . '.php'))
+		include(LANGUAGES_DIR . '/Settings.' . $settings['language'] . '.php');
+	else
+		$txt['theme_description'] = '';
 
-		$context['available_themes'][$id_theme]['description'] = $txt['theme_description'];
-	}
-
-	// As long as we're not doing the default theme...
-	if ($u === null || $u >= 0)
-	{
-		if ($guest_theme != 0)
-			$context['available_themes'][0] = $context['available_themes'][$guest_theme];
-
-		$context['available_themes'][0]['id'] = 0;
-		$context['available_themes'][0]['name'] = $txt['theme_forum_default'];
-		$context['available_themes'][0]['selected'] = $context['current_theme'] == 0;
-		$context['available_themes'][0]['description'] = $txt['theme_global_description'];
-	}
-
-	ksort($context['available_themes']);
+	$context['available_themes']['description'] = $txt['theme_description'];
+	$context['available_themes']['name'] = $txt['theme_forum_default'];
+	$context['available_themes']['selected'] = empty(we::$user['skin']);
+	$context['available_themes']['description'] = $txt['theme_global_description'];
 
 	$context['page_title'] = $txt['change_skin'];
 	wetem::load('pick');
@@ -620,7 +492,7 @@ function ThemeInstall()
 <theme-info xmlns="http://wedge.org/files/xml/theme-info.dtd" xmlns:we="http://wedge.org/">
 	<!-- For the id, always use something unique - put your name, a colon, and then the package name. -->
 	<id>wedge:' . westr::strtolower(str_replace(array(' '), '_', $_REQUEST['copy'])) . '</id>
-	<version>' . $settings['weVersion'] . '</version>
+	<version>' . WEDGE_VERSION . '</version>
 	<!-- Theme name, used purely for aesthetics. -->
 	<name>' . $_REQUEST['copy'] . '</name>
 	<!-- Author: your email address or contact information. The name attribute is optional. -->
@@ -716,7 +588,7 @@ function ThemeInstall()
 		list ($id_theme) = wesql::fetch_row($result);
 		wesql::free_result($result);
 
-		// This will be theme number...
+		// This will be the theme number...
 		$id_theme++;
 
 		$inserts = array();
@@ -747,9 +619,9 @@ function EditTheme()
 	isAllowedTo('admin_forum');
 	loadTemplate('Themes');
 
-	$_GET['th'] = isset($_GET['th']) ? (int) $_GET['th'] : (int) @$_GET['id'];
+	$_GET['skin'] = !empty($_GET['skin']) ? $_GET['skin'] : get_default_skin();
 
-	if (empty($_GET['th']))
+	if (empty($_GET['skin']))
 	{
 		$request = wesql::query('
 			SELECT id_theme, variable, value
@@ -814,18 +686,7 @@ function EditTheme()
 	$context['session_error'] = false;
 
 	// Get the directory of the theme we are editing.
-	$request = wesql::query('
-		SELECT value, id_theme
-		FROM {db_prefix}themes
-		WHERE variable = {literal:theme_dir}
-			AND id_theme = {int:current_theme}
-		LIMIT 1',
-		array(
-			'current_theme' => $_GET['th'],
-		)
-	);
-	list ($theme_dir, $context['theme_id']) = wesql::fetch_row($request);
-	wesql::free_result($request);
+	$theme_dir = TEMPLATES_DIR;
 
 	if (!isset($_REQUEST['filename']))
 	{
@@ -855,7 +716,7 @@ function EditTheme()
 				'is_template' => false,
 				'is_image' => false,
 				'is_editable' => false,
-				'href' => '<URL>?action=admin;area=theme;th=' . $_GET['th'] . ';' . $context['session_query'] . ';sa=edit;directory=' . $temp,
+				'href' => '<URL>?action=admin;area=theme;skin=' . $_GET['skin'] . ';' . $context['session_query'] . ';sa=edit;directory=' . $temp,
 				'size' => '',
 			));
 		}
@@ -894,18 +755,7 @@ function EditTheme()
 			// Check for a parse error!
 			if (substr($_REQUEST['filename'], -13) == '.template.php' && is_writable($theme_dir) && ini_get('display_errors'))
 			{
-				$request = wesql::query('
-					SELECT value
-					FROM {db_prefix}themes
-					WHERE variable = {literal:theme_url}
-						AND id_theme = {int:current_theme}
-					LIMIT 1',
-					array(
-						'current_theme' => $_GET['th'],
-					)
-				);
-				list ($theme_url) = wesql::fetch_row($request);
-				wesql::free_result($request);
+				$theme_url = TEMPLATES;
 
 				$fp = fopen($theme_dir . '/tmp_' . session_id() . '.php', 'w');
 				fwrite($fp, $_POST['entire_file']);
@@ -926,7 +776,7 @@ function EditTheme()
 				fwrite($fp, $_POST['entire_file']);
 				fclose($fp);
 
-				redirectexit('action=admin;area=theme;th=' . $_GET['th'] . ';' . $context['session_query'] . ';sa=edit;directory=' . dirname($_REQUEST['filename']));
+				redirectexit('action=admin;area=theme;skin=' . $_GET['skin'] . ';' . $context['session_query'] . ';sa=edit;directory=' . dirname($_REQUEST['filename']));
 			}
 		}
 		// Session timed out.
@@ -1032,7 +882,7 @@ function get_file_listing($path, $relative)
 				'is_template' => false,
 				'is_image' => false,
 				'is_editable' => false,
-				'href' => '<URL>?action=admin;area=theme;th=' . $_GET['th'] . ';' . $context['session_query'] . ';sa=edit;directory=' . $relative . $entry,
+				'href' => '<URL>?action=admin;area=theme;skin=' . $_GET['skin'] . ';' . $context['session_query'] . ';sa=edit;directory=' . $relative . $entry,
 				'size' => '',
 			);
 		else
@@ -1050,7 +900,7 @@ function get_file_listing($path, $relative)
 				'is_template' => preg_match('~\.template\.php$~', $entry) != 0,
 				'is_image' => preg_match('~\.(jpg|jpeg|gif|bmp|png)$~', $entry) != 0,
 				'is_editable' => is_writable($path . '/' . $entry) && preg_match('~\.(php|pl|css|js|vbs|xml|xslt|txt|xsl|html|htm|shtm|shtml|asp|aspx|cgi|py)$~', $entry) != 0,
-				'href' => '<URL>?action=admin;area=theme;th=' . $_GET['th'] . ';' . $context['session_query'] . ';sa=edit;filename=' . $relative . $entry,
+				'href' => '<URL>?action=admin;area=theme;skin=' . $_GET['skin'] . ';' . $context['session_query'] . ';sa=edit;filename=' . $relative . $entry,
 				'size' => $size,
 				'last_modified' => timeformat(filemtime($path . '/' . $entry)),
 			);
@@ -1069,20 +919,9 @@ function CopyTemplate()
 
 	$context[$context['admin_menu_name']]['current_subsection'] = 'edit';
 
-	$_GET['th'] = isset($_GET['th']) ? (int) $_GET['th'] : (int) $_GET['id'];
+	$_GET['skin'] = !empty($_GET['skin']) ? $_GET['skin'] : get_default_skin();
 
-	$request = wesql::query('
-		SELECT th1.value, th1.id_theme
-		FROM {db_prefix}themes AS th1
-		WHERE th1.variable = {literal:theme_dir}
-			AND th1.id_theme = {int:current_theme}
-		LIMIT 1',
-		array(
-			'current_theme' => $_GET['th'],
-		)
-	);
-	list ($theme_dir, $context['theme_id']) = wesql::fetch_row($request);
-	wesql::free_result($request);
+	$theme_dir = TEMPLATES_DIR;
 
 	if (isset($_REQUEST['template']) && preg_match('~[./\\\\:\0]~', $_REQUEST['template']) == 0)
 	{
@@ -1095,7 +934,7 @@ function CopyTemplate()
 		fwrite($fp, file_get_contents($filename));
 		fclose($fp);
 
-		redirectexit('action=admin;area=theme;th=' . $context['theme_id'] . ';' . $context['session_query'] . ';sa=copy');
+		redirectexit('action=admin;area=theme;' . $context['session_query'] . ';sa=copy');
 	}
 	elseif (isset($_REQUEST['lang_file']) && preg_match('~^[^./\\\\:\0]\.[^./\\\\:\0]$~', $_REQUEST['lang_file']) != 0)
 	{
@@ -1108,7 +947,7 @@ function CopyTemplate()
 		fwrite($fp, file_get_contents($filename));
 		fclose($fp);
 
-		redirectexit('action=admin;area=theme;th=' . $context['theme_id'] . ';' . $context['session_query'] . ';sa=copy');
+		redirectexit('action=admin;area=theme;' . $context['session_query'] . ';sa=copy');
 	}
 
 	$templates = array();
@@ -1177,45 +1016,71 @@ function CopyTemplate()
 /**
  * Get a list of all skins available for a given theme folder.
  */
-function wedge_get_skin_list($dir, $files = array(), &$root = array())
+function wedge_get_skin_list($dir, $files = array(), &$root = array(), $force = false)
 {
+	global $context;
+
+	$is_root = $dir === SKINS_DIR;
+	if ($is_root && !$force)
+	{
+		$skin_list = cache_get_data('wedge_skin_list', 180);
+		if ($skin_list !== null)
+			return $skin_list;
+
+		// Get the theme name and descriptions.
+		$available_themes = array(
+			'num_users' => isset($context['skin_user_counts']['']) ? $context['skin_user_counts'][''] : 0,
+			'skins' => array(
+				SKINS_DIR . '/Weaving' => array(
+					'name' => 'Weaving',
+					'type' => 'replace',
+					'comment' => '',
+					'num_users' => isset($context['skin_user_counts']['/']) ? $context['skin_user_counts']['/'] : 0,
+					'dir' => '/',
+				),
+			),
+		);
+
+		$available_themes['skins'][SKINS_DIR . '/Weaving']['skins'] = wedge_get_skin_list(SKINS_DIR, array(), $available_themes['skins'], true);
+		cache_put_data('wedge_skin_list', $available_themes, 180);
+		return $available_themes;
+	}
+
 	$skins = array();
-	$is_root = empty($root);
 	if ($is_root)
 		$root =& $skins;
 	if (empty($files))
-		$files = scandir($dir);
+		$files = glob($dir . '/*', GLOB_ONLYDIR);
 
-	foreach ($files as $file)
+	foreach ($files as $this_dir)
 	{
-		$this_dir = $dir . '/' . $file;
-		// If we're in the root, skip anything but the '.' folder. Otherwise, skip all '.' folders. It makes sense, really.
-		if (($is_root && $file !== '.') || (!$is_root && $file === '.') || $file === '..' || !is_dir($this_dir))
+		$file = basename($this_dir);
+		if ($file[0] === '.' || !is_dir($this_dir))
 			continue;
-		if ($is_root)
-			$this_dir = $dir;
+
 		$these_files = scandir($this_dir);
-		$is_valid = false;
-		// We need to have at least one .css file *or* skin.xml for a skin to be valid.
+		$is_valid = $has_skin_xml = false;
+		$sub_dirs = array();
 		foreach ($these_files as $test)
 		{
-			if (substr($test, -4) === '.css')
-			{
+			if (is_dir($this_dir . '/' . $test))
+				$sub_dirs[] = $this_dir . '/' . $test;
+			elseif ($test === 'skin.xml')
+				$has_skin_xml = true;
+			elseif (!$is_valid && substr($test, -4) === '.css')
 				$is_valid = true;
-				break;
-			}
 		}
-		if (!$is_valid && !in_array('skin.xml', $these_files))
+		// We need to have at least one .css file *or* skin.xml for a skin to be valid.
+		if (!$is_valid && !$has_skin_xml)
 			continue;
-		if (in_array('skin.xml', $these_files))
+		if ($has_skin_xml)
 		{
 			// I'm not actually parsing it XML-style... Mwahaha! I'm evil.
 			$setxml = file_get_contents($this_dir . '/skin.xml');
 			$skin = array(
 				'name' => preg_match('~<name>(?:<!\[CDATA\[)?(.*?)(?:]]>)?</name>~sui', $setxml, $match) ? trim($match[1]) : $file,
-				'type' => $is_root ? 'replace' : (preg_match('~<type>(.*?)</type>~sui', $setxml, $match) ? trim($match[1]) : 'add'),
+				'type' => preg_match('~<type>(.*?)</type>~sui', $setxml, $match) ? trim($match[1]) : 'add',
 				'comment' => preg_match('~<comment>(?:<!\[CDATA\[)?(.*?)(?:]]>)?</comment>~sui', $setxml, $match) ? trim($match[1]) : '',
-				'num_users' => 0,
 			);
 		}
 		else
@@ -1223,16 +1088,17 @@ function wedge_get_skin_list($dir, $files = array(), &$root = array())
 				'name' => $file,
 				'type' => 'add',
 				'comment' => '',
-				'num_users' => 0,
 			);
-		$skin['dir'] = substr($this_dir, strpos($this_dir, $is_root ? '/skins' : '/skins/') + 1);
+		$skin['dir'] = str_replace(SKINS_DIR . '/', '', $this_dir);
+		$skin['num_users'] = isset($context['skin_user_counts'][$skin['dir']]) ? $context['skin_user_counts'][$skin['dir']] : 0;
 		if ($skin['type'] == 'add')
 			$skins[$this_dir] = $skin;
 		else
 			$root[$this_dir] = $skin;
 
-		if ($is_root || $file !== '.')
-			$sub_skins = wedge_get_skin_list($this_dir, $these_files, $root);
+		if (!empty($sub_dirs))
+			$sub_skins = wedge_get_skin_list($this_dir, $sub_dirs, $root);
+
 		if (!empty($sub_skins))
 		{
 			if ($skin['type'] == 'add')
@@ -1241,35 +1107,27 @@ function wedge_get_skin_list($dir, $files = array(), &$root = array())
 				$root[$this_dir]['skins'] = $sub_skins;
 		}
 	}
-	return $skins;
-}
 
-function &wedge_find_skin($target, &$root)
-{
-	foreach ($root['skins'] as &$skin)
-		if ($skin['dir'] == $target)
-			return $skin;
-		elseif (isset($skin['skins']) && ($found =& wedge_find_skin($target, $skin)))
-			return $found;
-	$dummy = false;
-	return $dummy;
+	return $skins;
 }
 
 /**
  * Return a list of <option> variables for use in Themes and ManageBoard templates.
  * $show_defaults will add an indicator next to default (desktop and mobile) skins.
  */
-function wedge_show_skins(&$style, $current_skin = '', $filler = '', $show_defaults = false)
+function wedge_show_skins(&$style, $show_defaults = false, $current_skin = '', $filler = '')
 {
 	global $context, $settings, $txt;
 
+	if (!$current_skin)
+		$current_skin = $context['skin_actual'];
 	$last = count($style);
 	$current = 1;
 	$output = '';
 	foreach ($style as $sty)
 	{
 		$intro = !$show_defaults || $filler ? $filler . ($current == $last ? '&#9492;' : '&#9500;') . '&mdash; ' : '';
-		$output .= '<option value="' . base64_encode($sty['dir']) . '"' . ($current_skin == $sty['dir'] ? ' selected' : '') . '>' . $intro . $sty['name'];
+		$output .= '<option value="' . westr::safe($sty['dir']) . '"' . ($current_skin == $sty['dir'] ? ' selected' : '') . '>' . $intro . $sty['name'];
 		$context['skin_names'][$sty['dir']] = $sty['name'];
 		if ($show_defaults)
 		{
@@ -1280,7 +1138,7 @@ function wedge_show_skins(&$style, $current_skin = '', $filler = '', $show_defau
 		}
 		$output .= '</option>';
 		if (!empty($sty['skins']))
-			$output .= wedge_show_skins($sty['skins'], $current_skin, $current == $last ? $filler . '&nbsp;&nbsp;&nbsp;' : $filler . '&#9130;&nbsp;&nbsp;', $show_defaults);
+			$output .= wedge_show_skins($sty['skins'], $show_defaults, $current_skin, $current == $last ? $filler . '&nbsp;&nbsp;&nbsp;' : $filler . '&#9130;&nbsp;&nbsp;');
 		$current++;
 	}
 	return $output;

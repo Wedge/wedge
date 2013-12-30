@@ -23,7 +23,7 @@ if (!defined('WEDGE'))
 	void saveProfileChanges(array &profile_variables, int id_member)
 		// !!!
 
-	void makeThemeChanges(int id_member, int id_theme)
+	void makeThemeChanges(int id_member)
 		// !!!
 
 	void makeNotificationChanges(int id_member)
@@ -148,7 +148,7 @@ function loadProfileFields($force_reload = false)
 								Return types:
 					- true:			Element can be stored.
 					- false:		Skip this element.
-					- a text string:	An error occured - this is the error message.
+					- a text string:	An error occurred - this is the error message.
 
 				function $preload:		A function that is used to load data required for this element to be displayed. Must return
 								true to be displayed at all.
@@ -778,7 +778,7 @@ function saveProfileFields()
 		if (isset($field['input_validate']))
 		{
 			$is_valid = $field['input_validate']($_POST[$key]);
-			// An error occured - set it as such!
+			// An error occurred - set it as such!
 			if ($is_valid !== true)
 			{
 				// Is this an actual error?
@@ -870,7 +870,7 @@ function saveProfileFields()
 		$changeOther = allowedTo('profile_extra_any');
 	if ($changeOther && empty($post_errors))
 	{
-		makeThemeChanges($context['id_member'], isset($_POST['id_theme']) ? (int) $_POST['id_theme'] : $old_profile['id_theme']);
+		makeThemeChanges($context['id_member']);
 		if (!empty($_REQUEST['sa']))
 			makeCustomFieldChanges($context['id_member'], $_REQUEST['sa'], false);
 	}
@@ -941,7 +941,7 @@ function saveProfileChanges(&$profile_vars, $memID)
 	// Here's where we sort out all the 'other' values...
 	if ($changeOther)
 	{
-		makeThemeChanges($memID, isset($_POST['id_theme']) ? (int) $_POST['id_theme'] : $old_profile['id_theme']);
+		makeThemeChanges($memID);
 		makeNotificationChanges($memID);
 		if (!empty($_REQUEST['sa']))
 			makeCustomFieldChanges($memID, $_REQUEST['sa'], false);
@@ -962,7 +962,7 @@ function saveProfileChanges(&$profile_vars, $memID)
 }
 
 // Make any theme changes that are sent with the profile...
-function makeThemeChanges($memID, $id_theme)
+function makeThemeChanges($memID)
 {
 	global $settings, $context;
 

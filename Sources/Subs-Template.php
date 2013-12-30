@@ -1301,12 +1301,12 @@ function loadTemplate($template_name, $fatal = true)
 			call_user_func('template_' . $template_name . '_init');
 	}
 	// Hmmm... doesn't exist?! I don't suppose the directory is wrong, is it?
-	elseif (!file_exists($settings['theme_dir']) && file_exists($boarddir . '/Themes/default'))
+	// !! @todo: remove this..?
+	elseif (!file_exists(TEMPLATES_DIR) && file_exists($boarddir . '/Themes/default'))
 	{
-		$settings['theme_dir'] = $boarddir . '/Themes/default';
-		$settings['template_dirs'][] = $settings['theme_dir'];
+		$settings['template_dirs'][] = $settings['theme_dir'] = $boarddir . '/Themes/default';
 
-		if (we::$is_admin && !isset($_GET['th']))
+		if (we::$is_admin)
 		{
 			loadLanguage('Errors');
 			echo '
