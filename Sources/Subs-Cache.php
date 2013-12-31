@@ -385,7 +385,7 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 	usort($css, 'sort_skin_files');
 
 	$folder = end($context['css_folders']);
-	$id = $folder === 'skins' ? '' : str_replace('/', '-', strpos($folder, 'skins/') === 0 ? substr($folder, 6) : $folder);
+	$id = $folder === basename(SKINS_DIR) ? '' : str_replace('/', '-', strpos($folder, 'skins/') === 0 ? substr($folder, 6) : $folder);
 	$latest_date %= 1000000;
 
 	$can_gzip = !empty($settings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
@@ -1221,7 +1221,7 @@ function wedge_cache_smileys($set, $smileys, $extra)
 
 	$final_gzip = $final_raw = '';
 	$path = $settings['smileys_dir'] . '/' . $set . '/';
-	$url  = '..' . str_replace(ROOT, '', $settings['smileys_url']) . '/' . $set . '/';
+	$url  = '..' . str_replace(ROOT, '', SMILEYS) . '/' . $set . '/';
 
 	// Delete other cached versions, if they exist.
 	clean_cache($context['smiley_ext'], 'smileys' . $extra, $cssdir);

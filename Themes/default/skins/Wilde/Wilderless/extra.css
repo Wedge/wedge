@@ -1,0 +1,129 @@
+
+/*!
+ * Wireless (Default mobile) skin for Wedge
+ * © 2010 René-Gilles Deberdt, http://wedge.org
+ */
+
+html
+	background: none
+
+body
+	padding: 0
+
+#wedge
+	overflow: hidden
+
+#header
+	gradient: rgb(216, 205, 165), rgba(205, 216, 185, .3) // Fallback
+	background: linear-gradient(220deg, rgba(216, 205, 165, .66), rgba(205, 216, 185, .1)), linear-gradient(150deg, rgba(216, 205, 165, .66), rgba(205, 216, 185, .1))
+
+#top_section
+	padding: 8px 15px
+
+#edge
+	padding: 5px 0
+
+#linktree
+	padding: 0 0 10px
+
+#sidebar .column
+	padding: 20px 10px 0 20px
+
+#footer
+	border-radius: 0
+
+.postheader extends .clearfix
+	display: block
+	width: auto
+	padding: 8px 12px
+	min-height: 60px
+	if !chrome || !mobile
+		top: 0
+		position: sticky // If the browser supports it, it's all for the best!
+	@endif
+	background: #edefed // Add a bit of contrast...
+
+	h4
+		display: inline
+		margin-top, margin-left, vertical-align: 0
+	h5
+		display: inline
+		line-height: 1.3em
+		font-weight: 400
+	h5:before
+		content: "- "
+	.pixelicons
+		margin-top: -2px
+	.mime
+		vertical-align: 0
+	div.avatar
+		float: left
+	img.avatar
+		max-height: 40px
+		margin-right: 12px
+
+.postarea
+	display: block
+	width: auto // mostly for IE6
+	margin-left: 0
+
+@remove .postarea
+	padding: 0 15px
+
+.post
+	padding: 0 4px
+
+.inner
+	border-top: 0
+
+.signature
+	padding-left, padding-right: 8px
+
+// We want really comfortable menu items for use in wireless devices.
+.mimenu ul li
+	padding: 8px
+	height: auto
+
+.list_posts
+	font-size: 85%
+
+.topic_details
+	font-size: 110%
+
+.counter
+	padding: .3em .5em .5em .2em
+
+.poll dl
+	padding: 1em 0 0
+	dt, dd
+		width: 90%
+
+#basicinfo h4
+	font: 400 110%/105% $subject_font
+
+#notlist, #pmlist
+	font-size: .8em
+	line-height: 1.3em
+
+@remove
+	letter-spacing: -.25px
+
+@replace
+	font: 3.6em/1 $serif_font
+	font: 2em/1 $serif_font
+
+@if opera[11-], ie[10-]
+	@viewport
+		width: device-width
+		zoom: 1 // initial-scale
+		min-zoom: .7 // minimum-scale
+		max-zoom: 2 // maximum-scale
+@endif
+
+$big_font = Roboto Light, sans-serif-light, Segoe UI, Arial, sans-serif
+$head_font = Roboto Light, sans-serif-light, Segoe UI, Arial, sans-serif
+$mimenu_font_size = 18px/28px
+$horizontal_content_padding = 10px
+$head_font_size = 1.3em/1.3em
+$main_font_size = 15px/130%
+$post_bg = $post_bg2

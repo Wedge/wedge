@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!--
+	See Wine/Warm/skin.xml for descriptions and more options.
+-->
+<skin>
+
+	<name>
+		Wilderless
+	</name>
+
+	<comment><![CDATA[
+		By Nao.
+	]]></comment>
+
+	<options>
+		<mobile>
+			1
+		</mobile>
+	</options>
+
+</skin>

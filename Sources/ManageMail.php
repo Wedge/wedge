@@ -424,8 +424,8 @@ function ModifyEmailTemplates()
 
 		wesql::insert('replace',
 			'{db_prefix}language_changes',
-			array('id_theme' => 'int', 'id_lang' => 'string', 'lang_file' => 'string', 'lang_var' => 'string', 'lang_key' => 'string', 'lang_string' => 'string', 'serial' => 'int'),
-			array(1, $lang, 'EmailTemplates', 'txt', 'emailtemplate_' . $_POST['email'], serialize($new_entry), 1)
+			array('id_lang' => 'string', 'lang_file' => 'string', 'lang_var' => 'string', 'lang_key' => 'string', 'lang_string' => 'string', 'serial' => 'int'),
+			array($lang, 'EmailTemplates', 'txt', 'emailtemplate_' . $_POST['email'], serialize($new_entry), 1)
 		);
 
 		foreach (glob($cachedir . '/lang_*_*_EmailTemplates.php') as $filename)

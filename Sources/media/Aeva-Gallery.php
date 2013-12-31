@@ -2374,7 +2374,7 @@ function aeva_getMedia()
 	// If you can't access... Forget it.
 	if (!aeva_allowedTo('access'))
 	{
-		$path = $settings['theme_dir'] . '/images/aeva/denied.png';
+		$path = ASSETS_DIR . '/aeva/denied.png';
 		$filename = 'denied.png';
 		$is_new = false;
 	}

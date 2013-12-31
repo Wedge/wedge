@@ -2156,7 +2156,7 @@ VALUES
 	('enablePostHTML', '0'),
 	('theme_allow', '1'),
 	('theme_skin_guests', 'Wilde'),
-	('theme_skin_guests_mobile', 'Wireless'),
+	('theme_skin_guests_mobile', 'Wilderless'),
 	('enableEmbeddedFlash', '0'),
 	('xmlnews_enable', '1'),
 	('xmlnews_maxlen', '255'),
