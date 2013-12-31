@@ -95,7 +95,7 @@ function Login2()
 	$context['default_username'] = isset($_POST['user']) ? westr::htmlspecialchars($_POST['user']) : '';
 	$context['default_password'] = '';
 	$context['never_expire'] = $settings['cookieTime'] == 525600 || $settings['cookieTime'] == 3153600;
-	$context['login_errors'] = array($txt['error_occured']);
+	$context['login_errors'] = array($txt['error_occurred']);
 	$context['page_title'] = $txt['login'];
 
 	// Add the login chain to the link tree.

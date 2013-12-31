@@ -1602,7 +1602,7 @@ class wedit
 		);
 
 		// Load smileys - don't bother to run a query if we're not using the database's ones anyhow.
-		if (empty($settings['smiley_enable']) && we::$user['smiley_set'] != 'none')
+		if (empty($settings['smiley_enable']) && we::$user['smiley_set'] !== 'none')
 		{
 			$this->smileys['postform'][] = array(
 				'smileys' => array(
@@ -1732,9 +1732,9 @@ class wedit
 				'isLast' => true,
 			);
 		}
-		elseif (we::$user['smiley_set'] != 'none')
+		elseif (we::$user['smiley_set'] !== 'none')
 		{
-			if (($temp = cache_get_data('smiley_poster', 'forever')) == null)
+			if (($temp = cache_get_data('smiley_poster', 'forever')) === null)
 			{
 				$request = wesql::query('
 					SELECT code, filename, description, smiley_row, hidden

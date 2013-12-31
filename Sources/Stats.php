@@ -118,7 +118,7 @@ function Stats()
 		);
 
 	// Male vs. female ratio - let's calculate this only every four minutes.
-	if (($context['gender'] = cache_get_data('stats_gender', 240)) == null)
+	if (($context['gender'] = cache_get_data('stats_gender', 240)) === null)
 	{
 		$result = wesql::query('
 			SELECT COUNT(*) AS total_members, gender
@@ -366,7 +366,7 @@ function Stats()
 	}
 
 	// Try to cache this when possible, because it's a little unavoidably slow.
-	if (($members = cache_get_data('stats_top_starters', 360)) == null)
+	if (($members = cache_get_data('stats_top_starters', 360)) === null)
 	{
 		$request = wesql::query('
 			SELECT id_member_started, COUNT(*) AS hits

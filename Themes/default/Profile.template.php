@@ -2799,7 +2799,7 @@ function template_profile_smiley_pick()
 						<strong>', $txt['smileys_current'], ':</strong>
 					</dt>
 					<dd>
-						<select name="smiley_set" onchange="$(\'#smileypr\').attr(\'src\', this.selectedIndex == 0 ? \'', ASSETS, '/blank.gif\' : \'', $settings['smileys_url'], '/\' + (this.selectedIndex != 1 ? $(this).val() : \'', $settings['smiley_sets_default'], '\') + \'/smiley.gif\');">';
+						<select name="smiley_set" onchange="$(\'#smileypr\').attr(\'src\', this.selectedIndex == 0 ? \'', ASSETS, '/blank.gif\' : \'', SMILEYS, '/\' + (this.selectedIndex != 1 ? $(this).val() : \'', $settings['smiley_sets_default'], '\') + \'/smiley.gif\');">';
 
 	foreach ($context['smiley_sets'] as $set)
 		echo '
@@ -2807,6 +2807,6 @@ function template_profile_smiley_pick()
 
 	echo '
 						</select>
-						<img id="smileypr" src="', $context['member']['smiley_set']['id'] != 'none' ? $settings['smileys_url'] . '/' . ($context['member']['smiley_set']['id'] != '' ? $context['member']['smiley_set']['id'] : $settings['smiley_sets_default']) . '/smiley.gif' : ASSETS . '/blank.gif', '" alt=":)" class="top" style="padding-left: 20px">
+						<img id="smileypr" src="', $context['member']['smiley_set']['id'] != 'none' ? SMILEYS . '/' . ($context['member']['smiley_set']['id'] != '' ? $context['member']['smiley_set']['id'] : $settings['smiley_sets_default']) . '/smiley.gif' : ASSETS . '/blank.gif', '" alt=":)" class="top" style="padding-left: 20px">
 					</dd>';
 }

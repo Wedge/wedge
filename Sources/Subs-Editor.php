@@ -26,7 +26,7 @@ if (!defined('WEDGE'))
 
 function getMessageIcons($board_id)
 {
-	if (($temp = cache_get_data('posting_icons-' . $board_id, 480)) == null)
+	if (($temp = cache_get_data('posting_icons-' . $board_id, 480)) === null)
 	{
 		$request = wesql::query('
 			SELECT title, filename

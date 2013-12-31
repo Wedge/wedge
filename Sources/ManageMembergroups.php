@@ -155,8 +155,6 @@ function MembergroupIndex()
 				),
 				'data' => array(
 					'function' => function ($rowData) {
-						global $settings;
-
 						$stars = explode('#', $rowData['stars']);
 
 						// In case no stars are setup, return with nothing
@@ -259,8 +257,6 @@ function MembergroupIndex()
 				),
 				'data' => array(
 					'function' => function ($rowData) {
-						global $settings;
-
 						$stars = explode('#', $rowData['stars']);
 
 						if (empty($stars[0]) || empty($stars[1]))

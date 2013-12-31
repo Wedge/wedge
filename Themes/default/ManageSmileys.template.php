@@ -66,7 +66,7 @@ function template_modifyset()
 						<strong><label for="smiley_sets_path">', $txt['smiley_sets_url'], '</label>: </strong>
 					</dt>
 					<dd>
-						', $settings['smileys_url'], '/';
+						', SMILEYS, '/';
 
 		if ($context['current_set']['id'] == 'default')
 			echo '<strong>default</strong><input type="hidden" name="smiley_sets_path" id="smiley_sets_path" value="default">';
@@ -133,7 +133,7 @@ function template_modifysmiley()
 						<strong>', $txt['smiley_preview'], ': </strong>
 					</dt>
 					<dd>
-						<img src="', $settings['smileys_url'], '/', $settings['smiley_sets_default'], '/', $context['current_smiley']['filename'], '" id="preview"> (', $txt['smiley_preview_using'], ': <select name="set" onchange="updatePreview();">';
+						<img src="', SMILEYS, '/', $settings['smiley_sets_default'], '/', $context['current_smiley']['filename'], '" id="preview"> (', $txt['smiley_preview_using'], ': <select name="set" onchange="updatePreview();">';
 
 	foreach ($context['smiley_sets'] as $smiley_set)
 		echo '
@@ -202,7 +202,7 @@ function template_modifysmiley()
 	add_js('
 	function updatePreview()
 	{
-		$("#preview").attr("src", "', $settings['smileys_url'], '/" + document.forms.smileyForm.set.value + "/" + document.forms.smileyForm.smiley_filename.value);
+		$("#preview").attr("src", "', SMILEYS, '/" + document.forms.smileyForm.set.value + "/" + document.forms.smileyForm.smiley_filename.value);
 	}');
 }
 
@@ -249,7 +249,7 @@ function template_addsmiley()
 				<fieldset id="ex_settings">
 					<dl class="settings">
 						<dt>
-							<img src="', $settings['smileys_url'], '/', $settings['smiley_sets_default'], '/', $context['filenames'][0]['id'], '" id="preview">
+							<img src="', SMILEYS, '/', $settings['smiley_sets_default'], '/', $context['filenames'][0]['id'], '" id="preview">
 						</dt>
 						<dd>
 							', $txt['smiley_preview_using'], ': <select name="set" onchange="updatePreview(); selectMethod(\'existing\');">';
@@ -360,7 +360,7 @@ function template_addsmiley()
 	add_js('
 	function updatePreview()
 	{
-		$("#preview").attr("src", "', $settings['smileys_url'], '/" + document.forms.smileyForm.set.value + "/" + document.forms.smileyForm.smiley_filename.value);
+		$("#preview").attr("src", "', SMILEYS, '/" + document.forms.smileyForm.set.value + "/" + document.forms.smileyForm.smiley_filename.value);
 	}');
 }
 
@@ -391,9 +391,9 @@ function template_setorder()
 			foreach ($row as $smiley)
 			{
 				if (empty($context['move_smiley']))
-					echo '<a href="<URL>?action=admin;area=smileys;sa=setorder;move=', $smiley['id'], '"><img src="', $settings['smileys_url'], '/', $settings['smiley_sets_default'], '/', $smiley['filename'], '" style="padding: 2px; border: 0 solid black" alt="', $smiley['description'], '"></a>';
+					echo '<a href="<URL>?action=admin;area=smileys;sa=setorder;move=', $smiley['id'], '"><img src="', SMILEYS, '/', $settings['smiley_sets_default'], '/', $smiley['filename'], '" style="padding: 2px; border: 0 solid black" alt="', $smiley['description'], '"></a>';
 				else
-					echo '<img src="', $settings['smileys_url'], '/', $settings['smiley_sets_default'], '/', $smiley['filename'], '" style="padding: 2px; border: ', $smiley['selected'] ? '2px solid red' : '0 solid black', '" alt="', $smiley['description'], '"><a href="<URL>?action=admin;area=smileys;sa=setorder;location=', $location['id'], ';source=', $context['move_smiley'], ';after=', $smiley['id'], ';reorder=1;', $context['session_query'], '" title="', $txt['smileys_move_here'], '"><img src="', ASSETS, '/smiley_select_spot.gif" alt="', $txt['smileys_move_here'], '"></a>';
+					echo '<img src="', SMILEYS, '/', $settings['smiley_sets_default'], '/', $smiley['filename'], '" style="padding: 2px; border: ', $smiley['selected'] ? '2px solid red' : '0 solid black', '" alt="', $smiley['description'], '"><a href="<URL>?action=admin;area=smileys;sa=setorder;location=', $location['id'], ';source=', $context['move_smiley'], ';after=', $smiley['id'], ';reorder=1;', $context['session_query'], '" title="', $txt['smileys_move_here'], '"><img src="', ASSETS, '/smiley_select_spot.gif" alt="', $txt['smileys_move_here'], '"></a>';
 			}
 
 			echo '

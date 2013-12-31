@@ -167,7 +167,7 @@ function Recent()
 	add_linktree($context['page_title'], '<URL>?action=recent' . (empty($board) ? (empty($_REQUEST['c']) ? '' : ';c=' . (int) $_REQUEST['c']) : ';board=' . $board . '.0'));
 
 	$key = 'recent-' . MID . '-' . md5(serialize(array_diff_key($query_parameters, array('max_id_msg' => 0)))) . '-' . (int) $_REQUEST['start'];
-	if (empty($settings['cache_enable']) || ($messages = cache_get_data($key, 120)) == null)
+	if (empty($settings['cache_enable']) || ($messages = cache_get_data($key, 120)) === null)
 	{
 		$done = false;
 		while (!$done)

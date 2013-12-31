@@ -411,7 +411,7 @@ function getMediaPath($mid, $type = 'main', $security_override = false)
 	}
 	else
 	{
-		$path = $type == 'icon' ? $settings['theme_dir'] . '/images/blank.gif' : $settings['theme_dir'] . '/images/aeva/denied.png';
+		$path = $type == 'icon' ? ASSETS_DIR . '/blank.gif' : ASSETS_DIR . '/aeva/denied.png';
 		$filename = 'denied.png';
 		$is_new = false;
 	}
@@ -741,7 +741,7 @@ function loadMediaSettings($gal_url = null, $load_template = false, $load_langua
 	if (!isset($_SESSION['aeva_access']))
 		$_SESSION['aeva_access'] = array();
 
-	if (empty($amSettings['enable_cache']) || ($amSettings = cache_get_data('aeva_settings', 60)) == null)
+	if (empty($amSettings['enable_cache']) || ($amSettings = cache_get_data('aeva_settings', 60)) === null)
 	{
 		$amSettings = array();
 		$request = wesql::query('

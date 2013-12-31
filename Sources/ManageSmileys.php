@@ -386,7 +386,7 @@ function EditSmileySets()
 				),
 				'data' => array(
 					'sprintf' => array(
-						'format' => $settings['smileys_url'] . '/<strong>%1$s</strong>/...',
+						'format' => SMILEYS . '/<strong>%1$s</strong>/...',
 						'params' => array(
 							'path' => true,
 						),
@@ -889,7 +889,7 @@ function EditSmileys()
 				'picture' => array(
 					'data' => array(
 						'sprintf' => array(
-							'format' => '<a href="<URL>?action=admin;area=smileys;sa=modifysmiley;smiley=%1$d"><img src="' . $settings['smileys_url'] . '/' . $settings['smiley_sets_default'] . '/%2$s" alt="%3$s" style="padding: 2px" id="smiley%1$d"><input type="hidden" name="smileys[%1$d][filename]" value="%2$s"></a>',
+							'format' => '<a href="<URL>?action=admin;area=smileys;sa=modifysmiley;smiley=%1$d"><img src="' . SMILEYS . '/' . $settings['smiley_sets_default'] . '/%2$s" alt="%3$s" style="padding: 2px" id="smiley%1$d"><input type="hidden" name="smileys[%1$d][filename]" value="%2$s"></a>',
 							'params' => array(
 								'id_smiley' => false,
 								'filename' => true,
@@ -1046,7 +1046,7 @@ function EditSmileys()
 					knownSmileys.push(document.images[i].id.slice(6));
 
 		for (i = 0; i < knownSmileys.length; i++)
-			$("#smiley" + knownSmileys[i]).attr("src", "' . $settings['smileys_url'] . '/" + newSet + "/" + document.forms.smileyForm["smileys[" + knownSmileys[i] + "][filename]"].value);
+			$("#smiley" + knownSmileys[i]).attr("src", "' . SMILEYS . '/" + newSet + "/" + document.forms.smileyForm["smileys[" + knownSmileys[i] + "][filename]"].value);
 	}',
 		);
 
@@ -1465,10 +1465,10 @@ function EditMessageIcons()
 		checkSession();
 		$_GET['icon'] = (int) $_GET['icon'];
 
-		// Do some preperation with the data... like check the icon exists *somewhere*
+		// Do some preperation with the data... like check the icon exists.
 		if (strpos($_POST['icon_filename'], '.gif') !== false)
 			$_POST['icon_filename'] = substr($_POST['icon_filename'], 0, -4);
-		if (!file_exists($settings['theme_dir'] . '/images/post/' . $_POST['icon_filename'] . '.gif'))
+		if (!file_exists(ASSETS_DIR . '/post/' . $_POST['icon_filename'] . '.gif'))
 			fatal_lang_error('icon_not_found');
 		// There is a 16 character limit on message icons...
 		elseif (strlen($_POST['icon_filename']) > 16)

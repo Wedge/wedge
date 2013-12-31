@@ -355,7 +355,7 @@ function setup_fatal_error_context($error_message)
 	$context['robot_no_index'] = true;
 
 	if (!isset($context['error_title']))
-		$context['error_title'] = $txt['error_occured'];
+		$context['error_title'] = $txt['error_occurred'];
 	$context['error_message'] = isset($context['error_message']) ? $context['error_message'] : $error_message;
 
 	if (empty($context['page_title']))

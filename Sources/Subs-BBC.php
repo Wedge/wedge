@@ -267,7 +267,7 @@ function parse_bbc($message, $type = 'generic', $bbc_options = array()) // $smil
 		$cache_key = 'parse:' . $cache_id . '-' . md5(md5($message) . '-' . $smileys . (empty($disabled) ? '' : implode(',', array_keys($disabled)))
 					. serialize(we::$browser) . $txt['lang_locale'] . we::$user['time_offset'] . we::$user['time_format']);
 
-		if (($temp = cache_get_data($cache_key, 240)) != null)
+		if (($temp = cache_get_data($cache_key, 240)) !== null)
 			return $temp;
 
 		$cache_t = microtime(true);

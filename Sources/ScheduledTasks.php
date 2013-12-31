@@ -737,10 +737,10 @@ function scheduled_daily_digest()
 					{
 						if (!$titled)
 						{
-							$email['body'] .= "\n" . $langtxt[$members['lang']]['mod_actions'] . ':' . "\n" . '-----------------------------------------------';
+							$email['body'] .= "\n" . $langtxt[$member['lang']]['mod_actions'] . ':' . "\n" . '-----------------------------------------------';
 							$titled = true;
 						}
-						$email['body'] .= "\n" . sprintf($langtxt[$members['lang']][$note_type], $topic['subject']);
+						$email['body'] .= "\n" . sprintf($langtxt[$member['lang']][$note_type], $topic['subject']);
 					}
 
 		}
@@ -1175,7 +1175,7 @@ function loadEssentialThemeData()
 
 	// Check we have some directories setup.
 	if (empty($settings['template_dirs']))
-		$settings['template_dirs'] = array($settings['theme_dir']);
+		$settings['template_dirs'] = array(TEMPLATES_DIR);
 
 	// Check loadLanguage actually exists!
 	if (!function_exists('loadLanguage'))
