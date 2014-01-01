@@ -145,9 +145,9 @@ function BrowseMailQueue()
 					'value' => $txt['mailqueue_subject'],
 				),
 				'data' => array(
-					'function' => create_function('$rowData', '
-						return westr::strlen($rowData[\'subject\']) > 50 ? sprintf(\'%1$s...\', htmlspecialchars(westr::substr($rowData[\'subject\'], 0, 47))) : htmlspecialchars($rowData[\'subject\']);
-					'),
+					'function' => function ($rowData) {
+						return westr::strlen($rowData['subject']) > 50 ? sprintf('%1$s...', htmlspecialchars(westr::substr($rowData['subject'], 0, 47))) : htmlspecialchars($rowData['subject']);
+					},
 					'class' => 'smalltext',
 				),
 				'sort' => array(
@@ -178,15 +178,15 @@ function BrowseMailQueue()
 					'value' => $txt['mailqueue_priority'],
 				),
 				'data' => array(
-					'function' => create_function('$rowData', '
+					'function' => function ($rowData) {
 						global $txt;
 
 						// We probably have a text label with your priority.
-						$txtKey = sprintf(\'mq_mpriority_%1$s\', $rowData[\'priority\']);
+						$txtKey = sprintf('mq_mpriority_%1$s', $rowData['priority']);
 
 						// But if not, revert to priority 0.
-						return isset($txt[$txtKey]) ? $txt[$txtKey] : $txt[\'mq_mpriority_1\'];
-					'),
+						return isset($txt[$txtKey]) ? $txt[$txtKey] : $txt['mq_mpriority_1'];
+					},
 					'class' => 'smalltext',
 				),
 				'sort' => array(
@@ -199,9 +199,9 @@ function BrowseMailQueue()
 					'value' => $txt['mailqueue_age'],
 				),
 				'data' => array(
-					'function' => create_function('$rowData', '
-						return time_since(time() - $rowData[\'time_sent\']);
-					'),
+					'function' => function ($rowData) {
+						return time_since(time() - $rowData['time_sent']);
+					},
 					'class' => 'smalltext',
 				),
 				'sort' => array(
@@ -214,9 +214,9 @@ function BrowseMailQueue()
 					'value' => '<input type="checkbox" onclick="invertAll(this, this.form);">',
 				),
 				'data' => array(
-					'function' => create_function('$rowData', '
-						return \'<input type="checkbox" name="delete[]" value="\' . $rowData[\'id_mail\'] . \'">\';
-					'),
+					'function' => function ($rowData) {
+						return '<input type="checkbox" name="delete[]" value="' . $rowData['id_mail'] . '">';
+					},
 					'class' => 'smalltext',
 				),
 			),
@@ -424,8 +424,8 @@ function ModifyEmailTemplates()
 
 		wesql::insert('replace',
 			'{db_prefix}language_changes',
-			array('id_lang' => 'string', 'lang_file' => 'string', 'lang_var' => 'string', 'lang_key' => 'string', 'lang_string' => 'string', 'serial' => 'int'),
-			array($lang, 'EmailTemplates', 'txt', 'emailtemplate_' . $_POST['email'], serialize($new_entry), 1)
+			array('id_lang' => 'string', 'lang_file' => 'string', 'lang_key' => 'string', 'lang_string' => 'string', 'serial' => 'int', 'is_plugin' => 'int'),
+			array($lang, 'EmailTemplates', 'emailtemplate_' . $_POST['email'], serialize($new_entry), 1, 0)
 		);
 
 		foreach (glob($cachedir . '/lang_*_*_EmailTemplates.php') as $filename)

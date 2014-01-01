@@ -771,12 +771,12 @@ CREATE TABLE {$db_prefix}infractions (
 CREATE TABLE {$db_prefix}language_changes (
 	id_lang varchar(32) NOT NULL,
 	lang_file varchar(64) NOT NULL,
-	lang_var varchar(8) NOT NULL,
 	lang_key varchar(64) NOT NULL,
 	lang_string text NOT NULL,
 	serial tinyint(3) unsigned NOT NULL,
-	PRIMARY KEY (id_lang, lang_file, lang_var, lang_key),
-	KEY lang_file (id_lang, lang_file)
+	is_plugin tinyint(1) unsigned NOT NULL default 0,
+	PRIMARY KEY (id_lang, is_plugin, lang_file, lang_key),
+	KEY lang_file (id_lang, is_plugin, lang_file)
 ) ENGINE=MyISAM;
 
 #

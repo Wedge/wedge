@@ -520,7 +520,7 @@ function ShowCustomProfiles()
 				'data' => array(
 					'function' => function ($rowData) {
 						$isChecked = $rowData[\'disabled'] ? '' : ' checked';
-						$onClickHandler = $rowData['can_show_register'] ? sprintf(' onclick="document.getElementById(\\\'reg_%1$s\\\').disabled = !this.checked;"', $rowData['id']) : '';
+						$onClickHandler = $rowData['can_show_register'] ? sprintf(' onclick="document.getElementById(\'reg_%1$s\').disabled = !this.checked;"', $rowData['id']) : '';
 						return sprintf('<input type="checkbox" name="active[]" id="active_%1$s" value="%1$s"%2$s%3$s>', $rowData['id'], $isChecked, $onClickHandler);
 					},
 					'style' => 'width: 20%; text-align: center;',

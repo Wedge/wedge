@@ -55,7 +55,7 @@ function template_modify_language_list()
 				<ul>';
 		foreach ($block['files'] as $id => $name)
 			echo '
-					<li><a href="<URL>?action=admin;area=languages;sa=editlang;lid=', $context['lang_id'], ';tfid=', urlencode(1 . '|' . $id), '">', $name, '</a></li>';
+					<li>', template_lang_file_link('<URL>?action=admin;area=languages;sa=editlang;lid=' . $context['lang_id'] . ';tfid=' . urlencode($id), $name), '</li>';
 		echo '
 				</ul>';
 	}
@@ -68,14 +68,14 @@ function template_modify_language_list()
 				<form action="<URL>?action=admin;area=languages;sa=editlang;lid=', $context['lang_id'], '" method="post" accept-charset="UTF-8">
 					<input type="search" name="search" value="" class="search">';
 
-	foreach (array('plugins', 'themes') as $item)
-		if (!empty($context['language_files'][$item]))
-			echo '
-					<label style="height: 25px; vertical-align: middle"><input type="checkbox" name="include_', $item, '" value="1" checked> ', $txt['language_edit_search_' . $item], '</input></label>';
+	if (!empty($context['language_files']['plugins']))
+		echo '
+					<label style="height: 25px; vertical-align: middle"><input type="checkbox" name="include_plugins" value="1" checked> ', $txt['language_edit_search_plugins'], '</input></label>';
 
 	echo '
 					<div style="margin: 6px"></div>
 					<select name="search_type">';
+
 	foreach (array('both', 'keys', 'values') as $item)
 		echo '
 						<option value="', $item, '">', $txt['language_edit_search_' . $item], '</option>';
@@ -91,34 +91,35 @@ function template_modify_language_list()
 		echo '
 				<h6>', $txt['language_edit_elsewhere'], '</h6>
 				<ul>';
+
 		foreach ($context['other_files'] as $url => $desc)
 			echo '
 					<li><a href="', $url, '">', $desc, '</a></li>';
+
 		echo '
 				</ul>';
 	}
 
-	foreach (array('plugins', 'themes') as $item)
+	if (empty($context['language_files']['plugins']))
 	{
-		if (empty($context['language_files'][$item]))
+		echo '
+				<h6>', $txt['language_edit_no_plugins'], '</h6>
+				<p>', $txt['language_edit_no_plugins_desc'], '</p>';
+	}
+	else
+	{
+		foreach ($context['language_files']['plugins'] as $iid => $block)
 		{
 			echo '
-				<h6>', $txt['language_edit_no_' . $item], '</h6>
-				<p>', $txt['language_edit_no_' . $item . '_desc'], '</p>';
-		}
-		else
-		{
-			foreach ($context['language_files'][$item] as $iid => $block)
-			{
-				echo '
-				<h6>', sprintf($txt['language_edit_' . $item . '_title'], $block['name']), '</h6>
+				<h6>', sprintf($txt['language_edit_plugins_title'], $block['name']), '</h6>
 				<ul>';
-				foreach ($block['files'] as $id => $name)
-					echo '
-					<li><a href="<URL>?action=admin;area=languages;sa=editlang;lid=', $context['lang_id'], ';tfid=', urlencode($iid . '|' . $id), '">', $name, '</a></li>';
+
+			foreach ($block['files'] as $id => $name)
 				echo '
+					<li>', template_lang_file_link('<URL>?action=admin;area=languages;sa=editlang;lid=' . $context['lang_id'] . ';tfid=' . urlencode($iid . '|' . $id), $name), '</li>';
+
+			echo '
 				</ul>';
-			}
 		}
 	}
 
@@ -140,7 +141,7 @@ function template_modify_entries()
 	if (empty($context['entries']))
 	{
 		echo '
-			<div class="windowbg2 wrc">', sprintf($txt['language_no_entries'], '<URL>?action=admin;area=languages;sa=editlang;lid=english;tfid=' . urlencode($context['selected_file']['source_id'] . '|' . $context['selected_file']['lang_id'])), '</div>';
+			<div class="windowbg2 wrc">', sprintf($txt['language_no_entries'], '<URL>?action=admin;area=languages;sa=editlang;lid=english;tfid=' . urlencode(($context['selected_file']['source_id'] ? $context['selected_file']['source_id'] . '|' : '') . $context['selected_file']['lang_id'])), '</div>';
 		return;
 	}
 
@@ -148,21 +149,18 @@ function template_modify_entries()
 	<div class="windowbg2 wrc">
 		<dl class="settings admin_permissions">';
 
-	$lang_url = 'lid=' . $context['lang_id'] . ';tfid=' . urlencode($context['selected_file']['source_id'] . '|' . $context['selected_file']['lang_id']);
+	$lang_url = 'lid=' . $context['lang_id'] . ';tfid=' . urlencode(($context['selected_file']['source_id'] ? $context['selected_file']['source_id'] . '|' : '') . $context['selected_file']['lang_id']);
 
 	foreach ($context['entries'] as $key => $entry)
 	{
-		// OK, so we squished two things into one to make the $key earlier.
-		list ($lang_var, $actual_key) = explode('_', $key, 2);
-
 		echo '
-			<dt><a href="<URL>?action=admin;area=languages;sa=editlang;', $lang_url, ';eid=', $key, '">', $actual_key, '</a></dt>
+			<dt><a href="<URL>?action=admin;area=languages;sa=editlang;', $lang_url, ';eid=', $key, '">', $key, '</a></dt>
 			<dd>';
 
 		if (isset($entry['master']))
 		{
 			if (!is_array($entry['master']))
-				echo sprintf($txt['language_edit_master_value'], westr::safe($entry['master'], ENT_QUOTES));
+				echo sprintf($txt['language_edit_master_value'], htmlspecialchars($entry['master'], ENT_QUOTES));
 			else
 				template_array_langstring($txt['language_edit_master_value_array'], $entry['master']);
 		}
@@ -173,7 +171,7 @@ function template_modify_entries()
 		{
 			echo '<br>';
 			if (!is_array($entry['current']))
-				echo sprintf($txt['language_edit_current_value'], westr::safe($entry['current'], ENT_QUOTES));
+				echo sprintf($txt['language_edit_current_value'], htmlspecialchars($entry['current'], ENT_QUOTES));
 			else
 				template_array_langstring($txt['language_edit_current_value_array'], $entry['current']);
 		}
@@ -193,13 +191,10 @@ function template_modify_individual_entry()
 
 	echo '
 	<we:cat>
-		', sprintf($txt['edit_languages_specific'], $context['selected_file']['name'] . ' (' . $context['languages'][$context['lang_id']]['name'] . ')'), '
+		', sprintf($txt['edit_languages_specific'], $context['selected_file']['name'] . ($context['selected_file']['desc'] ? ' (' . $context['selected_file']['name'] . ')' : '') . ' (' . $context['languages'][$context['lang_id']]['name'] . ')'), '
 	</we:cat>';
 
-	$lang_url = 'lid=' . $context['lang_id'] . ';tfid=' . urlencode($context['selected_file']['source_id'] . '|' . $context['selected_file']['lang_id']);
-
-	// OK, so we squished two things into one to make the $key earlier.
-	list ($lang_var, $actual_key) = explode('_', $context['entry']['id'], 2);
+	$lang_url = 'lid=' . $context['lang_id'] . ';tfid=' . urlencode(($context['selected_file']['source_id'] ? $context['selected_file']['source_id'] . '|' : '') . $context['selected_file']['lang_id']);
 
 	echo '
 	<form action="<URL>?action=admin;area=languages;sa=editlang;', $lang_url, ';eid=', $context['entry']['id'], '" method="post" accept-charset="UTF-8">
@@ -207,13 +202,13 @@ function template_modify_individual_entry()
 			<dl class="settings admin_permissions">';
 
 	echo '
-				<dt>', $actual_key, '</dt>
+				<dt>', $context['entry']['id'], '</dt>
 				<dd>';
 
 	if (isset($context['entry']['master']))
 	{
 		if (!is_array($context['entry']['master']))
-			echo sprintf($txt['language_edit_master_value'], westr::safe($context['entry']['master'], ENT_QUOTES));
+			echo sprintf($txt['language_edit_master_value'], htmlspecialchars($context['entry']['master'], ENT_QUOTES));
 		else
 			template_array_langstring($txt['language_edit_master_value_array'], $context['entry']['master']);
 	}
@@ -228,28 +223,30 @@ function template_modify_individual_entry()
 	$editing_value = isset($context['entry']['current']) ? $context['entry']['current'] : $context['entry']['master'];
 	if (!is_array($editing_value))
 	{
-		$rows = (int) (strlen($editing_value) / 48) + substr_count($editing_value, "\n") + 1;
+		$rows = max(2, (int) (strlen($editing_value) / 48) + substr_count($editing_value, "\n") + 1);
 		echo '
 					', $txt['language_edit_new_value'], '
-					<textarea name="entry" cols="50" rows="', $rows, '" class="w100">', westr::safe($editing_value, ENT_QUOTES), '</textarea>';
+					<textarea name="entry" cols="50" rows="', $rows, '" class="w100">', htmlspecialchars($editing_value, ENT_QUOTES), '</textarea>';
 	}
 	else
 	{
 		echo '
 					', $txt['language_edit_new_value_array'], '
 					<dl id="multilang">';
+
 		foreach ($editing_value as $k => $v)
 		{
-			$rows = (int) (strlen($v) / 48) + substr_count($v, "\n") + 1;
+			$rows = max(2, (int) (strlen($v) / 48) + substr_count($v, "\n") + 1);
 			echo '
 						<dt>
 							<input type="submit" value="', $txt['delete'], '" class="delete" onclick="return removeRow(this);">
-							&nbsp; <input name="entry_key[]" value="', westr::safe($k, ENT_QUOTES), '" class="w25">
+							&nbsp; <input name="entry_key[]" value="', htmlspecialchars($k, ENT_QUOTES), '" class="w25">
 						</dt>
 						<dd>
-							<textarea name="entry_value[]" cols="30" rows="', $rows, '">', westr::safe($v, ENT_QUOTES), '</textarea>
+							<textarea name="entry_value[]" cols="30" rows="', $rows, '">', htmlspecialchars($v, ENT_QUOTES), '</textarea>
 						</dd>';
 		}
+
 		echo '
 					</dl>';
 
@@ -317,51 +314,53 @@ function template_search_entries()
 		foreach ($context['results']['default'] as $file_id => $file_entries)
 		{
 			echo '
-	<div class="windowbg', $use_bg2 ? '2' : '', ' wrc">
-		<dl class="settings admin_permissions">';
+	<div class="windowbg', $use_bg2 ? '2' : '', ' wrc">';
 			$use_bg2 = !$use_bg2;
 
-			$lang_url = 'lid=' . $context['lang_id'] . ';tfid=' . urlencode(1 . '|' . $file_id);
+			$lang_url = 'lid=' . $context['lang_id'] . ';tfid=' . urlencode($file_id);
 			$title = $file_id;
 			// But try and find a better one.
 			foreach ($context['language_files']['default'] as $section)
+			{
 				if (isset($section['files'][$file_id]))
 				{
 					$title = $section['files'][$file_id];
 					break;
 				}
+			}
 			echo '
-			<dt><strong><a href="<URL>?action=admin;area=languages;sa=editlang;', $lang_url, '">', $title, '</a></strong></dt>';
+			<h5>', template_lang_file_link('<URL>?action=admin;area=languages;sa=editlang;' . $lang_url, $title), '</h5>
+			<hr>
+			<dl class="settings admin_permissions">';
 
-			foreach ($file_entries as $lang_var => $lang_items)
-				foreach ($lang_items as $key => $entry)
-				{
-					echo '
-			<dt><a href="<URL>?action=admin;area=languages;sa=editlang;', $lang_url, ';eid=', $lang_var, '_', $key, '">', $key, '</a></dt>
+			foreach ($file_entries as $key => $entry)
+			{
+				echo '
+			<dt><a href="<URL>?action=admin;area=languages;sa=editlang;', $lang_url, ';eid=', $key, '">', $key, '</a></dt>
 			<dd>';
 
-					if (isset($entry['master']))
-					{
-						if (!is_array($entry['master']))
-							echo sprintf($txt['language_edit_master_value'], westr::safe($entry['master'], ENT_QUOTES));
-						else
-							template_array_langstring($txt['language_edit_master_value_array'], $entry['master']);
-					}
+				if (isset($entry['master']))
+				{
+					if (!is_array($entry['master']))
+						echo sprintf($txt['language_edit_master_value'], htmlspecialchars($entry['master'], ENT_QUOTES));
 					else
-						echo sprintf($txt['language_edit_master_value'], $txt['not_applicable']);
-
-					if (isset($entry['current']))
-					{
-						echo '<br>';
-						if (!is_array($entry['current']))
-							echo sprintf($txt['language_edit_current_value'], westr::safe($entry['current'], ENT_QUOTES));
-						else
-							template_array_langstring($txt['language_edit_current_value_array'], $entry['current']);
-					}
-
-					echo '
-			</dd>';
+						template_array_langstring($txt['language_edit_master_value_array'], $entry['master']);
 				}
+				else
+					echo sprintf($txt['language_edit_master_value'], $txt['not_applicable']);
+
+				if (isset($entry['current']))
+				{
+					echo '<br>';
+					if (!is_array($entry['current']))
+						echo sprintf($txt['language_edit_current_value'], htmlspecialchars($entry['current'], ENT_QUOTES));
+					else
+						template_array_langstring($txt['language_edit_current_value_array'], $entry['current']);
+				}
+
+				echo '
+			</dd>';
+			}
 
 			echo '
 		</dl>
@@ -380,6 +379,7 @@ function template_search_entries()
 		{
 			$use_bg2 = false;
 			foreach ($context['results']['plugins'] as $plugin_id => $plugin_entries)
+			{
 				foreach ($plugin_entries as $file_id => $file_entries)
 				{
 					echo '
@@ -392,39 +392,39 @@ function template_search_entries()
 					echo '
 			<dt><strong><a href="<URL>?action=admin;area=languages;sa=editlang;', $lang_url, '">', $title, '</a></strong></dt>';
 
-					foreach ($file_entries as $lang_var => $lang_items)
-						foreach ($lang_items as $key => $entry)
-						{
-							echo '
-			<dt><a href="<URL>?action=admin;area=languages;sa=editlang;', $lang_url, ';eid=', $lang_var, '_', $key, '">', $key, '</a></dt>
+					foreach ($file_entries as $key => $entry)
+					{
+						echo '
+			<dt><a href="<URL>?action=admin;area=languages;sa=editlang;', $lang_url, ';eid=', $key, '">', $key, '</a></dt>
 			<dd>';
 
-							if (isset($entry['master']))
-							{
-								if (!is_array($entry['master']))
-									echo sprintf($txt['language_edit_master_value'], westr::safe($entry['master'], ENT_QUOTES));
-								else
-									template_array_langstring($txt['language_edit_master_value_array'], $entry['master']);
-							}
+						if (isset($entry['master']))
+						{
+							if (!is_array($entry['master']))
+								echo sprintf($txt['language_edit_master_value'], htmlspecialchars($entry['master'], ENT_QUOTES));
 							else
-								echo sprintf($txt['language_edit_master_value'], $txt['not_applicable']);
-
-							if (isset($entry['current']))
-							{
-								echo '<br>';
-								if (!is_array($entry['current']))
-									echo sprintf($txt['language_edit_current_value'], westr::safe($entry['current'], ENT_QUOTES));
-								else
-									template_array_langstring($txt['language_edit_current_value_array'], $entry['current']);
-							}
-
-							echo '
-			</dd>';
+								template_array_langstring($txt['language_edit_master_value_array'], $entry['master']);
 						}
+						else
+							echo sprintf($txt['language_edit_master_value'], $txt['not_applicable']);
+
+						if (isset($entry['current']))
+						{
+							echo '<br>';
+							if (!is_array($entry['current']))
+								echo sprintf($txt['language_edit_current_value'], htmlspecialchars($entry['current'], ENT_QUOTES));
+							else
+								template_array_langstring($txt['language_edit_current_value_array'], $entry['current']);
+						}
+
+						echo '
+			</dd>';
+					}
 					echo '
 		</dl>
 	</div>';
 				}
+			}
 		}
 	}
 }
@@ -437,9 +437,17 @@ function template_array_langstring($title, $array)
 
 	foreach ($array as $k => $v)
 		echo '
-					<dt>', westr::safe($k, ENT_QUOTES), '</dt>
-					<dd>', westr::safe($v, ENT_QUOTES), '</dd>';
+					<dt>', htmlspecialchars($k, ENT_QUOTES), '</dt>
+					<dd>', htmlspecialchars($v, ENT_QUOTES), '</dd>';
 
 	echo '
 				</dl>';
+}
+
+function template_lang_file_link($link, $name)
+{
+	$desc = '';
+	if (strpos($name, '~') !== false)
+		list ($name, $desc) = explode('~', $name);
+	echo '<a href="', $link, '">', $name, '</a>', $desc ? ' (' . $desc . ')' : '';
 }

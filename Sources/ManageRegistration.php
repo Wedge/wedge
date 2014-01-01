@@ -202,8 +202,8 @@ function EditAgreement()
 
 		wesql::insert('replace',
 			'{db_prefix}language_changes',
-			array('id_lang' => 'string', 'lang_file' => 'string', 'lang_var' => 'string', 'lang_key' => 'string', 'lang_string' => 'string', 'serial' => 'int'),
-			array($_POST['agreelang'], 'Agreement', 'txt', 'registration_agreement_body', $_POST['message'], 0)
+			array('id_lang' => 'string', 'lang_file' => 'string', 'lang_key' => 'string', 'lang_string' => 'string', 'serial' => 'int', 'is_plugin' => 'int'),
+			array($_POST['agreelang'], 'Agreement', 'registration_agreement_body', $_POST['message'], 0, 0)
 		);
 
 		// And forcibly clean the cache...

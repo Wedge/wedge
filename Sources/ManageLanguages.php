@@ -105,7 +105,9 @@ function ModifyLanguages()
 			'function' => 'list_getLanguages',
 		),
 		'get_count' => array(
-			'function' => 'list_getNumLanguages',
+			'function' => function () {
+				return count(getLanguages(false));
+			},
 		),
 		'columns' => array(
 			'available' => array(
@@ -113,9 +115,9 @@ function ModifyLanguages()
 					'value' => $txt['languages_available'] . ' <a href="<URL>?action=help;in=availableLanguage" class="help" onclick="return reqWin(this);"></a>',
 				),
 				'data' => array(
-					'function' => create_function('$rowData', '
-						return \'<input type="checkbox" name="available[\' . $rowData[\'id\'] . \']" value="1"\' . (!empty($rowData[\'available\']) ? \' checked\' : \'\') . \'>\';
-					'),
+					'function' => function ($rowData) {
+						return '<input type="checkbox" name="available[' . $rowData['id'] . ']" value="1"' . (!empty($rowData['available']) ? ' checked' : '') . '>';
+					},
 					'style' => 'text-align: center; width: 8%',
 				),
 			),
@@ -124,9 +126,9 @@ function ModifyLanguages()
 					'value' => $txt['languages_default'],
 				),
 				'data' => array(
-					'function' => create_function('$rowData', '
-						return \'<input type="radio" name="def_language" value="\' . $rowData[\'id\'] . \'" \' . ($rowData[\'default\'] ? \'checked\' : \'\') . \' onclick="highlightSelected(\\\'#list_language_list_\' . $rowData[\'id\'] . \'\\\');">\';
-					'),
+					'function' => function ($rowData) {
+						return '<input type="radio" name="def_language" value="' . $rowData['id'] . '" ' . ($rowData['default'] ? 'checked' : '') . ' onclick="highlightSelected(\'#list_language_list_' . $rowData['id'] . '\');">';
+					},
 					'style' => 'text-align: center; width: 8%',
 				),
 			),
@@ -135,11 +137,9 @@ function ModifyLanguages()
 					'value' => $txt['languages_lang_name'],
 				),
 				'data' => array(
-					'function' => create_function('$rowData', '
-						global $context;
-
-						return sprintf(\'<a href="<URL>?action=admin;area=languages;sa=editlang;lid=%1$s">%2$s</a>\', $rowData[\'id\'], $rowData[\'name\']);
-					'),
+					'function' => function ($rowData) {
+						return sprintf('<a href="<URL>?action=admin;area=languages;sa=editlang;lid=%1$s">%2$s</a>', $rowData['id'], $rowData['name']);
+					},
 				),
 			),
 			'count' => array(
@@ -172,11 +172,11 @@ function ModifyLanguages()
 					'value' => $txt['languages_orientation'],
 				),
 				'data' => array(
-					'function' => create_function('$rowData', '
+					'function' => function ($rowData) {
 						global $txt;
 
-						return $rowData[\'rtl\'] ? $txt[\'languages_orients_rtl\'] : $txt[\'languages_orients_ltr\'];
-					'),
+						return $rowData['rtl'] ? $txt['languages_orients_rtl'] : $txt['languages_orients_ltr'];
+					},
 				),
 			),
 		),
@@ -216,12 +216,6 @@ function ModifyLanguages()
 	getLanguages();
 }
 
-// How many languages?
-function list_getNumLanguages()
-{
-	return count(getLanguages(false));
-}
-
 /* Fetch the actual language information.
 	- Callback for $listOptions['get_items']['function'] in ManageLanguageSettings.
 	- Determines which languages are available by looking for the "index.{language}.php" file.
@@ -234,9 +228,9 @@ function list_getLanguages()
 	if (empty($langsAvailable))
 		$langsAvailable[] = !empty($settings['language']) ? $settings['language'] : 'english';
 
-	$languages = array();
 	// Keep our old entries.
-	$old_txt = $txt;
+	$oldtxt = $txt;
+	$languages = array();
 
 	// Get the language files and data...
 	foreach ($context['languages'] as $lang)
@@ -278,7 +272,7 @@ function list_getLanguages()
 	wesql::free_result($request);
 
 	// Restore the current users language.
-	$txt = $old_txt;
+	$txt = $oldtxt;
 
 	// Return how many we have.
 	return $languages;
@@ -329,69 +323,57 @@ function ModifyLanguage()
 			),
 		),
 		'plugins' => array(),
-		'themes' => array(),
 	);
 
-	if (empty($_REQUEST['tfid']) || strpos($_REQUEST['tfid'], '|') === false)
-		list ($theme_id, $file_id) = array(1, '');
+	if (empty($_REQUEST['tfid']))
+		list ($theme_id, $file_id, $path) = array(1, '', '/');
 	else
 	{
 		$parts = explode('|', $_REQUEST['tfid']);
-		if (count($parts) == 2)
-			list ($theme_id, $file_id) = $parts;
+		if (!isset($parts[1]))
+			list ($theme_id, $file_id, $path) = array(1, $parts[0], '/');
 		else
 		{
-			// In plugins, the entry supplied is not theme_id|lang file, but plugin_id|path|lang
+			// In plugins, the entry supplied is plugin_id|path|lang
 			$theme_id = array_shift($parts);
 			$file_id = array_pop($parts);
-			$path = implode('/', $parts);
+			$path = implode('/', $parts) . '/';
 		}
 	}
-	if (!isset($path))
-		$path = '';
-	$path .= '/';
 
 	// Before doing plugins, we'll get the regular languages folder.
-	$themes = array(
-		1 => array(
-			'name' => $txt['dvc_default'],
-			'theme_dir' => $settings['theme_dir'],
-		),
+	$names = array(
+		1 => $txt['dvc_default'],
 	);
 
 	// This will be where we look. (Right now we only have one folder to retrieve, so... Do that.)
-	$lang_dirs = $images_dirs = array();
+	$lang_dirs = array();
 
 	// Check our languages folder exists, and add the path.
 	if (is_dir(LANGUAGES_DIR))
-		$lang_dirs[$id] = LANGUAGES_DIR;
+		$lang_dirs[1] = LANGUAGES_DIR;
 
-	// How about image directories? (Unused for now...)
-	if (is_dir(ASSETS_DIR . '/' . $context['lang_id']))
-		$images_dirs[$id] = ASSETS_DIR . '/' . $context['lang_id'];
-
-	// Now add the possible permutations for plugins. This is pretty hairy stuff.
-	// To avoid lots of rewriting that really isn't that necessary, we can reuse the code given here, just with a little crafty manipulation.
+	// Now add the possible permutations for plugins.
 	if (!empty($context['plugins_dir']))
 	{
 		foreach ($context['plugins_dir'] as $plugin_id => $plugin_path)
 		{
-			$themes[$plugin_id] = array(
-				'name' => substr(strrchr($plugin_id, ':'), 1),
-				'theme_dir' => $plugin_path,
-			);
+			$names[$plugin_id] = substr(strrchr($plugin_id, ':'), 1);
 			$context['language_files']['plugins'][$plugin_id] = array(
 				'name' => str_replace(array('-', '_'), ' ', substr(strrchr($plugin_id, ':'), 1)),
 			);
 			$lang_dirs[$plugin_id] = array('' => $plugin_path);
-			// We really might as well use SPL for this. I mean, we could do it otherwise but this is almost certainly faster.
+			// This is a bit faster than other folder scanning processes.
 			$objects = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($plugin_path), RecursiveIteratorIterator::SELF_FIRST);
 			foreach ($objects as $name => $object)
-				if (is_dir($name))
+			{
+				$filename = basename($name);
+				if ($filename !== '.' && $filename !== '..' && is_dir($name))
 					$lang_dirs[$plugin_id][str_replace($plugin_path, '', $name) . '/'] = $name;
+			}
 
 			if (empty($lang_dirs[$plugin_id]))
-				unset($lang_dirs[$plugin_id], $themes[$plugin_id], $context['language_files']['plugins'][$plugin_id]);
+				unset($lang_dirs[$plugin_id], $names[$plugin_id], $context['language_files']['plugins'][$plugin_id]);
 		}
 	}
 
@@ -406,12 +388,7 @@ function ModifyLanguage()
 			$theme_dirs = array('' => $theme_dirs);
 
 		// Sift out now where this is likely to go.
-		if ($th == 1)
-			$dest = 'default';
-		elseif (is_numeric($th))
-			$dest = 'themes';
-		else
-			$dest = 'plugins';
+		$dest = $th == 1 ? 'default' : 'plugins';
 
 		foreach ($theme_dirs as $path_prefix => $theme_dir)
 		{
@@ -430,7 +407,7 @@ function ModifyLanguage()
 				if (!isset($context['possible_files'][$th]))
 					$context['possible_files'][$th] = array(
 						'id' => $th,
-						'name' => $themes[$th]['name'],
+						'name' => $names[$th],
 						'files' => array(),
 					);
 
@@ -438,127 +415,85 @@ function ModifyLanguage()
 					$context['selected_file'] = array(
 						'source_id' => $theme_id,
 						'lang_id' => $path_prefix . $matches[1],
-						'name' => isset($txt['lang_file_desc_' . $matches[1]]) ? $txt['lang_file_desc_' . $matches[1]] : $matches[1],
+						'name' => $matches[1],
+						'desc' => isset($txt['lang_file_desc_' . $matches[1]]) ? $txt['lang_file_desc_' . $matches[1]] : '',
 						'path' => (isset($context['plugins_dir'][$theme_id]) ? $context['plugins_dir'][$theme_id] : $lang_dirs[$theme_id]) . $path . $file_id . '.' . $context['lang_id'] . '.php',
 					);
 
-				$langfile = isset($txt['lang_file_desc_' . $matches[1]]) ? $txt['lang_file_desc_' . $matches[1]] : $matches[1];
+				$langfile = $matches[1] . (isset($txt['lang_file_desc_' . $matches[1]]) ? '~' . $txt['lang_file_desc_' . $matches[1]] : '');
 
-				switch ($dest)
+				if ($dest == 'default')
 				{
-					case 'default':
-						$loc = ($matches[1] == 'Admin' || $matches[1] == 'Modlog' || strpos($matches[1], 'Manage') !== false) ? 'admin' : 'main';
-						$context['language_files']['default'][$loc]['files'][$path_prefix . $matches[1]] = $langfile;
-						break;
-					case 'themes':
-						$context['language_files']['themes'][$th]['files'][$path_prefix . $matches[1]] = $langfile;
-						break;
-					case 'plugins':
-						$context['language_files']['plugins'][$th]['files'][$path_prefix . $matches[1]] = $langfile;
-						break;
+					$loc = ($matches[1] == 'Admin' || $matches[1] == 'Modlog' || $matches[1] == 'ModerationCenter' || strpos($matches[1], 'Manage') !== false) ? 'admin' : 'main';
+					$context['language_files']['default'][$loc]['files'][$path_prefix . $matches[1]] = $langfile;
 				}
+				else
+					$context['language_files']['plugins'][$th]['files'][$path_prefix . $matches[1]] = $langfile;
 			}
 			$dir->close();
 		}
 	}
 
 	// Let's go clean up.
-	foreach (array('plugins', 'themes') as $type)
-	{
-		foreach ($context['language_files'][$type] as $item => $content)
-		{
-			if (empty($content['files']))
-				unset($context['language_files'][$type][$item]);
-		}
-		if (empty($context['language_files'][$type]))
-			unset($context['language_files'][$type]);
-	}
+	foreach ($context['language_files']['plugins'] as $item => $content)
+		if (empty($content['files']))
+			unset($context['language_files']['plugins'][$item]);
+
+	if (empty($context['language_files']['plugins']))
+		unset($context['language_files']['plugins']);
 
 	// If we are editing something, let's send it off. We still have to do all the preceding stuff anyway
 	// because it allows us to completely validate that what we're editing exists.
 	if (!empty($context['selected_file']))
-	{
 		return ModifyLanguageEntries();
-	}
+
 	elseif (isset($_POST['search']) && trim($_POST['search']) !== '')
-	{
 		return SearchLanguageEntries($lang_dirs);
-	}
 	else
-	{
 		wetem::load('modify_language_list');
-	}
 }
 
 function ModifyLanguageEntries()
 {
-	global $context, $txt, $helptxt, $cachedir;
+	global $context, $txt, $cachedir;
 
-	add_linktree($context['selected_file']['name'], '<URL>?action=admin;area=languages;sa=editlang;lid=' . $context['lang_id'] . ';tfid=' . urlencode($context['selected_file']['source_id'] . '|' . $context['selected_file']['lang_id']));
+	add_linktree($context['selected_file']['name'], '<URL>?action=admin;area=languages;sa=editlang;lid=' . $context['lang_id'] . ';tfid=' . urlencode(($context['selected_file']['source_id'] ? $context['selected_file']['source_id'] . '|' : '') . $context['selected_file']['lang_id']));
 
 	$context['entries'] = array();
 
 	// Now we load the existing content.
 	$oldtxt = $txt;
-	$oldhelptxt = $helptxt;
 	$txt = array();
-	$helptxt = array();
 
-	// Start by straight up loading the file.
+	// Start by loading the file.
 	@include($context['selected_file']['path']);
 	foreach ($txt as $k => $v)
-		$context['entries']['txt_' . $k] = array(
+		$context['entries'][$k] = array(
 			'master' => $v,
 		);
-	foreach ($helptxt as $k => $v)
-		$context['entries']['helptxt_' . $k] = array(
-			'master' => $v,
-		);
-	// We can put the original files back now, we care not about the actual information.
+	// We can put the original entries back now.
 	$txt = $oldtxt;
-	$helptxt = $oldhelptxt;
 
 	// Now we load everything else. Is this a conventional 'theme' string?
-	if (!isset($context['plugins_dir'][$context['selected_file']['source_id']]))
-	{
-		$request = wesql::query('
-			SELECT lang_var, lang_key, lang_string, serial
-			FROM {db_prefix}language_changes
-			WHERE id_theme = {int:id_theme}
-				AND id_lang = {string:lang}
-				AND lang_file = {string:lang_file}',
-			array(
-				'id_theme' => (int) $context['selected_file']['source_id'],
-				'lang' => $context['lang_id'],
-				'lang_file' => $context['selected_file']['lang_id'],
-			)
-		);
-		while ($row = wesql::fetch_assoc($request))
-			if ($row['lang_var'] == 'txt' || $row['lang_var'] == 'helptxt')
-				$context['entries'][$row['lang_var'] . '_' . $row['lang_key']]['current'] = $row['serial'] ? @unserialize($row['lang_string']) : $row['lang_string'];
-		wesql::free_result($request);
-	}
-	else
-	{
-		$request = wesql::query('
-			SELECT lang_var, lang_key, lang_string, serial
-			FROM {db_prefix}language_changes
-			WHERE id_theme = {int:id_theme}
-				AND id_lang = {string:lang}
-				AND lang_file = {string:lang_file}',
-			array(
-				'id_theme' => 0,
-				'lang' => $context['lang_id'],
-				'lang_file' => md5($context['selected_file']['source_id'] . ':' . $context['selected_file']['lang_id']),
-			)
-		);
-		while ($row = wesql::fetch_assoc($request))
-			if ($row['lang_var'] == 'txt' || $row['lang_var'] == 'helptxt')
-				$context['entries'][$row['lang_var'] . '_' . $row['lang_key']]['current'] = $row['serial'] ? @unserialize($row['lang_string']) : $row['lang_string'];
-		wesql::free_result($request);
-	}
+	$is_plugin = isset($context['plugins_dir'][$context['selected_file']['source_id']]);
 
-	// There are certain entries we do not allow touching from here. Declared once, but restricted on both loading and saving.
+	$request = wesql::query('
+		SELECT lang_key, lang_string, serial
+		FROM {db_prefix}language_changes
+		WHERE is_plugin = {int:is_plugin}
+			AND id_lang = {string:lang}
+			AND lang_file = {string:lang_file}',
+		array(
+			'is_plugin' => $is_plugin ? 1 : 0,
+			'lang' => $context['lang_id'],
+			'lang_file' => $is_plugin ? $context['selected_file']['source_id'] . ':' . $context['selected_file']['lang_id'] : $context['selected_file']['lang_id'],
+		)
+	);
+	while ($row = wesql::fetch_assoc($request))
+		$context['entries'][$row['lang_key']]['current'] = $row['serial'] ? @unserialize($row['lang_string']) : $row['lang_string'];
+	wesql::free_result($request);
+
+	// Some entries shouldn't be modified. Declared once, but restricted on both loading and saving.
 	$restricted_entries = array('txt_lang_name', 'txt_lang_locale', 'txt_lang_dictionary', 'txt_lang_spelling', 'txt_lang_rtl', 'txt_lang_paypal');
 	foreach ($restricted_entries as $item)
 		unset($context['entries'][$item]);
@@ -569,53 +504,45 @@ function ModifyLanguageEntries()
 		if (isset($_POST['delete']))
 		{
 			checkSession();
-			if (!isset($context['plugins_dir'][$context['selected_file']['source_id']]))
+			if (!$is_plugin)
 			{
 				$context['selected_file']['source_id'] = (int) $context['selected_file']['source_id'];
-				list ($lang_var, $actual_key) = explode('_', $_GET['eid'], 2);
 				$request = wesql::query('
 					DELETE FROM {db_prefix}language_changes
-					WHERE id_theme = {int:id_theme}
+					WHERE is_plugin = 0
 						AND id_lang = {string:lang}
 						AND lang_file = {string:lang_file}
-						AND lang_var = {string:lang_var}
 						AND lang_key = {string:lang_key}',
 					array(
-						'id_theme' => $context['selected_file']['source_id'],
 						'lang' => $context['lang_id'],
 						'lang_file' => $context['selected_file']['lang_id'],
-						'lang_var' => $lang_var,
-						'lang_key' => $actual_key,
+						'lang_key' => $_GET['eid'],
 					)
 				);
-				$glob = 'lang_*_*_' . $context['selected_file']['lang_id'] . '.php';
+				$glob = 'lang_*_' . $context['selected_file']['lang_id'] . '.php';
 			}
 			else
 			{
-				list ($lang_var, $actual_key) = explode('_', $_GET['eid'], 2);
-				$file_key = md5($context['selected_file']['source_id'] . ':' . $context['selected_file']['lang_id']);
+				$key = $context['selected_file']['source_id'] . ':' . $context['selected_file']['lang_id'];
 				$request = wesql::query('
 					DELETE FROM {db_prefix}language_changes
-					WHERE id_theme = {int:id_theme}
+					WHERE is_plugin = 1
 						AND id_lang = {string:lang}
 						AND lang_file = {string:lang_file}
-						AND lang_var = {string:lang_var}
 						AND lang_key = {string:lang_key}',
 					array(
-						'id_theme' => 0,
 						'lang' => $context['lang_id'],
-						'lang_file' => $file_key,
-						'lang_var' => $lang_var,
-						'lang_key' => $actual_key,
+						'lang_file' => $key,
+						'lang_key' => $_GET['eid'],
 					)
 				);
-				$glob = 'lang_*_' . $file_key . '.php';
+				$glob = 'lang_*_' . valid_filename($key) . '.php';
 			}
 
 			// Figure out what we're flushing. We don't need to do the *entire* cache, but we do need to do anything that could
 			// have been affected by this file. There are some awesome potential cross-contamination possibilities, so be safe.
 			foreach (glob($cachedir . '/' . $glob) as $filename)
-				@unlink($filename);
+				unlink($filename);
 
 			// Sorry in advance. This is not a fun process.
 			clean_cache('js');
@@ -625,28 +552,17 @@ function ModifyLanguageEntries()
 			wetem::load('modify_entries');
 			return;
 		}
-		elseif (isset($_POST['save']))
+
+		if (isset($_POST['save']))
 		{
 			checkSession();
 
-			// Dealing with plugins?
-			if (isset($context['plugins_dir'][$context['selected_file']['source_id']]))
-			{
-				$id_theme = 0;
-				$lang_file = md5($context['selected_file']['source_id'] . ':' . $context['selected_file']['lang_id']);
-			}
-			else
-			{
-				$id_theme = (int) $context['selected_file']['source_id'];
-				$lang_file = $context['selected_file']['lang_id'];
-			}
-
+			$lang_file = ($is_plugin ? $context['selected_file']['source_id'] . ':' : '') . $context['selected_file']['lang_id'];
 			$id_lang = $context['lang_id'];
-			list ($lang_var, $lang_key) = explode('_', $_GET['eid'], 2);
 
 			if (!empty($_POST['entry']))
 			{
-				$lang_string = $_POST['entry']; // I only wish I could sanitize this, but there's a ton of strings that can't be sanitized. :(
+				$lang_string = $_POST['entry']; // Unfortunately, there are a ton of strings that can't be sanitized. :(
 				$serial = 0;
 			}
 			elseif (!empty($_POST['entry_key']) && !empty($_POST['entry_value']) && is_array($_POST['entry_key']) && is_array($_POST['entry_value']))
@@ -675,15 +591,16 @@ function ModifyLanguageEntries()
 
 			wesql::insert('replace',
 				'{db_prefix}language_changes',
-				array('id_theme' => 'int', 'id_lang' => 'string', 'lang_file' => 'string', 'lang_var' => 'string', 'lang_key' => 'string', 'lang_string' => 'string', 'serial' => 'int'),
-				array($id_theme, $id_lang, $lang_file, $lang_var, $lang_key, $lang_string, $serial)
+				array('id_lang' => 'string', 'lang_file' => 'string', 'lang_key' => 'string', 'lang_string' => 'string', 'serial' => 'int', 'is_plugin' => 'int'),
+				array($id_lang, $lang_file, $_GET['eid'], $lang_string, $serial, $is_plugin ? 1 : 0)
 			);
 
-			// Figure out what we're flushing. We don't need to do the *entire* cache, but we do need to do anything that could have been affected by this file. There are some awesome potential cross-contamination possibilities, so be safe.
-			if ($id_theme == 0) // Plugins.
-				$glob = 'lang_*_' . $lang_file . '.php';
+			// Figure out what we're flushing. We don't need to do the *entire* cache, but we do need to do anything that could
+			// have been affected by this file. There are some awesome potential cross-contamination possibilities, so be safe.
+			if ($is_plugin)
+				$glob = 'lang_*_' . valid_filename($lang_file) . '.php';
 			else
-				$glob = 'lang_*_*_' . $context['selected_file']['lang_id'] . '.php';
+				$glob = 'lang_*_' . $context['selected_file']['lang_id'] . '.php';
 
 			foreach (glob($cachedir . '/' . $glob) as $filename)
 				@unlink($filename);
@@ -692,10 +609,7 @@ function ModifyLanguageEntries()
 			clean_cache('js');
 
 			// Just in case it makes any difference.
-			if ($lang_var == 'txt')
-				$txt[$lang_key] = $context['entries'][$_GET['eid']]['current'];
-			elseif ($lang_var == 'helptxt')
-				$helptxt[$lang_key] = $context['entries'][$_GET['eid']]['current'];
+			$txt[$_GET['eid']] = $context['entries'][$_GET['eid']]['current'];
 
 			wetem::load('modify_entries');
 			return;
@@ -713,12 +627,11 @@ function ModifyLanguageEntries()
 
 function SearchLanguageEntries($lang_dirs)
 {
-	global $context, $txt, $helptxt;
+	global $context, $txt;
 
 	// Just remember, whatever happens, this is going to suck in performance.
-	// First, remember to push the old $txt and old $helptxt elsewhere. We need them later.
+	// First, remember to push the old $txt elsewhere. We need it later.
 	$oldtxt = $txt;
-	$oldhelptxt = $helptxt;
 
 	$context['results'] = array(
 		'default' => array(),
@@ -731,45 +644,42 @@ function SearchLanguageEntries($lang_dirs)
 		foreach ($section['files'] as $file_id => $title)
 		{
 			$txt = array();
-			$helptxt = array();
 			include($lang_dirs[1] . '/' . $file_id . '.' . $context['lang_id'] . '.php');
-			foreach (array('txt', 'helptxt') as $lang_type)
-				foreach ($$lang_type as $key => $value)
+			foreach ($txt as $key => $value)
+			{
+				if ($search_type == 'keys' || $search_type == 'both')
 				{
-					if ($search_type == 'keys' || $search_type == 'both')
+					if (stripos($key, $_POST['search']) !== false)
 					{
-						if (stripos($key, $_POST['search']) !== false)
-						{
-							$context['results']['default'][$file_id][$lang_type][$key] = array('master' => $value);
-							continue;
-						}
-					}
-
-					if ($search_type == 'values' || $search_type == 'both')
-					{
-						if (is_array($value))
-						{
-							foreach ($value as $k => $v)
-								if (stripos($v, $_POST['search']) !== false)
-								{
-									$context['results']['default'][$file_id][$lang_type][$key] = array('master' => $value);
-									break;
-								}
-						}
-						elseif (stripos($value, $_POST['search']) !== false)
-							$context['results']['default'][$file_id][$lang_type][$key] = array('master' => $value);
+						$context['results']['default'][$file_id][$key] = array('master' => $value);
+						continue;
 					}
 				}
+
+				if ($search_type == 'values' || $search_type == 'both')
+				{
+					if (is_array($value))
+					{
+						foreach ($value as $k => $v)
+							if (stripos($v, $_POST['search']) !== false)
+							{
+								$context['results']['default'][$file_id][$key] = array('master' => $value);
+								break;
+							}
+					}
+					elseif (stripos($value, $_POST['search']) !== false)
+						$context['results']['default'][$file_id][$key] = array('master' => $value);
+				}
+			}
 		}
 
 	// Third, get all the entries for this language in the database and apply much the same tests.
 	$request = wesql::query('
-		SELECT lang_file, lang_var, lang_key, lang_string, serial
+		SELECT lang_file, lang_key, lang_string, serial
 		FROM {db_prefix}language_changes
-		WHERE id_theme = {int:default_theme}
+		WHERE is_plugin = 0
 			AND id_lang = {string:lang}',
 		array(
-			'default_theme' => 1,
 			'lang' => $context['lang_id'],
 		)
 	);
@@ -781,7 +691,7 @@ function SearchLanguageEntries($lang_dirs)
 		{
 			if (stripos($row['lang_key'], $_POST['search']) !== false)
 			{
-				$context['results']['default'][$row['lang_file']][$row['lang_var']][$row['lang_key']]['current'] = $lang_string;
+				$context['results']['default'][$row['lang_file']][$row['lang_key']]['current'] = $lang_string;
 				continue;
 			}
 		}
@@ -793,12 +703,12 @@ function SearchLanguageEntries($lang_dirs)
 				foreach ($lang_string as $k => $v)
 					if (stripos($v, $_POST['search']) !== false)
 					{
-						$context['results']['default'][$row['lang_file']][$row['lang_var']][$row['lang_key']]['current'] = $lang_string;
+						$context['results']['default'][$row['lang_file']][$row['lang_key']]['current'] = $lang_string;
 						break;
 					}
 			}
 			elseif (stripos($lang_string, $_POST['search']) !== false)
-				$context['results']['default'][$row['lang_file']][$row['lang_var']][$row['lang_key']]['current'] = $lang_string;
+				$context['results']['default'][$row['lang_file']][$row['lang_key']]['current'] = $lang_string;
 		}
 	}
 	wesql::free_result($request);
@@ -812,50 +722,47 @@ function SearchLanguageEntries($lang_dirs)
 		foreach ($context['language_files']['plugins'] as $plugin_id => $section)
 			foreach ($section['files'] as $file_id => $title)
 			{
-				$plugin_files[md5($plugin_id . ':' . $file_id)] = array($plugin_id, $file_id);
+				$plugin_files[$plugin_id . ':' . $file_id] = array($plugin_id, $file_id);
 				$txt = array();
-				$helptxt = array();
 				include($context['plugins_dir'][$plugin_id] . '/' . $file_id . '.' . $context['lang_id'] . '.php');
-				foreach (array('txt', 'helptxt') as $lang_type)
-					foreach ($$lang_type as $key => $value)
+				foreach ($txt as $key => $value)
+				{
+					if ($search_type == 'keys' || $search_type == 'both')
 					{
-						if ($search_type == 'keys' || $search_type == 'both')
+						if (stripos($key, $_POST['search']) !== false)
 						{
-							if (stripos($key, $_POST['search']) !== false)
-							{
-								$context['results']['plugins'][$plugin_id][$file_id][$lang_type][$key] = array('master' => $value);
-								continue;
-							}
-						}
-
-						if ($search_type == 'values' || $search_type == 'both')
-						{
-							if (is_array($value))
-							{
-								foreach ($value as $k => $v)
-									if (stripos($v, $_POST['search']) !== false)
-									{
-										$context['results']['plugins'][$plugin_id][$file_id][$lang_type][$key] = array('master' => $value);
-										break;
-									}
-							}
-							elseif (stripos($value, $_POST['search']) !== false)
-								$context['results']['plugins'][$plugin_id][$file_id][$lang_type][$key] = array('master' => $value);
+							$context['results']['plugins'][$plugin_id][$file_id][$key] = array('master' => $value);
+							continue;
 						}
 					}
+
+					if ($search_type == 'values' || $search_type == 'both')
+					{
+						if (is_array($value))
+						{
+							foreach ($value as $k => $v)
+								if (stripos($v, $_POST['search']) !== false)
+								{
+									$context['results']['plugins'][$plugin_id][$file_id][$key] = array('master' => $value);
+									break;
+								}
+						}
+						elseif (stripos($value, $_POST['search']) !== false)
+							$context['results']['plugins'][$plugin_id][$file_id][$key] = array('master' => $value);
+					}
+				}
 			}
 
-		// Fourth and a bit... plugin changes in the DB. If you were paying attention, you'll note we collated md5s along the way. We kind of need those.
+		// Fourth and a bit... plugin changes in the DB.
 		if (!empty($plugin_files))
 		{
 			$request = wesql::query('
-				SELECT lang_file, lang_var, lang_key, lang_string, serial
+				SELECT lang_file, lang_key, lang_string, serial
 				FROM {db_prefix}language_changes
-				WHERE id_theme = {int:default_theme}
+				WHERE is_plugin = 1
 					AND id_lang = {string:lang}
 					AND lang_file IN ({array_string:plugin_files})',
 				array(
-					'default_theme' => 0,
 					'lang' => $context['lang_id'],
 					'plugin_files' => array_keys($plugin_files),
 				)
@@ -869,7 +776,7 @@ function SearchLanguageEntries($lang_dirs)
 				{
 					if (stripos($row['lang_key'], $_POST['search']) !== false)
 					{
-						$context['results']['plugins'][$plugin_id][$file_id][$row['lang_var']][$row['lang_key']]['current'] = $lang_string;
+						$context['results']['plugins'][$plugin_id][$file_id][$row['lang_key']]['current'] = $lang_string;
 						continue;
 					}
 				}
@@ -881,12 +788,12 @@ function SearchLanguageEntries($lang_dirs)
 						foreach ($lang_string as $k => $v)
 							if (stripos($v, $_POST['search']) !== false)
 							{
-								$context['results']['plugins'][$plugin_id][$file_id][$row['lang_var']][$row['lang_key']]['current'] = $lang_string;
+								$context['results']['plugins'][$plugin_id][$file_id][$row['lang_key']]['current'] = $lang_string;
 								break;
 							}
 					}
 					elseif (stripos($lang_string, $_POST['search']) !== false)
-						$context['results']['plugins'][$plugin_id][$file_id][$row['lang_var']][$row['lang_key']]['current'] = $lang_string;
+						$context['results']['plugins'][$plugin_id][$file_id][$row['lang_key']]['current'] = $lang_string;
 				}
 			}
 			wesql::free_result($request);
@@ -894,6 +801,5 @@ function SearchLanguageEntries($lang_dirs)
 	}
 
 	$txt = $oldtxt;
-	$helptxt = $oldhelptxt;
 	wetem::load('search_entries');
 }
