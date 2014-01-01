@@ -1083,8 +1083,8 @@ function db_debug_junk()
  */
 function template_include($filename, $once = false)
 {
-	global $context, $txt, $helptxt, $settings;
-	global $boardurl, $boarddir, $maintenance, $mtitle, $mmessage;
+	global $context, $txt, $settings, $boarddir, $boardurl;
+	global $maintenance, $mtitle, $mmessage;
 	static $templates = array();
 
 	// We want to be able to figure out any errors...

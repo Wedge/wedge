@@ -73,7 +73,7 @@ if (!defined('WEDGE'))
 		array('text', 'nameInSettingsAndSQL'),
 
 	In these cases, it will look for $txt['nameInSettingsAndSQL'] as the description,
-	and $helptxt['nameInSettingsAndSQL'] as the help popup description.
+	and $txt['help_nameInSettingsAndSQL'] as the help popup description.
 
 	Here's a quick explanation of how to add a new item:
 
@@ -675,7 +675,7 @@ function FetchPHPInfo($return_config = false)
 // Set simplified setting arrays into more helpful ones.
 function prepareDBSettingContext(&$config_vars)
 {
-	global $txt, $helptxt, $context, $settings;
+	global $txt, $context, $settings;
 
 	// Load the help items, plus any from plugins for (?) icons.
 	loadLanguage('Help');
@@ -716,7 +716,7 @@ function prepareDBSettingContext(&$config_vars)
 
 		$var = array(
 			'label' => isset($config_var['text_label']) ? $config_var['text_label'] : (isset($txt[$name]) ? $txt[$name] : (isset($config_var[3]) && !is_array($config_var[3]) ? $config_var[3] : '')),
-			'help' => isset($helptxt[$name]) ? $name : '',
+			'help' => isset($txt['help_' . $name]) ? $name : '',
 			'type' => $type,
 			'size' => !empty($config_var[2]) && !is_array($config_var[2]) ? $config_var[2] : ($type == 'int' || $type == 'float' ? 6 : 0),
 			'data' => array(),
@@ -830,7 +830,7 @@ function prepareDBSettingContext(&$config_vars)
 			$context['bbc_columns'][$col][] = array(
 				'tag' => $tag,
 				// !!! 'tag_' . ?
-				'show_help' => isset($helptxt[$tag]),
+				'show_help' => isset($txt['help_' . $tag]),
 			);
 
 			$i++;

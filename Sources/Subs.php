@@ -2587,3 +2587,11 @@ function get_default_skin()
 	global $settings;
 	return $settings[we::is('mobile') ? 'theme_skin_guests_mobile' : 'theme_skin_guests'];
 }
+
+/**
+ * Fix filenames to use valid characters.
+ */
+function valid_filename($str)
+{
+	return preg_replace('~([\\\\/:*?"<>|]+)~', '-', $str);
+}

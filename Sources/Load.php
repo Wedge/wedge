@@ -1609,7 +1609,7 @@ function loadPluginTemplate($plugin_name, $template_name, $fatal = true)
 
 function loadPluginLanguage($plugin_name, $template_name, $lang = '', $fatal = true, $force_reload = false)
 {
-	global $context, $settings, $txt, $helptxt, $db_show_debug, $cachedir;
+	global $context, $settings, $txt, $db_show_debug, $cachedir;
 	static $already_loaded = array();
 
 	if (empty($context['plugins_dir'][$plugin_name]))
@@ -1617,8 +1617,6 @@ function loadPluginLanguage($plugin_name, $template_name, $lang = '', $fatal = t
 
 	if (empty($txt))
 		$txt = array();
-	if (empty($helptxt))
-		$helptxt = array();
 
 	// Default to the user's language.
 	if ($lang == '')
@@ -1627,7 +1625,9 @@ function loadPluginLanguage($plugin_name, $template_name, $lang = '', $fatal = t
 	if (!$force_reload && isset($already_loaded[$template_name]) && $already_loaded[$template_name] == $lang)
 		return $lang;
 
-	$file_key = md5($plugin_name . ':' . $template_name);
+	$key = $plugin_name . ':' . $template_name;
+	$file_key = valid_filename($key);
+	
 	// Try to get from cache. If successful, clean up and return.
 	$filename = $cachedir . '/lang_' . $lang . '_' . $file_key . '.php';
 	if (file_exists($filename))
@@ -1635,10 +1635,7 @@ function loadPluginLanguage($plugin_name, $template_name, $lang = '', $fatal = t
 		@include($filename);
 		if (!empty($val))
 		{
-			$val = @unserialize($val);
-			foreach ($val as $file => $content)
-				if (isset($$file))
-					$$file = array_merge($$file, $content);
+			$txt = array_merge($txt, unserialize($val));
 
 			$context['debug']['language_files'][] = $template_name . '.' . $lang . ' (' . $plugin_name . ', cached)'; // !!! Yes, I know.
 			$already_loaded[$plugin_name . ':' . $template_name] = $lang;
@@ -1648,10 +1645,8 @@ function loadPluginLanguage($plugin_name, $template_name, $lang = '', $fatal = t
 	}
 
 	// OK, so we didn't get a cache. Start by dumping the regular contents.
-	$oldhelptxt = $helptxt;
 	$oldtxt = $txt;
 	$txt = array();
-	$helptxt = array();
 
 	$attempts = array('english');
 	if ($lang != 'english')
@@ -1674,10 +1669,7 @@ function loadPluginLanguage($plugin_name, $template_name, $lang = '', $fatal = t
 	{
 		// And put back the old entries.
 		if (isset($txt))
-		{
 			$txt = !empty($txt) ? array_merge($oldtxt, $txt) : $oldtxt;
-			$helptxt = !empty($helptxt) ? array_merge($oldhelptxt, $helptxt) : $oldhelptxt;
-		}
 		if ($fatal)
 			log_error(sprintf($txt['theme_language_error'], '(' . $plugin_name . ') ' . $template_name . '.' . $lang, 'template'));
 	}
@@ -1686,43 +1678,30 @@ function loadPluginLanguage($plugin_name, $template_name, $lang = '', $fatal = t
 	{
 		// Now let's get anything from the database.
 		$request = wesql::query('
-			SELECT lang_var, lang_key, lang_string, serial
+			SELECT lang_key, lang_string, serial
 			FROM {db_prefix}language_changes
 			WHERE id_lang = {string:lang}
 				AND lang_file = {string:lang_file}',
 			array(
 				'lang' => $lang,
-				'lang_file' => $file_key,
+				'lang_file' => $key,
 			)
 		);
 		while ($row = wesql::fetch_assoc($request))
-		{
-			if ($row['lang_var'] == 'txt')
-				$txt[$row['lang_key']] = !empty($row['serial']) ? @unserialize($row['lang_string']) : $row['lang_string'];
-			elseif ($row['lang_var'] == 'helptxt')
-				$helptxt[$row['lang_key']] = !empty($row['serial']) ? @unserialize($row['lang_string']) : $row['lang_string'];
-		}
+			$txt[$row['lang_key']] = !empty($row['serial']) ? @unserialize($row['lang_string']) : $row['lang_string'];
 		wesql::free_result($request);
 
 		// Now cache this sucker.
 		$filename = $cachedir . '/lang_' . $lang . '_' . $file_key . '.php';
-		$val = array();
 		if (!empty($txt))
-		{
 			$txt = array_map('westr::entity_to_utf8', $txt);
-			$val['txt'] = $txt;
-		}
-		if (!empty($helptxt))
-			$val['helptxt'] = $helptxt;
-		$cache_data = '<' . '?php if(defined(\'WEDGE\'))$val=\'' . addcslashes(serialize($val), '\\\'') . '\';?' . '>';
+		$cache_data = '<' . '?php if(defined(\'WEDGE\'))$val=\'' . addcslashes(serialize($txt), '\\\'') . '\';?' . '>';
 		if (file_put_contents($filename, $cache_data, LOCK_EX) !== strlen($cache_data))
 			@unlink($filename);
 
 		// Now fix the master variables.
 		if (!empty($txt) || !empty($oldtxt))
 			$txt = array_merge($oldtxt, $txt);
-		if (!empty($helptxt) || !empty($oldhelptxt))
-			$helptxt = array_merge($oldhelptxt, $helptxt);
 	}
 
 	// Keep track of what we're up to soldier.
@@ -1751,7 +1730,7 @@ function loadPluginLanguage($plugin_name, $template_name, $lang = '', $fatal = t
  */
 function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload = false, $fallback = false)
 {
-	global $context, $settings, $db_show_debug, $txt, $helptxt, $cachedir;
+	global $context, $settings, $db_show_debug, $txt, $cachedir;
 	static $already_loaded = array();
 
 	if ($force_reload === 'all')
@@ -1766,8 +1745,6 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 
 	if (empty($txt))
 		$txt = array();
-	if (empty($helptxt))
-		$helptxt = array();
 
 	// For each file open it up and write it out!
 	foreach ((array) $template_name as $template)
@@ -1784,10 +1761,7 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 				@include($filename);
 				if (!empty($val))
 				{
-					$val = @unserialize($val);
-					foreach ($val as $file => $content)
-						if (isset($$file))
-							$$file = array_merge($$file, $content);
+					$txt = array_merge($txt, @unserialize($val));
 					$loaded = true;
 				}
 			}
@@ -1802,10 +1776,8 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 			}
 
 			// OK, this is messy. We need to load the file, grab any changes from the DB, but not touch the existing $txt state.
-			$oldhelptxt = $helptxt;
 			$oldtxt = $txt;
 			$txt = array();
-			$helptxt = array();
 		}
 
 		// There can be only one theme.
@@ -1848,10 +1820,7 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 			// Put stuff back and if we did scrape a fallback together, add it to the current strings
 			// so that, hopefully, we won't get an error, even if there's a missing language file.
 			if (isset($txt))
-			{
 				$txt = !empty($txt) ? array_merge($oldtxt, $txt) : $oldtxt;
-				$helptxt = !empty($helptxt) ? array_merge($oldhelptxt, $helptxt) : $oldhelptxt;
-			}
 
 			if ($fatal)
 			{
@@ -1866,7 +1835,7 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 			{
 				// So, now we need to get from the DB.
 				$request = wesql::query('
-					SELECT lang_var, lang_key, lang_string, serial
+					SELECT lang_key, lang_string, serial
 					FROM {db_prefix}language_changes
 					WHERE id_lang = {string:lang}
 						AND lang_file = {string:lang_file}',
@@ -1875,53 +1844,31 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 						'lang_file' => $template,
 					)
 				);
-				$additions = array('txt' => array(), 'helptxt' => array());
+				$additions = array();
 				while ($row = wesql::fetch_assoc($request))
 				{
 					// This might look a bit weird. But essentially we might be loading two things from two themes.
 					// If we don't have it already, use it. If we do have it already but it's not the default theme we're adding, replace it.
-					if ($row['lang_var'] == 'txt')
+					if (!isset($additions[$row['lang_key']]))
 					{
-						if (!isset($additions['txt'][$row['lang_key']]))
-						{
-							$txt[$row['lang_key']] = !empty($row['serial']) ? @unserialize($row['lang_string']) : $row['lang_string'];
-							$additions['txt'][$row['lang_key']] = true;
-						}
-					}
-					elseif ($row['lang_var'] == 'helptxt')
-					{
-						if (!isset($additions['helptxt'][$row['lang_key']]))
-						{
-							$helptxt[$row['lang_key']] = !empty($row['serial']) ? @unserialize($row['lang_string']) : $row['lang_string'];
-							$additions['helptxt'][$row['lang_key']] = true;
-						}
+						$txt[$row['lang_key']] = !empty($row['serial']) ? @unserialize($row['lang_string']) : $row['lang_string'];
+						$additions[$row['lang_key']] = true;
 					}
 				}
 				wesql::free_result($request);
 
 				// Now cache this sucker.
 				$filename = $cachedir . '/lang_' . $lang . '_' . $template . '.php';
-				$val = array();
+				// First of all, we need to convert numeric entities to UTF8. Takes less space in memory, for starters.
 				if (!empty($txt))
-				{
-					// First of all, we need to convert numeric entities to UTF8. Takes less space in memory, for starters.
 					$txt = array_map('westr::entity_to_utf8', $txt);
-					$val['txt'] = $txt;
-				}
-				if (!empty($helptxt))
-				{
-					$helptxt = array_map('westr::entity_to_utf8', $helptxt);
-					$val['helptxt'] = $helptxt;
-				}
-				$cache_data = '<' . '?php if(defined(\'WEDGE\'))$val=\'' . addcslashes(serialize($val), '\\\'') . '\';?' . '>';
+				$cache_data = '<' . '?php if(defined(\'WEDGE\'))$val=\'' . addcslashes(serialize($txt), '\\\'') . '\';?' . '>';
 				if (file_put_contents($filename, $cache_data, LOCK_EX) !== strlen($cache_data))
 					@unlink($filename);
 
 				// Now fix the master variables.
 				if (!empty($txt) || !empty($oldtxt))
 					$txt = array_merge($oldtxt, $txt);
-				if (!empty($helptxt) || !empty($oldhelptxt))
-					$helptxt = array_merge($oldhelptxt, $helptxt);
 			}
 		}
 

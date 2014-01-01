@@ -829,7 +829,7 @@ function AdminSearch()
 // A complicated but relatively quick internal search.
 function AdminSearchInternal()
 {
-	global $context, $txt, $helptxt, $settings;
+	global $context, $txt, $settings;
 
 	// Try to get some more memory.
 	ini_set('memory_limit', '128M');
@@ -964,7 +964,7 @@ function AdminSearchInternal()
 					if (!empty($var[1]) && !in_array($var[0], array('permissions', 'desc', 'message', 'warning', 'callback')))
 					{
 						$item = array(isset($var['text_label']) ? $var['text_label'] : $var[1], $setting_area[1]);
-						if (isset($var['help'], $helptxt[$var['help']]))
+						if (isset($var['help'], $txt['help_' . $var['help']]))
 							$item[2] = $var['help'];
 						if (!empty($context['page_title']))
 							$item[3] = $context['page_title'];
@@ -1024,7 +1024,7 @@ function AdminSearchInternal()
 					'name' => $name,
 					'parent_name' => isset($item[3]) ? $item[3] : '',
 					'type' => $section,
-					'help' => isset($item[2], $helptxt[$item[2]]) ? $helptxt[$item[2]] : (isset($helptxt[$found]) ? $helptxt[$found] : ''),
+					'help' => isset($item[2], $txt['help_' . $item[2]]) ? $txt['help_' . $item[2]] : (isset($txt['help_' . $found]) ? $txt['help_' . $found] : ''),
 				);
 			}
 		}

@@ -16,18 +16,15 @@ if (!defined('WEDGE'))
  *
  * - Accessed via ?action=help;in=xyz and subsequently $_GET['in'] is used as the identifier of the help to display.
  * - Identifies where a help string may be located (normally the Help language file, but if the string starts with permissionhelp, it also loads the permissions strings)
- * - steps through whether to use $helptxt (for administrative help strings as $txt[$_GET['in']] will be the option description), $txt (for permissions) or if not found, simply uses the provided string.
+ * - Looks into $txt['help_*'] or, if not found, simply uses the provided string.
  * - Uses the Help template, popup block, removing all layers.
  */
 function Help()
 {
-	global $txt, $helptxt, $context;
+	global $txt, $context;
 
 	if (!isset($_GET['in']) || !is_string($_GET['in']))
 		fatal_lang_error('no_access', false);
-
-	if (!isset($helptxt))
-		$helptxt = array();
 
 	// Load the admin help language file and template.
 	loadLanguage('Help');
@@ -47,5 +44,5 @@ function Help()
 	wetem::load('popup');
 
 	// What help string should be used?
-	$context['popup_contents'] = isset($helptxt[$_GET['in']]) ? $helptxt[$_GET['in']] : (isset($txt[$_GET['in']]) ? $txt[$_GET['in']] : $_GET['in']);
+	$context['popup_contents'] = isset($txt['help_' . $_GET['in']]) ? $txt['help_' . $_GET['in']] : (isset($txt[$_GET['in']]) ? $txt[$_GET['in']] : $_GET['in']);
 }
