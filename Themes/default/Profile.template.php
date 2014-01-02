@@ -2625,17 +2625,17 @@ function template_profile_avatar_select()
 							<div>
 								<select name="file" id="file" size="6" class="hide" onchange="showAvatar();" disabled><option></option></select>
 							</div>
-							<div><img id="avatar" src="', !empty($context['member']['avatar']['allow_external']) && $context['member']['avatar']['choice'] == 'external' ? $context['member']['avatar']['external'] : $settings['avatar_url'] . '/blank.gif', '"></div>
+							<div><img id="avatar" src="', !empty($context['member']['avatar']['allow_external']) && $context['member']['avatar']['choice'] == 'external' ? $context['member']['avatar']['external'] : AVATARS . '/blank.gif', '"></div>
 						</div>';
 
 		add_js('
 	var
-		files = ["' . implode('", "', $context['avatar_list']) . '"],
+		files = ["', implode('", "', $context['avatar_list']), '"],
 		avatar = $("#avatar")[0],
 		cat = $("#cat")[0],
 		file = $("#file")[0],
-		selavatar = "' . $context['avatar_selected'] . '",
-		avatardir = "' . $settings['avatar_url'] . '/";
+		selavatar = ', JavaScriptEscape($context['avatar_selected']), ',
+		avatardir = ', JavaScriptEscape(AVATARS . '/'), ';
 
 	if (avatar.src.indexOf("blank.gif") > -1)
 		changeSel(selavatar);
@@ -2675,7 +2675,7 @@ function template_profile_avatar_select()
 							<dfn>', sprintf($txt['avatar_resize_' . ($settings['avatar_action_too_large'] != 'option_refuse' ? 'warning' : 'forbid') . '_height'], $settings['avatar_max_height_external']), '</dfn>';
 
 		echo '
-							<div><img id="external_avatar" src="', !empty($context['member']['avatar']['allow_external']) && $context['member']['avatar']['choice'] == 'external' ? $context['member']['avatar']['external'] : $settings['avatar_url'] . '/blank.gif', '"></div>
+							<div><img id="external_avatar" src="', !empty($context['member']['avatar']['allow_external']) && $context['member']['avatar']['choice'] == 'external' ? $context['member']['avatar']['external'] : AVATARS . '/blank.gif', '"></div>
 						</div>';
 	}
 

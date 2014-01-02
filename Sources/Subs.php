@@ -1697,9 +1697,9 @@ function setupThemeContext($forceload = false)
 			if (!empty($settings['avatar_max_height_external']))
 				$avatar['height'] = $settings['avatar_max_height_external'];
 		}
-		// Otherwise we assume it's server stored?
+		// Otherwise we assume it's server-stored?
 		elseif ($avatar['url'] != '')
-			$avatar['href'] = $settings['avatar_url'] . '/' . htmlspecialchars($avatar['url']);
+			$avatar['href'] = AVATARS . '/' . htmlspecialchars($avatar['url']);
 
 		$opaque = !empty($avatar['id_attach']) && $avatar['transparent'] ? '' : 'opaque ';
 

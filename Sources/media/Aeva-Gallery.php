@@ -2357,7 +2357,7 @@ function aeva_addView()
 
 function aeva_getMedia()
 {
-	global $settings, $amSettings;
+	global $amSettings;
 
 	if (isset($_REQUEST['dl']) && !aeva_allowedTo('download_item'))
 		fatal_lang_error('media_accessDenied', !empty($amSettings['log_access_errors']));

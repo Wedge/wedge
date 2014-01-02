@@ -1835,7 +1835,7 @@ function getAvatars($directory, $level)
 	$result = array();
 
 	// Open the directory..
-	$dir = dir($settings['avatar_directory'] . (!empty($directory) ? '/' : '') . $directory);
+	$dir = dir($settings['avatar_dir'] . (!empty($directory) ? '/' : '') . $directory);
 	$dirs = array();
 	$files = array();
 
@@ -1847,7 +1847,7 @@ function getAvatars($directory, $level)
 		if (in_array($line, array('.', '..', 'blank.gif', 'index.php')))
 			continue;
 
-		if (is_dir($settings['avatar_directory'] . '/' . $directory . (!empty($directory) ? '/' : '') . $line))
+		if (is_dir($settings['avatar_dir'] . '/' . $directory . (!empty($directory) ? '/' : '') . $line))
 			$dirs[] = $line;
 		else
 			$files[] = $line;
@@ -2519,8 +2519,6 @@ function profileLoadAvatarData()
 {
 	global $context, $cur_profile, $settings;
 
-	$context['avatar_url'] = $settings['avatar_url'];
-
 	// Default context.
 	$context['member']['avatar'] += array(
 		'custom' => stristr($cur_profile['avatar'], 'http://') ? $cur_profile['avatar'] : 'http://',
@@ -2554,7 +2552,7 @@ function profileLoadAvatarData()
 			'server_pic' => 'blank.gif',
 			'external' => $cur_profile['avatar'] === 'gravatar://' || empty($settings['gravatarAllowExtraEmail']) ? $cur_profile['email_address'] : substr($cur_profile['avatar'], 11),
 		);
-	elseif ($cur_profile['avatar'] != '' && file_exists($settings['avatar_directory'] . '/' . $cur_profile['avatar']) && $context['member']['avatar']['allow_server_stored'])
+	elseif ($cur_profile['avatar'] != '' && file_exists($settings['avatar_dir'] . '/' . $cur_profile['avatar']) && $context['member']['avatar']['allow_server_stored'])
 		$context['member']['avatar'] += array(
 			'choice' => 'server_stored',
 			'server_pic' => $cur_profile['avatar'] == '' ? 'blank.gif' : $cur_profile['avatar'],
@@ -2571,7 +2569,7 @@ function profileLoadAvatarData()
 	if ($context['member']['avatar']['allow_server_stored'])
 	{
 		$context['avatar_list'] = array();
-		$context['avatars'] = is_dir($settings['avatar_directory']) ? getAvatars('', 0) : array();
+		$context['avatars'] = is_dir($settings['avatar_dir']) ? getAvatars('', 0) : array();
 	}
 	else
 		$context['avatars'] = array();
@@ -2772,7 +2770,7 @@ function profileSaveAvatarData(&$value)
 	elseif ($value == 'server_stored' && allowedTo('profile_server_avatar'))
 	{
 		$profile_vars['avatar'] = strtr(empty($_POST['file']) ? (empty($_POST['cat']) ? '' : $_POST['cat']) : $_POST['file'], array('&amp;' => '&'));
-		$profile_vars['avatar'] = preg_match('~^([][\w !@%*=#()&.,-]+/)?[][\w !@%*=#()&.,-]+$~', $profile_vars['avatar']) != 0 && preg_match('/\.\./', $profile_vars['avatar']) == 0 && file_exists($settings['avatar_directory'] . '/' . $profile_vars['avatar']) ? ($profile_vars['avatar'] == 'blank.gif' ? '' : $profile_vars['avatar']) : '';
+		$profile_vars['avatar'] = preg_match('~^([][\w !@%*=#()&.,-]+/)?[][\w !@%*=#()&.,-]+$~', $profile_vars['avatar']) != 0 && preg_match('/\.\./', $profile_vars['avatar']) == 0 && file_exists($settings['avatar_dir'] . '/' . $profile_vars['avatar']) ? ($profile_vars['avatar'] == 'blank.gif' ? '' : $profile_vars['avatar']) : '';
 
 		// Clear current profile...
 		$cur_profile['id_attach'] = 0;

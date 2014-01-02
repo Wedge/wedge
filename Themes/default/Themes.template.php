@@ -155,7 +155,7 @@ function template_main()
 
 function template_guest_selector($is_mobile = false)
 {
-	global $context, $settings, $txt;
+	global $context, $txt;
 
 	$guests = $is_mobile ? 'theme_guests_mobile' : 'theme_guests';
 
@@ -246,7 +246,7 @@ function template_list_themes()
 // This template allows for the selection of different themes ;)
 function template_pick()
 {
-	global $context, $txt, $settings;
+	global $context, $txt;
 
 	echo '
 	<div id="pick_theme">

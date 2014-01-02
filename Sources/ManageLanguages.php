@@ -281,7 +281,7 @@ function list_getLanguages()
 // Edit a particular set of language entries.
 function ModifyLanguage()
 {
-	global $context, $txt, $settings;
+	global $context, $txt;
 
 	// First up, validate the language selected.
 	getLanguages(false);
@@ -326,16 +326,16 @@ function ModifyLanguage()
 	);
 
 	if (empty($_REQUEST['tfid']))
-		list ($theme_id, $file_id, $path) = array(1, '', '/');
+		list ($source_id, $file_id, $path) = array(1, '', '/');
 	else
 	{
 		$parts = explode('|', $_REQUEST['tfid']);
 		if (!isset($parts[1]))
-			list ($theme_id, $file_id, $path) = array(1, $parts[0], '/');
+			list ($source_id, $file_id, $path) = array(1, $parts[0], '/');
 		else
 		{
 			// In plugins, the entry supplied is plugin_id|path|lang
-			$theme_id = array_shift($parts);
+			$source_id = array_shift($parts);
 			$file_id = array_pop($parts);
 			$path = implode('/', $parts) . '/';
 		}
@@ -379,21 +379,21 @@ function ModifyLanguage()
 
 	// Now for every theme get all the files and stick them in context!
 	$context['possible_files'] = array();
-	foreach ($lang_dirs as $th => $theme_dirs)
+	foreach ($lang_dirs as $th => $source_dirs)
 	{
 		// Depending on where we came from, we might be looking at a single folder or a plugin's potentially many subfolders.
-		// If we're looking at a plugin, the array will be the possible folders for the prefixing as array keys, with the values as full paths
-		// and the prefixing keys will contain the | delimiter as needed.
-		if (!is_array($theme_dirs))
-			$theme_dirs = array('' => $theme_dirs);
+		// If we're looking at a plugin, the array will be the possible folders for the prefixing as array keys, with
+		// the values as full paths, and the prefixing keys will contain the | delimiter as needed.
+		if (!is_array($source_dirs))
+			$source_dirs = array('' => $source_dirs);
 
 		// Sift out now where this is likely to go.
 		$dest = $th == 1 ? 'default' : 'plugins';
 
-		foreach ($theme_dirs as $path_prefix => $theme_dir)
+		foreach ($source_dirs as $path_prefix => $source_dir)
 		{
 			// Open it up.
-			$dir = dir($theme_dir);
+			$dir = dir($source_dir);
 			while ($entry = $dir->read())
 			{
 				// We're only after the files for this language.
@@ -411,13 +411,13 @@ function ModifyLanguage()
 						'files' => array(),
 					);
 
-				if ($th == $theme_id && $matches[1] == $file_id)
+				if ($th == $source_id && $matches[1] == $file_id)
 					$context['selected_file'] = array(
-						'source_id' => $theme_id,
+						'source_id' => $source_id,
 						'lang_id' => $path_prefix . $matches[1],
 						'name' => $matches[1],
 						'desc' => isset($txt['lang_file_desc_' . $matches[1]]) ? $txt['lang_file_desc_' . $matches[1]] : '',
-						'path' => (isset($context['plugins_dir'][$theme_id]) ? $context['plugins_dir'][$theme_id] : $lang_dirs[$theme_id]) . $path . $file_id . '.' . $context['lang_id'] . '.php',
+						'path' => (isset($context['plugins_dir'][$source_id]) ? $context['plugins_dir'][$source_id] : $lang_dirs[$source_id]) . $path . $file_id . '.' . $context['lang_id'] . '.php',
 					);
 
 				$langfile = $matches[1] . (isset($txt['lang_file_desc_' . $matches[1]]) ? '~' . $txt['lang_file_desc_' . $matches[1]] : '');

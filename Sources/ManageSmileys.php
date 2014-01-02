@@ -1401,7 +1401,7 @@ function ImportSmileys($smileyPath)
 
 function EditMessageIcons()
 {
-	global $context, $txt, $settings;
+	global $context, $txt;
 
 	// Get a list of icons.
 	$context['icons'] = array();

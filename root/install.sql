@@ -2172,7 +2172,7 @@ VALUES
 	('banLastUpdated', '0'),
 	('smileys_dir', '{$boarddir}/assets/smileys'),
 	('smileys_url', '{$boardurl}/assets/smileys'),
-	('avatar_directory', '{$boarddir}/assets/avatars'),
+	('avatar_dir', '{$boarddir}/assets/avatars'),
 	('avatar_url', '{$boardurl}/assets/avatars'),
 	('avatar_max_height_external', '65'),
 	('avatar_max_width_external', '65'),

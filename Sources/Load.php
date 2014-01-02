@@ -1200,9 +1200,9 @@ function loadMemberAvatar($user, $force = false)
 		else
 			$memberContext[$user]['avatar'] = array(
 				'name' => $profile['avatar'],
-				'image' => stristr($profile['avatar'], 'http://') ? '<img class="avatar" src="' . $profile['avatar'] . '"' . $avatar_width . $avatar_height . '>' : '<img class="avatar" src="' . $settings['avatar_url'] . '/' . htmlspecialchars($profile['avatar']) . '">',
-				'href' => stristr($profile['avatar'], 'http://') ? $profile['avatar'] : $settings['avatar_url'] . '/' . $profile['avatar'],
-				'url' => stristr($profile['avatar'], 'http://') ? $profile['avatar'] : $settings['avatar_url'] . '/' . $profile['avatar'],
+				'image' => stristr($profile['avatar'], 'http://') ? '<img class="avatar" src="' . $profile['avatar'] . '"' . $avatar_width . $avatar_height . '>' : '<img class="avatar" src="' . AVATARS . '/' . htmlspecialchars($profile['avatar']) . '">',
+				'href' => stristr($profile['avatar'], 'http://') ? $profile['avatar'] : AVATARS . '/' . $profile['avatar'],
+				'url' => stristr($profile['avatar'], 'http://') ? $profile['avatar'] : AVATARS . '/' . $profile['avatar'],
 			);
 	}
 	// It's an attachment?

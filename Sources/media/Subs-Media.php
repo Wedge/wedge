@@ -345,7 +345,7 @@ function aeva_getAlbumChildren($current)
 // This function returns file path to a media, also checks security unless security_override is true
 function getMediaPath($mid, $type = 'main', $security_override = false)
 {
-	global $amSettings, $settings;
+	global $amSettings;
 
 	// Get the item's filename
 	$galdir = $amSettings['data_dir_path'];
