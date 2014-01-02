@@ -71,7 +71,6 @@ if (!defined('WEDGE'))
 		- your name should go in author. (email in the email attribute.)
 		- any support website for the theme should be in website.
 		- layers and templates (non-default) should go in those elements ;).
-		- if the images dir isn't images, specify in the images element.
 		- any extra rows for themes should go in extra, serialized,
 		  as in "array(variable => value)".
 		- tar and gzip the directory - and you're done!
@@ -210,7 +209,6 @@ function ThemeList()
 			updateSettings(array(
 				'theme_dir' => realpath($_POST['reset_dir'] . '/' . basename(TEMPLATES_DIR)),
 				'theme_url' => $_POST['reset_url'] . '/' . basename(TEMPLATES_DIR),
-				'images_url' => $_POST['reset_url'] . '/' . basename(TEMPLATES_DIR) . '/' . basename(ASSETS),
 			));
 
 		cache_put_data('theme_settings', null, 90);
@@ -463,13 +461,9 @@ function ThemeInstall()
 			@chmod($theme_dir . $file, 0777);
 		}
 
-		// And now the entire images directory!
-		if (file_exists(TEMPLATES_DIR . '/images'))
-			copytree(TEMPLATES_DIR . '/images', $theme_dir . '/images');
 		package_flush_cache();
 
 		$theme_name = $_REQUEST['copy'];
-		$images_url = $boardurl . '/Themes/' . basename($theme_dir) . '/images';
 		$theme_dir = realpath($theme_dir);
 
 		// Let's get some data for the new theme.
@@ -552,7 +546,6 @@ function ThemeInstall()
 		// Defaults.
 		$install_info = array(
 			'theme_url' => $boardurl . '/Themes/' . basename($theme_dir),
-			'images_url' => isset($images_url) ? $images_url : $boardurl . '/Themes/' . basename($theme_dir) . '/images',
 			'theme_dir' => $theme_dir,
 			'name' => $theme_name
 		);
@@ -569,11 +562,6 @@ function ThemeInstall()
 				if (preg_match('~<' . $name . '>(?:<!\[CDATA\[)?(.+?)(?:\]\]>)?</' . $name . '>~', $theme_info, $match) == 1)
 					$install_info[$var] = $match[1];
 
-			if (preg_match('~<images>(?:<!\[CDATA\[)?(.+?)(?:\]\]>)?</images>~', $theme_info, $match) == 1)
-			{
-				$install_info['images_url'] = $install_info['theme_url'] . '/' . $match[1];
-				$explicit_images = true;
-			}
 			if (preg_match('~<extra>(?:<!\[CDATA\[)?(.+?)(?:\]\]>)?</extra>~', $theme_info, $match) == 1)
 				$install_info += unserialize($match[1]);
 		}

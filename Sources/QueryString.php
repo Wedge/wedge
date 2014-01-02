@@ -121,8 +121,8 @@ function cleanRequest()
 	define('SKINS_DIR', TEMPLATES_DIR . '/skins');			// !! Temporary.
 	define('LANGUAGES', TEMPLATES . '/languages');			// !! Temporary.
 	define('LANGUAGES_DIR', TEMPLATES_DIR . '/languages');	// !! Temporary.
-	define('ASSETS', TEMPLATES . '/images');				// !! Temporary
-	define('ASSETS_DIR', TEMPLATES_DIR . '/images');		// !! Temporary
+	define('ASSETS', ROOT . '/assets');
+	define('ASSETS_DIR', ROOT_DIR . '/assets');
 
 	define('SMILEYS', $settings['smileys_url']);
 	define('AVATARS', $settings['avatar_url']);

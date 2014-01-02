@@ -213,8 +213,6 @@ function template_list_themes()
 				<dd', $th['valid_path'] ? '' : ' class="error"', '>', $th['theme_dir'], $th['valid_path'] ? '' : ' ' . $txt['themeadmin_list_invalid'], '</dd>
 				<dt>', $txt['themeadmin_list_theme_url'], ':</dt>
 				<dd>', $th['theme_url'], '</dd>
-				<dt>', $txt['themeadmin_list_images_url'], ':</dt>
-				<dd>', $th['images_url'], '</dd>
 			</dl>
 		</div>';
 	}
@@ -493,6 +491,7 @@ function template_edit_style()
 		</div>';
 
 	add_js('
+	var we_assets_url = ', JavaScriptEscape(ASSETS_URL), ';
 	var previewData = "", previewTimeout, refreshPreviewCache;
 	var editFilename = ', JavaScriptEscape($context['edit_filename']), ';
 
@@ -525,7 +524,7 @@ function template_edit_style()
 
 	function refreshPreview(check)
 	{
-		var identical = document.forms.stylesheetForm.entire_file.value.replace(/url\([./]+images/gi, "url(" + we_theme_url + "/images") == refreshPreviewCache;
+		var identical = document.forms.stylesheetForm.entire_file.value.replace(/url\([./]+images/gi, "url(" + we_assets_url) == refreshPreviewCache;
 
 		// Don\'t reflow the whole thing if nothing changed!!
 		if (check && identical)
@@ -533,7 +532,7 @@ function template_edit_style()
 		refreshPreviewCache = document.forms.stylesheetForm.entire_file.value;
 
 		// Replace the paths for images.
-		refreshPreviewCache = refreshPreviewCache.replace(/url\([./]+images/gi, "url(" + we_theme_url + "/images");
+		refreshPreviewCache = refreshPreviewCache.replace(/url\([./]+images/gi, "url(" + we_assets_url);
 
 		// Try to do it without a complete reparse.
 		if (identical)
@@ -569,7 +568,7 @@ function template_edit_style()
 			var stylesheetMatch = new RegExp(\'<link rel="stylesheet"[^>]+href="[^"]+\' + editFilename + \'[^>]*>\');
 
 			// Replace the paths for images.
-			preview_sheet = preview_sheet.replace(/url\([./]+images/gi, "url(" + we_theme_url + "/images");
+			preview_sheet = preview_sheet.replace(/url\([./]+images/gi, "url(" + we_assets_url);
 			data = data.replace(stylesheetMatch, "<style id=\"css_preview_sheet\">" + preview_sheet + "<" + "/style>");
 
 			frames["css_preview_box"].document.open();

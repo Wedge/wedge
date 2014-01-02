@@ -41,8 +41,8 @@ $ssi_error_reporting = error_reporting(E_ALL | E_STRICT);
 /*
   Set this to one of three values depending on what you want to happen in the case of a fatal error.
 
-	false:	Default, will just load the error block and die - not putting any theme layers around it.
-	true:	Will load the error block AND put the Wedge layers around it (Not useful if on totally custom pages.)
+	false:	Default, will just show the error block and die - not putting any chrome around it.
+	true:	Will load the error block AND put the Wedge layers around it (not useful if on totally custom pages.)
 	string:	Name of a callback function to call in the event of an error to allow you to define your own methods. Will die after function returns.
 */
 $ssi_on_error_method = false;
@@ -128,7 +128,7 @@ if (empty($settings['allow_guestAccess']) && we::$is_guest)
 	we::$user['query_wanna_see_board'] = '0=1';
 }
 
-// Load the current or SSI theme. (Just use $ssi_skin = 'custom_skin';)
+// Load the current or SSI skin. (Just use $ssi_skin = 'custom_skin';)
 loadTheme(isset($ssi_skin) && strpos($ssi_skin, '..') === false ? $ssi_skin : '');
 
 // Deal with anything that SSI (only) wants.

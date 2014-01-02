@@ -1949,8 +1949,8 @@ function template_install_above()
 	define('SKINS_DIR', TEMPLATES_DIR . '/skins');			// !! Temporary.
 	define('LANGUAGES', TEMPLATES . '/languages');			// !! Temporary.
 	define('LANGUAGES_DIR', TEMPLATES_DIR . '/languages');	// !! Temporary.
-	define('ASSETS', TEMPLATES . '/images');				// !! Temporary
-	define('ASSETS_DIR', TEMPLATES_DIR . '/images');		// !! Temporary
+	define('ASSETS', ROOT . '/assets');
+	define('ASSETS_DIR', ROOT_DIR . '/assets');
 
 	if (empty($incontext['enable_update_settings'])) // Last step also defines MID, so avoid that...
 		define('MID', we::$id = 0);

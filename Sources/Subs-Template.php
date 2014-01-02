@@ -788,7 +788,6 @@ function clean_output($skip_full = false)
  * - {@link setupThemeContext()} is called to get some key values.
  * - Issue HTTP headers that cause browser-side caching to be turned off (old expires and last modified). This is turned off for attachments errors, though.
  * - Issue MIME type header
- * - If the settings dictate it so, update the theme settings to use the default images and path.
  */
 function start_output()
 {
@@ -815,7 +814,7 @@ function start_output()
 /**
  * Use the opportunity to show some potential errors while we're showing the top or default layer...
  *
- * - If using a conventional theme (with body or main layers), and the user is an admin, check whether certain files are present, and if so give the admin a warning. These include the installer, repair-settings and backups of the Settings files (with php~ extensions)
+ * - If using a conventional template (with body or main layers), and the user is an admin, check whether certain files are present, and if so give the admin a warning. These include the installer, repair-settings and backups of the Settings files (with php~ extensions)
  * - If the user is post-banned, provide a nice warning for them.
  */
 function while_we_re_here()
@@ -1268,7 +1267,7 @@ function template_include($filename, $once = false)
  *
  * The function can be used to load just stylesheets as well as loading templates; neither is required for the other to operate. Both templates and stylesheets loaded here will be logged if full debugging is on.
  *
- * @param mixed $template_name Name of a template file to load from the current theme's directory (with .template.php suffix), falling back to locating it in the default theme directory. Alternatively if loading stylesheets only, supply boolean false instead.
+ * @param mixed $template_name Name of a template file to load from the current template folder (with .template.php suffix), falling back to locating it in the default template directory. Alternatively if loading stylesheets only, supply boolean false instead.
  * @param bool $fatal Whether to exit execution with a fatal error if the template file could not be loaded. (Note: this is never used in the Wedge code base.)
  * @return bool Returns true on success, false on failure (assuming $fatal is false; otherwise the fatal error will suspend execution)
  */
