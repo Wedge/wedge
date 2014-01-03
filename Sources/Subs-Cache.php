@@ -993,7 +993,7 @@ function wedge_cache_js($id, &$lang_name, $latest_date, $ext, $js, $gzip = false
 	// In the meantime, if you update a language file, empty the JS cache folder if it fails to update.
 	if (preg_match_all('~@language\h+([^\n;]+)[\n;]~i', $final, $languages))
 	{
-		// Format: @language ThemeLanguage, Author:Plugin:Language, Author:Plugin:Language2
+		// Format: @language LanguageFile1, Author:Plugin:LanguageFile2, Author:Plugin:LanguageFile3
 		$langstring = implode(',', $languages[1]);
 		$langlist = serialize($langs = array_map('trim', explode(',', $langstring)));
 		if (strpos($langstring, ':') !== false)
@@ -1262,6 +1262,7 @@ function theme_base_css()
 	if (empty($settings['last_cache_purge']) || $settings['last_cache_purge'] < $one_month_ago)
 	{
 		clean_cache('css', $one_month_ago);
+		clean_cache('js', $one_month_ago);
 		updateSettings(array('last_cache_purge' => time()));
 	}
 
@@ -1799,7 +1800,7 @@ function cache_put_data($key, $val, $ttl = 120)
  * @param int $ttl Expiration date for the data, in seconds; after that delay, no data will be returned even if it is in cache.
  * @return mixed If retrieving from cache was not possible, null will be returned, otherwise the item will be unserialized and passed back.
  */
-function cache_get_data($key, $ttl = 120)
+function cache_get_data($orig_key, $ttl = 120, $put_callback = null)
 {
 	global $settings, $cache_type, $cache_hits, $cache_count, $db_show_debug, $cachedir;
 
@@ -1807,7 +1808,7 @@ function cache_get_data($key, $ttl = 120)
 		return;
 
 	$st = microtime(true);
-	$key = cache_prepare_key($key);
+	$key = cache_prepare_key($orig_key);
 	if ($ttl === 'forever')
 		$ttl = PHP_INT_MAX;
 
@@ -1841,7 +1842,12 @@ function cache_get_data($key, $ttl = 120)
 	// If the operation requires re-caching, return null to let the script know.
 	if (!empty($val))
 		return unserialize($val);
-	return null;
+
+	if ($put_callback === null)
+		return null;
+
+	cache_put_data($orig_key, $ttl, $new_cache = $put_callback());
+	return $new_cache;
 }
 
 function cache_prepare_key($key, $val = '', $type = 'get')
@@ -1871,20 +1877,21 @@ function cache_get_type()
 {
 	global $cache_type, $memcached_servers;
 
-	$cache_type = 'file';
+	if (empty($cache_type))
+		$cache_type = 'file';
 
-	// Okay, let's go for it memcached!
-	if (isset($memcached_servers) && trim($memcached_servers) !== '' && function_exists('memcache_get') && function_exists('memcache_set') && get_memcached_server())
-		$cache_type = 'memcached';
-	// Alternative PHP Cache from PECL.
-	elseif (function_exists('apc_fetch') && function_exists('apc_store'))
-		$cache_type = 'apc';
-	// Zend Platform/ZPS/pricey stuff.
-	elseif ((function_exists('zend_shm_cache_fetch') && function_exists('zend_shm_cache_store')) || (function_exists('output_cache_get') && function_exists('output_cache_put')))
-		$cache_type = 'zend';
-	// XCache
-	elseif (function_exists('xcache_get') && function_exists('xcache_set') && ini_get('xcache.var_size') > 0)
-		$cache_type = 'xcache';
+	// Make sure memcached wasn't disabled.
+	if ($cache_type === 'memcached' && !(isset($memcached_servers) && trim($memcached_servers) !== '' && function_exists('memcache_get') && function_exists('memcache_set') && get_memcached_server()))
+		$cache_type = 'file';
+	// Or PECL's APC.
+	elseif ($cache_type === 'apc' && !(function_exists('apc_fetch') && function_exists('apc_store')))
+		$cache_type = 'file';
+	// Or Zend Platform/ZPS.
+	elseif ($cache_type === 'zend' && !((function_exists('zend_shm_cache_fetch') && function_exists('zend_shm_cache_store')) || (function_exists('output_cache_get') && function_exists('output_cache_put'))))
+		$cache_type = 'file';
+	// Or XCache.
+	elseif ($cache_type === 'xcache' && !(function_exists('xcache_get') && function_exists('xcache_set') && ini_get('xcache.var_size') > 0))
+		$cache_type = 'file';
 }
 
 /**

@@ -56,7 +56,6 @@ if (!defined('WEDGE'))
 
 	void saveDBSettings(array config_vars)
 		// !!!
-
 */
 
 /*
@@ -377,25 +376,29 @@ function ModifyCookieSettings($return_config = false)
 // Simply modifying cache functions
 function ModifyCacheSettings($return_config = false)
 {
-	global $context, $txt, $settings, $memcached_servers;
+	global $context, $txt, $settings, $memcached_servers, $cache_type;
+
+	// Detect available optimizers.
+	$detected = array();
+	$detected['APC'] = function_exists('apc_fetch') && function_exists('apc_store') && is_callable('apc_store');
+	$detected['Zend'] = (function_exists('output_cache_put') && is_callable('output_cache_put')) || (function_exists('zend_shm_cache_store') && is_callable('zend_shm_cache_store'));
+	$detected['Memcached'] = function_exists('memcache_get') && function_exists('memcache_set') && is_callable('memcache_set');
+	$detected['XCache'] = function_exists('xcache_set') && is_callable('xcache_set') && ini_get('xcache.var_size') > 0;
+	$available_cache = array_keys(array_filter($detected));
 
 	// Define the variable(s) we want to edit. By default, just the one.
 	$config_vars = array(
 		array('select', 'cache_enable', array($txt['cache_off'], $txt['cache_level1'], $txt['cache_level2'], $txt['cache_level3'])),
+		array('select', 'cache_type',
+			array_merge(
+				array('file' => $txt['cache_type_file']),
+				array_combine(array_map('strtolower', $available_cache), $available_cache)
+			),
+			'file' => true
+		),
 	);
 
-	// Detect an optimizer?
-	$detected = 'no_caching';
-	if (function_exists('apc_store') && is_callable('apc_store'))
-		$detected = 'APC';
-	elseif ((function_exists('output_cache_put') && is_callable('output_cache_put')) || (function_exists('zend_shm_cache_store') && is_callable('zend_shm_cache_store')))
-		$detected = 'Zend';
-	elseif (function_exists('memcache_set') && is_callable('memcache_set'))
-		$detected = 'Memcached';
-	elseif (function_exists('xcache_set') && is_callable('xcache_set'))
-		$detected = 'XCache';
-
-	if ($detected == 'Memcached' || !empty($memcached_servers))
+	if ($detected['Memcached'] || !empty($memcached_servers))
 	{
 		$config_vars[] = array('text', 'cache_memcached');
 		$settings['cache_memcached'] = isset($memcached_servers) ? $memcached_servers : '';
@@ -408,16 +411,16 @@ function ModifyCacheSettings($return_config = false)
 	if (isset($_GET['save']))
 	{
 		// A short hack to avoid having to go through the mess that is saveSettings().
-		$memcached_servers = $_POST['cache_memcached'];
+		$memcached_servers = isset($_POST['cache_memcached']) ? $_POST['cache_memcached'] : '';
 		unset($_POST['cache_memcached']);
 
-		saveDBSettings($config_vars);
+		saveSettings($config_vars);
 
 		// We have to manually force the clearing of the cache otherwise the changed settings might not get noticed.
 		$settings['cache_enable'] = 1;
 		cache_put_data('settings', null, 'forever');
 
-		if ($detected == 'Memcached')
+		if ($detected['Memcached'])
 		{
 			loadSource('Subs-Admin');
 			updateSettingsFile(array('memcached_servers' => "'" . $memcached_servers . "'"));
@@ -428,9 +431,12 @@ function ModifyCacheSettings($return_config = false)
 
 	$context['post_url'] = '<URL>?action=admin;area=serversettings;sa=cache;save';
 	$context['settings_title'] = $txt['caching_settings'];
-	$context['settings_message'] = $txt['caching_information'];
 
-	$context['settings_message'] = sprintf($context['settings_message'], $txt['detected_' . $detected]);
+	$detected_list = array();
+	foreach ($available_cache as $type)
+		$detected_list[] = $txt['detected_' . $type];
+
+	$context['settings_message'] = sprintf($txt['caching_information'], empty($detected_list) ? $txt['detected_no_caching'] : implode('<br>', $detected_list));
 
 	// Prepare the template.
 	prepareDBSettingContext($config_vars);
@@ -503,7 +509,7 @@ function ModifyLoadBalancingSettings($return_config = false)
 				$_POST[$key] = '2.0';
 		}
 
-		saveDBSettings($config_vars);
+		saveSettings($config_vars);
 		redirectexit('action=admin;area=serversettings;sa=loads;' . $context['session_query']);
 	}
 
@@ -534,7 +540,7 @@ function ModifyProxySettings($return_config = false)
 				unset($_POST['reverse_proxy_ips'][$k]);
 		$_POST['reverse_proxy_ips'] = implode(',', $_POST['reverse_proxy_ips']);
 
-		saveDBSettings($config_vars);
+		saveSettings($config_vars);
 
 		// We have to manually force the clearing of the cache otherwise the changed settings might not get noticed.
 		$settings['cache_enable'] = 1;
@@ -858,7 +864,7 @@ function saveSettings(&$config_vars)
 {
 	global $context;
 
-	// Fix the darn stupid cookiename! (more may not be allowed, but these for sure!)
+	// Fix the darn stupid cookiename! (More may not be allowed, but these for sure!)
 	if (isset($_POST['cookiename']))
 		$_POST['cookiename'] = preg_replace('~[,;\s.$]+~u', '', $_POST['cookiename']);
 
@@ -872,8 +878,6 @@ function saveSettings(&$config_vars)
 		if (substr($_POST['boardurl'], 0, 7) != 'http://' && substr($_POST['boardurl'], 0, 7) != 'file://' && substr($_POST['boardurl'], 0, 8) != 'https://')
 			$_POST['boardurl'] = 'http://' . $_POST['boardurl'];
 	}
-
-	foreach ($config_vars as $setting)
 
 	// Now sort everything into a big array, and figure out arrays and etc.
 	$new_settings = array();
@@ -890,6 +894,9 @@ function saveSettings(&$config_vars)
 		if ($type == 'password' && isset($_POST[$name][1]) && $_POST[$name][0] == $_POST[$name][1])
 			$new_settings[$name] = '\'' . addcslashes($_POST[$name][0], '\'\\') . '\'';
 
+		if ($type == 'select' && isset($_POST[$name]) && isset($config_var[2][$_POST[$name]]))
+			$new_settings[$name] = '\'' . addcslashes($_POST[$name], '\'\\') . '\'';
+
 		elseif (($type == 'text' || $type == 'email') && isset($_POST[$name]))
 			$new_settings[$name] = '\'' . addcslashes($_POST[$name], '\'\\') . '\'';
 
@@ -902,7 +909,9 @@ function saveSettings(&$config_vars)
 
 	// Save the relevant settings in the Settings.php file.
 	loadSource('Subs-Admin');
-	updateSettingsFile($new_settings);
+
+	if (!empty($new_settings))
+		updateSettingsFile($new_settings);
 
 	// Now loopt through the remaining (database-based) settings.
 	$new_settings = array();

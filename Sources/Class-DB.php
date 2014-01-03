@@ -668,7 +668,9 @@ class wesql
 
 	public static function fetch_all($result)
 	{
-		if (function_exists('mysqli_fetch_all')) // mysqlnd enabled?
+		if ($result === false)
+			return array();
+		if (function_exists('mysqli_fetch_all')) // mysqlnd enabled, valid request?
 			return (array) mysqli_fetch_all($result, MYSQLI_ASSOC);
 		$arr = array();
 		while ($row = mysqli_fetch_assoc($result))
@@ -678,6 +680,8 @@ class wesql
 
 	public static function fetch_rows($result)
 	{
+		if ($result === false)
+			return array();
 		if (function_exists('mysqli_fetch_all'))
 			return (array) mysqli_fetch_all($result, MYSQLI_NUM);
 		$arr = array();

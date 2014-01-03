@@ -72,7 +72,7 @@ function Credits()
 		array(
 			'title' => $txt['credits_special'],
 			'members' => array(
-				'Dismal Shadow (Edwin Mendez)',
+				'Pandos (Sven Rissmann)',
 				'MultiformeIngegno (Lorenzo Raffio)',
 				'[Unknown] &amp; Karl Benson',
 				'Norodo',

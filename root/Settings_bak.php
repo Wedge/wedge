@@ -19,6 +19,7 @@ $mbname = 'My Community';						# The name of your forum.
 $boardurl = 'http://127.0.0.1/wedge';			# URL to your forum's folder. (without the trailing /!)
 $webmaster_email = 'noreply@myserver.com';		# Email address to send emails from. (like noreply@yourdomain.com.)
 $cookiename = 'WedgeCookie01';					# Name of the cookie to set for authentication.
+$cache_type = 'file';
 
 ########## Database Info ##########
 $db_server = 'localhost';

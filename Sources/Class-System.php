@@ -363,7 +363,7 @@ class we
 					)
 				);
 				$restrict = array();
-				$in_lists = array_combine(array_keys($temp['lists']), array_fill(0, count($temp['lists']), $id_member));
+				$in_lists = count($temp['lists']) ? array_combine(array_keys($temp['lists']), array_fill(0, count($temp['lists']), $id_member)) : array();
 				while ($row = wesql::fetch_assoc($request))
 				{
 					if ($row['list_type'] === 'restrict')

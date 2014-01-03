@@ -343,7 +343,7 @@ function ModifySpamSettings($return_config = false)
 			$_POST['qa_verification_number'] = $count_questions;
 
 		// Now save.
-		saveDBSettings($config_vars);
+		saveSettings($config_vars);
 
 		redirectexit('action=admin;area=antispam');
 	}
@@ -437,7 +437,7 @@ function ModifyLogSettings($return_config = false)
 		else
 			$_POST['pruningOptions'] = '';
 
-		saveDBSettings($savevar);
+		saveSettings($savevar);
 		redirectexit('action=admin;area=logs;sa=settings');
 	}
 
@@ -503,7 +503,7 @@ function ModifyPmSettings($return_config = false)
 			$save_vars[] = array('text', 'pm_spam_settings');
 		}
 
-		saveDBSettings($save_vars);
+		saveSettings($save_vars);
 
 		writeLog();
 		redirectexit('action=admin;area=pm');
@@ -724,7 +724,7 @@ function ModifySettingsPageHandler($return_config = false, $plugin_id = null)
 	{
 		checkSession();
 
-		saveDBSettings($config_vars);
+		saveSettings($config_vars);
 		redirectexit('action=admin;area=' . $return_area);
 	}
 

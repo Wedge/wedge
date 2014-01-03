@@ -187,7 +187,7 @@ if (!empty($settings['enableCompressedOutput']) && !headers_sent())
 // Register an error handler.
 set_error_handler('error_handler');
 
-// Start the session. (assuming it hasn't already been.)
+// Start the session, if it hasn't already been.
 loadSession();
 
 // What function shall we execute? (done like this for memory's sake.)
