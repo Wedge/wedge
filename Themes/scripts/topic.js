@@ -107,7 +107,6 @@ $(window).load(function ()
 	if (!is_touch && !can_sticky && (!poster_css_top || !(is_ie6 || is_ie7)))
 	{
 		$(window).on('scroll resize', follow_me);
-		$('.poster>div').css('position', 'relative');
 		follow_me();
 	}
 
