@@ -285,7 +285,7 @@ class westr extends westr_mb
 
 	static function nl2br($string)
 	{
-		return preg_replace('~(\r\n|\r|\n)~', '<br>$1', $string);
+		return nl2br($string, false);
 	}
 
 	/**

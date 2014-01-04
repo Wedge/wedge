@@ -233,12 +233,17 @@ function loadSource($source_name)
 		if (isset($done[$file]))
 			continue;
 		$done[$file] = true;
-		$cache = $cachedir . '/php/' . str_replace(array('/', '..'), array('_', 'UP'), $file) . '.php';
-		if (!file_exists($cache) || filemtime($cache) < filemtime($sourcedir . '/' . $file . '.php'))
+		if (strpos($file, 'getid3') !== false)
+			$cache = $sourcedir . '/' . $file . '.php';
+		else
 		{
-			copy($sourcedir . '/' . $file . '.php', $cache);
-			if (empty($db_show_debug)) // !! Temporary. Disabling to get proper line numbers when debugging.
-				minify_php($cache);
+			$cache = $cachedir . '/php/' . str_replace(array('/', '..'), array('_', 'UP'), $file) . '.php';
+			if (!file_exists($cache) || filemtime($cache) < filemtime($sourcedir . '/' . $file . '.php'))
+			{
+				copy($sourcedir . '/' . $file . '.php', $cache);
+				if (empty($db_show_debug)) // !! Temporary. Disabling to get proper line numbers when debugging.
+					minify_php($cache);
+			}
 		}
 		require_once($cache);
 	}

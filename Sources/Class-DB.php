@@ -417,12 +417,12 @@ class wesql
 		// Show an error message, if possible.
 		$context['error_title'] = $txt['database_error'];
 		if (allowedTo('admin_forum'))
-			$context['error_message'] = preg_replace('~(\r\n|\r|\n)~', '<br>$1', $query_error) . '<br>' . $txt['file'] . ': ' . $file . '<br>' . $txt['line'] . ': ' . $line;
+			$context['error_message'] = nl2br($query_error, false) . '<br>' . $txt['file'] . ': ' . $file . '<br>' . $txt['line'] . ': ' . $line;
 		else
 			$context['error_message'] = $txt['try_again'];
 
 		if (allowedTo('admin_forum') && !empty($db_show_debug))
-			$context['error_message'] .= '<br><br>' . preg_replace('~(\r\n|\r|\n)~', '<br>$1', $db_string);
+			$context['error_message'] .= '<br><br>' . nl2br($db_string, false);
 
 		// It's already been logged... don't log it again.
 		fatal_error($context['error_message'], false);
