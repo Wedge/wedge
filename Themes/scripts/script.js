@@ -34,7 +34,7 @@ var
 	is_safari = is_webkit && !is_chrome && !is_android && !is_ios,
 
 	// This should allow us to catch more touch devices like smartphones and tablets...
-	is_touch = 'ontouchstart' in document.documentElement,
+	is_touch = 'ontouchstart' in window || typeof window.Touch === 'object',
 
 	is_opera = ua('opera'),
 
@@ -135,7 +135,9 @@ function reqWin(from, desired_width, string, modal_type, callback, e)
 				});
 
 			$(this).css({ left: (viewport_width - $(this).width()) / 2, top: (viewport_height - $(this).height()) / 2 }).ds();
-			$('#popup,#helf').addClass('show');
+
+			// For some reason, if this isn't postponed by at least 3ms, #popup transitions are ignored, at least in Chrome. Don't ask me.
+			setTimeout(function () { $('#popup,#helf').addClass('show'); }, 10);
 		};
 
 	// Try and get the title for the current link.
@@ -1085,6 +1087,7 @@ function JumpTo(control)
 
 
 @if member
+	// *** Generic privacy dropdown
 	function PrivacySelector(privacy, privacy_public, privacy_members, privacy_author)
 	{
 		var s, p, pr = '<option value="' + privacy_public + '"' + (privacy == privacy_public ? ' selected' : '') + '>&lt;div class="privacy_public"&gt;&lt;/div&gt;' + $txt['privacy_public'] + '</option>';
