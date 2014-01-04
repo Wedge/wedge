@@ -436,7 +436,7 @@ function weEditor(opt)
 		}
 		// Otherwise we need to do a whole image...
 		else
-			this.insertText('<img alt="' + oSmileyProperties[0].php_htmlspecialchars() + '" class="smiley ' + oSmileyProperties[1] + '" src="' + we_theme_url + '/images/blank.gif" onresizestart="return false;" title="' + oSmileyProperties[2].php_htmlspecialchars() + '">');
+			this.insertText('<img alt="' + oSmileyProperties[0].php_htmlspecialchars() + '" class="smiley ' + oSmileyProperties[1] + '" src="' + we_assets + '/blank.gif" onresizestart="return false;" title="' + oSmileyProperties[2].php_htmlspecialchars() + '">');
 	};
 
 	this.handleButtonClick = function (oButtonProperties)

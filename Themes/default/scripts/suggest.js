@@ -19,7 +19,7 @@ function weAutoSuggest(oOptions)
 	// Store the handle to the text box.
 	var oText = $('#' + this.opt.sControlId), that = this;
 
-	this.opt.sItemTemplate = this.opt.sItemTemplate || '<input type="hidden" name="%post_name%[]" value="%item_id%"><a href="%item_href%" class="extern" onclick="window.open(this.href, \'_blank\'); return false;">%item_name%</a>&nbsp;<img src="%images_url%/pm_recipient_delete.gif" alt="%delete_text%" title="%delete_text%"> &nbsp; ';
+	this.opt.sItemTemplate = this.opt.sItemTemplate || '<input type="hidden" name="%post_name%[]" value="%item_id%"><a href="%item_href%" class="extern" onclick="window.open(this.href, \'_blank\'); return false;">%item_name%</a>&nbsp;<img src="%assets_url%/pm_recipient_delete.gif" alt="%delete_text%" title="%delete_text%"> &nbsp; ';
 
 	this.oTextHandle = oText;
 	this.oSuggestDivHandle = null;
@@ -264,7 +264,7 @@ weAutoSuggest.prototype.addItemLink = function (sItemId, sItemName, bFromSubmit)
 				item_id: sItemId,
 				item_href: weUrl((this.opt.sURLMask || 'action=profile;u=%item_id%').wereplace({ item_id: sItemId })),
 				item_name: sItemName,
-				images_url: we_theme_url + '/images',
+				assets_url: we_assets,
 				delete_text: this.opt.sTextDeleteItem || $txt['autosuggest_delete_item']
 			})
 		).appendTo(this.oItemList);

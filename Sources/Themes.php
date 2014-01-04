@@ -152,7 +152,7 @@ function ThemeAdmin()
 
 		// Can we create a new theme?
 		$context['can_create_new'] = is_writable($boarddir . '/Themes');
-		$context['new_theme_dir'] = substr(realpath($boarddir . '/Themes/default'), 0, -7);
+		$context['new_theme_dir'] = substr(realpath($boarddir . '/Themes'), 0, -7);
 
 		// Look for a non-existent theme directory. (i.e. theme87.)
 		$theme_dir = $boarddir . '/Themes/theme';

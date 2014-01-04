@@ -2525,7 +2525,7 @@ class wedit
 		},
 		sSmileyRowTemplate: ' . JavaScriptEscape('<div>%smileyRow%</div>') . ',
 		sSmileyTemplate: ' . (we::is('ie') ? JavaScriptEscape('<div class="smiley %smileySource% smpost" title="%smileyDesc%" id="%smileyId%"><img src="')
-			. ' + we_theme_url + \'/images/blank.gif\' + ' . JavaScriptEscape('" class="%smileySource%" /></div>')
+			. ' + we_assets + \'/blank.gif\' + ' . JavaScriptEscape('" class="%smileySource%" /></div>')
 			: JavaScriptEscape('<div class="smiley %smileySource% smpost" title="%smileyDesc%" id="%smileyId%"></div>')) . ',
 		sSmileyBoxTemplate: ' . JavaScriptEscape('<div class="inline-block">%smileyRows%<div class="more"></div></div> <div class="inline-block">%moreSmileys%</div>') . ',
 		sMoreSmileysTemplate: ' . JavaScriptEscape('<a href="#" id="%moreSmileysId%">[' . (!empty($this->smileys['postform']) ? $txt['more_smileys'] : $txt['more_smileys_pick']) . ']</a>') . ',
@@ -2616,13 +2616,13 @@ class wedit
 		sContainer: ' . JavaScriptEscape($bbccontainer) . ',
 		sButtonClickHandler: function (o) { oEditorHandle_' . $this->id . '.handleButtonClick(o); },
 		sSelectChangeHandler: function (o) { oEditorHandle_' . $this->id . '.handleSelectChange(o); },
-		sSprite: we_theme_url + \'/images/bbc/sprite.png\',
+		sSprite: we_assets + \'/bbc/sprite.png\',
 		aButtonRows: ['
 			. $js . '
 		],
 		sButtonTemplate: ' . (we::is('ie') ? JavaScriptEscape(
 			'<div class="bbc_button" id="%buttonId%"><div style="background: url(%buttonSrc%) -%posX%px -%posY%px no-repeat" title="%buttonDescription%">
-				<img id="%buttonId%" src="') . ' + we_theme_url + \'/images/blank.gif\' + '
+				<img id="%buttonId%" src="') . ' + we_assets + \'/blank.gif\' + '
 			. JavaScriptEscape('" align="bottom" width="23" height="22" alt="%buttonDescription%" title="%buttonDescription%" /></div></div>') : JavaScriptEscape(
 			'<div class="bbc_button" id="%buttonId%"><div style="background: url(%buttonSrc%) -%posX%px -%posY%px no-repeat" title="%buttonDescription%"></div></div>')
 		) . ',

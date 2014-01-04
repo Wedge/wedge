@@ -440,7 +440,7 @@ function template_ssi_above()
 <body>
 	<div id="header"><div class="frame">
 		<div id="top_section">
-			<img id="wedgelogo" src="Themes/default/images/wefoot2.png" alt="Wedge" title="Wedge">
+			<img id="wedgelogo" src="assets/wefoot2.png" alt="Wedge" title="Wedge">
 			<h1 class="forumtitle">Wedge SSI.php Examples</h1>
 			<br class="clear">
 		</div>

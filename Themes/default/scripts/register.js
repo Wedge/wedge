@@ -210,7 +210,7 @@ function weRegister(formID, passwordDifficultyLevel)
 	function setVerificationImage($imageHandle, imageIcon, alt)
 	{
 		$imageHandle.attr({
-			src: we_theme_url + '/images/icons/' + (imageIcon ? (imageIcon == 'check' ? 'field_check' : 'field_valid') : 'field_invalid') + '.gif',
+			src: we_assets + '/icons/' + (imageIcon ? (imageIcon == 'check' ? 'field_check' : 'field_valid') : 'field_invalid') + '.gif',
 			alt: alt,
 			title: alt
 		});

@@ -193,7 +193,7 @@ function load_lang_file()
 
 	$original_txt = $txt;
 	// Make sure the languages directory actually exists.
-	$folder = dirname(__FILE__) . '/Themes/default/languages';
+	$folder = dirname(__FILE__) . '/Themes/languages';
 	if (file_exists($folder))
 	{
 		// Find all the "Install" language files in the directory.
@@ -205,7 +205,7 @@ function load_lang_file()
 				$txt = array();
 				require_once($folder . '/index.' . substr($entry, 8));
 				if (!empty($txt['lang_name']))
-					$incontext['detected_languages'][$entry] = '&lt;img src="Themes/default/languages/Flag.' . substr($entry, 8, strlen($entry) - 12) . '.png"&gt; ' . $txt['lang_name'];
+					$incontext['detected_languages'][$entry] = '&lt;img src="Themes/languages/Flag.' . substr($entry, 8, strlen($entry) - 12) . '.png"&gt; ' . $txt['lang_name'];
 			}
 		$dir->close();
 	}
@@ -230,7 +230,7 @@ function load_lang_file()
 
 		<p>This installer was unable to find the installer\'s language file or files. They should be found under:</p>
 
-		<div style="margin: 1ex; font-family: monospace; font-weight: bold">', dirname($_SERVER['PHP_SELF']) != '/' ? dirname($_SERVER['PHP_SELF']) : '', '/Themes/default/languages</div>
+		<div style="margin: 1ex; font-family: monospace; font-weight: bold">', dirname($_SERVER['PHP_SELF']) != '/' ? dirname($_SERVER['PHP_SELF']) : '', '/Themes/languages</div>
 
 		<p>In some cases, FTP clients do not properly upload files with this many folders. Please double check to make sure you <strong>have uploaded all the files in the distribution</strong>.</p>
 		<p>If that doesn\'t help, please make sure this install.php file is in the same place as the Themes folder.</p>
@@ -248,7 +248,7 @@ function load_lang_file()
 		$_SESSION['installer_temp_lang'] = $GLOBALS['HTTP_GET_VARS']['lang_file'];
 
 	// Make sure it exists, if it doesn't reset it.
-	if (!isset($_SESSION['installer_temp_lang']) || preg_match('~[^.\w-]~', $_SESSION['installer_temp_lang']) === 1 || !file_exists(dirname(__FILE__) . '/Themes/default/languages/' . $_SESSION['installer_temp_lang']))
+	if (!isset($_SESSION['installer_temp_lang']) || preg_match('~[^.\w-]~', $_SESSION['installer_temp_lang']) === 1 || !file_exists(dirname(__FILE__) . '/Themes/languages/' . $_SESSION['installer_temp_lang']))
 	{
 		if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE']))
 		{
@@ -292,9 +292,9 @@ function load_lang_file()
 	}
 
 	// And now include the actual language file itself.
-	require_once(dirname(__FILE__) . '/Themes/default/languages/Install.english.php');
+	require_once(dirname(__FILE__) . '/Themes/languages/Install.english.php');
 	if ($_SESSION['installer_temp_lang'] != 'Install.english.php')
-		require_once(dirname(__FILE__) . '/Themes/default/languages/' . $_SESSION['installer_temp_lang']);
+		require_once(dirname(__FILE__) . '/Themes/languages/' . $_SESSION['installer_temp_lang']);
 }
 
 // This handy function loads some settings and the like.
@@ -468,7 +468,7 @@ function CheckFilesWritable()
 		'Settings_bak.php'
 	);
 	foreach ($incontext['detected_languages'] as $lang => $temp)
-		$extra_files[] = 'Themes/default/languages/' . $lang;
+		$extra_files[] = 'Themes/languages/' . $lang;
 
 	// With mod_security installed, we could attempt to fix it with .htaccess.
 	if (function_exists('apache_get_modules') && in_array('mod_security', apache_get_modules()))
@@ -1936,8 +1936,8 @@ function template_install_above()
 	$boardurl = 'http' . (!empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) != 'off' ? 's' : '') . '://' . $host;
 	$boardurl .= substr($_SERVER['REQUEST_URI'], 0, strrpos($_SERVER['REQUEST_URI'], '/'));
 
-	$settings['theme_dir'] = $boarddir . '/Themes/default';
-	$settings['theme_url'] = $boardurl . '/Themes/default';
+	$settings['theme_dir'] = $boarddir . '/Themes';
+	$settings['theme_url'] = $boardurl . '/Themes';
 
 	// Define our constants. (cf. QueryString.php)
 	define('ROOT', $boardurl);
