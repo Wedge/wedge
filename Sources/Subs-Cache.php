@@ -630,7 +630,6 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 		'$theme_dir' => TEMPLATES_DIR,
 		'$root_dir' => ROOT_DIR,
 		'$images' => $relative_root . str_replace(ROOT, '', ASSETS),
-		'$theme' => $relative_root . str_replace(ROOT, '', TEMPLATES),
 		'$root' => $relative_root,
 	);
 	if (!empty($additional_vars))
@@ -809,13 +808,12 @@ function dynamic_language_flags()
 	$rep = '';
 	foreach ($context['languages'] as $language)
 	{
-		// !! @todo: replace $theme with $root
-		$icon = '/languages/Flag.' . $language['filename'] . '.png';
+		$icon = '/Themes/languages/Flag.' . $language['filename'] . '.png';
 		$rep .= '
 .flag_' . $language['filename'] . ' mixes .inline-block("")
-	background: url($theme'. $icon . ') no-repeat 0 center
-	padding-left: math(width($theme_dir'. $icon . ') + 6px)
-	min-height: height($theme_dir'. $icon . ')px';
+	background: url($root'. $icon . ') no-repeat 0 center
+	padding-left: math(width($root_dir'. $icon . ') + 6px)
+	min-height: height($root_dir'. $icon . ')px';
 	}
 	return $rep;
 }

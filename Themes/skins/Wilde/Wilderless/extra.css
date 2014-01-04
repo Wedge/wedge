@@ -36,10 +36,10 @@ body
 	display: block
 	width: auto
 	padding: 8px 12px
-	min-height: 60px
+	min-height: 40px
 	if !chrome || !mobile
 		top: 0
-		position: sticky // If the browser supports it, it's all for the best!
+		position: sticky // If the browser supports it properly, it's all for the best!
 	@endif
 	background: #edefed // Add a bit of contrast...
 
