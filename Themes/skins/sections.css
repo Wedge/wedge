@@ -315,6 +315,10 @@ hr.sep
 
 	> div
 		width: 100%
+		top: 6px
+		@if $can_sticky || chrome
+			position: @is (ios, -prefix-sticky, sticky)
+		@endif
 
 	h4
 		padding: 3px 0 3px 16px // 19px originally.

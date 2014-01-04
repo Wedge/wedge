@@ -9,8 +9,16 @@
 
 @language index;
 
+var can_sticky;
+
 $(function ()
 {
+	// Test for position: sticky support. WebKit in iOS 6+ supports it prefixed; other supporting browsers don't use a prefix.
+	var test_sticky = document.createElement('div');
+	test_sticky.style.position = '-webkit-sticky';
+	test_sticky.style.position = 'sticky';
+	can_sticky = test_sticky.style.position.indexOf('sticky') >= 0;
+
 	// Anything that should be run when coming back to the tab, too.
 	$(document).on('visibilitychange msvisibilitychange mozvisibilitychange webkitvisibilitychange', page_showing);
 	page_showing();
@@ -41,7 +49,7 @@ $(window).load(function ()
 	// We need padding values, to ensure the user box doesn't go beyond acceptable boundaries.
 	var
 		$first_post = $('.poster').first(),
-		poster_padding_top = parseInt($first_post.css('paddingTop')),
+		poster_css_top = parseInt($first_post.find('>div').css('top')),
 		poster_padding_bot = parseInt($first_post.css('paddingBottom')),
 		sep_height = $('hr.sep').first().outerHeight(),
 		follow_me = function ()
@@ -63,7 +71,7 @@ $(window).load(function ()
 				offset = $poster.offset();
 				poster_top = offset.top;
 				poster_height = $poster.height();
-				if (top < poster_top + poster_height + poster_padding_top + poster_padding_bot + sep_height)
+				if (top < poster_top + poster_height + poster_css_top + poster_padding_bot + sep_height)
 					return false;
 			});
 
@@ -77,7 +85,6 @@ $(window).load(function ()
 			else if (top >= poster_top + poster_height - col_height)
 				$col.css({
 					position: '',
-					top: '',
 					left: '',
 					paddingTop: poster_height - col_height
 				});
@@ -85,30 +92,23 @@ $(window).load(function ()
 			else
 				$col.css({
 					position: 'fixed',
-					top: poster_padding_top,
 					left: offset.left,
 					paddingTop: 0
 				});
 
 			$('.poster>div').not($col).css({
 				position: '',
-				top: '',
 				left: '',
 				paddingTop: 0
 			});
 		};
 
-	if (!is_touch)
+	// If user box has no top, chances are it doesn't want this effect anyway.
+	if (!is_touch && !can_sticky && (!poster_css_top || !(is_ie6 || is_ie7)))
 	{
-		// Once the page is loaded, we lock user box sizes, to prevent breaking the effect.
-		$('.poster>div,.poster').css('min-height', 0).each(function () { $(this).width($(this).width()).css('min-height', $(this).height()); });
-
-		// If user box has no padding, chances are it doesn't want this effect anyway.
-		if (!isNaN(poster_padding_top) && !is_ie6 && !is_ie7)
-		{
-			$(window).on('scroll resize', follow_me);
-			follow_me();
-		}
+		$(window).on('scroll resize', follow_me);
+		$('.poster>div').css('position', 'relative');
+		follow_me();
 	}
 
 	@if member
@@ -178,7 +178,7 @@ $(window).load(function ()
 			// Move all posts at the same (DOM) level as their predecessors, and fade them in.
 			$new_page.children().hide().fadeIn(800).first().unwrap();
 
-			// Prepare all new posts for follow_me.
+			// Prepare all new posts for follow_me and relative dates.
 			page_showing();
 		}
 	});
@@ -189,7 +189,7 @@ function page_showing()
 	if (document.hidden || document.webkitHidden || document.msHidden || document.mozHidden)
 		return;
 
-	if (!is_touch)
+	if (!is_touch && !can_sticky)
 		$('.poster>div,.poster').css('min-height', 0).each(function () { $(this).width($(this).width()).css('min-height', $(this).height()); });
 
 	// Relative timestamps!
