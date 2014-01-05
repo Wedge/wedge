@@ -242,7 +242,7 @@ function Feed()
 	);
 
 	// You can plug into this, too!
-	add_hook('feed', array(&$subActions, &$query_this));
+	call_hook('feed', array(&$subActions, &$query_this));
 
 	if (empty($_GET['sa']) || !isset($subActions[$_GET['sa']]))
 		$_GET['sa'] = 'recent';
