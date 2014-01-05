@@ -46,8 +46,8 @@ function template_login()
 				<dl>
 					<dt>', $txt['mins_logged_in'], ':</dt>
 					<dd><input name="cookielength" size="4" maxlength="4" value="', $settings['cookieTime'], '"', $context['never_expire'] ? ' disabled' : '', '></dd>
-					<dt>', $txt['always_logged_in'], ':</dt>
-					<dd><input type="checkbox" name="cookieneverexp"', $context['never_expire'] ? ' checked' : '', ' onclick="this.form.cookielength.disabled = this.checked;"></dd>';
+					<dt><label for="neverexp">', $txt['always_logged_in'], ':</label></dt>
+					<dd><input type="checkbox" name="cookieneverexp" id="neverexp"', $context['never_expire'] ? ' checked' : '', ' onclick="this.form.cookielength.disabled = this.checked;"></dd>';
 
 	// If they have deleted their account, give them a chance to change their mind.
 	if (isset($context['login_show_undelete']))

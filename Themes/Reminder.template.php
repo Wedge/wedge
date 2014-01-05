@@ -19,13 +19,10 @@ function template_main()
 			<we:cat>
 				', $txt['authentication_reminder'], '
 			</we:cat>
+			<p class="information">', $txt['password_reminder_desc'], '</p>
 			<div class="roundframe">
-				<p class="smalltext center">', $txt['password_reminder_desc'], '</p>
-				<dl>
-					<dt>', $txt['user_email'], ':</dt>
-					<dd><input name="user" size="30"></dd>
-				</dl>
-				<p class="center"><input type="submit" value="', $txt['reminder_continue'], '" class="submit"></p>
+				<p><strong>', $txt['user_email'], '</strong>: <input name="user" size="30"></p>
+				<p><input type="submit" value="', $txt['reminder_continue'], '" class="submit"></p>
 			</div>
 		</div>
 		<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
@@ -129,7 +126,7 @@ function template_ask()
 				', $txt['authentication_reminder'], '
 			</we:cat>
 			<div class="roundframe">
-				<p class="smalltext">', $txt['enter_new_password'], '</p>
+				<p>', $txt['enter_new_password'], '</p>
 				<dl>
 					<dt>', $txt['secret_question'], ':</dt>
 					<dd>', $context['secret_question'], '</dd>

@@ -136,8 +136,7 @@ function reqWin(from, desired_width, string, modal_type, callback, e)
 
 			$(this).css({ left: (viewport_width - $(this).width()) / 2, top: (viewport_height - $(this).height()) / 2 }).ds();
 
-			// For some reason, if this isn't postponed by at least 3ms, #popup transitions are ignored, at least in Chrome. Don't ask me.
-			setTimeout(function () { $('#popup,#helf').addClass('show'); }, 10);
+			$('#popup,#helf').addClass('show');
 		};
 
 	// Try and get the title for the current link.

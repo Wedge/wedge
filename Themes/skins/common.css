@@ -174,5 +174,5 @@ $can_animate = @is ("chrome, firefox[5-], opera[12-], ie[10-], safari[4-], ios[3
 /* List browsers that support CSS filters (not the old IE ones!). Note that Firefox[3.5-] supports filter: url() with SVG filters. */
 $can_filter = @is ("chrome[18-], safari[6-]")
 
-/* List browsers that support position: sticky. iOS needs a prefix, others do not. Chrome and Opera Blink support it as of Nov 2013, but through a flag. */
+/* List browsers that support position: sticky. iOS needs a prefix, others do not. Firefox 27+, Chrome and Opera Blink support it as of Jan 2014, but through a flag. */
 $can_sticky = @is ("ios[6-], firefox[27-]")

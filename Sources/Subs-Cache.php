@@ -1585,7 +1585,7 @@ function wedge_parse_skin_options($skin_options)
  */
 function clean_cache($extensions = 'php', $filter = '', $force_folder = '', $remove_folder = false)
 {
-	global $cache_type, $cachedir, $cssdir, $jsdir;
+	global $cache_system, $cachedir, $cssdir, $jsdir;
 
 	$folder = $cachedir;
 	$is_recursive = false;
@@ -1623,20 +1623,19 @@ function clean_cache($extensions = 'php', $filter = '', $force_folder = '', $rem
 	// If we're emptying the regular cache, chances are we also want to reset non-file-based cached data if possible.
 	if ($folder == $cachedir)
 	{
-		if (empty($cache_type))
-			cache_get_type();
-		if ($cache_type === 'apc')
+		cache_get_type();
+		if ($cache_system === 'apc')
 			apc_clear_cache('user');
-		elseif ($cache_type === 'memcached')
+		elseif ($cache_system === 'memcached')
 			$val = memcache_flush(get_memcached_server());
-		elseif ($cache_type === 'xcache' && function_exists('xcache_clear_cache'))
+		elseif ($cache_system === 'xcache' && function_exists('xcache_clear_cache'))
 		{
 			for ($i = 0; $i < xcache_count(XC_TYPE_VAR); $i++)
 				xcache_clear_cache(XC_TYPE_VAR, $i);
 		}
-		elseif ($cache_type === 'zend' && function_exists('zend_shm_cache_clear'))
+		elseif ($cache_system === 'zend' && function_exists('zend_shm_cache_clear'))
 			zend_shm_cache_clear('we');
-		elseif ($cache_type === 'zend' && ($zend_cache_folder = ini_get('zend_accelerator.output_cache_dir')))
+		elseif ($cache_system === 'zend' && ($zend_cache_folder = ini_get('zend_accelerator.output_cache_dir')))
 			clean_cache('', '', $zend_cache_folder . '/.php_cache_api');
 
 		// Also get the source cache!
@@ -1732,7 +1731,7 @@ function cache_quick_get($key, $file, $function, $params, $level = 1)
  */
 function cache_put_data($key, $val, $ttl = 120)
 {
-	global $settings, $cache_type, $cache_hits, $cache_count, $db_show_debug, $cachedir;
+	global $settings, $cache_system, $cache_hits, $cache_count, $db_show_debug, $cachedir;
 
 	if (empty($settings['cache_enable']) && !empty($settings))
 		return;
@@ -1745,13 +1744,12 @@ function cache_put_data($key, $val, $ttl = 120)
 	if ($val !== null)
 		$val = serialize($val);
 
-	if (empty($cache_type))
-		cache_get_type();
+	cache_get_type();
 
 	// The simple yet efficient memcached.
-	if ($cache_type === 'memcached')
+	if ($cache_system === 'memcached')
 		memcache_set(get_memcached_server(), $key, $val, 0, $ttl);
-	elseif ($cache_type === 'apc')
+	elseif ($cache_system === 'apc')
 	{
 		// An extended key is needed to counteract a bug in APC.
 		if ($val === null)
@@ -1759,11 +1757,11 @@ function cache_put_data($key, $val, $ttl = 120)
 		else
 			apc_store($key . 'wedge', $val, $ttl === PHP_INT_MAX ? 0 : $ttl);
 	}
-	elseif ($cache_type === 'zend' && function_exists('zend_shm_cache_store'))
+	elseif ($cache_system === 'zend' && function_exists('zend_shm_cache_store'))
 		zend_shm_cache_store('we::' . $key, $val, $ttl);
-	elseif ($cache_type === 'zend' && function_exists('output_cache_put'))
+	elseif ($cache_system === 'zend' && function_exists('output_cache_put'))
 		output_cache_put($key, $val);
-	elseif ($cache_type === 'xcache')
+	elseif ($cache_system === 'xcache')
 	{
 		if ($val === null)
 			xcache_unset($key);
@@ -1800,7 +1798,7 @@ function cache_put_data($key, $val, $ttl = 120)
  */
 function cache_get_data($orig_key, $ttl = 120, $put_callback = null)
 {
-	global $settings, $cache_type, $cache_hits, $cache_count, $db_show_debug, $cachedir;
+	global $settings, $cache_system, $cache_hits, $cache_count, $db_show_debug, $cachedir;
 
 	if (empty($settings['cache_enable']) && !empty($settings))
 		return;
@@ -1810,18 +1808,17 @@ function cache_get_data($orig_key, $ttl = 120, $put_callback = null)
 	if ($ttl === 'forever')
 		$ttl = PHP_INT_MAX;
 
-	if (empty($cache_type))
-		cache_get_type();
+	cache_get_type();
 
-	if ($cache_type === 'memcached')
+	if ($cache_system === 'memcached')
 		$val = memcache_get(get_memcached_server(), $key);
-	elseif ($cache_type === 'apc')
+	elseif ($cache_system === 'apc')
 		$val = apc_fetch($key . 'wedge');
-	elseif ($cache_type === 'zend' && function_exists('zend_shm_cache_fetch'))
+	elseif ($cache_system === 'zend' && function_exists('zend_shm_cache_fetch'))
 		zend_shm_cache_fetch('we::' . $key);
-	elseif ($cache_type === 'zend' && function_exists('output_cache_get'))
+	elseif ($cache_system === 'zend' && function_exists('output_cache_get'))
 		$val = output_cache_get($key, $ttl);
-	elseif ($cache_type === 'xcache')
+	elseif ($cache_system === 'xcache')
 		$val = xcache_get($key);
 	// Otherwise it's the file cache!
 	elseif (file_exists($cachedir . '/' . $key . '.php') && @filesize($cachedir . '/' . $key . '.php') > 10)
@@ -1873,7 +1870,10 @@ function cache_prepare_key($key, $val = '', $type = 'get')
 
 function cache_get_type()
 {
-	global $cache_type, $memcached_servers;
+	global $cache_type, $cache_system, $memcached_servers;
+
+	if (isset($cache_system))
+		return;
 
 	if (empty($cache_type))
 		$cache_type = 'file';
@@ -1890,6 +1890,8 @@ function cache_get_type()
 	// Or XCache.
 	elseif ($cache_type === 'xcache' && !(function_exists('xcache_get') && function_exists('xcache_set') && ini_get('xcache.var_size') > 0))
 		$cache_type = 'file';
+
+	$cache_system = $cache_type;
 }
 
 /**

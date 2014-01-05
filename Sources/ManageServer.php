@@ -628,7 +628,6 @@ function FetchPHPInfo($return_config = false)
 	$context['phpinfo'] = substr($context['phpinfo'], 0, strrpos($context['phpinfo'], '</div>'));
 
 	$context['phpinfo'] = strtr($context['phpinfo'], array('class="e">' => 'class="windowbg2">', 'class="v">' => 'class="windowbg">'));
-	$context['phpinfo'] = preg_replace('~<h1>.*?</h1>~i', '', $context['phpinfo']);
 
 	// Now fix me some headers.
 	$context['phpinfo'] = strtr($context['phpinfo'], array('<h2><a' => '<we:cat><a', '</a></h2>' => '</a></we:cat>', '<h2>' => '<we:title>', '</h2>' => '</we:title>'));
@@ -637,6 +636,7 @@ function FetchPHPInfo($return_config = false)
 	// Now make a nice menu out of the headers.
 	preg_match_all('~<a name="([^"]+)">([^<]+)</a>~i', $context['phpinfo'], $matches);
 	$context['toc'] = array_combine($matches[1], $matches[2]);
+	$context['phpinfo'] = preg_replace('~(<a name="[^"]+">)([^<]+)</a>~i', '$1</a>$2', $context['phpinfo']);
 
 	// Time to do some judicious header editing. First, the PHP logo and stuff.
 	$context['php_header_icons'] = array();

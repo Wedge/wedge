@@ -306,7 +306,7 @@ function loadProfileFields($force_reload = false)
 		),
 		'lngfile' => array(
 			'type' => 'select',
-			'options' => function () use ($context) { return $context['profile_languages']; },
+			'options' => function () { global $context; return $context['profile_languages']; },
 			'label' => $txt['preferred_language'],
 			'permission' => 'profile_identity',
 			'preload' => 'profileLoadLanguages',
