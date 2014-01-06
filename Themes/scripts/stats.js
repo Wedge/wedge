@@ -117,7 +117,7 @@ $(function ()
 	$('#range').change(updateRangeFilter).each(function ()
 	{
 		var
-			month = new Date().getMonth(),
+			month = new Date().getMonth() + 1,
 			year = new Date().getFullYear(),
 			target_month = +first_stats.slice(5, 7),
 			target_year = +first_stats.slice(0, 4),
