@@ -288,9 +288,9 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 	if (!isset($context['skin_folders']))
 		wedge_get_skin_options();
 
-	$fallback_folder = $deep_folder = TEMPLATES_DIR . '/';
-	$fallback_folder .= reset($context['css_folders']) . '/';
-	$deep_folder .= end($context['css_folders']) . '/';
+	$fallback_folder = $deep_folder = SKINS_DIR . '/';
+	$fallback_folder = rtrim($fallback_folder . reset($context['css_folders']), '/') . '/';
+	$deep_folder = rtrim($deep_folder . end($context['css_folders']), '/') . '/';
 	$found_suffixes = array();
 	$found_files = array();
 	$css = array();
@@ -381,11 +381,13 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 		}
 	}
 
-	// Now that we have our final css file list, sort it.
+	// Now that we have our final CSS file list, sort it in this order:
+	// skins/index, skins/index.suffix.css, skins/SubSkin/index.css,
+	// skins/sections.css, skins/SubSkin/sections.suffix.css, etc.
 	usort($css, 'sort_skin_files');
 
 	$folder = end($context['css_folders']);
-	$id = $folder === basename(SKINS_DIR) ? '' : str_replace('/', '-', strpos($folder, 'skins/') === 0 ? substr($folder, 6) : $folder);
+	$id = $folder;
 	$latest_date %= 1000000;
 
 	$can_gzip = !empty($settings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
@@ -486,28 +488,30 @@ function add_plugin_css_file($plugin_name, $original_files = array(), $add_link 
 	<link rel="stylesheet" href="' . $final_script . '">';
 }
 
-// This function will sort a CSS file list in this order:
-// skins/index, skins/index.suffix.css, skins/SubSkin/index.css,
-// skins/sections.css, skins/SubSkin/sections.suffix.css, etc.
 function sort_skin_files($a, $b)
 {
-	$x = strrpos($a, '/');
-	$y = strrpos($b, '/');
+	global $context, $files;
 
-	$c = substr($a, $x + 1);
-	$d = substr($b, $y + 1);
+	$c = strrchr($a, '/'); // 3x faster than basename()!
+	$d = strrchr($b, '/');
 
-	$i = substr($c, 0, strpos($c, '.'));
-	$j = substr($d, 0, strpos($d, '.'));
+	$i = substr($c, 1, strpos($c, '.') - 1);
+	$j = substr($d, 1, strpos($d, '.') - 1);
 
 	// Same main file name?
 	if ($i == $j)
 	{
 		// Most top-level folder wins.
-		if ($x > $y)
-			return 1;
-		if ($x < $y)
-			return -1;
+		foreach ($context['css_folders'] as $folder)
+		{
+			$root = SKINS_DIR . ($folder ? '/' . $folder : '');
+			$is_a = $a === $root . $c;
+			$is_b = $b === $root . $d;
+			if ($is_a && !$is_b)
+				return -1;
+			elseif (!$is_a && $is_b)
+				return 1;
+		}
 
 		// Same folder, same starting name? Shortest suffix wins.
 		$x = strlen($c);
@@ -520,7 +524,6 @@ function sort_skin_files($a, $b)
 	}
 
 	// Different file names? First in $files wins.
-	global $files;
 	foreach ($files as $file)
 		if ($i === $file)
 			return -1;
@@ -1422,41 +1425,60 @@ function wedge_get_skin_options($options_only = false)
 	$skin_options = array();
 	$skeleton = $macros = $set = '';
 
-	// We will rebuild the css folder list, in case we have a replace-type skin in our path.
+	// We will rebuild the skin folder list, in case we have a replace-type skin in our path.
+	$root_dir = SKINS_DIR;
 	$context['skin_folders'] = array();
+	$context['template_folders'] = array();
+	$css_folders = array(we::$user['skin'] === '/' ? '' : we::$user['skin']);
 
-	$root_dir = TEMPLATES_DIR;
-	foreach ($context['css_folders'] as &$folder)
+	for ($i = 0; $i < count($css_folders) && $i < 10; $i++)
 	{
-		$fold = $root_dir . '/' . $folder . '/';
+		$folder = $css_folders[$i];
+		$fold = $root_dir . ($folder ? '/' . $folder : '') . '/';
 		$set = '';
 
 		// Remember all of the skeletons we can find.
 		if (file_exists($fold . 'skeleton.xml'))
-			$skeleton .= file_get_contents($fold . '/skeleton.xml');
+			$skeleton .= file_get_contents($fold . 'skeleton.xml');
 
 		// Remember all of the macros we can find.
 		if (file_exists($fold . 'macros.xml'))
-			$macros .= file_get_contents($fold . '/macros.xml');
+			$macros .= file_get_contents($fold . 'macros.xml');
 
 		if (file_exists($fold . 'skin.xml'))
-			$set = file_get_contents($fold . '/skin.xml');
+			$set = file_get_contents($fold . 'skin.xml');
 
 		// custom.xml files can be used to override skin.xml, skeleton.xml and macros.xml...
 		if (file_exists($fold . 'custom.xml'))
 		{
-			$custom = file_get_contents($fold . '/custom.xml');
-			$skeleton .= $custom;
-			$macros .= $custom;
-			$set .= $custom;
+			$custom = file_get_contents($fold . 'custom.xml');
+			$skeleton = $custom . $skeleton;
+			$macros = $custom . $macros;
+			$set = $custom . $set;
 		}
 
-		// If this is a replace-type skin, forget all of the parent folders.
-		if ($set && $folder !== 'skins' && strpos($set, '</type>') !== false && preg_match('~<type>([^<]+)</type>~', $set, $match) && strtolower(trim($match[1])) === 'replace')
-			$context['skin_folders'] = array();
+		// Do we have any custom template folders?
+		if (file_exists($fold . 'templates'))
+			$context['template_folders'][] = $fold . 'templates';
 
 		$context['skin_folders'][] = $fold;
+		if ($set && $folder !== '')
+		{
+			// If this is a replace-type skin, skip all parent folders.
+			if (strpos($set, '</type>') !== false && preg_match('~<type>([^<]+)</type>~', $set, $match) && strtolower(trim($match[1])) === 'replace')
+				break;
+
+			// Has this skin got a parent?
+			$parent = '';
+			if (strpos($set, '</parent>') !== false && preg_match('~<parent>([^<]+)</parent>~', $set, $parent))
+				$parent = trim(trim($parent[1]), '/');
+			$css_folders[] = $parent;
+		}
 	}
+
+	$css_folders = array_reverse($css_folders);
+	$context['css_folders'] = $css_folders;
+	$context['template_folders'][] = TEMPLATES_DIR;
 
 	// $set should now contain the local skin's settings.
 	// First get the skin options, such as <sidebar> position.

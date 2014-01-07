@@ -148,7 +148,7 @@ function ThemeAdmin()
 		$knownThemes = !empty($settings['knownThemes']) ? explode(',', $settings['knownThemes']) : array();
 
 		// Get all skins...
-		$context['themes'][1]['skins'] = wedge_get_skin_list(SKINS_DIR);
+		$context['themes'][1]['skins'] = wedge_get_skin_list();
 
 		// Can we create a new theme?
 		$context['can_create_new'] = is_writable($boarddir . '/Themes');
@@ -368,7 +368,7 @@ function PickTheme()
 		$context['skin_user_counts'][$row[0]] = $row[1];
 	wesql::free_result($request);
 
-	$context['available_themes'] = wedge_get_skin_list(SKINS_DIR);
+	$context['available_themes'] = wedge_get_skin_list();
 	unset($context['skin_user_counts']);
 
 	if (file_exists(LANGUAGES_DIR . '/Settings.' . we::$user['language'] . '.php'))
@@ -1004,99 +1004,78 @@ function CopyTemplate()
 /**
  * Get a list of all skins available for a given theme folder.
  */
-function wedge_get_skin_list($dir, $files = array(), &$root = array(), $force = false)
+function wedge_get_skin_list()
 {
 	global $context;
 
-	$is_root = $dir === SKINS_DIR;
-	if ($is_root && !$force)
-	{
-		$skin_list = cache_get_data('wedge_skin_list', 180);
-		if ($skin_list !== null)
-			return $skin_list;
+	$skin_list = cache_get_data('wedge_skin_list', 180);
+	$skin_list = null;
+	if ($skin_list !== null)
+		return $skin_list;
 
-		// Get the theme name and descriptions.
-		$available_themes = array(
-			'num_users' => isset($context['skin_user_counts']['']) ? $context['skin_user_counts'][''] : 0,
-			'skins' => array(
-				SKINS_DIR . '/Weaving' => array(
-					'name' => 'Weaving',
-					'type' => 'replace',
-					'comment' => '',
-					'num_users' => isset($context['skin_user_counts']['/']) ? $context['skin_user_counts']['/'] : 0,
-					'dir' => '/',
-				),
-			),
-		);
-
-		$available_themes['skins'][SKINS_DIR . '/Weaving']['skins'] = wedge_get_skin_list(SKINS_DIR, array(), $available_themes['skins'], true);
-		cache_put_data('wedge_skin_list', $available_themes, 180);
-		return $available_themes;
-	}
-
-	$skins = array();
-	if ($is_root)
-		$root =& $skins;
-	if (empty($files))
-		$files = glob($dir . '/*', GLOB_ONLYDIR);
+	$files = glob(SKINS_DIR . '/*', GLOB_ONLYDIR);
+	$skin_list = array('' => array(
+		'name' => 'Weaving',
+		'type' => 'replace',
+		'comment' => '',
+		'num_users' => isset($context['skin_user_counts']['/']) ? $context['skin_user_counts']['/'] : 0,
+		'dir' => '/',
+	));
 
 	foreach ($files as $this_dir)
 	{
 		$file = basename($this_dir);
-		if ($file[0] === '.' || !is_dir($this_dir))
+		if ($file[0] === '.')
 			continue;
 
 		$these_files = scandir($this_dir);
-		$is_valid = $has_skin_xml = false;
-		$sub_dirs = array();
+		$is_valid = false;
 		foreach ($these_files as $test)
 		{
-			if (is_dir($this_dir . '/' . $test))
-				$sub_dirs[] = $this_dir . '/' . $test;
-			elseif ($test === 'skin.xml')
-				$has_skin_xml = true;
-			elseif (!$is_valid && substr($test, -4) === '.css')
+			if ($test === 'skin.xml' || substr($test, -4) === '.css')
+			{
 				$is_valid = true;
+				break;
+			}
 		}
 		// We need to have at least one .css file *or* skin.xml for a skin to be valid.
-		if (!$is_valid && !$has_skin_xml)
+		if (!$is_valid)
 			continue;
-		if ($has_skin_xml)
-		{
-			// I'm not actually parsing it XML-style... Mwahaha! I'm evil.
-			$setxml = file_get_contents($this_dir . '/skin.xml');
-			$skin = array(
-				'name' => preg_match('~<name>(?:<!\[CDATA\[)?(.*?)(?:]]>)?</name>~sui', $setxml, $match) ? trim($match[1]) : $file,
-				'type' => preg_match('~<type>(.*?)</type>~sui', $setxml, $match) ? trim($match[1]) : 'add',
-				'comment' => preg_match('~<comment>(?:<!\[CDATA\[)?(.*?)(?:]]>)?</comment>~sui', $setxml, $match) ? trim($match[1]) : '',
-			);
-		}
-		else
-			$skin = array(
-				'name' => $file,
-				'type' => 'add',
-				'comment' => '',
-			);
+
+		// I'm not actually parsing this XML-style... Mwahaha! I'm evil.
+		$setxml = in_array('skin.xml', $these_files) ? file_get_contents($this_dir . '/skin.xml') : '';
+		$skin = array(
+			'name' => $setxml && preg_match('~<name>(?:<!\[CDATA\[)?(.*?)(?:]]>)?</name>~sui', $setxml, $match) ? trim($match[1]) : $file,
+			'type' => $setxml && preg_match('~<type>(.*?)</type>~sui', $setxml, $match) ? trim($match[1]) : 'add',
+			'parent' => $setxml && preg_match('~<parent>(.*?)</parent>~sui', $setxml, $match) ? trim($match[1]) : '',
+			'comment' => $setxml && preg_match('~<comment>(?:<!\[CDATA\[)?(.*?)(?:]]>)?</comment>~sui', $setxml, $match) ? trim($match[1]) : '',
+			'skins' => array(),
+		);
 		$skin['dir'] = str_replace(SKINS_DIR . '/', '', $this_dir);
 		$skin['num_users'] = isset($context['skin_user_counts'][$skin['dir']]) ? $context['skin_user_counts'][$skin['dir']] : 0;
-		if ($skin['type'] == 'add')
-			$skins[$this_dir] = $skin;
+
+		// Nested lists without recursion? Easy-peasy!
+		$entry =& $skin_list[$skin['dir']];
+		$entry = isset($entry) ? array_merge($skin, $entry) : $skin;
+
+		if ($skin['type'] === 'replace')
+			$skin_list[$skin['dir']] =& $entry;
 		else
-			$root[$this_dir] = $skin;
-
-		if (!empty($sub_dirs))
-			$sub_skins = wedge_get_skin_list($this_dir, $sub_dirs, $root);
-
-		if (!empty($sub_skins))
-		{
-			if ($skin['type'] == 'add')
-				$skins[$this_dir]['skins'] = $sub_skins;
-			else
-				$root[$this_dir]['skins'] = $sub_skins;
-		}
+			$skin_list[$skin['parent']]['skins'][$skin['dir']] =& $entry;
 	}
 
-	return $skins;
+	foreach ($skin_list as $id => $skin)
+		if ($skin['type'] === 'add')
+			unset($skin_list[$id]);
+
+	// Get the theme name and descriptions.
+	$available_themes = array(
+		'num_users' => isset($context['skin_user_counts']['']) ? $context['skin_user_counts'][''] : 0,
+		'skins' => $skin_list,
+	);
+
+	cache_put_data('wedge_skin_list', $available_themes, 180);
+	return $available_themes;
 }
 
 /**

@@ -33,6 +33,16 @@
 	</type>
 
 	<!--
+		Parent skin.
+
+		Wedge skins can inherit each other. Skins without a parent tag directly inherit the root skin, Weaving.
+	-->
+
+	<parent>
+		Wine
+	</parent>
+
+	<!--
 		Comment. This HTML text will only be shown to users when selecting
 		a skin, either for the default forum theme (admins), board theme
 		(board owners) and default theme override (regular users, if allowed.)

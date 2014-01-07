@@ -735,7 +735,7 @@ function EditBoard()
 	getLanguages();
 
 	loadSource('Themes');
-	$context['skin_list'] = wedge_get_skin_list(SKINS_DIR);
+	$context['skin_list'] = wedge_get_skin_list();
 
 	if (!isset($_REQUEST['delete']))
 	{

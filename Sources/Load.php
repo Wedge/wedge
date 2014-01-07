@@ -1289,18 +1289,9 @@ function loadTheme($skin = '', $initialize = true)
 			$skin = isset($board_info['skin']) ? $board_info['skin'] : '';
 	}
 
-	// Time to determine our CSS folder list... (SKINS_DIR . $context['skin'] will give you the skin folder.)
+	// SKINS_DIR . $context['skin'] will give you the skin folder.
 	$context['skin_actual'] = $skin;
 	$context['skin'] = '/' . ($skin ? ltrim($skin, '/') : get_default_skin());
-	$folders = explode('/', $context['skin']);
-	$context['css_folders'] = array();
-	$current_folder = '';
-	$skins_folder_name = basename(SKINS_DIR);
-	foreach ($folders as $folder)
-	{
-		$current_folder .= '/' . $folder;
-		$context['css_folders'][] = $skins_folder_name . substr($current_folder, 1);
-	}
 
 	// Then, we need to list the CSS files that will be part of our main CSS file.
 	// false indicates that we don't want their names to show up in the final filename.
