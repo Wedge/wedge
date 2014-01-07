@@ -12,6 +12,10 @@
 		By Nao.
 	]]></comment>
 
+	<parent>
+		Wilde
+	</parent>
+
 	<options>
 		<mobile>
 			1
