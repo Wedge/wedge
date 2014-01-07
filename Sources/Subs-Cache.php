@@ -1431,12 +1431,32 @@ function wedge_get_skin_options($options_only = false)
 	$context['template_folders'] = array();
 	$css_folders = array(we::$user['skin'] === '/' ? '' : we::$user['skin']);
 
+	loadSource('Themes');
+	$test_folders = wedge_get_skin_list(true); // Get a linear list of skins.
+
+	// From deepest to root.
 	for ($i = 0; $i < count($css_folders) && $i < 10; $i++)
 	{
 		$folder = $css_folders[$i];
-		$fold = $root_dir . ($folder ? '/' . $folder : '') . '/';
-		$set = '';
+		$context['skin_folders'][] = $root_dir . ($folder ? '/' . $folder : '') . '/';
 
+		if ($test_folders[$folder]['has_templates'])
+			$context['template_folders'][] = $folder . 'templates';
+
+		// If this is a replace-type skin, skip all parent folders.
+		if ($test_folders[$folder]['type'] === 'replace')
+			break;
+
+		// Has this skin got a parent?
+		if (isset($test_folders[$folder]['parent']))
+			$css_folders[] = $test_folders[$folder]['parent'];
+	}
+	$context['template_folders'][] = TEMPLATES_DIR;
+	$context['css_folders'] = array_reverse($css_folders);
+
+	// From root to deepest.
+	foreach (array_reverse($context['skin_folders']) as $fold)
+	{
 		// Remember all of the skeletons we can find.
 		if (file_exists($fold . 'skeleton.xml'))
 			$skeleton .= file_get_contents($fold . 'skeleton.xml');
@@ -1456,29 +1476,7 @@ function wedge_get_skin_options($options_only = false)
 			$macros = $custom . $macros;
 			$set = $custom . $set;
 		}
-
-		// Do we have any custom template folders?
-		if (file_exists($fold . 'templates'))
-			$context['template_folders'][] = $fold . 'templates';
-
-		$context['skin_folders'][] = $fold;
-		if ($set && $folder !== '')
-		{
-			// If this is a replace-type skin, skip all parent folders.
-			if (strpos($set, '</type>') !== false && preg_match('~<type>([^<]+)</type>~', $set, $match) && strtolower(trim($match[1])) === 'replace')
-				break;
-
-			// Has this skin got a parent?
-			$parent = '';
-			if (strpos($set, '</parent>') !== false && preg_match('~<parent>([^<]+)</parent>~', $set, $parent))
-				$parent = trim(trim($parent[1]), '/');
-			$css_folders[] = $parent;
-		}
 	}
-
-	$css_folders = array_reverse($css_folders);
-	$context['css_folders'] = $css_folders;
-	$context['template_folders'][] = TEMPLATES_DIR;
 
 	// $set should now contain the local skin's settings.
 	// First get the skin options, such as <sidebar> position.

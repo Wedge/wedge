@@ -1004,20 +1004,21 @@ function CopyTemplate()
 /**
  * Get a list of all skins available for a given theme folder.
  */
-function wedge_get_skin_list()
+function wedge_get_skin_list($linear = false)
 {
 	global $context;
 
-	$skin_list = cache_get_data('wedge_skin_list', 180);
-	$skin_list = null;
+	$skin_list = cache_get_data('wedge_skin_list' . ($linear ? '_flat' : ''), 180);
 	if ($skin_list !== null)
 		return $skin_list;
 
 	$files = glob(SKINS_DIR . '/*', GLOB_ONLYDIR);
-	$skin_list = array('' => array(
+	$skin_list = $flat = array('' => array(
 		'name' => 'Weaving',
 		'type' => 'replace',
+		'parent' => null,
 		'comment' => '',
+		'has_templates' => false,
 		'num_users' => isset($context['skin_user_counts']['/']) ? $context['skin_user_counts']['/'] : 0,
 		'dir' => '/',
 	));
@@ -1049,10 +1050,11 @@ function wedge_get_skin_list()
 			'type' => $setxml && preg_match('~<type>(.*?)</type>~sui', $setxml, $match) ? trim($match[1]) : 'add',
 			'parent' => $setxml && preg_match('~<parent>(.*?)</parent>~sui', $setxml, $match) ? trim($match[1]) : '',
 			'comment' => $setxml && preg_match('~<comment>(?:<!\[CDATA\[)?(.*?)(?:]]>)?</comment>~sui', $setxml, $match) ? trim($match[1]) : '',
-			'skins' => array(),
+			'has_templates' => in_array('templates', $these_files) && is_dir($this_dir . '/templates'),
 		);
 		$skin['dir'] = str_replace(SKINS_DIR . '/', '', $this_dir);
 		$skin['num_users'] = isset($context['skin_user_counts'][$skin['dir']]) ? $context['skin_user_counts'][$skin['dir']] : 0;
+		$flat[$skin['dir']] = $skin;
 
 		// Nested lists without recursion? Easy-peasy!
 		$entry =& $skin_list[$skin['dir']];
@@ -1069,13 +1071,15 @@ function wedge_get_skin_list()
 			unset($skin_list[$id]);
 
 	// Get the theme name and descriptions.
-	$available_themes = array(
+	$nested = array(
 		'num_users' => isset($context['skin_user_counts']['']) ? $context['skin_user_counts'][''] : 0,
 		'skins' => $skin_list,
 	);
 
-	cache_put_data('wedge_skin_list', $available_themes, 180);
-	return $available_themes;
+	// !! Should we cache both in the same entry..?
+	cache_put_data('wedge_skin_list_flat', $flat, 180);
+	cache_put_data('wedge_skin_list', $nested, 180);
+	return $linear ? $flat : $nested;
 }
 
 /**
