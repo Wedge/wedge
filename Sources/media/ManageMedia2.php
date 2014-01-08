@@ -980,7 +980,7 @@ function aeva_admin_maintenance_checkfiles()
 		{
 			$context['aeva_maintenance_done'] = 'error';
 			$context['aeva_maintenance_message'] = sprintf($txt['media_admin_maintenance_checkfiles_found'], count($extra_items), round($extra_size/1024), '<URL>?action=admin;area=aeva_maintenance;sa=checkfiles;delete;' . $context['session_query']);
-			$context['aeva_maintenance_message'] .= '<ul class="normallist margintop"><li class="largepadding">' . implode('</li><li class="largepadding">', $extra_items) . '</li></ul>';
+			$context['aeva_maintenance_message'] .= '<ul class="list margintop"><li class="largepadding">' . implode('</li><li class="largepadding">', $extra_items) . '</li></ul>';
 		}
 	}
 }
@@ -1167,7 +1167,7 @@ function aeva_admin_maintenance_checkorphans()
 		{
 			$context['aeva_maintenance_done'] = 'error';
 			$context['aeva_maintenance_message'] = sprintf($txt['media_admin_maintenance_checkorphans_done'], count($orphans));
-			$context['aeva_maintenance_message'] .= '<ul class="normallist margintop"><li class="largepadding">' . implode('</li><li class="largepadding">', $orphans) . '</li></ul>';
+			$context['aeva_maintenance_message'] .= '<ul class="list margintop"><li class="largepadding">' . implode('</li><li class="largepadding">', $orphans) . '</li></ul>';
 		}
 		unset($_SESSION['aeva_orphans']);
 	}

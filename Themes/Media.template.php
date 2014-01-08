@@ -1691,7 +1691,7 @@ function template_aeva_multiUpload()
 
 	echo '
 	<div class="windowbg wrc_top">
-		<ul class="normallist">
+		<ul class="list">
 			<li>', $txt['media_max_file_size'], ': ', $txt['media_image'], ' - ', $context['aeva_max_file_size']['image'], ' ', $txt['media_kb'], ', ', $txt['media_video'], ' - ', $context['aeva_max_file_size']['video'], ' ', $txt['media_kb'], ', ', $txt['media_audio'], ' - ', $context['aeva_max_file_size']['audio'], ' ', $txt['media_kb'], ', ', $txt['media_doc'], ' - ', $context['aeva_max_file_size']['doc'], ' ', $txt['media_kb'], '
 			<li>', $txt['media_needs_js_flash'], '</li>
 		</ul>
@@ -1700,7 +1700,7 @@ function template_aeva_multiUpload()
 		<we:title2>
 			', $txt['media_add_allowedTypes'], '
 		</we:title2>
-		<ul class="normallist">';
+		<ul class="list">';
 
 	foreach ($context['allowed_types'] as $k => $v)
 		echo '
