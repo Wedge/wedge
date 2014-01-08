@@ -392,6 +392,7 @@ function ModifyCacheSettings($return_config = false)
 		array('select', 'cache_type',
 			array_merge(
 				array('file' => $txt['cache_type_file']),
+				array('session' => $txt['cache_type_session']),
 				array_combine(array_map('strtolower', $available_cache), $available_cache)
 			),
 			'file' => true
@@ -414,11 +415,8 @@ function ModifyCacheSettings($return_config = false)
 		$memcached_servers = isset($_POST['cache_memcached']) ? $_POST['cache_memcached'] : '';
 		unset($_POST['cache_memcached']);
 
+		clean_cache();
 		saveSettings($config_vars);
-
-		// We have to manually force the clearing of the cache otherwise the changed settings might not get noticed.
-		$settings['cache_enable'] = 1;
-		cache_put_data('settings', null, 'forever');
 
 		if ($detected['Memcached'])
 		{

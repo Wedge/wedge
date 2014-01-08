@@ -1062,9 +1062,7 @@ function DatabasePopulation()
 	$tables = wedbPackages::list_tables($db_name, $db_prefix . '%');
 	foreach ($tables as $table)
 	{
-		wedbPackages::optimize_table($table) != -1 or $db_messed = true;
-
-		if (!empty($db_messed))
+		if (wedbPackages::optimize_table($table) == -1)
 		{
 			$incontext['failures'][-1] = wesql::error();
 			break;

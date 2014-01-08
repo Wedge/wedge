@@ -910,7 +910,7 @@ function OptimizeTables()
 	$context['optimized_tables'] = array();
 	foreach ($tables as $table)
 	{
-		// Optimize the table!  We use backticks here because it might be a custom table.
+		// Optimize the table! We use backticks here because it might be a custom table.
 		$data_freed = wedbPackages::optimize_table($table['table_name']);
 
 		if ($data_freed > 0)
@@ -1628,7 +1628,7 @@ function MaintainRecountPosts()
 	$items_per_request = 100;
 
 	// Set up to the context.
-	$context['page_title'] =  $txt['not_done_title'];
+	$context['page_title'] = $txt['not_done_title'];
 	$context['continue_countdown'] = '3';
 	$context['continue_post_data'] = '';
 	$context['continue_get_data'] = '';

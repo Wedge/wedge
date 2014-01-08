@@ -2136,21 +2136,49 @@ function sessionClose()
  */
 function sessionRead($session_id)
 {
+	global $cache_system, $session_cache;
+
 	if (preg_match('~^[a-zA-Z0-9,-]{16,32}$~', $session_id) == 0)
 		return false;
 
-	// Look for it in the database.
-	$result = wesql::query('
-		SELECT data
-		FROM {db_prefix}sessions
-		WHERE session_id = {string:session_id}
-		LIMIT 1',
-		array(
-			'session_id' => $session_id,
-		)
-	);
-	list ($sess_data) = wesql::fetch_row($result);
-	wesql::free_result($result);
+	cache_get_type();
+	if ($cache_system === 'session')
+	{
+		// Look for it in the database.
+		$session_cache = array();
+		$result = wesql::query('
+			SELECT session_id, data
+			FROM {db_prefix}sessions
+			WHERE session_id IN ({literal:cache}, {string:session_id})
+			LIMIT 2',
+			array(
+				'session_id' => $session_id,
+			)
+		);
+		while ($row = wesql::fetch_assoc($result))
+		{
+			if ($row['session_id'] === 'cache')
+				$session_cache = unserialize($row['data']);
+			else
+				$sess_data = $row['data'];
+		}
+		wesql::free_result($result);
+	}
+	else
+	{
+		// Look for it in the database.
+		$result = wesql::query('
+			SELECT data
+			FROM {db_prefix}sessions
+			WHERE session_id = {string:session_id}
+			LIMIT 1',
+			array(
+				'session_id' => $session_id,
+			)
+		);
+		list ($sess_data) = wesql::fetch_row($result);
+		wesql::free_result($result);
+	}
 
 	return $sess_data;
 }
@@ -2164,30 +2192,34 @@ function sessionRead($session_id)
  */
 function sessionWrite($session_id, $data)
 {
+	global $session_cache, $cache_updated;
+
 	// One of those weird bugs: sometimes, when using a combination of WebKit
 	// and a certain server configuration, wesql is already shut down at this point.
 	if (!class_exists('wesql') || !preg_match('~^[a-zA-Z0-9,-]{16,32}$~', $session_id))
 		return false;
 
-	// First try to update an existing row...
-	wesql::query('
-		UPDATE {db_prefix}sessions
-		SET data = {string:data}, last_update = {int:last_update}
-		WHERE session_id = {string:session_id}',
-		array(
-			'last_update' => time(),
-			'data' => $data,
-			'session_id' => $session_id,
-		)
-	);
+	$time = time();
+	if (isset($session_cache))
+	{
+		$no_expires = true;
+		foreach ($session_cache as $id => $cache)
+			if ($cache['ttl'] < $time)
+				unset($session_cache[$id], $no_expires);
 
-	// If that didn't work, try inserting a new one.
-	if (wesql::affected_rows() == 0)
-		return wesql::insert('ignore',
-			'{db_prefix}sessions',
-			array('session_id' => 'string', 'data' => 'string', 'last_update' => 'int'),
-			array($session_id, $data, time())
-		);
+		if (!empty($cache_updated) || empty($no_expires))
+			wesql::insert('update',
+				'{db_prefix}sessions',
+				array('session_id' => 'string', 'data' => 'string', 'last_update' => 'int'),
+				array('cache', serialize($session_cache), PHP_INT_MAX)
+			);
+	}
+
+	return wesql::insert('update',
+		'{db_prefix}sessions',
+		array('session_id' => 'string', 'data' => 'string', 'last_update' => 'int'),
+		array($session_id, $data, $time)
+	);
 
 	return true;
 }
@@ -2221,7 +2253,7 @@ function sessionGC($max_lifetime)
 {
 	global $settings;
 
-	// Just set to the default or lower? Ignore it for a higher value. (hopefully)
+	// Just set to the default or lower? Ignore it for a higher value. (Hopefully)
 	if (!empty($settings['databaseSession_lifetime']) && ($max_lifetime <= 1440 || $settings['databaseSession_lifetime'] > $max_lifetime))
 		$max_lifetime = max($settings['databaseSession_lifetime'], 60);
 
@@ -2231,6 +2263,10 @@ function sessionGC($max_lifetime)
 		WHERE last_update < {int:last_update}',
 		array('last_update' => time() - $max_lifetime)
 	);
+
+	if (mt_rand(1, 10) == 3 && wesql::affected_rows() > 0)
+		wesql::query('OPTIMIZE TABLE {db_prefix}sessions');
+
 	return true;
 }
 

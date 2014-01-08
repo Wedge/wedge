@@ -3498,7 +3498,7 @@ function aeva_markAllSeen()
 	// Optimize the table from time to time... Only 33% of the time should be okay,
 	// change this to mt_rand(1, 100) for a 1% rate if your forum is busy.
 	if (mt_rand(1, 3) == 1)
-		wesql::query('OPTIMIZE TABLE {db_prefix}media_log_media', array());
+		wesql::query('OPTIMIZE TABLE {db_prefix}media_log_media');
 }
 
 function aeva_addHeaders($autosize = true, $use_zoomedia = true)

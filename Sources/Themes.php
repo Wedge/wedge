@@ -1006,11 +1006,11 @@ function CopyTemplate()
  */
 function wedge_get_skin_list($linear = false)
 {
-	global $context;
+	global $context, $settings;
 
-	$skin_list = cache_get_data('wedge_skin_list' . ($linear ? '_flat' : ''), 180);
+	$skin_list = cache_get_data('wedge_skin_list', 180);
 	if ($skin_list !== null)
-		return $skin_list;
+		return $skin_list[$linear ? 0 : 1];
 
 	$files = glob(SKINS_DIR . '/*', GLOB_ONLYDIR);
 	$skin_list = $flat = array('' => array(
@@ -1019,6 +1019,7 @@ function wedge_get_skin_list($linear = false)
 		'parent' => null,
 		'comment' => '',
 		'has_templates' => false,
+		'enabled' => empty($settings['disabled_skins']['/']),
 		'num_users' => isset($context['skin_user_counts']['/']) ? $context['skin_user_counts']['/'] : 0,
 		'dir' => '/',
 	));
@@ -1053,6 +1054,7 @@ function wedge_get_skin_list($linear = false)
 			'has_templates' => in_array('templates', $these_files) && is_dir($this_dir . '/templates'),
 		);
 		$skin['dir'] = str_replace(SKINS_DIR . '/', '', $this_dir);
+		$skin['enabled'] = empty($settings['disabled_skins'][$skin['dir']]);
 		$skin['num_users'] = isset($context['skin_user_counts'][$skin['dir']]) ? $context['skin_user_counts'][$skin['dir']] : 0;
 		$flat[$skin['dir']] = $skin;
 
@@ -1077,8 +1079,7 @@ function wedge_get_skin_list($linear = false)
 	);
 
 	// !! Should we cache both in the same entry..?
-	cache_put_data('wedge_skin_list_flat', $flat, 180);
-	cache_put_data('wedge_skin_list', $nested, 180);
+	cache_put_data('wedge_skin_list', array($flat, $nested), 180);
 	return $linear ? $flat : $nested;
 }
 

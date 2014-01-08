@@ -445,6 +445,36 @@ class wesql
 		if (!is_array($data[array_rand($data)]))
 			$data = array($data);
 
+		// Should we assume the data is most likely to exist..? If yes, we'll use an UPDATE call.
+		// The first entry in the column list then becomes the condition.
+		if ($method === 'update')
+		{
+			foreach ($data as $id => $row)
+			{
+				$set = '';
+				$where_val = reset($columns);
+				$where_key = key($columns);
+				foreach ($columns as $key => $val)
+					if ($key !== $where_key)
+						$set[] = $key . ' = {' . $val . ':' . $key . '}';
+
+				self::query('
+					UPDATE ' . $table . '
+					SET ' . implode(', ', $set) . '
+					WHERE ' . $where_key . ' = {' . $where_val . ':' . $where_key . '}',
+					array_combine(array_keys($columns), $row)
+				);
+
+				if (self::affected_rows() > 0)
+					unset($data[$id]);
+			}
+			if (empty($data))
+				return true;
+
+			// Anything left to update? Do a regular insert, then.
+			$method = 'ignore';
+		}
+
 		// Create the mold for a single row insert.
 		$insertData = '(';
 
@@ -475,7 +505,7 @@ class wesql
 			$insertRows[] = self::quote($insertData, array_combine($indexed_columns, $dataRow), $connection);
 
 		// Determine the method.
-		$queryTitle = $method == 'replace' ? 'REPLACE' : ($method == 'ignore' ? 'INSERT IGNORE' : 'INSERT');
+		$queryTitle = $method === 'replace' ? 'REPLACE' : ($method === 'ignore' ? 'INSERT IGNORE' : 'INSERT');
 
 		// Do the insert, and return a success bool.
 		return !!self::query('

@@ -1051,7 +1051,7 @@ function aeva_admin_maintenance_checkorphans()
 		$_SESSION['aeva_orphans'] = array();
 
 		unset($amSettings['notouch'], $amSettings['orphans']);
-		wesql::query('OPTIMIZE TABLE {db_prefix}media_settings', array());
+		wesql::query('OPTIMIZE TABLE {db_prefix}media_settings');
 		$request = wesql::query('SELECT COUNT(DISTINCT id_file) FROM {db_prefix}media_files WHERE ' . ($album ? 'id_album = {int:album}' : 'id_file > 4'), array('album' => $album));
 		list ($total_files) = wesql::fetch_row($request);
 		wesql::free_result($request);
