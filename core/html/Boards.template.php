@@ -232,7 +232,7 @@ function template_boards_newsfader()
 		</ul>
 	</div>';
 
-		add_js_file('scripts/fader.js');
+		add_js_file('fader.js');
 
 		// Create a news fader object and toggle.
 		add_js('

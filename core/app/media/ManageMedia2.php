@@ -1263,7 +1263,7 @@ function aeva_admin_bans_add()
 	}
 	$context['aeva_curr_members'] = implode(',',$context['aeva_curr_members']);
 
-	add_js_file('scripts/suggest.js');
+	add_js_file('suggest.js');
 	add_js('
 	new weAutoSuggest({
 		', min_chars(), ',

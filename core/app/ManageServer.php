@@ -376,7 +376,7 @@ function ModifyCookieSettings($return_config = false)
 // Simply modifying cache functions
 function ModifyCacheSettings($return_config = false)
 {
-	global $context, $txt, $settings, $memcached_servers, $cache_type;
+	global $context, $txt, $settings, $memcached_servers;
 
 	// Detect available optimizers.
 	$detected = array();

@@ -193,7 +193,7 @@ function load_lang_file()
 
 	$original_txt = $txt;
 	// Make sure the languages directory actually exists.
-	$folder = dirname(__FILE__) . '/Themes/languages';
+	$folder = dirname(__FILE__) . '/core/languages';
 	if (file_exists($folder))
 	{
 		// Find all the "Install" language files in the directory.
@@ -205,7 +205,7 @@ function load_lang_file()
 				$txt = array();
 				require_once($folder . '/index.' . substr($entry, 8));
 				if (!empty($txt['lang_name']))
-					$incontext['detected_languages'][$entry] = '&lt;img src="Themes/languages/Flag.' . substr($entry, 8, strlen($entry) - 12) . '.png"&gt; ' . $txt['lang_name'];
+					$incontext['detected_languages'][$entry] = '&lt;img src="core/languages/Flag.' . substr($entry, 8, strlen($entry) - 12) . '.png"&gt; ' . $txt['lang_name'];
 			}
 		$dir->close();
 	}
@@ -230,10 +230,10 @@ function load_lang_file()
 
 		<p>This installer was unable to find the installer\'s language file or files. They should be found under:</p>
 
-		<div style="margin: 1ex; font-family: monospace; font-weight: bold">', dirname($_SERVER['PHP_SELF']) != '/' ? dirname($_SERVER['PHP_SELF']) : '', '/Themes/languages</div>
+		<div style="margin: 1ex; font-family: monospace; font-weight: bold">', dirname($_SERVER['PHP_SELF']) != '/' ? dirname($_SERVER['PHP_SELF']) : '', '/core/languages</div>
 
 		<p>In some cases, FTP clients do not properly upload files with this many folders. Please double check to make sure you <strong>have uploaded all the files in the distribution</strong>.</p>
-		<p>If that doesn\'t help, please make sure this install.php file is in the same place as the Themes folder.</p>
+		<p>If that doesn\'t help, please make sure this install.php file is in the same place as the assets folder.</p>
 
 		<p>If you continue to get this error message, feel free to <a href="http://wedge.org/">look to us for support</a>.</p>
 	</div></body>
@@ -248,7 +248,7 @@ function load_lang_file()
 		$_SESSION['installer_temp_lang'] = $GLOBALS['HTTP_GET_VARS']['lang_file'];
 
 	// Make sure it exists, if it doesn't reset it.
-	if (!isset($_SESSION['installer_temp_lang']) || preg_match('~[^.\w-]~', $_SESSION['installer_temp_lang']) === 1 || !file_exists(dirname(__FILE__) . '/Themes/languages/' . $_SESSION['installer_temp_lang']))
+	if (!isset($_SESSION['installer_temp_lang']) || preg_match('~[^.\w-]~', $_SESSION['installer_temp_lang']) === 1 || !file_exists(dirname(__FILE__) . '/core/languages/' . $_SESSION['installer_temp_lang']))
 	{
 		if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE']))
 		{
@@ -292,9 +292,9 @@ function load_lang_file()
 	}
 
 	// And now include the actual language file itself.
-	require_once(dirname(__FILE__) . '/Themes/languages/Install.english.php');
+	require_once(dirname(__FILE__) . '/core/languages/Install.english.php');
 	if ($_SESSION['installer_temp_lang'] != 'Install.english.php')
-		require_once(dirname(__FILE__) . '/Themes/languages/' . $_SESSION['installer_temp_lang']);
+		require_once(dirname(__FILE__) . '/core/languages/' . $_SESSION['installer_temp_lang']);
 }
 
 // This handy function loads some settings and the like.
@@ -303,7 +303,7 @@ function load_database()
 	global $settings, $sourcedir, $db_prefix, $db_connection, $db_name, $db_user;
 
 	if (empty($sourcedir))
-		$sourcedir = dirname(__FILE__) . '/Sources';
+		$sourcedir = dirname(__FILE__) . '/core/sources';
 
 	// Need this to check whether we need the database password.
 	require(dirname(__FILE__) . '/Settings.php');
@@ -457,18 +457,18 @@ function CheckFilesWritable()
 
 	// Now for the files and folders we want to make writable.
 	$writable_files = array(
+		'assets/avatars',
+		'assets/smileys',
 		'attachments',
-		'avatars',
 		'cache',
 		'css',
 		'js',
-		'Smileys',
-		'Themes',
+		'plugins',
 		'Settings.php',
 		'Settings_bak.php'
 	);
 	foreach ($incontext['detected_languages'] as $lang => $temp)
-		$extra_files[] = 'Themes/languages/' . $lang;
+		$extra_files[] = 'core/languages/' . $lang;
 
 	// With mod_security installed, we could attempt to fix it with .htaccess.
 	if (function_exists('apache_get_modules') && in_array('mod_security', apache_get_modules()))
@@ -719,7 +719,7 @@ function DatabaseSettings()
 		require(dirname(__FILE__) . '/Settings.php');
 
 		if (empty($sourcedir))
-			$sourcedir = dirname(__FILE__) . '/Sources';
+			$sourcedir = dirname(__FILE__) . '/core/sources';
 
 		// Better find the database file!
 		if (!file_exists($sourcedir . '/Class-DB.php'))
@@ -839,10 +839,10 @@ function ForumSettings()
 		$vars = array(
 			'boardurl' => $_POST['boardurl'],
 			'boarddir' => addslashes(dirname(__FILE__)),
-			'sourcedir' => addslashes(dirname(__FILE__)) . '/Sources',
+			'sourcedir' => addslashes(dirname(__FILE__)) . '/core/sources',
 			'cachedir' => addslashes(dirname(__FILE__)) . '/cache',
-			'pluginsdir' => addslashes(dirname(__FILE__)) . '/Plugins',
-			'pluginsurl' => $_POST['boardurl'] . '/Plugins',
+			'pluginsdir' => addslashes(dirname(__FILE__)) . '/plugins',
+			'pluginsurl' => $_POST['boardurl'] . '/plugins',
 			'mbname' => strtr($_POST['mbname'], array('\"' => '"')),
 		);
 
@@ -1122,7 +1122,7 @@ function AdminAccount()
 	require(dirname(__FILE__) . '/Settings.php');
 
 	// We need this for some of the IP stuff.
-	@include(dirname(__FILE__) . '/Sources/QueryString.php');
+	@include(dirname(__FILE__) . '/core/sources/QueryString.php');
 
 	load_database();
 
@@ -1914,7 +1914,7 @@ function template_install_above()
 	$cachedir = $boarddir . '/cache';
 	$cssdir = $boarddir . '/css';
 	$jsdir = $boarddir . '/js';
-	$sourcedir = $boarddir . '/Sources';
+	$sourcedir = $boarddir . '/core/sources';
 	$scripturl = $boarddir . '/index.php';
 	// !!! Dunno if we need to load all of these. Better safe than sorry.
 	require_once($scripturl);
@@ -1934,19 +1934,21 @@ function template_install_above()
 	$boardurl = 'http' . (!empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) != 'off' ? 's' : '') . '://' . $host;
 	$boardurl .= substr($_SERVER['REQUEST_URI'], 0, strrpos($_SERVER['REQUEST_URI'], '/'));
 
-	$settings['theme_dir'] = $boarddir . '/Themes';
-	$settings['theme_url'] = $boardurl . '/Themes';
+	$settings['theme_dir'] = $boarddir . '/core/templates';
+	$settings['theme_url'] = $boardurl . '/core/templates';
 
 	// Define our constants. (cf. QueryString.php)
-	define('ROOT', $boardurl);
 	define('SCRIPT', $scripturl);
+	define('ROOT', $boardurl);
 	define('ROOT_DIR', $boarddir);
-	define('TEMPLATES', $settings['theme_url']);			// !! Temporary.
-	define('TEMPLATES_DIR', $settings['theme_dir']);		// !! Temporary.
-	define('SKINS', TEMPLATES . '/skins');					// !! Temporary.
-	define('SKINS_DIR', TEMPLATES_DIR . '/skins');			// !! Temporary.
-	define('LANGUAGES', TEMPLATES . '/languages');			// !! Temporary.
-	define('LANGUAGES_DIR', TEMPLATES_DIR . '/languages');	// !! Temporary.
+	define('CORE', $boardurl . '/core');
+	define('CORE_DIR', $boarddir . '/core');
+	define('TEMPLATES', $settings['theme_url']);		// !! Temporary.
+	define('TEMPLATES_DIR', $settings['theme_dir']);	// !! Temporary.
+	define('SKINS', CORE . '/skins');					// !! Temporary.
+	define('SKINS_DIR', CORE_DIR . '/skins');			// !! Temporary.
+	define('LANGUAGES', CORE . '/languages');			// !! Temporary.
+	define('LANGUAGES_DIR', CORE_DIR . '/languages');	// !! Temporary.
 	define('ASSETS', ROOT . '/assets');
 	define('ASSETS_DIR', ROOT_DIR . '/assets');
 
@@ -1974,9 +1976,9 @@ function template_install_above()
 		<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
 		<script src="',
 		add_js_file(
-			array('scripts/script.js', 'scripts/sbox.js'),
+			array('script.js', 'sbox.js'),
 			false, true,
-			array('scripts/sbox.js' => 1)
+			array('sbox.js' => 1)
 		), '"></script>
 	</head>
 	<body><div id="wedge">

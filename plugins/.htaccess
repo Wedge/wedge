@@ -1,0 +1,5 @@
+# We need to be able to access images and various other files from plugins/, but not the archives of plugins themselves.
+<FilesMatch "\.(zip|gz|bz2|tar)$">
+Order deny,allow
+Deny from all
+</FilesMatch>

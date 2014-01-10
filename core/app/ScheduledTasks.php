@@ -480,12 +480,7 @@ function scheduled_auto_optimize()
 	// Otherwise are we restricting the number of people online for this?
 	if (!empty($settings['autoOptMaxOnline']))
 	{
-		$request = wesql::query('
-			SELECT COUNT(*)
-			FROM {db_prefix}log_online',
-			array(
-			)
-		);
+		$request = wesql::query('SELECT COUNT(*) FROM {db_prefix}log_online');
 		list ($dont_do_it) = wesql::fetch_row($request);
 		wesql::free_result($request);
 

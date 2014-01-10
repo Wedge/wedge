@@ -289,7 +289,7 @@ function aeva_embedObject($obj, $id_file, $cur_width = 0, $cur_height = 0, $desc
 				else
 				{
 					if (!$swfobjects++)
-						add_js_file('http://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js');
+						add_js_file('http://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js', true);
 
 					$output .= '
 		<div id="sob'. $swfobjects . '">&nbsp;</div>
@@ -389,7 +389,7 @@ function aeva_initZoom($autosize, $peralbum = array())
 
 	loadLanguage('Media');
 	add_css_file('zoom', true);
-	add_js_file('scripts/zoomedia.js');
+	add_js_file('zoomedia.js');
 	add_js('
 	$("a.zoom").zoomedia({
 		outline: "', empty($peralbum) || !in_array($peralbum['outline'], array('drop-shadow', 'white', 'black')) ? 'glass' : $peralbum['outline'], '"

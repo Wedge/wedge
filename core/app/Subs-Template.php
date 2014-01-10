@@ -1273,7 +1273,7 @@ function template_include($filename, $once = false)
  */
 function loadTemplate($template_name, $fatal = true)
 {
-	global $context, $settings, $txt, $boarddir, $db_show_debug;
+	global $context, $settings, $txt, $db_show_debug;
 
 	// No template to load?
 	if ($template_name === false)
@@ -1301,16 +1301,16 @@ function loadTemplate($template_name, $fatal = true)
 	}
 	// Hmmm... doesn't exist?! I don't suppose the directory is wrong, is it?
 	// !! @todo: remove this..?
-	elseif (!file_exists(TEMPLATES_DIR) && file_exists($boarddir . '/Themes'))
+	elseif (!file_exists(TEMPLATES_DIR) && file_exists(CORE_DIR . '/templates'))
 	{
-		$settings['template_dirs'][] = $settings['theme_dir'] = $boarddir . '/Themes';
+		$settings['template_dirs'][] = $settings['theme_dir'] = CORE_DIR . '/templates';
 
 		if (we::$is_admin)
 		{
 			loadLanguage('Errors');
 			echo '
 <div class="alert errorbox">
-	<a href="<URL>?action=admin;area=featuresettings;sa=paths;', $context['session_query'], '" class="alert">', $txt['theme_dir_wrong'], '</a>
+	<a href="', SCRIPT, '?action=admin;area=featuresettings;sa=paths;', $context['session_query'], '" class="alert">', $txt['theme_dir_wrong'], '</a>
 </div>';
 		}
 
@@ -1322,7 +1322,7 @@ function loadTemplate($template_name, $fatal = true)
 		if ($template_name != 'Errors' && $template_name != 'index')
 			fatal_lang_error('theme_template_error', 'template', array((string) $template_name));
 		else
-			exit(log_error(sprintf(isset($txt['theme_template_error']) ? $txt['theme_template_error'] : 'Unable to load Themes/%s.template.php!', (string) $template_name), 'template'));
+			exit(log_error(sprintf(isset($txt['theme_template_error']) ? $txt['theme_template_error'] : 'Unable to load core/templates/%s.template.php!', (string) $template_name), 'template'));
 	}
 	else
 		return false;

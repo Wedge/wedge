@@ -454,7 +454,7 @@ function ThemeInstall()
 		mkdir($theme_dir . '/scripts', 0777);
 
 		// Copy over the default non-theme files.
-		$to_copy = array('/index.php', '/index.template.php', '/skins/index.css', '/skins/index.rtl.css', '/scripts/theme.js');
+		$to_copy = array('/index.php', '/index.template.php');
 		foreach ($to_copy as $file)
 		{
 			copy(TEMPLATES_DIR . $file, $theme_dir . $file);

@@ -24,9 +24,9 @@ function template_init()
 	// Add the theme-specific JavaScript files to our priority cache list.
 	if (!empty($context['main_js_files']))
 	{
-		$context['main_js_files']['scripts/theme.js'] = false;
+		$context['main_js_files']['theme.js'] = false;
 		if (we::$is_guest && empty($context['disable_login_hashing']) && !empty($settings['enable_quick_login']))
-			$context['main_js_files']['scripts/sha1.js'] = true;
+			$context['main_js_files']['sha1.js'] = true;
 	}
 
 	// A couple of settings you might want to set:
@@ -494,7 +494,7 @@ function template_insert_javascript()
 	we_script = "<URL>";
 	we_assets = "', ASSETS, '";', '
 	we_sessid = "', $context['session_id'], '";
-	we_sessvar = "', $context['session_var'], '";', $context['server']['iso_case_folding'] && isset($context['main_js_files']['scripts/sha1.js']) ? '
+	we_sessvar = "', $context['session_var'], '";', $context['server']['iso_case_folding'] && isset($context['main_js_files']['sha1.js']) ? '
 	we_iso_case_folding = 1;' : '', empty($options['collapse_header']) ? '' : '
 	we_colhead = 1;', empty($context['current_topic']) ? '' : '
 	we_topic = ' . $context['current_topic'] . ';', empty($context['current_board']) ? '' : '

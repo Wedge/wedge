@@ -310,7 +310,7 @@ function template_edit_group()
 
 	if ($context['group']['id'] != 3 && $context['group']['id'] != 4)
 	{
-		add_js_file('scripts/suggest.js');
+		add_js_file('suggest.js');
 
 		add_js('
 	new weAutoSuggest({
@@ -674,7 +674,7 @@ function template_group_members()
 
 	if (!empty($context['group']['assignable']))
 	{
-		add_js_file('scripts/suggest.js');
+		add_js_file('suggest.js');
 		add_js('
 	new weAutoSuggest({
 		', min_chars(), ',

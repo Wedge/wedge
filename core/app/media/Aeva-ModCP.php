@@ -139,7 +139,7 @@ function aeva_modCP_submissions()
 
 	// HTML headers
 	$context['header'] .= '
-	<script src="' . add_js_file('scripts/mediadmin.js', false, true) . '"></script>';
+	<script src="' . add_js_file('mediadmin.js', false, true) . '"></script>';
 }
 
 // Approves an unapproved item
@@ -489,7 +489,7 @@ function aeva_modCP_reports()
 	$context['page_title'] = $txt['media_admin_moderation'];
 	// HTML headers
 	$context['header'] .= '
-	<script src="' . add_js_file('scripts/mediadmin.js', false, true) . '"></script>';
+	<script src="' . add_js_file('mediadmin.js', false, true) . '"></script>';
 }
 
 // Deletes a report
@@ -743,5 +743,5 @@ function aeva_modCP_modLog()
 
 	// HTML headers
 	$context['header'] .= '
-	<script src="' . add_js_file('scripts/mediadmin.js', false, true) . '"></script>';
+	<script src="' . add_js_file('mediadmin.js', false, true) . '"></script>';
 }

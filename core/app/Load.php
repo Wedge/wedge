@@ -1433,7 +1433,7 @@ function loadTheme($skin = '', $initialize = true)
 	{
 		// Add support for media queries to IE 8. Older versions aren't worth the trouble. Really.
 		if (we::is('ie8'))
-			add_js_file('scripts/respond.js');
+			add_js_file('respond.js');
 
 		// Custom templates to load, or just default?
 		if (isset($context['theme_templates']))
@@ -1554,10 +1554,10 @@ function weInitJS()
 
 	if ($origin === 'local')
 		$context['main_js_files'] = array(
-			'scripts/jquery-' . $version . '.min.js' => true,
-			'scripts/script.js' => true,
-			'scripts/sbox.js' => false,
-			'scripts/custom.js' => false
+			'jquery-' . $version . '.min.js' => true,
+			'script.js' => true,
+			'sbox.js' => false,
+			'custom.js' => false
 		);
 	else
 	{
@@ -1568,9 +1568,9 @@ function weInitJS()
 		);
 		$context['remote_js_files'] = array('//' . $remote[$origin]);
 		$context['main_js_files'] = array(
-			'scripts/script.js' => true,
-			'scripts/sbox.js' => false,
-			'scripts/custom.js' => false
+			'script.js' => true,
+			'sbox.js' => false,
+			'custom.js' => false
 		);
 	}
 }
@@ -1578,6 +1578,7 @@ function weInitJS()
 function loadPluginSource($plugin_name, $source_name)
 {
 	global $context;
+
 	if (empty($context['plugins_dir'][$plugin_name]))
 		return;
 
@@ -1588,6 +1589,7 @@ function loadPluginSource($plugin_name, $source_name)
 function loadPluginTemplate($plugin_name, $template_name, $fatal = true)
 {
 	global $context, $settings;
+
 	if (empty($context['plugins_dir'][$plugin_name]))
 		return;
 
@@ -1771,9 +1773,8 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 			$txt = array();
 		}
 
-		// There can be only one theme.
 		$attempts = array(
-			array($settings['theme_dir'], $template, $lang),
+			array(LANGUAGES_DIR, $template, $lang),
 		);
 
 		// Fall back on the default language if necessary.
@@ -1786,17 +1787,17 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 		);
 
 		foreach ($fallbacks as $file)
-			if (file_exists($file[0] . '/languages/' . $file[1] . '.english.php'))
-				template_include($file[0] . '/languages/' . $file[1] . '.english.php');
+			if (file_exists($file[0] . '/' . $file[1] . '.english.php'))
+				template_include($file[0] . '/' . $file[1] . '.english.php');
 
 		// Now try to find the actual language file.
 		$found = false;
 		foreach ($attempts as $file)
 		{
-			if (file_exists($file[0] . '/languages/' . $file[1] . '.' . $file[2] . '.php'))
+			if (file_exists($file[0] . '/' . $file[1] . '.' . $file[2] . '.php'))
 			{
 				// Include it!
-				template_include($file[0] . '/languages/' . $file[1] . '.' . $file[2] . '.php');
+				template_include($file[0] . '/' . $file[1] . '.' . $file[2] . '.php');
 
 				// Note that we found it.
 				$found = true;
@@ -1996,7 +1997,7 @@ function getLanguages($use_cache = true)
 
 	// Default language directories to try.
 	$language_directories = array(
-		$settings['theme_dir'] . '/languages',
+		LANGUAGES_DIR,
 	);
 
 	// Initialize the array, otherwise if it's empty, Wedge won't cache it.
@@ -2180,7 +2181,7 @@ function sessionRead($session_id)
 		wesql::free_result($result);
 	}
 
-	return $sess_data;
+	return isset($sess_data) ? $sess_data : false;
 }
 
 /**

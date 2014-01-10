@@ -20,7 +20,7 @@
 			- replace (discard the root style and consider this as the basic style)
 
 		Warnings:
-			- All files should have their url() paths modified accordingly. e.g., url($images) instead of url(../images)
+			- All files should have their url() paths modified accordingly. e.g., url($images) instead of url(../assets)
 			- If you're offering nested skins (/skins/skin1/skin2/), skin2 can only be of the "add" type,
 			  otherwise it should obviously be set directly below the top-level folder. (/skins/skin2/)
 			- If you use "replace", you don't have to copy all files from the top-level skin, Wedge will automatically
@@ -91,7 +91,7 @@
 		iOS devices to show the sidebar below the main content.
 	-->
 
-	<script for="ie6" include="scripts/pngfix.js scripts/ie6hover.js"><![CDATA[
+	<script for="ie6" include="pngfix.js ie6hover.js"><![CDATA[
 	$('input[type=checkbox], input[type=radio]').addClass('ie_check');
 	$('input[type=submit], input[type=button]').addClass('ie_button');
 	DD_belatedPNG.fix('.ping,#logo,#footer,#footer div.frame');

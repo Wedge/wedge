@@ -779,7 +779,7 @@ function aeva_albumCP($is_admin = false)
 	if (!$is_admin)
 	{
 		// This is needed for the toggle
-		add_js_file('scripts/mediadmin.js');
+		add_js_file('mediadmin.js');
 
 		$context['page_title'] = $txt['media_my_user_albums'];
 		add_linktree($txt['media_my_user_albums'], $galurl . 'area=mya');
@@ -1099,7 +1099,7 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 	else
 		$context['aeva_form_url'] = '<URL>?action=admin;area=aeva_albums;sa=' . ($is_add ? 'add' : 'edit;in=' . $id_album) . ';' . $context['session_query'];
 
-	add_js_file('scripts/suggest.js');
+	add_js_file('suggest.js');
 
 	$memlists = array(1 => '', '', '', '');
 	foreach (array(1 => $members_allowed, $members_denied, $members_allowed_write, $members_denied_write) as $num => $lis)
@@ -2031,7 +2031,7 @@ function aeva_massUpload()
 		// HTML Headers
 		$context['aeva_submit_url'] = $galurl . 'sa=mass;album=' . $id_album . ';upcook=' . urlencode(base64_encode($_COOKIE[$cookiename]));
 		add_js_file('http://yui.yahooapis.com/combo?2.9.0/build/yahoo-dom-event/yahoo-dom-event.js&amp;2.9.0/build/element/element-min.js&amp;2.9.0/build/uploader/uploader-min.js', true);
-		add_js_file('scripts/up.js');
+		add_js_file('up.js');
 		add_js('
 	Yup.init({
 		swfurl: "', aeva_theme_url('uploader.swf'), '",

@@ -61,7 +61,7 @@ function template_main()
 			$alternate = !$alternate;
 
 			echo '
-					<li', !empty($settings['recycle_board']) && !empty($settings['recycle_enable']) && $settings['recycle_board'] == $bdata['id'] ? ' id="recycle_board"' : '', ' class="windowbg', $alternate ? '' : '2', '" style="padding-', $context['right_to_left'] ? 'right' : 'left', ': ', 5 + 30 * $bdata['child_level'], 'px', $bdata['move'] ? '; color: red' : '', '"><span class="floatleft"><img src="', TEMPLATES, '/languages/Flag.', empty($bdata['language']) ? $settings['language'] : $bdata['language'], '.png"> <a href="<URL>?board=', $bdata['id'], '">', $bdata['name'], '</a>', !empty($settings['recycle_board']) && !empty($settings['recycle_enable']) && $settings['recycle_board'] == $bdata['id'] ? '<a href="<URL>?action=admin;area=manageboards;sa=settings"> <img src="' . ASSETS . '/post/recycled.gif" alt="' . $txt['recycle_board'] . '"></a></span>' : '</span>', '
+					<li', !empty($settings['recycle_board']) && !empty($settings['recycle_enable']) && $settings['recycle_board'] == $bdata['id'] ? ' id="recycle_board"' : '', ' class="windowbg', $alternate ? '' : '2', '" style="padding-', $context['right_to_left'] ? 'right' : 'left', ': ', 5 + 30 * $bdata['child_level'], 'px', $bdata['move'] ? '; color: red' : '', '"><span class="floatleft"><img src="', LANGUAGES, '/Flag.', empty($bdata['language']) ? $settings['language'] : $bdata['language'], '.png"> <a href="<URL>?board=', $bdata['id'], '">', $bdata['name'], '</a>', !empty($settings['recycle_board']) && !empty($settings['recycle_enable']) && $settings['recycle_board'] == $bdata['id'] ? '<a href="<URL>?action=admin;area=manageboards;sa=settings"> <img src="' . ASSETS . '/post/recycled.gif" alt="' . $txt['recycle_board'] . '"></a></span>' : '</span>', '
 						<span class="floatright">', $context['can_manage_permissions'] ? '<span class="modify_boards"><a href="<URL>?action=admin;area=permissions;sa=index;pid=' . $bdata['permission_profile'] . ';' . $context['session_query'] . '">' . $txt['mboards_permissions'] . '</a></span>' : '', '
 						<span class="modify_boards"><a href="<URL>?action=admin;area=manageboards;move=', $bdata['id'], '">', $txt['mboards_move'], '</a></span>
 						<span class="modify_boards"><a href="<URL>?action=admin;area=manageboards;sa=board;boardid=', $bdata['id'], '">', $txt['mboards_modify'], '</a></span></span><br class="clear_right">
@@ -767,7 +767,7 @@ function template_modify_board()
 	</div>
 	<br class="clear">';
 
-	add_js_file('scripts/suggest.js');
+	add_js_file('suggest.js');
 	add_js('
 	new weAutoSuggest({
 		', min_chars(), ',

@@ -409,7 +409,7 @@ function template_modify_user_subscription()
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 		</form>';
 
-	add_js_file('scripts/suggest.js');
+	add_js_file('suggest.js');
 
 	add_js('
 	new weAutoSuggest({

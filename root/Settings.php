@@ -35,13 +35,13 @@ $db_show_debug = false;
 
 ########## Directories/Files ##########
 # Note: These directories do not have to be changed unless you move things.
-$boarddir = dirname(__FILE__);			# The absolute path to the forum's folder. Not just '.'!
-$sourcedir = $boarddir . '/Sources';	# Path to the Sources directory.
-$cachedir = $boarddir . '/cache';		# Path to the cache directory.
-$cssdir = $boarddir . '/css';			# Path to the CSS cache directory.
-$jsdir = $boarddir . '/js';				# Path to the JS cache directory.
-$pluginsdir = $boarddir . '/Plugins';	# Path to the plugins directory.
-$pluginsurl = $boardurl . '/Plugins';	# URL to the Plugins area root.
+$boarddir = dirname(__FILE__);				# The absolute path to the forum's folder. Not just '.'!
+$sourcedir = $boarddir . '/core/sources';	# Path to the sources directory.
+$cachedir = $boarddir . '/cache';			# Path to the cache directory.
+$cssdir = $boarddir . '/css';				# Path to the CSS cache directory.
+$jsdir = $boarddir . '/js';					# Path to the JS cache directory.
+$pluginsdir = $boarddir . '/plugins';		# Path to the plugins directory.
+$pluginsurl = $boardurl . '/plugins';		# URL to the plugins area root.
 
 ########## Error-Catching ##########
 # Note: You shouldn't touch these settings.
@@ -56,10 +56,10 @@ if (file_exists(dirname(__FILE__) . '/install.php'))
 # Make sure the paths are correct... at least try to fix them.
 if (!file_exists($boarddir) && file_exists(dirname(__FILE__) . '/SSI.php'))
 	$boarddir = dirname(__FILE__);
-if (!file_exists($sourcedir) && file_exists($boarddir . '/Sources'))
-	$sourcedir = $boarddir . '/Sources';
-if (!file_exists($pluginsdir) && file_exists($boarddir . '/Plugins'))
-	$pluginsdir = $boarddir . '/Plugins';
+if (!file_exists($sourcedir) && file_exists($boarddir . '/core/sources'))
+	$sourcedir = $boarddir . '/core/sources';
+if (!file_exists($pluginsdir) && file_exists($boarddir . '/plugins'))
+	$pluginsdir = $boarddir . '/plugins';
 
 # Make absolutely sure the cache directories are defined.
 foreach (array('cache', 'css', 'js') as $var)

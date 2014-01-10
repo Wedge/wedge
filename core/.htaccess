@@ -1,0 +1,5 @@
+DirectoryIndex index.missing
+
+<Files *.php>
+	Deny from all
+</Files>

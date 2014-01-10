@@ -756,7 +756,7 @@ function setupAdminSidebar()
 			'<URL>?action=viewremote;filename=latest-news.js'
 		), true);
 
-	add_js_file('scripts/admin.js');
+	add_js_file('admin.js');
 
 	// This sets the announcements and current versions themselves ;)
 	add_js('

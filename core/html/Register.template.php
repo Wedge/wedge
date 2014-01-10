@@ -43,7 +43,7 @@ function template_registration_form()
 {
 	global $context, $txt, $settings;
 
-	add_js_file('scripts/register.js');
+	add_js_file('register.js');
 
 	add_js('
 	new weRegister("registration", ' . (empty($settings['password_strength']) ? 0 : $settings['password_strength']) . ');');

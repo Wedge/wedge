@@ -580,7 +580,7 @@ function template_search()
 {
 	global $context, $txt;
 
-	add_js_file('scripts/pm.js');
+	add_js_file('pm.js');
 
 	if (!empty($context['search_errors']))
 		echo '
@@ -925,8 +925,8 @@ function template_send()
 	</div>';
 
 	add_js_file(array(
-		'scripts/pm.js',
-		'scripts/suggest.js'
+		'pm.js',
+		'suggest.js'
 	));
 
 	add_js('

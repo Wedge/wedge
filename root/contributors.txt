@@ -78,21 +78,21 @@ Yahoo UI Uploader (Flash/AJAX mass uploader)
 	-- © Yahoo! Inc., 2006-2013, http://yuilibrary.com/
 	-- used under the Modified BSD license.
 
-Also see these files for more contributor credits:
+Also refer to these core files for more contributor credits:
 
-- Sources/Class-JSMin.php
-- Sources/Class-JSON.php
-- Sources/Class-SFTP.php
-- Sources/Class-ZipExtract.php
-- Sources/media/Aeva-Embed.php (uses portions by Karl Benson)
-- Sources/media/ManageMedia3.php (uses portions by Karl Benson)
-- Sources/media/Class-Zip.php
-- Sources/media/Subs-Exif.php
-- Sources/media/getid3/
-- scripts/ie6hover.js
-- scripts/nested.js
-- scripts/sbox.js
-- scripts/sha1.js
+- sources/Class-JSMin.php
+- sources/Class-JSON.php
+- sources/Class-SFTP.php
+- sources/Class-ZipExtract.php
+- sources/media/Aeva-Embed.php (uses portions by Karl Benson)
+- sources/media/ManageMedia3.php (uses portions by Karl Benson)
+- sources/media/Class-Zip.php
+- sources/media/Subs-Exif.php
+- sources/media/getid3/
+- javascript/ie6hover.js
+- javascript/nested.js
+- javascript/sbox.js
+- javascript/sha1.js
 
 
 

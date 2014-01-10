@@ -33,7 +33,7 @@ function ModifyProfile($post_errors = array())
 	if (empty($post_errors))
 		loadLanguage('Profile');
 	loadTemplate('Profile');
-	add_js_file('scripts/profile.js');
+	add_js_file('profile.js');
 
 	// If we only want to see guest posts, use this shortcut.
 	if (isset($_REQUEST['guest']))

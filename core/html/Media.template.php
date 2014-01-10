@@ -242,7 +242,7 @@ function template_aeva_item_init()
 {
 	global $item, $context, $options, $txt;
 
-	add_js_file('scripts/topic.js');
+	add_js_file('topic.js');
 
 	add_js('
 	var oQuickReply = new QuickReply({
@@ -1274,7 +1274,7 @@ function template_aeva_search_searching()
 		</div>
 	</form>';
 
-	add_js_file('scripts/suggest.js');
+	add_js_file('suggest.js');
 
 	add_js('
 	new weAutoSuggest({

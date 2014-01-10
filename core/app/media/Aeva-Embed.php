@@ -446,7 +446,7 @@ function aeva_build_object($input)
 
 		if (!$use_object_init)
 		{
-			add_js_file('http://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js');
+			add_js_file('http://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js', true);
 			add_js('
 	aevams = {', substr($swo_params, 1), '};', !empty($settings['embed_expins']) ? '
 	aeinst = "' . $boardurl . '/expressInstall.swf";' : '');

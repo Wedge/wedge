@@ -97,16 +97,16 @@ function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow =
 
 	foreach ($files as $fid => $file)
 	{
-		if (!file_exists($add = TEMPLATES_DIR . '/' . $file))
+		if (!file_exists($add = CORE_DIR . '/javascript/' . $file)) // !! Temp?
 		{
 			unset($files[$fid]);
 			continue;
 		}
 
-		// Turn scripts/name.min.js into 'name', and plugin/other.js into 'plugin_other' for the final filename.
-		// Don't add theme.js, sbox.js and custom.js files to the final filename, to save a few bytes on all pages.
+		// Turn name.min.js into 'name' for the final filename. We won't add keywords
+		// that are always in the final filename, to save a few bytes on all pages.
 		if (!isset($ignore_files[$file]))
-			$id .= str_replace(array('scripts/', '/'), array('', '_'), substr(strrchr($file, '/'), 1, strpos($file, '.min.js') !== false ? -7 : -3)) . '-';
+			$id .= str_replace('/', '_', substr(strrchr($file, '/'), 1, strpos($file, '.min.js') !== false ? -7 : -3)) . '-';
 
 		$latest_date = max($latest_date, filemtime($add));
 	}
@@ -185,8 +185,8 @@ function add_plugin_js_file($plugin_name, $files = array(), $is_direct_url = fal
 		if (!file_exists($file))
 			unset($files[$k]);
 
-		// Turn scripts/name.min.js into 'name', and plugin/other.js into 'plugin_other' for the final filename.
-		$id .= str_replace(array('scripts/', '/'), array('', '_'), substr(strrchr($file, '/'), 1, strpos($file, '.min.js') !== false ? -7 : -3)) . '-';
+		// Turn plugin/other.js into 'plugin_other' for the final filename.
+		$id .= str_replace('/', '_', substr(strrchr($file, '/'), 1, strpos($file, '.min.js') !== false ? -7 : -3)) . '-';
 		$latest_date = max($latest_date, filemtime($file));
 	}
 
@@ -245,7 +245,7 @@ function add_jquery_ui()
 	);
 
 	if (empty($settings['jquery_origin']) || $settings['jquery_origin'] === 'local')
-		add_js_file('scripts/jquery-ui-' . $version . '.min.js');
+		add_js_file('jquery-ui-' . $version . '.min.js');
 	else
 		add_js_file('//' . $remote[$settings['jquery_origin']]);
 }
@@ -475,7 +475,6 @@ function add_plugin_css_file($plugin_name, $original_files = array(), $add_link 
 
 	// Cache final file and retrieve its name.
 	$final_script = ROOT . '/css/' . wedge_cache_css_files($target_folder . ($target_folder ? '/' : ''), $id, $latest_date, $files, $can_gzip, $ext, array('$plugindir' => $context['plugins_url'][$plugin_name]));
-	$final_script = ROOT . '/css/' . wedge_cache_css_files('', $id, $latest_date, $files, $can_gzip, $ext, array('$plugindir' => $context['plugins_url'][$plugin_name]));
 
 	if ($final_script == ROOT . '/css/')
 		return false;
@@ -630,7 +629,7 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 	$css_vars = array(
 		'$language' => isset(we::$user['language']) && in_array(we::$user['language'], $languages) ? we::$user['language'] : $languages[0],
 		'$images_dir' => ASSETS_DIR,
-		'$theme_dir' => TEMPLATES_DIR,
+		'$theme_dir' => SKIN_DIR,
 		'$root_dir' => ROOT_DIR,
 		'$images' => $relative_root . str_replace(ROOT, '', ASSETS),
 		'$root' => $relative_root,
@@ -811,7 +810,7 @@ function dynamic_language_flags()
 	$rep = '';
 	foreach ($context['languages'] as $language)
 	{
-		$icon = '/Themes/languages/Flag.' . $language['filename'] . '.png';
+		$icon = str_replace(ROOT_DIR, '', LANGUAGES_DIR) . '/Flag.' . $language['filename'] . '.png';
 		$rep .= '
 .flag_' . $language['filename'] . ' mixes .inline-block("")
 	background: url($root'. $icon . ') no-repeat 0 center
@@ -948,7 +947,7 @@ function wedge_cache_js($id, &$lang_name, $latest_date, $ext, $js, $gzip = false
 	static $closure_failed = false;
 
 	$final = '';
-	$dir = $full_path ? '' : TEMPLATES_DIR . '/';
+	$dir = $full_path ? '' : CORE_DIR . '/javascript/';
 	$no_packing = array();
 
 	// Delete cached versions, unless they have the same timestamp (i.e. up to date.)
@@ -1552,7 +1551,7 @@ function wedge_get_skin_options($options_only = false)
 	$matches = wedge_parse_skin_tags($set, 'script', 'include');
 	foreach ($matches as $match)
 	{
-		// If we have an include param in the tag, it should either use a full URI, or 'scripts/something.js'
+		// If we have an include param in the tag, it should either use a full URI, or 'something.js'
 		// to load a local script, or '$here/something.js', where it'll look for it in the skin folder.
 		if (!empty($match['include']))
 		{

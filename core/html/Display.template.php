@@ -22,7 +22,7 @@ function template_display_posts()
 	else
 	{
 		// OK, we're going to need this!
-		add_js_file('scripts/topic.js');
+		add_js_file('topic.js');
 
 		// Show the topic information - icon, subject, etc.
 		echo '

@@ -1353,7 +1353,7 @@ function aeva_foxy_fill_player(&$playlist, $type, &$details, $play = 0, $wid = 4
 		max-height: '. $hei . 'px;
 	}');
 
-	add_js_file('scripts/player.js');
+	add_js_file('player.js');
 
 	$pcol = !empty($amSettings['player_color']) ? ($amSettings['player_color'][0] == '#' ? substr($amSettings['player_color'], 1) : $amSettings['player_color']) : '';
 	$bcol = !empty($context['aeva_override_bcolor']) ? $context['aeva_override_bcolor'] : (!empty($amSettings['player_bcolor']) ? ($amSettings['player_bcolor'][0] == '#' ? substr($amSettings['player_bcolor'], 1) : $amSettings['player_bcolor']) : '');

@@ -133,7 +133,7 @@ function template_browse()
 		<div class="smalltext floatleft inline-block">', $txt['plugin_readmes'], ':';
 
 			foreach ($plugin['readmes'] as $readme => $state)
-				echo ' &nbsp;<a href="<URL>?action=admin;area=plugins;sa=readme;plugin=', rawurlencode($plugin['folder']), ';lang=', $readme, '" onclick="return reqWin(this);"><img src="', TEMPLATES, '/languages/Flag.', $readme, '.png"></a>';
+				echo ' &nbsp;<a href="<URL>?action=admin;area=plugins;sa=readme;plugin=', rawurlencode($plugin['folder']), ';lang=', $readme, '" onclick="return reqWin(this);"><img src="', LANGUAGES, '/Flag.', $readme, '.png"></a>';
 
 			echo '
 		</div>';

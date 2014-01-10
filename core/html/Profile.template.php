@@ -652,7 +652,7 @@ function template_editBuddies()
 		</div>
 	</form>';
 
-	add_js_file('scripts/suggest.js');
+	add_js_file('suggest.js');
 	add_js('
 	new weAutoSuggest({
 		', min_chars(), ',
@@ -720,7 +720,7 @@ function template_editIgnoreList()
 		</div>
 	</form>';
 
-	add_js_file('scripts/suggest.js');
+	add_js_file('suggest.js');
 	add_js('
 	new weAutoSuggest({
 		', min_chars(), ',

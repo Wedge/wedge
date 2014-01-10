@@ -81,7 +81,7 @@ function template_main()
 	colorData = ', we_json_encode($colors), ';');
 
 		// And now, we can prepare to show that data.
-		add_js_file(array('scripts/wraph.js', 'scripts/stats.js'));
+		add_js_file(array('wraph.js', 'stats.js'));
 	}
 
 	echo '

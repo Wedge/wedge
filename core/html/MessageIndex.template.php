@@ -177,7 +177,7 @@ function template_main_board()
 	$context['bottom_linktree'] = true;
 
 	// JavaScript for inline editing.
-	add_js_file('scripts/topic.js');
+	add_js_file('topic.js');
 
 	add_js('
 	// Hide certain bits during topic edit.
@@ -330,7 +330,7 @@ function template_main_blog()
 	$context['bottom_linktree'] = true;
 
 	// JavaScript for inline editing.
-	add_js_file('scripts/topic.js');
+	add_js_file('topic.js');
 
 	add_js('
 	// Hide certain bits during topic edit.

@@ -250,7 +250,7 @@ function template_email_members()
 		</form>';
 
 	// Make the javascript stuff visible.
-	add_js_file('scripts/suggest.js');
+	add_js_file('suggest.js');
 	add_js('
 	$("#advanced_select_div").show();
 	new weAutoSuggest({

@@ -112,15 +112,17 @@ function cleanRequest()
 	}
 
 	// All done? No changin' the URLs? Okay, we can now define our constants...
-	define('ROOT', $boardurl);
 	define('SCRIPT', $scripturl);
+	define('ROOT', $boardurl);
 	define('ROOT_DIR', $boarddir);
-	define('TEMPLATES', $settings['theme_url']);			// !! Temporary.
-	define('TEMPLATES_DIR', $settings['theme_dir']);		// !! Temporary.
-	define('SKINS', TEMPLATES . '/skins');					// !! Temporary.
-	define('SKINS_DIR', TEMPLATES_DIR . '/skins');			// !! Temporary.
-	define('LANGUAGES', TEMPLATES . '/languages');			// !! Temporary.
-	define('LANGUAGES_DIR', TEMPLATES_DIR . '/languages');	// !! Temporary.
+	define('CORE', $boardurl . '/core');
+	define('CORE_DIR', $boarddir . '/core');
+	define('TEMPLATES', $settings['theme_url']);		// !! Temporary.
+	define('TEMPLATES_DIR', $settings['theme_dir']);	// !! Temporary.
+	define('SKINS', CORE . '/skins');					// !! Temporary.
+	define('SKINS_DIR', CORE_DIR . '/skins');			// !! Temporary.
+	define('LANGUAGES', CORE . '/languages');			// !! Temporary.
+	define('LANGUAGES_DIR', CORE_DIR . '/languages');	// !! Temporary.
 	define('ASSETS', ROOT . '/assets');
 	define('ASSETS_DIR', ROOT_DIR . '/assets');
 
@@ -351,7 +353,7 @@ function cleanRequest()
 		&& strpos($full_request, '/avatar_') === false // search bot looking for a previous avatar that got regenerated since then?
 		&& strpos($full_request, '/css/') === false
 		&& strpos($full_request, '/js/') === false // same, but with regenerated CSS or JS files?
-		&& strpos($full_request, '/Themes/default/') === false // maybe some old files from the SMF era?
+		&& strpos($full_request, '/Themes/') === false // maybe some old files from the SMF era?
 		&& strpos($full_request, '/mobiquo/tapatalk') === false // Bad bots trying to use a JS exploit?
 		&& strpos($full_request, '/apple-touch-icon') === false // iOS looking for a big icon. If it finds it, it won't execute this anyway.
 		&& (!isset($_SERVER['HTTP_REFERER']) || (strpos($_SERVER['HTTP_REFERER'], 'googleusercontent.com') === false))) // Google Cache

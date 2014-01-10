@@ -226,7 +226,7 @@ function template_maintain_members()
 	</div>
 	<br class="clear">';
 
-	add_js_file('scripts/suggest.js');
+	add_js_file('suggest.js');
 	add_js('
 	new weAutoSuggest({
 		', min_chars(), ',

@@ -66,12 +66,12 @@ class wedit
 
 			add_css_file('editor', true);
 			add_js_file(array(
-				'scripts/editor.js',
-				'scripts/editor-func.js',
-				'scripts/post.js'
+				'editor.js',
+				'editor-func.js',
+				'post.js'
 			), false, false, array(
-				'scripts/editor-func.js' => false,
-				'scripts/post.js' => false
+				'editor-func.js' => false,
+				'post.js' => false
 			));
 		}
 

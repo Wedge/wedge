@@ -440,7 +440,7 @@ function template_view_versions()
 		It also contains the function, swapOption, that toggles showing the detailed information for each of
 		the file categories. (Sources, languages, and templates.)
 	*/
-	add_js_file('scripts/admin.js');
+	add_js_file('admin.js');
 
 	add_js('
 	var oViewVersions = new we_ViewVersions({

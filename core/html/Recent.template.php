@@ -86,7 +86,7 @@ function template_unread($replies = false)
 	global $context, $txt;
 
 	// JavaScript for generating topic status icons.
-	add_js_file('scripts/topic.js');
+	add_js_file('topic.js');
 
 	echo '
 	<we:cat>

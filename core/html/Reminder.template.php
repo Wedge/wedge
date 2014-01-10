@@ -108,7 +108,7 @@ function template_set_password()
 		<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 	</form>';
 
-	add_js_file('scripts/register.js');
+	add_js_file('register.js');
 
 	add_js('
 	new weRegister("reminder_form", ', empty($settings['password_strength']) ? 0 : $settings['password_strength'], ');');
@@ -154,7 +154,7 @@ function template_ask()
 		<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 	</form>';
 
-	add_js_file('scripts/register.js');
+	add_js_file('register.js');
 
 	add_js('
 	new weRegister("creator", ', empty($settings['password_strength']) ? 0 : $settings['password_strength'], ');');

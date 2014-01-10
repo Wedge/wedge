@@ -72,7 +72,7 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 
 		// Some javascript ma'am?
 		if (!empty($verificationOptions['override_visual']) || (!empty($settings['use_captcha_images']) && !isset($verificationOptions['override_visual'])))
-			add_js_file('scripts/captcha.js');
+			add_js_file('captcha.js');
 
 		// Skip I, J, L, O, Q, S and Z.
 		$context['standard_captcha_range'] = array_merge(range('A', 'H'), array('K', 'M', 'N', 'P', 'R'), range('T', 'Y'));
