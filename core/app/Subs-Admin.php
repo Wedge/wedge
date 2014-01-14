@@ -181,7 +181,7 @@ function getFileVersions(&$versionOptions)
 			$version_info['file_versions']['subscriptions.php'] = '??';
 	}
 
-	// Load all the files in the Sources directory, except this file and the redirect.
+	// Load all the files in the core/app directory, except for this file and the redirect.
 	$sources_dir = dir($sourcedir);
 	while ($entry = $sources_dir->read())
 	{

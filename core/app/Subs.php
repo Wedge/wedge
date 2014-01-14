@@ -2456,7 +2456,7 @@ function call_lang_hook($hook, $plugin_id = '')
  *
  * @param string $hook The name of the hook that has zero or more functions attached, that the function will be added to.
  * @param string $function The name of the function whose name should be added to the named hook.
- * @param string $file The file where Wedge can find that function, in loadSource() format. To include /Sources/MyFile.php, simply use 'MyFile'. Use '../MyFile' if it's in the root folder, etc. Leave blank if you know it'll be loaded at any time.
+ * @param string $file The file where Wedge can find that function, in loadSource() format. To include /core/app/MyFile.php, simply use 'MyFile'. Use '../../MyFile' if it's in the root folder, etc. Leave blank if you know it'll be loaded at any time.
  * @param bool $register Whether the named function will be added to the hook registry permanently (default), or simply for the current page load only.
  */
 function add_hook($hook, $function, $file = '', $register = true)
@@ -2499,7 +2499,7 @@ function add_hook($hook, $function, $file = '', $register = true)
  *
  * @param string $hook The name of the hook that has one or more functions attached.
  * @param string $function The name of the function whose name should be removed from the named hook.
- * @param string $file The file where Wedge can find that function, in loadSource() format. To include /Sources/MyFile.php, simply use 'MyFile'. Use '../MyFile' if it's in the root folder, etc. Leave blank if you know it'll be loaded at any time.
+ * @param string $file The file where Wedge can find that function, in loadSource() format. To include /core/app/MyFile.php, simply use 'MyFile'. Use '../../MyFile' if it's in the root folder, etc. Leave blank if you know it'll be loaded at any time.
  * @todo Modify the function to return true on success and false on fail.
  */
 function remove_hook($hook, $function, $file = '')

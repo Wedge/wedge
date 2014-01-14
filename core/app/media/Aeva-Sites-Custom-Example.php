@@ -24,7 +24,7 @@ This is the file where you can include additional websites and settings that are
 Its name is "Aeva-Sites-Custom-Example.php", you just need to rename it to "Aeva-Sites-Custom.php" and fill it with
 your custom site definitions. They will never be deleted when upgrading Wedge.
 
-Upload the file to your Sources folder, go to the Admin area, check out the Forum > Auto-Embedding > Site list section,
+Upload the file to your core/app folder, go to the Admin area, check out the Forum > Auto-Embedding > Site list section,
 enable the custom sites at the bottom and save your choices. You can now start embedding them in your posts.
 
 Use the 'custom' type to make it easier to find your sites in the site list.

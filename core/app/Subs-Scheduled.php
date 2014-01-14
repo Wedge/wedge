@@ -95,7 +95,7 @@ function recalculateNextImperative()
  * Adds a task to the one-off function queue.
  *
  * The task array to be inserted accepts the following information keys:
- * - source (optional): string containing the name of a file in Sources to load, alternatively an array of strings listing multiple files. As per {@link loadSource()}, no .php extension or path should be provided.
+ * - source (optional): string containing the name of a file in core/app to load, alternatively an array of strings listing multiple files. As per {@link loadSource()}, no .php extension or path should be provided.
  * - function (required): string detailing the function to be called to execute this task.
  * - parameters (optional): an array detailing any parameters to be sent to the relevant function. Since call_user_func_array is used, the parameters should be added in the right order for the receiving function, regardless of whether it is a hashed or indexed array.
  *

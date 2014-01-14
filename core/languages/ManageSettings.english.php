@@ -117,12 +117,12 @@ $txt['likes_own_posts'] = 'Users can like their own posts';
 
 $txt['boardurl'] = 'Forum URL';
 $txt['boarddir'] = 'Path to Wedge folder';
-$txt['sourcedir'] = 'Path to Sources folder';
+$txt['sourcedir'] = 'Path to app folder';
 $txt['cachedir'] = 'Path to cache folder';
-$txt['pluginsdir'] = 'Path to Plugins folder';
-$txt['pluginsurl'] = 'URL to Plugins folder';
-$txt['theme_dir'] = 'Path to theme folder';
-$txt['theme_url'] = 'URL to theme folder';
+$txt['pluginsdir'] = 'Path to plugins folder';
+$txt['pluginsurl'] = 'URL to plugins folder';
+$txt['theme_dir'] = 'Path to HTML templates';
+$txt['theme_url'] = 'URL to HTML templates';
 $txt['images_url'] = 'URL to assets folder';
 
 $txt['caching_information'] = '<div class="center" style="font-weight: bold; text-decoration: underline">Important! Read this first before enabling these features.</div><br>

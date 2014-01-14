@@ -303,7 +303,7 @@ function load_database()
 	global $settings, $sourcedir, $db_prefix, $db_connection, $db_name, $db_user;
 
 	if (empty($sourcedir))
-		$sourcedir = dirname(__FILE__) . '/core/sources';
+		$sourcedir = dirname(__FILE__) . '/core/app';
 
 	// Need this to check whether we need the database password.
 	require(dirname(__FILE__) . '/Settings.php');
@@ -719,7 +719,7 @@ function DatabaseSettings()
 		require(dirname(__FILE__) . '/Settings.php');
 
 		if (empty($sourcedir))
-			$sourcedir = dirname(__FILE__) . '/core/sources';
+			$sourcedir = dirname(__FILE__) . '/core/app';
 
 		// Better find the database file!
 		if (!file_exists($sourcedir . '/Class-DB.php'))
@@ -839,7 +839,7 @@ function ForumSettings()
 		$vars = array(
 			'boardurl' => $_POST['boardurl'],
 			'boarddir' => addslashes(dirname(__FILE__)),
-			'sourcedir' => addslashes(dirname(__FILE__)) . '/core/sources',
+			'sourcedir' => addslashes(dirname(__FILE__)) . '/core/app',
 			'cachedir' => addslashes(dirname(__FILE__)) . '/cache',
 			'pluginsdir' => addslashes(dirname(__FILE__)) . '/plugins',
 			'pluginsurl' => $_POST['boardurl'] . '/plugins',
@@ -1122,7 +1122,7 @@ function AdminAccount()
 	require(dirname(__FILE__) . '/Settings.php');
 
 	// We need this for some of the IP stuff.
-	@include(dirname(__FILE__) . '/core/sources/QueryString.php');
+	@include(dirname(__FILE__) . '/core/app/QueryString.php');
 
 	load_database();
 
@@ -1914,7 +1914,7 @@ function template_install_above()
 	$cachedir = $boarddir . '/cache';
 	$cssdir = $boarddir . '/css';
 	$jsdir = $boarddir . '/js';
-	$sourcedir = $boarddir . '/core/sources';
+	$sourcedir = $boarddir . '/core/app';
 	$scripturl = $boarddir . '/index.php';
 	// !!! Dunno if we need to load all of these. Better safe than sorry.
 	require_once($scripturl);
@@ -1934,8 +1934,8 @@ function template_install_above()
 	$boardurl = 'http' . (!empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) != 'off' ? 's' : '') . '://' . $host;
 	$boardurl .= substr($_SERVER['REQUEST_URI'], 0, strrpos($_SERVER['REQUEST_URI'], '/'));
 
-	$settings['theme_dir'] = $boarddir . '/core/templates';
-	$settings['theme_url'] = $boardurl . '/core/templates';
+	$settings['theme_dir'] = $boarddir . '/core/html';
+	$settings['theme_url'] = $boardurl . '/core/html';
 
 	// Define our constants. (cf. QueryString.php)
 	define('SCRIPT', $scripturl);

@@ -1051,7 +1051,7 @@ function wedge_get_skin_list($linear = false)
 			'type' => $setxml && preg_match('~<type>(.*?)</type>~sui', $setxml, $match) ? trim($match[1]) : 'add',
 			'parent' => $setxml && preg_match('~<parent>(.*?)</parent>~sui', $setxml, $match) ? trim($match[1]) : '',
 			'comment' => $setxml && preg_match('~<comment>(?:<!\[CDATA\[)?(.*?)(?:]]>)?</comment>~sui', $setxml, $match) ? trim($match[1]) : '',
-			'has_templates' => in_array('templates', $these_files) && is_dir($this_dir . '/templates'),
+			'has_templates' => in_array('html', $these_files) && is_dir($this_dir . '/html'),
 		);
 		$skin['dir'] = str_replace(SKINS_DIR . '/', '', $this_dir);
 		$skin['enabled'] = empty($settings['disabled_skins'][$skin['dir']]);

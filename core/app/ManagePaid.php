@@ -61,7 +61,7 @@ if (!defined('WEDGE'))
 		- remove a subscription from a user.
 
 	array loadPaymentGateways()
-		- checks the Sources directory for any files fitting the format of a payment gateway.
+		- checks the app folder for any files fitting the format of a payment gateway.
 		- loads each file to check it's valid.
 		- includes each file and returns the function name and whether it should work with this version of Wedge.
 */

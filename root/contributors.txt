@@ -80,15 +80,15 @@ Yahoo UI Uploader (Flash/AJAX mass uploader)
 
 Also refer to these core files for more contributor credits:
 
-- sources/Class-JSMin.php
-- sources/Class-JSON.php
-- sources/Class-SFTP.php
-- sources/Class-ZipExtract.php
-- sources/media/Aeva-Embed.php (uses portions by Karl Benson)
-- sources/media/ManageMedia3.php (uses portions by Karl Benson)
-- sources/media/Class-Zip.php
-- sources/media/Subs-Exif.php
-- sources/media/getid3/
+- app/Class-JSMin.php
+- app/Class-JSON.php
+- app/Class-SFTP.php
+- app/Class-ZipExtract.php
+- app/media/Aeva-Embed.php (uses portions by Karl Benson)
+- app/media/ManageMedia3.php (uses portions by Karl Benson)
+- app/media/Class-Zip.php
+- app/media/Subs-Exif.php
+- app/media/getid3/
 - javascript/ie6hover.js
 - javascript/nested.js
 - javascript/sbox.js

@@ -2105,9 +2105,9 @@ INSERT INTO {$db_prefix}settings
 	(variable, value)
 VALUES
 	('language', '{$language}'),
-	('theme_url', '{$boardurl}/core/templates'),
+	('theme_url', '{$boardurl}/core/html'),
 	('images_url', '{$boardurl}/assets'),
-	('theme_dir', '{$boarddir}/core/templates'),
+	('theme_dir', '{$boarddir}/core/html'),
 	('news', 'e{$default_news}'),
 	('todayMod', '2'),
 	('enablePreviousNext', '1'),

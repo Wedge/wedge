@@ -279,19 +279,19 @@ function template_view_versions()
 	echo '
 					<tr>
 						<td class="windowbg">
-							<a href="#" id="Sources-link">', $txt['dvc_sources'], '</a>
+							<a href="#" id="App-link">', $txt['dvc_sources'], '</a>
 						</td>
 						<td class="windowbg">
-							<em id="yourSources">??</em>
+							<em id="yourApp">??</em>
 						</td>
 						<td class="windowbg">
-							<em id="currentSources">??</em>
+							<em id="currentApp">??</em>
 						</td>
 					</tr>
 				</tbody>
 			</table>
 
-			<table id="Sources" class="table_grid w100 cs0">
+			<table id="App" class="table_grid w100 cs0">
 			<tbody>';
 
 	// Loop through every source file displaying its version - using javascript.
@@ -302,10 +302,10 @@ function template_view_versions()
 						', $filename, '
 					</td>
 					<td class="windowbg2 w25">
-						<em id="yourSources', $filename, '">', $version, '</em>
+						<em id="yourApp', $filename, '">', $version, '</em>
 					</td>
 					<td class="windowbg2 w25">
-						<em id="currentSources', $filename, '">??</em>
+						<em id="currentApp', $filename, '">??</em>
 					</td>
 				</tr>';
 
@@ -438,7 +438,7 @@ function template_view_versions()
 		Below is the hefty javascript for this. Upon opening the page it checks the current file versions with ones
 		held at wedge.org and works out if they are up to date. If they aren't it colors that files number red.
 		It also contains the function, swapOption, that toggles showing the detailed information for each of
-		the file categories. (Sources, languages, and templates.)
+		the file categories. (core/app, core/languages, and core/html.)
 	*/
 	add_js_file('admin.js');
 
@@ -449,7 +449,7 @@ function template_view_versions()
 			\'.', $context['default_known_languages']), '\'
 		],
 		oSectionContainerIds: {
-			Sources: \'Sources\',
+			App: \'App\',
 			Default: \'Default\',
 			Languages: \'Languages\',
 			Templates: \'Templates\'

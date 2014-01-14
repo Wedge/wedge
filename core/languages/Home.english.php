@@ -7,7 +7,7 @@ $txt['home_intro'] = '
 			This forum is running Wedge, a forum-building platform written in PHP 5.
 			<br><br>
 			<em>In order to change this blurb, you can clone the following files:
-			Sources\Home.php, Templates\Home.template.php, languages\Home.*.php.
+			core/app/Home.php, core/html/Home.template.php, core/languages/Home.*.php.
 			Give them a different prefix, such as MyHome. Apply your modifications
 			to these new files, upload them, and tell Wedge to point its
 			index page to MyHome (default_index in the settings table).

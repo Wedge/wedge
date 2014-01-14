@@ -221,7 +221,7 @@ if (!isset($settings['app_error_count']))
 if (!empty($context['app_error_count']))
 	updateSettings(array('app_error_count' => $settings['app_error_count'] + $context['app_error_count']));
 
-// Loads a named file from the Sources folder. Uses cache if possible.
+// Loads a named file from the app folder. Uses cache if possible.
 // $source_name can be a string or an array of strings.
 function loadSource($source_name)
 {

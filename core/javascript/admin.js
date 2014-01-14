@@ -176,25 +176,25 @@ we_ViewVersions.prototype.determineVersions = function ()
 {
 	var
 		oHighYour = {
-			Sources: '??',
+			App: '??',
 			Default: '??',
 			Languages: '??',
 			Templates: '??'
 		},
 		oHighCurrent = {
-			Sources: '??',
+			App: '??',
 			Default: '??',
 			Languages: '??',
 			Templates: '??'
 		},
 		oLowVersion = {
-			Sources: false,
+			App: false,
 			Default: false,
 			Languages: false,
 			Templates: false
 		},
 		sSections = [
-			'Sources',
+			'App',
 			'Default',
 			'Languages',
 			'Templates'
@@ -277,12 +277,12 @@ we_ViewVersions.prototype.determineVersions = function ()
 		}
 	}
 
-	$('#currentSources').html(oHighCurrent.Sources);
+	$('#currentApp').html(oHighCurrent.App);
 	$('#currentDefault').html(oHighCurrent.Default);
 	$('#currentTemplates').html(oHighCurrent.Templates);
 	$('#currentLanguages').html(oHighCurrent.Languages);
 
-	oLowVersion.Sources ? $('#yourSources').html(oLowVersion.Sources).css('color', 'red') : $('#yourSources').html(oHighYour.Sources);
+	oLowVersion.App ? $('#yourApp').html(oLowVersion.App).css('color', 'red') : $('#yourApp').html(oHighYour.App);
 	oLowVersion.Default ? $('#yourDefault').html(oLowVersion.Default).css('color', 'red') : $('#yourDefault').html(oHighYour.Default);
 	oLowVersion.Templates ? $('#yourTemplates').html(oLowVersion.Templates).css('color', 'red') : $('#yourTemplates').html(oHighYour.Templates);
 	oLowVersion.Languages ? $('#yourLanguages').html(oLowVersion.Languages).css('color', 'red') : $('#yourLanguages').html(oHighYour.Languages);
