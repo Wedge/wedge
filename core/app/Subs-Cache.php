@@ -106,7 +106,7 @@ function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow =
 		// Turn name.min.js into 'name' for the final filename. We won't add keywords
 		// that are always in the final filename, to save a few bytes on all pages.
 		if (!isset($ignore_files[$file]))
-			$id .= str_replace('/', '_', substr(strrchr($file, '/'), 1, strpos($file, '.min.js') !== false ? -7 : -3)) . '-';
+			$id .= str_replace('/', '_', substr(strpos($file, '/') !== false ? substr(strrchr($file, '/'), 1) : $file, 0, strpos($file, '.min.js') !== false ? -7 : -3)) . '-';
 
 		$latest_date = max($latest_date, filemtime($add));
 	}
