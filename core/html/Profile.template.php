@@ -715,7 +715,7 @@ function template_editIgnoreList()
 					<strong>', $txt['who_member'], ':</strong>
 					<input name="new_ignore" id="new_ignore" size="25">
 				</label>
-				<input type="submit" value="', $txt['ignore_add_button'], '" class="new">
+				<input type="submit" value="', $txt['add'], '" class="new">
 			</div>
 		</div>
 	</form>';
@@ -744,8 +744,8 @@ function template_trackActivity()
 			<div id="tracking" class="windowbg2 wrc">
 				<dl class="noborder">
 					<dt>
-						', $txt['most_recent_ip'], ':', (empty($context['last_ip2']) ? '' : '
-						<dfn>(<a href="<URL>?action=help;in=whytwoip" onclick="return reqWin(this);">' . $txt['why_two_ip_address'] . '</a>)</dfn>'), '
+						', $txt['most_recent_ip'], ':', empty($context['last_ip2']) ? '' : '
+						<dfn>(<a href="<URL>?action=help;in=whytwoip" onclick="return reqWin(this);">' . $txt['why_two_ip_address'] . '</a>)</dfn>', '
 					</dt>
 					<dd>
 						<a href="<URL>?action=profile;u=', $context['member']['id'], ';area=tracking;sa=ip;searchip=', $context['last_ip'], '">', $context['last_ip'], '</a>';
@@ -885,7 +885,7 @@ function template_trackReported()
 				<strong>', $report['board_link'], ' / <a href="', $report['topic_href'], '">', $report['subject'], '</a></strong> ', $txt['mc_reportedp_by'], ' <strong>', $report['author']['link'], '</strong> (', number_context('mc_reportedp_count', $report['num_reports']), ')
 			</div>
 			<div class="clear smalltext">
-				&#171; ', $txt['mc_reportedp_last_reported'], ': ', $report['last_updated'], ' &#187;<br>';
+				« ', $txt['mc_reportedp_last_reported'], ': ', $report['last_updated'], ' »<br>';
 
 		// Prepare the comments...
 		$comments = array();
@@ -893,7 +893,7 @@ function template_trackReported()
 			$comments[$comment['member']['id']] = $comment['member']['link'];
 
 		echo '
-				&#171; ', $txt['mc_reportedp_reported_by'], ': ', implode(', ', $comments), ' &#187;
+				« ', $txt['mc_reportedp_reported_by'], ': ', implode(', ', $comments), ' »
 			</div>
 			<hr>
 			', $report['body'], '
