@@ -1720,13 +1720,17 @@ function cache_quick_get($key, $file, $function, $params, $level = 1)
 {
 	global $settings, $cache_block;
 
-	if (empty($settings['cache_enable']) || $settings['cache_enable'] < $level || !is_array($cache_block = cache_get_data($key, 3600)) || (!empty($cache_block['refresh_eval']) && eval($cache_block['refresh_eval'])) || (!empty($cache_block['expires']) && $cache_block['expires'] < time()))
+	$needs_refresh = empty($settings['cache_enable']) || $settings['cache_enable'] < $level || !is_array($cache_block = cache_get_data($key, 3600)) || (!empty($cache_block['refresh_eval']) && eval($cache_block['refresh_eval'])) || (!empty($cache_block['expires']) && $cache_block['expires'] < time());
+	if ($needs_refresh || !empty($cache_block['after_run']))
 	{
 		if (is_array($file))
 			loadPluginSource($file[0], $file[1]);
 		else
 			loadSource($file);
+	}
 
+	if ($needs_refresh)
+	{
 		$cache_block = call_user_func_array($function, $params);
 
 		if (!empty($settings['cache_enable']) && $settings['cache_enable'] >= $level)
