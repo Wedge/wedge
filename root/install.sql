@@ -2105,9 +2105,9 @@ INSERT INTO {$db_prefix}settings
 	(variable, value)
 VALUES
 	('language', '{$language}'),
+	('theme_dir', '{$boarddir}/core/html'),
 	('theme_url', '{$boardurl}/core/html'),
 	('images_url', '{$boardurl}/assets'),
-	('theme_dir', '{$boarddir}/core/html'),
 	('news', 'e{$default_news}'),
 	('todayMod', '2'),
 	('enablePreviousNext', '1'),
@@ -2293,7 +2293,7 @@ VALUES
 	('embed_real', '0'),
 	('embed_swf', '0'),
 	('disableTemplateEval', '1'),
-	('default_index', 'Welcome'),
+	('default_index', 'Home'),
 	('pm_enabled', '1'),
 	('enable_news', '1'),
 	('show_newsfader', '0'),

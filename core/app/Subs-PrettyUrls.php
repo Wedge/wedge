@@ -202,6 +202,6 @@ function pretty_update_topic($subject, $topic_id)
 	);
 
 	// Count this query!
-	if (isset($context))
+	if (isset($context, $context['pretty']))
 		$context['pretty']['db_count']++;
 }

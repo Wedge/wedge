@@ -18,6 +18,9 @@ define('INVALID_IP', '00000000000000000000000000000000');
 define('WEDGE_INSTALLER', 1);
 define('WEDGE', 1);
 
+define('SCRIPT', dirname(__FILE__) . '/index.php');
+require_once(SCRIPT);
+
 // Don't have PHP support, do you?
 // ><html dir="ltr"><head><title>Error!</title></head><body>Sorry, this installer requires PHP!<div style="display: none">
 
@@ -930,6 +933,7 @@ function DatabasePopulation()
 		'table_dups' => 0,
 		'insert_dups' => 0,
 	);
+
 	foreach ($sql_lines as $count => $line)
 	{
 		// No comments allowed!
@@ -959,9 +963,7 @@ function DatabasePopulation()
 			}
 			// Don't error on duplicate indexes
 			elseif (!preg_match('~^\s*CREATE( UNIQUE)? INDEX ([^\n\r]+?)~', $current_statement, $match))
-			{
 				$incontext['failures'][$count] = wesql::error();
-			}
 		}
 		else
 		{
@@ -1070,7 +1072,7 @@ function DatabasePopulation()
 	}
 
 	// Check for the ALTER privilege.
-	if (wesql::query('ALTER TABLE {db_prefix}boards ORDER BY id_board', array('security_override' => true, 'db_error_skip' => true)) === false)
+	if (wesql::query('ALTER TABLE ' . $db_prefix . 'boards ORDER BY id_board', array('security_override' => true, 'db_error_skip' => true)) === false)
 	{
 		$incontext['error'] = $txt['error_db_alter_priv'];
 		return false;
@@ -1326,13 +1328,7 @@ function DeleteInstall()
 
 	chdir(dirname(__FILE__));
 
-	require_once($sourcedir . '/Errors.php');
-	require_once($sourcedir . '/Subs.php');
-	require_once($sourcedir . '/Load.php');
-	require_once($sourcedir . '/Security.php');
-	require_once($sourcedir . '/Subs-Auth.php');
-	require_once($sourcedir . '/Class-String.php');
-	westr::getInstance();
+	init_variables();
 
 	// Bring a warning over.
 	if (!empty($incontext['account_existed']))
@@ -1412,9 +1408,6 @@ function DeleteInstall()
 
 	// Now is the perfect time to fetch the Wedge files.
 	require_once($sourcedir . '/ScheduledTasks.php');
-	require_once($sourcedir . '/Class-System.php');
-	require_once($sourcedir . '/QueryString.php');
-	we::getInstance(false);
 	// Sanity check that they loaded earlier!
 	if (isset($settings['recycle_board']))
 	{
@@ -1904,7 +1897,7 @@ function fixModSecurity()
 	return false;
 }
 
-function template_install_above()
+function init_variables()
 {
 	global $incontext, $txt, $boardurl, $cachedir, $cssdir, $jsdir;
 	global $boarddir, $sourcedir, $context, $settings;
@@ -1915,9 +1908,7 @@ function template_install_above()
 	$cssdir = $boarddir . '/css';
 	$jsdir = $boarddir . '/js';
 	$sourcedir = $boarddir . '/core/app';
-	$scripturl = $boarddir . '/index.php';
 	// !!! Dunno if we need to load all of these. Better safe than sorry.
-	require_once($scripturl);
 	require_once($sourcedir . '/Load.php');
 	require_once($sourcedir . '/Subs-Auth.php');
 	require_once($sourcedir . '/Class-String.php');
@@ -1938,25 +1929,33 @@ function template_install_above()
 	$settings['theme_url'] = $boardurl . '/core/html';
 
 	// Define our constants. (cf. QueryString.php)
-	define('SCRIPT', $scripturl);
 	define('ROOT', $boardurl);
 	define('ROOT_DIR', $boarddir);
 	define('CORE', $boardurl . '/core');
 	define('CORE_DIR', $boarddir . '/core');
-	define('TEMPLATES', $settings['theme_url']);		// !! Temporary.
-	define('TEMPLATES_DIR', $settings['theme_dir']);	// !! Temporary.
-	define('SKINS', CORE . '/skins');					// !! Temporary.
-	define('SKINS_DIR', CORE_DIR . '/skins');			// !! Temporary.
-	define('LANGUAGES', CORE . '/languages');			// !! Temporary.
-	define('LANGUAGES_DIR', CORE_DIR . '/languages');	// !! Temporary.
+	define('TEMPLATES', $settings['theme_url']);
+	define('TEMPLATES_DIR', $settings['theme_dir']);
+	define('SKINS', CORE . '/skins');
+	define('SKINS_DIR', CORE_DIR . '/skins');
+	define('LANGUAGES', CORE . '/languages');
+	define('LANGUAGES_DIR', CORE_DIR . '/languages');
 	define('ASSETS', ROOT . '/assets');
 	define('ASSETS_DIR', ROOT_DIR . '/assets');
+	we::$user['skin'] = '/';
 
 	if (empty($incontext['enable_update_settings'])) // Last step also defines MID, so avoid that...
 		define('MID', we::$id = 0);
 
-	$context['css_folders'] = array('skins');
+	$context['css_folders'] = array('');
 	$settings['minify'] = 'packer';
+}
+
+function template_install_above()
+{
+	global $incontext, $txt, $cachedir, $context, $settings;
+
+	if (!defined('ROOT'))
+		init_variables();
 
 	if (!file_exists($cachedir . '/cache.lock'))
 		@fclose(@fopen($cachedir . '/cache.lock', 'w'));
@@ -2300,7 +2299,10 @@ function template_populate_database()
 	global $incontext, $txt;
 
 	echo '
-	<form action="', $incontext['form_url'], '" method="post">
+	<form action="', $incontext['form_url'], '" method="post">';
+
+	if (empty($incontext['error']) && empty($incontext['warning']))
+		echo '
 		<p>', !empty($incontext['was_refresh']) ? $txt['user_refresh_install_desc'] : $txt['db_populate_info'], '</p>';
 
 	if (!empty($incontext['sql_results']))
@@ -2325,7 +2327,8 @@ function template_populate_database()
 		</ul>';
 	}
 
-	echo '
+	if (empty($incontext['error']) && empty($incontext['warning']))
+		echo '
 		<p>', $txt['db_populate_info2'], '</p>';
 
 	template_warning_divs();

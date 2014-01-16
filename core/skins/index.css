@@ -248,7 +248,7 @@ ul#noava
 		span extends .horizontal-arrow
 			color: #888
 			font-weight: 700
-		+ #linktree
+		+ #linktree:not(:empty)
 			margin-top: -7px
 @endif
 
