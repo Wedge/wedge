@@ -14,12 +14,10 @@ define('REQUIRED_MYSQL_SERVER_VERSION', '5.0.3');
 define('REQUIRED_MYSQL_CLIENT_VERSION', '5.0.0');
 
 // Some constants we might need later.
+define('APP_DIR', dirname(__FILE__) . '/core/app');
 define('INVALID_IP', '00000000000000000000000000000000');
 define('WEDGE_INSTALLER', 1);
 define('WEDGE', 1);
-
-define('SCRIPT', dirname(__FILE__) . '/index.php');
-require_once(SCRIPT);
 
 // Don't have PHP support, do you?
 // ><html dir="ltr"><head><title>Error!</title></head><body>Sorry, this installer requires PHP!<div style="display: none">
@@ -303,10 +301,7 @@ function load_lang_file()
 // This handy function loads some settings and the like.
 function load_database()
 {
-	global $settings, $sourcedir, $db_prefix, $db_connection, $db_name, $db_user;
-
-	if (empty($sourcedir))
-		$sourcedir = dirname(__FILE__) . '/core/app';
+	global $settings, $db_prefix, $db_connection, $db_name, $db_user;
 
 	// Need this to check whether we need the database password.
 	require(dirname(__FILE__) . '/Settings.php');
@@ -316,7 +311,7 @@ function load_database()
 	// Connect the database.
 	if (!$db_connection)
 	{
-		require_once($sourcedir . '/Class-DB.php');
+		loadSource('Class-DB');
 		wesql::getInstance();
 
 		if (!$db_connection)
@@ -721,11 +716,8 @@ function DatabaseSettings()
 		// Make sure it works.
 		require(dirname(__FILE__) . '/Settings.php');
 
-		if (empty($sourcedir))
-			$sourcedir = dirname(__FILE__) . '/core/app';
-
 		// Better find the database file!
-		if (!file_exists($sourcedir . '/Class-DB.php'))
+		if (!file_exists(APP_DIR . '/Class-DB.php'))
 		{
 			$incontext['error'] = sprintf($txt['error_db_file'], 'Class-DB.php');
 			return false;
@@ -733,7 +725,7 @@ function DatabaseSettings()
 
 		// Now include it, for database functions!
 		$settings['disableQueryCheck'] = true;
-		require_once($sourcedir . '/Class-DB.php');
+		loadSource('Class-DB');
 
 		// Attempt a connection.
 		$db_connection = wesql::connect($db_server, $db_name, $db_user, $db_passwd, $db_prefix, array('non_fatal' => true, 'dont_select_db' => true));
@@ -869,7 +861,7 @@ function ForumSettings()
 // Step one: Do the SQL thang.
 function DatabasePopulation()
 {
-	global $txt, $db_connection, $settings, $sourcedir, $db_prefix, $incontext, $db_name, $boardurl;
+	global $txt, $db_connection, $settings, $db_prefix, $incontext, $db_name, $boardurl;
 
 	$incontext['block'] = 'populate_database';
 	$incontext['page_title'] = $txt['db_populate'];
@@ -1060,7 +1052,7 @@ function DatabasePopulation()
 	}
 
 	// Let's optimize those new tables.
-	require_once($sourcedir . '/Class-DBPackages.php');
+	loadSource('Class-DBPackages');
 	$tables = wedbPackages::list_tables($db_name, $db_prefix . '%');
 	foreach ($tables as $table)
 	{
@@ -1093,8 +1085,7 @@ function DatabasePopulation()
 		array('pretty_filters', serialize($settings['pretty_filters']))
 	);
 
-	require_once($sourcedir . '/Subs.php');
-	require_once($sourcedir . '/Subs-PrettyUrls.php');
+	loadSource(array('Subs', 'Subs-PrettyUrls'));
 	pretty_update_filters();
 
 	// We're done.
@@ -1110,7 +1101,7 @@ function DatabasePopulation()
 // Ask for the administrator login information.
 function AdminAccount()
 {
-	global $txt, $db_connection, $incontext, $db_passwd, $sourcedir;
+	global $txt, $db_connection, $incontext, $db_passwd;
 
 	$incontext['block'] = 'admin_account';
 	$incontext['page_title'] = $txt['user_settings'];
@@ -1172,7 +1163,7 @@ function AdminAccount()
 			$incontext['error'] = $txt['error_user_settings_no_password'];
 			return false;
 		}
-		if (!file_exists($sourcedir . '/Subs.php'))
+		if (!file_exists(APP_DIR . '/Subs.php'))
 		{
 			$incontext['error'] = $txt['error_subs_missing'];
 			return false;
@@ -1317,7 +1308,7 @@ function AdminAccount()
 // Final step, clean up and a complete message!
 function DeleteInstall()
 {
-	global $txt, $incontext, $sourcedir, $settings;
+	global $txt, $incontext, $settings;
 
 	$incontext['page_title'] = $txt['congratulations'];
 	$incontext['block'] = 'delete_install';
@@ -1407,7 +1398,7 @@ function DeleteInstall()
 	wesql::free_result($request);
 
 	// Now is the perfect time to fetch the Wedge files.
-	require_once($sourcedir . '/ScheduledTasks.php');
+	loadSource('ScheduledTasks');
 	// Sanity check that they loaded earlier!
 	if (isset($settings['recycle_board']))
 	{
@@ -1897,28 +1888,33 @@ function fixModSecurity()
 	return false;
 }
 
+// This is a 'safe', cache-less replacement for loadSource.
+// $source_name can be a string or an array of strings.
+function loadSource($source_name)
+{
+	static $done = array();
+
+	foreach ((array) $source_name as $file)
+	{
+		if (isset($done[$file]))
+			continue;
+		$done[$file] = true;
+		require_once(APP_DIR . '/' . $file . '.php');
+	}
+}
+
 function init_variables()
 {
 	global $incontext, $txt, $boardurl, $cachedir, $cssdir, $jsdir;
-	global $boarddir, $sourcedir, $context, $settings;
+	global $boarddir, $context, $settings;
 
 	// Load Wedge's default paths and pray that it works...
 	$boarddir = dirname(__FILE__);
 	$cachedir = $boarddir . '/cache';
 	$cssdir = $boarddir . '/css';
 	$jsdir = $boarddir . '/js';
-	$sourcedir = $boarddir . '/core/app';
 	// !!! Dunno if we need to load all of these. Better safe than sorry.
-	require_once($sourcedir . '/Load.php');
-	require_once($sourcedir . '/Subs-Auth.php');
-	require_once($sourcedir . '/Class-String.php');
-	require_once($sourcedir . '/Class-System.php');
-	require_once($sourcedir . '/QueryString.php');
-	require_once($sourcedir . '/Subs.php');
-	require_once($sourcedir . '/Errors.php');
-	require_once($sourcedir . '/Security.php');
-	westr::getInstance();
-	we::getInstance(false);
+	loadSource(array('Load', 'Subs-Auth', 'Class-String', 'Class-System', 'QueryString', 'Subs', 'Errors', 'Security'));
 
 	// Fill in the server URL for the current user. This is user-specific, as they may be using a different URL than the script's default URL (Pretty URL, secure access...)
 	$host = empty($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_X_FORWARDED_SERVER'] : $_SERVER['HTTP_HOST'];
@@ -1929,6 +1925,7 @@ function init_variables()
 	$settings['theme_url'] = $boardurl . '/core/html';
 
 	// Define our constants. (cf. QueryString.php)
+	define('SCRIPT', $boarddir . '/index.php');
 	define('ROOT', $boardurl);
 	define('ROOT_DIR', $boarddir);
 	define('CORE', $boardurl . '/core');
@@ -1941,6 +1938,9 @@ function init_variables()
 	define('LANGUAGES_DIR', CORE_DIR . '/languages');
 	define('ASSETS', ROOT . '/assets');
 	define('ASSETS_DIR', ROOT_DIR . '/assets');
+
+	westr::getInstance();
+	we::getInstance(false);
 	we::$user['skin'] = '/';
 
 	if (empty($incontext['enable_update_settings'])) // Last step also defines MID, so avoid that...
