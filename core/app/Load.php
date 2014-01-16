@@ -1273,7 +1273,7 @@ function we_resetTransparency($id_attach, $path, $real_name)
  */
 function loadTheme($skin = '', $initialize = true)
 {
-	global $user_settings, $board_info, $boarddir, $sourcedir, $footer_coding;
+	global $user_settings, $board_info, $footer_coding;
 	global $txt, $boardurl, $mbname, $settings, $context, $options;
 
 	// First, determine our current skin, if not forced.
@@ -1518,18 +1518,6 @@ function loadTheme($skin = '', $initialize = true)
 		add_js('
 	$.get(weUrl("imperative"));');
 
-	// Any files to include at this point?
-	if (!empty($settings['integrate_theme_include']))
-	{
-		$theme_includes = explode(',', $settings['integrate_theme_include']);
-		foreach ($theme_includes as $include)
-		{
-			$include = strtr(trim($include), array('$boarddir' => $boarddir, '$sourcedir' => $sourcedir, '$themedir' => $settings['theme_dir']));
-			if (file_exists($include))
-				require_once($include);
-		}
-	}
-
 	// Load the notifications system
 	loadSource('Notifications');
 	weNotif::initialize();
@@ -1773,46 +1761,32 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 			$txt = array();
 		}
 
-		$attempts = array(
-			array(LANGUAGES_DIR, $template, $lang),
+		$language_folders = array(
+			LANGUAGES_DIR,
 		);
 
-		// Fall back on the default language if necessary.
-		if ($settings['language'] != 'english')
-			$attempts[] = array($settings['theme_dir'], $template, $settings['language']);
+		// First, load the English files, for a solid fallback, then the default language, then the user's.
+		$language_attempts = array_flip(array_flip(array('english', $settings['language'], $lang)));
 
-		// First, try to ensure we have the English US version loaded first. We do not need to record whether we succeeded or not though.
-		$fallbacks = array(
-			array($settings['theme_dir'], $template),
-		);
-
-		foreach ($fallbacks as $file)
-			if (file_exists($file[0] . '/' . $file[1] . '.english.php'))
-				template_include($file[0] . '/' . $file[1] . '.english.php');
-
-		// Now try to find the actual language file.
-		$found = false;
-		foreach ($attempts as $file)
+		// Now try to find the actual language file. Custom files are always considered found.
+		$found = $template === 'Custom';
+		foreach ($language_folders as $folder)
 		{
-			if (file_exists($file[0] . '/' . $file[1] . '.' . $file[2] . '.php'))
+			foreach ($language_attempts as $attempt)
 			{
-				// Include it!
-				template_include($file[0] . '/' . $file[1] . '.' . $file[2] . '.php');
-
-				// Note that we found it.
-				$found = true;
-
-				break;
+				if (file_exists($folder . '/' . $template . '.' . $attempt . '.php'))
+				{
+					template_include($folder . '/' . $template . '.' . $attempt . '.php');
+					$found = true;
+				}
 			}
 		}
 
-		// That couldn't be found! Log the error, but *try* to continue normally.
+		// Nothing to be found! Log the error, but *try* to continue normally.
 		if (!$found)
 		{
-			// Put stuff back and if we did scrape a fallback together, add it to the current strings
-			// so that, hopefully, we won't get an error, even if there's a missing language file.
-			if (isset($txt))
-				$txt = !empty($txt) ? array_merge($oldtxt, $txt) : $oldtxt;
+			// Put stuff back. Hopefully, we won't get an error, even if there's a missing language file.
+			$txt = !empty($txt) ? array_merge($oldtxt, $txt) : $oldtxt;
 
 			if ($fatal)
 			{
@@ -1821,47 +1795,44 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 			}
 		}
 
-		if (!defined('WEDGE_INSTALLER'))
+		if ($found && !defined('WEDGE_INSTALLER'))
 		{
-			if ($found)
+			// So, now we need to get from the DB.
+			$request = wesql::query('
+				SELECT lang_key, lang_string, serial
+				FROM {db_prefix}language_changes
+				WHERE id_lang = {string:lang}
+					AND lang_file = {string:lang_file}',
+				array(
+					'lang' => $lang,
+					'lang_file' => $template,
+				)
+			);
+			$additions = array();
+			while ($row = wesql::fetch_assoc($request))
 			{
-				// So, now we need to get from the DB.
-				$request = wesql::query('
-					SELECT lang_key, lang_string, serial
-					FROM {db_prefix}language_changes
-					WHERE id_lang = {string:lang}
-						AND lang_file = {string:lang_file}',
-					array(
-						'lang' => $lang,
-						'lang_file' => $template,
-					)
-				);
-				$additions = array();
-				while ($row = wesql::fetch_assoc($request))
+				// This might look a bit weird. But essentially we might be loading two things from two themes.
+				// If we don't have it already, use it. If we do have it already but it's not the default theme we're adding, replace it.
+				if (!isset($additions[$row['lang_key']]))
 				{
-					// This might look a bit weird. But essentially we might be loading two things from two themes.
-					// If we don't have it already, use it. If we do have it already but it's not the default theme we're adding, replace it.
-					if (!isset($additions[$row['lang_key']]))
-					{
-						$txt[$row['lang_key']] = !empty($row['serial']) ? @unserialize($row['lang_string']) : $row['lang_string'];
-						$additions[$row['lang_key']] = true;
-					}
+					$txt[$row['lang_key']] = !empty($row['serial']) ? @unserialize($row['lang_string']) : $row['lang_string'];
+					$additions[$row['lang_key']] = true;
 				}
-				wesql::free_result($request);
-
-				// Now cache this sucker.
-				$filename = $cachedir . '/lang_' . $lang . '_' . $template . '.php';
-				// First of all, we need to convert numeric entities to UTF8. Takes less space in memory, for starters.
-				if (!empty($txt))
-					$txt = array_map('westr::entity_to_utf8', $txt);
-				$cache_data = '<' . '?php if(defined(\'WEDGE\'))$val=\'' . addcslashes(serialize($txt), '\\\'') . '\';?' . '>';
-				if (file_put_contents($filename, $cache_data, LOCK_EX) !== strlen($cache_data))
-					@unlink($filename);
-
-				// Now fix the master variables.
-				if (!empty($txt) || !empty($oldtxt))
-					$txt = array_merge($oldtxt, $txt);
 			}
+			wesql::free_result($request);
+
+			// Now cache this sucker.
+			$filename = $cachedir . '/lang_' . $lang . '_' . $template . '.php';
+			// First of all, we need to convert numeric entities to UTF8. Takes less space in memory, for starters.
+			if (!empty($txt))
+				$txt = array_map('westr::entity_to_utf8', $txt);
+			$cache_data = '<' . '?php if(defined(\'WEDGE\'))$val=\'' . addcslashes(serialize($txt), '\\\'') . '\';?' . '>';
+			if (file_put_contents($filename, $cache_data, LOCK_EX) !== strlen($cache_data))
+				@unlink($filename);
+
+			// Now fix the master variables.
+			if (!empty($txt) || !empty($oldtxt))
+				$txt = array_merge($oldtxt, $txt);
 		}
 
 		// The index language file contains the locale. If that's what we're loading, we're changing time locales, so reload that. And only once.

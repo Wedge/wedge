@@ -1054,6 +1054,8 @@ function wedge_cache_js($id, &$lang_name, $latest_date, $ext, $js, $gzip = false
 						),
 						$final
 					);
+				else
+					$final = str_replace($str[0], "'Error'", $final);
 	}
 	// Did we remove all language files from the list? Clean it up...
 	elseif (!empty($settings['js_lang'][$id]))
