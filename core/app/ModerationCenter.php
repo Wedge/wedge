@@ -722,11 +722,11 @@ function ModReport()
 	if (!wesql::num_rows($request))
 		fatal_lang_error('mc_no_modreport_found');
 
-	// Woohoo we found a report and they can see it!  Bad news is we have more work to do
+	// Woohoo we found a report and they can see it! Bad news is we have more work to do.
 	$row = wesql::fetch_assoc($request);
 	wesql::free_result($request);
 
-	// If they are adding a comment then... add a comment.
+	// If they are adding a comment, then... Add a comment.
 	if (isset($_POST['add_comment']) && !empty($_POST['mod_comment']))
 	{
 		checkSession();
@@ -748,7 +748,7 @@ function ModReport()
 				)
 			);
 
-			// Redirect to prevent double submittion.
+			// Redirect to prevent double submission.
 			redirectexit('action=moderate;area=reports;report=' . $_REQUEST['report']);
 		}
 	}
@@ -1586,9 +1586,7 @@ function cache_getBoardIndexGroupReq()
 			INNER JOIN {db_prefix}membergroups AS mg ON (mg.id_group = lgr.id_group)
 		WHERE ' . (we::$user['mod_cache']['gq'] == '1=1' || we::$user['mod_cache']['gq'] == '0=1' ? we::$user['mod_cache']['gq'] : 'lgr.' . we::$user['mod_cache']['gq']) . '
 		ORDER BY lgr.id_request DESC
-		LIMIT 1',
-		array(
-		)
+		LIMIT 1'
 	);
 	if ($row = wesql::fetch_assoc($request))
 		$data = $row;

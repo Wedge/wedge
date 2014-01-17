@@ -556,7 +556,7 @@ function ob_sessrewrite($buffer)
 				wesql::free_result($query);
 			}
 
-			// If there are any uncached URLs, process them
+			// If there are any uncached URLs, process them.
 			if (count($uncached_urls) != 0)
 			{
 				// Run each filter callback function on each URL
@@ -578,17 +578,18 @@ function ob_sessrewrite($buffer)
 					$url['replacement'] = preg_replace(array('~"~', '~=?;+~', '~\?;~'), array('%22', ';', '?'), rtrim($url['replacement'], '&?;'));
 					$cached_urls[$url_id] = $url['replacement'];
 					if ($use_cache && strlen($url_id) < 256)
-						$cache_data[] = '(\'' . $url_id . '\', \'' . addslashes($url['replacement']) . '\')';
+						$cache_data[] = array($url_id, $url['replacement']);
 				}
 
-				// Cache these URLs in the database (use mysqli_query to avoid some issues.)
-				// !!! Um, why?
-				// !!! Because!!! (That's some code I never got around to harmonizing...)
-				if (count($cache_data) > 0)
-					mysqli_query("REPLACE INTO {$db_prefix}pretty_urls_cache (url_id, replacement) VALUES " . implode(', ', $cache_data));
+				// Cache these URLs in the database
+				if ($use_cache && count($cache_data) > 0)
+					wesql::insert('replace',
+						array('url_id' => 'string', 'replacement' => 'string'),
+						$cache_data
+					);
 			}
 
-			// Put the URLs back into the buffer
+			// And finally, put them back into the buffer.
 			foreach ($context['pretty']['patterns'] as $pattern)
 				$buffer = preg_replace_callback($pattern, 'pretty_buffer_callback', $buffer);
 		}
