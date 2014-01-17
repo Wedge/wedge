@@ -31,7 +31,7 @@ function template_main()
 			<div class="counter">', $post['counter'], '</div>
 			<div class="topic_details">
 				<h5>', $post['board']['link'], ' / ', $post['link'], '</h5>
-				<span class="smalltext">&#171;&nbsp;', $post['on_time'], ' ', $txt['by'], ' <strong>', $post['poster']['link'], '</strong>&nbsp;&#187;</span>
+				<span class="smalltext">«&nbsp;', $post['on_time'], ' ', $txt['by'], ' <strong>', $post['poster']['link'], '</strong>&nbsp;»</span>
 			</div>
 			<div class="list_posts">', $post['message'], '</div>';
 

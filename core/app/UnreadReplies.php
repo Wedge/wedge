@@ -477,14 +477,14 @@ function UnreadReplies()
 			}
 			// Show links to all the pages?
 			if (count($tmppages) <= 5)
-				$pages = '&#171; ' . implode(' ', $tmppages);
+				$pages = '« ' . implode(' ', $tmppages);
 			// Or skip a few?
 			else
-				$pages = '&#171; ' . $tmppages[0] . ' ' . $tmppages[1] . ' ... ' . $tmppages[count($tmppages) - 2] . ' ' . $tmppages[count($tmppages) - 1];
+				$pages = '« ' . $tmppages[0] . ' ' . $tmppages[1] . ' ... ' . $tmppages[count($tmppages) - 2] . ' ' . $tmppages[count($tmppages) - 1];
 
 			if (!empty($settings['enableAllMessages']) && $topic_length < $settings['enableAllMessages'])
 				$pages .= ' &nbsp;<a href="<URL>?topic=' . $row['id_topic'] . '.0;all">' . $txt['all_pages'] . '</a>';
-			$pages .= ' &#187;';
+			$pages .= ' »';
 		}
 		else
 			$pages = '';

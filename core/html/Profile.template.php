@@ -391,7 +391,7 @@ function template_showDrafts()
 				<div class="counter">', $post['counter'], '</div>
 				<div class="topic_details">
 					<h5><strong>', $post['board']['link'], ' / ', $post['topic']['link'], '</strong></h5>
-					<span class="smalltext">&#171;&nbsp;', $post['on_time'], '&nbsp;&#187;</span>
+					<span class="smalltext">«&nbsp;', $post['on_time'], '&nbsp;»</span>
 				</div>
 				<div class="list_posts">
 					', $post['body'], '
@@ -472,7 +472,7 @@ function template_showPosts()
 					<h5 title="', $txt['board_off_limits'], '"><strong>', $post['board']['name'], ' / ', $post['subject'], '</strong></h5>';
 
 			echo '
-					<span class="smalltext">&#171;&nbsp;', $post['on_time'], '&nbsp;&#187;</span>
+					<span class="smalltext">«&nbsp;', $post['on_time'], '&nbsp;»</span>
 				</div>
 				<div class="list_posts">';
 

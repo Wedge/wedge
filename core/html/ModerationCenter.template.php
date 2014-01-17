@@ -225,7 +225,7 @@ function template_reported_posts()
 					<strong>', $report['board_link'], ' / <a href="', $report['topic_href'], '">', $report['subject'], '</a></strong> ', $txt['mc_reportedp_by'], ' <strong>', $report['author']['link'], '</strong> (', number_context('mc_reportedp_count', $report['num_reports']), ')
 				</div>
 				<div class="clear smalltext">
-					&#171; ', $txt['mc_reportedp_last_reported'], ': ', $report['last_updated'], ' &#187;<br>';
+					« ', $txt['mc_reportedp_last_reported'], ': ', $report['last_updated'], ' »<br>';
 
 		// Prepare the comments...
 		$comments = array();
@@ -233,7 +233,7 @@ function template_reported_posts()
 			$comments[$comment['member']['id']] = $comment['member']['link'];
 
 		echo '
-					&#171; ', $txt['mc_reportedp_reported_by'], ': ', implode(', ', $comments), ' &#187;
+					« ', $txt['mc_reportedp_reported_by'], ': ', implode(', ', $comments), ' »
 				</div>
 				<hr>
 				', $report['body'], '
@@ -468,7 +468,7 @@ function template_user_watch_post_callback($post)
 					</div>
 					<br>
 					<div class="smalltext">
-						&#171; ' . $txt['mc_warned_users_posted'] . ': ' . $post['poster_time'] . ' &#187;
+						« ' . $txt['mc_warned_users_posted'] . ': ' . $post['poster_time'] . ' »
 					</div>
 					<hr>
 					' . $post['body'];

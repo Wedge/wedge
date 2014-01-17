@@ -403,7 +403,7 @@ function MessageIndex()
 			// Decide how many pages the topic should have.
 			if ($row['num_replies'] + 1 > $context['messages_per_page'])
 			{
-				$pages = '&#171; ';
+				$pages = '« ';
 
 				// We can't pass start by reference.
 				$start = -1;
@@ -412,7 +412,7 @@ function MessageIndex()
 				// If we can use all, show all.
 				if (!empty($settings['enableAllMessages']) && $row['num_replies'] + 1 < $settings['enableAllMessages'])
 					$pages .= ' &nbsp;<a href="<URL>?topic=' . $row['id_topic'] . '.0;all">' . $txt['all_pages'] . '</a>';
-				$pages .= ' &#187;';
+				$pages .= ' »';
 			}
 			else
 				$pages = '';

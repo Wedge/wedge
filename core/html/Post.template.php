@@ -308,7 +308,7 @@ function template_postform_after()
 		new_replies = [], reply_counter = ' . (empty($counter) ? 0 : $counter) . ',
 		can_quote = ' . ($context['can_quote'] ? 'true' : 'false') . ',
 		new_post_tpl = ' . JavaScriptEscape('<div class="windowbg%counter% wrc core_posts"><div id="msg%id%"><div class="floatleft"><h5>' . $txt['posted_by'] . ': %poster%</h5>'
-			. '<span class="smalltext">&#171;&nbsp;%date%&nbsp;&#187;</span><div class="note" id="image_new_%id%">%new%</div></div>') . ';');
+			. '<span class="smalltext">«&nbsp;%date%&nbsp;»</span><div class="note" id="image_new_%id%">%new%</div></div>') . ';');
 
 	// !!! Currently not sending poll options and option checkboxes.
 	foreach ($context['form_fields'] as $field_type => $field_items)
@@ -501,7 +501,7 @@ function template_show_previous_posts()
 				<div id="msg', $post['id'], '">
 					<div class="floatleft">
 						<h5>', $txt['posted_by'], ': ', $post['poster'], '</h5>
-						<span class="smalltext">&#171;&nbsp;', $post['on_time'], '&nbsp;&#187;</span>
+						<span class="smalltext">«&nbsp;', $post['on_time'], '&nbsp;»</span>
 					</div>
 					<br class="clear">';
 

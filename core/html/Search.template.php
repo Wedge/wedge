@@ -308,7 +308,7 @@ function template_results()
 					<div class="topic_details floatleft" style="width: 94%">
 						<div class="counter">', $message['counter'], '</div>
 						<h5>', $topic['board']['link'], ' / <a href="<URL>?topic=', $topic['id'], '.msg', $message['id'], '#msg', $message['id'], '">', $message['subject_highlighted'], '</a></h5>
-						<span class="smalltext">&#171;&nbsp;', $message['on_time'], ' ', $txt['by'], ' <strong>', $message['member']['link'], '</strong>&nbsp;&#187;</span>
+						<span class="smalltext">«&nbsp;', $message['on_time'], ' ', $txt['by'], ' <strong>', $message['member']['link'], '</strong>&nbsp;»</span>
 					</div>';
 
 				echo '
@@ -406,7 +406,7 @@ function template_results()
 				<div class="counter">', $message['counter'], '</div>
 				<div class="topic_details">
 					<h5>', $topic['board']['link'], ' / <a href="<URL>?topic=', $topic['id'], '.', $message['start'], ';seen#msg', $message['id'], '">', $message['subject_highlighted'], '</a></h5>
-					<span class="smalltext">&#171;&nbsp;', $message['on_time'], ' ', $txt['by'], ' <strong>', $message['member']['link'], '</strong>&nbsp;&#187;</span>
+					<span class="smalltext">«&nbsp;', $message['on_time'], ' ', $txt['by'], ' <strong>', $message['member']['link'], '</strong>&nbsp;»</span>
 				</div>
 				<div class="list_posts">', $message['body_highlighted'], '</div>';
 
