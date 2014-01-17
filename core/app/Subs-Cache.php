@@ -470,8 +470,8 @@ function add_plugin_css_file($plugin_name, $original_files = array(), $add_link 
 	$can_gzip = !empty($settings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
 	$ext = $can_gzip ? (we::is('safari[-5.0]') ? '.cgz' : '.css.gz') : '.css';
 
-	// Build the target folder from our skin's folder names and main file name. We don't need to show 'common-index-sections-extra-custom' in the main filename, though!
-	$target_folder = trim(implode('-', array_filter(array_diff($original_files, (array) 'common', $ignore_files))), '-');
+	// Build the target folder from our plugin's file names. We don't need to show 'common-index-sections-extra-custom' in the main filename, though!
+	$target_folder = trim(str_replace(array('/', ':'), '-', strtolower($plugin_name) . '-' . implode('-', array_filter(array_diff($original_files, (array) 'common', $ignore_files)))), '-');
 
 	// Cache final file and retrieve its name.
 	$final_script = ROOT . '/css/' . wedge_cache_css_files($target_folder . ($target_folder ? '/' : ''), $id, $latest_date, $files, $can_gzip, $ext, array('$plugindir' => $context['plugins_url'][$plugin_name]));
@@ -679,7 +679,7 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 	}
 
 	// Cache all tests.
-	cache_put_data($cachekey, implode('|', empty($add) ? $ids : $add), 'forever');
+	cache_put_data($cachekey, empty($add) ? $ids : $add, 'forever');
 
 	// And we've finally got our full, working filename...
 	$id = wedge_get_css_filename(isset($add) ? $add : array());
