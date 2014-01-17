@@ -494,7 +494,7 @@ function registerMember(&$regOptions, $return_errors = false)
 		$reg_errors[] = array('lang', 'need_username');
 
 	// Spaces and other odd characters are evil...
-	$regOptions['username'] = preg_replace('~[\t\n\r\x0B\0\x{A0}]+~u', ' ', $regOptions['username']);
+	$regOptions['username'] = trim(preg_replace('~[\t\n\r \x0B\0\x{A0}\x{AD}\x{2000}-\x{200F}\x{201F}\x{202F}\x{3000}\x{FEFF}]+~u', ' ', $regOptions['username']));
 
 	// Don't use too long a name.
 	if (westr::strlen($regOptions['username']) > 25)
@@ -507,9 +507,8 @@ function registerMember(&$regOptions, $return_errors = false)
 	if (westr::strtolower($regOptions['username']) === westr::strtolower($txt['guest_title']))
 		$reg_errors[] = array('lang', 'username_reserved', 'general', array($txt['guest_title']));
 
-	// !!! Separate the sprintf?
 	if (empty($regOptions['email']) || !is_valid_email($regOptions['email']) || strlen($regOptions['email']) > 255)
-		$reg_errors[] = array('done', sprintf($txt['valid_email_needed'], westr::htmlspecialchars($regOptions['username'])));
+		$reg_errors[] = array('lang', 'profile_error_bad_email');
 
 	if (!empty($regOptions['check_reserved_name']) && isReservedName($regOptions['username'], 0, false))
 		$reg_errors[] = array('done', '(' . htmlspecialchars($regOptions['username']) . ') ' . $txt['name_in_use']);
@@ -535,7 +534,7 @@ function registerMember(&$regOptions, $return_errors = false)
 		$reg_errors[] = array('lang', 'no_password');
 
 	// Now perform hard password validation as required.
-	if (!empty($regOptions['check_password_strength']))
+	if (!empty($regOptions['check_password_strength']) && $regOptions['password'] != '')
 	{
 		$passwordError = validatePassword($regOptions['password'], $regOptions['username'], array($regOptions['email']));
 

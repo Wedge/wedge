@@ -279,7 +279,7 @@ function Register2()
 	// Validation... even if we're not a mall.
 	if (isset($_POST['real_name']) && (!empty($settings['allow_editDisplayName']) || allowedTo('moderate_forum')))
 	{
-		$_POST['real_name'] = trim(preg_replace('~[\s]~u', ' ', $_POST['real_name']));
+		$_POST['real_name'] = trim(preg_replace('~[\t\n\r \x0B\0\x{A0}\x{AD}\x{2000}-\x{200F}\x{201F}\x{202F}\x{3000}\x{FEFF}]+~u', ' ', $_POST['real_name']));
 		if (trim($_POST['real_name']) != '' && !isReservedName($_POST['real_name']) && westr::strlen($_POST['real_name']) < 60)
 			$possible_strings[] = 'real_name';
 	}
@@ -330,6 +330,22 @@ function Register2()
 		);
 		$require = isset($settings['registration_method'], $msg[$settings['registration_method']]) ? $msg[$settings['registration_method']] : 'both';
 	}
+
+	$exclude_fields = array('signature', 'location', 'gender', 'website_url', 'website_title');
+	if (!empty($settings['registration_fields']))
+	{
+		// Don't exclude fields required for registration by the admin. Except signatures. Spammers like to abuse these.
+		$reg_fields = array_diff(explode(',', $settings['registration_fields']), (array) 'signature');
+		if (in_array('website', $reg_fields))
+			$reg_fields = array_merge($reg_fields, array('website_url', 'website_title'));
+		$exclude_fields = array_diff($exclude_fields, $reg_fields);
+	}
+
+	$possible_strings = array_diff($possible_strings, $exclude_fields);
+	$possible_ints = array_diff($possible_ints, $exclude_fields);
+	$possible_floats = array_diff($possible_floats, $exclude_fields);
+	$possible_bools = array_diff($possible_bools, $exclude_fields);
+
 	// Set the options needed for registration.
 	$regOptions = array(
 		'interface' => 'guest',
@@ -489,7 +505,7 @@ function RegisterCheckUsername()
 	$valid_username = true;
 
 	// Clean it up like mother would.
-	$checked_username = preg_replace('~[\t\n\r\x0B\0\x{A0}]+~u', ' ', $checked_username);
+	$checked_username = preg_replace('~[\t\n\r \x0B\0\x{A0}\x{AD}\x{2000}-\x{200F}\x{201F}\x{202F}\x{3000}\x{FEFF}]+~u', ' ', $checked_username);
 	if (westr::strlen($checked_username) > 25)
 		$checked_username = westr::htmltrim(westr::substr($checked_username, 0, 25));
 

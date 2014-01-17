@@ -391,7 +391,6 @@ function ModifyProfile($post_errors = array())
 					'file' => 'Profile-Actions',
 					'function' => 'activateAccount',
 					'sc' => 'get',
-					'select' => 'summary',
 					'permission' => array(
 						'own' => array(),
 						'any' => array('moderate_forum'),

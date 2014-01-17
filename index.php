@@ -172,17 +172,25 @@ elseif (isset($_GET['imperative']))
 	ImperativeTask();
 }
 
-// Check if compressed output is enabled, supported, and not already being done.
-if (!empty($settings['enableCompressedOutput']) && !headers_sent())
+if (!headers_sent())
 {
-	// If zlib is being used, turn off output compression.
-	if (ini_get('zlib.output_compression') >= 1 || ini_get('output_handler') == 'ob_gzhandler')
-		$settings['enableCompressedOutput'] = '0';
-	else
+	// Check if compressed output is enabled, supported, and not already being done.
+	if (!empty($settings['enableCompressedOutput']))
 	{
-		ob_end_clean();
-		ob_start('ob_gzhandler');
+		// If zlib is being used, turn off output compression.
+		if (ini_get('zlib.output_compression') >= 1 || ini_get('output_handler') == 'ob_gzhandler')
+			$settings['enableCompressedOutput'] = '0';
+		else
+		{
+			ob_end_clean();
+			ob_start('ob_gzhandler');
+		}
 	}
+
+	// Basic protection against XSS.
+	header('X-Frame-Options: SAMEORIGIN');
+	header('X-XSS-Protection: 1; mode=block');
+	header('X-Content-Type-Options: nosniff');
 }
 
 // Register an error handler.

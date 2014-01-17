@@ -20,7 +20,7 @@ class westr_foundation
 	static $can_utf;			// does PHP support utf8_encode/decode functions? It does by default.
 	static $can_iconv;			// does PHP support iconv functions? It does by default.
 
-	const westr_SPACECHARS = '\x{A0}\x{AD}\x{2000}-\x{200F}\x{201F}\x{202F}\x{3000}\x{FEFF}';
+	const SPACECHARS = '\x{A0}\x{AD}\x{2000}-\x{200F}\x{201F}\x{202F}\x{3000}\x{FEFF}';
 
 	// What kind of class are you, anyway? One of a kind!
 	private function __clone()
@@ -225,7 +225,7 @@ class westr extends westr_mb
 {
 	static function htmltrim($string)
 	{
-		return preg_replace('~^(?:[ \t\n\r\x0B\x00' . self::westr_SPACECHARS . ']|&nbsp;)+|(?:[ \t\n\r\x0B\x00' . self::westr_SPACECHARS . ']|&nbsp;)+$~u', '', self::entity_clean($string));
+		return preg_replace('~^(?:[ \t\n\r\x0B\x00' . self::SPACECHARS . ']|&nbsp;)+|(?:[ \t\n\r\x0B\x00' . self::SPACECHARS . ']|&nbsp;)+$~u', '', self::entity_clean($string));
 	}
 
 	static function strpos($haystack, $needle, $offset = 0)
