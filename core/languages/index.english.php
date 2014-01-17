@@ -588,6 +588,7 @@ $txt['mc_unapproved_poststopics'] = 'Unapproved Posts';
 $txt['mc_reported_posts'] = 'Reported Posts';
 $txt['modlog_view'] = 'Moderation Log';
 $txt['unapproved_members'] = 'Unapproved Members';
+$txt['admin_uncache'] = 'Purge cache';
 
 $txt['ignoring_user'] = 'You are ignoring this user. Click here to see or hide the post.';
 

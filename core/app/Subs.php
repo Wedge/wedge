@@ -2128,6 +2128,7 @@ function setupMenuContext()
 
 	$error_count = allowedTo('admin_forum') ? (!empty($settings['app_error_count']) ? $settings['app_error_count'] : '') : '';
 	$can_view_unseen = allowedTo('media_access_unseen') && isset(we::$user['media_unseen']) && we::$user['media_unseen'] > 0;
+	$can_admin = allowedTo('admin_forum');
 	$is_b = !empty($board_info['id']);
 
 	$items = array(
@@ -2161,13 +2162,13 @@ function setupMenuContext()
 				'featuresettings' => array(
 					'title' => $txt['settings_title'],
 					'href' => '<URL>?action=admin;area=featuresettings',
-					'show' => allowedTo('admin_forum'),
+					'show' => $can_admin,
 				),
 				'errorlog' => array(
 					'title' => $txt['errlog'],
 					'notice' => $error_count,
 					'href' => '<URL>?action=admin;area=logs;sa=errorlog',
-					'show' => allowedTo('admin_forum') && !empty($settings['enableErrorLogging']),
+					'show' => $can_admin && !empty($settings['enableErrorLogging']),
 				),
 				'permissions' => array(
 					'title' => $txt['edit_permissions'],
@@ -2177,7 +2178,7 @@ function setupMenuContext()
 				'plugins' => array(
 					'title' => $txt['plugin_manager'],
 					'href' => '<URL>?action=admin;area=plugins',
-					'show' => allowedTo('admin_forum'),
+					'show' => $can_admin,
 				),
 				'',
 				'modcenter' => array(
@@ -2206,6 +2207,12 @@ function setupMenuContext()
 					'href' => '<URL>?action=admin;area=viewmembers;sa=browse;type=approve',
 					'show' => $context['unapproved_members'],
 					'notice' => $context['unapproved_members'],
+				),
+				'',
+				'uncache' => array(
+					'title' => $txt['admin_uncache'],
+					'href' => '<URL>?action=uncache',
+					'show' => $can_admin && !empty($settings['cache_enable']),
 				),
 			),
 		),

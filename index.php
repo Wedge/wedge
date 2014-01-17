@@ -131,6 +131,7 @@ $action_list = array(
 	'theme' =>			'Themes',
 	'thoughts' =>		'Thoughts',
 	'trackip' =>		array('Profile-View', 'trackIP'),
+	'uncache' =>		array('Subs-Cache', 'uncache'),
 	'unread' =>			'Unread',
 	'unreadreplies' =>	'UnreadReplies',
 	'verification' =>	'VerificationCode',

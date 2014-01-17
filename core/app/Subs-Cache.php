@@ -1597,6 +1597,25 @@ function wedge_parse_skin_options($skin_options)
 }
 
 /**
+ * /do/uncache will refresh all cache: CSS, JavaScript, PHP, language files and key-value pairs.
+ */
+function uncache()
+{
+	global $settings;
+
+	if (empty($settings['cache_enable']) || !allowedTo('admin_forum'))
+		return;
+
+	clean_cache();
+	clean_cache('css');
+	clean_cache('js');
+	updateSettings(array('last_cache_purge' => time()));
+
+	// Redirect to the current page, if possible.
+	redirectexit(isset($_SERVER['HTTP_REFERER']) && strpos($_SERVER['HTTP_REFERER'], ROOT) !== false ? $_SERVER['HTTP_REFERER'] : '');
+}
+
+/**
  * Cleans some or all of the files stored in the file cache.
  *
  * @param string $extensions Optional, a comma-separated list of file extensions that should be pruned. Leave empty to clear the regular data cache (data sub-folder), you may also use 'css' or 'js' as special values to clean the CSS or JavaScript cache folders.
