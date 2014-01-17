@@ -268,8 +268,8 @@ function loadBoard()
 			SELECT
 				c.id_cat, b.name AS bname, b.url, b.id_owner, b.description, b.num_topics, b.member_groups,
 				b.num_posts, b.id_parent, c.name AS cname, IFNULL(mem.id_member, 0) AS id_moderator,
-				mem.real_name' . (!empty($topic) ? ', b.id_board' : '') . ', b.child_level, b.skin,
-				b.override_theme, b.count_posts, b.id_profile, b.redirect, b.language, bm.permission = \'deny\' AS banned,
+				mem.real_name' . (!empty($topic) ? ', b.id_board' : '') . ', b.child_level, b.skin, b.skin_mobile,
+				b.override_skin, b.count_posts, b.id_profile, b.redirect, b.language, bm.permission = \'deny\' AS banned,
 				bm.permission = {literal:access} AS allowed, mco.real_name AS owner_name, mco.buddy_list AS contacts, b.board_type, b.sort_method,
 				b.sort_override, b.unapproved_topics, b.unapproved_posts' . (!empty($topic) ? ', t.approved, t.id_member_started' : '') . '
 			FROM {db_prefix}boards AS b' . (!empty($topic) ? '
@@ -317,8 +317,8 @@ function loadBoard()
 				'parent' => $row['id_parent'],
 				'child_level' => $row['child_level'],
 				'skin' => $row['skin'],
-				'theme' => 1,
-				'override_theme' => !empty($row['override_theme']),
+				'skin_mobile' => $row['skin_mobile'],
+				'override_skin' => !empty($row['override_skin']),
 				'profile' => $row['id_profile'],
 				'redirect' => $row['redirect'],
 				'posts_count' => empty($row['count_posts']),
@@ -415,6 +415,9 @@ function loadBoard()
 		}
 		wesql::free_result($request);
 	}
+
+	if (isset($board_info['skin_mobile']) && we::is('mobile'))
+		$board_info['skin'] = $board_info['skin_mobile'];
 
 	if (!empty($topic))
 		$_GET['board'] = (int) $board;
@@ -1283,9 +1286,8 @@ function loadTheme($skin = '', $initialize = true)
 		if (!empty($settings['theme_allow']) || allowedTo('admin_forum'))
 			$skin = empty($_REQUEST['presk']) ? we::$user['skin'] : $_REQUEST['presk'];
 
-		// Always allow board-specific themes, if they are overriding.
-		// !! @todo: add support for skin_mobile.
-		if (!empty($board_info['skin']) && $board_info['override_theme'])
+		// Always allow board-specific skins, if they are overriding.
+		if (!empty($board_info['skin']) && $board_info['override_skin'])
 			$skin = isset($board_info['skin']) ? $board_info['skin'] : '';
 	}
 

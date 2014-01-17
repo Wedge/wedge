@@ -589,11 +589,18 @@ function modifyBoard($board_id, &$boardOptions)
 		$boardUpdateParameters['skin'] = $boardOptions['board_skin'];
 	}
 
-	// Should the board theme override the user preferred theme?
-	if (isset($boardOptions['override_theme']))
+	// And the mobile version.
+	if (isset($boardOptions['board_skin_mobile']))
 	{
-		$boardUpdates[] = 'override_theme = {int:override_theme}';
-		$boardUpdateParameters['override_theme'] = $boardOptions['override_theme'] ? 1 : 0;
+		$boardUpdates[] = 'skin_mobile = {string:skin_mobile}';
+		$boardUpdateParameters['skin_mobile'] = $boardOptions['board_skin_mobile'];
+	}
+
+	// Should the board skin override the user's preferred skin?
+	if (isset($boardOptions['override_skin']))
+	{
+		$boardUpdates[] = 'override_skin = {int:override_skin}';
+		$boardUpdateParameters['override_skin'] = $boardOptions['override_skin'] ? 1 : 0;
 	}
 
 	if (isset($boardOptions['board_name']))
@@ -828,8 +835,9 @@ function createBoard($boardOptions)
 	// Set every optional value to its default value.
 	$boardOptions += array(
 		'posts_count' => true,
-		'override_theme' => false,
+		'override_skin' => false,
 		'board_skin' => '',
+		'board_skin_mobile' => '',
 		'board_description' => '',
 		'profile' => 1,
 		'moderators' => '',
@@ -1102,7 +1110,7 @@ function getBoardTree($restrict = false)
 	$request = wesql::query('
 		SELECT
 			IFNULL(b.id_board, 0) AS id_board, b.id_parent, b.name AS board_name, b.description, b.child_level, b.url,
-			b.board_order, b.count_posts, b.member_groups, b.skin, b.override_theme, b.id_profile, b.redirect,
+			b.board_order, b.count_posts, b.member_groups, b.skin, b.skin_mobile, b.override_skin, b.id_profile, b.redirect,
 			b.redirect_newtab, b.num_posts, b.language, b.num_topics, b.offlimits_msg, c.id_cat, c.name AS cat_name, c.cat_order, c.can_collapse
 		FROM {db_prefix}categories AS c
 			LEFT JOIN {db_prefix}boards AS b ON (b.id_cat = c.id_cat)' . $restriction . '
@@ -1150,7 +1158,8 @@ function getBoardTree($restrict = false)
 				'posts' => $row['num_posts'],
 				'topics' => $row['num_topics'],
 				'skin' => $row['skin'],
-				'override_theme' => $row['override_theme'],
+				'skin_mobile' => $row['skin_mobile'],
+				'override_skin' => $row['override_skin'],
 				'profile' => $row['id_profile'],
 				'redirect' => $row['redirect'],
 				'redirect_newtab' => $row['redirect_newtab'],

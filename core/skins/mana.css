@@ -297,7 +297,7 @@ fieldset dl
 .modify_boards
 	padding: 0 0.5em
 
-#boardskin
+#sbboardskin, #sbboardskin_mobile
 	font-family: $mono_font
 
 /* Styles for the manage members section.

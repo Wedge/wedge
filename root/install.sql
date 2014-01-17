@@ -588,7 +588,7 @@ CREATE TABLE {$db_prefix}boards (
 	num_members mediumint(8) unsigned NOT NULL default 0,
 	check_members_date datetime NOT NULL default '0000-00-00 00:00:00',
 	count_posts tinyint(4) NOT NULL default 0,
-	override_theme tinyint(4) unsigned NOT NULL default 0,
+	override_skin tinyint(4) unsigned NOT NULL default 0,
 	skin varchar(255) NOT NULL default '',
 	skin_mobile varchar(255) NOT NULL default '',
 	board_type enum('board', 'blog', 'site') NOT NULL default 'board',

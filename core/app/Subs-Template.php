@@ -137,7 +137,7 @@ function obExit($start = null, $do_finish = null, $from_index = false, $from_fat
  */
 function ob_sessrewrite($buffer)
 {
-	global $settings, $context, $db_prefix, $session_var, $board_info, $is_output_buffer;
+	global $settings, $context, $session_var, $board_info, $is_output_buffer;
 	global $txt, $time_start, $db_count, $cached_urls, $use_cache, $members_groups;
 
 	// Just quit if SCRIPT is set to nothing, or the SID is not defined. (SSI?)
@@ -584,6 +584,7 @@ function ob_sessrewrite($buffer)
 				// Cache these URLs in the database
 				if ($use_cache && count($cache_data) > 0)
 					wesql::insert('replace',
+						'{db_prefix}pretty_urls_cache',
 						array('url_id' => 'string', 'replacement' => 'string'),
 						$cache_data
 					);

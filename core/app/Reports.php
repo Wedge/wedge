@@ -201,7 +201,7 @@ function BoardReport()
 		'num_posts' => $txt['board_num_posts'],
 		'count_posts' => $txt['board_count_posts'],
 		'skin' => $txt['board_skin'],
-		'override_theme' => $txt['board_override_theme'],
+		'override_skin' => $txt['board_override_skin'],
 		'profile' => $txt['board_profile'],
 		'moderators' => $txt['board_moderators'],
 		'groups' => $txt['board_groups'],
@@ -211,9 +211,8 @@ function BoardReport()
 	setKeys('cols');
 
 	// Go through each board!
-	// !!! @todo: record custom skin names as well.
 	$request = wesql::query('
-		SELECT b.id_board, b.name, b.num_posts, b.num_topics, b.count_posts, b.member_groups, b.override_theme, b.id_profile,
+		SELECT b.id_board, b.name, b.num_posts, b.num_topics, b.count_posts, b.member_groups, b.skin, b.override_skin, b.id_profile,
 			c.name AS cat_name, IFNULL(par.name, {string:text_none}) AS parent_name
 		FROM {db_prefix}boards AS b
 			LEFT JOIN {db_prefix}categories AS c ON (c.id_cat = b.id_cat)
@@ -242,7 +241,8 @@ function BoardReport()
 			'num_topics' => $row['num_topics'],
 			'count_posts' => empty($row['count_posts']) ? $txt['yes'] : $txt['no'],
 			'profile' => $profile_name,
-			'override_theme' => $row['override_theme'] ? $txt['yes'] : $txt['no'],
+			'skin' => $row['skin'] == '/' ? 'Weaving' : $row['skin'],
+			'override_skin' => $row['override_skin'] ? $txt['yes'] : $txt['no'],
 			'moderators' => empty($moderators[$row['id_board']]) ? $txt['none'] : implode(', ', $moderators[$row['id_board']]),
 		);
 

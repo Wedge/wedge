@@ -68,9 +68,11 @@ $txt['mboards_count_posts_desc'] = 'Makes new replies and topics raise members\'
 $txt['mboards_unchanged'] = 'Unchanged';
 $txt['mboards_skin'] = 'Board Skin';
 $txt['mboards_skin_desc'] = 'This allows you to change the look of your forum inside only this board.';
+$txt['mboards_skin_mobile'] = 'Board Mobile Skin';
+$txt['mboards_skin_mobile_desc'] = 'Same, but when accessed from a mobile device.';
 $txt['mboards_skin_default'] = '(overall forum default)';
-$txt['mboards_override_theme'] = 'Override Member\'s Skin';
-$txt['mboards_override_theme_desc'] = 'Use this board\'s skin even if the member didn\'t choose to use the defaults.';
+$txt['mboards_override_skin'] = 'Override Member\'s Skin';
+$txt['mboards_override_skin_desc'] = 'Use this board\'s skin even if the member didn\'t choose to use the defaults.';
 $txt['mboards_language'] = 'Board Language';
 $txt['mboards_language_desc'] = 'This allows you to set the default language of the forum (such as the text on buttons) inside only this board. Note that this is only a default, if a user picks a language preference, their preference will override this setting.';
 

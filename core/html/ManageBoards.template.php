@@ -681,19 +681,29 @@ function template_modify_board()
 						<dd>
 							<select name="boardskin" id="boardskin" onchange="refreshOptions();">
 								<option value=""', $context['board']['skin'] == '' ? ' selected' : '', '>', $txt['mboards_skin_default'], '</option>',
-								wedge_show_skins($context['skin_list']['skins'], false, $context['board']['skin']), '
+								wedge_show_skins($context['skin_list']['skins'], false, $context['board']['skin'] == '' ? null : $context['board']['skin']), '
+							</select>
+						</dd>
+						<dt>
+							<strong>', $txt['mboards_skin_mobile'], ':</strong>
+							<dfn>', $txt['mboards_skin_mobile_desc'], '</dfn>
+						</dt>
+						<dd>
+							<select name="boardskin_mobile" id="boardskin_mobile" onchange="refreshOptions();">
+								<option value=""', $context['board']['skin_mobile'] == '' ? ' selected' : '', '>', $txt['mboards_skin_default'], '</option>',
+								wedge_show_skins($context['skin_list']['skins'], false, $context['board']['skin_mobile'] == '' ? null : $context['board']['skin_mobile']), '
 							</select>
 						</dd>
 					</dl>
 				</div>
-				<div id="override_theme_div">
+				<div id="override_skin_div">
 					<dl class="settings">
 						<dt>
-							<strong>', $txt['mboards_override_theme'], ':</strong>
-							<dfn>', $txt['mboards_override_theme_desc'], '</dfn>
+							<strong>', $txt['mboards_override_skin'], ':</strong>
+							<dfn>', $txt['mboards_override_skin_desc'], '</dfn>
 						</dt>
 						<dd>
-							<input type="checkbox" name="override_theme"', $context['board']['override_theme'] ? ' checked' : '', '>
+							<input type="checkbox" name="override_skin"', $context['board']['override_skin'] ? ' checked' : '', '>
 						</dd>
 					</dl>
 				</div>';
@@ -798,10 +808,9 @@ function template_modify_board()
 	{
 		var redirect = document.getElementById("redirect_enable");
 		var redirectEnabled = redirect ? redirect.checked : false;
-		var nonDefaultTheme = document.getElementById("boardskin").value == 0 ? false : true;
+		var nonDefaultSkin = document.getElementById("boardskin").value != 0 || document.getElementById("boardskin_mobile").value != 0;
 
-		// What to show?
-		document.getElementById("override_theme_div").style.display = redirectEnabled || !nonDefaultTheme ? "none" : "";
+		document.getElementById("override_skin_div").style.display = redirectEnabled || !nonDefaultSkin ? "none" : "";
 		document.getElementById("board_skin_div").style.display = redirectEnabled ? "none" : "";
 		document.getElementById("count_posts_div").style.display = redirectEnabled ? "none" : "";');
 

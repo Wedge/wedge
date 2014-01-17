@@ -555,8 +555,9 @@ function EditBoard()
 			'posts' => 0,
 			'topics' => 0,
 			'skin' => '',
+			'skin_mobile' => '',
 			'profile' => 1,
-			'override_theme' => 0,
+			'override_skin' => 0,
 			'redirect' => '',
 			'redirect_newtab' => 0,
 			'url' => $_SERVER['HTTP_HOST'] . '/enter-a-name',
@@ -782,10 +783,11 @@ function EditBoard2()
 		}
 
 		$boardOptions['board_skin'] = empty($_POST['boardskin']) ? '' : $_POST['boardskin'];
+		$boardOptions['board_skin_mobile'] = empty($_POST['boardskin_mobile']) ? '' : $_POST['boardskin_mobile'];
 
 		// Checkboxes....
 		$boardOptions['posts_count'] = isset($_POST['count']);
-		$boardOptions['override_theme'] = isset($_POST['override_theme']);
+		$boardOptions['override_skin'] = isset($_POST['override_skin']);
 
 		// We're going to need the list of groups for this.
 		$boardOptions['access'] = array(

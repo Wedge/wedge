@@ -1091,7 +1091,7 @@ function wedge_show_skins(&$style, $show_defaults = false, $current_skin = '', $
 {
 	global $context, $settings, $txt;
 
-	if (!$current_skin)
+	if ($current_skin === '')
 		$current_skin = $context['skin_actual'];
 	$last = count($style);
 	$current = 1;
