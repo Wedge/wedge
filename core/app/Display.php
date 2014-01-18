@@ -1025,8 +1025,8 @@ function Display()
 		'can_restore_topic' => 'move_any',
 		'can_restore_msg' => 'move_any',
 	);
-	foreach ($common_permissions as $contextual => $perm)
-		$context[$contextual] = allowedTo($perm);
+	foreach ($common_permissions as $key => $perm)
+		$context[$key] = allowedTo($perm);
 
 	// Permissions with _any/_own versions. $context[YYY] => ZZZ_any/_own.
 	$anyown_permissions = array(
@@ -1037,8 +1037,8 @@ function Display()
 		'can_remove_poll' => 'poll_remove',
 		'can_reply' => 'post_reply',
 	);
-	foreach ($anyown_permissions as $contextual => $perm)
-		$context[$contextual] = allowedTo($perm . '_any') || (we::$user['started'] && allowedTo($perm . '_own'));
+	foreach ($anyown_permissions as $key => $perm)
+		$context[$key] = allowedTo($perm . '_any') || (we::$user['started'] && allowedTo($perm . '_own'));
 
 	// Cleanup all the permissions with extra stuff...
 	$context['post_moderated'] = we::$user['post_moderated'];

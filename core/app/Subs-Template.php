@@ -1282,7 +1282,7 @@ function loadTemplate($template_name, $fatal = true)
 		return true;
 
 	$loaded = false;
-	foreach ($settings['template_dirs'] as $template_dir)
+	foreach ($context['template_folders'] as $template_dir)
 	{
 		if (file_exists($template_dir . '/' . $template_name . '.template.php'))
 		{
@@ -1305,7 +1305,7 @@ function loadTemplate($template_name, $fatal = true)
 	// !! @todo: remove this..?
 	elseif (!file_exists(TEMPLATES_DIR) && file_exists(CORE_DIR . '/html'))
 	{
-		$settings['template_dirs'][] = $settings['theme_dir'] = CORE_DIR . '/html';
+		$context['template_folders'][] = $settings['theme_dir'] = CORE_DIR . '/html';
 
 		if (we::$is_admin)
 		{

@@ -1166,11 +1166,11 @@ function next_time($regularity, $unit, $offset)
 // This loads the bare minimum data to allow us to load language files!
 function loadEssentialThemeData()
 {
-	global $settings;
+	global $context;
 
 	// Check we have some directories setup.
-	if (empty($settings['template_dirs']))
-		$settings['template_dirs'] = array(TEMPLATES_DIR);
+	if (empty($context['template_folders']))
+		$context['template_folders'] = array(TEMPLATES_DIR);
 
 	// Check loadLanguage actually exists!
 	if (!function_exists('loadLanguage'))

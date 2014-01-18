@@ -1439,10 +1439,10 @@ function wedge_get_skin_options($options_only = false)
 	for ($i = 0; $i < count($css_folders) && $i < 10; $i++)
 	{
 		$folder = $css_folders[$i];
-		$context['skin_folders'][] = $root_dir . ($folder ? '/' . $folder : '') . '/';
+		$context['skin_folders'][] = $full_path = $root_dir . ($folder ? '/' . $folder : '') . '/';
 
 		if ($test_folders[$folder]['has_templates'])
-			$context['template_folders'][] = $folder . 'templates';
+			$context['template_folders'][] = $full_path . 'html';
 
 		// If this is a replace-type skin, skip all parent folders.
 		if ($test_folders[$folder]['type'] === 'replace')

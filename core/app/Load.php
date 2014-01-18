@@ -1347,7 +1347,7 @@ function loadTheme($skin = '', $initialize = true)
 	$options = $themeData[$member];
 
 	// Only one template folder for now.
-	$settings['template_dirs'] = array(TEMPLATES_DIR);
+	$context['template_folders'] = array(TEMPLATES_DIR);
 
 	if (!$initialize)
 		return;
@@ -1421,6 +1421,7 @@ function loadTheme($skin = '', $initialize = true)
 	$context['macros'] = array();
 	$context['skeleton'] = array();
 	$context['skeleton_ops'] = array();
+	loadSource('Subs-Cache');
 
 	// If output is an Ajax request, or printer-friendly
 	// page, skip the index template entirely, and don't load skeletons.
@@ -1433,6 +1434,9 @@ function loadTheme($skin = '', $initialize = true)
 	}
 	else
 	{
+		// Now we'll override all of these...
+		wedge_get_skin_options();
+
 		// Add support for media queries to IE 8. Older versions aren't worth the trouble. Really.
 		if (we::is('ie8'))
 			add_js_file('respond.js');
@@ -1461,10 +1465,6 @@ function loadTheme($skin = '', $initialize = true)
 
 		// Run template_init()
 		execBlock('init', 'ignore');
-
-		// Now we'll override all of these...
-		loadSource('Subs-Cache');
-		wedge_get_skin_options();
 	}
 
 	// We should have all our skeletons ready. Create the main one!
@@ -1578,16 +1578,16 @@ function loadPluginSource($plugin_name, $source_name)
 
 function loadPluginTemplate($plugin_name, $template_name, $fatal = true)
 {
-	global $context, $settings;
+	global $context;
 
 	if (empty($context['plugins_dir'][$plugin_name]))
 		return;
 
 	// We may as well reuse the normal template loader. Might rewrite this later, however.
-	$old_templates = $settings['template_dirs'];
-	$settings['template_dirs'] = array($context['plugins_dir'][$plugin_name]);
+	$old_templates = $context['template_folders'];
+	$context['template_folders'] = array($context['plugins_dir'][$plugin_name]);
 	loadTemplate($template_name, $fatal);
-	$settings['template_dirs'] = $old_templates;
+	$context['template_folders'] = $old_templates;
 }
 
 function loadPluginLanguage($plugin_name, $template_name, $lang = '', $fatal = true, $force_reload = false)
