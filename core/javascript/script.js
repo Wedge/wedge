@@ -265,9 +265,9 @@ function expandPages(spanNode, firstPage, lastPage, perPage)
 		$(spanNode).before('<a href="' + baseURL.replace(/%1\$d/, i).replace(/%%/g, '%') + '">' + (1 + i / perPage) + '</a> ');
 
 	if (oldLastPage)
-		$(spanNode).before($(spanNode).clone().click(function () { expandPages(this, lastPage, oldLastPage, perPage); }));
-
-	$(spanNode).remove();
+		$(spanNode).off().click(function () { expandPages(this, lastPage, oldLastPage, perPage); });
+	else
+		$(spanNode).remove();
 }
 
 // Create the Ajax loading icon, and add a link to turn it off.
