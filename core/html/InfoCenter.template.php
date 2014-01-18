@@ -22,13 +22,13 @@ function template_info_center_statistics()
 
 	if (empty($settings['trackStats']))
 		echo '
-			<img src="', ASSETS, '/icons/info.gif" alt="', $txt['forum_stats'], '">';
+			<img src="', ASSETS, '/icons/info.gif" alt="', $txt['global_stats'], '">';
 	else
 		echo '
-			<a href="<URL>?action=stats"><img src="', ASSETS, '/icons/info.gif" alt="', $txt['forum_stats'], '"></a>';
+			<a href="<URL>?action=stats"><img src="', ASSETS, '/icons/info.gif" alt="', $txt['global_stats'], '"></a>';
 
 	echo '
-			', $txt['forum_stats'], '
+			', $txt['global_stats'], '
 		</we:title>
 		<ul class="stats">
 			<li>', $context['common_stats']['total_posts'], ' ', $txt['posts_made'], ' ', $txt['in'], ' ', $context['common_stats']['total_topics'], ' ', $txt['topics'], ' ', $txt['by'], ' ', $context['common_stats']['total_members'], ' ', $txt['members'], '.</li>', !empty($settings['show_latest_member']) ? '

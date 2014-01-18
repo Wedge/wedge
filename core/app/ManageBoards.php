@@ -551,6 +551,7 @@ function EditBoard()
 			'id' => 0,
 			'name' => $txt['mboards_new_board_name'],
 			'description' => '',
+			'type' => 'forum',
 			'count_posts' => 1,
 			'posts' => 0,
 			'topics' => 0,
@@ -753,7 +754,7 @@ function EditBoard()
 // Make changes to/delete a board.
 function EditBoard2()
 {
-	global $settings, $context;
+	global $settings, $context, $txt;
 
 	checkSession();
 
@@ -781,6 +782,10 @@ function EditBoard2()
 			$boardOptions['move_to'] = $_POST['placement'];
 			$boardOptions['target_board'] = (int) $_POST['board_order'];
 		}
+
+		// !! @todo: add support for gallery-type and generic-type boards.
+		unset($txt['b_type']['media'], $txt['b_type']['site']);
+		$boardOptions['board_type'] = empty($_POST['boardtype']) || !isset($txt['b_type'][$_POST['boardtype']]) ? 'forum' : $_POST['boardtype'];
 
 		$boardOptions['board_skin'] = empty($_POST['boardskin']) ? '' : $_POST['boardskin'];
 		$boardOptions['board_skin_mobile'] = empty($_POST['boardskin_mobile']) ? '' : $_POST['boardskin_mobile'];

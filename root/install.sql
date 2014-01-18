@@ -591,7 +591,7 @@ CREATE TABLE {$db_prefix}boards (
 	override_skin tinyint(4) unsigned NOT NULL default 0,
 	skin varchar(255) NOT NULL default '',
 	skin_mobile varchar(255) NOT NULL default '',
-	board_type enum('board', 'blog', 'site') NOT NULL default 'board',
+	board_type enum('forum', 'blog', 'media', 'site') NOT NULL default 'forum',
 	unapproved_posts smallint(5) NOT NULL default 0,
 	unapproved_topics smallint(5) NOT NULL default 0,
 	redirect varchar(255) NOT NULL default '',

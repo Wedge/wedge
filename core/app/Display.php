@@ -163,7 +163,7 @@ function Display()
 
 	// If this topic has unapproved posts, we need to work out how many posts the user can see, for page indexing.
 	// We also need to discount the first post if this is a blog board.
-	$including_first = $topicinfo['approved'] && $board_info['type'] == 'board' ? 1 : 0;
+	$including_first = $topicinfo['approved'] && $board_info['type'] == 'forum' ? 1 : 0;
 	if ($settings['postmod_active'] && $topicinfo['unapproved_posts'] && we::$is_member && !allowedTo('approve_posts'))
 	{
 		$request = wesql::query('
@@ -223,7 +223,7 @@ function Display()
 		{
 			$virtual_msg = (int) substr($_REQUEST['start'], 3);
 			if (!$topicinfo['unapproved_posts'] && $virtual_msg >= $topicinfo['id_last_msg'])
-				$context['start_from'] = $context['total_visible_posts'] - 1 + ($board_info['type'] == 'board' ? 0 : 1);
+				$context['start_from'] = $context['total_visible_posts'] - 1 + ($board_info['type'] == 'forum' ? 0 : 1);
 			elseif (!$topicinfo['unapproved_posts'] && $virtual_msg <= $topicinfo['id_first_msg'])
 				$context['start_from'] = 0;
 			else
@@ -244,7 +244,7 @@ function Display()
 				);
 				list ($context['start_from']) = wesql::fetch_row($request);
 				wesql::free_result($request);
-				if ($board_info['type'] != 'board')
+				if ($board_info['type'] != 'forum')
 					$context['start_from']--;
 			}
 
@@ -696,7 +696,7 @@ function Display()
 
 	// Calculate the fastest way to get the messages!
 	$ascending = empty($options['view_newest_first']);
-	$start = $_REQUEST['start'] + ($ascending && $board_info['type'] != 'board' ? 1 : 0);
+	$start = $_REQUEST['start'] + ($ascending && $board_info['type'] != 'forum' ? 1 : 0);
 	$limit = $context['messages_per_page'];
 
 	/* The following code is buggy. I'm leaving it here, but commented out for now. Can't even see notable performance improvements...
@@ -705,7 +705,7 @@ function Display()
 	{
 		$ascending = !$ascending;
 		$limit = min($context['total_visible_posts'] - $_REQUEST['start'], $limit);
-		$start = max($context['total_visible_posts'] - $_REQUEST['start'] - $limit, $ascending && $board_info['type'] != 'board' ? 1 : 0);
+		$start = max($context['total_visible_posts'] - $_REQUEST['start'] - $limit, $ascending && $board_info['type'] != 'forum' ? 1 : 0);
 	}
 	*/
 
@@ -762,7 +762,7 @@ function Display()
 	);
 
 	$all_posters = array();
-	if ($board_info['type'] != 'board')
+	if ($board_info['type'] != 'forum')
 	{
 		// Always get the first poster and message.
 		$messages = array($topicinfo['id_first_msg']);
@@ -791,7 +791,7 @@ function Display()
 	$posters = array_unique($all_posters);
 
 	// What's the oldest comment in the page..?
-	$context['mark_unread_time'] = min($board_info['type'] == 'board' || count($messages) < 2 ? $messages : array_slice($messages, 1));
+	$context['mark_unread_time'] = min($board_info['type'] == 'forum' || count($messages) < 2 ? $messages : array_slice($messages, 1));
 
 	// When was the last time this topic was replied to? Should we warn them about it?
 	if (!empty($settings['oldTopicDays']))
@@ -963,7 +963,7 @@ function Display()
 			loadMemberData($posters, false, 'userbox');
 
 		// Figure out the ordering.
-		if ($board_info['type'] != 'board')
+		if ($board_info['type'] != 'forum')
 			$order = empty($options['view_newest_first']) ? 'ORDER BY id_msg' : 'ORDER BY id_msg != {int:first_msg}, id_msg DESC';
 		else
 			$order = 'ORDER BY id_msg' . (empty($options['view_newest_first']) ? '' : ' DESC');
@@ -985,7 +985,7 @@ function Display()
 		);
 
 		// Since the anchor information is needed on the top of the page we load these variables beforehand.
-		$context['first_message'] = empty($options['view_newest_first']) || $board_info['type'] != 'board' ? min($messages) : max($messages);
+		$context['first_message'] = empty($options['view_newest_first']) || $board_info['type'] != 'forum' ? min($messages) : max($messages);
 		if (empty($options['view_newest_first']))
 			$context['first_new_message'] = isset($context['start_from']) && empty($_REQUEST['start']) && empty($context['start_from']);
 		else
@@ -1294,7 +1294,7 @@ function prepareDisplayContext($reset = false)
 
 	// Remember which message this is, e.g. reply #83.
 	if ($counter === null || $reset)
-		$counter = empty($options['view_newest_first']) ? $context['start'] : $context['total_visible_posts'] - $context['start'] + ($board_info['type'] == 'board' ? -1 : 1);
+		$counter = empty($options['view_newest_first']) ? $context['start'] : $context['total_visible_posts'] - $context['start'] + ($board_info['type'] == 'forum' ? -1 : 1);
 
 	// Start from the beginning...
 	if ($reset)
@@ -1386,7 +1386,7 @@ function prepareDisplayContext($reset = false)
 		'subject' => $message['subject'],
 		'on_time' => on_timeformat($message['poster_time']),
 		'timestamp' => $message['poster_time'], // Don't apply time offset here. This isn't used, but doesn't cost anything to include here, so...
-		'counter' => $board_info['type'] == 'board' ? $counter : ($counter == $context['start'] ? 0 : $counter),
+		'counter' => $board_info['type'] == 'forum' ? $counter : ($counter == $context['start'] ? 0 : $counter),
 		'modified' => array(
 			'on_time' => on_timeformat($message['modified_time']),
 			'timestamp' => forum_time(true, $message['modified_time']),
@@ -1418,7 +1418,7 @@ function prepareDisplayContext($reset = false)
 	$output['can_mergeposts'] &= !empty($output['last_post_id']);
 
 	// Is this a board? If not, we're dealing with this as replies to a post, and we won't allow merging the first reply into the post.
-	if ($board_info['type'] != 'board' && $message['id_msg'] == $context['first_message'])
+	if ($board_info['type'] != 'forum' && $message['id_msg'] == $context['first_message'])
 		$output['can_mergeposts'] = false;
 	else
 	{

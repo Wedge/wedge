@@ -533,7 +533,7 @@ function template_messageindex_statistics()
 	if (empty($settings['show_stats_index']))
 		return;
 
-	$type = $board_info['type'] == 'board' ? 'board' : 'blog';
+	$type = $board_info['type'] == 'forum' ? 'forum' : 'blog';
 
 	echo '
 	<section>

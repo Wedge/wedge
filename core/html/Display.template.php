@@ -26,7 +26,7 @@ function template_display_posts()
 
 		// Show the topic information - icon, subject, etc.
 		echo '
-		<div id="forumposts"', $board_info['type'] == 'board' ? '' : ' class="blog"', '>';
+		<div id="forumposts"', $board_info['type'] == 'forum' ? '' : ' class="blog"', '>';
 
 		if (we::$is_member)
 			echo '

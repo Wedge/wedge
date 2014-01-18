@@ -444,6 +444,22 @@ function template_modify_board()
 
 	echo '
 					<dt>
+						<strong>', $txt['mboards_type'], ':</strong>
+						<dfn>', $txt['mboards_type_desc'], '</dfn>
+					</dt>
+					<dd>
+						<select name="boardtype" id="boardtype">';
+
+	// !! @todo: add support for gallery-type and generic-type boards.
+	unset($txt['b_type']['media'], $txt['b_type']['site']);
+	foreach ($txt['b_type'] as $type => $name)
+		echo '
+							<option value="', $type, '"', $context['board']['type'] == $type ? ' selected' : '', '>', ucfirst($name), '</option>';
+
+	echo '
+						</select>
+					</dd>
+					<dt>
 						<strong>', $txt['mboards_description'], ':</strong>
 						<dfn>', $txt['mboards_description_desc'], '</dfn>
 					</dt>

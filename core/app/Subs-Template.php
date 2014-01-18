@@ -207,14 +207,14 @@ function ob_sessrewrite($buffer)
 	if ((!defined('SKIN_MOBILE') || !SKIN_MOBILE) && strpos($buffer, '<we:msg_') !== false)
 	{
 		$ex_uid = $ex_area = $area = $one_removed = '';
-		$is_board = isset($board_info['type']) && $board_info['type'] == 'board';
+		$is_forum = isset($board_info['type']) && $board_info['type'] == 'forum';
 
 		// First, find all potential messages in this page...
 		preg_match_all('~<we:msg [^>]*id="([^"]+)" class="([^"]+)"[^>]*>(.*?)</we:msg>~s', $buffer, $messages, PREG_SET_ORDER);
 		foreach ($messages as $msg)
 		{
 			// Blog posts aren't soft-mergeable.
-			if (!$is_board && strpos($msg[2], 'first-post') !== false)
+			if (!$is_forum && strpos($msg[2], 'first-post') !== false)
 				continue;
 
 			// Find the author ID for the current post, and isolate the post's content.

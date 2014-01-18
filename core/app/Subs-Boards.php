@@ -615,6 +615,12 @@ function modifyBoard($board_id, &$boardOptions)
 		$boardUpdateParameters['board_description'] = $boardOptions['board_description'];
 	}
 
+	if (isset($boardOptions['board_type']))
+	{
+		$boardUpdates[] = 'board_type = {string:board_type}';
+		$boardUpdateParameters['board_type'] = $boardOptions['board_type'];
+	}
+
 	if (isset($boardOptions['profile']))
 	{
 		$boardUpdates[] = 'id_profile = {int:profile}';
@@ -839,6 +845,7 @@ function createBoard($boardOptions)
 		'board_skin' => '',
 		'board_skin_mobile' => '',
 		'board_description' => '',
+		'board_type' => 'forum',
 		'profile' => 1,
 		'moderators' => '',
 		'inherit_permissions' => true,
@@ -1098,7 +1105,7 @@ function fixChildren($parent, $newLevel, $newParent)
 }
 
 // Load a lot of useful information regarding the boards and categories.
-// Restrict to their own boards anyone who's not an admin
+// Restrict to their own boards anyone who's not an admin.
 function getBoardTree($restrict = false)
 {
 	global $cat_tree, $boards, $boardList;
@@ -1109,8 +1116,8 @@ function getBoardTree($restrict = false)
 	// Getting all the board and category information you'd ever wanted.
 	$request = wesql::query('
 		SELECT
-			IFNULL(b.id_board, 0) AS id_board, b.id_parent, b.name AS board_name, b.description, b.child_level, b.url,
-			b.board_order, b.count_posts, b.member_groups, b.skin, b.skin_mobile, b.override_skin, b.id_profile, b.redirect,
+			IFNULL(b.id_board, 0) AS id_board, b.id_parent, b.name AS board_name, b.board_type, b.description, b.child_level,
+			b.url, b.board_order, b.count_posts, b.member_groups, b.skin, b.skin_mobile, b.override_skin, b.id_profile, b.redirect,
 			b.redirect_newtab, b.num_posts, b.language, b.num_topics, b.offlimits_msg, c.id_cat, c.name AS cat_name, c.cat_order, c.can_collapse
 		FROM {db_prefix}categories AS c
 			LEFT JOIN {db_prefix}boards AS b ON (b.id_cat = c.id_cat)' . $restriction . '
@@ -1152,6 +1159,7 @@ function getBoardTree($restrict = false)
 				'order' => $row['board_order'],
 				'url' => $row['url'],
 				'name' => $row['board_name'],
+				'type' => $row['board_type'],
 				'member_groups' => explode(',', $row['member_groups']),
 				'description' => $row['description'],
 				'count_posts' => empty($row['count_posts']),

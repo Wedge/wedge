@@ -76,6 +76,9 @@ $txt['mboards_override_skin_desc'] = 'Use this board\'s skin even if the member 
 $txt['mboards_language'] = 'Board Language';
 $txt['mboards_language_desc'] = 'This allows you to set the default language of the forum (such as the text on buttons) inside only this board. Note that this is only a default, if a user picks a language preference, their preference will override this setting.';
 
+$txt['mboards_type'] = 'Board Type';
+$txt['mboards_type_desc'] = 'This changes the way the board\'s homepage is presented. Board shows a tabular list of topics, sorted by latest reply. Blog shows a list of posts sorted by date, regardless of comment dates.';
+
 $txt['mboards_redirect'] = 'Redirect to a web address';
 $txt['mboards_redirect_desc'] = 'Enable this option to redirect anyone who clicks on this board to another web address.';
 $txt['mboards_redirect_url'] = 'Address to redirect users to';
