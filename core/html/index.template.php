@@ -365,7 +365,7 @@ function template_sidebar_feed()
 	{
 		$feed = '<URL>?board=' . $board_info['id'] . ';action=feed';
 		echo '
-			<dt>', $board_info['type'] == 'blog' ? $txt['feed_current_blog'] : $txt['feed_current_board'], '</dt>
+			<dt>', $board_info['type'] == 'blog' ? $txt['feed_current_blog'] : $txt['feed_current_forum'], '</dt>
 			<dd>', sprintf($txt['feed_posts'], $feed), ' / ', sprintf($txt['feed_topics'], $feed . ';sa=news'), '</dd>';
 	}
 

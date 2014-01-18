@@ -79,7 +79,7 @@ function ViewQuery()
 	</style>
 </head>
 <body>
-	<div id="junk" class="windowbg wrc left">';
+	<div id="junk_queries" class="windowbg wrc left">';
 
 	foreach ($_SESSION['debug'] as $q => $query_data)
 	{
