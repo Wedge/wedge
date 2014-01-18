@@ -111,6 +111,10 @@ function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow =
 		$latest_date = max($latest_date, filemtime($add));
 	}
 
+	// If no files were found, don't waste more time.
+	if (empty($files))
+		return;
+
 	// Add the 'm' keyword for member files -- using 'member' would add an extra couple of bytes per page for no reason.
 	$id .= (we::$is_guest ? '' : 'm-');
 	$id = !empty($settings['obfuscate_filenames']) ? md5(substr($id, 0, -1)) . '-' : $id;

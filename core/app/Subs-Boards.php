@@ -258,10 +258,10 @@ function MarkRead()
 		if (!empty($_GET['t']))
 		{
 			// Ensure for realistic boundaries.
-			if ($_GET['t'] >= $topicinfo['id_last_msg'])
-				$earlyMsg = $settings['maxMsgID'];
-			elseif ($_GET['t'] <= $topicinfo['id_first_msg'])
+			if ($_GET['t'] <= $topicinfo['id_first_msg'])
 				$earlyMsg = 0;
+			elseif ($_GET['t'] >= $topicinfo['id_last_msg'])
+				$earlyMsg = $settings['maxMsgID'];
 			// If it's anywhere inside the topic, get the latest post before the named one.
 			else
 			{
