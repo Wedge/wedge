@@ -281,9 +281,10 @@ fieldset dl
 			position: relative
 			.handle extends #sortable li .handle // Only want the handle, not the whole thing.
 				cursor: move
-		input.permbutton mixes .button-padding
+		.modify_board mixes .button-padding
+			background: raw-url($images/buttons/modify.gif) 5px center no-repeat
+		.perms_board mixes .button-padding
 			background: raw-url($images/buttons/permissions.png) 5px center no-repeat
-			background-color: #e0eaf6
 		.floatright
 			margin: 0 4px
 	.sortable_error

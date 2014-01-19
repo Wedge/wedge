@@ -126,6 +126,7 @@ function template_board_list()
 					</div>
 					<br class="clear">
 				</div>';
+
 		if (!empty($category['children']))
 		{
 			echo '
@@ -189,10 +190,10 @@ function template_board_tree($child)
 						', $indent, '<div class="windowbg">
 							', $indent, '<span class="handle"></span> ', $child['node']['name'], '
 							', $indent, '<div class="floatright">
-								', $indent, '<form action="<URL>?action=admin;area=manageboards;sa=board;boardid=', $child['node']['id'], '" method="post"><input type="submit" class="modify" value="', $txt['modify'], '"></form>
+								', $indent, '<a href="<URL>?action=admin;area=manageboards;sa=board;boardid=', $child['node']['id'], '" class="modify_board">', $txt['modify'], '</a>
 							', $indent, '</div>
 							', $indent, '<div class="floatright">
-								', $indent, '<form action="<URL>?action=admin;area=permissions;sa=index;pid=', $child['node']['profile'], '" method="post"><input type="submit" class="permbutton" value="', $txt['mboards_permissions'], '"></form>
+								', $indent, '<a href="<URL>?action=admin;area=permissions;sa=index;pid=', $child['node']['profile'], '" class="perms_board">', $txt['mboards_permissions'], '</a>
 							', $indent, '</div>
 							', $indent, '<br class="clear">
 						', $indent, '</div>';

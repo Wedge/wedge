@@ -1495,9 +1495,6 @@ body.waiting *
 
 @if !ie[-7]
 	@media $responsive
-		dt, dd
-			clear: both
-			width: auto !important
 		body
 			padding: 0
 			#wedge
@@ -1562,4 +1559,10 @@ body.waiting *
 			#main_menu mixes .hide
 			#sidemenu
 				display: block
+
+	// Even smaller? A smartphone, maybe..?
+	@media all and (max-width: 600px)
+		dt, dd
+			clear: both
+			width: auto !important
 @endif
