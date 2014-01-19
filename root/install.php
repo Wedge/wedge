@@ -11,7 +11,7 @@
 define('WEDGE_VERSION', '0.1');
 define('REQUIRED_PHP_VERSION', '5.3.0');
 define('REQUIRED_MYSQL_SERVER_VERSION', '5.0.3');
-define('REQUIRED_MYSQL_CLIENT_VERSION', '5.0.0');
+define('REQUIRED_MYSQL_CLIENT_VERSION', '5.0.3');
 
 // Some constants we might need later.
 define('APP_DIR', dirname(__FILE__) . '/core/app');
@@ -835,7 +835,7 @@ function ForumSettings()
 			'boardurl' => $_POST['boardurl'],
 			'boarddir' => addslashes(dirname(__FILE__)),
 			'sourcedir' => addslashes(dirname(__FILE__)) . '/core/app',
-			'cachedir' => addslashes(dirname(__FILE__)) . '/cache',
+			'cachedir' => addslashes(dirname(__FILE__)) . '/gz',
 			'pluginsdir' => addslashes(dirname(__FILE__)) . '/plugins',
 			'pluginsurl' => $_POST['boardurl'] . '/plugins',
 			'mbname' => strtr($_POST['mbname'], array('\"' => '"')),
@@ -1910,9 +1910,9 @@ function init_variables()
 
 	// Load Wedge's default paths and pray that it works...
 	$boarddir = dirname(__FILE__);
-	$cachedir = $boarddir . '/cache';
-	$cssdir = $boarddir . '/css';
-	$jsdir = $boarddir . '/js';
+	$cachedir = $boarddir . '/gz';
+	$cssdir = $boarddir . '/gz/css';
+	$jsdir = $boarddir . '/gz/js';
 	// !!! Dunno if we need to load all of these. Better safe than sorry.
 	loadSource(array('Load', 'Subs-Auth', 'Class-String', 'Class-System', 'QueryString', 'Subs', 'Errors', 'Security'));
 

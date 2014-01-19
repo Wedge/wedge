@@ -177,17 +177,13 @@
 					<p>The Wedge installer can set file permissions simply and easily. Navigating to the directory where Wedge is located should redirect you to the install.php file and prompt the installer. For example: www.yourdomain.com/forum/install.php. If the installer detects files that need their permissions adjusted it will prompt for FTP details so it can <b>CHMOD</b> the files it requires for the install. This may not work on some servers.</p>
 					<h3>Setting File Permissions With FTP</h3>
 					<p>Using a control panel or FTP client, file permissions can be changed quickly and easily. Usually, FTP programs will allow permissions to be changed by right-clicking files/directories and selecting &quot;Properties&quot;, &quot;Attributes&quot; or &quot;Permissions&quot;. The desired numerical value can be entered, or if provided, check boxes can be changed.</p>
-					<p>The following files and directories must be writable. Depending on how your server is set up, this could mean that they must have <b>CHMOD</b> values of 644, 664 or 666 for files, and 755, 775 or 777 for folders:</p>
+					<p>The following files and directories must be writable, along with their subfolders. Depending on how your server is set up, this could mean that they must have <b>CHMOD</b> values of 644, 664 or 666 for files, and 755, 775 or 777 for folders:</p>
 					<ul>
 						<li>/assets/avatars</li>
 						<li>/assets/smileys</li>
 						<li>/attachments</li>
-						<li>/cache</li>
+						<li>/gz</li>
 						<li>/plugins</li>
-						<li>/core/languages/Install.english.php</li>
-						<li>/css</li>
-						<li>/js</li>
-						<li>agreement.txt</li>
 						<li>Settings.php</li>
 						<li>Settings_bak.php</li>
 						<li>install.php</li>

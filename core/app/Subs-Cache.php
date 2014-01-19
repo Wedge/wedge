@@ -127,7 +127,7 @@ function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow =
 	if (!file_exists($jsdir . '/' . $id . $lang_name . $latest_date . $ext))
 		wedge_cache_js($id, $lang_name, $latest_date, $ext, $files, $can_gzip);
 
-	$final_script = ROOT . '/js/' . $id . $lang_name . $latest_date . $ext;
+	$final_script = ROOT . '/gz/js/' . $id . $lang_name . $latest_date . $ext;
 
 	// Do we just want the URL?
 	if ($is_out_of_flow)
@@ -208,7 +208,7 @@ function add_plugin_js_file($plugin_name, $files = array(), $is_direct_url = fal
 	if (!file_exists($jsdir . '/' . $id . $lang_name . $latest_date . $ext))
 		wedge_cache_js($id, $lang_name, $latest_date, $ext, $files, $can_gzip, true);
 
-	$final_script = ROOT . '/js/' . $id . $lang_name . $latest_date . $ext;
+	$final_script = ROOT . '/gz/js/' . $id . $lang_name . $latest_date . $ext;
 
 	// Do we just want the URL?
 	if ($is_out_of_flow)
@@ -405,9 +405,9 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 	$target_folder = trim($id . '-' . implode('-', array_filter(array_diff($files, (array) 'common', $ignore_files))), '-');
 
 	// Cache final file and retrieve its name.
-	$final_script = ROOT . '/css/' . wedge_cache_css_files($target_folder . ($target_folder ? '/' : ''), $found_suffixes, $latest_date, $css, $can_gzip, $ext);
+	$final_script = ROOT . '/gz/css/' . wedge_cache_css_files($target_folder . ($target_folder ? '/' : ''), $found_suffixes, $latest_date, $css, $can_gzip, $ext);
 
-	if ($final_script == ROOT . '/css/')
+	if ($final_script == ROOT . '/gz/css/')
 		return false;
 
 	if ($is_main)
@@ -478,9 +478,9 @@ function add_plugin_css_file($plugin_name, $original_files = array(), $add_link 
 	$target_folder = trim(str_replace(array('/', ':'), '-', strtolower($plugin_name) . '-' . implode('-', array_filter(array_diff($original_files, (array) 'common', $ignore_files)))), '-');
 
 	// Cache final file and retrieve its name.
-	$final_script = ROOT . '/css/' . wedge_cache_css_files($target_folder . ($target_folder ? '/' : ''), $id, $latest_date, $files, $can_gzip, $ext, array('$plugindir' => $context['plugins_url'][$plugin_name]));
+	$final_script = ROOT . '/gz/css/' . wedge_cache_css_files($target_folder . ($target_folder ? '/' : ''), $id, $latest_date, $files, $can_gzip, $ext, array('$plugindir' => $context['plugins_url'][$plugin_name]));
 
-	if ($final_script == ROOT . '/css/')
+	if ($final_script == ROOT . '/gz/css/')
 		return false;
 
 	// Do we just want the URL?
@@ -626,9 +626,9 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 	if ($gzip && !we::is('ie6,ie7'))
 		$plugins[] = new wess_base64($folder);
 
-	// Default CSS variables (paths are set relative to the cache folder)
+	// Default CSS variables (paths are absolute or, if forum is in a sub-folder, relative to the CSS cache folder)
 	// !!! If subdomains are allowed, should we use absolute paths instead?
-	$relative_root = '..' . str_repeat('/..', substr_count($folder, '/'));
+	$relative_root = strpos(str_replace('://', '', ROOT), '/') === false && strpos(ASSETS, ROOT) === 0 ? '' : '../..' . str_repeat('/..', substr_count($folder, '/'));
 	$languages = isset($context['skin_available_languages']) ? $context['skin_available_languages'] : array('english');
 	$css_vars = array(
 		'$language' => isset(we::$user['language']) && in_array(we::$user['language'], $languages) ? we::$user['language'] : $languages[0],
@@ -1227,7 +1227,7 @@ function wedge_cache_smileys($set, $smileys, $extra)
 
 	$final_gzip = $final_raw = '';
 	$path = $settings['smileys_dir'] . '/' . $set . '/';
-	$url  = '..' . str_replace(ROOT, '', SMILEYS) . '/' . $set . '/';
+	$url = (strpos(str_replace('://', '', ROOT), '/') === false && strpos(SMILEYS, ROOT) === 0 ? '' : '../..') . str_replace(ROOT, '', SMILEYS) . '/' . $set . '/';
 
 	// Delete other cached versions, if they exist.
 	clean_cache($context['smiley_ext'], 'smileys' . $extra, $cssdir);
@@ -1253,7 +1253,7 @@ function wedge_cache_smileys($set, $smileys, $extra)
 	if ($context['smiley_gzip'])
 		$final = gzencode($final, 9);
 
-	file_put_contents($cssdir . '/smileys' . $extra . '-' . $set . '-' . $context['smiley_now'] . $context['smiley_ext'], $final);
+	file_put_contents($cssdir . '/smileys' . $extra . ($set == 'default' ? '' : '-' . $set) . '-' . $context['smiley_now'] . $context['smiley_ext'], $final);
 }
 
 /**
@@ -1632,7 +1632,7 @@ function clean_cache($extensions = 'php', $filter = '', $force_folder = '', $rem
 	global $cache_system, $cache_updated, $session_cache;
 	global $cachedir, $cssdir, $jsdir;
 
-	$folder = $cachedir;
+	$folder = $cachedir . '/keys';
 	$is_recursive = false;
 	$there_is_another = false;
 	if ($extensions === 'css')
@@ -1666,7 +1666,7 @@ function clean_cache($extensions = 'php', $filter = '', $force_folder = '', $rem
 	$filter_is_folder = !$filter || strpos($force_folder, $filter) !== false;
 
 	// If we're emptying the regular cache, chances are we also want to reset non-file-based cached data if possible.
-	if ($folder == $cachedir)
+	if ($folder == $cachedir . '/keys')
 	{
 		cache_get_type();
 		if ($cache_system === 'apc')
@@ -1689,7 +1689,7 @@ function clean_cache($extensions = 'php', $filter = '', $force_folder = '', $rem
 		}
 
 		// Also get the source cache!
-		clean_cache('php', '', $cachedir . '/php');
+		clean_cache('php', '', $cachedir . '/app');
 	}
 
 	// Remove the files in Wedge's own disk cache, if any.
@@ -1835,14 +1835,14 @@ function cache_put_data($key, $val, $ttl = 120)
 	else
 	{
 		if ($val === null)
-			@unlink($cachedir . '/' . $key . '.php');
+			@unlink($cachedir . '/keys/' . $key . '.php');
 		else
 		{
 			$cache_data = '<' . '?php if(defined(\'WEDGE\')&&$valid=' . ($ttl === PHP_INT_MAX ? '1' : 'time()<' . (time() + $ttl)) . ')$val=\'' . addcslashes($val, '\\\'') . '\';';
 
 			// Check that the cache write was successful. If it fails due to low diskspace, remove the cache file.
-			if (file_put_contents($cachedir . '/' . $key . '.php', $cache_data, LOCK_EX) !== strlen($cache_data))
-				@unlink($cachedir . '/' . $key . '.php');
+			if (file_put_contents($cachedir . '/keys/' . $key . '.php', $cache_data, LOCK_EX) !== strlen($cache_data))
+				@unlink($cachedir . '/keys/' . $key . '.php');
 		}
 	}
 
@@ -1887,11 +1887,11 @@ function cache_get_data($orig_key, $ttl = 120, $put_callback = null)
 	elseif ($cache_system === 'session' && isset($session_cache))
 		$val = isset($session_cache[$key]) && time() < $session_cache[$key]['ttl'] ? $session_cache[$key]['data'] : false;
 	// Otherwise it's the file cache!
-	elseif (file_exists($cachedir . '/' . $key . '.php') && @filesize($cachedir . '/' . $key . '.php') > 10)
+	elseif (file_exists($cachedir . '/keys/' . $key . '.php') && @filesize($cachedir . '/keys/' . $key . '.php') > 10)
 	{
-		@include($cachedir . '/' . $key . '.php');
+		@include($cachedir . '/keys/' . $key . '.php');
 		if (empty($valid))
-			@unlink($cachedir . '/' . $key . '.php');
+			@unlink($cachedir . '/keys/' . $key . '.php');
 	}
 
 	if (!empty($db_show_debug))

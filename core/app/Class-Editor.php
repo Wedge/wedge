@@ -2486,7 +2486,7 @@ class wedit
 				if (!isset($settings[$var_name]))
 					updateSettings(array($var_name => time() % 1000));
 				$context['smiley_now'] = $settings[$var_name];
-				$filename = '/css/smileys' . $extra . '-' . we::$user['smiley_set'] . '-' . $context['smiley_now'] . $context['smiley_ext'];
+				$filename = '/gz/css/smileys' . $extra . (we::$user['smiley_set'] == 'default' ? '' : '-' . we::$user['smiley_set']) . '-' . $context['smiley_now'] . $context['smiley_ext'];
 				$exists = file_exists($boarddir . $filename);
 				if (!$exists)
 					parsesmileys($dummy);

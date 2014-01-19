@@ -350,10 +350,10 @@ function updateSettingsFile($config_vars)
 	// like a possible race condition,
 	// or a failure to write at low diskspace
 
-	// Check before you act: if cache is enabled, we can do a simple test
+	// Check before you act: do a simple test in the cache folder.
 	// Can we even write things on this filesystem?
-	if ((empty($cachedir) || !file_exists($cachedir)) && file_exists($boarddir . '/cache'))
-		$cachedir = $boarddir . '/cache';
+	if ((empty($cachedir) || !file_exists($cachedir)) && file_exists($boarddir . '/gz'))
+		$cachedir = $boarddir . '/gz';
 	$test_fp = @fopen($cachedir . '/settings_update.tmp', 'w+');
 	if ($test_fp)
 	{

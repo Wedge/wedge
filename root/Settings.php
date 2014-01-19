@@ -10,9 +10,9 @@
 
 ########## Maintenance ##########
 # Note: If $maintenance is set to 2, the forum will be unusable!  Change it to 0 to fix it.
-$maintenance = 0;					# Set to 1 to enable Maintenance Mode, 2 to make the forum untouchable. (you'll have to make it 0 again manually!)
-$mtitle = 'Maintenance Mode';		# Title for the Maintenance Mode message.
-$mmessage = 'We are currently working on website maintenance. Please bear with us, we\'ll restore access as soon as we can!';	# Description of why the forum is in maintenance mode.
+$maintenance = 0;								# Set to 1 to enable Maintenance Mode, 2 to make the forum untouchable. (you'll have to make it 0 again manually!)
+$mtitle = 'Maintenance Mode';					# Title for the Maintenance Mode message.
+$mmessage = 'This website is currently under maintenance. Please bear with us, we\'ll restore access as soon as we can!';	# Description of why the forum is in maintenance mode.
 
 ########## Forum Info ##########
 $mbname = 'My Community';						# The name of your forum.
@@ -37,9 +37,9 @@ $db_show_debug = false;
 # Note: These directories do not have to be changed unless you move things.
 $boarddir = dirname(__FILE__);				# The absolute path to the forum's folder. Not just '.'!
 $sourcedir = $boarddir . '/core/app';		# Path to the sources directory.
-$cachedir = $boarddir . '/cache';			# Path to the cache directory.
-$cssdir = $boarddir . '/css';				# Path to the CSS cache directory.
-$jsdir = $boarddir . '/js';					# Path to the JS cache directory.
+$cachedir = $boarddir . '/gz';				# Path to the cache directory.
+$cssdir = $boarddir . '/gz/css';			# Path to the CSS cache directory.
+$jsdir = $boarddir . '/gz/js';				# Path to the JS cache directory.
 $pluginsdir = $boarddir . '/plugins';		# Path to the plugins directory.
 $pluginsurl = $boardurl . '/plugins';		# URL to the plugins area root.
 
@@ -62,11 +62,11 @@ if (!file_exists($pluginsdir) && file_exists($boarddir . '/plugins'))
 	$pluginsdir = $boarddir . '/plugins';
 
 # Make absolutely sure the cache directories are defined.
-foreach (array('cache', 'css', 'js') as $var)
+foreach (array('cache' => 'gz', 'css' => 'gz/css', 'js' => 'gs/jz') as $var => $path)
 {
 	$dir = $var . 'dir';
-	if ((empty($$dir) || ($$dir !== $boarddir . '/' . $var && !file_exists($$dir))) && file_exists($boarddir . '/' . $var))
-		$$dir = $boarddir . '/' . $var;
+	if ((empty($$dir) || ($$dir !== $boarddir . '/' . $path && !file_exists($$dir))) && file_exists($boarddir . '/' . $path))
+		$$dir = $boarddir . '/' . $path;
 	if (!file_exists($$dir))
 		exit('Missing cache folder: $' . $dir . ' (' . $$dir . ')');
 }

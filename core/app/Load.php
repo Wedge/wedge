@@ -1612,7 +1612,7 @@ function loadPluginLanguage($plugin_name, $template_name, $lang = '', $fatal = t
 	$file_key = valid_filename($key);
 	
 	// Try to get from cache. If successful, clean up and return.
-	$filename = $cachedir . '/lang_' . $lang . '_' . $file_key . '.php';
+	$filename = $cachedir . '/lang/' . $lang . '_' . $file_key . '.php';
 	if (file_exists($filename))
 	{
 		@include($filename);
@@ -1675,7 +1675,7 @@ function loadPluginLanguage($plugin_name, $template_name, $lang = '', $fatal = t
 		wesql::free_result($request);
 
 		// Now cache this sucker.
-		$filename = $cachedir . '/lang_' . $lang . '_' . $file_key . '.php';
+		$filename = $cachedir . '/lang/' . $lang . '_' . $file_key . '.php';
 		if (!empty($txt))
 			$txt = array_map('westr::entity_to_utf8', $txt);
 		$cache_data = '<' . '?php if(defined(\'WEDGE\'))$val=\'' . addcslashes(serialize($txt), '\\\'') . '\';?' . '>';
@@ -1738,7 +1738,7 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 		if (!defined('WEDGE_INSTALLER'))
 		{
 			// So, firstly try to get this from the file cache.
-			$filename = $cachedir . '/lang_' . $lang . '_' . $template . '.php';
+			$filename = $cachedir . '/lang/' . $lang . '_' . $template . '.php';
 			if (file_exists($filename))
 			{
 				@include($filename);
@@ -1824,7 +1824,7 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 			wesql::free_result($request);
 
 			// Now cache this sucker.
-			$filename = $cachedir . '/lang_' . $lang . '_' . $template . '.php';
+			$filename = $cachedir . '/lang/' . $lang . '_' . $template . '.php';
 			// First of all, we need to convert numeric entities to UTF8. Takes less space in memory, for starters.
 			if (!empty($txt))
 				$txt = array_map('westr::entity_to_utf8', $txt);

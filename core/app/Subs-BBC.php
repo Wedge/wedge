@@ -1212,7 +1212,7 @@ function parsesmileys(&$message)
 			updateSettings(array($var_name => time() % 1000));
 		$context['smiley_now'] = $settings[$var_name];
 
-		if (!file_exists($cssdir . '/smileys' . $extra . '-' . we::$user['smiley_set'] . '-' . $context['smiley_now'] . $context['smiley_ext']))
+		if (!file_exists($cssdir . '/smileys' . $extra . (we::$user['smiley_set'] == 'default' ? '' : '-' . we::$user['smiley_set']) . '-' . $context['smiley_now'] . $context['smiley_ext']))
 		{
 			// We're only going to cache the smileys that show up on the post editor by default.
 			// The reason is to help save bandwidth by only storing whatever is most likely to be used.
@@ -1246,7 +1246,7 @@ function replace_smileys($match)
 
 			$smiley_css_done = true;
 			$context['header'] .= '
-	<link rel="stylesheet" href="' . $boardurl . '/css/smileys' . (we::is('ie6,ie7') ? '-ie' : '') . '-' . we::$user['smiley_set'] . '-' . $context['smiley_now'] . $context['smiley_ext'] . '">';
+	<link rel="stylesheet" href="' . $boardurl . '/gz/css/smileys' . (we::is('ie6,ie7') ? '-ie' : '') . (we::$user['smiley_set'] == 'default' ? '' : '-' . we::$user['smiley_set']) . '-' . $context['smiley_now'] . $context['smiley_ext'] . '">';
 		}
 		return $smileyPregReplace[$match[1]];
 	}

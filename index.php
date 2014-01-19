@@ -246,7 +246,7 @@ function loadSource($source_name)
 			$cache = $sourcedir . '/' . $file . '.php';
 		else
 		{
-			$cache = $cachedir . '/php/' . str_replace(array('/', '..'), array('_', 'UP'), $file) . '.php';
+			$cache = $cachedir . '/app/' . str_replace(array('/', '..'), array('_', 'UP'), $file) . '.php';
 			if (!file_exists($cache) || filemtime($cache) < filemtime($sourcedir . '/' . $file . '.php'))
 			{
 				copy($sourcedir . '/' . $file . '.php', $cache);
