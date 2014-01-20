@@ -12,12 +12,7 @@ if (defined('WEDGE'))
 	return;
 
 const WEDGE_VERSION = '0.1';
-
-// Knock knock! We're entering through the front door.
-const WEDGE = 1;
-const PRIVACY_DEFAULT = 0;
-const PRIVACY_MEMBERS = 1;
-const PRIVACY_AUTHOR = 99;
+const WEDGE = 1; // We are go.
 
 // Get everything started up...
 if (function_exists('set_magic_quotes_runtime') && version_compare('5.4.0', PHP_VERSION) > 0)

@@ -57,12 +57,12 @@ function template_html_before()
 	<!-- Powered by Wedge, © R.-G. Deberdt - http://wedge.org -->
 	<title>', $context['page_title_html_safe'], !empty($context['page_indicator']) ? $context['page_indicator'] : '', '</title>';
 
-	// If the forum is in a sub-folder, in which case it needs to explicitly set a favicon URL.
-	if (strpos(trim(substr($boardurl, strpos($boardurl, '://') + 3), '/'), '/') !== false)
+	// If the forum is in a sub-folder, it needs to explicitly set a favicon URL.
+	if (strpos(str_replace('://', '', $boardurl), '/') !== false)
 		echo '
 	<link rel="shortcut icon" href="', $boardurl, '/favicon.ico" type="image/vnd.microsoft.icon">';
 
-	// Present a canonical url for search engines to prevent duplicate content in their indices.
+	// Present a canonical URL for search engines to prevent duplicate content in their indices.
 	if (!empty($context['canonical_url']))
 		echo '
 	<link rel="canonical" href="', $context['canonical_url'], '">';

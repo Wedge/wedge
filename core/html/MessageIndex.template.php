@@ -110,8 +110,8 @@ function template_main_board()
 							<span id="msg_' . $topic['first_post']['id'] . '">', $topic['new'] && we::$is_member ? $topic['new_link'] : $topic['first_post']['link'],
 							!$context['can_approve_posts'] && !$topic['approved'] ? '&nbsp;<em>(' . $txt['awaiting_approval'] . ')</em>' : '', '</span>';
 
-			// Is this topic new? (assuming they are logged in!)
-			if ($topic['new'] && we::$is_member)
+			// Are there unread messages in this topic?
+			if (isset($context['nb_new'][$topic['id']]))
 					echo '
 							<a href="', $topic['new_href'], '" id="newicon', $topic['first_post']['id'], '" class="note">', $context['nb_new'][$topic['id']], '</a>';
 
@@ -266,8 +266,8 @@ function template_main_blog()
 							&nbsp; (', number_context('num_views', $topic['views']), ')
 								<small id="pages', $topic['first_post']['id'], '">', $topic['pages'], '</small>';
 
-			// Is this topic new? (assuming they are logged in!)
-			if ($topic['new'] && we::$is_member)
+			// Are there unread messages in this topic?
+			if (isset($context['nb_new'][$topic['id']]))
 					echo '
 							<a href="', $topic['new_href'], '" id="newicon', $topic['first_post']['id'], '" class="note">', $context['nb_new'][$topic['id']], '</a>';
 

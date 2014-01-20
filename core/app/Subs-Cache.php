@@ -1434,7 +1434,7 @@ function wedge_get_skin_options($options_only = false)
 	$root_dir = SKINS_DIR;
 	$context['skin_folders'] = array();
 	$context['template_folders'] = array();
-	$css_folders = array(ltrim($context['skin'], '/'));
+	$css_folders = array(ltrim(isset($context['skin']) ? $context['skin'] : '', '/'));
 
 	loadSource('Themes');
 	$test_folders = wedge_get_skin_list(true); // Get a linear list of skins.
