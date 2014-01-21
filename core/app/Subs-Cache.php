@@ -1688,8 +1688,9 @@ function clean_cache($extensions = 'php', $filter = '', $force_folder = '', $rem
 			$cache_updated = true;
 		}
 
-		// Also get the source cache!
+		// Also get the source and language caches!
 		clean_cache('php', '', $cachedir . '/app');
+		clean_cache('php', '', $cachedir . '/lang');
 	}
 
 	// Remove the files in Wedge's own disk cache, if any.
