@@ -458,9 +458,9 @@ function CheckFilesWritable()
 		'assets/avatars',
 		'assets/smileys',
 		'attachments',
-		'cache',
-		'css',
-		'js',
+		'gz/keys',
+		'gz/css',
+		'gz/js',
 		'plugins',
 		'Settings.php',
 		'Settings_bak.php'
