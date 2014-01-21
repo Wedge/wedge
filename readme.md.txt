@@ -13,7 +13,7 @@ Installing from the GitHub repo
 
 First, ensure that your server meets the requirements (PHP 5.3, MySQL 5.0.3, etc.)
 
-Go to the `github.com/wedge/wedge` repository.
+Go to the `github.com/Wedge/wedge` repository.
 If you're already there, then hello!
 
 Click the 'Download ZIP' button.

@@ -58,9 +58,9 @@ express written consent from the Author.
 this Package, provided that you do not distribute any Modified Package
 without express written consent.
 
-4. Permission is hereby granted to fork the official GitHub reposity for
-Wedge (currently at http://github.com/wedge/wedge), to facilitate the
-sharing of improvements to the original Package. This license agreement
+4. Permission is hereby granted to fork the official GitHub repository
+for Wedge (currently at http://github.com/Wedge/wedge), to facilitate
+the sharing of improvements to the original Package. This license agreement
 does not allow you to distribute your Modified Package outside of GitHub.com.
 
 5. The Author reserves the right to change the terms of this Agreement
