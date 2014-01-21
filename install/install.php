@@ -937,7 +937,7 @@ function DatabasePopulation()
 			continue;
 
 		// Does this table already exist? If so, don't insert more data into it!
-		if (preg_match('~^\s*INSERT INTO ([^\s\n\r]+?)~', $current_statement, $match) != 0 && in_array($match[1], $exists))
+		if (preg_match('~^\s*INSERT INTO ([^\s]+?)~', $current_statement, $match) != 0 && in_array($match[1], $exists))
 		{
 			$incontext['sql_results']['insert_dups']++;
 			$current_statement = '';
@@ -948,18 +948,18 @@ function DatabasePopulation()
 		{
 			// Error 1050: Table already exists!
 			// !! Needs to be made better!
-			if (mysqli_errno($db_connection) === 1050 && preg_match('~^\s*CREATE TABLE ([^\s\n\r]+?)~', $current_statement, $match) == 1)
+			if (mysqli_errno($db_connection) === 1050 && preg_match('~^\s*CREATE TABLE ([^\s]+?)~', $current_statement, $match) == 1)
 			{
 				$exists[] = $match[1];
 				$incontext['sql_results']['table_dups']++;
 			}
 			// Don't error on duplicate indexes
-			elseif (!preg_match('~^\s*CREATE( UNIQUE)? INDEX ([^\n\r]+?)~', $current_statement, $match))
+			elseif (!preg_match('~^\s*CREATE( UNIQUE)? INDEX ([^\r\n]+?)~', $current_statement, $match))
 				$incontext['failures'][$count] = wesql::error();
 		}
 		else
 		{
-			if (preg_match('~^\s*CREATE TABLE ([^\s\n\r]+?)~', $current_statement, $match) == 1)
+			if (preg_match('~^\s*CREATE TABLE ([^\s]+?)~', $current_statement, $match) == 1)
 				$incontext['sql_results']['tables']++;
 			else
 			{
@@ -984,7 +984,7 @@ function DatabasePopulation()
 	}
 
 	// Maybe we can auto-detect better cookie settings?
-	preg_match('~^http[s]?://([^\.]+?)([^/]*?)(/.*)?$~', $boardurl, $matches);
+	preg_match('~^http[s]?://([^.]+?)([^/]*?)(/.*)?$~', $boardurl, $matches);
 	if (!empty($matches))
 	{
 		// Default = both off.
@@ -1207,7 +1207,7 @@ function AdminAccount()
 			$incontext['error'] = $txt['error_invalid_characters_username'];
 			return false;
 		}
-		elseif (empty($_POST['email']) || !preg_match('~^[\w=+/-][\w=\'+/\.-]*@[\w-]+(\.[\w-]+)*(\.\w{2,6})$~', stripslashes($_POST['email'])) || strlen(stripslashes($_POST['email'])) > 255)
+		elseif (empty($_POST['email']) || !preg_match('~^[\w=+/-][\w=\'+/.-]*@[\w-]+(\.[\w-]+)*(\.\w{2,6})$~', stripslashes($_POST['email'])) || strlen(stripslashes($_POST['email'])) > 255)
 		{
 			// One step back, this time fill out a proper email address.
 			$incontext['error'] = sprintf($txt['error_valid_email_needed'], $_POST['username']);
@@ -1218,7 +1218,7 @@ function AdminAccount()
 			$incontext['member_salt'] = substr(md5(mt_rand()), 0, 4);
 
 			// Format the username properly.
-			$_POST['username'] = preg_replace('~[\t\n\r\x0B\0\xA0]+~', ' ', $_POST['username']);
+			$_POST['username'] = preg_replace('~[\t\r\n\x0B\0\xA0]+~', ' ', $_POST['username']);
 			$ip = isset($_SERVER['REMOTE_ADDR']) ? expand_ip($_SERVER['REMOTE_ADDR']) : expand_ip('');
 
 			$request = wesql::insert('',
