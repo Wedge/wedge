@@ -85,7 +85,6 @@ function Themes()
 
 	// Load the important language files...
 	loadLanguage('Themes');
-	loadLanguage('Settings');
 
 	// No funny business - guests only.
 	is_not_guest();

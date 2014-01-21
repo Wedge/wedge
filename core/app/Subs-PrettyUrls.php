@@ -59,7 +59,7 @@ function pretty_generate_url($text, $is_board = false, $slash = false)
 		'zh' =>	array('ж', 'Ж'),
 	);
 
-	$text = preg_replace('~&#(\d{1,7});~', 'fix_accents', $text); // Turns &#12345; to UTF-8
+	$text = preg_replace_callback('~&#(\d{1,7});~', 'fix_accents', $text); // Turns &#12345; to UTF-8
 
 	$text = str_replace(array('&amp;', '&quot;', '£', '¥', 'ß', '¹', '²', '³', '©', '®', '™', '½', '¼', '¾', '§'),
 						array('&', '"', 'p', 'yen', 'ss', '1', '2', '3', 'c', 'r', 'tm', '1-2', '1-4', '3-4', 's'), $text);

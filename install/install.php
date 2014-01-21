@@ -458,6 +458,7 @@ function CheckFilesWritable()
 		'assets/avatars',
 		'assets/smileys',
 		'attachments',
+		'gz/app',
 		'gz/keys',
 		'gz/css',
 		'gz/js',
