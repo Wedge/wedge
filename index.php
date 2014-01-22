@@ -245,7 +245,8 @@ function loadSource($source_name)
 			if (!file_exists($cache) || filemtime($cache) < filemtime($sourcedir . '/' . $file . '.php'))
 			{
 				copy($sourcedir . '/' . $file . '.php', $cache);
-				if (empty($db_show_debug)) // !! Temporary. Disabling to get proper line numbers when debugging.
+				// !! Disabling this temporarily (until I add a setting for it), to get proper line numbers when debugging.
+				if (false && empty($db_show_debug))
 					minify_php($cache);
 			}
 		}

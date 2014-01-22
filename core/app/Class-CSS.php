@@ -1753,7 +1753,8 @@ class wess_base64 extends wess
 
 			foreach ($images as $img => $img_ext)
 			{
-				$absolut = realpath($cssdir . '/' . $this->folder . $img);
+				$path = strpos($this->folder . $img, '../') !== false ? $cssdir . '/' . $this->folder . $img : ROOT_DIR . $img;
+				$absolut = realpath($path);
 
 				// Only small files should be embedded, really. We're saving on hits, not bandwidth.
 				if (file_exists($absolut) && filesize($absolut) <= 3072)
