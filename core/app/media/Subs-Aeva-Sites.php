@@ -132,11 +132,7 @@ $sites = array(
 		'pattern' => 'http://(?:video\.google\.(?:com|com?\.[a-z]{2}|[a-z]{2})/[^"]*?)?(?:(?:www|[a-z]{2})\.)?youtu(?:be\.com/[^"#[]*?(?:[&/?;]|&amp;|%[23]F)(?:video_id=|v(?:/|=|%3D|%2F))|\.be/)([\w-]{11})',
 		// If you want to force the use of Flash, remove the 'plugin' line above, set ui-height to 25 and replace the 'movie' line with the one below:
 		// 'movie' => 'http://www.youtube-nocookie.com/v/$2?version=3',
-		'movie' => '<iframe class="aext" width="{int:width}" height="{int:height}" src="http://www.youtube-nocookie.com/embed/$2?theme=light" type="text/html" scrolling="no" marginheight="0" marginwidth="0" frameborder="0"></iframe>',
-		'size' => array(
-			'normal' => array(480, 385),
-			'ws' => array(640, 385),
-		),
+		'movie' => '<div class="ytb"><iframe class="aext" src="http://www.youtube-nocookie.com/embed/$2?theme=light" type="text/html" scrolling="no" marginheight="0" marginwidth="0" frameborder="0"></iframe></div>',
 		'ui-height' => 0,
 		// http://www.youtube.com/watch?v=-X8mD76W4F0 or v=MxGofCFHYCc (all hail Jochen Hippel!)
 		// On Google - http://video.google.co.uk/url?docid=-8978185459530152475&ev=v&len=91&srcurl=http%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3Dg2cT5J0gxeU
@@ -162,8 +158,7 @@ $sites = array(
 		'plugin' => 'html',
 		// http://www.youtube.com/playlist?list=PL550C8549B4CCBF8A
 		'pattern' => 'http://(?:(?:www|[a-z]{2})\.)?youtube\.com/[^"]*?(?:[&/?;]|&amp;)(?:list=PL|p=|p/)([0-9a-fA-F]{16})',
-		'movie' => '<iframe class="aext" width="{int:width}" height="{int:height}" src="http://www.youtube-nocookie.com/embed?listType=playlist&list=PL$2&theme=light" type="text/html" scrolling="no" marginheight="0" marginwidth="0" frameborder="0"></iframe>',
-		'size' => array(480, 385),
+		'movie' => '<div class="ytb"><iframe class="aext" src="http://www.youtube-nocookie.com/embed?listType=playlist&list=PL$2&theme=light" type="text/html" scrolling="no" marginheight="0" marginwidth="0" frameborder="0"></iframe></div>',
 		'ui-height' => 25,
 		'fix-html-pattern' => '<object [^>]*><param name="movie" value="$1" />.*?</object>',
 	),

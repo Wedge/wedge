@@ -66,10 +66,10 @@ What more can you tell me about Wedge?
 No one can be told you what Wedge really is. You have to read the website for yourself.
 Plus, it saves me the hassle. And I'm lazy. See? I can't even come up with my own quotes.
 
-http://wedge.org
-http://wedge.org/blog/ (development blog, spectacularly failing at being noob-friendly.)
-http://wedge.org/pub/faq/ (mostly outdated, but we're working on it.)
-http://wedge.org/pub/feats/ (a list of features introduced in the first few years.)
+- http://wedge.org
+- http://wedge.org/blog/ (development blog, spectacularly failing at being noob-friendly.)
+- http://wedge.org/pub/faq/ (mostly outdated, but we're working on it.)
+- http://wedge.org/pub/feats/ (a list of features introduced in the first few years.)
 
 Can you read me my rights?
 --------------------------

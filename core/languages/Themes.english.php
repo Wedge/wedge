@@ -3,7 +3,7 @@
 
 $txt['themeadmin_explain'] = 'Themes are the different looks and feels of your forum. These settings affect the selection of themes, and which themes guests and other members use.';
 
-$txt['theme_allow'] = 'Allow members to select their own themes?';
+$txt['theme_allow'] = 'Allow members to select their own skins?';
 $txt['theme_guests'] = 'Overall forum default for guests';
 $txt['theme_guests_mobile'] = 'Overall forum default for guests (mobile mode)';
 $txt['theme_select'] = 'choose...';

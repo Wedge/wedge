@@ -376,7 +376,7 @@ function aeva_build_object($input)
 		$title = $tentative_title;
 
 	$current_width = isset($_COOKIE['embed_quality']) ? $_COOKIE['embed_quality'] : 1;
-	$default_size = $size_type = isset($arr['size']['normal']) ? $arr['size'][isset($opt['ws'], $arr['size']['ws']) ? 'ws' : 'normal'] : $arr['size'];
+	$size_type = isset($arr['size']['normal']) ? $arr['size'][isset($opt['ws'], $arr['size']['ws']) ? 'ws' : 'normal'] : (isset($arr['size']) ? $arr['size'] : array(0, 0));
 	$default_movie = is_array($arr['movie']) ? $arr['movie']['normal'] : $arr['movie'];
 	$fixed_size = !empty($size_type[2]);
 
