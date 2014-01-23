@@ -273,7 +273,7 @@ function expandPages(spanNode, firstPage, lastPage, perPage)
 // Create the Ajax loading icon, and add a link to turn it off.
 // 'where' should be empty to center on screen, or a DOM element to serve as the center point.
 // 'exact' is an optional array of two numbers, indicating a top/left offset to be applied on top of where's.
-// e.g., show_ajax('#notifs', [0, 20]) will show the Ajax popup 20 pixels below the center of the #notifs text.
+// e.g., show_ajax('.notifs.notif', [0, 20]) will show the Ajax popup 20 pixels below the center of the notifications button.
 function show_ajax(where, exact)
 {
 	// We're delaying the creation a bit, to account for super-fast AJAX (e.g. local server, caching, etc.)
@@ -755,14 +755,16 @@ $(window).load(function ()
 			is_opened = false,
 			is_pm_opened = false,
 			original_title = document.title,
-			$shade = $('<div/>').addClass('mimenu').appendTo('#notifs'),
-			$pmshade = $('<div/>').addClass('mimenu').appendTo('#pms'),
+			$notif_button = $('.notifs.notif'),
+			$pm_button = $('.notifs.npm'),
+			$shade = $('<div/>').addClass('mimenu').appendTo($notif_button),
+			$pmshade = $('<div/>').addClass('mimenu').appendTo($pm_button),
 
 			toggle_me = function ()
 			{
 				is_opened = !is_opened;
 				$shade.toggleClass('open'); // should work, otherwise use $shade[is_opened ? 'show' : 'hide']('fast');
-				$('#notifs').toggleClass('hover');
+				$notif_button.toggleClass('hover');
 
 				// Hide popup when clicking elsewhere.
 				$(document).off('click.no');
@@ -770,11 +772,11 @@ $(window).load(function ()
 					return;
 				$(document).on('click.no', function (e)
 				{
-					if ($(e.target).closest('#notifs').length)
+					if ($(e.target).closest($notif_button).length)
 						return;
 					is_opened = !is_opened;
 					$shade.toggleClass('open');
-					$('#notifs').toggleClass('hover');
+					$notif_button.toggleClass('hover');
 					$(document).off('click.no');
 				});
 			},
@@ -783,29 +785,29 @@ $(window).load(function ()
 			{
 				is_pm_opened = !is_pm_opened;
 				$pmshade.toggleClass('open');
-				$('#pms').toggleClass('hover');
+				$pm_button.toggleClass('hover');
 				$(document).off('click.no');
 				if (!is_pm_opened)
 					return;
 				$(document).on('click.no', function (e)
 				{
-					if ($(e.target).closest('#pms').length)
+					if ($(e.target).closest($pm_button).length)
 						return;
 					is_pm_opened = !is_pm_opened;
 					$pmshade.toggleClass('open');
-					$('#pms').toggleClass('hover');
+					$pm_button.toggleClass('hover');
 					$(document).off('click.no');
 				});
 			},
 
 			pmload = function (url, toggle)
 			{
-				show_ajax('#pms', [0, 30]);
+				show_ajax($pm_button, [0, 30]);
 				$pmshade.load(url, function (data)
 				{
 					hide_ajax();
-					$('#pm_container')
-						.css('max-height', ($(window).height() - $('#pm_container').offset().top) * .9)
+					$pmshade.find('.n_container')
+						.css('max-height', ($(window).height() - $pmshade.find('.n_container').offset().top) * .9)
 						.closest('ul')
 						.css('max-width', $(window).width() * .95);
 
@@ -837,12 +839,12 @@ $(window).load(function ()
 
 		notload = function (url, toggle)
 		{
-			show_ajax('#notifs', [0, 30]);
+			show_ajax($notif_button, [0, 30]);
 			$shade.load(url, function (data)
 			{
 				hide_ajax();
-				$('#n_container')
-					.css('max-height', ($(window).height() - $('#n_container').offset().top) * .9)
+				$shade.find('.n_container')
+					.css('max-height', ($(window).height() - $shade.find('.n_container').offset().top) * .9)
 					.closest('ul')
 					.css('max-width', $(window).width() * .95);
 
@@ -903,7 +905,7 @@ $(window).load(function ()
 			});
 		};
 
-		$('#notifs').click(function (e)
+		$notif_button.click(function (e)
 		{
 			if (e.target != this)
 				return true;
@@ -920,7 +922,7 @@ $(window).load(function ()
 				toggle_me();
 		});
 
-		$('#pms').click(function (e)
+		$pm_button.click(function (e)
 		{
 			if (e.target != this)
 				return true;

@@ -56,7 +56,7 @@ function template_pm_popup()
 	global $txt, $context, $memberContext;
 
 	echo '
-		<ul id="pmlist"><li>
+		<ul class="nlist"><li>
 			<span class="floatright">', $context['can_send'] ? '
 				<a href="<URL>?action=pm;sa=send" style="color: #888">' . $txt['notifications_short_write_pm'] . '</a> |' : '', $context['show_drafts'] ? '
 				<a href="<URL>?action=pm;sa=showdrafts" style="color: #888">' . $txt['notifications_short_drafts'] . '</a> |' : '', '
@@ -68,7 +68,7 @@ function template_pm_popup()
 				<a href="<URL>?action=pm" style="color: #888">', $txt['notifications_short_inbox'], '</a> |
 				<a href="<URL>?action=pm;f=sent" style="color: #888">', $txt['notifications_short_sent'], '</a>
 			</span>
-			<div id="pm_container">';
+			<div class="n_container">';
 
 	if (empty($context['personal_messages']))
 		echo '

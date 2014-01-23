@@ -76,7 +76,7 @@
 	dt, dd
 		width: 90%
 
-#notlist, #pmlist
+ul.nlist
 	font-size: .8em
 	line-height: 1.3em
 

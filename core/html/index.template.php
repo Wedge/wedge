@@ -186,7 +186,7 @@ function template_notifications()
 
 	if (isset($context['unread_notifications']))
 		echo '
-			<div id="notifs">
+			<div class="notifs notif">
 				<span class="note', $context['unread_notifications'] ? '' : 'void', '">', $context['unread_notifications'], '</span>
 				', $txt['notifications'], '
 			</div>';
@@ -198,7 +198,7 @@ function template_pm_notifications()
 
 	if ($context['allow_pm'])
 		echo '
-			<div id="pms">
+			<div class="notifs npm">
 				<span class="note', !empty(we::$user['unread_messages']) ? '' : 'void', '">', we::$user['unread_messages'], '</span>
 				', $txt['pm_short'], '
 			</div>';

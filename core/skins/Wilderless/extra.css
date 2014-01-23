@@ -12,6 +12,7 @@ body
 
 #wedge
 	overflow: hidden
+	border-width: 0 1px
 
 #header
 	gradient: rgb(216, 205, 165), rgba(205, 216, 185, .3) // Fallback
@@ -29,7 +30,7 @@ body
 #sidebar .column
 	padding: 20px 10px 0 20px
 
-#footer
+#wedge, #header, #footer
 	border-radius: 0
 
 .postheader extends .clearfix
@@ -39,7 +40,7 @@ body
 	min-height: 40px
 	if !chrome || !mobile
 		top: 0
-		position: sticky // If the browser supports it properly, it's all for the best!
+		position: sticky // If the browser supports it, it's all for the best!
 	@endif
 	background: #edefed // Add a bit of contrast...
 
@@ -101,7 +102,7 @@ body
 #basicinfo h4
 	font: 400 110%/105% $subject_font
 
-#notlist, #pmlist
+ul.nlist
 	font-size: .8em
 	line-height: 1.3em
 
