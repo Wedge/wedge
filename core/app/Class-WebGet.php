@@ -144,7 +144,7 @@ class weget
 		// Some stuff only makes sense for HTTP.
 		if ($this->protocol == 'http')
 		{
-			curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true); // Accept redirects
+			@curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true); // Accept redirects
 			curl_setopt($curl, CURLOPT_MAXREDIRS, $this->max_redir_level); // How many levels of redirect to allow
 			curl_setopt($curl, CURLOPT_USERAGENT, $this->user_agent); // User agent to supply
 			curl_setopt($curl, CURLOPT_HEADER, false); // We don't want the header in the output
