@@ -881,7 +881,8 @@ function DatabasePopulation()
 	// to continue past this point.
 	$result = wesql::query('
 		SELECT variable, value
-		FROM {db_prefix}settings',
+		FROM {db_prefix}settings
+		LIMIT 1',
 		array('db_error_skip' => true)
 	);
 	if ($result !== false)
@@ -2018,7 +2019,7 @@ function template_install_below()
 {
 	global $incontext, $txt;
 
-	if ((!empty($incontext['continue']) && empty($incontext['error'])) || !empty($incontext['skip']))
+	if ((!empty($incontext['continue']) && empty($incontext['fatal'])) || !empty($incontext['skip']))
 	{
 		echo '
 		<div class="right" style="margin: 1ex">';
