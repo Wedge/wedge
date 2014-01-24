@@ -77,6 +77,9 @@ function template_main()
 		</form>';
 
 	// Link to wedge.org for latest themes and info!
+	// !! This doesn't work for now. Probably not ever.
+
+/*
 	echo '
 		<br>
 		<we:cat>
@@ -89,8 +92,12 @@ function template_main()
 			</div>
 		</div>
 		<br>';
+*/
 
 	// Warn them if theme creation isn't possible!
+	// !! Actually, nope, it's never possible, since themes no longer exist.
+
+/*
 	if (!$context['can_create_new'])
 		echo '
 		<div class="errorbox">', $txt['theme_install_writable'], '</div>';
@@ -105,7 +112,6 @@ function template_main()
 				<dl class="settings">';
 
 	// Here's a little box for installing a new theme.
-	// !!! Should the value="theme_gz" be there?!
 	if ($context['can_create_new'])
 		echo '
 					<dt>
@@ -140,17 +146,18 @@ function template_main()
 			</div>
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 		</form>';
+*/
 
 	add_js('
-	window.weSessionQuery = "', $context['session_query'], '";
-	window.weThemes_writable = ', $context['can_create_new'] ? 'true' : 'false', ';');
+	window.weSessionQuery = "', $context['session_query'], '";')
 
-	if (empty($settings['disable_wedge_js']))
-		add_js_file('<URL>?action=viewremote;filename=latest-themes.js', true);
-
-	add_js('
-	if (typeof window.weLatestThemes != "undefined")
-		$("#themeLatest").html(window.weLatestThemes);');
+	// !! Remove these lines, and associated deprecated code.
+//	window.weThemes_writable = ', $context['can_create_new'] ? 'true' : 'false', ';');
+//	if (empty($settings['disable_wedge_js']))
+//		add_js_file('<URL>?action=viewremote;filename=latest-themes.js', true);
+//	add_js('
+//	if (typeof window.weLatestThemes != "undefined")
+//		$("#themeLatest").html(window.weLatestThemes);');
 }
 
 function template_guest_selector($is_mobile = false)

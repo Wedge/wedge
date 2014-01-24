@@ -120,7 +120,7 @@ function Admin()
 					'bigicon' => 'themes_and_layout.png',
 					'subsections' => array(
 						'admin' => array($txt['themeadmin_admin_title']),
-						'list' => array($txt['themeadmin_list_title']),
+// Begone!				'list' => array($txt['themeadmin_list_title']),
 						'edit' => array($txt['themeadmin_edit_title']),
 					),
 				),
