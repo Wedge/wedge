@@ -393,7 +393,7 @@ function ModifyCacheSettings($return_config = false)
 			array_merge(
 				array('file' => $txt['cache_type_file']),
 				array('session' => $txt['cache_type_session']),
-				array_combine(array_map('strtolower', $available_cache), $available_cache)
+				empty($available_cache) ? array() : array_combine(array_map('strtolower', $available_cache), $available_cache)
 			),
 			'file' => true
 		),
@@ -633,7 +633,7 @@ function FetchPHPInfo($return_config = false)
 
 	// Now make a nice menu out of the headers.
 	preg_match_all('~<a name="([^"]+)">([^<]+)</a>~i', $context['phpinfo'], $matches);
-	$context['toc'] = array_combine($matches[1], $matches[2]);
+	$context['toc'] = empty($matches[1]) || empty($matches[2]) ? array() : array_combine($matches[1], $matches[2]);
 	$context['phpinfo'] = preg_replace('~(<a name="[^"]+">)([^<]+)</a>~i', '$1</a>$2', $context['phpinfo']);
 
 	// Time to do some judicious header editing. First, the PHP logo and stuff.

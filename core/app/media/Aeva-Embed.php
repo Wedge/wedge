@@ -269,11 +269,6 @@ function aeva_match(&$message, $for_real = false)
 	return $has_any;
 }
 
-function aeva_strip_options($match)
-{
-	return strtr($match[0], '~', '-');
-}
-
 // The core function: replace matched links with the full embedded object.
 function aeva_build_object($input)
 {
@@ -371,7 +366,7 @@ function aeva_build_object($input)
 
 	// Strip the #options out of the original link
 	$input[1] = preg_replace('~#.*~', '', $input[1]);
-	$input = preg_replace_callback('~#[^"<]*~', 'aeva_strip_options', $input);
+	$input = preg_replace_callback('~#[^"<]*~', function ($match) { return strtr($match[0], '~', '-'); }, $input);
 	if ($tentative_title && substr($tentative_title, 0, 7) !== 'http://')
 		$title = $tentative_title;
 
@@ -651,16 +646,11 @@ function aeva_limits()
 	}
 }
 
-function aeva_fix_lookbehind($match)
-{
-	return $match[0] . '!<AEVA_LOOKBEHIND>!';
-}
-
 // Links urls that haven't already been linked
 function aeva_autolink_urls($input)
 {
 	// Parse any URLs.... And ensure they're not already auto-linked!
-	$input = preg_replace_callback('~(=|\[(?:url|img(?:\s[^]]*)?)])(http://|https://|ftp://|ftps://|www\.)~i', 'aeva_fix_lookbehind', $input);
+	$input = preg_replace_callback('~(=|\[(?:url|img(?:\s[^]]*)?)])(http://|https://|ftp://|ftps://|www\.)~i', function ($match) { return $match[0] . '!<AEVA_LOOKBEHIND>!'; }, $input);
 
 	if (preg_match('~(?:http://|www\.)[^!]~i', $input))
 	{
@@ -899,7 +889,7 @@ function aeva_onposting($input)
 	// Do lookups
 	if (!empty($settings['embed_lookups']))
 	{
-		// Will [url] BBCode links which aren't currently URL-BBCoded, so they get can get looked up/embedded by Aeva.
+		// Will surround raw links with [url] tags if not already done, so they get can get looked up/embedded by Aeva.
 		if (!empty($settings['autoLinkUrls']))
 			$input = aeva_autolink_urls($input);
 		$input = embed_lookups_match($input);
