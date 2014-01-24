@@ -149,7 +149,7 @@ function template_main()
 */
 
 	add_js('
-	window.weSessionQuery = "', $context['session_query'], '";')
+	window.weSessionQuery = "', $context['session_query'], '";');
 
 	// !! Remove these lines, and associated deprecated code.
 //	window.weThemes_writable = ', $context['can_create_new'] ? 'true' : 'false', ';');
