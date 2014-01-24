@@ -620,10 +620,10 @@ CREATE TABLE {$db_prefix}boards (
 #
 
 INSERT INTO {$db_prefix}boards
-	(id_board, id_cat, board_order, id_last_msg, id_msg_updated, name, description, url, urllen, num_topics, num_posts, member_groups)
+	(id_board, id_cat, board_order, id_last_msg, id_msg_updated, name, description, url, urllen, num_topics, num_posts, member_groups, offlimits_msg)
 VALUES
-	(1, 1, 1, 1, 1, '{$default_board_name}', '{$default_board_description}', '{$boarddomain}/{$default_board_url}', CHAR_LENGTH('{$boarddomain}/{$default_board_url}'), 1, 1, '-1,0,2'),
-	(2, 1, 2, 0, 0, '{$default_recycling_board_name}', '{$default_recycling_board_description}', '{$default_recycling_board_url}', CHAR_LENGTH('{$default_recycling_board_url}'), 0, 0, '2');
+	(1, 1, 1, 1, 1, '{$default_board_name}', '{$default_board_description}', '{$boarddomain}/{$default_board_url}', CHAR_LENGTH('{$boarddomain}/{$default_board_url}'), 1, 1, '-1,0,2', ''),
+	(2, 1, 2, 0, 0, '{$default_recycling_board_name}', '{$default_recycling_board_description}', '{$default_recycling_board_url}', CHAR_LENGTH('{$default_recycling_board_url}'), 0, 0, '2', '');
 # --------------------------------------------------------
 
 #
@@ -1731,8 +1731,8 @@ CREATE TABLE {$db_prefix}messages (
 #
 
 INSERT INTO {$db_prefix}messages
-	(id_msg, id_msg_modified, id_topic, id_board, poster_time, subject, poster_name, poster_email, poster_ip, modified_name, body, icon)
-VALUES (1, 1, 1, 1, UNIX_TIMESTAMP(), '{$default_topic_subject}', 'Wedge', 'dontreply@wedge.org', '0', '', '{$default_topic_message}', 'xx');
+	(id_msg, id_msg_modified, id_topic, id_board, poster_time, subject, poster_name, poster_email, poster_ip, modified_name, body, icon, data)
+VALUES (1, 1, 1, 1, UNIX_TIMESTAMP(), '{$default_topic_subject}', 'Wedge', 'dontreply@wedge.org', '0', '', '{$default_topic_message}', 'xx', '');
 # --------------------------------------------------------
 
 #
