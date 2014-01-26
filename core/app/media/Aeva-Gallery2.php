@@ -2012,7 +2012,7 @@ function aeva_massUpload()
 	if (!$context['aeva_album']['can_upload'] && !allowedToAccessAlbum($id_album))
 		fatal_lang_error('media_accessDenied', !empty($amSettings['log_access_errors']));
 
-	if (AJAX)
+	if (empty($_REQUEST['upcook']))
 	{
 		wetem::load('aeva_multiUpload');
 		$max_php_size = (int) min(aeva_getPHPSize('upload_max_filesize'), aeva_getPHPSize('post_max_size'));
@@ -2067,7 +2067,6 @@ function aeva_massUpload()
 	}
 
 	// Are we submitting?
-	wetem::load('aeva_multiUpload_xml');
 	$context['errors'] = array();
 	$context['items'] = array();
 	$context['aeva_mu_id'] = mt_rand(1,10000000);
@@ -2183,6 +2182,8 @@ function aeva_massUpload()
 	// Delete temporary data
 	if ($zip)
 		deltree($amSettings['data_dir_path'] . '/tmp/mu_' . $context['aeva_mu_id']);
+
+	return_callback('template_aeva_multiUpload_xml');
 }
 
 // Modifying item's title?

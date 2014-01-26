@@ -44,8 +44,7 @@ function cleanRequest()
 	define('INVALID_IP', '00000000000000000000000000000000');
 
 	// Is this a page requested through jQuery? If yes, set the AJAX constant so we can choose to show only the template's default block.
-	// !! upcook is a cookie hack for the AeMe mass-uploader. It should be removed once rewritten to get rid of Flash!
-	$ajax = (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') || !empty($_REQUEST['upcook']);
+	$ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
 	define('INFINITE', $ajax && !empty($_POST['infinite']));
 	define('AJAX', $ajax && !INFINITE);
 
