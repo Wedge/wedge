@@ -14,7 +14,7 @@ if (!defined('WEDGE'))
 /**
  * Create a wave file that represents an audio version of an CAPTCHA string.
  *
- * Used by {@link VerificationCode()} in VerificationCode.php, this function attempts to process the CAPTCHA into a sound file spelling the letters of the CAPTCHA out. It attempts to use the user's language first, before defaulting back to English - it requires one wave file per letter in assets/fonts/sound/ in the format of {letter}.{language}.wav.
+ * Used by {@link VerificationCode()} in VerificationCode.php, this function attempts to process the CAPTCHA into a sound file spelling the letters of the CAPTCHA out. It attempts to use the user's language first, before defaulting back to English - it requires one wave file per letter in assets/sounds/ in the format of {letter}.{language}.wav.
  *
  * @param string $word The string containing the CAPTCHA.
  * @return mixed Return false in the event of failure; if successful the audio data in wave format is output.
@@ -32,11 +32,11 @@ function createWaveFile($word)
 	mt_srand(end($unpacked));
 
 	// Try to see if there's a sound font in the user's language.
-	if (file_exists(ASSETS_DIR . '/fonts/sound/a.' . we::$user['language'] . '.wav'))
+	if (file_exists(ASSETS_DIR . '/sounds/a.' . we::$user['language'] . '.wav'))
 		$sound_language = we::$user['language'];
 
 	// English should be there.
-	elseif (file_exists(ASSETS_DIR . '/fonts/sound/a.english.wav'))
+	elseif (file_exists(ASSETS_DIR . '/sounds/a.english.wav'))
 		$sound_language = 'english';
 
 	// Guess not...
@@ -50,7 +50,7 @@ function createWaveFile($word)
 	$sound_word = '';
 	for ($i = 0; $i < strlen($word); $i++)
 	{
-		$sound_letter = implode('', file(ASSETS_DIR . '/fonts/sound/' . $word{$i} . '.' . $sound_language . '.wav'));
+		$sound_letter = implode('', file(ASSETS_DIR . '/sounds/' . $word{$i} . '.' . $sound_language . '.wav'));
 		if (strpos($sound_letter, 'data') === false)
 			return false;
 
