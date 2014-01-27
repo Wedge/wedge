@@ -18,9 +18,8 @@ If you're already there, then hello!
 
 Click the 'Download ZIP' button.
 Unzip the file, and upload the resulting folder to your FTP account.
-If this is your first time uploading Wedge files, move the contents of the `install` folder
-to the root, and point your browser to `http://mywebsite.com/my_wedge_folder/install.php`
-Follow the instructions.
+Point your browser to `http://mywebsite.com/my_wedge_folder/index.php`
+and follow the instructions.
 
 If it works, then great. If it doesn't, then skip to any fork that
 works best for you. SMF has an official board that lists them all.
