@@ -1542,6 +1542,10 @@ function weInitJS()
 	if ($origin !== 'local' && $origin !== 'jquery' && (strpos($version, 'b') !== false || strpos($version, 'rc') !== false))
 		$origin = 'jquery';
 
+	// !! Temp code. Thank you Google... -_-
+	if ($origin == 'google')
+		$origin = 'jquery';
+
 	if ($origin === 'local')
 		$context['main_js_files'] = array(
 			'jquery-' . $version . '.min.js' => true,
