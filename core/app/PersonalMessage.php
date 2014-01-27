@@ -140,7 +140,7 @@ function PersonalMessage()
 				FROM {db_prefix}pm_recipients
 				WHERE id_member = {int:current_member}
 					AND is_read = {int:new}
-				ORDER BY id_pm',
+				ORDER BY id_pm DESC',
 				array(
 					'current_member' => MID,
 					'new' => 0,
