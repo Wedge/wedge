@@ -21,8 +21,9 @@ Unzip the file, and upload the resulting folder to your FTP account.
 Point your browser to `http://mywebsite.com/my_wedge_folder/index.php`
 and follow the instructions.
 
-If it works, then great. If it doesn't, then skip to any fork that
-works best for you. SMF has an official board that lists them all.
+- If it works, then great.
+- If it doesn't, then skip to any fork that works best for you. SMF has an official board that lists them all.
+- If you're getting an Error 500 or something similar at install time, try the last version of Wedge [before the new installer was introduced](https://github.com/Wedge/wedge/tree/934e2bf0d838f76ff8721d4ea66f4ff6785feae5). Click the 'Download ZIP' button on that page, and follow the instructions in the README.
 
 Importing data from my old forum
 --------------------------------
