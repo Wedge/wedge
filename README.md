@@ -27,7 +27,11 @@ works best for you. SMF has an official board that lists them all.
 Importing data from my old forum
 --------------------------------
 
-There is an importer out there, but we're not making it available for now.
+- Check out the `Wedge/importer` repo at GitHub. It allows you to import a forum installed on the same server (and MySQL server.)
+- Supported source forums include SMF 1.1, SMF 2.0 and a few others that are totally untested. Well, basically, only SMF 2.0 import is tested and supported for now.
+- Importing Aeva Media items and Custom folder attachments isn't supported for now.
+
+https://github.com/Wedge/importer/
 
 What's a 'forum' software?
 --------------------------
