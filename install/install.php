@@ -8,16 +8,21 @@
  * @author see contributors.txt
  */
 
-define('WEDGE_VERSION', '0.1');
+if (!defined('WEDGE'))
+	die('Hacking attempt...');
+
 define('REQUIRED_PHP_VERSION', '5.3.0');
 define('REQUIRED_MYSQL_SERVER_VERSION', '5.0.3');
 define('REQUIRED_MYSQL_CLIENT_VERSION', '5.0.3');
 
+global $boarddir;
+
 // Some constants we might need later.
-define('APP_DIR', dirname(__FILE__) . '/core/app');
+define('ROOT_DIR', $boarddir);
+define('APP_DIR', ROOT_DIR . '/core/app');
 define('INVALID_IP', '00000000000000000000000000000000');
+define('IS_WINDOWS', strpos(__FILE__, ':\\') !== false);
 define('WEDGE_INSTALLER', 1);
-define('WEDGE', 1);
 
 // Don't have PHP support, do you?
 // ><html dir="ltr"><head><title>Error!</title></head><body>Sorry, this installer requires PHP!<div style="display: none">
@@ -34,7 +39,7 @@ $db = array(
 initialize_inputs();
 load_lang_file();
 
-// This is what we are.
+// This is our caller script. It will redirect to us on every step.
 $installurl = $_SERVER['PHP_SELF'];
 
 // All the steps in detail.
@@ -148,10 +153,9 @@ function initialize_inputs()
 		if (isset($_SESSION['installer_temp_ftp']))
 		{
 			$ftp = new ftp_connection($_SESSION['installer_temp_ftp']['server'], $_SESSION['installer_temp_ftp']['port'], $_SESSION['installer_temp_ftp']['username'], $_SESSION['installer_temp_ftp']['password']);
-			$ftp->chdir($_SESSION['installer_temp_ftp']['path']);
+			$ftp->chdir($_SESSION['installer_temp_ftp']['path'] . '/install');
 
 			$ftp->unlink('install.php');
-			$ftp->unlink('webinstall.php');
 			$ftp->unlink('install.sql');
 
 			// We won't bother with CSS/JS caches here, it poses no security threat. Let the user do the job themselves...
@@ -161,9 +165,8 @@ function initialize_inputs()
 		}
 		else
 		{
-			@unlink(__FILE__);
-			@unlink(dirname(__FILE__) . '/webinstall.php');
-			@unlink(dirname(__FILE__) . '/install.sql');
+			@unlink(ROOT_DIR . '/install/install.php');
+			@unlink(ROOT_DIR . '/install/install.sql');
 
 			// Empty CSS and JavaScript caches, in case user chose to enable compression during the install process.
 			clean_cache('css');
@@ -194,7 +197,7 @@ function load_lang_file()
 
 	$original_txt = $txt;
 	// Make sure the languages directory actually exists.
-	$folder = dirname(__FILE__) . '/core/languages';
+	$folder = ROOT_DIR . '/core/languages';
 	if (file_exists($folder))
 	{
 		// Find all the "Install" language files in the directory.
@@ -249,7 +252,7 @@ function load_lang_file()
 		$_SESSION['installer_temp_lang'] = $GLOBALS['HTTP_GET_VARS']['lang_file'];
 
 	// Make sure it exists, if it doesn't reset it.
-	if (!isset($_SESSION['installer_temp_lang']) || preg_match('~[^.\w-]~', $_SESSION['installer_temp_lang']) === 1 || !file_exists(dirname(__FILE__) . '/core/languages/' . $_SESSION['installer_temp_lang']))
+	if (!isset($_SESSION['installer_temp_lang']) || preg_match('~[^.\w-]~', $_SESSION['installer_temp_lang']) === 1 || !file_exists(ROOT_DIR . '/core/languages/' . $_SESSION['installer_temp_lang']))
 	{
 		if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE']))
 		{
@@ -293,9 +296,9 @@ function load_lang_file()
 	}
 
 	// And now include the actual language file itself.
-	require_once(dirname(__FILE__) . '/core/languages/Install.english.php');
+	require_once(ROOT_DIR . '/core/languages/Install.english.php');
 	if ($_SESSION['installer_temp_lang'] != 'Install.english.php')
-		require_once(dirname(__FILE__) . '/core/languages/' . $_SESSION['installer_temp_lang']);
+		require_once(ROOT_DIR . '/core/languages/' . $_SESSION['installer_temp_lang']);
 }
 
 // This handy function loads some settings and the like.
@@ -304,7 +307,7 @@ function load_database()
 	global $settings, $db_prefix, $db_connection, $db_name, $db_user;
 
 	// Need this to check whether we need the database password.
-	require(dirname(__FILE__) . '/Settings.php');
+	require(ROOT_DIR . '/Settings.php');
 
 	$settings['disableQueryCheck'] = true;
 
@@ -386,10 +389,10 @@ function Welcome()
 		$incontext['warning'] = $txt['error_php_too_low'];
 
 	// See if we think they have already installed it?
-	if (is_readable(dirname(__FILE__) . '/Settings.php'))
+	if (is_readable(ROOT_DIR . '/Settings.php'))
 	{
 		$probably_installed = 0;
-		$test_set = @file_get_contents(dirname(__FILE__) . '/Settings.php');
+		$test_set = @file_get_contents(ROOT_DIR . '/Settings.php');
 		if (preg_match('~^\$db_passwd\s=\s\'[^\']+\';~m', $test_set))
 			$probably_installed++;
 		if (preg_match('~^\$boardurl\s=\s\'(?:[^\'h]|h(?!ttp://127\.0\.0\.1/wedge))+\';~m', $test_set))
@@ -404,7 +407,7 @@ function Welcome()
 
 	if (function_exists('mysqli_connect'))
 	{
-		if (!file_exists(dirname(__FILE__) . '/install.sql'))
+		if (!file_exists(ROOT_DIR . '/install/install.sql'))
 		{
 			$notFoundSQLFile = true;
 			$txt['error_db_script_missing'] = sprintf($txt['error_db_script_missing'], 'install.sql');
@@ -419,11 +422,11 @@ function Welcome()
 	elseif (!function_exists('session_start'))
 		$error = 'error_session_missing';
 	// Make sure they uploaded all the files.
-	elseif (!file_exists(dirname(__FILE__) . '/index.php'))
+	elseif (!file_exists(ROOT_DIR . '/index.php'))
 		$error = 'error_missing_files';
 	// Very simple check on the session.save_path for Windows.
 	// !!! Move this down later if they don't use database-driven sessions?
-	elseif (ini_get('session.save_path') == '/tmp' && substr(__FILE__, 1, 2) == ':\\')
+	elseif (ini_get('session.save_path') == '/tmp' && IS_WINDOWS)
 		$error = 'error_session_save_path';
 	// What about GD2 and related functions?
 	elseif (!checkGD2())
@@ -450,47 +453,39 @@ function CheckFilesWritable()
 	$incontext['block'] = 'chmod_files';
 
 	// This file is special... We only want to be able to read it.
-	if (file_exists(dirname(__FILE__) . '/MGalleryItem.php'))
-		@chmod(dirname(__FILE__) . '/MGalleryItem.php', 0644);
+	if (file_exists(ROOT_DIR . '/MGalleryItem.php'))
+		@chmod(ROOT_DIR . '/MGalleryItem.php', 0644);
 
-	// Now for the files and folders we want to make writable.
+	// Now for the files and folders we want to make writable. Really not many left...
 	$writable_files = array(
-		'assets/avatars',
-		'assets/smileys',
-		'attachments',
-		'gz/app',
-		'gz/keys',
-		'gz/css',
-		'gz/js',
-		'plugins',
-		'Settings.php',
-		'Settings_bak.php'
+		'.',
+		'assets/smileys'
 	);
 	foreach ($incontext['detected_languages'] as $lang => $temp)
 		$extra_files[] = 'core/languages/' . $lang;
 
-	// With mod_security installed, we could attempt to fix it with .htaccess.
-	if (function_exists('apache_get_modules') && in_array('mod_security', apache_get_modules()))
-		$writable_files[] = file_exists(dirname(__FILE__) . '/.htaccess') ? '.htaccess' : '.';
+	// .htaccess helps with pretty URLs, and against mod_security.
+	if (isset($_SERVER['SERVER_SOFTWARE']) && strpos($_SERVER['SERVER_SOFTWARE'], 'Apache') === false)
+		$writable_files[] = file_exists(ROOT_DIR . '/.htaccess') ? '.htaccess' : '.';
 
 	$failed_files = array();
 
-	// On linux, it's easy - just use is_writable!
-	if (substr(__FILE__, 1, 2) != ':\\')
+	// On Linux, it's easy - just use is_writable!
+	if (!IS_WINDOWS)
 	{
 		foreach ($writable_files as $file)
 		{
-			if (!is_writable(dirname(__FILE__) . '/' . $file))
+			if (!is_writable(ROOT_DIR . '/' . $file))
 			{
-				@chmod(dirname(__FILE__) . '/' . $file, 0755);
+				@chmod(ROOT_DIR . '/' . $file, 0755);
 
 				// Well, 755 hopefully worked... if not, try 777.
-				if (!is_writable(dirname(__FILE__) . '/' . $file) && !@chmod(dirname(__FILE__) . '/' . $file, 0777))
+				if (!is_writable(ROOT_DIR . '/' . $file) && !@chmod(ROOT_DIR . '/' . $file, 0777))
 					$failed_files[] = $file;
 			}
 		}
 		foreach ($extra_files as $file)
-			@chmod(dirname(__FILE__) . (empty($file) ? '' : '/' . $file), 0777);
+			@chmod(ROOT_DIR . (empty($file) ? '' : '/' . $file), 0777);
 	}
 	// Windows is trickier. Let's try opening for r+...
 	else
@@ -498,16 +493,16 @@ function CheckFilesWritable()
 		foreach ($writable_files as $file)
 		{
 			// Folders can't be opened for write... but the index.php in them can ;)
-			if (is_dir(dirname(__FILE__) . '/' . $file))
+			if (is_dir(ROOT_DIR . '/' . $file))
 				$file .= '/index.php';
 
-			// Funny enough, chmod actually does do something on windows - it removes the read only attribute.
-			@chmod(dirname(__FILE__) . '/' . $file, 0777);
-			$fp = @fopen(dirname(__FILE__) . '/' . $file, 'r+');
+			// Funny enough, chmod actually does do something on Windows - it removes the read-only attribute.
+			@chmod(ROOT_DIR . '/' . $file, 0777);
+			$fp = @fopen(ROOT_DIR . '/' . $file, 'r+');
 
 			// Hmm, okay, try just for write in that case...
 			if (!is_resource($fp))
-				$fp = @fopen(dirname(__FILE__) . '/' . $file, 'w');
+				$fp = @fopen(ROOT_DIR . '/' . $file, 'w');
 
 			if (!is_resource($fp))
 				$failed_files[] = $file;
@@ -515,7 +510,7 @@ function CheckFilesWritable()
 			@fclose($fp);
 		}
 		foreach ($extra_files as $file)
-			@chmod(dirname(__FILE__) . (empty($file) ? '' : '/' . $file), 0777);
+			@chmod(ROOT_DIR . (empty($file) ? '' : '/' . $file), 0777);
 	}
 
 	$failure = count($failed_files) >= 1;
@@ -526,8 +521,8 @@ function CheckFilesWritable()
 	// Put the list into context.
 	$incontext['failed_files'] = $failed_files;
 
-	// It's not going to be possible to use FTP on windows to solve the problem...
-	if ($failure && substr(__FILE__, 1, 2) == ':\\')
+	// It's not going to be possible to use FTP on Windows to solve the problem...
+	if ($failure && IS_WINDOWS)
 	{
 		$incontext['error'] = $txt['error_windows_chmod'] . '
 					<ul style="margin: 2.5ex; font-family: monospace">
@@ -575,7 +570,7 @@ function CheckFilesWritable()
 			elseif ($ftp->error !== false && empty($incontext['ftp_errors']) && !empty($ftp->last_message))
 				$incontext['ftp_errors'][] = $ftp->last_message;
 
-			list ($username, $detect_path, $found_path) = $ftp->detect_path(dirname(__FILE__));
+			list ($username, $detect_path, $found_path) = $ftp->detect_path(ROOT_DIR);
 
 			if (empty($_POST['ftp_path']) && $found_path)
 				$_POST['ftp_path'] = $detect_path;
@@ -608,11 +603,11 @@ function CheckFilesWritable()
 
 			foreach ($failed_files as $file)
 			{
-				if (!is_writable(dirname(__FILE__) . '/' . $file))
+				if (!is_writable(ROOT_DIR . '/' . $file))
 					$ftp->chmod($file, 0755);
-				if (!is_writable(dirname(__FILE__) . '/' . $file))
+				if (!is_writable(ROOT_DIR . '/' . $file))
 					$ftp->chmod($file, 0777);
-				if (!is_writable(dirname(__FILE__) . '/' . $file))
+				if (!is_writable(ROOT_DIR . '/' . $file))
 				{
 					$failed_files_updated[] = $file;
 					$incontext['ftp_errors'][] = rtrim($ftp->last_message) . ' -> ' . $file . "\n";
@@ -708,14 +703,14 @@ function DatabaseSettings()
 		);
 
 		// God I hope it saved!
-		if (!updateSettingsFile($vars) && substr(__FILE__, 1, 2) == ':\\')
+		if (!updateSettingsFile($vars) && IS_WINDOWS)
 		{
 			$incontext['error'] = $txt['error_windows_chmod'];
 			return false;
 		}
 
 		// Make sure it works.
-		require(dirname(__FILE__) . '/Settings.php');
+		require(ROOT_DIR . '/Settings.php');
 
 		// Better find the database file!
 		if (!file_exists(APP_DIR . '/Class-DB.php'))
@@ -834,23 +829,23 @@ function ForumSettings()
 		// Save these variables.
 		$vars = array(
 			'boardurl' => $_POST['boardurl'],
-			'boarddir' => addslashes(dirname(__FILE__)),
-			'sourcedir' => addslashes(dirname(__FILE__)) . '/core/app',
-			'cachedir' => addslashes(dirname(__FILE__)) . '/gz',
-			'pluginsdir' => addslashes(dirname(__FILE__)) . '/plugins',
+			'boarddir' => addslashes(ROOT_DIR),
+			'sourcedir' => addslashes(ROOT_DIR) . '/core/app',
+			'cachedir' => addslashes(ROOT_DIR) . '/gz',
+			'pluginsdir' => addslashes(ROOT_DIR) . '/plugins',
 			'pluginsurl' => $_POST['boardurl'] . '/plugins',
 			'mbname' => strtr($_POST['mbname'], array('\"' => '"')),
 		);
 
 		// Must save!
-		if (!updateSettingsFile($vars) && substr(__FILE__, 1, 2) == ':\\')
+		if (!updateSettingsFile($vars) && IS_WINDOWS)
 		{
 			$incontext['error'] = $txt['error_windows_chmod'];
 			return false;
 		}
 
 		// Make sure it works.
-		require(dirname(__FILE__) . '/Settings.php');
+		require(ROOT_DIR . '/Settings.php');
 
 		// Good, skip on.
 		return true;
@@ -872,8 +867,6 @@ function DatabasePopulation()
 	if (isset($_POST['pop_done']))
 		return true;
 
-	// Reload settings.
-	require(dirname(__FILE__) . '/Settings.php');
 	load_database();
 
 	// Before running any of the queries, let's make sure another version isn't already installed.
@@ -896,7 +889,7 @@ function DatabasePopulation()
 
 	$replaces = array(
 		'{$db_prefix}' => $db_prefix,
-		'{$boarddir}' => wesql::escape_string(dirname(__FILE__)),
+		'{$boarddir}' => wesql::escape_string(ROOT_DIR),
 		'{$boardurl}' => $boardurl,
 		'{$boarddomain}' => substr($boardurl, strpos($boardurl, '://') !== false ? strpos($boardurl, '://') + 3 : 0),
 		'{$enableCompressedOutput}' => isset($_POST['compress']) ? '1' : '0',
@@ -915,7 +908,7 @@ function DatabasePopulation()
 	$replaces[') ENGINE=MyISAM;'] = ') ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;';
 
 	// Read in the SQL. Turn this on and that off... internationalize... etc.
-	$sql_lines = explode("\n", strtr(implode(' ', file(dirname(__FILE__) . '/install.sql')), $replaces));
+	$sql_lines = explode("\n", strtr(implode(' ', file(ROOT_DIR . '/install/install.sql')), $replaces));
 
 	// Execute the SQL.
 	$current_statement = '';
@@ -1112,12 +1105,6 @@ function AdminAccount()
 	// Skipping?
 	if (!empty($_POST['skip']))
 		return true;
-
-	// Need this to check whether we need the database password.
-	require(dirname(__FILE__) . '/Settings.php');
-
-	// We need this for some of the IP stuff.
-	@include(dirname(__FILE__) . '/core/app/QueryString.php');
 
 	load_database();
 
@@ -1316,10 +1303,9 @@ function DeleteInstall()
 	$incontext['block'] = 'delete_install';
 	$incontext['continue'] = 0;
 
-	require(dirname(__FILE__) . '/Settings.php');
 	load_database();
 
-	chdir(dirname(__FILE__));
+	chdir(ROOT_DIR);
 
 	init_variables();
 
@@ -1329,7 +1315,7 @@ function DeleteInstall()
 
 	wesql::query('SET NAMES utf8', array('db_error_skip' => true));
 
-	// As track stats is by default enabled let's add some activity.
+	// As track stats is by default enabled, let's add some activity.
 	wesql::insert('ignore',
 		'{db_prefix}log_activity',
 		array('date' => 'date', 'topics' => 'int', 'posts' => 'int', 'registers' => 'int'),
@@ -1415,8 +1401,12 @@ function DeleteInstall()
 	}
 
 	// Some final context for the template.
-	$incontext['dir_still_writable'] = is_writable(dirname(__FILE__)) && substr(__FILE__, 1, 2) != ':\\';
-	$incontext['probably_delete_install'] = isset($_SESSION['installer_temp_ftp']) || is_writable(dirname(__FILE__)) || is_writable(__FILE__);
+	$incontext['dir_still_writable'] = is_writable(ROOT_DIR) && IS_WINDOWS;
+	$incontext['probably_delete_install'] = isset($_SESSION['installer_temp_ftp']) || is_writable(ROOT_DIR) || is_writable(__FILE__);
+
+	// Revoke install mode, and save our first known 'proper' settings.
+	updateSettingsFile(array('maintenance' => 0));
+	@copy(ROOT_DIR . '/Settings.php', ROOT_DIR . '/Settings_bak.php');
 
 	return false;
 }
@@ -1764,7 +1754,7 @@ class ftp_connection
 function updateSettingsFile($vars)
 {
 	// Modify Settings.php.
-	$settingsArray = file(dirname(__FILE__) . '/Settings.php');
+	$settingsArray = file(ROOT_DIR . '/Settings.php');
 
 	// !!! Do we just want to read the file in clean, and split it this way always?
 	if (count($settingsArray) == 1)
@@ -1774,17 +1764,6 @@ function updateSettingsFile($vars)
 	{
 		if (empty($settingsArray[$i]))
 			continue;
-
-		// Remove the redirect (normally 5 lines of code)...
-		if (strpos($settingsArray[$i], 'file_exists') !== false && trim($settingsArray[$i]) == 'if (file_exists(dirname(__FILE__) . \'/install.php\'))')
-		{
-			$settingsArray[$i++] = '';
-			$tab = substr($settingsArray[$i], 0, strpos($settingsArray[$i], '{')); // It should normally be empty.
-			while ($i < $n - 1 && rtrim($settingsArray[$i]) != $tab . '}')
-				$settingsArray[$i++] = '';
-			$settingsArray[$i] = '';
-			continue;
-		}
 
 		if (trim($settingsArray[$i]) == '?' . '>')
 		{
@@ -1804,7 +1783,7 @@ function updateSettingsFile($vars)
 				continue;
 
 			$comment = strstr($settingsArray[$i], '#');
-			$settingsArray[$i] = '$' . $var . ' = \'' . $val . '\';' . ($comment != '' ? "\t\t" . $comment : "\n");
+			$settingsArray[$i] = '$' . $var . ' = ' . (is_numeric($val) ? $val : "'$val'") . ';' . ($comment != '' ? "\t\t" . $comment : "\n");
 			unset($vars[$var]);
 		}
 	}
@@ -1818,12 +1797,12 @@ function updateSettingsFile($vars)
 	}
 
 	// Blank out the file - done to fix an oddity with some servers.
-	$fp = @fopen(dirname(__FILE__) . '/Settings.php', 'w');
+	$fp = @fopen(ROOT_DIR . '/Settings.php', 'w');
 	if (!$fp)
 		return false;
 	fclose($fp);
 
-	$fp = fopen(dirname(__FILE__) . '/Settings.php', 'r+');
+	$fp = fopen(ROOT_DIR . '/Settings.php', 'r+');
 
 	// Gotta have one of these ;)
 	if (trim($settingsArray[0]) != '<?php')
@@ -1840,7 +1819,7 @@ function updateSettingsFile($vars)
 		$last_line = $line;
 	}
 
-	fwrite($fp, $settingsArray[$i] . '?' . '>');
+	fwrite($fp, $settingsArray[$i] . ($last_line !== '' || trim($settingsArray[$i - 2]) !== '' ? "\n" : '') . '?' . '>');
 	fclose($fp);
 
 	return true;
@@ -1860,14 +1839,14 @@ function fixModSecurity()
 
 	if (!function_exists('apache_get_modules') || !in_array('mod_security', apache_get_modules()))
 		return true;
-	elseif (file_exists(dirname(__FILE__) . '/.htaccess') && is_writable(dirname(__FILE__) . '/.htaccess'))
+	elseif (file_exists(ROOT_DIR . '/.htaccess') && is_writable(ROOT_DIR . '/.htaccess'))
 	{
-		$current_htaccess = implode('', file(dirname(__FILE__) . '/.htaccess'));
+		$current_htaccess = implode('', file(ROOT_DIR . '/.htaccess'));
 
 		// Only change something if mod_security hasn't been addressed yet.
 		if (strpos($current_htaccess, '<IfModule mod_security.c>') === false)
 		{
-			if ($ht_handle = fopen(dirname(__FILE__) . '/.htaccess', 'a'))
+			if ($ht_handle = fopen(ROOT_DIR . '/.htaccess', 'a'))
 			{
 				fwrite($ht_handle, $htaccess_addition);
 				fclose($ht_handle);
@@ -1879,9 +1858,9 @@ function fixModSecurity()
 		else
 			return true;
 	}
-	elseif (file_exists(dirname(__FILE__) . '/.htaccess'))
-		return strpos(@file_get_contents(dirname(__FILE__) . '/.htaccess'), '<IfModule mod_security.c>') !== false;
-	elseif (is_writable(dirname(__FILE__)) && ($ht_handle = fopen(dirname(__FILE__) . '/.htaccess', 'w')))
+	elseif (file_exists(ROOT_DIR . '/.htaccess'))
+		return strpos(@file_get_contents(ROOT_DIR . '/.htaccess'), '<IfModule mod_security.c>') !== false;
+	elseif (is_writable(ROOT_DIR) && ($ht_handle = fopen(ROOT_DIR . '/.htaccess', 'w')))
 	{
 		fwrite($ht_handle, $htaccess_addition);
 		fclose($ht_handle);
@@ -1890,28 +1869,13 @@ function fixModSecurity()
 	return false;
 }
 
-// This is a 'safe', cache-less replacement for loadSource.
-// $source_name can be a string or an array of strings.
-function loadSource($source_name)
-{
-	static $done = array();
-
-	foreach ((array) $source_name as $file)
-	{
-		if (isset($done[$file]))
-			continue;
-		$done[$file] = true;
-		require_once(APP_DIR . '/' . $file . '.php');
-	}
-}
-
 function init_variables()
 {
 	global $incontext, $txt, $boardurl, $cachedir, $cssdir, $jsdir;
 	global $boarddir, $context, $settings;
 
 	// Load Wedge's default paths and pray that it works...
-	$boarddir = dirname(__FILE__);
+	$boarddir = dirname(__DIR__);
 	$cachedir = $boarddir . '/gz';
 	$cssdir = $boarddir . '/gz/css';
 	$jsdir = $boarddir . '/gz/js';
@@ -1929,7 +1893,6 @@ function init_variables()
 	// Define our constants. (cf. QueryString.php)
 	define('SCRIPT', $boarddir . '/index.php');
 	define('ROOT', $boardurl);
-	define('ROOT_DIR', $boarddir);
 	define('CORE', $boardurl . '/core');
 	define('CORE_DIR', $boarddir . '/core');
 	define('TEMPLATES', $settings['theme_url']);
@@ -1984,7 +1947,7 @@ function template_install_above()
 	</head>
 	<body><div id="wedge">
 	<div id="header">
-		<img src="http://wedge.org/wedge.png" id="install_logo" />
+		<img src="http://wedge.org/wedge.png" id="install_logo">
 		<div class="frame" style="margin-left: 140px">
 			<div id="upper_section" class="flow_hidden"><div class="frame">
 				<h1 class="forumtitle"><a>', $txt['wedge_installer'], '</a></h1>

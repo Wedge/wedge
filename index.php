@@ -27,8 +27,25 @@ ob_start();
 // Do some cleaning, just in case.
 unset($GLOBALS['cachedir']);
 
+// Is it our first run..?
+$here = dirname(__FILE__);
+if (!file_exists($here . '/Settings.php'))
+{
+	require_once($here . '/core/app/OriginalFiles.php');
+	create_settings_file($here);
+	create_generic_folders($here);
+}
 // Load the settings...
-require_once(dirname(__FILE__) . '/Settings.php');
+require_once($here . '/Settings.php');
+
+foreach (array('cache' => 'gz', 'css' => 'gz/css', 'js' => 'gs/jz') as $var => $path)
+{
+	$dir = $var . 'dir';
+	if ((empty($$dir) || ($$dir !== $boarddir . '/' . $path && !file_exists($$dir))) && file_exists($boarddir . '/' . $path))
+		$$dir = $boarddir . '/' . $path;
+	if (!file_exists($$dir))
+		exit('Missing cache folder: $' . $dir . ' (' . $$dir . ')');
+}
 
 // And important files.
 loadSource(array(
@@ -40,9 +57,15 @@ loadSource(array(
 	'Security',
 ));
 
-// If $maintenance is set specifically to 2, then we're upgrading or something.
-if (!empty($maintenance) && $maintenance == 2)
-	show_db_error();
+// Are we installing, or doing something that needs the forum to be down?
+if (!empty($maintenance) && $maintenance > 1)
+{
+	if ($maintenance == 2) // Installing
+		require_once(__DIR__ . '/install/install.php');
+	else // Downtime
+		show_db_error();
+	return;
+}
 
 // Initiate the database connection.
 loadDatabase();
@@ -194,7 +217,7 @@ set_error_handler('error_handler');
 // Start the session, if it hasn't already been.
 loadSession();
 
-// What function shall we execute? (done like this for memory's sake.)
+// What function shall we execute? (Done this way for memory's sake.)
 $function = wedge_main();
 
 // Do some logging, unless this is an attachment, avatar, toggle of editor buttons, theme option, XML feed etc.
