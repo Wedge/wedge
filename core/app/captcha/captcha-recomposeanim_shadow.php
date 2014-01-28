@@ -34,7 +34,7 @@ class captcha_recomposeanim_shadow extends captcha_recomposeanim
 		$purple = imagecolorallocate($image, 255, 0, 255); // this will, shortly, be our transparent color.
 		imagefilledrectangle($image, 0, 0, $this->width, $this->height, $purple);
 
-		$font = ASSETS_DIR . '/fonts/Screenge.ttf';
+		$font = ASSETS_DIR . '/fonts/wecaptcha1.ttf';
 		$this->pixelmap = array();
 		$angle = mt_rand(0, 359);
 		$bisect = ($angle % 45);
