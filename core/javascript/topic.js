@@ -104,7 +104,8 @@ $(window).load(function ()
 		};
 
 	// If user box has no top, chances are it doesn't want this effect anyway.
-	if (!is_touch && !can_sticky && (!poster_css_top || !(is_ie6 || is_ie7)))
+	// The fallback is also too unstable on mobile browsers, IE6, IE7 and old Opera.
+	if (poster_css_top && !is_touch && !can_sticky && !is_ie6 && !is_ie7 && !is_opera)
 	{
 		$(window).on('scroll resize', follow_me);
 		follow_me();
