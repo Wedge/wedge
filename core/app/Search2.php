@@ -143,7 +143,7 @@ function Search2()
 			$search_params[$k] = $v;
 		}
 		if (isset($search_params['brd']))
-			$search_params['brd'] = empty($search_params['brd']) ? array() : explode(',', $search_params['brd']);
+			$search_params['brd'] = wedge_ranged_explode(',', $search_params['brd']);
 	}
 
 	// 1 => 'allwords' (default, don't set as param) / 2 => 'anywords'.
@@ -266,7 +266,7 @@ function Search2()
 
 	// Ensure that brd is an array.
 	if (!empty($_REQUEST['brd']) && !is_array($_REQUEST['brd']))
-		$_REQUEST['brd'] = strpos($_REQUEST['brd'], ',') !== false ? explode(',', $_REQUEST['brd']) : array($_REQUEST['brd']);
+		$_REQUEST['brd'] = strpos($_REQUEST['brd'], ',') !== false ? wedge_ranged_explode(',', $_REQUEST['brd']) : array($_REQUEST['brd']);
 
 	// Make sure all boards are integers.
 	if (!empty($_REQUEST['brd']))
@@ -319,7 +319,7 @@ function Search2()
 			$search_params['brd'][] = $row['id_board'];
 		wesql::free_result($request);
 
-		// This error should pro'bly only happen for hackers.
+		// This error should probably only happen for hackers.
 		if (empty($search_params['brd']))
 			$context['search_errors']['no_boards_selected'] = true;
 	}
@@ -645,7 +645,7 @@ function Search2()
 			$temp_params = $search_params;
 			$temp_params['search'] = implode(' ', $did_you_mean['search']);
 			if (isset($temp_params['brd']))
-				$temp_params['brd'] = implode(',', $temp_params['brd']);
+				$temp_params['brd'] = wedge_ranged_implode(',', $temp_params['brd']);
 			$context['params'] = array();
 			foreach ($temp_params as $k => $v)
 				$context['did_you_mean_params'][] = $k . '|\'|' . $v;
@@ -691,7 +691,7 @@ function Search2()
 	// All search params have been checked, let's compile them to a single string...
 	$temp_params = $search_params;
 	if (isset($temp_params['brd']))
-		$temp_params['brd'] = implode(',', $temp_params['brd']);
+		$temp_params['brd'] = wedge_ranged_implode(',', $temp_params['brd']);
 	$context['params'] = array();
 	foreach ($temp_params as $k => $v)
 		$context['params'][] = $k . '|\'|' . $v;
@@ -1634,8 +1634,8 @@ function prepareSearchContext($reset = false)
 		// Fix the international characters in the keyword too.
 		$query = strtr(westr::htmlspecialchars($query), array('\\\'' => '\''));
 
-		$body_highlighted = preg_replace('/((<[^>]*)|' . preg_quote(strtr($query, array('\'' => '&#039;')), '/') . ')/ieu', "'\$2' == '\$1' ? stripslashes('\$1') : '<mark>\$1</mark>'", $body_highlighted);
-		$subject_highlighted = preg_replace('/(' . preg_quote($query, '/') . ')/iu', '<mark>$1</mark>', $subject_highlighted);
+		$body_highlighted = preg_replace_callback('~((<[^>]*)|' . preg_quote(strtr($query, array('\'' => '&#039;')), '~') . ')~iu', function ($match) { return !empty($match[2]) && $match[2] == $match[1] ? stripslashes($match[1]) : '<mark>' . $match[1] . '</mark>'; }, $body_highlighted);
+		$subject_highlighted = preg_replace('~(' . preg_quote($query, '~') . ')~iu', '<mark>$1</mark>', $subject_highlighted);
 	}
 
 	$output['matches'][] = array(
@@ -1662,4 +1662,27 @@ function prepareSearchContext($reset = false)
 	$counter++;
 
 	return $output;
+}
+
+function wedge_ranged_implode($separator, $arr)
+{
+	$temp_arr = array();
+	sort($arr);
+	$last_val = $last_real = ~PHP_INT_MAX;
+	foreach ($arr as $val)
+	{
+		if ($val != $last_val + 1)
+			$last_real = $val;
+		$temp_arr[$last_real] = $val;
+		$last_val = $val;
+	}
+	$str = '';
+	foreach ($temp_arr as $first => $last)
+		$str .= $first == $last ? $first . ',' : $first . '-' . $last . ',';
+	return substr($str, 0, -1);
+}
+
+function wedge_ranged_explode($separator, $string)
+{
+	return empty($string) ? array() : explode($separator, preg_replace_callback('~(\d+)-(\d+)~', function ($m) { return implode(',', range($m[1], $m[2])); }, $string));
 }

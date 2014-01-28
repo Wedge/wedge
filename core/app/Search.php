@@ -82,7 +82,10 @@ function Search()
 			$context['search_params'][$k] = $v;
 		}
 		if (isset($context['search_params']['brd']))
-			$context['search_params']['brd'] = $context['search_params']['brd'] == '' ? array() : explode(',', $context['search_params']['brd']);
+		{
+			loadSource('Search2');
+			$context['search_params']['brd'] = $context['search_params']['brd'] == '' ? array() : wedge_ranged_explode(',', $context['search_params']['brd']);
+		}
 	}
 
 	if (isset($_REQUEST['search']))
