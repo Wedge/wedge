@@ -124,10 +124,17 @@ function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow =
 	$can_gzip = !empty($settings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
 	$ext = $can_gzip ? (we::is('safari[-5.0]') ? '.jgz' : '.js.gz') : '.js';
 
-	if (!file_exists($jsdir . '/' . $id . $lang_name . $latest_date . $ext))
+	// jQuery never gets updated, so let's be bold and shorten its filename to... The version number!
+	$is_jquery = count($files) == 1 && reset($files) == 'jquery-' . $context['jquery_version'] . '.min.js';
+	$final_name = $is_jquery ? $context['jquery_version'] : $id . $lang_name . $latest_date;
+	if (!file_exists($jsdir . '/' . $final_name . $ext))
+	{
 		wedge_cache_js($id, $lang_name, $latest_date, $ext, $files, $can_gzip);
+		if ($is_jquery)
+			@rename($jsdir . '/' . $id . $lang_name . $latest_date . $ext, $jsdir . '/' . $final_name . $ext);
+	}
 
-	$final_script = ROOT . '/gz/js/' . $id . $lang_name . $latest_date . $ext;
+	$final_script = ROOT . '/gz/js/' . $final_name . $ext;
 
 	// Do we just want the URL?
 	if ($is_out_of_flow)
@@ -1311,7 +1318,8 @@ function theme_base_js($indenting = 0)
 	$tab = str_repeat("\t", $indenting);
 	return (!empty($context['remote_js_files']) ? '
 ' . $tab . '<script src="' . implode('"></script>
-' . $tab . '<script src="', $context['remote_js_files']) . '"></script>' : '') . '
+' . $tab . '<script src="', $context['remote_js_files']) . '"></script>
+	<script>window.$ || document.write(\'<script src="' . add_js_file('jquery-' . $context['jquery_version'] . '.min.js', false, true) . '"><\/script>\');</script>' : '') . '
 ' . $tab . '<script src="' . add_js_file(
 		array_keys($context['main_js_files']), false, true,
 		array_diff($context['main_js_files'], array_filter($context['main_js_files']))

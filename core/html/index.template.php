@@ -75,7 +75,7 @@ function template_html_before()
 	// If feeds are enabled, advertise the presence of one.
 	if (!empty($settings['xmlnews_enable']) && (!empty($settings['allow_guestAccess']) || we::$is_member))
 		echo '
-	<link rel="alternate" href="<URL>?action=feed" type="application/atom+xml" title="', $context['forum_name_html_safe'], ' - ', $txt['feed'], '">';
+	<link rel="alternate" href="<URL>?action=feed" type="application/atom+xml" title="', $context['forum_name_html_safe'], '">';
 
 	// If we're viewing a topic, we should link to the previous and next pages, respectively. Search engines like this.
 	if (empty($context['robot_no_index']))
