@@ -1300,7 +1300,7 @@ function EditSmileyOrder()
 
 function InstallSmileySet()
 {
-	global $boarddir, $settings;
+	global $settings;
 
 	isAllowedTo('manage_smileys');
 	checkSession('request');
@@ -1312,14 +1312,14 @@ function InstallSmileySet()
 
 	// !!! Decide: overwrite or not?
 	if (isset($_FILES['set_gz']) && is_uploaded_file($_FILES['set_gz']['tmp_name']) && (ini_get('open_basedir') != '' || file_exists($_FILES['set_gz']['tmp_name'])))
-		$extracted = read_tgz_file($_FILES['set_gz']['tmp_name'], $boarddir . '/Smileys/' . $name);
+		$extracted = read_tgz_file($_FILES['set_gz']['tmp_name'], ASSETS_DIR . '/smileys/' . $name);
 	elseif (isset($_REQUEST['set_gz']))
 	{
 		// Check that the smiley is from wedge.org, for now... maybe add mirroring later.
 		if (preg_match('~^http://[\w-]+\.wedge\.org/~', $_REQUEST['set_gz']) == 0 || strpos($_REQUEST['set_gz'], 'dlattach') !== false)
 			fatal_lang_error('package_not_on_wedge');
 
-		$extracted = read_tgz_file($_REQUEST['set_gz'], $boarddir . '/Smileys/' . $name);
+		$extracted = read_tgz_file($_REQUEST['set_gz'], ASSETS_DIR . '/smileys/' . $name);
 	}
 	else
 		redirectexit('action=admin;area=smileys');

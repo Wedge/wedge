@@ -122,8 +122,6 @@ function create_generic_folders($root_dir = '')
 
 function create_generic_folder($folder, $root_dir)
 {
-	global $context;
-
 	// We're gonna let PHP output warnings or errors on mkdir and copy, because it's serious stuff.
 	$path = str_replace('/', DIRECTORY_SEPARATOR, $root_dir . '/' . $folder);
 	mkdir($path);
