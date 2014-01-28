@@ -227,8 +227,7 @@ function template_search_ajax()
 			</div>
 			<hr>
 			<input type="submit" class="submit floatright" value="', $txt['search'], '">
-			<input type="button" onclick="location = \'<URL>?action=search\'" value="', $txt['more_actions'], '">
-			<br class="clear">
+			<a href="<URL>?action=search" style="padding: 0; margin: 10px 0 -5px">', $txt['more_actions'], '</a>
 		</div>
 		</li></ul>';
 }
