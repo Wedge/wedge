@@ -190,7 +190,7 @@ function page_showing()
 		return;
 
 	if (!is_touch && !can_sticky)
-		$('.poster>div,.poster').css('min-height', 0).each(function () { $(this).width($(this).width()).css('min-height', $(this).height()); });
+		$('.poster,.poster>div').css('min-height', 0).css('position', '').width('').each(function () { $(this).width($(this).width()).css('min-height', $(this).height()); });
 
 	// Relative timestamps!
 	$('time[datetime]').each(function () {
