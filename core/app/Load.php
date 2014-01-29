@@ -1535,20 +1535,16 @@ function weInitJS()
 {
 	global $settings, $context;
 
-	$version = we::is('ie[-8],firefox[-3.6]') ? '1.11.0' : '2.1.0';
+	$context['jquery_version'] = we::is('ie[-8],firefox[-3.6]') ? '1.11.0' : '2.1.0';
 	$origin = empty($settings['jquery_origin']) ? 'local' : $settings['jquery_origin'];
 
 	// !! Temp code or permanent? We won't always need to test for jQuery's beta status...
-	if ($origin !== 'local' && $origin !== 'jquery' && (strpos($version, 'b') !== false || strpos($version, 'rc') !== false))
-		$origin = 'jquery';
-
-	// !! Temp code. Thank you Google... -_-
-	if ($origin == 'google')
+	if ($origin !== 'local' && $origin !== 'jquery' && (strpos($context['jquery_version'], 'b') !== false || strpos($context['jquery_version'], 'rc') !== false))
 		$origin = 'jquery';
 
 	if ($origin === 'local')
 		$context['main_js_files'] = array(
-			'jquery-' . $version . '.min.js' => true,
+			'jquery-' . $context['jquery_version'] . '.min.js' => true,
 			'script.js' => true,
 			'sbox.js' => false,
 			'custom.js' => false
@@ -1556,9 +1552,9 @@ function weInitJS()
 	else
 	{
 		$remote = array(
-			'google' =>		'ajax.googleapis.com/ajax/libs/jquery/' . $version . '/jquery.min.js',
-			'microsoft' =>	'ajax.aspnetcdn.com/ajax/jquery/jquery-' . $version . '.min.js',
-			'jquery' =>		'code.jquery.com/jquery-' . $version . '.min.js',
+			'google' =>		'ajax.googleapis.com/ajax/libs/jquery/' . $context['jquery_version'] . '/jquery.min.js',
+			'microsoft' =>	'ajax.aspnetcdn.com/ajax/jquery/jquery-' . $context['jquery_version'] . '.min.js',
+			'jquery' =>		'code.jquery.com/jquery-' . $context['jquery_version'] . '.min.js',
 		);
 		$context['remote_js_files'] = array('//' . $remote[$origin]);
 		$context['main_js_files'] = array(
