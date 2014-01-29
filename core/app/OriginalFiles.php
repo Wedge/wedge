@@ -112,15 +112,15 @@ function create_generic_folders($root_dir = '')
 	foreach ($folders as $key => $folder)
 	{
 		if (!file_exists($boarddir . '/' . $key))
-			create_generic_folder($key, $boarddir);
+			create_generic_folder($boarddir, $key);
 		if (is_array($folder))
-			foreach ($folder as $sub_key => $sub_folder)
-				if (!file_exists($boarddir . '/' . $folder . '/' . $sub_folder))
-					create_generic_folder($key . '/' . $sub_folder, $boarddir);
+			foreach ($folder as $sub_folder)
+				if (!file_exists($boarddir . '/' . $key . '/' . $sub_folder))
+					create_generic_folder($boarddir, $key . '/' . $sub_folder);
 	}
 }
 
-function create_generic_folder($folder, $root_dir)
+function create_generic_folder($root_dir, $folder)
 {
 	// We're gonna let PHP output warnings or errors on mkdir and copy, because it's serious stuff.
 	$path = str_replace('/', DIRECTORY_SEPARATOR, $root_dir . '/' . $folder);
