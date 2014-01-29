@@ -504,7 +504,7 @@ $.fn.mime = function (oList, oStrings)
 			$men = $('<div class="mimenu"><ul class="actions"></ul></div>').hide(),
 			pms;
 
-		$.each(oList ? oList[id] : [], function ()
+		$.each(oList ? oList[id] || [] : [], function ()
 		{
 			pms = oStrings[this.slice(0, 2)];
 
