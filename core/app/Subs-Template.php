@@ -180,7 +180,7 @@ function ob_sessrewrite($buffer)
 	if (!empty($cut[1]))
 		$buffer = preg_replace_callback('~<[^>]+?\son[a-z]+="[^"]*"[^>]*>~i', 'wedge_event_delayer', $cut[0]) . $cut[1];
 
-	$this_pos = strpos($buffer, empty($settings['minify_html']) ? '<!-- insert inline events here -->' : '<!--insert inline events here-->');
+	$this_pos = strpos($buffer, '<!-- insert inline events here -->');
 	if ($this_pos !== false)
 	{
 		if (!empty($context['delayed_events']))
@@ -195,7 +195,7 @@ function ob_sessrewrite($buffer)
 		else
 			$thing = 'eves = 1;';
 
-		$buffer = substr_replace($buffer, $thing, $this_pos, empty($settings['minify_html']) ? 34 : 32);
+		$buffer = substr_replace($buffer, $thing, $this_pos, 34);
 	}
 
 	$buffer = strtr($buffer, "\x0f\x10", '"\'');
