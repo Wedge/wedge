@@ -76,7 +76,7 @@ function template_pm_popup()
 	else
 		foreach ($context['personal_messages'] as $pm)
 			echo '
-				<div class="n_item n_new" id="pm', $pm['id_pm'], '">
+				<div class="n_item n_new" data-id="', $pm['id_pm'], '">
 					<div class="n_time">', timeformat($pm['msgtime']), '</div>
 					<div class="n_icon">', !empty($memberContext[$pm['id_member_from']]['avatar']) ? $memberContext[$pm['id_member_from']]['avatar']['image'] : '', '</div>
 					<div class="n_text"> ', sprintf($txt[$pm['sprintf']], $pm['member_link'], $pm['msg_link']), '</div>

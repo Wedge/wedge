@@ -273,7 +273,7 @@ function expandPages(spanNode, firstPage, lastPage, perPage)
 // Create the Ajax loading icon, and add a link to turn it off.
 // 'where' should be empty to center on screen, or a DOM element to serve as the center point.
 // 'exact' is an optional array of two numbers, indicating a top/left offset to be applied on top of where's.
-// e.g., show_ajax('.notifs.notif', [0, 20]) will show the Ajax popup 20 pixels below the center of the notifications button.
+// e.g., show_ajax($notif_button, [0, 20]) will show the Ajax popup 20 pixels below the center of the notifications button.
 function show_ajax(where, exact)
 {
 	// We're delaying the creation a bit, to account for super-fast AJAX (e.g. local server, caching, etc.)
@@ -763,7 +763,7 @@ $(window).load(function ()
 			toggle_me = function ()
 			{
 				is_opened = !is_opened;
-				$shade.toggleClass('open'); // should work, otherwise use $shade[is_opened ? 'show' : 'hide']('fast');
+				$shade.toggleClass('open');
 				$notif_button.toggleClass('hover');
 
 				// Hide popup when clicking elsewhere.
@@ -786,6 +786,8 @@ $(window).load(function ()
 				is_pm_opened = !is_pm_opened;
 				$pmshade.toggleClass('open');
 				$pm_button.toggleClass('hover');
+
+				// Hide popup when clicking elsewhere.
 				$(document).off('click.no');
 				if (!is_pm_opened)
 					return;
@@ -800,20 +802,27 @@ $(window).load(function ()
 				});
 			},
 
-			pmload = function (url, toggle)
+			// url: URL to the page to load.
+			// toggle: set to false to skip the animation.
+			// $button: selector that once clicked, opens the popup.
+			// url_preview: URL to the page to load when requesting a preview.
+			// toggle_callback: false, or a function to run when toggling popups.
+			// preview_callback: false, or a function to run when toggling previews.
+			// is_generic_notification: always use false. For now.
+			show_notification = function (url, toggle, $button, $popup, url_preview, toggle_callback, preview_callback, is_generic_notification)
 			{
-				show_ajax($pm_button, [0, 30]);
-				$pmshade.load(url, function (data)
+				show_ajax($button, [0, 30]);
+				$popup.load(url, function (data)
 				{
 					hide_ajax();
-					$pmshade.find('.n_container')
-						.css('max-height', ($(window).height() - $pmshade.find('.n_container').offset().top) * .9)
+					$(this).find('.n_container')
+						.css('max-height', ($(window).height() - $(this).find('.n_container').offset().top) * .9)
 						.closest('ul')
 						.css('max-width', $(window).width() * .95);
 
 					$(this).find('.n_item').each(function ()
 					{
-						var that = $(this), id = that.attr('id').slice(2);
+						var that = $(this), id = $(this).data('id');
 
 						$(this)
 							.hover(function () { $(this).toggleClass('windowbg3').find('.n_read').toggle(); })
@@ -823,86 +832,70 @@ $(window).load(function ()
 								if (!that.next('.n_prev').stop(true, true).slideToggle(600).length)
 								{
 									show_ajax(this);
-									$.post(weUrl('action=pm;sa=ajax;preview=' + id), function (doc) {
-										hide_ajax();
-										$('<div/>').addClass('n_prev').html(doc).insertAfter(that).hide().slideToggle(600);
-										that.removeClass('n_new');
-									});
+									$.post(
+										weUrl(url_preview.wereplace({ id: id })),
+										function (doc) {
+											hide_ajax();
+											$('<div/>').addClass('n_prev').html(doc).insertAfter(that).hide().slideToggle(600);
+											if (preview_callback)
+												preview_callback.call(that, doc, id);
+											that.removeClass('n_new');
+										}
+									);
 								}
 							});
-					});
 
-					if (toggle)
-						toggle_me_pm();
-				});
-			};
-
-		notload = function (url, toggle)
-		{
-			show_ajax($notif_button, [0, 30]);
-			$shade.load(url, function (data)
-			{
-				hide_ajax();
-				$shade.find('.n_container')
-					.css('max-height', ($(window).height() - $shade.find('.n_container').offset().top) * .9)
-					.closest('ul')
-					.css('max-width', $(window).width() * .95);
-
-				$(this).find('.n_item').each(function ()
-				{
-					var that = $(this), id = that.attr('id').slice(3);
-
-					$(this)
-						.hover(function () { $(this).toggleClass('windowbg3').find('.n_read').toggle(); })
-						.click(function ()
-						{
-							// Try to toggle the preview. If it doesn't exist, create it.
-							if (!that.next('.n_prev').stop(true, true).slideToggle(600).length)
-							{
-								show_ajax(this);
-								$.post(weUrl('action=notification;sa=preview;in=' + id), function (doc)
+						if (is_generic_notification)
+							$(this)
+								.find('.n_read')
+								.hover(function () { $(this).toggleClass('windowbg'); })
+								.click(function (e)
 								{
-									hide_ajax();
-									$('<div/>').addClass('n_prev').html(doc).insertAfter(that).hide().slideToggle(600);
+									var was_new = that.hasClass('n_new');
 
-									if (that.hasClass('n_new'))
+									that.removeClass('n_new').next('.n_prev').andSelf().hide(300, function () { $(this).remove(); });
+									if (was_new)
 									{
-										that.removeClass('n_new');
 										we_notifs--;
 										$shade.prev().attr('class', we_notifs > 0 ? 'note' : 'notevoid').text(we_notifs);
 										document.title = (we_notifs > 0 ? '(' + we_notifs + ') ' : '') + original_title;
 
 										$.post(weUrl('action=notification;sa=markread;in=' + id));
 									}
+
+									// Cancel the implied click on the parent.
+									e.stopImmediatePropagation();
+									return false;
 								});
-							}
-						})
+					});
 
-						.find('.n_read')
-						.hover(function () { $(this).toggleClass('windowbg'); })
-						.click(function (e)
-						{
-							var was_new = that.hasClass('n_new');
-
-							that.removeClass('n_new').next('.n_prev').andSelf().hide(300, function () { $(this).remove(); });
-							if (was_new)
-							{
-								we_notifs--;
-								$shade.prev().attr('class', we_notifs > 0 ? 'note' : 'notevoid').text(we_notifs);
-								document.title = (we_notifs > 0 ? '(' + we_notifs + ') ' : '') + original_title;
-
-								$.post(weUrl('action=notification;sa=markread;in=' + id));
-							}
-
-							// Cancel the implied click on the parent.
-							e.stopImmediatePropagation();
-							return false;
-						});
+					if (toggle && toggle_callback)
+						toggle_callback.call(this);
 				});
+			};
 
-				if (toggle)
-					toggle_me();
-			});
+		notload = function (url, toggle)
+		{
+			show_notification(
+				url,
+				toggle,
+				$notif_button,
+				$shade,
+				'action=notification;sa=preview;in=%id%',
+				toggle_me,
+				function (doc, id)
+				{
+					if (this.hasClass('n_new'))
+					{
+						we_notifs--;
+						$shade.prev().attr('class', we_notifs > 0 ? 'note' : 'notevoid').text(we_notifs);
+						document.title = (we_notifs > 0 ? '(' + we_notifs + ') ' : '') + original_title;
+
+						$.post(weUrl('action=notification;sa=markread;in=' + id));
+					}
+				},
+				true
+			);
 		};
 
 		$notif_button.click(function (e)
@@ -933,7 +926,15 @@ $(window).load(function ()
 			if (!is_pm_up_to_date)
 			{
 				// Multiple things go back to PMs via AJAX. We want to be explicit to keep the PM code simpler...
-				pmload(weUrl('action=pm;sa=ajax'), true);
+				show_notification(
+					weUrl('action=pm;sa=ajax'),
+					true,
+					$pm_button,
+					$pmshade,
+					'action=pm;sa=ajax;preview=%id%',
+					toggle_me_pm,
+					false
+				);
 				is_pm_up_to_date = true;
 			}
 			else

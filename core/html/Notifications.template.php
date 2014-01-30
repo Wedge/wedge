@@ -35,7 +35,7 @@ function template_notifications_list()
 	else
 		foreach ($context['notifications'] as $notification)
 			echo '
-			<div class="n_item', $notification->getUnread() ? ' n_new' : '', AJAX ? '' : ' wrc', '" id="nti', $notification->getID(), '">', $notification->getUnread() ? '
+			<div class="n_item', $notification->getUnread() ? ' n_new' : '', AJAX ? '' : ' wrc', '" data-id="', $notification->getID(), '">', $notification->getUnread() ? '
 				<div class="n_read">x</div>' : '', '
 				<div class="n_time">', timeformat($notification->getTime()), '</div>
 				<div class="n_icon">', $notification->getIcon(), '</div>
