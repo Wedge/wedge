@@ -14,7 +14,7 @@ CREATE TABLE {$db_prefix}admin_info_files (
 	filetype varchar(255) NOT NULL default '',
 	PRIMARY KEY (id_file),
 	KEY filename (filename(30))
-) ENGINE=MyISAM;
+);
 
 #
 # Dumping data for table `admin_info_files`
@@ -39,7 +39,7 @@ VALUES
 CREATE TABLE {$db_prefix}approval_queue (
 	id_msg int(10) unsigned NOT NULL default 0,
 	PRIMARY KEY (id_msg)
-) ENGINE=MyISAM;
+);
 
 #
 # Table structure for table `attachments`
@@ -65,7 +65,7 @@ CREATE TABLE {$db_prefix}attachments (
 	UNIQUE id_member (id_member, id_attach),
 	KEY id_msg (id_msg),
 	KEY attachment_type (attachment_type)
-) ENGINE=MyISAM;
+);
 
 #
 # Table structure for table `bans`
@@ -82,7 +82,7 @@ CREATE TABLE {$db_prefix}bans (
 	member_added mediumint(8) unsigned NOT NULL default 0,
 	PRIMARY KEY (id_ban),
 	KEY ban_type (ban_type)
-) ENGINE=MyISAM;
+);
 
 #
 # Table structure for table `bbcode`
@@ -111,7 +111,7 @@ CREATE TABLE {$db_prefix}bbcode (
 	trim_wspace enum('none', 'inside', 'outside', 'both') NOT NULL,
 	id_plugin varchar(255) NOT NULL default '',
 	PRIMARY KEY (id_bbcode)
-) ENGINE=MyISAM;
+);
 
 #
 # Dumping data for table `bbcode`
@@ -188,7 +188,7 @@ CREATE TABLE {$db_prefix}board_groups (
 	view_perm enum('allow', 'disallow', 'deny') NOT NULL default 'allow',
 	enter_perm enum('allow', 'disallow', 'deny') NOT NULL default 'allow',
 	PRIMARY KEY (id_group, id_board)
-) ENGINE=MyISAM;
+);
 
 #
 # Dumping data for table `board_groups`
@@ -212,7 +212,7 @@ CREATE TABLE {$db_prefix}board_members (
 	id_board mediumint(8) unsigned NOT NULL default 0,
 	permission enum('access', 'deny') NOT NULL default 'access',
 	PRIMARY KEY (id_member, id_board, permission)
-) ENGINE=MyISAM;
+);
 
 #
 # Table structure for table `board_permissions`
@@ -224,7 +224,7 @@ CREATE TABLE {$db_prefix}board_permissions (
 	permission varchar(30) NOT NULL default '',
 	add_deny tinyint(4) NOT NULL default 1,
 	PRIMARY KEY (id_group, id_profile, permission)
-) ENGINE=MyISAM;
+);
 
 #
 # Dumping data for table `board_permissions`
@@ -613,7 +613,7 @@ CREATE TABLE {$db_prefix}boards (
 	KEY id_msg_updated (id_msg_updated),
 	KEY member_groups (member_groups(48)),
 	KEY urllen (urllen)
-) ENGINE=MyISAM;
+);
 
 #
 # Dumping data for table `boards`
@@ -637,7 +637,7 @@ CREATE TABLE {$db_prefix}categories (
 	can_collapse bit(1) NOT NULL default 1,
 	PRIMARY KEY (cat_order, id_cat),
 	UNIQUE id_cat (id_cat)
-) ENGINE=MyISAM;
+);
 
 #
 # Dumping data for table `categories`
@@ -655,7 +655,7 @@ CREATE TABLE {$db_prefix}collapsed_categories (
 	id_cat tinyint(4) unsigned NOT NULL default 0,
 	id_member mediumint(8) unsigned NOT NULL default 0,
 	PRIMARY KEY (id_cat, id_member)
-) ENGINE=MyISAM;
+);
 
 #
 # Table structure for table `contact_lists`
@@ -671,7 +671,7 @@ CREATE TABLE {$db_prefix}contact_lists (
 	position tinyint(4) NOT NULL default 0,
 	PRIMARY KEY (id_list),
 	KEY member (id_owner)
-) AUTO_INCREMENT=100 ENGINE=MyISAM;
+) AUTO_INCREMENT=100;
 
 #
 # Table structure for table `contacts`
@@ -688,7 +688,7 @@ CREATE TABLE {$db_prefix}contacts (
 	position tinyint(4) NOT NULL default 0,
 	PRIMARY KEY (id_member, id_list, list_type),
 	KEY member (id_owner)
-) ENGINE=MyISAM;
+);
 
 #
 # Table structure for table `custom_fields`
@@ -718,7 +718,7 @@ CREATE TABLE {$db_prefix}custom_fields (
 	position tinyint(3) NOT NULL default 0,
 	PRIMARY KEY (id_field),
 	UNIQUE col_name (col_name)
-) ENGINE=MyISAM;
+);
 
 #
 # Table structure for table `drafts`
@@ -737,7 +737,7 @@ CREATE TABLE {$db_prefix}drafts (
 	PRIMARY KEY (id_draft),
 	KEY member_context (id_member, is_pm, id_context),
 	KEY member_board_context (id_member, is_pm, id_board)
-) ENGINE=MyISAM;
+);
 
 #
 # Table structure for table `group_moderators`
@@ -747,7 +747,7 @@ CREATE TABLE {$db_prefix}group_moderators (
 	id_group smallint(5) NOT NULL default 0,
 	id_member mediumint(8) unsigned NOT NULL default 0,
 	PRIMARY KEY (id_group, id_member)
-) ENGINE=MyISAM;
+);
 
 #
 # Table structure for table `infractions`
@@ -762,7 +762,7 @@ CREATE TABLE {$db_prefix}infractions (
 	duration varchar(5) NOT NULL default '',
 	issuing_groups varchar(255) NOT NULL default '',
 	PRIMARY KEY (id_infraction)
-) ENGINE=MyISAM;
+);
 
 #
 # Table structure for table `language_changes`
@@ -777,7 +777,7 @@ CREATE TABLE {$db_prefix}language_changes (
 	is_plugin bit(1) NOT NULL default 0,
 	PRIMARY KEY (id_lang, is_plugin, lang_file, lang_key),
 	KEY lang_file (id_lang, is_plugin, lang_file)
-) ENGINE=MyISAM;
+);
 
 #
 # Table structure for table `likes`
@@ -790,7 +790,7 @@ CREATE TABLE {$db_prefix}likes (
 	PRIMARY KEY (id_content, content_type, id_member),
 	KEY (id_content, content_type),
 	KEY (id_member)
-) ENGINE=MyISAM;
+);
 
 #
 # Table structure for table `log_actions`
@@ -813,7 +813,7 @@ CREATE TABLE {$db_prefix}log_actions (
 	KEY id_member (id_member),
 	KEY id_board (id_board),
 	KEY id_msg (id_msg)
-) ENGINE=MyISAM;
+);
 
 #
 # Table structure for table `log_activity`
@@ -827,7 +827,7 @@ CREATE TABLE {$db_prefix}log_activity (
 	registers smallint(5) unsigned NOT NULL default 0,
 	most_on smallint(5) unsigned NOT NULL default 0,
 	PRIMARY KEY (date)
-) ENGINE=MyISAM;
+);
 
 #
 # Table structure for table `log_boards`
@@ -838,7 +838,7 @@ CREATE TABLE {$db_prefix}log_boards (
 	id_board mediumint(8) unsigned NOT NULL default 0,
 	id_msg int(10) unsigned NOT NULL default 0,
 	PRIMARY KEY (id_member, id_board)
-) ENGINE=MyISAM;
+);
 
 #
 # Table structure for table `log_comments`
@@ -859,7 +859,7 @@ CREATE TABLE {$db_prefix}log_comments (
 	KEY id_recipient (id_recipient),
 	KEY log_time (log_time),
 	KEY comment_type (comment_type(8))
-) ENGINE=MyISAM;
+);
 
 #
 # Table structure for table `log_digest`
@@ -871,7 +871,7 @@ CREATE TABLE {$db_prefix}log_digest (
 	note_type varchar(10) NOT NULL default 'post',
 	daily tinyint(3) unsigned NOT NULL default 0,
 	exclude mediumint(8) unsigned NOT NULL default 0
-) ENGINE=MyISAM;
+);
 
 #
 # Table structure for table `log_errors`
@@ -892,7 +892,7 @@ CREATE TABLE {$db_prefix}log_errors (
 	KEY id_member (id_member),
 	KEY ip (ip),
 	KEY error_type (error_type)
-) ENGINE=MyISAM;
+);
 
 #
 # Table structure for table `log_floodcontrol`
@@ -903,7 +903,7 @@ CREATE TABLE {$db_prefix}log_floodcontrol (
 	log_time int(10) unsigned NOT NULL default 0,
 	log_type varchar(8) NOT NULL default 'post',
 	PRIMARY KEY (ip, log_type(8))
-) ENGINE=MyISAM;
+);
 
 #
 # Table structure for table `log_group_requests`
@@ -917,7 +917,7 @@ CREATE TABLE {$db_prefix}log_group_requests (
 	reason text NOT NULL,
 	PRIMARY KEY (id_request),
 	UNIQUE id_member (id_member, id_group)
-) ENGINE=MyISAM;
+);
 
 #
 # Table structure for table `log_ips`
@@ -928,7 +928,7 @@ CREATE TABLE {$db_prefix}log_ips (
 	member_ip char(32) NOT NULL default '',
 	PRIMARY KEY (id_ip),
 	UNIQUE member_ip (member_ip)
-) ENGINE=MyISAM;
+);
 
 #
 # Table structure for table `log_infractions`
@@ -957,7 +957,7 @@ CREATE TABLE {$db_prefix}log_infractions (
 	KEY issued_by (issued_by),
 	KEY issued_to (issued_to),
 	KEY issue_date (issue_date)
-) ENGINE=MyISAM;
+);
 
 #
 # Table structure for table `log_intrusion`
@@ -976,7 +976,7 @@ CREATE TABLE {$db_prefix}log_intrusion (
 	headers text NOT NULL,
 	request_entity text NOT NULL,
 	PRIMARY KEY (id_event)
-) ENGINE=MyISAM;
+);
 
 #
 # Table structure for table `log_mark_read`
@@ -987,7 +987,7 @@ CREATE TABLE {$db_prefix}log_mark_read (
 	id_board mediumint(8) unsigned NOT NULL default 0,
 	id_msg int(10) unsigned NOT NULL default 0,
 	PRIMARY KEY (id_member, id_board)
-) ENGINE=MyISAM;
+);
 
 #
 # Table structure for table `log_notify`
@@ -1000,7 +1000,7 @@ CREATE TABLE {$db_prefix}log_notify (
 	sent tinyint(1) unsigned NOT NULL default 0,
 	PRIMARY KEY (id_member, id_topic, id_board),
 	KEY id_topic (id_topic, id_member)
-) ENGINE=MyISAM;
+);
 
 #
 # Table structure for table `log_online`
@@ -1016,7 +1016,7 @@ CREATE TABLE {$db_prefix}log_online (
 	PRIMARY KEY (session),
 	KEY log_time (log_time),
 	KEY id_member (id_member)
-) ENGINE=MyISAM;
+);
 
 #
 # Table structure for table `log_polls`
@@ -1027,7 +1027,7 @@ CREATE TABLE {$db_prefix}log_polls (
 	id_member mediumint(8) unsigned NOT NULL default 0,
 	id_choice tinyint(3) unsigned NOT NULL default 0,
 	KEY id_poll (id_poll, id_member, id_choice)
-) ENGINE=MyISAM;
+);
 
 #
 # Table structure for table `log_reported`
@@ -1053,7 +1053,7 @@ CREATE TABLE {$db_prefix}log_reported (
 	KEY closed (closed),
 	KEY time_started (time_started),
 	KEY id_msg (id_msg)
-) ENGINE=MyISAM;
+);
 
 #
 # Table structure for table `log_reported_comments`
@@ -1072,7 +1072,7 @@ CREATE TABLE {$db_prefix}log_reported_comments (
 	KEY id_report (id_report),
 	KEY id_member (id_member),
 	KEY time_sent (time_sent)
-) ENGINE=MyISAM;
+);
 
 #
 # Table structure for table `log_scheduled_tasks`
@@ -1084,7 +1084,7 @@ CREATE TABLE {$db_prefix}log_scheduled_tasks (
 	time_run int(10) NOT NULL default 0,
 	time_taken float NOT NULL default 0,
 	PRIMARY KEY (id_log)
-) ENGINE=MyISAM;
+);
 
 #
 # Table structure for table `log_search_messages`
@@ -1094,7 +1094,7 @@ CREATE TABLE {$db_prefix}log_search_messages (
 	id_search tinyint(3) unsigned NOT NULL default 0,
 	id_msg int(10) unsigned NOT NULL default 0,
 	PRIMARY KEY (id_search, id_msg)
-) ENGINE=MyISAM;
+);
 
 #
 # Table structure for table `log_search_results`
@@ -1107,7 +1107,7 @@ CREATE TABLE {$db_prefix}log_search_results (
 	relevance smallint(5) unsigned NOT NULL default 0,
 	num_matches smallint(5) unsigned NOT NULL default 0,
 	PRIMARY KEY (id_search, id_topic)
-) ENGINE=MyISAM;
+);
 
 #
 # Table structure for table `log_search_subjects`
@@ -1118,7 +1118,7 @@ CREATE TABLE {$db_prefix}log_search_subjects (
 	id_topic mediumint(8) unsigned NOT NULL default 0,
 	PRIMARY KEY (word, id_topic),
 	KEY id_topic (id_topic)
-) ENGINE=MyISAM;
+);
 
 #
 # Table structure for table `log_search_topics`
@@ -1128,7 +1128,7 @@ CREATE TABLE {$db_prefix}log_search_topics (
 	id_search tinyint(3) unsigned NOT NULL default 0,
 	id_topic mediumint(8) unsigned NOT NULL default 0,
 	PRIMARY KEY (id_search, id_topic)
-) ENGINE=MyISAM;
+);
 
 #
 # Table structure for table `log_spider_hits`
@@ -1144,7 +1144,7 @@ CREATE TABLE {$db_prefix}log_spider_hits (
 	KEY id_spider(id_spider),
 	KEY log_time(log_time),
 	KEY processed (processed)
-) ENGINE=MyISAM;
+);
 
 #
 # Table structure for table `log_spider_stats`
@@ -1156,7 +1156,7 @@ CREATE TABLE {$db_prefix}log_spider_stats (
 	last_seen int(10) unsigned NOT NULL default 0,
 	stat_date date NOT NULL default '0001-01-01',
 	PRIMARY KEY (stat_date, id_spider)
-) ENGINE=MyISAM;
+);
 
 #
 # Table structure for table `log_subscribed`
@@ -1181,7 +1181,7 @@ CREATE TABLE {$db_prefix}log_subscribed (
 	KEY payments_pending (payments_pending),
 	KEY status (status),
 	KEY id_member (id_member)
-) ENGINE=MyISAM;
+);
 
 #
 # Table structure for table `log_topics`
@@ -1193,7 +1193,7 @@ CREATE TABLE {$db_prefix}log_topics (
 	id_msg int(10) unsigned NOT NULL default 0,
 	PRIMARY KEY (id_member, id_topic),
 	KEY id_topic (id_topic)
-) ENGINE=MyISAM;
+);
 
 #
 # Table structure for table `mail_queue`
@@ -1212,7 +1212,7 @@ CREATE TABLE {$db_prefix}mail_queue (
 	PRIMARY KEY (id_mail),
 	KEY time_sent (time_sent),
 	KEY mail_priority (priority, id_mail)
-) ENGINE=MyISAM;
+);
 # --------------------------------------------------------
 
 #
@@ -1251,7 +1251,7 @@ CREATE TABLE {$db_prefix}media_albums (
 	KEY album_of (album_of),
 	KEY master (master),
 	KEY id_of (id_album, album_of, featured)
-) ENGINE=MyISAM;
+);
 
 #
 # Table structure for table `media_comments`
@@ -1269,7 +1269,7 @@ CREATE TABLE {$db_prefix}media_comments (
 	last_edited_name varchar(25) NOT NULL default '',
 	approved tinyint(1) unsigned NOT NULL default 0,
 	PRIMARY KEY (id_comment)
-) ENGINE=MyISAM;
+);
 
 #
 # Table structure for table `media_fields`
@@ -1286,7 +1286,7 @@ CREATE TABLE {$db_prefix}media_fields (
 	bbc bit(1) NOT NULL default 0,
 	albums text NOT NULL,
 	PRIMARY KEY (id_field)
-) ENGINE=MyISAM;
+);
 
 #
 # Table structure for table `media_field_data`
@@ -1297,7 +1297,7 @@ CREATE TABLE {$db_prefix}media_field_data (
 	id_media int(10) unsigned NOT NULL default 0,
 	value text NOT NULL,
 	PRIMARY KEY (id_field, id_media)
-) ENGINE=MyISAM;
+);
 
 #
 # Table structure for table `media_files`
@@ -1314,7 +1314,7 @@ CREATE TABLE {$db_prefix}media_files (
 	transparency enum('', 'transparent', 'opaque') NOT NULL default '',
 	meta text NOT NULL,
 	PRIMARY KEY (id_file)
-) ENGINE=MyISAM;
+);
 # --------------------------------------------------------
 
 #
@@ -1364,7 +1364,7 @@ CREATE TABLE {$db_prefix}media_items (
 	KEY id_thumb (id_thumb),
 	KEY time_added (time_added),
 	KEY album_id (album_id)
-) ENGINE=MyISAM;
+);
 
 #
 # Table structure for table `media_log_media`
@@ -1375,7 +1375,7 @@ CREATE TABLE {$db_prefix}media_log_media (
 	id_member mediumint(8) unsigned NOT NULL default 0,
 	time int(10) unsigned NOT NULL default 0,
 	PRIMARY KEY (id_media, id_member)
-) ENGINE=MyISAM;
+);
 
 #
 # Table structure for table `media_log_ratings`
@@ -1387,7 +1387,7 @@ CREATE TABLE {$db_prefix}media_log_ratings (
 	rating mediumint(8) NOT NULL default 0,
 	time int(10) unsigned NOT NULL default 0,
 	PRIMARY KEY (id_media, id_member)
-) ENGINE=MyISAM;
+);
 
 #
 # Table structure for table `media_perms`
@@ -1398,7 +1398,7 @@ CREATE TABLE {$db_prefix}media_perms (
 	id_profile int(10) unsigned NOT NULL default 0,
 	permission varchar(255) NOT NULL default '',
 	PRIMARY KEY (id_group, id_profile, permission)
-) ENGINE=MyISAM;
+);
 
 #
 # Table structure for table `media_playlists`
@@ -1413,7 +1413,7 @@ CREATE TABLE {$db_prefix}media_playlists (
 	PRIMARY KEY (id_playlist),
 	KEY name (name),
 	KEY views (views)
-) ENGINE=MyISAM;
+);
 
 #
 # Table structure for table `media_playlist_data`
@@ -1422,10 +1422,11 @@ CREATE TABLE {$db_prefix}media_playlists (
 CREATE TABLE {$db_prefix}media_playlist_data (
 	id_playlist int(10) unsigned NOT NULL default 0,
 	id_media int(10) unsigned NOT NULL default 0,
-	play_order int(5) unsigned NOT NULL auto_increment,
+	play_order int(5) unsigned auto_increment NOT NULL,
 	description text NOT NULL,
-	PRIMARY KEY (id_playlist, play_order, id_media)
-) ENGINE=MyISAM;
+	PRIMARY KEY (id_playlist, play_order, id_media),
+	KEY (play_order)
+);
 
 #
 # Table structure for table `media_quotas`
@@ -1437,7 +1438,7 @@ CREATE TABLE {$db_prefix}media_quotas (
 	type varchar(10) NOT NULL default '',
 	quota int(10) unsigned NOT NULL default 0,
 	PRIMARY KEY (id_profile, id_group, type)
-) ENGINE=MyISAM;
+);
 
 #
 # Table structure for table `media_settings`
@@ -1447,7 +1448,7 @@ CREATE TABLE {$db_prefix}media_settings (
 	name varchar(30) NOT NULL default '',
 	value text NOT NULL,
 	PRIMARY KEY (name)
-) ENGINE=MyISAM;
+);
 # --------------------------------------------------------
 
 #
@@ -1527,7 +1528,7 @@ CREATE TABLE {$db_prefix}media_variables (
 	val8 text NOT NULL,
 	val9 text NOT NULL,
 	PRIMARY KEY (id)
-) ENGINE=MyISAM;
+);
 # --------------------------------------------------------
 
 #
@@ -1550,7 +1551,7 @@ CREATE TABLE {$db_prefix}membergroups (
 	id_parent smallint(5) NOT NULL default '-2',
 	PRIMARY KEY (id_group),
 	KEY min_posts (min_posts)
-) ENGINE=MyISAM;
+);
 
 #
 # Dumping data for table `membergroups`
@@ -1650,7 +1651,7 @@ CREATE TABLE {$db_prefix}members (
 	KEY warning (warning),
 	KEY total_time_logged_in (total_time_logged_in),
 	KEY skin (skin(20))
-) ENGINE=MyISAM;
+);
 
 #
 # Table structure for table `message_icons`
@@ -1664,7 +1665,7 @@ CREATE TABLE {$db_prefix}message_icons (
 	icon_order smallint(5) unsigned NOT NULL default 0,
 	PRIMARY KEY (id_icon),
 	KEY id_board (id_board)
-) ENGINE=MyISAM;
+);
 
 #
 # Dumping data for table `message_icons`
@@ -1724,7 +1725,7 @@ CREATE TABLE {$db_prefix}messages (
 	KEY id_member_msg (id_member, approved, id_msg),
 	KEY current_topic (id_topic, id_msg, id_member, approved),
 	KEY related_ip (id_member, poster_ip, id_msg)
-) ENGINE=MyISAM;
+);
 
 #
 # Dumping data for table `messages`
@@ -1743,7 +1744,7 @@ CREATE TABLE {$db_prefix}moderators (
 	id_board mediumint(8) unsigned NOT NULL default 0,
 	id_member mediumint(8) unsigned NOT NULL default 0,
 	PRIMARY KEY (id_board, id_member)
-) ENGINE=MyISAM;
+);
 
 #
 # Table structure for table `mod_filter_msg`
@@ -1755,7 +1756,7 @@ CREATE TABLE {$db_prefix}mod_filter_msg (
 	lang varchar(255) NOT NULL default '',
 	msg text NOT NULL,
 	PRIMARY KEY (id_rule, rule_type, lang)
-) ENGINE=MyISAM;
+);
 
 #
 # Table structure for the table `notifications`
@@ -1770,7 +1771,7 @@ CREATE TABLE {$db_prefix}notifications (
 	unread tinyint(1) unsigned NOT NULL default 0,
 	data text NOT NULL,
 	PRIMARY KEY (id_notification)
-) ENGINE=MyISAM;
+);
 
 #
 # Table structure for table 'notif_subs'
@@ -1781,7 +1782,7 @@ CREATE TABLE {$db_prefix}notif_subs (
 	type varchar(20) NOT NULL,
 	starttime int(10) NOT NULL default 0,
 	PRIMARY KEY (id_member, id_object, type)
-) ENGINE=MyISAM;
+);
 
 #
 # Table structure for table `permission_profiles`
@@ -1791,7 +1792,7 @@ CREATE TABLE {$db_prefix}permission_profiles (
 	id_profile smallint(5) NOT NULL auto_increment,
 	profile_name varchar(255) NOT NULL default '',
 	PRIMARY KEY (id_profile)
-) ENGINE=MyISAM;
+);
 
 #
 # Dumping data for table `permission_profiles`
@@ -1811,7 +1812,7 @@ CREATE TABLE {$db_prefix}permissions (
 	permission varchar(30) NOT NULL default '',
 	add_deny tinyint(4) NOT NULL default 1,
 	PRIMARY KEY (id_group, permission)
-) ENGINE=MyISAM;
+);
 
 #
 # Dumping data for table `permissions`
@@ -1882,7 +1883,7 @@ CREATE TABLE {$db_prefix}personal_messages (
 	KEY id_member (id_member_from, deleted_by_sender),
 	KEY msgtime (msgtime),
 	KEY id_pm_head (id_pm_head)
-) ENGINE=MyISAM;
+);
 
 #
 # Table structure for table `plugin_servers`
@@ -1896,7 +1897,7 @@ CREATE TABLE {$db_prefix}plugin_servers (
 	password varchar(64) NOT NULL default '',
 	status tinyint(3) NOT NULL default 0,
 	PRIMARY KEY (id_server)
-) ENGINE=MyISAM;
+);
 
 #
 # Dumping data for table `plugin_servers`
@@ -1921,7 +1922,7 @@ CREATE TABLE {$db_prefix}pm_recipients (
 	deleted tinyint(3) unsigned NOT NULL default 0,
 	PRIMARY KEY (id_pm, id_member),
 	UNIQUE id_member (id_member, deleted, id_pm)
-) ENGINE=MyISAM;
+);
 
 #
 # Table structure for table `pm_rules`
@@ -1938,7 +1939,7 @@ CREATE TABLE {$db_prefix}pm_rules (
 	PRIMARY KEY (id_rule),
 	KEY id_member (id_member),
 	KEY delete_pm (delete_pm)
-) ENGINE=MyISAM;
+);
 
 #
 # Table structure for table `poll_choices`
@@ -1950,7 +1951,7 @@ CREATE TABLE {$db_prefix}poll_choices (
 	label varchar(255) NOT NULL default '',
 	votes smallint(5) unsigned NOT NULL default 0,
 	PRIMARY KEY (id_poll, id_choice)
-) ENGINE=MyISAM;
+);
 
 #
 # Table structure for table `polls`
@@ -1971,7 +1972,7 @@ CREATE TABLE {$db_prefix}polls (
 	id_member mediumint(8) unsigned NOT NULL default 0,
 	poster_name varchar(255) NOT NULL default '',
 	PRIMARY KEY (id_poll)
-) ENGINE=MyISAM;
+);
 
 #
 # Table structure for table `pretty_topic_urls`
@@ -1982,7 +1983,7 @@ CREATE TABLE {$db_prefix}pretty_topic_urls (
 	pretty_url varchar(80) NOT NULL,
 	PRIMARY KEY (id_topic),
 	KEY pretty_url (pretty_url)
-) ENGINE=MyISAM;
+);
 
 #
 # Table structure for table `pretty_urls_cache`
@@ -1993,7 +1994,7 @@ CREATE TABLE {$db_prefix}pretty_urls_cache (
 	replacement varchar(255) NOT NULL,
 	log_time timestamp NOT NULL default CURRENT_TIMESTAMP,
 	PRIMARY KEY (url_id)
-) ENGINE=MyISAM;
+);
 
 #
 # Table structure for table `privacy_boards`
@@ -2003,7 +2004,7 @@ CREATE TABLE {$db_prefix}privacy_boards (
 	id_board smallint(5) unsigned NOT NULL,
 	privacy int(10) NOT NULL default 0,
 	PRIMARY KEY (id_board, privacy)
-) ENGINE=MyISAM;
+);
 
 #
 # Table structure for table `privacy_thoughts`
@@ -2013,7 +2014,7 @@ CREATE TABLE {$db_prefix}privacy_thoughts (
 	id_thought int(10) unsigned NOT NULL,
 	privacy int(10) NOT NULL default 0,
 	PRIMARY KEY (id_thought, privacy)
-) ENGINE=MyISAM;
+);
 
 #
 # Table structure for table `privacy_topics`
@@ -2023,7 +2024,7 @@ CREATE TABLE {$db_prefix}privacy_topics (
 	id_topic mediumint(8) unsigned NOT NULL,
 	privacy int(10) NOT NULL default 0,
 	PRIMARY KEY (id_topic, privacy)
-) ENGINE=MyISAM;
+);
 
 #
 # Table structure for table `scheduled_imperative`
@@ -2035,7 +2036,7 @@ CREATE TABLE {$db_prefix}scheduled_imperative (
 	instr_details text NOT NULL,
 	PRIMARY KEY (id_instr),
 	KEY instr_time (instr_time)
-) ENGINE=MyISAM;
+);
 
 
 #
@@ -2055,7 +2056,7 @@ CREATE TABLE {$db_prefix}scheduled_tasks (
 	KEY next_time (next_time),
 	KEY disabled (disabled),
 	UNIQUE task (task)
-) ENGINE=MyISAM;
+);
 
 #
 # Dumping data for table `scheduled_tasks`
@@ -2085,7 +2086,7 @@ CREATE TABLE {$db_prefix}sessions (
 	last_update int(10) unsigned NOT NULL,
 	data text NOT NULL,
 	PRIMARY KEY (session_id)
-) ENGINE=MyISAM;
+);
 
 #
 # Table structure for table `settings`
@@ -2095,7 +2096,7 @@ CREATE TABLE {$db_prefix}settings (
 	variable varchar(255) NOT NULL default '',
 	value text NOT NULL,
 	PRIMARY KEY (variable(30))
-) ENGINE=MyISAM;
+);
 
 #
 # Dumping data for table `settings`
@@ -2322,7 +2323,7 @@ CREATE TABLE {$db_prefix}smileys (
 	smiley_order smallint(5) unsigned NOT NULL default 0,
 	hidden tinyint(4) unsigned NOT NULL default 0,
 	PRIMARY KEY (id_smiley)
-) ENGINE=MyISAM;
+);
 
 #
 # Dumping data for table `smileys`
@@ -2366,7 +2367,7 @@ CREATE TABLE {$db_prefix}spiders (
 	user_agent varchar(255) NOT NULL default '',
 	ip_info varchar(255) NOT NULL default '',
 	PRIMARY KEY id_spider(id_spider)
-) ENGINE=MyISAM;
+);
 
 #
 # Dumping data for table `spiders`
@@ -2416,7 +2417,7 @@ CREATE TABLE {$db_prefix}subscriptions (
 	email_complete text NOT NULL,
 	PRIMARY KEY (id_subscribe),
 	KEY active (active)
-) ENGINE=MyISAM;
+);
 
 #
 # Table structure for table `subscriptions_groups`
@@ -2426,7 +2427,7 @@ CREATE TABLE {$db_prefix}subscriptions_groups (
 	id_subscribe mediumint(8) unsigned NOT NULL default 0,
 	id_group smallint(5) NOT NULL default 0,
 	PRIMARY KEY (id_subscribe, id_group)
-) ENGINE=MyISAM;
+);
 
 #
 # Table structure for table `themes`
@@ -2438,7 +2439,7 @@ CREATE TABLE {$db_prefix}themes (
 	value text NOT NULL,
 	PRIMARY KEY (id_member, variable(30)),
 	KEY id_member (id_member)
-) ENGINE=MyISAM;
+);
 
 #
 # Dumping data for table `themes`
@@ -2470,7 +2471,7 @@ CREATE TABLE {$db_prefix}thoughts (
 	privacy int(10) NOT NULL default 0,
 	PRIMARY KEY (id_thought, privacy),
 	KEY mup (id_member, updated)
-) ENGINE=MyISAM;
+);
 
 #
 # Table structure for table `topics`
@@ -2504,7 +2505,7 @@ CREATE TABLE {$db_prefix}topics (
 	KEY member_started (id_member_started, id_board),
 	KEY last_message_pinned (id_board, is_pinned, id_last_msg),
 	KEY board_news (id_board, id_first_msg)
-) ENGINE=MyISAM;
+);
 
 #
 # Dumping data for table `topics`
