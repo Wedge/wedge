@@ -622,7 +622,7 @@ class media_handler
 	function getFileSize()
 	{
 		if ($this->media_type() == 'image' && ($this->image_handler == 2 || $this->image_handler == 3))
-			return $this->image_handler == 2 ? $this->imagick->getImageSize() : MagickGetImageSize($this->magick);
+			return $this->image_handler == 2 ? $this->imagick->getImageLength() : MagickGetImageLength($this->magick);
 		else
 			return filesize($this->src);
 	}
