@@ -11,8 +11,8 @@
 if (defined('WEDGE'))
 	return;
 
-const WEDGE_VERSION = '0.1';
-const WEDGE = 1; // We are go.
+define('WEDGE_VERSION', '0.1');
+define('WEDGE', 1); // We are go.
 
 // Get everything started up...
 if (function_exists('set_magic_quotes_runtime') && version_compare('5.4.0', PHP_VERSION) > 0)
@@ -260,7 +260,7 @@ function loadSource($source_name)
 		if (isset($done[$file]))
 			continue;
 		$done[$file] = true;
-		if (strpos($file, 'getid3') !== false)
+		if (defined('WEDGE_INSTALL') || strpos($file, 'getid3') !== false)
 			$cache = $sourcedir . '/' . $file . '.php';
 		else
 		{

@@ -1761,7 +1761,7 @@ CREATE TABLE {$db_prefix}mod_filter_msg (
 # Table structure for the table `notifications`
 #
 CREATE TABLE {$db_prefix}notifications (
-	id_notification int(10) NOT NULL AUTO_INCREMENT,
+	id_notification int(10) NOT NULL auto_increment,
 	id_member int(10) NOT NULL default 0,
 	id_member_from int(10) NOT NULL default 0,
 	notifier varchar(50) NOT NULL default '',
