@@ -1161,6 +1161,9 @@ function loadMemberAvatar($user, $force = false)
 		return true;
 
 	$dataLoaded[$user] = true;
+	if (!isset($user_profile[$user]))
+		return;
+
 	$profile = $user_profile[$user];
 
 	// So, they're not banned, or if they are, we're not hiding their avatar.
@@ -1421,6 +1424,7 @@ function loadTheme($skin = '', $initialize = true)
 	$context['macros'] = array();
 	$context['skeleton'] = array();
 	$context['skeleton_ops'] = array();
+	$context['jquery_version'] = we::is('ie[-8],firefox[-3.6]') ? '1.11.0' : '2.1.0';
 	loadSource('Subs-Cache');
 
 	// If output is an Ajax request, or printer-friendly
@@ -1535,7 +1539,6 @@ function weInitJS()
 {
 	global $settings, $context;
 
-	$context['jquery_version'] = we::is('ie[-8],firefox[-3.6]') ? '1.11.0' : '2.1.0';
 	$origin = empty($settings['jquery_origin']) ? 'local' : $settings['jquery_origin'];
 
 	// !! Temp code or permanent? We won't always need to test for jQuery's beta status...
