@@ -123,14 +123,6 @@ function initialize_inputs()
 		exit;
 	}
 
-	// Are we calling the backup css file?
-	if (isset($_GET['infile_css']))
-	{
-		header('Content-Type: text/css');
-		template_css();
-		exit;
-	}
-
 	// Anybody home?
 	if (!isset($_GET['xml']))
 	{
@@ -180,6 +172,9 @@ function initialize_inputs()
 
 	// Make sure a timezone is set, it isn't always. But let's use the system derived one as much as possible.
 	date_default_timezone_set(@date_default_timezone_get());
+
+	if (!defined('ROOT'))
+		init_variables();
 
 	// Force an integer step, defaulting to 0.
 	$_GET['step'] = (int) @$_GET['step'];
@@ -1307,8 +1302,6 @@ function DeleteInstall()
 
 	chdir(ROOT_DIR);
 
-	init_variables();
-
 	// Bring a warning over.
 	if (!empty($incontext['account_existed']))
 		$incontext['warning'] = $incontext['account_existed'];
@@ -1918,9 +1911,6 @@ function init_variables()
 function template_install_above()
 {
 	global $incontext, $txt, $cachedir, $context, $settings;
-
-	if (!defined('ROOT'))
-		init_variables();
 
 	if (!file_exists($cachedir . '/cache.lock'))
 		@fclose(@fopen($cachedir . '/cache.lock', 'w'));
