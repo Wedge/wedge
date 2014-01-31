@@ -9,7 +9,7 @@ $txt['behav_403'] = 'You do not have permission to access this server.';
 $txt['behav_417'] = 'Expectation Failed.';
 
 $txt['behavior_admin'] = 'Security Error';
-$txt['behavior_header'] = 'We apologize for the inconvience, but were not able to complete your request; as part of protection against spreading bad things like spam and malware, the defenses of this site found potentially suspicious behavior that matched that of known spammers and/or malware distributors. Fortunately the problem is normally quite easy to fix.<br><br>The information for this was supplied by <a href="http://www.bad-behavior.ioerror.us/">Bad Behavior</a>.';
+$txt['behavior_header'] = 'We apologize for the inconvience, but we are unable to complete your request; as part of protection against spreading bad things like spam and malware, the defenses of this site found potentially suspicious behavior that matched that of known spammers and/or malware distributors. Fortunately the problem is normally quite easy to fix.<br><br>The information for this was supplied by <a href="http://www.bad-behavior.ioerror.us/">Bad Behavior</a>.';
 
 $txt['behavior_false_ua'] = 'Every page request your browser sends, it should be sending a User-Agent - a string to identify itself to the server. The user-agent supplied in this request was false; if you reset it to what the browser is supposed to send, you should be able to access this site.';
 $txt['behavior_misconfigured_proxy'] = 'This problem is often associated with proxy servers and systems that are not set up properly. Normally you will need to uninstall the software, since invariably just disabling it is not enough. If this is not an option, please contact the server administrator.';
