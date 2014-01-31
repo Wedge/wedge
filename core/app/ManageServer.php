@@ -520,7 +520,7 @@ function ModifyProxySettings($return_config = false)
 
 	// Define the variables we want to edit.
 	$config_vars = array(
-		// Only a couple of settings, but they are important
+		// Only a couple of settings, but they are important.
 		array('check', 'reverse_proxy'),
 		array('text', 'reverse_proxy_header'),
 		array('large_text', 'reverse_proxy_ips', 'subtext' => $txt['reverse_proxy_one_per_line']),
@@ -532,11 +532,7 @@ function ModifyProxySettings($return_config = false)
 	// Saving again?
 	if (isset($_GET['save']))
 	{
-		$_POST['reverse_proxy_ips'] = !empty($_POST['reverse_proxy_ips']) ? array_map('trim', explode("\n", $_POST['reverse_proxy_ips'])) : '';
-		foreach ($_POST['reverse_proxy_ips'] as $k => $v)
-			if (empty($v))
-				unset($_POST['reverse_proxy_ips'][$k]);
-		$_POST['reverse_proxy_ips'] = implode(',', $_POST['reverse_proxy_ips']);
+		$_POST['reverse_proxy_ips'] = !empty($_POST['reverse_proxy_ips']) ? implode("\n", array_filter(array_map('trim', preg_split('~[\s,]+~', $_POST['reverse_proxy_ips'])))) : '';
 
 		saveSettings($config_vars);
 

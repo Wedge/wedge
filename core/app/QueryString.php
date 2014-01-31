@@ -115,13 +115,13 @@ function cleanRequest()
 	define('ROOT', $boardurl);
 	define('ROOT_DIR', $boarddir);
 	define('CORE', $boardurl . '/core');
-	define('CORE_DIR', $boarddir . '/core');
-	define('TEMPLATES', $settings['theme_url']);		// !! Temporary.
-	define('TEMPLATES_DIR', $settings['theme_dir']);	// !! Temporary.
-	define('SKINS', CORE . '/skins');					// !! Temporary.
-	define('SKINS_DIR', CORE_DIR . '/skins');			// !! Temporary.
-	define('LANGUAGES', CORE . '/languages');			// !! Temporary.
-	define('LANGUAGES_DIR', CORE_DIR . '/languages');	// !! Temporary.
+	define('CORE_DIR', ROOT_DIR . '/core');
+	define('TEMPLATES', CORE . '/html');
+	define('TEMPLATES_DIR', CORE_DIR . '/html');
+	define('SKINS', CORE . '/skins');
+	define('SKINS_DIR', CORE_DIR . '/skins');
+	define('LANGUAGES', CORE . '/languages');
+	define('LANGUAGES_DIR', CORE_DIR . '/languages');
 	define('ASSETS', ROOT . '/assets');
 	define('ASSETS_DIR', ROOT_DIR . '/assets');
 
@@ -507,7 +507,7 @@ function cleanRequest()
 		}
 		$context['additional_headers']['X-Detected-Remote-Address'] = $_SERVER['REMOTE_ADDR'];
 		if (!empty($settings['reverse_proxy_ips']))
-			$reverse_proxies = explode(',', $settings['reverse_proxy_ips']); // We don't want this set if we're not knowingly using them.
+			$reverse_proxies = explode("\n", $settings['reverse_proxy_ips']); // We don't want this set if we're not knowingly using them.
 	}
 
 	// OK, whatever we have in our default place, let's turn it into our default format.
