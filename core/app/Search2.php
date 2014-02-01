@@ -968,7 +968,7 @@ function Search2()
 						CREATE TEMPORARY TABLE {db_prefix}tmp_log_search_topics (
 							id_topic mediumint(8) unsigned NOT NULL default {string:string_zero},
 							PRIMARY KEY (id_topic)
-						) TYPE=HEAP',
+						) ENGINE=MEMORY',
 						array(
 							'string_zero' => '0',
 							'db_error_skip' => true,
@@ -1128,7 +1128,7 @@ function Search2()
 						CREATE TEMPORARY TABLE {db_prefix}tmp_log_search_messages (
 							id_msg int(10) unsigned NOT NULL default {string:string_zero},
 							PRIMARY KEY (id_msg)
-						) TYPE=HEAP',
+						) ENGINE=MEMORY',
 						array(
 							'string_zero' => '0',
 							'db_error_skip' => true,

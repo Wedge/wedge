@@ -206,8 +206,8 @@ if (!headers_sent())
 	}
 
 	// Basic protection against XSS.
+	header('X-XSS-Protection: 1');
 	header('X-Frame-Options: SAMEORIGIN');
-	header('X-XSS-Protection: 1; mode=block');
 	header('X-Content-Type-Options: nosniff');
 }
 
