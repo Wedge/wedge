@@ -2212,7 +2212,7 @@ function setupMenuContext()
 				'uncache' => array(
 					'title' => $txt['admin_uncache'],
 					'href' => '<URL>?action=uncache',
-					'show' => $can_admin && !empty($settings['cache_enable']),
+					'show' => $can_admin,
 				),
 			),
 		),
