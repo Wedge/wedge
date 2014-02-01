@@ -1378,6 +1378,10 @@ function DeleteInstall()
 		updateStats('subject', 1, htmlspecialchars($txt['default_topic_subject']));
 	wesql::free_result($request);
 
+	// Revoke install mode, and save our first known 'proper' settings.
+	updateSettingsFile(array('maintenance' => 0));
+	@copy(ROOT_DIR . '/Settings.php', ROOT_DIR . '/Settings_bak.php');
+
 	// Now is the perfect time to fetch the Wedge files.
 	loadSource('ScheduledTasks');
 	// Sanity check that they loaded earlier!
@@ -1388,7 +1392,6 @@ function DeleteInstall()
 		// We've just installed!
 		we::$user['ip'] = $_SERVER['REMOTE_ADDR'];
 		we::$id = isset($incontext['member_id']) ? $incontext['member_id'] : 0;
-		define('MID', we::$id);
 		$_SERVER['BAN_CHECK_IP'] = $_SERVER['REMOTE_ADDR'];
 		logAction('install', array('version' => WEDGE_VERSION), 'admin');
 	}
@@ -1396,10 +1399,6 @@ function DeleteInstall()
 	// Some final context for the template.
 	$incontext['dir_still_writable'] = is_writable(ROOT_DIR) && IS_WINDOWS;
 	$incontext['probably_delete_install'] = isset($_SESSION['installer_temp_ftp']) || is_writable(ROOT_DIR) || is_writable(__FILE__);
-
-	// Revoke install mode, and save our first known 'proper' settings.
-	updateSettingsFile(array('maintenance' => 0));
-	@copy(ROOT_DIR . '/Settings.php', ROOT_DIR . '/Settings_bak.php');
 
 	return false;
 }
