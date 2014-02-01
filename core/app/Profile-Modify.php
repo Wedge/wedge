@@ -236,7 +236,7 @@ function loadProfileFields($force_reload = false)
 			'log_change' => true,
 			'permission' => 'moderate_forum',
 			'input_validate' => function (&$value) {
-				global $txt, $settings, $cur_profile, $context;
+				global $txt, $settings, $cur_profile;
 
 				// Bad date! Go try again - please?
 				if (($value = strtotime($value)) === -1)

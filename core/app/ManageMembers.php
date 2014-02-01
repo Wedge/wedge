@@ -883,8 +883,6 @@ function MembersAwaitingActivation()
 				),
 				'data' => array(
 					'function' => function ($rowData) {
-						global $settings;
-
 						return host_from_ip($rowData['member_ip']);
 					},
 					'class' => 'smalltext',

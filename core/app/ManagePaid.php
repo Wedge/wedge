@@ -275,7 +275,7 @@ function ViewSubscriptions()
 				),
 				'data' => array(
 					'function' => function ($rowData) {
-						global $context, $txt;
+						global $txt;
 
 						return $rowData['flexible'] ? '<em>' . $txt['flexible'] . '</em>' : $rowData['cost'] . ' / ' . $rowData['length'];
 					},
@@ -315,7 +315,7 @@ function ViewSubscriptions()
 				),
 				'data' => array(
 					'function' => function ($rowData) {
-						global $context, $txt;
+						global $txt;
 
 						return '<span style="color: ' . ($rowData['active'] ? 'green' : 'red') . '">' . ($rowData['active'] ? $txt['yes'] : $txt['no']) . '</span>';
 					},
