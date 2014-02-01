@@ -39,7 +39,7 @@ function template_main()
 			{
 				$filters[] = $key;
 				echo '
-					<option value="', $key, '">', $name, '</option>';
+					<option value="', $key, '"', $_SESSION['stat_charts']['filter'] == $key ? ' selected' : '', '>', $name, '</option>';
 			}
 		}
 
