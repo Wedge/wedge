@@ -95,7 +95,7 @@
 <body>
 	<div id="header"><div class="frame">
 		<div id="top_section">
-			<img id="wedgelogo" src="assets/wefoot1.png" alt="Wedge" title="Wedge" style="float: right; margin: -8px -2% 0 0">
+			<img id="wedgelogo" src="../assets/wefoot1.png" alt="Wedge" title="Wedge" style="float: right; margin: -8px -2% 0 0">
 			<h1 class="forumtitle">Wedge Installation Guide</h1>
 		</div>
 		<div id="upper_section" style="overflow: hidden">
@@ -199,7 +199,7 @@
 					<h2 id="final_install">Running the installer</h2>
 					<p>The final step in installing Wedge is running the installer. The information from the previous steps will be used in the installation process.</p>
 					<p>The first page you see may request your FTP information. If you see this screen, it is because the installer found some files or folders with inadequate permissions for Wedge to run properly. If you enter your FTP information here, the installer can automatically fix these permissions for you. Please note that the path should be the same path you see in your FTP client. For example, it might be &quot;public_html/forum&quot;. And remember, the installer will not save your FTP password anywhere.</p>
-					<p>Navigating to the directory where Wedge is located, should redirect you to the install.php file, and prompt the installer to run. For example: www.yourdomain.com/forum/install.php</p>
+					<p>Navigating to the directory where Wedge is located, should run the installer for you, as long as the sub-folder called <samp>install</samp> was properly uploaded. If it is, and nothing happens, make sure there is no <samp>Settings.php</samp> file in your forum's root folder.</p>
 					<h3>Basic forum settings</h3>
 					<dl>
 						<dt>Forum Name</dt>
@@ -207,7 +207,7 @@
 						<dt>Forum URL</dt>
 						<dd>The URL the forum can be found at, without the trailing slash. The Wedge installer will most likely have this correct, so it is safe to leave this field alone.</dd>
 						<dt>Gzip Output</dt>
-						<dd>If Gzip output tests pass, this can be used to save bandwidth and make pages load faster.</dd>
+						<dd>If the Gzip Output tests pass, this can be used to save bandwidth and make pages load faster.</dd>
 						<dt>Database Sessions</dt>
 						<dd>Sessions can be stored in the database, or in files. Database sessions are more reliable, secure, and may work better on sites with multiple servers.</dd>
 					</dl>
@@ -229,7 +229,7 @@
 				</div>
 				<div class="panel">
 					<h2 id="finishing">Finishing the installation and cleaning up</h2>
-					<p>Once all steps of the installation process have been completed, check the box to remove the install files from the server. If this does not work, they will need to be deleted via FTP. All installer files should be removed from the server once the installation process is complete, as they are a major security risk if left on a server unattended. Once Wedge is installed they are no longer needed.</p>
+					<p>Once all steps of the installation process have been completed, check the box to remove the install files from the server. If this does not work, they will need to be deleted via FTP. All installer files should be removed from the server once the installation process is complete, as they can be a security risk if left on a server unattended. Once Wedge is installed, they are no longer needed.</p>
 					<p>Good luck!<br>
 					The Wedge Team.</p>
 				</div>
@@ -237,8 +237,7 @@
 		</div>
 	</div></div>
 	<div id="footer"><div class="frame">
-		<div class="smalltext padding"><a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/"><img alt="Creative Commons License" style="border-width: 0; margin-bottom: 0.7em" src="http://i.creativecommons.org/l/by-sa/3.0/80x15.png"></a><br>This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-ShareAlike 3.0 Unported License</a>.</div>
-		<div class="smalltext"><a href="http://wedge.org">Wedge</a></div>
+		Powered by <a href="http://wedge.org">Wedge</a>. That's not exactly rocket science.
 	</div></div>
 </body>
 </html>
