@@ -332,7 +332,7 @@ function list_getModLogEntryCount($query_string = '', $query_params = array(), $
 
 function list_getModLogEntries($start, $items_per_page, $sort, $query_string = '', $query_params = array(), $log_type = 1)
 {
-	global $context, $txt, $callback_entry;
+	global $context, $txt;
 
 	$modlog_query = allowedTo('admin_forum') || we::$user['mod_cache']['bq'] == '1=1' ? '1=1' : (we::$user['mod_cache']['bq'] == '0=1' ? 'lm.id_board = 0 AND lm.id_topic = 0' : (strtr(we::$user['mod_cache']['bq'], array('id_board' => 'b.id_board')) . ' AND ' . strtr(we::$user['mod_cache']['bq'], array('id_board' => 't.id_board'))));
 	$see_IP = allowedTo('manage_bans');
@@ -595,16 +595,11 @@ function list_getModLogEntries($start, $items_per_page, $sort, $query_string = '
 
 		if (empty($entry['action_text']))
 			$entries[$k]['action_text'] = isset($txt['modlog_ac_' . $entry['action']]) ? $txt['modlog_ac_' . $entry['action']] : $entry['action'];
-		$callback_entry = $entry['extra'];
-		$entries[$k]['action_text'] = preg_replace_callback('~\{([A-Za-z\d_]+)\}~i', 'modlog_entry_callback', $entry['action_text']);
+		$entries[$k]['action_text'] = preg_replace_callback('~\{([a-zA-Z0-9_]+)\}~', function ($match) use ($entry) {
+			return isset($entry['extra'][$match[1]]) ? $entry['extra'][$match[1]] : '';
+		}, $entry['action_text']);
 	}
 
 	// Back we go!
 	return $entries;
-}
-
-function modlog_entry_callback($match)
-{
-	global $callback_entry;
-	return isset($callback_entry[$match[1]]) ? $callback_entry[$match[1]] : '';
 }

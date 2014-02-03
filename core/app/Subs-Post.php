@@ -1484,6 +1484,9 @@ function createAttachment(&$attachmentOptions)
 		}
 	}
 
+	if (!empty($attachmentOptions['mime_type']) && strpos($attachmentOptions['mime_type'], 'image/') !== 0)
+		$attachmentOptions['width'] = $attachmentOptions['height'] = 0;
+
 	// Get the hash if no hash has been given yet.
 	if (empty($attachmentOptions['file_hash']))
 		$attachmentOptions['file_hash'] = getAttachmentFilename($attachmentOptions['name'], false, null, true);
@@ -1614,6 +1617,9 @@ function createAttachment(&$attachmentOptions)
 			elseif (isset($validImageTypes[$size[2]]))
 				$attachmentOptions['mime_type'] = 'image/' . $validImageTypes[$size[2]];
 		}
+
+		if (!empty($attachmentOptions['mime_type']) && strpos($attachmentOptions['mime_type'], 'image/') !== 0)
+			$attachmentOptions['width'] = $attachmentOptions['height'] = 0;
 
 		if (!empty($attachmentOptions['width']) && !empty($attachmentOptions['height']))
 			wesql::query('

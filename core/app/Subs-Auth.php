@@ -60,10 +60,6 @@ if (!defined('WEDGE'))
 		- searches only buddies if buddies_only is set.
 		- returns an array containing information about the matching members.
 
-	void RequestMembers()
-		- used by javascript to find members matching the request.
-		- outputs each member name on its own line.
-
 	void resetPassword(int id_member, string username = null)
 		- called by Profile.php when changing someone's username.
 		- checks the validity of the new username.

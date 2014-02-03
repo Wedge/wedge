@@ -74,7 +74,7 @@ class westr_foundation
 	}
 
 	// Converts entities (&#224;) to their equivalent UTF-8 characters.
-	static function entity_to_utf8($string)
+	static function entity_to_utf8($string, $reencode_sensitive = false)
 	{
 		return preg_replace_callback(
 			'~&#(\d{2,8}|x[0-9a-fA-F]{1,6});~',
@@ -86,7 +86,8 @@ class westr_foundation
 					$n = hexdec(substr($n, 1));
 				if ($n < 32 || $n === 0x202e || $n === 0x202d || ($n >= 0xD800 && $n <= 0xDFFF) || $n > 0x10FFFF)
 					return '';
-				if (in_array($n, array(0x22, 0x26, 0x27, 0x3c, 0x3e)))
+				// isReservedName may need these to be set aside (", &, ', <, >)
+				if ($reencode_sensitive && in_array($n, array(34, 38, 39, 60, 62)))
 					return '&#' . $n . ';';
 				if ($n < 128)
 					return chr($n);

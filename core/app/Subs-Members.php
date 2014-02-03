@@ -876,7 +876,7 @@ function isReservedName($name, $current_id_member = 0, $is_name = true, $fatal =
 
 	// No cheating with entities please.
 	// Although it's unlikely there are entities in UTF8 mode, never say never.
-	$name = westr::entity_to_utf8($name);
+	$name = westr::entity_to_utf8($name, true);
 	$name_lower = westr::strtolower($name);
 
 	// Administrators are never restricted ;).
@@ -888,7 +888,7 @@ function isReservedName($name, $current_id_member = 0, $is_name = true, $fatal =
 		foreach ($rules as $rule)
 		{
 			// We need to fix any entities
-			$rule['ban_content'] = westr::entity_to_utf8($rule['ban_content']);
+			$rule['ban_content'] = westr::entity_to_utf8($rule['ban_content'], true);
 
 			// Is this case insensitive?
 			if (!empty($rule['extra']['case_sens']))

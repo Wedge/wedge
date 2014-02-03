@@ -122,6 +122,13 @@ function Login2()
 		return;
 	}
 
+	// And if it's too long, trim it back.
+	if (westr::strlen($_POST['user']) > 80)
+	{
+		$_POST['user'] = westr::substr($_POST['user'], 0, 79);
+		$context['default_username'] = westr::safe($_POST['user']);
+	}
+
 	// Are we using any sort of hook to validate the login?
 	if (in_array('retry', call_hook('validate_login', array($_POST['user'], isset($_POST['hash_passwrd']) && strlen($_POST['hash_passwrd']) == 40 ? $_POST['hash_passwrd'] : null, $settings['cookieTime'])), true))
 	{
