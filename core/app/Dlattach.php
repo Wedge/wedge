@@ -179,29 +179,15 @@ function Dlattach()
 	}
 
 	// Set up sending the file with its headers. The filename should be in UTF-8 but of course, browsers don't always expect that...
-	$fixchar = function ($matches) {
-		$n = $matches[1];
-		if ($n < 32)
-			return '';
-		elseif ($n < 128)
-			return chr($n);
-		elseif ($n < 2048)
-			return chr(192 | $n >> 6) . chr(128 | $n & 63);
-		elseif ($n < 65536)
-			return chr(224 | $n >> 12) . chr(128 | $n >> 6 & 63) . chr(128 | $n & 63);
-		else
-			return chr(240 | $n >> 18) . chr(128 | $n >> 12 & 63) . chr(128 | $n >> 6 & 63) . chr(128 | $n & 63);
-	};
-
 	$disposition = !isset($_REQUEST['image']) ? 'attachment' : 'inline';
 
 	// Different browsers like different standards...
 	if (we::is('ie8down'))
-		header('Content-Disposition: ' . $disposition . '; filename="' . urlencode(preg_replace_callback('~&#(\d{3,8});~', $fixchar, $real_filename)) . '"');
+		header('Content-Disposition: ' . $disposition . '; filename="' . urlencode(westr::entity_to_utf8($real_filename)) . '"');
 	elseif (we::is('safari'))
 		header('Content-Disposition: ' . $disposition . '; filename="' . $real_filename . '"');
 	else
-		header('Content-Disposition: ' . $disposition . '; filename*=UTF-8\'\'' . rawurlencode(preg_replace_callback('~&#(\d{3,8});~', $fixchar, $real_filename)));
+		header('Content-Disposition: ' . $disposition . '; filename*=UTF-8\'\'' . rawurlencode(westr::entity_to_utf8($real_filename)));
 
 	// If this has an "image extension" - but isn't actually an image - then ensure it isn't cached cause of silly IE.
 	if (!isset($_REQUEST['image']) && in_array($file_ext, array('gif', 'jpg', 'bmp', 'png', 'jpeg', 'tiff')))
@@ -219,11 +205,11 @@ function Dlattach()
 	if (!empty($settings['attachmentRecodeLineEndings']) && !isset($_REQUEST['image']) && in_array($file_ext, array('txt', 'css', 'htm', 'html', 'php', 'xml')))
 	{
 		if (strpos($_SERVER['HTTP_USER_AGENT'], 'Windows') !== false)
-			$callback = function ($buffer) { return preg_replace('~[\r]?\n~', "\r\n", $buffer); };
+			$callback = function ($buffer) { return preg_replace('~\v~', "\r\n", $buffer); };
 		elseif (strpos($_SERVER['HTTP_USER_AGENT'], 'Mac') !== false)
-			$callback = function ($buffer) { return preg_replace('~[\r]?\n~', "\r", $buffer); };
+			$callback = function ($buffer) { return preg_replace('~\v~', "\r", $buffer); };
 		else
-			$callback = function ($buffer) { return preg_replace('~[\r]?\n~', "\n", $buffer); };
+			$callback = function ($buffer) { return preg_replace('~\v~', "\n", $buffer); };
 	}
 
 	// Since we don't do output compression for files this large...

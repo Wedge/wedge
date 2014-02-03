@@ -16,15 +16,14 @@ function pretty_generate_url($text, $is_board = false, $slash = false)
 {
 	// Do you know your ABCs?
 	$characterHash = array(
-		'-' =>	array('`', '«', '»', '"', ';-)', ';)', ';o)', ':-)', ':)', ':o)', '^^', '^_^', ';-p',
-					  ':-p', ';-P', ':-P', ':D', ';D', '>_<', '°_°', '@_@', '^o^', ':-/', ' ', ' '),
+		'-' =>	array(';-)', ';)', ';o)', ':-)', ':)', ':o)', '^^', '^_^', ';-p', ':-p', ';-P', ':-P', ':D', ';D', '>_<', '°_°', '@_@', '^o^', ':-/'),
 		chr(18)	=> array("'", 'ﺀ', 'ع', '‘', '’'),
 		'('	=>	array('{', '['),
 		')'	=>	array('}', ']'),
 		'a'	=>	array('ª', 'ą', 'Ą', 'а', 'А', 'ạ', 'Ạ', 'ả', 'Ả', 'Ầ', 'ầ', 'Ấ', 'ấ', 'Ậ', 'ậ', 'Ẩ', 'ẩ',
 					  'Ẫ', 'ẫ', 'Ă', 'ă', 'Ắ', 'ắ', 'Ẵ', 'ẵ', 'Ặ', 'ặ', 'Ằ', 'ằ', 'Ẳ', 'ẳ', 'α', 'Α'),
 		'b'	=>	array('б', 'Б', 'ب'),
-		'c'	=>	array('ć', 'Ć', 'č', 'Č', '¢'),
+		'c'	=>	array('ć', 'Ć', 'č', 'Č', '¢', '©', '&copy;'),
 		'ch' =>	array('ч', 'Ч', 'χ', 'Χ'),
 		'd'	=>	array('Ð', 'д', 'Д', 'د', 'ض', 'đ', 'Đ', 'δ', 'Δ'),
 		'e'	=>	array('ę', 'Ę', 'е', 'Е', 'ё', 'Ё', 'э', 'Э', 'Ẹ', 'ẹ', 'Ẻ', 'ẻ', 'Ẽ', 'ẽ',
@@ -40,14 +39,15 @@ function pretty_generate_url($text, $is_board = false, $slash = false)
 		'n'	=>	array('ń', 'Ń', 'н', 'Н', 'ن', 'ν', 'Ν'),
 		'o'	=>	array('°', 'º', 'о', 'О', 'Ọ', 'ọ', 'Ỏ', 'ỏ', 'Ộ', 'ộ', 'Ố', 'ố', 'Ỗ', 'ỗ', 'Ồ', 'ồ', 'Ổ',
 					  'ổ', 'Ơ', 'ơ', 'Ờ', 'ờ', 'Ớ', 'ớ', 'Ợ', 'ợ', 'Ở', 'ở', 'Ỡ', 'ỡ', 'ο', 'Ο', 'ω', 'Ω'),
-		'p'	=>	array('%', 'п', 'П', 'π', 'Π'),
+		'p'	=>	array('%', 'п', 'П', 'π', 'Π', '£'),
 		'ps' =>	array('ψ', 'Ψ'),
-		'r'	=>	array('р', 'Р', 'ر'),
+		'r'	=>	array('р', 'Р', 'ر', '®', '&reg;'),
 		's'	=>	array('ş', 'Ş', 'ś', 'Ś', 'с', 'С', 'س', 'ص', 'š', 'Š', 'σ', 'ς', 'Σ'),
 		'sh' =>	array('ш', 'Ш', 'ش'),
 		'shch' => array('щ', 'Щ'),
 		't'	=>	array('т', 'Т', 'ت', 'ط', 'τ', 'Τ', 'ţ', 'Ţ'),
 		'th' =>	array('ث', 'θ', 'Θ'),
+		'tm' => array('™', '&trade;'),
 		'ts' =>	array('ц', 'Ц'),
 		'u'	=>	array('у', 'У', 'Ụ', 'ụ', 'Ủ', 'ủ', 'Ũ', 'ũ', 'Ư', 'ư', 'Ừ', 'ừ', 'Ứ', 'ứ', 'Ự', 'ự', 'Ử', 'ử', 'Ữ', 'ữ', 'υ', 'Υ'),
 		'v'	=>	array('в', 'В', 'β', 'Β'),
@@ -59,10 +59,11 @@ function pretty_generate_url($text, $is_board = false, $slash = false)
 		'zh' =>	array('ж', 'Ж'),
 	);
 
-	$text = preg_replace_callback('~&#(\d{1,7});~', 'fix_accents', $text); // Turns &#12345; to UTF-8
+	// Turn numeric entities into UTF-8 for further processing.
+	$text = westr::entity_to_utf8($text);
 
-	$text = str_replace(array('&amp;', '&quot;', '£', '¥', 'ß', '¹', '²', '³', '©', '®', '™', '½', '¼', '¾', '§'),
-						array('&', '"', 'p', 'yen', 'ss', '1', '2', '3', 'c', 'r', 'tm', '1-2', '1-4', '3-4', 's'), $text);
+	$text = str_replace(array('&amp;', '&quot;', '¥',   'ß',  '¹', '²', '³', '©', '®', '™',  '½',   '¼',   '¾',   '§'),
+						array('&',     '"',      'yen', 'ss', '1', '2', '3', 'c', 'r', 'tm', '1-2', '1-4', '3-4', 's'), $text);
 	$text = str_replace(array('ج', 'ذ', 'غ', 'ﻻ', 'ق', 'و', 'ا', 'ﻯ'), array('j', 'dh', 'gh', 'la', 'q', 'w', 'aa', 'ae'), $text);
 
 	foreach ($characterHash as $replace => $search)
@@ -73,52 +74,16 @@ function pretty_generate_url($text, $is_board = false, $slash = false)
 	else
 		$text = strtolower(htmlentities($text, ENT_NOQUOTES, 'UTF-8'));
 
-	$text = preg_replace('~[\x80-\xff]~', '-', $text);
 	$text = preg_replace('~&(..?)(acute|grave|cedil|uml|circ|ring|tilde|lig|slash);~', '$1', $text);
-	$text = str_replace(array('&#169;', '&#0169;', '&copy;', '&#153;', '&#0153;', '&trade;', '&#174;', '&#0174;', '&reg;', '&#160;', '&nbsp;'),
-						array('c', 'c', 'c', 'tm', 'tm', 'tm', 'r', 'r', 'r', '-', '-'), $text); // © ™ ® nbsp
-	$text = preg_replace_callback('~&#(\d{1,7}|x[0-9a-f]{1,6});~', 'entity_replace', $text); // Turns &#12345; to %AB%CD
 
-	$text = preg_replace(array('~[\x00-\x1f\x80-\xff]~', '~&[^;]*?;~', '~[^a-z0-9\$%_' . ($slash ? '/' : '') . '-]~'), '-', $text);
-	$text = str_replace(array('"', "'"), chr(18), $text);
+	// Anything not converted after all of that, we'll just turn into a dash.
+	$text = preg_replace(array('~&[^;]*?;~', '~[^a-z0-9\$%_' . ($slash ? '/' : '') . '-]~'), '-', $text);
 
 	// If this is a board name, then only [a-z0-9] and hyphens are allowed -- standard host name policy.
 	if ($is_board)
 		$text = trim(preg_replace('~[^/a-z0-9-]~', '-', $text), '/-');
 
 	return trim(preg_replace('~-+~', '-', $text), '-');
-}
-
-function entity_replace($matches)
-{
-	$string = $matches[1]; // Comes from preg_replace_callback
-	$num = $string[0] === 'x' ? hexdec(substr($string, 1)) : (int) $string;
-	$rep = $num > 0x10FFFF || ($num >= 0xD800 && $num <= 0xDFFF) ? '' : ($num < 0x80 ?
-		chr($num) : ($num == 0 || ($num >= 0x80 && $num < 0x100) ? '-' : ($num < 0x800 ?
-		chr(192 | $num >> 6) . chr(128 | $num & 63) : ($num < 0x10000 ?
-		chr(224 | $num >> 12) . chr(128 | $num >> 6 & 63) . chr(128 | $num & 63) :
-		chr(240 | $num >> 18) . chr(128 | $num >> 12 & 63) . chr(128 | $num >> 6 & 63) . chr(128 | $num & 63)))));
-	return preg_replace('~([\x80-\xff])~', 'entity_percents', $rep);
-}
-
-function entity_percents($matches)
-{
-	return '%' . sprintf('%x', ord($matches[1]));
-}
-
-function fix_accents($matches)
-{
-	if ($matches[1] < 256)
-		return chr($matches[1]);
-	return '&#' . $matches[1] . ';';
-}
-
-// Remove percent-encoded multi-byte characters that were not completely trimmed at the end of a pretty URL
-function trimpercent($str)
-{
-	if (strpos($str, '%') === false)
-		return trim($str, '-' . chr(18));
-	return trim(preg_replace('~(?:%f[0-4](?:%(?:[8-9a-b](?:[0-9a-f](?:%(?:[8-9a-b](?:[0-9a-f](?:%[8-9a-b]?)?)?)?)?)?)?)?|%e[0-9a-f](?:%(?:[8-9a-b](?:[0-9a-f](?:%[8-9a-b]?)?)?)?)?|%d[0-9a-f](?:%[8-9a-b]?)?|%c[2-9a-f](?:%[8-9a-b]?)?|%[0-f]?)$~', '', $str), '-' . chr(18));
 }
 
 // Check a new pretty URL against the list of existing boards to ensure there won't be a conflict.
@@ -204,4 +169,12 @@ function pretty_update_topic($subject, $topic_id)
 	// Count this query!
 	if (isset($context, $context['pretty']))
 		$context['pretty']['db_count']++;
+}
+
+// Remove percent-encoded multi-byte characters that were not completely trimmed at the end of a pretty URL
+function trimpercent($str)
+{
+	if (strpos($str, '%') === false)
+		return trim($str, '-' . chr(18));
+	return trim(preg_replace('~(?:%f[0-4](?:%(?:[8-9a-b](?:[0-9a-f](?:%(?:[8-9a-b](?:[0-9a-f](?:%[8-9a-b]?)?)?)?)?)?)?)?|%e[0-9a-f](?:%(?:[8-9a-b](?:[0-9a-f](?:%[8-9a-b]?)?)?)?)?|%d[0-9a-f](?:%[8-9a-b]?)?|%c[2-9a-f](?:%[8-9a-b]?)?|%[0-f]?)$~', '', $str), '-' . chr(18));
 }

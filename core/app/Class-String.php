@@ -77,17 +77,22 @@ class westr_foundation
 	static function entity_to_utf8($string)
 	{
 		return preg_replace_callback(
-			'~&#(\d{2,8});~',
+			'~&#(\d{2,8}|x[0-9a-fA-F]{1,6});~',
 			function ($n)
 			{
 				if (is_array($n))
 					$n = $n[1];
-
+				if ($n[0] === 'x')
+					$n = hexdec(substr($n, 1));
+				if ($n < 32 || $n === 0x202e || $n === 0x202d || ($n >= 0xD800 && $n <= 0xDFFF) || $n > 0x10FFFF)
+					return '';
+				if (in_array($n, array(0x22, 0x26, 0x27, 0x3c, 0x3e)))
+					return '&#' . $n . ';';
 				if ($n < 128)
 					return chr($n);
-				elseif ($n < 2048)
+				if ($n < 2048)
 					return chr(192 | $n >> 6) . chr(128 | $n & 63);
-				elseif ($n < 65536)
+				if ($n < 65536)
 					return chr(224 | $n >> 12) . chr(128 | $n >> 6 & 63) . chr(128 | $n & 63);
 				return chr(240 | $n >> 18) . chr(128 | $n >> 12 & 63) . chr(128 | $n >> 6 & 63) . chr(128 | $n & 63);
 			},

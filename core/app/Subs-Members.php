@@ -876,21 +876,7 @@ function isReservedName($name, $current_id_member = 0, $is_name = true, $fatal =
 
 	// No cheating with entities please.
 	// Although it's unlikely there are entities in UTF8 mode, never say never.
-	$replaceEntities = function ($messages) {
-		$string = $messages[2];
-		$num = $string[0] === 'x' ? hexdec(substr($string, 1)) : (int) $string;
-		if ($num === 0x202E || $num === 0x202D)
-			return '';
-		if (in_array($num, array(0x22, 0x26, 0x27, 0x3C, 0x3E)))
-			return '&#' . $num . ';';
-		return $num < 0x20 || $num > 0x10FFFF || ($num >= 0xD800 && $num <= 0xDFFF) ? '' :
-			($num < 0x80 ? chr($num) : ($num < 0x800 ? chr(192 | $num >> 6) . chr(128 | $num & 63) :
-			($num < 0x10000 ? chr(224 | $num >> 12) . chr(128 | $num >> 6 & 63) . chr(128 | $num & 63) :
-			chr(240 | $num >> 18) . chr(128 | $num >> 12 & 63) . chr(128 | $num >> 6 & 63) . chr(128 | $num & 63))));
-	};
-
-	$entity_test = '~(&#(\d{1,7}|x[0-9a-fA-F]{1,6});)~';
-	$name = preg_replace_callback($entity_test, $replaceEntities, $name);
+	$name = westr::entity_to_utf8($name);
 	$name_lower = westr::strtolower($name);
 
 	// Administrators are never restricted ;).
@@ -902,7 +888,7 @@ function isReservedName($name, $current_id_member = 0, $is_name = true, $fatal =
 		foreach ($rules as $rule)
 		{
 			// We need to fix any entities
-			$rule['ban_content'] = preg_replace_callback($entity_test, $replaceEntities, $rule['ban_content']);
+			$rule['ban_content'] = westr::entity_to_utf8($rule['ban_content']);
 
 			// Is this case insensitive?
 			if (!empty($rule['extra']['case_sens']))

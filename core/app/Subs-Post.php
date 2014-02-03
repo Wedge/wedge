@@ -708,7 +708,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = true, $from = n
 function mimespecialchars($string, $with_charset = true, $hotmail_fix = false, $br = "\r\n")
 {
 	// This is the fun part....
-	if (preg_match('~&#\d{3,8};~', $string) && !$hotmail_fix)
+	if (preg_match('~&#\d{2,8};~', $string) && !$hotmail_fix)
 		$string = westr::entity_to_utf8($string);
 
 	// Convert all special characters to HTML entities... just for Hotmail :-\
