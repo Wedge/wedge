@@ -169,24 +169,6 @@ $txt['maintain_members_confirm'] = 'Are you sure you really want to delete these
 $txt['maintain_recountposts'] = 'Recount Member Posts';
 $txt['maintain_recountposts_desc'] = 'This will recalculate the post counts of all members within the forum, and ensure that the current count is the correct one, as well as ensuring post-count permissions are reapplied.';
 
-// !!! This little lot can go once the converter is done.
-$txt['utf8_title'] = 'Convert the database and data to UTF-8';
-$txt['utf8_introduction'] = 'UTF-8 is an international character set covering nearly all languages around the world. Converting your database and data to UTF-8 can make it easier to support multiple languages on the same board. It also can enhance search and sorting capabilities for languages with non-latin characters.';
-$txt['utf8_warning'] = 'If you want to convert your data and database to UTF-8, be aware of the following:
-<ul class="list">
-	<li>Converting character sets might be <em>harmful</em> for your data! Make sure you have backed up your database <em>before</em> converting.</li>
-	<li>Because UTF-8 is a richer character set than most other character sets, there\'s no way back, unless by restoring your database to before the conversion.</li>
-	<li>After converting your data and database to UTF-8, you will need UTF-8 compatible language files.</li>
-</ul>';
-$txt['utf8_charset_not_supported'] = 'Conversion from %1$s to UTF-8 is not supported.';
-$txt['utf8_detected_charset'] = 'Based on your default language file (\'%1$s\'), the character set of your data would most likely be \'%2$s\'.';
-$txt['utf8_already_utf8'] = 'Your database and data already seem to be configured as UTF-8 data. No conversion is needed.';
-$txt['utf8_source_charset'] = 'Data character set';
-$txt['utf8_proceed'] = 'Proceed';
-$txt['utf8_database_charset'] = 'Database character set';
-$txt['utf8_target_charset'] = 'Convert data and database to';
-$txt['utf8_utf8'] = 'UTF-8';
-
 // Move topics out.
 $txt['move_topics_maintenance'] = 'Move Topics';
 $txt['move_topics_select_board'] = 'Select Board';

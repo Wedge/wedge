@@ -491,7 +491,6 @@ function Admin()
 					'function' => 'ManageMaintenance',
 					'subsections' => array(
 						'routine' => array($txt['maintain_sub_routine'], 'admin_forum'),
-						'database' => array($txt['maintain_sub_database'], 'admin_forum'),
 						'members' => array($txt['maintain_sub_members'], 'admin_forum'),
 						'topics' => array($txt['maintain_sub_topics'], 'admin_forum'),
 					),

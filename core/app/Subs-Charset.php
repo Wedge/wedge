@@ -12,7 +12,7 @@ if (!defined('WEDGE'))
 	die('Hacking attempt...');
 
 /*	This file has functions in it to do with character set and string
-	manipulation.  It provides these functions:
+	manipulation. It provides these functions:
 
 	string utf8_strtolower(string $string)
 		- converts a UTF-8 string into a lowercase UTF-8 string.
@@ -21,10 +21,6 @@ if (!defined('WEDGE'))
 	string utf8_strtoupper(string $string)
 		- converts a UTF-8 string into a uppercase UTF-8 string.
 		- equivalent to mb_strtoupper($string, 'UTF-8')
-
-	void fix_serialized_columns()
-		- fixes corrupted serialized strings after a character set conversion.
-
 */
 
 // Converts the given UTF-8 string into lowercase.
@@ -549,33 +545,4 @@ function utf8_strtoupper($string)
 	);
 
 	return strtr($string, $case_folding);
-}
-
-// Fixes corrupted serialized strings after a character set conversion.
-function fix_serialized_columns()
-{
-	$request = wesql::query('
-		SELECT id_action, extra
-		FROM {db_prefix}log_actions
-		WHERE action IN ({literal:remove}, {literal:delete})'
-	);
-	while ($row = wesql::fetch_assoc($request))
-	{
-		if (@unserialize($row['extra']) === false && preg_match('~^(a:3:{s:5:"topic";i:\d+;s:7:"subject";s:)(\d+):"(.+)"(;s:6:"member";s:5:"\d+";})$~', $row['extra'], $matches) === 1)
-			wesql::query('
-				UPDATE {db_prefix}log_actions
-				SET extra = {string:extra}
-				WHERE id_action = {int:current_action}',
-				array(
-					'current_action' => $row['id_action'],
-					'extra' => $matches[1] . strlen($matches[3]) . ':"' . $matches[3] . '"' . $matches[4],
-				)
-			);
-	}
-	wesql::free_result($request);
-
-	// Refresh some cached data.
-	updateSettings(array(
-		'memberlist_updated' => time(),
-	));
 }

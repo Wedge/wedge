@@ -8,36 +8,6 @@
  * @author see contributors.txt
  */
 
-// Template for the database maintenance tasks.
-function template_maintain_database()
-{
-	global $context, $txt;
-
-	// If maintenance has finished tell the user.
-	if (!empty($context['maintenance_finished']))
-		echo '
-	<div class="maintenance_finished">
-		', sprintf($txt['maintain_done'], $context['maintenance_finished']), '
-	</div>';
-
-	echo '
-	<div id="manage_maintenance">
-		<we:title>
-			', $txt['maintain_optimize'], '
-		</we:title>
-		<div class="windowbg wrc">
-			<form action="<URL>?action=admin;area=maintain;sa=database;activity=optimize" method="post" accept-charset="UTF-8">
-				<p>', $txt['maintain_optimize_info'], '</p>
-				<span><input type="submit" value="', $txt['maintain_run_now'], '" class="submit"></span>
-				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-			</form>
-		</div>';
-
-	echo '
-	</div>
-	<br class="clear">';
-}
-
 // Template for the routine maintenance tasks.
 function template_maintain_routine()
 {
@@ -50,24 +20,38 @@ function template_maintain_routine()
 		', sprintf($txt['maintain_done'], $context['maintenance_finished']), '
 	</div>';
 
-	// Starts off with general maintenance procedures.
+	// Start off with database optimization, then do general maintenance procedures.
 	echo '
-	<div id="manage_maintenance">';
+	<div id="manage_maintenance" class="splitter">
+		<section>
+			<we:title style="margin: 0 3px 5px">
+				', $txt['maintain_optimize'], '
+			</we:title>
+			<div class="windowbg2 wrc" id="optimize_tables">
+				<form action="<URL>?action=admin;area=maintain;sa=database;activity=optimize" method="post" accept-charset="UTF-8">
+					<span><input type="submit" value="', $txt['maintain_run_now'], '" class="submit floatright" style="margin: 5px 0 0 1em"></span>
+					<p>', $txt['maintain_optimize_info'], '</p>
+					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" class="clear">
+				</form>
+			</div>
+		</section>';
 
 	$use_bg2 = false;
 	foreach ($context['maintenance_tasks'] as $id => $task)
 	{
 		echo '
-		<we:title>
-			', $task[0], '
-		</we:title>
-		<div class="windowbg', $use_bg2 ? '2' : '', ' wrc" id="', $id, '">
-			<form action="<URL>?', $task[2], '" method="post" accept-charset="UTF-8">
-				<p>', $task[1], '</p>
-				<span><input type="submit" value="', $txt['maintain_run_now'], '"></span>
-				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-			</form>
-		</div>';
+		<section>
+			<we:title style="margin: 0 3px 5px">
+				', $task[0], '
+			</we:title>
+			<div class="windowbg', $use_bg2 ? '2' : '', ' wrc" id="', $id, '">
+				<form action="<URL>?', $task[2], '" method="post" accept-charset="UTF-8">
+					<span><input type="submit" value="', $txt['maintain_run_now'], '" class="submit floatright" style="margin: 5px 0 0 1em"></span>
+					<p>', $task[1], '</p>
+					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" class="clear">
+				</form>
+			</div>
+		</section>';
 		$use_bg2 = !$use_bg2;
 	}
 
@@ -183,8 +167,9 @@ function template_maintain_members()
 				<p class="maintain_members">
 					<label><input type="checkbox" name="posts" id="posts" checked> ', $txt['reattribute_increase_posts'], '</label>
 				</p>
-				<span><input type="submit" id="do_attribute" value="', $txt['reattribute'], '" onclick="return checkAttributeValidity() && ask(warningMessage, e);" class="submit"></span>
+				<span><input type="submit" id="do_attribute" value="', $txt['reattribute'], '" onclick="return checkAttributeValidity() && ask(warningMessage, e);" class="submit floatright"></span>
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
+				<br class="clear">
 			</form>
 		</div>
 		<we:title>
@@ -209,8 +194,9 @@ function template_maintain_members()
 
 	echo '
 				</div>
-				<span><input type="submit" value="', $txt['maintain_old_remove'], '" onclick="return ask(', JavaScriptEscape($txt['maintain_members_confirm']), ', e);" class="delete"></span>
+				<span><input type="submit" value="', $txt['maintain_old_remove'], '" onclick="return ask(', JavaScriptEscape($txt['maintain_members_confirm']), ', e);" class="delete floatright"></span>
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
+				<br class="clear">
 			</form>
 		</div>
 		<we:title>
@@ -219,8 +205,9 @@ function template_maintain_members()
 		<div class="windowbg2 wrc">
 			<form action="<URL>?action=admin;area=maintain;sa=members;activity=recountposts" method="post" accept-charset="UTF-8">
 				<p>', $txt['maintain_recountposts_desc'], '</p>
-				<span><input type="submit" value="', $txt['maintain_run_now'], '"></span>
+				<span><input type="submit" value="', $txt['maintain_run_now'], '" class="submit floatright"></span>
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
+				<br class="clear">
 			</form>
 		</div>
 	</div>
@@ -337,7 +324,7 @@ function template_maintain_topics()
 	echo '
 						</div>
 					</div>
-					<input type="submit" value="', $txt['maintain_old_remove'], '" onclick="return ask(', JavaScriptEscape($txt['maintain_old_confirm']), ', e);" class="delete">
+					<input type="submit" value="', $txt['maintain_old_remove'], '" onclick="return ask(', JavaScriptEscape($txt['maintain_old_confirm']), ', e);" class="delete floatright">
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 				</form>
 			</div>
@@ -361,8 +348,10 @@ function template_maintain_topics()
 					</p>
 					<p>
 						', $txt['move_topics_from'], ':
-						<a href="#motLink" onclick="swapMot(); return false;"><span class="foldable" title="+" id="motIcon"></span></a> <a href="#motLink" onclick="swapMot(); return false;" id="motText" style="font-weight: bold">', $txt['maintain_old_all'], '</a>
+						<a href="#motLink" onclick="swapMot(); return false;"><span class="foldable" title="+" id="motIcon"></span></a>
+						<a href="#motLink" onclick="swapMot(); return false;" id="motText" style="font-weight: bold">', $txt['maintain_old_all'], '</a>
 					</p>
+					<hr>
 					<div class="flow_hidden hide" id="motPanel">
 						<div class="floatleft" style="width: 49%">';
 
@@ -399,6 +388,8 @@ function template_maintain_topics()
 						</div>
 					</div>
 					<p>
+					<input type="submit" value="', $txt['move_topics_now'], '" onclick="return moveTopicsNow(e);" class="submit floatright">
+					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 					<label for="id_board_to">', $txt['move_topics_to'], '</label>
 					<select name="id_board_to" id="id_board_to">
 						<option data-hide>(', $txt['move_topics_select_board'], ')</option>';
@@ -417,8 +408,6 @@ function template_maintain_topics()
 	}
 	echo '
 					</select></p>
-					<input type="submit" value="', $txt['move_topics_now'], '" onclick="return moveTopicsNow(e);" class="submit">
-					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 				</form>
 			</div>
 		</div>
@@ -461,65 +450,6 @@ function template_optimize()
 				<br>', number_context('database_optimized', $context['num_tables_optimized']), '
 			</p>
 			<p><a href="<URL>?action=admin;area=maintain">', $txt['maintain_return'], '</a></p>
-		</div>
-	</div>
-	<br class="clear">';
-}
-
-function template_convert_utf8()
-{
-	global $context, $txt;
-
-	echo '
-	<div id="manage_maintenance">
-		<we:title>
-			', $txt['utf8_title'], '
-		</we:title>
-		<div class="windowbg wrc">
-			<form action="<URL>?action=admin;area=maintain;sa=database;activity=convertutf8" method="post" accept-charset="UTF-8">
-				<p>', $txt['utf8_introduction'], '</p>
-				<div>', $txt['utf8_warning'], '</div>
-
-				<dl class="settings">
-					<dt><strong>', $txt['utf8_source_charset'], ':</strong></dt>
-					<dd>
-						<select name="src_charset">';
-
-	foreach ($context['charset_list'] as $charset)
-		echo '
-							<option value="', $charset, '"', $charset === $context['charset_detected'] ? ' selected' : '', '>', $charset, '</option>';
-
-	echo '
-						</select>
-					</dd>
-					<dt><strong>', $txt['utf8_database_charset'], ':</strong></dt>
-					<dd>', $context['database_charset'], '</dd>
-					<dt><strong>', $txt['utf8_target_charset'], ': </strong></dt>
-					<dd>', $txt['utf8_utf8'], '</dd>
-				</dl>
-				<input type="submit" value="', $txt['utf8_proceed'], '">
-				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-				<input type="hidden" name="proceed" value="1">
-			</form>
-		</div>
-	</div>
-	<br class="clear">';
-}
-
-function template_convert_entities()
-{
-	global $context, $txt;
-
-	echo '
-	<div id="manage_maintenance">
-		<we:title>
-			', $txt['entity_convert_title'], '
-		</we:title>
-		<div class="windowbg wrc">
-			<p>', $txt['entity_convert_introduction'], '</p>
-			<form action="<URL>?action=admin;area=maintain;sa=database;activity=convertentities;start=0;', $context['session_query'], '" method="post" accept-charset="UTF-8">
-				<input type="submit" value="', $txt['entity_convert_proceed'], '">
-			</form>
 		</div>
 	</div>
 	<br class="clear">';

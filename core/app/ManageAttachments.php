@@ -1375,7 +1375,58 @@ function RepairAttachments()
 	// What stage are we at?
 	$context['completed'] = $fix_errors ? true : false;
 	$context['errors_found'] = !empty($to_fix) ? true : false;
+}
 
+
+/**
+ * Older versions of the application used a method to convert filenames of attachments in to a safer form.
+ *
+ * - Accented characters are converted to filesystem-safe versions.
+ * - Extended characters (dual characters in a single glyph) are converted to their ANSI equivalents.
+ * - Remove characters other than letters or other word characters, and replace . with _
+ * - Form the encrypted filename out of attachment id, the cleaned filename and the MD5 hash of the filename.
+ *
+ * @param string $filename The original filename, as it was originally uploaded (and stored in the database)
+ * @param mixed $attachment_id If using encrypted filenames, the attachment id is required as it forms part of the filename. Otherwise it is not required and simply can be submitted as false.
+ * @param mixed $dir If using multiple attachment folders, the id of the folder.
+ * @param bool $new Submit true if using a newer attachment, or encrypted filenames are enabled.
+ * @todo This must be removed at some point because it's a blocker on UTF-8 purity.
+ */
+function getLegacyAttachmentFilename($filename, $attachment_id, $dir = null, $new = false)
+{
+	global $settings;
+
+	// Remove international characters (windows-1252)
+	// These two assignments should never be needed again. Still, behave.
+	$filename = strtr($filename,
+		"\x8a\x8e\x9a\x9e\x9f\xc0\xc1\xc2\xc3\xc4\xc5\xc7\xc8\xc9\xca\xcb\xcc\xcd\xce\xcf\xd1\xd2\xd3\xd4\xd5\xd6\xd8\xd9\xda\xdb\xdc\xdd\xe0\xe1\xe2\xe3\xe4\xe5\xe7\xe8\xe9\xea\xeb\xec\xed\xee\xef\xf1\xf2\xf3\xf4\xf5\xf6\xf8\xf9\xfa\xfb\xfc\xfd\xff",
+		'SZszYAAAAAACEEEEIIIINOOOOOOUUUUYaaaaaaceeeeiiiinoooooouuuuyy');
+	$filename = strtr($filename, array("\xde" => 'TH', "\xfe" => 'th',
+		"\xd0" => 'DH', "\xf0" => 'dh', "\xdf" => 'ss', "\x8c" => 'OE',
+		"\x9c" => 'oe', "\xc6" => 'AE', "\xe6" => 'ae', "\xb5" => 'u'));
+
+	// Sorry, no spaces, dots, or anything else but letters allowed.
+	$clean_name = preg_replace(array('/\s/', '/[^\w.-]/'), array('_', ''), $filename);
+
+	$enc_name = $attachment_id . '_' . strtr($clean_name, '.', '_') . md5($clean_name);
+	$clean_name = preg_replace('~\.{2,}~', '.', $clean_name);
+
+	if ($attachment_id == false || ($new && empty($settings['attachmentEncryptFilenames'])))
+		return $clean_name;
+	elseif ($new)
+		return $enc_name;
+
+	// Are we using multiple directories?
+	if (!empty($settings['currentAttachmentUploadDir']))
+	{
+		if (!is_array($settings['attachmentUploadDir']))
+			$settings['attachmentUploadDir'] = unserialize($settings['attachmentUploadDir']);
+		$path = $settings['attachmentUploadDir'][$dir];
+	}
+	else
+		$path = $settings['attachmentUploadDir'];
+
+	return $path . '/' . (file_exists($path . '/' . $enc_name) ? $enc_name : $clean_name);
 }
 
 function pauseAttachmentMaintenance($to_fix, $max_substep = 0)
