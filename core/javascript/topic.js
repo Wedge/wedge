@@ -250,7 +250,7 @@ function expandThumb(thumbID)
 		$.post(obj.href, function (response)
 		{
 			hide_ajax();
-			$('#msg' + iMessageId + ' .post_like').replaceWith(response);
+			$('#msg' + iMessageId + ' .post_like').first().replaceWith(response);
 		});
 
 		return false;
