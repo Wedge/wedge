@@ -223,14 +223,18 @@ function cleanRequest()
 
 	$full_board = array();
 	$full_request = $_SERVER['HTTP_HOST'] . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '/');
-	if (isset($_GET['board']) && is_numeric($_GET['board']))
-		$board = (int) $_GET['board'];
-	elseif (!empty($settings['pretty_enable_filters']))
-	{
-		// !!! Authorize URLs with a port number
-		//	$_SERVER['HTTP_HOST'] = strpos($_SERVER['HTTP_HOST'], ':') === false ? $_SERVER['HTTP_HOST'] : substr($_SERVER['HTTP_HOST'], 0, strpos($_SERVER['HTTP_HOST'], ':'));
+
+	// !!! Authorize URLs with a port number
+	//	$_SERVER['HTTP_HOST'] = strpos($_SERVER['HTTP_HOST'], ':') === false ? $_SERVER['HTTP_HOST'] : substr($_SERVER['HTTP_HOST'], 0, strpos($_SERVER['HTTP_HOST'], ':'));
+	$do_pretty = !empty($settings['pretty_enable_filters']);
+	if ($do_pretty)
 		$query_string = str_replace(substr($boardurl, strpos($boardurl, '://') + 3), '/', $full_request);
 
+	$board = 0;
+	if (isset($_GET['board']) && is_numeric($_GET['board']))
+		$board = (int) $_GET['board'];
+	elseif ($do_pretty)
+	{
 		$query = wesql::query('
 			SELECT id_board, url
 			FROM {db_prefix}boards AS b
@@ -243,25 +247,7 @@ function cleanRequest()
 			)
 		);
 
-		if (wesql::num_rows($query) == 0)
-		{
-			$board = 0;
-			unset($_GET['board']);
-
-			// URL has the form domain.com/profile/User?
-			if (preg_match('~/' . (isset($settings['pretty_prefix_profile']) ? $settings['pretty_prefix_profile'] : 'profile/') . '([^/?]*)~', $query_string, $m))
-			{
-				if (empty($m[1]) && empty($_GET['u']))
-					$_GET['u'] = 0;
-				elseif (empty($_GET['u']))
-					$_GET['user'] = urldecode($m[1]);
-				$_GET['action'] = 'profile';
-			}
-			// URL: /category/42/ (shows the board list, hiding all categories but number 42)
-			elseif (preg_match('~/category/(\d+)~', $full_request, $m) && (int) $m[1] > 0)
-				$_GET['category'] = (int) $m[1];
-		}
-		else
+		if (wesql::num_rows($query) > 0)
 		{
 			$full_board = wesql::fetch_assoc($query);
 
@@ -306,7 +292,25 @@ function cleanRequest()
 				$_GET['pretty'] = 1;
 			}
 		}
+		else
+			unset($_GET['board']);
 		wesql::free_result($query);
+	}
+
+	if ($do_pretty)
+	{
+		// URL has the form domain.com/profile/User?
+		if (preg_match('~/' . (isset($settings['pretty_prefix_profile']) ? $settings['pretty_prefix_profile'] : 'profile/') . '([^/?]*)~', $query_string, $m))
+		{
+			if (empty($m[1]) && empty($_GET['u']))
+				$_GET['u'] = 0;
+			elseif (empty($_GET['u']))
+				$_GET['user'] = urldecode($m[1]);
+			$_GET['action'] = 'profile';
+		}
+		// URL: /category/42/ (shows the board list, hiding all categories but number 42)
+		elseif (preg_match('~/category/(\d+)~', $full_request, $m) && (int) $m[1] > 0)
+			$_GET['category'] = (int) $m[1];
 
 		// If URL has the form domain.com/wahetever/do/action, it's an action. Really.
 		if (preg_match('~/' . (isset($settings['pretty_prefix_action']) ? $settings['pretty_prefix_action'] : 'do/') . '([a-zA-Z0-9]+)~', $query_string, $m) && isset($action_list[$m[1]]))
