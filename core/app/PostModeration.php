@@ -24,13 +24,13 @@ function PostModeration()
 	// Allowed sub-actions, you know the drill by now!
 	$subactions = array(
 		'approve' => 'ApproveMessage',
-		'replies' => 'UnapprovedPosts',
+		'posts' => 'UnapprovedPosts',
 		'topics' => 'UnapprovedPosts',
 	);
 
 	// Pick something valid...
 	if (!isset($_REQUEST['sa']) || !isset($subactions[$_REQUEST['sa']]))
-		$_REQUEST['sa'] = 'replies';
+		$_REQUEST['sa'] = 'posts';
 
 	$subactions[$_REQUEST['sa']]();
 }
@@ -40,7 +40,7 @@ function UnapprovedPosts()
 {
 	global $txt, $context;
 
-	$context['current_view'] = isset($_GET['sa']) && $_GET['sa'] == 'topics' ? 'topics' : 'replies';
+	$context['current_view'] = isset($_GET['sa']) && $_GET['sa'] == 'topics' ? 'topics' : 'posts';
 	$context['page_title'] = $txt['mc_unapproved_posts'];
 
 	// Work out what boards we can work in!
@@ -121,7 +121,7 @@ function UnapprovedPosts()
 		while ($row = wesql::fetch_assoc($request))
 		{
 			// If it's not within what our view is ignore it...
-			if (($row['id_msg'] == $row['id_first_msg'] && $context['current_view'] != 'topics') || ($row['id_msg'] != $row['id_first_msg'] && $context['current_view'] != 'replies'))
+			if (($row['id_msg'] == $row['id_first_msg'] && $context['current_view'] != 'topics') || ($row['id_msg'] != $row['id_first_msg'] && $context['current_view'] != 'posts'))
 				continue;
 
 			$can_add = false;
@@ -334,7 +334,7 @@ function ApproveMessage()
 }
 
 // Approve a batch of posts (or topics in their own right)
-function approveMessages($messages, $messageDetails, $current_view = 'replies')
+function approveMessages($messages, $messageDetails, $current_view = 'posts')
 {
 	loadSource('Subs-Post');
 	if ($current_view == 'topics')
@@ -354,7 +354,7 @@ function approveMessages($messages, $messageDetails, $current_view = 'replies')
 }
 
 // remove a batch of messages (or topics)
-function removeMessages($messages, $messageDetails, $current_view = 'replies')
+function removeMessages($messages, $messageDetails, $current_view = 'posts')
 {
 	global $settings;
 	loadSource('RemoveTopic');
