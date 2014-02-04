@@ -469,7 +469,7 @@ function getBoardIndex($boardIndexOptions)
 			if ($key == -1)
 			{
 				$cats = array_keys($categories);
-				$key = $cats[0];
+				$key = !empty($cats) ? $cats[0] : 0;
 				$after = false;
 			}
 
