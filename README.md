@@ -23,14 +23,14 @@ and follow the instructions.
 
 - If it works, then great.
 - If it doesn't, then skip to any fork that works best for you. SMF has an official board that lists them all.
-- If you're getting an Error 500 or something similar at install time, try the last version of Wedge [before the new installer was introduced](https://github.com/Wedge/wedge/tree/934e2bf0d838f76ff8721d4ea66f4ff6785feae5). Click the 'Download ZIP' button on that page, and follow the instructions in the README.
+- If you're getting an Error 500 or something similar at install time, it might be due to a configuration error. Ask your host about it. Perhaps switching to a newer version of PHP will help. Alternatively, make sure you don't have a malformed `.htaccess` file in your root folder. It's the cause of 90% of Apache server crashes.
 
 Importing data from my old forum
 --------------------------------
 
-- Check out the `Wedge/importer` repo at GitHub. It allows you to import a forum installed on the same server (and MySQL server.)
-- Supported source forums include SMF 1.1, SMF 2.0 and a few others that are totally untested. Well, basically, only SMF 2.0 import is tested and supported for now.
-- Importing Aeva Media items and Custom folder attachments isn't supported for now.
+- Check out the `Wedge/importer` repo at GitHub. It allows you to import a forum installed on the same server (and, preferably, same MySQL server.)
+- Supported source forums include SMF 1.1, SMF 2.0, MyBB 1.6 and a few others that are totally untested. Well, really, only SMF 2.0 import is tested and supported for now.
+- Importing Aeva Media items and Custom folder attachments isn't supported for now. Feel free to bother @eurich so that he gets started on these! ;)
 
 https://github.com/Wedge/importer/
 

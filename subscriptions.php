@@ -9,7 +9,6 @@
  */
 
 /*
-
 	void generateSubscriptionError()
 	// log the error for posterity
 */
@@ -268,9 +267,7 @@ function generateSubscriptionError($text)
 	// Send an email?
 	if (!empty($settings['paid_email']))
 	{
-		$replacements = array(
-			'SUBERROR' => $text,
-		);
+		$replacements = array('SUBERROR' => $text);
 
 		emailAdmins('paid_subscription_error', $replacements, $notify_users);
 	}
