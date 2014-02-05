@@ -78,7 +78,7 @@ class westr_foundation
 	{
 		return preg_replace_callback(
 			'~&#(\d{2,8}|x[0-9a-fA-F]{1,6});~',
-			function ($n)
+			function ($n) use ($reencode_sensitive)
 			{
 				if (is_array($n))
 					$n = $n[1];

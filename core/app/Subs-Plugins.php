@@ -261,7 +261,7 @@ function uploadedPluginValidate()
 	// Required functions?
 	if (!empty($manifest->{'required-functions'}))
 	{
-		$required_functions = testRequiredFunctions($manifest->{'required_functions'});
+		$required_functions = testRequiredFunctions($manifest->{'required-functions'});
 		if (!empty($required_functions))
 			fatal_lang_error('fatal_install_error_reqfunc', false, westr::htmlspecialchars(implode(', ', $required_functions)));
 	}
