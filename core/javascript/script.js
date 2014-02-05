@@ -453,12 +453,11 @@ $.fn.mm = function ()
 		if (!$(this).children('ul').length)
 			$(this).children().andSelf().removeClass('hove');
 
-		// Are we leaving the menu entirely, and thus triggering the time
-		// threshold, or are we just switching to another menu item?
-		var id = this.id;
-		$(e.relatedTarget).closest('.menu').length ?
-			menu_hide_children(id) :
-			menu_delay[id.slice(2)] = setTimeout(function () { menu_hide_children(id); }, 250);
+		// Are we leaving the menu entirely, and thus triggering the time threshold,
+		// or are we just switching to another non-context menu item?
+		var id = this.id, target_parent = $(e.relatedTarget).closest('.menu');
+		target_parent.length && !target_parent.hasClass('context') ? menu_hide_children(id) :
+			menu_delay[id.slice(2)] = setTimeout(function () { menu_hide_children(id); }, 300);
 	},
 
 	// Hide all children menus.
@@ -483,6 +482,9 @@ $.fn.mm = function ()
 				});
 		});
 	});
+
+	// Make menu icons clickable by stealing the link from their neighbor.
+	$('.menu>li>span').each(function () { $(this).wrap($('<a/>').attr('href', $(this).next().find('a').attr('href'))); });
 };
 
 
