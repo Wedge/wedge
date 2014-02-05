@@ -657,14 +657,14 @@ function ModifySettingsPageHandler($return_config = false, $plugin_id = null)
 				$new_item = array($item, $name);
 				break;
 			case 'text':
-			case 'large-text':
+			case 'large_text':
 				$array = array($item, $name);
 				if (!empty($element['size']))
 					$array['size'] = (string) $element['size'];
 				$new_item = $array;
 				break;
 			case 'select':
-			case 'multi-select':
+			case 'multi_select':
 				$array = array($item, $name, array());
 				foreach ($element->option as $opt)
 				{

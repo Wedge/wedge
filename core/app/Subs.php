@@ -1102,7 +1102,7 @@ function redirectexit($setLocation = '', $refresh = false, $permanent = false)
 
 	$setLocation = str_replace('<URL>', SCRIPT, $setLocation);
 
-	if (!preg_match('~^(?:http|ftp)s?://~', $setLocation))
+	if ($is_internal = !preg_match('~^(?:http|ftp)s?://~', $setLocation))
 		$setLocation = SCRIPT . ($setLocation != '' ? '?' . $setLocation : '');
 
 	// Put the session ID in.
@@ -1113,7 +1113,8 @@ function redirectexit($setLocation = '', $refresh = false, $permanent = false)
 		$setLocation = preg_replace('/^' . preg_quote(SCRIPT, '/') . '\\??/', SCRIPT . '?debug;', $setLocation);
 
 	// Redirections should be prettified too
-	$setLocation = prettify_urls($setLocation);
+	if ($is_internal)
+		$setLocation = prettify_urls($setLocation);
 
 	// Maybe hooks want to change where we are heading?
 	call_hook('redirect', array(&$setLocation, &$refresh));

@@ -104,14 +104,32 @@ function template_browse()
 			echo '
 		<div class="floatright smalltext errorbox plugin_error"><strong>', $txt['install_errors'], '</strong><br>', implode('<br>', $plugin['install_errors']), '</div>';
 
-		// Plugin description
-		if (!empty($plugin['description']))
+		if (!empty($plugin['description']) || !empty($plugin['readmes']))
+		{
 			echo '
-		<p>', $plugin['description'], '</p>';
+		<p>';
+
+			// Plugin description
+			if (!empty($plugin['description']))
+				echo $plugin['description'];
+
+			// Plugin readmes
+			if (!empty($plugin['readmes']))
+			{
+				echo !empty($plugin['description']) ? ' - ' : '', $txt['plugin_readmes'], ':';
+
+				foreach ($plugin['readmes'] as $readme => $state)
+					echo ' &nbsp;<a href="<URL>?action=admin;area=plugins;sa=readme;plugin=', rawurlencode($plugin['folder']), ';lang=', $readme, '" onclick="return reqWin(this);"><img src="', LANGUAGES, '/Flag.', $readme, '.png"></a>';
+			}
+
+			echo '
+		</p>';
+		}
 
 		// Plugin author, including links home.
 		echo '
-		<div class="plugin_from">', $txt['plugin_written_by'], ': ', $plugin['author'];
+		<div class="plugin_from"><em>', $txt['plugin_written_by'], '</em>: ', $plugin['author'];
+
 		if (!empty($plugin['author_url']))
 			echo '
 		&nbsp;<a href="', $plugin['author_url'], '" target="_blank"><img src="', ASSETS, '/icons/profile_sm.gif" title="', $txt['plugin_author_url'], '"></a>';
@@ -125,19 +143,6 @@ function template_browse()
 		&nbsp;<a href="mailto:', $plugin['author_email'], '"><img src="', ASSETS, '/email_sm.gif" title="', $txt['plugin_author_email'], '"></a>';
 
 		echo '</div>';
-
-		// Plugin readmes
-		if (!empty($plugin['readmes']))
-		{
-			echo '
-		<div class="smalltext floatleft inline-block">', $txt['plugin_readmes'], ':';
-
-			foreach ($plugin['readmes'] as $readme => $state)
-				echo ' &nbsp;<a href="<URL>?action=admin;area=plugins;sa=readme;plugin=', rawurlencode($plugin['folder']), ';lang=', $readme, '" onclick="return reqWin(this);"><img src="', LANGUAGES, '/Flag.', $readme, '.png"></a>';
-
-			echo '
-		</div>';
-		}
 
 		echo '
 	</fieldset>';
