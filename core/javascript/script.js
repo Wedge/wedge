@@ -841,12 +841,11 @@ $(window).load(function ()
 											$('<div/>').addClass('n_prev').html(doc).insertAfter(that).hide().slideToggle(600);
 											if (preview_callback)
 												preview_callback.call(that, doc, id);
-											that.removeClass('n_new');
 										}
 									);
 								}
-								else
-									that.removeClass('n_new');
+								else if (preview_callback)
+									preview_callback.call(that, '', id);
 							});
 
 						if (is_generic_notification)
@@ -891,6 +890,7 @@ $(window).load(function ()
 				{
 					if (this.hasClass('n_new'))
 					{
+						this.removeClass('n_new');
 						we_notifs--;
 						$shade.prev().attr('class', we_notifs > 0 ? 'note' : 'notevoid').text(we_notifs);
 						document.title = (we_notifs > 0 ? '(' + we_notifs + ') ' : '') + original_title;
