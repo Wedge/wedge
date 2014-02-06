@@ -392,7 +392,6 @@ function ModifyCacheSettings($return_config = false)
 		array('select', 'cache_type',
 			array_merge(
 				array('file' => $txt['cache_type_file']),
-				array('session' => $txt['cache_type_session']),
 				empty($available_cache) ? array() : array_combine(array_map('strtolower', $available_cache), $available_cache)
 			),
 			'file' => true

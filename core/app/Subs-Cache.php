@@ -1637,8 +1637,7 @@ function uncache()
  */
 function clean_cache($extensions = 'php', $filter = '', $force_folder = '', $remove_folder = false)
 {
-	global $cache_system, $cache_updated, $session_cache;
-	global $cachedir, $cssdir, $jsdir;
+	global $cache_system, $cachedir, $cssdir, $jsdir;
 
 	$folder = $cachedir . '/keys';
 	$is_recursive = false;
@@ -1690,11 +1689,6 @@ function clean_cache($extensions = 'php', $filter = '', $force_folder = '', $rem
 			zend_shm_cache_clear('we');
 		elseif ($cache_system === 'zend' && ($zend_cache_folder = ini_get('zend_accelerator.output_cache_dir')))
 			clean_cache('', '', $zend_cache_folder . '/.php_cache_api');
-		elseif ($cache_system === 'session')
-		{
-			$session_cache = array();
-			$cache_updated = true;
-		}
 
 		// Also get the source and language caches!
 		clean_cache('php', '', $cachedir . '/app');
@@ -1794,7 +1788,7 @@ function cache_quick_get($key, $file, $function, $params, $level = 1)
  */
 function cache_put_data($key, $val, $ttl = 120)
 {
-	global $cache_system, $cache_hits, $cache_count, $session_cache, $cache_updated;
+	global $cache_system, $cache_hits, $cache_count;
 	global $settings, $db_show_debug, $cachedir;
 
 	if (empty($settings['cache_enable']) && !empty($settings))
@@ -1832,14 +1826,6 @@ function cache_put_data($key, $val, $ttl = 120)
 		else
 			xcache_set($key, $val, $ttl);
 	}
-	elseif ($cache_system === 'session' && isset($session_cache))
-	{
-		$session_cache[$key] = array(
-			'ttl' => min(PHP_INT_MAX, time() + $ttl),
-			'data' => $val,
-		);
-		$cache_updated = true;
-	}
 	// Otherwise file cache?
 	else
 	{
@@ -1870,7 +1856,7 @@ function cache_put_data($key, $val, $ttl = 120)
  */
 function cache_get_data($orig_key, $ttl = 120, $put_callback = null)
 {
-	global $cache_system, $cache_hits, $cache_count, $session_cache;
+	global $cache_system, $cache_hits, $cache_count;
 	global $settings, $db_show_debug, $cachedir;
 
 	if (empty($settings['cache_enable']) && !empty($settings))
@@ -1893,8 +1879,6 @@ function cache_get_data($orig_key, $ttl = 120, $put_callback = null)
 		$val = output_cache_get($key, $ttl);
 	elseif ($cache_system === 'xcache')
 		$val = xcache_get($key);
-	elseif ($cache_system === 'session' && isset($session_cache))
-		$val = isset($session_cache[$key]) && time() < $session_cache[$key]['ttl'] ? $session_cache[$key]['data'] : false;
 	// Otherwise it's the file cache!
 	elseif (file_exists($cachedir . '/keys/' . $key . '.php') && @filesize($cachedir . '/keys/' . $key . '.php') > 10)
 	{

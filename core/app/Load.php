@@ -2113,49 +2113,23 @@ function sessionClose()
  */
 function sessionRead($session_id)
 {
-	global $cache_system, $session_cache;
+	global $cache_system;
 
 	if (preg_match('~^[a-zA-Z0-9,-]{16,32}$~', $session_id) == 0)
 		return false;
 
-	cache_get_type();
-	if ($cache_system === 'session')
-	{
-		// Look for it in the database.
-		$session_cache = array();
-		$result = wesql::query('
-			SELECT session_id, data
-			FROM {db_prefix}sessions
-			WHERE session_id IN ({literal:cache}, {string:session_id})
-			LIMIT 2',
-			array(
-				'session_id' => $session_id,
-			)
-		);
-		while ($row = wesql::fetch_assoc($result))
-		{
-			if ($row['session_id'] === 'cache')
-				$session_cache = unserialize($row['data']);
-			else
-				$sess_data = $row['data'];
-		}
-		wesql::free_result($result);
-	}
-	else
-	{
-		// Look for it in the database.
-		$result = wesql::query('
-			SELECT data
-			FROM {db_prefix}sessions
-			WHERE session_id = {string:session_id}
-			LIMIT 1',
-			array(
-				'session_id' => $session_id,
-			)
-		);
-		list ($sess_data) = wesql::fetch_row($result);
-		wesql::free_result($result);
-	}
+	// Look for it in the database.
+	$result = wesql::query('
+		SELECT data
+		FROM {db_prefix}sessions
+		WHERE session_id = {string:session_id}
+		LIMIT 1',
+		array(
+			'session_id' => $session_id,
+		)
+	);
+	list ($sess_data) = wesql::fetch_row($result);
+	wesql::free_result($result);
 
 	return isset($sess_data) ? $sess_data : false;
 }
@@ -2169,36 +2143,16 @@ function sessionRead($session_id)
  */
 function sessionWrite($session_id, $data)
 {
-	global $session_cache, $cache_updated;
-
 	// One of those weird bugs: sometimes, when using a combination of WebKit
 	// and a certain server configuration, wesql is already shut down at this point.
 	if (!class_exists('wesql') || !preg_match('~^[a-zA-Z0-9,-]{16,32}$~', $session_id))
 		return false;
 
-	$time = time();
-	if (isset($session_cache))
-	{
-		$no_expires = true;
-		foreach ($session_cache as $id => $cache)
-			if ($cache['ttl'] < $time)
-				unset($session_cache[$id], $no_expires);
-
-		if (!empty($cache_updated) || empty($no_expires))
-			wesql::insert('update',
-				'{db_prefix}sessions',
-				array('session_id' => 'string', 'data' => 'string', 'last_update' => 'int'),
-				array('cache', serialize($session_cache), PHP_INT_MAX)
-			);
-	}
-
 	return wesql::insert('update',
 		'{db_prefix}sessions',
 		array('session_id' => 'string', 'data' => 'string', 'last_update' => 'int'),
-		array($session_id, $data, $time)
+		array($session_id, $data, time())
 	);
-
-	return true;
 }
 
 /**

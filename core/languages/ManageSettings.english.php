@@ -159,7 +159,6 @@ $txt['cache_level3'] = 'Level 3 Caching (Not Recommended)';
 
 $txt['cache_type'] = 'Caching Type';
 $txt['cache_type_file'] = 'File-based caching';
-$txt['cache_type_session'] = 'Session-based caching';
 $txt['cache_memcached'] = 'Memcached server details<dfn>Leave empty to disable Memcached</dfn>';
 
 $txt['loadavg_warning'] = '<span class="error">Please note: the settings below are to be edited with care. Setting any of them too low may render your forum <strong>unusable</strong>! The current load average is <strong>%01.2f</strong></span>';
