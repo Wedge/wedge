@@ -1259,11 +1259,9 @@ function getBoardChildren($boards)
 	foreach ($boards as $k => $v)
 		$boards[$k] = (int) $v;
 
-	$cache_key = 'board_children-' . implode(',', $boards);
-	if (($complete_boards = cache_get_data($cache_key, 480)) === null)
+	return cache_get_data('board_children-' . implode(',', $boards), 480, function () use ($boards)
 	{
-		$complete_boards = $boards;
-		$this_iteration = $boards;
+		$complete_boards = $this_iteration = $boards;
 		while (!empty($this_iteration))
 		{
 			$request = wesql::query('
@@ -1281,9 +1279,6 @@ function getBoardChildren($boards)
 
 			$complete_boards = array_merge($complete_boards, $this_iteration);
 		}
-
-		cache_put_data($cache_key, $complete_boards, 480);
-	}
-
-	return $complete_boards;
+		return $complete_boards;
+	});
 }

@@ -1910,12 +1910,7 @@ function cache_prepare_key($key, $val = '', $type = 'get')
 
 	$cache_count = isset($cache_count) ? $cache_count + 1 : 1;
 	if (!empty($db_show_debug))
-	{
-		if ($type == 'get')
-			$cache_hits[$cache_count] = array('k' => $key, 'd' => 'get');
-		else
-			$cache_hits[$cache_count] = array('k' => $key, 'd' => 'put', 's' => $val === null ? 0 : strlen(serialize($val)));
-	}
+		$cache_hits[$cache_count] = $type == 'get' ? array('k' => $key, 'd' => 'get') : array('k' => $key, 'd' => 'put', 's' => $val === null ? 0 : strlen(serialize($val)));
 
 	if (empty($settings['cache_hash']))
 	{
