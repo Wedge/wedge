@@ -845,6 +845,8 @@ $(window).load(function ()
 										}
 									);
 								}
+								else
+									that.removeClass('n_new');
 							});
 
 						if (is_generic_notification)
