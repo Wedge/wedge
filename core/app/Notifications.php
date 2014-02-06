@@ -84,8 +84,9 @@ class weNotif
 		if (MID)
 		{
 			loadSource(array('notifiers/Likes', 'notifiers/Move'));
-			self::$notifiers['likes'] = new Likes_Notifier();
 			self::$notifiers['move'] = new Move_Notifier();
+			self::$notifiers['likes'] = new Likes_Notifier();
+			self::$notifiers['likes_thought'] = new Likes_Thought_Notifier();
 		}
 
 		call_hook('notification_callback', array(&self::$notifiers));

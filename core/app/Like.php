@@ -43,7 +43,7 @@ function Like()
 
 			$request = wesql::query('
 				SELECT
-					h.id_thought, h.id_member
+					h.id_member, h.thought
 				FROM {db_prefix}thoughts AS h
 				WHERE h.id_thought = {int:tid}
 					AND {query_see_thought}',
@@ -55,7 +55,7 @@ function Like()
 			$valid = false;
 			if (wesql::num_rows($request) != 0)
 			{
-				list ($id_topic, $id_author) = wesql::fetch_row($request);
+				list ($id_author, $subject) = wesql::fetch_row($request);
 				$valid = true;
 			}
 			wesql::free_result($request);
@@ -135,16 +135,27 @@ function Like()
 		);
 		$now_liked = true;
 
-		// Send notifications. Just posts for now.
+		// Send notifications.
 		if (!empty($id_author) && !empty($subject))
-			Notification::issue('likes', $id_author, $_REQUEST['msg'], array(
-				'topic' => $topic,
-				'subject' => $subject,
-				'member' => array(
-					'id' => MID,
-					'name' => we::$user['name'],
-				),
-			));
+		{
+			if ($content_type == 'think')
+				Notification::issue('likes_thought', $id_author, $id_content, array(
+					'subject' => $subject,
+					'member' => array(
+						'id' => MID,
+						'name' => we::$user['name'],
+					),
+				));
+			else
+				Notification::issue('likes', $id_author, $_REQUEST['msg'], array(
+					'topic' => $topic,
+					'subject' => $subject,
+					'member' => array(
+						'id' => MID,
+						'name' => we::$user['name'],
+					),
+				));
+		}
 	}
 
 	wesql::free_result($request);

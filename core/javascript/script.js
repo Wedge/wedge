@@ -831,7 +831,7 @@ $(window).load(function ()
 							.click(function ()
 							{
 								// Try to toggle the preview. If it doesn't exist, create it.
-								if (!that.next('.n_prev').stop(true, true).slideToggle(600).length)
+								if (!that.next('.n_prev').stop(true, true).slideToggle(600).length && that.data('prev') != 'no')
 								{
 									show_ajax(this);
 									$.post(
