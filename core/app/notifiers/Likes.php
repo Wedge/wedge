@@ -42,7 +42,6 @@ class Likes_Thought_Notifier extends Notifier
 		global $txt;
 
 		$data = $notification->getData();
-		$url = $notification->getURL();
 		$member_url = SCRIPT . '?action=profile;u=' . $data['member']['id'];
 
 		return strtr(
@@ -52,8 +51,6 @@ class Likes_Thought_Notifier extends Notifier
 				'{MEMBER_LINK}' => '<a href="' . $member_url . '">' . $data['member']['name'] . '</a>',
 				'{MEMBER_URL}' => $member_url,
 				'{OBJECT_NAME}' => $data['subject'],
-				'{OBJECT_URL}' => $url,
-				'{OBJECT_LINK}' => '<a href="' . $url . '">' . $data['subject'] . '</a>',
 			)
 		);
 	}

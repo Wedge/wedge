@@ -272,7 +272,6 @@ ul#noava
 // Banner header
 #upper_section
 	overflow: hidden
-	height: 95px
 	.frame
 		height: 95px
 
@@ -463,7 +462,7 @@ em
 	color: #fff !important
 	font: 700 7.5pt/100% Tahoma, Arial, sans-serif
 	text-transform: uppercase
-	margin: 0 6x
+	margin: 0 3px
 	padding: 2px 5px 3px
 	:hover
 		text-decoration: none
