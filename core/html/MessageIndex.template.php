@@ -15,11 +15,11 @@ function template_main_board()
 	echo '
 	<a id="top"></a>';
 
-	template_messageindex_childboards();
-
 	if (!empty($settings['show_board_desc']) && $context['description'] != '')
 		echo '
 	<p class="description_board">', $context['description'], '</p>';
+
+	template_messageindex_childboards();
 
 	if (!$context['no_topic_listing'])
 	{
@@ -191,11 +191,11 @@ function template_main_blog()
 	echo '
 	<a id="top"></a>';
 
-	template_messageindex_childboards();
-
 	if (!empty($settings['show_board_desc']) && $context['description'] != '')
 		echo '
 	<p class="description_board">', $context['description'], '</p>';
+
+	template_messageindex_childboards();
 
 	if (!$context['no_topic_listing'])
 	{
@@ -287,16 +287,8 @@ function template_main_blog()
 							<a href="', $topic['new'] && we::$is_member ? $topic['new_href'] : $topic['first_post']['href'], '">', number_context('num_replies', $topic['replies']), '</a>', $topic['can_reply'] ? ' | ' : '';
 
 				if ($topic['can_reply'])
-				{
-					// If quick reply is open, point directly to it, otherwise use the regular reply page
-					if (empty($options['display_quick_reply']) || $options['display_quick_reply'] != 2)
-						$reply_url = '<URL>?action=post;topic=' . $topic['id'] . '.0;last=' . $topic['last_post']['id'];
-					else
-						$reply_url = substr($topic['last_post']['href'], 0, strpos($topic['last_post']['href'], '#')) . '#quickreply';
-
 					echo '
-							<a href="', $reply_url, '">', $txt['reply'], '</a>';
-				}
+							<a href="<URL>?action=post;topic=' . $topic['id'] . '.0;last=' . $topic['last_post']['id'], '">', $txt['reply'], '</a>';
 			}
 
 			echo '
