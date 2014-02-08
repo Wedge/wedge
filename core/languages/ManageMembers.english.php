@@ -113,7 +113,6 @@ $txt['ban_group_subtext'] = 'This only applies to hard-banned users, and only fo
 $txt['ban_group_none'] = 'Do not add banned users to any group';
 
 $txt['membergroups_select_permission_type'] = 'Select permission profile';
-$txt['membergroups_images_url'] = '{theme URL}/images/';
 $txt['membergroups_select_visible_boards'] = 'Show boards';
 $txt['membergroups_members_top'] = 'Members';
 $txt['membergroups_name'] = 'Name';

@@ -280,7 +280,7 @@ function template_edit_group()
 						<dfn>', $txt['membergroups_star_image_note'], '</dfn>
 					</dt>
 					<dd>
-						', $txt['membergroups_images_url'], '
+						', strpos(ASSETS, ROOT) !== false ? str_replace(ROOT, '', ASSETS) : ASSETS, '/
 						<input name="star_image" id="star_image_input" value="', $context['group']['star_image'], '" onchange="if (this.value && this.form.star_count.value == 0) this.form.star_count.value = 1; else if (!this.value) this.form.star_count.value = 0; $(\'#star_preview\').attr(\'src\', we_assets + \'/\' + (this.value && this.form.star_count.value > 0 ? this.value.replace(/\$language/g, \'', we::$user['language'], '\') : \'blank.gif\'));" size="20">
 						<img id="star_preview" src="', ASSETS, '/', $context['group']['star_image'] == '' ? 'blank.gif' : $context['group']['star_image'], '">
 					</dd>
