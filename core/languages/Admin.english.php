@@ -124,9 +124,8 @@ $txt['manage_search'] = 'Search';
 
 $txt['smileys_manage'] = 'Smileys and Message Icons';
 $txt['smileys_manage_info'] = 'Install new smiley sets, add smileys to existing ones, or manage your message icons.';
-$txt['package_info'] = 'Install new features or modify existing ones with this interface.';
-$txt['theme_admin'] = 'Themes and Layout';
-$txt['theme_admin_info'] = 'Setup and manage your themes and set or reset theme options.';
+$txt['theme_admin'] = 'Skins';
+$txt['theme_admin_info'] = 'Manage your skin choices.';
 $txt['registration_center'] = 'Registration and Login';
 $txt['member_center_info'] = 'View the member list, search for members and manage not-yet-approved members and members who haven\'t activated their account yet.';
 

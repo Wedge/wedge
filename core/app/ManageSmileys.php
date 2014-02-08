@@ -1317,7 +1317,7 @@ function InstallSmileySet()
 	{
 		// Check that the smiley is from wedge.org, for now... maybe add mirroring later.
 		if (preg_match('~^http://[\w-]+\.wedge\.org/~', $_REQUEST['set_gz']) == 0 || strpos($_REQUEST['set_gz'], 'dlattach') !== false)
-			fatal_lang_error('package_not_on_wedge');
+			fatal_lang_error('only_on_wedge');
 
 		$extracted = read_tgz_file($_REQUEST['set_gz'], ASSETS_DIR . '/smileys/' . $name);
 	}

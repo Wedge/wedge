@@ -236,13 +236,7 @@ $txt['smileys_upload_error_illegal'] = 'Illegal Type.';
 $txt['search_invalid_weights'] = 'Search weights are not properly configured. At least one weight should be configured to be non-zero. Please report this error to an administrator.';
 $txt['unable_to_create_temporary'] = 'The search function was unable to create temporary tables. Please try again.';
 
-$txt['package_not_on_wedge'] = 'Sorry, plugins can only be downloaded like this from the wedge.org server.';
-$txt['package_upload_error_failed'] = 'Could not upload plugin, please check directory permissions!';
-
-$txt['package_get_error_not_found'] = 'The plugin you are trying to install cannot be located. You may want to manually upload the plugin to your Packages directory.';
-$txt['package_get_error_missing_xml'] = 'The plugin you are attempting to install is missing the plugin-info.xml that must be in the plugin\'s root folder.';
-$txt['package_get_error_is_zero'] = 'Although the plugin was downloaded to the server it appears to be empty. Please check the Packages directory, and the &quot;temp&quot; sub-directory are both writable. If you continue to experience this problem you should try extracting the plugin on your PC and uploading the extracted files into a subdirectory in your Packages directory and try again. For example, if the plugin file was called shout.tar.gz you should:<br>1) Download the plugin to your local PC and extract it into files.<br>2) Using an FTP client create a new directory in your &quot;Packages&quot; folder, in this example you may call it "shout".<br>3) Upload all the files from the extracted plugin to this directory.<br>4) Go back to the plugin manager browse page and the plugin will be automatically found by Wedge.';
-$txt['package_get_error_packageinfo_corrupt'] = 'Wedge was unable to find any valid information within the plugin-info.xml file included in the plugin file. There may be an error with the modification, or the plugin may be corrupt.';
+$txt['only_on_wedge'] = 'Sorry, this kind of asset can only be downloaded from an official source.';
 
 $txt['no_membergroup_selected'] = 'No membergroup selected';
 $txt['membergroup_does_not_exist'] = 'The membergroup doesn\'t exist or is invalid.';
