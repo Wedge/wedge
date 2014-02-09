@@ -460,8 +460,6 @@ function ThemeInstall()
 			@chmod($theme_dir . $file, 0777);
 		}
 
-		package_flush_cache();
-
 		$theme_name = $_REQUEST['copy'];
 		$theme_dir = realpath($theme_dir);
 

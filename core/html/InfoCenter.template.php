@@ -79,7 +79,7 @@ function template_info_center_usersonline()
 		// Showing membergroups?
 		if (!empty($settings['show_group_key']) && !empty($context['membergroups']))
 			echo '
-			<br>[' . implode(']&nbsp;&nbsp;[', $context['membergroups']) . ']';
+			<br>[' . implode(']&nbsp; [', $context['membergroups']) . ']';
 	}
 
 	echo '

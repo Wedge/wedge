@@ -28,17 +28,13 @@ function getWritableObject()
 
 	// Have we already done it lately? If so, gather everything we need from the session.
 	if (!empty($_SESSION['pack_ftp']['type']))
-	{
 		$context['connect_details'] = $_SESSION['pack_ftp'];
-	}
+
 	// They weren't specified before we got here. But maybe we can get them because we've already been given them before.
 	elseif (!empty($_POST['connect_pwd']))
 	{
 		// OK, let's start with looking for a stored connection.
-		if (!empty($settings['default_con']))
-			$context['connect_details'] = unserialize(base64_decode($settings['default_con']));
-		else
-			$context['connect_details'] = array();
+		$context['connect_details'] = empty($settings['default_con']) ? array() : unserialize(base64_decode($settings['default_con']));
 
 		$details = array('srv', 'user', 'pwd', 'port', 'type');
 		// Whether we have a stored connection or not, look for details in the $_POST.

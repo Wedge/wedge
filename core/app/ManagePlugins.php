@@ -557,14 +557,14 @@ function EnablePlugin()
 					}
 					elseif ($this_col['type'] == 'text' || $this_col['type'] == 'mediumtext')
 					{
-						// Block text columns can't have a default, can't be auto inc and can't be unsigned.
+						// Block text columns can't have a default, be auto inc, or be unsigned.
 						unset($this_col['auto'], $this_col['unsigned'], $this_col['default']);
 					}
 					elseif ($this_col['type'] == 'date')
 					{
 						// Date columns can have a default, but can't be auto inc or unsigned.
 						unset($this_col['auto'], $this_col['unsigned']);
-						// But check the date is meaningful.
+						// Check the date is meaningful.
 						if (empty($this_col['default']) || !preg_match('~^[0-9]{4}\-(0[1-9]|1[0-2])\-(0[1-9]|[12][0-9]|3[0-2])$~', $this_col['default']))
 							unset($this_col['default']);
 					}
@@ -572,7 +572,7 @@ function EnablePlugin()
 					{
 						// Datetime columns can have a default, but can't be auto inc or unsigned.
 						unset($this_col['auto'], $this_col['unsigned']);
-						// But check the date is meaningful.
+						// Check the date is meaningful.
 						if (empty($this_col['default']) || !preg_match('~^[0-9]{4}\-(0[1-9]|1[0-2])\-(0[1-9]|[12][0-9]|3[0-2]) ([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$~', $this_col['default']))
 							unset($this_col['default']);
 					}
@@ -657,14 +657,14 @@ function EnablePlugin()
 				}
 				elseif ($this_col['type'] == 'text' || $this_col['type'] == 'mediumtext')
 				{
-					// Block text columns can't have a default, can't be auto inc and can't be unsigned.
+					// Block text columns can't have a default, be auto inc, or be unsigned.
 					unset($this_col['auto'], $this_col['unsigned'], $this_col['default']);
 				}
 				elseif ($this_col['type'] == 'date')
 				{
 					// Date columns can have a default, but can't be auto inc or unsigned.
 					unset($this_col['auto'], $this_col['unsigned']);
-					// But check the date is meaningful.
+					// Check the date is meaningful.
 					if (empty($this_col['default']) || !preg_match('~^[0-9]{4}\-(0[1-9]|1[0-2])\-(0[1-9]|[12][0-9]|3[0-2])$~', $this_col['default']))
 						unset($this_col['default']);
 				}
@@ -672,7 +672,7 @@ function EnablePlugin()
 				{
 					// Datetime columns can have a default, but can't be auto inc or unsigned.
 					unset($this_col['auto'], $this_col['unsigned']);
-					// But check the date is meaningful.
+					// Check the date is meaningful.
 					if (empty($this_col['default']) || !preg_match('~^[0-9]{4}\-(0[1-9]|1[0-2])\-(0[1-9]|[12][0-9]|3[0-2]) ([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$~', $this_col['default']))
 						unset($this_col['default']);
 				}

@@ -250,7 +250,7 @@ function ModifySpamSettings($return_config = false)
 	foreach ($context['languages'] as $lang_id => $lang)
 		$css[] = '#antispam .flag_' . $lang_id;
 	add_css('
-	' . implode(', ', $css) . ' { margin-right: 4px; margin-bottom: 1px } #antispam td { vertical-align: top; text-align: center }');
+	' . implode(', ', $css) . ' { margin-right: 4px; margin-bottom: 1px } #antispam td { vertical-align: top; text-align: center } #antispam td.lang { text-align: right }');
 
 	$context['qa_verification_qas'] = array();
 
