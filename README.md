@@ -85,9 +85,5 @@ Read license.txt, and if you don't get all of the legalese, it just means:
   to do so, drop me a PM at wedge.org (user name is Nao, it's easy, the guy's everywhere.)
 - And other details that most people shouldn't have to bother with. Still, be respectful. Thanks.
 
-There's also license_smf.txt, which basically states that Wedge is based on SMF. Otherwise,
-it would have taken 10 years to develop it, not 3. And I do have a life, thank you.
-Oh, who am I kidding.
-
 -- René-Gilles Deberdt (Nao), from Paris, France.
    (The city of lights, rude people and Scarletts. I'm one of those three.)

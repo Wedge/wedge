@@ -35,7 +35,7 @@ Contributors:	Arantor (Peter Spicer) -- former co-developer
 
 Based on:		Simple Machines Forum 2.0
 					-- © Simple Machines and its contributors 2011, http://www.simplemachines.org/
-					-- used under the Modified BSD license (see license_smf.txt file)
+					-- used under the Modified BSD license (see license.txt file)
 
 
 --------------------------------------------------------------------------
@@ -72,7 +72,7 @@ MultiAttach (multiple attachment selector)
 JW Player 4.4.157 (media playback)
 	-- © Long Tail Video 2013, http://www.longtailvideo.com/jw-player/
 	-- free version, suitable only for non-commercial sites - for commercial sites, contact LongTail Video, or disable use of
-		video/audio in the media gallery. We will shortly replace the library with an open-source one, to remove this restriction.
+		video/audio in the media gallery. We will eventually replace the library with an open-source one, to remove this restriction.
 
 Yahoo UI Uploader (Flash/AJAX mass uploader)
 	-- © Yahoo! Inc., 2006-2013, http://yuilibrary.com/
