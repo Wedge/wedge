@@ -1,10 +1,10 @@
 /*!
  * Helper functions for topic pages
  *
- * @package Wedge
- * @copyright 2010 René-Gilles Deberdt, wedge.org
- * @license http://wedge.org/license/
- * @author see contributors.txt
+ * Wedge (http://wedge.org)
+ * Copyright © 2010 René-Gilles Deberdt, wedge.org
+ * Portions are © 2011 Simple Machines.
+ * License: http://wedge.org/license/
  */
 
 @language index;
@@ -313,7 +313,7 @@ function go_down()
 
 			show_ajax();
 			$.post(
-				weUrl('action=jsmodify;' + we_sessvar + '=' + we_sessid),
+				weUrl('action=quickedit;' + we_sessvar + '=' + we_sessid),
 				{
 					topic: $('#qm_subject').data('id'),
 					subject: $('#qm_subject').val().replace(/&#/g, '&#38;#'),
@@ -588,7 +588,7 @@ function QuickReply(opt)
 			// Send in the Ajax request and let's hope for the best.
 			show_ajax();
 			$.post(
-				weUrl('action=jsmodify;' + we_sessvar + '=' + we_sessid),
+				weUrl('action=quickedit;' + we_sessvar + '=' + we_sessid),
 				{
 					topic: we_topic,
 					subject: $('#qe_subject').val().replace(/&#/g, '&#38;#'),
@@ -754,7 +754,7 @@ function QuickReply(opt)
 							show_ajax();
 
 							$.post(
-								weUrl('action=jsmodify;' + we_sessvar + '=' + we_sessid),
+								weUrl('action=quickedit;' + we_sessvar + '=' + we_sessid),
 								{
 									topic: we_topic,
 									msg: $div.closest('.msg').attr('id').slice(3),

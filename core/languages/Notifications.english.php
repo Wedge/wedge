@@ -1,12 +1,5 @@
 <?php
-/**
- * Language file for notifications
- *
- * @package Wedge
- * @copyright 2010 René-Gilles Deberdt, wedge.org
- * @license http://wedge.org/license/
- * @author see contributors.txt
- */
+// Language file for notifications
 
 $txt['notifications'] = 'Notifications';
 $txt['notifications_short_unread'] = 'Unread';

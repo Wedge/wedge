@@ -1,10 +1,10 @@
 /*!
- * This file contains javascript associated with the captcha visual verification stuff.
+ * This file contains JavaScript associated with the captcha visual verification stuff.
  *
- * @package Wedge
- * @copyright 2010 René-Gilles Deberdt, wedge.org
- * @license http://wedge.org/license/
- * @author see contributors.txt
+ * Wedge (http://wedge.org)
+ * Copyright © 2010 René-Gilles Deberdt, wedge.org
+ * Portions are © 2011 Simple Machines.
+ * License: http://wedge.org/license/
  */
 
 function weCaptcha(imageURL, uniqueID)

@@ -2,10 +2,10 @@
 /**
  * This file handles the core of quick (inline) edit functionality.
  *
- * @package Wedge
- * @copyright 2010 René-Gilles Deberdt, wedge.org
- * @license http://wedge.org/license/
- * @author see contributors.txt
+ * Wedge (http://wedge.org)
+ * Copyright © 2010 René-Gilles Deberdt, wedge.org
+ * Portions are © 2011 Simple Machines.
+ * License: http://wedge.org/license/
  */
 
 if (!defined('WEDGE'))
@@ -27,7 +27,7 @@ if (!defined('WEDGE'))
  * - If there were no errors but we only changed the icon or subject, return only those details.
  * - Otherwise there were some errors - so get ready to return those too (including loading the relevant language file, and do any preprocessing on the strings, e.g. the long_message one)
  */
-function JSModify()
+function QuickEdit()
 {
 	global $settings, $board, $topic, $txt, $context;
 

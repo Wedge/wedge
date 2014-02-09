@@ -2,10 +2,10 @@
 /**
  * This file handles the parsing of BBC (Bulletin Board Code). Let's just say it's important on its own.
  *
- * @package Wedge
- * @copyright 2010 René-Gilles Deberdt, wedge.org
- * @license http://wedge.org/license/
- * @author see contributors.txt
+ * Wedge (http://wedge.org)
+ * Copyright © 2010 René-Gilles Deberdt, wedge.org
+ * Portions are © 2011 Simple Machines.
+ * License: http://wedge.org/license/
  */
 
 if (!defined('WEDGE'))
@@ -1043,7 +1043,7 @@ function parse_bbc($message, $type = 'generic', $bbc_options = array()) // $smil
 	}
 
 	// Deal with footnotes... They're more complex, so can't be parsed like other bbcodes.
-	if (stripos($message, '[nb]') !== false && $context['action'] !== 'jseditor' && (empty($parse_tags) || in_array('nb', $parse_tags)))
+	if (stripos($message, '[nb]') !== false && ($context['action'] !== 'ajax' || !isset($_GET['sa']) || $_GET['sa'] !== 'wysiwyg') && (empty($parse_tags) || in_array('nb', $parse_tags)))
 	{
 		preg_match_all('~\[nb]((?>[^[]|\[(?!/?nb])|(?R))+?)\[/nb\]~i', $message, $matches, PREG_SET_ORDER);
 

@@ -2,10 +2,10 @@
 /**
  * The Who's Who of Wedge Wardens. Keeps track of all the credits, and displays them to everyone, or just within the admin panel.
  *
- * @package Wedge
- * @copyright 2010 René-Gilles Deberdt, wedge.org
- * @license http://wedge.org/license/
- * @author see contributors.txt
+ * Wedge (http://wedge.org)
+ * Copyright © 2010 René-Gilles Deberdt, wedge.org
+ * Portions are © 2011 Simple Machines.
+ * License: http://wedge.org/license/
  */
 
 if (!defined('WEDGE'))
@@ -96,7 +96,6 @@ function Credits()
 				'http://wedge.org/license/',
 				2010
 			),
-			$txt['credits_smf2'],
 			sprintf(
 				$txt['credits_aeme'],
 				'Nao &#23578;',

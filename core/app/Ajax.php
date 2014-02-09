@@ -2,10 +2,10 @@
 /**
  * This file provides the handling for some of the AJAX operations, namely the very generic ones fired through action=ajax.
  *
- * @package Wedge
- * @copyright 2010 René-Gilles Deberdt, wedge.org
- * @license http://wedge.org/license/
- * @author see contributors.txt
+ * Wedge (http://wedge.org)
+ * Copyright © 2010 René-Gilles Deberdt, wedge.org
+ * Portions are © 2011 Simple Machines.
+ * License: http://wedge.org/license/
  */
 
 if (!defined('WEDGE'))
@@ -23,8 +23,14 @@ function Ajax()
 		'jumpto' => array(
 			'function' => 'GetJumpTo',
 		),
+		'opt' => array(
+			'function' => 'SetOption',
+		),
 		'messageicons' => array(
 			'function' => 'ListMessageIcons',
+		),
+		'wysiwyg' => array(
+			'function' => 'EditorSwitch',
 		),
 		'thought' => array(
 			'function' => 'Thought',
@@ -78,6 +84,53 @@ function GetJumpTo()
 }
 
 /**
+ * Sets a user option via JavaScript.
+ *
+ * - Accessed via ?action=ajax;sa=opt;var=variable;val=value;session_var=sess_id.
+ * - Does not log access to the Who's Online log.
+ * - Requires user to be logged in.
+ */
+function SetOption()
+{
+	global $options;
+
+	// Check the session id.
+	checkSession('get');
+
+	// If no variables are provided, leave the hell out of here.
+	if (empty($_POST['v']) || !isset($_POST['val']))
+		exit;
+
+	// Sorry, guests can't go any further than this..
+	if (we::$is_guest || MID == 0)
+		obExit(false);
+
+	// If this is the admin preferences the passed value will just be an element of it.
+	if ($_POST['v'] == 'admin_preferences')
+	{
+		$options['admin_preferences'] = !empty($options['admin_preferences']) ? unserialize($options['admin_preferences']) : array();
+		// New thingy...
+		if (isset($_GET['admin_key']) && strlen($_GET['admin_key']) < 5)
+			$options['admin_preferences'][$_GET['admin_key']] = $_POST['val'];
+
+		// Change the value to be something nice,
+		$_POST['val'] = serialize($options['admin_preferences']);
+	}
+
+	// Update the option.
+	wesql::insert('replace',
+		'{db_prefix}themes',
+		array('id_member' => 'int', 'variable' => 'string-255', 'value' => 'string-65534'),
+		array(MID, $_POST['v'], is_array($_POST['val']) ? implode(',', $_POST['val']) : $_POST['val'])
+	);
+
+	cache_put_data('theme_settings:' . MID, null, 60);
+
+	// Nothing to output.
+	exit;
+}
+
+/**
  * Produces a list of the message icons, used for the AJAX change-icon selector within the topic view.
  *
  * - Uses the {@link getMessageIcons()} function in Subs-Editor.php to achieve this.
@@ -96,6 +149,32 @@ function ListMessageIcons()
 	<icon value="' . $icon['value'] . '" url="' . $icon['url'] . '"><![CDATA[' . cleanXml('<img src="' . $icon['url'] . '" alt="' . $icon['value'] . '" title="' . $icon['name'] . '">') . ']]></icon>';
 
 	return_xml('<we>', $str, '</we>');
+}
+
+// Handles the processing required to switch between WYSIWYG and BBCode-only editing modes.
+function EditorSwitch()
+{
+	checkSession('get');
+
+	if (!isset($_REQUEST['view']) || !isset($_REQUEST['message']))
+		fatal_lang_error('no_access', false);
+
+	loadSource('Class-Editor');
+
+	// Return the right thing for the mode.
+	if ((int) $_REQUEST['view'])
+	{
+		$_REQUEST['message'] = strtr($_REQUEST['message'], array('#wecol#' => ';', '#welt#' => '&lt;', '#wegt#' => '&gt;', '#weamp#' => '&amp;'));
+		$message = wedit::bbc_to_html($_REQUEST['message']);
+	}
+	else
+	{
+		$_REQUEST['message'] = un_htmlspecialchars($_REQUEST['message']);
+		$_REQUEST['message'] = strtr($_REQUEST['message'], array('#wecol#' => ';', '#welt#' => '&lt;', '#wegt#' => '&gt;', '#weamp#' => '&amp;'));
+		$message = wedit::html_to_bbc($_REQUEST['message']);
+	}
+
+	return_xml('<we><message view="', (int) $_REQUEST['view'], '">', cleanXml(westr::htmlspecialchars($message)), '</message></we>');
 }
 
 function Thought()

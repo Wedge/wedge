@@ -2,10 +2,9 @@
 /**
  * Displays a given image CAPTCHA.
  *
- * @package Wedge
- * @copyright 2010 René-Gilles Deberdt, wedge.org
- * @license http://wedge.org/license/
- * @author see contributors.txt
+ * Wedge (http://wedge.org)
+ * Copyright © 2010 René-Gilles Deberdt, wedge.org
+ * License: http://wedge.org/license/
  */
 
 // Wedge CAPTCHA: recomposeanim_cycle2

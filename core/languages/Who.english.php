@@ -137,7 +137,6 @@ $txt['credits_admins'] = array(1 => 'Administrator', 'n' => 'Administrators');
 $txt['credits_moderators'] = array(1 => 'Moderator', 'n' => 'Moderators');
 $txt['credits_software'] = 'The Wedge Team (forum engine)';
 $txt['credits_wedge'] = 'Wedge is copyright © %3$d by %1$s, all rights reserved. It is distributed under the <a href="%2$s">Wedge license</a>.';
-$txt['credits_smf2'] = 'Uses portions from <a href="http://www.simplemachines.org/">SMF 2.0</a>, copyright © Simple Machines 2011, all rights reserved. SMF is covered by the <a href="http://www.simplemachines.org/about/smf/license.php">BSD</a> license.';
 $txt['credits_aeme'] = 'Uses portions from <a href="%4$s">Aeva Media</a>, copyright © 2007-2011 %1$s, %2$s and %3$s.';
 $txt['credits_special'] = 'Special Thanks';
 $txt['credits_copyright'] = 'Copyrights';

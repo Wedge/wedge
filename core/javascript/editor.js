@@ -1,10 +1,10 @@
 /*!
  * weEditor manages the post editor, both in its plain text and WYSIWIG versions.
  *
- * @package Wedge
- * @copyright 2010 René-Gilles Deberdt, wedge.org
- * @license http://wedge.org/license/
- * @author see contributors.txt
+ * Wedge (http://wedge.org)
+ * Copyright © 2010 René-Gilles Deberdt, wedge.org
+ * Portions are © 2011 Simple Machines.
+ * License: http://wedge.org/license/
  */
 
 @language Post;
@@ -672,7 +672,7 @@ function weEditor(opt)
 		open(weUrl('action=media;sa=post;noh=' + opt.sUniqueId), 'media', 'toolbar=no,titlebar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=' + Math.min(1000, screen.availWidth - 50) + ',height=' + Math.min(700, screen.availHeight - 50));
 	};
 
-	// Toggle wysiwyg/normal mode.
+	// Toggle WYSIWYG/normal mode.
 	this.toggleView = function (bView)
 	{
 		if (!this.canWysiwyg)
@@ -683,7 +683,7 @@ function weEditor(opt)
 		var that = this;
 
 		$.post(
-			weUrl('action=jseditor;view=' + +bView + ';' + we_sessvar + '=' + we_sessid),
+			weUrl('action=ajax;sa=wysiwyg;view=' + +bView + ';' + we_sessvar + '=' + we_sessid),
 			{ message: this.getText(true, !bView) },
 			function (oXMLDoc)
 			{

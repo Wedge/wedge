@@ -2,10 +2,10 @@
 /**
  * The core template that underpins the entire layout, including key configuration settings.
  *
- * @package Wedge
- * @copyright 2010 René-Gilles Deberdt, wedge.org
- * @license http://wedge.org/license/
- * @author see contributors.txt
+ * Wedge (http://wedge.org)
+ * Copyright © 2010 René-Gilles Deberdt, wedge.org
+ * Portions are © 2011 Simple Machines.
+ * License: http://wedge.org/license/
  */
 
 /*
@@ -21,13 +21,9 @@ function template_init()
 {
 	global $context, $settings;
 
-	// Add the theme-specific JavaScript files to our priority cache list.
-	if (!empty($context['main_js_files']))
-	{
-		$context['main_js_files']['theme.js'] = false;
-		if (we::$is_guest && empty($context['disable_login_hashing']) && !empty($settings['enable_quick_login']))
-			$context['main_js_files']['sha1.js'] = true;
-	}
+	// Add the login-specific JavaScript files to our priority cache list.
+	if (we::$is_guest && !empty($context['main_js_files']) && empty($context['disable_login_hashing']) && !empty($settings['enable_quick_login']))
+		$context['main_js_files']['sha1.js'] = true;
 
 	// A couple of settings you might want to set:
 	// $context['message_index_preview'] = true; // Does this theme use post previews on the message index?

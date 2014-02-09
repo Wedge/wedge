@@ -3,10 +3,9 @@
  * This file handles all caching data in Wedge: regular data (cache_get/put_data), CSS and JavaScript.
  * It also ensures that CSS and JS files are properly parsed and compressed by Wess before they're cached.
  *
- * @package Wedge
- * @copyright 2010 René-Gilles Deberdt, wedge.org
- * @license http://wedge.org/license/
- * @author see contributors.txt
+ * Wedge (http://wedge.org)
+ * Copyright © 2010 René-Gilles Deberdt, wedge.org
+ * License: http://wedge.org/license/
  */
 
 if (!defined('WEDGE'))
@@ -1607,6 +1606,9 @@ function wedge_parse_skin_options($skin_options)
 	foreach ($skin_options as $key => $val)
 		define('SKIN_' . strtoupper($key), we::$is['SKIN_' . strtoupper($key)] = !empty($val));
 }
+
+// And now for the actual cache system.
+// Portions are © 2011 Simple Machines.
 
 /**
  * /do/uncache will refresh all cache: CSS, JavaScript, PHP, language files and key-value pairs.

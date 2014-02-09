@@ -2,10 +2,10 @@
 /**
  * The main administration template, including the home page, credits, file versions, censored words, pending-completion, generic settings handling and more.
  *
- * @package Wedge
- * @copyright 2010 René-Gilles Deberdt, wedge.org
- * @license http://wedge.org/license/
- * @author see contributors.txt
+ * Wedge (http://wedge.org)
+ * Copyright © 2010 René-Gilles Deberdt, wedge.org
+ * Portions are © 2011 Simple Machines.
+ * License: http://wedge.org/license/
  */
 
 function template_admin_time_remaining()
@@ -79,7 +79,7 @@ function template_admin()
 		e.preventDefault();
 		$("#admin_intro input").hide();
 		$("#admin_intro").slideUp();
-		$.post(weUrl("action=jsoption;th=1;" + we_sessvar + "=" + we_sessid + ";time=" + $.now()), { v: "hide_admin_intro", val: 1 });
+		$.post(weUrl("action=ajax;sa=opt;th=1;" + we_sessvar + "=" + we_sessid + ";time=" + $.now()), { v: "hide_admin_intro", val: 1 });
 	};');
 		}
 

@@ -1,10 +1,9 @@
 /*!
  * All code related to showing rotating elements on a page, e.g. news fader.
  *
- * @package Wedge
- * @copyright 2010 René-Gilles Deberdt, wedge.org
- * @license http://wedge.org/license/
- * @author see contributors.txt
+ * Wedge (http://wedge.org)
+ * Copyright © 2010 René-Gilles Deberdt, wedge.org
+ * License: http://wedge.org/license/
  */
 
 function weFader(opt)

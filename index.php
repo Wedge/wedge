@@ -2,10 +2,10 @@
 /**
  * Welcome to Wedge.
  *
- * @package Wedge
- * @copyright 2010 René-Gilles Deberdt, wedge.org
- * @license http://wedge.org/license/
- * @author see contributors.txt
+ * Wedge (http://wedge.org)
+ * Copyright © 2010 René-Gilles Deberdt, wedge.org
+ * Portions are © 2011 Simple Machines.
+ * License: http://wedge.org/license/
  */
 
 if (defined('WEDGE'))
@@ -15,7 +15,7 @@ define('WEDGE_VERSION', '0.1');
 define('WEDGE', 1); // We are go.
 
 // Get everything started up...
-if (function_exists('set_magic_quotes_runtime') && version_compare('5.4.0', PHP_VERSION) > 0)
+if (function_exists('set_magic_quotes_runtime') && version_compare(PHP_VERSION, '5.4') < 0)
 	@set_magic_quotes_runtime(0);
 
 error_reporting(E_ALL | E_STRICT);
@@ -103,9 +103,6 @@ $action_list = array(
 	'feed' =>			'Feed',
 	'groups' =>			'Groups',
 	'help' =>			'Help',
-	'jseditor' =>		'JSEditor',
-	'jsmodify' =>		'JSModify',
-	'jsoption' =>		'JSOption',
 	'like' =>			'Like',
 	'lock' =>			'Lock',
 	'login' =>			'Login',
@@ -129,9 +126,10 @@ $action_list = array(
 	'post2' =>			'Post2',
 	'printpage' =>		'PrintPage',
 	'profile' =>		array('Profile', 'ModifyProfile'),
-	'quotefast' =>		'QuoteFast',
+	'quickedit' =>		'QuickEdit',
 	'quickmod' =>		array('QuickMod', 'QuickModeration'),
 	'quickmod2' =>		array('QuickMod', 'QuickInTopicModeration'),
+	'quotefast' =>		'QuoteFast',
 	'recent' =>			'Recent',
 	'register' =>		'Register',
 	'register2' =>		array('Register', 'Register2'),
@@ -160,7 +158,7 @@ $action_list = array(
 
 // If an action should not influence the who's online list, please add it here. (Hookable as global.)
 $action_no_log = array(
-	'ajax', 'dlattach', 'feed', 'jseditor', 'jsoption', 'like', 'notification', 'verification', 'viewquery', 'viewremote',
+	'ajax', 'dlattach', 'feed', 'like', 'notification', 'verification', 'viewquery', 'viewremote',
 );
 
 if (empty($settings['pm_enabled']))
