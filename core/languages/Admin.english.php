@@ -30,6 +30,7 @@ $txt['admin_users'] = 'Members';
 $txt['admin_newsletters'] = 'Newsletters';
 $txt['admin_edit_news'] = 'News';
 $txt['admin_groups'] = 'Membergroups';
+$txt['admin_groups_settings'] = 'Group & Badge Settings';
 $txt['admin_members'] = 'Manage Members';
 $txt['admin_members_approve'] = 'Awaiting Approval';
 $txt['admin_members_activate'] = 'Awaiting Activation';
@@ -231,7 +232,6 @@ $txt['primary'] = 'Primary';
 $txt['additional'] = 'Additional';
 $txt['wild_cards_allowed'] = 'wildcard characters * and ? are allowed';
 $txt['member_part_of_these_membergroups'] = 'Member is part of these membergroups';
-$txt['membergroups'] = 'Membergroups';
 $txt['confirm_delete_members'] = 'Are you sure you want to delete the selected members?';
 
 $txt['support_credits_title'] = 'Support and Credits';
