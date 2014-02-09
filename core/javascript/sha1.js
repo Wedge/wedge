@@ -1,10 +1,10 @@
 /*!
  * Code for handling encryption in JavaScript, and a few related helper functions.
  *
- * @package Wedge
- * @copyright 2010 René-Gilles Deberdt, wedge.org
- * @license http://wedge.org/license/
- * @author see contributors.txt
+ * Wedge (http://wedge.org)
+ * Copyright © 2010 René-Gilles Deberdt, wedge.org
+ * Portions are © 2011 Simple Machines.
+ * License: http://wedge.org/license/
  */
 
 // Convert a string to an 8 bit representation (like in PHP).

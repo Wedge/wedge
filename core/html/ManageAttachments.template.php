@@ -2,10 +2,10 @@
 /**
  * Displays the configuration of attachments and avatars, and allows to browse the uploaded files.
  *
- * @package Wedge
- * @copyright 2010 René-Gilles Deberdt, wedge.org
- * @license http://wedge.org/license/
- * @author see contributors.txt
+ * Wedge (http://wedge.org)
+ * Copyright © 2010 René-Gilles Deberdt, wedge.org
+ * Portions are © 2011 Simple Machines.
+ * License: http://wedge.org/license/
  */
 
 // Template template wraps around the simple settings page to add javascript functionality.
