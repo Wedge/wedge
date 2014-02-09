@@ -1,6 +1,6 @@
 <?php
 /**
- * Provides .tar.gz and .zip decompression support with a simple XML parser to handle XML package files.
+ * Provides .tar.gz and .zip decompression support, and file structure helpers.
  *
  * @package Wedge
  * @copyright 2010 René-Gilles Deberdt, wedge.org
@@ -11,10 +11,7 @@
 if (!defined('WEDGE'))
 	die('Hacking attempt...');
 
-/*	This file's central purpose of existence is that of making the package
-	manager work nicely. It contains functions for handling tar.gz and zip
-	files, as well as a simple xml parser to handle the xml package stuff.
-	Not to mention a few functions to make file handling easier.
+/*	This file contains functions for handling files, notably tar.gz and zip.
 
 	array read_tgz_file(string filename, string destination,
 			bool single_file = false, bool overwrite = false, array files_to_extract = null)
@@ -57,42 +54,18 @@ if (!defined('WEDGE'))
 		- returns an array of the files extracted.
 		- if files_to_extract is not equal to null only extracts file within this array.
 
-	string parse_path(string path)
-		- parses special identifiers out of the specified path.
-		- returns the parsed path.
-
-	void deltree(string path, bool delete_directory = true)
-		- deletes a directory, and all the files and direcories inside it.
-		- requires access to delete these files.
-
 	bool mktree(string path, int mode)
 		- creates the specified tree structure with the mode specified.
 		- creates every directory in path until it finds one that already
 		  exists.
 		- returns true if successful, false otherwise.
 
-	void copytree(string source, string destination)
-		- copies one directory structure over to another.
-		- requires the destination to be writable.
-
-	void listtree(string path, string sub_path = none)
-		// !!!
-
-	int package_put_contents(string filename, string data)
+	int file_put_contents_vary(string filename, string data)
 		- writes data to a file, almost exactly like the file_put_contents() function.
-		- uses FTP to create/chmod the file when necessary and available.
 		- uses text mode for text mode file extensions.
 		- returns the number of bytes written.
 
-	void package_chmod(string filename)
-		// !!!
-
-	Creating your own package server:
-	---------------------------------------------------------------------------
-		// !!!
-
-	Creating your own package:
-	---------------------------------------------------------------------------
+	void try_chmod(string filename, string perm_state)
 		// !!!
 */
 
@@ -241,7 +214,7 @@ function read_tgz_data($data, $destination, $single_file = false, $overwrite = f
 			elseif ($files_to_extract !== null && !in_array($current['filename'], $files_to_extract))
 				continue;
 
-			package_put_contents($destination . '/' . $current['filename'], $current['data']);
+			file_put_contents_vary($destination . '/' . $current['filename'], $current['data']);
 		}
 
 		if (substr($current['filename'], -1, 1) != '/')
@@ -254,13 +227,7 @@ function read_tgz_data($data, $destination, $single_file = false, $overwrite = f
 			);
 	}
 
-	if ($destination !== null && !$single_file)
-		package_flush_cache();
-
-	if ($single_file)
-		return false;
-	else
-		return $return;
+	return $single_file ? false : $return;
 }
 
 // Extract zip data. If destination is null, return a listing.
@@ -352,7 +319,7 @@ function read_zip_data($data, $destination, $single_file = false, $overwrite = f
 			elseif ($files_to_extract !== null && !in_array($file_info['filename'], $files_to_extract))
 				continue;
 
-			package_put_contents($destination . '/' . $file_info['filename'], $file_info['data']);
+			file_put_contents_vary($destination . '/' . $file_info['filename'], $file_info['data']);
 		}
 
 		if (substr($file_info['filename'], -1, 1) != '/')
@@ -365,96 +332,15 @@ function read_zip_data($data, $destination, $single_file = false, $overwrite = f
 			);
 	}
 
-	if ($destination !== null && !$single_file)
-		package_flush_cache();
-
-	if ($single_file)
-		return false;
-	else
-		return $return;
-}
-
-function deltree($dir, $delete_dir = true)
-{
-	global $package_ftp;
-
-	if (!file_exists($dir))
-		return;
-
-	$current_dir = @opendir($dir);
-	if ($current_dir == false)
-	{
-		if ($delete_dir && isset($package_ftp))
-		{
-			$ftp_file = strtr($dir, array($_SESSION['pack_ftp']['root'] => ''));
-			if (!is_writable($dir))
-				$package_ftp->chmod($ftp_file, 0777);
-			$package_ftp->unlink($ftp_file);
-		}
-
-		return;
-	}
-
-	while ($entryname = readdir($current_dir))
-	{
-		if (in_array($entryname, array('.', '..')))
-			continue;
-
-		if (is_dir($dir . '/' . $entryname))
-			deltree($dir . '/' . $entryname);
-		else
-		{
-			// Here, 755 doesn't really matter since we're deleting it anyway.
-			if (isset($package_ftp))
-			{
-				$ftp_file = strtr($dir . '/' . $entryname, array($_SESSION['pack_ftp']['root'] => ''));
-
-				if (!is_writable($dir . '/' . $entryname))
-					$package_ftp->chmod($ftp_file, 0777);
-				$package_ftp->unlink($ftp_file);
-			}
-			else
-			{
-				if (!is_writable($dir . '/' . $entryname))
-					@chmod($dir . '/' . $entryname, 0777);
-				unlink($dir . '/' . $entryname);
-			}
-		}
-	}
-
-	closedir($current_dir);
-
-	if ($delete_dir)
-	{
-		if (isset($package_ftp))
-		{
-			$ftp_file = strtr($dir, array($_SESSION['pack_ftp']['root'] => ''));
-			if (!is_writable($dir . '/' . $entryname))
-				$package_ftp->chmod($ftp_file, 0777);
-			$package_ftp->unlink($ftp_file);
-		}
-		else
-		{
-			if (!is_writable($dir))
-				@chmod($dir, 0777);
-			@rmdir($dir);
-		}
-	}
+	return $single_file ? false : $return;
 }
 
 function mktree($strPath, $mode)
 {
-	global $package_ftp;
-
 	if (is_dir($strPath))
 	{
 		if (!is_writable($strPath) && $mode !== false)
-		{
-			if (isset($package_ftp))
-				$package_ftp->chmod(strtr($strPath, array($_SESSION['pack_ftp']['root'] => '')), $mode);
-			else
-				@chmod($strPath, $mode);
-		}
+			@chmod($strPath, $mode);
 
 		$test = @opendir($strPath);
 		if ($test)
@@ -470,16 +356,9 @@ function mktree($strPath, $mode)
 		return false;
 
 	if (!is_writable(dirname($strPath)) && $mode !== false)
-	{
-		if (isset($package_ftp))
-			$package_ftp->chmod(dirname(strtr($strPath, array($_SESSION['pack_ftp']['root'] => ''))), $mode);
-		else
-			@chmod(dirname($strPath), $mode);
-	}
+		@chmod(dirname($strPath), $mode);
 
-	if ($mode !== false && isset($package_ftp))
-		return $package_ftp->create_dir(strtr($strPath, array($_SESSION['pack_ftp']['root'] => '')));
-	elseif ($mode === false)
+	if ($mode === false)
 	{
 		$test = @opendir(dirname($strPath));
 		if ($test)
@@ -504,311 +383,95 @@ function mktree($strPath, $mode)
 	}
 }
 
-function copytree($source, $destination)
+function file_put_contents_vary($filename, $data)
 {
-	global $package_ftp;
+	static $text_filetypes = array('php', 'txt', '.js', 'css', 'tml', 'htm');
 
-	if (!file_exists($destination) || !is_writable($destination))
-		mktree($destination, 0755);
-	if (!is_writable($destination))
-		mktree($destination, 0777);
-
-	$current_dir = scandir($source);
-	if (empty($current_dir))
-		return;
-
-	foreach ($current_dir as $entryname)
-	{
-		if (in_array($entryname, array('.', '..')))
-			continue;
-
-		if (isset($package_ftp))
-			$ftp_file = strtr($destination . '/' . $entryname, array($_SESSION['pack_ftp']['root'] => ''));
-
-		if (is_file($source . '/' . $entryname))
-		{
-			if (isset($package_ftp) && !file_exists($destination . '/' . $entryname))
-				$package_ftp->create_file($ftp_file);
-			elseif (!file_exists($destination . '/' . $entryname))
-				@touch($destination . '/' . $entryname);
-		}
-
-		package_chmod($destination . '/' . $entryname);
-
-		if (is_dir($source . '/' . $entryname))
-			copytree($source . '/' . $entryname, $destination . '/' . $entryname);
-		elseif (file_exists($destination . '/' . $entryname))
-			package_put_contents($destination . '/' . $entryname, package_get_contents($source . '/' . $entryname));
-		else
-			copy($source . '/' . $entryname, $destination . '/' . $entryname);
-	}
-}
-
-function listtree($path, $sub_path = '')
-{
-	$data = array();
-
-	$dir = @dir($path . $sub_path);
-	if (!$dir)
-		return array();
-	while ($entry = $dir->read())
-	{
-		if ($entry == '.' || $entry == '..')
-			continue;
-
-		if (is_dir($path . $sub_path . '/' . $entry))
-			$data = array_merge($data, listtree($path, $sub_path . '/' . $entry));
-		else
-			$data[] = array(
-				'filename' => $sub_path == '' ? $entry : $sub_path . '/' . $entry,
-				'size' => filesize($path . $sub_path . '/' . $entry),
-				'skipped' => false,
-			);
-	}
-	$dir->close();
-
-	return $data;
-}
-
-function package_get_contents($filename)
-{
-	global $package_cache, $settings;
-
-	if (!isset($package_cache))
-	{
-		// Windows doesn't seem to care about the memory_limit.
-		if (!empty($settings['package_disable_cache']) || ini_set('memory_limit', '128M') !== false || strpos(strtolower(PHP_OS), 'win') !== false)
-			$package_cache = array();
-		else
-			$package_cache = false;
-	}
-
-	if ($package_cache === false || !isset($package_cache[$filename]))
-		return file_get_contents($filename);
-	else
-		return $package_cache[$filename];
-}
-
-function package_put_contents($filename, $data, $testing = false)
-{
-	global $package_ftp, $package_cache, $settings;
-	static $text_filetypes = array('php', 'txt', '.js', 'css', 'vbs', 'tml', 'htm');
-
-	if (!isset($package_cache))
-	{
-		// Try to increase the memory limit - we don't want to run out of ram!
-		if (!empty($settings['package_disable_cache']) || ini_set('memory_limit', '128M') !== false || strpos(strtolower(PHP_OS), 'win') !== false)
-			$package_cache = array();
-		else
-			$package_cache = false;
-	}
-
-	if (isset($package_ftp))
-		$ftp_file = strtr($filename, array($_SESSION['pack_ftp']['root'] => ''));
-
-	if (!file_exists($filename) && isset($package_ftp))
-		$package_ftp->create_file($ftp_file);
-	elseif (!file_exists($filename))
+	if (!file_exists($filename))
 		@touch($filename);
 
-	package_chmod($filename);
+	try_chmod($filename);
 
-	if (!$testing && $package_cache === false)
-	{
-		$fp = @fopen($filename, in_array(substr($filename, -3), $text_filetypes) ? 'w' : 'wb');
+	$fp = @fopen($filename, in_array(substr($filename, -3), $text_filetypes) ? 'w' : 'wb');
 
-		// We should show an error message or attempt a rollback, no?
-		if (!$fp)
-			return false;
+	// We should show an error message or attempt a rollback, no?
+	if (!$fp)
+		return false;
 
-		fwrite($fp, $data);
-		fclose($fp);
-	}
-	elseif ($package_cache === false)
-		return strlen($data);
-	else
-	{
-		$package_cache[$filename] = $data;
-
-		// Permission denied, eh?
-		$fp = @fopen($filename, 'r+');
-		if (!$fp)
-			return false;
-		fclose($fp);
-	}
+	fwrite($fp, $data);
+	fclose($fp);
 
 	return strlen($data);
 }
 
-function package_flush_cache($trash = false)
-{
-	global $package_ftp, $package_cache;
-	static $text_filetypes = array('php', 'txt', '.js', 'css', 'vbs', 'tml', 'htm');
-
-	if (empty($package_cache))
-		return;
-
-	// First, let's check permissions!
-	foreach ($package_cache as $filename => $data)
-	{
-		if (isset($package_ftp))
-			$ftp_file = strtr($filename, array($_SESSION['pack_ftp']['root'] => ''));
-
-		if (!file_exists($filename) && isset($package_ftp))
-			$package_ftp->create_file($ftp_file);
-		elseif (!file_exists($filename))
-			@touch($filename);
-
-		package_chmod($filename);
-
-		$fp = fopen($filename, 'r+');
-		if (!$fp && !$trash)
-		{
-			// We should have package_chmod()'d them before, no?!
-			trigger_error('package_flush_cache(): some files are still not writable', E_USER_WARNING);
-			return;
-		}
-		fclose($fp);
-	}
-
-	if ($trash)
-	{
-		$package_cache = array();
-		return;
-	}
-
-	foreach ($package_cache as $filename => $data)
-	{
-		$fp = fopen($filename, in_array(substr($filename, -3), $text_filetypes) ? 'w' : 'wb');
-		fwrite($fp, $data);
-		fclose($fp);
-	}
-
-	$package_cache = array();
-}
-
 // Try to make a file writable. Return true if it worked, false if it didn't.
-function package_chmod($filename, $perm_state = 'writable', $track_change = false)
+function try_chmod($filename, $perm_state = 'writable')
 {
-	global $package_ftp;
-
 	if (file_exists($filename) && is_writable($filename) && $perm_state == 'writable')
 		return true;
 
-	// Start off checking without FTP.
-	if (!isset($package_ftp) || $package_ftp === false)
+	for ($i = 0; $i < 2; $i++)
 	{
-		for ($i = 0; $i < 2; $i++)
+		$chmod_file = $filename;
+
+		// Start off with a less aggressive test.
+		if ($i == 0)
 		{
-			$chmod_file = $filename;
-
-			// Start off with a less agressive test.
-			if ($i == 0)
+			// If this file doesn't exist, then we actually want to look at whatever parent directory does.
+			$subTraverseLimit = 2;
+			while (!file_exists($chmod_file) && $subTraverseLimit)
 			{
-				// If this file doesn't exist, then we actually want to look at whatever parent directory does.
-				$subTraverseLimit = 2;
-				while (!file_exists($chmod_file) && $subTraverseLimit)
-				{
-					$chmod_file = dirname($chmod_file);
-					$subTraverseLimit--;
-				}
+				$chmod_file = dirname($chmod_file);
+				$subTraverseLimit--;
+			}
 
-				// Keep track of the writable status here.
+			// Keep track of the writable status here.
+			$file_permissions = @fileperms($chmod_file);
+		}
+		else
+		{
+			// This looks odd, but it's an attempt to work around PHP suExec.
+			if (!file_exists($chmod_file) && $perm_state == 'writable')
+			{
+				$file_permissions = @fileperms(dirname($chmod_file));
+
+				mktree(dirname($chmod_file), 0755);
+				@touch($chmod_file);
+				@chmod($chmod_file, 0755);
+			}
+			else
 				$file_permissions = @fileperms($chmod_file);
-			}
-			else
-			{
-				// This looks odd, but it's an attempt to work around PHP suExec.
-				if (!file_exists($chmod_file) && $perm_state == 'writable')
-				{
-					$file_permissions = @fileperms(dirname($chmod_file));
-
-					mktree(dirname($chmod_file), 0755);
-					@touch($chmod_file);
-					@chmod($chmod_file, 0755);
-				}
-				else
-					$file_permissions = @fileperms($chmod_file);
-			}
-
-			// This looks odd, but it's another attempt to work around PHP suExec.
-			if ($perm_state != 'writable')
-				@chmod($chmod_file, $perm_state == 'execute' ? 0755 : 0644);
-			else
-			{
-				if (!@is_writable($chmod_file))
-					@chmod($chmod_file, 0755);
-				if (!@is_writable($chmod_file))
-					@chmod($chmod_file, 0777);
-				if (!@is_writable(dirname($chmod_file)))
-					@chmod($chmod_file, 0755);
-				if (!@is_writable(dirname($chmod_file)))
-					@chmod($chmod_file, 0777);
-			}
-
-			// The ultimate writable test.
-			if ($perm_state == 'writable')
-			{
-				$fp = is_dir($chmod_file) ? @opendir($chmod_file) : @fopen($chmod_file, 'rb');
-				if (@is_writable($chmod_file) && $fp)
-				{
-					if (!is_dir($chmod_file))
-						fclose($fp);
-					else
-						closedir($fp);
-
-					// It worked!
-					if ($track_change)
-						$_SESSION['pack_ftp']['original_perms'][$chmod_file] = $file_permissions;
-
-					return true;
-				}
-			}
-			elseif ($perm_state != 'writable' && isset($_SESSION['pack_ftp']['original_perms'][$chmod_file]))
-				unset($_SESSION['pack_ftp']['original_perms'][$chmod_file]);
 		}
 
-		// If we're here we're a failure.
-		return false;
-	}
-	// Otherwise we do have FTP?
-	elseif ($package_ftp !== false && !empty($_SESSION['pack_ftp']))
-	{
-		$ftp_file = strtr($filename, array($_SESSION['pack_ftp']['root'] => ''));
-
-		// This looks odd, but it's an attempt to work around PHP suExec.
-		if (!file_exists($filename) && $perm_state == 'writable')
-		{
-			$file_permissions = @fileperms(dirname($filename));
-
-			mktree(dirname($filename), 0755);
-			$package_ftp->create_file($ftp_file);
-			$package_ftp->chmod($ftp_file, 0755);
-		}
-		else
-			$file_permissions = @fileperms($filename);
-
+		// This looks odd, but it's another attempt to work around PHP suExec.
 		if ($perm_state != 'writable')
-		{
-			$package_ftp->chmod($ftp_file, $perm_state == 'execute' ? 0755 : 0644);
-		}
+			@chmod($chmod_file, $perm_state == 'execute' ? 0755 : 0644);
 		else
 		{
-			if (!@is_writable($filename))
-				$package_ftp->chmod($ftp_file, 0777);
-			if (!@is_writable(dirname($filename)))
-				$package_ftp->chmod(dirname($ftp_file), 0777);
+			if (!@is_writable($chmod_file))
+				@chmod($chmod_file, 0755);
+			if (!@is_writable($chmod_file))
+				@chmod($chmod_file, 0777);
+			if (!@is_writable(dirname($chmod_file)))
+				@chmod($chmod_file, 0755);
+			if (!@is_writable(dirname($chmod_file)))
+				@chmod($chmod_file, 0777);
 		}
 
-		if (@is_writable($filename))
+		// The ultimate writable test.
+		if ($perm_state == 'writable')
 		{
-			if ($track_change)
-				$_SESSION['pack_ftp']['original_perms'][$filename] = $file_permissions;
+			$fp = is_dir($chmod_file) ? @opendir($chmod_file) : @fopen($chmod_file, 'rb');
+			if (@is_writable($chmod_file) && $fp)
+			{
+				if (!is_dir($chmod_file))
+					fclose($fp);
+				else
+					closedir($fp);
 
-			return true;
+				return true;
+			}
 		}
-		elseif ($perm_state != 'writable' && isset($_SESSION['pack_ftp']['original_perms'][$filename]))
-			unset($_SESSION['pack_ftp']['original_perms'][$filename]);
 	}
 
 	// Oh dear, we failed if we get here.
