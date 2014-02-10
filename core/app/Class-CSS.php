@@ -384,9 +384,10 @@ class wess_var extends wess
 			$css = str_replace($decs, '', $css);
 			unset($decs);
 
+			// Build CSS vars, taking into account {tests} and self-references.
 			foreach ($matches[0] as $i => $dec)
 				if (empty($matches[2][$i]) || we::is(we::$user['extra_tests'][] = strtolower($matches[2][$i])))
-					$css_vars[$matches[1][$i]] = rtrim($matches[4][$i], '; ');
+					$css_vars[$matches[1][$i]] = preg_replace('~' . preg_quote($matches[1][$i], '~') . '\b~', isset($css_vars[$matches[1][$i]]) ? $css_vars[$matches[1][$i]] : '', rtrim($matches[4][$i], '; '));
 
 			// Same as above, but for the actual variables.
 			$keys = array_map('strlen', array_keys($css_vars));
