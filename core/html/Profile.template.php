@@ -2464,12 +2464,13 @@ function template_profile_group_manage()
 						<select name="id_group" ', (we::$user['is_owner'] && $context['member']['group_id'] == 1 ? 'onchange="if (this.value != 1) ask(' . JavaScriptEscape($txt['deadmin_confirm']) . ', e, function (go) { if (!go) $(this).val(1).sb(); });"' : ''), '>';
 
 	// Fill the select box with all primary member groups that can be assigned to a member.
-	foreach ($context['member_groups'] as $member_group)
+	foreach ($context['member_groups'] as $id => $member_group)
 		if (!empty($member_group['can_be_primary']))
 			echo '
-							<option value="', $member_group['id'], '"', $member_group['is_primary'] ? ' selected' : '', '>
+							<option value="', $id, '"', $member_group['is_primary'] ? ' selected' : '', '>
 								', $member_group['name'], !empty($member_group['badge']) ? '|' . westr::htmlspecialchars($member_group['badge']) : '', '
-							</option>';
+							</option>', $id === 0 ? '
+							<option class="hr"></option>' : '';
 
 	echo '
 						</select>
