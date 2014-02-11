@@ -35,14 +35,16 @@ $txt['scheduled_task_desc_weNotif::scheduled_periodical'] = 'Sends all the perio
 $txt['notification_email_periodical_subject'] = '%s, you have %d unread notification(s)!';
 $txt['notification_email_periodical_body'] = 'It looks like you have gathered a bunch of unread notifications over the past few days, here is the gist of them. Head over to the forums to check them out!';
 
-$txt['notifier_likes_title'] = 'Member Likes';
-$txt['notifier_likes_desc'] = 'Notify you when one of your contributions has been liked.';
-$txt['notifier_likes_subject'] = 'Someone liked one of your contributions!';
+$txt['notifier_likes_title'] = 'Post Likes';
+$txt['notifier_likes_desc'] = 'Notify you when one of your messages has been liked.';
+$txt['notifier_likes_subject'] = 'Someone liked one of your posts!';
 $txt['notifier_likes_html'] = '<span class="like_button"></span>{MEMBER_LINK} liked your post, "{OBJECT_LINK}"';
 $txt['notifier_likes_text'] = '{MEMBER_NAME} liked your post, "{OBJECT_NAME}", which is located here:
 
 {OBJECT_URL}';
 
+$txt['notifier_likes_thought_title'] = 'Thought Likes';
+$txt['notifier_likes_thought_desc'] = 'Notify you when one of your thoughts has been liked.';
 $txt['notifier_likes_thought_subject'] = 'Someone liked one of your thoughts!';
 $txt['notifier_likes_thought_html'] = '<span class="like_button"></span>{MEMBER_LINK} liked your thought: "{OBJECT_NAME}"';
 $txt['notifier_likes_thought_text'] = '{MEMBER_NAME} liked your thought: "{OBJECT_NAME}"';
