@@ -430,9 +430,10 @@ function template_modify_group()
 	window.weUsedDeny = false;');
 
 	echo '
-		<form action="<URL>?action=admin;area=permissions;sa=modify2;group=', $context['group']['id'], ';pid=', $context['profile']['id'],
-		'" method="post" accept-charset="UTF-8" name="permissionForm" id="permissionForm" onsubmit="return !window.weUsedDeny || ask(',
-		JavaScriptEscape($txt['permissions_deny_dangerous']), ', e);">';
+		<form action="<URL>?action=admin;area=permissions;sa=modify2;group=', $context['group']['id'], ';pid=', $context['profile']['id'], '" method="post" accept-charset="UTF-8" name="permissionForm" id="permissionForm" onsubmit="return(e);">
+			<we:cat>
+				', $txt['permissions_deny_dangerous'], '
+			</we:cat>';	
 
 	if ($context['group']['id'] != -1)
 		echo '
