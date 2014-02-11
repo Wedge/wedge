@@ -185,7 +185,7 @@ function ThemeAdmin()
 		));
 
 		if (!empty($_POST['theme_reset']))
-			wedge_update_skin(null, $_POST['theme_reset']);
+			wedge_update_skin(null, $_POST['theme_reset'] == -1 ? '' : $_POST['theme_reset']);
 
 		redirectexit('action=admin;area=theme;' . $context['session_query'] . ';sa=admin');
 	}

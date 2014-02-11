@@ -56,8 +56,8 @@ function template_main()
 					</dt>
 					<dd>
 						<select name="theme_reset" id="theme_reset">
-							<option value="-1" selected>', $txt['theme_nochange'], '</option>
-							<option value="0">', $txt['theme_forum_default'], '</option>';
+							<option value="0" selected>', $txt['theme_nochange'], '</option>
+							<option value="-1">', $txt['theme_forum_default'], '</option>';
 
 	// Same thing, this time for changing the theme of everyone.
 	foreach ($context['themes'][1] as $th)
