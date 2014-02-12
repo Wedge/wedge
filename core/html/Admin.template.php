@@ -660,7 +660,7 @@ function template_show_settings()
 			$is_open = true;
 			echo '
 			<div class="windowbg2 wrc">
-				<dl class="settings">';
+				<dl class="settings"', is_array($config_var) && isset($config_var['style']) ? ' style="' . $config_var['style'] . '"' : '', '>';
 		}
 
 		// Hang about? Are you pulling my leg - a callback?!

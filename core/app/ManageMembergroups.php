@@ -1209,7 +1209,7 @@ function ModifyMembergroupSettings($return_config = false)
 		array('select', 'ban_group', $ban_groups, 'subtext' => $txt['ban_group_subtext']),
 		array('title', 'membergroup_badges'),
 		array('desc', 'membergroup_badges_desc'),
-		array('callback', 'badge_order'),
+		array('callback', 'badge_order', 'style' => 'overflow: visible'),
 	);
 
 	if ($return_config)
