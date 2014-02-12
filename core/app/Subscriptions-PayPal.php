@@ -137,7 +137,7 @@ class paypal_payment
 		// Build the request string - starting with the minimum requirement.
 		$weget = new weget('https://' . (!empty($settings['paidsubs_test']) ? 'www.sandbox.' : 'www.') . 'paypal.com/cgi-bin/webscr');
 		$weget->setMethod('POST');
-		$weget->addPostVar('cmd', '_notify_validate');
+		$weget->addPostVar('cmd', '_notify-validate');
 
 		// Now my dear, add all the posted bits.
 		foreach ($_POST as $k => $v)
@@ -150,11 +150,11 @@ class paypal_payment
 		// If this isn't verified then give up...
 		// !! This contained a comment "send an email", but we don't appear to send any?
 		if (strcmp(trim($this->return_data), 'VERIFIED') != 0)
-			exit;
+			generateSubscriptionError($txt['paypal_unverified']);
 
 		// Check that this is intended for us.
 		if ($settings['paypal_email'] != $_POST['business'] && (empty($settings['paypal_additional_emails']) || !in_array($_POST['business'], explode(',', $settings['paypal_additional_emails']))))
-			exit;
+			generateSubscriptionError($txt['paypal_incorrect_email']);
 
 		// Is this a subscription - and if so it's it a secondary payment that we need to process?
 		if ($this->isSubscription() && (empty($_POST['item_number']) || strpos($_POST['item_number'], '+') === false))
@@ -163,11 +163,11 @@ class paypal_payment
 
 		// Verify the currency!
 		if (strtolower($_POST['mc_currency']) != strtolower($settings['paid_currency_code']))
-			exit;
+			generateSubscriptionError($txt['paypal_invalid_currency']);
 
 		// Can't exist if it doesn't contain anything.
 		if (empty($_POST['item_number']))
-			exit;
+			generateSubscriptionError($txt['paypal_no_item']);
 
 		// Return the id_sub and id_member
 		return explode('+', $_POST['item_number']);
@@ -206,7 +206,7 @@ class paypal_payment
 		return (isset($_POST['tax']) ? $_POST['tax'] : 0) + $_POST['mc_gross'];
 	}
 
-	// exit.
+	// Exit.
 	public function close()
 	{
 		global $subscription_id;
