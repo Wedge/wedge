@@ -749,9 +749,9 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 	if (isset($get_badges))
 	{
 		// Load cached membergroup badges (or rank images) and when to show them.
-		if (($member_badges = cache_get_data('member-badges', 5000)) === null)
+		if (($mba = cache_get_data('member-badges', 5000)) === null)
 		{
-			$member_badges = array();
+			$mba = array();
 			$request = wesql::query('
 				SELECT g.id_group, g.stars, g.show_when, g.display_order
 				FROM {db_prefix}membergroups AS g
@@ -763,9 +763,9 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 			);
 
 			while ($row = wesql::fetch_assoc($request))
-				$member_badges[$row['id_group']] = array($row['show_when'], $row['stars'], $row['display_order']);
+				$mba[$row['id_group']] = array($row['show_when'], $row['stars'], $row['display_order']);
 			wesql::free_result($request);
-			cache_put_data('member-badges', $member_badges, 5000);
+			cache_put_data('member-badges', $mba, 5000);
 		}
 	}
 
@@ -921,20 +921,18 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 
 			// Should we show a badge for the primary group?
 			$gid = $user_profile[$id]['id_group'];
-			if (!empty($member_badges[$gid]))
-				$badges[$member_badges[$gid][2]] = array($gid, $member_badges[$gid][1]);
-
-			$groups = explode(',', $user_profile[$id]['additional_groups']);
+			if (isset($mba[$gid]))
+				$badges[$mba[$gid][2]] = array($gid, $mba[$gid][1]);
 
 			// Now do the additional groups -- and test whether we can show more than one badge.
-			foreach ($groups as $gid)
-				if (!empty($member_badges[$gid]) && $member_badges[$gid][0] != 2 && ($member_badges[$gid][0] == 1 || empty($user_profile[$id]['badges'])))
-					$badges[$member_badges[$gid][2]] = array($gid, $member_badges[$gid][1]);
+			foreach (explode(',', $user_profile[$id]['additional_groups']) as $gid)
+				if (isset($mba[$gid]) && $mba[$gid][0] != 2 && ($mba[$gid][0] == 1 || empty($badges)))
+					$badges[$mba[$gid][2]] = array($gid, $mba[$gid][1]);
 
 			// And finally, do the post group.
 			$gid = $user_profile[$id]['id_post_group'];
-			if (!empty($member_badges[$gid]) && ($member_badges[$gid][0] == 1 || empty($user_profile[$id]['badges'])))
-				$badges[$member_badges[$gid][2]] = array($gid, $member_badges[$gid][1]);
+			if (isset($mba[$gid]) && ($mba[$gid][0] == 1 || empty($badges)))
+				$badges[$mba[$gid][2]] = array($gid, $mba[$gid][1]);
 
 			if (!empty($badges))
 				ksort($badges);
