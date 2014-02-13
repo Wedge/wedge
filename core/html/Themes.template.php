@@ -62,7 +62,7 @@ function template_main()
 	// Same thing, this time for changing the theme of everyone.
 	foreach ($context['themes'][1] as $th)
 		if (!empty($th['skins']))
-			echo wedge_show_skins($th['skins']);
+			echo str_replace(' selected>', '>', wedge_show_skins($th['skins']));
 
 	echo '
 						</select>
@@ -162,9 +162,10 @@ function template_main()
 
 function template_guest_selector($is_mobile = false)
 {
-	global $context, $txt;
+	global $context, $settings, $txt;
 
 	$guests = $is_mobile ? 'theme_guests_mobile' : 'theme_guests';
+	$current_default = $settings[$is_mobile ? 'theme_skin_guests_mobile' : 'theme_skin_guests'];
 
 	echo '
 					<dt>
@@ -180,7 +181,7 @@ function template_guest_selector($is_mobile = false)
 	// Put an option for each theme in the select box.
 	foreach ($context['themes'][1] as $th)
 		if (!empty($th['skins']))
-			echo wedge_show_skins($th['skins']);
+			echo wedge_show_skins($th['skins'], true, $current_default);
 
 	echo '
 						</select>
