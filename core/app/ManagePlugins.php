@@ -494,11 +494,11 @@ function EnablePlugin()
 		$int_types = array('tinyint', 'smallint', 'mediumint', 'int', 'bigint');
 		$float_types = array('float', 'real', 'double');
 
-		loadSource('Class-DBPackages');
+		loadSource('Class-DBHelper');
 		$new_tables = $new_columns = $new_indexes = array();
 		$existing_columns = $existing_indexes = array();
 
-		$existing_tables = wedbPackages::list_tables();
+		$existing_tables = wedb::list_tables();
 
 		// First, pass through and collate a list of tables, columns and indexes that we are expecting to deal with. That way we know what we're going to have to query for.
 		if (!empty($manifest->database->tables))
@@ -608,7 +608,7 @@ function EnablePlugin()
 				if (empty($this_table['columns']))
 					continue;
 
-				wedbPackages::create_table($this_table['name'], $this_table['columns'], $this_table['indexes'], $this_table['if-exists']);
+				wedb::create_table($this_table['name'], $this_table['columns'], $this_table['indexes'], $this_table['if-exists']);
 			}
 		}
 
@@ -690,7 +690,7 @@ function EnablePlugin()
 
 				// There's really no point in being clever and trying the work that's in create_table.
 				// You can't call create_table on the core tables, and add_column already checks to see if it exists and promptly updates if not.
-				wedbPackages::add_column($table_name, $this_col, 'update');
+				wedb::add_column($table_name, $this_col, 'update');
 			}
 		}
 	}
@@ -1301,19 +1301,19 @@ function commitRemovePlugin($fullclean, &$manifest, &$remote_class)
 
 	if ($fullclean && !empty($manifest->database))
 	{
-		loadSource('Class-DBPackages');
+		loadSource('Class-DBHelper');
 
 		// Pass each table we find to the drop-table routine. That already does its own checking as to whether the table exists or not.
 		if (!empty($manifest->database->tables))
 			foreach ($manifest->database->tables->table as $table)
 				if (!empty($table['name']))
-					weDBPackages::drop_table((string) $table['name']);
+					wedb::drop_table((string) $table['name']);
 
 		// And columns.
 		if (!empty($manifest->database->columns))
 			foreach ($manifest->database->columns->column as $column)
 				if (!empty($column['name']) && !empty($column['table']))
-					weDBPackages::remove_column((string) $column['table'], (string) $column['name']);
+					wedb::remove_column((string) $column['table'], (string) $column['name']);
 	}
 
 	// Clean up permissions? Only need to do this on a full clean-up.

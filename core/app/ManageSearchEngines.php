@@ -979,10 +979,10 @@ function recacheSpiderNames()
 // Sort the search engine table by user agent name to avoid misidentification of engine.
 function sortSpiderTable()
 {
-	loadSource('Class-DBPackages');
+	loadSource('Class-DBHelper');
 
 	// Add a sorting column.
-	wedbPackages::add_column('{db_prefix}spiders', array('name' => 'temp_order', 'size' => 8, 'type' => 'mediumint', 'null' => false));
+	wedb::add_column('{db_prefix}spiders', array('name' => 'temp_order', 'size' => 8, 'type' => 'mediumint', 'null' => false));
 
 	// Set the contents of this column.
 	wesql::query('
@@ -1002,5 +1002,5 @@ function sortSpiderTable()
 	);
 
 	// Remove the sorting column.
-	wedbPackages::remove_column('{db_prefix}spiders', 'temp_order');
+	wedb::remove_column('{db_prefix}spiders', 'temp_order');
 }

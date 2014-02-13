@@ -305,7 +305,7 @@ function OptimizeTables()
 	checkSession('post');
 
 	ignore_user_abort(true);
-	loadSource('Class-DBPackages');
+	loadSource('Class-DBHelper');
 
 	// Start with no tables optimized.
 	$opttab = 0;
@@ -317,7 +317,7 @@ function OptimizeTables()
 	$real_prefix = preg_match('~^(`?)(.+?)\\1\\.(.*?)$~', $db_prefix, $match) === 1 ? $match[3] : $db_prefix;
 
 	// Get a list of tables, as well as how many there are.
-	$temp_tables = wedbPackages::list_tables(false, $real_prefix . '%');
+	$temp_tables = wedb::list_tables(false, $real_prefix . '%');
 	$tables = array();
 	foreach ($temp_tables as $table)
 		$tables[] = array('table_name' => $table);
@@ -330,7 +330,7 @@ function OptimizeTables()
 	foreach ($tables as $table)
 	{
 		// Optimize the table! We use backticks here because it might be a custom table.
-		$data_freed = wedbPackages::optimize_table($table['table_name']);
+		$data_freed = wedb::optimize_table($table['table_name']);
 
 		if ($data_freed > 0)
 			$context['optimized_tables'][] = array(

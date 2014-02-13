@@ -1042,11 +1042,11 @@ function DatabasePopulation()
 	}
 
 	// Let's optimize those new tables.
-	loadSource('Class-DBPackages');
-	$tables = wedbPackages::list_tables($db_name, $db_prefix . '%');
+	loadSource('Class-DBHelper');
+	$tables = wedb::list_tables($db_name, $db_prefix . '%');
 	foreach ($tables as $table)
 	{
-		if (wedbPackages::optimize_table($table) == -1)
+		if (wedb::optimize_table($table) == -1)
 		{
 			$incontext['failures'][-1] = wesql::error();
 			break;

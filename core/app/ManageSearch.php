@@ -353,9 +353,9 @@ function CreateMessageIndex()
 
 		if ($context['start'] === 0)
 		{
-			loadSource('Class-DBPackages');
+			loadSource('Class-DBHelper');
 
-			$tables = wedbPackages::list_tables(false, $db_prefix . 'log_search_words');
+			$tables = wedb::list_tables(false, $db_prefix . 'log_search_words');
 			if (!empty($tables))
 			{
 				wesql::query('
@@ -568,7 +568,7 @@ function create_word_search($size)
 	else
 		$size = 'int'; // yeah, largeint isn't a real field
 
-	wedbPackages::create_table(
+	wedb::create_table(
 		'{db_prefix}log_search_words',
 		array(
 			array('name' => 'id_word', 'type' => $size, 'unsigned' => true, 'null' => false, 'default' => 0),

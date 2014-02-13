@@ -234,8 +234,8 @@ class custom_search
 	{
 		global $db_prefix;
 
-		loadSource('Class-DBPackages');
-		$tables = wedbPackages::list_tables(false, $db_prefix . 'log_search_words');
+		loadSource('Class-DBHelper');
+		$tables = wedb::list_tables(false, $db_prefix . 'log_search_words');
 		if (!empty($tables))
 		{
 			wesql::query('

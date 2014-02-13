@@ -11,7 +11,7 @@
 if (!defined('WEDGE'))
 	die('Hacking attempt...');
 
-class wedbPackages
+class wedb
 {
 	public static function is_reserved_table($table)
 	{

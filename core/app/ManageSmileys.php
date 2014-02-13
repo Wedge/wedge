@@ -1665,10 +1665,10 @@ function list_getMessageIcons($start, $items_per_page, $sort)
 // This function sorts the smiley table by code length, it is needed as MySQL withdrew support for functions in order by.
 function sortSmileyTable()
 {
-	loadSource('Class-DBPackages');
+	loadSource('Class-DBHelper');
 
 	// Add a sorting column.
-	wedbPackages::add_column('{db_prefix}smileys', array('name' => 'temp_order', 'size' => 8, 'type' => 'mediumint', 'null' => false));
+	wedb::add_column('{db_prefix}smileys', array('name' => 'temp_order', 'size' => 8, 'type' => 'mediumint', 'null' => false));
 
 	// Set the contents of this column.
 	wesql::query('
@@ -1686,7 +1686,7 @@ function sortSmileyTable()
 	);
 
 	// Remove the sorting column.
-	wedbPackages::remove_column('{db_prefix}smileys', 'temp_order');
+	wedb::remove_column('{db_prefix}smileys', 'temp_order');
 	cleanSmileyCache(false);
 }
 

@@ -805,8 +805,8 @@ function testRequiredVersions($manifest_element)
 	// MySQL?
 	if (!empty($min_versions['mysql']))
 	{
-		loadSource('Class-DBPackages');
-		$mysql_version = wedbPackages::get_version();
+		loadSource('Class-DBHelper');
+		$mysql_version = wedb::get_version();
 
 		preg_match('~^\d(\.\d){2}~', $min_versions['mysql'] . '.0.0', $matches);
 		if (!empty($matches[0]) && version_compare($matches[0], $mysql_version, '>='))
