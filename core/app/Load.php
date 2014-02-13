@@ -763,7 +763,8 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 			);
 
 			while ($row = wesql::fetch_assoc($request))
-				$mba[$row['id_group']] = array($row['show_when'], $row['stars'], $row['display_order']);
+				if (!empty($row['stars']))
+					$mba[$row['id_group']] = array($row['show_when'], $row['stars'], $row['display_order']);
 			wesql::free_result($request);
 			cache_put_data('member-badges', $mba, 5000);
 		}
