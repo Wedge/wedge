@@ -205,6 +205,7 @@ body
 			margin: 0 .2em 0 1em
 			padding: 0
 			$max-width: 70px
+			height: auto
 	@endif
 	p
 		margin: 0 0 2px
@@ -466,6 +467,9 @@ em
 	padding: 2px 5px 3px
 	:hover
 		text-decoration: none
+	// In topic pages, needs more space.
+	h5 &
+		margin-left: 8px
 
 // Same, but scarier.
 .notewarn extends .note
