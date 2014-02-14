@@ -281,7 +281,7 @@ function template_modify_user_subscription()
 	function generateDays(offset)
 	{
 		var days = 0, selected = 0;
-		var dayElement = $("#day" + offset)[0], year = $("#year" + offset).val(), monthElement = ("#month" + offset)[0];
+		var $dayElement = $("#day" + offset), dayElement = $dayElement[0], year = $("#year" + offset).val(), month = $("#month" + offset).val();
 
 		monthLength[1] = (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0)) ? 29 : 28;
 
@@ -289,13 +289,15 @@ function template_modify_user_subscription()
 		while (dayElement.options.length)
 			dayElement.options[0] = null;
 
-		days = monthLength[monthElement.value - 1];
+		days = monthLength[month - 1];
 
 		for (i = 1; i <= days; i++)
-			dayElement.options.push(new Option(i, i));
+			dayElement.add(new Option(i, i));
 
 		if (selected < days)
 			dayElement.selectedIndex = selected;
+
+		$dayElement.sb();
 	}');
 
 	echo '
