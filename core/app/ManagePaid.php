@@ -961,9 +961,8 @@ function ModifyUserSubscription()
 
 	// Searching?
 	if (isset($_POST['ssearch']))
-	{
 		return ViewSubscribedUsers();
-	}
+
 	// Saving?
 	elseif (isset($_REQUEST['save_sub']))
 	{

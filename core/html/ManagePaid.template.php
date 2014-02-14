@@ -276,59 +276,54 @@ function template_modify_user_subscription()
 	// Some quickly stolen javascript from Post, could do with being more efficient :)
 	if (!$context['current_subscription']['lifetime'])
 		add_js('
-	var monthLength = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-
+	var monthDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 	function generateDays(offset)
 	{
-		var days = 0, selected = 0;
-		var dayElement = $("#day" + offset)[0], year = $("#year" + offset).val(), monthElement = ("#month" + offset)[0];
+		var year = $("#year" + offset).val(), $day = $("#day" + offset), selected = $day.val();
+		monthDays[1] = year % 4 == 0 && (year % 100 != 0 || year % 400 == 0) ? 29 : 28;
+		$day.empty();
 
-		monthLength[1] = (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0)) ? 29 : 28;
+		for (var i = 1, days = monthDays[$("#month" + offset).val() - 1]; i <= days; i++)
+			$day.append(new Option(i, i));
 
-		selected = dayElement.selectedIndex;
-		while (dayElement.options.length)
-			dayElement.options[0] = null;
+		if (selected <= days)
+			$day.val(selected);
 
-		days = monthLength[monthElement.value - 1];
-
-		for (i = 1; i <= days; i++)
-			dayElement.options.push(new Option(i, i));
-
-		if (selected < days)
-			dayElement.selectedIndex = selected;
+		$day.sb();
 	}');
 
 	echo '
 		<form action="<URL>?action=admin;area=paidsubscribe;sa=modifyuser;sid=', $context['sub_id'], ';lid=', $context['log_id'], '" method="post">
 			<we:cat>
 				', $txt[$context['action_type'] . '_subscriber'], ' - ', $context['current_subscription']['name'], '
-				', empty($context['sub']['username']) ? '' : ' (' . $txt['user'] . ': ' . $context['sub']['username'] . ')', '
 			</we:cat>
 			<div class="windowbg wrc">
-				<dl class="settings">';
+				<div>';
 
 	// Do we need a username?
 	if ($context['action_type'] == 'add')
 		echo '
-					<dt>
+					<div class="padding">
 						<strong>', $txt['paid_username'], ':</strong>
-						<dfn>', $txt['one_username'], '</dfn>
-					</dt>
-					<dd>
 						<input name="name" id="name_control" value="', $context['sub']['username'], '" size="30">
-					</dd>';
+						<br><dfn>', $txt['one_username'], '</dfn>
+					</div>';
+
+	elseif (!empty($context['sub']['username']))
+		echo '
+					<div class="padding">
+						<strong>', $txt['paid_username'], ':</strong> ', $context['sub']['username'], '
+					</div>';
 
 	echo '
-					<dt>
+					<div class="padding">
 						<strong>', $txt['paid_status'], ':</strong>
-					</dt>
-					<dd>
 						<select name="status">
 							<option value="0"', $context['sub']['status'] == 0 ? ' selected' : '', '>', $txt['paid_finished'], '</option>
 							<option value="1"', $context['sub']['status'] == 1 ? ' selected' : '', '>', $txt['paid_active'], '</option>
 						</select>
-					</dd>
-				</dl>';
+					</div>
+				</div>';
 
 	if (!$context['current_subscription']['lifetime'])
 	{
@@ -391,7 +386,7 @@ function template_modify_user_subscription()
 					', (isset($txt['day']) ? $txt['day'] : ''), ':&nbsp;
 					<select name="dayend" id="dayend">';
 
-	// This prints out all the days in the current month - this changes dynamically as we switch months.
+		// This prints out all the days in the current month - this changes dynamically as we switch months.
 		for ($day = 1; $day <= $context['sub']['end']['last_day']; $day++)
 			echo '
 						<option value="', $day, '"', $day == $context['sub']['end']['day'] ? ' selected' : '', '>', $day, '</option>';
@@ -436,9 +431,12 @@ function template_modify_user_subscription()
 		{
 			echo '
 				<li class="reset">
-					', $payment['desc'], '
-					<span class="floatleft"><a href="<URL>?action=admin;area=paidsubscribe;sa=modifyuser;lid=', $context['log_id'], ';pending=', $id, ';accept">', $txt['pending_payments_accept'], '</a></span>
-					<span class="floatright"><a href="<URL>?action=admin;area=paidsubscribe;sa=modifyuser;lid=', $context['log_id'], ';pending=', $id, ';remove">', $txt['remove'], '</a></span>
+					<span class="floatright">
+						<a href="<URL>?action=admin;area=paidsubscribe;sa=modifyuser;lid=', $context['log_id'], ';pending=', $id, ';accept">', $txt['pending_payments_accept'], '</a> -
+						<a href="<URL>?action=admin;area=paidsubscribe;sa=modifyuser;lid=', $context['log_id'], ';pending=', $id, ';remove">', $txt['remove'], '</a>
+					</span>
+					<span class="floatleft">', $payment['desc'], '</span>
+					<hr class="clear">
 				</li>';
 		}
 
