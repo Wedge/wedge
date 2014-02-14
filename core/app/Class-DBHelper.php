@@ -158,13 +158,9 @@ class wedb
 			{
 				// Auto increment is easy here!
 				if (!empty($column['auto']))
-				{
-					$default = 'auto_increment';
-				}
-				elseif (isset($column['default']) && $column['default'] !== null && $column['type'] != 'text' && $column['type'] != 'mediumtext')
-					$default = 'default \'' . wesql::escape_string($column['default']) . '\'';
+					$default = ' auto_increment';
 				else
-					$default = '';
+					$default = self::escape_default($column);
 
 				// Sort out the size... and stuff...
 				$column['size'] = isset($column['size']) && is_numeric($column['size']) ? $column['size'] : null;
@@ -180,7 +176,7 @@ class wedb
 					$type .= '(' . $column['values'] . ')';
 
 				// Now just put it together!
-				$table_query .= "\n\t`" . $column['name'] . '` ' . $type . ' ' . (!empty($unsigned) ? $unsigned : '') . (!empty($column['null']) ? '' : 'NOT NULL') . ' ' . $default . ',';
+				$table_query .= "\n\t`" . $column['name'] . '` ' . $type . ' ' . (!empty($unsigned) ? $unsigned : '') . (!empty($column['null']) ? '' : 'NOT NULL') . $default . ',';
 			}
 
 			// Loop through the indexes next...
@@ -232,9 +228,8 @@ class wedb
 					elseif (!empty($column['values']) && ($column['type'] == 'set' || $column['type'] == 'enum'))
 						$type .= '(' . $column['values'] . ')';
 
-					$changes[] = 'ADD `' . $column['name'] . '` ' . $type . ' ' . (!empty($unsigned) ? $unsigned : '') . (empty($column['null']) ? 'NOT NULL' : '') . ' ' .
-						(!isset($column['default']) || $column['type'] == 'text' || $column['type'] == 'mediumtext' ? '' : 'default \'' . wesql::escape_string($column['default']) . '\'') . ' ' .
-						(empty($column['auto']) ? '' : 'auto_increment primary key');
+					$changes[] = 'ADD `' . $column['name'] . '` ' . $type . ' ' . (!empty($unsigned) ? $unsigned : '') . (empty($column['null']) ? 'NOT NULL' : '') .
+						self::escape_default($column) . (empty($column['auto']) ? '' : ' auto_increment primary key');
 				}
 				else
 				{
@@ -289,9 +284,8 @@ class wedb
 						elseif (!empty($column['values']) && ($column['type'] == 'set' || $column['type'] == 'enum'))
 							$type .= '(' . $column['values'] . ')';
 
-						$changes[] = 'MODIFY `' . $column['name'] . '` ' . $type . ' ' . (!empty($unsigned) ? $unsigned : '') . (empty($column['null']) ? 'NOT NULL' : '') . ' ' .
-							(!isset($column['default']) || $column['type'] == 'text' || $column['type'] == 'mediumtext' ? '' : 'default \'' . wesql::escape_string($column['default']) . '\'') . ' ' .
-							(empty($column['auto']) ? '' : 'auto_increment primary key');
+						$changes[] = 'MODIFY `' . $column['name'] . '` ' . $type . ' ' . (!empty($unsigned) ? $unsigned : '') . (empty($column['null']) ? 'NOT NULL' : '') .
+							self::escape_default($column) . (empty($column['auto']) ? '' : ' auto_increment primary key');
 					}
 				}
 			}
@@ -387,17 +381,11 @@ class wedb
 
 		$table_name = str_replace('{db_prefix}', $db_prefix, $table_name);
 
-		// Does it exist - if so don't add it again!
 		$columns = self::list_columns($table_name, false);
+		// Does it exist? If so, change it or skip it, depending on $if_exists.
 		foreach ($columns as $column)
 			if ($column == $column_info['name'])
-			{
-				// If we're going to overwrite then use change column.
-				if ($if_exists == 'update')
-					return self::change_column($table_name, $column_info['name'], $column_info);
-				else
-					return false;
-			}
+				return $if_exists == 'update' ? self::change_column($table_name, $column_info['name'], $column_info) : false;
 
 		// Get the specifics...
 		$column_info['size'] = isset($column_info['size']) && is_numeric($column_info['size']) ? $column_info['size'] : null;
@@ -415,9 +403,9 @@ class wedb
 		// Now add the thing!
 		$query = '
 			ALTER TABLE ' . $table_name . '
-			ADD `' . $column_info['name'] . '` ' . $type . ' ' . (!empty($unsigned) ? $unsigned : '') . (empty($column_info['null']) ? 'NOT NULL' : '') . ' ' .
-				(!isset($column_info['default']) ? '' : 'default \'' . wesql::escape_string($column_info['default']) . '\'') . ' ' .
-				(empty($column_info['auto']) ? '' : 'auto_increment primary key') . ' ';
+			ADD `' . $column_info['name'] . '` ' . $type . ' ' . (!empty($unsigned) ? $unsigned : '') . (empty($column_info['null']) ? 'NOT NULL' : '') .
+				self::escape_default($column_info) . (empty($column_info['auto']) ? '' : ' auto_increment primary key');
+
 		wesql::query($query,
 			array(
 				'security_override' => true,
@@ -500,13 +488,21 @@ class wedb
 
 		wesql::query('
 			ALTER TABLE ' . $table_name . '
-			CHANGE COLUMN `' . $old_column . '` `' . $column_info['name'] . '` ' . $type . ' ' . (!empty($unsigned) ? $unsigned : '') . (empty($column_info['null']) ? 'NOT NULL' : '') . ' ' .
-				(!isset($column_info['default']) ? '' : 'default \'' . wesql::escape_string($column_info['default']) . '\'') . ' ' .
-				(empty($column_info['auto']) ? '' : 'auto_increment') . ' ',
+			CHANGE COLUMN `' . $old_column . '` `' . $column_info['name'] . '` ' . $type . ' ' . (!empty($unsigned) ? $unsigned : '')
+				. (empty($column_info['null']) ? 'NOT NULL' : '') . self::escape_default($column_info) . (empty($column_info['auto']) ? '' : ' auto_increment'),
 			array(
 				'security_override' => true,
 			)
 		);
+	}
+
+	protected static function escape_default($column)
+	{
+		if (!isset($column['default']) || $column['default'] === null || $column['type'] == 'text' || $column['type'] == 'mediumtext')
+			return '';
+		if (is_int($column['default']))
+			return ' default ' . (int) $column['default'];
+		return ' default \'' . wesql::escape_string($column['default']) . '\'';
 	}
 
 	// Add an index.
