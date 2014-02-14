@@ -871,12 +871,9 @@ function list_getSubscribedUserCount($id_sub, $search_string, $search_vars = arr
 		SELECT COUNT(*) AS total_subs
 		FROM {db_prefix}log_subscribed AS ls
 			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = ls.id_member)
-		WHERE ls.id_subscribe = {int:current_subscription} ' . $search_string . '
-			AND (ls.end_time != {int:no_end_time} OR ls.payments_pending != {int:no_pending_payments})',
+		WHERE ls.id_subscribe = {int:current_subscription} ' . $search_string,
 		array_merge($search_vars, array(
 			'current_subscription' => $id_sub,
-			'no_end_time' => 0,
-			'no_pending_payments' => 0,
 		))
 	);
 	list ($memberCount) = wesql::fetch_row($request);
@@ -896,13 +893,10 @@ function list_getSubscribedUsers($start, $items_per_page, $sort, $id_sub, $searc
 			INNER JOIN {db_prefix}subscriptions AS s ON (ls.id_subscribe = s.id_subscribe)
 			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = ls.id_member)
 		WHERE ls.id_subscribe = {int:current_subscription} ' . $search_string . '
-			AND (ls.end_time != {int:no_end_time} OR ls.payments_pending != {int:no_payments_pending})
 		ORDER BY ' . $sort . '
 		LIMIT ' . $start . ', ' . $items_per_page,
 		array_merge($search_vars, array(
 			'current_subscription' => $id_sub,
-			'no_end_time' => 0,
-			'no_payments_pending' => 0,
 			'guest' => $txt['guest'],
 		))
 	);
