@@ -725,6 +725,24 @@ class wesql
 		return mysqli_free_result($result);
 	}
 
+	public static function query_all($db_string, $db_values = array(), $connection = null)
+	{
+		$request = self::query($db_string, $db_values, $connection);
+		$all = self::fetch_all($request);
+		wesql::free_result($request);
+
+		return $all;
+	}
+
+	public static function query_rows($db_string, $db_values = array(), $connection = null)
+	{
+		$request = self::query($db_string, $db_values, $connection);
+		$all = self::fetch_rows($request);
+		wesql::free_result($request);
+
+		return $all;
+	}
+
 	public static function data_seek($result, $row_num)
 	{
 		return mysqli_data_seek($result, $row_num);
