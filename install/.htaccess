@@ -106,27 +106,9 @@
 </IfModule>
 
 # Pretty URLs
-<IfModule mod_version.c>
-	<IfVersion >= 2.2.16>
-		<IfModule mod_dir.c>
-			FallbackResource /index.php
-		</IfModule>
-	</IfVersion>
-	<IfVersion < 2.2.16>
-		<IfModule mod_rewrite.c>
-			RewriteEngine on
-			RewriteCond %{REQUEST_FILENAME} !-f
-			RewriteCond %{REQUEST_FILENAME} !-d
-			RewriteRule .* index.php [L]
-		</IfModule>
-	</IfVersion>
-</IfModule>
-
-<IfModule !mod_version.c>
-	<IfModule mod_rewrite.c>
-		RewriteEngine on
-		RewriteCond %{REQUEST_FILENAME} !-f
-		RewriteCond %{REQUEST_FILENAME} !-d
-		RewriteRule .* index.php [L]
-	</IfModule>
+<IfModule mod_rewrite.c>
+	RewriteEngine on
+	RewriteCond %{REQUEST_FILENAME} !-f
+	RewriteCond %{REQUEST_FILENAME} !-d
+	RewriteRule .* index.php [L]
 </IfModule>
