@@ -1190,25 +1190,20 @@ function loadMemberAvatar($user, $force = false)
 	{
 		if (stristr($profile['avatar'], 'gravatar://'))
 		{
-			if ($profile['avatar'] === 'gravatar://' || empty($settings['gravatarAllowExtraEmail']))
-				$image = get_gravatar_url($profile['email_address']);
-			else
-				$image = get_gravatar_url(substr($profile['avatar'], 11));
-
-			$memberContext[$user]['avatar'] = array(
-				'name' => $profile['avatar'],
-				'image' => '<img class="avatar" src="' . $image . '"' . $avatar_width . $avatar_height . '>',
-				'href' => $image,
-				'url' => $image,
-			);
+			$image = get_gravatar_url($profile['avatar'] === 'gravatar://' || empty($settings['gravatarAllowExtraEmail']) ? $profile['email_address'] : substr($profile['avatar'], 11));
+			$image_tag = '<img class="avatar" src="' . $image . '"' . $avatar_width . $avatar_height . '>';
 		}
 		else
-			$memberContext[$user]['avatar'] = array(
-				'name' => $profile['avatar'],
-				'image' => stristr($profile['avatar'], 'http://') ? '<img class="avatar" src="' . $profile['avatar'] . '"' . $avatar_width . $avatar_height . '>' : '<img class="avatar" src="' . AVATARS . '/' . htmlspecialchars($profile['avatar']) . '">',
-				'href' => stristr($profile['avatar'], 'http://') ? $profile['avatar'] : AVATARS . '/' . $profile['avatar'],
-				'url' => stristr($profile['avatar'], 'http://') ? $profile['avatar'] : AVATARS . '/' . $profile['avatar'],
-			);
+		{
+			$image = stristr($profile['avatar'], 'http://') ? $profile['avatar'] : AVATARS . '/' . $profile['avatar'];
+			$image_tag = stristr($profile['avatar'], 'http://') ? '<img class="avatar" src="' . $profile['avatar'] . '"' . $avatar_width . $avatar_height . '>' : '<img class="avatar" src="' . AVATARS . '/' . htmlspecialchars($profile['avatar']) . '">';
+		}
+		$memberContext[$user]['avatar'] = array(
+			'name' => $profile['avatar'],
+			'image' => $image_tag,
+			'href' => $image,
+			'url' => $image,
+		);
 	}
 	// It's an attachment?
 	elseif (!empty($profile['id_attach']))

@@ -1,5 +1,4 @@
 <?php
-// Version: 0.1; ManageBans
 
 $txt['ban_general_description'] = 'In this area you can manage bans against users who are troublesome, be it spammers or other miscreants.';
 $txt['ban_description_hard'] = 'This area allows you to manage "hard" bans, which stop users straight away and prevent them going further.';

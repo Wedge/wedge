@@ -616,8 +616,8 @@ function we_json_encode($str)
  * Other protections include dealing with newlines, carriage returns (through suppression), single quotes, links, inline script tags, and SCRIPT. (Probably to prevent search bots from indexing JS-only URLs.)
  *
  * @param string $string A string whose contents to be quoted.
- * @param string $q (for quote) The quote character to use around the string. Defaults to ". Can be useful to switch to ' for gzip compression in JS files.
- * @return string A transformed string with contents suitably single quoted for use in JavaScript.
+ * @param string $q (for quote) The quote character to use around the string. Defaults to '. Can be useful to switch to " if called within a string already declared with single quotes.
+ * @return string A transformed string with contents suitably quoted for use in JavaScript.
  */
 function JavaScriptEscape($string, $q = "'")
 {

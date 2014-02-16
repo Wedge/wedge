@@ -89,7 +89,7 @@ $(window).load(function ()
 					paddingTop: poster_height - col_height
 				});
 			// Otherwise, go ahead and 'fix' our current post's user box position.
-			else
+			else if ($col[0].style.position != 'fixed')
 				$col.css({
 					position: 'fixed',
 					left: offset.left,
