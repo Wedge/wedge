@@ -1034,9 +1034,9 @@ function weToggle(opt)
 
 	// If the init state is set to be collapsed, collapse it.
 	// If cookies are enabled and our toggler cookie is set to '1', override the initial state.
-	// Note: the cookie retrieval code is below, you can turn it into a function by replacing opt.sCookie with a param.
+	// Note: the cookie retrieval code is below, you can turn it into a function.
 	// It's not used anywhere else in Wedge, which is why we won't bother with a weCookie object.
-	if (@if (member) opt.isCollapsed @else opt.sCookie && document.cookie.search('\\b' + opt.sCookie + '\\s*=\\s*1\\b') != -1 @endif)
+	if (@if (member) opt.isCollapsed @else document.cookie.search('\\b' + opt.sOption + '\\s*=\\s*1\\b') != -1 @endif)
 		this.cs(true, true);
 
 	// Initialize the images to be clickable.
