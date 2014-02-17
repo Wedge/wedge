@@ -32,7 +32,7 @@ function upgrade_db()
 	}
 
 	// We might want to add some message here...
-	redirectexit($boardurl . '/index.php?' ($v < WEDGE ? 'upgrading-step-' . $v : 'upgraded'));
+	redirectexit($boardurl . '/index.php?' . ($v < WEDGE ? 'upgrading-step-' . $v : 'upgraded'));
 }
 
 // 1.0-alpha-1, February 2014. Adding hey_not and hey_not fields to the members table.
