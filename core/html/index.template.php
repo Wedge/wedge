@@ -178,24 +178,24 @@ function template_search_box()
 
 function template_notifications()
 {
-	global $txt, $context;
+	global $txt, $context, $user_settings;
 
 	if (isset($context['unread_notifications']))
 		echo '
 			<div class="notifs notif">
-				<span class="note', $context['unread_notifications'] ? '' : 'void', '">', $context['unread_notifications'], '</span>
+				<span class="note', !empty($user_settings['hey_not']) ? '' : 'void', '">', $context['unread_notifications'], '</span>
 				', $txt['notifications'], '
 			</div>';
 }
 
 function template_pm_notifications()
 {
-	global $txt, $context;
+	global $txt, $context, $user_settings;
 
 	if ($context['allow_pm'])
 		echo '
 			<div class="notifs npm">
-				<span class="note', !empty(we::$user['unread_messages']) ? '' : 'void', '">', we::$user['unread_messages'], '</span>
+				<span class="note', !empty($user_settings['hey_pm']) ? '' : 'void', '">', we::$user['unread_messages'], '</span>
 				', $txt['pm_short'], '
 			</div>';
 }

@@ -1,5 +1,5 @@
 
-Version 0.1 Alpha 3                              January ??, 2014
+Version 1.0 Alpha 1                             February ??, 2014
 -----------------------------------------------------------------
 + Everything that was written in the last 14 months.
 @ This is the first public alpha. Yay!

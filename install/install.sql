@@ -1636,6 +1636,8 @@ CREATE TABLE {$db_prefix}members (
 	unread_notifications smallint(5) unsigned NOT NULL default 0,
 	notify_email_period tinyint(3) NOT NULL default 7,
 	notify_email_last_sent int(10) NOT NULL default 0,
+	hey_not bit(1) NOT NULL default 0,
+	hey_pm bit(1) NOT NULL default 0,
 	data text NOT NULL,
 	PRIMARY KEY (id_member),
 	KEY member_name (member_name),

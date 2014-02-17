@@ -278,7 +278,8 @@ class Notification
 		// Update the unread notification count
 		wesql::query('
 			UPDATE {db_prefix}members
-			SET unread_notifications = unread_notifications + 1
+			SET unread_notifications = unread_notifications + 1,
+				hey_not = 1
 			WHERE id_member IN ({array_int:member})',
 			array(
 				'member' => array_keys($notifications),

@@ -230,7 +230,7 @@ class weNotif
 	 */
 	public static function action()
 	{
-		global $context, $txt, $settings;
+		global $context, $txt, $settings, $user_settings;
 
 		$sa = !empty($_REQUEST['sa']) ? $_REQUEST['sa'] : '';
 
@@ -326,6 +326,10 @@ class weNotif
 
 		if (isset($_GET['show']))
 			updateMyData(array('n_all' => $_GET['show'] == 'latest'));
+
+		// Was the user notified in a visible way of a notification..? Then opening the popup should end this.
+		if (!empty($user_settings['hey_not']))
+			updateMemberData(MID, array('hey_not' => 0));
 
 		// Show read & unread notifications, unless we're calling from AJAX and the user didn't specify they wanted all of them.
 		$context['notifications'] = (array) Notification::get(null, MID, 0, AJAX && empty(we::$user['data']['n_all']));

@@ -11,8 +11,8 @@
 if (defined('WEDGE'))
 	return;
 
-define('WEDGE_VERSION', '0.1');
-define('WEDGE', 1); // We are go.
+define('WEDGE_VERSION', '1.0-alpha-1');
+define('WEDGE', 1); // Internal snapshot number.
 
 // Get everything started up...
 if (function_exists('set_magic_quotes_runtime') && version_compare(PHP_VERSION, '5.4') < 0)
@@ -38,13 +38,17 @@ if (!file_exists($here . '/Settings.php'))
 // Load the settings...
 require_once($here . '/Settings.php');
 
-foreach (array('cache' => 'gz', 'css' => 'gz/css', 'js' => 'gs/jz') as $var => $path)
+// Make sure the paths are correct... at least try to fix them.
+if (!file_exists($boarddir = rtrim($boarddir, '/')) && file_exists(dirname(__FILE__) . '/SSI.php'))
+	$boarddir = dirname(__FILE__);
+
+foreach (array('source' => 'core/app', 'plugins' => 'plugins', 'cache' => 'gz', 'css' => 'gz/css', 'js' => 'gs/jz') as $var => $path)
 {
 	$dir = $var . 'dir';
 	if ((empty($$dir) || ($$dir !== $boarddir . '/' . $path && !file_exists($$dir))) && file_exists($boarddir . '/' . $path))
 		$$dir = $boarddir . '/' . $path;
 	if (!file_exists($$dir))
-		exit('Missing cache folder: $' . $dir . ' (' . $$dir . ')');
+		exit('Missing folder: $' . $dir . ' (' . $$dir . ')');
 }
 
 // And important files.
@@ -69,6 +73,13 @@ if (!empty($maintenance) && $maintenance > 1)
 
 // Initiate the database connection.
 loadDatabase();
+
+// Upgrade if the latest version needs it.
+if (empty($we_shot) || $we_shot < WEDGE)
+{
+	loadSource('Upgrade');
+	upgrade_db();
+}
 
 // Load the settings from the settings table, and perform operations like optimizing.
 loadSettings();

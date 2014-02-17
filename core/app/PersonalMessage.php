@@ -134,6 +134,9 @@ function PersonalMessage()
 			wetem::hide();
 			wetem::load('pm_popup');
 
+			if (!empty($user_settings['hey_pm']))
+				updateMemberData(MID, array('hey_pm' => 0));
+
 			// Now we get the list of PMs to deal with.
 			$request = wesql::query('
 				SELECT id_pm
