@@ -159,6 +159,23 @@ class weNotif
 		return $notifs;
 	}
 
+	public static function unread_count($id_member = 0)
+	{
+		$request = wesql::query('
+			SELECT unread_notifications
+			FROM {db_prefix}members
+			WHERE id_member = {int:member}
+			LIMIT 1',
+			array(
+				'member' => $id_member ?: MID,
+			)
+		);
+		list ($unread) = wesql::fetch_row($request);
+		wesql::free_result($request);
+
+		return $unread;
+	}
+
 	/**
 	 * Loads a specific member's notifier preferences.
 	 *
@@ -252,7 +269,8 @@ class weNotif
 			// Redirect to the target
 			redirectexit($notification->getURL());
 		}
-		elseif ($sa == 'subscribe' || $sa == 'unsubscribe')
+
+		if ($sa == 'subscribe' || $sa == 'unsubscribe')
 		{
 			checkSession('get');
 
@@ -278,23 +296,11 @@ class weNotif
 
 			redirectexit(self::$subscribers[$type]->getURL($object));
 		}
-		elseif ($sa == 'unread')
-		{
-			$request = wesql::query('
-				SELECT unread_notifications
-				FROM {db_prefix}members
-				WHERE id_member = {int:member}
-				LIMIT 1',
-				array(
-					'member' => MID,
-				)
-			);
-			list ($unread_count) = wesql::fetch_row($request);
-			wesql::free_result($request);
 
-			return_raw($unread_count . ';' . (!empty($settings['pm_enabled']) ? we::$user['unread_messages'] : -1));
-		}
-		elseif ($sa == 'markread' && isset($_REQUEST['in']))
+		if ($sa == 'unread')
+			return_raw(self::unread_count() . ';' . (!empty($settings['pm_enabled']) ? we::$user['unread_messages'] : -1));
+
+		if ($sa == 'markread' && isset($_REQUEST['in']))
 		{
 			$notifications = Notification::get($_REQUEST['in'], MID);
 
@@ -305,7 +311,8 @@ class weNotif
 				exit();
 			redirectexit();
 		}
-		elseif ($sa == 'preview' && isset($_REQUEST['in']))
+
+		if ($sa == 'preview' && isset($_REQUEST['in']))
 		{
 			$notifications = Notification::get($_REQUEST['in'], MID);
 
@@ -338,17 +345,7 @@ class weNotif
 			$notification_members[] = $notif->getMemberFrom();
 		loadMemberData($notification_members);
 
-		$request = wesql::query('
-			SELECT unread_notifications
-			FROM {db_prefix}members
-			WHERE id_member = {int:member}
-			LIMIT 1',
-			array(
-				'member' => MID,
-			)
-		);
-		list ($context['unread_count']) = wesql::fetch_row($request);
-		wesql::free_result($request);
+		$context['unread_count'] = self::unread_count();
 	}
 
 	/**

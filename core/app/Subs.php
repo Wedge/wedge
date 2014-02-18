@@ -363,7 +363,7 @@ function updateMemberData($members, $data)
 	$knownInts = array(
 		'date_registered', 'posts', 'id_group', 'last_login', 'instant_messages', 'unread_messages',
 		'new_pm', 'pm_prefs', 'gender', 'hide_email', 'show_online', 'pm_email_notify', 'pm_receive_from',
-		'notify_announcements', 'notify_send_body', 'notify_regularity', 'notify_types',
+		'notify_announcements', 'notify_send_body', 'notify_regularity', 'notify_types', 'hey_not', 'hey_pm',
 		'is_activated', 'id_msg_last_visit', 'id_post_group', 'total_time_logged_in', 'warning',
 	);
 	$knownFloats = array(
@@ -388,7 +388,7 @@ function updateMemberData($members, $data)
 			$type = 'raw';
 		}
 
-		// Ensure posts, instant_messages, and unread_messages don't overflow or underflow.
+		// Ensure posts, instant_messages, and unread_messages don't underflow.
 		if (in_array($var, array('posts', 'instant_messages', 'unread_messages')) && preg_match('~^' . $var . ' (\+ |- |\+ -)([\d]+)~', $val, $match))
 		{
 			if ($match[1] != '+ ')
