@@ -817,6 +817,10 @@ $(window).load(function ()
 				$popup.load(url, function (data)
 				{
 					hide_ajax();
+
+					// Opening the popup accomplished .note's mission, so we can remove that.
+					$popup.prev().addClass('notevoid').removeClass('note');
+
 					$(this).find('.n_container')
 						.css('max-height', ($(window).height() - $(this).find('.n_container').offset().top) * .9)
 						.closest('ul')
@@ -860,7 +864,7 @@ $(window).load(function ()
 									if (was_new)
 									{
 										we_notifs--;
-										$shade.prev().attr('class', we_notifs > 0 ? 'note' : 'notevoid').text(we_notifs);
+										$shade.prev().text(we_notifs);
 										document.title = (we_notifs > 0 ? '(' + we_notifs + ') ' : '') + original_title;
 
 										$.post(weUrl('action=notification;sa=markread;in=' + id));
@@ -892,7 +896,7 @@ $(window).load(function ()
 					{
 						this.removeClass('n_new');
 						we_notifs--;
-						$shade.prev().attr('class', we_notifs > 0 ? 'note' : 'notevoid').text(we_notifs);
+						$shade.prev().text(we_notifs);
 						document.title = (we_notifs > 0 ? '(' + we_notifs + ') ' : '') + original_title;
 
 						$.post(weUrl('action=notification;sa=markread;in=' + id));
@@ -956,14 +960,14 @@ $(window).load(function ()
 				{
 					we_notifs = count[0];
 					is_up_to_date = false;
-					$shade.prev().attr('class', we_notifs > 0 ? 'note' : 'notevoid').text(we_notifs);
+					$shade.prev().text(we_notifs);
 					document.title = (we_notifs > 0 ? '(' + we_notifs + ') ' : '') + original_title;
 				}
 				if (count[1] !== '-1' && count[1] != window.we_pms)
 				{
 					we_pms = count[1];
 					is_pm_up_to_date = false;
-					$pmshade.prev().attr('class', we_pms > 0 ? 'note' : 'notevoid').text(we_pms);
+					$pmshade.prev().text(we_pms);
 				}
 			});
 
