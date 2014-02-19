@@ -615,7 +615,6 @@ function registerMember(&$regOptions, $return_errors = false)
 		'lngfile' => '',
 		'buddy_list' => '',
 		'pm_ignore_list' => '',
-		'message_labels' => '',
 		'website_title' => '',
 		'website_url' => '',
 		'location' => '',
@@ -623,8 +622,6 @@ function registerMember(&$regOptions, $return_errors = false)
 		'signature' => '',
 		'avatar' => '',
 		'usertitle' => '',
-		'secret_question' => '',
-		'secret_answer' => '',
 		'additional_groups' => '',
 		'ignore_boards' => '',
 		'smiley_set' => '',
@@ -688,7 +685,7 @@ function registerMember(&$regOptions, $return_errors = false)
 	// Right, now let's prepare for insertion.
 	$knownInts = array(
 		'date_registered', 'posts', 'id_group', 'last_login', 'instant_messages', 'unread_messages',
-		'new_pm', 'pm_prefs', 'gender', 'hide_email', 'show_online', 'pm_email_notify',
+		'pm_prefs', 'gender', 'hide_email', 'show_online', 'pm_email_notify',
 		'notify_announcements', 'notify_send_body', 'notify_regularity', 'notify_types',
 		'is_activated', 'id_msg_last_visit', 'id_post_group', 'total_time_logged_in', 'warning',
 	);

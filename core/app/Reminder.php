@@ -84,7 +84,7 @@ function RemindPick()
 
 	// Find the user!
 	$request = wesql::query('
-		SELECT id_member, real_name, member_name, email_address, is_activated, validation_code, lngfile, secret_question
+		SELECT id_member, real_name, member_name, email_address, is_activated, validation_code, lngfile, data
 		FROM {db_prefix}members
 		WHERE ' . $where . '
 		LIMIT 1',
@@ -97,7 +97,7 @@ function RemindPick()
 		wesql::free_result($request);
 
 		$request = wesql::query('
-			SELECT id_member, real_name, member_name, email_address, is_activated, validation_code, lngfile, secret_question
+			SELECT id_member, real_name, member_name, email_address, is_activated, validation_code, lngfile, data
 			FROM {db_prefix}members
 			WHERE email_address = {string:email_address}
 			LIMIT 1',
@@ -131,9 +131,10 @@ function RemindPick()
 		fatal_lang_error('no_reminder_email', 'user', array($webmaster_email));
 
 	// If they have no secret question then they can only get emailed the item, or they are requesting the email, send them an email.
-	if (empty($row['secret_question']) || (isset($_POST['reminder_type']) && $_POST['reminder_type'] == 'email'))
+	$data = empty($row['data']) ? array() : @unserialize($row['data']);
+	if (empty($data['secret']) || (isset($_POST['reminder_type']) && $_POST['reminder_type'] == 'email'))
 	{
-		// Randomly generate a new password, with only alpha numeric characters that is a max length of 10 chars.
+		// Randomly generate a new password, with only alpha numeric characters, with a max length of 10 characters.
 		loadSource(array('Subs-Members', 'Subs-Post'));
 		$password = generateValidationCode();
 
@@ -289,7 +290,7 @@ function SecretAnswerInput()
 
 	// Get the stuff....
 	$request = wesql::query('
-		SELECT id_member, real_name, member_name, secret_question
+		SELECT id_member, real_name, member_name, data
 		FROM {db_prefix}members
 		WHERE id_member = {int:id_member}
 		LIMIT 1',
@@ -303,14 +304,19 @@ function SecretAnswerInput()
 	$row = wesql::fetch_assoc($request);
 	wesql::free_result($request);
 
-	// If there is NO secret question - then throw an error.
-	if (trim($row['secret_question']) == '')
+	// Get secret question from the member's data field.
+	$data = empty($row['data']) ? array() : @unserialize($row['data']);
+	$qa = isset($data['secret']) ? $data['secret'] : '|';
+	$question = substr($qa, 0, strrpos($qa, '|'));
+
+	// If there is NO secret question, then throw an error.
+	if (trim($question) == '')
 		fatal_lang_error('registration_no_secret_question', false);
 
 	// Ask for the answer...
 	$context['remind_user'] = $row['id_member'];
 	$context['remind_type'] = '';
-	$context['secret_question'] = $row['secret_question'];
+	$context['secret_question'] = $question;
 
 	wetem::load('ask');
 }
@@ -328,7 +334,7 @@ function SecretAnswer2()
 
 	// Get the information from the database.
 	$request = wesql::query('
-		SELECT id_member, real_name, member_name, secret_answer, secret_question, email_address
+		SELECT id_member, real_name, member_name, email_address, data
 		FROM {db_prefix}members
 		WHERE id_member = {int:id_member}
 		LIMIT 1',
@@ -342,8 +348,14 @@ function SecretAnswer2()
 	$row = wesql::fetch_assoc($request);
 	wesql::free_result($request);
 
+	// Get secret question & answer from the member's data field.
+	$data = empty($row['data']) ? array() : @unserialize($row['data']);
+	$qa = isset($data['secret']) ? $data['secret'] : '|';
+	$question = substr($qa, 0, strrpos($qa, '|'));
+	$answer = substr(strrchr($qa, '|'), 1);
+
 	// Check if the secret answer is correct.
-	if ($row['secret_question'] == '' || $row['secret_answer'] == '' || md5($_POST['secret_answer']) !== $row['secret_answer'])
+	if (trim($question) == '' || trim($answer) == '' || md5($_POST['secret_answer']) !== $answer)
 	{
 		log_error(sprintf($txt['reminder_error'], $row['member_name']), 'user');
 		fatal_lang_error('incorrect_answer', false);

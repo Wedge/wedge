@@ -699,10 +699,10 @@ function sendpm($recipients, $subject, $message, $store_outbox = true, $from = n
 		if (isset($deletes[$id]))
 			unset($all_to[$k]);
 
-	// Increase everyone's PM counter, and set new_pm and hey_pm to 1.
-	// hey_pm will be reset once the PM popup shows up, while new_pm will be reset when you visit your inbox. Uh...
+	// Increase everyone's PM counter, and set hey_pm to 1.
+	// hey_pm will be reset once you visit your inbox or the PM popup shows up.
 	if (!empty($all_to))
-		updateMemberData($all_to, array('instant_messages' => '+', 'unread_messages' => '+', 'new_pm' => 1, 'hey_pm' => 1));
+		updateMemberData($all_to, array('instant_messages' => '+', 'unread_messages' => '+', 'hey_pm' => 1));
 
 	return $log;
 }

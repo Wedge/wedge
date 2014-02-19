@@ -128,37 +128,36 @@ function loadProfileFields($force_reload = false)
 		In general each "field" has one array - the key of which is the database column name associated with said field. Each item
 		can have the following attributes:
 
-				string $type:			The type of field this is - valid types are:
-					- callback:		This is a field which has its own callback mechanism for templating.
-					- check:		A simple checkbox.
-					- hidden:		This doesn't have any visual aspects but may have some validity.
-					- password:		A password box.
-					- select:		A select box.
-					- text:			A string of some description.
+				string $type:				The type of field this is - valid types are:
+					- callback:				This is a field which has its own callback mechanism for templating.
+					- check:				A simple checkbox.
+					- hidden:				This doesn't have any visual aspects but may have some validity.
+					- password:				A password box.
+					- select:				A select box.
+					- text:					A string of some description.
 
-				string $label:			The label for this item - default will be $txt[$key] if this isn't set.
-				string $subtext:		The subtext (Small label) for this item.
-				int $size:			Optional size for a text area.
-				array $input_attr:		An array of text strings to be added to the input box for this item.
-				string $value:			The value of the item. If not set $cur_profile[$key] is assumed.
-				string $permission:		Permission required for this item (Excluded _any/_own subfix which is applied automatically).
+				string $label:				The label for this item - default will be $txt[$key] if this isn't set.
+				string $subtext:			The subtext (Small label) for this item.
+				int $size:					Optional size for a text area.
+				array $input_attr:			An array of text strings to be added to the input box for this item.
+				string $value:				The value of the item. If not set $cur_profile[$key] is assumed.
+				string $permission:			Permission required for this item (Excluded _any/_own subfix which is applied automatically).
 				function $input_validate:	A runtime function which validates the element before going to the database. It is passed
-								the relevant $_POST element if it exists and should be treated like a reference.
+												the relevant $_POST element if it exists and should be treated like a reference.
+					Return types:
+						- true:				Element can be stored.
+						- false:			Skip this element.
+						- a text string:	An error occurred - this is the error message.
 
-								Return types:
-					- true:			Element can be stored.
-					- false:		Skip this element.
-					- a text string:	An error occurred - this is the error message.
+				function $preload:			A function that is used to load data required for this element to be displayed.
+												Must return true to be displayed at all.
 
-				function $preload:		A function that is used to load data required for this element to be displayed. Must return
-								true to be displayed at all.
-
-				string $cast_type:		If set casts the element to a certain type. Valid types (bool, int, float).
-				string $save_key:		If the index of this element isn't the database column name it can be overriden
-								with this string.
-				bool $is_dummy:			If set then nothing is acted upon for this element.
-				bool $enabled:			A test to determine whether this is even available - if not is unset.
-				string $link_with:		Key which links this field to an overall set.
+				string $cast_type:			If set casts the element to a certain type. Valid types (bool, int, float).
+				string $save_key:			If the index of this element isn't the database column name it can be overriden
+												with this string.
+				bool $is_dummy:				If set then nothing is acted upon for this element.
+				bool $enabled:				A test to determine whether this is even available - if not is unset.
+				string $link_with:			Key which links this field to an overall set.
 
 		Note that all elements that have a custom input_validate must ensure they set the value of $cur_profile correct to enable
 		the changes to be displayed correctly on submit of the form.
@@ -283,7 +282,7 @@ function loadProfileFields($force_reload = false)
 		'gender' => array(
 			'type' => 'select',
 			'cast_type' => 'int',
-			'options' => function () use ($txt) { return array(0 => '', 1 => $txt['male'], 2 => $txt['female']); },
+			'options' => function () { global $txt; return array(0 => '', 1 => $txt['male'], 2 => $txt['female']); },
 			'label' => $txt['gender'],
 			'permission' => 'profile_extra',
 			'class' => 'fixed',
@@ -499,6 +498,9 @@ function loadProfileFields($force_reload = false)
 			'subtext' => $txt['secret_desc'],
 			'size' => 50,
 			'permission' => 'profile_identity',
+			'input_validate' => function (&$value) {
+				return false;
+			},
 		),
 		'secret_answer' => array(
 			'type' => 'text',
@@ -509,8 +511,7 @@ function loadProfileFields($force_reload = false)
 			'value' => '',
 			'permission' => 'profile_identity',
 			'input_validate' => function (&$value) {
-				$value = $value != '' ? md5($value) : '';
-				return true;
+				return false;
 			},
 		),
 		'signature' => array(
@@ -652,8 +653,10 @@ function loadProfileFields($force_reload = false)
 		),
 	);
 
+	$cur_profile['secret_question'] = isset($cur_profile['data']['secret']) ? implode('|', explode('|', $cur_profile['data']['secret'], -1)) : '';
 	$disabled_fields = !empty($settings['disabled_profile_fields']) ? explode(',', $settings['disabled_profile_fields']) : array();
 	$is_owner = we::$user['is_owner'];
+
 	// For each of the above let's take out the bits which don't apply - to save memory and security!
 	foreach ($profile_fields as $key => $field)
 	{
@@ -690,6 +693,7 @@ function setupProfileContext($fields)
 
 	$i = 0;
 	$last_type = '';
+
 	foreach ($fields as $key => $field)
 	{
 		if (isset($profile_fields[$field]))
@@ -709,9 +713,7 @@ function setupProfileContext($fields)
 
 				// Everything has a value!
 				if (!isset($cur_field['value']))
-				{
 					$cur_field['value'] = isset($cur_profile[$field]) ? $cur_profile[$field] : '';
-				}
 
 				// Any input attributes?
 				$cur_field['input_attr'] = !empty($cur_field['input_attr']) ? implode(',', $cur_field['input_attr']) : '';
@@ -764,6 +766,21 @@ function saveProfileFields()
 
 	// Assume we log nothing.
 	$context['log_changes'] = array();
+
+	$secret = isset($cur_profile['data']['secret']) ? $cur_profile['data']['secret'] : array('', '');
+	$question = isset($_POST['secret_question']) && $_POST['secret_question'] !== '' ? $_POST['secret_question'] : substr($secret, 0, strrpos($secret, '|'));
+	$answer = isset($_POST['secret_answer']) && $_POST['secret_answer'] !== '' ? md5($_POST['secret_answer']) : substr(strrchr($secret, '|'), 1);
+
+	if (trim($question) === '' || trim($answer) === '')
+	{
+		unset($cur_profile['data']['secret']);
+		updateMemberData($context['id_member'], array('data' => serialize($cur_profile['data'])));
+	}
+	elseif (!isset($cur_profile['data']['secret']) || $cur_profile['data']['secret'] !== $secret)
+	{
+		$cur_profile['data']['secret'] = $question . '|' . $answer;
+		updateMemberData($context['id_member'], array('data' => serialize($cur_profile['data'])));
+	}
 
 	// Cycle through the profile fields working out what to do!
 	foreach ($profile_fields as $key => $field)
@@ -863,11 +880,7 @@ function saveProfileFields()
 		}
 	}
 
-	// !! Temporary
-	if (we::$user['is_owner'])
-		$changeOther = allowedTo(array('profile_extra_any', 'profile_extra_own'));
-	else
-		$changeOther = allowedTo('profile_extra_any');
+	$changeOther = allowedTo(we::$user['is_owner'] ? array('profile_extra_any', 'profile_extra_own') : 'profile_extra_any');
 	if ($changeOther && empty($post_errors))
 	{
 		makeThemeChanges($context['id_member']);
@@ -962,6 +975,7 @@ function saveProfileChanges(&$profile_vars, $memID)
 }
 
 // Make any theme changes that are sent with the profile...
+// !! @todo: rewrite this...
 function makeThemeChanges($memID)
 {
 	global $settings, $context;
@@ -3492,7 +3506,7 @@ function groupMembership2($profile_vars, $memID)
 		if (!empty($moderators))
 		{
 			$request = wesql::query('
-				SELECT id_member, email_address, lngfile, member_name, mod_prefs
+				SELECT id_member, email_address, lngfile, member_name, data
 				FROM {db_prefix}members
 				WHERE id_member IN ({array_int:moderator_list})
 					AND notify_types != {int:no_notifications}
@@ -3505,9 +3519,10 @@ function groupMembership2($profile_vars, $memID)
 			while ($row = wesql::fetch_assoc($request))
 			{
 				// Check whether they are interested.
-				if (!empty($row['mod_prefs']))
+				$data = empty($row['data']) ? array() : @unserialize($row['data']);
+				if (!empty($data['modset']))
 				{
-					list (, $pref_binary) = explode('|', $row['mod_prefs']);
+					list (, $pref_binary) = explode('|', $data['modset']);
 					if (!($pref_binary & 4))
 						continue;
 				}

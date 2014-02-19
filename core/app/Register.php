@@ -241,10 +241,10 @@ function Register2()
 	}
 
 	foreach ($_POST as $key => $value)
-	{
 		if (!is_array($_POST[$key]))
 			$_POST[$key] = htmltrim__recursive(str_replace(array("\n", "\r"), '', $_POST[$key]));
-	}
+
+	$data = array();
 
 	// Collect all extra registration fields someone might have filled in.
 	$possible_strings = array(
@@ -252,11 +252,8 @@ function Register2()
 		'location', 'birthdate',
 		'buddy_list', 'pm_ignore_list',
 		'signature', 'personal_text', 'avatar',
-		'secret_question', 'secret_answer',
-		'time_format', 'timezone',
-		'smiley_set',
-		'lngfile',
-		'data',
+		'data', 'time_format', 'timezone',
+		'smiley_set', 'lngfile',
 	);
 	$possible_ints = array(
 		'pm_email_notify',
@@ -270,8 +267,8 @@ function Register2()
 		'hide_email', 'show_online',
 	);
 
-	if (isset($_POST['secret_answer']) && $_POST['secret_answer'] != '')
-		$_POST['secret_answer'] = md5($_POST['secret_answer']);
+	if (isset($_POST['secret_question'], $_POST['secret_answer']) && trim($_POST['secret_answer']) != '')
+		$data['secret'] = $_POST['secret_question'] . '|' . md5($_POST['secret_answer'])));
 
 	// Needed for isReservedName() and registerMember().
 	loadSource('Subs-Members');
@@ -361,6 +358,11 @@ function Register2()
 		'extra_register_vars' => array(),
 		'theme_vars' => array(),
 	);
+
+	// secret_question/secret_answer are stored in the data field.
+	if (!empty($data))
+		$_POST['data'] = serialize($data);
+	unset($data);
 
 	// Include the additional options that might have been filled in.
 	foreach ($possible_strings as $var)

@@ -1212,9 +1212,8 @@ function AdminAccount()
 					'id_group' => 'int', 'posts' => 'int', 'date_registered' => 'int', 'hide_email' => 'int',
 					'password_salt' => 'string', 'lngfile' => 'string', 'personal_text' => 'string', 'avatar' => 'string',
 					'member_ip' => 'string', 'member_ip2' => 'string', 'buddy_list' => 'string', 'pm_ignore_list' => 'string',
-					'message_labels' => 'string', 'website_title' => 'string', 'website_url' => 'string', 'location' => 'string',
-					'signature' => 'string', 'usertitle' => 'string', 'secret_question' => 'string',
-					'additional_groups' => 'string', 'ignore_boards' => 'string', 'data' => 'string',
+					'website_title' => 'string', 'website_url' => 'string', 'location' => 'string', 'signature' => 'string',
+					'usertitle' => 'string', 'additional_groups' => 'string', 'ignore_boards' => 'string', 'data' => 'string',
 				),
 				array(
 					stripslashes($_POST['username']), stripslashes($_POST['username']), sha1(strtolower(stripslashes($_POST['username'])) . stripslashes($_POST['password1'])), stripslashes($_POST['email']),
@@ -1222,8 +1221,7 @@ function AdminAccount()
 					$incontext['member_salt'], '', '', '',
 					$ip, $ip, '', '',
 					'', '', '', '',
-					'', '', '',
-					'', '', '',
+					'', '', '', '',
 				)
 			);
 

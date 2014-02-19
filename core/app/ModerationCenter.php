@@ -1504,19 +1504,19 @@ function list_getInfractionLogCount()
 
 function ModBlockPrefs()
 {
-	global $context, $user_settings;
+	global $context;
 
 	// Does the user have any settings yet?
-	if (empty($user_settings['mod_prefs']))
+	if (empty(we::$user['data']['modset']))
 		$pref_binary = 5;
 	else
-		list (, $pref_binary) = explode('|', $user_settings['mod_prefs']);
+		list (, $pref_binary) = explode('|', we::$user['data']['modset']);
 
 	// Are we saving?
 	if (isset($_POST['save']))
 	{
 		checkSession('post');
-		/* Current format of mod_prefs is:
+		/* Current format of modset is:
 			|yyy
 
 			WHERE:
@@ -1535,7 +1535,7 @@ function ModBlockPrefs()
 		if ($context['can_moderate_boards'] && !empty($_POST['mod_notify_report']))
 			$pref_binary |= ($_POST['mod_notify_report'] == 2 ? 1 : 2);
 
-		updateMemberData(MID, array('mod_prefs' => '|' . $pref_binary));
+		updateMyData(array('modset' => '|' . $pref_binary));
 	}
 
 	// What blocks does the user currently have selected?

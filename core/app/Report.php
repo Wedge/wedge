@@ -179,7 +179,7 @@ function ReportToModerator2()
 	$moderators = membersAllowedTo('moderate_board', $board);
 
 	$request = wesql::query('
-		SELECT id_member, email_address, lngfile, mod_prefs
+		SELECT id_member, email_address, lngfile, data
 		FROM {db_prefix}members
 		WHERE id_member IN ({array_int:moderator_list})
 			AND notify_types != {int:notify_types}
@@ -284,9 +284,10 @@ function ReportToModerator2()
 	while ($row = wesql::fetch_assoc($request))
 	{
 		// Maybe they don't want to know?!
-		if (!empty($row['mod_prefs']))
+		$data = @unserialize($row['data']);
+		if (!empty($data['modset']))
 		{
-			list (, $pref_binary) = explode('|', $row['mod_prefs']);
+			list (, $pref_binary) = explode('|', $data['modset']);
 			if (!($pref_binary & 1) && (!($pref_binary & 2) || !in_array($row['id_member'], $real_mods)))
 				continue;
 		}

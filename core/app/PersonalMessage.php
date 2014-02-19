@@ -123,6 +123,37 @@ function PersonalMessage()
 	loadTemplate('PersonalMessage');
 	loadTemplate('Msg'); // For template_user_status
 
+	// Now we have the labels, and assuming we have unsorted mail, apply our rules!
+	if (!empty($user_settings['hey_pm']))
+	{
+		cache_put_data('labelCounts:' . MID, null, 720);
+		$context['labels'] = empty(we::$user['data']['pmlabs']) ? array() : explode(',', we::$user['data']['pmlabs']);
+		foreach ($context['labels'] as $id_label => $label_name)
+			$context['labels'][(int) $id_label] = array(
+				'id' => $id_label,
+				'name' => trim($label_name),
+				'messages' => 0,
+				'unread_messages' => 0,
+			);
+		$context['labels'][-1] = array(
+			'id' => -1,
+			'name' => $txt['pm_msg_label_inbox'],
+			'messages' => 0,
+			'unread_messages' => 0,
+		);
+
+		applyRules();
+		updateMemberData(MID, array('hey_pm' => 0));
+		wesql::query('
+			UPDATE {db_prefix}pm_recipients
+			SET is_new = 0
+			WHERE id_member = {int:current_member}',
+			array(
+				'current_member' => MID,
+			)
+		);
+	}
+
 	// Are we just getting AJAXy things?
 	if (AJAX && isset($_GET['sa']) && $_GET['sa'] == 'ajax')
 	{
@@ -133,9 +164,6 @@ function PersonalMessage()
 			$context['show_drafts'] = $context['can_send'] && allowedTo('save_pm_draft') && !empty($settings['masterSavePmDrafts']);
 			wetem::hide();
 			wetem::load('pm_popup');
-
-			if (!empty($user_settings['hey_pm']))
-				updateMemberData(MID, array('hey_pm' => 0));
 
 			// Now we get the list of PMs to deal with.
 			$request = wesql::query('
@@ -297,49 +325,18 @@ function PersonalMessage()
 	if ($context['draft_saved'] = isset($_GET['draftsaved']))
 		loadLanguage('Post');
 
-	// Now we have the labels, and assuming we have unsorted mail, apply our rules!
-	if ($user_settings['new_pm'])
-	{
-		$context['labels'] = $user_settings['message_labels'] == '' ? array() : explode(',', $user_settings['message_labels']);
-		foreach ($context['labels'] as $id_label => $label_name)
-			$context['labels'][(int) $id_label] = array(
-				'id' => $id_label,
-				'name' => trim($label_name),
-				'messages' => 0,
-				'unread_messages' => 0,
-			);
-		$context['labels'][-1] = array(
-			'id' => -1,
-			'name' => $txt['pm_msg_label_inbox'],
-			'messages' => 0,
-			'unread_messages' => 0,
-		);
-
-		applyRules();
-		updateMemberData(MID, array('new_pm' => 0));
-		wesql::query('
-			UPDATE {db_prefix}pm_recipients
-			SET is_new = {int:not_new}
-			WHERE id_member = {int:current_member}',
-			array(
-				'current_member' => MID,
-				'not_new' => 0,
-			)
-		);
-	}
-
 	// Load the label data.
-	if ($user_settings['new_pm'] || ($context['labels'] = cache_get_data('labelCounts:' . MID, 720)) === null)
+	$context['labels'] = cache_get_data('labelCounts:' . MID, 720, function ()
 	{
-		$context['labels'] = $user_settings['message_labels'] == '' ? array() : explode(',', $user_settings['message_labels']);
-		foreach ($context['labels'] as $id_label => $label_name)
-			$context['labels'][(int) $id_label] = array(
+		$labels = empty(we::$user['data']['pmlabs'] ? array() : explode(',', we::$user['data']['pmlabs']);
+		foreach ($labels as $id_label => $label_name)
+			$labels[(int) $id_label] = array(
 				'id' => $id_label,
 				'name' => trim($label_name),
 				'messages' => 0,
 				'unread_messages' => 0,
 			);
-		$context['labels'][-1] = array(
+		$labels[-1] = array(
 			'id' => -1,
 			'name' => $txt['pm_msg_label_inbox'],
 			'messages' => 0,
@@ -363,16 +360,16 @@ function PersonalMessage()
 			$this_labels = explode(',', $row['labels']);
 			foreach ($this_labels as $this_label)
 			{
-				$context['labels'][(int) $this_label]['messages'] += $row['num'];
+				$labels[(int) $this_label]['messages'] += $row['num'];
 				if (!($row['is_read'] & 1))
-					$context['labels'][(int) $this_label]['unread_messages'] += $row['num'];
+					$labels[(int) $this_label]['unread_messages'] += $row['num'];
 			}
 		}
 		wesql::free_result($result);
 
 		// Store it please!
-		cache_put_data('labelCounts:' . MID, $context['labels'], 720);
-	}
+		return $labels;
+	});
 
 	// This determines if we have more labels than just the standard inbox.
 	$context['currently_using_labels'] = count($context['labels']) > 1 ? 1 : 0;
@@ -3043,7 +3040,7 @@ function ManageLabels()
 		}
 
 		// Save the label status.
-		updateMemberData(MID, array('message_labels' => implode(',', $the_labels)));
+		updateMyData(array('pmlabs' => implode(',', $the_labels)));
 
 		// Update all the messages currently with any label changes in them!
 		if (!empty($message_changes))

@@ -770,7 +770,7 @@ $(window).load(function ()
 
 				// Hide popup when clicking elsewhere.
 				$(document).off('click.no');
-				if (!is_opened) // skipping the 'return' compresses badly. sigh.
+				if (!is_opened) // Skipping the 'return' compresses badly. Sigh.
 					return;
 				$(document).on('click.no', function (e)
 				{

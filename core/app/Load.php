@@ -722,9 +722,9 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 			mem.additional_groups,
 
 			mem.pm_ignore_list, mem.pm_email_notify, mem.pm_receive_from,
-			mem.time_format, mem.timezone, mem.secret_question, mem.smiley_set, mem.total_time_logged_in,
+			mem.time_format, mem.timezone, mem.smiley_set, mem.total_time_logged_in,
 			mem.ignore_boards, mem.notify_announcements, mem.notify_regularity, mem.notify_send_body,
-			mem.notify_types, lo.url, mem.password_salt, mem.pm_prefs';
+			mem.notify_types, lo.url, mem.password_salt, mem.pm_prefs, mem.data';
 
 		$get_badges = true;
 	}

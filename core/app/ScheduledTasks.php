@@ -292,7 +292,7 @@ function scheduled_approval_notification()
 
 	// Come along one and all... until we reject you ;)
 	$request = wesql::query('
-		SELECT id_member, real_name, email_address, lngfile, id_group, additional_groups, mod_prefs
+		SELECT id_member, real_name, email_address, lngfile, id_group, additional_groups, data
 		FROM {db_prefix}members
 		WHERE id_group IN ({array_int:additional_group_list})
 			OR FIND_IN_SET({raw:additional_group_list_implode}, additional_groups) != 0' . (empty($members) ? '' : '
@@ -308,9 +308,10 @@ function scheduled_approval_notification()
 	while ($row = wesql::fetch_assoc($request))
 	{
 		// Check whether they are interested.
-		if (!empty($row['mod_prefs']))
+		$data = @unserialize($row['data']);
+		if (!empty($data['modset']))
 		{
-			list (, $pref_binary) = explode('|', $row['mod_prefs']);
+			list (, $pref_binary) = explode('|', $data['modset']);
 			if (!($pref_binary & 4))
 				continue;
 		}
