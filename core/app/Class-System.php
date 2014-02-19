@@ -90,6 +90,7 @@ class we
 			list ($id_member, $password, $login_span) = @unserialize($_SESSION['login_' . $cookiename]);
 			$id_member = !empty($id_member) && strlen($password) == 40 && $login_span > time() ? (int) $id_member : 0;
 		}
+		we::$id = $id_member;
 
 		// Only load this stuff if the user isn't a guest.
 		if ($id_member != 0)

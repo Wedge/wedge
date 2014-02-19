@@ -767,7 +767,7 @@ function saveProfileFields()
 	// Assume we log nothing.
 	$context['log_changes'] = array();
 
-	$secret = isset($cur_profile['data']['secret']) ? $cur_profile['data']['secret'] : array('', '');
+	$secret = isset($cur_profile['data']['secret']) ? $cur_profile['data']['secret'] : '|';
 	$question = isset($_POST['secret_question']) && $_POST['secret_question'] !== '' ? $_POST['secret_question'] : substr($secret, 0, strrpos($secret, '|'));
 	$answer = isset($_POST['secret_answer']) && $_POST['secret_answer'] !== '' ? md5($_POST['secret_answer']) : substr(strrchr($secret, '|'), 1);
 

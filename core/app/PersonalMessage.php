@@ -328,6 +328,8 @@ function PersonalMessage()
 	// Load the label data.
 	$context['labels'] = cache_get_data('labelCounts:' . MID, 720, function ()
 	{
+		global $txt;
+
 		$labels = empty(we::$user['data']['pmlabs']) ? array() : explode(',', we::$user['data']['pmlabs']);
 		foreach ($labels as $id_label => $label_name)
 			$labels[(int) $id_label] = array(
