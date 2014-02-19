@@ -181,7 +181,7 @@ function template_credits()
 			<section>
 				<h6>', $group['title'], '</h6>
 				<ul', $i === $max ? ' class="last"' : '', '>
-					<li', $i++ == 1 ? ' style="list-style-type: none"' : '', '>', implode('</li>
+					<li', $i++ == 2 ? ' style="list-style-type: none"' : '', '>', implode('</li>
 					<li>', $group['members']), '</li>
 				</ul>
 			</section>';

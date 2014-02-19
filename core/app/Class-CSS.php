@@ -1748,7 +1748,7 @@ class wess_base64 extends wess
 		if (preg_match_all('~(?<!raw-)url\(([^)]+)\)~i', $css, $matches))
 		{
 			foreach ($matches[1] as $img)
-				if (preg_match('~\.(gif|png|jpe?g)$~', $img, $ext))
+				if (preg_match('~\.(gif|png|jpe?g|svg)$~', $img, $ext))
 					$images[$img] = $ext[1] == 'jpg' ? 'jpeg' : $ext[1];
 
 			foreach ($images as $img => $img_ext)
@@ -1760,7 +1760,7 @@ class wess_base64 extends wess
 				if (file_exists($absolut) && filesize($absolut) <= 3072)
 				{
 					$img_raw = file_get_contents($absolut);
-					$img_data = 'url(data:image/' . $img_ext . ';base64,' . base64_encode($img_raw) . ')';
+					$img_data = 'url(data:image/' . ($img_ext == 'svg' ? 'svg+xml' : $img_ext) . ';base64,' . base64_encode($img_raw) . ')';
 					$css = str_replace('url(' . $img . ')', $img_data, $css);
 				}
 			}

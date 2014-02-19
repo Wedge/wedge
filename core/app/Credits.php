@@ -48,32 +48,31 @@ function Credits()
 		array(
 			'title' => $txt['credits_groups_ps'],
 			'members' => array(
-				'<div style="float: left; text-align: center"><img src="http://wedge.org/about/nao.png" style="margin: 8px auto 4px"><br class="clear">Ren&eacute;-Gilles<br>Deberdt</div>
-				<div style="float: left; text-align: center; margin-left: 8px"><img src="http://wedge.org/about/pete.png" style="margin: 8px auto 4px"><br class="clear">Peter Spicer</div>
-				<div class="clear"></div>',
+				'Ren&eacute;-Gilles Deberdt',
+				'Peter Spicer',
 			),
 		),
 		array(
 			'title' => $txt['credits_groups_dev'],
 			'members' => array(
-				'<b>Nao &#23578;</b> (Ren&eacute;-Gilles Deberdt)',
+				'<img src="http' . (!empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) != 'off' ? 's://secure.' : '://') . 'gravatar.com/avatar/0879c588019800e5349fe171d69e1c28" class="opaque left" style="margin: 8px 16px 8px 0"><br><br>Ren&eacute;-Gilles Deberdt<br>(Nao &#23578;)<br class="clear">',
 			),
 		),
 		array(
 			'title' => $txt['credits_groups_contributors'],
 			'members' => array(
-				'Arantor (Peter Spicer)',
-				'Aaron (Aaron van Geffen)',
-				'Dragooon (Shitiz Garg)',
-				'live627 (John Rayes)',
-				'TE (Thorsten Eurich)',
+				'Peter Spicer (Arantor)',
+				'Shitiz Garg (Dragooon)',
+				'John Rayes (live627)',
+				'Thorsten Eurich (TE)',
 			),
 		),
 		array(
 			'title' => $txt['credits_special'],
 			'members' => array(
-				'Pandos (Sven Rissmann)',
-				'MultiformeIngegno (Lorenzo Raffio)',
+				'Sven Rissmann (Pandos)',
+				'Lorenzo Raffio (MultiformeIngegno)',
+				'Aaron van Geffen (Aaron)',
 				'[Unknown] &amp; Karl Benson',
 				'Norodo',
 			),
