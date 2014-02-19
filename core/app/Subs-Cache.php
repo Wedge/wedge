@@ -1902,7 +1902,7 @@ function cache_get_data($orig_key, $ttl = 120, $put_callback = null)
 	if ($put_callback === null)
 		return null;
 
-	cache_put_data($orig_key, $ttl, $new_cache = $put_callback());
+	cache_put_data($orig_key, $new_cache = $put_callback(), $ttl);
 	return $new_cache;
 }
 
