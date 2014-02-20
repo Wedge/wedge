@@ -45,7 +45,7 @@ function template_boards()
 
 		if (empty($category['hide_rss']))
 			echo '
-							<a class="catfeed" href="<URL>?action=feed;c=', $category['id'], '" class="feed_icon"></a>';
+							<a class="catfeed feed_icon" href="<URL>?action=feed;c=', $category['id'], '"></a>';
 
 		echo '
 							', $category['link'], '
