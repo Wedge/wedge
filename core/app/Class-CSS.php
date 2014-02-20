@@ -1351,49 +1351,47 @@ class wess_math extends wess
 // The only exception is the gradient function, because it accepts a #aarrggbb value.
 class wess_rgba extends wess
 {
+	// Converts from a string (possibly rgba) value to a rgb string
+	private static function rgba2rgb($input)
+	{
+		global $alphamix;
+		static $cache = array();
+
+		if (isset($cache[$input[0]]))
+			return $cache[$input[0]];
+
+		$str = wess::string2color($input[2]);
+		if (empty($str))
+			return $cache[$input[0]] = 'red';
+		list ($r, $g, $b, $a) = $str[1] ? $str[1] : wess::hsl2rgb($str[2]['h'], $str[2]['s'], $str[2]['l'], $str[2]['a']);
+
+		if ($a == 1)
+			return $cache[$input[0]] = $input[1] . wess::rgb2hex($r, $g, $b);
+		if (!empty($input[1]))
+			return $cache[$input[0]] = $input[1] . '#' . sprintf('%02x%02x%02x%02x', round($a * 255), $r, $g, $b);
+
+		// We're going to assume the matte color is white, otherwise, well, too bad.
+		if (isset($alphamix) && !is_array($alphamix))
+		{
+			$rgb = wess::string2color($alphamix);
+			if (empty($rgb[1]) && !empty($rgb[2]))
+				$rgb[1] = hsl2rgb($rgb[2]['h'], $rgb[2]['s'], $rgb[2]['l'], $rgb[2]['a']);
+			$alphamix = $rgb[1];
+		}
+		elseif (!isset($alphamix))
+			$alphamix = array(255, 255, 255);
+
+		$ma = 1 - $a;
+		$r = $a * $r + $ma * $alphamix[0];
+		$g = $a * $g + $ma * $alphamix[1];
+		$b = $a * $b + $ma * $alphamix[2];
+
+		return $cache[$input[0]] = wess::rgb2hex($r, $g, $b);
+	}
+
 	function process(&$css)
 	{
-		$css = preg_replace_callback(
-			'~(colorstr=)' . (we::is('ie8down') ? '?' : '') . '((?:rgb|hsl)a?\([^()]*\))~i',
-			function ($input)
-			{
-				// Converts from a string (possibly rgba) value to a rgb string
-				global $alphamix;
-				static $cache = array();
-
-				if (isset($cache[$input[0]]))
-					return $cache[$input[0]];
-
-				$str = wess::string2color($input[2]);
-				if (empty($str))
-					return $cache[$input[0]] = 'red';
-				list ($r, $g, $b, $a) = $str[1] ? $str[1] : wess::hsl2rgb($str[2]['h'], $str[2]['s'], $str[2]['l'], $str[2]['a']);
-
-				if ($a == 1)
-					return $cache[$input[0]] = $input[1] . wess::rgb2hex($r, $g, $b);
-				if (!empty($input[1]))
-					return $cache[$input[0]] = $input[1] . '#' . sprintf('%02x%02x%02x%02x', round($a * 255), $r, $g, $b);
-
-				// We're going to assume the matte color is white, otherwise, well, too bad.
-				if (isset($alphamix) && !is_array($alphamix))
-				{
-					$rgb = wess::string2color($alphamix);
-					if (empty($rgb[1]) && !empty($rgb[2]))
-						$rgb[1] = hsl2rgb($rgb[2]['h'], $rgb[2]['s'], $rgb[2]['l'], $rgb[2]['a']);
-					$alphamix = $rgb[1];
-				}
-				elseif (!isset($alphamix))
-					$alphamix = array(255, 255, 255);
-
-				$ma = 1 - $a;
-				$r = $a * $r + $ma * $alphamix[0];
-				$g = $a * $g + $ma * $alphamix[1];
-				$b = $a * $b + $ma * $alphamix[2];
-
-				return $cache[$input[0]] = wess::rgb2hex($r, $g, $b);
-			},
-			$css
-		);
+		$css = preg_replace_callback('~(colorstr=)' . (we::is('ie8down') ? '?' : '') . '((?:rgb|hsl)a?\([^()]*\))~i', 'wess_rgba::rgba2rgb', $css);
 	}
 }
 
@@ -1748,7 +1746,7 @@ class wess_base64 extends wess
 		if (preg_match_all('~(?<!raw-)url\(([^)]+)\)~i', $css, $matches))
 		{
 			foreach ($matches[1] as $img)
-				if (preg_match('~\.(gif|png|jpe?g|svg)$~', $img, $ext))
+				if (preg_match('~\.(gif|png|jpe?g|svgz?)$~', $img, $ext))
 					$images[$img] = $ext[1] == 'jpg' ? 'jpeg' : $ext[1];
 
 			foreach ($images as $img => $img_ext)
@@ -1757,10 +1755,13 @@ class wess_base64 extends wess
 				$absolut = realpath($path);
 
 				// Only small files should be embedded, really. We're saving on hits, not bandwidth.
-				if (file_exists($absolut) && filesize($absolut) <= 3072)
+				if (file_exists($absolut) && filesize($absolut) <= ($img_ext == 'svg' ? 15000 : 3072))
 				{
 					$img_raw = file_get_contents($absolut);
-					$img_data = 'url(data:image/' . ($img_ext == 'svg' ? 'svg+xml' : $img_ext) . ';base64,' . base64_encode($img_raw) . ')';
+					if ($img_ext == 'svg')
+						$img_data = 'url("data:image/svg+xml;' . preg_replace('~^.*?(?=\<svg)~s', '', str_replace(array('"', "\t", "\n"), array('\'', ' ', ' '), $img_raw)) . '")';
+					else
+						$img_data = 'url(data:image/' . ($img_ext == 'svgz' ? 'svg+xml' : $img_ext) . ';base64,' . base64_encode($img_raw) . ')';
 					$css = str_replace('url(' . $img . ')', $img_data, $css);
 				}
 			}
