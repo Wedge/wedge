@@ -268,7 +268,7 @@ function Register2()
 	);
 
 	if (isset($_POST['secret_question'], $_POST['secret_answer']) && trim($_POST['secret_answer']) != '')
-		$data['secret'] = $_POST['secret_question'] . '|' . md5($_POST['secret_answer'])));
+		$data['secret'] = $_POST['secret_question'] . '|' . md5($_POST['secret_answer']);
 
 	// Needed for isReservedName() and registerMember().
 	loadSource('Subs-Members');
