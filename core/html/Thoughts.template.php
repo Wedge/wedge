@@ -186,7 +186,7 @@ function template_thoughts_table()
 				<td colspan="2">', $txt['no_thoughts'], '</td>
 			</tr>';
 
-	if (!empty($context['header']))
+	if (AJAX && !empty($context['header']))
 		echo '<tr class="hide"><td>', $context['header'], '</td></tr>';
 }
 
