@@ -422,7 +422,7 @@ class we
 		// Fill in the server URL for the current user. This is user-specific, as they may be using a different URL than the script's default URL (Pretty URL, secure access...)
 		// Note that HTTP_X_FORWARDED_SERVER is mostly used by proxy servers. If the client doesn't provide anything, it's probably a bot.
 		$user['host'] = empty($_SERVER['REAL_HTTP_HOST']) ? (empty($_SERVER['HTTP_HOST']) ? (empty($_SERVER['HTTP_X_FORWARDED_SERVER']) ? substr(strrchr($boardurl, ':'), 3) : $_SERVER['HTTP_X_FORWARDED_SERVER']) : $_SERVER['HTTP_HOST']) : $_SERVER['REAL_HTTP_HOST'];
-		$user['server'] = 'http' . (!empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) != 'off' ? 's' : '') . '://' . $user['host'];
+		$user['server'] = $context['protocol'] . $user['host'];
 
 		// The URL in your address bar. Also contains the query string.
 		// Do not print this without sanitizing first!
