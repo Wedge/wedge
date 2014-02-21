@@ -183,7 +183,7 @@ function template_thoughts_table()
 	if (empty($context['thoughts']))
 		echo '
 			<tr class="windowbg center">
-				<td colspan="2">', $txt['no_thoughts'], '</td>
+				<td', allowedTo('post_thought') ? ' colspan="2"' : '', '>', $txt['no_thoughts'], '</td>
 			</tr>';
 
 	if (AJAX && !empty($context['header']))
