@@ -68,7 +68,7 @@ function upgrade_step_2()
 		if ($row['mod_prefs'] !== '')
 			$data['modset'] = $row['mod_prefs'];
 		if ($row['secret_answer'] !== '')
-			$data['secret'] = array($row['secret_question'], $row['secret_answer']);
+			$data['secret'] = $row['secret_question'] . '|' . $row['secret_answer'];
 		updateMemberData($row['id_member'], array('data' => serialize($data)));
 	}
 	wedb::remove_column('{db_prefix}members', 'message_labels');
