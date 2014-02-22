@@ -325,5 +325,9 @@ ul.buttonlist
 	letter-spacing: -3px
 	letter-spacing: -1px
 
+@replace
+	wefoot2.png
+	wefoot1.png
+
 $head_font_style = 400
 $head_font_size = 140%/20px

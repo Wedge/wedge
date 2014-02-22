@@ -326,7 +326,7 @@ ul#noava
 		padding: 10px 20px
 
 	ul extends .clearfix
-		background: url($images/wefoot1.png) 0 9px no-repeat
+		background: url($images/wefoot2.png) 0 9px no-repeat
 		padding: 5px 0 5px 60px
 		min-height: 35px
 		li
@@ -1909,6 +1909,7 @@ h6
 
 	.n_container
 		clear: both
+		user-select: text
 		white-space: normal
 		overflow: auto
 		border-top: 1px solid #ccc
