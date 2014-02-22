@@ -1045,7 +1045,7 @@ function wedge_cache_js($id, &$lang_name, $latest_date, $ext, $js, $gzip = false
 								westr::utf8_to_entity(
 									is_array($txt[$str[2]]) ?
 										html_entity_decode(
-											str_replace("\xe2\x80\xaf", "\xc2\xa0", we_json_encode($txt[$str[2]])),
+											str_replace("\xe2\x80\xaf", "\xc2\xa0", json_encode($txt[$str[2]])),
 											ENT_NOQUOTES,
 											'UTF-8'
 										)

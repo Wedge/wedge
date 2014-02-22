@@ -76,9 +76,9 @@ function template_main()
 		}
 
 		add_js('
-	lineChartData = ', we_json_encode($context['full_chart']), ';
-	nameData = ', we_json_encode($names), ';
-	colorData = ', we_json_encode($colors), ';');
+	lineChartData = ', json_encode($context['full_chart']), ';
+	nameData = ', json_encode($names), ';
+	colorData = ', json_encode($colors), ';');
 
 		// And now, we can prepare to show that data.
 		add_js_file(array('wraph.js', 'stats.js'));

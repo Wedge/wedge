@@ -865,14 +865,14 @@ function profileInfractions($memID)
 
 		add_js('
 	var
-		infractions = ' . we_json_encode($context['preset_infractions']) . ',
+		infractions = ' . json_encode($context['preset_infractions']) . ',
 		current_points = ' . $context['current_points'] . ',
 		max_points = ' . $context['max_points'] . ',
-		infraction_levels = ' . we_json_encode($js) . ',
-		sanction_types = ' . we_json_encode($context['allowed_sanctions']) . ',
-		durations = ' . we_json_encode($txt['infraction_duration_types']), ',
-		no_punish = ' . we_json_encode($txt['infraction_no_punishments']), ',
-		adhoc_stuff = ' . we_json_encode($context['adhoc_stuff']) . ';');
+		infraction_levels = ' . json_encode($js) . ',
+		sanction_types = ' . json_encode($context['allowed_sanctions']) . ',
+		durations = ' . json_encode($txt['infraction_duration_types']), ',
+		no_punish = ' . json_encode($txt['infraction_no_punishments']), ',
+		adhoc_stuff = ' . json_encode($context['adhoc_stuff']) . ';');
 
 		wetem::load('profileInfractions_issue');
 	}

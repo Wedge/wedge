@@ -698,14 +698,13 @@ function template_show_settings()
 					echo '
 						<label for="', $config_var['name'], '"><a id="setting_', $config_var['name'], '" href="<URL>?action=help;in=', $config_var['help'], '" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
 							<span id="span_', $config_var['name'], '"', $config_var['disabled'] ? ' class="disabled"' : ($config_var['invalid'] ? ' class="error"' : ''), '>', $config_var['label'], $subtext, $config_var['type'] == 'password' ? '<br><em>' . $txt['admin_confirm_password'] . '</em>' : '', '</span>
-						</label>
-					</dt>';
+						</label>';
 				else
 					echo '
-						<label for="', $config_var['name'], '"><a id="setting_', $config_var['name'], '"></a> <span id="span_', $config_var['name'], '"', $config_var['disabled'] ? ' class="disabled"' : ($config_var['invalid'] ? ' class="error"' : ''), '>', $config_var['label'], $subtext, $config_var['type'] == 'password' ? '<br><em>' . $txt['admin_confirm_password'] . '</em>' : '', '</span></label>
-					</dt>';
+						<a id="setting_', $config_var['name'], '"></a> <span id="span_', $config_var['name'], '"', $config_var['disabled'] ? ' class="disabled"' : ($config_var['invalid'] ? ' class="error"' : ''), '><label for="', $config_var['name'], '">', $config_var['label'], '</label>', $subtext, $config_var['type'] == 'password' ? '<br><em>' . $txt['admin_confirm_password'] . '</em>' : '', '</span>';
 
 				echo '
+					</dt>
 					<dd', !empty($config_var['force_div_id']) ? ' id="' . $config_var['force_div_id'] . '_dd"' : '', '>', $config_var['preinput'];
 
 				// Show a check box.
@@ -1189,7 +1188,7 @@ function template_edit_profile_field()
 			$fields = array_merge($fields, $field_list);
 
 		add_js ('
-	insertTemplate.templates = ', we_json_encode($fields), ';');
+	insertTemplate.templates = ', json_encode($fields), ';');
 	}
 
 	echo '

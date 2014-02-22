@@ -18,6 +18,10 @@ loadSource(array(
 	'Class-Skeleton',
 ));
 
+// Fallback for unlikely missing JSON.
+if (!function_exists('json_encode') || !function_exists('json_decode'))
+	loadSource('Class-JSON');
+
 /**
  * This function updates some internal statistics as necessary.
  *
@@ -599,17 +603,7 @@ function return_json($json)
 {
 	clean_output();
 	header('Content-Type: application/json; charset=UTF-8');
-	exit(str_replace('\\/', '/', we_json_encode($json)));
-}
-
-// Fallback function for json_encode().
-function we_json_encode($str)
-{
-	if (function_exists('json_encode'))
-		return json_encode($str);
-
-	loadSource('Class-JSON');
-	return weJSON::encode($str);
+	exit(str_replace('\\/', '/', json_encode($json)));
 }
 
 /**
