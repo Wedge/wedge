@@ -2760,3 +2760,37 @@ function aeva_massDownloadSend()
 
 	exit;
 }
+
+function deltree($dir, $delete_dir = true)
+{
+	if (!file_exists($dir))
+		return;
+
+	$current_dir = @opendir($dir);
+	if ($current_dir == false)
+		return;
+
+	while ($entryname = readdir($current_dir))
+	{
+		if ($entryname === '.' || $entryname === '..')
+			continue;
+
+		if (is_dir($dir . '/' . $entryname))
+			deltree($dir . '/' . $entryname);
+		else
+		{
+			if (!is_writable($dir . '/' . $entryname))
+				@chmod($dir . '/' . $entryname, 0777);
+			unlink($dir . '/' . $entryname);
+		}
+	}
+
+	closedir($current_dir);
+
+	if ($delete_dir)
+	{
+		if (!is_writable($dir))
+			@chmod($dir, 0777);
+		@rmdir($dir);
+	}
+}
