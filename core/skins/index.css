@@ -507,15 +507,14 @@ em
 /* Custom Select box styles
 --------------------------------------------------------- */
 
-select
-	visibility: hidden
+select mixes .hide
 select[size]
-	visibility: visible
+	display: inline
 
 // Move the original <select> outside the viewport,
 // thus keeping its tabindex and events working.
 select.sb
-	visibility: visible
+	display: inline
 	position: absolute
 	clip: rect(1px, 1px, 1px, 1px)
 	width, height: 1px
