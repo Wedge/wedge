@@ -298,7 +298,7 @@ class we
 				'id_attach' => isset($user_settings['id_attach']) ? $user_settings['id_attach'] : 0,
 				'transparent' => !empty($user_settings['transparency']) && $user_settings['transparency'] == 'transparent'
 			),
-			'data' => $user_settings['data'] !== '' ? $user_settings['data'] : array(),
+			'data' => isset($user_settings['data']) && $user_settings['data'] !== '' ? $user_settings['data'] : array(),
 			'smiley_set' => isset($user_settings['smiley_set']) ? $user_settings['smiley_set'] : '',
 			'messages' => empty($settings['pm_enabled']) || empty($user_settings['instant_messages']) ? 0 : $user_settings['instant_messages'],
 			'unread_messages' => empty($settings['pm_enabled']) || empty($user_settings['unread_messages']) ? 0 : $user_settings['unread_messages'],
