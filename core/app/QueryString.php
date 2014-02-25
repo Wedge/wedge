@@ -334,7 +334,7 @@ function cleanRequest()
 			if (preg_match($regex, $full_request, $filename))
 			{
 				// There are probably faster ways to retrieve an 'existing' cached version.
-				$matches = glob($boarddir . '/' . $filename[1] . $filename[2] . '*.' . $filename[3]);
+				$matches = glob($boarddir . '/' . $filename[1] . '*.' . $filename[2]);
 				if (!empty($matches) && preg_match($regex, (string) reset($matches), $new_filename))
 				{
 					header('HTTP/1.1 301 Moved Permanently');
