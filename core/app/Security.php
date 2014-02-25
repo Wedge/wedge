@@ -220,12 +220,12 @@ function is_not_banned($forceCheck = false)
 		return;
 
 	// Only check the ban every so often, to reduce load.
-	if ($forceCheck || !isset($_SESSION['ban']) || empty($settings['banLastUpdated']) || ($_SESSION['ban']['last_checked'] < $settings['banLastUpdated']) || $_SESSION['ban']['id_member'] != MID || $_SESSION['ban']['ip'] != we::$user['ip'] || $_SESSION['ban']['ip2'] != we::$user['ip2'] || (isset(we::$user['email'], $_SESSION['ban']['email']) && $_SESSION['ban']['email'] != we::$user['email']))
+	if ($forceCheck || !isset($_SESSION['ban']) || empty($settings['banLastUpdated']) || ($_SESSION['ban']['last_checked'] < $settings['banLastUpdated']) || $_SESSION['ban']['id_member'] != we::$id || $_SESSION['ban']['ip'] != we::$user['ip'] || $_SESSION['ban']['ip2'] != we::$user['ip2'] || (isset(we::$user['email'], $_SESSION['ban']['email']) && $_SESSION['ban']['email'] != we::$user['email']))
 	{
 		// Innocent until proven guilty. (But we know you are! :P)
 		$_SESSION['ban'] = array(
 			'last_checked' => time(),
-			'id_member' => MID,
+			'id_member' => we::$id,
 			'ip' => we::$user['ip'],
 			'ip2' => we::$user['ip2'],
 			'email' => we::$user['email'],
@@ -235,9 +235,9 @@ function is_not_banned($forceCheck = false)
 
 		$ban_list = array();
 		// Check the user id first of all.
-		if (MID)
+		if (we::$id)
 		{
-			$member_check = check_banned_member(MID);
+			$member_check = check_banned_member(we::$id);
 			if (!empty($member_check))
 				$ban_list = array_merge($ban_list, $member_check);
 		}
@@ -276,8 +276,9 @@ function is_not_banned($forceCheck = false)
 				$_SESSION['ban']['cannot_access']['reason'] = '';
 		}
 
-		// If for whatever reason the is_activated flag seems wrong, do a little work to clear it up. But we're not going to go mad and re-evaluate all the bans - just the ones for this person.
-		if (MID)
+		// If for whatever reason the is_activated flag seems wrong, do a little work to clear it up.
+		// But we're not going to go mad and re-evaluate all the bans - just the ones for this person.
+		if (we::$id)
 		{
 			$update = 0;
 			if ($user_settings['is_activated'] >= 20)
@@ -299,7 +300,7 @@ function is_not_banned($forceCheck = false)
 			}
 			if (!empty($update))
 			{
-				updateMemberData(MID, array('is_activated' => $user_settings['is_activated'] + $update));
+				updateMemberData(we::$id, array('is_activated' => $user_settings['is_activated'] + $update));
 				updateStats('member');
 			}
 		}
@@ -362,7 +363,7 @@ function is_not_banned($forceCheck = false)
 	{
 		// We don't wanna see you!
 		if (we::$is_member)
-			wesql::query('DELETE FROM {db_prefix}log_online WHERE id_member = {int:current_member}', array('current_member' => MID));
+			wesql::query('DELETE FROM {db_prefix}log_online WHERE id_member = {int:current_member}', array('current_member' => we::$id));
 
 		// 'Log' the user out. Can't have any funny business... (save the name!)
 		$old_name = isset(we::$user['name']) && we::$user['name'] != '' ? we::$user['name'] : $txt['guest_title'];
