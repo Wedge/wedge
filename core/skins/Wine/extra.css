@@ -169,12 +169,12 @@ section.block header, .wehead
 ------------------------------------------------------- */
 
 // .cat, .title, .title2 and .posthead are closely related... Inheritance fiesta!
-.catbase extends .grad40
+.catbase
 	border-radius: 5px
 	img
 		vertical-align: -3px
 
-.cat
+.cat extends .grad40
 	background-color: #b3afa9
 	letter-spacing: 0
 	color: white
@@ -200,6 +200,7 @@ section.block header, .wehead
 
 .title final
 	font: 400 1em $main_font
+	background: rgba(0,0,0,.03)
 
 
 /*
