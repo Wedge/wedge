@@ -110,7 +110,15 @@ class we
 					)
 				);
 				$user_settings = wesql::fetch_assoc($request);
-				$user_settings['data'] = unserialize($user_settings['data']);
+				$data = $user_settings['data'] !== '' ? @unserialize($user_settings['data']) : array();
+				if ($data === false)
+				{
+					$data = @unserialize(utf8_decode($user_settings['data']));
+					if ($data === false)
+						$data = array();
+					$data = array_map('utf8_encode', $data);
+				}
+				$user_settings['data'] = $data;
 				wesql::free_result($request);
 
 				if (!empty($settings['cache_enable']) && $settings['cache_enable'] >= 2)
@@ -290,7 +298,7 @@ class we
 				'id_attach' => isset($user_settings['id_attach']) ? $user_settings['id_attach'] : 0,
 				'transparent' => !empty($user_settings['transparency']) && $user_settings['transparency'] == 'transparent'
 			),
-			'data' => isset($user_settings['data']) ? $user_settings['data'] : array(),
+			'data' => $user_settings['data'] !== '' ? $user_settings['data'] : array(),
 			'smiley_set' => isset($user_settings['smiley_set']) ? $user_settings['smiley_set'] : '',
 			'messages' => empty($settings['pm_enabled']) || empty($user_settings['instant_messages']) ? 0 : $user_settings['instant_messages'],
 			'unread_messages' => empty($settings['pm_enabled']) || empty($user_settings['unread_messages']) ? 0 : $user_settings['unread_messages'],

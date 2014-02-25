@@ -1,6 +1,6 @@
 <?php
 /**
- * Upgrade database tables before the forum gets hurt.
+ * Upgrade the forum before it gets hurt.
  *
  * Wedge (http://wedge.org)
  * Copyright © 2010 René-Gilles Deberdt, wedge.org
