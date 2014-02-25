@@ -289,6 +289,14 @@ function PickTheme()
 
 		$skin = file_exists(SKINS_DIR . '/' . ltrim($_GET['skin'], '/')) ? $_GET['skin'] : '';
 
+		if (we::$is_guest)
+		{
+			loadSource('Subs-Auth');
+			$cookie_url = url_parts(!empty($settings['localCookies']), !empty($settings['globalCookies']));
+			setcookie('guest_skin', $skin, $skin ? time() + 3600 * 24 * 365 : time() - 3600, $cookie_url[1], $cookie_url[0], 0);
+			redirectexit(isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : 'action=skin');
+		}
+
 		// Save for this user.
 		if ($u === null || !allowedTo('admin_forum'))
 		{

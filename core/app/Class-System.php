@@ -255,6 +255,18 @@ class we
 		if (!isset($_SESSION['is_mobile']))
 			$_SESSION['is_mobile'] = self::is_mobile();
 
+		if (isset($_COOKIE['guest_skin']))
+		{
+			if ($id_member === 0)
+				$user_settings['skin'] = $_COOKIE['guest_skin'];
+			else
+			{
+				loadSource('Subs-Auth');
+				$cookie_url = url_parts(!empty($settings['localCookies']), !empty($settings['globalCookies']));
+				setcookie('guest_skin', '', time() - 3600, $cookie_url[1], $cookie_url[0], 0);
+			}
+		}
+
 		// Set up the we::$user array.
 		$user += array(
 			'username' => $username,
