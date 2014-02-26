@@ -42,15 +42,17 @@ function template_main()
 	$nb_new = get_unread_numbers($boards);
 
 	$alt = '';
+	$is_mobile = we::is('mobile');
 	foreach ($boards as $post)
 	{
 		$alt = $alt ? '' : '2';
 		echo '
-			<tr class="windowbg', $alt, '">
+			<tr class="windowbg', $alt, '">', $is_mobile ? '' : '
 				<td class="latestp1">
-					<div>', strftime('%d/%m %H:%M', $post['timestamp']), '<br>', $post['poster']['link'], '</div>
-				</td>
-				<td class="latestp2">
+					<div>' . timeformat($post['timestamp']) . ' ' . $txt['by'] . ' ' . $post['poster']['link'] . '</div>
+				</td>', '
+				<td class="latestp2">', $is_mobile ? '
+					' . timeformat($post['timestamp']) . ' ' . $txt['by'] . ' ' . $post['poster']['link'] . '<br>' : '', '
 					', $post['board']['link'], ' &gt; ';
 
 		if ($post['is_new'] && we::$is_member)
