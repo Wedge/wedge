@@ -225,20 +225,19 @@
 			// we'll also actually simulate the focus to trigger any related events.
 			doFocus ? $orig.triggerHandler('focus') : focusSB();
 
-			// Stop dropdown animation (if any), and hack into its visibility to get its (.details-free) width.
+			// Stop dropdown animation (if any), and hack into its visibility to get proper widths.
 			$dd
 				.stop(true, true)
 				.show()
 				.css({ visibility: 'hidden' })
-				.find('.details')
-					.toggle();
+				.find('.viewport').andSelf().height('');
 
+			// Hide .details so that the new width won't be influenced by it.
+			$dd.find('.details').toggle();
 			// Set dropdown width to at least the display area's width.
-			$dd
-				.height('')
-				.width(Math.max($dd.width(), $display.outerWidth() - $dd.outerWidth(true) - $dd.width() + 1))
-				.find('.details')
-					.toggle();
+			$dd.width(Math.max($dd.width(), $display.outerWidth() - $dd.outerWidth(true) - $dd.width() + 1));
+			// Now we can reset.
+			$dd.find('.details').toggle();
 
 			var
 				// Figure out if we should show above/below the display box, first by calculating the free space around it.
@@ -252,18 +251,15 @@
 
 				// If we have enough space below the button, or if we don't have enough room above either, show a dropdown.
 				// Otherwise, show a drop-up, but only if there's enough size, or the space above is more comfortable.
-				showDown = (ddMaxHeight <= bottomSpace) || ((ddMaxHeight >= topSpace) && (bottomSpace + 50 >= topSpace));
+				showDown = (ddMaxHeight <= bottomSpace) || ((ddMaxHeight >= topSpace) && (bottomSpace >= topSpace - 50));
 
 			// Create a custom scrollbar for our select box?
 			if (ddMaxHeight < ddHeight)
 			{
 				$dd.height(ddMaxHeight - ddHeight + $dd.height());
 
-				if (!scrollbar)
-				{
-					scrollbar = new ScrollBar($dd);
-					centerOnSelected();
-				}
+				scrollbar ? scrollbar.init() : scrollbar = new ScrollBar($dd);
+				centerOnSelected();
 			}
 
 			$selected.addClass('selected');
@@ -292,7 +288,7 @@
 				$orig.triggerHandler('click');
 
 			// Animate height, except for Opera where issues with the inline-block status may lead to glitches.
-			$dd.animate(!showDown || is_opera ? { opacity: 'toggle' } : { opacity: 'toggle', height: 'toggle' }, instantOpen ? 0 : 150);
+			$dd.animate(!showDown || is_opera ? { opacity: 'toggle' } : { opacity: 'toggle', height: 'toggle' }, instantOpen ? 0 : 200);
 			$sb.addClass('open');
 		},
 
@@ -526,6 +522,28 @@
 			return false;
 		};
 
+		that.init = function ()
+		{
+			$dd.find('.scrollbar')
+				.height($dd.height());
+
+			$dd.width(newwi + 15)
+				.find('.viewport').height($dd.height());
+
+			viewportAxis = $dd.height();
+			$scrollbar = $dd.find('.scrollbar').height(viewportAxis);
+			$content = $dd.find('.overview');
+			contentAxis = $content.height();
+			$thumb = $scrollbar.find('div');
+
+			scrollbarRatio = contentAxis / viewportAxis;
+			thumbAxis = Math.min(viewportAxis, viewportAxis / scrollbarRatio);
+
+			// Set size.
+			iMouse = $thumb.offset().top;
+			$thumb.height(thumbAxis);
+		};
+
 		// Scroll to...
 		that.st = function (iTop, iHeight)
 		{
@@ -546,24 +564,7 @@
 
 		$dd.append('<div class="scrollbar"><div>');
 
-		$dd.find('.scrollbar')
-			.height($dd.height());
-
-		$dd.width(newwi + 15)
-			.find('.viewport').height($dd.height());
-
-		viewportAxis = $dd.height();
-		$scrollbar = $dd.find('.scrollbar').height(viewportAxis);
-		$content = $dd.find('.overview');
-		contentAxis = $content.height();
-		$thumb = $scrollbar.find('div');
-
-		scrollbarRatio = contentAxis / viewportAxis;
-		thumbAxis = Math.min(viewportAxis, viewportAxis / scrollbarRatio);
-
-		// Set size.
-		iMouse = $thumb.offset().top;
-		$thumb.height(thumbAxis);
+		that.init();
 
 		// Set events
 		$scrollbar.mousedown(drag);
