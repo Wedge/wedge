@@ -226,10 +226,19 @@
 			doFocus ? $orig.triggerHandler('focus') : focusSB();
 
 			// Stop dropdown animation (if any), and hack into its visibility to get its (.details-free) width.
-			$dd.stop(true, true).show().css({ visibility: 'hidden' }).find('.details').toggle();
+			$dd
+				.stop(true, true)
+				.show()
+				.css({ visibility: 'hidden' })
+				.find('.details')
+					.toggle();
 
 			// Set dropdown width to at least the display area's width.
-			$dd.width(Math.max($dd.width(), $display.outerWidth() - $dd.outerWidth(true) - $dd.width() + 1)).find('.details').toggle();
+			$dd
+				.height('')
+				.width(Math.max($dd.width(), $display.outerWidth() - $dd.outerWidth(true) - $dd.width() + 1))
+				.find('.details')
+					.toggle();
 
 			var
 				// Figure out if we should show above/below the display box, first by calculating the free space around it.
@@ -239,7 +248,7 @@
 
 				// Show scrollbars if the dropdown is taller than 250 pixels (or the viewport height).
 				// Touch-enabled phones have poor usability and shouldn't bother -- let them stretch all the way.
-				ddMaxHeight = Math.min(250, ddHeight, Math.max(bottomSpace + 50, topSpace)),
+				ddMaxHeight = Math.min(Math.max(500, ddHeight / 5), ddHeight, Math.max(bottomSpace, topSpace - 50) - 50),
 
 				// If we have enough space below the button, or if we don't have enough room above either, show a dropdown.
 				// Otherwise, show a drop-up, but only if there's enough size, or the space above is more comfortable.
@@ -269,6 +278,14 @@
 					marginLeft: Math.min(0, $(window).width() - $dd.outerWidth() - $sb.offset().left)
 				})
 				.hide();
+
+			// If the dropdown overflows on the left, shrink it.
+			var differential = parseInt($dd.css('marginLeft')) + $sb.offset().left;
+			if (differential < 0)
+			{
+				$dd.show().find('.viewport').andSelf().width(function (index, width) { return width + differential; });
+				$dd.hide().css('marginLeft', -$sb.offset().left).find('.text').css('white-space', 'normal');
+			}
 
 			// If opening via a key stroke, simulate a click.
 			if (via_keyboard)

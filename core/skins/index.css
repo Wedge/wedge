@@ -620,7 +620,7 @@ select.sb
 			color: #000
 			cursor: default
 			display: block
-			padding: 4px 6px
+			padding: @is (mobile, 12px 8px, 4px 6px)
 			text-decoration: none
 
 		.selected .item
