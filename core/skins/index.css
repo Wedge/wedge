@@ -235,10 +235,7 @@ ul#noava
 
 @if $context['languages']
 	#flags mixes .inline-block // Language flags
-		margin: 6px 1em 0 0
-		padding: 0
-		a
-			margin-top: -3px
+		margin: 0 1em 0 0
 @endif
 
 @if $settings['enable_news']
@@ -272,6 +269,7 @@ ul#noava
 
 // Banner header
 #upper_section
+	clear: both
 	overflow: hidden
 	.frame
 		height: 95px
@@ -1857,12 +1855,11 @@ h6
 @if member
 	.notifs mixes .inline-block
 		user-select: none
-		height, line-height: 25px
+		height, line-height: 30px
 		cursor: pointer
 		overflow: visible
 		position: relative
 		padding: 0 .4em 0 .1em
-		margin: 5px .4em 0 0
 		border-radius: 6px
 		:hover, &.hover
 			background: rgba(0,0,0,.05)
