@@ -292,7 +292,7 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 	// Set hardcoded paths aside, e.g. plugin CSS.
 	$latest_date = 0;
 	$hardcoded_css = array();
-	foreach ($original_files as $key => $path)
+	foreach ((array) $original_files as $key => $path)
 	{
 		if (strpos($path, '/') !== false)
 		{
