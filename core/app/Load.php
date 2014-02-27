@@ -34,9 +34,6 @@ function loadSettings()
 		'app_error_count' => 0,
 	);
 
-	// Most database systems have not set UTF-8 as their default input charset.
-	wesql::query('SET NAMES utf8');
-
 	// Try to load settings from the cache first; they'll never get cached if the setting is off.
 	if (($settings = cache_get_data('settings', 'forever')) === null)
 	{
@@ -2228,6 +2225,9 @@ function loadDatabase()
 	// If in SSI mode fix up the prefix.
 	if (WEDGE == 'SSI')
 		wesql::fix_prefix($db_prefix, $db_name);
+
+	// Most database systems have not set UTF-8 as their default input charset.
+	wesql::query('SET NAMES utf8');
 }
 
 function importing_cleanup()

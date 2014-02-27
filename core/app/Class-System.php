@@ -110,15 +110,7 @@ class we
 					)
 				);
 				$user_settings = wesql::fetch_assoc($request);
-				$data = $user_settings['data'] !== '' ? @unserialize($user_settings['data']) : array();
-				if ($data === false)
-				{
-					$data = @unserialize(utf8_decode($user_settings['data']));
-					if ($data === false)
-						$data = array();
-					$data = array_map('utf8_encode', $data);
-				}
-				$user_settings['data'] = $data;
+				$user_settings['data'] = $user_settings['data'] !== '' ? unserialize($user_settings['data']) : array();
 				wesql::free_result($request);
 
 				if (!empty($settings['cache_enable']) && $settings['cache_enable'] >= 2)
