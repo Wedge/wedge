@@ -289,10 +289,25 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 	global $settings, $context, $db_show_debug, $files;
 	static $cached_files = array();
 
+	// Set hardcoded paths aside, e.g. plugin CSS.
+	$latest_date = 0;
+	$hardcoded_css = array();
+	foreach ($original_files as $key => $path)
+	{
+		if (strpos($path, '/') !== false)
+		{
+			unset($original_files[$key]);
+			if (file_exists($path))
+			{
+				$hardcoded_css[] = $path;
+				$latest_date = max($latest_date, filemtime($path));
+			}
+		}
+	}
+
 	// Delete all duplicates and ensure $original_files is an array.
 	$original_files = array_merge(array('common' => 0), array_flip((array) $original_files));
 	$files = array_keys($original_files);
-	$latest_date = 0;
 
 	// If we didn't go through the regular theme initialization flow, get the skin options.
 	if (!isset($context['skin_folders']))
@@ -411,7 +426,7 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 	$target_folder = trim($id . '-' . implode('-', array_filter(array_diff($files, (array) 'common', $ignore_files))), '-');
 
 	// Cache final file and retrieve its name.
-	$final_script = ROOT . '/gz/css/' . wedge_cache_css_files($target_folder . ($target_folder ? '/' : ''), $found_suffixes, $latest_date, $css, $can_gzip, $ext);
+	$final_script = ROOT . '/gz/css/' . wedge_cache_css_files($target_folder . ($target_folder ? '/' : ''), $found_suffixes, $latest_date, array_merge($css, $hardcoded_css), $can_gzip, $ext);
 
 	if ($final_script == ROOT . '/gz/css/')
 		return false;
@@ -647,6 +662,10 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 	if (!empty($additional_vars))
 		foreach ($additional_vars as $key => $val)
 			$css_vars[$key] = $val;
+	foreach ($context['plugins_dir'] as $key => $val)
+		$css_vars['$plugins_dir[\'' . $key . '\']'] = str_replace(ROOT_DIR, '', $val);
+	foreach ($context['plugins_url'] as $key => $val)
+		$css_vars['$plugins[\'' . $key . '\']'] = str_replace(ROOT, '', $val);
 
 	// Load all CSS files in order, and replace $here with the current folder while we're at it.
 	foreach ((array) $css as $file)
