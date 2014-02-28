@@ -662,10 +662,12 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 	if (!empty($additional_vars))
 		foreach ($additional_vars as $key => $val)
 			$css_vars[$key] = $val;
-	foreach ($context['plugins_dir'] as $key => $val)
-		$css_vars['$plugins_dir[\'' . $key . '\']'] = str_replace(ROOT_DIR, '', $val);
-	foreach ($context['plugins_url'] as $key => $val)
-		$css_vars['$plugins[\'' . $key . '\']'] = str_replace(ROOT, '', $val);
+	if (!empty($context['plugins_dir']))
+		foreach ($context['plugins_dir'] as $key => $val)
+			$css_vars['$plugins_dir[\'' . $key . '\']'] = str_replace(ROOT_DIR, '', $val);
+	if (!empty($context['plugins_url']))
+		foreach ($context['plugins_url'] as $key => $val)
+			$css_vars['$plugins[\'' . $key . '\']'] = str_replace(ROOT, '', $val);
 
 	// Load all CSS files in order, and replace $here with the current folder while we're at it.
 	foreach ((array) $css as $file)
