@@ -1395,7 +1395,7 @@ function prepareDisplayContext($reset = false)
 		),
 		'body' => $message['body'],
 		'new' => !$message['is_read'] && !$is_new,
-		'edited' => $message['is_read'] && $message['id_msg_modified'] > $topicinfo['new_from'],
+		'edited' => $message['is_read'] && $message['id_msg_modified'] > $topicinfo['new_from'] && we::$is_member,
 		'approved' => $message['approved'],
 		'first_new' => isset($context['start_from']) && $context['start_from'] == $counter,
 		'is_message_author' => $is_me,
