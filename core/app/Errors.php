@@ -35,9 +35,10 @@ function log_error($error_message, $error_type = 'general', $file = null, $line 
 	if ($plugin_dir === null)
 		$plugin_dir = DIRECTORY_SEPARATOR === '/' ? $pluginsdir : str_replace(DIRECTORY_SEPARATOR, '/', $pluginsdir);
 
-	// Basically, htmlspecialchars it minus &. (for entities!)
+	// Basically, htmlspecialchars it minus & (for entities!); also save simple links.
 	$error_message = strtr($error_message, array('<' => '&lt;', '>' => '&gt;', '"' => '&quot;'));
 	$error_message = strtr($error_message, array('&lt;br&gt;' => '<br>', '&lt;b&gt;' => '<strong>', '&lt;/b&gt;' => '</strong>', "\n" => '<br>'));
+	$error_message = preg_replace('~&lt;a href=&quot;(.*?)&quot;&gt;(.*?)&lt;/a&gt;~', '~<a href="$1">$2</a>~', $error_message);
 
 	// Add a file and line to the error message?
 	// Don't use the actual txt entries for file and line but instead use %1$s for file and %2$s for line
