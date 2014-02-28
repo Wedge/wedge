@@ -154,6 +154,10 @@ function ob_sessrewrite($buffer)
 	// Very fast on-the-fly replacement of <URL>...
 	$buffer = str_replace('<URL>', SCRIPT, $buffer);
 
+	// And a quick fix for FTP clients uploading CRLF versions.
+	if (strpos($buffer, "\r\n") !== false)
+		$buffer = str_replace("\r\n", "\n", $buffer);
+
 	if (isset($context['meta_description'], $context['meta_description_repl']))
 		$buffer = str_replace($context['meta_description'], $context['meta_description_repl'], $buffer);
 
@@ -606,8 +610,7 @@ function ob_sessrewrite($buffer)
 		$loadTime = $txt['page_created'] . sprintf($txt['seconds_with_' . ($db_count > 1 ? 'queries' : 'query')], $new_load_time - $time_start, $db_count);
 		$queriesDiff = $db_count - $old_db_count;
 		if (we::$is_admin)
-			$loadTime .= '</li>
-			<li class="rd">(' . $txt['dynamic_replacements'] . ': ' . sprintf($txt['seconds_with_' . ($queriesDiff > 1 ? 'queries' : 'query')], $new_load_time - $old_load_time, $queriesDiff) . ')';
+			$loadTime .= ' (' . $txt['dynamic_replacements'] . ': ' . sprintf($txt['seconds_with_' . ($queriesDiff > 1 ? 'queries' : 'query')], $new_load_time - $old_load_time, $queriesDiff) . ')';
 		$buffer = str_replace('<!-- insert stats here -->', $loadTime, $buffer);
 	}
 
