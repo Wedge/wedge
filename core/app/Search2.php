@@ -201,15 +201,7 @@ function Search2()
 		$userString = strtr($userString, array('%' => '\%', '_' => '\_', '*' => '%', '?' => '_'));
 
 		preg_match_all('~"([^"]+)"~', $userString, $matches);
-		$possible_users = array_merge($matches[1], explode(',', preg_replace('~"[^"]+"~', '', $userString)));
-
-		for ($k = 0, $n = count($possible_users); $k < $n; $k++)
-		{
-			$possible_users[$k] = trim($possible_users[$k]);
-
-			if (strlen($possible_users[$k]) == 0)
-				unset($possible_users[$k]);
-		}
+		$possible_users = array_filter(array_map('trim', array_merge($matches[1], explode(',', preg_replace('~"[^"]+"~', '', $userString)))));
 
 		// Create a list of database-escaped search names.
 		$realNameMatches = array();
@@ -222,42 +214,45 @@ function Search2()
 			);
 
 		// Retrieve a list of possible members.
-		$request = wesql::query('
-			SELECT id_member
-			FROM {db_prefix}members
-			WHERE {raw:match_possible_users}',
-			array(
-				'match_possible_users' => 'real_name LIKE ' . implode(' OR real_name LIKE ', $realNameMatches),
-			)
-		);
-		// Simply do nothing if there're too many members matching the criteria.
-		if (wesql::num_rows($request) > $maxMembersToSearch)
-			$userQuery = '';
-		elseif (wesql::num_rows($request) == 0)
+		if (!empty($realNameMatches))
 		{
-			$userQuery = wesql::quote(
-				'm.id_member = {int:id_member_guest} AND ({raw:match_possible_guest_names})',
+			$request = wesql::query('
+				SELECT id_member
+				FROM {db_prefix}members
+				WHERE {raw:match_possible_users}',
 				array(
-					'id_member_guest' => 0,
-					'match_possible_guest_names' => 'm.poster_name LIKE ' . implode(' OR m.poster_name LIKE ', $realNameMatches),
+					'match_possible_users' => 'real_name LIKE ' . implode(' OR real_name LIKE ', $realNameMatches),
 				)
 			);
+			// Simply do nothing if there're too many members matching the criteria.
+			if (wesql::num_rows($request) > $maxMembersToSearch)
+				$userQuery = '';
+			elseif (wesql::num_rows($request) == 0)
+			{
+				$userQuery = wesql::quote(
+					'm.id_member = {int:id_member_guest} AND ({raw:match_possible_guest_names})',
+					array(
+						'id_member_guest' => 0,
+						'match_possible_guest_names' => 'm.poster_name LIKE ' . implode(' OR m.poster_name LIKE ', $realNameMatches),
+					)
+				);
+			}
+			else
+			{
+				$memberlist = array();
+				while ($row = wesql::fetch_assoc($request))
+					$memberlist[] = $row['id_member'];
+				$userQuery = wesql::quote(
+					'(m.id_member IN ({array_int:matched_members}) OR (m.id_member = {int:id_member_guest} AND ({raw:match_possible_guest_names})))',
+					array(
+						'matched_members' => $memberlist,
+						'id_member_guest' => 0,
+						'match_possible_guest_names' => 'm.poster_name LIKE ' . implode(' OR m.poster_name LIKE ', $realNameMatches),
+					)
+				);
+			}
+			wesql::free_result($request);
 		}
-		else
-		{
-			$memberlist = array();
-			while ($row = wesql::fetch_assoc($request))
-				$memberlist[] = $row['id_member'];
-			$userQuery = wesql::quote(
-				'(m.id_member IN ({array_int:matched_members}) OR (m.id_member = {int:id_member_guest} AND ({raw:match_possible_guest_names})))',
-				array(
-					'matched_members' => $memberlist,
-					'id_member_guest' => 0,
-					'match_possible_guest_names' => 'm.poster_name LIKE ' . implode(' OR m.poster_name LIKE ', $realNameMatches),
-				)
-			);
-		}
-		wesql::free_result($request);
 	}
 
 	// If the boards were passed by URL (params=), temporarily put them back in $_REQUEST.
