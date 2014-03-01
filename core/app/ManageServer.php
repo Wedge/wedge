@@ -564,6 +564,8 @@ function ModifyDebugSettings($return_config = false)
 		array('check', 'disableTemplateEval'),
 		array('check', 'timeLoadPageEnable'),
 		'',
+		array('check', 'enableErrorQueryLogging'),
+		'',
 		array('check', 'db_show_debug', 'file' => true, 'onclick' => 'update_show_debug()'),
 		array('select', 'db_show_debug_who', array(
 			'none' => $txt['db_show_debug_none'],
