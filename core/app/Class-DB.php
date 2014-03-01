@@ -633,7 +633,8 @@ class wesql
 		if (empty($log_message))
 			$log_message = $error_message;
 
-		foreach (debug_backtrace() as $step)
+		$trace_log = debug_backtrace(!function_exists('version_compare') || (version_compare('5.3.6', PHP_VERSION) > 0) ? false : DEBUG_BACKTRACE_IGNORE_ARGS);
+		foreach ($trace_log as $step)
 		{
 			// Found it?
 			if ((!isset($step['class']) || $step['class'] !== 'wesql') && strpos($step['function'], 'query') === false && (!in_array(substr($step['function'], 0, 5), array('preg_', 'mysql'))))

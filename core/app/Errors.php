@@ -45,7 +45,7 @@ function log_error($error_message, $error_type = 'general', $file = null, $line 
 	if ($file == null)
 	{
 		// We weren't given a filename but we need it at least for identifying if this is a plugin or not. We need to find if we came here via the fatal error handlers first.
-		$array = debug_backtrace();
+		$array = debug_backtrace(!function_exists('version_compare') || (version_compare('5.3.6', PHP_VERSION) > 0) ? false : DEBUG_BACKTRACE_IGNORE_ARGS);
 		for ($i = 0, $c = count($array); $i < $c; $i++)
 			if (!empty($array[$i]['function']) && in_array($array[$i]['function'], array('fatal_error', 'fatal_lang_error')))
 			{
@@ -79,7 +79,10 @@ function log_error($error_message, $error_type = 'general', $file = null, $line 
 	if (empty(we::$user['ip']))
 		we::$user['ip'] = '';
 	if (empty(we::$user['url']))
-		we::$user['url'] = (empty($_SERVER['REAL_HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : $_SERVER['REAL_HTTP_HOST']) . $_SERVER['REQUEST_URI'];
+	{
+		$is_secure = isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] == 'on' || $_SERVER['HTTPS'] == 1) || isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https';
+		we::$user['url'] = ($is_secure ? 'https://' : 'http://') . (empty($_SERVER['REAL_HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : $_SERVER['REAL_HTTP_HOST']) . $_SERVER['REQUEST_URI'];
+	}
 
 	// Find the best query string we can...
 	$query_string = we::$user['url'];
