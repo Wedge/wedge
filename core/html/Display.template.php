@@ -269,8 +269,7 @@ function template_quick_reply()
 				<a href="#" onclick="return window.oQuickReply && oQuickReply.swap();" onmousedown="return false;"><div id="qr_expand"', $options['display_quick_reply'] == 2 ? ' class="fold"' : '', '></div></a>
 				<a href="#" onclick="return window.oQuickReply && oQuickReply.swap();" onmousedown="return false;">', $txt['quick_reply'], '</a>
 			</we:cat>
-			<div id="qr_options" class="roundframe', $options['display_quick_reply'] == 2 ? '' : ' hide', '">
-				<p class="smalltext left">', $txt['quick_reply_desc'], '</p>', $context['is_locked'] ? '
+			<div id="qr_options" class="roundframe', $options['display_quick_reply'] == 2 ? '' : ' hide', '">', $context['is_locked'] ? '
 				<p class="alert smalltext">' . $txt['quick_reply_warning'] . '</p>' : '', !empty($context['oldTopicError']) ? '
 				<p class="alert smalltext">' . sprintf($txt['error_old_topic'], $settings['oldTopicDays']) . '</p>' : '', empty($context['post_moderated']) ? '' : '
 				<em>' . $txt['wait_for_approval'] . '</em>', empty($context['post_moderated']) && $context['require_verification'] ? '

@@ -470,7 +470,6 @@ $txt['generic_confirm_request'] = 'Are you sure you want to do this?';
 
 $txt['reagree_reply'] = 'The site terms and conditions have changed. Before you can post on the site, you will need to re-accept the user agreement. You can do so by visiting <a href="%1$s">this page</a>.';
 $txt['quick_reply'] = 'Quick Reply';
-$txt['quick_reply_desc'] = 'With <em>Quick-Reply</em> you can write a post when viewing a topic without loading a new page. You can still use bulletin board code and smileys as you would in a normal post.';
 $txt['quick_reply_warning'] = 'Warning: this topic is currently locked! Only admins and moderators can reply.';
 $txt['quick_reply_verification'] = 'After submitting your post you will be directed to the regular post page to verify your post %1$s.';
 $txt['quick_reply_verification_guests'] = '(required for all guests)';
