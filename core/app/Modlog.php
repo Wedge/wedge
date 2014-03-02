@@ -451,7 +451,7 @@ function list_getModLogEntries($start, $items_per_page, $sort, $query_string = '
 			'editable' => time() > $row['log_time'] + $context['hoursdisable'] * 3600,
 			'extra' => $row['extra'],
 			'action' => $row['action'],
-			'action_text' => isset($row['action_text']) ? $row['action_text'] : '',
+			'action_text' => isset($row['action_text']) ? $row['action_text'] : (!empty($txt['modlog_ac_' . $row['action']]) ? $txt['modlog_ac_' . $row['action']] : '(' . $row['action'] . ')'),
 		);
 	}
 	wesql::free_result($result);
