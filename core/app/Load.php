@@ -1771,10 +1771,12 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 			foreach ($language_attempts as $attempt)
 			{
 				if (file_exists($folder . '/' . $template . '.' . $attempt . '.php'))
-				{
 					template_include($folder . '/' . $template . '.' . $attempt . '.php');
-					$found = true;
-				}
+				elseif (file_exists($folder . '/' . $attempt . '/' . $template . '.' . $attempt . '.php'))
+					template_include($folder . '/' . $attempt . '/' . $template . '.' . $attempt . '.php');
+				else
+					continue;
+				$found = true;
 			}
 		}
 
@@ -1949,7 +1951,7 @@ function getLanguages($use_cache = true)
 	global $context, $settings;
 
 	// If the language array is already filled, or we wanna use the cache and it's not expired...
-	// The master copy will have everything but if we're calling 'from cache' we only want 'available' languages.
+	// The master copy will have everything, but if we're calling 'from cache', we only want 'available' languages.
 	if ($use_cache && (isset($context['languages']) || ($context['languages'] = cache_get_data('known_languages', !empty($settings['cache_enable']) && $settings['cache_enable'] < 1 ? 86400 : 3600)) !== null))
 	{
 		$langs = !empty($settings['langsAvailable']) ? explode(',', $settings['langsAvailable']) : array();
@@ -1964,14 +1966,15 @@ function getLanguages($use_cache = true)
 
 	// Default language directories to try.
 	$language_directories = array(
-		LANGUAGES_DIR,
+		'root' => LANGUAGES_DIR,
 	);
+	$language_directories += glob(LANGUAGES_DIR . '/*', GLOB_ONLYDIR);
 
 	// Initialize the array, otherwise if it's empty, Wedge won't cache it.
 	$context['languages'] = array();
 
 	// Go through all unique directories.
-	foreach (array_unique($language_directories) as $language_dir)
+	foreach ($language_directories as $language_dir)
 	{
 		// Can't look in here... doesn't exist!
 		if (!file_exists($language_dir))
@@ -1989,6 +1992,7 @@ function getLanguages($use_cache = true)
 				'name' => $txt['lang_name'],
 				'code' => isset($txt['lang_hreflang']) ? $txt['lang_hreflang'] : (isset($txt['lang_dictionary']) ? $txt['lang_dictionary'] : ''),
 				'filename' => $matches[1],
+				'folder' => str_replace(LANGUAGES_DIR, '', $language_dir),
 				'location' => $entry,
 			);
 		}

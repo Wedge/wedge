@@ -236,7 +236,7 @@ function list_getLanguages()
 	foreach ($context['languages'] as $lang)
 	{
 		// Load the file to get the character set.
-		require(LANGUAGES_DIR . '/index.' . $lang['filename'] . '.php');
+		require(LANGUAGES_DIR . $lang['folder'] . '/index.' . $lang['filename'] . '.php');
 
 		$languages[$lang['filename']] = array(
 			'id' => $lang['filename'],
@@ -244,7 +244,7 @@ function list_getLanguages()
 			'available' => $settings['language'] == $lang['filename'] || in_array($lang['filename'], $langsAvailable),
 			'default' => $settings['language'] == $lang['filename'] || ($settings['language'] == '' && $lang['filename'] == 'english'),
 			'locale' => $txt['lang_locale'],
-			'name' => '<img src="' . LANGUAGES . '/Flag.' . $lang['filename'] . '.png" style="margin-right: 8px">' . $txt['lang_name'],
+			'name' => '<img src="' . LANGUAGES . $lang['folder'] . '/Flag.' . $lang['filename'] . '.png" style="margin-right: 8px">' . $txt['lang_name'],
 			'dictionary' => $txt['lang_dictionary'] . ' (' . $txt['lang_spelling'] . ')',
 			'rtl' => $txt['lang_rtl'],
 		);
@@ -351,7 +351,7 @@ function ModifyLanguage()
 
 	// Check our languages folder exists, and add the path.
 	if (is_dir(LANGUAGES_DIR))
-		$lang_dirs[1] = LANGUAGES_DIR;
+		$lang_dirs[1] = LANGUAGES_DIR . $context['languages'][$context['lang_id']]['folder'] . '/';
 
 	// Now add the possible permutations for plugins.
 	if (!empty($context['plugins_dir']))
