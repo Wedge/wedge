@@ -125,10 +125,6 @@ header(\'Location: ../\');');
 		foreach (glob($root_dir . '/assets/icons/media/*.png') as $png_file)
 			copy($png_file, $root_dir . '/media/icons/' . basename($png_file));
 
-	// If we're sure we're not under Apache, no need to bother adding htaccess files...
-	if (isset($_SERVER['SERVER_SOFTWARE']) && strpos($_SERVER['SERVER_SOFTWARE'], 'Apache') === false)
-		return;
-
 	// We need to be able to access images and various other files from plugins/, but not the archives of plugins themselves.
 	if ($folder == 'plugins')
 		$file = '
