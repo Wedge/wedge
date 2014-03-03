@@ -434,9 +434,6 @@ function QuickReply(opt)
 			$('#' + opt.sSmileyDiv).slideDown(500);
 		if (opt.sBbcDiv != '' || opt.sSmileyDiv != '')
 			$('#' + opt.sSwitchMode).slideUp(500);
-		// !!! Are we positive that QuickReply always refers to oEditorHandle_message?
-		if (opt.bUsingWysiwyg)
-			oEditorHandle_message.toggleView(true);
 	};
 
 	var bCollapsed = opt.bDefaultCollapsed;
