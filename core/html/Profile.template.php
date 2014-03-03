@@ -286,10 +286,6 @@ function template_summary()
 		}
 	}
 
-	echo '
-				<dt>', $txt['date_registered'], ': </dt>
-				<dd>', $context['member']['registered'], '</dd>';
-
 	// If the person looking is allowed, they can check the members IP address and hostname.
 	if ($context['can_see_ip'])
 	{
@@ -314,6 +310,10 @@ function template_summary()
 				<dd>', $context['member']['language'], '</dd>';
 
 	echo '
+			</dl>
+			<dl>
+				<dt>', $txt['date_registered'], ': </dt>
+				<dd>', $context['member']['registered'], '</dd>
 				<dt>', $txt['lastLoggedIn'], ': </dt>
 				<dd>', $context['member']['last_login'], '</dd>
 			</dl>';
