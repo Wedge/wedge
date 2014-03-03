@@ -1011,7 +1011,6 @@ function makeThemeChanges($memID)
 		}
 	}
 
-	$erase_options = array();
 	if (isset($_POST['default_options']) && is_array($_POST['default_options']))
 		foreach ($_POST['default_options'] as $opt => $val)
 		{
@@ -1023,7 +1022,6 @@ function makeThemeChanges($memID)
 				$val = max(0, min($val, 50));
 
 			$themeSetArray[] = array($memID, $opt, is_array($val) ? implode(',', $val) : $val);
-			$erase_options[] = $opt;
 		}
 
 	// If themeSetArray isn't still empty, send it to the database.
@@ -1035,20 +1033,6 @@ function makeThemeChanges($memID)
 				'{db_prefix}themes',
 				array('id_member' => 'int', 'variable' => 'string-255', 'value' => 'string-65534'),
 				$themeSetArray
-			);
-		}
-
-		if (!empty($erase_options))
-		{
-			wesql::query('
-				DELETE FROM {db_prefix}themes
-				WHERE
-					variable IN ({array_string:erase_variables})
-					AND id_member = {int:id_member}',
-				array(
-					'id_member' => $memID,
-					'erase_variables' => $erase_options
-				)
 			);
 		}
 
