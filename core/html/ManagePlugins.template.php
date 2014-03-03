@@ -118,7 +118,7 @@ function template_browse()
 				echo !empty($plugin['description']) ? ' - ' : '', $txt['plugin_readmes'], ':';
 
 				foreach ($plugin['readmes'] as $readme => $state)
-					echo ' &nbsp;<a href="<URL>?action=admin;area=plugins;sa=readme;plugin=', rawurlencode($plugin['folder']), ';lang=', $readme, '" onclick="return reqWin(this);"><img src="', LANGUAGES, '/Flag.', $readme, '.png"></a>';
+					echo ' &nbsp;<a href="<URL>?action=admin;area=plugins;sa=readme;plugin=', rawurlencode($plugin['folder']), ';lang=', $readme, '" onclick="return reqWin(this);"><img src="', LANGUAGES, $context['languages'][$readme]['folder'], '/Flag.', $readme, '.png"></a>';
 			}
 
 			echo '

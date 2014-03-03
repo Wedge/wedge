@@ -61,7 +61,7 @@ function template_main()
 			$alternate = !$alternate;
 
 			echo '
-					<li', !empty($settings['recycle_board']) && !empty($settings['recycle_enable']) && $settings['recycle_board'] == $bdata['id'] ? ' id="recycle_board"' : '', ' class="windowbg', $alternate ? '' : '2', '" style="padding-', $context['right_to_left'] ? 'right' : 'left', ': ', 5 + 30 * $bdata['child_level'], 'px', $bdata['move'] ? '; color: red' : '', '"><span class="floatleft"><img src="', LANGUAGES, '/Flag.', empty($bdata['language']) ? $settings['language'] : $bdata['language'], '.png"> <a href="<URL>?board=', $bdata['id'], '">', $bdata['name'], '</a>', !empty($settings['recycle_board']) && !empty($settings['recycle_enable']) && $settings['recycle_board'] == $bdata['id'] ? '<a href="<URL>?action=admin;area=manageboards;sa=settings"> <img src="' . ASSETS . '/post/recycled.gif" alt="' . $txt['recycle_board'] . '"></a></span>' : '</span>', '
+					<li', !empty($settings['recycle_board']) && !empty($settings['recycle_enable']) && $settings['recycle_board'] == $bdata['id'] ? ' id="recycle_board"' : '', ' class="windowbg', $alternate ? '' : '2', '" style="padding-', $context['right_to_left'] ? 'right' : 'left', ': ', 5 + 30 * $bdata['child_level'], 'px', $bdata['move'] ? '; color: red' : '', '"><span class="floatleft"><img src="', LANGUAGES, $context['languages'][empty($bdata['language']) ? $settings['language'] : $bdata['language']]['folder'], '/Flag.', empty($bdata['language']) ? $settings['language'] : $bdata['language'], '.png">&nbsp; <a href="<URL>?board=', $bdata['id'], '">', $bdata['name'], '</a>', !empty($settings['recycle_board']) && !empty($settings['recycle_enable']) && $settings['recycle_board'] == $bdata['id'] ? '<a href="<URL>?action=admin;area=manageboards;sa=settings"> <img src="' . ASSETS . '/post/recycled.gif" alt="' . $txt['recycle_board'] . '"></a></span>' : '</span>', '
 						<span class="floatright">', $context['can_manage_permissions'] ? '<span class="modify_boards"><a href="<URL>?action=admin;area=permissions;sa=index;pid=' . $bdata['permission_profile'] . ';' . $context['session_query'] . '">' . $txt['mboards_permissions'] . '</a></span>' : '', '
 						<span class="modify_boards"><a href="<URL>?action=admin;area=manageboards;move=', $bdata['id'], '">', $txt['mboards_move'], '</a></span>
 						<span class="modify_boards"><a href="<URL>?action=admin;area=manageboards;sa=board;boardid=', $bdata['id'], '">', $txt['mboards_modify'], '</a></span></span><br class="clear_right">
@@ -181,19 +181,21 @@ function template_board_list()
 
 function template_board_tree($child)
 {
-	global $txt;
+	global $txt, $context;
 
-	$indent = !empty($child['node']['level']) ? str_repeat('		', $child['node']['level']) : '';
+	$node = $child['node'];
+	$indent = !empty($node['level']) ? str_repeat('		', $node['level']) : '';
 
 	echo '
-					', $indent, '<li id="board_b', $child['node']['id'], '">
+					', $indent, '<li id="board_b', $node['id'], '">
 						', $indent, '<div class="windowbg">
-							', $indent, '<span class="handle"></span> ', $child['node']['name'], '
+							', $indent, '<span class="handle"></span> ', empty($node['language']) ? '' : '
+							<img src="' . LANGUAGES . $context['languages'][$node['language']]['folder'] . '/Flag.' . $node['language'] . '.png">&nbsp; ', $node['name'], '
 							', $indent, '<div class="floatright">
-								', $indent, '<a href="<URL>?action=admin;area=manageboards;sa=board;boardid=', $child['node']['id'], '" class="modify_board">', $txt['modify'], '</a>
+								', $indent, '<a href="<URL>?action=admin;area=manageboards;sa=board;boardid=', $node['id'], '" class="modify_board">', $txt['modify'], '</a>
 							', $indent, '</div>
 							', $indent, '<div class="floatright">
-								', $indent, '<a href="<URL>?action=admin;area=permissions;sa=index;pid=', $child['node']['profile'], '" class="perms_board">', $txt['mboards_permissions'], '</a>
+								', $indent, '<a href="<URL>?action=admin;area=permissions;sa=index;pid=', $node['profile'], '" class="perms_board">', $txt['mboards_permissions'], '</a>
 							', $indent, '</div>
 							', $indent, '<br class="clear">
 						', $indent, '</div>';
