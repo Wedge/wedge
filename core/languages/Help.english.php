@@ -17,10 +17,10 @@ $txt['admins_see_votes'] = '
 $txt['help_manage_boards'] = '
 	In this menu you can create/reorder/remove boards, and the categories
 	above them. For example, if you had a wide-ranging
-	site that offered information on "Sports" and "Cars" and "Music", these
+	site that offered information on "Sports", "Cars" and "Music", these
 	would be the top-level Categories you\'d create. Under each of these
 	categories you\'d likely want to create hierarchical "sub-categories",
-	or "Boards" for topics within each. It\'s a simple hierarchy, with this structure: <br>
+	or "Boards" for topics within each. It\'s a simple hierarchy, with this structure:<br>
 	<ul class="list">
 		<li>
 			<strong>Sports</strong>
@@ -41,11 +41,11 @@ $txt['help_manage_boards'] = '
 			&nbsp;- A board under the category of "Sports"</li>
 		</ul>
 	</ul>
-	Categories allow you to break down the board into broad topics ("Cars,
-	Sports"), and the "Boards" under them are the actual topics under which
+	Categories allow you to break down the board into broad topics ("Cars",
+	"Sports"), and the "Boards" under them contain the actual topics into which
 	members can post. A user interested in Pintos
 	would post a message under "Cars-&gt;Pinto". Categories allow people to
-	quickly find what their interests are: Instead of a "Store" you have
+	quickly find what their interests are: instead of a "Store" you have
 	"Hardware" and "Clothing" stores you can go to. This simplifies your
 	search for "pipe joint compound" because you can go to the Hardware
 	Store "category" instead of the Clothing Store (where you\'re unlikely
