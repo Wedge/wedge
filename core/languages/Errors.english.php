@@ -165,6 +165,8 @@ $txt['under_age_registration_prohibited'] = 'Sorry, but users under the age of %
 
 $txt['who_off'] = 'You cannot access Who\'s Online right now because it is disabled.';
 
+$txt['unsupported_browser'] = 'The browser you\'re currently using to visit this website, %s, is very old, slow and insecure. We encourage you to upgrade to a newer version, or switch to a better, more modern alternative such as Google Chrome, Opera or Mozilla Firefox.';
+
 $txt['merge_create_topic_failed'] = 'Error creating a new topic.';
 $txt['merge_need_more_topics'] = 'Merge topics require at least two topics to merge.';
 

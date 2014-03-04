@@ -1465,6 +1465,13 @@ function loadTheme($skin = '', $initialize = true)
 	// We should have all our skeletons ready. Create the main one!
 	wetem::createMainSkeleton();
 
+	// Add an error box for old browsers.
+	if (we::is('ie6,ie7'))
+	{
+		loadTemplate('Errors');
+		wetem::add(array('top', 'default'), 'unsupported_browser');
+	}
+
 	// Any theme-related strings that need to be loaded?
 	if (!empty($context['require_theme_strings']))
 		loadLanguage('ThemeStrings', '', false);

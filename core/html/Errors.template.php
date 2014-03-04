@@ -296,3 +296,13 @@ function template_intrusion_log()
 		<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 	</form>';
 }
+
+function template_unsupported_browser()
+{
+	global $txt;
+
+	loadLanguage('Errors');
+
+	echo '
+	<div class="errorbox">', sprintf($txt['unsupported_browser'], 'Internet Explorer ' . (we::is('ie6') ? 6 : 7)) . '</div>';
+}
