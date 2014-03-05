@@ -166,7 +166,7 @@ body
 
 #sideshow mixes .hide
 	cursor: pointer
-	padding: 2px 0 0 1em
+	padding: 5px 0 0 1em
 	float: right
 	width: 16px
 	// These will still need a px-based fallback, for a few years at least.
@@ -1317,6 +1317,7 @@ table
 	border: 0
 	margin: 4px 8px
 	max-width: 100%
+	height: auto // avoids problems with hardcoded img heights
 
 .bbc_table
 	font, color: inherit

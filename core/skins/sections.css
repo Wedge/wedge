@@ -1204,8 +1204,7 @@ tr.windowbg td
 		text-decoration: none
 		border-bottom: 1px solid #346
 	ul
-		margin: 0
-		padding: 0
+		margin, padding: 0
 	li
 		list-style: none
 		float: left
@@ -1509,10 +1508,8 @@ body.waiting *
 	@media $responsive
 		body
 			padding: 0
-			#wedge
-				border-radius: 0
-			@if opera, ios
-				#header, #footer
+			@if $radius
+				#wedge, #header, #footer
 					border-radius: 0
 			@endif
 			#edge
@@ -1528,6 +1525,8 @@ body.waiting *
 			#sideshow mixes .inline-block
 			#sidebar
 				display: none
+			input[type=text], input:not([type])
+				max-width: 100%
 @endif
 
 @if !ie[-8]
@@ -1563,6 +1562,8 @@ body.waiting *
 			#header h1
 				margin-top: 8px
 				font-size: 2.2em
+				img
+					margin-top: 0
 			#upper_section
 				height: 60px
 			#slogan
