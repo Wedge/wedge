@@ -216,17 +216,19 @@ class we
 			if (isset($_COOKIE[$cookiename]))
 				$_COOKIE[$cookiename] = '';
 
+			// At the very least, try to guess whether this user agent is unlikely to be human!
+			$wild_guess = (strpos(self::$ua, 'Mozilla') === false && strpos(self::$ua, 'Opera') === false) || preg_match('~(?:bot|slurp|crawl|spider)~', strtolower(self::$ua));
+
 			// Do we perhaps think this is a search robot? Check every five minutes just in case...
 			if ((!empty($settings['spider_mode']) || !empty($settings['spider_group'])) && (!isset($_SESSION['robot_check']) || $_SESSION['robot_check'] < time() - 300))
 			{
 				loadSource('ManageSearchEngines');
-				$user['possibly_robot'] = SpiderCheck();
+				$user['possibly_robot'] = SpiderCheck() || $wild_guess;
 			}
 			elseif (!empty($settings['spider_mode']))
-				$user['possibly_robot'] = isset($_SESSION['id_robot']) ? $_SESSION['id_robot'] : 0;
-			// If we haven't turned on proper spider hunts then have a guess!
+				$user['possibly_robot'] = isset($_SESSION['id_robot']) ? $_SESSION['id_robot'] : false;
 			else
-				$user['possibly_robot'] = (strpos(self::$ua, 'Mozilla') === false && strpos(self::$ua, 'Opera') === false) || preg_match('~(?:bot|slurp|crawl|spider)~', strtolower(self::$ua));
+				$user['possibly_robot'] = $wild_guess;
 		}
 
 		// Figure out the new time offset.
