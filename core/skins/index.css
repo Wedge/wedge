@@ -869,7 +869,10 @@ input[type=file]
 		font-weight: 400
 		margin: 0 2px @is (ie7, 0, 10px) 0 // 10px gives more breathing space to the dropdown's arrow...
 
-	li ul
+	ul
+		opacity: 0
+		transition: opacity .3s ease, transform .3s ease, visibility .3s ease
+		transform: translate3d(0, 5px, 0)
 		display: block
 		clear: left
 		@if !ie[-7]
@@ -878,10 +881,9 @@ input[type=file]
 		position: absolute
 		z-index: 42
 		visibility: hidden
-		transition: opacity .3s ease
 		margin, padding: 0
 		border: 1px solid #bbb
-		@if ie9, chrome, firefox[20-] // Speed matters.
+		@if ie[9-], chrome, firefox[20-] // Speed matters.
 			background: #fcfcfc
 			box-shadow: inset 0 50px 50px rgba(232, 236, 232, .8), 2px 2px 3px 0 rgba(0,0,0, .2)
 		@else
@@ -890,7 +892,8 @@ input[type=file]
 		@endif
 		border-radius: 0 10px 10px 0
 
-	li li ul
+	ul ul
+		transform: translate3d(5px, 0, 0)
 		left: @is (ie6, 95%, 100%)
 		top: 0
 
@@ -919,6 +922,12 @@ input[type=file]
 		display: block
 		margin: 0
 		white-space: nowrap
+
+	ul.anim
+		visibility: visible
+		opacity: 1
+		transition: opacity .3s ease, transform .3s ease
+		transform: translate3d(0, 0, 0)
 
 .css > li > ul
 	transition: opacity .15s ease

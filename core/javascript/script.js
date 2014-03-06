@@ -418,70 +418,32 @@ $.fn.ds = function ()
 
 $.fn.mm = function ()
 {
-	var menu_baseId = 0, menu_delay = [],
+	this.find('li')
+		// Entering a menu entry?
+		.on('mouseenter focus', function ()
+		{
+			// Start the animation on its child.
+			$('>ul', this).addClass('anim');
 
-	// Entering a menu entry?
-	menu_show_me = function ()
-	{
-		var
-			is_top = $(this).parent().hasClass('menu'),
-			is_visible = $('>ul', this).css('visibility') == 'visible';
+			// Add hover effects to this menu entry's parent list. On top-level entries, add effect to the h4 tag only.
+			if (!$(this).parent().hasClass('menu') || !$('>h4', this).addClass('hove').length)
+				$(this).addClass('hove').parentsUntil('.menu>li').filter('li').addClass('hove');
 
-		$('>ul', this).css({
-			visibility: 'visible',
-			opacity: 1,
-			margin: is_top ? '0 ' + $('span', this).width() + 'px' : 0
+			$(this).siblings('li').children().andSelf().removeClass('hove anim');
+		})
+		// Leaving a menu entry? Then hide all of its children.
+		.on('mouseleave blur', function (e)
+		{
+			$(this).children().andSelf().removeClass('hove anim');
+		})
+		// Disable double clicks and text selection...
+		.mousedown(false)
+		// Clicking a link will immediately close the menu -- giving a feeling of responsiveness.
+		.find('>a,>h4>a')
+		.click(function () {
+			$('.hove').removeClass('hove');
+			$(this).parentsUntil('.menu').removeClass('anim');
 		});
-
-		if (!is_top || !$('>h4', this).addClass('hove').length)
-			$(this).addClass('hove').parentsUntil('.menu>li').filter('li').addClass('hove');
-
-		if (!is_visible)
-			$('>ul', this)
-				.css(is_top ? { marginTop: 5 } : { marginLeft: 0 })
-				.animate(is_top ? { marginTop: 0 } : { marginLeft: -5 });
-
-		clearTimeout(menu_delay[this.id.slice(2)]);
-
-		$(this).siblings('li').each(function () { menu_hide_children(this.id); });
-	},
-
-	// Leaving a menu entry?
-	menu_hide_me = function (e)
-	{
-		// The deepest level should hide the hover class immediately.
-		if (!$(this).children('ul').length)
-			$(this).children().andSelf().removeClass('hove');
-
-		// Are we leaving the menu entirely, and thus triggering the time threshold,
-		// or are we just switching to another non-context menu item?
-		var id = this.id, target_parent = $(e.relatedTarget).closest('.menu');
-		target_parent.length && !target_parent.hasClass('context') ? menu_hide_children(id) :
-			menu_delay[id.slice(2)] = setTimeout(function () { menu_hide_children(id); }, 300);
-	},
-
-	// Hide all children menus.
-	menu_hide_children = function (id)
-	{
-		$('#' + id).children().andSelf().removeClass('hove').find('ul').css({ visibility: 'hidden' }).css(is_ie8down ? '' : 'opacity', 0);
-	};
-
-	this.each(function () {
-		var $elem = $(this);
-		$elem.find('li').each(function () {
-			$(this).attr('id', 'li' + menu_baseId++)
-				.on('mouseenter focus', menu_show_me)
-				.on('mouseleave blur', menu_hide_me)
-				// Disable double clicks...
-				.mousedown(false)
-				// Clicking a link will immediately close the menu -- giving a feeling of responsiveness.
-				.has('>a,>h4>a')
-				.click(function () {
-					$('.hove').removeClass('hove');
-					$elem.find('ul').css({ visibility: 'hidden' }).css(is_ie8down ? '' : 'opacity', 0);
-				});
-		});
-	});
 
 	// Make menu icons clickable by stealing the link from their neighbor.
 	$('.menu>li>span').each(function () { $(this).wrap($('<a/>').attr('href', $(this).next().find('a').attr('href'))); });
