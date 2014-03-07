@@ -439,7 +439,7 @@ $.fn.mm = function ()
 		// Disable double clicks and text selection...
 		.mousedown(false)
 		// Clicking a link will immediately close the menu -- giving a feeling of responsiveness.
-		.find('>a,>h4>a')
+		.has('>a,>h4>a')
 		.click(function () {
 			$('.hove').removeClass('hove');
 			$(this).parentsUntil('.menu').removeClass('anim');
