@@ -140,9 +140,9 @@ function template_topic_poll_before()
 	echo '
 		<div class="poll_moderation">', template_button_strip($context['nav_buttons']['poll']), '
 		</div>
-		<we:block class="poll windowbg" header="', $txt['poll'], '" footer="', empty($context['poll']['expire_time']) ? '' :
-			($context['poll']['is_expired'] ? $txt['poll_expired_on'] : $txt['poll_expires_on']) . ': ' . $context['poll']['expire_time'] . ($show_voters ? ' - ' : ''),
-			$show_voters ? $txt['poll_total_voters'] . ': ' . $context['poll']['total_votes'] : '', '">
+		<we:block class="poll windowbg" header="', $txt['poll'], '" footer="htmlsafe::', westr::safe((empty($context['poll']['expire_time']) ? '' :
+			($context['poll']['is_expired'] ? $txt['poll_expired_on'] : $txt['poll_expires_on']) . ': ' . $context['poll']['expire_time'] . ($show_voters ? ' - ' : ''))
+			. ($show_voters ? $txt['poll_total_voters'] . ': ' . $context['poll']['total_votes'] : '')), '">
 			<h4>
 				<img src="', ASSETS, '/topic/', $context['poll']['is_locked'] ? 'normal_poll_locked' : 'normal_poll', '.png" style="vertical-align: -4px">
 				', $context['poll']['question'], '
