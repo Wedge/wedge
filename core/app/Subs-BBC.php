@@ -1085,7 +1085,7 @@ function parse_bbc($message, $type = 'generic', $bbc_options = array()) // $smil
 	}
 
 	// Is there anything we want to do just before we go home?
-	call_hook('post_bbc_parse', array(&$message, &$bbc_options));
+	call_hook('post_bbc_parse', array(&$message, &$bbc_options, &$type));
 
 	// There might possibly be some things to do.
 	if (!empty($owner) && !empty($user_profile[$owner]))
