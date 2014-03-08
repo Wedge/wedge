@@ -1466,7 +1466,7 @@ function loadTheme($skin = '', $initialize = true)
 	wetem::createMainSkeleton();
 
 	// Add an error box for old browsers.
-	if (we::is('ie6,ie7'))
+	if (we::is('ie6,ie7') && !we::$user['possibly_robot'])
 	{
 		loadTemplate('Errors');
 		wetem::add(array('top', 'default'), 'unsupported_browser');
