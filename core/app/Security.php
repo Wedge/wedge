@@ -1187,7 +1187,7 @@ function showEmailAddress($userProfile_hideEmail, $userProfile_id)
  *
  * Part of the anti-spam measures include whitelist and blacklist items to be screened against. This is where such are processed.
  *
- * Much of the functionality is derived from Bad Behavior, http://www.bad-behavior.ioerror.us/ which is licensed under the GNU LGPL 3.0 and used herein under clause 4.
+ * Much of the functionality is derived from Bad Behavior (http://bad-behavior.ioerror.us/), which is licensed under the GNU LGPL 3.0 and used herein under clause 4.
  * As such, we are required to make reference to the GNU GPL 3.0 - http://www.gnu.org/licenses/gpl-3.0.html - and its child licence GNU LGPL 3.0 - http://www.gnu.org/licenses/lgpl-3.0.html - it is acknowledged that we have not included the full licence text with the package, because the core package is not itself GPL/LGPL licensed and we believe it would lead to confusion if multiple licence documents were provided. We will seek to provide clarification where this is necessary.
  *
  * @return mixed Returns true if whitelisted, or not confirmed as spammer in any way; false if matching any rules but the current user is an administrator (so they receive an alternate warning), otherwise execution will be suspended and the request directed to an appropriate error page.
@@ -1320,13 +1320,13 @@ function checkUserBehavior()
 /**
  * Checks the blacklist for known user agents that have undesirable behaviors.
  *
- * Detection data courtesy of Bad Behavior (http://www.bad-behavior.ioerror.us/)
+ * Detection data courtesy of Bad Behavior (http://bad-behavior.ioerror.us/)
  *
  * @return mixed Returns false if valid, returns the id of the error (and stores it in $context['behavior_error']) if an error condition was hit.
  */
 function checkUserRequest_blacklist()
 {
-	global $context;
+	global $context, $settings;
 
 	// If the user agent begins with any of these, fail it.
 	$rules = array(
@@ -1351,14 +1351,13 @@ function checkUserRequest_blacklist()
 			'User Agent: ',
 			'User-Agent: ',
 			// exploit attempts
-			'<sc',
 			'core-project/',
 			'Internet Explorer',
 			'Winnie Poh',
 			// malicious
 			'Diamond',
 			'MJ12bot/v1.0.8',
-			'Mozilla ',
+			'Mozilla/0',
 			'Mozilla/1',
 			'Mozilla/2',
 			'Mozilla/3',
@@ -1395,7 +1394,7 @@ function checkUserRequest_blacklist()
 			'Morfeus',
 			'Mozilla/4.0 (Hydra)',
 			'Nessus',
-			'PMAfind',
+			'PMAFind',
 			'revolt',
 			'w3af',
 		),
@@ -1403,6 +1402,8 @@ function checkUserRequest_blacklist()
 			// harvesters
 			'Email Extractor',
 			'EMail Exractor',
+			'.NET CLR1',
+			'Perman Surfer',
 			'unspecified.mail',
 			'User-agent: ',
 			'WebaltBot',
@@ -1417,7 +1418,6 @@ function checkUserRequest_blacklist()
 			'Havij',
 			'MSIE 7.0;  Windows NT 5.2',
 			'Turing Machine',
-			'ZmEu',
 			// spammers
 			'; Widows ',
 			'a href=',
@@ -1429,26 +1429,44 @@ function checkUserRequest_blacklist()
 			'MVAClient',
 			'Murzillo compatible',
 			'.NET CLR 1)',
-			'.NET CLR1',
-			'Perman Surfer',
 			'POE-Component-Client',
 			'Ubuntu/9.25',
-			'Windows NT 4.0;)',
 			'Windows NT 5.0;)',
 			'Windows NT 5.1;)',
 			'WordPress/4.01',
 			'Xedant Human Emulator',
+			// exploit attempts
+			'<sc',
+			'ZmEu',
 			// vulnerability scanners
 			'Forest Lobster',
 			'Ming Mong',
+			'Netsparker',
 			'Nikto/',
 		),
 		'contains_regex' => array(
 			// spammers
-			'/^[A-Z]{10}$/',
-			'/[bcdfghjklmnpqrstvwxz ]{8,}/',
+			'~^[A-Z]{10}$~',
+			'~[bcdfghjklmnpqrstvwxz ]{8,}~',
 		),
 	);
+
+	if (empty($settings['allow_jurassic_crap']))
+	{
+		$rules['begins_with'][] = 'Microsoft Internet Explorer/';
+		$rules['contains'] += array(
+			'Firebird/',
+			'Win95',
+			'Win98',
+			'WinME',
+			'Win 9x 4.90',
+			'Windows 3',
+			'Windows 95',
+			'Windows 98',
+			'Windows NT 4',
+			'Windows NT;',
+		);
+	}
 
 	foreach ($rules['begins_with'] as $test)
 		if (strpos($context['http_headers']['User-Agent'], $test) === 0)
@@ -1468,7 +1486,7 @@ function checkUserRequest_blacklist()
 /**
  * Checks the request headers for known issues with respect to invalid HTTP or known spammer behavior.
  *
- * Detection data courtesy of Bad Behavior (http://www.bad-behavior.ioerror.us/)
+ * Detection data courtesy of Bad Behavior (http://bad-behavior.ioerror.us/)
  *
  * @return mixed Returns false if valid, returns the id of the error (and stores it in $context['behavior_error']) if an error condition was hit.
  */
@@ -1610,7 +1628,7 @@ function checkUserRequest_request()
 /**
  * Performs acceptance checks that are based primarily on the user agent for the current request.
  *
- * Detection data courtesy of Bad Behavior (http://www.bad-behavior.ioerror.us/)
+ * Detection data courtesy of Bad Behavior (http://bad-behavior.ioerror.us/)
  *
  * @return mixed Returns false if valid, returns the id of the error (and stores it in $context['behavior_error']) if an error condition was hit.
  */
@@ -1678,7 +1696,7 @@ function checkUserRequest_useragent()
 /**
  * Performs acceptance checks that are based primarily on the details of the request if it is a POST request.
  *
- * Detection data courtesy of Bad Behavior (http://www.bad-behavior.ioerror.us/)
+ * Detection data courtesy of Bad Behavior (http://bad-behavior.ioerror.us/)
  *
  * @return mixed Returns false if valid, returns the id of the error (and stores it in $context['behavior_error']) if an error condition was hit.
  */
