@@ -601,6 +601,11 @@ function Post2()
 		$_POST['poll_change_vote'] = isset($_POST['poll_change_vote']) ? 1 : 0;
 
 		$_POST['poll_guest_vote'] = isset($_POST['poll_guest_vote']) ? 1 : 0;
+
+		$_POST['poll_voters_visible'] = (int) $_POST['poll_voters_visible'];
+		if ($_POST['poll_votes_visible'] < 0 || $_POST['poll_votes_visible'] > 3)
+			$_POST['poll_votes_visible'] = 0; // If it's not a safe value, make it safe!
+
 		// Make sure guests are actually allowed to vote generally.
 		if ($_POST['poll_guest_vote'])
 		{
@@ -788,12 +793,13 @@ function Post2()
 		wesql::insert('',
 			'{db_prefix}polls',
 			array(
-				'question' => 'string-255', 'hide_results' => 'int', 'max_votes' => 'int', 'expire_time' => 'int', 'id_member' => 'int',
-				'poster_name' => 'string-255', 'change_vote' => 'int', 'guest_vote' => 'int'
+				'question' => 'string-255', 'hide_results' => 'int', 'voters_visible' => 'int', 'max_votes' => 'int', 'expire_time' => 'int',
+				'id_member' => 'int', 'poster_name' => 'string-255', 'change_vote' => 'int', 'guest_vote' => 'int'
 			),
 			array(
-				$_POST['question'], $_POST['poll_hide'], $_POST['poll_max_votes'], (empty($_POST['poll_expire']) ? 0 : time() + $_POST['poll_expire'] * 3600 * 24), MID,
-				$_POST['guestname'], $_POST['poll_change_vote'], $_POST['poll_guest_vote'],
+				$_POST['question'], $_POST['poll_hide'], $_POST['poll_voters_visible'], $_POST['poll_max_votes'],
+				empty($_POST['poll_expire']) ? 0 : time() + $_POST['poll_expire'] * 3600 * 24,
+				MID, $_POST['guestname'], $_POST['poll_change_vote'], $_POST['poll_guest_vote'],
 			)
 		);
 		$id_poll = wesql::insert_id();
