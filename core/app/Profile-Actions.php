@@ -888,7 +888,7 @@ function profileBan($memID)
 	global $txt, $context, $cur_profile;
 
 	isAllowedTo('manage_bans');
-	add_css_file('mana', true);
+	add_css_file('mana');
 	loadLanguage('ManageBans');
 
 	$context['errors'] = array();

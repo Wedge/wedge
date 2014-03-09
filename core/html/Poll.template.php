@@ -19,11 +19,10 @@ function template_main()
 	function addPollOption()
 	{
 		if (pollOptionNum == 0)
-		{
 			for (var i = 0; i < document.forms.postmodify.elements.length; i++)
 				if (document.forms.postmodify.elements[i].id.slice(0, 8) == "options-")
 					pollOptionNum++;
-		}
+
 		pollOptionNum++;
 
 		$("#pollMoreOptions").append(\'<li><label', (isset($context['poll_error']['no_question']) ? ' class="error"' : ''), '>', $txt['option'], ' \' + pollOptionNum + \': <input name="options[\' + (pollOptionNum - 1) + \']" id="options-\' + (pollOptionNum - 1) + \'" value="" size="70" maxlength="255"></label></li>\');

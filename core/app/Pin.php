@@ -178,7 +178,7 @@ function OrderPin()
 			fatal_lang_error('no_pinned_order', false);
 
 		// OK so we have some topics. Let's go set up the template and get ready to display them.
-		add_css_file('mana', true);
+		add_css_file('mana');
 		add_jquery_ui();
 		add_css('
 	#sortable { width: 98% } #sortable .floatright { margin-left: 1em; margin-right: 1em }');

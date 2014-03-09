@@ -400,7 +400,7 @@ function aeva_initGallery($gal_url = null)
 			add_linktree($txt['media_gallery'], $galurl2);
 
 		// Some CSS and JS we'll be using
-		add_css_file(isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'mass' ? array('media', 'up') : 'media', true);
+		add_css_file(isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'mass' ? array('media', 'up') : 'media');
 	}
 
 	$context['aeva_header'] = array(

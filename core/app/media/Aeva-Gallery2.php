@@ -2271,7 +2271,7 @@ function aeva_profileSummary($memID)
 	loadSource('media/Subs-Media');
 
 	// Some CSS we'll be using
-	add_css_file('media', true);
+	add_css_file('media');
 
 	// Load the gallery template's profile summary section
 	loadMediaSettings(null, true, true);
@@ -2344,7 +2344,7 @@ function aeva_profileItems($memID)
 	loadSource('media/Subs-Media');
 
 	// Some CSS we'll be using
-	add_css_file('media', true);
+	add_css_file('media');
 
 	// Load the gallery template's profile items section
 	loadMediaSettings(null, true, true);
@@ -2367,7 +2367,7 @@ function aeva_profileComments($memID)
 
 	loadSource('media/Subs-Media');
 
-	add_css_file('media', true);
+	add_css_file('media');
 
 	// Load the gallery template's profile comments section
 	loadMediaSettings(null, true, true);
@@ -2390,7 +2390,7 @@ function aeva_profileVotes($memID)
 
 	loadSource('media/Subs-Media');
 
-	add_css_file('media', true);
+	add_css_file('media');
 
 	// Load the gallery template's profile votes section
 	loadMediaSettings(null, true, true);

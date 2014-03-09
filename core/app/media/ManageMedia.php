@@ -130,7 +130,7 @@ function aeva_admin_init()
 		$areas[$area]();
 
 	// Some CSS and JS we'll be using
-	add_css_file('media', true);
+	add_css_file('media');
 	add_js_file('mediadmin.js');
 }
 

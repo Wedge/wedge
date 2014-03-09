@@ -144,7 +144,7 @@ function template_report_before()
 <head>
 	<meta charset="utf-8">
 	<title>', $context['page_title'], '</title>
-	<link rel="stylesheet" href="', add_css_file('report'), '">
+	<link rel="stylesheet" href="', add_css_file('report', false), '">
 </head>
 <body>';
 }

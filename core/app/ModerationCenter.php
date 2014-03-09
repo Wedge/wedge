@@ -33,7 +33,7 @@ function ModerationCenter($dont_call = false)
 
 	// Load the language, and the template.
 	loadLanguage('ModerationCenter');
-	add_css_file('mana', true);
+	add_css_file('mana');
 
 	$context['robot_no_index'] = true;
 

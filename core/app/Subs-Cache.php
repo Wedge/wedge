@@ -280,11 +280,11 @@ function add_css()
  * This function adds one or more minified, gzipped files to the header stylesheets. It takes care of everything. Good boy.
  *
  * @param mixed $original_files A filename or an array of filenames, with a relative path set to the theme root folder. Just specify the filename, like 'index', if it's a file from the current skin.
- * @param boolean $add_link Set to true if you want Wedge to automatically add the link tag around the URL and move it to the header.
+ * @param boolean $add_link Set to false if you want Wedge to return the URL instead of automatically adding the link to your page header.
  * @param boolean $is_main Determines whether this is the primary CSS file list (index.css and other files), which gets special treatment.
  * @return string The generated code for direct inclusion in the source code, if $out_of_flow is set. Otherwise, nothing.
  */
-function add_css_file($original_files = array(), $add_link = false, $is_main = false, $ignore_files = array())
+function add_css_file($original_files = array(), $add_link = true, $is_main = false, $ignore_files = array())
 {
 	global $settings, $context, $db_show_debug, $files;
 	static $cached_files = array();
@@ -1574,7 +1574,7 @@ function wedge_get_skin_options($options_only = false)
 					$context['header'] .= '
 	<link rel="stylesheet" href="' . $val . '">';
 				else
-					add_css_file($val, true);
+					add_css_file($val);
 			}
 		}
 		if (!empty($match['value']))

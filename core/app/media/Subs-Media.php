@@ -3513,7 +3513,7 @@ function aeva_addHeaders($autosize = true, $use_zoomedia = true)
 	aeva_loadLanguage('media_move');
 
 	if ($context['action'] !== 'media')
-		add_css_file('media', true);
+		add_css_file('media');
 
 	if ($context['action'] !== 'media' && ((we::is('firefox') && $pfx = 'moz') || (we::is('safari') && $pfx = 'webkit')))
 		add_css('

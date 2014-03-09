@@ -169,7 +169,7 @@ function summary($memID)
 	$context['member']['bans'] = array();
 	if (allowedTo('moderate_forum'))
 	{
-		add_css_file('mana', true);
+		add_css_file('mana');
 		loadLanguage('ManageBans');
 		// Can they edit the ban?
 		$context['can_edit_ban'] = allowedTo('manage_bans');

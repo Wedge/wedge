@@ -64,7 +64,7 @@ class wedit
 			self::$editorLoaded = true;
 			loadLanguage('Post');
 
-			add_css_file('editor', true);
+			add_css_file('editor');
 			add_js_file(array(
 				'editor.js',
 				'editor-func.js',
