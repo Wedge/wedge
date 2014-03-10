@@ -304,5 +304,5 @@ function template_unsupported_browser()
 	loadLanguage('Errors');
 
 	echo '
-	<div class="errorbox">', sprintf($txt['unsupported_browser'], 'Internet Explorer ' . (we::is('ie6') ? 6 : 7)) . '</div>';
+	<div class="information">', sprintf($txt['unsupported_browser'], 'Internet Explorer ' . (we::is('ie6') ? 6 : 7)) . '</div>';
 }
