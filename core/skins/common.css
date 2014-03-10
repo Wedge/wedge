@@ -113,12 +113,19 @@
 	- Enjoy.
 */
 
+/* A generic font stack for display purposes (titles, large text...) */
+$generic_stack = "Franklin Gothic Medium", "Franklin Gothic", "Segoe UI", Helvetica, Arial, sans-serif
+@if ios // Helvetica Light looks good on my iPod.
+	$generic_stack = HelveticaNeue-Light, "Helvetica Neue Light", "Helvetica Neue", Helvetica, sans-serif
+@endif
+
 $main_font = Arial, sans-serif
 $main_font_size = 88%/130%
 $menu_font = $main_font
-$big_font = "Franklin Gothic Medium", "Franklin Gothic", "Segoe UI", Helvetica, Arial, sans-serif
-$head_font = "Franklin Gothic Medium", "Franklin Gothic", "Segoe UI", Helvetica, Arial, sans-serif
-$subject_font = "Franklin Gothic Medium", "Franklin Gothic", "Segoe UI", Arial, sans-serif
+$big_font = $generic_stack
+$head_font = $generic_stack
+
+$subject_font = $generic_stack
 $mono_font = Consolas, "Dejavu Sans Mono", Menlo, "Lucida Console", "Courier New", monospace
 $serif_font = Georgia, serif
 
@@ -164,9 +171,9 @@ $responsive = "all and (max-width: $responsive_max_width)"
 
 /* List of browsers that support the STANDARD flexbox model, i.e. display: flex.
 	IE10 supports an older model, but Wess automatically rewrites your CSS for it.
-	Opera 12.1 and Safari Mobile 7 normally support it, which their implementations are flawed, at least in Wedge.
+	Safari Mobile 7 normally supports it, but its implementation is flawed, at least in Wedge.
 	For reference, browsers supporting the OLD, useless model were: (firefox[2-], chrome[4-], safari[3.1-] && !ios, ios[3.2-]) */
-$can_flex = @is ("firefox[22-], chrome[27-], ie[10-], safari[7-] && !ios")
+$can_flex = @is ("firefox[22-], opera[12.1-], chrome[27-], ie[10-], safari[7-]")
 
 /* List browsers that support CSS3 animations (Wedge adds prefixes automatically.) */
 $can_animate = @is ("chrome, firefox[5-], opera[12-], ie[10-], safari[4-], ios[3.2-], android[2.1-]")
