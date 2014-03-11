@@ -86,7 +86,7 @@ function template_html_before()
 
 	if (SKIN_MOBILE && !we::is('opera[11-], ie[10-]'))
 		echo '
-	<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=2,minimum-scale=0.7,user-scalable=1">';
+	<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=2,minimum-scale=0.7">';
 
 	if (!empty($context['meta_description']))
 		echo '
@@ -661,25 +661,25 @@ function template_footer()
 {
 	global $context, $txt;
 
+	// Show the credits page (forum admin/mod team and credits), and a link to an HTML conformity checker, for geeks.
+	// If you want to use validator.nu instead, replace the w3.org link with:
+	// "http://validator.nu/?doc=', we::$user['url'], '"
 	echo '
 	<div id="footer"><div class="frame">
-		<ul class="reset">';
+		<ul class="reset">
+			<li id="copyright">', $txt['copyright'], '</li>
+			<li class="links">
+				<a id="site_credits" href="<URL>?action=credits">', $txt['site_credits'], '</a> |
+				<a id="button_html5" href="http://validator.w3.org/check?uri=referer" target="_blank" class="new_win" title="', $txt['valid_html5'], '">', $txt['html5'], '</a>',
+				empty($context['custom_credits']) ? '' : $context['custom_credits'], '
+			</li>';
 
 	// Show the load time?
 	if ($context['show_load_time'])
 		echo '
 			<li class="stats"><!-- insert stats here --></li>';
 
-	// Show the credit page (forum admin/mod team and credits), and a link to an HTML conformity checker, for geeks.
-	// If you want to use validator.nu instead, replace the w3.org link with:
-	// "http://validator.nu/?doc=', we::$user['url'], '"
 	echo '
-			<li class="copyright">', $txt['copyright'], $context['show_load_time'] ? ' |</li>' : '</li><br class="clear">', '
-			<li class="links">
-				<a id="site_credits" href="<URL>?action=credits">', $txt['site_credits'], '</a> |
-				<a id="button_html5" href="http://validator.w3.org/check?uri=referer" target="_blank" class="new_win" title="', $txt['valid_html5'], '">', $txt['html5'], '</a>',
-				empty($context['custom_credits']) ? '' : $context['custom_credits'], '
-			</li>
 		</ul>
 	</div></div>';
 }
