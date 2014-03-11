@@ -3,6 +3,22 @@
 	This is where all styling related to a specific page or area is put.
 /*
 
+/* Styles for the homepage.
+------------------------------------------------- */
+
+.latestp1
+	width: 100px
+	font-size: .9em
+	line-height: 1.3em
+	div
+		overflow: hidden
+		white-space: nowrap
+
+.latestp2
+	padding: .5em .7em !important
+	a:first-child
+		opacity: .7
+
 /* Styles for the board index.
 ------------------------------------------------- */
 
@@ -1219,8 +1235,7 @@ tr.windowbg td
 
 #theme_settings
 	overflow: auto
-	margin: 0
-	padding: 0
+	margin, padding: 0
 	> li
 		list-style: none
 		margin: 10px 0
@@ -1435,7 +1450,7 @@ div.top_row dd
 // The upshrink image needs some tweaking
 #upshrink extends .shrinkable
 	float: right
-	margin-left: .5em
+	margin: 2px 0 0 .5em
 
 #qr_expand, #postMoreExpand, #newsupshrink
 	base: .foldable
