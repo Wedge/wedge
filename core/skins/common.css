@@ -171,7 +171,6 @@ $responsive = "all and (max-width: $responsive_max_width)"
 
 /* List of browsers that support the STANDARD flexbox model, i.e. display: flex.
 	IE10 supports an older model, but Wess automatically rewrites your CSS for it.
-	Safari Mobile 7 normally supports it, but its implementation is flawed, at least in Wedge.
 	For reference, browsers supporting the OLD, useless model were: (firefox[2-], chrome[4-], safari[3.1-] && !ios, ios[3.2-]) */
 $can_flex = @is ("firefox[22-], opera[12.1-], chrome[27-], ie[10-], safari[7-]")
 
