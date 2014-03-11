@@ -324,15 +324,16 @@ ul#noava
 		padding: 10px 20px
 
 	ul extends .clearfix
-		background: url($images/wefoot2.png) 0 9px no-repeat
-		padding: 5px 0 5px 60px
-		min-height: 35px
 		li
 			margin-left: 4px
-			float: left
 			line-height: 160%
-			&.copyright
-				clear: left
+			:first-child:before
+				content: ""
+				float: left
+				background: url($images/wefoot2.png) 0 4px no-repeat
+				padding: math(height($images_dir/wefoot2.png)px + 4) math(width($images_dir/wefoot2.png)px + 18) 0 0
+		.links
+			display: block
 	a
 		color: #679
 		border-bottom: 1px dashed #679
