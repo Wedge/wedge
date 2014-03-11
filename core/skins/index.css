@@ -871,7 +871,7 @@ input[type=file]
 
 	ul
 		opacity: 0
-		transition: opacity .2s ease, transform .3s ease, visibility .3s ease
+		transition: opacity .15s ease, transform .3s ease, visibility .3s ease
 		transform: translate3d(0, 5px, 0)
 		display: block
 		clear: left
@@ -926,7 +926,7 @@ input[type=file]
 	ul.anim
 		visibility: visible
 		opacity: 1
-		transition: opacity .3s ease, transform .3s ease
+		transition: opacity .15s ease, transform .3s ease
 		transform: translate3d(0, 0, 0)
 		ul & // sub-menus
 			transform: translate3d(-5px, 0, 0)
