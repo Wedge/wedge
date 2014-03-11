@@ -1328,7 +1328,10 @@ table
 	border: 0
 	margin: 4px 8px
 	max-width: 100%
-	height: auto // avoids problems with hardcoded img heights
+	// We need to avoid problems with hardcoded img width & height
+	// when width is stopped in its tracks by max-width.
+	&[width]
+		height: auto
 
 .bbc_table
 	font, color: inherit
