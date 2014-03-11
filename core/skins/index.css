@@ -870,10 +870,12 @@ input[type=file]
 		font-weight: 400
 		margin: 0 2px @is (ie7, 0, 10px) 0 // 10px gives more breathing space to the dropdown's arrow...
 
-	ul
+	li > ul
 		opacity: 0
 		transition: opacity .15s ease, transform .3s ease, visibility .3s ease
-		transform: translate3d(0, 5px, 0)
+		@if !ie // IE 9-10 behave strangely here.
+			transform: translate3d(0, 5px, 0)
+		@endif
 		display: block
 		clear: left
 		@if !ie[-7]
@@ -924,16 +926,13 @@ input[type=file]
 		margin: 0
 		white-space: nowrap
 
-	ul.anim
+	li:hover > ul
 		visibility: visible
 		opacity: 1
 		transition: opacity .15s ease, transform .3s ease
 		transform: translate3d(0, 0, 0)
 		ul & // sub-menus
 			transform: translate3d(-5px, 0, 0)
-
-.css > li > ul
-	transition: opacity .15s ease
 
 li.active > a
 	font-weight: 700
@@ -951,22 +950,21 @@ li.subsection > a
 		right: 8px
 
 // Hover colors. We're using box-shadow to keep the ability to set hover-independent background colors.
-.css h4:hover, .menu h4:hover, h4.hove
+.menu li:hover > h4
 	box-shadow: inset 0 0 10em rgba(0,0,0, .075)
 
-#main_menu
-	h4:hover, h4.hove
-		background-color: #5a6c85
+#main_menu li:hover > h4
+	background-color: #5a6c85
+	color: #fff
+	a
 		color: #fff
-		a
-			color: #fff
 
 // Quick hack for arrow colors on selected parents.
-li.hove > a:after, .menu h4.hove:after
+.menu li:hover > a:after, .menu li:hover > h4:after
 	opacity: .5
 	transition: opacity .3s
 
-.css > li li:hover, li.hove
+.menu li li:hover
 	color: #000
 	border-radius: 0 9px 9px 0
 	background-color: rgba(0,0,0, .075)
@@ -1001,19 +999,16 @@ li.sep
 		padding: 4px 8px
 	hr
 		margin: 0
-	&.hove
+	.menu li &:hover
 		background: none
 
-/*	Pure CSS menu emulation... Until JS takes over
-	to add the hover timer and proper widths! */
-.css
+// This is the magical place where sub-menus get opened and closed!
+.menu
 	li:hover ul ul, li:hover ul ul ul
-		display: none
 		visibility: hidden
 		opacity: 0
 
 	li:hover ul, ul li:hover ul, ul ul li:hover ul
-		display: block
 		visibility: visible
 		opacity: 1
 
@@ -1044,6 +1039,13 @@ li.sep
 		border-bottom-color: #fbfbf8
 		border-width: 6px
 		margin: 0 1px
+
+	// Add an extra layer behind the arrow, so we know we're still inside the menu.
+	> li:first-child:before
+		content: ""
+		bottom, width: 100%
+		height: 12px
+		position: absolute
 
 // Used in both normal and mini-menus...
 .menu > li > ul

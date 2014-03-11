@@ -3,14 +3,18 @@
 
 /* The dropdown menus
 ------------------------------------------------------- */
+
+// No sub-menus for IE6. Could fix it. Won't.
+.menu li li mixes .hide
+
+/*
 .menu
 	width: 100%
 	a:hover
 		text-decoration: none
 
-	/*	Sort of a hasLayout fix for IE6... Without it, we get an horizontal frame below any menu entry
-		that has a submenu itself. If you have a better fix, please share. Curse you, IE6! */
-	li li
+	// Esoteric hack.
+	li li mixes .hide
 		border-bottom: 1px solid #fff8f1
 
 	li ul
@@ -20,19 +24,12 @@
 		padding-top, padding-bottom: 0
 		background-color: #c74c55
 
-li.hove
-	background-color: #e2ebe7
-
 li.sep
-	background: none
-	a
-		padding: 0
-	hr
-		margin: 0
-		width: 80px
+	width: 80px
+*/
 
 // Sub-area non-dropdown menus in the admin area
-#context_menus
+.context
 	h4
 		padding: 0
 	a

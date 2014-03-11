@@ -418,35 +418,11 @@ $.fn.ds = function ()
 
 $.fn.mm = function ()
 {
-	this.find('li')
-		// Entering a menu entry?
-		.on('mouseenter focus', function ()
-		{
-			// Start the animation on its child.
-			$('>ul', this).addClass('anim');
-
-			// Add hover effects to this menu entry's parent list. On top-level entries, add effect to the h4 tag only.
-			if (!$(this).parent().hasClass('menu') || !$('>h4', this).addClass('hove').length)
-				$(this).addClass('hove').parentsUntil('.menu>li').filter('li').addClass('hove');
-
-			$(this).siblings('li').children().andSelf().removeClass('hove anim');
-		})
-		// Leaving a menu entry? Then hide all of its children.
-		.on('mouseleave blur', function (e)
-		{
-			$(this).children().andSelf().removeClass('hove anim');
-		})
-		// Disable double clicks and text selection...
-		.mousedown(false)
-		// Clicking a link will immediately close the menu -- giving a feeling of responsiveness.
-		.has('>a,>h4>a')
-		.click(function () {
-			$('.hove').removeClass('hove');
-			$(this).parentsUntil('.menu').removeClass('anim');
-		});
+	// Disable double clicks and text selection...
+	this.find('li').mousedown(false);
 
 	// Make menu icons clickable by stealing the link from their neighbor.
-	$('.menu>li>span').each(function () { $(this).wrap($('<a/>').attr('href', $(this).next().find('a').attr('href'))); });
+	this.find('>li>span').each(function () { $(this).wrap($('<a/>').attr('href', $(this).next().find('a').attr('href'))); });
 };
 
 
@@ -524,10 +500,10 @@ $(function ()
 	$('select').sb();
 
 	// Save a copy of our untreated menu, for responsiveness.
-	$('#main_menu').clone().removeClass('css menu').attr('id', 'sidemenu').prependTo('#sidebar>div');
+	$('#main_menu').clone().removeClass('menu').attr('id', 'sidemenu').prependTo('#sidebar>div');
 
 	// Now replace our pure CSS menus with JS-powered versions.
-	$('.menu').removeClass('css').mm();
+	$('.menu').mm();
 
 	// Bind all delayed inline events to their respective DOM elements.
 	$('[data-eve]').each(function ()

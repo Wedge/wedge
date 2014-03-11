@@ -14,18 +14,11 @@
 
 /* The dropdown menus
 ------------------------------------------------------- */
-li.hove
-	background: #e2ebe7
+.context.menu h4:hover
+	background-color: #ebe7e2
 
 li.sep
-	a
-		padding: 0
-	hr
-		margin: 0
-		width: 80px
-
-#context_menus h4:hover
-	background-color: #ebe7e2
+	width: 100px
 
 // Annoying hack...
 .menu > li
