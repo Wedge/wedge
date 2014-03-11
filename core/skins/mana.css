@@ -14,7 +14,7 @@ input, textarea
 ------------------------------------------------------- */
 #quick_search
 	padding: 8px
-	line-height: 20px
+	line-height: 1.2em
 	form
 		float: right
 		padding: 18px 0 0 12px
