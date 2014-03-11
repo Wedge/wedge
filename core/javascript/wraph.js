@@ -807,21 +807,21 @@ window.Wraph = function (cx, options, zoom_hook)
 		}
 	};
 
-	// xPos requires data normally available only to the Line class. Sorry about that.
 	function goToRange(low, high)
 	{
-		for (var i = 0, j = data.datasets[0].data.length, start = null, current; i < j; i++)
+		// Determine days/months/etc. matching min and max pointer positions.
+		for (var i = 0, j = data.datasets[0].data.length, start = null; i < j; i++)
 		{
-			current = xPos(i);
+			var current = xPos(i);
 			if (start === null && current > low)
-				start = Math.max(0, i);
+				start = i;
 			if (current >= high)
 			{
 				zoom_hook.call(this, data.range[start], data.range[i] || '');
 				return;
 			}
 		}
-		zoom_hook.call(this, data.range[start], data.range[i - 1] || '');
+		zoom_hook.call(this, data.range[start] || data.range[i - 1] || '', data.range[i - 1] || '');
 	}
 
 	function initActivity()
