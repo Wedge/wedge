@@ -1615,36 +1615,33 @@ dl#feed
 	clear: left
 	letter-spacing: -.25px
 	color: #666
+	gradient: rgba(222, 222, 222, 0), rgba(222, 222, 222, .3)
+	background-color: #f4faf8
+	border-color: #ddd
 	a
 		border-bottom: 0 !important
 		text-decoration: underline !important
 		text-shadow: none
-
-.cat final
-	background: #fcfaf8
-	gradient: rgba(212, 212, 212, 0), rgba(212, 212, 212, .2)
-	border-color: #ddd // #fd9604
-	border-radius: 4px
 	.table_list &
 		margin: -5px
 
-.title extends .cat
+.title extends .catbase
 	position: relative
 	font-size: @ifnull ($title_font_size, 1.4em)
 	padding: 4px 8px
 	border, margin: 0
-	color: #777
+	&, a
+		color: #777
 
-// Customize sidebar section headers; 'final' because no .title2 needed in there.
-#sidebar .title final
-	font-size: @ifnull ($sidebar_title_font_size, 1.5em)
-	margin: 0 0 15px
-	padding: 4px 0 0
+	// Customize sidebar section headers
+	#sidebar &
+		font-size: @ifnull ($sidebar_title_font_size, 1.5em)
+		margin: 0 0 15px
+		padding: 4px 0 0
 
-.title2 extends .title
-	background: none
+.title2 extends .catbase
+	font-size: @ifnull ($title_font_size, 1.4em)
 	border-bottom: 1px dotted rgba(0,0,0, .5)
-	border-radius: 0
 	&, a
 		color: #777
 
