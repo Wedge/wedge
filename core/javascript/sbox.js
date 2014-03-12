@@ -258,7 +258,13 @@
 			{
 				$dd.height(ddMaxHeight - ddHeight + $dd.height());
 
-				scrollbar ? scrollbar.init() : scrollbar = new ScrollBar($dd);
+				if (is_touch)
+					$dd.css({
+						transform: 'translate3d(0,0,0)',
+						overflowY: 'scroll'
+					});
+				else
+					scrollbar ? scrollbar.init() : scrollbar = new ScrollBar($dd);
 				centerOnSelected();
 			}
 
@@ -279,8 +285,8 @@
 			var differential = parseInt($dd.css('marginLeft')) + $sb.offset().left;
 			if (differential < 0)
 			{
-				$dd.show().find('.viewport').andSelf().width(function (index, width) { return width + differential; });
-				$dd.hide().css('marginLeft', -$sb.offset().left).find('.text').css('white-space', 'normal');
+				$dd.show().find('.viewport').andSelf().width(function (index, width) { return width + differential - 10; });
+				$dd.hide().css('marginLeft', 5 - $sb.offset().left).find('.text').css('white-space', 'normal');
 			}
 
 			// If opening via a key stroke, simulate a click.
