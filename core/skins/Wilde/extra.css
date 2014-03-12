@@ -31,11 +31,11 @@ $post_bg2 = $window_bg2
 .darkgrad virtual
 	gradient: #bcbcbb, $darkgrad
 
-.wehead, .catbase
+.wehead, .cat
 	box-shadow: inset 0 8px 12px -8px #eee, 1px 1px 3px #aa9
 
 #sidebar .title final
-	box-shadow: inset 0 8px 12px -8px #eee, 1px 1px 3px #ccb
+	border-bottom: 1px solid #ccc
 
 #wedge
 	text-align: $left
@@ -154,7 +154,7 @@ $post_bg2 = $window_bg2
 		padding: 0 15px
 		#wedge
 			border: 0
-		#header, .wrc, .msg, .poster
+		.wrc, .msg, .poster
 			border-radius: 0
 		#linktree
 			ul
@@ -165,7 +165,7 @@ $post_bg2 = $window_bg2
 // The footer with copyright links etc.
 #footer extends .lightgrad
 	border-top: 1px solid #ccc
-	border-radius: 0 0 20px 20px
+	border-radius: 0 0 $radius $radius
 
 /* Styles for the general looks for the default theme.
 ------------------------------------------------------- */
@@ -238,30 +238,27 @@ $post_bg2 = $window_bg2
 	margin-top, margin-bottom: 8px
 	text-shadow: none
 	font: 1.2em/1.2 $head_font
-	border-radius: 4px
 
 .cat final
 	background-color: #f5fcf5
 	color: #b77
 
-.title unextends .cat
-.title extends .catbase
-	background-color: #f0f3f6
-	&.blog mixes .inline-block
-		border: 0
-		background, box-shadow: none
-		vertical-align: baseline
-		padding: 0 8px
-		font-size: 2.2em
-		line-height: 1.3em
+.title.blog mixes .inline-block
+	border: 0
+	background, box-shadow: none
+	vertical-align: baseline
+	padding: 0 8px
+	font-size: 2.2em
+	line-height: 1.3em
 
 .title2
 	background: none
 
-.title
-	color: #222
+.title extends .cat
+	color: #888
+	background-color: #f8f8f8
 	a
-		color: #777 !important
+		color: #666 !important
 		:hover
 			color: #53616f !important
 			text-decoration: none
