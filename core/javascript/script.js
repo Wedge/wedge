@@ -411,18 +411,15 @@ $.fn.ds = function ()
 };
 
 
-/**
- * Dropdown menu in JS with CSS fallback, Nao style.
- * May not show, but it took years to refine it.
- */
-
 $.fn.mm = function ()
 {
-	// Disable double clicks and text selection...
-	this.find('li').mousedown(false);
-
-	// Make menu icons clickable by stealing the link from their neighbor.
-	this.find('>li>span').each(function () { $(this).wrap($('<a/>').attr('href', $(this).next().find('a').attr('href'))); });
+	this.find('li')
+		// Clicking a link will immediately close the menu -- giving a feeling of responsiveness.
+		.has('>a,>h4>a')
+		.click(function () {
+			if (!$(this).parent().hasClass('menu'))
+				$(this).parent().hide();
+		});
 };
 
 
@@ -504,6 +501,9 @@ $(function ()
 
 	// Now replace our pure CSS menus with JS-powered versions.
 	$('.menu').mm();
+
+	// Make menu icons clickable by stealing the link from their neighbor.
+	$('.menu>li>span').each(function () { $(this).wrap($('<a/>').attr('href', $(this).next().find('a').attr('href'))); });
 
 	// Bind all delayed inline events to their respective DOM elements.
 	$('[data-eve]').each(function ()
