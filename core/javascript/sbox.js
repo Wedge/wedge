@@ -523,9 +523,9 @@
 
 		set_hw_top = function ($where, top)
 		{
-			// This was only tested on decent mobile browsers.
+			// Limiting hardware acceleration to Chrome Mobile, as it works fine there.
 			// Desktop browsers are powerful enough not to need HW acceleration.
-			if (is_touch && (is_chrome || is_firefox))
+			if (is_touch && is_chrome)
 				$where.css({
 					transform: 'translate3d(0,' + parseInt(top) + 'px,0)'
 				});
