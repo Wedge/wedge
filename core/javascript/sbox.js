@@ -257,14 +257,7 @@
 			if (ddMaxHeight < ddHeight)
 			{
 				$dd.height(ddMaxHeight - ddHeight + $dd.height());
-
-				if (is_touch)
-					$dd.css({
-						transform: 'translate3d(0,0,0)',
-						overflowY: 'scroll'
-					});
-				else
-					scrollbar ? scrollbar.init() : scrollbar = new ScrollBar($dd);
+				scrollbar ? scrollbar.init() : scrollbar = new ScrollBar($dd);
 				centerOnSelected();
 			}
 
@@ -517,7 +510,7 @@
 	ScrollBar = function ($dd)
 	{
 		var
-			that = this, startPos = 0, iMouse, iScroll = 0,
+			that = this, startPos = 0, iMouse, iScroll = 0, iThumb = 0,
 			thumbAxis, viewportAxis, contentAxis,
 			$content, $scrollbar, $thumb,
 			scrollbarRatio, iTouch,
@@ -526,6 +519,20 @@
 		{
 			that.st(startPos + e.pageY - iMouse);
 			return false;
+		},
+
+		set_hw_top = function ($where, top)
+		{
+			// This was only tested on decent mobile browsers.
+			// Desktop browsers are powerful enough not to need HW acceleration.
+			if (is_touch && (is_chrome || is_firefox))
+				$where.css({
+					transform: 'translate3d(0,' + parseInt(top) + 'px,0)'
+				});
+			else
+				$where.css({
+					top: parseInt(top)
+				});
 		};
 
 		that.init = function ()
@@ -557,8 +564,8 @@
 				iTop = (iTop - viewportAxis / 2 + iHeight / 2) / scrollbarRatio;
 
 			iScroll = Math.min(viewportAxis - thumbAxis, Math.max(0, iTop)) * scrollbarRatio;
-			$thumb.css('top', iScroll / scrollbarRatio);
-			$content.css('top', -iScroll);
+			set_hw_top($thumb, iThumb = iScroll / scrollbarRatio);
+			set_hw_top($content, -iScroll);
 		};
 
 		if ($dd.find('.viewport').length)
@@ -577,7 +584,7 @@
 		$thumb.mousedown(function (e)
 		{
 			iMouse = e.pageY;
-			startPos = parseInt($thumb.css('top')) || 0;
+			startPos = iThumb;
 			$(document)
 				.on('mousemove.sc', drag)
 				.on('mouseup.sc', function () { $(document).off('.sc'); return false; });
@@ -589,14 +596,14 @@
 			{
 				// Below: (wheelDelta * 40/120) or (-detail * 40/3) = 40 pixels per wheel movement
 				iScroll = Math.min(contentAxis - viewportAxis, Math.max(0, iScroll - (e.originalEvent.wheelDelta || -e.originalEvent.detail * 40) / 3));
-				$thumb.css('top', iScroll / scrollbarRatio);
-				$content.css('top', -iScroll);
+				set_hw_top($thumb, iThumb = iScroll / scrollbarRatio);
+				set_hw_top($content, -iScroll);
 				e.preventDefault();
 			})
 			// This should add support for scrolling on touch devices.
 			.on('touchstart', function (e) {
 				iTouch = e.originalEvent.touches[0].pageY;
-				startPos = parseInt($thumb.css('top'));
+				startPos = iThumb;
 			})
 			.on('touchmove', function (e) {
 				that.st(startPos - e.originalEvent.touches[0].pageY + iTouch);
