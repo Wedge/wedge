@@ -959,7 +959,7 @@ class wess_nesting extends wess
 				// A quick hack to turn direct selectors into normal selectors when in IE6. This is because it ignores direct selectors, as well as
 				// any selectors declared alongside them. If you still want these selectors to inherit something, do it manually in an '@if ie6' block!
 				if ($is_ie6 && strpos($node['selector'], '>') !== false)
-					$node['selector'] = ' ';
+					$node['selector'] = '.ie6';
 				$node['selector'] = str_replace('#wedge-quote#', '"', $node['selector']);
 				preg_match_all('~' . $selector_regex . '\h+extends\h+("[^\n{"]+"|[^\n,{"]+)~i', $node['selector'], $matches, PREG_SET_ORDER);
 				foreach ($matches as $m)
