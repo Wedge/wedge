@@ -602,11 +602,11 @@
 			})
 			// This should add support for scrolling on touch devices.
 			.on('touchstart', function (e) {
-				iTouch = e.originalEvent.touches[0].pageY;
+				iTouch = e.originalEvent.touches[0].pageY * 1.5 / scrollbarRatio;
 				startPos = iThumb;
 			})
 			.on('touchmove', function (e) {
-				that.st(startPos - e.originalEvent.touches[0].pageY + iTouch);
+				that.st(startPos - e.originalEvent.touches[0].pageY * 1.5 / scrollbarRatio + iTouch);
 				e.preventDefault();
 			});
 	};
