@@ -1934,9 +1934,9 @@ function template_install_above()
 	</head>
 	<body><div id="wedge">
 	<div id="header">
-		<img src="http://wedge.org/wedge.png" id="install_logo">
-		<div class="frame" style="margin-left: 140px">
-			<div id="upper_section" class="flow_hidden"><div class="frame">
+		<img src="http://wedge.org/wedge.png" id="logo">
+		<div class="frame">
+			<div id="banner" class="flow_hidden"><div class="frame">
 				<h1 class="forumtitle"><a>', $txt['wedge_installer'], '</a></h1>
 			</div></div>
 		</div>

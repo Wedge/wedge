@@ -1,9 +1,6 @@
 
-#upper_section
-	.user
-		height: 4em
-	.news
-		height: 80px
+#header > .frame
+	margin-left: 140px
 
 h2
 	font-weight: 400
@@ -19,7 +16,8 @@ h2
 		.panel &
 			margin: 0 0 0.5em 0
 
-#install_logo extends .floatleft
+#logo
+	float: left
 	margin: 20px 0 0 10px
 	position: absolute
 

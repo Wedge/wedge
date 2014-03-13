@@ -68,30 +68,39 @@ table.cs0 final tr.windowbg:last-child td
 	.column
 		padding: 14px 12px 12px
 
-#header
-	h2
-		color: #fc9
-	// The main title
-	h1
-		margin-top: 36px
-		font: 100 2.8em $big_font
-		text-shadow: 1px 1px #000
-		a
-			color: luma(hue(#fc9, 20), +20%)
+#header h2
+	color: #fc9
+
+// The main title
+h1
+	font: 100 2.8em $big_font
+	text-shadow: 1px 1px #000
+	a
+		color: luma(hue(#fc9, 20), +20%)
 
 #slogan
-	float: right
 	color: #000
 
-// Banner header
-#upper_section
-	background: url($images/theme/bg.jpg)
-	.frame
-		gradient: $head_bg, luma($head_bg, -20%)
+#banner
+	height: 100px
+	@if ie[-9]
+		background-image: url($images/theme/bg.jpg)
+	@else
+		background-image: linear-gradient($head_bg, luma($head_bg, -20%)), url($images/theme/bg.jpg)
+	@endif
 	@if ie6
 		h1
 			filter: none
 	@endif
+	// We're using flexbox to easily spread out our elements.
+	.frame
+		display: flex
+		align-items: baseline
+		justify-content: space-between
+		@if ie[-9]
+			width: auto
+			gradient: $head_bg, luma($head_bg, -20%)
+		@endif
 
 #linktree
 	margin: 0 -10px
@@ -200,7 +209,7 @@ section.block header, .wehead
 
 .title final
 	font: 400 1em $main_font
-	background: rgba(0,0,0,.03)
+	background: rgba(0,0,0, .03)
 
 
 /*

@@ -48,22 +48,20 @@ $post_bg2 = $window_bg2
 
 #header
 	gradient: $wilde_bg3, alpha($wilde_bg3, .2)
-	border-radius: 20px 20px 0 0
-	div.frame
-		padding: 5px 0 0
+	> .frame
+		padding: 10px 0 0
 	h2, p
 		color: #000
-	h1
-		float: right
-		margin: 32px 30px 0 0
-		letter-spacing: -2px
-		text-shadow: white 0 1px 2px
-		font: 700 3em $big_font
-		a
-			color: #78a
 	input.search
 		background-color: rgb(235,225,215)
 		color: #000
+
+h1
+	width: auto
+	letter-spacing: -2px
+	font: 700 3em/.8em $big_font
+	a
+		color: #78a
 
 #content
 	background: $lightgrad
@@ -87,21 +85,18 @@ $post_bg2 = $window_bg2
 		padding: 16px 20px 16px 16px
 
 #top_section
-	background: none
-	border: 0
 	padding: 0 20px 10px
 
-#slogan
-	float: left
-	letter-spacing: -1px
+h1, #slogan
 	text-shadow: #ddd 1px 1px 2px
 
-// The upper_section, float the two each way
-#upper_section
-	border, padding: 0
-	.frame
-		background-image: none
-		width, height: auto
+#slogan
+	text-indent: 1em
+
+// The banner's container.
+#banner .frame
+	display: flex
+	align-items: baseline
 
 @remove #linktree ul
 	border: *
@@ -264,7 +259,7 @@ $post_bg2 = $window_bg2
 			text-decoration: none
 
 @if ie[-9]
-	.catbase, body, #header, #navi, #footer, #upper_section .frame, #upper_section h1
+	.catbase, body, #header, #navi, #footer, #banner .frame, h1
 		filter: none
 
 	// .lightgrad implies a gradient, which triggers hasLayout for IE -- not good in menus!

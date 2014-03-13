@@ -288,9 +288,6 @@ input.search
 .boardstate_redirect
 	filter: alpha(opacity=25)
 
-#upper_section h1
-	display: inline // IE6 double margin bug fix
-
 hr
 	clear: both
 

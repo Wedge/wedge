@@ -143,7 +143,7 @@ function template_header_after()
 	global $context, $settings, $options;
 
 	echo '
-		<div id="upper_section"', empty($options['collapse_header']) ? '' : ' class="hide"', '><div class="frame"><we:banner title="',
+		<div id="banner"', empty($options['collapse_header']) ? '' : ' class="hide"', '><div class="frame"><we:banner title="',
 		$context['header_logo_url_html_safe'], '" url="', !empty($settings['home_url']) && !empty($settings['home_link']) ?
 		$settings['home_url'] : '<URL>', '">', $context['site_slogan'], '</we:banner>
 		</div></div>

@@ -129,6 +129,12 @@ body
 	.splitter
 		columns: 1
 
+// By default set the color on these tags to #000.
+h1, h2, h3, h4, h5, h6
+	color: #000
+	font-size: 1em
+	margin, padding: 0
+
 /* Main layout declarations (body, sidebar...)
 ------------------------------------------------------- */
 
@@ -250,29 +256,31 @@ ul#noava
 			margin-top: -7px
 @endif
 
-// Main title
-#header h1
-	margin: 45px 0 0 30px
-	float: left
-	letter-spacing: -1px
-	font: 100 2.5em/1em $big_font
-	text-shadow: 0 1px #fff
-	a
-		color: #766
-
-#slogan
-	float: left
-	margin: 57px 30px 0 20px
-	color: #888
-	font: 100 1.6em/1em $big_font
-	white-space: nowrap
-
 // Banner header
-#upper_section
+#banner
+	width: 100%
 	clear: both
 	overflow: hidden
+	display: flex
+	align-items: flex-end
+	min-height: 70px
+
 	.frame
-		height: 95px
+		width: 100%
+		box-sizing: border-box
+		padding: 0 25px 10px
+
+// Main title
+h1
+	letter-spacing: -1px
+	font: 100 2.5em/1em $big_font
+	a
+		color: #444
+
+#slogan
+	color: #888
+	font: 100 1.2em/1.1em $big_font
+	text-indent: .2em
 
 // The search box, with a few hacks to allow for a drop-down menu...
 #search_form
@@ -385,12 +393,6 @@ hr
 	color, background-color: #ccc
 	border: 0
 	height: 1px
-
-// By default set the color on these tags to #000.
-h1, h2, h3, h4, h5, h6
-	color: #000
-	font-size: 1em
-	margin, padding: 0
 
 // Fieldsets are used to group elements.
 fieldset

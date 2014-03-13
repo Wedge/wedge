@@ -36,18 +36,8 @@ $darkgrad = #f3f2f0
 
 #header
 	background: $darkgrad
-	div.frame
-		padding: 5px 0 0
 	h2, p
 		color: #000
-	h1
-		float: right
-		margin: 32px 30px 0 0
-		font: italic 700 3em "Segoe UI", sans-serif
-		letter-spacing: -2px
-		text-shadow: white 0 1px 2px
-		a
-			color: #78a
 	input.search
 		background-color: rgb(235,225,215)
 		color: #000
@@ -69,23 +59,24 @@ $darkgrad = #f3f2f0
 #top_section
 	background: none
 	border: 0
-	padding: 0 20px 10px
+
+h1
+	font: italic 700 3em "Segoe UI", sans-serif
+	letter-spacing: -2px
+	text-shadow: white 0 1px 2px
+	a
+		color: #78a
 
 #slogan
-	float: left
 	letter-spacing: -1px
 	text-shadow: #ddd 1px 1px 2px
 
-// The upper_section, float the two each way
-#upper_section
-	border, padding: 0
-	.frame
-		background-image: none
-		width, height: auto
+#banner
+	gradient: #ccc, #fff
 
 #linktree li unextends .horizontal-arrow
 
-// The navigation list (i.e. linktree)
+// The navigation list
 #linktree
 	background: #faf8f6
 	margin: 0
@@ -246,7 +237,7 @@ $window_bg2 = #e8ebee
 			text-decoration: none
 
 @if ie[-9]
-	.catbase, body, #header, #navi, #footer, #upper_section .frame, #upper_section h1
+	.catbase, body, #header, #navi, #footer, #banner .frame, h1
 		filter: none
 
 	// .lightgrad implies a gradient, which triggers hasLayout for IE -- not good in menus!

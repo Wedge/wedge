@@ -72,16 +72,16 @@ h4, h5
 #header
 	h2, p
 		color: #000
-	h1
-		margin: 28px 0 0 30px
-		text-transform: lowercase
-		font: italic 700 3em "Segoe UI", sans-serif
-		letter-spacing: -2px
-		text-shadow: white 0 1px 2px
-		a
-			color: #866
-		:first-letter
-			color: #555
+
+h1
+	text-transform: lowercase
+	font: italic 700 3em "Segoe UI", sans-serif
+	letter-spacing: -2px
+	text-shadow: white 0 1px 2px
+	a
+		color: #866
+	:first-letter
+		color: #555
 
 #logo
 	background: none
@@ -89,7 +89,7 @@ h4, h5
 #top_section
 	padding: 0
 
-#upper_section
+#banner
 	border-top: 0
 	border-bottom: 3px solid luma($reddish, +3%)
 
@@ -320,7 +320,7 @@ tr.titlebg th, tr.catbg th
 	max-width: 190px // Less room in the sidebar...
 
 @if ie[-9]
-	.catbase, header, #upper_section h1, #footer
+	.catbase, header, #footer, h1
 		filter: none
 @endif
 

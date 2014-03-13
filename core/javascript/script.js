@@ -639,7 +639,7 @@ $(window).load(function ()
 	// but you'll have to add_js() the code below, with the new IDs in place.
 	new weToggle({
 		isCollapsed: !!window.we_colhead,
-		aSwapContainers: ['upper_section'],
+		aSwapContainers: ['banner'],
 		aSwapImages: ['upshrink'],
 		sOption: 'collapse_header'
 	});
