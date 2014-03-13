@@ -78,19 +78,19 @@ function Memberlist()
 			'label' => $txt['online_status'],
 			'width' => '60',
 		),
-		'real_name' => array(
+		'name' => array(
 			'label' => $txt['username']
 		),
-		'email_address' => array(
+		'email' => array(
 			'label' => $txt['email'],
 			'width' => '25'
 		),
-		'website_url' => array(
+		'website' => array(
 			'label' => $txt['website'],
 			'width' => '70',
 			'link_with' => 'website',
 		),
-		'id_group' => array(
+		'group' => array(
 			'label' => $txt['position']
 		),
 		'registered' => array(
@@ -167,9 +167,9 @@ function MLAll()
 
 	// Only use caching if:
 	// 1. there are at least 2k members,
-	// 2. the default sorting method (real_name) is being used,
+	// 2. the list is sorted by user name,
 	// 3. the page shown is high enough to make a DB filesort unprofitable.
-	$use_cache = $settings['totalMembers'] > 2000 && (!isset($_REQUEST['sort']) || $_REQUEST['sort'] === 'real_name') && isset($_REQUEST['start']) && $_REQUEST['start'] > $cache_step_size;
+	$use_cache = $settings['totalMembers'] > 2000 && isset($_REQUEST['sort'], $_REQUEST['start']) && $_REQUEST['sort'] === 'name' && $_REQUEST['start'] > $cache_step_size;
 
 	if ($use_cache)
 	{
@@ -230,9 +230,12 @@ function MLAll()
 		wesql::free_result($request);
 	}
 
-	// Set defaults for sort (real_name) and start. (0)
+	// Set defaults for sort (posts) and start. (0)
 	if (!isset($_REQUEST['sort']) || !isset($context['columns'][$_REQUEST['sort']]))
-		$_REQUEST['sort'] = 'real_name';
+	{
+		$_REQUEST['sort'] = 'posts';
+		$_REQUEST['desc'] = 1;
+	}
 
 	if (!is_numeric($_REQUEST['start']))
 	{
@@ -257,7 +260,7 @@ function MLAll()
 
 	$context['letter_links'] = '';
 	for ($i = 97; $i < 123; $i++)
-		$context['letter_links'] .= '<a href="<URL>?action=mlist;sa=all;start=' . chr($i) . '#letter' . chr($i) . '">' . strtoupper(chr($i)) . '</a> ';
+		$context['letter_links'] .= '<a href="<URL>?action=mlist;sort=name;start=' . chr($i) . '#letter' . chr($i) . '">' . strtoupper(chr($i)) . '</a> ';
 
 	// Sort out the column information.
 	foreach ($context['columns'] as $col => $column_details)
@@ -298,15 +301,15 @@ function MLAll()
 			'down' => allowedTo('moderate_forum') ? 'IFNULL(lo.log_time, 1) ASC, real_name ASC' : 'IF(mem.show_online, IFNULL(lo.log_time, 1), 1) ASC, real_name ASC',
 			'up' => allowedTo('moderate_forum') ? 'IFNULL(lo.log_time, 1) DESC, real_name DESC' : 'IF(mem.show_online, IFNULL(lo.log_time, 1), 1) DESC, real_name DESC'
 		),
-		'real_name' => array(
+		'name' => array(
 			'down' => 'mem.real_name DESC',
 			'up' => 'mem.real_name ASC'
 		),
-		'email_address' => array(
+		'email' => array(
 			'down' => allowedTo('moderate_forum') ? 'mem.email_address DESC' : 'mem.hide_email DESC, mem.email_address DESC',
 			'up' => allowedTo('moderate_forum') ? 'mem.email_address ASC' : 'mem.hide_email ASC, mem.email_address ASC'
 		),
-		'website_url' => array(
+		'website' => array(
 			'down' => 'LENGTH(mem.website_url) > 0 ASC, IFNULL(mem.website_url, 1=1) DESC, mem.website_url DESC',
 			'up' => 'LENGTH(mem.website_url) > 0 DESC, IFNULL(mem.website_url, 1=1) ASC, mem.website_url ASC'
 		),
@@ -314,7 +317,7 @@ function MLAll()
 			'down' => 'mem.date_registered DESC',
 			'up' => 'mem.date_registered ASC'
 		),
-		'id_group' => array(
+		'group' => array(
 			'down' => 'IFNULL(mg.group_name, 1=1) DESC, mg.group_name DESC',
 			'up' => 'IFNULL(mg.group_name, 1=1) ASC, mg.group_name ASC'
 		),
@@ -332,7 +335,7 @@ function MLAll()
 	);
 
 	// Using cache allows to narrow down the list to be retrieved.
-	if ($use_cache && $_REQUEST['sort'] === 'real_name' && !isset($_REQUEST['desc']))
+	if ($use_cache && $_REQUEST['sort'] === 'name' && !isset($_REQUEST['desc']))
 	{
 		$first_offset = $_REQUEST['start'] - ($_REQUEST['start'] % $cache_step_size);
 		$second_offset = ceil(($_REQUEST['start'] + $settings['defaultMaxMembers']) / $cache_step_size) * $cache_step_size;
@@ -344,7 +347,7 @@ function MLAll()
 	}
 
 	// Reverse sorting is a bit more complicated...
-	elseif ($use_cache && $_REQUEST['sort'] === 'real_name')
+	elseif ($use_cache && $_REQUEST['sort'] === 'name')
 	{
 		$first_offset = floor(($memberlist_cache['num_members'] - $settings['defaultMaxMembers'] - $_REQUEST['start']) / $cache_step_size) * $cache_step_size;
 		if ($first_offset < 0)
@@ -361,7 +364,7 @@ function MLAll()
 	$request = wesql::query('
 		SELECT mem.id_member
 		FROM {db_prefix}members AS mem' . ($_REQUEST['sort'] === 'is_online' ? '
-			LEFT JOIN {db_prefix}log_online AS lo ON (lo.id_member = mem.id_member)' : '') . ($_REQUEST['sort'] === 'id_group' ? '
+			LEFT JOIN {db_prefix}log_online AS lo ON (lo.id_member = mem.id_member)' : '') . ($_REQUEST['sort'] === 'group' ? '
 			LEFT JOIN {db_prefix}membergroups AS mg ON (mg.id_group = CASE WHEN mem.id_group = {int:regular_id_group} THEN mem.id_post_group ELSE mem.id_group END)' : '') . '
 		WHERE mem.is_activated = {int:is_activated}' . (empty($where) ? '' : '
 			AND ' . $where) . '
@@ -373,7 +376,7 @@ function MLAll()
 	wesql::free_result($request);
 
 	// Add anchors at the start of each letter.
-	if ($_REQUEST['sort'] == 'real_name')
+	if ($_REQUEST['sort'] == 'name')
 	{
 		$last_letter = '';
 		foreach ($context['members'] as $i => $dummy)
