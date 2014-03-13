@@ -3584,6 +3584,7 @@ function groupMembership2($profile_vars, $memID)
 function get_wedge_timezones()
 {
 	return array(
+		'',
 		'Pacific/Midway' => '[UTC-11:00] American Samoa',
 		'Pacific/Apia' => '[UTC-11:00] Apia, Samoa',
 		'Pacific/Honolulu' => '[UTC-10:00] Hawaii',
