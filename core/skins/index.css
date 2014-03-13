@@ -525,7 +525,6 @@ select.sb
 
 	.text mixes .inline-block
 		vertical-align: baseline
-		white-space: nowrap
 		small
 			color: #aaa
 
@@ -552,6 +551,7 @@ select.sb
 		border-radius: 6px
 
 		.text
+			white-space: nowrap
 			overflow: visible !important
 			padding: 0 3px
 
@@ -612,6 +612,9 @@ select.sb
 		z-index: 999
 		box-shadow: 0 2px 5px rgba(0,0,0, .3)
 
+		&.has_bar
+			padding-right: 15px
+
 		&.above
 			box-shadow: 0 -2px 5px rgba(0,0,0, .3)
 
@@ -652,12 +655,11 @@ select.sb
 	/* Scrollbar viewport */
 	.overview, .viewport
 		position: relative
-		float: left
 
 	/* The scrollbar itself */
 	.scrollbar
-		position: relative
-		float: right
+		position: absolute
+		top: 2px
 		right: 1px
 		width: 11px
 		background: #f5f8f5

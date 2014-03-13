@@ -230,12 +230,15 @@
 				.stop(true, true)
 				.show()
 				.css({ visibility: 'hidden' })
-				.find('.viewport').andSelf().height('');
+				.width('')
+				.height('')
+				.find('.viewport')
+					.height('');
 
 			// Hide .details so that the new width won't be influenced by it.
 			$dd.find('.details').toggle();
-			// Set dropdown width to at least the display area's width.
-			$dd.width(Math.max($dd.width(), $display.outerWidth() - $dd.outerWidth(true) - $dd.width() + 1));
+			// Set dropdown width to at least the display area's width, and at most the screen's width minus (potential) scrollbar width.
+			$dd.width(Math.min($(window).width() - 25, Math.max($dd.width(), $display.outerWidth() - $dd.outerWidth(true) + $dd.width())));
 			// Now we can reset.
 			$dd.find('.details').toggle();
 
@@ -274,14 +277,6 @@
 				})
 				.hide();
 
-			// If the dropdown overflows on the left, shrink it.
-			var differential = parseInt($dd.css('marginLeft')) + $sb.offset().left;
-			if (differential < 0)
-			{
-				$dd.show().find('.viewport').andSelf().width(function (index, width) { return width + differential - 10; });
-				$dd.hide().css('marginLeft', 5 - $sb.offset().left).find('.text').css('white-space', 'normal');
-			}
-
 			// If opening via a key stroke, simulate a click.
 			if (via_keyboard)
 				$orig.triggerHandler('click');
@@ -304,7 +299,7 @@
 
 			// Update the title attr and the display markup
 			$oritex
-				.width('auto')
+				.width('')
 				.html($newtex.html() || '&nbsp;')
 				.attr('title', $newtex.text().php_unhtmlspecialchars());
 			newwi = $oritex.width();
@@ -537,13 +532,8 @@
 
 		that.init = function ()
 		{
-			$dd.find('.scrollbar')
-				.height($dd.height());
-
-			$dd.width(newwi + 15)
-				.find('.viewport').height($dd.height());
-
 			viewportAxis = $dd.height();
+			$dd.find('.viewport').height(viewportAxis);
 			$scrollbar = $dd.find('.scrollbar').height(viewportAxis);
 			$content = $dd.find('.overview');
 			contentAxis = $content.height();
@@ -571,10 +561,8 @@
 		if ($dd.find('.viewport').length)
 			return;
 
-		$dd.width('auto').contents().wrapAll('<div class="viewport"><div class="overview">');
-
-		var newwi = $dd.width();
-
+		$dd.addClass('has_bar').width(Math.min($dd.width(), $(window).width() - 25));
+		$dd.contents().wrapAll('<div class="viewport"><div class="overview">');
 		$dd.append('<div class="scrollbar"><div>');
 
 		that.init();
