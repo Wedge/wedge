@@ -97,14 +97,6 @@ dl.settings
 	padding-left: 0
 	padding-right: 2em
 
-// The main title
-#header h1
-	float: right
-
-// Float the slogan, if any, to the left.
-#slogan
-	float: left
-
 // The upshrink image needs some tweaking
 #upshrink
 	float: left
