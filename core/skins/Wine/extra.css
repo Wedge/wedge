@@ -82,7 +82,7 @@ h1
 	color: #000
 
 #banner
-	height: 100px
+	height: $banner_height
 	@if ie[-9]
 		background-image: url($images/theme/bg.jpg)
 	@else
@@ -92,6 +92,9 @@ h1
 		h1
 			filter: none
 	@endif
+	// If using a regular logo, ensure it doesn't go out of bounds.
+	img
+		max-height: math($banner_height - 40px)
 	// We're using flexbox to easily spread out our elements.
 	.frame
 		display: flex
@@ -341,3 +344,4 @@ ul.buttonlist
 
 $head_font_style = 400
 $head_font_size = 140%/20px
+$banner_height = 100px
