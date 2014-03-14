@@ -1924,7 +1924,7 @@ h6
 					box-shadow: none
 			@endif
 
-	.n_container
+	.n_container mixes .hardware
 		clear: both
 		user-select: text
 		white-space: normal
