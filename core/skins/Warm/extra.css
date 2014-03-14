@@ -193,7 +193,7 @@ dl#feed
 
 #main_menu
 	padding: 5px 0 0
-	h4:hover, h4.hove
+	li:hover > h4
 		background-color: transparent
 		color: #000
 		a

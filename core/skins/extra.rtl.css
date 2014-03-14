@@ -546,11 +546,12 @@ ul.moderation_notes li
 
 .menu li
 	float: right
-	a
-		border-width: 0 4px 0 0
+
+.menu li a
+	border-width: 0 4px 0 0
 
 .menu ul
 	border-radius: 10px 0 0 10px
 
-.css > li li:hover, li.hove
+.menu li li:hover
 	border-radius: 9px 0 0 9px

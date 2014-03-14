@@ -156,7 +156,7 @@ a, #linktree a
 
 #main_menu
 	margin: 0 16px -10px
-	h4:hover, h4.hove
+	li:hover > h4
 		background-color: transparent
 		color: #000
 		a
