@@ -845,7 +845,8 @@ input[type=file]
 		-webkit-appearance: textfield
 @endif
 
-/* Styles for the dropdown menus.
+/* The dropdown menus, Nao style.
+   May not show, but it took years to refine it.
 ------------------------------------------------------- */
 
 #navi
@@ -854,6 +855,7 @@ input[type=file]
 	padding: 0 15px
 
 .menu
+	user-select: none
 	font-family: $menu_font
 	min-height: 2em
 	margin: 0 0 @is (ie7, 0, -10px) // fixes h4's margin, see below...
@@ -918,6 +920,7 @@ input[type=file]
 	> li
 		display: inline-block
 		margin, padding: 0
+		> ul extends .arrow_above
 
 	li li
 		@if ie6
@@ -938,43 +941,54 @@ input[type=file]
 		ul & // sub-menus
 			transform: translate3d(-5px, 0, 0)
 
-li.active > a
-	font-weight: 700
+	li.active > a
+		font-weight: 700
 
-// We need an .horizontal-arrow for our sub-menus...
-li.subsection > a
-	margin-right: 12px
-	:after
-		opacity: .3
-		font: .6em/1 Arial
-		vertical-align: .12em
-		content: "\a0\a0\25ba"
-		position: absolute
-		margin-top: .6em
-		right: 8px
+	// We need an .horizontal-arrow for our sub-menus...
+	li.subsection > a
+		margin-right: 12px
+		:after
+			opacity: .3
+			font: .6em/1 Arial
+			vertical-align: .12em
+			content: "\a0\a0\25ba"
+			position: absolute
+			margin-top: .6em
+			right: 8px
 
-// Hover colors. We're using box-shadow to keep the ability to set hover-independent background colors.
-.menu li:hover > h4
-	box-shadow: inset 0 0 10em rgba(0,0,0, .075)
+	// Quick hack for arrow colors on selected parents.
+	li:hover > a:after,
+	li:hover > h4:after
+		opacity: .5
+		transition: opacity .3s
 
-#main_menu li:hover > h4
-	background-color: #5a6c85
-	color: #fff
-	a
-		color: #fff
+	// Hover colors. We're using box-shadow to keep the ability to set hover-independent background colors (see #main_menu).
+	li:hover > h4
+		box-shadow: inset 0 0 10em rgba(0,0,0, .075)
 
-// Quick hack for arrow colors on selected parents.
-.menu li:hover > a:after, .menu li:hover > h4:after
-	opacity: .5
-	transition: opacity .3s
+	li li:hover
+		color: #000
+		border-radius: 0 9px 9px 0
+		background-color: rgba(0,0,0, .075)
 
-.menu li li:hover
-	color: #000
-	border-radius: 0 9px 9px 0
-	background-color: rgba(0,0,0, .075)
+	> li > a, h4
+		border-radius: 6px
 
-.menu > li > a, .menu h4
-	border-radius: 6px
+	// This is the magical place where sub-menus get opened and closed!
+	li:hover ul ul, li:hover ul ul ul
+		visibility: hidden
+		opacity: 0
+
+	li:hover ul, ul li:hover ul, ul ul li:hover ul
+		visibility: visible
+		opacity: 1
+
+	.note
+		margin: 2px -4px 0 8px
+
+	h4 .note
+		float: none
+		margin: 0 0 0 4px
 
 .menu.context
 	padding-left: 1em
@@ -988,7 +1002,7 @@ li.subsection > a
 		:after mixes .hide
 
 li.chosen h4
-	background-color: #95a89d !important
+	background-color: #95a89d
 	font-weight: 700
 	color: #fff
 	a
@@ -1006,29 +1020,12 @@ li.sep
 	.menu li &:hover
 		background: none
 
-// This is the magical place where sub-menus get opened and closed!
-.menu
-	li:hover ul ul, li:hover ul ul ul
-		visibility: hidden
-		opacity: 0
-
-	li:hover ul, ul li:hover ul, ul ul li:hover ul
-		visibility: visible
-		opacity: 1
-
 #main .menu
 	margin-bottom: 4px
 
-.menu .note
-	margin: 2px -4px 0 8px
-
-.menu h4 .note
-	float: none
-	margin: 0 0 0 4px
-
 // This will show an arrow above menus.
 // Classes using this must manually set position: relative.
-.menu > li > ul, .mimenu > ul
+.arrow_above virtual
 	:before, :after
 		content: ""
 		bottom: 100%
@@ -1051,18 +1048,22 @@ li.sep
 		height: 12px
 		position: absolute
 
-// Used in both normal and mini-menus...
-.menu > li > ul
-	:after
-		border-bottom-color: #e9ede9
-
-.mimenu > ul
-	position: relative
-
+// Right-aligned menus need to push the arrow to the right.
 .mimenu.right > ul
 	:before, :after
 		left: auto
 		right: 15px
+
+// Main menus need a darker arrow.
+.menu > li > ul
+	:after
+		border-bottom-color: #e9ede9
+
+#main_menu li:hover > h4
+	background-color: #5a6c85
+	color: #fff
+	a
+		color: #fff
 
 #sidemenu mixes .hide
 	border-bottom: 1px solid #ccc
@@ -1110,13 +1111,14 @@ li.sep
 		right: -10px
 
 	// ...And for the mini-menu itself (phew.)
-	> ul
+	> ul extends .arrow_above
+		position: relative
 		white-space: nowrap
 		background: #fbfbf8 // rgba(255,255,255, .5)
 		margin: 0
 		padding: 4px
-		border: 1px solid rgba(0,0,0, .2)
 		border-radius: 5px
+		border: 1px solid rgba(0,0,0, .2)
 		box-shadow: 1px 1px 6px rgba(0,0,0, .25)
 
 		> li
