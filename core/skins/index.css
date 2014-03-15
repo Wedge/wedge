@@ -858,8 +858,13 @@ input[type=file]
 	border-bottom: 1px solid #bdb5b5
 	padding: 0 15px
 
-.menu
+.menu, .mimenu
 	user-select: none
+	@if webkit && (ios, android)
+		-prefix-tap-highlight-color: rgba(0, 0, 0, 0)
+	@endif
+
+.menu
 	font-family: $menu_font
 	min-height: 2em
 	margin: 0 0 @is (ie7, 0, -10px) // fixes h4's margin, see below...
