@@ -105,7 +105,7 @@
 // Mix this into any selector to enable hardware acceleration on it. Hopefully.
 .hardware virtual
 	transform: translate3d(0, 0, 0)
-	-prefix-backface-visibility: hidden
+	backface-visibility: hidden
 
 /* Common and helper variables.
 ------------------------------------------------------- */
