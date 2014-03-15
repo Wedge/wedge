@@ -460,7 +460,7 @@ em
 .note mixes .inline-block
 	vertical-align: .1em
 	border-radius: 7px
-	@if ie[-9]
+	@if ie[-9], ios[-5.1]
 		background-color: #eb8c66
 	@else
 		gradient: #fa6, #d76
@@ -478,7 +478,7 @@ em
 
 // Same, but scarier.
 .notewarn extends .note
-	@if ie[-9]
+	@if ie[-9], ios[-5.1]
 		background-color: #d55a61
 	@else
 		gradient: luma(#d55a61, +10%), luma(#b63c47, +10%)
@@ -486,7 +486,7 @@ em
 
 // Same, but positive.
 .notenice extends .note
-	@if ie[-9]
+	@if ie[-9], ios[-5.1]
 		background-color: rgb(100, 175, 100)
 	@else
 		gradient: rgb(100, 175, 100), rgb(100, 190, 100)
@@ -494,7 +494,7 @@ em
 
 // Same, but neutral. Doesn't get in the way.
 .notevoid extends .note
-	@if ie[-9]
+	@if ie[-9], ios[-5.1]
 		background-color: rgb(175, 175, 175)
 	@else
 		gradient: rgb(150, 150, 150), rgb(175, 175, 175)
