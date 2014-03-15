@@ -37,7 +37,7 @@ function cleanRequest()
 	// While we're here cleaning the request, try and clean the headers that we'll send back.
 	header('X-Powered-By: ');
 	header('Server: ');
-	// Additionally, when not in SSI, try and enforce we don't get included in a frame that we're not in control of.
+	// Additionally, when not in SSI, make sure we don't get included in a frame that we're not in control of.
 	if (WEDGE != 'SSI')
 		header('X-Frame-Options: SAMEORIGIN');
 
@@ -52,7 +52,7 @@ function cleanRequest()
 	// (in which case they'll get the annoying PHPSESSID stuff in their URL and we need index.php in them.)
 	$scripturl = $boardurl . (!empty($settings['pretty_remove_index']) && isset($_COOKIE[session_name()]) ? '/' : '/index.php');
 
-	$is_secure = isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] == 'on' || $_SERVER['HTTPS'] == 1) || isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https';
+	$is_secure = (isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] == 'on' || $_SERVER['HTTPS'] == 1)) || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https');
 	$context['protocol'] = $is_secure ? 'https://' : 'http://';
 
 	// Check to see if they're accessing it from the wrong place.
@@ -96,9 +96,6 @@ function cleanRequest()
 		// Okay, #4 - perhaps it's an IP address? We're gonna want to use that one, then. (assuming it's the IP or something...)
 		if (!empty($do_fix) || preg_match('~^http[s]?://(?:[\d.:]+|\[[\d:]+\](?::\d+)?)(?:$|/)~', $detected_url) == 1)
 		{
-			// Caching is good ;)
-			define('NEEDS_URL_FIX', $oldurl = $boardurl);
-
 			// Fix $boardurl and $scripturl
 			$boardurl = $detected_url;
 			$scripturl = strtr($scripturl, array($oldurl => $boardurl));

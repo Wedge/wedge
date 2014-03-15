@@ -1271,7 +1271,7 @@ function we_resetTransparency($id_attach, $path, $real_name)
 function loadTheme($skin = '', $initialize = true)
 {
 	global $user_settings, $board_info, $footer_coding;
-	global $txt, $boardurl, $mbname, $settings, $context, $options;
+	global $txt, $mbname, $settings, $context, $options;
 
 	// First, determine our current skin, if not forced.
 	if (!$skin)
@@ -1345,22 +1345,6 @@ function loadTheme($skin = '', $initialize = true)
 
 	if (!$initialize)
 		return;
-
-	// Wrong URL detected..?
-	if (defined('NEEDS_URL_FIX'))
-	{
-		// Clean up after loadBoard()
-		if (isset($board_info['moderators']))
-		{
-			foreach ($board_info['moderators'] as $k => $dummy)
-			{
-				$board_info['moderators'][$k]['href'] = strtr($dummy['href'], array(NEEDS_URL_FIX => $boardurl));
-				$board_info['moderators'][$k]['link'] = strtr($dummy['link'], array('"' . NEEDS_URL_FIX => '"' . $boardurl));
-			}
-		}
-		foreach ($context['linktree'] as $k => $dummy)
-			$context['linktree'][$k]['url'] = strtr($dummy['url'], array(NEEDS_URL_FIX => $boardurl));
-	}
 
 	// Determine the current smiley set
 	we::$user['smiley_set'] = (!in_array(we::$user['smiley_set'], explode(',', $settings['smiley_sets_known'])) && we::$user['smiley_set'] != 'none') || empty($settings['smiley_sets_enable']) ? $settings['smiley_sets_default'] : we::$user['smiley_set'];
