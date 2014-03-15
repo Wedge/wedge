@@ -43,7 +43,7 @@ function Login()
 	add_linktree($txt['login'], '<URL>?action=login');
 
 	// Set the login URL - will be used when the login process is done (but careful not to send us to an attachment).
-	if (isset($_SESSION['old_url']) && strpos($_SESSION['old_url'], 'dlattach') === false && preg_match('~(board|topic)[=,]~', $_SESSION['old_url']) != 0)
+	if (isset($_SESSION['old_url']) && strpos($_SESSION['old_url'], 'dlattach') === false && strhas($_SESSION['old_url'], array('board=', 'topic=', 'board,', 'topic,')))
 		$_SESSION['login_url'] = $_SESSION['old_url'];
 	else
 		unset($_SESSION['login_url']);

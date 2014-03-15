@@ -775,7 +775,7 @@ class wess_nesting extends wess
 
 				// Do we have an extends/unextend line followed by a line on the same level or above it?
 				// If yes, this means we just extended a selector and should close it immediately.
-				if ($level >= $l[0] && (strpos($ex_string, ' extends ') !== false || strpos($ex_string, ' unextends ') !== false))
+				if ($level >= $l[0] && strhas($ex_string, array(' extends ', ' unextends ')))
 					$tree .= " {\n}\n";
 
 				// Same level, and no continuation of a selector? We're probably in a list of properties.
@@ -797,7 +797,7 @@ class wess_nesting extends wess
 			}
 
 			// Did we finish the file with an extends or unextends...? Immediately open it and close it.
-			if ((strpos($ex_string, ' extends ') !== false || strpos($ex_string, ' unextends ') !== false))
+			if (strhas($ex_string, array(' extends ', ' unextends ')))
 				$tree .= " {\n}\n";
 			while ($level > 0)
 			{

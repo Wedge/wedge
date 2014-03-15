@@ -898,6 +898,19 @@ function un_htmlspecialchars($string)
 }
 
 /**
+ * Returns whether $string contains any $items (can be either a string, or an array of strings.)
+ * For the record, this is way faster than preg_match('~elem1|elem2~', $str).
+ */
+function strhas($string, $items)
+{
+	foreach ((array) $items as $item)
+		if (strpos($string, $item) !== false)
+			return $item;
+
+	return false;
+}
+
+/**
  * Shortens a string, typically a thread subject, in a way that is intended to avoid breaking in internationalization ways.
  *
  * Specifically, if a string is longer than the specified length, shorten it and add an ellipsis. Internationlized characters and entities are respected as 'one' character for length calculations, and also trailing entities are avoided too.

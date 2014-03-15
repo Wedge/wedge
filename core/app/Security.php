@@ -1637,19 +1637,19 @@ function checkUserRequest_useragent()
 	global $context, $settings;
 
 	// For most browsers, there's only one test to do, to make sure they send an Accept header. Naughty bots pretending to be these folks don't normally.
-	if (preg_match('~Opera|Lynx|Safari~', $context['http_headers']['User-Agent']))
+	if (strhas($context['http_headers']['User-Agent'], array('Opera', 'Lynx', 'Safari')))
 	{
 		if (!isset($context['http_headers']['Accept']))
 			return $context['behavior_error'] = 'behav_no_accept';
 	}
 	// Ah, Internet Explorer. We already got rid of Opera, which sometimes sends MSIE in the headers.
-	elseif (strpos($context['http_headers']['User-Agent'], '; MSIE') !== false)
+	elseif (strhas($context['http_headers']['User-Agent'], '; MSIE'))
 	{
-		// Silly bots think IE sends "Windows XP" or similar in the 'what browser we're using' area. Except it doesn't.
-		if (strpos($context['http_headers']['User-Agent'], 'Windows ME') !== false || strpos($context['http_headers']['User-Agent'], 'Windows XP') !== false || strpos($context['http_headers']['User-Agent'], 'Windows 2000') !== false || strpos($context['http_headers']['User-Agent'], 'Win32') !== false)
+		// Silly bots think IE sends "Windows XP" or similar in the 'what browser we're using' area. Except, it doesn't.
+		if (strhas($context['http_headers']['User-Agent'], array('Windows ME', 'Windows XP', 'Windows 2000', 'Win32')))
 			return $context['behavior_error'] = 'behav_invalid_win';
 		// Connection: TE again. IE doesn't use it, Akamai and IE for WinCE does.
-		elseif (!isset($context['http_headers']['Akamai-Origin-Hop']) && strpos($context['http_headers']['User-Agent'], 'IEMobile') === false && @preg_match('/\bTE\b/i', $context['http_headers']['Connection']))
+		elseif (!isset($context['http_headers']['Akamai-Origin-Hop']) && !strhas($context['http_headers']['User-Agent'], 'IEMobile') && @preg_match('~\bTE\b~i', $context['http_headers']['Connection']))
 			return $context['behavior_error'] = 'behav_te_not_msie';
 	}
 	// Some browsers are just special however. Konqueror is on the surface, straightforward, but there's a Yahoo dev project that isn't a real browser but calls itself Konqueror, so we have to do the normal browser test but exclude if it's this.
@@ -1686,7 +1686,7 @@ function checkUserRequest_useragent()
 	elseif (stripos($context['http_headers']['User-Agent'], 'Mozilla') === 0)
 	{
 		// The main test for Mozilla is the same as the standard needing Accept header. But Google Desktop didn't previously support it, and since there's some legacy stuff, we except it for now.
-		if (strpos($context['http_headers']['User-Agent'], 'Google Desktop') === false && strpos($context['http_headers']['User-Agent'], 'PLAYSTATION 3') === false && !isset($context['http_headers']['Accept']))
+		if (!isset($context['http_headers']['Accept']) && strpos($context['http_headers']['User-Agent'], 'Google Desktop') === false && strpos($context['http_headers']['User-Agent'], 'PLAYSTATION 3') === false)
 			return $context['behavior_error'] = 'behav_no_accept';
 	}
 

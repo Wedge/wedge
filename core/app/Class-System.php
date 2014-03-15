@@ -217,7 +217,7 @@ class we
 				$_COOKIE[$cookiename] = '';
 
 			// At the very least, try to guess whether this user agent is unlikely to be human!
-			$wild_guess = (strpos(self::$ua, 'Mozilla') === false && strpos(self::$ua, 'Opera') === false) || preg_match('~(?:bot|slurp|crawl|spider)~', strtolower(self::$ua));
+			$wild_guess = !strhas(self::$ua, array('Mozilla', 'Opera')) || strhas(strtolower(self::$ua), array('bot', 'slurp', 'crawl', 'spider'));
 
 			// Do we perhaps think this is a search robot? Check every five minutes just in case...
 			if ((!empty($settings['spider_mode']) || !empty($settings['spider_group'])) && (!isset($_SESSION['robot_check']) || $_SESSION['robot_check'] < time() - 300))
