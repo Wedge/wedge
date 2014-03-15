@@ -2463,7 +2463,7 @@ class wedit
 				<div class="writer">
 					<div>
 						<textarea class="editor" name="', $this->id, '" id="', $this->id, '" rows="', $this->rows, '" cols="', we::is('ie8') ? '600' : $this->columns,
-						'" tabindex="', ++$context['tabindex'], '" style="width: ', $this->width, '; height: ', $this->height, $has_error ? '; border: 1px solid red' : '', '">', $this->value, '</textarea>
+						'" tabindex="', $context['tabindex']++, '" style="width: ', $this->width, '; height: ', $this->height, $has_error ? '; border: 1px solid red' : '', '">', $this->value, '</textarea>
 					</div>
 					<div id="', $this->id, '_resizer" style="width: ', $this->width, '" class="hide rich_resize"></div>
 				</div>
@@ -2630,11 +2630,10 @@ class wedit
 		sButtonBackgroundPosHover: [0, 0],
 		sActiveButtonBackgroundPos: [0, 0],
 		sDividerTemplate: ' . JavaScriptEscape('<div class="bbc_divider"></div>') . ',
-		sSelectTemplate: ' . JavaScriptEscape('<select name="%selectName%" id="%selectId%" tabindex="' . ($context['tabindex'] - 2) . '" class="seledit">%selectOptions%</select>') . ',
+		sSelectTemplate: ' . JavaScriptEscape('<select name="%selectName%" id="%selectId%" class="seledit">%selectOptions%</select>') . ',
 		sButtonRowTemplate: ' . JavaScriptEscape('<div>%buttonRow%</div>') . '
 	});');
 		}
-		$context['tabindex']++;
 
 		$auto_drafts = in_array($this->editorOptions['drafts'], array('auto_post', 'auto_pm'));
 		// If we're doing it, let's add the auto saver for drafts.
