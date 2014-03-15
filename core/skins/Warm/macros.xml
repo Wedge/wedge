@@ -1,17 +1,8 @@
 <?xml version="1.0"?>
 <!--
-	Macros. These examples are actually fairly useless since they just
-	mostly repeat the default macros defined in index.template.php, but it
-	makes it easier to get the point. Use these settings to override any
-	macros set up in the theme with your own versions. For instance, you
-	can change the header banner with little effort.
+	Macros.
+	Check out the skins/macros.xml file for all default macros.
 -->
-
-<macro name="banner">
-		{body}
-		<h1><a href="<URL>">{title}</a></h1></macro>
-
-<macro name="title"><header class="title">{body}</header></macro>
 
 <macro name="sidebar">
 <div id="edge">

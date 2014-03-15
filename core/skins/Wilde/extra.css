@@ -91,12 +91,7 @@ h1, #slogan
 	text-shadow: #ddd 1px 1px 2px
 
 #slogan
-	text-indent: 1em
-
-// The banner's container.
-#banner .frame
-	display: flex
-	align-items: baseline
+	text-align: right
 
 @remove #linktree ul
 	border: *

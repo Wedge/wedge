@@ -269,18 +269,22 @@ ul#noava
 		width: 100%
 		box-sizing: border-box
 		padding: 0 25px 10px
+		display: flex
+		flex-flow: row wrap
+		align-items: baseline
 
 // Main title
 h1
 	letter-spacing: -1px
 	font: 100 2.5em/1em $big_font
+	padding-right: .3em
 	a
 		color: #444
+		word-wrap: normal
 
 #slogan
 	color: #888
-	font: 100 1.2em/1.1em $big_font
-	text-indent: .2em
+	font: 100 1.3em/1.1em $big_font
 
 // The search box, with a few hacks to allow for a drop-down menu...
 #search_form
