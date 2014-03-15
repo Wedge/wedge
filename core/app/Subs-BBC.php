@@ -389,7 +389,7 @@ function parse_bbc($message, $type = 'generic', $bbc_options = array()) // $smil
 				if (!$no_autolink_area)
 				{
 					// Parse any URLs.... have to get rid of the @ problems some things cause... stupid email addresses.
-					if (!isset($disabled['url']) && (strpos($data, '://') !== false || strpos($data, 'www.') !== false) && strpos($data, '[url') === false)
+					if (!isset($disabled['url']) && strhas($data, array('://', 'www.')) && strpos($data, '[url') === false)
 					{
 						// Switch out quotes really quick because they can cause problems.
 						$data = strtr($data, array('&#039;' => '\'', '&nbsp;' => "\xC2\xA0", '&quot;' => '>">', '"' => '<"<', '&lt;' => '<lt<'));

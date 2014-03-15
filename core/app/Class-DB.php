@@ -210,7 +210,7 @@ class wesql
 			$clean = trim(strtolower(preg_replace($allowed_comments_from, $allowed_comments_to, $clean)));
 
 			// Comments? We don't use comments in our queries, we leave 'em outside!
-			if (strpos($clean, '/*') > 2 || strpos($clean, '--') !== false || strpos($clean, ';') !== false)
+			if (strpos($clean, '/*') > 2 || strhas($clean, array('--', ';')))
 				$fail = true;
 			// Trying to change passwords, slow us down, or something?
 			elseif (strpos($clean, 'sleep') !== false && preg_match('~(^|[^a-z])sleep($|[^[_a-z])~s', $clean) != 0)
@@ -406,7 +406,7 @@ class wesql
 				}
 			}
 			// Are they out of space, perhaps?
-			elseif ($query_errno == 1030 && (strpos($query_error, ' -1 ') !== false || strpos($query_error, ' 28 ') !== false || strpos($query_error, ' 12 ') !== false))
+			elseif ($query_errno == 1030 && strhas($query_error, array(' -1 ', ' 28 ', ' 12 ')))
 				$query_error .= !isset($txt, $txt['mysql_error_space']) ? ' - check database storage space.' : $txt['mysql_error_space'];
 		}
 

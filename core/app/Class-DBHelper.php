@@ -849,7 +849,7 @@ class wedb
 				$auto_inc = trim($l);
 
 			// For the engine type, see if we can work out what it is.
-			if (strpos($l, 'ENGINE') !== false || strpos($l, 'TYPE') !== false)
+			if (strhas($l, array('ENGINE', 'TYPE')))
 			{
 				// Extract the engine type.
 				preg_match('~(ENGINE|TYPE)=(\w+)(\sDEFAULT)?(\sCHARSET=(\w+))?(\sCOLLATE=(\w+))?~', $l, $match);

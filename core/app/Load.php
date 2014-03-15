@@ -1540,7 +1540,7 @@ function weInitJS()
 	$origin = empty($settings['jquery_origin']) ? 'local' : $settings['jquery_origin'];
 
 	// !! Temp code or permanent? We won't always need to test for jQuery's beta status...
-	if ($origin !== 'local' && $origin !== 'jquery' && (strpos($context['jquery_version'], 'b') !== false || strpos($context['jquery_version'], 'rc') !== false))
+	if ($origin !== 'local' && $origin !== 'jquery' && strhas($context['jquery_version'], array('b', 'rc')))
 		$origin = 'jquery';
 
 	if ($origin === 'local')

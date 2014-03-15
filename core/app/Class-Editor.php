@@ -1836,7 +1836,7 @@ class wedit
 				wedit::fixTags($parts[$i]);
 
 				// Replace /me.+?\n with [me=name]dsf[/me]\n.
-				if (strpos(we::$user['name'], '[') !== false || strpos(we::$user['name'], ']') !== false || strpos(we::$user['name'], '\'') !== false || strpos(we::$user['name'], '"') !== false)
+				if (strhas(we::$user['name'], array('[', ']', '\'', '"')))
 					$parts[$i] = preg_replace('~(\A|\n)/me(?: |&nbsp;)([^\n]*)(?:\z)?~i', '$1[me=&quot;' . we::$user['name'] . '&quot;]$2[/me]', $parts[$i]);
 				else
 					$parts[$i] = preg_replace('~(\A|\n)/me(?: |&nbsp;)([^\n]*)(?:\z)?~i', '$1[me=' . we::$user['name'] . ']$2[/me]', $parts[$i]);

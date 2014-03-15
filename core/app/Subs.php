@@ -744,7 +744,7 @@ function timeformat($log_time, $show_today = true, $offset_type = false)
 
 		// Try to make something of a time format string...
 		$s = strpos($format, '%S') === false ? '' : ':%S';
-		if (strpos($format, '%H') === false && strpos($format, '%T') === false)
+		if (!strhas($format, array('%H', '%T')))
 		{
 			$h = strpos($format, '%l') === false ? '%I' : '%l';
 			$today_fmt = $h . ':%M' . $s . ' %p';

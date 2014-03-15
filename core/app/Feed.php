@@ -400,7 +400,7 @@ function dumpTags($data, $i, $tag = null, $xml_format = '')
 				echo "\n", str_repeat("\t", $i), '</', $key, '>';
 			}
 			// A string with returns in it.... show this as a multiline element.
-			elseif (strpos($val, "\n") !== false || strpos($val, '<br />') !== false)
+			elseif (strhas($val, array("\n", '<br />')))
 				echo "\n", $val, "\n", str_repeat("\t", $i), '</', $key, '>';
 			// A simple string.
 			else

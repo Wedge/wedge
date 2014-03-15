@@ -620,14 +620,14 @@ class we
 
 		// Detect Webkit and related
 		$browser['webkit'] = $is_webkit = strpos($ua, 'AppleWebKit') !== false;
-		$browser['chrome'] = $is_webkit && (strpos($ua, 'Chrome') !== false || strpos($ua, 'CriOS') !== false);
+		$browser['chrome'] = $is_webkit && strhas($ua, array('Chrome', 'CriOS'));
 		$browser['safari'] = $is_webkit && !$browser['chrome'] && strpos($ua, 'Safari') !== false;
 
 		// Detect Firefox versions
 		$browser['gecko'] = !$is_webkit && strpos($ua, 'Gecko') !== false;	// Mozilla and compatible
 		$browser['firefox'] = strpos($ua, 'Gecko/') !== false;				// Firefox says "Gecko/20xx", not "like Gecko"
 
-		$browser['ie'] = $is_ie = strpos($ua, 'MSIE') !== false || strpos($ua, 'Trident/') !== false; // MSIE was removed from IE 11.
+		$browser['ie'] = $is_ie = strhas($ua, array('MSIE', 'Trident/')); // MSIE was removed from IE 11.
 
 		// Retrieve the version number, as a floating point.
 		// Chrome for iOS uses the Safari Mobile string and replaces Version with CriOS.
@@ -743,7 +743,7 @@ class we
 		if (isset($_SERVER['HTTP_PROFILE']) || isset($_SERVER['HTTP_X_WAP_PROFILE']) || isset($_SERVER['HTTP_X_OPERAMINI_PHONE_UA']))
 			return true;
 
-		if (isset($_SERVER['HTTP_ACCEPT']) && (strpos($_SERVER['HTTP_ACCEPT'], 'text/vnd.wap.wml') !== false || strpos($_SERVER['HTTP_ACCEPT'], 'application/vnd.wap.xhtml+xml') !== false))
+		if (isset($_SERVER['HTTP_ACCEPT']) && strhas($_SERVER['HTTP_ACCEPT'], array('text/vnd.wap.wml', 'application/vnd.wap.xhtml+xml')))
 			return true;
 
 		$is_mobile = false;
@@ -856,7 +856,7 @@ class we
 			}
 
 			// A boolean test, which ::is() understands, for a variable comparison.
-			if (strpos($string, '=') !== false || strpos($string, '<') !== false || strpos($string, '>') !== false)
+			if (strhas($string, array('=', '<', '>')))
 				$string = preg_replace_callback('~(!?[^!=<>\h]*)\h*(=+|!=+|<>|[<>]=?)\h*(!?[^!=<>\h]*)~', 'we::evaluate', $string);
 
 			// Negative tests.

@@ -752,8 +752,7 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 		foreach ($matches as $m)
 		{
 			// The spec says pseudo-elements aren't allowed INSIDE :matches, but implementations seem to also refuse them NEXT to :matches.
-			if (strpos($m[0], ':') !== false && (strpos($m[0], ':before') !== false || strpos($m[0], ':after') !== false ||
-				strpos($m[0], ':first-letter') !== false || strpos($m[0], ':first-line') !== false || strpos($m[0], ':selection') !== false))
+			if (strpos($m[0], ':') !== false && strhas($m[0], array(':before', ':after', ':first-letter', ':first-line', ':selection')))
 				continue;
 			$final = str_replace(
 				$m[0],

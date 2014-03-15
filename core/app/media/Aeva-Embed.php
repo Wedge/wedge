@@ -1106,7 +1106,7 @@ function aeva_check_embed_link($link)
 
 	$link2 = aeva_onposting($link);
 	$link3 = aeva_main(preg_replace(array('~\[url=([^]]*)]([^[]*)\[/url]~', '~\[url]([^[]*)\[/url]~'), array('<a href="$1">$2</a>', '<a href="$1">$1</a>'), $link2));
-	if (strpos($link3, '<embed ') !== false || strpos($link3, 'swfobject.embedSWF(') !== false)
+	if (strhas($link3, array('<embed ', 'swfobject.embedSWF(')))
 		return $link2;
 
 	// Parse the boardurl to grab the domain we're on.
