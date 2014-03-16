@@ -96,7 +96,7 @@ function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow =
 
 	foreach ($files as $fid => $file)
 	{
-		if (!file_exists($add = CORE_DIR . '/javascript/' . $file)) // !! Temp?
+		if (!file_exists($add = ROOT_DIR . '/core/javascript/' . $file)) // !! Temp?
 		{
 			unset($files[$fid]);
 			continue;
@@ -977,7 +977,7 @@ function wedge_cache_js($id, &$lang_name, $latest_date, $ext, $js, $gzip = false
 	static $closure_failed = false;
 
 	$final = '';
-	$dir = $full_path ? '' : CORE_DIR . '/javascript/';
+	$dir = $full_path ? '' : ROOT_DIR . '/core/javascript/';
 	$no_packing = array();
 
 	// Delete cached versions, unless they have the same timestamp (i.e. up to date.)
@@ -1252,7 +1252,7 @@ function wedge_cache_smileys($set, $smileys, $extra)
 	global $cssdir, $context, $settings;
 
 	$final_gzip = $final_raw = '';
-	$path = $settings['smileys_dir'] . '/' . $set . '/';
+	$path = ASSETS_DIR . '/smileys/' . $set . '/';
 	$url = (strpos(str_replace('://', '', ROOT), '/') === false && strpos(SMILEYS, ROOT) === 0 ? '' : '../..') . str_replace(ROOT, '', SMILEYS) . '/' . $set . '/';
 
 	// Delete other cached versions, if they exist.

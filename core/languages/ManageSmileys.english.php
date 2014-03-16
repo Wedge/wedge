@@ -9,8 +9,6 @@ $txt['smiley_sets_confirm'] = 'Are you sure you want to remove these smiley sets
 $txt['setting_smiley_sets_default'] = 'Default Smiley Set';
 $txt['setting_smiley_sets_enable'] = 'Enable smiley set selection by members';
 $txt['setting_smiley_enable'] = 'Organize, add and edit smileys manually';
-$txt['setting_smileys_url'] = 'Base URL to all smiley sets';
-$txt['setting_smileys_dir'] = 'Absolute path to all smiley sets';
 $txt['groups_manage_smileys'] = 'Groups allowed to manage smileys and message icons';
 
 $txt['smiley_sets_name'] = 'Name';

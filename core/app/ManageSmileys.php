@@ -113,10 +113,6 @@ function EditSmileySettings($return_config = false)
 {
 	global $settings, $context, $txt;
 
-	// The directories...
-	$context['smileys_dir'] = $settings['smileys_dir'];
-	$context['smileys_dir_found'] = is_dir($context['smileys_dir']);
-
 	// Get the names of the smiley sets.
 	$smiley_sets = explode(',', $settings['smiley_sets_known']);
 	$set_names = explode("\n", $settings['smiley_sets_names']);
@@ -136,8 +132,6 @@ function EditSmileySettings($return_config = false)
 		'',
 			array('select', 'smiley_sets_default', $smiley_context),
 			array('check', 'smiley_sets_enable'),
-			array('text', 'smileys_url'),
-			array('text', 'smileys_dir', 'invalid' => !$context['smileys_dir_found']),
 	);
 
 	if ($return_config)
@@ -292,10 +286,10 @@ function EditSmileySets()
 			$context['current_set']['is_new'] = false;
 
 			// Calculate whether there are any smileys in the directory that can be imported.
-			if (!empty($settings['smiley_enable']) && is_dir($settings['smileys_dir'] . '/' . $context['current_set']['path']))
+			if (!empty($settings['smiley_enable']) && is_dir(ASSETS_DIR . '/smileys/' . $context['current_set']['path']))
 			{
 				$smileys = array();
-				$dir = dir($settings['smileys_dir'] . '/' . $context['current_set']['path']);
+				$dir = dir(ASSETS_DIR . '/smileys/' . $context['current_set']['path']);
 				while ($entry = $dir->read())
 				{
 					if (in_array(strrchr($entry, '.'), array('.jpg', '.gif', '.jpeg', '.png')))
@@ -325,15 +319,15 @@ function EditSmileySets()
 
 		// Retrieve all potential smiley set directories.
 		$context['smiley_set_dirs'] = array();
-		if (is_dir($settings['smileys_dir']))
+		if (is_dir(ASSETS_DIR . '/smileys'))
 		{
-			$dir = dir($settings['smileys_dir']);
+			$dir = dir(ASSETS_DIR . '/smileys');
 			while ($entry = $dir->read())
 			{
-				if (!in_array($entry, array('.', '..')) && is_dir($settings['smileys_dir'] . '/' . $entry))
+				if (!in_array($entry, array('.', '..')) && is_dir(ASSETS_DIR . '/smileys/' . $entry))
 					$context['smiley_set_dirs'][] = array(
 						'id' => $entry,
-						'path' => $settings['smileys_dir'] . '/' . $entry,
+						'path' => ASSETS_DIR . '/smileys/' . $entry,
 						'selectable' => $entry == $context['current_set']['path'] || !in_array($entry, explode(',', $settings['smiley_sets_known'])),
 						'current' => $entry == $context['current_set']['path'],
 					);
@@ -492,8 +486,7 @@ function AddSmiley()
 	global $settings, $context, $txt;
 
 	// Get a list of all known smiley sets.
-	$context['smileys_dir'] = $settings['smileys_dir'];
-	$context['smileys_dir_found'] = is_dir($context['smileys_dir']);
+	$context['smileys_dir_found'] = is_dir(ASSETS_DIR . '/smileys');
 	$context['smiley_sets'] = explode(',', $settings['smiley_sets_known']);
 	$set_names = explode("\n", $settings['smiley_sets_names']);
 	foreach ($context['smiley_sets'] as $i => $set)
@@ -540,7 +533,7 @@ function AddSmiley()
 			$writeErrors = array();
 			foreach ($context['smiley_sets'] as $set)
 			{
-				if (!is_writable($context['smileys_dir'] . '/' . un_htmlspecialchars($set['path'])))
+				if (!is_writable(ASSETS_DIR . '/smileys/' . un_htmlspecialchars($set['path'])))
 					$writeErrors[] = $set['path'];
 			}
 			if (!empty($writeErrors))
@@ -570,20 +563,20 @@ function AddSmiley()
 			// Check if the file already exists... and if not move it to EVERY smiley set directory.
 			$i = 0;
 			// Keep going until we find a set the file doesn't exist in. (or maybe it exists in all of them?)
-			while (isset($context['smiley_sets'][$i]) && file_exists($context['smileys_dir'] . '/' . un_htmlspecialchars($context['smiley_sets'][$i]['path']) . '/' . $destName))
+			while (isset($context['smiley_sets'][$i]) && file_exists(ASSETS_DIR . '/smileys/' . un_htmlspecialchars($context['smiley_sets'][$i]['path']) . '/' . $destName))
 				$i++;
 
 			// Okay, we're going to put the smiley right here, since it's not there yet!
 			if (isset($context['smiley_sets'][$i]['path']))
 			{
-				$smileyLocation = $context['smileys_dir'] . '/' . un_htmlspecialchars($context['smiley_sets'][$i]['path']) . '/' . $destName;
+				$smileyLocation = ASSETS_DIR . '/smileys/' . un_htmlspecialchars($context['smiley_sets'][$i]['path']) . '/' . $destName;
 				move_uploaded_file($_FILES['uploadSmiley']['tmp_name'], $smileyLocation);
 				@chmod($smileyLocation, 0644);
 
 				// Now, we want to move it from there to all the other sets.
 				for ($n = count($context['smiley_sets']); $i < $n; $i++)
 				{
-					$currentPath = $context['smileys_dir'] . '/' . un_htmlspecialchars($context['smiley_sets'][$i]['path']) . '/' . $destName;
+					$currentPath = ASSETS_DIR . '/smileys/' . un_htmlspecialchars($context['smiley_sets'][$i]['path']) . '/' . $destName;
 
 					// The file is already there!  Don't overwrite it!
 					if (file_exists($currentPath))
@@ -639,7 +632,7 @@ function AddSmiley()
 					fatal_lang_error('smileys_upload_error_illegal');
 
 				// If the file exists - ignore it.
-				$smileyLocation = $context['smileys_dir'] . '/' . $set['path'] . '/' . $destName;
+				$smileyLocation = ASSETS_DIR . '/smileys/' . $set['path'] . '/' . $destName;
 				if (file_exists($smileyLocation))
 					continue;
 
@@ -696,10 +689,10 @@ function AddSmiley()
 	{
 		foreach ($context['smiley_sets'] as $smiley_set)
 		{
-			if (!file_exists($context['smileys_dir'] . '/' . un_htmlspecialchars($smiley_set['path'])))
+			if (!file_exists(ASSETS_DIR . '/smileys/' . un_htmlspecialchars($smiley_set['path'])))
 				continue;
 
-			$dir = dir($context['smileys_dir'] . '/' . un_htmlspecialchars($smiley_set['path']));
+			$dir = dir(ASSETS_DIR . '/smileys/' . un_htmlspecialchars($smiley_set['path']));
 			while ($entry = $dir->read())
 			{
 				if (!in_array($entry, $context['filenames']) && in_array(strrchr($entry, '.'), array('.jpg', '.gif', '.jpeg', '.png')))
@@ -950,15 +943,15 @@ function EditSmileys()
 					),
 					'data' => array(
 						'function' => function ($rowData) {
-							global $context, $txt, $settings;
+							global $context, $txt;
 
-							if (!is_dir($settings['smileys_dir']))
+							if (!is_dir(ASSETS_DIR . '/smileys'))
 								return htmlspecialchars($rowData['description']);
 
 							// Check if there are smileys missing in some sets.
 							$missing_sets = array();
 							foreach ($context['smiley_sets'] as $smiley_set)
-								if (!file_exists(sprintf('%1$s/%2$s/%3$s', $settings['smileys_dir'], $smiley_set['path'], $rowData['filename'])))
+								if (!file_exists(sprintf('%1$s/%2$s/%3$s', ASSETS_DIR . '/smileys', $smiley_set['path'], $rowData['filename'])))
 									$missing_sets[] = $smiley_set['path'];
 
 							$description = htmlspecialchars($rowData['description']);
@@ -1061,8 +1054,7 @@ function EditSmileys()
 	elseif ($context['sub_action'] == 'modifysmiley')
 	{
 		// Get a list of all known smiley sets.
-		$context['smileys_dir'] = $settings['smileys_dir'];
-		$context['smileys_dir_found'] = is_dir($context['smileys_dir']);
+		$context['smileys_dir_found'] = is_dir(ASSETS_DIR . '/smileys');
 		$context['smiley_sets'] = explode(',', $settings['smiley_sets_known']);
 		$set_names = explode("\n", $settings['smiley_sets_names']);
 		foreach ($context['smiley_sets'] as $i => $set)
@@ -1081,10 +1073,10 @@ function EditSmileys()
 		{
 			foreach ($context['smiley_sets'] as $smiley_set)
 			{
-				if (!file_exists($context['smileys_dir'] . '/' . un_htmlspecialchars($smiley_set['path'])))
+				if (!file_exists(ASSETS_DIR . '/smileys/' . un_htmlspecialchars($smiley_set['path'])))
 					continue;
 
-				$dir = dir($context['smileys_dir'] . '/' . un_htmlspecialchars($smiley_set['path']));
+				$dir = dir(ASSETS_DIR . '/smileys/' . un_htmlspecialchars($smiley_set['path']));
 				while ($entry = $dir->read())
 				{
 					if (!in_array($entry, $context['filenames']) && in_array(strrchr($entry, '.'), array('.jpg', '.gif', '.jpeg', '.png')))
@@ -1338,13 +1330,11 @@ function InstallSmileySet()
 // A function to import new smileys from an existing directory into the database.
 function ImportSmileys($smileyPath)
 {
-	global $settings;
-
-	if (!is_dir($settings['smileys_dir'] . '/' . $smileyPath))
+	if (!is_dir(ASSETS_DIR . '/smileys/' . $smileyPath))
 		fatal_lang_error('smiley_set_unable_to_import');
 
 	$smileys = array();
-	$dir = dir($settings['smileys_dir'] . '/' . $smileyPath);
+	$dir = dir(ASSETS_DIR . '/smileys/' . $smileyPath);
 	while ($entry = $dir->read())
 	{
 		if (in_array(strrchr($entry, '.'), array('.jpg', '.gif', '.jpeg', '.png')))

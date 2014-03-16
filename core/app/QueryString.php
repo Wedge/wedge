@@ -88,30 +88,21 @@ function loadPaths()
 
 			// Fix the theme urls...
 			$settings['theme_url'] = strtr($settings['theme_url'], array($oldurl => $boardurl));
-
-			// And just a few mod settings :)
-			$settings['smileys_url'] = strtr($settings['smileys_url'], array($oldurl => $boardurl));
-			$settings['avatar_url'] = strtr($settings['avatar_url'], array($oldurl => $boardurl));
 		}
 	}
 
 	// All done? No changin' the URLs? Okay, we can now define our constants...
-	define('SCRIPT', $scripturl);
-	define('ROOT', $boardurl);
-	define('ROOT_DIR', $boarddir);
-	define('CORE', $boardurl . '/core');
-	define('CORE_DIR', ROOT_DIR . '/core');
-	define('TEMPLATES', CORE . '/html');
-	define('TEMPLATES_DIR', CORE_DIR . '/html');
-	define('SKINS', CORE . '/skins');
-	define('SKINS_DIR', CORE_DIR . '/skins');
-	define('LANGUAGES', CORE . '/languages');
-	define('LANGUAGES_DIR', CORE_DIR . '/languages');
-	define('ASSETS', ROOT . '/assets');
-	define('ASSETS_DIR', ROOT_DIR . '/assets');
-
-	define('SMILEYS', $settings['smileys_url']);
-	define('AVATARS', $settings['avatar_url']);
+	define('SCRIPT',		$scripturl);
+	define('ROOT',			$boardurl);
+	define('ROOT_DIR',		$boarddir);
+	define('CORE',			ROOT . '/core');				define('CORE_DIR',		ROOT_DIR . '/core');
+	define('TEMPLATES',		ROOT . '/core/html');			define('TEMPLATES_DIR',	ROOT_DIR . '/core/html');
+	define('SKINS',			ROOT . '/core/skins');			define('SKINS_DIR',		ROOT_DIR . '/core/skins');
+	define('LANGUAGES',		ROOT . '/core/languages');		define('LANGUAGES_DIR',	ROOT_DIR . '/core/languages');
+	define('PLUGINS',		ROOT . '/plugins');				define('PLUGINS_DIR',	ROOT_DIR . '/plugins');
+	define('ASSETS',		ROOT . '/assets');				define('ASSETS_DIR',	ROOT_DIR . '/assets');
+	define('SMILEYS',		ROOT . '/assets/smileys');
+	define('AVATARS',		ROOT . '/assets/avatars');
 
 	// Some aliases, if you prefer these.
 	define('SCRIPT_DIR',	ROOT_DIR);

@@ -212,15 +212,12 @@ function ManageAvatarSettings($return_config = false)
 	// Just for admin search.
 	$context['page_title'] = $txt['attachments_avatars'];
 
-	$context['valid_avatar_dir'] = is_dir($settings['avatar_dir']);
 	$context['valid_custom_avatar_dir'] = empty($settings['custom_avatar_enabled']) || (!empty($settings['custom_avatar_dir']) && is_dir($settings['custom_avatar_dir']) && is_writable($settings['custom_avatar_dir']));
 
 	$config_vars = array(
 		// Server stored avatars!
 		array('title', 'avatar_server_stored'),
 			array('permissions', 'profile_server_avatar', 0, $txt['avatar_server_stored_groups'], 'exclude' => array(-1)),
-			array('text', 'avatar_dir', 40, 'invalid' => !$context['valid_avatar_dir']),
-			array('text', 'avatar_url', 40),
 		// External avatars?
 		array('title', 'avatar_external'),
 			array('permissions', 'profile_remote_avatar', 0, $txt['avatar_external_url_groups'], 'exclude' => array(-1)),
