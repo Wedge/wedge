@@ -334,9 +334,6 @@ $radius = 20px
 @remove #footer
 	margin-top: 16px
 
-@remove #slogan
-	color: #000
-
 @remove #search_form > input[type=submit]
 	background: #938983
 	border-color: #bbb #888 #888 #bbb
