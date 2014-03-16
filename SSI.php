@@ -69,9 +69,6 @@ loadSource(array(
 loadDatabase();
 loadSettings();
 
-// Clean the request variables.
-cleanRequest();
-
 // Seed the random generator?
 if (empty($settings['rand_seed']) || mt_rand(1, 250) == 42)
 	we_seed_generator();

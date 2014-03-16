@@ -180,9 +180,6 @@ if (!empty($context['extra_actions']))
 if (!empty($context['nolog_actions']))
 	$action_no_log = array_merge($action_no_log, $context['nolog_actions']);
 
-// Clean the request variables, add slashes, etc.
-cleanRequest();
-
 // Seed the random generator.
 if (empty($settings['rand_seed']) || mt_rand(1, 250) == 42)
 	we_seed_generator();

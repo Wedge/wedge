@@ -67,6 +67,9 @@ function loadSettings()
 			cache_put_data('settings', $settings, 'forever');
 	}
 
+	// Set up path constants.
+	loadPaths();
+
 	// Deal with loading plugins.
 	$context['enabled_plugins'] = array();
 	$context['extra_actions'] = array();
@@ -160,6 +163,9 @@ function loadSettings()
 
 	// Call pre-load hook functions.
 	call_hook('pre_load');
+
+	// Sanitize and harmonize URL variables.
+	cleanRequest();
 }
 
 function can_shell_exec()

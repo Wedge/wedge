@@ -1,6 +1,6 @@
 <?php
 /**
- * This file handles functions that manage the output buffer, query string, and incoming sanitation thereof, amongst other things.
+ * This file manages the output buffer and decodes/sanitizes the query string, amongst other things.
  *
  * Wedge (http://wedge.org)
  * Copyright © 2010 René-Gilles Deberdt, wedge.org
@@ -12,27 +12,12 @@ if (!defined('WEDGE'))
 	die('Hacking attempt...');
 
 /**
- * Cleans all of the environment variables going into this request.
- *
- * By the time we're done, everything should have slashes (regardless of php.ini).
- *
- * - Defines SCRIPT ($boardurl + index.php if needed)
- * - Identifies which function to run to handle magic_quotes.
- * - Removes $HTTP_POST_* if set.
- * - Aborts if someone is trying to set $GLOBALS via $_REQUEST or the cookies (in the case of register_globals being on)
- * - Aborts if someone is trying to use numeric keys (e.g. index.php?1=2) in $_POST, $_GET or $_FILES and dumps them if found in $_COOKIE.
- * - Ensure we have the current querystring, and that it's valid.
- * - Check if the server is using ; as the separator, and parse the URL if not.
- * - Cleans input strings dependent on magic_quotes settings.
- * - Process everything in $_GET to ensure it all has entities.
- * - Rebuild $_REQUEST to be $_POST and $_GET only (never $_COOKIE)
- * - Check if $topic and $board are set and push them into the global space.
- * - Check for other stuff in $_REQUEST like a start, or action and deal with the types appropriately.
- * - Try to get the requester's IP address and make sure we have a USER-AGENT and we have the requested URI.
+ * Initializes all of the path constants.
  */
-function cleanRequest()
+function loadPaths()
 {
-	global $board, $topic, $boardurl, $boarddir, $settings, $context, $action_list;
+	global $boardurl, $boarddir, $settings, $context;
+	global $sourcedir, $pluginsdir, $cachedir, $cssdir, $jsdir;
 
 	// While we're here cleaning the request, try and clean the headers that we'll send back.
 	header('X-Powered-By: ');
@@ -129,9 +114,32 @@ function cleanRequest()
 	define('AVATARS', $settings['avatar_url']);
 
 	// Some aliases, if you prefer these.
-	define('SCRIPT_DIR', ROOT_DIR);
-	define('IMAGES', ASSETS);
-	define('IMAGES_DIR', ASSETS_DIR);
+	define('SCRIPT_DIR',	ROOT_DIR);
+	define('IMAGES',		ASSETS);
+	define('IMAGES_DIR',	ASSETS_DIR);
+}
+
+/**
+ * Cleans all of the environment variables going into this request.
+ *
+ * By the time we're done, everything should have slashes (regardless of php.ini).
+ *
+ * - Identifies which function to run to handle magic_quotes.
+ * - Removes $HTTP_POST_* if set.
+ * - Aborts if someone is trying to set $GLOBALS via $_REQUEST or the cookies (in the case of register_globals being on)
+ * - Aborts if someone is trying to use numeric keys (e.g. index.php?1=2) in $_POST, $_GET or $_FILES and dumps them if found in $_COOKIE.
+ * - Ensure we have the current querystring, and that it's valid.
+ * - Check if the server is using ; as the separator, and parse the URL if not.
+ * - Cleans input strings dependent on magic_quotes settings.
+ * - Process everything in $_GET to ensure it all has entities.
+ * - Rebuild $_REQUEST to be $_POST and $_GET only (never $_COOKIE)
+ * - Check if $topic and $board are set and push them into the global space.
+ * - Check for other stuff in $_REQUEST like a start, or action and deal with the types appropriately.
+ * - Try to get the requester's IP address and make sure we have a USER-AGENT and we have the requested URI.
+ */
+function cleanRequest()
+{
+	global $board, $topic, $boardurl, $boarddir, $settings, $context, $action_list;
 
 	// What function to use to reverse magic quotes - if sybase is on we assume that the database sensibly has the right unescape function!
 	$removeMagicQuoteFunction = ini_get('magic_quotes_sybase') || strtolower(ini_get('magic_quotes_sybase')) == 'on' ? 'unescapestring__recursive' : 'stripslashes__recursive';
@@ -970,3 +978,4 @@ function get_ip_identifier($ip)
 	);
 	return wesql::insert_id();
 }
+
