@@ -42,7 +42,7 @@ require_once($here . '/Settings.php');
 if (!file_exists($boarddir = rtrim($boarddir, '/')) && file_exists(dirname(__FILE__) . '/SSI.php'))
 	$boarddir = dirname(__FILE__);
 
-foreach (array('source' => 'core/app', 'plugins' => 'plugins', 'cache' => 'gz', 'css' => 'gz/css', 'js' => 'gs/jz') as $var => $path)
+foreach (array('source' => 'core/app', 'plugins' => 'plugins', 'cache' => 'gz', 'css' => 'gz/css', 'js' => 'gz/js') as $var => $path)
 {
 	$dir = $var . 'dir';
 	if ((empty($$dir) || ($$dir !== $boarddir . '/' . $path && !file_exists($$dir))) && file_exists($boarddir . '/' . $path))
