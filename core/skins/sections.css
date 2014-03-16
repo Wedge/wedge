@@ -769,78 +769,82 @@ fieldset.merge_options
 .custom_subject
 	margin: .5em 0
 
-/* Styles for the login areas.
+/* Styles for the login areas. Never seen by members.
 ------------------------------------------------------- */
 
-.login
-	margin: auto
-	dl
-		overflow: auto
+@if guest
+	.login
+		margin: auto
+		dl
+			overflow: auto
+			clear: right
+		dt, dd
+			margin: 0 0 .4em
+			width: 44%
+			padding: .1em
+		dt
+			float: left
+			clear: both
+			text-align: right
+			font-weight: 700
+		dd
+			width: 54%
+			float: right
+			text-align: left
+		p
+			text-align: center
+
+	#login #main
+		vertical-align: middle
+@endif
+
+/* Styles for the registration section. Ditto.
+------------------------------------------------------- */
+
+@if guest
+	.register_error
+		border: 1px dashed red
+		padding: 5px
+		margin: 0 1ex 1ex 1ex
+		span
+			text-decoration: underline
+
+	// Additional profile fields
+	dl.register_form
+		margin: 0
 		clear: right
-	dt, dd
-		margin: 0 0 .4em
-		width: 44%
-		padding: .1em
-	dt
-		float: left
-		clear: both
-		text-align: right
-		font-weight: 700
-	dd
-		width: 54%
-		float: right
-		text-align: left
-	p
+		dt
+			font-weight: 400
+			float: left
+			clear: both
+			width: 50%
+			margin: .5em 0 0
+		dd
+			float: left
+			width: 49%
+			margin: .5em 0 0
+
+	#confirm_buttons
 		text-align: center
+		padding: 1em 0
 
-#login #main
-	vertical-align: middle
+	.coppa_contact
+		padding: 4px
+		width: 32ex
+		background-color: #fff
+		color: #000
+		margin-left: 5ex
+		border: 1px solid #000
 
-/* Styles for the registration section.
-------------------------------------------------------- */
+	.valid_input
+		background-color: #f5fff0
 
-.register_error
-	border: 1px dashed red
-	padding: 5px
-	margin: 0 1ex 1ex 1ex
-	span
-		text-decoration: underline
+	.invalid_input
+		background-color: #fff0f0
 
-// Additional profile fields
-dl.register_form
-	margin: 0
-	clear: right
-	dt
-		font-weight: 400
-		float: left
-		clear: both
-		width: 50%
-		margin: .5em 0 0
-	dd
-		float: left
-		width: 49%
-		margin: .5em 0 0
-
-#confirm_buttons
-	text-align: center
-	padding: 1em 0
-
-.coppa_contact
-	padding: 4px
-	width: 32ex
-	background-color: #fff
-	color: #000
-	margin-left: 5ex
-	border: 1px solid #000
-
-.valid_input
-	background-color: #f5fff0
-
-.invalid_input
-	background-color: #fff0f0
-
-.vv_special
-	display: none
+	.vv_special
+		display: none
+@endif
 
 /* Styles for maintenance mode.
 ------------------------------------------------------- */
