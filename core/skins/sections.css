@@ -841,10 +841,10 @@ fieldset.merge_options
 
 	.invalid_input
 		background-color: #fff0f0
-
-	.vv_special
-		display: none
 @endif
+
+.vv_special
+	display: none
 
 /* Styles for maintenance mode.
 ------------------------------------------------------- */
