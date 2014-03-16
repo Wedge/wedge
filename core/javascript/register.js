@@ -22,17 +22,7 @@ function verifyAgree()
 
 function weRegister(formID, passwordDifficultyLevel)
 {
-	var
-		verificationFields = [],
-		verificationFieldLength = 0,
-		txt_username_valid = $txt['registration_username_available'],
-		txt_username_invalid = $txt['registration_username_unavailable'],
-		txt_username_check = $txt['registration_username_check'],
-		txt_password_short = $txt['registration_password_short'],
-		txt_password_reserved = $txt['registration_password_reserved'],
-		txt_password_numbercase = $txt['registration_password_numbercase'],
-		txt_password_no_match = $txt['registration_password_no_match'],
-		txt_password_valid = $txt['registration_password_valid'];
+	var verificationFields = [], verificationFieldLength = 0;
 
 	// This will automatically pick up all the necessary verification fields and initialize their visual status.
 	$('#' + formID).find('input[type="text"][id*="autov"], input[type="password"][id*="autov"]').each(function ()
@@ -106,29 +96,29 @@ function weRegister(formID, passwordDifficultyLevel)
 
 		// Is it a valid length?
 		if ((curPass.length < 8 && passwordDifficultyLevel >= 1) || curPass.length < 4)
-			result = txt_password_short;
+			result = $txt['registration_password_short'];
 
 		// More than basic?
 		if (passwordDifficultyLevel >= 1)
 		{
 			// If there is a username, check it's not in the password!
 			if (verificationFields.username && verificationFields.username[1].value && curPass.indexOf(verificationFields.username[1].value) != -1)
-				result = txt_password_reserved;
+				result = $txt['registration_password_reserved'];
 
 			// Any reserved fields?
 			for (var i in verificationFields)
 				if (verificationFields[i][3] == 'reserved' && verificationFields[i][1].value && curPass.indexOf(verificationFields[i][1].value) != -1)
-					result = txt_password_reserved;
+					result = $txt['registration_password_reserved'];
 
 			// Finally - is it hard and, as such, requiring mixed cases and numbers?
 			if ((passwordDifficultyLevel > 1) && ((curPass == curPass.toLowerCase()) || (!curPass.match(/(\D\d|\d\D)/))))
-				result = txt_password_numbercase;
+				result = $txt['registration_password_numbercase'];
 		}
 
 		var isValid = result == '';
 
 		// Set the image.
-		setVerificationImage(verificationFields.pwmain[2], isValid, result || txt_password_valid);
+		setVerificationImage(verificationFields.pwmain[2], isValid, result || $txt['registration_password_valid']);
 		verificationFields.pwmain[1].className = verificationFields.pwmain[4] + ' ' + (isValid ? 'valid' : 'invalid') + '_input';
 
 		// As this has changed the verification one may have too!
@@ -148,7 +138,7 @@ function weRegister(formID, passwordDifficultyLevel)
 		// Check and set valid status!
 		var isValid = verificationFields.pwmain[1].value == verificationFields.pwverify[1].value && refreshMainPassword(true);
 
-		setVerificationImage(verificationFields.pwverify[2], isValid, isValid ? txt_password_valid : txt_password_no_match);
+		setVerificationImage(verificationFields.pwverify[2], isValid, isValid ? $txt['registration_password_valid'] : $txt['registration_password_no_match']);
 		verificationFields.pwverify[1].className = verificationFields.pwverify[4] + ' ' + (isValid ? 'valid' : 'invalid') + '_input';
 
 		return true;
@@ -164,7 +154,7 @@ function weRegister(formID, passwordDifficultyLevel)
 		if (verificationFields.username[1].className)
 			verificationFields.username[1].className = verificationFields.username[4];
 		// Check the image is correct.
-		setVerificationImage(verificationFields.username[2], 'check', txt_username_check);
+		setVerificationImage(verificationFields.username[2], 'check', $txt['registration_username_check']);
 
 		// Check the password is still OK.
 		refreshMainPassword();
@@ -198,7 +188,7 @@ function weRegister(formID, passwordDifficultyLevel)
 			var isValid = $('username', XMLDoc).attr('valid') == 1;
 
 			verificationFields.username[1].className = verificationFields.username[4] + ' ' + (isValid ? 'valid' : 'invalid') + '_input';
-			setVerificationImage(verificationFields.username[2], isValid, isValid ? txt_username_valid : txt_username_invalid);
+			setVerificationImage(verificationFields.username[2], isValid, isValid ? $txt['registration_username_available'] : $txt['registration_username_unavailable']);
 
 			hide_ajax();
 		});
