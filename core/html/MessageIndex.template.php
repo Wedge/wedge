@@ -186,7 +186,7 @@ function template_main_board()
 
 function template_main_blog()
 {
-	global $context, $options, $settings, $txt, $board_info;
+	global $context, $settings, $txt, $board_info;
 
 	echo '
 	<a id="top"></a>';
