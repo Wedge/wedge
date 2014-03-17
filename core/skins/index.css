@@ -148,7 +148,7 @@ h1, h2, h3, h4, h5, h6
 	&.sliding
 		overflow: hidden
 
-@if opera && $radius
+@if $radius
 	#header
 		border-radius: $radius $radius 0 0
 @endif
@@ -284,7 +284,8 @@ h1
 
 #slogan
 	color: #888
-	font: 100 1.3em/1.1em $big_font
+	font: 100 1.4em/1.1em $big_font
+	letter-spacing: -1px
 
 // The search box, with a few hacks to allow for a drop-down menu...
 #search_form
@@ -329,7 +330,7 @@ h1
 #footer
 	margin: auto
 	border-top: 1px solid #bdb5b5
-	@if opera && $radius
+	@if $radius
 		border-radius: 0 0 $radius $radius
 	@endif
 	div.frame

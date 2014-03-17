@@ -139,6 +139,13 @@ h1, #slogan
 #linktree_bt
 	padding: 0 20px 20px
 
+// The footer with copyright links etc.
+@remove #footer
+	border-top: 1px solid #bdb5b5
+
+#footer extends .lightgrad
+	border-top: 1px solid #ccc
+
 @media $responsive
 	body
 		padding: 0 15px
@@ -151,11 +158,6 @@ h1, #slogan
 				background: average(#fdfdfd, #efefef)
 			li:after, li:nth-last-child(even), li:nth-last-child(even):after
 				background: none
-
-// The footer with copyright links etc.
-#footer extends .lightgrad
-	border-top: 1px solid #ccc
-	border-radius: 0 0 $radius $radius
 
 /* Styles for the general looks for the default theme.
 ------------------------------------------------------- */
