@@ -81,9 +81,6 @@ if (empty($we_shot) || $we_shot < WEDGE)
 	upgrade_db();
 }
 
-// Load the settings from the settings table, and perform operations like optimizing.
-loadSettings();
-
 /*
 	I am the Gatekeeper. Are you the Keymaster?
 
@@ -179,6 +176,9 @@ if (!empty($context['extra_actions']))
 	$action_list = array_merge($action_list, $context['extra_actions']);
 if (!empty($context['nolog_actions']))
 	$action_no_log = array_merge($action_no_log, $context['nolog_actions']);
+
+// Load the settings from the settings table, and perform operations like optimizing.
+loadSettings();
 
 // Seed the random generator.
 if (empty($settings['rand_seed']) || mt_rand(1, 250) == 42)
