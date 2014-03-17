@@ -17,6 +17,7 @@ if (!defined('WEDGE'))
  * - Ensure the database is using the same character set as the application thinks it is.
  * - Attempt to load the settings from cache, failing that from the database, with some fallback/sanity values for a few common settings.
  * - Save the value in cache for next time.
+ * - Fill up the list of known actions.
  * - Set the timezone (mandatory in PHP)
  * - Check the load average settings if available.
  * - Check whether post moderation is enabled.
@@ -24,7 +25,7 @@ if (!defined('WEDGE'))
  */
 function loadSettings()
 {
-	global $settings, $context, $pluginsdir, $pluginsurl;
+	global $settings, $context, $pluginsdir, $pluginsurl, $action_list;
 
 	// This is where it all began.
 	$context = array(
@@ -66,6 +67,92 @@ function loadSettings()
 		if (!empty($settings['cache_enable']))
 			cache_put_data('settings', $settings, 'forever');
 	}
+
+	/*
+		I am the Gatekeeper. Are you the Keymaster?
+
+		Here's the monstrous $action array - $action => array($file, [[$function], $plugin_id]).
+		If the function name is the same as the loadSource file name, e.g. Admin.php, to run Admin(), you can declare it as a string.
+		Only add $plugin_id if it's for a plugin, otherwise just have (one or) two items in the list.
+
+		Add custom actions to to the $action_list array this way:
+
+		'my-action' => array('MyFile.php', 'MyFunction'),
+
+		Then, the URL index.php?action=my-action will load call MyFile.php and call MyFunction().
+	*/
+	$action_list = array(
+		'activate' =>		'Activate',
+		'admin' =>			'Admin',
+		'ajax' =>			'Ajax',
+		'announce' =>		'Announce',
+		'boards' =>			'Boards',
+		'buddy' =>			'Buddy',
+		'collapse' =>		'Collapse',
+		'coppa' =>			'CoppaForm',
+		'credits' =>		'Credits',
+		'deletemsg' =>		array('RemoveTopic', 'DeleteMessage'),
+		'display' =>		'Display',
+		'dlattach' =>		'Dlattach',
+		'emailuser' =>		'Mailer',
+		'feed' =>			'Feed',
+		'groups' =>			'Groups',
+		'help' =>			'Help',
+		'like' =>			'Like',
+		'lock' =>			'Lock',
+		'login' =>			'Login',
+		'login2' =>			'Login2',
+		'logout' =>			'Logout',
+		'markasread' =>		array('Subs-Boards', 'MarkRead'),
+		'media' =>			array('media/Aeva-Gallery', 'aeva_initGallery'),
+		'mergeposts' =>		array('Merge', 'MergePosts'),
+		'mergetopics' =>	array('Merge', 'MergeTopics'),
+		'mlist' =>			'Memberlist',
+		'moderate' =>		'ModerationCenter',
+		'movetopic' =>		'MoveTopic',
+		'movetopic2' =>		array('MoveTopic', 'MoveTopic2'),
+		'notify' =>			'Notify',
+		'notifyboard' =>	array('Notify', 'BoardNotify'),
+		'notification' =>	array('Notifications', 'weNotif::action'),
+		'pin' =>			'Pin',
+		'pm' =>				'PersonalMessage',
+		'poll' =>			'Poll',
+		'post' =>			'Post',
+		'post2' =>			'Post2',
+		'printpage' =>		'PrintPage',
+		'profile' =>		array('Profile', 'ModifyProfile'),
+		'quickedit' =>		'QuickEdit',
+		'quickmod' =>		array('QuickMod', 'QuickModeration'),
+		'quickmod2' =>		array('QuickMod', 'QuickInTopicModeration'),
+		'quotefast' =>		'QuoteFast',
+		'recent' =>			'Recent',
+		'register' =>		'Register',
+		'register2' =>		array('Register', 'Register2'),
+		'reminder' =>		array('Reminder', 'RemindMe'),
+		'removetopic2' =>	array('RemoveTopic', 'RemoveTopic2'),
+		'report' =>			'Report',
+		'restoretopic' =>	array('RemoveTopic', 'RestoreTopic'),
+		'search' =>			'Search',
+		'search2' =>		'Search2',
+		'sendtopic' =>		'Mailer',
+		'skin' =>			array('Themes', 'PickTheme'),
+		'splittopics' =>	array('Split', 'SplitTopics'),
+		'stats' =>			'Stats',
+		'suggest' =>		'Suggest',
+		'theme' =>			'Themes',
+		'thoughts' =>		'Thoughts',
+		'trackip' =>		array('Profile-View', 'trackIP'),
+		'uncache' =>		array('Subs-Cache', 'uncache'),
+		'unread' =>			'Unread',
+		'unreadreplies' =>	'UnreadReplies',
+		'verification' =>	'VerificationCode',
+		'viewquery' =>		'ViewQuery',
+		'viewremote' =>		'ViewRemote',
+		'who' =>			'Who',
+	);
+
+	if (empty($settings['pm_enabled']))
+		unset($action_list['pm']);
 
 	// Set up path constants.
 	loadPaths();
@@ -2105,8 +2192,6 @@ function sessionClose()
  */
 function sessionRead($session_id)
 {
-	global $cache_system;
-
 	if (preg_match('~^[a-zA-Z0-9,-]{16,32}$~', $session_id) == 0)
 		return false;
 

@@ -81,104 +81,18 @@ if (empty($we_shot) || $we_shot < WEDGE)
 	upgrade_db();
 }
 
-/*
-	I am the Gatekeeper. Are you the Keymaster?
-
-	Here's the monstrous $action array - $action => array($file, [[$function], $plugin_id]).
-	If the function name is the same as the loadSource file name, e.g. Admin.php, to run Admin(), you can declare it as a string.
-	Only add $plugin_id if it's for a plugin, otherwise just have (one or) two items in the list.
-
-	Add custom actions to to the $action_list array this way:
-
-	'my-action' => array('MyFile.php', 'MyFunction'),
-
-	Then, the URL index.php?action=my-action will load call MyFile.php and call MyFunction().
-*/
-$action_list = array(
-	'activate' =>		'Activate',
-	'admin' =>			'Admin',
-	'ajax' =>			'Ajax',
-	'announce' =>		'Announce',
-	'boards' =>			'Boards',
-	'buddy' =>			'Buddy',
-	'collapse' =>		'Collapse',
-	'coppa' =>			'CoppaForm',
-	'credits' =>		'Credits',
-	'deletemsg' =>		array('RemoveTopic', 'DeleteMessage'),
-	'display' =>		'Display',
-	'dlattach' =>		'Dlattach',
-	'emailuser' =>		'Mailer',
-	'feed' =>			'Feed',
-	'groups' =>			'Groups',
-	'help' =>			'Help',
-	'like' =>			'Like',
-	'lock' =>			'Lock',
-	'login' =>			'Login',
-	'login2' =>			'Login2',
-	'logout' =>			'Logout',
-	'markasread' =>		array('Subs-Boards', 'MarkRead'),
-	'media' =>			array('media/Aeva-Gallery', 'aeva_initGallery'),
-	'mergeposts' =>		array('Merge', 'MergePosts'),
-	'mergetopics' =>	array('Merge', 'MergeTopics'),
-	'mlist' =>			'Memberlist',
-	'moderate' =>		'ModerationCenter',
-	'movetopic' =>		'MoveTopic',
-	'movetopic2' =>		array('MoveTopic', 'MoveTopic2'),
-	'notify' =>			'Notify',
-	'notifyboard' =>	array('Notify', 'BoardNotify'),
-	'notification' =>	array('Notifications', 'weNotif::action'),
-	'pin' =>			'Pin',
-	'pm' =>				'PersonalMessage',
-	'poll' =>			'Poll',
-	'post' =>			'Post',
-	'post2' =>			'Post2',
-	'printpage' =>		'PrintPage',
-	'profile' =>		array('Profile', 'ModifyProfile'),
-	'quickedit' =>		'QuickEdit',
-	'quickmod' =>		array('QuickMod', 'QuickModeration'),
-	'quickmod2' =>		array('QuickMod', 'QuickInTopicModeration'),
-	'quotefast' =>		'QuoteFast',
-	'recent' =>			'Recent',
-	'register' =>		'Register',
-	'register2' =>		array('Register', 'Register2'),
-	'reminder' =>		array('Reminder', 'RemindMe'),
-	'removetopic2' =>	array('RemoveTopic', 'RemoveTopic2'),
-	'report' =>			'Report',
-	'restoretopic' =>	array('RemoveTopic', 'RestoreTopic'),
-	'search' =>			'Search',
-	'search2' =>		'Search2',
-	'sendtopic' =>		'Mailer',
-	'skin' =>			array('Themes', 'PickTheme'),
-	'splittopics' =>	array('Split', 'SplitTopics'),
-	'stats' =>			'Stats',
-	'suggest' =>		'Suggest',
-	'theme' =>			'Themes',
-	'thoughts' =>		'Thoughts',
-	'trackip' =>		array('Profile-View', 'trackIP'),
-	'uncache' =>		array('Subs-Cache', 'uncache'),
-	'unread' =>			'Unread',
-	'unreadreplies' =>	'UnreadReplies',
-	'verification' =>	'VerificationCode',
-	'viewquery' =>		'ViewQuery',
-	'viewremote' =>		'ViewRemote',
-	'who' =>			'Who',
-);
+// Load the actions and database settings, and perform operations like optimizing.
+loadSettings();
 
 // If an action should not influence the who's online list, please add it here. (Hookable as global.)
 $action_no_log = array(
 	'ajax', 'dlattach', 'feed', 'like', 'notification', 'verification', 'viewquery', 'viewremote',
 );
 
-if (empty($settings['pm_enabled']))
-	unset($action_list['pm']);
-
 if (!empty($context['extra_actions']))
 	$action_list = array_merge($action_list, $context['extra_actions']);
 if (!empty($context['nolog_actions']))
 	$action_no_log = array_merge($action_no_log, $context['nolog_actions']);
-
-// Load the settings from the settings table, and perform operations like optimizing.
-loadSettings();
 
 // Seed the random generator.
 if (empty($settings['rand_seed']) || mt_rand(1, 250) == 42)
@@ -276,7 +190,10 @@ function loadSource($source_name)
 				copy($sourcedir . '/' . $file . '.php', $cache);
 				// !! Disabling this temporarily (until I add a setting for it), to get proper line numbers when debugging.
 				if (false && empty($db_show_debug))
+				{
+					require_once($sourcedir . '/Subs-MinifyPHP.php');
 					minify_php($cache);
+				}
 			}
 		}
 		require_once($cache);
@@ -438,112 +355,4 @@ function index_action($hook_action = 'default_action')
 
 	loadSource('Boards');
 	return 'Boards';
-}
-
-// Cache a minified PHP file.
-function minify_php($file)
-{
-	global $save_strings;
-
-	$php = preg_replace('~\s+~', ' ', clean_me_up($file));
-	$php = preg_replace('~(?<=[^a-zA-Z0-9_.])\s+|\s+(?=[^$a-zA-Z0-9_.])~', '', $php);
-	$php = preg_replace('~(?<=[^0-9.])\s+\.|\.\s+(?=[^0-9.])~', '.', $php); // 2 . 1 != 2.1
-	$php = str_replace(',)', ')', $php);
-	$pos = 0;
-
-	foreach ($save_strings as $str)
-		if (($pos = strpos($php, "\x0f", $pos)) !== false)
-			$php = substr_replace($php, $str, $pos, 1);
-
-	file_put_contents($file, $php);
-}
-
-// Remove comments and protect strings.
-function clean_me_up($file, $remove_comments = false)
-{
-	global $save_strings, $is_output_buffer;
-
-	// Set this to true if calling loadSource within an output buffer handler.
-	if (empty($is_output_buffer))
-	{
-		$php = php_strip_whitespace($file);
-		$search_for = array("'", '"');
-	}
-	else
-	{
-		$php = file_get_contents($file);
-		$search_for = array('/*', '//', "'", '"');
-	}
-
-	$save_strings = array();
-	$pos = 0;
-
-	while (true)
-	{
-		$pos = find_next($php, $pos, $search_for);
-		if ($pos === false)
-			return $php;
-
-		$look_for = $php[$pos];
-		if ($look_for === '/')
-		{
-			if ($php[$pos + 1] === '/') // Remove //
-				$look_for = array("\r", "\n", "\r\n");
-			else // Remove /* ... */
-				$look_for = '*/';
-		}
-		else
-		{
-			$next = find_next($php, $pos + 1, $look_for);
-			if ($next === false) // Shouldn't be happening.
-				return $php;
-			if ($php[$next] === "\r" && $php[$next + 1] === "\n")
-				$next++;
-			$save_strings[] = substr($php, $pos, $next + 1 - $pos);
-			$php = substr_replace($php, "\x0f", $pos, $next + 1 - $pos);
-			continue;
-		}
-
-		$end = find_next($php, $pos + 1, $look_for);
-		if ($end === false)
-			return $php;
-		if (!is_array($look_for))
-			$end += strlen($look_for);
-		$temp = substr($php, $pos, $end - $pos);
-
-		$breaks = substr_count($temp, "\n") + substr_count($temp, "\r") - substr_count($temp, "\r\n");
-		$php = substr_replace($php, str_pad(str_repeat("\n", $breaks), $end - $pos), $pos, $end - $pos);
-		$pos = $end + 1;
-	}
-}
-
-function find_next(&$php, $pos, $search_for)
-{
-	if (is_array($search_for))
-	{
-		$positions = array();
-		foreach ((array) $search_for as $item)
-		{
-			$position = strpos($php, $item, $pos);
-			if ($position !== false)
-				$positions[] = $position;
-		}
-		if (empty($positions))
-			return false;
-		$next = min($positions);
-	}
-	else
-	{
-		$next = strpos($php, $search_for, $pos);
-		if ($next === false)
-			return false;
-	}
-
-	$check_before = $next;
-	$escaped = false;
-	while (--$check_before >= 0 && $php[$check_before] == '\\')
-		$escaped = !$escaped;
-	if ($escaped)
-		return find_next($php, ++$next, $search_for);
-	return $next;
 }
