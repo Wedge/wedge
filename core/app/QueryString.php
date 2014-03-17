@@ -212,9 +212,9 @@ function cleanRequest()
 	}
 
 	// Compatibility with older URLs. Replace 'index.php/a,b,c/d/e,f' with 'a=b,c&d=&e=f' and parse it into $_GET.
-	if (!empty($_SERVER['REQUEST_URI']) && strpos($_SERVER['REQUEST_URI'], basename($scripturl) . '/') !== false)
+	if (!empty($_SERVER['REQUEST_URI']) && strpos($_SERVER['REQUEST_URI'], basename(SCRIPT) . '/') !== false)
 	{
-		parse_str(substr(preg_replace('~&(\w+)(?=&|$)~', '&$1=', strtr(preg_replace('~/([^,/]+),~', '/$1=', substr($_SERVER['REQUEST_URI'], strpos($_SERVER['REQUEST_URI'], basename($scripturl)) + strlen(basename($scripturl)))), '/', '&')), 1), $temp);
+		parse_str(substr(preg_replace('~&(\w+)(?=&|$)~', '&$1=', strtr(preg_replace('~/([^,/]+),~', '/$1=', substr($_SERVER['REQUEST_URI'], strpos($_SERVER['REQUEST_URI'], basename(SCRIPT)) + strlen(basename(SCRIPT)))), '/', '&')), 1), $temp);
 		if (function_exists('get_magic_quotes_gpc') && @get_magic_quotes_gpc() != 0 && empty($settings['integrate_magic_quotes']))
 			$temp = $removeMagicQuoteFunction($temp);
 		$_GET += $temp;
@@ -587,7 +587,7 @@ function cleanRequest()
 
 	// Make sure we know the URL of the current request.
 	if (empty($_SERVER['REQUEST_URI']))
-		$_SERVER['REQUEST_URL'] = $scripturl . (!empty($_SERVER['QUERY_STRING']) ? '?' . $_SERVER['QUERY_STRING'] : '');
+		$_SERVER['REQUEST_URL'] = SCRIPT . (!empty($_SERVER['QUERY_STRING']) ? '?' . $_SERVER['QUERY_STRING'] : '');
 	else
 		$_SERVER['REQUEST_URL'] = $context['protocol'] . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 
