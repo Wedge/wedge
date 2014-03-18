@@ -128,8 +128,8 @@ header(\'Location: ../\');');
 	// We need to be able to access images and various other files from plugins/, but not the archives of plugins themselves.
 	if ($folder == 'plugins')
 		$file = '
-<FilesMatch "\.(zip|gz|bz2|tar)$">
-	Order deny,allow
+<FilesMatch "\.(zip|gz|bz2|tar|xml)$">
+	Order Deny,Allow
 	Deny from all
 </FilesMatch>';
 
