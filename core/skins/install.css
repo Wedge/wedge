@@ -1,6 +1,10 @@
 
-#header > .frame
-	margin-left: 140px
+#header
+	padding-left: 1em
+
+#banner > .frame
+	display: block
+	text-align: right
 
 h2
 	font-weight: 400
