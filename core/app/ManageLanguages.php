@@ -57,6 +57,11 @@ function ModifyLanguages()
 		foreach (glob($cachedir . '/lang_*.php') as $filename)
 			@unlink($filename);
 		$context['cache_cleared'] = true;
+
+		// The rest also needs to be cleaned up. For instance,
+		// most JS files hold hard-coded copies of text strings.
+		clean_cache('css');
+		clean_cache('js');
 	}
 
 	// Whatever we're doing, we want this and we want it uncached.
@@ -92,8 +97,9 @@ function ModifyLanguages()
 		{
 			updateSettings($new_settings);
 			$settings = array_merge($settings, $new_settings);
-			// And just because we cache things in the CSS...
+			// And just because we cache things in the CSS and JS...
 			clean_cache('css');
+			clean_cache('js');
 		}
 	}
 
