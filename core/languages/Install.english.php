@@ -19,7 +19,7 @@ $txt['congratulations'] = 'Congratulations, the installation process is complete
 $txt['congratulations_help'] = 'If at any time you need support, or Wedge fails to work properly, please remember that <a href="http://wedge.org/" target="_blank">help is available</a> if you need it.';
 $txt['still_writable'] = 'Your installation directory is still writable. It\'s a good idea to chmod it so that it is not writable for security reasons.';
 $txt['delete_installer'] = 'Click here to delete this install.php file now.';
-$txt['delete_installer_maybe'] = '<em>(doesn\'t work on all servers.)</em>';
+$txt['delete_installer_maybe'] = '<em>(Doesn\'t work on all servers!)</em>';
 $txt['go_to_your_forum'] = 'Now you can see <a href="%1$s">your newly installed forum</a> and begin to use it. You should first make sure you are logged in, after which you will be able to access the administration center.';
 $txt['good_luck'] = 'Good luck!<br>The Wedge Team.';
 

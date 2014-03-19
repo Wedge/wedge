@@ -25,7 +25,7 @@ if (!defined('WEDGE'))
  */
 function loadSettings()
 {
-	global $settings, $context, $pluginsdir, $pluginsurl, $action_list;
+	global $settings, $context, $pluginsdir, $pluginsurl, $action_list, $action_no_log;
 
 	// This is where it all began.
 	$context = array(
@@ -154,13 +154,14 @@ function loadSettings()
 	if (empty($settings['pm_enabled']))
 		unset($action_list['pm']);
 
+	// If an action should not influence the who's online list, please add it to the $action_no_log global from your own action.
+	$action_no_log = array('ajax', 'dlattach', 'feed', 'like', 'notification', 'verification', 'viewquery', 'viewremote');
+
 	// Set up path constants.
 	loadPaths();
 
 	// Deal with loading plugins.
 	$context['enabled_plugins'] = array();
-	$context['extra_actions'] = array();
-	$context['nolog_actions'] = array();
 	if (!empty($settings['enabled_plugins']))
 	{
 		// Step through the list we think we have enabled.
@@ -181,9 +182,9 @@ function loadSettings()
 						if (strpos($action['function'], '::') !== false)
 							$action['function'] = explode('::', $action['function']);
 
-						$context['extra_actions'][$action['action']] = array($action['filename'], $action['function'], $plugin_details['id']);
+						$action_list[$action['action']] = array($action['filename'], $action['function'], $plugin_details['id']);
 						if (!empty($action['nolog']))
-							$context['nolog_actions'][] = $action['action'];
+							$action_no_log[] = $action['action'];
 					}
 
 				unset($plugin_details['id'], $plugin_details['provides'], $plugin_details['actions']);

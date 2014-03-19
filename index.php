@@ -84,16 +84,6 @@ if (empty($we_shot) || $we_shot < WEDGE)
 // Load the actions and database settings, and perform operations like optimizing.
 loadSettings();
 
-// If an action should not influence the who's online list, please add it here. (Hookable as global.)
-$action_no_log = array(
-	'ajax', 'dlattach', 'feed', 'like', 'notification', 'verification', 'viewquery', 'viewremote',
-);
-
-if (!empty($context['extra_actions']))
-	$action_list = array_merge($action_list, $context['extra_actions']);
-if (!empty($context['nolog_actions']))
-	$action_no_log = array_merge($action_no_log, $context['nolog_actions']);
-
 // Seed the random generator.
 if (empty($settings['rand_seed']) || mt_rand(1, 250) == 42)
 	we_seed_generator();
