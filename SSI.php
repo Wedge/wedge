@@ -69,10 +69,6 @@ loadSource(array(
 loadDatabase();
 loadSettings();
 
-// Seed the random generator?
-if (empty($settings['rand_seed']) || mt_rand(1, 250) == 42)
-	we_seed_generator();
-
 // Avoid any hacking attempts. Shouldn't work anyway though, due to register_globals being off.
 unset($_REQUEST['GLOBALS'], $_COOKIE['GLOBALS'], $_REQUEST['ssi_skin'], $_COOKIE['ssi_skin'], $_REQUEST['context']);
 
@@ -80,7 +76,7 @@ unset($_REQUEST['GLOBALS'], $_COOKIE['GLOBALS'], $_REQUEST['ssi_skin'], $_COOKIE
 if (isset($ssi_gzip) && $ssi_gzip === true && (int) ini_get('zlib.output_compression') < 1 && ini_get('output_handler') != 'ob_gzhandler')
 	ob_start('ob_gzhandler');
 else
-	$settings['enableCompressedOutput'] = '0';
+	$settings['enableCompressedOutput'] = 0;
 
 ob_start('ob_sessrewrite');
 

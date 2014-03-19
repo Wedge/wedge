@@ -2325,16 +2325,6 @@ function setupMenuContext()
 }
 
 /**
- * Generates a random seed to be used application-wide.
- *
- * This function updates $settings['rand_sand'] which is used in generating tokens for major Wedge actions. It is updated if not found or on a 1/250 chance of regeneration per page load (both regular index.php and SSI.php use)
- */
-function we_seed_generator()
-{
-	updateSettings(array('rand_seed' => mt_rand()));
-}
-
-/**
  * Calls a given hook at the related point in the code.
  *
  * Each of the hooks is an array of functions within $settings['hooks'], to be called at relevant points in the code, such as $settings['hooks']['login'] which is run during login (to facilitate login into an integrated application.)

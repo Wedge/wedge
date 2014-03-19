@@ -81,10 +81,6 @@ if (empty($we_shot) || $we_shot < WEDGE)
 // Load the actions and database settings, and perform operations like optimizing.
 loadSettings();
 
-// Seed the random generator.
-if (empty($settings['rand_seed']) || mt_rand(1, 250) == 42)
-	we_seed_generator();
-
 // Before we get carried away, are we doing a scheduled task? If so save CPU cycles by jumping out!
 if (isset($_GET['scheduled']))
 {

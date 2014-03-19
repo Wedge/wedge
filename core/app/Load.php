@@ -213,14 +213,16 @@ function loadSettings()
 		}
 	}
 
+	// UTF8-aware string functions.
 	loadSource('Class-String');
 	westr::getInstance();
 
-	// Setting the timezone is a requirement.
-	if (isset($settings['default_timezone']))
-		date_default_timezone_set($settings['default_timezone']);
-	else
-		date_default_timezone_set(@date_default_timezone_get()); // At least attempt to use what the host has to try to prevent lots and lots of errors spewing everywhere.
+	// Change the random generator seed, from time to time.
+	if (empty($settings['rand_seed']) || mt_rand(1, 250) == 42)
+		updateSettings(array('rand_seed' => mt_rand()));
+
+	// Setting the timezone is a requirement. At least use what the host has, to prevent errors.
+	date_default_timezone_set(isset($settings['default_timezone']) ? $settings['default_timezone'] : @date_default_timezone_get());
 
 	// Check the load averages?
 	if (!empty($settings['loadavg_enable']))
