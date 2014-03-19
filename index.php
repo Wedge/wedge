@@ -24,9 +24,6 @@ $time_start = microtime(true);
 // Makes sure that headers can be sent!
 ob_start();
 
-// Do some cleaning, just in case.
-unset($GLOBALS['cachedir']);
-
 // Is it our first run..?
 $here = dirname(__FILE__);
 if (!file_exists($here . '/Settings.php'))
