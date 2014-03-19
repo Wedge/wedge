@@ -82,28 +82,6 @@ if (empty($we_shot) || $we_shot < WEDGE)
 // like optimizing or running scheduled tasks.
 loadSettings();
 
-
-if (!headers_sent())
-{
-	// Check if compressed output is enabled, supported, and not already being done.
-	if (!empty($settings['enableCompressedOutput']))
-	{
-		// If zlib is being used, turn off output compression.
-		if (ini_get('zlib.output_compression') >= 1 || ini_get('output_handler') == 'ob_gzhandler')
-			$settings['enableCompressedOutput'] = '0';
-		else
-		{
-			ob_end_clean();
-			ob_start('ob_gzhandler');
-		}
-	}
-
-	// Basic protection against XSS.
-	header('X-XSS-Protection: 1');
-	header('X-Frame-Options: SAMEORIGIN');
-	header('X-Content-Type-Options: nosniff');
-}
-
 // Register an error handler.
 set_error_handler('error_handler');
 

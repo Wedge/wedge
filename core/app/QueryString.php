@@ -19,20 +19,6 @@ function loadPaths()
 	global $boardurl, $boarddir, $settings, $context;
 	global $sourcedir, $pluginsdir, $cachedir, $cssdir, $jsdir;
 
-	// While we're here cleaning the request, try and clean the headers that we'll send back.
-	header('X-Powered-By: ');
-	header('Server: ');
-	// Additionally, when not in SSI, make sure we don't get included in a frame that we're not in control of.
-	if (WEDGE != 'SSI')
-		header('X-Frame-Options: SAMEORIGIN');
-
-	define('INVALID_IP', '00000000000000000000000000000000');
-
-	// Is this a page requested through jQuery? If yes, set the AJAX constant so we can choose to show only the template's default block.
-	$ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
-	define('INFINITE', $ajax && !empty($_POST['infinite']));
-	define('AJAX', $ajax && !INFINITE);
-
 	// $scripturl is your board URL if you asked to remove index.php or the user visits for the first time
 	// (in which case they'll get the annoying PHPSESSID stuff in their URL and we need index.php in them.)
 	$scripturl = $boardurl . (!empty($settings['pretty_remove_index']) && isset($_COOKIE[session_name()]) ? '/' : '/index.php');
@@ -132,17 +118,14 @@ function cleanRequest()
 {
 	global $board, $topic, $boardurl, $boarddir, $settings, $context, $action_list;
 
-	// What function to use to reverse magic quotes - if sybase is on we assume that the database sensibly has the right unescape function!
-	$removeMagicQuoteFunction = ini_get('magic_quotes_sybase') || strtolower(ini_get('magic_quotes_sybase')) == 'on' ? 'unescapestring__recursive' : 'stripslashes__recursive';
-
-	// Save some memory.. (since we don't use these anyway.)
+	// These were deprecated years ago. Save some memory.
 	unset($GLOBALS['HTTP_POST_VARS'], $GLOBALS['HTTP_POST_FILES']);
 
 	// These keys shouldn't be set... Ever.
 	if (isset($_REQUEST['GLOBALS']) || isset($_COOKIE['GLOBALS']))
 		exit('Invalid request variable.');
 
-	// Same goes for numeric keys.
+	// !! The numeric key exploit was fixed in PHP 5.1, so it needn't be addressed.
 	foreach (array_merge(array_keys($_POST), array_keys($_GET), array_keys($_FILES)) as $key)
 		if (is_numeric($key))
 			exit('Numeric request keys are invalid.');
@@ -162,6 +145,11 @@ function cleanRequest()
 		header('HTTP/1.1 400 Bad Request');
 		exit;
 	}
+
+	define('INVALID_IP', '00000000000000000000000000000000');
+
+	// Determine what function will be used to reverse magic quotes.
+	$removeMagicQuoteFunction = ini_get('magic_quotes_sybase') || strtolower(ini_get('magic_quotes_sybase')) == 'on' ? 'unescapestring__recursive' : 'stripslashes__recursive';
 
 	$supports_semicolon = strpos(ini_get('arg_separator.input'), ';') !== false;
 
@@ -969,4 +957,3 @@ function get_ip_identifier($ip)
 	);
 	return wesql::insert_id();
 }
-

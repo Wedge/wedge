@@ -35,6 +35,11 @@ function loadSettings()
 		'app_error_count' => 0,
 	);
 
+	// Is this a page requested through jQuery? If yes, set the AJAX constant so we can choose to show only the template's default block.
+	$ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
+	define('INFINITE', $ajax && !empty($_POST['infinite']));
+	define('AJAX', $ajax && !INFINITE);
+
 	// Try to load settings from the cache first; they'll never get cached if the setting is off.
 	if (($settings = cache_get_data('settings', 'forever')) === null)
 	{
@@ -270,6 +275,30 @@ function loadSettings()
 	{
 		loadSource('Subs-Scheduled');
 		ImperativeTask();
+	}
+
+	if (!headers_sent())
+	{
+		// Check if compressed output is enabled, supported, and not already being done.
+		if (!empty($settings['enableCompressedOutput']))
+		{
+			// If zlib is being used, turn off output compression.
+			if (ini_get('zlib.output_compression') >= 1 || ini_get('output_handler') == 'ob_gzhandler')
+				$settings['enableCompressedOutput'] = 0;
+			else
+			{
+				ob_end_clean();
+				ob_start('ob_gzhandler');
+			}
+		}
+
+		// While we're here, clean some outgoing headers, and
+		// protect against XSS and inclusion in external frames.
+		header('Server: ');
+		header('X-Powered-By: ');
+		header('X-XSS-Protection: 1');
+		header('X-Frame-Options: SAMEORIGIN');
+		header('X-Content-Type-Options: nosniff');
 	}
 }
 
