@@ -88,11 +88,73 @@ set_error_handler('error_handler');
 // Start the session, if it hasn't already been.
 loadSession();
 
-// What function shall we execute? (Done this way for memory's sake.)
-$function = wedge_main();
+$action = isset($_GET['action']) ? $_GET['action'] : '';
+
+// Special case: session keep-alive, do nothing.
+if ($action === 'keepalive')
+	exit;
+
+// Allow modifying $action_list/$action_no_log globals easily.
+call_hook('action_list');
+
+$context['action'] = $action = isset($action_list[$action]) ? $action : (isset($settings['default_action'], $action_list[$settings['default_action']]) ? $settings['default_action'] : '');
+$context['subaction'] = isset($_GET['sa']) ? $_GET['sa'] : null;
+
+// Load the user's cookie (or set as guest) and load their settings.
+we::getInstance();
+
+// Get rid of ?PHPSESSID for robots.
+if (we::$user['possibly_robot'] && strpos(we::$user['url'], 'PHPSESSID=') !== false)
+{
+	$correcturl = preg_replace('~([?&]PHPSESSID=[^&]*)~', '', we::$user['url']);
+	$correcturl = str_replace(array('index.php&', 'index.php??'), 'index.php?', $correcturl);
+	$correcturl = str_replace(array('/&?', '/??', '/&'), '/?', $correcturl);
+	$correcturl = preg_replace('~&$|\?$~', '', $correcturl);
+
+	if ($correcturl != we::$user['url'])
+	{
+		header('HTTP/1.1 301 Moved Permanently');
+		header('Location: ' . $correcturl);
+		exit;
+	}
+}
+
+// Check the request for anything hinky.
+checkUserBehavior();
+
+// Allow plugins to check for the request as well, and manipulate $action.
+call_hook('behavior', array(&$action));
+
+// Last chance to get the board ID if we have a default one. Use the 'behavior' hook to force it.
+if (empty($action) && empty($board) && empty($topic))
+{
+	if (isset($_GET['category']) && is_numeric($_GET['category']))
+		$action = 'boards';
+	elseif (isset($settings['default_index']) && strpos($settings['default_index'], 'board') === 0)
+		$board = (int) substr($settings['default_index'], 5);
+}
+
+// Load the current board's information.
+loadBoard();
+
+// Load the current user's permissions.
+loadPermissions();
+
+// Load the current theme. Note that ?theme=1 will also work, may be used for guest theming.
+// Attachments don't require the entire theme to be loaded.
+if ($action !== 'dlattach' || empty($settings['allow_guestAccess']) || we::$is_member)
+	loadTheme();
+
+// Check if the user should be disallowed access.
+is_not_banned();
+
+// If we are in a topic and don't have permission to approve it then duck out now.
+if (!empty($topic) && $action !== 'feed' && empty($board_info['cur_topic_approved']) && !allowedTo('approve_posts'))
+	if (MID != $board_info['cur_topic_starter'] || we::$is_guest)
+		fatal_lang_error('not_a_topic', false);
 
 // Do some logging, unless this is an attachment, avatar, toggle of editor buttons, theme option, XML feed etc.
-if (empty($_REQUEST['action']) || !in_array($_REQUEST['action'], $action_no_log))
+if (!$action || !in_array($action, $action_no_log))
 {
 	// Log this user as online.
 	writeLog();
@@ -102,8 +164,8 @@ if (empty($_REQUEST['action']) || !in_array($_REQUEST['action'], $action_no_log)
 		trackStats(array('hits' => '+'));
 }
 
-// After all this time... After everything we saw, after everything we lost... I have only one thing to say to you... Bye!
-call_user_func($function);
+// What function shall we execute? (Done this way for memory's sake.)
+call_user_func(determine_action($action));
 
 wetem::add('sidebar', 'sidebar_quick_access');
 
@@ -111,6 +173,7 @@ wetem::add('sidebar', 'sidebar_quick_access');
 if (!empty($settings['xmlnews_enable']) && !empty($settings['xmlnews_sidebar']) && (!empty($settings['allow_guestAccess']) || we::$is_member) && function_exists('template_sidebar_feed'))
 	wetem::add('sidebar', 'sidebar_feed');
 
+// I have only one thing to say to you... Bye!
 obExit(null, null, true);
 
 // Since we're not leaving obExit the special route, we need to make sure we update the error count.
@@ -151,75 +214,9 @@ function loadSource($source_name)
 	}
 }
 
-// The main controlling function.
-function wedge_main()
+function determine_action($action)
 {
-	global $context, $settings, $board, $topic, $board_info, $maintenance, $action_list;
-
-	$action = isset($_GET['action']) ? $_GET['action'] : '';
-
-	// Special case: session keep-alive, do nothing.
-	if ($action === 'keepalive')
-		exit;
-
-	// Allow modifying $action_list easily. (It's a global by now.)
-	call_hook('action_list');
-
-	$context['action'] = $action = isset($action_list[$action]) ? $action : (isset($settings['default_action'], $action_list[$settings['default_action']]) ? $settings['default_action'] : '');
-	$context['subaction'] = isset($_GET['sa']) ? $_GET['sa'] : null;
-
-	// Load the user's cookie (or set as guest) and load their settings.
-	we::getInstance();
-
-	// Get rid of ?PHPSESSID for robots.
-	if (we::$user['possibly_robot'] && strpos(we::$user['url'], 'PHPSESSID=') !== false)
-	{
-		$correcturl = preg_replace('~([?&]PHPSESSID=[^&]*)~', '', we::$user['url']);
-		$correcturl = str_replace(array('index.php&', 'index.php??'), 'index.php?', $correcturl);
-		$correcturl = str_replace(array('/&?', '/??', '/&'), '/?', $correcturl);
-		$correcturl = preg_replace('~&$|\?$~', '', $correcturl);
-
-		if ($correcturl != we::$user['url'])
-		{
-			header('HTTP/1.1 301 Moved Permanently');
-			header('Location: ' . $correcturl);
-			exit;
-		}
-	}
-
-	// Check the request for anything hinky.
-	checkUserBehavior();
-
-	// Allow plugins to check for the request as well, and manipulate $action.
-	call_hook('behavior', array(&$action));
-
-	// Last chance to get the board ID if we have a default one. Use the 'behavior' hook to force it.
-	if (empty($action) && empty($board) && empty($topic))
-	{
-		if (isset($_GET['category']) && is_numeric($_GET['category']))
-			$action = 'boards';
-		elseif (isset($settings['default_index']) && strpos($settings['default_index'], 'board') === 0)
-			$board = (int) substr($settings['default_index'], 5);
-	}
-
-	// Load the current board's information.
-	loadBoard();
-
-	// Load the current user's permissions.
-	loadPermissions();
-
-	// Load the current theme. Note that ?theme=1 will also work, may be used for guest theming.
-	// Attachments don't require the entire theme to be loaded.
-	if ($action !== 'dlattach' || empty($settings['allow_guestAccess']) || we::$is_member)
-		loadTheme();
-
-	// Check if the user should be disallowed access.
-	is_not_banned();
-
-	// If we are in a topic and don't have permission to approve it then duck out now.
-	if (!empty($topic) && $action !== 'feed' && empty($board_info['cur_topic_approved']) && !allowedTo('approve_posts'))
-		if (MID != $board_info['cur_topic_starter'] || we::$is_guest)
-			fatal_lang_error('not_a_topic', false);
+	global $settings, $board, $topic, $maintenance, $action_list;
 
 	// Is the forum in maintenance mode? (doesn't apply to administrators.)
 	if (!empty($maintenance) && !allowedTo('admin_forum'))
@@ -227,8 +224,7 @@ function wedge_main()
 		// You can only login.... otherwise, you're getting the "maintenance mode" display.
 		if ($action === 'login2' || $action === 'logout')
 		{
-			$action = ucfirst($action);
-			loadSource($action);
+			loadSource($action = ucfirst($action));
 			return $action;
 		}
 		// Welcome. You are unauthorized. Your death will now be implemented.
