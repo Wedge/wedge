@@ -21,7 +21,7 @@ global $boardurl, $boarddir, $sourcedir, $webmaster_email, $cookiename;
 global $db_server, $db_connection, $db_name, $db_user, $db_prefix, $db_persist;
 global $db_error_send, $db_last_error, $ssi_db_user, $ssi_db_passwd, $db_passwd;
 
-if (function_exists('set_magic_quotes_runtime') && version_compare('5.4.0', PHP_VERSION) > 0)
+if (function_exists('set_magic_quotes_runtime') && version_compare(PHP_VERSION, '5.4') < 0)
 {
 	// Remember the current configuration so it can be set back.
 	$ssi_magic_quotes_runtime = function_exists('get_magic_quotes_runtime') && @get_magic_quotes_runtime();
@@ -29,9 +29,6 @@ if (function_exists('set_magic_quotes_runtime') && version_compare('5.4.0', PHP_
 }
 
 $time_start = microtime(true);
-
-// Just being safe...
-unset($GLOBALS['cachedir']);
 
 // Get the forum's settings for database and file paths.
 require_once(dirname(__FILE__) . '/Settings.php');
@@ -70,7 +67,7 @@ loadDatabase();
 loadSettings();
 
 // Avoid any hacking attempts. Shouldn't work anyway though, due to register_globals being off.
-unset($_REQUEST['GLOBALS'], $_COOKIE['GLOBALS'], $_REQUEST['ssi_skin'], $_COOKIE['ssi_skin'], $_REQUEST['context']);
+unset($board, $topic, $_REQUEST['GLOBALS'], $_COOKIE['GLOBALS'], $_REQUEST['ssi_skin'], $_COOKIE['ssi_skin'], $_REQUEST['context']);
 
 // Gzip output? Because it must be boolean and true, this can't be hacked.
 if (isset($ssi_gzip) && $ssi_gzip === true && (int) ini_get('zlib.output_compression') < 1 && ini_get('output_handler') != 'ob_gzhandler')
@@ -103,8 +100,6 @@ else
 
 header('Content-Type: text/html; charset=UTF-8');
 
-// Get rid of $board and $topic... do stuff loadBoard would do.
-unset($board, $topic);
 $context['linktree'] = array();
 
 // Load the user and their cookie, as well as their settings.
@@ -162,7 +157,7 @@ elseif (basename($_SERVER['PHP_SELF']) == 'SSI.php')
 }
 
 error_reporting($ssi_error_reporting);
-if (function_exists('set_magic_quotes_runtime') && isset($ssi_magic_quotes_runtime))
+if (isset($ssi_magic_quotes_runtime))
 	@set_magic_quotes_runtime($ssi_magic_quotes_runtime);
 
 return true;
