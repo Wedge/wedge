@@ -78,20 +78,10 @@ if (empty($we_shot) || $we_shot < WEDGE)
 	upgrade_db();
 }
 
-// Load the actions and database settings, and perform operations like optimizing.
+// Load the actions and database settings, and perform operations
+// like optimizing or running scheduled tasks.
 loadSettings();
 
-// Before we get carried away, are we doing a scheduled task? If so save CPU cycles by jumping out!
-if (isset($_GET['scheduled']))
-{
-	loadSource('ScheduledTasks');
-	AutoTask();
-}
-elseif (isset($_GET['imperative']))
-{
-	loadSource('Subs-Scheduled');
-	ImperativeTask();
-}
 
 if (!headers_sent())
 {

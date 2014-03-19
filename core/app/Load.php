@@ -254,8 +254,23 @@ function loadSettings()
 	// Call pre-load hook functions.
 	call_hook('pre_load');
 
-	// Sanitize and harmonize URL variables.
+	// Sanitize and normalize URL variables.
 	cleanRequest();
+
+	if (WEDGE == 'SSI')
+		return;
+
+	// Before we get carried away, are we doing a scheduled task? If so save CPU cycles by jumping out!
+	if (isset($_GET['scheduled']))
+	{
+		loadSource('ScheduledTasks');
+		AutoTask();
+	}
+	elseif (isset($_GET['imperative']))
+	{
+		loadSource('Subs-Scheduled');
+		ImperativeTask();
+	}
 }
 
 function can_shell_exec()
