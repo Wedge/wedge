@@ -49,7 +49,7 @@ function PluginsHome()
 
 function ListPlugins()
 {
-	global $txt, $context, $pluginsdir, $maintenance;
+	global $txt, $context, $maintenance;
 
 	wetem::load('browse');
 	$context['page_title'] = $txt['plugin_manager'];
@@ -61,143 +61,141 @@ function ListPlugins()
 
 	// 1. Step through the directory, figure out what's there and what's not, and store everything that's valid in $context['available_plugins'].
 	// Since we explicitly want folders at this point, we don't want to use scandir.
-	if (!empty($pluginsdir))
+
+	// !! libxml_use_internal_errors(true); ??
+	if ($handle = opendir($plug_dir = ROOT_DIR . '/plugins/'))
 	{
-		// !! libxml_use_internal_errors(true); ??
-		if ($handle = opendir($pluginsdir))
+		while (($folder = readdir($handle)) !== false)
 		{
-			while (($folder = readdir($handle)) !== false)
+			if ($folder[0] == '.' || strpos($folder, ',') !== false)
+				continue;
+
+			if (filetype($plug_dir . $folder) == 'dir' && file_exists($plug_dir . $folder . '/plugin-info.xml'))
 			{
-				if ($folder[0] == '.' || strpos($folder, ',') !== false)
+				$manifest = safe_sxml_load($plug_dir . $folder . '/plugin-info.xml');
+				if ($manifest === false || empty($manifest['id']) || empty($manifest->name) || empty($manifest->author) || empty($manifest->version))
 					continue;
 
-				if (filetype($pluginsdir . '/' . $folder) == 'dir' && file_exists($pluginsdir . '/' . $folder . '/plugin-info.xml'))
+				$plugin = array(
+					'folder' => $folder,
+					'id' => (string) $manifest['id'],
+					'name' => westr::htmlspecialchars((string) $manifest->name),
+					'author' => westr::htmlspecialchars($manifest->author),
+					'author_url' => (string) $manifest->author['url'],
+					'author_email' => (string) $manifest->author['email'],
+					'website' => (string) $manifest->website,
+					'version' => westr::htmlspecialchars($manifest->version),
+					'description' => westr::htmlspecialchars($manifest->description),
+					'hooks' => array(),
+					'provide_hooks' => array(),
+					'optional_hooks' => array(
+						'function' => array(),
+						'language' => array(),
+					),
+					'readmes' => array(),
+					'acp_url' => '',
+					'install_errors' => array(),
+					'enabled' => false,
+					'maint' => array(),
+				);
+
+				// Use the supplied link if, well, given, but failing that check to see if they used an auto admin page.
+				if (!empty($manifest->{'acp-url'}))
+					$plugin['acp_url'] = (string) $manifest->{'acp-url'};
+				elseif (!empty($manifest->{'settings-page'}['area']))
+					$plugin['acp_url'] = 'action=admin;area=' . (string) $manifest->{'settings-page'}['area'];
+
+				// Do some sanity checking, to validate that any given URL or email are at least vaguely legal.
+				if (empty($plugin['author_url']) || (strpos($plugin['author_url'], 'http://') !== 0 && strpos($plugin['author_url'], 'https://') !== 0))
+					$plugin['author_url'] = '';
+				if (empty($plugin['website']) || (strpos($plugin['website'], 'http://') !== 0 && strpos($plugin['website'], 'https://') !== 0))
+					$plugin['website'] = '';
+				if (empty($plugin['author_email']) || !is_valid_email($plugin['author_email']))
+					$plugin['author_email'] = '';
+
+				// Test minimum versions of things.
+				if (!empty($manifest->{'min-versions'}))
 				{
-					$manifest = safe_sxml_load($pluginsdir . '/' . $folder . '/plugin-info.xml');
-					if ($manifest === false || empty($manifest['id']) || empty($manifest->name) || empty($manifest->author) || empty($manifest->version))
-						continue;
-
-					$plugin = array(
-						'folder' => $folder,
-						'id' => (string) $manifest['id'],
-						'name' => westr::htmlspecialchars((string) $manifest->name),
-						'author' => westr::htmlspecialchars($manifest->author),
-						'author_url' => (string) $manifest->author['url'],
-						'author_email' => (string) $manifest->author['email'],
-						'website' => (string) $manifest->website,
-						'version' => westr::htmlspecialchars($manifest->version),
-						'description' => westr::htmlspecialchars($manifest->description),
-						'hooks' => array(),
-						'provide_hooks' => array(),
-						'optional_hooks' => array(
-							'function' => array(),
-							'language' => array(),
-						),
-						'readmes' => array(),
-						'acp_url' => '',
-						'install_errors' => array(),
-						'enabled' => false,
-						'maint' => array(),
-					);
-
-					// Use the supplied link if, well, given, but failing that check to see if they used an auto admin page.
-					if (!empty($manifest->{'acp-url'}))
-						$plugin['acp_url'] = (string) $manifest->{'acp-url'};
-					elseif (!empty($manifest->{'settings-page'}['area']))
-						$plugin['acp_url'] = 'action=admin;area=' . (string) $manifest->{'settings-page'}['area'];
-
-					// Do some sanity checking, to validate that any given URL or email are at least vaguely legal.
-					if (empty($plugin['author_url']) || (strpos($plugin['author_url'], 'http://') !== 0 && strpos($plugin['author_url'], 'https://') !== 0))
-						$plugin['author_url'] = '';
-					if (empty($plugin['website']) || (strpos($plugin['website'], 'http://') !== 0 && strpos($plugin['website'], 'https://') !== 0))
-						$plugin['website'] = '';
-					if (empty($plugin['author_email']) || !is_valid_email($plugin['author_email']))
-						$plugin['author_email'] = '';
-
-					// Test minimum versions of things.
-					if (!empty($manifest->{'min-versions'}))
-					{
-						$min_versions = testRequiredVersions($manifest->{'min-versions'});
-						foreach (array('php', 'mysql') as $test)
-							if (isset($min_versions[$test]))
-								$plugin['install_errors']['min' . $test] = sprintf($txt['install_error_min' . $test], $min_versions[$test][0], $min_versions[$test][1]);
-					}
-
-					// Required functions?
-					if (!empty($manifest->{'required-functions'}))
-					{
-						$required_functions = testRequiredFunctions($manifest->{'required-functions'});
-						if (!empty($required_functions))
-							$plugin['install_errors']['reqfunc'] = sprintf($txt['install_error_reqfunc'], implode(', ', $required_functions));
-					}
-
-					// Hooks associated with this plugin.
-					if (!empty($manifest->hooks))
-					{
-						$hooks_listed = $manifest->hooks->children();
-						foreach ($hooks_listed as $each_hook)
-						{
-							switch ($each_hook->getName())
-							{
-								case 'function':
-									if (!empty($each_hook['point']))
-										$plugin['hooks']['function'][] = $each_hook['point'];
-									if (!empty($each_hook['optional']) && $each_hook['optional'] == 'yes')
-										$plugin['optional_hooks']['function'][] = $each_hook['point'];
-									break;
-								case 'language':
-									if (!empty($each_hook['point']))
-										$plugin['hooks']['language'][] = $each_hook['point'];
-									if (!empty($each_hook['optional']) && $each_hook['optional'] == 'yes')
-										$plugin['optional_hooks']['language'][] = $each_hook['point'];
-									break;
-								case 'provides':
-									$provided_hooks = $each_hook->children();
-
-									foreach ($provided_hooks as $hook)
-										if (!empty($hook['type']) && ((string) $hook['type'] == 'function' || (string) $hook['type'] == 'language'))
-										{
-											// Only deal with hooks provided by a plugin if it's enabled.
-											if (in_array($folder, $context['enabled_plugins']))
-												$hooks[(string) $hook['type']][] = (string) $hook;
-
-											if (empty($plugin['provide_hooks'][(string) $hook['type']]))
-												$plugin['provide_hooks'][(string) $hook['type']] = array();
-											$plugin['provide_hooks'][(string) $hook['type']][] = (string) $hook;
-										}
-									break;
-							}
-						}
-					}
-
-					// Readme files. $context['languages'] contains all the languages we have - no sense offering readmes we don't have installed languages for.
-					if (!empty($manifest->readmes))
-					{
-						foreach ($manifest->readmes->readme as $readme)
-						{
-							$lang = (string) $readme['lang'];
-							if (!empty($lang) && isset($context['languages'][$lang]))
-								$plugin['readmes'][$lang] = true;
-						}
-
-						// We'll put them in alphabetic order, but English first because that's guaranteed to be available as an installed language.
-						ksort($plugin['readmes']);
-						if (isset($plugin['readmes']['english']))
-						{
-							unset($plugin['readmes']['english']);
-							$plugin['readmes'] = array_merge(array('english' => true), $plugin['readmes']);
-						}
-					}
-
-					// Is there anything it has to do in maintenance mode?
-					$plugin['maint'] = get_maint_requirements($manifest);
-
-					// OK, add to the list.
-					$context['available_plugins'][strtolower($plugin['name'] . $folder)] = $plugin;
+					$min_versions = testRequiredVersions($manifest->{'min-versions'});
+					foreach (array('php', 'mysql') as $test)
+						if (isset($min_versions[$test]))
+							$plugin['install_errors']['min' . $test] = sprintf($txt['install_error_min' . $test], $min_versions[$test][0], $min_versions[$test][1]);
 				}
+
+				// Required functions?
+				if (!empty($manifest->{'required-functions'}))
+				{
+					$required_functions = testRequiredFunctions($manifest->{'required-functions'});
+					if (!empty($required_functions))
+						$plugin['install_errors']['reqfunc'] = sprintf($txt['install_error_reqfunc'], implode(', ', $required_functions));
+				}
+
+				// Hooks associated with this plugin.
+				if (!empty($manifest->hooks))
+				{
+					$hooks_listed = $manifest->hooks->children();
+					foreach ($hooks_listed as $each_hook)
+					{
+						switch ($each_hook->getName())
+						{
+							case 'function':
+								if (!empty($each_hook['point']))
+									$plugin['hooks']['function'][] = $each_hook['point'];
+								if (!empty($each_hook['optional']) && $each_hook['optional'] == 'yes')
+									$plugin['optional_hooks']['function'][] = $each_hook['point'];
+								break;
+							case 'language':
+								if (!empty($each_hook['point']))
+									$plugin['hooks']['language'][] = $each_hook['point'];
+								if (!empty($each_hook['optional']) && $each_hook['optional'] == 'yes')
+									$plugin['optional_hooks']['language'][] = $each_hook['point'];
+								break;
+							case 'provides':
+								$provided_hooks = $each_hook->children();
+
+								foreach ($provided_hooks as $hook)
+									if (!empty($hook['type']) && ((string) $hook['type'] == 'function' || (string) $hook['type'] == 'language'))
+									{
+										// Only deal with hooks provided by a plugin if it's enabled.
+										if (in_array($folder, $context['enabled_plugins']))
+											$hooks[(string) $hook['type']][] = (string) $hook;
+
+										if (empty($plugin['provide_hooks'][(string) $hook['type']]))
+											$plugin['provide_hooks'][(string) $hook['type']] = array();
+										$plugin['provide_hooks'][(string) $hook['type']][] = (string) $hook;
+									}
+								break;
+						}
+					}
+				}
+
+				// Readme files. $context['languages'] contains all the languages we have - no sense offering readmes we don't have installed languages for.
+				if (!empty($manifest->readmes))
+				{
+					foreach ($manifest->readmes->readme as $readme)
+					{
+						$lang = (string) $readme['lang'];
+						if (!empty($lang) && isset($context['languages'][$lang]))
+							$plugin['readmes'][$lang] = true;
+					}
+
+					// We'll put them in alphabetic order, but English first because that's guaranteed to be available as an installed language.
+					ksort($plugin['readmes']);
+					if (isset($plugin['readmes']['english']))
+					{
+						unset($plugin['readmes']['english']);
+						$plugin['readmes'] = array_merge(array('english' => true), $plugin['readmes']);
+					}
+				}
+
+				// Is there anything it has to do in maintenance mode?
+				$plugin['maint'] = get_maint_requirements($manifest);
+
+				// OK, add to the list.
+				$context['available_plugins'][strtolower($plugin['name'] . $folder)] = $plugin;
 			}
-			closedir($handle);
 		}
+		closedir($handle);
 	}
 
 	// 1a. We want the packages in a nice order. The array key is the name of the plugin, then with the folder appended in the case of duplicates.
@@ -293,7 +291,7 @@ function ListPlugins()
 
 function PluginReadme()
 {
-	global $context, $txt, $pluginsdir;
+	global $context, $txt;
 
 	// Let's start and fire up the template. We're reusing the nice popup, so load templates and set up various things.
 	loadTemplate('GenericPopup');
@@ -318,7 +316,7 @@ function PluginReadme()
 	// Lastly, does the package know this readme?
 	if ($valid)
 	{
-		$manifest = safe_sxml_load($pluginsdir . '/' . $_GET['plugin'] . '/plugin-info.xml');
+		$manifest = safe_sxml_load(ROOT_DIR . '/plugins/' . $_GET['plugin'] . '/plugin-info.xml');
 
 		if (!empty($manifest->readmes))
 		{
@@ -343,7 +341,7 @@ function PluginReadme()
 	// So, the readme is valid. Read it, it's probably bbcode, so preparse and parse it.
 	if ($valid)
 	{
-		$path = strtr($readme, array('$plugindir' => $pluginsdir . '/' . $_GET['plugin']));
+		$path = strtr($readme, array('$plugindir' => ROOT_DIR . '/plugins/' . $_GET['plugin']));
 		$contents = file_get_contents($path);
 		loadSource('Class-Editor');
 
@@ -370,7 +368,7 @@ function PluginReadme()
 
 function EnablePlugin()
 {
-	global $context, $pluginsdir, $settings, $maintenance;
+	global $context, $settings, $maintenance;
 
 	checkSession('request');
 
@@ -378,7 +376,7 @@ function EnablePlugin()
 	if (!isViablePlugin())
 		fatal_lang_error('fatal_not_valid_plugin', false);
 
-	$manifest = safe_sxml_load($pluginsdir . '/' . $_GET['plugin'] . '/plugin-info.xml');
+	$manifest = safe_sxml_load(ROOT_DIR . '/plugins/' . $_GET['plugin'] . '/plugin-info.xml');
 	if ($manifest === false || empty($manifest['id']) || empty($manifest->name) || empty($manifest->author) || empty($manifest->version))
 		fatal_lang_error('fatal_not_valid_plugin', false);
 
@@ -1089,7 +1087,7 @@ function EnablePlugin()
 
 function DisablePlugin($manifest = null, $plugin = null)
 {
-	global $context, $pluginsdir, $settings;
+	global $context, $settings;
 
 	// We might be coming from the user's request or a separate process. If from elsewhere, we don't need to do all the checks.
 	if (empty($manifest) || empty($plugin))
@@ -1100,7 +1098,7 @@ function DisablePlugin($manifest = null, $plugin = null)
 		if (!isViablePlugin())
 			fatal_lang_error('fatal_not_valid_plugin', false);
 
-		$manifest = safe_sxml_load($pluginsdir . '/' . $_GET['plugin'] . '/plugin-info.xml');
+		$manifest = safe_sxml_load(ROOT_DIR . '/plugins/' . $_GET['plugin'] . '/plugin-info.xml');
 		if ($manifest === false || empty($manifest['id']) || empty($manifest->name) || empty($manifest->author) || empty($manifest->version))
 			fatal_lang_error('fatal_not_valid_plugin', false);
 
@@ -1200,13 +1198,13 @@ function DisablePlugin($manifest = null, $plugin = null)
 
 function RemovePlugin()
 {
-	global $txt, $context, $pluginsdir, $maintenance;
+	global $txt, $context, $maintenance;
 
 	// !! libxml_use_internal_errors(true); ??
 	if (!isViablePlugin())
 		fatal_lang_error('fatal_not_valid_plugin', false);
 
-	$manifest = safe_sxml_load($pluginsdir . '/' . $_GET['plugin'] . '/plugin-info.xml');
+	$manifest = safe_sxml_load(ROOT_DIR . '/plugins/' . $_GET['plugin'] . '/plugin-info.xml');
 	if ($manifest === false || empty($manifest->name) || empty($manifest->version))
 		fatal_lang_error('fatal_not_valid_plugin_remove', false);
 
@@ -1255,7 +1253,7 @@ function RemovePlugin()
 
 		// Check that the entire tree is deletable.
 		$all_writable = true;
-		$iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($pluginsdir . '/' . $_GET['plugin']), RecursiveIteratorIterator::SELF_FIRST);
+		$iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(ROOT_DIR . '/plugins/' . $_GET['plugin']), RecursiveIteratorIterator::SELF_FIRST);
 		foreach ($iterator as $path)
 			if (!$path->isWritable())
 			{
@@ -1286,8 +1284,6 @@ function RemovePlugin()
 // This ugly function deals with actually removing a plugin.
 function commitRemovePlugin($fullclean, &$manifest, &$remote_class)
 {
-	global $pluginsdir;
-
 	// So, as far as we know, it's valid to remove, because RemovePlugin() should have checked all this for us, even writability.
 
 	// Database changes: remove/remove-clean script
@@ -1422,7 +1418,7 @@ function commitRemovePlugin($fullclean, &$manifest, &$remote_class)
 	updateSettings(array('settings_updated' => time()));
 
 	// Lastly, actually do the delete.
-	$result = deleteFiletree($remote_class, $pluginsdir . '/' . $_GET['plugin'], true);
+	$result = deleteFiletree($remote_class, ROOT_DIR . '/plugins/' . $_GET['plugin'], true);
 	if (empty($result))
 		fatal_lang_error('remove_plugin_files_still_there', false, $_GET['plugin']);
 	else
@@ -1432,11 +1428,9 @@ function commitRemovePlugin($fullclean, &$manifest, &$remote_class)
 // Handles running any change-state scripts, e.g. on-enable. The type is primarily for the error message if the file couldn't be found.
 function executePluginScript($type, $file)
 {
-	global $pluginsdir;
-
 	if (!empty($file))
 	{
-		$full_path = strtr($file, array('$plugindir' => $pluginsdir . '/' . $_GET['plugin']));
+		$full_path = strtr($file, array('$plugindir' => ROOT_DIR . '/plugins/' . $_GET['plugin']));
 		if (empty($file) || substr($file, -4) != '.php' || strpos($file, '$plugindir/') !== 0 || !file_exists($full_path))
 			fatal_lang_error('fatal_install_' . $type . '_missing', false, empty($file) ? $txt['not_applicable'] : htmlspecialchars($file));
 
@@ -1449,9 +1443,11 @@ function executePluginScript($type, $file)
 // Identify whether the plugin requested is a viable plugin or not.
 function isViablePlugin()
 {
-	global $pluginsdir;
-
-	return (!empty($_GET['plugin']) && strpos($_GET['plugin'], DIRECTORY_SEPARATOR) === false && $_GET['plugin'][0] != '.' && filetype($pluginsdir . '/' . $_GET['plugin']) == 'dir' && file_exists($pluginsdir . '/' . $_GET['plugin'] . '/plugin-info.xml'));
+	return !empty($_GET['plugin'])
+		&& strpos($_GET['plugin'], DIRECTORY_SEPARATOR) === false
+		&& $_GET['plugin'][0] != '.'
+		&& filetype(ROOT_DIR . '/plugins/' . $_GET['plugin']) == 'dir'
+		&& file_exists(ROOT_DIR . '/plugins/' . $_GET['plugin'] . '/plugin-info.xml');
 }
 
 // This is a routing agent to the relevant aspect of adding plugins to the system.

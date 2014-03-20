@@ -12,11 +12,11 @@ if (!defined('WEDGE'))
 
 function getWritableObject()
 {
-	global $pluginsdir, $context, $settings, $boarddir;
+	global $context, $settings, $boarddir;
 
 	// Normally it'll be on the plugins folder, but there's no reason for it to absolutely be.
 	// !! Is $path supposed to be set earlier..?
-	$path = $pluginsdir;
+	$path = ROOT_DIR . '/plugins';
 
 	// Easy case, it's directly writable.
 	if (is_writable($path))
@@ -302,7 +302,7 @@ function uploadedPluginValidate()
 
 function uploadedPluginConnection()
 {
-	global $cachedir, $settings, $context, $pluginsdir, $txt;
+	global $cachedir, $settings, $context, $txt;
 
 	// If we already have details, pass through to the next stage.
 	if (isset($_SESSION['plugin_ftp']))
@@ -335,7 +335,7 @@ function uploadedPluginConnection()
 		'password' => '',
 		'port' => '21',
 		'type' => 'ftp',
-		'path' => realpath($pluginsdir),
+		'path' => realpath(ROOT_DIR . '/plugins'),
 	);
 
 	if (!empty($settings['ftp_settings']))
@@ -547,7 +547,7 @@ function uploadedPluginPrune()
 
 function uploadedPluginFolders()
 {
-	global $context, $txt, $cachedir, $pluginsdir;
+	global $context, $txt, $cachedir;
 
 	if (!empty($_SESSION['uploadplugin']['folders']))
 		redirectexit('action=admin;area=plugins;sa=add;upload;stage=4;' . $context['session_query']);
@@ -607,10 +607,10 @@ function uploadedPluginFolders()
 		$filename = 'plugin';
 
 	// Having come up with a hopefully sane name, were there any duplicates?
-	if (is_dir($pluginsdir . '/' . $filename))
+	if (is_dir(ROOT_DIR . '/plugins/' . $filename))
 	{
 		$count = 1;
-		while (is_dir($pluginsdir . '/' . $filename . '_' . $count))
+		while (is_dir(ROOT_DIR . '/plugins/' . $filename . '_' . $count))
 			$count++;
 
 		$filename .= '_' . $count;
@@ -850,7 +850,7 @@ function get_maint_requirements($manifest)
 
 function test_hooks_conflict($manifest)
 {
-	global $pluginsdir, $settings;
+	global $settings;
 
 	// This could be interesting, actually. Does this plugin declare any hooks that any other active plugin uses?
 	if (!empty($manifest->hooks->provides))
@@ -864,6 +864,7 @@ function test_hooks_conflict($manifest)
 				$hooks_provided[$hook_name] = true;
 		}
 
+		$plug_dir = ROOT_DIR . '/plugins/';
 		$conflicted_plugins = array();
 		// So now we know what hooks this plugin offers. Now let's see what other plugins use this.
 		if (!empty($hooks_provided))
@@ -871,12 +872,12 @@ function test_hooks_conflict($manifest)
 			$plugins = explode(',', $settings['enabled_plugins']);
 			foreach ($plugins as $plugin)
 			{
-				if ($plugin == $_GET['plugin'] || !file_exists($pluginsdir . '/' . $plugin . '/plugin-info.xml'))
+				if ($plugin == $_GET['plugin'] || !file_exists($plug_dir . $plugin . '/plugin-info.xml'))
 					continue;
 
 				// Now, we have to go and get the XML manifest for these plugins, because we have to be able to differentiate
 				// optional from required hooks, and we can't do that with what's in context, only the actual manifest.
-				$other_manifest = safe_sxml_load($pluginsdir . '/' . $plugin . '/plugin-info.xml');
+				$other_manifest = safe_sxml_load($plug_dir . $plugin . '/plugin-info.xml');
 				$hooks = $other_manifest->hooks->children();
 				foreach ($hooks as $hook)
 				{

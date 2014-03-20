@@ -1087,7 +1087,7 @@ function db_debug_junk()
  */
 function template_include($filename, $once = false)
 {
-	global $context, $txt, $settings, $boarddir, $boardurl;
+	global $context, $txt, $settings, $boardurl;
 	global $maintenance, $mtitle, $mmessage;
 	static $templates = array();
 
@@ -1165,7 +1165,7 @@ function template_include($filename, $once = false)
 		else
 		{
 			loadSource('Class-WebGet');
-			$weget = new weget($boardurl . strtr($filename, array($boarddir => '', strtr($boarddir, '\\', '/') => '')));
+			$weget = new weget(str_replace(ROOT_DIR, $boardurl, $filename));
 			$error = $weget->get();
 
 			if (empty($error))
@@ -1178,12 +1178,12 @@ function template_include($filename, $once = false)
 	</head>
 	<body>
 		<h3>', $txt['template_parse_error'], '</h3>
-		', sprintf($txt['template_parse_error_details'], strtr($filename, array($boarddir => '', strtr($boarddir, '\\', '/') => '')));
+		', sprintf($txt['template_parse_error_details'], str_replace(ROOT_DIR, '', $filename));
 
 			if (!empty($error))
 				echo '
 		<hr>
-		<div style="margin: 0 20px"><tt>', strtr(strtr($error, array('<strong>' . $boarddir => '<strong>...', '<strong>' . strtr($boarddir, '\\', '/') => '<strong>...')), '\\', '/'), '</tt></div>';
+		<div style="margin: 0 20px"><tt>', str_replace('<strong>' . ROOT_DIR, '<strong>...', $error), '</tt></div>';
 
 			// Yes, this is VERY complicated... Still, it's good.
 			if (preg_match('~ <strong>(\d+)</strong><br\s*/?\>$~i', $error, $match) != 0)
@@ -1306,9 +1306,9 @@ function loadTemplate($template_name, $fatal = true)
 	}
 	// Hmmm... doesn't exist?! I don't suppose the directory is wrong, is it?
 	// !! @todo: remove this..?
-	elseif (!file_exists(TEMPLATES_DIR) && file_exists(CORE_DIR . '/html'))
+	elseif (!file_exists(TEMPLATES_DIR) && file_exists(ROOT_DIR . '/core/html'))
 	{
-		$context['template_folders'][] = $settings['theme_dir'] = CORE_DIR . '/html';
+		$context['template_folders'][] = $settings['theme_dir'] = ROOT_DIR . '/core/html';
 
 		if (we::$is_admin)
 		{

@@ -11,13 +11,8 @@
 if (!defined('WEDGE'))
 	die('Hacking attempt...');
 
-function create_settings_file($root_dir = '')
+function create_settings_file()
 {
-	global $boarddir;
-
-	if (empty($boarddir))
-		$boarddir = $root_dir;
-
 	$file = '<' . '?php
 /**
  * Contains the master settings for Wedge, including database credentials.
@@ -55,20 +50,11 @@ $db_persist = 0;
 $db_error_send = 1;
 $db_show_debug = false;
 $db_last_error = 0;
-
-# Paths and folders
-$boarddir = dirname(__FILE__);				# The absolute path to the forum folder.
-$sourcedir = $boarddir . \'/core/app\';		# Path to the sources directory.
-$cachedir = $boarddir . \'/gz\';				# Path to the cache directory.
-$cssdir = $boarddir . \'/gz/css\';			# Path to the CSS cache directory.
-$jsdir = $boarddir . \'/gz/js\';				# Path to the JS cache directory.
-$pluginsdir = $boarddir . \'/plugins\';		# Path to the plugins directory.
-$pluginsurl = $boardurl . \'/plugins\';		# URL to plugins.
 ';
 
 	foreach (array('/Settings_bak.php', '/Settings.php') as $target)
-		if (!file_exists($boarddir . $target))
-			file_put_contents($boarddir . $target, $file . "\n?" . '>');
+		if (!file_exists(ROOT_DIR . $target))
+			file_put_contents(ROOT_DIR . $target, $file . "\n?" . '>');
 }
 
 function create_generic_folders($root_dir = '')

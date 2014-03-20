@@ -116,11 +116,6 @@ $txt['likes_enabled'] = 'Enable likes system';
 $txt['likes_own_posts'] = 'Users can like their own posts';
 
 $txt['boardurl'] = 'Forum URL';
-$txt['boarddir'] = 'Path to Wedge folder';
-$txt['sourcedir'] = 'Path to app folder';
-$txt['cachedir'] = 'Path to cache folder';
-$txt['pluginsdir'] = 'Path to plugins folder';
-$txt['pluginsurl'] = 'URL to plugins folder';
 $txt['theme_dir'] = 'Path to HTML templates';
 $txt['theme_url'] = 'URL to HTML templates';
 $txt['images_url'] = 'URL to assets folder';

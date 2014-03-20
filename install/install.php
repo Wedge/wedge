@@ -824,11 +824,6 @@ function ForumSettings()
 		// Save these variables.
 		$vars = array(
 			'boardurl' => $_POST['boardurl'],
-			'boarddir' => addslashes(ROOT_DIR),
-			'sourcedir' => addslashes(ROOT_DIR) . '/core/app',
-			'cachedir' => addslashes(ROOT_DIR) . '/gz',
-			'pluginsdir' => addslashes(ROOT_DIR) . '/plugins',
-			'pluginsurl' => $_POST['boardurl'] . '/plugins',
 			'mbname' => strtr($_POST['mbname'], array('\"' => '"')),
 		);
 
@@ -1883,16 +1878,14 @@ function init_variables()
 	// Define our constants. (cf. QueryString.php)
 	define('SCRIPT', $boarddir . '/index.php');
 	define('ROOT', $boardurl);
-	define('CORE', $boardurl . '/core');
-	define('CORE_DIR', $boarddir . '/core');
 	define('TEMPLATES', $settings['theme_url']);
 	define('TEMPLATES_DIR', $settings['theme_dir']);
-	define('SKINS', CORE . '/skins');
-	define('SKINS_DIR', CORE_DIR . '/skins');
-	define('LANGUAGES', CORE . '/languages');
-	define('LANGUAGES_DIR', CORE_DIR . '/languages');
-	define('ASSETS', ROOT . '/assets');
-	define('ASSETS_DIR', ROOT_DIR . '/assets');
+	define('SKINS',			ROOT . '/core/skins');
+	define('SKINS_DIR',		ROOT_DIR . '/core/skins');
+	define('LANGUAGES',		ROOT . '/core/languages');
+	define('LANGUAGES_DIR',	ROOT_DIR . '/core/languages');
+	define('ASSETS',		ROOT . '/assets');
+	define('ASSETS_DIR',	ROOT_DIR . '/assets');
 
 	westr::getInstance();
 	we::getInstance(false);

@@ -15,7 +15,7 @@ define('WEDGE_VERSION', '1.0-alpha-1');
 define('WEDGE', 2); // Internal snapshot number.
 
 // Get everything started up...
-if (function_exists('set_magic_quotes_runtime') && version_compare(PHP_VERSION, '5.4') < 0)
+if (version_compare(PHP_VERSION, '5.4') < 0 && function_exists('set_magic_quotes_runtime'))
 	@set_magic_quotes_runtime(0);
 
 error_reporting(E_ALL | E_STRICT);
@@ -24,29 +24,22 @@ $time_start = microtime(true);
 // Makes sure that headers can be sent!
 ob_start();
 
+define('ROOT_DIR', str_replace('\\', '/', dirname(__FILE__)));
+
 // Is it our first run..?
-$here = dirname(__FILE__);
-if (!file_exists($here . '/Settings.php'))
+if (!file_exists(ROOT_DIR . '/Settings.php'))
 {
-	require_once($here . '/core/app/OriginalFiles.php');
-	create_settings_file($here);
-	create_generic_folders($here);
+	require_once(ROOT_DIR . '/core/app/OriginalFiles.php');
+	create_settings_file(ROOT_DIR);
+	create_generic_folders(ROOT_DIR);
 }
 // Load the settings...
-require_once($here . '/Settings.php');
+require_once(ROOT_DIR . '/Settings.php');
 
-// Make sure the paths are correct... at least try to fix them.
-if (!file_exists($boarddir = rtrim($boarddir, '/')) && file_exists(dirname(__FILE__) . '/SSI.php'))
-	$boarddir = dirname(__FILE__);
-
-foreach (array('source' => 'core/app', 'plugins' => 'plugins', 'cache' => 'gz', 'css' => 'gz/css', 'js' => 'gz/js') as $var => $path)
-{
-	$dir = $var . 'dir';
-	if ((empty($$dir) || ($$dir !== $boarddir . '/' . $path && !file_exists($$dir))) && file_exists($boarddir . '/' . $path))
-		$$dir = $boarddir . '/' . $path;
-	if (!file_exists($$dir))
-		exit('Missing folder: $' . $dir . ' (' . $$dir . ')');
-}
+// Crucial paths.
+$boarddir = ROOT_DIR;
+foreach (array('source' => 'core/app', 'cache' => 'gz', 'css' => 'gz/css', 'js' => 'gz/js') as $var => $path)
+	${$var . 'dir'} = ROOT_DIR . '/' . $path;
 
 // And important files.
 loadSource(array(
@@ -62,7 +55,7 @@ loadSource(array(
 if (!empty($maintenance) && $maintenance > 1)
 {
 	if ($maintenance == 2) // Installing
-		require_once(__DIR__ . '/install/install.php');
+		require_once(ROOT_DIR . '/install/install.php');
 	else // Downtime
 		show_db_error();
 	return;
@@ -104,6 +97,7 @@ $context['subaction'] = isset($_GET['sa']) ? $_GET['sa'] : null;
 we::getInstance();
 
 // Get rid of ?PHPSESSID for robots.
+// !! Probably useless, thanks to canonical URLs.
 if (we::$user['possibly_robot'] && strpos(we::$user['url'], 'PHPSESSID=') !== false)
 {
 	$correcturl = preg_replace('~([?&]PHPSESSID=[^&]*)~', '', we::$user['url']);

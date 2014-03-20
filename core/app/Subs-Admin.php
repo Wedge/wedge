@@ -285,7 +285,7 @@ function updateSettingsFile($config_vars)
 		$temp = trim(implode("\n", $settingsArray));
 		if (substr($temp, 0, 5) != '<?php' || substr($temp, -2) != '?' . '>')
 			return;
-		if (strpos($temp, 'sourcedir') === false || strpos($temp, 'boarddir') === false || strpos($temp, 'cookiename') === false)
+		if (strpos($temp, 'boardurl') === false || strpos($temp, 'cookiename') === false)
 			return;
 	}
 

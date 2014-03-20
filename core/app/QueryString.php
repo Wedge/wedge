@@ -17,7 +17,6 @@ if (!defined('WEDGE'))
 function loadPaths()
 {
 	global $boardurl, $boarddir, $settings, $context;
-	global $sourcedir, $pluginsdir, $cachedir, $cssdir, $jsdir;
 
 	// $scripturl is your board URL if you asked to remove index.php or the user visits for the first time
 	// (in which case they'll get the annoying PHPSESSID stuff in their URL and we need index.php in them.)
@@ -81,11 +80,9 @@ function loadPaths()
 	define('SCRIPT',		$scripturl);
 	define('ROOT',			$boardurl);
 	define('ROOT_DIR',		$boarddir);
-	define('CORE',			ROOT . '/core');				define('CORE_DIR',		ROOT_DIR . '/core');
 	define('TEMPLATES',		ROOT . '/core/html');			define('TEMPLATES_DIR',	ROOT_DIR . '/core/html');
 	define('SKINS',			ROOT . '/core/skins');			define('SKINS_DIR',		ROOT_DIR . '/core/skins');
 	define('LANGUAGES',		ROOT . '/core/languages');		define('LANGUAGES_DIR',	ROOT_DIR . '/core/languages');
-	define('PLUGINS',		ROOT . '/plugins');				define('PLUGINS_DIR',	ROOT_DIR . '/plugins');
 	define('ASSETS',		ROOT . '/assets');				define('ASSETS_DIR',	ROOT_DIR . '/assets');
 	define('SMILEYS',		ROOT . '/assets/smileys');
 	define('AVATARS',		ROOT . '/assets/avatars');

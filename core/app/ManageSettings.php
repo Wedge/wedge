@@ -171,11 +171,6 @@ function ModifyPathSettings($return_config = false)
 
 	$config_vars = array(
 		array('text', 'boardurl', 36, 'file' => true),
-		array('text', 'boarddir', 36, 'file' => true),
-		array('text', 'sourcedir', 36, 'file' => true),
-		array('text', 'cachedir', 36, 'file' => true),
-		array('text', 'pluginsdir', 36, 'file' => true),
-		array('text', 'pluginsurl', 36, 'file' => true),
 		'',
 		array('text', 'theme_url', 36),
 		array('text', 'theme_dir', 36),

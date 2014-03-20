@@ -25,7 +25,7 @@ if (!defined('WEDGE'))
  */
 function loadSettings()
 {
-	global $settings, $context, $pluginsdir, $pluginsurl, $action_list, $action_no_log;
+	global $settings, $context, $action_list, $action_no_log;
 
 	// This is where it all began.
 	$context = array(
@@ -171,16 +171,15 @@ function loadSettings()
 	{
 		// Step through the list we think we have enabled.
 		$plugins = explode(',', $settings['enabled_plugins']);
-		$sane_path = str_replace('\\', '/', $pluginsdir);
 		$hook_stack = array();
 		foreach ($plugins as $plugin)
 		{
-			if (!empty($settings['plugin_' . $plugin]) && file_exists($sane_path . '/' . $plugin . '/plugin-info.xml'))
+			if (!empty($settings['plugin_' . $plugin]) && file_exists(ROOT_DIR . '/plugins/' . $plugin . '/plugin-info.xml'))
 			{
 				$plugin_details = @unserialize($settings['plugin_' . $plugin]);
 				$context['enabled_plugins'][$plugin_details['id']] = $plugin;
-				$context['plugins_dir'][$plugin_details['id']] = $sane_path . '/' . $plugin;
-				$context['plugins_url'][$plugin_details['id']] = $pluginsurl . '/' . $plugin;
+				$context['plugins_dir'][$plugin_details['id']] = ROOT_DIR . '/plugins/' . $plugin;
+				$context['plugins_url'][$plugin_details['id']] = ROOT . '/plugins/' . $plugin;
 				if (isset($plugin_details['actions']))
 					foreach ($plugin_details['actions'] as $action)
 					{
