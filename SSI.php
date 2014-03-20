@@ -21,7 +21,7 @@ global $boardurl, $boarddir, $sourcedir, $webmaster_email, $cookiename;
 global $db_server, $db_connection, $db_name, $db_user, $db_prefix, $db_persist;
 global $db_error_send, $db_last_error, $ssi_db_user, $ssi_db_passwd, $db_passwd;
 
-if (function_exists('set_magic_quotes_runtime') && version_compare(PHP_VERSION, '5.4') < 0)
+if (version_compare(PHP_VERSION, '5.4') < 0 && function_exists('set_magic_quotes_runtime'))
 {
 	// Remember the current configuration so it can be set back.
 	$ssi_magic_quotes_runtime = function_exists('get_magic_quotes_runtime') && @get_magic_quotes_runtime();
