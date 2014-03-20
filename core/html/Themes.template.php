@@ -189,6 +189,7 @@ function template_guest_selector($is_mobile = false)
 					</dd>';
 }
 
+// !! @todo: replace with a list of skins.
 function template_list_themes()
 {
 	global $context, $txt;

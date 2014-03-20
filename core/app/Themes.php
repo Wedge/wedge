@@ -199,21 +199,6 @@ function ThemeList()
 	loadLanguage('Admin');
 	isAllowedTo('admin_forum');
 
-	if (isset($_POST['save']))
-	{
-		checkSession();
-
-		$setValues = array();
-		if (file_exists($_POST['reset_dir'] . '/' . basename(TEMPLATES_DIR)))
-			updateSettings(array(
-				'theme_dir' => realpath($_POST['reset_dir'] . '/' . basename(TEMPLATES_DIR)),
-				'theme_url' => $_POST['reset_url'] . '/' . basename(TEMPLATES_DIR),
-			));
-
-		cache_put_data('theme_settings', null, 90);
-		redirectexit('action=admin;area=theme;sa=list;' . $context['session_query']);
-	}
-
 	loadTemplate('Themes');
 
 	$context['reset_dir'] = realpath($boarddir . '/Themes');
@@ -394,6 +379,7 @@ function PickTheme()
 	wetem::load('pick');
 }
 
+// !! @todo: remove this.
 function ThemeInstall()
 {
 	global $boarddir, $boardurl, $txt, $context, $settings;
@@ -748,14 +734,12 @@ function EditTheme()
 			// Check for a parse error!
 			if (substr($_REQUEST['filename'], -13) == '.template.php' && is_writable($theme_dir) && ini_get('display_errors'))
 			{
-				$theme_url = TEMPLATES;
-
 				$fp = fopen($theme_dir . '/tmp_' . session_id() . '.php', 'w');
 				fwrite($fp, $_POST['entire_file']);
 				fclose($fp);
 
 				// !!! Use Class-WebGet()?
-				$error = @file_get_contents($theme_url . '/tmp_' . session_id() . '.php');
+				$error = @file_get_contents(TEMPLATES . '/tmp_' . session_id() . '.php');
 				$error = strtr($error, array('<b>' => '<strong>', '</b>' => '</strong>'));
 				if (preg_match('~ <strong>\d+</strong><br\s*/?\>$~i', $error) != 0)
 					$error_file = $theme_dir . '/tmp_' . session_id() . '.php';
