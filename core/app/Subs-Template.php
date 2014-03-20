@@ -1304,23 +1304,6 @@ function loadTemplate($template_name, $fatal = true)
 		if (function_exists('template_' . $template_name . '_init'))
 			call_user_func('template_' . $template_name . '_init');
 	}
-	// Hmmm... doesn't exist?! I don't suppose the directory is wrong, is it?
-	// !! @todo: remove this..?
-	elseif (!file_exists(TEMPLATES_DIR) && file_exists(ROOT_DIR . '/core/html'))
-	{
-		$context['template_folders'][] = $settings['theme_dir'] = ROOT_DIR . '/core/html';
-
-		if (we::$is_admin)
-		{
-			loadLanguage('Errors');
-			echo '
-<div class="alert errorbox">
-	<a href="', SCRIPT, '?action=admin;area=featuresettings;sa=paths;', $context['session_query'], '" class="alert">', $txt['theme_dir_wrong'], '</a>
-</div>';
-		}
-
-		loadTemplate($template_name);
-	}
 	// Cause an error otherwise.
 	elseif ($fatal)
 	{

@@ -116,9 +116,6 @@ $txt['likes_enabled'] = 'Enable likes system';
 $txt['likes_own_posts'] = 'Users can like their own posts';
 
 $txt['boardurl'] = 'Forum URL';
-$txt['theme_dir'] = 'Path to HTML templates';
-$txt['theme_url'] = 'URL to HTML templates';
-$txt['images_url'] = 'URL to assets folder';
 
 $txt['caching_information'] = '<div class="center" style="font-weight: bold; text-decoration: underline">Important! Read this first before enabling these features.</div><br>
 	Wedge supports caching through the use of accelerators. The currently supported accelerators include:<br>

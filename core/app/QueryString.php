@@ -70,9 +70,6 @@ function loadPaths()
 			$boardurl = $detected_url;
 			$scripturl = strtr($scripturl, array($oldurl => $boardurl));
 			$_SERVER['REQUEST_URL'] = strtr($_SERVER['REQUEST_URL'], array($oldurl => $boardurl));
-
-			// Fix the theme urls...
-			$settings['theme_url'] = strtr($settings['theme_url'], array($oldurl => $boardurl));
 		}
 	}
 

@@ -461,7 +461,6 @@ $txt['not_done_continue'] = 'Continue';
 
 $txt['general_settings'] = 'General';
 $txt['database_settings'] = 'Database';
-$txt['path_settings'] = 'Paths';
 $txt['cookies_sessions_settings'] = 'Cookies and Sessions';
 $txt['caching_settings'] = 'Caching';
 $txt['load_balancing_settings'] = 'Load Balancing';

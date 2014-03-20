@@ -1872,20 +1872,13 @@ function init_variables()
 	$boardurl = 'http' . (!empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) != 'off' ? 's' : '') . '://' . $host;
 	$boardurl .= substr($_SERVER['REQUEST_URI'], 0, strrpos($_SERVER['REQUEST_URI'], '/'));
 
-	$settings['theme_dir'] = $boarddir . '/core/html';
-	$settings['theme_url'] = $boardurl . '/core/html';
-
 	// Define our constants. (cf. QueryString.php)
-	define('SCRIPT', $boarddir . '/index.php');
-	define('ROOT', $boardurl);
-	define('TEMPLATES', $settings['theme_url']);
-	define('TEMPLATES_DIR', $settings['theme_dir']);
-	define('SKINS',			ROOT . '/core/skins');
-	define('SKINS_DIR',		ROOT_DIR . '/core/skins');
-	define('LANGUAGES',		ROOT . '/core/languages');
-	define('LANGUAGES_DIR',	ROOT_DIR . '/core/languages');
-	define('ASSETS',		ROOT . '/assets');
-	define('ASSETS_DIR',	ROOT_DIR . '/assets');
+	define('ROOT',			$boardurl);
+	define('SCRIPT',		$boarddir . '/index.php');
+	define('TEMPLATES',		$boardurl . '/core/html');	define('TEMPLATES_DIR', $boarddir . '/core/html');
+	define('SKINS',			ROOT . '/core/skins');		define('SKINS_DIR',		ROOT_DIR . '/core/skins');
+	define('LANGUAGES',		ROOT . '/core/languages');	define('LANGUAGES_DIR',	ROOT_DIR . '/core/languages');
+	define('ASSETS',		ROOT . '/assets');			define('ASSETS_DIR',	ROOT_DIR . '/assets');
 
 	westr::getInstance();
 	we::getInstance(false);

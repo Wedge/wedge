@@ -66,7 +66,6 @@ function ModifyFeatureSettings()
 
 	$subActions = array(
 		'basic' => 'ModifyBasicSettings',
-		'paths' => 'ModifyPathSettings',
 		'pretty' => 'ModifyPrettyURLs',
 	);
 
@@ -79,8 +78,6 @@ function ModifyFeatureSettings()
 		'description' => $txt['settings_desc'],
 		'tabs' => array(
 			'basic' => array(
-			),
-			'paths' => array(
 			),
 			'pretty' => array(
 				'description' => $txt['pretty_urls_desc'],
@@ -98,6 +95,7 @@ function ModifyBasicSettings($return_config = false)
 
 	$config_vars = array(
 			array('text', 'mbname', 30, 'file' => true),
+			array('text', 'boardurl', 40, 'file' => true),
 			array('text', 'home_url', 40, 'subtext' => $txt['home_url_subtext']),
 			array('check', 'home_link', 'subtext' => $txt['home_link_subtext']),
 		'',
@@ -161,37 +159,6 @@ function ModifyBasicSettings($return_config = false)
 	$context['post_url'] = '<URL>?action=admin;area=featuresettings;save;sa=basic';
 	$context['settings_title'] = $txt['mods_cat_features'];
 
-	prepareDBSettingContext($config_vars);
-}
-
-// Basic path settings - absolute locations for main folders.
-function ModifyPathSettings($return_config = false)
-{
-	global $context, $txt;
-
-	$config_vars = array(
-		array('text', 'boardurl', 36, 'file' => true),
-		'',
-		array('text', 'theme_url', 36),
-		array('text', 'theme_dir', 36),
-		array('text', 'images_url', 36),
-	);
-
-	if ($return_config)
-		return $config_vars;
-
-	// Setup the template stuff.
-	$context['post_url'] = '<URL>?action=admin;area=featuresettings;sa=paths;save';
-	$context['settings_title'] = $txt['path_settings'];
-
-	// Saving settings?
-	if (isset($_REQUEST['save']))
-	{
-		saveSettings($config_vars);
-		redirectexit('action=admin;area=featuresettings;sa=paths;' . $context['session_query']);
-	}
-
-	// Fill the config array.
 	prepareDBSettingContext($config_vars);
 }
 

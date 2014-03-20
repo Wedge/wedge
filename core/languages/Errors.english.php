@@ -132,7 +132,6 @@ $txt['cannot_view_stats'] = 'You aren\'t allowed to view the forum statistics.';
 $txt['cannot_who_view'] = 'Sorry - you don\'t have the proper permissions to view the Who\'s Online list.';
 $txt['stats_not_available'] = 'The forum statistics are not available.';
 
-$txt['theme_dir_wrong'] = 'The default theme\'s directory is wrong, please correct it by clicking this text.';
 $txt['registration_disabled'] = 'Sorry, registration is currently disabled.';
 $txt['registration_no_secret_question'] = 'Sorry, there is no secret question set for this member.';
 $txt['poll_range_error'] = 'Sorry, the poll must run for more than 0 days.';

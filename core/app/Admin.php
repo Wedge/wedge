@@ -68,8 +68,6 @@ function Admin()
 					'subsections' => array(
 						'basic' => array($txt['mods_cat_features']),
 						'',
-						'paths' => array($txt['path_settings']),
-						'',
 						'pretty' => array($txt['pretty_urls']),
 					),
 				),
@@ -885,7 +883,6 @@ function AdminSearchInternal()
 	$search = array(
 		'settings' => array(
 			array('ModifyBasicSettings',		'area=featuresettings;sa=basic'),
-			array('ModifyPathSettings',			'area=featuresettings;sa=paths'),
 			array('ModifyPrettyURLs',			'area=featuresettings;sa=pretty'),
 			array('ModifySignatureSettings',	'area=memberoptions;sa=sig'),
 			array('ModifyWhosOnline',			'area=memberoptions;sa=whosonline'),

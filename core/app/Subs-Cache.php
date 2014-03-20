@@ -671,7 +671,7 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 
 	// Load all CSS files in order, and replace $here with the current folder while we're at it.
 	foreach ((array) $css as $file)
-		$final .= str_replace('$here', $relative_root . str_replace('\\', '/', str_replace(ROOT_DIR, '', dirname($file))), file_get_contents($file));
+		$final .= str_replace('$here', $relative_root . str_replace(ROOT_DIR, '', dirname($file)), file_get_contents($file));
 
 	if (empty($final)) // Nothing loaded...?
 	{
