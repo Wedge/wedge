@@ -603,8 +603,8 @@ function Post2()
 		$_POST['poll_guest_vote'] = isset($_POST['poll_guest_vote']) ? 1 : 0;
 
 		$_POST['poll_voters_visible'] = (int) $_POST['poll_voters_visible'];
-		if ($_POST['poll_votes_visible'] < 0 || $_POST['poll_votes_visible'] > 3)
-			$_POST['poll_votes_visible'] = 0; // If it's not a safe value, make it safe!
+		if ($_POST['poll_voters_visible'] < 0 || $_POST['poll_voters_visible'] > 3)
+			$_POST['poll_voters_visible'] = 0; // If it's not a safe value, make it safe!
 
 		// Make sure guests are actually allowed to vote generally.
 		if ($_POST['poll_guest_vote'])
