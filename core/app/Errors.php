@@ -24,7 +24,7 @@ if (!defined('WEDGE'))
  */
 function log_error($error_message, $error_type = 'general', $file = null, $line = null, $referrer = null)
 {
-	global $settings, $last_error, $context, $pluginsdir;
+	global $settings, $last_error, $context;
 	static $plugin_dir = null;
 
 	// Check if error logging is actually on.
@@ -33,7 +33,7 @@ function log_error($error_message, $error_type = 'general', $file = null, $line 
 
 	// Windows does funny things. Fix the pathing to make sense on Windows.
 	if ($plugin_dir === null)
-		$plugin_dir = DIRECTORY_SEPARATOR === '/' ? $pluginsdir : str_replace(DIRECTORY_SEPARATOR, '/', $pluginsdir);
+		$plugin_dir = DIRECTORY_SEPARATOR === '/' ? ROOT_DIR . '/plugins' : str_replace(DIRECTORY_SEPARATOR, '/', ROOT_DIR . '/plugins');
 
 	// Basically, htmlspecialchars it minus & (for entities!); also save simple links.
 	$error_message = strtr($error_message, array('<' => '&lt;', '>' => '&gt;', '"' => '&quot;'));
@@ -45,7 +45,7 @@ function log_error($error_message, $error_type = 'general', $file = null, $line 
 	if ($file == null)
 	{
 		// We weren't given a filename but we need it at least for identifying if this is a plugin or not. We need to find if we came here via the fatal error handlers first.
-		$array = debug_backtrace(!function_exists('version_compare') || (version_compare('5.3.6', PHP_VERSION) > 0) ? false : DEBUG_BACKTRACE_IGNORE_ARGS);
+		$array = debug_backtrace(version_compare(PHP_VERSION, '5.3.6') < 0 ? false : DEBUG_BACKTRACE_IGNORE_ARGS);
 		for ($i = 0, $c = count($array); $i < $c; $i++)
 			if (!empty($array[$i]['function']) && in_array($array[$i]['function'], array('fatal_error', 'fatal_lang_error')))
 			{
