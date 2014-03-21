@@ -107,7 +107,8 @@ function log_error($error_message, $error_type = 'general', $file = null, $line 
 		$is_short = false;
 
 	// Don't log session data in the url twice, it's a waste.
-	$query_string = preg_replace('~' . session_name() . '=' . session_id() . '[&;]~', '', $query_string);
+	$sn = session_name();
+	$query_string = preg_replace('~(?:\?' . $sn . '=[^&;]*$|\b' . $sn . '=[^&;]*[&;])~', '', $query_string);
 	$query_string = htmlspecialchars(($is_short === false ? '' : '?') . $query_string);
 
 	// What types of categories do we have?
