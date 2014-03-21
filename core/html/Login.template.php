@@ -22,7 +22,7 @@ function template_login()
 				<img src="', ASSETS, '/icons/online.gif">
 				', $txt['login'], '
 			</we:cat>
-			<div class="roundframe"><br class="clear">';
+			<div class="roundframe">';
 
 	// Did they make a mistake last time?
 	if (!empty($context['login_errors']))
@@ -37,6 +37,7 @@ function template_login()
 
 	// Now just get the basic information - username, password, etc.
 	echo '
+				<br class="clear">
 				<dl>
 					<dt>', empty($settings['login_type']) ? $txt['username_or_email'] : ($settings['login_type'] == 1 ? $txt['username'] : $txt['email']), ':</dt>
 					<dd><input name="user" size="20" value="', $context['default_username'], '"></dd>
@@ -136,8 +137,9 @@ function template_maintenance()
 		</we:cat>
 		<p class="description">
 			<img class="floatleft" src="', ASSETS, '/construction.png" width="40" height="40" alt="', $txt['in_maintain_mode'], '">
-			', $context['description'], '<br class="clear">
+			', $context['description'], '
 		</p>
+		<br class="clear">
 		<we:title2>
 			', $txt['admin_login'], '
 		</we:title2>
