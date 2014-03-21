@@ -1467,9 +1467,11 @@ function aeva_mgPost()
 		aeva_getAlbums(aeva_allowedTo('moderate') ? '' : (empty($allowed_albums) ? '1=0' : 'a.id_album IN (' . implode(',', array_keys($allowed_albums)) . ')'), 1);
 
 		$albums = array();
-		$q = @$allowed_albums[$latest_album]['quota'];
-		if (empty($q))
-			$q = array(
+		if ($allowed_albums !== false)
+			$latest_album = isset($allowed_albums[$latest_album]) ? $latest_album : key($allowed_albums);
+		$q = $allowed_albums ?
+			$allowed_albums[$latest_album]['quota'] :
+			array(
 				'audio' => $amSettings['max_file_size'],
 				'video' => $amSettings['max_file_size'],
 				'image' => $amSettings['max_file_size'],
@@ -1489,7 +1491,8 @@ function aeva_mgPost()
 			$albums[$list] = array(
 				str_repeat('&nbsp;&nbsp;&nbsp;', $context['aeva_albums'][$list]['child_level']) . $context['aeva_albums'][$list]['name'],
 				$list == $latest_album,
-				' onclick="updateQuota(' . $q['image'] . ', ' . $q['video'] . ', ' . $q['audio'] . ', ' . $q['doc'] . ');"');
+				' onclick="updateQuota(' . $q['image'] . ', ' . $q['video'] . ', ' . $q['audio'] . ', ' . $q['doc'] . ');"'
+			);
 	}
 
 	$max_php_size = (int) min(aeva_getPHPSize('upload_max_filesize'), aeva_getPHPSize('post_max_size'));
@@ -1499,7 +1502,7 @@ function aeva_mgPost()
 	{
 		if (document.aeva_form.file.files) // Firefox 3 or Webkit?
 			$("#file_warning").html(document.aeva_form.file.files[0].size > ' . $max_php_size . ' ?
-				"' . sprintf($txt['media_file_too_large_php'], round($max_php_size/1048576, 1)) . '" : "");
+				"' . sprintf($txt['media_file_too_large_php'], round($max_php_size / 1048576, 1)) . '" : "");
 	}');
 
 	// Load the data
@@ -1608,7 +1611,11 @@ function aeva_mgPost()
 			'type' => 'title',
 		),
 		'max_file_size' => array(
-			'label' => $txt['media_max_file_size'] . ': ' . $txt['media_image'] . ' - <span id="aeva_i_quota">' . $context['aeva_max_file_size']['image'] . '</span> ' . $txt['media_kb'] . ', ' . $txt['media_video'] . ' - <span id="aeva_v_quota">' . $context['aeva_max_file_size']['video'] . '</span> ' . $txt['media_kb'] . ', ' . $txt['media_audio'] . ' - <span id="aeva_a_quota">' . $context['aeva_max_file_size']['audio'] . '</span> ' . $txt['media_kb'] . ', ' . $txt['media_doc'] . ' - <span id="aeva_d_quota">' . $context['aeva_max_file_size']['doc'] . '</span> ' . $txt['media_kb'],
+			'label' => $txt['media_max_file_size'] . ': '
+				. $txt['media_image'] . ' - <span id="aeva_i_quota">' . $context['aeva_max_file_size']['image'] . '</span> ' . $txt['media_kb'] . ', '
+				. $txt['media_video'] . ' - <span id="aeva_v_quota">' . $context['aeva_max_file_size']['video'] . '</span> ' . $txt['media_kb'] . ', '
+				. $txt['media_audio'] . ' - <span id="aeva_a_quota">' . $context['aeva_max_file_size']['audio'] . '</span> ' . $txt['media_kb'] . ', '
+				. $txt['media_doc'] . ' - <span id="aeva_d_quota">' . $context['aeva_max_file_size']['doc'] . '</span> ' . $txt['media_kb'],
 			'class' => 'windowbg',
 			'type' => 'title',
 		),

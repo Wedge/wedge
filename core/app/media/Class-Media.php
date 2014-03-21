@@ -734,7 +734,7 @@ function aeva_extList()
 
 	// Supported doc files are:
 	// Desktop documents (text, PDF, Office...) - txt,rtf,pdf,xls,doc,ppt,docx,xlsx,pptx
-	// Internet files - xml,html,htm,php,css,js
+	// Internet files - xml,html,htm,mht,php,css,js
 	// Archive files - zip,rar,ace,arj,7z,gz,tar,tgz,bz,bzip2,sit
 
 	$doc_mime = !empty($amSettings['my_docs']) ?
