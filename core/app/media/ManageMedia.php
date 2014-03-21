@@ -254,7 +254,7 @@ function aeva_admin_settings()
 		unset($th['image_handler']);
 
 	// Doc types...
-	$default_docs = 'txt,rtf,pdf,xls,doc,ppt,docx,xlsx,pptx,xml,html,htm,php,css,js,zip,rar,ace,arj,7z,gz,tar,tgz,bz,bzip2,sit';
+	$default_docs = 'txt,rtf,diff,patch,pdf,xls,doc,ppt,docx,xlsx,pptx,odt,ods,odp,xml,html,htm,mht,torrent,srt,ssa,ass,php,css,js,zip,rar,ace,arj,7z,gz,tar,tgz,bz,bzip2,sit';
 	if (!isset($amSettings['my_docs']))
 		$amSettings['my_docs'] = $default_docs;
 	$my_docs = array_map('trim', explode(',', $amSettings['my_docs']));

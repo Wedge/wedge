@@ -1508,7 +1508,7 @@ VALUES
 	('disable_playlists', '0'),
 	('disable_comments', '0'),
 	('disable_ratings', '0'),
-	('my_docs', 'txt,rtf,diff,patch,pdf,xls,doc,ppt,docx,xlsx,pptx,odt,ods,odp,xml,html,htm,mht,torrent,srt,ssa,php,css,js,zip,rar,ace,arj,7z,gz,tar,tgz,bz,bzip2,sit');
+	('my_docs', 'txt,rtf,diff,patch,pdf,xls,doc,ppt,docx,xlsx,pptx,odt,ods,odp,xml,html,htm,mht,torrent,srt,ssa,ass,php,css,js,zip,rar,ace,arj,7z,gz,tar,tgz,bz,bzip2,sit');
 
 #
 # Table structure for table `media_variables`
