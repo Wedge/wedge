@@ -1092,7 +1092,7 @@ function db_debug_junk()
  */
 function template_include($filename, $once = false)
 {
-	global $context, $txt, $settings, $boardurl;
+	global $context, $txt, $settings;
 	global $maintenance, $mtitle, $mmessage;
 	static $templates = array();
 
@@ -1141,7 +1141,7 @@ function template_include($filename, $once = false)
 			$txt['template_parse_error_details'] = 'There was a problem loading the <tt><strong>%1$s</strong></tt> template or language file. Please check the syntax and try again - remember, single quotes (<tt>\'</tt>) often have to be escaped with a slash (<tt>\\</tt>). To see more specific error information from PHP, try <a href="{board_url}%1$s" class="extern">accessing the file directly</a>.<br><br>You may want to try to <a href="javascript:location.reload();">refresh this page</a>.';
 		}
 
-		$txt['template_parse_error_details'] = str_replace('{board_url}', $boardurl, $txt['template_parse_error_details']);
+		$txt['template_parse_error_details'] = str_replace('{board_url}', ROOT, $txt['template_parse_error_details']);
 
 		// First, let's get the doctype and language information out of the way.
 		echo '<!DOCTYPE html>
@@ -1170,7 +1170,7 @@ function template_include($filename, $once = false)
 		else
 		{
 			loadSource('Class-WebGet');
-			$weget = new weget(str_replace(ROOT_DIR, $boardurl, $filename));
+			$weget = new weget(str_replace(ROOT_DIR, ROOT, $filename));
 			$error = $weget->get();
 
 			if (empty($error))
