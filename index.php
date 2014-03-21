@@ -30,10 +30,12 @@ define('ROOT_DIR', str_replace('\\', '/', dirname(__FILE__)));
 if (!file_exists(ROOT_DIR . '/Settings.php'))
 {
 	require_once(ROOT_DIR . '/core/app/OriginalFiles.php');
-	create_settings_file(ROOT_DIR);
-	create_generic_folders(ROOT_DIR);
+	create_settings_file();
+	create_generic_folders();
+	create_main_htaccess();
 }
-// Load the settings...
+
+// Load our settings...
 require_once(ROOT_DIR . '/Settings.php');
 
 // Crucial paths.
