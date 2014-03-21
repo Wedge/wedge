@@ -38,10 +38,6 @@ function Home()
 	// Set a canonical URL for this page.
 	$context['canonical_url'] = '<URL>';
 
-	// Do not let search engines index anything if there is a random thing in $_GET.
-	if (!empty($_GET))
-		$context['robot_no_index'] = true;
-
 	$context['page_title'] = isset($txt['homepage_title']) ? $txt['homepage_title'] : $context['forum_name'] . ' - ' . $txt['home'];
 
 	/* Share any thoughts...?
