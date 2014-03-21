@@ -1604,7 +1604,7 @@ function aeva_createTextEditor($post_box_name, $post_box_form, $forceDisableBBC 
 			'id' => $post_box_name,
 			'form' => $post_box_form,
 			'value' => $value,
-			'width' => '95%',
+			'width' => '100%',
 			'disable_smiley_box' => $forceDisableBBC,
 			'buttons' => array(
 				array(
@@ -1612,12 +1612,6 @@ function aeva_createTextEditor($post_box_name, $post_box_form, $forceDisableBBC 
 					'button_text' => $txt['post'],
 					'onclick' => 'return submitThisOnce(this);',
 					'accesskey' => 's',
-				),
-				array(
-					'name' => 'preview',
-					'button_text' => $txt['preview'],
-					'onclick' => 'return submitThisOnce(this);',
-					'accesskey' => 'p',
 				),
 			),
 			'drafts' => 'none',
