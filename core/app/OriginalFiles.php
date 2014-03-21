@@ -187,8 +187,6 @@ FileETag none';
 
 function create_main_htaccess()
 {
-	$apache_version = function_exists('apache_get_version') ? apache_get_version() : '';
-	$version = preg_match('~Apache/([\d.]+)~', $apache_version, $version) ? $version[1] : 0;
 	$begin_code = '############### BEGIN WEDGE CODE ###############';
 	$end_code = str_replace('BEGIN', 'END', $begin_code);
 
@@ -220,17 +218,34 @@ function create_main_htaccess()
 	// Setting PHP variables is only supported in mod_php. If using PHP as CGI, edit php.ini instead.
 	$file .= '
 
-<IfModule mod_php.c>';
+<IfModule mod_php.c>
 
-	// Apache 2 rules.
-	if (!$version || intval($version) >= 2)
-		$file .= create_apache_rules(true);
+	# PHP has to be running for Wedge to work, of course.
+	php_flag engine on
 
-	// Apache 1 rules. It's unlikely we'll come back to 1.x from 2.x, so skip this if 2.x was detected.
-	if (!$version)
-		$file .= create_apache_rules();
+	# Security
+	php_flag session.use_cookies on' /* Using cookies for sessions is much more secure. */ . '
+	php_flag session.use_trans_sid off' /* If it is really necessary, Wedge will do this - and it does it better. */ . '
+	php_flag register_globals off' /* This is generally a bad thing to have on unless you need it on. */ . '
+	php_flag magic_quotes_sybase off' /* This setting goes against Wedge's expectations on secure request variables. */ . '
 
-	$file .= '
+	# Functionality
+	php_value session.gc_maxlifetime 2880' /* A longer session length is preferrable when posting long messages. */ . '
+	php_value session.save_handler "files"
+	php_value session.serialize_handler "php"' /* Wedge expects these options to be set normally. (They almost always are.) */ . '
+	php_flag session.use_only_cookies off' /* URL-based sessions are used if cookies aren't available to the client. */ . '
+	php_flag session.auto_start off' /* If the session is automatically started, output compression may not work. */ . '
+	php_flag allow_url_fopen on' /* With this on, you can use the plugin manager among other things. */ . '
+	php_value arg_separator.output "&amp;"' /* This is here just for validation, although it isn't really used. */ . '
+	php_value upload_max_filesize "4M"' /* This sets a larger upload file size. */ . '
+
+	# Optimization
+	php_value arg_separator.input "&;"' /* If PHP does this, Wedge won't have to redo it. */ . '
+	php_flag always_populate_raw_post_data off
+	php_flag register_argc_argv off' /* Wedge doesn't use these two, might as well disable them. */ . '
+	php_flag magic_quotes_gpc off' /* Magic quotes suck. Die. Forever. */ . '
+	php_flag implicit_flush off' /* This is a really bad setting for connections, and is best off just generally. */ . '
+
 </IfModule>';
 
 	// Ensures that accessing your forum root with "/" instead of "/index.php" will work.
@@ -260,40 +275,4 @@ function create_main_htaccess()
 	if (file_exists(ROOT_DIR . '/.htaccess'))
 		$file .= preg_replace('~' . $begin_code . '.*?' . $end_code . '\v~s', '', file_get_contents(ROOT_DIR . '/.htaccess'));
 	file_put_contents(ROOT_DIR . '/.htaccess', $file);
-}
-
-function create_apache_rules($v2 = false)
-{
-	$on = $v2 ? '1' : 'on';
-	$off = $v2 ? '0' : 'off';
-	$php_flag = $v2 ? 'php_value' : 'php_flag';
-
-	return '
-<IfDefine ' . ($v2 ? '' : '!') . "APACHE2>
-	# PHP has to be running for Wedge to work, of course.
-	$php_flag engine $on
-
-	# Security
-	$php_flag session.use_cookies $on" /* Using cookies for sessions is much more secure. */ . "
-	$php_flag session.use_trans_sid $off" /* If it is really necessary, Wedge will do this - and it does it better. */ . "
-	$php_flag register_globals $off" /* This is generally a bad thing to have on unless you need it on. */ . "
-	$php_flag magic_quotes_sybase $off" /* This setting goes against Wedge's expectations on secure request variables. */ . "
-
-	# Functionality
-	$php_flag session.auto_start $off" /* If the session is automatically started, output compression may not work. */ . "
-	php_value session.gc_maxlifetime 2880" /* A longer session length is preferrable when posting long messages. */ . "
-	php_value session.save_handler \"files\"
-	php_value session.serialize_handler \"php\"" /* Wedge expects these options to be set normally. (They almost always are.) */ . "
-	$php_flag session.use_only_cookies $off" /* URL-based sessions are used if cookies aren't available to the client. */ . "
-	$php_flag allow_url_fopen $on" /* With this on, you can use the plugin manager among other things. */ . "
-	php_value arg_separator.output \"&amp;\"" /* This is here just for validation, although it isn't really used. */ . "
-	php_value upload_max_filesize \"4M\"" /* This sets a larger upload file size. */ . "
-
-	# Optimization
-	php_value arg_separator.input \"&;\"" /* If PHP does this, Wedge won't have to redo it. */ . "
-	$php_flag always_populate_raw_post_data $off
-	$php_flag register_argc_argv $off" /* Wedge doesn't use these two, might as well disable them. */ . "
-	$php_flag magic_quotes_gpc $off" /* Magic quotes suck. Die. Forever. */ . "
-	$php_flag implicit_flush $off" /* This is a really bad setting for connections, and is best off just generally. */ . "
-</IfDefine>";
 }
