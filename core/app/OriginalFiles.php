@@ -57,13 +57,8 @@ $db_last_error = 0;
 			file_put_contents(ROOT_DIR . $target, $file . "\n?" . '>');
 }
 
-function create_generic_folders($root_dir = '')
+function create_generic_folders()
 {
-	global $boarddir;
-
-	if (empty($boarddir))
-		$boarddir = $root_dir;
-
 	$folders = array(
 		'attachments' => true,
 		'gz' => array(
@@ -86,12 +81,12 @@ function create_generic_folders($root_dir = '')
 
 	foreach ($folders as $key => $folder)
 	{
-		if (!file_exists($boarddir . '/' . $key))
-			create_generic_folder($boarddir, $key);
+		if (!file_exists(ROOT_DIR . '/' . $key))
+			create_generic_folder(ROOT_DIR, $key);
 		if (is_array($folder))
 			foreach ($folder as $sub_folder)
-				if (!file_exists($boarddir . '/' . $key . '/' . $sub_folder))
-					create_generic_folder($boarddir, $key . '/' . $sub_folder);
+				if (!file_exists(ROOT_DIR . '/' . $key . '/' . $sub_folder))
+					create_generic_folder(ROOT_DIR, $key . '/' . $sub_folder);
 	}
 }
 
