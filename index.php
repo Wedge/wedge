@@ -98,23 +98,6 @@ $context['subaction'] = isset($_GET['sa']) ? $_GET['sa'] : null;
 // Load the user's cookie (or set as guest) and load their settings.
 we::getInstance();
 
-// Get rid of ?PHPSESSID for robots.
-// !! Probably useless, thanks to canonical URLs.
-if (we::$user['possibly_robot'] && strpos(we::$user['url'], 'PHPSESSID=') !== false)
-{
-	$correcturl = preg_replace('~([?&]PHPSESSID=[^&]*)~', '', we::$user['url']);
-	$correcturl = str_replace(array('index.php&', 'index.php??'), 'index.php?', $correcturl);
-	$correcturl = str_replace(array('/&?', '/??', '/&'), '/?', $correcturl);
-	$correcturl = preg_replace('~&$|\?$~', '', $correcturl);
-
-	if ($correcturl != we::$user['url'])
-	{
-		header('HTTP/1.1 301 Moved Permanently');
-		header('Location: ' . $correcturl);
-		exit;
-	}
-}
-
 // Check the request for anything hinky.
 checkUserBehavior();
 

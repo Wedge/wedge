@@ -60,6 +60,11 @@ function obExit($start = null, $do_finish = null, $from_index = false, $from_fat
 		if (empty($context['page_title_html_safe']))
 			$context['page_title_html_safe'] = empty($context['page_title']) ? '' : westr::htmlspecialchars(un_htmlspecialchars(strip_tags($context['page_title'])), ENT_COMPAT, false, false);
 
+		// Try to get rid of ?PHPSESSID for robots.
+		if (empty($context['canonical_url']) && we::$user['possibly_robot'] && empty($context['robot_no_index']) && strpos(we::$user['url'], ($sn = session_name()) . '=') !== false)
+			if (we::$user['url'] != ($correcturl = preg_replace('~(?:\?' . $sn . '=[^&;]*$|\b' . $sn . '=[^&;]*[&;])~', '', we::$user['url'])))
+				$context['canonical_url'] = $correcturl;
+
 		// Start up the session URL fixer. Don't do it in SSI, as it did it already.
 		if (!defined('WEDGE') || WEDGE != 'SSI')
 			ob_start('ob_sessrewrite');
