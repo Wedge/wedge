@@ -83,6 +83,7 @@ h1
 
 #banner
 	height: $banner_height
+	position: relative
 	@if ie[-9]
 		background-image: url($images/theme/bg.jpg)
 	@else
@@ -97,9 +98,9 @@ h1
 		max-height: math($banner_height - 40px)
 	// We're using flexbox to easily spread out our elements.
 	.frame
-		display: flex
-		align-items: baseline
+		position: absolute
 		justify-content: space-between
+		padding-top, bottom: 0
 		@if ie[-9]
 			width: auto
 			gradient: $head_bg, luma($head_bg, -20%)
