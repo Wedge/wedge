@@ -261,14 +261,12 @@ ul#noava
 	width: 100%
 	clear: both
 	overflow: hidden
-	display: flex
-	align-items: flex-end
 	min-height: 70px
 
 	.frame
 		width: 100%
 		box-sizing: border-box
-		padding: 0 25px 10px
+		padding: 25px 25px 10px
 		display: flex
 		flex-flow: row wrap
 		align-items: baseline
