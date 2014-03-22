@@ -1092,7 +1092,7 @@ function db_debug_junk()
  */
 function template_include($filename, $once = false)
 {
-	global $settings;
+	global $settings, $txt;
 	static $templates = array();
 
 	// We want to be able to figure out any errors...
