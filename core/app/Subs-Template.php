@@ -1092,8 +1092,7 @@ function db_debug_junk()
  */
 function template_include($filename, $once = false)
 {
-	global $context, $txt, $settings;
-	global $maintenance, $mtitle, $mmessage;
+	global $settings;
 	static $templates = array();
 
 	// We want to be able to figure out any errors...
@@ -1124,151 +1123,8 @@ function template_include($filename, $once = false)
 
 	if ($file_found !== true)
 	{
-		clean_output();
-
-		// Don't cache error pages!!
-		header('Expires: Wed, 25 Aug 2010 17:00:00 GMT');
-		header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
-		header('Cache-Control: no-cache');
-
-		if (!isset($txt['template_parse_error']))
-			loadLanguage('Errors', '', false);
-
-		if (!isset($txt['template_parse_error']))
-		{
-			$txt['template_parse_error'] = 'Template Parse Error!';
-			$txt['template_parse_error_message'] = 'It seems something has gone sour on the forum with the template system. This problem should only be temporary, so please come back later and try again. If you continue to see this message, please contact the administrator.<br><br>You can also try <a href="javascript:location.reload();">refreshing this page</a>.';
-			$txt['template_parse_error_details'] = 'There was a problem loading the <tt><strong>%1$s</strong></tt> template or language file. Please check the syntax and try again - remember, single quotes (<tt>\'</tt>) often have to be escaped with a slash (<tt>\\</tt>). To see more specific error information from PHP, try <a href="{board_url}%1$s" class="extern">accessing the file directly</a>.<br><br>You may want to try to <a href="javascript:location.reload();">refresh this page</a>.';
-		}
-
-		$txt['template_parse_error_details'] = str_replace('{board_url}', ROOT, $txt['template_parse_error_details']);
-
-		// First, let's get the doctype and language information out of the way.
-		echo '<!DOCTYPE html>
-<html', !empty($context['right_to_left']) ? ' dir="rtl"' : '', '>
-	<head>
-		<meta charset="utf-8">';
-
-		if (!empty($maintenance) && !allowedTo('admin_forum'))
-			echo '
-		<title>', $mtitle, '</title>
-	</head>
-	<body>
-		<h3>', $mtitle, '</h3>
-		', $mmessage, '
-	</body>
-</html>';
-		elseif (!allowedTo('admin_forum'))
-			echo '
-		<title>', $txt['template_parse_error'], '</title>
-	</head>
-	<body>
-		<h3>', $txt['template_parse_error'], '</h3>
-		', $txt['template_parse_error_message'], '
-	</body>
-</html>';
-		else
-		{
-			loadSource('Class-WebGet');
-			$weget = new weget(str_replace(ROOT_DIR, ROOT, $filename));
-			$error = $weget->get();
-
-			if (empty($error))
-				$error = isset($php_errormsg) ? $php_errormsg : '';
-
-			$error = strtr($error, array('<b>' => '<strong>', '</b>' => '</strong>'));
-
-			echo '
-		<title>', $txt['template_parse_error'], '</title>
-	</head>
-	<body>
-		<h3>', $txt['template_parse_error'], '</h3>
-		', sprintf($txt['template_parse_error_details'], str_replace(ROOT_DIR, '', $filename));
-
-			if (!empty($error))
-				echo '
-		<hr>
-		<div style="margin: 0 20px"><tt>', str_replace('<strong>' . ROOT_DIR, '<strong>...', $error), '</tt></div>';
-
-			// Yes, this is VERY complicated... Still, it's good.
-			if (preg_match('~ <strong>(\d+)</strong><br\s*/?\>$~i', $error, $match) != 0)
-			{
-				$data = file($filename);
-				$data2 = highlight_php_code(implode('', $data));
-				$data2 = preg_split('~\<br\s*/?\>~', $data2);
-
-				// Fix the PHP code stuff...
-				$data2 = str_replace('<span class="bbc_pre">' . "\t" . '</span>', "\t", $data2);
-
-				// Now we get to work around a bug in PHP where it doesn't escape <br>s!
-				$j = -1;
-				foreach ($data as $line)
-				{
-					$j++;
-
-					if (strpos($line, '<br>') === false)
-						continue;
-
-					$n = substr_count($line, '<br>');
-					for ($i = 0; $i < $n; $i++)
-					{
-						$data2[$j] .= '&lt;br&gt;' . $data2[$j + $i + 1];
-						unset($data2[$j + $i + 1]);
-					}
-					$j += $n;
-				}
-				$data2 = array_values($data2);
-				array_unshift($data2, '');
-
-				echo '
-		<div style="margin: 2ex 20px"><div style="width: 100%; overflow: auto"><pre style="margin: 0">';
-
-				// Figure out what the color coding was before...
-				$line = max($match[1] - 9, 1);
-				$last_line = '';
-				for ($line2 = $line - 1; $line2 > 1; $line2--)
-					if (strpos($data2[$line2], '<') !== false)
-					{
-						if (preg_match('~(<[^/>]+>)[^<]*$~', $data2[$line2], $color_match) != 0)
-							$last_line = $color_match[1];
-						break;
-					}
-
-				// Show the relevant lines...
-				for ($n = min($match[1] + 4, count($data2) + 1); $line <= $n; $line++)
-				{
-					if ($line == $match[1])
-						echo '</pre><div style="background-color: #ffb0b5"><pre style="margin: 0">';
-
-					echo '<span style="color: black">', sprintf('%' . strlen($n) . 's', $line), ':</span> ';
-					if (isset($data2[$line]) && $data2[$line] != '')
-						echo substr($data2[$line], 0, 2) == '</' ? preg_replace('~^</[^>]+>~', '', $data2[$line]) : $last_line . $data2[$line];
-
-					if (isset($data2[$line]) && preg_match('~(<[^/>]+>)[^<]*$~', $data2[$line], $color_match) != 0)
-					{
-						$last_line = $color_match[1];
-						echo '</', substr($last_line, 1, 4), '>';
-					}
-					elseif ($last_line != '' && strpos($data2[$line], '<') !== false)
-						$last_line = '';
-					elseif ($last_line != '' && $data2[$line] != '')
-						echo '</', substr($last_line, 1, 4), '>';
-
-					if ($line == $match[1])
-						echo '</pre></div><pre style="margin: 0">';
-					else
-						echo "\n";
-				}
-
-				echo '</pre></div></div>';
-			}
-
-			echo '
-	</body>
-</html>';
-		}
-
-		exit;
+		loadSource('ManageErrors');
+		handleTemplateErrors($filename);
 	}
 }
 
@@ -1283,7 +1139,7 @@ function template_include($filename, $once = false)
  */
 function loadTemplate($template_name, $fatal = true)
 {
-	global $context, $settings, $txt, $db_show_debug;
+	global $context, $txt, $db_show_debug;
 
 	// No template to load?
 	if ($template_name === false)
