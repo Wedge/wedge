@@ -528,23 +528,21 @@ function CreateMessageIndex()
 // Get the installed APIs.
 function loadAllSearchAPIs()
 {
-	global $sourcedir;
-
 	$apis = array();
-	if ($dh = scandir($sourcedir))
+	if ($dh = scandir(APP_DIR))
 	{
 		foreach ($dh as $file)
 		{
-			if (is_file($sourcedir . '/' . $file) && preg_match('~SearchAPI-([A-Za-z\d_]+)\.php$~', $file, $matches))
+			if (is_file(APP_DIR . '/' . $file) && preg_match('~SearchAPI-([A-Za-z\d_]+)\.php$~', $file, $matches))
 			{
 				// Check this is definitely a valid API!
-				$fp = fopen($sourcedir . '/' . $file, 'rb');
+				$fp = fopen(APP_DIR . '/' . $file, 'rb');
 				$header = fread($fp, 4096);
 				fclose($fp);
 
 				if (strpos($header, 'class ' . strtolower($matches[1]) . '_search') !== false)
 				{
-					require_once($sourcedir . '/' . $file);
+					require_once(APP_DIR . '/' . $file);
 
 					$index_name = strtolower($matches[1]);
 					$search_class_name = $index_name . '_search';

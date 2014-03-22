@@ -48,17 +48,15 @@ function showCodeImage($code)
 
 function loadCaptchaTypes()
 {
-	global $sourcedir;
-
 	$captcha_types = array();
-	if ($dh = scandir($sourcedir . '/captcha'))
+	if ($dh = scandir(APP_DIR . '/captcha'))
 	{
 		foreach ($dh as $file)
 		{
 			if (!is_dir($file) && preg_match('~captcha-([A-Za-z\d_]+)\.php$~', $file, $matches))
 			{
 				// Check this is definitely a valid API!
-				$fp = fopen($sourcedir . '/captcha/' . $file, 'rb');
+				$fp = fopen(APP_DIR . '/captcha/' . $file, 'rb');
 				$header = fread($fp, 4096);
 				fclose($fp);
 

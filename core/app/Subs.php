@@ -2419,11 +2419,9 @@ function call_lang_hook($hook, $plugin_id = '')
  */
 function add_hook($hook, $function, $file = '', $register = true)
 {
-	global $settings, $sourcedir;
+	global $settings;
 
-	if (!empty($file) && !file_exists($sourcedir . '/' . ($file = trim($file)) . '.php'))
-		$file = '';
-	if (strpos($file, '|') !== false)
+	if (!empty($file) && (strpos($file, '|') !== false || !file_exists(APP_DIR . '/' . ($file = trim($file)) . '.php')))
 		$file = '';
 
 	$function .= '|' . $file;
@@ -2462,9 +2460,9 @@ function add_hook($hook, $function, $file = '', $register = true)
  */
 function remove_hook($hook, $function, $file = '')
 {
-	global $settings, $sourcedir;
+	global $settings;
 
-	if (!empty($file) && !file_exists($sourcedir . '/' . ($file = trim($file)) . '.php'))
+	if (!empty($file) && !file_exists(APP_DIR . '/' . ($file = trim($file)) . '.php'))
 		$file = '';
 
 	$function .= '|' . $file;

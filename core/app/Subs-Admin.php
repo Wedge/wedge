@@ -140,7 +140,7 @@ function getServerVersions($checkFor)
 // Search through source, theme and language files to determine their version.
 function getFileVersions(&$versionOptions)
 {
-	global $boarddir, $sourcedir;
+	global $boarddir;
 
 	// Default place to find the languages would be the default theme dir.
 	$lang_dir = LANGUAGES_DIR;
@@ -182,13 +182,13 @@ function getFileVersions(&$versionOptions)
 	}
 
 	// Load all the files in the core/app directory, except for this file and the redirect.
-	$sources_dir = dir($sourcedir);
+	$sources_dir = dir(APP_DIR);
 	while ($entry = $sources_dir->read())
 	{
-		if (substr($entry, -4) === '.php' && !is_dir($sourcedir . '/' . $entry) && $entry !== 'index.php')
+		if (substr($entry, -4) === '.php' && !is_dir(APP_DIR . '/' . $entry) && $entry !== 'index.php')
 		{
 			// Read the first 4k from the file.... enough for the header.
-			$fp = fopen($sourcedir . '/' . $entry, 'rb');
+			$fp = fopen(APP_DIR . '/' . $entry, 'rb');
 			$header = fread($fp, 4096);
 			fclose($fp);
 

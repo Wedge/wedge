@@ -633,7 +633,7 @@ function updateErrorCount($count = 0)
 
 function ViewFile()
 {
-	global $context, $txt, $boarddir, $sourcedir, $cachedir;
+	global $context, $txt, $boarddir, $cachedir;
 
 	loadTemplate('GenericPopup');
 	loadLanguage('Help');
@@ -646,7 +646,7 @@ function ViewFile()
 	$basename = strtolower(basename($file));
 
 	// Make sure the file we are looking for is one they are allowed to look at
-	if (strrchr($basename, '.') != '.php' || $basename == 'settings.php' || $basename == 'settings_bak.php' || !strhas($file, array(realpath($boarddir), realpath($sourcedir), realpath($cachedir . '/php'))) || !is_readable($file))
+	if (strrchr($basename, '.') != '.php' || $basename == 'settings.php' || $basename == 'settings_bak.php' || !strhas($file, array(realpath($boarddir), realpath(APP_DIR), realpath($cachedir . '/php'))) || !is_readable($file))
 		fatal_lang_error('error_bad_file', true, array(htmlspecialchars(base64_decode($_REQUEST['file']))));
 
 	// Get the min and max lines

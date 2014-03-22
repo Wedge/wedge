@@ -1435,7 +1435,7 @@ function executePluginScript($type, $file)
 			fatal_lang_error('fatal_install_' . $type . '_missing', false, empty($file) ? $txt['not_applicable'] : htmlspecialchars($file));
 
 		// This is just here as reference for what is available.
-		global $txt, $boarddir, $sourcedir, $settings, $context;
+		global $txt, $boarddir, $settings, $context;
 		require($full_path);
 	}
 }

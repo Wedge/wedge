@@ -25,6 +25,7 @@ $time_start = microtime(true);
 ob_start();
 
 define('ROOT_DIR', str_replace('\\', '/', dirname(__FILE__)));
+define('APP_DIR', ROOT_DIR . '/core/app');
 
 // Is it our first run..?
 if (!file_exists(ROOT_DIR . '/Settings.php'))
@@ -40,7 +41,7 @@ require_once(ROOT_DIR . '/Settings.php');
 
 // Crucial paths.
 $boarddir = ROOT_DIR;
-foreach (array('source' => 'core/app', 'cache' => 'gz', 'css' => 'gz/css', 'js' => 'gz/js') as $var => $path)
+foreach (array('cache' => 'gz', 'css' => 'gz/css', 'js' => 'gz/js') as $var => $path)
 	${$var . 'dir'} = ROOT_DIR . '/' . $path;
 
 // And important files.
@@ -165,7 +166,7 @@ if (!empty($context['app_error_count']))
 // $source_name can be a string or an array of strings.
 function loadSource($source_name)
 {
-	global $sourcedir, $cachedir, $db_show_debug;
+	global $db_show_debug;
 	static $done = array();
 
 	foreach ((array) $source_name as $file)
@@ -174,17 +175,17 @@ function loadSource($source_name)
 			continue;
 		$done[$file] = true;
 		if (defined('WEDGE_INSTALL') || strpos($file, 'getid3') !== false)
-			$cache = $sourcedir . '/' . $file . '.php';
+			$cache = APP_DIR . '/' . $file . '.php';
 		else
 		{
-			$cache = $cachedir . '/app/' . str_replace(array('/', '..'), array('_', 'UP'), $file) . '.php';
-			if (!file_exists($cache) || filemtime($cache) < filemtime($sourcedir . '/' . $file . '.php'))
+			$cache = ROOT_DIR . '/gz/app/' . str_replace(array('/', '..'), array('_', 'UP'), $file) . '.php';
+			if (!file_exists($cache) || filemtime($cache) < filemtime(APP_DIR . '/' . $file . '.php'))
 			{
-				copy($sourcedir . '/' . $file . '.php', $cache);
+				copy(APP_DIR . '/' . $file . '.php', $cache);
 				// !! Disabling this temporarily (until I add a setting for it), to get proper line numbers when debugging.
 				if (false && empty($db_show_debug))
 				{
-					require_once($sourcedir . '/Subs-MinifyPHP.php');
+					require_once(APP_DIR . '/Subs-MinifyPHP.php');
 					minify_php($cache);
 				}
 			}
@@ -264,7 +265,7 @@ function determine_action($action)
 
 function index_action($hook_action = 'default_action')
 {
-	global $settings, $sourcedir;
+	global $settings;
 
 	// Some plugins may want to specify default "front page" behavior through the 'default_action' hook, and/or a
 	// last-minute fallback ('fallback_action'). If they do, they shall return the name of the function they want to call.
@@ -273,7 +274,7 @@ function index_action($hook_action = 'default_action')
 			return $func;
 
 	// Otherwise, if the admin specified a custom homepage, fall back to it.
-	if (isset($settings['default_index']) && file_exists($sourcedir . '/' . $settings['default_index'] . '.php'))
+	if (isset($settings['default_index']) && file_exists(APP_DIR . '/' . $settings['default_index'] . '.php'))
 	{
 		loadSource($settings['default_index']);
 		return $settings['default_index'];

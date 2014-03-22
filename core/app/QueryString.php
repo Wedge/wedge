@@ -76,7 +76,6 @@ function loadPaths()
 	// All done? No changin' the URLs? Okay, we can now define our constants...
 	define('SCRIPT',		$scripturl);
 	define('ROOT',			$boardurl);
-	define('ROOT_DIR',		$boarddir);
 	define('TEMPLATES',		ROOT . '/core/html');			define('TEMPLATES_DIR',	ROOT_DIR . '/core/html');
 	define('SKINS',			ROOT . '/core/skins');			define('SKINS_DIR',		ROOT_DIR . '/core/skins');
 	define('LANGUAGES',		ROOT . '/core/languages');		define('LANGUAGES_DIR',	ROOT_DIR . '/core/languages');
@@ -110,7 +109,7 @@ function loadPaths()
  */
 function cleanRequest()
 {
-	global $board, $topic, $boardurl, $boarddir, $settings, $context, $action_list;
+	global $board, $topic, $boarddir, $settings, $context, $action_list;
 
 	// These were deprecated years ago. Save some memory.
 	unset($GLOBALS['HTTP_POST_VARS'], $GLOBALS['HTTP_POST_FILES']);
@@ -209,7 +208,7 @@ function cleanRequest()
 	//	$_SERVER['HTTP_HOST'] = strpos($_SERVER['HTTP_HOST'], ':') === false ? $_SERVER['HTTP_HOST'] : substr($_SERVER['HTTP_HOST'], 0, strpos($_SERVER['HTTP_HOST'], ':'));
 	$do_pretty = !empty($settings['pretty_enable_filters']);
 	if ($do_pretty)
-		$query_string = str_replace(substr($boardurl, strpos($boardurl, '://') + 3), '/', $full_request);
+		$query_string = str_replace(substr(ROOT, strpos(ROOT, '://') + 3), '/', $full_request);
 
 	$board = 0;
 	if (isset($_GET['board']) && is_numeric($_GET['board']))

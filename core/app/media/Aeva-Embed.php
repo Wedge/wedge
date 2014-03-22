@@ -15,14 +15,14 @@ if (!defined('WEDGE'))
 // Main auto embed function
 function aeva_main($message)
 {
-	global $context, $settings, $sites, $upto, $sourcedir;
+	global $context, $settings, $sites, $upto;
 
 	// Auto-embedding is disabled. We shouldn't have got this far, but if we have... get out of here.
 	if (empty($settings['embed_enabled']))
 		return $message;
 
 	// Attempt to load all Enabled Sites, if not already loaded
-	if (empty($sites) && file_exists($sourcedir . '/media/Aeva-Sites.php'))
+	if (empty($sites) && file_exists(APP_DIR . '/media/Aeva-Sites.php'))
 		loadSource('media/Aeva-Sites');
 
 	// Are we checking a link in the media gallery? We'd best avoid JavaScript then.
@@ -34,7 +34,7 @@ function aeva_main($message)
 	if (empty($sites))
 	{
 		loadSource(
-			file_exists($sourcedir . '/media/Aeva-Sites-Custom.php') ? array('media/Subs-Aeva-Sites', 'media/Aeva-Sites-Custom') : 'media/Subs-Aeva-Sites'
+			file_exists(APP_DIR . '/media/Aeva-Sites-Custom.php') ? array('media/Subs-Aeva-Sites', 'media/Aeva-Sites-Custom') : 'media/Subs-Aeva-Sites'
 		);
 
 		// We're using the full version, so we just keep allowed local embeds and popular sites.
@@ -847,7 +847,7 @@ function embed_lookups_match($input)
 // Called on both quick reply and full posting
 function aeva_onposting($input)
 {
-	global $settings, $sites, $sourcedir;
+	global $settings, $sites;
 
 	// Exit if all three are disabled:
 	// - Lookups (retrieve final URL, check whether embeds are allowed, etc.)
@@ -872,14 +872,14 @@ function aeva_onposting($input)
 	$input = aeva_protection($array, $input, false);
 
 	// Attempt to load - Enabled Sites
-	if (empty($sites) && file_exists($sourcedir . '/media/Aeva-Sites.php'))
+	if (empty($sites) && file_exists(APP_DIR . '/media/Aeva-Sites.php'))
 		loadSource('media/Aeva-Sites');
 
 	// If we can't use generated version (either just after install, OR permissions meant generated
 	// version couldn't be created, OR it can't be found), load the full un-optimized version.
 	if (empty($sites))
 		loadSource(
-			file_exists($sourcedir . '/media/Aeva-Sites-Custom.php') ? array('media/Subs-Aeva-Sites', 'media/Aeva-Sites-Custom') : 'media/Subs-Aeva-Sites'
+			file_exists(APP_DIR . '/media/Aeva-Sites-Custom.php') ? array('media/Subs-Aeva-Sites', 'media/Aeva-Sites-Custom') : 'media/Subs-Aeva-Sites'
 		);
 
 	// Noob users might have included the full embed code provided by the site
@@ -1099,7 +1099,7 @@ function aeva_embed_video($message, $id_media = 0, $id_preview = 0)
 
 function aeva_check_embed_link($link)
 {
-	global $sites, $boardurl, $settings, $sourcedir;
+	global $sites, $boardurl, $settings;
 
 	if (empty($settings['embed_enabled']))
 		return false;
@@ -1119,12 +1119,12 @@ function aeva_check_embed_link($link)
 			return true;
 	unset($x);
 
-	if (empty($sites) && file_exists($sourcedir . '/media/Aeva-Sites.php'))
+	if (empty($sites) && file_exists(APP_DIR . '/media/Aeva-Sites.php'))
 		loadSource('media/Aeva-Sites');
 
 	if (empty($sites))
 		loadSource(
-			file_exists($sourcedir . '/media/Aeva-Sites-Custom.php') ? array('media/Subs-Aeva-Sites', 'media/Aeva-Sites-Custom') : 'media/Subs-Aeva-Sites'
+			file_exists(APP_DIR . '/media/Aeva-Sites-Custom.php') ? array('media/Subs-Aeva-Sites', 'media/Aeva-Sites-Custom') : 'media/Subs-Aeva-Sites'
 		);
 
 	$link = preg_replace(array('~\[url=([^]]*)][^[]*\[/url]~', '~\[url]([^[]*)\[/url]~'), '$1', $link);

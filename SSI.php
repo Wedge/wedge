@@ -12,12 +12,12 @@
 if (defined('WEDGE'))
 	return;
 
-const WEDGE = 'SSI';
+define('WEDGE', 'SSI');
 
 // We're going to want a few globals... these are all set later.
 global $settings, $context, $sc, $topic, $board, $txt;
 global $time_start, $maintenance, $msubject, $mmessage, $mbname;
-global $boardurl, $boarddir, $sourcedir, $webmaster_email, $cookiename;
+global $boardurl, $boarddir, $webmaster_email, $cookiename;
 global $db_server, $db_connection, $db_name, $db_user, $db_prefix, $db_persist;
 global $db_error_send, $db_last_error, $ssi_db_user, $ssi_db_passwd, $db_passwd;
 
@@ -30,9 +30,16 @@ if (version_compare(PHP_VERSION, '5.4') < 0 && function_exists('set_magic_quotes
 
 $time_start = microtime(true);
 
+define('ROOT_DIR', str_replace('\\', '/', dirname(__FILE__)));
+define('APP_DIR', ROOT_DIR . '/core/app');
+
 // Get the forum's settings for database and file paths.
 require_once(dirname(__FILE__) . '/Settings.php');
 require_once(dirname(__FILE__) . '/index.php');
+
+$boarddir = ROOT_DIR;
+foreach (array('cache' => 'gz', 'css' => 'gz/css', 'js' => 'gz/js') as $var => $path)
+	${$var . 'dir'} = ROOT_DIR . '/' . $path;
 
 $ssi_error_reporting = error_reporting(E_ALL | E_STRICT);
 /*
@@ -47,10 +54,6 @@ $ssi_on_error_method = false;
 // Don't do anything if the forum's been shut down competely.
 if ($maintenance == 2 && (!isset($ssi_maintenance_off) || $ssi_maintenance_off !== true))
 	exit($mmessage);
-
-// Fix for using the current directory as a path.
-if ($sourcedir[0] === '.' && $sourcedir[1] !== '.')
-	$sourcedir = dirname(__FILE__) . substr($sourcedir, 1);
 
 // Load the important includes.
 loadSource(array(

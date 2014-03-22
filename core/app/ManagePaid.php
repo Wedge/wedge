@@ -1814,23 +1814,21 @@ function loadSubscriptions()
 // Load all the payment gateways.
 function loadPaymentGateways()
 {
-	global $sourcedir;
-
 	$gateways = array();
-	if ($dh = scandir($sourcedir))
+	if ($dh = scandir(APP_DIR))
 	{
 		foreach ($dh as $file)
 		{
-			if (is_file($sourcedir . '/' . $file) && preg_match('~Subscriptions-([A-Za-z\d]+)\.php$~', $file, $matches))
+			if (is_file(APP_DIR . '/' . $file) && preg_match('~Subscriptions-([A-Za-z\d]+)\.php$~', $file, $matches))
 			{
 				// Check this is definitely a valid gateway!
-				$fp = fopen($sourcedir . '/' . $file, 'rb');
+				$fp = fopen(APP_DIR . '/' . $file, 'rb');
 				$header = fread($fp, 4096);
 				fclose($fp);
 
 				if (strpos($header, '// Wedge Payment Gateway: ' . strtolower($matches[1])) !== false)
 				{
-					require_once($sourcedir . '/' . $file);
+					require_once(APP_DIR . '/' . $file);
 
 					$gateways[] = array(
 						'filename' => $file,

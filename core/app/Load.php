@@ -1991,9 +1991,7 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
  */
 function loadSearchAPI($api)
 {
-	global $sourcedir;
-
-	$file = $sourcedir . '/SearchAPI-' . ucwords($api) . '.php';
+	$file = APP_DIR . '/SearchAPI-' . ucwords($api) . '.php';
 	if (!file_exists($file))
 		return false;
 	@include($file);

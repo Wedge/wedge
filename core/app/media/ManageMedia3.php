@@ -16,7 +16,7 @@ if (!defined('WEDGE'))
 // Handles the admin pages
 function aeva_admin_embed()
 {
-	global $context, $txt, $settings, $sourcedir;
+	global $context, $txt, $settings;
 
 	wetem::load('aeva_form');
 	wetem::outer('aeva_admin_enclose_table');
@@ -100,10 +100,10 @@ function aeva_admin_embed()
 	$definitions = 'default';
 
 	// Attempt to load enabled sites
-	if (file_exists($sourcedir . '/media/Subs-Aeva-Generated-Sites.php'))
-		rename($sourcedir . '/media/Subs-Aeva-Generated-Sites.php', $sourcedir . '/media/Aeva-Sites.php');
-	if (file_exists($sourcedir . '/media/Aeva-Sites.php'))
-		include($sourcedir . '/media/Aeva-Sites.php');
+	if (file_exists(APP_DIR . '/media/Subs-Aeva-Generated-Sites.php'))
+		rename(APP_DIR . '/media/Subs-Aeva-Generated-Sites.php', APP_DIR . '/media/Aeva-Sites.php');
+	if (file_exists(APP_DIR . '/media/Aeva-Sites.php'))
+		include(APP_DIR . '/media/Aeva-Sites.php');
 
 	// Site definitions
 	if (empty($sites))
@@ -129,16 +129,16 @@ function aeva_admin_embed()
 	$sites = array();
 
 	// Load the FULL definitions into the $sites static
-	@include($sourcedir . '/media/Subs-Aeva-Sites.php');
+	@include(APP_DIR . '/media/Subs-Aeva-Sites.php');
 
 	// Checkall helps us decide whether to make the checkboxes all checked
 	$checkall = array('pop' => true, 'video' => true, 'audio' => true, 'adult' => true, 'other' => true);
 	// Create arrays to store bits of information/organize them into various sections
 	$stypes = array('local', 'pop', 'video', 'audio', 'adult', 'other');
 
-	if (file_exists($sourcedir . '/media/Aeva-Sites-Custom.php'))
+	if (file_exists(APP_DIR . '/media/Aeva-Sites-Custom.php'))
 	{
-		@include($sourcedir . '/media/Aeva-Sites-Custom.php');
+		@include(APP_DIR . '/media/Aeva-Sites-Custom.php');
 		$checkall['custom'] = true;
 		$stypes[] = 'custom';
 	}
@@ -351,10 +351,8 @@ function aeva_prepare_sites(&$original_array, $type, $is_sites, &$checkall)
 // Generates the file containing optimized arrays (ONLY enabled sites with only necessary information
 function aeva_write_file($arrays)
 {
-	global $sourcedir;
-
 	// Filename
-	$filename = $sourcedir . '/media/Aeva-Sites.php';
+	$filename = APP_DIR . '/media/Aeva-Sites.php';
 
 	// Chmod - suppress errors, especially for Windows
 	@chmod($filename, 0777);

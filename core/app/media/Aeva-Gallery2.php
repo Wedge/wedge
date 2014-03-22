@@ -2189,7 +2189,7 @@ function aeva_massUpload()
 // Modifying item's title?
 function aeva_massUploadFinish()
 {
-	global $galurl, $sourcedir;
+	global $galurl;
 
 	// Unset it
 	unset($_POST['submit_title_update']);
@@ -2253,11 +2253,8 @@ function aeva_massUploadFinish()
 		aeva_modifyItem($iOpts);
 	}
 
-	if (file_exists($sourcedir . '/media/Aeva-Foxy.php'))
-	{
-		loadSource('media/Aeva-Foxy');
-		aeva_foxy_notify_items($album, $act_items);
-	}
+	loadSource('media/Aeva-Foxy');
+	aeva_foxy_notify_items($album, $act_items);
 
 	// Bye Bye
 	redirectexit($galurl . 'sa=album;in=' . $album);
