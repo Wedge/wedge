@@ -61,12 +61,10 @@ function MessageIndex()
 
 	// Right, let's only index normal stuff!
 	if (count($_GET) > 1)
-	{
-		$session_name = session_name();
 		foreach ($_GET as $k => $v)
-			if (!in_array($k, array('board', 'start', $session_name)))
+			if (!in_array($k, array('board', 'start', session_name())))
 				$context['robot_no_index'] = true;
-	}
+
 	if (!empty($_REQUEST['start']) && (!is_numeric($_REQUEST['start']) || $_REQUEST['start'] % $context['messages_per_page'] != 0))
 		$context['robot_no_index'] = true;
 
