@@ -268,7 +268,7 @@ class wesql
 
 	public static function serious_error($db_string, $connection = null)
 	{
-		global $txt, $context, $webmaster_email, $settings, $db_last_error, $db_persist, $cachedir;
+		global $txt, $context, $webmaster_email, $settings, $db_last_error, $db_persist;
 		global $db_server, $db_user, $db_passwd, $db_name, $db_show_debug, $ssi_db_user, $ssi_db_passwd;
 
 		if (isset($txt) && !isset($txt['mysql_error_space'], $txt['file']))
@@ -351,7 +351,7 @@ class wesql
 				loadSource('Subs-Post');
 
 				// Make a note of the REPAIR...
-				@touch($cachedir . '/error.lock');
+				@touch(CACHE_DIR . '/error.lock');
 
 				// Attempt to find and repair the broken table.
 				foreach ($fix_tables as $table)

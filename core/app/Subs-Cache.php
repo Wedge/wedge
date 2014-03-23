@@ -65,7 +65,7 @@ function add_js_inline()
  */
 function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow = false, $ignore_files = array())
 {
-	global $context, $settings, $jsdir, $footer_coding;
+	global $context, $settings, $footer_coding;
 	static $done_files = array();
 
 	if (!is_array($files))
@@ -126,14 +126,14 @@ function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow =
 	// jQuery never gets updated, so let's be bold and shorten its filename to... The version number!
 	$is_jquery = count($files) == 1 && reset($files) == 'jquery-' . $context['jquery_version'] . '.min.js';
 	$final_name = $is_jquery ? $context['jquery_version'] : $id . $lang_name . $latest_date;
-	if (!file_exists($jsdir . '/' . $final_name . $ext))
+	if (!file_exists(CACHE_DIR . '/js/' . $final_name . $ext))
 	{
 		wedge_cache_js($id, $lang_name, $latest_date, $ext, $files, $can_gzip);
 		if ($is_jquery)
-			@rename($jsdir . '/' . $id . $lang_name . $latest_date . $ext, $jsdir . '/' . $final_name . $ext);
+			@rename(CACHE_DIR . '/js/' . $id . $lang_name . $latest_date . $ext, CACHE_DIR . '/js/' . $final_name . $ext);
 	}
 
-	$final_script = ROOT . '/gz/js/' . $final_name . $ext;
+	$final_script = CACHE . '/js/' . $final_name . $ext;
 
 	// Do we just want the URL?
 	if ($is_out_of_flow)
@@ -160,7 +160,7 @@ function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow =
  */
 function add_plugin_js_file($plugin_name, $files = array(), $is_direct_url = false, $is_out_of_flow = false)
 {
-	global $context, $jsdir, $settings, $footer_coding;
+	global $context, $settings, $footer_coding;
 	static $done_files = array();
 
 	if (empty($context['plugins_dir'][$plugin_name]))
@@ -211,10 +211,10 @@ function add_plugin_js_file($plugin_name, $files = array(), $is_direct_url = fal
 	$can_gzip = !empty($settings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
 	$ext = $can_gzip ? (we::is('safari[-5.0]') ? '.jgz' : '.js.gz') : '.js';
 
-	if (!file_exists($jsdir . '/' . $id . $lang_name . $latest_date . $ext))
+	if (!file_exists(CACHE_DIR . '/js/' . $id . $lang_name . $latest_date . $ext))
 		wedge_cache_js($id, $lang_name, $latest_date, $ext, $files, $can_gzip, true);
 
-	$final_script = ROOT . '/gz/js/' . $id . $lang_name . $latest_date . $ext;
+	$final_script = CACHE . '/js/' . $id . $lang_name . $latest_date . $ext;
 
 	// Do we just want the URL?
 	if ($is_out_of_flow)
@@ -426,9 +426,9 @@ function add_css_file($original_files = array(), $add_link = true, $is_main = fa
 	$target_folder = trim($id . '-' . implode('-', array_filter(array_diff($files, (array) 'common', $ignore_files))), '-');
 
 	// Cache final file and retrieve its name.
-	$final_script = ROOT . '/gz/css/' . wedge_cache_css_files($target_folder . ($target_folder ? '/' : ''), $found_suffixes, $latest_date, array_merge($css, $hardcoded_css), $can_gzip, $ext);
+	$final_script = CACHE . '/css/' . wedge_cache_css_files($target_folder . ($target_folder ? '/' : ''), $found_suffixes, $latest_date, array_merge($css, $hardcoded_css), $can_gzip, $ext);
 
-	if ($final_script == ROOT . '/gz/css/')
+	if ($final_script == CACHE . '/css/')
 		return false;
 
 	if ($is_main)
@@ -499,9 +499,9 @@ function add_plugin_css_file($plugin_name, $original_files = array(), $add_link 
 	$target_folder = trim(str_replace(array('/', ':'), '-', strtolower($plugin_name) . '-' . implode('-', array_filter(array_diff($original_files, (array) 'common', $ignore_files)))), '-');
 
 	// Cache final file and retrieve its name.
-	$final_script = ROOT . '/gz/css/' . wedge_cache_css_files($target_folder . ($target_folder ? '/' : ''), $id, $latest_date, $files, $can_gzip, $ext, array('$plugindir' => $context['plugins_url'][$plugin_name]));
+	$final_script = CACHE . '/css/' . wedge_cache_css_files($target_folder . ($target_folder ? '/' : ''), $id, $latest_date, $files, $can_gzip, $ext, array('$plugindir' => $context['plugins_url'][$plugin_name]));
 
-	if ($final_script == ROOT . '/gz/css/')
+	if ($final_script == CACHE . '/css/')
 		return false;
 
 	// Do we just want the URL?
@@ -592,9 +592,9 @@ function wedge_get_css_filename($add)
  */
 function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false, $ext = '.css', $additional_vars = array())
 {
-	global $css_vars, $context, $cssdir;
+	global $css_vars, $context;
 
-	$final_folder = substr($cssdir . '/' . $folder, 0, -1);
+	$final_folder = substr(CACHE_DIR . '/css/' . $folder, 0, -1);
 	$cachekey = 'css_files-' . $folder . implode('-', $ids);
 
 	// Get the list of tests that shall be done within the CSS files,
@@ -615,7 +615,7 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 	if (!empty($folder) && $folder != '/' && !file_exists($final_folder))
 	{
 		@mkdir($final_folder, 0755);
-		@copy($cssdir . '/index.php', $final_folder . '/index.php');
+		@copy(CACHE_DIR . '/css/index.php', $final_folder . '/index.php');
 	}
 
 	$final = '';
@@ -973,7 +973,7 @@ function wedge_js_replace_ifs($match)
  */
 function wedge_cache_js($id, &$lang_name, $latest_date, $ext, $js, $gzip = false, $full_path = false)
 {
-	global $settings, $comments, $jsdir, $txt;
+	global $settings, $comments, $txt;
 	static $closure_failed = false;
 
 	$final = '';
@@ -981,7 +981,7 @@ function wedge_cache_js($id, &$lang_name, $latest_date, $ext, $js, $gzip = false
 	$no_packing = array();
 
 	// Delete cached versions, unless they have the same timestamp (i.e. up to date.)
-	if (is_array($files = glob($jsdir . '/' . $id. '*' . $ext, GLOB_NOSORT)))
+	if (is_array($files = glob(CACHE_DIR . '/js/' . $id. '*' . $ext, GLOB_NOSORT)))
 		foreach ($files as $del)
 			if (strpos($del, (string) $latest_date) === false)
 				@unlink($del);
@@ -1237,7 +1237,7 @@ function wedge_cache_js($id, &$lang_name, $latest_date, $ext, $js, $gzip = false
 	if ($gzip)
 		$final = gzencode($final, 9);
 
-	file_put_contents($jsdir . '/' . $id . $lang_name . $latest_date . $ext, $final);
+	file_put_contents(CACHE_DIR . '/js/' . $id . $lang_name . $latest_date . $ext, $final);
 }
 
 /**
@@ -1249,14 +1249,14 @@ function wedge_cache_js($id, &$lang_name, $latest_date, $ext, $js, $gzip = false
  */
 function wedge_cache_smileys($set, $smileys, $extra)
 {
-	global $cssdir, $context, $settings;
+	global $context, $settings;
 
 	$final_gzip = $final_raw = '';
 	$path = ASSETS_DIR . '/smileys/' . $set . '/';
 	$url = (strpos(str_replace('://', '', ROOT), '/') === false && strpos(SMILEYS, ROOT) === 0 ? '' : '../..') . str_replace(ROOT, '', SMILEYS) . '/' . $set . '/';
 
 	// Delete other cached versions, if they exist.
-	clean_cache($context['smiley_ext'], 'smileys' . $extra, $cssdir);
+	clean_cache($context['smiley_ext'], 'smileys' . $extra, CACHE_DIR . '/css');
 
 	foreach ($smileys as $name => $smiley)
 	{
@@ -1279,7 +1279,7 @@ function wedge_cache_smileys($set, $smileys, $extra)
 	if ($context['smiley_gzip'])
 		$final = gzencode($final, 9);
 
-	file_put_contents($cssdir . '/smileys' . $extra . ($set == 'default' ? '' : '-' . $set) . '-' . $context['smiley_now'] . $context['smiley_ext'], $final);
+	file_put_contents(CACHE_DIR . '/css/smileys' . $extra . ($set == 'default' ? '' : '-' . $set) . '-' . $context['smiley_now'] . $context['smiley_ext'], $final);
 }
 
 /**
@@ -1659,20 +1659,20 @@ function uncache()
  */
 function clean_cache($extensions = 'php', $filter = '', $force_folder = '', $remove_folder = false)
 {
-	global $cache_system, $cachedir, $cssdir, $jsdir;
+	global $cache_system, $cachedir;
 
 	$folder = $cachedir . '/keys';
 	$is_recursive = false;
 	$there_is_another = false;
 	if ($extensions === 'css')
 	{
-		$folder = $cssdir;
+		$folder = CACHE_DIR . '/css';
 		$extensions = array('css', 'cgz', 'css.gz');
 		$is_recursive = true;
 	}
 	elseif ($extensions === 'js')
 	{
-		$folder = $jsdir;
+		$folder = CACHE_DIR . '/js';
 		$extensions = array('js', 'jgz', 'js.gz');
 	}
 	elseif (!is_array($extensions))

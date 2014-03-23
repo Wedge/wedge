@@ -336,7 +336,7 @@ function ModifyMailSettings($return_config = false)
 
 function ModifyEmailTemplates()
 {
-	global $context, $txt, $mbname, $cachedir;
+	global $context, $txt, $mbname;
 
 	getLanguages();
 
@@ -428,7 +428,7 @@ function ModifyEmailTemplates()
 			array($lang, 'EmailTemplates', 'emailtemplate_' . $_POST['email'], serialize($new_entry), 1, 0)
 		);
 
-		foreach (glob($cachedir . '/lang_*_*_EmailTemplates.php') as $filename)
+		foreach (glob(CACHE_DIR . '/lang_*_*_EmailTemplates.php') as $filename)
 			@unlink($filename);
 
 		$_SESSION['was_saved'] = true;

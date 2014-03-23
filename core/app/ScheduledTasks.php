@@ -1244,7 +1244,7 @@ function scheduled_fetchRemoteFiles()
 
 function scheduled_weekly_maintenance()
 {
-	global $settings, $cachedir;
+	global $settings;
 
 	// Delete some settings that needn't be set if they are otherwise empty.
 	$emptySettings = array(
@@ -1402,8 +1402,8 @@ function scheduled_weekly_maintenance()
 	);
 
 	// Check the cache folders etc. have what they're supposed to have. Just remember that we have to mask things from occasional silly hosts.
-	if (!file_exists($cachedir . '/index.php'))
-		@file_put_contents($cachedir . '/index.php', '<' . '?' . 'ph' . "p\n\n// Redirect to the upper level.\nheader('Location: ../');\n");
+	if (!file_exists(CACHE_DIR . '/index.php'))
+		@file_put_contents(CACHE_DIR . '/index.php', '<' . '?ph' . "p\n\n// Redirect to the upper level.\nheader('Location: ../');\n");
 
 	if (!file_exists($cachedir . '/.htaccess'))
 		@file_put_contents($cachedir . '/.htaccess', '<Files *.php>

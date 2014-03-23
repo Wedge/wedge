@@ -80,6 +80,7 @@ function loadPaths()
 	define('SKINS',			ROOT . '/core/skins');			define('SKINS_DIR',		ROOT_DIR . '/core/skins');
 	define('LANGUAGES',		ROOT . '/core/languages');		define('LANGUAGES_DIR',	ROOT_DIR . '/core/languages');
 	define('ASSETS',		ROOT . '/assets');				define('ASSETS_DIR',	ROOT_DIR . '/assets');
+	define('CACHE',			ROOT . '/gz');					define('CACHE_DIR',		ROOT_DIR . '/gz');
 	define('SMILEYS',		ROOT . '/assets/smileys');
 	define('AVATARS',		ROOT . '/assets/avatars');
 

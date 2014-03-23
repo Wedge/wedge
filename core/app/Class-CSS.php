@@ -1738,8 +1738,6 @@ class wess_base64 extends wess
 
 	function process(&$css)
 	{
-		global $cssdir;
-
 		$images = array();
 		if (preg_match_all('~(?<!raw-)url\(([^)]+)\)~i', $css, $matches))
 		{
@@ -1749,7 +1747,7 @@ class wess_base64 extends wess
 
 			foreach ($images as $img => $img_ext)
 			{
-				$path = strpos($this->folder . $img, '../') !== false ? $cssdir . '/' . $this->folder . $img : ROOT_DIR . $img;
+				$path = strpos($this->folder . $img, '../') !== false ? CACHE_DIR . '/css/' . $this->folder . $img : ROOT_DIR . $img;
 				$absolut = realpath($path);
 
 				// Only small files should be embedded, really. We're saving on hits, not bandwidth.

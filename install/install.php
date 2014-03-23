@@ -1856,14 +1856,11 @@ function fixModSecurity()
 
 function init_variables()
 {
-	global $incontext, $txt, $boardurl, $cachedir, $cssdir, $jsdir;
+	global $incontext, $txt, $boardurl;
 	global $boarddir, $context, $settings;
 
 	// Load Wedge's default paths and pray that it works...
 	$boarddir = dirname(__DIR__);
-	$cachedir = $boarddir . '/gz';
-	$cssdir = $boarddir . '/gz/css';
-	$jsdir = $boarddir . '/gz/js';
 	// !!! Dunno if we need to load all of these. Better safe than sorry.
 	loadSource(array('Load', 'Subs-Auth', 'Class-String', 'Class-System', 'QueryString', 'Subs', 'Errors', 'Security'));
 
@@ -1879,6 +1876,7 @@ function init_variables()
 	define('SKINS',			ROOT . '/core/skins');		define('SKINS_DIR',		ROOT_DIR . '/core/skins');
 	define('LANGUAGES',		ROOT . '/core/languages');	define('LANGUAGES_DIR',	ROOT_DIR . '/core/languages');
 	define('ASSETS',		ROOT . '/assets');			define('ASSETS_DIR',	ROOT_DIR . '/assets');
+	define('CACHE',			ROOT . '/gz');				define('CACHE_DIR',		ROOT_DIR . '/gz');
 
 	westr::getInstance();
 	we::getInstance(false);
@@ -1893,10 +1891,10 @@ function init_variables()
 
 function template_install_above()
 {
-	global $incontext, $txt, $cachedir, $context, $settings;
+	global $incontext, $txt, $context, $settings;
 
-	if (!file_exists($cachedir . '/cache.lock'))
-		@fclose(@fopen($cachedir . '/cache.lock', 'w'));
+	if (!file_exists(CACHE_DIR . '/cache.lock'))
+		@fclose(@fopen(CACHE_DIR . '/cache.lock', 'w'));
 
 	echo '<!DOCTYPE html>
 <html', !empty($txt['lang_rtl']) ? ' dir="rtl"' : '', '>

@@ -160,7 +160,7 @@ function AdminRegister()
  */
 function EditAgreement()
 {
-	global $txt, $context, $settings, $cachedir;
+	global $txt, $context, $settings;
 
 	// Get all the agreements.
 	getLanguages();
@@ -207,7 +207,7 @@ function EditAgreement()
 		);
 
 		// And forcibly clean the cache...
-		foreach (glob($cachedir . '/lang_*_*_Agreement.php') as $filename)
+		foreach (glob(CACHE_DIR . '/lang_*_*_Agreement.php') as $filename)
 			@unlink($filename);
 
 		$context['was_saved'] = true;

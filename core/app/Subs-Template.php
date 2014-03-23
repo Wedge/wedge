@@ -859,7 +859,7 @@ function while_we_re_here()
 			if (!file_exists(ROOT_DIR . '/' . $security_file))
 				unset($security_files[$i]);
 
-		if (!empty($security_files) || $cache_not_writable = (!empty($settings['cache_enable']) && !is_writable(ROOT_DIR . '/gz')))
+		if (!empty($security_files) || $cache_not_writable = (!empty($settings['cache_enable']) && !is_writable(CACHE_DIR)))
 		{
 			loadLanguage('Errors');
 

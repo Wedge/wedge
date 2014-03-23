@@ -398,7 +398,7 @@ function setup_fatal_error_context($error_message)
  */
 function show_db_error($loadavg = false)
 {
-	global $mbname, $maintenance, $mtitle, $mmessage, $settings, $cachedir;
+	global $mbname, $maintenance, $mtitle, $mmessage, $settings;
 	global $db_connection, $webmaster_email, $db_last_error, $db_error_send;
 
 	// Just check we're not in any buffers, just in case.
@@ -418,14 +418,14 @@ function show_db_error($loadavg = false)
 	{
 		// For our purposes, we're gonna want this on if at all possible.
 		$settings['cache_enable'] = '1';
-		$db_last_error = @filemtime($cachedir . '/error.lock');
+		$db_last_error = @filemtime(CACHE_DIR . '/error.lock');
 
 		if ($db_last_error < time() - 3600 * 24 * 3 && empty($maintenance) && !empty($db_error_send))
 		{
 			loadSource('Subs-Admin');
 
 			// Log when we last did this.
-			@touch($cachedir . '/error.lock');
+			@touch(CACHE_DIR . '/error.lock');
 
 			// Language files aren't loaded yet :(.
 			$db_error = @wesql::error($db_connection);

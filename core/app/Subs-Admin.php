@@ -348,15 +348,15 @@ function updateSettingsFile($config_vars)
 
 	// Check before you act: do a simple test in the cache folder.
 	// Can we even write things on this filesystem?
-	$test_fp = @fopen(ROOT_DIR . '/gz/settings_update.tmp', 'w+');
+	$test_fp = @fopen(CACHE_DIR . '/settings_update.tmp', 'w+');
 	if ($test_fp)
 	{
 		fclose($test_fp);
 
-		$test_fp = @fopen(ROOT_DIR . '/gz/settings_update.tmp', 'r+');
+		$test_fp = @fopen(CACHE_DIR . '/settings_update.tmp', 'r+');
 		$written_bytes = fwrite($test_fp, 'test');
 		fclose($test_fp);
-		@unlink(ROOT_DIR . '/gz/settings_update.tmp');
+		@unlink(CACHE_DIR . '/settings_update.tmp');
 
 		if ($written_bytes !== strlen('test'))
 		{

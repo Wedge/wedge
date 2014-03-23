@@ -49,12 +49,12 @@ function ManageLanguages()
 // This lists all the current languages and allows editing of them.
 function ModifyLanguages()
 {
-	global $txt, $context, $settings, $cachedir;
+	global $txt, $context, $settings;
 
 	if (isset($_GET['cleancache']))
 	{
 		checkSession();
-		foreach (glob($cachedir . '/lang_*.php') as $filename)
+		foreach (glob(CACHE_DIR . '/lang_*.php') as $filename)
 			@unlink($filename);
 		$context['cache_cleared'] = true;
 
@@ -461,7 +461,7 @@ function ModifyLanguage()
 
 function ModifyLanguageEntries()
 {
-	global $context, $txt, $cachedir;
+	global $context, $txt;
 
 	add_linktree($context['selected_file']['name'], '<URL>?action=admin;area=languages;sa=editlang;lid=' . $context['lang_id'] . ';tfid=' . urlencode(($context['selected_file']['source_id'] ? $context['selected_file']['source_id'] . '|' : '') . $context['selected_file']['lang_id']));
 
@@ -547,7 +547,7 @@ function ModifyLanguageEntries()
 
 			// Figure out what we're flushing. We don't need to do the *entire* cache, but we do need to do anything that could
 			// have been affected by this file. There are some awesome potential cross-contamination possibilities, so be safe.
-			foreach (glob($cachedir . '/' . $glob) as $filename)
+			foreach (glob(CACHE_DIR . '/' . $glob) as $filename)
 				unlink($filename);
 
 			// Sorry in advance. This is not a fun process.
@@ -608,7 +608,7 @@ function ModifyLanguageEntries()
 			else
 				$glob = 'lang_*_' . $context['selected_file']['lang_id'] . '.php';
 
-			foreach (glob($cachedir . '/' . $glob) as $filename)
+			foreach (glob(CACHE_DIR . '/' . $glob) as $filename)
 				@unlink($filename);
 
 			// Sorry in advance. This is not a fun process.
