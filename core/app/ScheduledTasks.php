@@ -1401,46 +1401,9 @@ function scheduled_weekly_maintenance()
 		)
 	);
 
-	// Check the cache folders etc. have what they're supposed to have. Just remember that we have to mask things from occasional silly hosts.
-	if (!file_exists(CACHE_DIR . '/index.php'))
-		@file_put_contents(CACHE_DIR . '/index.php', '<' . '?ph' . "p\n\n// Redirect to the upper level.\nheader('Location: ../');\n");
-
-	if (!file_exists($cachedir . '/.htaccess'))
-		@file_put_contents($cachedir . '/.htaccess', '<Files *.php>
-	Deny from all
-</Files>
-
-<Files *.zip>
-	Deny from all
-</Files>
-
-<Files *.lock>
-	Deny from all
-</Files>
-
-<Files index.php>
-	Allow from all
-</Files>
-
-<IfModule mod_mime.c>
-	AddEncoding x-gzip .gz
-	AddEncoding x-gzip .cgz
-	AddEncoding x-gzip .jgz
-	<FilesMatch "\.(js\.gz|jgz)$">
-		ForceType text/javascript
-	</FilesMatch>
-	<FilesMatch "\.(css\.gz|cgz)$">
-		ForceType text/css
-	</FilesMatch>
-</IfModule>
-
-<IfModule mod_headers.c>
-	Header set Cache-Control "max-age=2592000"
-	Header set Expires "Thu, 21 March 2025 03:42:00 GMT"
-	Header set Vary "Accept-Encoding"
-</IfModule>
-
-FileETag none');
+	// Check whether the generic folders were removed or something.
+	loadSource('OriginalFiles');
+	create_generic_folders(true);
 
 	return true;
 }

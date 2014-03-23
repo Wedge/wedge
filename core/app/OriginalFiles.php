@@ -57,7 +57,10 @@ $db_last_error = 0;
 			file_put_contents(ROOT_DIR . $target, $file . "\n?" . '>');
 }
 
-function create_generic_folders()
+// Go through the folder tree, look for folders that have yet to be created,
+// create them as needed, and create index.php and .htaccess files if required.
+// $force is used by the weekly maintenance task to re-create files if deleted.
+function create_generic_folders($force = false)
 {
 	$folders = array(
 		'attachments' => true,
@@ -81,30 +84,35 @@ function create_generic_folders()
 
 	foreach ($folders as $key => $folder)
 	{
-		if (!file_exists(ROOT_DIR . '/' . $key))
-			create_generic_folder(ROOT_DIR, $key);
+		if ($force || !file_exists(ROOT_DIR . '/' . $key))
+			create_generic_folder(ROOT_DIR, $key, $force);
 		if (is_array($folder))
 			foreach ($folder as $sub_folder)
-				if (!file_exists(ROOT_DIR . '/' . $key . '/' . $sub_folder))
-					create_generic_folder(ROOT_DIR, $key . '/' . $sub_folder);
+				if ($force || !file_exists(ROOT_DIR . '/' . $key . '/' . $sub_folder))
+					create_generic_folder(ROOT_DIR, $key . '/' . $sub_folder, $force);
 	}
 }
 
-function create_generic_folder($root_dir, $folder)
+function create_generic_folder($root_dir, $folder, $force = false)
 {
 	// We're gonna let PHP output warnings or errors on mkdir and copy, because it's serious stuff.
 	$path = str_replace('/', DIRECTORY_SEPARATOR, $root_dir . '/' . $folder);
-	mkdir($path);
+	if (!$force || !file_exists($path))
+		mkdir($path);
 
 	// We need to put and index.php file in all folders.
-	file_put_contents($path . '/index.php', '<' . '?php
+	if (!$force || !file_exists($path . '/index.php'))
+		file_put_contents($path . '/index.php', '<' . '?php
 // Redirect to the upper level.
 header(\'Location: ../\');');
 
 	// Copy assets/icons/media to media/icons. After that, you can freely delete the originals.
-	if ($folder == 'media/icons' && file_exists($root_dir . '/assets/icons/media'))
+	if (!$force && ($folder == 'media/icons' && file_exists($root_dir . '/assets/icons/media')))
 		foreach (glob($root_dir . '/assets/icons/media/*.png') as $png_file)
 			copy($png_file, $root_dir . '/media/icons/' . basename($png_file));
+
+	if ($force && file_exists($path . '/.htaccess'))
+		return;
 
 	// We need to be able to access images and various other files from plugins/, but not the archives of plugins themselves.
 	if ($folder == 'plugins')
@@ -149,15 +157,15 @@ header(\'Location: ../\');');
 </Files>
 
 <IfModule mod_mime.c>
-	AddEncoding x-gzip .gz
-	AddEncoding x-gzip .cgz
+	AddEncoding x-gzip .gz' . ($folder == 'gz/js' ? '
 	AddEncoding x-gzip .jgz
 	<FilesMatch "\.(js\.gz|jgz)$">
 		ForceType text/javascript
-	</FilesMatch>
+	</FilesMatch>' : '
+	AddEncoding x-gzip .cgz
 	<FilesMatch "\.(css\.gz|cgz)$">
 		ForceType text/css
-	</FilesMatch>
+	</FilesMatch>') . '
 </IfModule>
 
 <IfModule mod_headers.c>
