@@ -1659,9 +1659,9 @@ function uncache()
  */
 function clean_cache($extensions = 'php', $filter = '', $force_folder = '', $remove_folder = false)
 {
-	global $cache_system, $cachedir;
+	global $cache_system;
 
-	$folder = $cachedir . '/keys';
+	$folder = CACHE_DIR . '/keys';
 	$is_recursive = false;
 	$there_is_another = false;
 	if ($extensions === 'css')
@@ -1695,7 +1695,7 @@ function clean_cache($extensions = 'php', $filter = '', $force_folder = '', $rem
 	$filter_is_folder = !$filter || strpos($force_folder, $filter) !== false;
 
 	// If we're emptying the regular cache, chances are we also want to reset non-file-based cached data if possible.
-	if ($folder == $cachedir . '/keys')
+	if ($folder == CACHE_DIR . '/keys')
 	{
 		cache_get_type();
 		if ($cache_system === 'apc')
@@ -1713,8 +1713,8 @@ function clean_cache($extensions = 'php', $filter = '', $force_folder = '', $rem
 			clean_cache('', '', $zend_cache_folder . '/.php_cache_api');
 
 		// Also get the source and language caches!
-		clean_cache('php', '', $cachedir . '/app');
-		clean_cache('php', '', $cachedir . '/lang');
+		clean_cache('php', '', CACHE_DIR . '/app');
+		clean_cache('php', '', CACHE_DIR . '/lang');
 	}
 
 	// Remove the files in Wedge's own disk cache, if any.
@@ -1738,7 +1738,7 @@ function clean_cache($extensions = 'php', $filter = '', $force_folder = '', $rem
 	// Invalidate cache, to be sure!
 	if (!$force_folder && !is_array($extensions))
 	{
-		@fclose(@fopen($cachedir . '/cache.lock', 'w'));
+		@fclose(@fopen(CACHE_DIR . '/cache.lock', 'w'));
 		clearstatcache();
 	}
 	elseif ($remove_folder && !$there_is_another)
@@ -1811,7 +1811,7 @@ function cache_quick_get($key, $file, $function, $params, $level = 1)
 function cache_put_data($key, $val, $ttl = 120)
 {
 	global $cache_system, $cache_hits, $cache_count;
-	global $settings, $db_show_debug, $cachedir;
+	global $settings, $db_show_debug;
 
 	if (empty($settings['cache_enable']) && !empty($settings))
 		return;
@@ -1852,14 +1852,14 @@ function cache_put_data($key, $val, $ttl = 120)
 	else
 	{
 		if ($val === null)
-			@unlink($cachedir . '/keys/' . $key . '.php');
+			@unlink(CACHE_DIR . '/keys/' . $key . '.php');
 		else
 		{
 			$cache_data = '<' . '?php if(defined(\'WEDGE\')&&$valid=' . ($ttl === PHP_INT_MAX ? '1' : 'time()<' . (time() + $ttl)) . ')$val=\'' . addcslashes($val, '\\\'') . '\';';
 
 			// Check that the cache write was successful. If it fails due to low diskspace, remove the cache file.
-			if (file_put_contents($cachedir . '/keys/' . $key . '.php', $cache_data, LOCK_EX) !== strlen($cache_data))
-				@unlink($cachedir . '/keys/' . $key . '.php');
+			if (file_put_contents(CACHE_DIR . '/keys/' . $key . '.php', $cache_data, LOCK_EX) !== strlen($cache_data))
+				@unlink(CACHE_DIR . '/keys/' . $key . '.php');
 		}
 	}
 
@@ -1878,8 +1878,7 @@ function cache_put_data($key, $val, $ttl = 120)
  */
 function cache_get_data($orig_key, $ttl = 120, $put_callback = null)
 {
-	global $cache_system, $cache_hits, $cache_count;
-	global $settings, $db_show_debug, $cachedir;
+	global $cache_system, $cache_hits, $cache_count, $settings, $db_show_debug;
 
 	if (empty($settings['cache_enable']) && !empty($settings))
 		return;
@@ -1902,11 +1901,11 @@ function cache_get_data($orig_key, $ttl = 120, $put_callback = null)
 	elseif ($cache_system === 'xcache')
 		$val = xcache_get($key);
 	// Otherwise it's the file cache!
-	elseif (file_exists($cachedir . '/keys/' . $key . '.php') && @filesize($cachedir . '/keys/' . $key . '.php') > 10)
+	elseif (file_exists(CACHE_DIR . '/keys/' . $key . '.php') && @filesize(CACHE_DIR . '/keys/' . $key . '.php') > 10)
 	{
-		@include($cachedir . '/keys/' . $key . '.php');
+		@include(CACHE_DIR . '/keys/' . $key . '.php');
 		if (empty($valid))
-			@unlink($cachedir . '/keys/' . $key . '.php');
+			@unlink(CACHE_DIR . '/keys/' . $key . '.php');
 	}
 
 	if (!empty($db_show_debug))
@@ -1928,7 +1927,7 @@ function cache_get_data($orig_key, $ttl = 120, $put_callback = null)
 
 function cache_prepare_key($key, $val = '', $type = 'get')
 {
-	global $boardurl, $settings, $cache_hits, $cache_count, $db_show_debug, $cachedir;
+	global $boardurl, $settings, $cache_hits, $cache_count, $db_show_debug;
 
 	$cache_count = isset($cache_count) ? $cache_count + 1 : 1;
 	if (!empty($db_show_debug))
@@ -1936,9 +1935,9 @@ function cache_prepare_key($key, $val = '', $type = 'get')
 
 	if (empty($settings['cache_hash']))
 	{
-		if (!file_exists($cachedir . '/cache.lock'))
-			@fclose(@fopen($cachedir . '/cache.lock', 'w'));
-		$settings['cache_hash'] = md5($boardurl . filemtime($cachedir . '/cache.lock'));
+		if (!file_exists(CACHE_DIR . '/cache.lock'))
+			@fclose(@fopen(CACHE_DIR . '/cache.lock', 'w'));
+		$settings['cache_hash'] = md5($boardurl . filemtime(CACHE_DIR . '/cache.lock'));
 	}
 
 	return $settings['cache_hash'] . '-' . bin2hex($key);

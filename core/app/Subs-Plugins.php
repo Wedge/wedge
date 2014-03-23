@@ -184,7 +184,7 @@ function deleteFiletree(&$class, $dir, $delete_dir = true)
  */
 function uploadedPluginValidate()
 {
-	global $context, $txt, $cachedir;
+	global $context, $txt;
 
 	// It's just possible, however unlikely, that the user has done something silly.
 	if (isset($_SESSION['uploadplugin']))
@@ -266,7 +266,7 @@ function uploadedPluginValidate()
 	// What we do need to do, though, is check against plugins that we have currently enabled. (Not enabled... they can fix that themselves from the main listing.)
 	// And we need to store this and make sure it won't be automatically garbage collected.
 	$new_file = 'post_plugin_' . MID . '.zip';
-	if (!move_uploaded_file($_FILES['plugin']['tmp_name'], $cachedir . '/' . $new_file))
+	if (!move_uploaded_file($_FILES['plugin']['tmp_name'], CACHE_DIR . '/' . $new_file))
 		fatal_lang_error('plugins_invalid_upload', false);
 
 	$id = (string) $manifest['id'];
@@ -275,8 +275,8 @@ function uploadedPluginValidate()
 		'file' => $new_file,
 		'size' => $_FILES['plugin']['size'],
 		'name' => $_FILES['plugin']['name'],
-		'mtime' => filemtime($cachedir . '/' . $new_file),
-		'md5' => md5_file($cachedir . '/' . $new_file),
+		'mtime' => filemtime(CACHE_DIR . '/' . $new_file),
+		'md5' => md5_file(CACHE_DIR . '/' . $new_file),
 		'id' => $id,
 		'manifest' => $idx[0],
 	);
@@ -302,7 +302,7 @@ function uploadedPluginValidate()
 
 function uploadedPluginConnection()
 {
-	global $cachedir, $settings, $context, $txt;
+	global $settings, $context, $txt;
 
 	// If we already have details, pass through to the next stage.
 	if (isset($_SESSION['plugin_ftp']))
@@ -321,7 +321,7 @@ function uploadedPluginConnection()
 	if (isset($_POST['cancel']))
 	{
 		// OK, so we're not proceeding with this one, fair enough.
-		@unlink($cachedir . '/' . $_SESSION['uploadplugin']['file']);
+		@unlink(CACHE_DIR . '/' . $_SESSION['uploadplugin']['file']);
 		unset($_SESSION['uploadplugin']);
 		redirectexit('action=admin;area=plugins');
 	}
@@ -547,7 +547,7 @@ function uploadedPluginPrune()
 
 function uploadedPluginFolders()
 {
-	global $context, $txt, $cachedir;
+	global $context, $txt;
 
 	if (!empty($_SESSION['uploadplugin']['folders']))
 		redirectexit('action=admin;area=plugins;sa=add;upload;stage=4;' . $context['session_query']);
@@ -567,7 +567,7 @@ function uploadedPluginFolders()
 	$file_count = 0;
 	try
 	{
-		$zip = new wextr($cachedir . '/' . $_SESSION['uploadplugin']['file']);
+		$zip = new wextr(CACHE_DIR . '/' . $_SESSION['uploadplugin']['file']);
 		$list = $zip->list_contents();
 
 		if (!empty($_SESSION['uploadplugin']['trunc']))
@@ -649,7 +649,7 @@ function uploadedPluginFolders()
 
 function uploadedPluginFiles()
 {
-	global $context, $txt, $cachedir;
+	global $context, $txt;
 
 	if (isset($_SESSION['uploadplugin']['flist']) && empty($_SESSION['uploadplugin']['flist']))
 	{
@@ -677,7 +677,7 @@ function uploadedPluginFiles()
 	{
 		try
 		{
-			$zip = new wextr($cachedir . '/' . $_SESSION['uploadplugin']['file']);
+			$zip = new wextr(CACHE_DIR . '/' . $_SESSION['uploadplugin']['file']);
 			$list = $zip->list_contents();
 
 			$files = array();
@@ -711,7 +711,7 @@ function uploadedPluginFiles()
 		try
 		{
 			if (!isset($zip))
-				$zip = new wextr($cachedir . '/' . $_SESSION['uploadplugin']['file']);
+				$zip = new wextr(CACHE_DIR . '/' . $_SESSION['uploadplugin']['file']);
 
 			while (!empty($_SESSION['uploadplugin']['flist']))
 			{
@@ -762,12 +762,10 @@ function obfuscate_pass($pass)
  */
 function validate_plugin_session()
 {
-	global $cachedir;
-
 	if (empty($_SESSION['uploadplugin']) || empty($_SESSION['uploadplugin']['file']))
 		return 'plugins_unable_read';
 
-	$filename = $cachedir . '/' . $_SESSION['uploadplugin']['file'];
+	$filename = CACHE_DIR . '/' . $_SESSION['uploadplugin']['file'];
 	if (!file_exists($filename) || filesize($filename) != $_SESSION['uploadplugin']['size'])
 		return 'plugins_uploaded_error';
 
@@ -902,9 +900,7 @@ function test_hooks_conflict($manifest)
 
 function clean_up_plugin_session()
 {
-	global $cachedir;
-
 	if (!empty($_SESSION['uploadplugin']['file']))
-		@unlink($cachedir . '/' . $_SESSION['uploadplugin']['file']);
+		@unlink(CACHE_DIR . '/' . $_SESSION['uploadplugin']['file']);
 	unset($_SESSION['uploadplugin'], $_SESSION['plugin_ftp']);
 }
