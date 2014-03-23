@@ -15,11 +15,26 @@ define('REQUIRED_PHP_VERSION', '5.3.0');
 define('REQUIRED_MYSQL_SERVER_VERSION', '5.0.3');
 define('REQUIRED_MYSQL_CLIENT_VERSION', '5.0.3');
 
-global $boarddir;
-
-// Some constants we might need later.
-define('ROOT_DIR', $boarddir);
+// Load Wedge's default paths and pray that it works...
+define('ROOT_DIR', str_replace('\\', '/', dirname(__FILE__)));
 define('APP_DIR', ROOT_DIR . '/core/app');
+
+// Fill in the server URL for the current user. This is user-specific, as they may be using a different URL than the script's default URL (Pretty URL, secure access...)
+$host = empty($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_X_FORWARDED_SERVER'] : $_SERVER['HTTP_HOST'];
+$boardurl = 'http' . (!empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) != 'off' ? 's' : '') . '://' . $host;
+$boardurl .= substr($_SERVER['REQUEST_URI'], 0, strrpos($_SERVER['REQUEST_URI'], '/'));
+
+// Define our constants. (cf. QueryString.php)
+define('ROOT',			$boardurl);
+define('SCRIPT',		ROOT_DIR . '/index.php');
+define('TEMPLATES',		ROOT . '/core/html');		define('TEMPLATES_DIR', ROOT_DIR . '/core/html');
+define('SKINS',			ROOT . '/core/skins');		define('SKINS_DIR',		ROOT_DIR . '/core/skins');
+define('LANGUAGES',		ROOT . '/core/languages');	define('LANGUAGES_DIR',	ROOT_DIR . '/core/languages');
+define('ASSETS',		ROOT . '/assets');			define('ASSETS_DIR',	ROOT_DIR . '/assets');
+define('CACHE',			ROOT . '/gz');				define('CACHE_DIR',		ROOT_DIR . '/gz');
+define('SMILEYS',		ROOT . '/assets/smileys');
+define('AVATARS',		ROOT . '/assets/avatars');
+
 define('INVALID_IP', '00000000000000000000000000000000');
 define('IS_WINDOWS', strpos(__FILE__, ':\\') !== false);
 define('WEDGE_INSTALLER', 1);
@@ -1859,28 +1874,8 @@ function init_variables()
 	global $incontext, $txt, $boardurl;
 	global $context, $settings;
 
-	// Load Wedge's default paths and pray that it works...
-	define('ROOT_DIR', str_replace('\\', '/', dirname(__FILE__)));
-	define('APP_DIR', ROOT_DIR . '/core/app');
-
 	// !!! Dunno if we need to load all of these. Better safe than sorry.
 	loadSource(array('Load', 'Subs-Auth', 'Class-String', 'Class-System', 'QueryString', 'Subs', 'Errors', 'Security'));
-
-	// Fill in the server URL for the current user. This is user-specific, as they may be using a different URL than the script's default URL (Pretty URL, secure access...)
-	$host = empty($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_X_FORWARDED_SERVER'] : $_SERVER['HTTP_HOST'];
-	$boardurl = 'http' . (!empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) != 'off' ? 's' : '') . '://' . $host;
-	$boardurl .= substr($_SERVER['REQUEST_URI'], 0, strrpos($_SERVER['REQUEST_URI'], '/'));
-
-	// Define our constants. (cf. QueryString.php)
-	define('ROOT',			$boardurl);
-	define('SCRIPT',		$boarddir . '/index.php');
-	define('TEMPLATES',		ROOT . '/core/html');		define('TEMPLATES_DIR', ROOT_DIR . '/core/html');
-	define('SKINS',			ROOT . '/core/skins');		define('SKINS_DIR',		ROOT_DIR . '/core/skins');
-	define('LANGUAGES',		ROOT . '/core/languages');	define('LANGUAGES_DIR',	ROOT_DIR . '/core/languages');
-	define('ASSETS',		ROOT . '/assets');			define('ASSETS_DIR',	ROOT_DIR . '/assets');
-	define('CACHE',			ROOT . '/gz');				define('CACHE_DIR',		ROOT_DIR . '/gz');
-	define('SMILEYS',		ROOT . '/assets/smileys');
-	define('AVATARS',		ROOT . '/assets/avatars');
 
 	westr::getInstance();
 	we::getInstance(false);
