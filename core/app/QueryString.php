@@ -16,7 +16,7 @@ if (!defined('WEDGE'))
  */
 function loadPaths()
 {
-	global $boardurl, $boarddir, $settings, $context;
+	global $boardurl, $settings, $context;
 
 	// $scripturl is your board URL if you asked to remove index.php or the user visits for the first time
 	// (in which case they'll get the annoying PHPSESSID stuff in their URL and we need index.php in them.)
@@ -109,7 +109,7 @@ function loadPaths()
  */
 function cleanRequest()
 {
-	global $board, $topic, $boarddir, $settings, $context, $action_list;
+	global $board, $topic, $settings, $context, $action_list;
 
 	// These were deprecated years ago. Save some memory.
 	unset($GLOBALS['HTTP_POST_VARS'], $GLOBALS['HTTP_POST_FILES']);
@@ -311,7 +311,7 @@ function cleanRequest()
 			if (preg_match($regex, $full_request, $filename))
 			{
 				// There are probably faster ways to retrieve an 'existing' cached version.
-				$matches = glob($boarddir . '/' . $filename[1] . '*.' . $filename[2]);
+				$matches = glob(ROOT_DIR . '/' . $filename[1] . '*.' . $filename[2]);
 				if (!empty($matches) && preg_match($regex, (string) reset($matches), $new_filename))
 				{
 					header('HTTP/1.1 301 Moved Permanently');

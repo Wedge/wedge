@@ -52,7 +52,7 @@ if (!defined('WEDGE'))
 	void ThemeInstall()
 		- installs new themes, either from a gzip or copy of the default.
 		- requires an administrator.
-		- puts themes in $boardurl/Themes.
+		- puts themes in ROOT/Themes.
 		- assumes the gzip has a root directory in it. (ie default.)
 		- accessed with ?action=admin;area=theme;sa=install.
 
@@ -133,7 +133,7 @@ function Themes()
 
 function ThemeAdmin()
 {
-	global $context, $boarddir, $settings;
+	global $context, $settings;
 
 	loadLanguage('Admin');
 	isAllowedTo('admin_forum');
@@ -150,11 +150,11 @@ function ThemeAdmin()
 		$context['themes'][1]['skins'] = wedge_get_skin_list();
 
 		// Can we create a new theme?
-		$context['can_create_new'] = is_writable($boarddir . '/Themes');
-		$context['new_theme_dir'] = substr(realpath($boarddir . '/Themes'), 0, -7);
+		$context['can_create_new'] = is_writable(ROOT_DIR . '/Themes');
+		$context['new_theme_dir'] = substr(realpath(ROOT_DIR . '/Themes'), 0, -7);
 
 		// Look for a non-existent theme directory. (i.e. theme87.)
-		$theme_dir = $boarddir . '/Themes/theme';
+		$theme_dir = ROOT_DIR . '/Themes/theme';
 		$i = 1;
 		while (file_exists($theme_dir . $i))
 			$i++;
@@ -194,15 +194,15 @@ function ThemeAdmin()
 // !! @todo: remove completely!
 function ThemeList()
 {
-	global $context, $boarddir, $boardurl;
+	global $context;
 
 	loadLanguage('Admin');
 	isAllowedTo('admin_forum');
 
 	loadTemplate('Themes');
 
-	$context['reset_dir'] = realpath($boarddir . '/Themes');
-	$context['reset_url'] = $boardurl . '/Themes';
+	$context['reset_dir'] = realpath(ROOT_DIR . '/Themes');
+	$context['reset_url'] = ROOT . '/Themes';
 
 	wetem::load('list_themes');
 }
@@ -382,7 +382,7 @@ function PickTheme()
 // !! @todo: remove this.
 function ThemeInstall()
 {
-	global $boarddir, $boardurl, $txt, $context, $settings;
+	global $txt, $context, $settings;
 
 	checkSession('request');
 
@@ -422,7 +422,7 @@ function ThemeInstall()
 
 	if ((!empty($_FILES['theme_gz']) && (!isset($_FILES['theme_gz']['error']) || $_FILES['theme_gz']['error'] != 4)) || !empty($_REQUEST['theme_gz']))
 		$method = 'upload';
-	elseif (isset($_REQUEST['theme_dir']) && rtrim(realpath($_REQUEST['theme_dir']), '/\\') != realpath($boarddir . '/Themes') && file_exists($_REQUEST['theme_dir']))
+	elseif (isset($_REQUEST['theme_dir']) && rtrim(realpath($_REQUEST['theme_dir']), '/\\') != realpath(ROOT_DIR . '/Themes') && file_exists($_REQUEST['theme_dir']))
 		$method = 'path';
 	else
 		$method = 'copy';
@@ -430,10 +430,10 @@ function ThemeInstall()
 	if (!empty($_REQUEST['copy']) && $method == 'copy')
 	{
 		// Hopefully the themes directory is writable, or we might have a problem.
-		if (!is_writable($boarddir . '/Themes'))
+		if (!is_writable(ROOT_DIR . '/Themes'))
 			fatal_lang_error('theme_install_write_error', 'critical');
 
-		$theme_dir = $boarddir . '/Themes/' . preg_replace('~[^A-Za-z0-9_\- ]~', '', $_REQUEST['copy']);
+		$theme_dir = ROOT_DIR . '/Themes/' . preg_replace('~[^A-Za-z0-9_\- ]~', '', $_REQUEST['copy']);
 
 		umask(0);
 		mkdir($theme_dir, 0777);
@@ -507,7 +507,7 @@ function ThemeInstall()
 	elseif ($method = 'upload')
 	{
 		// Hopefully the themes directory is writable, or we might have a problem.
-		if (!is_writable($boarddir . '/Themes'))
+		if (!is_writable(ROOT_DIR . '/Themes'))
 			fatal_lang_error('theme_install_write_error', 'critical');
 
 		loadSource('Subs-Package');
@@ -515,17 +515,17 @@ function ThemeInstall()
 		// Set the default settings...
 		$theme_name = strtok(basename(isset($_FILES['theme_gz']) ? $_FILES['theme_gz']['name'] : $_REQUEST['theme_gz']), '.');
 		$theme_name = preg_replace(array('/\s/', '/\.{2,}/', '/[^\w.-]/'), array('_', '.', ''), $theme_name);
-		$theme_dir = $boarddir . '/Themes/' . $theme_name;
+		$theme_dir = ROOT_DIR . '/Themes/' . $theme_name;
 
 		if (isset($_FILES['theme_gz']) && is_uploaded_file($_FILES['theme_gz']['tmp_name']) && (ini_get('open_basedir') != '' || file_exists($_FILES['theme_gz']['tmp_name'])))
-			$extracted = read_tgz_file($_FILES['theme_gz']['tmp_name'], $boarddir . '/Themes/' . $theme_name, false, true);
+			$extracted = read_tgz_file($_FILES['theme_gz']['tmp_name'], ROOT_DIR . '/Themes/' . $theme_name, false, true);
 		elseif (isset($_REQUEST['theme_gz']))
 		{
 			// Check that the theme is from wedge.org, for now... maybe add mirroring later.
 			if (preg_match('~^http://[\w-]+\.wedge\.org/~', $_REQUEST['theme_gz']) == 0 || strpos($_REQUEST['theme_gz'], 'dlattach') !== false)
 				fatal_lang_error('only_on_wedge');
 
-			$extracted = read_tgz_file($_REQUEST['theme_gz'], $boarddir . '/Themes/' . $theme_name, false, true);
+			$extracted = read_tgz_file($_REQUEST['theme_gz'], ROOT_DIR . '/Themes/' . $theme_name, false, true);
 		}
 		else
 			redirectexit('action=admin;area=theme;sa=admin;' . $context['session_query']);
@@ -536,7 +536,7 @@ function ThemeInstall()
 	{
 		// Defaults.
 		$install_info = array(
-			'theme_url' => $boardurl . '/Themes/' . basename($theme_dir),
+			'theme_url' => ROOT . '/Themes/' . basename($theme_dir),
 			'theme_dir' => $theme_dir,
 			'name' => $theme_name
 		);
@@ -589,7 +589,7 @@ function ThemeInstall()
 
 function EditTheme()
 {
-	global $context, $boarddir;
+	global $context;
 
 	// !!! Should this be removed?
 	if (isset($_REQUEST['preview']))
@@ -775,7 +775,7 @@ function EditTheme()
 	}
 
 	$context['allow_save'] = is_writable($theme_dir . '/' . $_REQUEST['filename']);
-	$context['allow_save_filename'] = strtr($theme_dir . '/' . $_REQUEST['filename'], array($boarddir => '...'));
+	$context['allow_save_filename'] = strtr($theme_dir . '/' . $_REQUEST['filename'], array(ROOT_DIR => '...'));
 	$context['edit_filename'] = htmlspecialchars($_REQUEST['filename']);
 
 	if (substr($_REQUEST['filename'], -4) == '.css')

@@ -211,10 +211,7 @@ function aeva_admin_settings()
 	);
 
 	if (empty($amSettings['data_dir_url']) && !empty($amSettings['data_dir_path']))
-	{
-		global $boardurl, $boarddir;
-		$amSettings['data_dir_url'] = $boardurl . str_replace($boarddir, '', $amSettings['data_dir_path']);
-	}
+		$amSettings['data_dir_url'] = str_replace(ROOT_DIR, ROOT, $amSettings['data_dir_path']);
 
 	$info = array('datetime', 'copyright', 'xposuretime', 'flash', 'duration', 'make', 'model', 'xres', 'yres', 'resunit', 'focal_length', 'orientation', 'iso', 'meteringMode', 'digitalZoom', 'exifVersion', 'contrast', 'sharpness', 'focusType', 'fnumber','frame_count', 'bit_rate', 'audio_codec', 'video_codec');
 	$th['show_info'] = array('checkbox', 'meta', array());

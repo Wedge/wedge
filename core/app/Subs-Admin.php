@@ -140,8 +140,6 @@ function getServerVersions($checkFor)
 // Search through source, theme and language files to determine their version.
 function getFileVersions(&$versionOptions)
 {
-	global $boarddir;
-
 	// Default place to find the languages would be the default theme dir.
 	$lang_dir = LANGUAGES_DIR;
 
@@ -152,9 +150,9 @@ function getFileVersions(&$versionOptions)
 	);
 
 	// Find the version in SSI.php's file header.
-	if (!empty($versionOptions['include_ssi']) && file_exists($boarddir . '/SSI.php'))
+	if (!empty($versionOptions['include_ssi']) && file_exists(ROOT_DIR . '/SSI.php'))
 	{
-		$fp = fopen($boarddir . '/SSI.php', 'rb');
+		$fp = fopen(ROOT_DIR . '/SSI.php', 'rb');
 		$header = fread($fp, 4096);
 		fclose($fp);
 
@@ -167,9 +165,9 @@ function getFileVersions(&$versionOptions)
 	}
 
 	// Do the paid subscriptions handler?
-	if (!empty($versionOptions['include_subscriptions']) && file_exists($boarddir . '/subscriptions.php'))
+	if (!empty($versionOptions['include_subscriptions']) && file_exists(ROOT_DIR . '/subscriptions.php'))
 	{
-		$fp = fopen($boarddir . '/subscriptions.php', 'rb');
+		$fp = fopen(ROOT_DIR . '/subscriptions.php', 'rb');
 		$header = fread($fp, 4096);
 		fclose($fp);
 
@@ -265,13 +263,11 @@ function getFileVersions(&$versionOptions)
 // Update the Settings.php file.
 function updateSettingsFile($config_vars)
 {
-	global $boarddir, $cachedir;
-
 	// When was Settings.php last changed?
-	$last_settings_change = filemtime($boarddir . '/Settings.php');
+	$last_settings_change = filemtime(ROOT_DIR . '/Settings.php');
 
 	// Load the file.  Break it up based on \r or \n, and then clean out extra characters.
-	$settingsArray = trim(file_get_contents($boarddir . '/Settings.php'));
+	$settingsArray = trim(file_get_contents(ROOT_DIR . '/Settings.php'));
 	if (strpos($settingsArray, "\n") !== false)
 		$settingsArray = explode("\n", $settingsArray);
 	elseif (strpos($settingsArray, "\r") !== false)
@@ -352,17 +348,15 @@ function updateSettingsFile($config_vars)
 
 	// Check before you act: do a simple test in the cache folder.
 	// Can we even write things on this filesystem?
-	if ((empty($cachedir) || !file_exists($cachedir)) && file_exists($boarddir . '/gz'))
-		$cachedir = $boarddir . '/gz';
-	$test_fp = @fopen($cachedir . '/settings_update.tmp', 'w+');
+	$test_fp = @fopen(ROOT_DIR . '/gz/settings_update.tmp', 'w+');
 	if ($test_fp)
 	{
 		fclose($test_fp);
 
-		$test_fp = @fopen($cachedir . '/settings_update.tmp', 'r+');
+		$test_fp = @fopen(ROOT_DIR . '/gz/settings_update.tmp', 'r+');
 		$written_bytes = fwrite($test_fp, 'test');
 		fclose($test_fp);
-		@unlink($cachedir . '/settings_update.tmp');
+		@unlink(ROOT_DIR . '/gz/settings_update.tmp');
 
 		if ($written_bytes !== strlen('test'))
 		{
@@ -373,18 +367,18 @@ function updateSettingsFile($config_vars)
 
 	// Protect me from what I want! :P
 	clearstatcache();
-	if (filemtime($boarddir . '/Settings.php') === $last_settings_change)
+	if (filemtime(ROOT_DIR . '/Settings.php') === $last_settings_change)
 	{
 		// You asked for it...
 		// Blank out the file - done to fix a oddity with some servers.
-		$fp = @fopen($boarddir . '/Settings.php', 'w');
+		$fp = @fopen(ROOT_DIR . '/Settings.php', 'w');
 
 		// Is it even writable, though?
 		if ($fp)
 		{
 			fclose($fp);
 
-			$fp = fopen($boarddir . '/Settings.php', 'r+');
+			$fp = fopen(ROOT_DIR . '/Settings.php', 'r+');
 			foreach ($settingsArray as $line)
 				fwrite($fp, strtr($line, "\r", ''));
 			fclose($fp);

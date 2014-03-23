@@ -123,7 +123,7 @@ if (!defined('WEDGE'))
 // This is the main pass through function, it creates tabs and the like.
 function ModifySettings()
 {
-	global $context, $txt, $boarddir;
+	global $context, $txt;
 
 	// This is just to keep the database password more secure.
 	isAllowedTo('admin_forum');
@@ -165,8 +165,8 @@ function ModifySettings()
 	if ($_REQUEST['sa'] != 'phpinfo')
 	{
 		// Warn the user if the backup of Settings.php failed.
-		$context['settings_not_writable'] = !is_writable($boarddir . '/Settings.php');
-		$settings_backup_fail = !@is_writable($boarddir . '/Settings_bak.php') || !@copy($boarddir . '/Settings.php', $boarddir . '/Settings_bak.php');
+		$context['settings_not_writable'] = !is_writable(ROOT_DIR . '/Settings.php');
+		$settings_backup_fail = !@is_writable(ROOT_DIR . '/Settings_bak.php') || !@copy(ROOT_DIR . '/Settings.php', ROOT_DIR . '/Settings_bak.php');
 
 		if ($context['settings_not_writable'])
 			$context['settings_message'] = '<p class="center"><strong>' . $txt['settings_not_writable'] . '</strong></p><br>';

@@ -730,7 +730,7 @@ function aeva_prevNextThumb($myurl, &$prev)
 function aeva_viewItem()
 {
 	// Comes into play when you're viewing a single item
-	global $galurl, $txt, $amSettings, $context, $memberContext, $boarddir;
+	global $galurl, $txt, $amSettings, $context, $memberContext;
 
 	// Set the item ID
 	$item = isset($_REQUEST['in']) ? (int) $_REQUEST['in'] : 0;
@@ -753,7 +753,7 @@ function aeva_viewItem()
 	$peralbum['autosize'] = !empty($peralbum['autosize']) && $peralbum['autosize'] == 'no' ? 'no' : 'yes';
 	$amSettings['use_zoom'] &= empty($peralbum['zoom']) || $peralbum['zoom'] == 'yes';
 	$context['aeva_has_preview'] = (bool) $item_data['has_preview'];
-	$amSettings['show_linking_code'] = empty($amSettings['show_linking_code']) || ($item_data['type'] == 'unknown') ? 0 : (1 + (file_exists($boarddir . '/MGalleryItem.php') ? 0 : 1));
+	$amSettings['show_linking_code'] = empty($amSettings['show_linking_code']) || ($item_data['type'] == 'unknown') ? 0 : (1 + (file_exists(ROOT_DIR . '/MGalleryItem.php') ? 0 : 1));
 
 	// Handle rating and stuff
 	// Any previous rates?

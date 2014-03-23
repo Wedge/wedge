@@ -2148,12 +2148,10 @@ class wedit
 	// Fix a specific class of tag - ie. url with =.
 	public static function fixTag(&$message, $myTag, $protocols, $embeddedUrl = false, $hasEqualSign = false, $hasExtra = false)
 	{
-		global $boardurl;
-
-		if (preg_match('~^([^:]+://[^/]+)~', $boardurl, $match) != 0)
+		if (preg_match('~^([^:]+://[^/]+)~', ROOT, $match) != 0)
 			$domain_url = $match[1];
 		else
-			$domain_url = $boardurl . '/';
+			$domain_url = ROOT . '/';
 
 		$replaces = array();
 
@@ -2439,7 +2437,7 @@ class wedit
 
 	public function outputEditor()
 	{
-		global $context, $txt, $settings, $boarddir, $boardurl, $smiley_css_done;
+		global $context, $txt, $settings, $smiley_css_done;
 
 		$smileycontainer = empty($this->editorOptions['custom_smiley_div']) ? 'smileyBox_' . $this->id : $this->editorOptions['custom_smiley_div'];
 		$bbccontainer = empty($this->editorOptions['custom_bbc_div']) ? 'bbcBox_' . $this->id : $this->editorOptions['custom_bbc_div'];
@@ -2487,14 +2485,14 @@ class wedit
 					updateSettings(array($var_name => time() % 1000));
 				$context['smiley_now'] = $settings[$var_name];
 				$filename = '/gz/css/smileys' . $extra . (we::$user['smiley_set'] == 'default' ? '' : '-' . we::$user['smiley_set']) . '-' . $context['smiley_now'] . $context['smiley_ext'];
-				$exists = file_exists($boarddir . $filename);
+				$exists = file_exists(ROOT_DIR . $filename);
 				if (!$exists)
 					parsesmileys($dummy);
 			}
 
-			if (empty($smiley_css_done) && strpos($context['header'], $boardurl . $filename) === false)
+			if (empty($smiley_css_done) && strpos($context['header'], ROOT . $filename) === false)
 				$context['header'] .= '
-	<link rel="stylesheet" href="' . $boardurl . $filename . '">';
+	<link rel="stylesheet" href="' . ROOT . $filename . '">';
 
 			$js = '';
 			foreach ($this->smileys as $location => $smileyRows)

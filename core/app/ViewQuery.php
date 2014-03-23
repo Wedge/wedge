@@ -22,7 +22,7 @@ if (!defined('WEDGE'))
  */
 function ViewQuery()
 {
-	global $context, $db_connection, $settings, $boarddir, $txt, $db_show_debug;
+	global $context, $db_connection, $settings, $txt, $db_show_debug;
 
 	$show_debug = !empty($db_show_debug);
 	// We should have debug mode enabled, as well as something to display!
@@ -99,7 +99,7 @@ function ViewQuery()
 
 		// Make the filenames look a bit better.
 		if (isset($query_data['f']))
-			$query_data['f'] = preg_replace('~^' . preg_quote($boarddir, '~') . '~', '...', $query_data['f']);
+			$query_data['f'] = preg_replace('~^' . preg_quote(ROOT_DIR, '~') . '~', '...', $query_data['f']);
 
 		$is_select_query = substr(trim($query_data['q']), 0, 6) == 'SELECT';
 		if ($is_select_query)

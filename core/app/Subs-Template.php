@@ -829,7 +829,7 @@ function start_output()
  */
 function while_we_re_here()
 {
-	global $txt, $settings, $context, $boarddir, $cachedir;
+	global $txt, $settings, $context;
 	static $checked_security_files = false, $showed_banned = false, $showed_behav_error = false;
 
 	// If this page was loaded through jQuery, it's likely we've already had the warning shown in its container...
@@ -856,10 +856,10 @@ function while_we_re_here()
 		$security_files = array('import.php', 'install.php', 'webinstall.php', 'upgrade.php', 'convert.php', 'repair_paths.php', 'repair_settings.php', 'Settings.php~', 'Settings_bak.php~');
 
 		foreach ($security_files as $i => $security_file)
-			if (!file_exists($boarddir . '/' . $security_file))
+			if (!file_exists(ROOT_DIR . '/' . $security_file))
 				unset($security_files[$i]);
 
-		if (!empty($security_files) || (!empty($settings['cache_enable']) && !is_writable($cachedir)))
+		if (!empty($security_files) || $cache_not_writable = (!empty($settings['cache_enable']) && !is_writable(ROOT_DIR . '/gz')))
 		{
 			loadLanguage('Errors');
 
@@ -879,7 +879,7 @@ function while_we_re_here()
 					', sprintf($txt['not_removed_extra'], $security_file, substr($security_file, 0, -1)), '<br>';
 			}
 
-			if (!empty($settings['cache_enable']) && !is_writable($cachedir))
+			if (!empty($cache_not_writable))
 				echo '
 					<strong>', $txt['cache_writable'], '</strong><br>';
 
@@ -934,7 +934,7 @@ function while_we_re_here()
  */
 function db_debug_junk()
 {
-	global $context, $boarddir, $settings, $txt;
+	global $txt, $settings, $context;
 	global $db_cache, $db_count, $db_show_debug, $cache_count, $cache_hits;
 
 	// Is debugging on? (i.e. it is set, and it is true, and we're not on action=viewquery or an help popup.
@@ -990,7 +990,7 @@ function db_debug_junk()
 		{
 			if (file_exists($files[$i]))
 				$total_size += filesize($files[$i]);
-			$files[$i] = strtr($files[$i], array($boarddir => '.'));
+			$files[$i] = strtr($files[$i], array(ROOT_DIR => '.'));
 		}
 
 		// A small trick to avoid repeating block names ad nauseam...
@@ -1062,7 +1062,7 @@ function db_debug_junk()
 
 			// Make the filenames look a bit better.
 			if (isset($qq['f']))
-				$qq['f'] = preg_replace('~^' . preg_quote($boarddir, '~') . '~', '...', $qq['f']);
+				$qq['f'] = preg_replace('~^' . preg_quote(ROOT_DIR, '~') . '~', '...', $qq['f']);
 
 			$temp .= '
 	<strong>' . ($is_select ? '<a href="' . SCRIPT . '?action=viewquery;qq=' . ($q + 1) . '#qq' . $q . '" target="_blank" class="new_win">' : '') . westr::nl2br(str_replace("\t", '&nbsp;&nbsp;&nbsp;', htmlspecialchars(ltrim($qq['q'], "\n\r")))) . ($is_select ? '</a></strong>' : '</strong>') . '<br>

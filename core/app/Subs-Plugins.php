@@ -12,7 +12,7 @@ if (!defined('WEDGE'))
 
 function getWritableObject()
 {
-	global $context, $settings, $boarddir;
+	global $context, $settings;
 
 	// Normally it'll be on the plugins folder, but there's no reason for it to absolutely be.
 	// !! Is $path supposed to be set earlier..?
@@ -66,12 +66,12 @@ function getWritableObject()
 
 				if (!in_array($_POST['ftp_path'], array('', '/')))
 				{
-					$ftp_root = strtr($boarddir, array($_POST['connect_path'] => ''));
+					$ftp_root = strtr(ROOT_DIR, array($_POST['connect_path'] => ''));
 					if (substr($ftp_root, -1) == '/' && ($_POST['connect_path'] == '' || substr($_POST['connect_path'], 0, 1) == '/'))
 						$ftp_root = substr($ftp_root, 0, -1);
 				}
 				else
-					$ftp_root = $boarddir;
+					$ftp_root = ROOT_DIR;
 
 				$context['connect_details']['path'] = $ftp_root;
 			}

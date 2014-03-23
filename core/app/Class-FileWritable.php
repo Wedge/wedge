@@ -19,11 +19,10 @@ class weFileWritable
 	// This is essentially pure placeholder but it makes everything much more convenient later.
 	public function __construct($server = null, $port = null, $user = null, $pass = null)
 	{
-		global $boarddir;
 		$this->connection = false;
 		$this->error = false;
 		$this->pasv = array();
-		$this->path = $boarddir;
+		$this->path = ROOT_DIR;
 	}
 
 	public function connect($server = null, $port = null, $user = null, $pass = null)

@@ -1018,7 +1018,7 @@ function aeva_foxy_get_xml_comments()
 
 function aeva_foxy_album($id, $type, $wid = 0, $details = '', $sort = 'm.id_media DESC', $field_sort = 0)
 {
-	global $context, $amSettings, $boarddir, $txt, $galurl, $boardurl;
+	global $context, $amSettings, $txt, $galurl;
 
 	$det = empty($details) || $details[0] == 'all' ? 'all' : ($details[0] == 'no_name' ? 'no_name' : '');
 	if ($det == 'all' || $det == 'no_name')
@@ -1134,7 +1134,7 @@ function aeva_foxy_album($id, $type, $wid = 0, $details = '', $sort = 'm.id_medi
 	$playlist = array();
 	$has_album = array();
 	$has_type = array('audio' => 0, 'video' => 0, 'image' => 0);
-	$clearurl = $boardurl . str_replace($boarddir, '', $amSettings['data_dir_path']);
+	$clearurl = str_replace(ROOT_DIR, ROOT, $amSettings['data_dir_path']);
 	while ($row = wesql::fetch_assoc($request))
 	{
 		if (in_array($type, array('audio', 'video', 'media')) && empty($playlist_description))
@@ -1343,7 +1343,7 @@ function aeva_foxy_album($id, $type, $wid = 0, $details = '', $sort = 'm.id_medi
 
 function aeva_foxy_fill_player(&$playlist, $type, &$details, $play = 0, $wid = 470, $hei = 430, $thei = 70)
 {
-	global $boardurl, $amSettings, $context, $txt;
+	global $amSettings, $context, $txt;
 	static $swo = 0;
 
 	$swo++;
@@ -1444,7 +1444,7 @@ function aeva_foxy_fill_player(&$playlist, $type, &$details, $play = 0, $wid = 4
 		bcol: "' . $pcol . '",' : '', !empty($bcol) ? '
 		scol: "' . $bcol . '",' : '', '
 		duration: ', floor($first['duration']), ',
-		install: "', $boardurl, '/expressInstall.swf",
+		install: "', ROOT, '/expressInstall.swf",
 		height: ', $thei, '
 	});');
 
