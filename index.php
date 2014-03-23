@@ -39,11 +39,6 @@ if (!file_exists(ROOT_DIR . '/Settings.php'))
 // Load our settings...
 require_once(ROOT_DIR . '/Settings.php');
 
-// Crucial paths.
-$boarddir = ROOT_DIR;
-foreach (array('cache' => 'gz', 'css' => 'gz/css', 'js' => 'gz/js') as $var => $path)
-	${$var . 'dir'} = ROOT_DIR . '/' . $path;
-
 // And important files.
 loadSource(array(
 	'Class-System',
