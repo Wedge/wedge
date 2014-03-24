@@ -1881,7 +1881,7 @@ function cache_get_data($orig_key, $ttl = 120, $put_callback = null)
 	global $cache_system, $cache_hits, $cache_count, $settings, $db_show_debug;
 
 	if (empty($settings['cache_enable']) && !empty($settings))
-		return;
+		return null;
 
 	$st = microtime(true);
 	$key = cache_prepare_key($orig_key);
