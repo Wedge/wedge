@@ -223,7 +223,7 @@ function aeva_reverse_protection($input)
 // Callback, only build the embed on each match
 function aeva_match(&$message, $for_real = false)
 {
-	global $sites, $upto, $boardurl, $settings;
+	global $sites, $upto, $settings;
 	static $local_done = false;
 
 	// Prevent stupid loop/crash. Also, if loading full version, return if disabled.
@@ -242,7 +242,7 @@ function aeva_match(&$message, $for_real = false)
 			$regex = str_replace('{local}', '[a-z]+://[^"]+?/', $regex);
 		else
 		{
-			$x = @parse_url($boardurl);
+			$x = @parse_url(ROOT);
 			$x['scheme'] = !empty($x['scheme']) ? $x['scheme'] : 'http';
 			$x['host'] = !empty($x['host']) ? $x['host'] : null;
 
@@ -272,7 +272,7 @@ function aeva_match(&$message, $for_real = false)
 // The core function: replace matched links with the full embedded object.
 function aeva_build_object($input)
 {
-	global $context, $settings, $sites, $upto, $boardurl, $txt;
+	global $context, $settings, $sites, $upto, $txt;
 	static $swfobjects = 0;
 
 	// Load the language files, English if no translated version is available.
@@ -443,8 +443,7 @@ function aeva_build_object($input)
 		{
 			add_js_file('http://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js', true);
 			add_js('
-	aevams = {', substr($swo_params, 1), '};', !empty($settings['embed_expins']) ? '
-	aeinst = "' . $boardurl . '/expressInstall.swf";' : '');
+	aevams = {', substr($swo_params, 1), '};');
 
 			if (!$fixed_size)
 				add_js('
@@ -538,7 +537,7 @@ function aeva_build_object($input)
 	{
 		$object .= '<div id="aevid' . $swfobjects . '">' . ($show_raw_link ? '' : $link) . '</div>';
 		$extra_js .= '
-	swfobject.embedSWF("<aeva-embed>", "aevid' . $swfobjects . '", "' . $sw . '", "' . $sh . '", "9", ' . (!empty($settings['embed_expins']) ? 'aeinst' : '""') . ', {}, ' . (!empty($arr['show-flashvars']) ?
+	swfobject.embedSWF("<aeva-embed>", "aevid' . $swfobjects . '", "' . $sw . '", "' . $sh . '", "9", "", {}, ' . (!empty($arr['show-flashvars']) ?
 		'{' . substr($swo_params, 1) . ',flashvars:"<flashvars>"}' : 'aevams') . ', {id:"aevawi' . $swfobjects . '"});';
 	}
 

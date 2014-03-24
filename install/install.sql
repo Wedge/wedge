@@ -2264,7 +2264,6 @@ VALUES
 	('embed_titles', '0'),
 	('embed_inlinetitles', '1'),
 	('embed_noscript', '0'),
-	('embed_expins', '1'),
 	('embed_quotes', '0'),
 	('embed_incontext', '0'),
 	('embed_fix_html', '1'),

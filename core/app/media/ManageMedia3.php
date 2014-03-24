@@ -80,7 +80,6 @@ function aeva_admin_embed()
 		'embed_includeurl'			=> array('yesno', 'config'),
 		'hr3'						=> array('hr', 'config'),
 		'embed_noscript'			=> array('yesno', 'config'),
-		'embed_expins'				=> array('yesno', 'config'),
 		'hr4'						=> array('hr', 'config'),
 		'embed_max_width'			=> array('small_text', 'config', null, null, $txt['media_pixels']),
 		'embed_max_per_post'		=> array('small_text', 'config', null, null, $txt['media_lower_items']),
