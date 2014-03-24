@@ -1458,8 +1458,7 @@ INSERT INTO {$db_prefix}media_settings
 	(name, value)
 VALUES
 	('installed_on', UNIX_TIMESTAMP()),
-	('data_dir_path', '{$boarddir}/media'),
-	('data_dir_url', '{$boardurl}/media'),
+	('data_dir', 'media'),
 	('max_dir_files', '1500'),
 	('num_items_per_page', '15'),
 	('max_dir_size', '51400'),
@@ -1498,7 +1497,6 @@ VALUES
 	('show_extra_info', '1'),
 	('clear_thumbnames', '1'),
 	('image_handler', '1'),
-	('enable_cache', '0'),
 	('use_zoom', '1'),
 	('show_linking_code', '1'),
 	('album_edit_unapprove', '1'),

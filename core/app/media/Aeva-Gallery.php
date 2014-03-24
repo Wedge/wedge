@@ -730,7 +730,7 @@ function aeva_prevNextThumb($myurl, &$prev)
 function aeva_viewItem()
 {
 	// Comes into play when you're viewing a single item
-	global $galurl, $txt, $amSettings, $context, $memberContext;
+	global $galurl, $txt, $amSettings, $context, $memberContext, $settings;
 
 	// Set the item ID
 	$item = isset($_REQUEST['in']) ? (int) $_REQUEST['in'] : 0;
@@ -1070,7 +1070,7 @@ function aeva_viewItem()
 		$item_data['is_resized'] = !empty($item_data['id_preview']);
 		preg_match('~\[url=([^]]+)~', $item_data['embed_url'], $match);
 		$key = (isset($match[1]) ? md5($match[1]) . '-' : '') . md5($item_data['embed_url']);
-		if (!$amSettings['enable_cache'] || !($item_data['embed_object'] = cache_get_data('aeva-embed-link-' . $key, 1200)))
+		if (($item_data['embed_object'] = cache_get_data('aeva-embed-link-' . $key, 1200)) === null)
 		{
 			loadSource('media/Aeva-Embed');
 
@@ -1080,7 +1080,7 @@ function aeva_viewItem()
 	}
 	else
 	{
-		if ($amSettings['enable_cache'] && ($temp_data = cache_get_data('aeva-file-info-' . $item_data['id_file'] . '-' . $item_data['filename'], 1200)))
+		if (($temp_data = cache_get_data('aeva-file-info-' . $item_data['id_file'] . '-' . $item_data['filename'], 1200)) !== null)
 		{
 			$item_data['embed_object'] = $temp_data['embed_object'];
 			$item_data['extra_info'] = $temp_data['extra_info'];
@@ -1129,7 +1129,7 @@ function aeva_viewItem()
 			$file->close();
 
 			// Cache it if we should
-			if ($amSettings['enable_cache'])
+			if (!empty($settings['cache_enable']))
 			{
 				$cache = array(
 					'embed_object' => strpos($item_data['embed_object'], 'swfobject.embedSWF') === false ? $item_data['embed_object'] : 'no_cache',

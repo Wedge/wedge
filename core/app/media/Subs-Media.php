@@ -741,7 +741,7 @@ function loadMediaSettings($gal_url = null, $load_template = false, $load_langua
 	if (!isset($_SESSION['aeva_access']))
 		$_SESSION['aeva_access'] = array();
 
-	if (empty($amSettings['enable_cache']) || ($amSettings = cache_get_data('aeva_settings', 60)) === null)
+	if (($amSettings = cache_get_data('aeva_settings', 3600)) === null || empty($amSettings['data_dir']))
 	{
 		$amSettings = array();
 		$request = wesql::query('
@@ -753,13 +753,22 @@ function loadMediaSettings($gal_url = null, $load_template = false, $load_langua
 			$amSettings[$row['name']] = $row['value'];
 		wesql::free_result($request);
 
-		// Cache the settings
-		if ($amSettings['enable_cache'])
-			cache_put_data('aeva_settings', $amSettings, 60);
+		// Old Aeva Media paths, maybe..? Update to the lighter one.
+		if (empty($amSettings['data_dir']))
+		{
+			wesql::query('DELETE FROM {db_prefix}media_settings WHERE name IN ({literal:data_dir_path}, {literal:data_dir_url})');
+			aeva_updateSettings('data_dir', ($npath = str_replace(ROOT, '', $amSettings['data_dir_path'])) != $amSettings['data_dir_path'] ? $npath : 'media', true);
+		}
+
+		// Keep these for an hour.
+		cache_put_data('aeva_settings', $amSettings, 3600);
 	}
 	// If you want to easily override settings dynamically, set $amSettings in index.template.php's template_init() function.
 	if (!empty($amOverride))
 		$amSettings = $amOverride + $amSettings;
+
+	$amSettings['data_dir_path'] = ROOT_DIR . '/' . $amSettings['data_dir'];
+	$amSettings['data_dir_url'] = ROOT . '/' . $amSettings['data_dir'];
 
 	if (!empty($amSettings['ftp_file']) && file_exists($amSettings['ftp_file']))
 	{

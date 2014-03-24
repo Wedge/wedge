@@ -149,12 +149,10 @@ function aeva_admin_settings()
 
 		'title_main' => array('title', 'config'),
 		'welcome' => array('textbox', 'config'),
-		'data_dir_path' => array('text', 'config'),
-		'data_dir_url' => array('text', 'config'),
+		'data_dir' => array('text', 'config'),
 		'max_dir_files' => array('small_text', 'config'),
 		'enable_re-rating' => array('yesno', 'config'),
 		'use_metadata_date' => array('yesno', 'config'),
-		'enable_cache' => array('yesno', 'config'),
 		'image_handler' => array('radio', 'config'),
 
 		'title_security' => array('title', 'config'),
@@ -209,9 +207,6 @@ function aeva_admin_settings()
 		'disable_comments' => array('yesno', 'layout'),
 		'disable_ratings' => array('yesno', 'layout'),
 	);
-
-	if (empty($amSettings['data_dir_url']) && !empty($amSettings['data_dir_path']))
-		$amSettings['data_dir_url'] = str_replace(ROOT_DIR, ROOT, $amSettings['data_dir_path']);
 
 	$info = array('datetime', 'copyright', 'xposuretime', 'flash', 'duration', 'make', 'model', 'xres', 'yres', 'resunit', 'focal_length', 'orientation', 'iso', 'meteringMode', 'digitalZoom', 'exifVersion', 'contrast', 'sharpness', 'focusType', 'fnumber','frame_count', 'bit_rate', 'audio_codec', 'video_codec');
 	$th['show_info'] = array('checkbox', 'meta', array());
@@ -309,13 +304,12 @@ function aeva_admin_settings()
 			}
 			else
 			{
-				aeva_updateSettings($setting, $new_value, true);
+				aeva_updateSettings($setting, $setting == 'data_dir' && $new_value === '' ? 'media' : $new_value, true);
 				if ($setting === 'media_enabled')
 					updateSettings(array($setting => $new_value));
 			}
 		}
-		if ($amSettings['enable_cache'])
-			cache_put_data('aeva_settings', $amSettings, 60);
+		cache_put_data('aeva_settings', $amSettings, 3600);
 
 		// If the Clear Thumbnails setting was changed, we redirect to the hidden maintenance area that renames all thumbnails.
 		if (!empty($update_thumbnames))

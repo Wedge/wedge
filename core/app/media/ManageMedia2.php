@@ -948,9 +948,9 @@ function aeva_admin_maintenance_checkfiles()
 	while ($row = wesql::fetch_assoc($request))
 	{
 		$extra_size += $row['filesize'];
-		$dir = $amSettings['data_dir_path'].'/'.$row['directory'].'/';
+		$dir = $amSettings['data_dir_path'] . '/' . $row['directory'] . '/';
 		$both = aeva_getEncryptedFilename($row['filename'], $row['id_file'], false, true);
-		$extra_items[$row['id_file']] = !file_exists($dir.$both[0]) ? (!file_exists($dir.$both[1]) ? $dir . '???' : $dir.$both[1]) : $dir.$both[0];
+		$extra_items[$row['id_file']] = !file_exists($dir.$both[0]) ? (!file_exists($dir . $both[1]) ? $dir . '???' : $dir . $both[1]) : $dir . $both[0];
 	}
 
 	if (isset($_REQUEST['delete']))
