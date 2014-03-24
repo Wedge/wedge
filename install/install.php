@@ -894,11 +894,9 @@ function DatabasePopulation()
 
 	$replaces = array(
 		'{$db_prefix}' => $db_prefix,
-		'{$boarddir}' => wesql::escape_string(ROOT_DIR),
-		'{$boardurl}' => $boardurl,
-		'{$boarddomain}' => substr($boardurl, strpos($boardurl, '://') !== false ? strpos($boardurl, '://') + 3 : 0),
+		'{ROOT_DIR}' => wesql::escape_string(ROOT_DIR),
+		'{$domain}' => substr($boardurl, strpos($boardurl, '://') !== false ? strpos($boardurl, '://') + 3 : 0),
 		'{$enableCompressedOutput}' => isset($_POST['compress']) ? '1' : '0',
-		'{$enableCompressedData}' => isset($_POST['compress']) && isset($_SERVER['SERVER_SOFTWARE']) && strpos($_SERVER['SERVER_SOFTWARE'], 'Apache') !== false ? '1' : '0',
 		'{$databaseSession_enable}' => isset($_POST['dbsession']) ? '1' : '0',
 		'{$current_time}' => time(),
 		'{$sched_task_offset}' => 82800 + mt_rand(0, 86399),
