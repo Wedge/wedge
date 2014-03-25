@@ -494,7 +494,7 @@ function ModifyPmSettings($return_config = false)
 // Shell for all the Pretty URL interfaces
 function ModifyPrettyURLs($return_config = false)
 {
-	global $context, $settings, $txt;
+	global $context, $settings, $txt, $remove_index;
 
 	// For the administrative search function not to get upset.
 	if ($return_config)
@@ -542,12 +542,12 @@ function ModifyPrettyURLs($return_config = false)
 			array(
 				'pretty_enable_filters' => $is_enabled,
 				'pretty_enable_cache' => isset($_POST['pretty_cache']) ? ($_POST['pretty_cache'] == 'on' ? 'on' : '') : '',
-				'pretty_remove_index' => isset($_POST['pretty_remove_index']) ? ($_POST['pretty_remove_index'] == 'on' ? 'on' : '') : '',
 				'pretty_filters' => serialize($settings['pretty_filters']),
 				'pretty_prefix_action' => $action,
 				'pretty_prefix_profile' => $profile,
 			)
 		);
+		updateSettingsFile(array('remove_index' => isset($_POST['pretty_remove_index']) ? ($_POST['pretty_remove_index'] == 'on' ? 1 : 0) : 1));
 		$settings['pretty_filters'] = unserialize($settings['pretty_filters']);
 
 		if (isset($_REQUEST['pretty_cache']))
@@ -565,7 +565,7 @@ function ModifyPrettyURLs($return_config = false)
 
 	$context['pretty']['settings'] = array(
 		'cache' => !empty($settings['pretty_enable_cache']) ? $settings['pretty_enable_cache'] : 0,
-		'index' => !empty($settings['pretty_remove_index']) ? $settings['pretty_remove_index'] : 0,
+		'index' => !empty($remove_index) ? $remove_index : 0,
 	);
 }
 

@@ -36,6 +36,7 @@ $boardurl = \'http://127.0.0.1/wedge\'; # URL to your forum\'s root folder
 $webmaster_email = \'noreply@myserver.com\';
 $cookiename = \'WedgeCookie01\';
 $cache_type = \'file\';
+$remove_index = 0;
 $we_shot = ' . WEDGE . ';
 
 # MySQL server

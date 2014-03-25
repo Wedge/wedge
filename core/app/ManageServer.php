@@ -331,7 +331,7 @@ function ModifyCookieSettings($return_config = false)
 		array('int', 'cookieTime'),
 		array('check', 'localCookies', 'subtext' => $txt['localCookies_subtext']),
 		array('check', 'globalCookies', 'subtext' => $txt['globalCookies_subtext']),
-		array('check', 'secureCookies', 'disabled' => $context['protocol'] != 'https://', 'subtext' => $txt['secureCookies_subtext']),
+		array('check', 'secureCookies', 'disabled' => PROTOCOL != 'https://', 'subtext' => $txt['secureCookies_subtext']),
 		'',
 		// Sessions
 		array('check', 'databaseSession_enable'),

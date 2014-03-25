@@ -32,7 +32,7 @@ $time_start = microtime(true);
 define('ROOT_DIR', str_replace('\\', '/', dirname(__FILE__)));
 define('APP_DIR', ROOT_DIR . '/core/app');
 
-// Get the forum's settings for database and file paths.
+// Get the forum's settings and loadSource() definition.
 require_once(dirname(__FILE__) . '/Settings.php');
 require_once(dirname(__FILE__) . '/index.php');
 
@@ -61,6 +61,7 @@ loadSource(array(
 ));
 
 // Initiate the database connection and load $settings data.
+loadConstants();
 loadDatabase();
 loadSettings();
 

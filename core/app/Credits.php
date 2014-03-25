@@ -55,7 +55,7 @@ function Credits()
 		array(
 			'title' => $txt['credits_groups_dev'],
 			'members' => array(
-				'<img src="' . $context['protocol'] . ($context['protocol'] == 'https://' ? 'secure.' : '') . 'gravatar.com/avatar/0879c588019800e5349fe171d69e1c28" class="opaque left" style="margin: 8px 20px 8px -24px"><br><br>Ren&eacute;-Gilles Deberdt<br>(Nao &#23578;)<br class="clear">',
+				'<img src="' . PROTOCOL . (PROTOCOL == 'https://' ? 'secure.' : '') . 'gravatar.com/avatar/0879c588019800e5349fe171d69e1c28" class="opaque left" style="margin: 8px 20px 8px -24px"><br><br>Ren&eacute;-Gilles Deberdt<br>(Nao &#23578;)<br class="clear">',
 			),
 		),
 		array(

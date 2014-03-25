@@ -87,7 +87,7 @@ if (!defined('WEDGE'))
 // Actually set the login cookie...
 function setLoginCookie($cookie_length, $id, $password = '')
 {
-	global $cookiename, $settings;
+	global $cookiename, $settings, $aliases;
 
 	// If changing state force them to re-address some permission caching.
 	$_SESSION['mc']['time'] = 0;
@@ -118,11 +118,9 @@ function setLoginCookie($cookie_length, $id, $password = '')
 		setcookie($cookiename, $data, time() + $cookie_length, $cookie_url[1], '', !empty($settings['secureCookies']), true);
 
 	// Any alias URLs? This is mainly for use with frames, etc.
-	if (!empty($settings['forum_alias_urls']))
+	if (!empty($aliases))
 	{
-		$aliases = explode(',', $settings['forum_alias_urls']);
-
-		foreach ($aliases as $alias)
+		foreach (explode(',', $aliases) as $alias)
 		{
 			// Fake the ROOT so we can set a different cookie.
 			$alias = strtr(trim($alias), array('http://' => '', 'https://' => ''));

@@ -35,11 +35,6 @@ function loadSettings()
 		'app_error_count' => 0,
 	);
 
-	// Is this a page requested through jQuery? If yes, set the AJAX constant so we can choose to show only the template's default block.
-	$ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
-	define('INFINITE', $ajax && !empty($_POST['infinite']));
-	define('AJAX', $ajax && !INFINITE);
-
 	// Try to load settings from the cache first; they'll never get cached if the setting is off.
 	if (($settings = cache_get_data('settings', 'forever')) === null)
 	{
@@ -161,9 +156,6 @@ function loadSettings()
 
 	// If an action should not influence the who's online list, please add it to the $action_no_log global from your own action.
 	$action_no_log = array('ajax', 'dlattach', 'feed', 'like', 'notification', 'verification', 'viewquery', 'viewremote');
-
-	// Set up path constants.
-	loadPaths();
 
 	// Deal with loading plugins.
 	$context['enabled_plugins'] = array();

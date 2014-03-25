@@ -49,6 +49,9 @@ loadSource(array(
 	'Security',
 ));
 
+// Load paths.
+loadConstants();
+
 // Are we installing, or doing something that needs the forum to be down?
 if (!empty($maintenance) && $maintenance > 1)
 {

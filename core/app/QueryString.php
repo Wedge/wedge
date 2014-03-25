@@ -12,23 +12,28 @@ if (!defined('WEDGE'))
 	die('Hacking attempt...');
 
 /**
- * Initializes all of the path constants.
+ * Initializes all of the constants, especially all paths.
  */
-function loadPaths()
+function loadConstants()
 {
-	global $boardurl, $settings, $context;
+	global $boardurl, $remove_index, $aliases;
+
+	// Is this a page requested through jQuery? If yes, set the AJAX constant so we can choose to show only the template's default block.
+	$ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
+	define('INFINITE', $ajax && !empty($_POST['infinite']));
+	define('AJAX', $ajax && !INFINITE);
 
 	// $scripturl is your board URL if you asked to remove index.php or the user visits for the first time
 	// (in which case they'll get the annoying PHPSESSID stuff in their URL and we need index.php in them.)
-	$scripturl = $boardurl . (!empty($settings['pretty_remove_index']) && isset($_COOKIE[session_name()]) ? '/' : '/index.php');
+	$scripturl = $boardurl . (!empty($remove_index) && isset($_COOKIE[session_name()]) ? '/' : '/index.php');
 
 	$is_secure = (isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] == 'on' || $_SERVER['HTTPS'] == 1)) || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https');
-	$context['protocol'] = $is_secure ? 'https://' : 'http://';
+	define('PROTOCOL', $is_secure ? 'https://' : 'http://');
 
 	// Check to see if they're accessing it from the wrong place.
 	if (isset($_SERVER['HTTP_HOST']) || isset($_SERVER['SERVER_NAME']))
 	{
-		$detected_url = $context['protocol'];
+		$detected_url = PROTOCOL;
 		$detected_url .= empty($_SERVER['HTTP_HOST']) ? $_SERVER['SERVER_NAME'] . (empty($_SERVER['SERVER_PORT']) || $_SERVER['SERVER_PORT'] == '80' ? '' : ':' . $_SERVER['SERVER_PORT']) : $_SERVER['HTTP_HOST'];
 		$temp = preg_replace('~/' . basename($scripturl) . '(/.+)?$~', '', strtr(dirname($_SERVER['PHP_SELF']), '\\', '/'));
 		if ($temp != '/')
@@ -38,16 +43,12 @@ function loadPaths()
 	// Is everything all right, URL-wise..? Then waste no more.
 	if (isset($detected_url) && $detected_url != $boardurl)
 	{
-		// Try #1 - check if it's in a list of alias addresses
-		if (!empty($settings['forum_alias_urls']))
-		{
-			$aliases = explode(',', $settings['forum_alias_urls']);
-
-			// Rip off all the boring parts, spaces, etc.
-			foreach ($aliases as $alias)
+		// Try #1 - check if it's in a list of alias addresses.
+		// Define these in Settings.php! e.g. $aliases = 'mainsite.com,altsite.org,anothersite.net'.
+		if (!empty($aliases))
+			foreach (explode(',', $aliases) as $alias)
 				if ($detected_url == trim($alias) || strtr($detected_url, array('http://' => '', 'https://' => '')) == trim($alias))
 					$do_fix = true;
-		}
 
 		// Hmm... check #2 - is it just different by a www? Send them to the correct place!!
 		if (empty($do_fix) && strtr($detected_url, array('://' => '://www.')) == $boardurl && (empty($_GET) || count($_GET) == 1) && WEDGE != 'SSI')
@@ -63,7 +64,7 @@ function loadPaths()
 		if (strtr($detected_url, array('https://' => 'http://')) == $boardurl)
 			$do_fix = true;
 
-		// Okay, #4 - perhaps it's an IP address? We're gonna want to use that one, then. (assuming it's the IP or something...)
+		// Okay, #4 - perhaps it's an IP address? We're gonna want to use that one, then. (Assuming it's the IP or something...)
 		if (!empty($do_fix) || preg_match('~^http[s]?://(?:[\d.:]+|\[[\d:]+\](?::\d+)?)(?:$|/)~', $detected_url) == 1)
 		{
 			// Fix $boardurl and $scripturl
@@ -571,7 +572,7 @@ function cleanRequest()
 	if (empty($_SERVER['REQUEST_URI']))
 		$_SERVER['REQUEST_URL'] = SCRIPT . (!empty($_SERVER['QUERY_STRING']) ? '?' . $_SERVER['QUERY_STRING'] : '');
 	else
-		$_SERVER['REQUEST_URL'] = $context['protocol'] . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+		$_SERVER['REQUEST_URL'] = PROTOCOL . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 
 	// And make sure HTTP_USER_AGENT is set.
 	$_SERVER['HTTP_USER_AGENT'] = isset($_SERVER['HTTP_USER_AGENT']) ? htmlspecialchars(wesql::unescape_string($_SERVER['HTTP_USER_AGENT']), ENT_QUOTES) : '';

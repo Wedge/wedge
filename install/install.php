@@ -24,16 +24,9 @@ $host = empty($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_X_FORWARDED_SERVER'] : $_S
 $boardurl = 'http' . (!empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) != 'off' ? 's' : '') . '://' . $host;
 $boardurl .= substr($_SERVER['REQUEST_URI'], 0, strrpos($_SERVER['REQUEST_URI'], '/'));
 
-// Define our constants. (cf. QueryString.php)
-define('ROOT',			$boardurl);
-define('SCRIPT',		ROOT_DIR . '/index.php');
-define('TEMPLATES',		ROOT . '/core/html');		define('TEMPLATES_DIR', ROOT_DIR . '/core/html');
-define('SKINS',			ROOT . '/core/skins');		define('SKINS_DIR',		ROOT_DIR . '/core/skins');
-define('LANGUAGES',		ROOT . '/core/languages');	define('LANGUAGES_DIR',	ROOT_DIR . '/core/languages');
-define('ASSETS',		ROOT . '/assets');			define('ASSETS_DIR',	ROOT_DIR . '/assets');
-define('CACHE',			ROOT . '/gz');				define('CACHE_DIR',		ROOT_DIR . '/gz');
-define('SMILEYS',		ROOT . '/assets/smileys');
-define('AVATARS',		ROOT . '/assets/avatars');
+// Define our paths and constants.
+require_once(ROOT_DIR . '/core/QueryString.php');
+loadConstants();
 
 define('INVALID_IP', '00000000000000000000000000000000');
 define('IS_WINDOWS', strpos(__FILE__, ':\\') !== false);
@@ -282,11 +275,12 @@ function load_lang_file()
 				arsort($preferred, SORT_NUMERIC);
 			}
 
-			// This is the list of known Wedge language packs/mappings as of March 2013.
+			// This is the list of known Wedge language packs/mappings as of March 2014.
 			$langs = array(
 				'en' => 'Install.english.php',
 				'en-gb' => 'Install.english-uk.php',
 				'fr' => 'Install.french.php',
+				'de' => 'Install.german.php',
 			);
 
 			foreach ($preferred as $key => $value)
