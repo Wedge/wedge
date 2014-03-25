@@ -469,8 +469,8 @@ class weNotif
 			}
 
 			// Call the notifier callback
-			foreach ($notifier_settings as $notifier => $settings)
-				$notifiers[$notifier]->saveProfile(MID, $settings);
+			foreach ($notifier_settings as $notifier => $setting)
+				$notifiers[$notifier]->saveProfile(MID, $setting);
 
 			redirectexit('action=profile;area=notifications');
 		}
