@@ -56,7 +56,7 @@ class we
 	 */
 	protected static function init_user()
 	{
-		global $context, $settings, $user_settings, $cookiename, $boardurl;
+		global $context, $settings, $user_settings, $cookiename;
 
 		$id_member = 0;
 
@@ -435,7 +435,7 @@ class we
 
 		// Fill in the server URL for the current user. This is user-specific, as they may be using a different URL than the script's default URL (Pretty URL, secure access...)
 		// Note that HTTP_X_FORWARDED_SERVER is mostly used by proxy servers. If the client doesn't provide anything, it's probably a bot.
-		$user['host'] = empty($_SERVER['REAL_HTTP_HOST']) ? (empty($_SERVER['HTTP_HOST']) ? (empty($_SERVER['HTTP_X_FORWARDED_SERVER']) ? substr(strrchr($boardurl, ':'), 3) : $_SERVER['HTTP_X_FORWARDED_SERVER']) : $_SERVER['HTTP_HOST']) : $_SERVER['REAL_HTTP_HOST'];
+		$user['host'] = empty($_SERVER['REAL_HTTP_HOST']) ? (empty($_SERVER['HTTP_HOST']) ? (empty($_SERVER['HTTP_X_FORWARDED_SERVER']) ? substr(strrchr(ROOT, ':'), 3) : $_SERVER['HTTP_X_FORWARDED_SERVER']) : $_SERVER['HTTP_HOST']) : $_SERVER['REAL_HTTP_HOST'];
 		$user['server'] = $context['protocol'] . $user['host'];
 
 		// The URL in your address bar. Also contains the query string.

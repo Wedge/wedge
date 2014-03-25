@@ -111,7 +111,7 @@ function ManagePaidSubscriptions()
 // Modify which payment methods are to be used.
 function ModifySubscriptionSettings($return_config = false)
 {
-	global $context, $txt, $settings, $boardurl;
+	global $context, $txt, $settings;
 
 	// If the currency is set to something different then we need to set it to other for this to work and set it back shortly.
 	$settings['paid_currency'] = !empty($settings['paid_currency_code']) ? $settings['paid_currency_code'] : '';
@@ -159,7 +159,7 @@ function ModifySubscriptionSettings($return_config = false)
 	// Some important context stuff
 	$context['page_title'] = $txt['settings'];
 	wetem::load('show_settings');
-	$context['settings_message'] = str_replace('{board_url}', $boardurl, $txt['paid_note']);
+	$context['settings_message'] = str_replace('{board_url}', ROOT, $txt['paid_note']);
 	$context[$context['admin_menu_name']]['current_subsection'] = 'settings';
 
 	// Get the final touches in place.

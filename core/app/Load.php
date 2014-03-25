@@ -2145,7 +2145,7 @@ function getLanguages($use_cache = true)
  */
 function loadSession()
 {
-	global $settings, $boardurl, $sc;
+	global $settings, $sc;
 
 	// Attempt to change a few PHP settings.
 	ini_set('session.use_cookies', true);
@@ -2156,7 +2156,7 @@ function loadSession()
 
 	if (!empty($settings['globalCookies']))
 	{
-		$parsed_url = parse_url($boardurl);
+		$parsed_url = parse_url(ROOT);
 
 		if (!preg_match('~^\d{1,3}(\.\d{1,3}){3}$~', $parsed_url['host']) && preg_match('~(?:[^.]+\.)?([^.]{2,}\..+)\z~i', $parsed_url['host'], $parts))
 			ini_set('session.cookie_domain', '.' . $parts[1]);

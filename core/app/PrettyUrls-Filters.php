@@ -93,7 +93,7 @@ function pretty_synchronize_topic_urls()
  */
 function pretty_filter_actions(&$urls)
 {
-	global $boardurl, $settings;
+	global $settings;
 
 	$action_pattern = '~(?<=[?;&])action=([^;]+)~';
 	$action_replacement = isset($settings['pretty_prefix_action']) ? $settings['pretty_prefix_action'] : 'do/';
@@ -101,7 +101,7 @@ function pretty_filter_actions(&$urls)
 	foreach ($urls as &$url)
 	{
 		if (!isset($url['replacement']))
-			$url['replacement'] = $boardurl . '/' . $url['url'];
+			$url['replacement'] = ROOT . '/' . $url['url'];
 		if (strpos($url['replacement'], 'action=') !== false && preg_match($action_pattern, $url['replacement'], $action))
 			$url['replacement'] = str_replace($action[0], '', substr_replace($url['replacement'], $action_replacement . $action[1] . '/', strpos($url['replacement'], '?'), 0));
 	}
@@ -112,7 +112,7 @@ function pretty_filter_actions(&$urls)
  */
 function pretty_filter_topics(&$urls)
 {
-	global $boardurl, $settings, $context;
+	global $settings, $context;
 
 	$pattern = '~(?<=[?;&])topic=(\d+)(?:\.([a-zA-Z0-9$%]+))?~';
 	$query_data = array();
@@ -148,7 +148,7 @@ function pretty_filter_topics(&$urls)
 		{
 			if (isset($row['pretty_url']))
 				$topicData[$row['id_topic']] = array(
-					'pretty_board' => !empty($row['url']) ? $context['protocol'] . $row['url'] : $boardurl,
+					'pretty_board' => !empty($row['url']) ? $context['protocol'] . $row['url'] : ROOT,
 					'pretty_url' => $row['pretty_url'],
 				);
 			else
@@ -240,7 +240,7 @@ function pretty_filter_topics(&$urls)
  */
 function pretty_filter_boards(&$urls)
 {
-	global $boardurl, $context;
+	global $context;
 
 	$pattern = '~(.*[?;&])\bboard=([.0-9$%d]+)(?:;(cat|tag)=([^;&]+))?(?:;month=(\d{6,8}))?(.*)~S';
 	$bo_list = array();
@@ -287,11 +287,11 @@ function pretty_filter_boards(&$urls)
 
 		foreach ($urls as &$url)
 			if (!isset($url['replacement']) && isset($url['board_id']))
-				$url['replacement'] = (!empty($url_list[$url['board_id']]) ? $context['protocol'] . $url_list[$url['board_id']] : $boardurl) . '/' . $url['cattag'] . $url['epoch'] . $url['start'] . $url['match1'] . $url['match6'];
+				$url['replacement'] = (!empty($url_list[$url['board_id']]) ? $context['protocol'] . $url_list[$url['board_id']] : ROOT) . '/' . $url['cattag'] . $url['epoch'] . $url['start'] . $url['match1'] . $url['match6'];
 	}
 
 	$cat_pattern = '~(.*)\bcategory=([^;]+)~S';
-	$cat_replacement = $boardurl . '/category/$2/$1';
+	$cat_replacement = ROOT . '/category/$2/$1';
 
 	foreach ($urls as &$url)
 		if (!isset($url['replacement']) && strpos($url['url'], 'category=') !== false && preg_match($cat_pattern, $url['url']))
@@ -303,7 +303,7 @@ function pretty_filter_boards(&$urls)
  */
 function pretty_filter_profiles(&$urls)
 {
-	global $boardurl, $settings;
+	global $settings;
 
 	$pattern = '~(.*)\baction=profile(;u=([0-9]+))?(.*)~S';
 	$query_data = array();
@@ -321,7 +321,7 @@ function pretty_filter_profiles(&$urls)
 			if ($url['profile_id'] > 0)
 				$query_data[$url['profile_id']] = true;
 			else
-				$url['replacement'] = $boardurl . $prefix . ($url['this_is_me'] ? $me_postfix : 'guest/') . $url['match1'] . $url['match3'];
+				$url['replacement'] = ROOT . $prefix . ($url['this_is_me'] ? $me_postfix : 'guest/') . $url['match1'] . $url['match3'];
 		}
 	}
 
@@ -346,6 +346,6 @@ function pretty_filter_profiles(&$urls)
 		// Build the replacement URLs
 		foreach ($urls as &$url)
 			if (isset($url['profile_id']))
-				$url['replacement'] = $boardurl . $prefix . (!empty($memberNames[$url['profile_id']]) ? $memberNames[$url['profile_id']] . '/' : ($url['this_is_me'] ? $me_postfix : 'guest/')) . $url['match1'] . $url['match3'];
+				$url['replacement'] = ROOT . $prefix . (!empty($memberNames[$url['profile_id']]) ? $memberNames[$url['profile_id']] . '/' : ($url['this_is_me'] ? $me_postfix : 'guest/')) . $url['match1'] . $url['match3'];
 	}
 }

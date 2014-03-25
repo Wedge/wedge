@@ -488,8 +488,8 @@ function ModifyPmSettings($return_config = false)
 
 // !!! To-do:
 //		- Specifically allow for subdomains
-//		- Disable the area and subdomain feature, and explain why, if $boardurl has a subfolder name in it!
-//			i.e. if (preg_match('~://[^/]+/[^/]+~', $boardurl))
+//		- Disable the area and subdomain feature, and explain why, if ROOT has a subfolder name in it!
+//			i.e. if (preg_match('~://[^/]+/[^/]+~', ROOT))
 
 // Shell for all the Pretty URL interfaces
 function ModifyPrettyURLs($return_config = false)

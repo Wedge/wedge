@@ -1098,7 +1098,7 @@ function aeva_embed_video($message, $id_media = 0, $id_preview = 0)
 
 function aeva_check_embed_link($link)
 {
-	global $sites, $boardurl, $settings;
+	global $sites, $settings;
 
 	if (empty($settings['embed_enabled']))
 		return false;
@@ -1109,7 +1109,7 @@ function aeva_check_embed_link($link)
 		return $link2;
 
 	// Parse the boardurl to grab the domain we're on.
-	$x = @parse_url($boardurl);
+	$x = @parse_url(ROOT);
 	$x['scheme'] = !empty($x['scheme']) ? $x['scheme'] : 'http';
 	$x['host'] = !empty($x['host']) ? $x['host'] : null;
 

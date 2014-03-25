@@ -34,7 +34,7 @@ function template_init()
 // The main block above the content.
 function template_html_before()
 {
-	global $context, $txt, $settings, $boardurl, $topic;
+	global $context, $txt, $settings, $topic;
 
 	// Declare our HTML5 doctype, and whether to show right to left.
 	// The charset is already specified in the headers so it may be omitted,
@@ -54,9 +54,9 @@ function template_html_before()
 	<title>', $context['page_title_html_safe'], !empty($context['page_indicator']) ? $context['page_indicator'] : '', '</title>';
 
 	// If the forum is in a sub-folder, it needs to explicitly set a favicon URL.
-	if (strpos(str_replace('://', '', $boardurl), '/') !== false)
+	if (strpos(str_replace('://', '', ROOT), '/') !== false)
 		echo '
-	<link rel="shortcut icon" href="', $boardurl, '/favicon.ico" type="image/vnd.microsoft.icon">';
+	<link rel="shortcut icon" href="', ROOT, '/favicon.ico" type="image/vnd.microsoft.icon">';
 
 	// Present a canonical URL for search engines to prevent duplicate content in their indices.
 	if (!empty($context['canonical_url']))

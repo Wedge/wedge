@@ -88,10 +88,10 @@ function pretty_generate_url($text, $is_board = false, $slash = false)
 // Check a new pretty URL against the list of existing boards to ensure there won't be a conflict.
 function is_already_taken($url, $id, $id_owner)
 {
-	global $context, $action_list, $boardurl;
+	global $context, $action_list;
 
 	// Is the board name in the action list?
-	$board_name = substr($url, strlen($boardurl) + 1);
+	$board_name = substr($url, strlen(ROOT) + 1);
 	$forbidden = array_merge($action_list, array('do' => true));
 
 	foreach (explode('/', $board_name) as $name)

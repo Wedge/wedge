@@ -39,7 +39,7 @@ define('INVALID_IP', '00000000000000000000000000000000');
 define('IS_WINDOWS', strpos(__FILE__, ':\\') !== false);
 define('WEDGE_INSTALLER', 1);
 
-// Don't have PHP support, do you?
+// The following comment will end your script gracefully if PHP isn't available.
 // ><html dir="ltr"><head><title>Error!</title></head><body>Sorry, this installer requires PHP!<div style="display: none">
 
 // Database info.
@@ -862,7 +862,7 @@ function ForumSettings()
 // Step one: Do the SQL thang.
 function DatabasePopulation()
 {
-	global $txt, $db_connection, $settings, $db_prefix, $incontext, $db_name, $boardurl;
+	global $txt, $db_connection, $settings, $db_prefix, $incontext, $db_name;
 
 	$incontext['block'] = 'populate_database';
 	$incontext['page_title'] = $txt['db_populate'];
@@ -895,7 +895,7 @@ function DatabasePopulation()
 	$replaces = array(
 		'{$db_prefix}' => $db_prefix,
 		'{ROOT_DIR}' => wesql::escape_string(ROOT_DIR),
-		'{$domain}' => substr($boardurl, strpos($boardurl, '://') !== false ? strpos($boardurl, '://') + 3 : 0),
+		'{$domain}' => substr(ROOT, strpos(ROOT, '://') !== false ? strpos(ROOT, '://') + 3 : 0),
 		'{$enableCompressedOutput}' => isset($_POST['compress']) ? '1' : '0',
 		'{$databaseSession_enable}' => isset($_POST['dbsession']) ? '1' : '0',
 		'{$current_time}' => time(),
@@ -982,7 +982,7 @@ function DatabasePopulation()
 	}
 
 	// Maybe we can auto-detect better cookie settings?
-	preg_match('~^http[s]?://([^.]+?)([^/]*?)(/.*)?$~', $boardurl, $matches);
+	preg_match('~^http[s]?://([^.]+?)([^/]*?)(/.*)?$~', ROOT, $matches);
 	if (!empty($matches))
 	{
 		// Default = both off.
@@ -1869,8 +1869,7 @@ function fixModSecurity()
 
 function init_variables()
 {
-	global $incontext, $txt, $boardurl;
-	global $context, $settings;
+	global $incontext, $txt, $context, $settings;
 
 	// !!! Dunno if we need to load all of these. Better safe than sorry.
 	loadSource(array('Load', 'Subs-Auth', 'Class-String', 'Class-System', 'QueryString', 'Subs', 'Errors', 'Security'));
@@ -2186,7 +2185,7 @@ function template_database_settings()
 // Stick in their forum settings.
 function template_forum_settings()
 {
-	global $incontext, $txt, $boardurl;
+	global $incontext, $txt;
 
 	echo '
 	<form action="', $incontext['form_url'], '" method="post">
@@ -2194,7 +2193,7 @@ function template_forum_settings()
 
 	template_warning_divs();
 
-	$default_name = trim(ucwords(preg_replace(array('~^.*://|\.[a-z]{2,4}(?:/|$)|[^a-z]~i', '~ +~'), array(' ', ' '), $boardurl)));
+	$default_name = trim(ucwords(preg_replace(array('~^.*://|\.[a-z]{2,4}(?:/|$)|[^a-z]~i', '~ +~'), array(' ', ' '), ROOT)));
 
 	echo '
 		<table class="w100 cp0 cs0" style="margin: 1em 0">
@@ -2321,7 +2320,7 @@ function template_admin_account()
 // Tell them it's done, and to delete.
 function template_delete_install()
 {
-	global $incontext, $installurl, $txt, $boardurl;
+	global $incontext, $installurl, $txt;
 
 	echo '
 		<p>', $txt['congratulations_help'], '</p>';
@@ -2350,7 +2349,7 @@ function template_delete_install()
 		<br>';
 
 	echo '
-		', sprintf($txt['go_to_your_forum'], $boardurl . '/index.php'), '<br>
+		', sprintf($txt['go_to_your_forum'], SCRIPT), '<br>
 		<br>
 		', $txt['good_luck'];
 }

@@ -360,7 +360,7 @@ function template_aeva_item_main_after()
 
 function template_aeva_item_details()
 {
-	global $galurl, $context, $amSettings, $txt, $boardurl;
+	global $galurl, $context, $amSettings, $txt;
 
 	$item =& $context['item_data'];
 	$in_sidebar = wetem::parent('aeva_item_details') == 'sidebar';
@@ -451,14 +451,14 @@ function template_aeva_item_details()
 				<dt>', $txt['media_embed_html'], '</dt>
 				<dd>
 					<input id="html_embed" size="24" value="', $item['type'] == 'image' ?
-						westr::htmlspecialchars('<img src="' . $boardurl . '/MGalleryItem.php?id=' . $item['id_media'] . '">') :
+						westr::htmlspecialchars('<img src="' . ROOT . '/MGalleryItem.php?id=' . $item['id_media'] . '">') :
 						westr::htmlspecialchars(trim(preg_replace('/[\t\r\n]+/', ' ', $item['embed_object']))), '" onclick="this.focus(); this.select();" readonly>
 				</dd>';
 			if ($item['type'] != 'embed')
 				echo '
 				<dt>', $txt['media_direct_link'], '</td>
 				<dd>
-					<input id="direct_link" size="24" value="' . $boardurl . '/MGalleryItem.php?id=' . $item['id_media'] . '" onclick="this.focus(); this.select();" readonly>
+					<input id="direct_link" size="24" value="' . ROOT . '/MGalleryItem.php?id=' . $item['id_media'] . '" onclick="this.focus(); this.select();" readonly>
 				</dd>';
 		}
 	}
@@ -1686,7 +1686,7 @@ function template_aeva_multiUpload_xml()
 
 function template_aeva_multiUpload()
 {
-	global $context, $txt, $boardurl;
+	global $context, $txt;
 
 	echo '
 	<div class="windowbg wrc_top">
@@ -1709,7 +1709,7 @@ function template_aeva_multiUpload()
 		</ul>
 	</div>
 	<div class="roundframe" id="mu_container">
-		<form action="', $boardurl, '">
+		<form action="', SCRIPT, '">
 			<strong>1</strong>. ', $txt['media_sort_order'], ' &ndash;
 			<select id="sort_order" name="sort_order">
 				<option value="1" selected>', $txt['media_sort_order_filename'], '</option>

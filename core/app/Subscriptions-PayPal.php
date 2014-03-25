@@ -40,7 +40,7 @@ class paypal_display
 	// What do we want?
 	public function fetchGatewayFields($unique_id, $sub_data, $value, $period, $return_url)
 	{
-		global $settings, $txt, $boardurl;
+		global $settings, $txt;
 
 		$return_data = array(
 			'form' => 'https://www.' . (!empty($settings['paidsubs_test']) ? 'sandbox.' : '') . 'paypal.com/cgi-bin/webscr',
@@ -63,7 +63,7 @@ class paypal_display
 		$return_data['hidden']['cmd'] = !$sub_data['repeatable'] ? '_xclick' : '_xclick-subscriptions';
 		$return_data['hidden']['return'] = $return_url;
 		$return_data['hidden']['src'] = 1;
-		$return_data['hidden']['notify_url'] = $boardurl . '/subscriptions.php';
+		$return_data['hidden']['notify_url'] = ROOT . '/subscriptions.php';
 
 		// Now then, what language should we use? A language pack should indicate the language PayPal should use.
 		$return_data['hidden']['lc'] = isset($txt['lang_paypal']) ? $txt['lang_paypal'] : 'US';

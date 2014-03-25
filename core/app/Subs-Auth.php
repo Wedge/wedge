@@ -124,7 +124,7 @@ function setLoginCookie($cookie_length, $id, $password = '')
 
 		foreach ($aliases as $alias)
 		{
-			// Fake the $boardurl so we can set a different cookie.
+			// Fake the ROOT so we can set a different cookie.
 			$alias = strtr(trim($alias), array('http://' => '', 'https://' => ''));
 			$cookie_url = url_parts(!empty($settings['localCookies']), !empty($settings['globalCookies']), 'http://' . $alias);
 
@@ -157,10 +157,8 @@ function setLoginCookie($cookie_length, $id, $password = '')
 // Get the domain and path for the cookie...
 function url_parts($local, $global, $force_url = '')
 {
-	global $boardurl;
-
 	// Parse the URL with PHP to make life easier.
-	$parsed_url = parse_url(empty($url) ? $boardurl : $force_url);
+	$parsed_url = parse_url(empty($url) ? ROOT : $force_url);
 
 	// Is local cookies off?
 	if (empty($parsed_url['path']) || !$local)

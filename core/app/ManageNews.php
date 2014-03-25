@@ -473,7 +473,7 @@ function ComposeMailing()
 // Send out the mailing!
 function SendMailing($clean_only = false)
 {
-	global $txt, $context, $boardurl, $settings;
+	global $txt, $context, $settings;
 
 	// How many to send at once? Quantity depends on whether we are queueing or not.
 	$num_at_once = empty($settings['mail_queue']) ? 60 : 1000;
@@ -602,7 +602,7 @@ function SendMailing($clean_only = false)
 	// Replace in all the standard things.
 	$_POST['message'] = str_replace($variables,
 		array(
-			!empty($_POST['send_html']) ? '<a href="' . $boardurl . '">' . $boardurl . '</a>' : $boardurl,
+			!empty($_POST['send_html']) ? '<a href="' . ROOT . '">' . ROOT . '</a>' : ROOT,
 			timeformat(forum_time(), false),
 			!empty($_POST['send_html']) ? '<a href="' . SCRIPT . '?action=profile;u=' . $settings['latestMember'] . '">' . $cleanLatestMember . '</a>' : ($context['send_pm'] ? '[url=' . SCRIPT . '?action=profile;u=' . $settings['latestMember'] . ']' . $cleanLatestMember . '[/url]' : $cleanLatestMember),
 			$settings['latestMember'],
@@ -610,7 +610,7 @@ function SendMailing($clean_only = false)
 		), $_POST['message']);
 	$_POST['subject'] = str_replace($variables,
 		array(
-			$boardurl,
+			ROOT,
 			timeformat(forum_time(), false),
 			$settings['latestRealName'],
 			$settings['latestMember'],

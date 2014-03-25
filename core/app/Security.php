@@ -795,7 +795,7 @@ function query_for_bans($type)
 // Make sure the user's correct session was passed, and they came from here. (type can be post, get, or request.)
 function checkSession($type = 'post', $from_action = '', $is_fatal = true)
 {
-	global $sc, $settings, $boardurl;
+	global $sc, $settings;
 
 	// Is it in as $_POST?
 	if ($type == 'post')
@@ -842,7 +842,7 @@ function checkSession($type = 'post', $from_action = '', $is_fatal = true)
 		else
 			$real_host = $_SERVER['HTTP_HOST'];
 
-		$parsed_url = parse_url($boardurl);
+		$parsed_url = parse_url(ROOT);
 
 		// Are global cookies on? If so, let's check them ;)
 		if (!empty($settings['globalCookies']))

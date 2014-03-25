@@ -1669,7 +1669,7 @@ function template_repair_boards()
 // Pretty URLs
 function template_pretty_urls()
 {
-	global $context, $txt, $settings, $boardurl;
+	global $context, $txt, $settings;
 
 	if (!empty($context['pretty']['chrome']['menu']))
 	{
@@ -1721,8 +1721,8 @@ function template_pretty_urls()
 				$prefix = empty($settings['pretty_prefix_action']) ? '' : $settings['pretty_prefix_action'];
 				echo '
 				<select name="pretty_prefix_action" class="pretty_prefix', $enabled ? '' : ' hide', '">
-					<option value=""', $prefix == '' ? ' selected' : '', '>', $boardurl, '/action</option>
-					<option value="do/"', $prefix == 'do/' ? ' selected' : '', '>', $boardurl, '/do/action</option>
+					<option value=""', $prefix == '' ? ' selected' : '', '>', ROOT, '/action</option>
+					<option value="do/"', $prefix == 'do/' ? ' selected' : '', '>', ROOT, '/do/action</option>
 				</select>';
 			}
 
@@ -1731,8 +1731,8 @@ function template_pretty_urls()
 				$prefix = empty($settings['pretty_prefix_profile']) ? '' : $settings['pretty_prefix_profile'];
 				echo '
 				<select name="pretty_prefix_profile" class="pretty_prefix', $enabled ? '' : ' hide', '">
-					<option value="~"', $prefix == '~' ? ' selected' : '', '>', $boardurl, '/~UserName/</option>
-					<option value="profile/"', $prefix == 'profile/' ? ' selected' : '', '>', $boardurl, '/profile/UserName/</option>
+					<option value="~"', $prefix == '~' ? ' selected' : '', '>', ROOT, '/~UserName/</option>
+					<option value="profile/"', $prefix == 'profile/' ? ' selected' : '', '>', ROOT, '/profile/UserName/</option>
 				</select>';
 			}
 

@@ -32,6 +32,7 @@ function upgrade_db()
 	}
 
 	// We might want to add some message here...
+	// Note: ROOT isn't defined at this point, so stick to $boardurl!
 	redirectexit($boardurl . '/index.php?' . ($v < WEDGE ? 'upgrading-step-' . $v : 'upgraded'));
 }
 
