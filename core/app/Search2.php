@@ -121,6 +121,9 @@ function Search2()
 		elseif ($_REQUEST['search_type'] == 'everywhere')
 			unset($_REQUEST['topic'], $_REQUEST['brd']);
 	}
+	else
+		unset($_REQUEST['topic'], $_REQUEST['brd']);
+
 	// No scope was picked within the search form, perhaps because of a JS error? Clean it up.
 	if (isset($_REQUEST['brd'], $_REQUEST['topic']))
 		unset($_REQUEST['brd']);

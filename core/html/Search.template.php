@@ -174,23 +174,31 @@ function template_search_ajax()
 
 	echo '
 		<ul class="actions"><li>
-		<div id="search_popup">
+		<div id="search_popup">';
+
+	if (!empty($context['current_topic']) || !empty($context['current_board']))
+	{
+		echo '
 			<h6>
 				', $txt['search_scope'], '
 			</h6>
 			<select name="search_type">';
 
-	if (!empty($context['current_topic']))
-		echo '
+		if (!empty($context['current_topic']))
+			echo '
 				<option value="topic" selected>', $txt['search_this_topic'], '</option>';
-	if (!empty($context['current_board']))
-		echo '
+
+		if (!empty($context['current_board']))
+			echo '
 				<option value="board"', empty($context['current_topic']) ? ' selected' : '', '>', $txt['search_this_board'], '</option>
 				<option value="tree">', $txt['search_this_tree'], '</option>';
 
-	echo '
+		echo '
 				<option value="everywhere">', $txt['search_everywhere'], '</option>
-			</select>
+			</select>';
+	}
+
+	echo '
 			<h6>
 				', $txt['set_parameters'], '
 			</h6>
