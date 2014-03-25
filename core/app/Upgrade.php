@@ -12,7 +12,7 @@ if (!defined('WEDGE'))
 
 function upgrade_db()
 {
-	global $we_shot, $boardurl;
+	global $we_shot;
 
 	$v = empty($we_shot) ? 0 : $we_shot;
 
@@ -32,8 +32,7 @@ function upgrade_db()
 	}
 
 	// We might want to add some message here...
-	// Note: ROOT isn't defined at this point, so stick to $boardurl!
-	redirectexit($boardurl . '/index.php?' . ($v < WEDGE ? 'upgrading-step-' . $v : 'upgraded'));
+	redirectexit($v < WEDGE ? 'upgrading-step-' . $v : 'upgraded');
 }
 
 // 1.0-alpha-1, February 2014. Adding hey_not and hey_not fields to the members table.
