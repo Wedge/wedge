@@ -1856,7 +1856,7 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 			$filename = CACHE_DIR . '/lang/' . $lang . '_' . $template . '.php';
 			if (file_exists($filename))
 			{
-				@include($filename);
+				include($filename);
 				if (!empty($val))
 				{
 					$txt = array_merge($txt, @unserialize($val));
@@ -1882,8 +1882,9 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 			LANGUAGES_DIR,
 		);
 
-		// First, load the English files, for a solid fallback, then the default language, then the user's.
-		$language_attempts = array_flip(array_flip(array('english', $settings['language'], $lang)));
+		// First, load the English files, for a solid fallback, then the user's language.
+		if (!isset($language_attempts))
+			$language_attempts = array_flip(array_flip(array('english', ($pos = strpos($lang, '-')) !== false ? substr($lang, 0, $pos) : $lang, $lang)));
 
 		// Now try to find the actual language file. Custom files are always considered found.
 		$found = $template === 'Custom';
