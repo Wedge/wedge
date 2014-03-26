@@ -360,6 +360,26 @@ class weNotif
 	{
 		global $context, $txt;
 
+		$context[$context['profile_menu_name']]['tab_data'] = array(
+			'title' => $txt['notifications'],
+			'description' => $txt['notification_profile_desc'],
+			'icon' => 'profile_sm.gif',
+			'tabs' => array(
+				'general' => array(),
+				'posts' => array(),
+			),
+		);
+
+		// Did we want the old system, instead..?
+		if (isset($_GET['sa']) && $_GET['sa'] == 'posts')
+		{
+			loadSource('Profile-Modify');
+			wetem::rename('weNotif::profile', 'notification');
+			$context[$context['profile_menu_name']]['tab_data']['description'] = $txt['notification_info'];
+			notification($memID);
+			return;
+		}
+
 		// Not the same user? Hell no.
 		if ($memID != MID)
 			fatal_lang_error('no_access');
@@ -481,8 +501,6 @@ class weNotif
 
 		prepareDBSettingContext($config_vars);
 
-		$context['settings_title'] = $txt['notifications'];
-		$context['settings_message'] = $txt['notification_profile_desc'];
 		$context['post_url'] = '<URL>?action=profile;area=notifications;save';
 
 		wetem::load('show_settings');

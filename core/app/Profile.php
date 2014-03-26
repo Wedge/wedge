@@ -136,9 +136,9 @@ function ModifyProfile($post_errors = array())
 					'file' => 'Profile-View',
 					'function' => 'showPosts',
 					'subsections' => array(
-						'messages' => array($txt['showMessages'], array('profile_view_own', 'profile_view_any')),
-						'topics' => array($txt['showTopics'], array('profile_view_own', 'profile_view_any')),
-						'attach' => array($txt['showAttachments'], array('profile_view_own', 'profile_view_any'), 'enabled' => !empty($settings['attachmentEnable'])),
+						'messages' => array($txt['showMessages']),
+						'topics' => array($txt['showTopics']),
+						'attach' => array($txt['showAttachments'], 'enabled' => !empty($settings['attachmentEnable'])),
 					),
 					'permission' => array(
 						'own' => 'profile_view_own',
@@ -190,28 +190,20 @@ function ModifyProfile($post_errors = array())
 					),
 				),
 				'',
-				'notification' => array(
-					'label' => $txt['notification'],
-					'file' => 'Profile-Modify',
-					'function' => 'notification',
-					'sc' => 'post',
-					'permission' => array(
-						'own' => array('profile_extra_any', 'profile_extra_own'),
-						'any' => array('profile_extra_any'),
-					),
-				),
 				'notifications' => array(
-					'label' => $txt['notifications'],
-					'enabled' => true,
+					'label' => $txt['notifications_all'],
 					'file' => 'Notifications',
 					'function' => 'weNotif::profile',
+					'subsections' => array(
+						'general' => array($txt['notifications_general']),
+						'posts' => array($txt['notifications_posts']),
+					),
 					'permission' => array(
 						'own' => array('profile_extra_any', 'profile_extra_own'),
 					),
 				),
 				'notifsubs' => array(
 					'label' => $txt['notif_subs'],
-					'enabled' => true,
 					'function' => 'weNotif::subs_profile',
 					'file' => 'Notifications',
 					'permission' => array(

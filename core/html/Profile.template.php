@@ -1553,11 +1553,6 @@ function template_notification()
 
 	// The main containing header.
 	echo '
-			<we:cat>
-				<img src="', ASSETS, '/icons/profile_sm.gif">
-				', $txt['profile'], '
-			</we:cat>
-			<p class="description">', $txt['notification_info'], '</p>
 			<div class="windowbg2 wrc">
 				<form action="<URL>?action=profile;area=notification;save" method="post" accept-charset="UTF-8" id="notify_options" class="flow_hidden">';
 
