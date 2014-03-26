@@ -276,7 +276,7 @@ class we
 			'email' => isset($user_settings['email_address']) ? $user_settings['email_address'] : '',
 			'activated' => !empty($user_settings['is_activated']) ? $user_settings['is_activated'] : 0,
 			'passwd' => isset($user_settings['passwd']) ? $user_settings['passwd'] : '',
-			'language' => empty($user_settings['lngfile']) || empty($settings['userLanguage']) ? $settings['language'] : $user_settings['lngfile'],
+			'language' => empty($user_settings['lngfile']) || empty($settings['userLanguage']) ? '' : $user_settings['lngfile'],
 			'skin' => $_SESSION['is_mobile'] ? (empty($user_settings['skin_mobile']) ? '' : $user_settings['skin_mobile']) : (empty($user_settings['skin']) ? '' : $user_settings['skin']),
 			'last_login' => empty($user_settings['last_login']) ? 0 : $user_settings['last_login'],
 			'ip' => $_SERVER['REMOTE_ADDR'],
@@ -457,6 +457,8 @@ class we
 		}
 		elseif (!empty($settings['userLanguage']) && !empty($_SESSION['language']) && isset($languages[strtr($_SESSION['language'], './\\:', '____')]))
 			$user['language'] = strtr($_SESSION['language'], './\\:', '____');
+		elseif ($user['language'] === '')
+			$user['language'] = get_preferred_language($settings['language']);
 
 		// Just build this here, it makes it easier to change/use - administrators can see all boards.
 		if ($is['admin'])
