@@ -313,9 +313,8 @@ function add_css_file($original_files = array(), $add_link = true, $is_main = fa
 	if (!isset($context['skin_folders']))
 		wedge_get_skin_options();
 
-	$fallback_folder = $deep_folder = SKINS_DIR . '/';
-	$fallback_folder = rtrim($fallback_folder . reset($context['css_folders']), '/') . '/';
-	$deep_folder = rtrim($deep_folder . end($context['css_folders']), '/') . '/';
+	$fallback_folder = rtrim(SKINS_DIR . '/' . reset($context['css_folders']), '/') . '/';
+	$deep_folder = rtrim(SKINS_DIR . '/' . end($context['css_folders']), '/') . '/';
 	$found_suffixes = array();
 	$found_files = array();
 	$css = array();
@@ -377,6 +376,9 @@ function add_css_file($original_files = array(), $add_link = true, $is_main = fa
 		}
 	}
 
+	// We can no longer be locals from this point on.
+	we::$cache['local'] = false;
+
 	// The following code is only executed if parsing a replace-type skin and one of the files wasn't found.
 	if (!empty($fallback_folder))
 	{
@@ -385,9 +387,6 @@ function add_css_file($original_files = array(), $add_link = true, $is_main = fa
 
 		if (empty($cached_files[$fold]))
 			$cached_files[$fold] = array_diff((array) @scandir($fold ? $fold : '', 1), array('.', '..', '.htaccess', 'index.php', 'skin.xml', 'custom.xml'));
-
-		// Ignore local files (we're only guests in this folder.)
-		we::$cache['local'] = false;
 
 		foreach ($cached_files[$fold] as $file)
 		{
@@ -669,9 +668,18 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 		foreach ($context['plugins_url'] as $key => $val)
 			$css_vars['$plugins[\'' . $key . '\']'] = str_replace(ROOT, '', $val);
 
-	// Load all CSS files in order, and replace $here with the current folder while we're at it.
+	// Our deepest skin folder is the one for which 'local' keywords will return true.
+	$deep_folder = rtrim(SKINS_DIR . '/' . end($context['css_folders']), '/');
+
+	// Load all CSS files in order, replace $here with the current folder while we're at it, and mark local sections.
 	foreach ((array) $css as $file)
-		$final .= str_replace('$here', $relative_root . str_replace(ROOT_DIR, '', dirname($file)), file_get_contents($file));
+	{
+		$local = file_get_contents($file);
+		if (dirname($file) === $deep_folder && strpos(strtolower($local), 'local') !== false)
+			$local = preg_replace('~@(is\h+\([^),]*|(?:else)?if\h+[^\n]*)\blocal\b~i', '@$1true', $local);
+		$final .= str_replace('$here', str_replace(ROOT_DIR, $relative_root, dirname($file)), $local);
+	}
+	unset($local);
 
 	if (empty($final)) // Nothing loaded...?
 	{
