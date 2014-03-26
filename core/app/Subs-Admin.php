@@ -150,9 +150,9 @@ function getFileVersions(&$versionOptions)
 	);
 
 	// Find the version in SSI.php's file header.
-	if (!empty($versionOptions['include_ssi']) && file_exists(ROOT_DIR . '/SSI.php'))
+	if (!empty($versionOptions['include_ssi']) && file_exists(ROOT_DIR . '/core/SSI.php'))
 	{
-		$fp = fopen(ROOT_DIR . '/SSI.php', 'rb');
+		$fp = fopen(ROOT_DIR . '/core/SSI.php', 'rb');
 		$header = fread($fp, 4096);
 		fclose($fp);
 

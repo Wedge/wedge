@@ -14,10 +14,10 @@
 */
 
 // Start things rolling by getting Wedge alive...
-if (!file_exists(dirname(__FILE__) . '/SSI.php'))
+if (!file_exists(dirname(__FILE__) . '/core/SSI.php'))
 	exit('Cannot find SSI.php');
 
-require_once(dirname(__FILE__) . '/SSI.php');
+require_once(dirname(__FILE__) . '/core/SSI.php');
 loadSource(array('ManagePaid', 'Subs-Admin')); // for subscriptions core and admin emailing
 
 loadLanguage('ManagePaid');

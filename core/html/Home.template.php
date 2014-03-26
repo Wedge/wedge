@@ -37,7 +37,7 @@ function template_main()
 	<we:block class="tborder" style="margin: 5px 0 15px; padding: 2px; border: 1px solid #dcc; border-radius: 5px">
 		<table class="homeposts w100 cs0">';
 
-	loadSource('../../SSI');
+	loadSource('../SSI');
 	$boards = ssi_recentTopicTitles($n, null, null, 'naos');
 	$nb_new = get_unread_numbers($boards);
 

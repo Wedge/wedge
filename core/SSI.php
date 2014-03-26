@@ -29,12 +29,12 @@ if (version_compare(PHP_VERSION, '5.4') < 0 && function_exists('set_magic_quotes
 
 $time_start = microtime(true);
 
-define('ROOT_DIR', str_replace('\\', '/', dirname(__FILE__)));
+define('ROOT_DIR', str_replace('\\', '/', dirname(dirname(__FILE__))));
 define('APP_DIR', ROOT_DIR . '/core/app');
 
 // Get the forum's settings and loadSource() definition.
-require_once(dirname(__FILE__) . '/Settings.php');
-require_once(dirname(__FILE__) . '/index.php');
+require_once(ROOT_DIR . '/Settings.php');
+require_once(ROOT_DIR . '/index.php');
 
 $ssi_error_reporting = error_reporting(E_ALL | E_STRICT);
 /*
@@ -152,7 +152,7 @@ if (isset($_GET['ssi_function']))
 elseif (basename($_SERVER['PHP_SELF']) == 'SSI.php')
 {
 	loadLanguage('Errors', '', false);
-	exit(sprintf($txt['ssi_not_direct'], we::$is_admin ? '\'' . addslashes(__FILE__) . '\'' : '\'SSI.php\''));
+	exit(sprintf($txt['ssi_not_direct'], we::$is_admin ? '\'' . addslashes(__FILE__) . '\'' : '\'core/SSI.php\''));
 }
 
 error_reporting($ssi_error_reporting);
