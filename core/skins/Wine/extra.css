@@ -159,6 +159,14 @@ h1
 	h4, h4 a
 		color: #fff
 
+@if local
+	#main_menu li:hover > h4
+		background-color: #5a6c85
+		color: #fff
+		a
+			color: #fff
+@endif
+
 @if ie6
 	#navi, #top_section
 		background: #928585

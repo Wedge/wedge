@@ -178,11 +178,6 @@ h1, #slogan
 
 #main_menu
 	margin: 0 16px -10px
-	li:hover > h4
-		background-color: transparent
-		color: #000
-		a
-			color: #000
 	h4, h4 a
 		color: #000
 	li.chosen h4
