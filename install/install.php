@@ -176,7 +176,7 @@ function initialize_inputs()
 	// Make sure a timezone is set, it isn't always. But let's use the system derived one as much as possible.
 	date_default_timezone_set(@date_default_timezone_get());
 
-	if (!defined('ROOT'))
+	if (!class_exists('we') || empty(we::$user))
 		init_variables();
 
 	// Force an integer step, defaulting to 0.
@@ -1826,8 +1826,7 @@ function init_variables()
 {
 	global $incontext, $txt, $context, $settings;
 
-	// !!! Dunno if we need to load all of these. Better safe than sorry.
-	loadSource(array('Load', 'Subs-Auth', 'Class-String', 'Class-System', 'QueryString', 'Subs', 'Errors', 'Security'));
+	loadSource(array('Subs-Auth', 'Class-String'));
 
 	westr::getInstance();
 	we::getInstance(false);
