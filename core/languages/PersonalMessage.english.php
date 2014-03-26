@@ -199,3 +199,4 @@ $txt['pm_readable_buddy'] = 'sender is a contact';
 $txt['pm_readable_label'] = 'apply label &quot;{LABEL}&quot;';
 $txt['pm_readable_delete'] = 'delete the message';
 $txt['pm_readable_then'] = '<strong>then</strong>';
+$txt['pm_not_found'] = 'Sorry, the requested message could not be found.';

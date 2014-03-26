@@ -232,7 +232,10 @@ function PersonalMessage()
 			// We're getting a specific preview.
 			$pmsg = (int) $_GET['preview'];
 			if (!isAccessiblePM($pmsg, isset($_REQUEST['f']) && $_REQUEST['f'] == 'sent' ? 'outbox' : 'inbox'))
-				fatal_lang_error('no_access');
+			{
+				mark_ajax_pm_read($pmsg);
+				return_raw($context['header'] . $txt['pm_not_found']);
+			}
 			$request = wesql::query('
 				SELECT body
 				FROM {db_prefix}personal_messages
@@ -243,38 +246,6 @@ function PersonalMessage()
 			);
 			list ($body) = wesql::fetch_row($request);
 			wesql::free_result($request);
-
-			/*
-				// While we're at it we could, I guess, mark it read.
-				// !! Well, I guess not. A PM usually invites for an answer.
-				wesql::query('
-					UPDATE {db_prefix}pm_recipients
-					SET is_read = 1
-					WHERE id_pm = {int:pm}
-						AND id_member = {int:member}
-						AND is_read = 0',
-					array(
-						'pm' => $pmsg,
-						'member' => MID,
-					)
-				);
-				$request = wesql::query('
-					SELECT COUNT(id_pm)
-					FROM {db_prefix}pm_recipients
-					WHERE id_member = {int:current_member}
-						AND is_read = {int:new}
-					ORDER BY id_pm',
-					array(
-						'current_member' => MID,
-						'new' => 0,
-					)
-				);
-				list ($count) = wesql::fetch_row($request);
-				wesql::free_result($request);
-				updateMemberData(MID, array('unread_messages' => $count));
-				// And next time we actually enter the inbox certain things need to be recalculated.
-				cache_put_data('labelCounts:' . MID, null);
-			*/
 
 			return_raw($context['header'] . parse_bbc($body, 'pm', array('cache' => 'pm' . $pmsg)));
 		}
@@ -423,6 +394,40 @@ function PersonalMessage()
 		unset($_REQUEST['sa']);
 		MessageFolder();
 	}
+}
+
+// This is only used on PM preview errors, as PMs normally require an action.
+function mark_ajax_pm_read($pmsg)
+{
+	wesql::query('
+		UPDATE {db_prefix}pm_recipients
+		SET is_read = 1
+		WHERE id_pm = {int:pm}
+			AND id_member = {int:member}
+			AND is_read = 0',
+		array(
+			'pm' => $pmsg,
+			'member' => MID,
+		)
+	);
+	$request = wesql::query('
+		SELECT COUNT(id_pm)
+		FROM {db_prefix}pm_recipients
+		WHERE id_member = {int:current_member}
+			AND is_read = {int:new}
+		ORDER BY id_pm',
+		array(
+			'current_member' => MID,
+			'new' => 0,
+		)
+	);
+	list ($count) = wesql::fetch_row($request);
+	wesql::free_result($request);
+
+	updateMemberData(MID, array('unread_messages' => $count));
+
+	// And next time we actually enter the inbox, this needs to be recalculated.
+	cache_put_data('labelCounts:' . MID, null);
 }
 
 // A sidebar to easily access different areas of the section
