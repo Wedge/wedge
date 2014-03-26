@@ -178,12 +178,6 @@ h1, #slogan
 
 #main_menu
 	margin: 0 16px -10px
-	h4, h4 a
-		color: #000
-	li.chosen h4
-		color: #fff
-		a
-			color: #fff
 
 /*
 	If you want to align the main menu, add this above...

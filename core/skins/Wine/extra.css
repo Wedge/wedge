@@ -155,16 +155,15 @@ h1
 #navi
 	border-bottom: 3px solid #bdb5b5
 
-#main_menu
-	h4, h4 a
-		color: #fff
-
 @if local
-	#main_menu li:hover > h4
-		background-color: #5a6c85
-		color: #fff
-		a
+	#main_menu
+		h4, h4 a
 			color: #fff
+		li:hover > h4
+			background-color: #5a6c85
+			color: #fff
+			a
+				color: #fff
 @endif
 
 @if ie6
