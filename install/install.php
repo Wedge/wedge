@@ -15,17 +15,12 @@ define('REQUIRED_PHP_VERSION', '5.3.0');
 define('REQUIRED_MYSQL_SERVER_VERSION', '5.0.3');
 define('REQUIRED_MYSQL_CLIENT_VERSION', '5.0.3');
 
-// Load Wedge's default paths and pray that it works...
-define('ROOT_DIR', str_replace('\\', '/', dirname(__FILE__)));
-define('APP_DIR', ROOT_DIR . '/core/app');
-
 // Fill in the server URL for the current user. This is user-specific, as they may be using a different URL than the script's default URL (Pretty URL, secure access...)
 $host = empty($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_X_FORWARDED_SERVER'] : $_SERVER['HTTP_HOST'];
 $boardurl = 'http' . (!empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) != 'off' ? 's' : '') . '://' . $host;
 $boardurl .= substr($_SERVER['REQUEST_URI'], 0, strrpos($_SERVER['REQUEST_URI'], '/'));
 
 // Define our paths and constants.
-require_once(ROOT_DIR . '/core/QueryString.php');
 loadConstants();
 
 define('INVALID_IP', '00000000000000000000000000000000');
@@ -255,54 +250,25 @@ function load_lang_file()
 		$_SESSION['installer_temp_lang'] = $GLOBALS['HTTP_GET_VARS']['lang_file'];
 
 	// Make sure it exists, if it doesn't reset it.
-	if (!isset($_SESSION['installer_temp_lang']) || preg_match('~[^.\w-]~', $_SESSION['installer_temp_lang']) === 1 || !file_exists(ROOT_DIR . '/core/languages/' . $_SESSION['installer_temp_lang']))
+	if (!isset($_SESSION['installer_temp_lang']) || preg_match('~[^.\w-]~', $_SESSION['installer_temp_lang']) === 1 || !file_exists(LANGUAGES_DIR . '/' . $_SESSION['installer_temp_lang']))
 	{
-		if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE']))
-		{
-			// break up string into pieces (languages and q factors)
-			preg_match_all('/([a-z]{1,8}(-[a-z]{1,8})?)\s*(;\s*q\s*=\s*(1|0\.[0-9]+))?/i', strtolower($_SERVER['HTTP_ACCEPT_LANGUAGE']), $lang_parse);
-			if (count($lang_parse[1]))
-			{
-				// create a list like "en" => 0.8
-				$preferred = array_combine($lang_parse[1], $lang_parse[4]);
-
-				// set default to 1 for any without q factor (IE fix)
-				foreach ($preferred as $lang => $val)
-					if ($val === '')
-						$preferred[$lang] = 1;
-
-				// sort list based on value
-				arsort($preferred, SORT_NUMERIC);
-			}
-
-			// This is the list of known Wedge language packs/mappings as of March 2014.
-			$langs = array(
-				'en' => 'Install.english.php',
-				'en-gb' => 'Install.english-uk.php',
-				'fr' => 'Install.french.php',
-				'de' => 'Install.german.php',
-			);
-
-			foreach ($preferred as $key => $value)
-			{
-				$lang = isset($langs[$key]) ? $langs[$key] : (isset($langs[substr($key, 0, 2)]) ? $langs[substr($key, 0, 2)] : '');
-				if (!empty($lang) && isset($incontext['detected_languages'][$lang]))
-				{
-					$_SESSION['installer_temp_lang'] = $lang;
-					break;
-				}
-			}
-		}
-
+		loadSource('Subs');
+		$lang = get_preferred_language();
+		if (isset($incontext['detected_languages'][$lang]) && (file_exists(LANGUAGES_DIR . '/Install.' . $lang . '.php') || file_exists(LANGUAGES_DIR . '/' . $lang . '/Install.' . $lang . '.php')))
+			$_SESSION['installer_temp_lang'] = 'Install.' . $lang . '.php';
 		// Use the first one...
-		if (empty($_SESSION['installer_temp_lang']))
+		else
 			list ($_SESSION['installer_temp_lang']) = array_keys($incontext['detected_languages']);
 	}
 
 	// And now include the actual language file itself.
-	require_once(ROOT_DIR . '/core/languages/Install.english.php');
+	require_once(LANGUAGES_DIR . '/Install.english.php');
 	if ($_SESSION['installer_temp_lang'] != 'Install.english.php')
-		require_once(ROOT_DIR . '/core/languages/' . $_SESSION['installer_temp_lang']);
+		require_once(
+			file_exists(LANGUAGES_DIR . '/' . $_SESSION['installer_temp_lang']) ?
+				LANGUAGES_DIR . '/' . $_SESSION['installer_temp_lang'] :
+				LANGUAGES_DIR . '/' . str_replace(array('Install.', '.php'), '', $_SESSION['installer_temp_lang']) . '/' . $_SESSION['installer_temp_lang']
+		);
 }
 
 // This handy function loads some settings and the like.
@@ -310,15 +276,11 @@ function load_database()
 {
 	global $settings, $db_prefix, $db_connection, $db_name, $db_user;
 
-	// Need this to check whether we need the database password.
-	require(ROOT_DIR . '/Settings.php');
-
 	$settings['disableQueryCheck'] = true;
 
 	// Connect the database.
 	if (!$db_connection)
 	{
-		loadSource('Class-DB');
 		wesql::getInstance();
 
 		if (!$db_connection)
@@ -725,7 +687,6 @@ function DatabaseSettings()
 
 		// Now include it, for database functions!
 		$settings['disableQueryCheck'] = true;
-		loadSource('Class-DB');
 
 		// Attempt a connection.
 		$db_connection = wesql::connect($db_server, $db_name, $db_user, $db_passwd, $db_prefix, array('non_fatal' => true, 'dont_select_db' => true));

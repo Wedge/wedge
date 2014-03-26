@@ -49,9 +49,6 @@ loadSource(array(
 	'Security',
 ));
 
-// Load paths.
-loadConstants();
-
 // Are we installing, or doing something that needs the forum to be down?
 if (!empty($maintenance) && $maintenance > 1)
 {
@@ -61,6 +58,9 @@ if (!empty($maintenance) && $maintenance > 1)
 		show_db_error();
 	return;
 }
+
+// Load paths.
+loadConstants();
 
 // Initiate the database connection.
 loadDatabase();
