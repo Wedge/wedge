@@ -1450,7 +1450,7 @@ function EditMessageIcons()
 
 		redirectexit('action=admin;area=smileys;sa=editicons');
 	}
-	elseif ($context['sub_action'] == 'editicon' && isset($_GET['icon']))
+	elseif ($context['sub_action'] == 'editicon' && isset($_GET['icon']) && !empty($_POST))
 	{
 		checkSession();
 		$_GET['icon'] = (int) $_GET['icon'];
