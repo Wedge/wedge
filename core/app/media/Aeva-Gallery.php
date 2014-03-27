@@ -273,27 +273,27 @@ function aeva_initGallery($gal_url = null)
 			'areas' => array(
 				'vua' => array(
 					'label' => $txt['media_albums'],
-					'icon' => 'album.png',
+					'icon' => ASSETS . '/aeva/album.png',
 				),
 				'unseen' => array(
 					'label' => $txt['media_unseen'],
 					'notice' => empty(we::$user['media_unseen']) || we::$user['media_unseen'] == -1 ? '' : we::$user['media_unseen'],
-					'icon' => 'eye.png',
+					'icon' => ASSETS . '/aeva/eye.png',
 					'enabled' => aeva_allowedTo('access_unseen'),
 				),
 				'playlists' => array(
 					'label' => $txt['media_playlists'],
-					'icon' => 'playlist.png',
+					'icon' => ASSETS . '/aeva/playlist.png',
 					'enabled' => empty($amSettings['disable_playlists']),
 				),
 				'stats' => array(
 					'label' => $txt['media_stats'],
 					'enabled' => true,
-					'icon' => 'chart_bar.png',
+					'icon' => ASSETS . '/aeva/chart_bar.png',
 				),
 				'search' => array(
 					'label' => $txt['media_search'],
-					'icon' => 'magnifier.png',
+					'icon' => ASSETS . '/aeva/magnifier.png',
 					'enabled' => aeva_allowedTo('search'),
 				),
 			),
@@ -306,13 +306,13 @@ function aeva_initGallery($gal_url = null)
 				'add' => array(
 					'enabled' => aeva_allowedTo('add_user_album'),
 					'label' => $txt['media_add_album'],
-					'icon' => 'images.png',
+					'icon' => ASSETS . '/aeva/images.png',
 				),
 				'post' => array(
 					'enabled' => we::$is_member,
 					'label' => $txt['media_add_item'],
 					'href' => $galurl . 'sa=post',
-					'icon' => 'camera_add.png',
+					'icon' => ASSETS . '/aeva/camera_add.png',
 				),
 			),
 		),
