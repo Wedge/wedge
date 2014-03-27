@@ -747,6 +747,8 @@ function handleTemplateErrors($filename)
 
 		if (empty($error))
 			$error = isset($php_errormsg) ? strtr($php_errormsg, array('<b>' => '<strong>', '</b>' => '</strong>')) : '';
+		elseif (strpos(strtolower($error), '<h2>error 403</h2>') !== false)
+			$error = isset($php_errormsg) ? strtr($php_errormsg, array('<b>' => '<strong>', '</b>' => '</strong>')) : '(Please restore .htaccess file to core/html!)';
 
 		echo '
 		<title>', $txt['template_parse_error'], '</title>
