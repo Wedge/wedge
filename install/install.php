@@ -274,8 +274,10 @@ function load_lang_file()
 // This handy function loads some settings and the like.
 function load_database()
 {
-	global $settings, $db_prefix, $db_connection, $db_name, $db_user;
+	global $settings, $db_connection, $db_server, $db_name;
+	global $db_user, $db_passwd, $db_prefix, $db_persist;
 
+	loadSource('Class-DB');
 	$settings['disableQueryCheck'] = true;
 
 	// Connect the database.
@@ -686,7 +688,9 @@ function DatabaseSettings()
 		}
 
 		// Now include it, for database functions!
+		loadSource('Class-DB');
 		$settings['disableQueryCheck'] = true;
+		wesql::getInstance();
 
 		// Attempt a connection.
 		$db_connection = wesql::connect($db_server, $db_name, $db_user, $db_passwd, $db_prefix, array('non_fatal' => true, 'dont_select_db' => true));
