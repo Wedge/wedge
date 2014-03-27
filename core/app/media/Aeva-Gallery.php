@@ -1080,7 +1080,7 @@ function aeva_viewItem()
 	}
 	else
 	{
-		if (($temp_data = cache_get_data('aeva-file-info-' . $item_data['id_file'] . '-' . $item_data['filename'], 1200)) !== null)
+		if (($temp_data = cache_get_data('aeva-file-info-' . md5($item_data['id_file'] . $item_data['filename']), 1200)) !== null)
 		{
 			$item_data['embed_object'] = $temp_data['embed_object'];
 			$item_data['extra_info'] = $temp_data['extra_info'];
@@ -1136,7 +1136,7 @@ function aeva_viewItem()
 					'extra_info' => $item_data['extra_info'],
 					'is_resized' => $item_data['is_resized']
 				);
-				cache_put_data('aeva-file-info-' . $item_data['id_file'] . '-' . $item_data['filename'], $cache, 1200);
+				cache_put_data('aeva-file-info-' . md5($item_data['id_file'] . $item_data['filename']), $cache, 1200);
 			}
 		}
 	}

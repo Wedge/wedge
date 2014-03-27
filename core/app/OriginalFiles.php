@@ -15,12 +15,8 @@ function create_settings_file()
 {
 	$file = '<' . '?php
 /**
- * Contains the master settings for Wedge, including database credentials.
+ * Contains master settings for Wedge, including database credentials.
  * DO NOT CHANGE ANYTHING, UNLESS YOU KNOW WHAT YOU\'RE DOING!
- *
- * Wedge (http://wedge.org)
- * Copyright © 2010 René-Gilles Deberdt, wedge.org
- * License: http://wedge.org/license/
  */
 
 # 1 = Maintenance Mode (admin-only)
@@ -49,7 +45,7 @@ $ssi_db_passwd = \'\';
 $db_prefix = \'wedge_\';
 $db_persist = 0;
 $db_error_send = 1;
-$db_show_debug = false;
+$db_show_debug = 0;
 $db_last_error = 0;
 ';
 
