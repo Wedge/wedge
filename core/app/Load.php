@@ -2088,7 +2088,7 @@ function getLanguages($use_cache = true)
 	$language_directories = array(
 		'root' => LANGUAGES_DIR,
 	);
-	$language_directories += glob(LANGUAGES_DIR . '/*', GLOB_ONLYDIR);
+	$language_directories += (array) glob(LANGUAGES_DIR . '/*', GLOB_ONLYDIR);
 
 	// Initialize the array, otherwise if it's empty, Wedge won't cache it.
 	$context['languages'] = array();
@@ -2097,7 +2097,7 @@ function getLanguages($use_cache = true)
 	foreach ($language_directories as $language_dir)
 	{
 		// Can't look in here... doesn't exist!
-		if (!file_exists($language_dir))
+		if (!$language_dir || !file_exists($language_dir))
 			continue;
 
 		$dir = glob($language_dir . '/index.*.php');
