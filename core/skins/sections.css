@@ -318,7 +318,7 @@ hr.sep
 // Poster details and list of items
 .poster
 	@if $can_flex
-		flex: 0 0 14em
+		flex: 0 0 20%
 	@else
 		display: table-cell
 		width: 14em
