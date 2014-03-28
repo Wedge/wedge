@@ -191,9 +191,13 @@ function SetCensor()
 // Modify all settings related to posts and posting.
 function ModifyPostSettings($return_config = false)
 {
-	global $context, $txt;
+	global $context, $txt, $settings;
 
 	$context['page_title'] = $context['settings_title'] = $txt['manageposts_settings'];
+
+	// A small hack to save us a lot of allowedTo tests in other places.
+	if (isset($settings['real_edit_disable_time']))
+		$settings['edit_disable_time'] = $settings['real_edit_disable_time'];
 
 	// All the settings...
 	$config_vars = array(

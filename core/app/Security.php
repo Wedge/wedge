@@ -454,6 +454,7 @@ function banPermissions()
 				'pin_topic',
 				'merge_any', 'split_any',
 				'modify_own', 'modify_any', 'modify_replies',
+				'bypass_edit_disable',
 				'move_any',
 				'send_topic',
 				'lock_own', 'lock_any',

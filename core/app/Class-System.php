@@ -446,6 +446,12 @@ class we
 		if (!empty($user['ignoreboards']) && empty($user['ignoreboards'][$tmp = count($user['ignoreboards']) - 1]))
 			unset($user['ignoreboards'][$tmp]);
 
+		if (allowedTo('bypass_edit_disable'))
+		{
+			$settings['real_edit_disable_time'] = $settings['edit_disable_time'];
+			$settings['edit_disable_time'] = 0;
+		}
+
 		// Do we have any languages to validate this?
 		$languages = getLanguages();
 

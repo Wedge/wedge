@@ -1391,6 +1391,7 @@ function loadAllPermissions()
 			'who_view' => array(false, 'general'),
 			'search_posts' => array(false, 'general'),
 			'post_thought' => array(false, 'general'),
+			'bypass_edit_disable' => array(false, 'general'),
 			'pm_read' => array(false, 'pm'),
 			'pm_send' => array(false, 'pm'),
 			'save_pm_draft' => array(false, 'pm'),

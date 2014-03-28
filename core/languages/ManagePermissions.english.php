@@ -209,6 +209,8 @@ $txt['permissionname_modify_own'] = 'Own post';
 $txt['permissionname_modify_any'] = 'Any post';
 $txt['permissionname_report_any'] = 'Report posts to the moderators';
 $txt['permissionhelp_report_any'] = 'This permission adds a link to each message, allowing a user to report a post to a moderator. On reporting, all moderators on that board will receive an email with a link to the reported post and a description of the problem (as given by the reporting user).';
+$txt['permissionname_bypass_edit_disable'] = 'Ignore edit disable time';
+$txt['permissionhelp_bypass_edit_disable'] = 'This permission allows users to keep editing their own posts even after the edit disable time.';
 
 $txt['permissionname_save_post_draft'] = 'Save drafts of new posts';
 $txt['permissionhelp_save_post_draft'] = 'This permission allows users to save drafts of new posts, before they are posted. Attachments and polls are NOT saved.';
