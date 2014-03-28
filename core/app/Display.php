@@ -58,7 +58,7 @@ function Display()
 	// !!! Should we just be taking the original HTTP var and redirect to it?
 	if ((isset($context['pretty']['oldschoolquery']) || $_SERVER['HTTP_HOST'] != $board_info['url']) && !empty($settings['pretty_filters']['topics']))
 	{
-		$url = 'topic=' . $topic . '.' . (isset($_REQUEST['start']) ? $_REQUEST['start'] : '0') . (isset($_REQUEST['seen']) ? ';seen' : '') . (isset($_REQUEST['all']) ? ';all' : '') . (isset($_REQUEST['viewresults']) ? ';viewresults' : '');
+		$url = 'topic=' . $topic . '.' . (isset($_REQUEST['start']) ? $_REQUEST['start'] : '0') . (isset($_REQUEST['all']) ? ';all' : '') . (isset($_REQUEST['viewresults']) ? ';viewresults' : '');
 		header('HTTP/1.1 301 Moved Permanently');
 		redirectexit($url, false);
 	}
@@ -870,52 +870,6 @@ function Display()
 				);
 				$do_once = false;
 			}
-		}
-
-		// Have we recently cached the number of new topics in this board, and it's still a lot?
-		if (isset($_REQUEST['seen'], $_SESSION['seen_cache'][$board]) && $_SESSION['seen_cache'][$board] > 5)
-			$_SESSION['seen_cache'][$board]--;
-		// Mark board as seen if this is the only new topic.
-		elseif (isset($_REQUEST['seen']))
-		{
-			// Use the mark read tables... and the last visit to figure out if this should be read or not.
-			// @todo: should this use {query_see_topic}? Wouldn't recommend, as a topic might be marked private, but later published.
-			$request = wesql::query('
-				SELECT COUNT(*)
-				FROM {db_prefix}topics AS t
-					LEFT JOIN {db_prefix}log_boards AS lb ON (lb.id_board = {int:current_board} AND lb.id_member = {int:current_member})
-					LEFT JOIN {db_prefix}log_topics AS lt ON (lt.id_topic = t.id_topic AND lt.id_member = {int:current_member})
-				WHERE t.id_board = {int:current_board}
-					AND t.id_last_msg > IFNULL(lb.id_msg, 0)
-					AND t.id_last_msg > IFNULL(lt.id_msg, 0)' . (empty($_SESSION['id_msg_last_visit']) ? '' : '
-					AND t.id_last_msg > {int:id_msg_last_visit}'),
-				array(
-					'current_board' => $board,
-					'current_member' => MID,
-					'id_msg_last_visit' => (int) $_SESSION['id_msg_last_visit'],
-				)
-			);
-			list ($numNewTopics) = wesql::fetch_row($request);
-			wesql::free_result($request);
-
-			// If there're no real new topics in this board, mark the board as seen.
-			if (empty($numNewTopics))
-				$_REQUEST['boardseen'] = true;
-			else
-				$_SESSION['seen_cache'][$board] = $numNewTopics;
-		}
-		// Probably one less topic - maybe not, but even if we decrease this too fast it will only make us look more often.
-		elseif (isset($_SESSION['seen_cache'][$board]))
-			$_SESSION['seen_cache'][$board]--;
-
-		// Mark board as seen if we came using the last post link from the board list or other places.
-		if (isset($_REQUEST['boardseen']))
-		{
-			wesql::insert('replace',
-				'{db_prefix}log_boards',
-				array('id_msg' => 'int', 'id_member' => 'int', 'id_board' => 'int'),
-				array($settings['maxMsgID'], MID, $board)
-			);
 		}
 	}
 

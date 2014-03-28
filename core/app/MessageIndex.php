@@ -104,40 +104,11 @@ function MessageIndex()
 			$context['link_moderators'][] = '<a href="<URL>?action=profile;u=' . $mod['id'] . '" title="' . $txt['board_moderator'] . '">' . $mod['name'] . '</a>';
 	}
 
-	// Mark current and parent boards as seen.
+	// Now we've seen this board, we can receive notifications for it again.
 	if (we::$is_member)
 	{
 		// We can't know they read it if we allow prefetches.
 		preventPrefetch();
-
-		wesql::insert('replace',
-			'{db_prefix}log_boards',
-			array('id_msg' => 'int', 'id_member' => 'int', 'id_board' => 'int'),
-			array($settings['maxMsgID'], MID, $board)
-		);
-
-		if (!empty($board_info['parent_boards']))
-		{
-			wesql::query('
-				UPDATE {db_prefix}log_boards
-				SET id_msg = {int:id_msg}
-				WHERE id_member = {int:current_member}
-					AND id_board IN ({array_int:board_list})',
-				array(
-					'current_member' => MID,
-					'board_list' => array_keys($board_info['parent_boards']),
-					'id_msg' => $settings['maxMsgID'],
-				)
-			);
-
-			// We've seen all these boards now!
-			foreach ($board_info['parent_boards'] as $k => $dummy)
-				if (isset($_SESSION['seen_cache'][$k]))
-					unset($_SESSION['seen_cache'][$k]);
-		}
-
-		if (isset($_SESSION['seen_cache'][$board]))
-			unset($_SESSION['seen_cache'][$board]);
 
 		$request = wesql::query('
 			SELECT sent

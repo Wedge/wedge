@@ -1015,7 +1015,7 @@ function sendNotifications($topics, $type, $exclude = array(), $members_only = a
 		$replacements = array(
 			'TOPICSUBJECT' => $topicData[$row['id_topic']]['subject'],
 			'POSTERNAME' => un_htmlspecialchars($topicData[$row['id_topic']]['name']),
-			'TOPICLINK' => SCRIPT . '?topic=' . $row['id_topic'] . '.new;seen#new',
+			'TOPICLINK' => SCRIPT . '?topic=' . $row['id_topic'] . '.new#new',
 			'UNSUBSCRIBELINK' => SCRIPT . '?action=notify;topic=' . $row['id_topic'] . '.0',
 		);
 
@@ -1395,10 +1395,6 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 
 	// They've posted, so they can make the view count go up one if they really want. (this is to keep views >= replies...)
 	$_SESSION['last_read_topic'] = 0;
-
-	// Better safe than sorry.
-	if (isset($_SESSION['seen_cache'][$topicOptions['board']]))
-		$_SESSION['seen_cache'][$topicOptions['board']]--;
 
 	// Update all the stats so everyone knows about this new topic and message.
 	updateStats('message', true, $msgOptions['id']);
@@ -2259,7 +2255,7 @@ function sendApprovalNotifications(&$topicData)
 			$replacements = array(
 				'TOPICSUBJECT' => $topicData[$row['id_topic']]['subject'],
 				'POSTERNAME' => un_htmlspecialchars($topicData[$row['id_topic']]['name']),
-				'TOPICLINK' => SCRIPT . '?topic=' . $row['id_topic'] . '.new;seen#new',
+				'TOPICLINK' => SCRIPT . '?topic=' . $row['id_topic'] . '.new#new',
 				'UNSUBSCRIBELINK' => SCRIPT . '?action=notify;topic=' . $row['id_topic'] . '.0',
 			);
 

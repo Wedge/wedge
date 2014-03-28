@@ -213,9 +213,6 @@ function MarkRead()
 		if (!empty($_SESSION['old_url']) && strpos($_SESSION['old_url'], 'action=unread') !== false)
 			redirectexit('action=unread');
 
-		if (isset($_SESSION['seen_cache']))
-			$_SESSION['seen_cache'] = array();
-
 		redirectexit();
 	}
 	elseif ($sa == 'unreadreplies')
@@ -232,9 +229,6 @@ function MarkRead()
 			array('id_msg' => 'int', 'id_member' => 'int', 'id_topic' => 'int'),
 			$markRead
 		);
-
-		if (isset($_SESSION['seen_cache']))
-			$_SESSION['seen_cache'] = array();
 
 		redirectexit('action=unreadreplies');
 	}
@@ -391,10 +385,6 @@ function MarkRead()
 			redirectexit();
 
 		markBoardsRead($boards, isset($_REQUEST['unread']));
-
-		foreach ($boards as $b)
-			if (isset($_SESSION['seen_cache'][$b]))
-				$_SESSION['seen_cache'][$b] = array();
 
 		if (isset($_REQUEST['unread']))
 			redirectexit(empty($board_info['parent']) ? '' : 'board=' . $board_info['parent'] . '.0');

@@ -412,7 +412,7 @@ function template_results()
 			<div class="', $message['alternate'] == 0 ? 'windowbg' : 'windowbg2', ' wrc core_posts">
 				<div class="counter">', $message['counter'], '</div>
 				<div class="topic_details">
-					<h5>', $topic['board']['link'], ' / <a href="<URL>?topic=', $topic['id'], '.', $message['start'], ';seen#msg', $message['id'], '">', $message['subject_highlighted'], '</a></h5>
+					<h5>', $topic['board']['link'], ' / <a href="<URL>?topic=', $topic['id'], '.', $message['start'], '#msg', $message['id'], '">', $message['subject_highlighted'], '</a></h5>
 					<span class="smalltext">«&nbsp;', $message['on_time'], ' ', $txt['by'], ' <strong>', $message['member']['link'], '</strong>&nbsp;»</span>
 				</div>
 				<div class="list_posts">', $message['body_highlighted'], '</div>';

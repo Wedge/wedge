@@ -256,7 +256,7 @@ function getBoardIndex($boardIndexOptions)
 		}
 		elseif ($row_board['subject'] != '')
 		{
-			$this_last_post['href'] = '<URL>?topic=' . $row_board['id_topic'] . '.msg' . (we::$is_guest ? $row_board['id_msg'] : $row_board['new_from']) . (empty($row_board['is_read']) ? ';boardseen' : '') . '#new';
+			$this_last_post['href'] = '<URL>?topic=' . $row_board['id_topic'] . '.msg' . (we::$is_guest ? $row_board['id_msg'] : $row_board['new_from']) . '#new';
 			$this_last_post['link'] = '<a href="' . $this_last_post['href'] . '" title="' . $row_board['subject'] . '">' . $row_board['short_subject'] . '</a>';
 		}
 		else

@@ -472,7 +472,7 @@ function UnreadReplies()
 			$tmpa = 1;
 			for ($tmpb = 0; $tmpb < $topic_length; $tmpb += $messages_per_page)
 			{
-				$tmppages[] = '<a href="<URL>?topic=' . $row['id_topic'] . '.' . $tmpb . ';seen">' . $tmpa . '</a>';
+				$tmppages[] = '<a href="<URL>?topic=' . $row['id_topic'] . '.' . $tmpb . '">' . $tmpa . '</a>';
 				$tmpa++;
 			}
 			// Show links to all the pages?
@@ -508,8 +508,8 @@ function UnreadReplies()
 				'preview' => $row['first_body'],
 				'icon' => $row['first_icon'],
 				'icon_url' => ASSETS . '/post/' . $row['first_icon'] . '.gif',
-				'href' => '<URL>?topic=' . $row['id_topic'] . '.0;seen',
-				'link' => '<a href="<URL>?topic=' . $row['id_topic'] . '.0;seen">' . $row['first_subject'] . '</a>'
+				'href' => '<URL>?topic=' . $row['id_topic'] . '.0',
+				'link' => '<a href="<URL>?topic=' . $row['id_topic'] . '.0">' . $row['first_subject'] . '</a>'
 			),
 			'last_post' => array(
 				'id' => $row['id_last_msg'],
@@ -525,12 +525,12 @@ function UnreadReplies()
 				'preview' => $row['last_body'],
 				'icon' => $row['last_icon'],
 				'icon_url' => ASSETS . '/post/' . $row['last_icon'] . '.gif',
-				'href' => '<URL>?topic=' . $row['id_topic'] . ($no_replies ? '.0;seen' : '.msg' . $row['id_last_msg'] . ';seen#new'),
-				'link' => '<a href="<URL>?topic=' . $row['id_topic'] . ($no_replies ? '.0;seen' : '.msg' . $row['id_last_msg'] . ';seen#new') . '">' . $row['last_subject'] . '</a>'
+				'href' => '<URL>?topic=' . $row['id_topic'] . ($no_replies ? '.0' : '.msg' . $row['id_last_msg'] . '#new'),
+				'link' => '<a href="<URL>?topic=' . $row['id_topic'] . ($no_replies ? '.0' : '.msg' . $row['id_last_msg'] . '#new') . '">' . $row['last_subject'] . '</a>'
 			),
 			'new_from' => $row['new_from'],
-			'new_href' => '<URL>?topic=' . $row['id_topic'] . ($no_replies ? '.0;seen' : '.msg' . $row['new_from'] . ';seen#new'),
-			'new_link' => '<a href="<URL>?topic=' . $row['id_topic'] . ($no_replies ? '.0;seen' : '.msg' . $row['new_from'] . ';seen#new') . '">' . $row['first_subject'] . '</a>',
+			'new_href' => '<URL>?topic=' . $row['id_topic'] . ($no_replies ? '.0' : '.msg' . $row['new_from'] . '#new'),
+			'new_link' => '<a href="<URL>?topic=' . $row['id_topic'] . ($no_replies ? '.0' : '.msg' . $row['new_from'] . '#new') . '">' . $row['first_subject'] . '</a>',
 			'is_pinned' => !empty($row['is_pinned']),
 			'is_locked' => !empty($row['locked']),
 			'is_poll' => $row['id_poll'] > 0,

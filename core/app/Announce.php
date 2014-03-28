@@ -212,7 +212,7 @@ function AnnouncementSend()
 		if (!empty($_REQUEST['move']) && allowedTo('move_any'))
 			redirectexit('action=movetopic;topic=' . $topic . '.0' . (empty($_REQUEST['goback']) ? '' : ';goback'));
 		elseif (!empty($_REQUEST['goback']))
-			redirectexit('topic=' . $topic . '.new;boardseen#new', we::is('ie'));
+			redirectexit('topic=' . $topic . '.new#new', we::is('ie'));
 		else
 			redirectexit('board=' . $board . '.0');
 	}
