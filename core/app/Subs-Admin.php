@@ -84,7 +84,7 @@ function getServerVersions($checkFor)
 			'version' => ($safe_mode ? $untick : $tick) . ' ' . ($safe_mode ? $txt['support_safe_mode_enabled'] : $txt['support_safe_mode_disabled'])
 		);
 	}
-	// Is GD available?  If it is, we should show version information for it too.
+	// Is GD available? If it is, we should show version information for it too.
 	if (in_array('gd', $checkFor) && function_exists('gd_info'))
 	{
 		$temp = gd_info();
@@ -159,7 +159,7 @@ function getFileVersions(&$versionOptions)
 		// The comment looks roughly like... that.
 		if (preg_match('~\*\s@version\s+(.+)[\s]{2}~i', $header, $match) == 1)
 			$version_info['file_versions']['SSI.php'] = $match[1];
-		// Not found!  This is bad.
+		// Not found! This is bad.
 		else
 			$version_info['file_versions']['SSI.php'] = '??';
 	}
@@ -266,28 +266,28 @@ function updateSettingsFile($config_vars)
 	// When was Settings.php last changed?
 	$last_settings_change = filemtime(ROOT_DIR . '/Settings.php');
 
-	// Load the file.  Break it up based on \r or \n, and then clean out extra characters.
+	// Load the file. Break it up based on \r or \n, and then clean out extra characters.
 	$settingsArray = trim(file_get_contents(ROOT_DIR . '/Settings.php'));
 	if (strpos($settingsArray, "\n") !== false)
 		$settingsArray = explode("\n", $settingsArray);
 	elseif (strpos($settingsArray, "\r") !== false)
 		$settingsArray = explode("\r", $settingsArray);
 	else
-		return;
+		return false;
 
 	// Make sure we got a good file.
 	if (count($config_vars) == 1 && isset($config_vars['db_last_error']))
 	{
 		$temp = trim(implode("\n", $settingsArray));
 		if (substr($temp, 0, 5) != '<?php' || substr($temp, -2) != '?' . '>')
-			return;
+			return false;
 		if (strpos($temp, 'boardurl') === false || strpos($temp, 'cookiename') === false)
-			return;
+			return false;
 	}
 
 	// Presumably, the file has to have stuff in it for this function to be called :P.
 	if (count($settingsArray) < 10)
-		return;
+		return false;
 
 	foreach ($settingsArray as $k => $dummy)
 		$settingsArray[$k] = strtr($dummy, array("\r" => '')) . "\n";
@@ -321,7 +321,7 @@ function updateSettingsFile($config_vars)
 	if (empty($end) || $end < 10)
 		$end = count($settingsArray) - 1;
 
-	// Still more?  Add them at the end.
+	// Still more? Add them at the end.
 	if (!empty($config_vars))
 	{
 		if (trim($settingsArray[$end]) == '?' . '>')
@@ -340,50 +340,24 @@ function updateSettingsFile($config_vars)
 
 	// Sanity error checking: the file needs to be at least 12 lines.
 	if (count($settingsArray) < 12)
-		return;
+		return false;
 
-	// Try to avoid a few pitfalls:
-	// like a possible race condition,
-	// or a failure to write at low diskspace
+	$settingsArray = implode('', $settingsArray);
+	$temp = ROOT_DIR . '/Settings-' . mt_rand(1, 10000) . '.php';
 
-	// Check before you act: do a simple test in the cache folder.
-	// Can we even write things on this filesystem?
-	$test_fp = @fopen(CACHE_DIR . '/settings_update.tmp', 'w+');
-	if ($test_fp)
+	// Try to avoid a few pitfalls, like a possible race condition or low diskspace.
+	if (file_put_contents($temp, $settingsArray, LOCK_EX) !== strlen($settingsArray))
 	{
-		fclose($test_fp);
-
-		$test_fp = @fopen(CACHE_DIR . '/settings_update.tmp', 'r+');
-		$written_bytes = fwrite($test_fp, 'test');
-		fclose($test_fp);
-		@unlink(CACHE_DIR . '/settings_update.tmp');
-
-		if ($written_bytes !== strlen('test'))
-		{
-			// Oops. Low disk space, perhaps..? Don't mess with Settings.php, then.
-			return;
-		}
+		@unlink($temp);
+		return false;
 	}
 
-	// Protect me from what I want! :P
+	// Make sure it hasn't changed since we requested the update.
 	clearstatcache();
+
 	if (filemtime(ROOT_DIR . '/Settings.php') === $last_settings_change)
-	{
-		// You asked for it...
-		// Blank out the file - done to fix a oddity with some servers.
-		$fp = @fopen(ROOT_DIR . '/Settings.php', 'w');
-
-		// Is it even writable, though?
-		if ($fp)
-		{
-			fclose($fp);
-
-			$fp = fopen(ROOT_DIR . '/Settings.php', 'r+');
-			foreach ($settingsArray as $line)
-				fwrite($fp, strtr($line, "\r", ''));
-			fclose($fp);
-		}
-	}
+		if (!rename($temp, ROOT_DIR . '/Settings.php'))
+			@unlink($temp);
 }
 
 function updateAdminPreferences()
