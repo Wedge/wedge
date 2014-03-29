@@ -561,9 +561,8 @@ function uploadedPluginFolders()
 
 	checkSession('request');
 
-	// Now we get the job of going through and figuring out what folders we need.
-	loadSource('Class-ZipExtract');
-	$folders = array('' => true); // We want an empty entry, this represents the plugin's root folder
+	// Now we'll determine what folders we need.
+	$folders = array('' => true); // We want an empty entry, this represents the plugin's root folder.
 	$file_count = 0;
 	try
 	{
@@ -576,7 +575,7 @@ function uploadedPluginFolders()
 		foreach ($list as $i => $file)
 		{
 			if (!$file['is_folder'])
-				$file_count++; // We're already going through the zip, let's count how many actual files there are while we're here
+				$file_count++; // While we're here, let's count how many actual files there are.
 
 			// We may have learned earlier on that there's a folder inside a folder here... this should fix it.
 			if (isset($trunc))
@@ -670,9 +669,6 @@ function uploadedPluginFiles()
 	checkSession('request');
 
 	// Now we get the job of going through and figuring out what folders we need.
-	loadSource('Class-ZipExtract');
-
-	// So, we're here. We have something to do. First, figure out if we need our todo list figuring out.
 	if (!isset($_SESSION['uploadplugin']['flist']))
 	{
 		try
