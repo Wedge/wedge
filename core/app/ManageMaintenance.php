@@ -188,9 +188,7 @@ function MaintainMembers()
 	// Get membergroups - for deleting members and the like.
 	$result = wesql::query('
 		SELECT id_group, group_name
-		FROM {db_prefix}membergroups',
-		array(
-		)
+		FROM {db_prefix}membergroups'
 	);
 	$context['membergroups'] = array(
 		array(
@@ -369,9 +367,7 @@ function AdminBoardRecount()
 	// Step the number of topics at a time so things don't time out...
 	$request = wesql::query('
 		SELECT MAX(id_topic)
-		FROM {db_prefix}topics',
-		array(
-		)
+		FROM {db_prefix}topics'
 	);
 	list ($max_topics) = wesql::fetch_row($request);
 	wesql::free_result($request);
@@ -779,9 +775,7 @@ function AdminBoardRecount()
 
 	$request = wesql::query('
 		SELECT /*!40001 SQL_NO_CACHE */ id_board, id_parent, id_last_msg, child_level, id_msg_updated
-		FROM {db_prefix}boards',
-		array(
-		)
+		FROM {db_prefix}boards'
 	);
 	$resort_me = array();
 	while ($row = wesql::fetch_assoc($request))
@@ -982,9 +976,7 @@ function MaintainPurgeInactiveMembers()
 		// Need to get *all* groups then work out which (if any) we avoid.
 		$request = wesql::query('
 			SELECT id_group, group_name, min_posts
-			FROM {db_prefix}membergroups',
-			array(
-			)
+			FROM {db_prefix}membergroups'
 		);
 		while ($row = wesql::fetch_assoc($request))
 		{
