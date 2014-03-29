@@ -1133,11 +1133,8 @@ function redirectexit($setLocation = '', $refresh = false, $permanent = false)
 	if ($permanent)
 		header('HTTP/1.1 301 Moved Permanently');
 
-	// We send a Refresh header only in special cases because Location looks better. And is quicker...
-	if ($refresh)
-		header('Refresh: 0; URL=' . strtr($setLocation, array(' ' => '%20')));
-	else
-		header('Location: ' . str_replace(' ', '%20', $setLocation));
+	// We send a Refresh header only in special cases because Location is better.
+	header(($refresh ? 'Refresh: 0; URL=' : 'Location: ') . str_replace(' ', '%20', $setLocation));
 
 	// Debugging.
 	if (!empty($db_show_debug))

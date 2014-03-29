@@ -14,7 +14,9 @@ function upgrade_db()
 {
 	global $we_shot;
 
-	$v = empty($we_shot) ? 0 : $we_shot;
+	// Some servers seem to be unable to cope with the update. Wait until they catch up with a 'safe' redirect.
+	$v = preg_match('~\$we_shot = (\d+);~', @file_get_contents(ROOT_DIR . '/Settings.php'), $real_shot) ? $real_shot[1] : (empty($we_shot) ? 0 : $we_shot);
+	$fix_redirect = $v == WEDGE;
 
 	// We'll need some of the database helpers, and updateSettingsFile.
 	// We're calling updateSettingsFile for each DB upgrade, so that we can
@@ -26,13 +28,14 @@ function upgrade_db()
 	{
 		if (function_exists('upgrade_step_' . $v))
 			call_user_func('upgrade_step_' . $v);
-		updateSettingsFile(array('we_shot' => $v));
+		if (updateSettingsFile(array('we_shot' => $v)) === false)
+			return;
 		if (microtime(true) - $t > 1)
 			break;
 	}
 
 	// We might want to add some message here...
-	redirectexit($v < WEDGE ? 'upgrading-step-' . $v : 'upgraded');
+	redirectexit($v < WEDGE ? 'upgrading-' . $v : 'upgraded', $fix_redirect);
 }
 
 // 1.0-alpha-1, February 2014. Adding hey_not and hey_not fields to the members table.
@@ -60,16 +63,19 @@ function upgrade_step_2()
 			'db_error_skip' => true,
 		)
 	);
-	while ($row = wesql::fetch_assoc($request))
+	if ($request !== false)
 	{
-		$data = @unserialize($row['data']);
-		if ($row['message_labels'] !== '')
-			$data['pmlabs'] = $row['message_labels'];
-		if ($row['mod_prefs'] !== '')
-			$data['modset'] = $row['mod_prefs'];
-		if ($row['secret_answer'] !== '')
-			$data['secret'] = $row['secret_question'] . '|' . $row['secret_answer'];
-		updateMemberData($row['id_member'], array('data' => serialize($data)));
+		while ($row = wesql::fetch_assoc($request))
+		{
+			$data = @unserialize($row['data']);
+			if ($row['message_labels'] !== '')
+				$data['pmlabs'] = $row['message_labels'];
+			if ($row['mod_prefs'] !== '')
+				$data['modset'] = $row['mod_prefs'];
+			if ($row['secret_answer'] !== '')
+				$data['secret'] = $row['secret_question'] . '|' . $row['secret_answer'];
+			updateMemberData($row['id_member'], array('data' => serialize($data)));
+		}
 	}
 	wedb::remove_column('{db_prefix}members', 'message_labels');
 	wedb::remove_column('{db_prefix}members', 'mod_prefs');
