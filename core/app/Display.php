@@ -60,7 +60,7 @@ function Display()
 	{
 		$url = 'topic=' . $topic . '.' . (isset($_REQUEST['start']) ? $_REQUEST['start'] : '0') . (isset($_REQUEST['all']) ? ';all' : '') . (isset($_REQUEST['viewresults']) ? ';viewresults' : '');
 		header('HTTP/1.1 301 Moved Permanently');
-		redirectexit($url, false);
+		redirectexit($url);
 	}
 
 	// Not only does a prefetch make things slower for the server, but it makes it impossible to know if they read it.
