@@ -1482,7 +1482,6 @@ function loadAllPermissions()
 
 	// Some permissions are hidden if features are off.
 	$hiddenPermissions = array();
-	$relabelGroups = array(); // As above but for groups.
 
 	// Post moderation?
 	if (!$settings['postmod_active'])
