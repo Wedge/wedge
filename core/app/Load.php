@@ -1409,7 +1409,7 @@ function loadTheme($skin = '', $initialize = true)
 	{
 		// Are we allowed to request a preview, or to choose our own preferred skin?
 		if (!empty($settings['theme_allow']) || allowedTo('admin_forum'))
-			$skin = empty($_REQUEST['presk']) ? we::$user['skin'] : $_REQUEST['presk'];
+			$skin = empty($_REQUEST['presk']) || strpos($_REQUEST['presk'], '/') !== false ? we::$user['skin'] : $_REQUEST['presk'];
 
 		// Always allow board-specific skins, if they are overriding.
 		if (!empty($board_info['skin']) && $board_info['override_skin'])
