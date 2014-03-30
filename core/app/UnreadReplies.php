@@ -53,8 +53,7 @@ function UnreadReplies()
 			WHERE {query_wanna_see_board}
 				AND b.child_level > {int:no_child}
 				AND b.id_board NOT IN ({array_int:boards})
-			ORDER BY child_level ASC
-			',
+			ORDER BY child_level ASC',
 			array(
 				'no_child' => 0,
 				'boards' => $boards,

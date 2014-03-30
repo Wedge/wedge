@@ -680,15 +680,20 @@ ul.buttonlist extends "ul.reset, .clearfix"
 			margin: .8em 0 .3em 3em
 
 ul.poll_main, dl.poll_options
+	list-style: none
 	overflow: hidden
 	padding: 0 0 .7em .7em
 	margin: 12px 0 4px
-	list-style: none
 
 ul.poll_main
 	li
-		padding-left: 1em
-		margin: .2em 0
+		@if ie6
+			padding-left: 0
+			margin: 0 -2em
+		@else
+			padding-left: 1em
+			margin: .2em 0
+		@endif
 	input
 		margin: .2em 0 .2em 1em
 
@@ -705,7 +710,8 @@ dl.poll_options
 ---------------------------------------------------- */
 
 .move_topic
-	width: 710px
+	width: 80%
+	min-width: 200px
 	margin: auto
 	text-align: left
 
@@ -755,7 +761,7 @@ ul.split_messages
 ---------------------------------------------------- */
 
 ul.merge_topics li
-	list-style-type: none
+	list-style: none
 
 dl.merge_topic
 	dt
@@ -855,9 +861,6 @@ fieldset.merge_options
 	text-align: left
 	img.floatleft
 		margin-right: 1em
-
-tr.titlebg td
-	padding-left: .7em
 
 #admin_login .center
 	padding: 1em
@@ -983,7 +986,7 @@ tr.windowbg td
 		display: block
 		margin: 10px 0 0
 	ul
-		list-style-type: none
+		list-style: none
 		margin: 10px 0 0
 		li
 			display: block
@@ -1118,12 +1121,10 @@ tr.windowbg td
 	margin: 6px 0
 
 .activity_stats
-	margin: 0
-	padding: 0
 	list-style: none
+	margin, padding: 0
 	li
-		margin: 0
-		padding: 0
+		margin, padding: 0
 		width: 4.16%
 		float: left
 		span
@@ -1224,9 +1225,9 @@ tr.windowbg td
 		text-decoration: none
 		border-bottom: 1px solid #346
 	ul
+		list-style: none
 		margin, padding: 0
 	li
-		list-style: none
 		float: left
 		clear: both
 	li.category
@@ -1238,10 +1239,10 @@ tr.windowbg td
 		margin: .2em 0 0
 
 #theme_settings
-	overflow: auto
+	list-style: none
 	margin, padding: 0
+	overflow: auto
 	> li
-		list-style: none
 		margin: 10px 0
 		padding: 0
 
