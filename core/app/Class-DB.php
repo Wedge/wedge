@@ -90,7 +90,7 @@ class wesql
 			$db_callback = array($db_values, $connection == null ? self::$_db_con : $connection);
 
 			// Do the quoting and escaping
-			$db_string = preg_replace_callback('~{([a-z_]+)(?::([a-zA-Z0-9_-]+))?}~', 'wesql::value_replacement__callback', $db_string);
+			$db_string = preg_replace_callback('~{([a-z_]+)(?::([a-zA-Z0-9_-]+))?}~', 'wesql::replace_value', $db_string);
 
 			// Clear this global variable.
 			$db_callback = array();
@@ -144,7 +144,7 @@ class wesql
 			$db_callback = array($db_values, $connection);
 
 			// Inject the values passed to this function.
-			$db_string = preg_replace_callback('~{([a-z_]+)(?::([a-zA-Z0-9_-]+))?}~', 'wesql::value_replacement__callback', $db_string);
+			$db_string = preg_replace_callback('~{([a-z_]+)(?::([a-zA-Z0-9_-]+))?}~', 'wesql::replace_value', $db_string);
 
 			// This shouldn't be residing in global space any longer.
 			$db_callback = array();
@@ -526,7 +526,7 @@ class wesql
 		self::$callback_values[$match] = $value;
 	}
 
-	public static function value_replacement__callback($matches)
+	public static function replace_value($matches)
 	{
 		global $db_callback;
 
@@ -541,7 +541,12 @@ class wesql
 			return self::$callback_values[$matches[1]];
 
 		if (!isset($matches[2]))
-			self::error_backtrace('Invalid value inserted or no type specified.', '', E_USER_ERROR);
+		{
+			if (in_array($matches[1], array('literal', 'int', 'string', 'array_int', 'array_string', 'date', 'float', 'raw')))
+				self::error_backtrace('Invalid value inserted into database, {' . $matches[1] . ':???}.', '', E_USER_ERROR);
+			else
+				self::error_backtrace('Invalid database variable, {' . $matches[1] . '}.', '', E_USER_ERROR);
+		}
 
 		if ($matches[1] == 'literal')
 			return sprintf('\'%1$s\'', mysqli_real_escape_string($connection, $matches[2]));
@@ -557,12 +562,9 @@ class wesql
 				if (!is_numeric($replacement) || (string) $replacement !== (string) (int) $replacement)
 					self::error_backtrace('Wrong value type sent to the database. Integer expected. (' . $matches[2] . ')', '', E_USER_ERROR);
 				return (string) (int) $replacement;
-			break;
 
 			case 'string':
-			case 'text':
 				return sprintf('\'%1$s\'', mysqli_real_escape_string($connection, $replacement));
-			break;
 
 			case 'array_int':
 				if (is_array($replacement))
@@ -583,8 +585,6 @@ class wesql
 				else
 					self::error_backtrace('Wrong value type sent to the database. Array of integers expected. (' . $matches[2] . ')', '', E_USER_ERROR);
 
-			break;
-
 			case 'array_string':
 				if (is_array($replacement))
 				{
@@ -598,33 +598,23 @@ class wesql
 				}
 				else
 					self::error_backtrace('Wrong value type sent to the database. Array of strings expected. (' . $matches[2] . ')', '', E_USER_ERROR);
-			break;
 
 			case 'date':
 				if (preg_match('~^(\d{4})-([0-1]?\d)-([0-3]?\d)$~', $replacement, $date_matches) === 1)
 					return sprintf('\'%04d-%02d-%02d\'', $date_matches[1], $date_matches[2], $date_matches[3]);
 				else
 					self::error_backtrace('Wrong value type sent to the database. Date expected. (' . $matches[2] . ')', '', E_USER_ERROR);
-			break;
 
 			case 'float':
 				if (!is_numeric($replacement))
 					self::error_backtrace('Wrong value type sent to the database. Floating point number expected. (' . $matches[2] . ')', '', E_USER_ERROR);
 				return (string) (float) $replacement;
-			break;
-
-			case 'identifier':
-				// Backticks inside identifiers are supported as of MySQL 4.1. We don't need them for Wedge.
-				return '`' . strtr($replacement, array('`' => '', '.' => '')) . '`';
-			break;
 
 			case 'raw':
 				return $replacement;
-			break;
 
 			default:
 				self::error_backtrace('Undefined type used in the database query. (' . $matches[1] . ':' . $matches[2] . ')');
-			break;
 		}
 	}
 

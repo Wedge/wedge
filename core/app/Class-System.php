@@ -575,6 +575,7 @@ class we
 		wesql::register_replacement('query_wanna_list_board', $user['query_wanna_list_board']);
 		wesql::register_replacement('query_see_thought', $user['query_see_thought']);
 		wesql::register_replacement('query_see_topic', $user['query_see_topic']);
+		wesql::register_replacement('empty', "''");
 
 		self::$is =& $is;
 		self::$user =& $user;
