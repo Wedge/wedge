@@ -663,6 +663,7 @@ function loadPermissions()
 	if (we::$is_admin)
 	{
 		banPermissions();
+		we::permissions();
 		return;
 	}
 
@@ -756,6 +757,9 @@ function loadPermissions()
 
 	// Banned? Watch, don't touch...
 	banPermissions();
+
+	// Tell the system class what permissions we have.
+	we::permissions();
 
 	// Load the mod cache so we can know what additional boards they should see, but no sense in doing it for guests.
 	if (we::$is_member)

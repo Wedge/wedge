@@ -90,7 +90,7 @@ class we
 			list ($id_member, $password, $login_span) = @unserialize($_SESSION['login_' . $cookiename]);
 			$id_member = !empty($id_member) && strlen($password) == 40 && $login_span > time() ? (int) $id_member : 0;
 		}
-		we::$id = $id_member;
+		self::$id = $id_member;
 
 		// Only load this stuff if the user isn't a guest.
 		if ($id_member != 0)
@@ -446,12 +446,6 @@ class we
 		if (!empty($user['ignoreboards']) && empty($user['ignoreboards'][$tmp = count($user['ignoreboards']) - 1]))
 			unset($user['ignoreboards'][$tmp]);
 
-		if (allowedTo('bypass_edit_disable'))
-		{
-			$settings['real_edit_disable_time'] = $settings['edit_disable_time'];
-			$settings['edit_disable_time'] = 0;
-		}
-
 		// Do we have any languages to validate this?
 		$languages = getLanguages();
 
@@ -545,29 +539,6 @@ class we
 			}
 		}
 
-		// {query_see_topic}, which has basic t.approved tests as well
-		// as more elaborate topic privacy, is set up here.
-		if ($is['admin'])
-			$user['query_see_topic'] = '1=1';
-
-		elseif ($is['guest'])
-			$user['query_see_topic'] = empty($settings['postmod_active']) ? 't.privacy = ' . PRIVACY_DEFAULT : '(t.approved = 1 AND t.privacy = ' . PRIVACY_DEFAULT . ')';
-
-		// If we're in a board, the approve_posts permission may be set for the current topic.
-		// If not in a board, rely on mod_cache to see if you can approve this specific topic.
-		else
-		{
-			$user['can_skip_approval'] = empty($settings['postmod_active']) || allowedTo(array('moderate_forum', 'moderate_board', 'approve_posts'));
-			$user['query_see_topic'] = '
-			(
-				t.id_member_started = ' . $id_member . ' OR (' . ($user['can_skip_approval'] ? '' : (empty($user['mod_cache']['ap']) ? '
-					t.approved = 1' : '
-					(t.approved = 1 OR t.id_board IN (' . implode(', ', $user['mod_cache']['ap']) . '))') . '
-					AND ') . 't.privacy IN (' . $user['privacy_list'] . ')
-				)
-			)';
-		}
-
 		$user['query_see_thought'] = ($is['guest'] ? '
 			(' : '
 			(
@@ -575,7 +546,6 @@ class we
 				h.privacy IN (' . $user['privacy_list'] . ')
 			)';
 
-		wesql::register_replacement('query_see_topic', $user['query_see_topic']);
 		wesql::register_replacement('query_see_board', $user['query_see_board']);
 		wesql::register_replacement('query_list_board', $user['query_list_board']);
 		wesql::register_replacement('query_wanna_see_board', $user['query_wanna_see_board']);
@@ -782,6 +752,48 @@ class we
 		}
 
 		return $is_mobile;
+	}
+
+	/**
+	 * This is run once permissions are available for the user.
+	 */
+	public static function permissions()
+	{
+		global $settings;
+
+		$user =& self::$user;
+		$is =& self::$is;
+
+		if (allowedTo('bypass_edit_disable'))
+		{
+			$settings['real_edit_disable_time'] = $settings['edit_disable_time'];
+			$settings['edit_disable_time'] = 0;
+		}
+
+		// {query_see_topic}, which has basic t.approved tests as well
+		// as more elaborate topic privacy, is set up here.
+		if ($is['admin'])
+			$user['query_see_topic'] = '1=1';
+
+		elseif ($is['guest'])
+			$user['query_see_topic'] = empty($settings['postmod_active']) ? 't.privacy = ' . PRIVACY_DEFAULT : '(t.approved = 1 AND t.privacy = ' . PRIVACY_DEFAULT . ')';
+
+		// If we're in a board, the approve_posts permission may be set for the current topic.
+		// If not in a board, rely on mod_cache to see if you can approve this specific topic.
+		else
+		{
+			$user['can_skip_approval'] = empty($settings['postmod_active']) || allowedTo(array('moderate_forum', 'moderate_board', 'approve_posts'));
+			$user['query_see_topic'] = '
+			(
+				t.id_member_started = ' . MID . ' OR (' . ($user['can_skip_approval'] ? '' : (empty($user['mod_cache']['ap']) ? '
+					t.approved = 1' : '
+					(t.approved = 1 OR t.id_board IN (' . implode(', ', $user['mod_cache']['ap']) . '))') . '
+					AND ') . 't.privacy IN (' . $user['privacy_list'] . ')
+				)
+			)';
+		}
+
+		wesql::register_replacement('query_see_topic', $user['query_see_topic']);
 	}
 
 	/**
