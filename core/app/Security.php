@@ -1357,7 +1357,7 @@ function checkUserRequest_blacklist()
 			'Winnie Poh',
 			// malicious
 			'Diamond',
-			'MJ12bot/v1.0.8',
+			'MJ12bot',
 			'Mozilla/0',
 			'Mozilla/1',
 			'Mozilla/2',
@@ -1637,57 +1637,60 @@ function checkUserRequest_useragent()
 {
 	global $context, $settings;
 
+	$ua = $context['http_headers']['User-Agent'];
+	$lua = strtolower($ua);
+
 	// For most browsers, there's only one test to do, to make sure they send an Accept header. Naughty bots pretending to be these folks don't normally.
-	if (strhas($context['http_headers']['User-Agent'], array('Opera', 'Lynx', 'Safari')))
+	if (strhas($ua, array('Opera', 'Lynx', 'Safari')))
 	{
 		if (!isset($context['http_headers']['Accept']))
 			return $context['behavior_error'] = 'behav_no_accept';
 	}
 	// Ah, Internet Explorer. We already got rid of Opera, which sometimes sends MSIE in the headers.
-	elseif (strhas($context['http_headers']['User-Agent'], '; MSIE'))
+	elseif (strhas($ua, '; MSIE'))
 	{
 		// Silly bots think IE sends "Windows XP" or similar in the 'what browser we're using' area. Except, it doesn't.
-		if (strhas($context['http_headers']['User-Agent'], array('Windows ME', 'Windows XP', 'Windows 2000', 'Win32')))
+		if (strhas($ua, array('Windows ME', 'Windows XP', 'Windows 2000', 'Win32')))
 			return $context['behavior_error'] = 'behav_invalid_win';
 		// Connection: TE again. IE doesn't use it, Akamai and IE for WinCE does.
-		elseif (!isset($context['http_headers']['Akamai-Origin-Hop']) && !strhas($context['http_headers']['User-Agent'], 'IEMobile') && @preg_match('~\bTE\b~i', $context['http_headers']['Connection']))
+		elseif (!isset($context['http_headers']['Akamai-Origin-Hop']) && !strhas($ua, 'IEMobile') && @preg_match('~\bTE\b~i', $context['http_headers']['Connection']))
 			return $context['behavior_error'] = 'behav_te_not_msie';
 	}
 	// Some browsers are just special however. Konqueror is on the surface, straightforward, but there's a Yahoo dev project that isn't a real browser but calls itself Konqueror, so we have to do the normal browser test but exclude if it's this.
-	elseif (stripos($context['http_headers']['User-Agent'], 'Konqueror') !== false)
+	elseif (strhas($lua, 'konqueror'))
 	{
-		if (!isset($context['http_headers']['Accept']) && (stripos($context['http_headers']['User-Agent'], 'YahooSeeker/CafeKelsa') === false || match_cidr($_SERVER['REMOTE_ADDR'], '209.73.160.0/19') === false))
+		if (!isset($context['http_headers']['Accept']) && (!strhas($lua, 'yahooseeker/cafekelsa') || match_cidr($_SERVER['REMOTE_ADDR'], '209.73.160.0/19') === false))
 			return $context['behavior_error'] = 'behav_no_accept';
 	}
 	// Is it claiming to be Yahoo's bot?
-	elseif (stripos($context['http_headers']['User-Agent'], 'Yahoo! Slurp') !== false || stripos($context['http_headers']['User-Agent'], 'Yahoo! SearchMonkey') !== false)
+	elseif (strhas($lua, array('yahoo! slurp', 'yahoo! searchmonkey')))
 	{
 		if ((!match_cidr($_SERVER['REMOTE_ADDR'], array('202.160.176.0/20', '67.195.0.0/16', '203.209.252.0/24', '72.30.0.0/16', '98.136.0.0/14', '74.6.0.0/16'))) || (empty($settings['disableHostnameLookup']) && !test_ip_host($_SERVER['REMOTE_ADDR'], 'crawl.yahoo.net')))
 			return $context['behavior_error'] = 'behav_not_yahoobot';
 	}
 	// Is it claiming to be MSN's bot?
-	elseif (stripos($context['http_headers']['User-Agent'], 'bingbot') !== false || stripos($context['http_headers']['User-Agent'], 'msnbot') !== false || stripos($context['http_headers']['User-Agent'], 'MS Search') !== false)
+	elseif (strhas($lua, array('bingbot', 'msnbot', 'ms search')))
 	{
 		if (empty($settings['disableHostnameLookup']) && !test_ip_host($_SERVER['REMOTE_ADDR'], 'msn.com'))
 			return $context['behavior_error'] = 'behav_not_msnbot';
 	}
 	// Is it claiming to be Googlebot, even?
-	elseif (stripos($context['http_headers']['User-Agent'], 'Googlebot') !== false || stripos($context['http_headers']['User-Agent'], 'Mediapartners-Google') !== false || stripos($context['http_headers']['User-Agent'], 'Google Web Preview') !== false)
+	elseif (strhas($lua, array('googlebot', 'mediapartners-google', 'google web preview')))
 	{
 		if ((!match_cidr($_SERVER['REMOTE_ADDR'], array('66.249.64.0/19', '64.233.160.0/19', '72.14.192.0/18', '203.208.32.0/19', '74.125.0.0/16', '216.239.32.0/19', '209.85.128.0/17'))) || (empty($settings['disableHostnameLookup']) && !test_ip_host($_SERVER['REMOTE_ADDR'], 'googlebot.com')))
 			return $context['behavior_error'] = 'behav_not_googlebot';
 	}
 	// What about Baidu? I know we don't really like Baidu, but it's even generating fake bots now.
-	elseif (stripos($context['http_headers']['User-Agent'], 'baidu') !== false)
+	elseif (strhas($lua, 'baidu'))
 	{
 		if (!match_cidr($_SERVER['REMOTE_ADDR'], array('119.63.192.0/21', '123.125.71.0/24', '180.76.0.0/16', '220.181.0.0/16')) === false)
 			return $context['behavior_error'] = 'behav_not_baidu';
 	}
-	// OK, so presumably this is some kind of Mozilla derivative? (No guarantee it's actually Firefox, mind. All main browsers cite Mozilla. :/)
-	elseif (stripos($context['http_headers']['User-Agent'], 'Mozilla') === 0)
+	// OK, so presumably this is some kind of Mozilla derivative? No guarantee it's actually Firefox, though. All main browsers claim to be Mozilla.
+	elseif (strpos($ua, 'Mozilla') === 0)
 	{
-		// The main test for Mozilla is the same as the standard needing Accept header. But Google Desktop didn't previously support it, and since there's some legacy stuff, we except it for now.
-		if (!isset($context['http_headers']['Accept']) && strpos($context['http_headers']['User-Agent'], 'Google Desktop') === false && strpos($context['http_headers']['User-Agent'], 'PLAYSTATION 3') === false)
+		// The main test for Mozilla is the same as the standard needing Accept header. But Google Desktop didn't previously support it, and since there's some legacy stuff, we accept it for now.
+		if (!isset($context['http_headers']['Accept']) && !strhas($ua, array('Google Desktop', 'PLAYSTATION 3')))
 			return $context['behavior_error'] = 'behav_no_accept';
 	}
 
@@ -1762,20 +1765,23 @@ function userBehaviorResponse()
 		case 'behav_wrong_keep_alive':
 		case 'behav_rogue_chars':
 			$error_blocks = array('behavior_malware');
-			break;
+		break;
+
 		case 'behav_te_not_msie':
 		case 'behav_not_msnbot':
 		case 'behav_not_yahoobot':
 		case 'behav_not_googlebot':
 		case 'behav_not_baidu':
 			$error_blocks = array('behavior_false_ua', 'behavior_misconfigured_privacy');
-			break;
+		break;
+
 		case 'behav_no_ua_in_post':
 		case 'behav_invalid_win':
 		case 'behav_blacklist':
 		case 'behav_not_cloudflare':
 			$error_blocks = array('behavior_false_ua', 'behavior_misconfigured_proxy', 'behavior_misconfigured_privacy', 'behavior_malware');
-			break;
+		break;
+
 		case 'behav_pragma':
 		case 'behav_empty_refer':
 		case 'behav_invalid_refer':
@@ -1787,16 +1793,19 @@ function userBehaviorResponse()
 		case 'behav_content_range':
 		case 'behav_invalid_via':
 			$error_blocks = array('behavior_misconfigured_proxy', 'behavior_misconfigured_privacy', 'behavior_malware');
-			break;
+		break;
+
 		case 'behav_offsite_form':
 			$error_blocks = array('behavior_misconfigured_privacy', 'behavior_malware');
-			break;
+		break;
+
 		case 'behav_te_error':
 			$error_blocks = array('behavior_misconfigured_proxy', 'behavior_misconfigured_privacy', 'behavior_malware', 'behavior_opera_bug');
-			break;
+		break;
+
 		case 'behav_invalid_range':
 			$error_blocks = array('behavior_malware', 'behavior_chrome_bug');
-			break;
+		break;
 	}
 
 	return array($error, $error_blocks);
