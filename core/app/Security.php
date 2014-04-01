@@ -1659,13 +1659,13 @@ function checkUserRequest_useragent()
 	// Some browsers are just special however. Konqueror is on the surface, straightforward, but there's a Yahoo dev project that isn't a real browser but calls itself Konqueror, so we have to do the normal browser test but exclude if it's this.
 	elseif (strhas($lua, 'konqueror'))
 	{
-		if (!isset($context['http_headers']['Accept']) && (!strhas($lua, 'yahooseeker/cafekelsa') || match_cidr($_SERVER['REMOTE_ADDR'], '209.73.160.0/19') === false))
+		if (!isset($context['http_headers']['Accept']) && (!strhas($lua, 'yahooseeker/cafekelsa') || !match_cidr($_SERVER['REMOTE_ADDR'], '209.73.160.0/19')))
 			return $context['behavior_error'] = 'behav_no_accept';
 	}
 	// Is it claiming to be Yahoo's bot?
 	elseif (strhas($lua, array('yahoo! slurp', 'yahoo! searchmonkey')))
 	{
-		if ((!match_cidr($_SERVER['REMOTE_ADDR'], array('202.160.176.0/20', '67.195.0.0/16', '203.209.252.0/24', '72.30.0.0/16', '98.136.0.0/14', '74.6.0.0/16'))) || (empty($settings['disableHostnameLookup']) && !test_ip_host($_SERVER['REMOTE_ADDR'], 'crawl.yahoo.net')))
+		if (!match_cidr($_SERVER['REMOTE_ADDR'], array('202.160.176.0/20', '67.195.0.0/16', '203.209.252.0/24', '72.30.0.0/16', '98.136.0.0/14', '74.6.0.0/16')) || (empty($settings['disableHostnameLookup']) && !test_ip_host($_SERVER['REMOTE_ADDR'], 'crawl.yahoo.net')))
 			return $context['behavior_error'] = 'behav_not_yahoobot';
 	}
 	// Is it claiming to be MSN's bot?
@@ -1677,17 +1677,17 @@ function checkUserRequest_useragent()
 	// Is it claiming to be Googlebot, even?
 	elseif (strhas($lua, array('googlebot', 'mediapartners-google', 'google web preview')))
 	{
-		if ((!match_cidr($_SERVER['REMOTE_ADDR'], array('66.249.64.0/19', '64.233.160.0/19', '72.14.192.0/18', '203.208.32.0/19', '74.125.0.0/16', '216.239.32.0/19', '209.85.128.0/17'))) || (empty($settings['disableHostnameLookup']) && !test_ip_host($_SERVER['REMOTE_ADDR'], 'googlebot.com')))
+		if (!match_cidr($_SERVER['REMOTE_ADDR'], array('66.249.64.0/19', '64.233.160.0/19', '72.14.192.0/18', '203.208.32.0/19', '74.125.0.0/16', '216.239.32.0/19', '209.85.128.0/17')) || (empty($settings['disableHostnameLookup']) && !test_ip_host($_SERVER['REMOTE_ADDR'], 'googlebot.com')))
 			return $context['behavior_error'] = 'behav_not_googlebot';
 	}
 	// What about Baidu? I know we don't really like Baidu, but it's even generating fake bots now.
 	elseif (strhas($lua, 'baidu'))
 	{
-		if (!match_cidr($_SERVER['REMOTE_ADDR'], array('119.63.192.0/21', '123.125.71.0/24', '180.76.0.0/16', '220.181.0.0/16')) === false)
+		if (!match_cidr($_SERVER['REMOTE_ADDR'], array('119.63.192.0/21', '123.125.71.0/24', '180.76.0.0/16', '220.181.0.0/16')))
 			return $context['behavior_error'] = 'behav_not_baidu';
 	}
 	// OK, so presumably this is some kind of Mozilla derivative? No guarantee it's actually Firefox, though. All main browsers claim to be Mozilla.
-	elseif (strpos($ua, 'Mozilla') === 0)
+	elseif (strpos($lua, 'mozilla') === 0)
 	{
 		// The main test for Mozilla is the same as the standard needing Accept header. But Google Desktop didn't previously support it, and since there's some legacy stuff, we accept it for now.
 		if (!isset($context['http_headers']['Accept']) && !strhas($ua, array('Google Desktop', 'PLAYSTATION 3')))
