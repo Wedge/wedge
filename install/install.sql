@@ -830,17 +830,6 @@ CREATE TABLE {$db_prefix}log_activity (
 ) ENGINE=MyISAM;
 
 #
-# Table structure for table `log_boards`
-#
-
-CREATE TABLE {$db_prefix}log_boards (
-	id_member mediumint(8) unsigned NOT NULL default 0,
-	id_board mediumint(8) unsigned NOT NULL default 0,
-	id_msg int(10) unsigned NOT NULL default 0,
-	PRIMARY KEY (id_member, id_board)
-) ENGINE=MyISAM;
-
-#
 # Table structure for table `log_comments`
 #
 

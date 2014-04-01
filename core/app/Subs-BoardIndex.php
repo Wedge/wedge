@@ -42,17 +42,15 @@ function getBoardIndex($boardIndexOptions)
 			CASE WHEN b.redirect != {string:blank_string} THEN 1 ELSE 0 END AS is_redirect, b.redirect_newtab,
 			b.num_posts, b.num_topics, b.unapproved_posts, b.unapproved_topics, b.id_parent, b.language,
 			IFNULL(m.poster_time, 0) AS poster_time, IFNULL(mem.member_name, m.poster_name) AS poster_name,
-			m.subject, m.id_topic, IFNULL(mem.real_name, m.poster_name) AS real_name, b.offlimits_msg,' . (we::$is_guest ? ' 1 AS is_read, 0 AS new_from,' : '
-			(IFNULL(lb.id_msg, 0) >= b.id_msg_updated) AS is_read, IFNULL(lb.id_msg, -1) + 1 AS new_from,' . ($boardIndexOptions['include_categories'] ? '
-			c.can_collapse, IFNULL(cc.id_member, 0) AS is_collapsed,' : '')) . '
+			m.subject, m.id_topic, IFNULL(mem.real_name, m.poster_name) AS real_name, b.offlimits_msg,' . ($boardIndexOptions['include_categories'] ? '
+			c.can_collapse, IFNULL(cc.id_member, 0) AS is_collapsed,' : '') . '
 			IFNULL(mem.id_member, 0) AS id_member, m.id_msg,
 			IFNULL(mods_mem.id_member, 0) AS id_moderator, mods_mem.real_name AS mod_real_name
 		FROM {db_prefix}boards AS b' . ($boardIndexOptions['include_categories'] ? '
 			LEFT JOIN {db_prefix}categories AS c ON (c.id_cat = b.id_cat)' : '') . '
 			LEFT JOIN {db_prefix}messages AS m ON (m.id_msg = b.id_last_msg)
-			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = m.id_member)' . (we::$is_guest ? '' : '
-			LEFT JOIN {db_prefix}log_boards AS lb ON (lb.id_board = b.id_board AND lb.id_member = {int:current_member})' . ($boardIndexOptions['include_categories'] ? '
-			LEFT JOIN {db_prefix}collapsed_categories AS cc ON (cc.id_cat = c.id_cat AND cc.id_member = {int:current_member})' : '')) . '
+			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = m.id_member)' . ($boardIndexOptions['include_categories'] ? '
+			LEFT JOIN {db_prefix}collapsed_categories AS cc ON (cc.id_cat = c.id_cat AND cc.id_member = {int:current_member})' : '') . '
 			LEFT JOIN {db_prefix}moderators AS mods ON (mods.id_board = b.id_board)
 			LEFT JOIN {db_prefix}members AS mods_mem ON (mods_mem.id_member = mods.id_member)
 		WHERE {query_list_board}' . (empty($boardIndexOptions['category']) ? '' : '
@@ -74,12 +72,16 @@ function getBoardIndex($boardIndexOptions)
 	else
 		$this_category = array();
 
+	$current_time = time();
+
 	// Run through the categories and boards (or only boards)....
 	while ($row_board = wesql::fetch_assoc($result_boards))
 	{
 		// Perhaps we are ignoring this board?
 		$ignoreThisBoard = in_array($row_board['id_board'], we::$user['ignoreboards']);
-		$row_board['is_read'] = !empty($row_board['is_read']) || $ignoreThisBoard ? '1' : '0';
+
+		$board_time = forum_time(true, $row_board['poster_time']);
+		$posted_today = $row_board['poster_name'] !== '' && ($current_time - $board_time < 24 * 3600);
 
 		if ($boardIndexOptions['include_categories'])
 		{
@@ -103,7 +105,7 @@ function getBoardIndex($boardIndexOptions)
 
 			// If this board has new posts in it (and isn't the recycle bin!) then the category is new.
 			if (empty($settings['recycle_enable']) || $settings['recycle_board'] != $row_board['id_board'])
-				$categories[$row_board['id_cat']]['new'] |= empty($row_board['is_read']) && $row_board['poster_name'] != '';
+				$categories[$row_board['id_cat']]['new'] |= $posted_today;
 
 			// Avoid showing category unread link where it only has redirection boards.
 			$categories[$row_board['id_cat']]['show_unread'] = !empty($categories[$row_board['id_cat']]['show_unread']) ? 1 : !$row_board['is_redirect'];
@@ -128,7 +130,6 @@ function getBoardIndex($boardIndexOptions)
 				$isChild = false;
 
 				$this_category[$row_board['id_board']] = array(
-					'new' => empty($row_board['is_read']),
 					'id' => $row_board['id_board'],
 					'name' => $row_board['board_name'],
 					'description' => $row_board['description'],
@@ -148,6 +149,8 @@ function getBoardIndex($boardIndexOptions)
 					'href' => '<URL>?board=' . $row_board['id_board'] . '.0',
 					'link' => '<a href="<URL>?board=' . $row_board['id_board'] . '.0">' . $row_board['board_name'] . '</a>',
 					'language' => $row_board['language'],
+					'age' => $current_time - $board_time,
+					'new' => $posted_today,
 				);
 			}
 			if (!empty($row_board['id_moderator']))
@@ -171,7 +174,6 @@ function getBoardIndex($boardIndexOptions)
 				'id' => $row_board['id_board'],
 				'name' => $row_board['board_name'],
 				'description' => $row_board['description'],
-				'new' => empty($row_board['is_read']) && $row_board['poster_name'] != '',
 				'topics' => $row_board['num_topics'],
 				'posts' => $row_board['num_posts'],
 				'is_redirect' => $row_board['is_redirect'],
@@ -179,10 +181,12 @@ function getBoardIndex($boardIndexOptions)
 				'unapproved_posts' => $row_board['unapproved_posts'] - $row_board['unapproved_topics'],
 				'can_approve_posts' => !empty(we::$user['mod_cache']['ap']) && (we::$user['mod_cache']['ap'] == array(0) || in_array($row_board['id_board'], we::$user['mod_cache']['ap'])),
 				'href' => '<URL>?board=' . $row_board['id_board'] . '.0',
-				'link' => '<a href="<URL>?board=' . $row_board['id_board'] . '.0">' . $row_board['board_name'] . '</a>'
+				'link' => '<a href="<URL>?board=' . $row_board['id_board'] . '.0">' . $row_board['board_name'] . '</a>',
+				'age' => $current_time - $board_time,
+				'new' => $posted_today,
 			);
 
-			// Counting child board posts is... slow :/.
+			// Counting child board posts is... slow. :-/
 			if (!empty($boardIndexOptions['countChildPosts']) && !$row_board['is_redirect'])
 			{
 				$this_category[$row_board['id_parent']]['posts'] += $row_board['num_posts'];
@@ -190,7 +194,7 @@ function getBoardIndex($boardIndexOptions)
 			}
 
 			// Does this board contain new boards?
-			$this_category[$row_board['id_parent']]['children_new'] |= empty($row_board['is_read']);
+			$this_category[$row_board['id_parent']]['children_new'] |= $posted_today;
 
 			// This is easier to use in many cases for the theme....
 			$this_category[$row_board['id_parent']]['link_children'][] =& $this_category[$row_board['id_parent']]['children'][$row_board['id_board']]['link'];
@@ -235,7 +239,7 @@ function getBoardIndex($boardIndexOptions)
 		$this_last_post = array(
 			'id' => $row_board['id_msg'],
 			'on_time' => $row_board['poster_time'] > 0 ? on_timeformat($row_board['poster_time']) : $txt['not_applicable'],
-			'timestamp' => forum_time(true, $row_board['poster_time']),
+			'timestamp' => $board_time,
 			'subject' => $row_board['short_subject'],
 			'member' => array(
 				'id' => $row_board['id_member'],
@@ -244,7 +248,7 @@ function getBoardIndex($boardIndexOptions)
 				'href' => $row_board['poster_name'] != '' && !empty($row_board['id_member']) ? '<URL>?action=profile;u=' . $row_board['id_member'] : '',
 				'link' => $row_board['poster_name'] != '' ? (!empty($row_board['id_member']) ? '<a href="<URL>?action=profile;u=' . $row_board['id_member'] . '">' . $row_board['real_name'] . '</a>' : $row_board['real_name']) : $txt['not_applicable'],
 			),
-			'start' => 'msg' . $row_board['new_from'],
+			'start' => 'new',
 			'topic' => $row_board['id_topic']
 		);
 
@@ -256,7 +260,7 @@ function getBoardIndex($boardIndexOptions)
 		}
 		elseif ($row_board['subject'] != '')
 		{
-			$this_last_post['href'] = '<URL>?topic=' . $row_board['id_topic'] . '.msg' . (we::$is_guest ? $row_board['id_msg'] : $row_board['new_from']) . '#new';
+			$this_last_post['href'] = '<URL>?topic=' . $row_board['id_topic'] . '.new#new';
 			$this_last_post['link'] = '<a href="' . $this_last_post['href'] . '" title="' . $row_board['subject'] . '">' . $row_board['short_subject'] . '</a>';
 		}
 		else
@@ -266,19 +270,12 @@ function getBoardIndex($boardIndexOptions)
 		}
 
 		// Set the last post in the parent board.
-		if ($row_board['id_parent'] == $boardIndexOptions['parent_id'] || ($isChild && !empty($row_board['poster_time']) && $this_category[$row_board['id_parent']]['last_post']['timestamp'] < forum_time(true, $row_board['poster_time'])))
+		if ($row_board['id_parent'] == $boardIndexOptions['parent_id'] || ($isChild && !empty($row_board['poster_time']) && $this_category[$row_board['id_parent']]['last_post']['timestamp'] < $board_time))
 			$this_category[$isChild ? $row_board['id_parent'] : $row_board['id_board']]['last_post'] = $this_last_post;
+
 		// Just in the child...?
 		if ($isChild)
-		{
 			$this_category[$row_board['id_parent']]['children'][$row_board['id_board']]['last_post'] = $this_last_post;
-
-			// If there are no posts in this board, it really can't be new...
-			$this_category[$row_board['id_parent']]['children'][$row_board['id_board']]['new'] &= $row_board['poster_name'] != '';
-		}
-		// No last post for this board?  It's not new then, is it..?
-		elseif ($row_board['poster_name'] == '')
-			$this_category[$row_board['id_board']]['new'] = false;
 
 		// Determine a global most recent topic.
 		if (!empty($boardIndexOptions['set_latest_post']) && !empty($row_board['poster_time']) && $row_board['poster_time'] > $latest_post['timestamp'] && !$ignoreThisBoard)
@@ -289,7 +286,7 @@ function getBoardIndex($boardIndexOptions)
 	}
 	wesql::free_result($result_boards);
 
-	// By now we should know the most recent post...if we wanna know it that is.
+	// By now we should know the most recent post... If we wanna know it, that is.
 	if (!empty($boardIndexOptions['set_latest_post']) && !empty($latest_post['ref']))
 		$context['latest_post'] = $latest_post['ref'];
 
@@ -327,7 +324,7 @@ function getBoardIndex($boardIndexOptions)
 				'display' => array('open' => 'reported_open', 'closed' => 'reported_closed'),
 				'is_redirect' => true,
 				'redirect_newtab' => false,
-				'custom_class' => 'boardstate_off',
+				'custom_class' => 'age-old',
 				'href' => '<URL>?action=moderate;area=reports',
 				'link' => '<a href="<URL>?action=moderate;area=reports">' . $txt['reported_posts'] . '</a>',
 				'language' => '',
@@ -346,7 +343,6 @@ function getBoardIndex($boardIndexOptions)
 					);
 					$thiscat['mod']['boards']['reported']['last_post']['offlimits'] = strtr($txt['reported_board_desc'], $repl);
 					$thiscat['mod']['boards']['reported']['new'] = true;
-					$thiscat['mod']['boards']['reported']['custom_class'] = 'boardstate_on';
 				}
 			}
 		}
@@ -364,7 +360,7 @@ function getBoardIndex($boardIndexOptions)
 				'display' => array('open' => 'group_req_open', 'closed' => 'group_req_closed'),
 				'is_redirect' => true,
 				'redirect_newtab' => false,
-				'custom_class' => 'boardstate_off',
+				'custom_class' => 'age-old',
 				'href' => '<URL>?action=moderate;area=groups;sa=requests',
 				'link' => '<a href="<URL>?action=moderate;area=groups;sa=requests">' . $txt['group_requests'] . '</a>',
 				'language' => '',
@@ -395,7 +391,7 @@ function getBoardIndex($boardIndexOptions)
 				'display' => array(),
 				'is_redirect' => true,
 				'redirect_newtab' => false,
-				'custom_class' => 'boardstate_off',
+				'custom_class' => 'age-old',
 				'href' => '<URL>?action=moderate',
 				'link' => '<a href="<URL>?action=moderate">' . $txt['logs_board'] . '</a>',
 				'language' => '',
@@ -410,7 +406,7 @@ function getBoardIndex($boardIndexOptions)
 					'display' => array(),
 					'is_redirect' => true,
 					'redirect_newtab' => false,
-					'custom_class' => 'boardstate_off',
+					'custom_class' => 'age-old',
 					'href' => '<URL>?action=moderate;area=modlog',
 					'link' => '<a href="<URL>?action=moderate">' . $txt['logs_moderation'] . '</a>',
 					'language' => '',
@@ -425,7 +421,7 @@ function getBoardIndex($boardIndexOptions)
 					'display' => array(),
 					'is_redirect' => true,
 					'redirect_newtab' => false,
-					'custom_class' => 'boardstate_off',
+					'custom_class' => 'age-old',
 					'href' => '<URL>?action=moderate;area=warnings;sa=log',
 					'link' => '<a href="<URL>?action=moderate;area=warnings;sa=log">' . $txt['logs_infractions'] . '</a>',
 					'language' => '',
@@ -436,6 +432,7 @@ function getBoardIndex($boardIndexOptions)
 				$err = !empty($settings['app_error_count']) ? (int) $settings['app_error_count'] : 0;
 				$thiscat['mod']['boards']['logs']['children']['err'] = array(
 					'new' => !empty($err),
+					'age' => !empty($err) ? 0 : PHP_INT_MAX,
 					'id' => 'errlog',
 					'name' => $txt['errlog'],
 					'description' => '',
@@ -443,7 +440,6 @@ function getBoardIndex($boardIndexOptions)
 					'display' => array('err_count' => 'error_log_count'),
 					'is_redirect' => true,
 					'redirect_newtab' => false,
-					'custom_class' => 'boardstate_off',
 					'href' => '<URL>?action=admin;area=logs;sa=errorlog',
 					'link' => '<a href="<URL>?action=admin;area=logs;sa=errorlog">' . $txt['errlog'] . '</a>',
 					'language' => '',

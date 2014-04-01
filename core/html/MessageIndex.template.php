@@ -346,6 +346,9 @@ function template_messageindex_childboards()
 
 		foreach ($context['boards'] as $board)
 		{
+			$age = isset($board['age']) ? $board['age'] : ($board['new'] ? 0 : PHP_INT_MAX);
+			$age_class = !empty($board['new']) || $age < 24 * 3600 ? 'day' : ($age < 7 * 24 * 3600 ? 'week' : ($age < 31 * 24 * 3600 ? 'month' : ($age < 365 * 24 * 3600 ? 'year' : 'old')));
+
 			echo '
 				<tr id="board_', $board['id'], '" class="windowbg2">
 					<td class="icon windowbg"', !empty($board['children']) ? ' rowspan="2"' : '', '>
@@ -354,19 +357,15 @@ function template_messageindex_childboards()
 			// If this board is told to have a custom icon, use it.
 			if (!empty($board['custom_class']))
 				echo '
-							<div class="boardstatus ', $board['custom_class'], '"', !empty($board['custom_title']) ? ' title="' . $board['custom_title'] . '"' : '', '></div>';
-			// If the board has new posts, show an indicator.
-			if ($board['new'])
-				echo '
-							<div class="boardstate_on" title="', $txt['new_posts'], '"></div>';
+							<div class="boardstate ', $board['custom_class'], '"', !empty($board['custom_title']) ? ' title="' . $board['custom_title'] . '"' : '', '></div>';
 			// Is it a redirection board?
 			elseif ($board['is_redirect'])
 				echo '
-							<div class="boardstate_redirect" title="', $txt['redirect_board'], '"></div>';
-			// No new posts at all! The agony!!
+							<div class="boardstate link" title="', $txt['redirect_board'], '"></div>';
+			// Show an indicator of the board's recent activity.
 			else
 				echo '
-							<div class="boardstate_off" title="', $txt['old_posts'], '"></div>';
+							<div class="boardstate age-', $age_class, '"></div>';
 
 			echo '
 						</a>

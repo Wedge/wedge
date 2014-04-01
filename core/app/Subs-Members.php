@@ -259,13 +259,6 @@ function deleteMembers($users, $check_not_admin = false, $merge_to = false)
 		)
 	);
 	wesql::query('
-		DELETE FROM {db_prefix}log_boards
-		WHERE id_member IN ({array_int:users})',
-		array(
-			'users' => $users,
-		)
-	);
-	wesql::query('
 		DELETE FROM {db_prefix}log_comments
 		WHERE id_recipient IN ({array_int:users})
 			AND comment_type = {literal:warntpl}',

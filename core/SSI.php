@@ -570,11 +570,8 @@ function ssi_topBoards($num_top = 10, $output_method = 'echo')
 
 	// Find boards with lots of posts.
 	$request = wesql::query('
-		SELECT
-			b.name, b.num_topics, b.num_posts, b.id_board,' . (we::$is_member ? ' 1 AS is_read' : '
-			(IFNULL(lb.id_msg, 0) >= b.id_last_msg) AS is_read') . '
+		SELECT b.name, b.num_topics, b.num_posts, b.id_board, b.id_last_msg
 		FROM {db_prefix}boards AS b
-			LEFT JOIN {db_prefix}log_boards AS lb ON (lb.id_board = b.id_board AND lb.id_member = {int:current_member})
 		WHERE {query_wanna_see_board}' . (!empty($settings['recycle_enable']) && $settings['recycle_board'] > 0 ? '
 			AND b.id_board != {int:recycle_board}' : '') . '
 		ORDER BY b.num_posts DESC
@@ -591,7 +588,7 @@ function ssi_topBoards($num_top = 10, $output_method = 'echo')
 			'num_posts' => $row['num_posts'],
 			'num_topics' => $row['num_topics'],
 			'name' => $row['name'],
-			'new' => empty($row['is_read']),
+			'last_msg' => $row['id_last_msg'],
 			'href' => SCRIPT . '?board=' . $row['id_board'] . '.0',
 			'link' => '<a href="' . SCRIPT . '?board=' . $row['id_board'] . '.0">' . $row['name'] . '</a>'
 		);
@@ -612,7 +609,7 @@ function ssi_topBoards($num_top = 10, $output_method = 'echo')
 	foreach ($boards as $bdata)
 		echo '
 			<tr>
-				<td>', $bdata['link'], $bdata['new'] ? ' <a href="' . $bdata['href'] . '" class="note">' . $txt['new'] . '</a>' : '', '</td>
+				<td>', $bdata['link'], '</td>
 				<td class="right">', comma_format($bdata['num_topics']), '</td>
 				<td class="right">', comma_format($bdata['num_posts']), '</td>
 			</tr>';

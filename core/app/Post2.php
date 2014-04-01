@@ -892,23 +892,6 @@ function Post2()
 			$topic = $topicOptions['id'];
 	}
 
-	// Marking read should be done even for editing messages....
-	// Mark all the parents read, since you just posted and they will be unread.
-	if (we::$is_member && !empty($board_info['parent_boards']))
-	{
-		wesql::query('
-			UPDATE {db_prefix}log_boards
-			SET id_msg = {int:id_msg}
-			WHERE id_member = {int:current_member}
-				AND id_board IN ({array_int:board_list})',
-			array(
-				'current_member' => MID,
-				'board_list' => empty($_REQUEST['goback']) ? array_keys($board_info['parent_boards']) : array_merge(array_keys($board_info['parent_boards']), array($board)),
-				'id_msg' => $settings['maxMsgID'],
-			)
-		);
-	}
-
 	// Turn notification on or off. (Note this just blows smoke if it's already on or off.)
 	if (!empty($_POST['notify']) && allowedTo('mark_any_notify'))
 	{

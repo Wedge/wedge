@@ -103,15 +103,6 @@ function markBoardsRead($boards, $unread = false)
 				'board_list' => $boards,
 			)
 		);
-		wesql::query('
-			DELETE FROM {db_prefix}log_boards
-			WHERE id_board IN ({array_int:board_list})
-				AND id_member = {int:current_member}',
-			array(
-				'current_member' => MID,
-				'board_list' => $boards,
-			)
-		);
 	}
 	// Otherwise mark the board as read.
 	else
@@ -120,15 +111,8 @@ function markBoardsRead($boards, $unread = false)
 		foreach ($boards as $board)
 			$markRead[] = array($settings['maxMsgID'], MID, $board);
 
-		// Update log_mark_read and log_boards.
 		wesql::insert('replace',
 			'{db_prefix}log_mark_read',
-			array('id_msg' => 'int', 'id_member' => 'int', 'id_board' => 'int'),
-			$markRead
-		);
-
-		wesql::insert('replace',
-			'{db_prefix}log_boards',
 			array('id_msg' => 'int', 'id_member' => 'int', 'id_board' => 'int'),
 			$markRead
 		);
@@ -388,30 +372,6 @@ function MarkRead()
 
 		if (isset($_REQUEST['unread']))
 			redirectexit(empty($board_info['parent']) ? '' : 'board=' . $board_info['parent'] . '.0');
-
-		// Find all the boards this user can see.
-		$result = wesql::query('
-			SELECT b.id_board
-			FROM {db_prefix}boards AS b
-			WHERE b.id_parent IN ({array_int:parent_list})
-				AND {query_see_board}',
-			array(
-				'parent_list' => $boards,
-			)
-		);
-		if (wesql::num_rows($result) > 0)
-		{
-			$logBoardInserts = '';
-			while ($row = wesql::fetch_assoc($result))
-				$logBoardInserts[] = array($settings['maxMsgID'], MID, $row['id_board']);
-
-			wesql::insert('replace',
-				'{db_prefix}log_boards',
-				array('id_msg' => 'int', 'id_member' => 'int', 'id_board' => 'int'),
-				$logBoardInserts
-			);
-		}
-		wesql::free_result($result);
 
 		redirectexit(empty($board) ? '' : 'board=' . $board . '.0');
 	}
@@ -961,13 +921,6 @@ function deleteBoards($boards_to_remove, $moveChildrenTo = null)
 	// Delete the board's logs.
 	wesql::query('
 		DELETE FROM {db_prefix}log_mark_read
-		WHERE id_board IN ({array_int:boards_to_remove})',
-		array(
-			'boards_to_remove' => $boards_to_remove,
-		)
-	);
-	wesql::query('
-		DELETE FROM {db_prefix}log_boards
 		WHERE id_board IN ({array_int:boards_to_remove})',
 		array(
 			'boards_to_remove' => $boards_to_remove,

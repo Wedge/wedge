@@ -1951,14 +1951,7 @@ function notification($memID)
 				),
 				'data' => array(
 					'function' => function ($board) {
-						global $txt;
-
-						$link = $board['link'];
-
-						if ($board['new'])
-							$link .= ' <a href="' . $board['href'] . '" class="note">' . $txt['new'] . '</a>';
-
-						return $link;
+						return $board['link'];
 					},
 				),
 				'sort' => array(
@@ -2034,15 +2027,7 @@ function notification($memID)
 				'data' => array(
 					'function' => function ($topic) {
 						global $txt;
-
-						$link = $topic['link'];
-
-						if ($topic['new'])
-							$link .= ' <a href="' . $topic['new_href'] . '" class="note">' . $txt['new'] . '</a>';
-
-						$link .= '<div class="smalltext"><em>' . $txt['in'] . ' ' . $topic['board_link'] . '</em></div>';
-
-						return $link;
+						return $topic['link'] . '<div class="smalltext"><em>' . $txt['in'] . ' ' . $topic['board_link'] . '</em></div>';
 					},
 				),
 				'sort' => array(
@@ -2206,10 +2191,9 @@ function list_getTopicNotifications($start, $items_per_page, $sort, $memID)
 function list_getBoardNotifications($start, $items_per_page, $sort, $memID)
 {
 	$request = wesql::query('
-		SELECT b.id_board, b.name, IFNULL(lb.id_msg, 0) AS board_read, b.id_msg_updated
+		SELECT b.id_board, b.name
 		FROM {db_prefix}log_notify AS ln
 			INNER JOIN {db_prefix}boards AS b ON (b.id_board = ln.id_board)
-			LEFT JOIN {db_prefix}log_boards AS lb ON (lb.id_board = b.id_board AND lb.id_member = {int:current_member})
 		WHERE ln.id_member = {int:selected_member}
 			AND {query_see_board}
 		ORDER BY ' . $sort,
@@ -2225,7 +2209,6 @@ function list_getBoardNotifications($start, $items_per_page, $sort, $memID)
 			'name' => $row['name'],
 			'href' => '<URL>?board=' . $row['id_board'] . '.0',
 			'link' => '<a href="<URL>?board=' . $row['id_board'] . '.0">' . $row['name'] . '</a>',
-			'new' => $row['board_read'] < $row['id_msg_updated']
 		);
 	wesql::free_result($request);
 

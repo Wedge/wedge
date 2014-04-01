@@ -58,7 +58,7 @@ function template_boards()
 		if (!$category['is_collapsed'])
 		{
 			/* Each board in each category's boards has:
-			new (is it new?), id, name, description, moderators (see below), link_moderators (just a list.),
+			new (is it new?), id, name, description, moderators (see below), link_moderators (just a list),
 			children (see below.), link_children (easier to use.), children_new (are they new?),
 			topics (# of), posts (# of), link, href, and last_post. (see below.) */
 
@@ -68,6 +68,8 @@ function template_boards()
 			foreach ($category['boards'] as $board)
 			{
 				$alt = !$alt;
+				$age = isset($board['age']) ? $board['age'] : ($board['new'] ? 0 : PHP_INT_MAX);
+				$age_class = !empty($board['new']) || $age < 24 * 3600 ? 'day' : ($age < 7 * 24 * 3600 ? 'week' : ($age < 31 * 24 * 3600 ? 'month' : ($age < 365 * 24 * 3600 ? 'year' : 'old')));
 
 				echo '
 				<tr id="board_', $board['id'], '" class="windowbg', $alt ? '2' : '', '">
@@ -77,19 +79,15 @@ function template_boards()
 				// If this board is told to have a custom icon, use it.
 				if (!empty($board['custom_class']))
 					echo '
-							<div class="boardstatus ', $board['custom_class'], '"', !empty($board['custom_title']) ? ' title="' . $board['custom_title'] . '"' : '', '></div>';
-				// If the board has new posts, show an indicator.
-				elseif ($board['new'])
-					echo '
-							<div class="boardstate_on" title="', $txt['new_posts'], '"></div>';
+							<div class="boardstate ', $board['custom_class'], '"', !empty($board['custom_title']) ? ' title="' . $board['custom_title'] . '"' : '', '></div>';
 				// Is it a redirection board?
 				elseif ($board['is_redirect'])
 					echo '
-							<div class="boardstate_redirect" title="', $txt['redirect_board'], '"></div>';
-				// No new posts at all! The agony!!
+							<div class="boardstate link" title="', $txt['redirect_board'], '"></div>';
+				// Show an indicator of the board's recent activity.
 				else
 					echo '
-							<div class="boardstate_off" title="', $txt['old_posts'], '"></div>';
+							<div class="boardstate age-', $age_class, '"></div>';
 
 				echo '
 						</a>

@@ -786,62 +786,6 @@ function loadForumTests()
 			),
 			'messages' => array('repair_missing_log_topics_members', 'id_member'),
 		),
-		'missing_log_boards' => array(
-			'substeps' => array(
-				'step_size' => 500,
-				'step_max' => '
-					SELECT MAX(id_member)
-					FROM {db_prefix}log_boards'
-			),
-			'check_query' => '
-				SELECT lb.id_board
-				FROM {db_prefix}log_boards AS lb
-					LEFT JOIN {db_prefix}boards AS b ON (b.id_board = lb.id_board)
-				WHERE b.id_board IS NULL
-					AND lb.id_member BETWEEN {STEP_LOW} AND {STEP_HIGH}
-				GROUP BY lb.id_board',
-			'fix_collect' => array(
-				'index' => 'id_board',
-				'process' => function ($boards) {
-					wesql::query('
-						DELETE FROM {db_prefix}log_boards
-						WHERE id_board IN ({array_int:boards})',
-						array(
-							'boards' => $boards
-						)
-					);
-				},
-			),
-			'messages' => array('repair_missing_log_boards', 'id_board'),
-		),
-		'missing_log_boards_members' => array(
-			'substeps' => array(
-				'step_size' => 500,
-				'step_max' => '
-					SELECT MAX(id_member)
-					FROM {db_prefix}log_boards'
-			),
-			'check_query' => '
-				SELECT lb.id_member
-				FROM {db_prefix}log_boards AS lb
-					LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = lb.id_member)
-				WHERE mem.id_member IS NULL
-					AND lb.id_member BETWEEN {STEP_LOW} AND {STEP_HIGH}
-				GROUP BY lb.id_member',
-			'fix_collect' => array(
-				'index' => 'id_member',
-				'process' => function ($members) {
-					wesql::query('
-						DELETE FROM {db_prefix}log_boards
-						WHERE id_member IN ({array_int:members})',
-						array(
-							'members' => $members
-						)
-					);
-				},
-			),
-			'messages' => array('repair_missing_log_boards_members', 'id_member'),
-		),
 		'missing_log_mark_read' => array(
 			'substeps' => array(
 				'step_size' => 500,

@@ -775,9 +775,8 @@ function removeMessage($message, $decreasePostCount = true)
 	{
 		// Check if the recycle board exists and if so get the read status.
 		$request = wesql::query('
-			SELECT (IFNULL(lb.id_msg, 0) >= b.id_msg_updated) AS is_seen, id_last_msg
+			SELECT id_last_msg
 			FROM {db_prefix}boards AS b
-				LEFT JOIN {db_prefix}log_boards AS lb ON (lb.id_board = b.id_board AND lb.id_member = {int:current_member})
 			WHERE b.id_board = {int:recycle_board}',
 			array(
 				'current_member' => MID,
@@ -786,7 +785,7 @@ function removeMessage($message, $decreasePostCount = true)
 		);
 		if (wesql::num_rows($request) == 0)
 			fatal_lang_error('recycle_no_valid_board');
-		list ($isRead, $last_board_msg) = wesql::fetch_row($request);
+		list ($last_board_msg) = wesql::fetch_row($request);
 		wesql::free_result($request);
 
 		// Is there an existing topic in the recycle board to group this post with?
@@ -859,14 +858,6 @@ function removeMessage($message, $decreasePostCount = true)
 					'{db_prefix}log_topics',
 					array('id_topic' => 'int', 'id_member' => 'int', 'id_msg' => 'int'),
 					array($topicID, MID, $settings['maxMsgID'])
-				);
-
-			// Mark recycle board as seen, if it was marked as seen before.
-			if (!empty($isRead) && we::$is_member)
-				wesql::insert('replace',
-					'{db_prefix}log_boards',
-					array('id_board' => 'int', 'id_member' => 'int', 'id_msg' => 'int'),
-					array($settings['recycle_board'], MID, $settings['maxMsgID'])
 				);
 
 			// Add one topic and post to the recycle bin board.

@@ -1469,16 +1469,27 @@ div.top_row dd
 /* Board status icons.
 ------------------------------------------------- */
 
-.boardstate_on mixes .inline-block
+.boardstate mixes .inline-block
 	background: url($images/boardicon.png) 0 0 no-repeat
 	width: 37px
 	height: 42px
+	-prefix-filter: saturate(3) hue-rotate(270deg)
 
-.boardstate_off extends .boardstate_on
-	opacity: .4
+	&.age-week
+		opacity: .8
 
-.boardstate_redirect extends .boardstate_on
-	opacity: .2
+	&.age-month
+		opacity: .6
+
+	&.age-year
+		opacity: .4
+
+	&.age-old
+		opacity: .2
+
+	&.link
+		opacity: .6
+		-prefix-filter: none
 
 /* More icons.
 ------------------------------------------------- */

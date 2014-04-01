@@ -12,7 +12,7 @@ if (defined('WEDGE'))
 	return;
 
 define('WEDGE_VERSION', '1.0-alpha-1');
-define('WEDGE', 2); // Internal snapshot number.
+define('WEDGE', 3); // Internal snapshot number.
 
 // Get everything started up...
 if (version_compare(PHP_VERSION, '5.4') < 0 && function_exists('set_magic_quotes_runtime'))

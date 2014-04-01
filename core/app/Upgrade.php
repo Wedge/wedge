@@ -26,10 +26,16 @@ function upgrade_db()
 	$t = microtime(true);
 	while ($v++ < WEDGE)
 	{
+		// Execute this step.
 		if (function_exists('upgrade_step_' . $v))
-			call_user_func('upgrade_step_' . $v);
-		if (updateSettingsFile(array('we_shot' => $v)) === false)
+			$result = call_user_func('upgrade_step_' . $v);
+
+		// If it failed, skip the rest and let the page 'happen'. Hopefully it'll work on the next page load.
+		// If it worked, increase $we_shot by one. If Settings.php isn't writable, then again, stop everything.
+		if ($result === false || updateSettingsFile(array('we_shot' => $v)) === false)
 			return;
+
+		// If we've been doing this for more than a second, let the page refresh first.
 		if (microtime(true) - $t > 1)
 			break;
 	}
@@ -82,4 +88,10 @@ function upgrade_step_2()
 	wedb::remove_column('{db_prefix}members', 'new_pm');
 	wedb::remove_column('{db_prefix}members', 'secret_question');
 	wedb::remove_column('{db_prefix}members', 'secret_answer');
+}
+
+// 1.0-alpha-1, March 2014. Removing boardseen/topicseen functionality from another age.
+function upgrade_step_3()
+{
+	return wedb::drop_table('{db_prefix}log_boards');
 }

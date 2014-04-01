@@ -42,7 +42,6 @@ class wedb
 				'likes',
 				'log_actions',
 				'log_activity',
-				'log_boards',
 				'log_comments',
 				'log_digest',
 				'log_errors',

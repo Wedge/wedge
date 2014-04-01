@@ -676,29 +676,6 @@ function moveTopics($topics, $toBoard)
 		)
 	);
 
-	// Mark target board as seen, if it was already marked as seen before.
-	$request = wesql::query('
-		SELECT (IFNULL(lb.id_msg, 0) >= b.id_msg_updated) AS isSeen
-		FROM {db_prefix}boards AS b
-			LEFT JOIN {db_prefix}log_boards AS lb ON (lb.id_board = b.id_board AND lb.id_member = {int:current_member})
-		WHERE b.id_board = {int:id_board}',
-		array(
-			'current_member' => MID,
-			'id_board' => $toBoard,
-		)
-	);
-	list ($isSeen) = wesql::fetch_row($request);
-	wesql::free_result($request);
-
-	if (!empty($isSeen) && we::$is_member)
-	{
-		wesql::insert('replace',
-			'{db_prefix}log_boards',
-			array('id_board' => 'int', 'id_member' => 'int', 'id_msg' => 'int'),
-			array($toBoard, MID, $settings['maxMsgID'])
-		);
-	}
-
 	// Update the cache?
 	if (!empty($settings['cache_enable']) && $settings['cache_enable'] >= 3)
 		foreach ($topics as $topic_id)
