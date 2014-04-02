@@ -1471,9 +1471,10 @@ div.top_row dd
 
 .boardstate mixes .inline-block
 	background: url($images/boardicon.png) 0 0 no-repeat
+	position: relative
 	width: 37px
 	height: 42px
-	-prefix-filter: saturate(3) hue-rotate(270deg)
+	font-size: 1.2em
 
 	&.age-week
 		opacity: .8
@@ -1489,7 +1490,11 @@ div.top_row dd
 
 	&.link
 		opacity: .6
-		-prefix-filter: none
+		:after
+			content: "\bb"
+			position: absolute
+			bottom: 8px
+			right: 9px
 
 /* More icons.
 ------------------------------------------------- */
