@@ -746,23 +746,25 @@ function handleTemplateErrors($filename)
 		$error = $weget->get();
 
 		if (empty($error))
-			$error = isset($php_errormsg) ? strtr($php_errormsg, array('<b>' => '<strong>', '</b>' => '</strong>')) : '';
+			$error = isset($php_errormsg) ? $php_errormsg : '';
 		elseif (strpos(strtolower($error), '<h2>error 403</h2>') !== false)
 			$error = isset($php_errormsg) ? strtr($php_errormsg, array('<b>' => '<strong>', '</b>' => '</strong>')) : '(Please restore .htaccess file to core/html!)';
+
+		$error = strtr($error, array('<b>' => '<strong>', '</b>' => '</strong>'));
 
 		echo '
 		<title>', $txt['template_parse_error'], '</title>
 	</head>
 	<body>
 		<h3>', $txt['template_parse_error'], '</h3>
-	', sprintf($txt['template_parse_error_details'], str_replace(ROOT_DIR, '', $filename));
+		', sprintf($txt['template_parse_error_details'], str_replace(ROOT_DIR, '', $filename));
 
 		if (!empty($error))
 			echo '
 		<hr>
 		<div style="margin: 0 20px"><tt>', str_replace('<strong>' . ROOT_DIR, '<strong>...', $error), '</tt></div>';
 
-		// Yes, this is VERY complicated... Still, it's good.
+		// Show the error in the context of its surrounding source code.
 		if (preg_match('~ <strong>(\d+)</strong><br\s*/?\>$~i', $error, $match) != 0)
 		{
 			$data = file($filename);
@@ -810,7 +812,7 @@ function handleTemplateErrors($filename)
 			for ($n = min($match[1] + 4, count($data2) + 1); $line <= $n; $line++)
 			{
 				if ($line == $match[1])
-					echo '</pre><div style="background-color: #ffb0b5"><pre style="margin: 0">';
+					echo '</pre><div style="display: inline-block; background-color: #ffb0b5"><pre style="margin: 0">';
 
 				echo '<span style="color: black">', sprintf('%' . strlen($n) . 's', $line), ':</span> ';
 				if (isset($data2[$line]) && $data2[$line] != '')
