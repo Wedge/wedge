@@ -1349,13 +1349,14 @@ function trackStats($stats = array())
  *
  * @param string $posts An array of topics, as returned by ssi_recentTopics() for instance.
  * @param boolean $straight_list Set to true if you want to provide a direct array of topic IDs.
+ * @param boolean $is_boards If set to true, $posts is actually an array of board IDs to look into.
  */
-function get_unread_numbers($posts, $straight_list = false)
+function get_unread_numbers($posts, $straight_list = false, $is_boards = false)
 {
 	$has_unread = $nb_new = array();
 	if (we::$is_member)
 	{
-		if ($straight_list)
+		if ($straight_list || $is_boards)
 			$has_unread = $posts;
 		else
 			foreach ($posts as $post)
@@ -1366,21 +1367,22 @@ function get_unread_numbers($posts, $straight_list = false)
 	if (empty($has_unread))
 		return array();
 
+	$where = $is_boards ? 'id_board' : 'id_topic';
 	$request = wesql::query('
-		SELECT COUNT(DISTINCT m.id_msg) AS co, m.id_topic
+		SELECT COUNT(DISTINCT m.id_msg) AS co, m.' . $where . '
 		FROM {db_prefix}messages AS m
 			LEFT JOIN {db_prefix}log_topics AS lt ON (lt.id_topic = m.id_topic AND lt.id_member = {int:id_member})
 			LEFT JOIN {db_prefix}log_mark_read AS lmr ON (lmr.id_board = m.id_board AND lmr.id_member = {int:id_member})
-		WHERE m.id_topic IN ({array_int:has_unread})
+		WHERE m.' . $where . ' IN ({array_int:has_unread})
 			AND (m.id_msg > IFNULL(lt.id_msg, IFNULL(lmr.id_msg, 0)))
-		GROUP BY m.id_topic',
+		GROUP BY m.' . $where,
 		array(
 			'id_member' => MID,
 			'has_unread' => $has_unread
 		)
 	);
 	while ($row = wesql::fetch_assoc($request))
-		$nb_new[$row['id_topic']] = $row['co'];
+		$nb_new[$row[$where]] = $row['co'];
 	wesql::free_result($request);
 
 	return $nb_new;
