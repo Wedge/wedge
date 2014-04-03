@@ -21,6 +21,8 @@ function template_boards()
 	and boards. (see below.) */
 	$alt = false;
 	$is_guest = we::$is_guest;
+	$nb_new = get_unread_numbers($context['board_ids'], false, true);
+
 	foreach ($context['categories'] as $category)
 	{
 		// If there are no parent boards we can see, avoid showing an empty category (unless it's collapsed)
@@ -70,27 +72,26 @@ function template_boards()
 				$alt = !$alt;
 				$age = isset($board['age']) ? $board['age'] : ($board['new'] ? 0 : PHP_INT_MAX);
 				$age_class = !empty($board['new']) || $age < 24 * 3600 ? 'day' : ($age < 7 * 24 * 3600 ? 'week' : ($age < 31 * 24 * 3600 ? 'month' : ($age < 365 * 24 * 3600 ? 'year' : 'old')));
+				$nb = !empty($nb_new[$board['id']]) ? $nb_new[$board['id']] : '';
 
 				echo '
 				<tr id="board_', $board['id'], '" class="windowbg', $alt ? '2' : '', '">
-					<td class="icon"', !empty($board['children']) ? ' rowspan="2"' : '', '>
-						<a', $board['redirect_newtab'] ? ' target="_blank"' : '', ' href="', $board['is_redirect'] || $is_guest ? $board['href'] : '<URL>?action=unread;board=' . $board['id'] . '.0;children', '">';
+					<td class="icon"', !empty($board['children']) ? ' rowspan="2"' : '', '>';
 
 				// If this board is told to have a custom icon, use it.
 				if (!empty($board['custom_class']))
 					echo '
-							<div class="boardstate ', $board['custom_class'], '"', !empty($board['custom_title']) ? ' title="' . $board['custom_title'] . '"' : '', '></div>';
+						<div class="boardstate ', $board['custom_class'], '"', !empty($board['custom_title']) ? ' title="' . $board['custom_title'] . '"' : '', '></div>';
 				// Is it a redirection board?
 				elseif ($board['is_redirect'])
 					echo '
-							<div class="boardstate link" title="', $txt['redirect_board'], '"></div>';
+						<div class="boardstate link" title="', $txt['redirect_board'], '"></div>';
 				// Show an indicator of the board's recent activity.
 				else
 					echo '
-							<div class="boardstate age-', $age_class, '"></div>';
+						<div class="boardstate age-', $age_class, '"></div>';
 
 				echo '
-						</a>
 					</td>
 					<td class="info">
 						', $settings['display_flags'] == 'all' || ($settings['display_flags'] == 'specified' && !empty($board['language'])) ? '<img src="' . LANGUAGES . $context['languages'][$board['language']]['folder'] . '/Flag.' . $board['language'] . '.png">&nbsp; ': '', '<a', $board['redirect_newtab'] ? ' target="_blank"' : '', ' class="subject" href="', $board['href'], '" id="b', $board['id'], '">', $board['name'], '</a>';
@@ -98,7 +99,11 @@ function template_boards()
 				// Has it outstanding posts for approval?
 				if (!empty($board['can_approve_posts']) && (!empty($board['unapproved_posts']) || !empty($board['unapproved_topics'])))
 					echo '
-						<a href="<URL>?action=moderate;area=postmod;sa=', ($board['unapproved_topics'] > 0 ? 'topics' : 'posts'), ';brd=', $board['id'], ';', $context['session_query'], '" title="', sprintf($txt['unapproved_posts'], $board['unapproved_topics'], $board['unapproved_posts']), '" class="moderation_link">(!)</a>';
+						<a href="<URL>?action=moderate;area=postmod;sa=', $board['unapproved_topics'] > 0 ? 'topics' : 'posts', ';brd=', $board['id'], ';', $context['session_query'], '" title="', sprintf($txt['unapproved_posts'], $board['unapproved_topics'], $board['unapproved_posts']), '" class="moderation_link">(!)</a>';
+
+				if ($nb && !$board['redirect_newtab'])
+					echo '
+						(<a href="<URL>?action=unread;board=', $board['id'], '.0;children', '" title="', $txt['show_unread'], '">', $nb, '</a>)';
 
 				if (!empty($board['description']))
 					echo '
@@ -107,7 +112,7 @@ function template_boards()
 				// Show the "Moderators: ". Each has name, href, link, and id. (but we're gonna use link_moderators.)
 				if (!empty($board['moderators']))
 					echo '
-						<p class="moderators">', count($board['moderators']) == 1 ? $txt['moderator'] : $txt['moderators'], ': ', implode(', ', $board['link_moderators']), '</p>';
+						<p class="moderators">', count($board['moderators']) === 1 ? $txt['moderator'] : $txt['moderators'], ': ', implode(', ', $board['link_moderators']), '</p>';
 
 				// Show some basic information about the number of posts, etc.
 				if (!SKIN_MOBILE)
@@ -146,7 +151,7 @@ function template_boards()
 					</td>
 				</tr>';
 
-				// Show the "Child Boards: ". (there's a link_children but we're going to bold the new ones...)
+				// Show the "Child Boards: " area. (There's a link_children but we're going to bold the new ones...)
 				if (!empty($board['children']))
 				{
 					// Sort the links into an array with new boards bold so it can be imploded.
@@ -161,13 +166,13 @@ function template_boards()
 								if (isset($child[$item]))
 									$display[] = number_context($string, $child[$item]);
 
-						if (!$child['is_redirect'])
-						{
-							$child_title = ($child['new'] ? $txt['new_posts'] : $txt['old_posts']) . (!empty($display) ? ' (' . implode(', ', $display) . ')' : '');
-							$child['link'] = '<a href="' . $child['href'] . '"' . ($child['new'] ? ' class="new_posts"' : '') . ' title="' . $child_title . '">' . $child['name'] . '</a>' . ($child['new'] ? ' <a href="<URL>?action=unread;board=' . $child['id'] . '" title="' . $child_title . '" class="note new_posts">' . $txt['new_short'] . '</a>' : '');
-						}
-						else
+						if ($child['is_redirect'])
 							$child['link'] = '<a href="' . $child['href'] . '"' . (!empty($display) ? ' title="' . implode(', ', $display) . '"' : '') . '>' . $child['name'] . '</a>';
+						else
+						{
+							$nb = !empty($nb_new[$child['id']]) ? $nb_new[$child['id']] : 0;
+							$child['link'] = '<a href="' . $child['href'] . '">' . $child['name'] . '</a>' . ($nb ? ' (<a href="<URL>?action=unread;board=' . $child['id'] . ';children" title="' . $txt['show_unread'] . '">' . $nb . '</a>)' : '');
+						}
 
 						// Has it posts awaiting approval?
 						if (!empty($child['can_approve_posts']) && (!empty($child['unapproved_posts']) || !empty($child['unapproved_topics'])))

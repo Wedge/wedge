@@ -73,6 +73,7 @@ function getBoardIndex($boardIndexOptions)
 		$this_category = array();
 
 	$current_time = time();
+	$context['board_ids'] = array();
 
 	// Run through the categories and boards (or only boards)....
 	while ($row_board = wesql::fetch_assoc($result_boards))
@@ -82,6 +83,7 @@ function getBoardIndex($boardIndexOptions)
 
 		$board_time = forum_time(true, $row_board['poster_time']);
 		$posted_today = $row_board['poster_name'] !== '' && ($current_time - $board_time < 24 * 3600);
+		$context['board_ids'][$row_board['id_board']] = $row_board['id_board'];
 
 		if ($boardIndexOptions['include_categories'])
 		{

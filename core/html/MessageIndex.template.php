@@ -335,6 +335,8 @@ function template_messageindex_childboards()
 
 	if (!empty($context['boards']) && (!empty($options['show_children']) || $context['start'] == 0))
 	{
+		$nb_new = get_unread_numbers($context['board_ids'], false, true);
+
 		echo '
 	<div class="childboards" id="board_', $context['current_board'], '_childboards">
 		<we:cat>
@@ -348,11 +350,11 @@ function template_messageindex_childboards()
 		{
 			$age = isset($board['age']) ? $board['age'] : ($board['new'] ? 0 : PHP_INT_MAX);
 			$age_class = !empty($board['new']) || $age < 24 * 3600 ? 'day' : ($age < 7 * 24 * 3600 ? 'week' : ($age < 31 * 24 * 3600 ? 'month' : ($age < 365 * 24 * 3600 ? 'year' : 'old')));
+			$nb = !empty($nb_new[$board['id']]) ? $nb_new[$board['id']] : '';
 
 			echo '
 				<tr id="board_', $board['id'], '" class="windowbg2">
-					<td class="icon windowbg"', !empty($board['children']) ? ' rowspan="2"' : '', '>
-						<a', $board['redirect_newtab'] ? ' target="_blank"' : '', ' href="', ($board['is_redirect'] || we::$is_guest ? $board['href'] : '<URL>?action=unread;board=' . $board['id'] . '.0;children'), '">';
+					<td class="icon windowbg"', !empty($board['children']) ? ' rowspan="2"' : '', '>';
 
 			// If this board is told to have a custom icon, use it.
 			if (!empty($board['custom_class']))
@@ -368,7 +370,6 @@ function template_messageindex_childboards()
 							<div class="boardstate age-', $age_class, '"></div>';
 
 			echo '
-						</a>
 					</td>
 					<td class="info">
 						', $settings['display_flags'] == 'all' || ($settings['display_flags'] == 'specified' && !empty($board['language'])) ? '<img src="' . LANGUAGES . $context['languages'][$board['language']]['folder'] . '/Flag.' . $board['language'] . '.png">&nbsp; ': '', '<a', $board['redirect_newtab'] ? ' target="_blank"' : '', ' class="subject" href="', $board['href'], '" id="b', $board['id'], '">', $board['name'], '</a>';
@@ -376,10 +377,14 @@ function template_messageindex_childboards()
 			// Has it outstanding posts for approval?
 			if ($board['can_approve_posts'] && ($board['unapproved_posts'] || $board['unapproved_topics']))
 				echo '
-						<a href="<URL>?action=moderate;area=postmod;sa=', ($board['unapproved_topics'] > 0 ? 'topics' : 'posts'), ';brd=', $board['id'], ';', $context['session_query'], '" title="', sprintf($txt['unapproved_posts'], $board['unapproved_topics'], $board['unapproved_posts']), '" class="moderation_link">(!)</a>';
+						<a href="<URL>?action=moderate;area=postmod;sa=', $board['unapproved_topics'] > 0 ? 'topics' : 'posts', ';brd=', $board['id'], ';', $context['session_query'], '" title="', sprintf($txt['unapproved_posts'], $board['unapproved_topics'], $board['unapproved_posts']), '" class="moderation_link">(!)</a>';
 
-			echo '
+				if ($nb)
+					echo '
+						<a href="<URL>?action=unread;board=', $board['id'], '.0;children', '" class="notevoid" title="', $txt['show_unread'], '">', $nb, '</a>';
 
+				if (!empty($board['description']))
+					echo '
 						<p>', $board['description'], '</p>';
 
 			// Show the "Moderators: ". Each has name, href, link, and id. (but we're gonna use link_moderators.)
@@ -428,16 +433,16 @@ function template_messageindex_childboards()
 						id, name, description, new (is it new?), topics (#), posts (#), href, link, and last_post. */
 				foreach ($board['children'] as $child)
 				{
-					if (!$child['is_redirect'])
-					{
-						$child_title = ($child['new'] ? $txt['new_posts'] : $txt['old_posts']) . ' (' . number_context('num_topics', $child['topics']) . ', ' . number_context('num_posts', $child['posts']) . ')';
-						$child['link'] = '<a href="' . $child['href'] . '"' . ($child['new'] ? ' class="new_posts"' : '') . ' title="' . $child_title . '">' . $child['name'] . '</a>' . ($child['new'] ? ' <a href="<URL>?action=unread;board=' . $child['id'] . '" title="' . $child_title . '" class="note new_posts">' . $txt['new'] . '</a>' : '');
-					}
-					else
+					if ($child['is_redirect'])
 						$child['link'] = '<a href="' . $child['href'] . '" title="' . number_context('num_redirects', $child['posts']) . '">' . $child['name'] . '</a>';
+					else
+					{
+						$nb = !empty($nb_new[$child['id']]) ? $nb_new[$child['id']] : 0;
+						$child['link'] = '<a href="' . $child['href'] . '">' . $child['name'] . '</a>' . ($nb ? ' <a href="<URL>?action=unread;board=' . $child['id'] . ';children" title="' . $txt['show_unread'] . '" class="notevoid">' . $nb . '</a>' : '');
+					}
 
 					// Has it posts awaiting approval?
-					if ($child['can_approve_posts'] && ($child['unapproved_posts'] | $child['unapproved_topics']))
+					if ($child['can_approve_posts'] && ($child['unapproved_posts'] || $child['unapproved_topics']))
 						$child['link'] .= ' <a href="<URL>?action=moderate;area=postmod;sa=' . ($child['unapproved_topics'] > 0 ? 'topics' : 'posts') . ';brd=' . $child['id'] . ';' . $context['session_query'] . '" title="' . sprintf($txt['unapproved_posts'], $child['unapproved_topics'], $child['unapproved_posts']) . '" class="moderation_link">(!)</a>';
 
 					$children[] = $child['new'] ? '<strong>' . $child['link'] . '</strong>' : $child['link'];
