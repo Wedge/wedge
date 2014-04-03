@@ -285,10 +285,6 @@ $txt['new_short'] = 'New';
 
 $txt['edited'] = 'Edited';
 
-// Can be used in a title parameter, so stick to alphanumeric characters.
-$txt['new_posts'] = 'New Posts';
-$txt['old_posts'] = 'No New Posts';
-
 $txt['forgot_your_password'] = 'Forgot your password?';
 
 $txt['date'] = 'Date';
