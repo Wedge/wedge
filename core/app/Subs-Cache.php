@@ -636,8 +636,8 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 		new wess_prefixes(),	// Automatically adds browser prefixes for many frequent elements, or manually through -prefix.
 	);
 
-	// rgba to rgb conversion for IE 6/7/8/9
-	if (we::is('ie'))
+	// rgba to rgb conversion for IE 6-8, and a hack for IE9.
+	if (we::is('ie[-9]'))
 		$plugins[] = new wess_rgba();
 
 	// No need to start the Base64 plugin if we can't gzip the result or the browser can't see it...
