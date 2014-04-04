@@ -398,8 +398,8 @@ function setupThoughtMenu()
 		{
 			$menu[] = 'mo/' . $tho['id_master'];
 			$menu[] = 'de';
-			// Admins can only select their own thoughts for posterity...
-			if ($tho['id_member'] == MID)
+			// Users can only select their *own*, public thoughts for posterity...
+			if ($tho['id_member'] == MID && $tho['privacy'] == PRIVACY_DEFAULT)
 				$menu[] = 'bl';
 		}
 
