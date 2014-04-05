@@ -2558,7 +2558,7 @@ function get_preferred_language($default = 'english')
 
 	// Break up string into pieces (languages and q factors)
 	preg_match_all('/([a-z]{1,8}(-[a-z]{1,8})?)\s*(;\s*q\s*=\s*(1|0\.[0-9]+))?/i', strtolower($_SERVER['HTTP_ACCEPT_LANGUAGE']), $lang_parse);
-	if (empty(count($lang_parse[1])))
+	if (empty($lang_parse[1]))
 		return $default;
 
 	// Create a list like ['en' => 0.8]
