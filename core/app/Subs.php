@@ -1466,21 +1466,26 @@ function preventPrefetch($always = false)
  */
 function getRePrefix()
 {
-	global $context, $settings, $txt;
+	global $context;
 
-	if (!isset($context['response_prefix']) && ($context['response_prefix'] = cache_get_data('response_prefix', 600)) === null)
+	if (isset($context['response_prefix']))
+		return;
+
+	$context['response_prefix'] = cache_get_data('re_prefix', 'forever', function ()
 	{
+		global $context, $settings, $txt;
+
 		if ($settings['language'] === we::$user['language'])
-			$context['response_prefix'] = $txt['response_prefix'];
+			$prefix = $txt['response_prefix'];
 		else
 		{
 			$realtxt = $txt;
 			loadLanguage('index', $settings['language'], false);
-			$context['response_prefix'] = $txt['response_prefix'];
+			$prefix = $txt['response_prefix'];
 			$txt = $realtxt;
 		}
-		cache_put_data('response_prefix', $context['response_prefix'], 600);
-	}
+		return $prefix;
+	});
 }
 
 /**
