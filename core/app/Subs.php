@@ -2558,19 +2558,19 @@ function get_preferred_language($default = 'english')
 
 	// Break up string into pieces (languages and q factors)
 	preg_match_all('/([a-z]{1,8}(-[a-z]{1,8})?)\s*(;\s*q\s*=\s*(1|0\.[0-9]+))?/i', strtolower($_SERVER['HTTP_ACCEPT_LANGUAGE']), $lang_parse);
-	if (count($lang_parse[1]))
-	{
-		// Create a list like "en" => 0.8
-		$preferred = array_combine($lang_parse[1], $lang_parse[4]);
+	if (empty(count($lang_parse[1])))
+		return $default;
 
-		// Set default to 1 for any without q factor (IE fix)
-		foreach ($preferred as $lang => $val)
-			if ($val === '')
-				$preferred[$lang] = 1;
+	// Create a list like ['en' => 0.8]
+	$preferred = array_combine($lang_parse[1], $lang_parse[4]);
 
-		// Sort list based on value
-		arsort($preferred, SORT_NUMERIC);
-	}
+	// Set default to 1 for any without q factor (IE fix)
+	foreach ($preferred as $lang => $val)
+		if ($val === '')
+			$preferred[$lang] = 1;
+
+	// Sort list based on value
+	arsort($preferred, SORT_NUMERIC);
 
 	// This is the list of known Wedge language packs/mappings as of March 2014.
 	$langs = array(
