@@ -1476,18 +1476,6 @@ div.top_row dd
 	height: 42px
 	font-size: 1.2em
 
-	&.age-week
-		opacity: .8
-
-	&.age-month
-		opacity: .6
-
-	&.age-year
-		opacity: .4
-
-	&.age-old
-		opacity: .2
-
 	&.link
 		opacity: .6
 		:after
@@ -1495,6 +1483,18 @@ div.top_row dd
 			position: absolute
 			bottom: 8px
 			right: 9px
+
+.age-week
+	opacity: .8
+
+.age-month
+	opacity: .6
+
+.age-year
+	opacity: .4
+
+.age-old
+	opacity: .2
 
 /* More icons.
 ------------------------------------------------- */
@@ -1576,7 +1576,7 @@ body.waiting *
 				position: fixed
 				top, right: 3px
 				border: 1px solid #ccc
-				gradient: rgba(255,255,255,1), rgba(255,255,255,.66)
+				gradient: #fff, rgba(255,255,255,.66)
 				padding: 2px 5px
 				z-index: 99
 

@@ -381,7 +381,7 @@ function template_messageindex_childboards()
 
 				if ($nb)
 					echo '
-						<a href="<URL>?action=unread;board=', $board['id'], '.0;children', '" class="notevoid" title="', $txt['show_unread'], '">', $nb, '</a>';
+						<a href="<URL>?action=unread;board=', $board['id'], '.0;children', '" class="note" title="', $txt['show_unread'], '">', $nb, '</a>';
 
 				if (!empty($board['description']))
 					echo '
@@ -438,7 +438,7 @@ function template_messageindex_childboards()
 					else
 					{
 						$nb = !empty($nb_new[$child['id']]) ? $nb_new[$child['id']] : 0;
-						$child['link'] = '<a href="' . $child['href'] . '">' . $child['name'] . '</a>' . ($nb ? ' <a href="<URL>?action=unread;board=' . $child['id'] . ';children" title="' . $txt['show_unread'] . '" class="notevoid">' . $nb . '</a>' : '');
+						$child['link'] = '<a href="' . $child['href'] . '">' . $child['name'] . '</a>' . ($nb ? ' <a href="<URL>?action=unread;board=' . $child['id'] . ';children" title="' . $txt['show_unread'] . '" class="note">' . $nb . '</a>' : '');
 					}
 
 					// Has it posts awaiting approval?
