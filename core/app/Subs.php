@@ -1553,7 +1553,7 @@ function url_image_size($url)
 			if (!empty($width))
 				$size = array($width, $height);
 		}
-		elseif (strpos($data, "\89PNG") === 0)
+		elseif (strpos($data, "\x89PNG") === 0)
 		{
 			// Seems to be a PNG. Let's look for the signature of the header chunk, minimum 12 bytes in. PNG max sizes are (signed) 32 bits each way.
 			$pos = strpos($data, 'IHDR');
