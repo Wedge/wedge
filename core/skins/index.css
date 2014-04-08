@@ -459,9 +459,12 @@ em
 .note mixes .inline-block
 	vertical-align: .1em
 	border-radius: 7px
-	border: 1px solid #ccc
-	gradient: #fafafa, #fff
-	color: #444 !important
+	@if ie[-9], ios[-5.1]
+		background-color: #eb8c66
+	@else
+		gradient: #fa6, #d76
+	@endif
+	color: #fff !important
 	font: 700 7.5pt/100% Tahoma, Arial, sans-serif
 	text-transform: uppercase
 	margin: 0 3px
@@ -472,15 +475,29 @@ em
 	h5 &
 		margin-left: 8px
 
-// Same, but with inverted colors, to grab your attention.
+// Same, but scarier.
 .notewarn extends .note
-	color: #fff !important
-	border-width: 0
-	gradient: #fa6, #d76
+	@if ie[-9], ios[-5.1]
+		background-color: #d55a61
+	@else
+		gradient: luma(#d55a61, +10%), luma(#b63c47, +10%)
+	@endif
 
-// Same, but positive. Here, greenish.
+// Same, but positive.
 .notenice extends .note
-	gradient: #dffedf, #cae9ca
+	@if ie[-9], ios[-5.1]
+		background-color: rgb(100, 175, 100)
+	@else
+		gradient: rgb(100, 175, 100), rgb(100, 190, 100)
+	@endif
+
+// Same, but neutral. Doesn't get in the way.
+.notevoid extends .note
+	@if ie[-9], ios[-5.1]
+		background-color: rgb(175, 175, 175)
+	@else
+		gradient: rgb(150, 150, 150), rgb(175, 175, 175)
+	@endif
 
 // The sort direction indicator. A small but potentially important detail.
 .sort_up mixes .inline-block

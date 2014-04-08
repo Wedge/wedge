@@ -103,7 +103,7 @@ function template_boards()
 
 				if ($nb && !$board['redirect_newtab'])
 					echo '
-						<a href="<URL>?action=unread;board=', $board['id'], '.0;children', '" title="', $txt['show_unread'], '" class="note">', $nb, '</a>';
+						(<a href="<URL>?action=unread;board=', $board['id'], '.0;children', '" title="', $txt['show_unread'], '">', $nb, '</a>)';
 
 				if (!empty($board['description']))
 					echo '
@@ -171,7 +171,7 @@ function template_boards()
 						else
 						{
 							$nb = !empty($nb_new[$child['id']]) ? $nb_new[$child['id']] : 0;
-							$child['link'] = '<a href="' . $child['href'] . '">' . $child['name'] . '</a>' . ($nb ? ' <a href="<URL>?action=unread;board=' . $child['id'] . ';children" title="' . $txt['show_unread'] . '" class="note">' . $nb . '</a>' : '');
+							$child['link'] = '<a href="' . $child['href'] . '">' . $child['name'] . '</a>' . ($nb ? ' (<a href="<URL>?action=unread;board=' . $child['id'] . ';children" title="' . $txt['show_unread'] . '">' . $nb . '</a>)' : '');
 						}
 
 						// Has it posts awaiting approval?
