@@ -538,6 +538,7 @@ function ModifyPrettyURLs($return_config = false)
 		if ($profile != '~' && $profile != 'profile/')
 			$profile = 'profile/';
 
+		loadSource('Subs-Admin');
 		updateSettings(
 			array(
 				'pretty_enable_filters' => $is_enabled,
