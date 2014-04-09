@@ -117,11 +117,6 @@ class wedit
 		return '[html]' . strtr(htmlspecialchars($a[1], ENT_QUOTES), array('\\&quot;' => '&quot;', '&amp;#13;' => '<br>', '&amp;#32;' => ' ', '&amp;#91;' => '[', '&amp;#93;' => ']')) . '[/html]';
 	}
 
-	private static function cleanup_nobbc($a)
-	{
-		return '[nobbc]' . strtr($a[1], array('[' => '&#91;', ']' => '&#93;', ':' => '&#58;', '@' => '&#64;')) . '[/nobbc]';
-	}
-
 	private static function preparse_time($a)
 	{
 		global $settings;
@@ -1779,7 +1774,9 @@ class wedit
 		$message = preg_replace('~&amp;#(\d{4,5}|[2-9]\d{2,4}|1[2-9]\d);~', '&#$1;', $message);
 
 		// Clean up after nobbc ;)
-		$message = preg_replace_callback('~\[nobbc\](.+?)\[/nobbc\]~i', 'wedit::cleanup_nobbc', $message);
+		$message = preg_replace_callback('~\[nobbc\](.+?)\[/nobbc\]~is', function ($a) {
+			return '[nobbc]' . strtr($a[1], array('[' => '&#91;', ']' => '&#93;', ':' => '&#58;', '@' => '&#64;')) . '[/nobbc]';
+		}, $message);
 
 		// Remove \r's... they're evil!
 		$message = strtr($message, array("\r" => ''));
@@ -1827,7 +1824,7 @@ class wedit
 		// Now that we've fixed all the code tags, let's fix the img and url tags...
 		$parts = preg_split('~(\[/code]|\[code[^]]*])~i', $message, -1, PREG_SPLIT_DELIM_CAPTURE);
 
-		// Only mess with stuff outside [code] tags.
+		// Only mess with stuff outside of [code] tags.
 		for ($i = 0, $n = count($parts); $i < $n; $i++)
 		{
 			// It goes 0 = outside, 1 = begin tag, 2 = inside, 3 = close tag, repeat.
