@@ -80,16 +80,15 @@ function Post2()
 	// If we came from WYSIWYG then turn it back into BBC regardless. Make sure we tell it what item we're expecting to use.
 	wedit::preparseWYSIWYG('message');
 
-	// On posting new topic/reply/full modify: replace embed HTML, do lookups, and/or check whether YouTube links are embeddable
-	if (!empty($_POST['message']))
-	{
-		loadSource('media/Aeva-Embed');
-		$_POST['message'] = aeva_onposting($_POST['message']);
-	}
-
 	// Previewing? Go back to start.
 	if (isset($_REQUEST['preview']))
 	{
+		if (!empty($_POST['message']))
+		{
+			loadSource('media/Aeva-Embed');
+			$_POST['message'] = aeva_onposting($_POST['message']);
+		}
+
 		loadSource('Post');
 		return Post();
 	}

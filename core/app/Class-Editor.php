@@ -1978,6 +1978,10 @@ class wedit
 		else
 			$message = strtr(implode('', $parts), array('  ' => '&nbsp; ', "\xC2\xA0" => '&nbsp;'));
 
+		// On posting/editing: replace embed HTML, do lookups, and/or check whether YouTube links are embeddable.
+		loadSource('media/Aeva-Embed');
+		$message = aeva_onposting($message);
+
 		// Now let's quickly clean up things that will slow our parser (which are common in posted code.)
 		$message = strtr($message, array('[]' => '&#91;]', '[&#039;' => '&#91;&#039;'));
 	}
