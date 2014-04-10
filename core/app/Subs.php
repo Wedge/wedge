@@ -1369,13 +1369,20 @@ function get_unread_numbers($posts, $straight_list = false, $is_boards = false)
 
 	$where = $is_boards ? 'id_board' : 'id_topic';
 	$request = wesql::query('
-		SELECT COUNT(DISTINCT m.id_msg) AS co, m.' . $where . '
-		FROM {db_prefix}messages AS m
-			LEFT JOIN {db_prefix}log_topics AS lt ON (lt.id_topic = m.id_topic AND lt.id_member = {int:id_member})
-			LEFT JOIN {db_prefix}log_mark_read AS lmr ON (lmr.id_board = m.id_board AND lmr.id_member = {int:id_member})
-		WHERE m.' . $where . ' IN ({array_int:has_unread})
-			AND (m.id_msg > IFNULL(lt.id_msg, IFNULL(lmr.id_msg, 0)))
-		GROUP BY m.' . $where,
+  SELECT COUNT(DISTINCT m.id_msg) AS co, m.id_board
+  FROM {db_prefix}messages AS m
+  WHERE m.poster_time >= (UNIX_TIMESTAMP(NOW()) - 30 * 24 * 3600)
+      AND (
+        m.id_msg >
+        IFNULL(
+        (SELECT lt.id_msg FROM {db_prefix}log_topics AS lt WHERE (lt.id_topic = m.id_topic AND lt.id_member = 1)),
+        IFNULL(
+        (SELECT lmr.id_msg FROM {db_prefix}log_mark_read AS lmr WHERE (lmr.id_board = m.id_board AND lmr.id_member = 1)),
+                0
+            )
+          )
+        )
+        ORDER BY ' . $where . ' DESC',
 		array(
 			'id_member' => MID,
 			'has_unread' => $has_unread

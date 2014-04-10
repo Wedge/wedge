@@ -975,7 +975,8 @@ CREATE TABLE {$db_prefix}log_mark_read (
 	id_member mediumint(8) unsigned NOT NULL default 0,
 	id_board mediumint(8) unsigned NOT NULL default 0,
 	id_msg int(10) unsigned NOT NULL default 0,
-	PRIMARY KEY (id_member, id_board)
+	PRIMARY KEY (id_member, id_board),
+	KEY lmr (id_member, id_board, id_msg)
 ) ENGINE=MyISAM;
 
 #
@@ -1181,7 +1182,8 @@ CREATE TABLE {$db_prefix}log_topics (
 	id_topic mediumint(8) unsigned NOT NULL default 0,
 	id_msg int(10) unsigned NOT NULL default 0,
 	PRIMARY KEY (id_member, id_topic),
-	KEY id_topic (id_topic)
+	KEY id_topic (id_topic),
+	KEY lt (id_member, id_topic, id_msg)
 ) ENGINE=MyISAM;
 
 #
@@ -1707,7 +1709,8 @@ CREATE TABLE {$db_prefix}messages (
 	KEY id_topic (id_topic),
 	KEY id_member_msg (id_member, approved, id_msg),
 	KEY current_topic (id_topic, id_msg, id_member, approved),
-	KEY related_ip (id_member, poster_ip, id_msg)
+	KEY related_ip (id_member, poster_ip, id_msg),
+	KEY m (id_msg, id_topic, id_board, poster_time, id_member)
 ) ENGINE=MyISAM;
 
 #
