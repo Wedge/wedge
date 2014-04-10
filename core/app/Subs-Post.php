@@ -2187,23 +2187,23 @@ function sendApprovalNotifications(&$topicData)
 	$topics = array();
 	$digest_insert = array();
 	foreach ($topicData as $topic => $msgs)
-		foreach ($msgs as $msgKey => $msg)
 	{
-		censorText($topicData[$topic][$msgKey]['subject']);
-		censorText($topicData[$topic][$msgKey]['body']);
-		$topicData[$topic][$msgKey]['subject'] = un_htmlspecialchars($topicData[$topic][$msgKey]['subject']);
-		$topicData[$topic][$msgKey]['body'] = trim(un_htmlspecialchars(strip_tags(strtr(parse_bbc($topicData[$topic][$msgKey]['body'], 'post-notify', array('smileys' => false)), array('<br>' => "\n", '</div>' => "\n", '</li>' => "\n", '&#91;' => '[', '&#93;' => ']')))));
+		foreach ($msgs as $msgKey => $msg)
+		{
+			censorText($topicData[$topic][$msgKey]['subject']);
+			censorText($topicData[$topic][$msgKey]['body']);
+			$topicData[$topic][$msgKey]['subject'] = un_htmlspecialchars($topicData[$topic][$msgKey]['subject']);
+			$topicData[$topic][$msgKey]['body'] = trim(un_htmlspecialchars(strip_tags(strtr(parse_bbc($topicData[$topic][$msgKey]['body'], 'post-notify', array('smileys' => false)), array('<br>' => "\n", '</div>' => "\n", '</li>' => "\n", '&#91;' => '[', '&#93;' => ']')))));
 
-		$topics[] = $msg['id'];
-		$digest_insert[] = array($msg['topic'], $msg['id'], 'reply', MID);
+			$topics[] = $msg['id'];
+			$digest_insert[] = array($msg['topic'], $msg['id'], 'reply', MID);
+		}
 	}
 
 	// These need to go into the digest too...
 	wesql::insert('',
 		'{db_prefix}log_digest',
-		array(
-			'id_topic' => 'int', 'id_msg' => 'int', 'note_type' => 'string', 'exclude' => 'int',
-		),
+		array('id_topic' => 'int', 'id_msg' => 'int', 'note_type' => 'string', 'exclude' => 'int'),
 		$digest_insert
 	);
 
@@ -2693,7 +2693,7 @@ function saveDraft($is_pm, $id_context = 0)
 			return $_REQUEST['draft_id'];
 	}
 
-	// Guess it is a new draft after all
+	// Guess it is a new draft after all.
 	wesql::insert('',
 		'{db_prefix}drafts',
 		array(

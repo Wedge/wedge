@@ -2100,7 +2100,7 @@ class wedit
 				$desired_width = !empty($matches[1][$match]) ? (int) substr(trim($matches[1][$match]), 6) : 0;
 				$desired_height = !empty($matches[2][$match]) ? (int) substr(trim($matches[2][$match]), 7) : 0;
 
-				// One was omitted, or both.  We'll have to find its real size...
+				// One was omitted, or both. We'll have to find its real size...
 				if (empty($desired_width) || empty($desired_height))
 				{
 					list ($width, $height) = url_image_size(un_htmlspecialchars($matches[4][$match]));
@@ -2123,14 +2123,14 @@ class wedit
 				if ($desired_width <= $settings['max_image_width'] && $desired_height <= $settings['max_image_height'])
 					continue;
 
-				// Too bad, it's too wide.  Make it as wide as the maximum.
+				// Too bad, it's too wide. Make it as wide as the maximum.
 				if ($desired_width > $settings['max_image_width'] && !empty($settings['max_image_width']))
 				{
 					$desired_height = (int) (($settings['max_image_width'] * $desired_height) / $desired_width);
 					$desired_width = $settings['max_image_width'];
 				}
 
-				// Now check the height, as well.  Might have to scale twice, even...
+				// Now check the height, as well. Might have to scale twice, even...
 				if ($desired_height > $settings['max_image_height'] && !empty($settings['max_image_height']))
 				{
 					$desired_width = (int) (($settings['max_image_height'] * $desired_width) / $desired_height);

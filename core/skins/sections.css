@@ -1481,8 +1481,7 @@ div.top_row dd
 		:after
 			content: "\bb"
 			position: absolute
-			bottom: 8px
-			right: 9px
+			bottom, right: 9px
 
 .age-week
 	opacity: .8
