@@ -34,7 +34,7 @@ function getBoardIndex($boardIndexOptions)
 			'ref' => 0,
 		);
 
-	// Find all boards and categories, as well as related information.  This will be sorted by the natural order of boards and categories, which we control.
+	// Find all boards and categories, as well as related information. This will be sorted by the natural order of boards and categories, which we control.
 	$result_boards = wesql::query('
 		SELECT' . ($boardIndexOptions['include_categories'] ? '
 			c.id_cat, c.name AS cat_name, c.cat_order,' : '') . '
@@ -118,7 +118,7 @@ function getBoardIndex($boardIndexOptions)
 			else
 				$categories[$row_board['id_cat']]['is_collapsed'] = false;
 
-			// Let's save some typing.  Climbing the array might be slower, anyhow.
+			// Let's save some typing. Climbing the array might be slower, anyhow.
 			$this_category =& $categories[$row_board['id_cat']]['boards'];
 		}
 

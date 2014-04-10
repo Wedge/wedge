@@ -106,7 +106,7 @@ function deleteMembers($users, $check_not_admin = false, $merge_to = false)
 		foreach ($users as $k => $v)
 			$users[$k] = (int) $v;
 
-		// Deleting more than one?  You can't have more than one account...
+		// Deleting more than one? You can't have more than one account...
 		isAllowedTo('profile_remove_any');
 	}
 
@@ -134,7 +134,7 @@ function deleteMembers($users, $check_not_admin = false, $merge_to = false)
 	if (empty($user_log_details))
 		return;
 
-	// Make sure they aren't trying to delete administrators if they aren't one.  But don't bother checking if it's just themself.
+	// Make sure they aren't trying to delete administrators if they aren't one. But don't bother checking if it's just themself.
 	if (!empty($admins) && ($check_not_admin || (!allowedTo('admin_forum') && (count($users) != 1 || $users[0] != MID))))
 	{
 		$users = array_diff($users, $admins);
@@ -482,7 +482,7 @@ function registerMember(&$regOptions, $return_errors = false)
 			fatal_lang_error('register_only_once', false);
 	}
 
-	// No name?!  How can you register with no name?
+	// No name?! How can you register with no name?
 	if (empty($regOptions['username']))
 		$reg_errors[] = array('lang', 'need_username');
 
@@ -626,7 +626,7 @@ function registerMember(&$regOptions, $return_errors = false)
 	if ($regOptions['require'] == 'coppa')
 	{
 		$regOptions['register_vars']['is_activated'] = 5;
-		// !!! This should be changed.  To what should be it be changed??
+		// !!! This should be changed. To what should be it be changed??
 		$regOptions['register_vars']['validation_code'] = '';
 	}
 	// Maybe it can be activated right away?

@@ -1075,7 +1075,7 @@ function setPermissionLevel($level, $group, $profile = 'null')
 		'send_topic',
 	);
 
-	// Standard - ie. members.  They can do anything Restrictive can.
+	// Standard - ie. members. They can do anything Restrictive can.
 	$groupLevels['global']['standard'] = array_merge($groupLevels['global']['restrict'], array(
 		'view_mlist',
 		'pm_read',
@@ -1126,7 +1126,7 @@ function setPermissionLevel($level, $group, $profile = 'null')
 		'approve_posts',
 	));
 
-	// Maintenance - wannabe admins.  They can do almost everything.
+	// Maintenance - wannabe admins. They can do almost everything.
 	$groupLevels['global']['maintenance'] = array_merge($groupLevels['global']['moderator'], array(
 		'manage_attachments',
 		'manage_smileys',

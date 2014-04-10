@@ -63,7 +63,7 @@ function Search2()
 		$weight_total += $weight[$weight_factor];
 	}
 
-	// Zero weight.  Weightless :P.
+	// Zero weight. Weightless. :P
 	if (empty($weight_total))
 		fatal_lang_error('search_invalid_weights');
 
@@ -604,7 +604,7 @@ function Search2()
 					unset($suggestions[$i]);
 			}
 
-			// Anything found?  If so, correct it!
+			// Anything found? If so, correct it!
 			if (!empty($suggestions))
 			{
 				$suggestions = array_values($suggestions);
@@ -1480,7 +1480,7 @@ function prepareSearchContext($reset = false)
 	global $memberContext, $messages_request;
 	global $boards_can, $participants;
 
-	// Remember which message this is.  (ie. reply #83)
+	// Remember which message this is, e.g. reply #83.
 	static $counter = null;
 	if ($counter == null || $reset)
 		$counter = $_REQUEST['start'] + 1;

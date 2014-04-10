@@ -258,7 +258,7 @@ function setPassword2()
 	// Just in case, flood control.
 	validatePasswordFlood($_POST['u'], $flood_value, true);
 
-	// User validated.  Update the database!
+	// User validated. Update the database!
 	updateMemberData($_POST['u'], array('validation_code' => '', 'passwd' => sha1(strtolower($username) . $_POST['passwrd1'])));
 
 	call_hook('reset_pass', array($username, $username, $_POST['passwrd1']));

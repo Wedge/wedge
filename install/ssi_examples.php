@@ -33,7 +33,7 @@ template_ssi_above();
 	<div class="bbc_code"><header>Code: <a href="#" onclick="return weSelectText(this);" class="codeoperation">[Select]</a></header><code>&lt;?php require(&quot;<?php echo htmlspecialchars(we::$is_admin ? realpath(ROOT_DIR . '/core/SSI.php') : 'core/SSI.php'); ?>&quot;); ?&gt;</code></div>
 
 	<h2>Some notes on usage</h2>
-	<p>All the functions have an output method parameter.  This can either be &quot;echo&quot; (the default) or &quot;array&quot;.</p>
+	<p>All the functions have an output method parameter. This can either be &quot;echo&quot; (the default) or &quot;array&quot;.</p>
 	<p>If it is &quot;echo&quot;, the function will act normally - otherwise, it will return an array containing information about the requested task. For example, it might return a list of topics for ssi_recentTopics.</p>
 	<p>This functionality can be used to allow you to present the information in any way you wish.</p>
 

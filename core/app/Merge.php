@@ -611,7 +611,7 @@ function MergeExecute($topics = array())
 	// Grab the response prefix (like 'Re: ') in the default forum language.
 	getRePrefix();
 
-	// Change the topic IDs of all messages that will be merged.  Also adjust subjects if 'enforce subject' was checked.
+	// Change the topic IDs of all messages that will be merged. Also adjust subjects if 'enforce subject' was checked.
 	wesql::query('
 		UPDATE {db_prefix}messages
 		SET

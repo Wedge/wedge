@@ -11,8 +11,8 @@
 if (!defined('WEDGE'))
 	die('Hacking attempt...');
 
-/*	This is here for the "repair any errors" feature in the admin center.  It
-	uses just two simple functions:
+/*	This is here for the "repair any errors" feature in the admin center.
+	It uses just two simple functions:
 
 	void RepairBoards()
 		- finds or repairs errors in the database to fix possible problems.
@@ -121,7 +121,7 @@ function pauseRepairProcess($to_fix, $current_step_description, $max_substep = 0
 	if (function_exists('apache_reset_timeout'))
 		@apache_reset_timeout();
 
-	// Errr, wait.  How much time has this taken already?
+	// Errr, wait. How much time has this taken already?
 	if (!$force && microtime(true) - $time_start < 3)
 		return;
 

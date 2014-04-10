@@ -253,7 +253,7 @@ function adminLogin()
 	$context['get_data'] = '?' . construct_query_string($_GET);
 	$context['post_data'] = '';
 
-	// Now go through $_POST.  Make sure the session hash is sent.
+	// Now go through $_POST. Make sure the session hash is sent.
 	$_POST[$context['session_var']] = $context['session_id'];
 	foreach ($_POST as $k => $v)
 		$context['post_data'] .= adminLogin_outputPostVars($k, $v);
@@ -454,7 +454,7 @@ function validateUsername($memID, $username)
 {
 	global $txt;
 
-	// No name?!  How can you register with no name?
+	// No name?! How can you register with no name?
 	if ($username == '')
 		fatal_lang_error('need_username', false);
 

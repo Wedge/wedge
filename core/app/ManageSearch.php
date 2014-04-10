@@ -282,7 +282,7 @@ function EditSearchMethod()
 	// Format the data and index length in kilobytes.
 	foreach ($context['table_info'] as $type => $size)
 	{
-		// If it's not numeric then just break.  This database engine doesn't support size.
+		// If it's not numeric then just break. This database engine doesn't support size.
 		if (!is_numeric($size))
 			break;
 

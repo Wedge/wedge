@@ -12,7 +12,7 @@ if (!defined('WEDGE'))
 	die('Hacking attempt...');
 
 /*	This file contains the functions for displaying and searching in the
-	members list.  It does so with these functions:
+	members list. It does so with these functions:
 
 	void MemberList()
 		- shows a list of registered members.
@@ -439,7 +439,7 @@ function MLSearch()
 		$context['old_search'] = $_REQUEST['search'];
 		$context['old_search_value'] = urlencode($_REQUEST['search']);
 
-		// No fields?  Use default...
+		// No fields? Use default...
 		if (empty($_POST['fields']))
 			$_POST['fields'] = array('name');
 

@@ -12,7 +12,7 @@ if (!defined('WEDGE'))
 	die('Hacking attempt...');
 
 /*	This file is here to make it easier for installed mods to have settings
-	and options.  It uses the following functions:
+	and options. It uses the following functions:
 
 	void ModifySignatureSettings()
 		// !!!

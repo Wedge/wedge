@@ -14,9 +14,9 @@ if (!defined('WEDGE'))
 	die('Hacking attempt...');
 
 /*	This whole file deals almost exclusively with handling avatars,
-	specifically uploaded ones.  It uses, for gifs at least, Gif Util... for
-	more information on that, please see its website, shown above.  The other
-	functions are as follows:
+	specifically uploaded ones. It uses, for gifs at least, Gif Util... for
+	more information on that, please see its website, shown above.
+	The other functions are as follows:
 
 	bool downloadAvatar(string url, int id_member, int max_width,
 			int max_height)
@@ -422,7 +422,7 @@ if (!function_exists('imagecreatefrombmp'))
 					{
 						$color = imagecolorallocate($dst_img, $r, $g, $b);
 
-						// Gah!  Out of colors?  Stupid GD 1... try anyhow.
+						// Gah! Out of colors? Stupid GD 1... try anyhow.
 						if ($color == -1)
 							$color = imagecolorclosest($dst_img, $r, $g, $b);
 					}
@@ -444,7 +444,7 @@ if (!function_exists('imagecreatefrombmp'))
 					{
 						$color = imagecolorallocate($dst_img, $r, $g, $b);
 
-						// Gah!  Out of colors?  Stupid GD 1... try anyhow.
+						// Gah! Out of colors? Stupid GD 1... try anyhow.
 						if ($color == -1)
 							$color = imagecolorclosest($dst_img, $r, $g, $b);
 					}
@@ -472,7 +472,7 @@ if (!function_exists('imagecreatefrombmp'))
 					{
 						$color = imagecolorallocate($dst_img, $r, $g, $b);
 
-						// Gah!  Out of colors?  Stupid GD 1... try anyhow.
+						// Gah! Out of colors? Stupid GD 1... try anyhow.
 						if ($color == -1)
 							$color = imagecolorclosest($dst_img, $r, $g, $b);
 					}

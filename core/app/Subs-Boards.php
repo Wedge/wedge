@@ -12,8 +12,8 @@ if (!defined('WEDGE'))
 	die('Hacking attempt...');
 
 /*	This file is mainly concerned with minor tasks relating to boards, such as
-	marking them read, collapsing categories, or quick moderation.  It defines
-	the following list of functions:
+	marking them read, collapsing categories, or quick moderation.
+	It defines the following list of functions:
 
 	void markBoardsRead(array boards)
 		// !!!

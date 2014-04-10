@@ -443,7 +443,7 @@ function scheduled_daily_maintenance()
 
 	if (!empty($settings['pruneErrorLog']))
 	{
-		// Figure out when our cutoff time is.  1 day = 86400 seconds.
+		// Figure out when our cutoff time is. 1 day = 86400 seconds.
 		$t = time() - $settings['pruneErrorLog'] * 86400;
 
 		wesql::query('
@@ -1288,7 +1288,7 @@ function scheduled_weekly_maintenance()
 
 		if (!empty($settings['pruneModLog']))
 		{
-			// Figure out when our cutoff time is.  1 day = 86400 seconds.
+			// Figure out when our cutoff time is. 1 day = 86400 seconds.
 			$t = time() - $settings['pruneModLog'] * 86400;
 
 			wesql::query('
@@ -1304,10 +1304,10 @@ function scheduled_weekly_maintenance()
 
 		if (!empty($settings['pruneReportLog']))
 		{
-			// Figure out when our cutoff time is.  1 day = 86400 seconds.
+			// Figure out when our cutoff time is. 1 day = 86400 seconds.
 			$t = time() - $settings['pruneReportLog'] * 86400;
 
-			// This one is more complex then the other logs.  First we need to figure out which reports are too old.
+			// This one is more complex then the other logs. First we need to figure out which reports are too old.
 			$reports = array();
 			$result = wesql::query('
 				SELECT id_report
@@ -1350,7 +1350,7 @@ function scheduled_weekly_maintenance()
 
 		if (!empty($settings['pruneScheduledTaskLog']))
 		{
-			// Figure out when our cutoff time is.  1 day = 86400 seconds.
+			// Figure out when our cutoff time is. 1 day = 86400 seconds.
 			$t = time() - $settings['pruneScheduledTaskLog'] * 86400;
 
 			wesql::query('
@@ -1364,7 +1364,7 @@ function scheduled_weekly_maintenance()
 
 		if (!empty($settings['pruneSpiderHitLog']))
 		{
-			// Figure out when our cutoff time is.  1 day = 86400 seconds.
+			// Figure out when our cutoff time is. 1 day = 86400 seconds.
 			$t = time() - $settings['pruneSpiderHitLog'] * 86400;
 
 			wesql::query('

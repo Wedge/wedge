@@ -24,7 +24,7 @@ if (!defined('WEDGE'))
 	array list_getModLogEntries($start, $items_per_page, $sort, $query_string = '', $query_params = array(), $log_type = 1)
 		- Gets the moderation log entries that match the specified paramaters
 		- limit can be an array with two values
-		- search_param and order should be proper SQL strings or blank.  If blank they are not used.
+		- search_param and order should be proper SQL strings or blank. If blank they are not used.
 */
 
 // Show the moderation log
