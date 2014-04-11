@@ -400,6 +400,12 @@ function ob_sessrewrite($buffer)
 	// And a second replacement, in case macros added <URL> again.
 	$buffer = str_replace('<URL>', SCRIPT, $buffer);
 
+	if (isset($settings['page_replacements']))
+	{
+		$pr = unserialize($settings['page_replacements']);
+		$buffer = str_replace(array_keys($pr), array_values($pr), $buffer);
+	}
+
 	if (isset($context['ob_replacements']))
 		$buffer = str_replace(array_keys($context['ob_replacements']), array_values($context['ob_replacements']), $buffer);
 

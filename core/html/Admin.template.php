@@ -1697,11 +1697,11 @@ function template_pretty_urls()
 	</div>';
 
 	echo '
-	<we:cat>
-		', $txt['pretty_settings'], '
-	</we:cat>
-	<div class="windowbg2 wrc">
-		<form id="adminsearch" action="<URL>?action=admin;area=featuresettings;sa=pretty;save" method="post" accept-charset="UTF-8">';
+	<form id="adminsearch" action="<URL>?action=admin;area=featuresettings;sa=pretty;save" method="post" accept-charset="UTF-8">
+		<we:cat>
+			', $txt['pretty_settings'], '
+		</we:cat>
+		<div class="windowbg2 wrc">';
 
 	// Display the filters
 	if (!empty($context['pretty']['filters']))
@@ -1751,12 +1751,40 @@ function template_pretty_urls()
 				<input type="checkbox" name="pretty_remove_index"', $context['pretty']['settings']['index'] ? ' checked' : '', '>
 				', $txt['pretty_remove_index'], '
 			</label>
-			<div class="floatright">
-				<input type="submit" name="save" value="', $txt['pretty_save'], '" class="save">
-			</div>
-		</form>
-		<br class="clear">
-	</div>
+		</div>
+		<we:title>
+			', $txt['pretty_pr_title'], '
+		</we:title>
+		<div class="windowbg2 wrc">
+			', $txt['pretty_pr_desc'], '
+			<dl class="settings">
+				<dt>', $txt['pretty_pr_from'], '</dt>
+				<dd>', $txt['pretty_pr_to'], '</dd>
+			</dl>';
+
+	if (!empty($context['pretty']['settings']['pr']))
+		foreach ($context['pretty']['settings']['pr'] as $from => $to)
+			echo '
+			<dl class="settings">
+				<dt><input name="from[]" size="50" value="', westr::safe($from), '"></dt>
+				<dd><input name="to[]" size="50" value="', westr::safe($to), '"></dd>
+			</dl>';
+
+	echo '
+			<dl class="settings" id="pr">
+				<dt><input name="from[]" size="50"></dt>
+				<dd><input name="to[]" size="50"></dd>
+			</dl>';
+
+	add_js('
+	$("#pr").after($("<input type=button>").val(', JavaScriptEscape($txt['pretty_pr_add']), ').click(function () { $("#pr").clone().insertBefore(this).hide().fadeIn("slow").find("input").val(""); }));');
+
+	echo '
+		</div>
+		<div class="right padding">
+			<input type="submit" name="save" value="', $txt['pretty_save'], '" class="save">
+		</div>
+	</form>
 	<br>
 	<we:cat>
 		', $txt['pretty_maintenance'], '

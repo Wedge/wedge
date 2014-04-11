@@ -1747,7 +1747,8 @@ class wess_base64 extends wess
 
 			foreach ($images as $img => $img_ext)
 			{
-				$path = strpos($this->folder . $img, '../') !== false ? CACHE_DIR . '/css/' . $this->folder . $img : ROOT_DIR . $img;
+				$imgr = str_replace(ROOT, '', $img);
+				$path = strpos($this->folder . $imgr, '../') !== false ? CACHE_DIR . '/css/' . $this->folder . $imgr : ROOT_DIR . $imgr;
 				$absolut = realpath($path);
 
 				// Only small files should be embedded, really. We're saving on hits, not bandwidth.

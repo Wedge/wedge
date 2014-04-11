@@ -591,7 +591,7 @@ function wedge_get_css_filename($add)
  */
 function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false, $ext = '.css', $additional_vars = array())
 {
-	global $css_vars, $context;
+	global $css_vars, $context, $settings;
 
 	$final_folder = substr(CACHE_DIR . '/css/' . $folder, 0, -1);
 	$cachekey = 'css_files-' . $folder . implode('-', $ids);
@@ -648,15 +648,14 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 
 	// Default CSS variables (paths are absolute or, if forum is in a sub-folder, relative to the CSS cache folder)
 	// !!! If subdomains are allowed, should we use absolute paths instead?
-	$relative_root = strpos(str_replace('://', '', ROOT), '/') === false && strpos(ASSETS, ROOT) === 0 ? '' : '../..' . str_repeat('/..', substr_count($folder, '/'));
 	$languages = isset($context['skin_available_languages']) ? $context['skin_available_languages'] : array('english');
 	$css_vars = array(
 		'$language' => isset(we::$user['language']) && in_array(we::$user['language'], $languages) ? we::$user['language'] : $languages[0],
 		'$images_dir' => ASSETS_DIR,
 		'$theme_dir' => SKINS_DIR,
 		'$root_dir' => ROOT_DIR,
-		'$images' => $relative_root . str_replace(ROOT, '', ASSETS),
-		'$root' => $relative_root,
+		'$images' => ASSETS,
+		'$root' => ROOT,
 	);
 	if (!empty($additional_vars))
 		foreach ($additional_vars as $key => $val)
@@ -677,7 +676,7 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 		$local = file_get_contents($file);
 		if (dirname($file) === $deep_folder && strpos(strtolower($local), 'local') !== false)
 			$local = preg_replace('~@(is\h+\([^),]*|(?:else)?if\h+[^\n]*)\blocal\b~i', '@$1true', $local);
-		$final .= str_replace('$here', str_replace(ROOT_DIR, $relative_root, dirname($file)), $local);
+		$final .= str_replace('$here', str_replace(ROOT_DIR, ROOT, dirname($file)), $local);
 	}
 	unset($local);
 
@@ -772,6 +771,29 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 				$final
 			);
 		}
+	}
+
+	// We may want to apply page replacements to CSS files as well.
+	$rep = array();
+	if (isset($settings['page_replacements']))
+		$rep = unserialize($settings['page_replacements']);
+	if (isset($context['ob_replacements']))
+		$rep = array_merge($rep, $context['ob_replacements']);
+	if (!empty($rep))
+		$final = str_replace(array_keys($rep), array_values($rep), $final);
+
+	// Turn url(ROOT/image) into url(/image), but *only* if the CSS file is served from inside ROOT!
+	// We're going to go through page replacements to ensure mydomain/gz/css/ isn't turned into something else.
+	$set_relative = true;
+	if (!empty($rep))
+		foreach ($rep as $key => $val)
+			$set_relative &= strpos($key, 'gz/css') === false;
+
+	if ($set_relative)
+	{
+		preg_match('~.*://[^/]+~', ROOT, $root_root);
+		if (!empty($root_root))
+			$final = str_replace('url(' . $root_root[0], 'url(', $final);
 	}
 
 	// Restore comments as requested.

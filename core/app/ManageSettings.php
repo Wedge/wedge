@@ -12,7 +12,7 @@ if (!defined('WEDGE'))
 	die('Hacking attempt...');
 
 /*	This file is here to make it easier for installed mods to have settings
-	and options.  It uses the following functions:
+	and options. It uses the following functions:
 
 	void ModifyFeatureSettings()
 		// !!!
@@ -360,7 +360,7 @@ function ModifyLogSettings($return_config = false)
 			array('int', 'pruneReportLog', 'postinput' => $txt['days_word'], 'subtext' => $txt['pruneZeroDisable']), // Report to moderator log.
 			array('int', 'pruneScheduledTaskLog', 'postinput' => $txt['days_word'], 'subtext' => $txt['pruneZeroDisable']), // Log of the scheduled tasks and how long they ran.
 			array('int', 'pruneSpiderHitLog', 'postinput' => $txt['days_word'], 'subtext' => $txt['pruneZeroDisable']), // Log of the scheduled tasks and how long they ran.
-			// If you add any additional logs make sure to add them after this point.  Additionally, make sure you add them to the weekly scheduled task.
+			// If you add any additional logs make sure to add them after this point. Additionally, make sure you add them to the weekly scheduled task.
 			// Plugin developers: do NOT use the pruningOptions master variable for this as Wedge may overwrite your setting in the future!
 	);
 
@@ -538,6 +538,11 @@ function ModifyPrettyURLs($return_config = false)
 		if ($profile != '~' && $profile != 'profile/')
 			$profile = 'profile/';
 
+		if (isset($_POST['from']) && array_filter($_POST['from']) != $_POST['from'])
+			foreach ($_POST['from'] as $key => $val)
+				if (empty($val))
+					unset($_POST['from'][$key], $_POST['to'][$key]);
+
 		loadSource('Subs-Admin');
 		updateSettings(
 			array(
@@ -546,9 +551,12 @@ function ModifyPrettyURLs($return_config = false)
 				'pretty_filters' => serialize($settings['pretty_filters']),
 				'pretty_prefix_action' => $action,
 				'pretty_prefix_profile' => $profile,
+				'page_replacements' => isset($_POST['from']) ? serialize(array_combine($_POST['from'], $_POST['to'])) : '',
 			)
 		);
-		updateSettingsFile(array('remove_index' => isset($_POST['pretty_remove_index']) ? ($_POST['pretty_remove_index'] == 'on' ? 1 : 0) : 1));
+		$new_remove_index = isset($_POST['pretty_remove_index']) ? ($_POST['pretty_remove_index'] == 'on' ? 1 : 0) : 1;
+		if (!isset($remove_index) || $new_remove_index != $remove_index)
+			updateSettingsFile(array('remove_index' => $new_remove_index));
 		$settings['pretty_filters'] = unserialize($settings['pretty_filters']);
 
 		if (isset($_REQUEST['pretty_cache']))
@@ -561,13 +569,20 @@ function ModifyPrettyURLs($return_config = false)
 		loadSource('Subs-PrettyUrls');
 		pretty_update_filters();
 
+		// Page replacements may force us to regenerate our CSS files.
+		clean_cache('css');
+
 		redirectexit('action=admin;area=featuresettings;sa=pretty');
 	}
 
 	$context['pretty']['settings'] = array(
 		'cache' => !empty($settings['pretty_enable_cache']) ? $settings['pretty_enable_cache'] : 0,
 		'index' => !empty($remove_index) ? $remove_index : 0,
+		'pr' => !empty($settings['page_replacements']) ? unserialize($settings['page_replacements']) : array(),
 	);
+
+	// Disable page replacements here... Unless you want the input boxes to break. ;)
+	$settings['page_replacements'] = '';
 }
 
 // This is a special function for handling plugins that want to create a simple one-page configuration area through the XML manifest.

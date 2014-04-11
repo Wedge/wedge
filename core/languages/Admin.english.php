@@ -583,6 +583,12 @@ $txt['pretty_filter_actions_example'] = 'http://yoursite.com/index.php?action=he
 $txt['pretty_filter_profiles'] = 'Prettify Profile URLs';
 $txt['pretty_filter_profiles_example'] = 'http://yoursite.com/index.php?action=profile;u=1 &rarr; http://yoursite.com/profile/user-name/<br>As this uses the login name (user name) of an account rather than its display name, it may not be desirable to your users.';
 
+$txt['pretty_pr_title'] = 'Page Replacements';
+$txt['pretty_pr_desc'] = 'You may need to replace a URL with another in a way that doesn\'t follow the pretty URLs rules. This section allows you to, for instance, replace <span class="bbc_tt">my-domain.com/assets/</span> with <span class="bbc_tt">assets.my-static-domain.com/</span>, which might help with performance. But these replacements aren\'t limited to URLs, you can change anything on the page before it\'s shown to your visitors!';
+$txt['pretty_pr_from'] = 'From...';
+$txt['pretty_pr_to'] = 'To...';
+$txt['pretty_pr_add'] = 'Add a replacement';
+
 // Media Gallery
 $txt['media_title'] = 'Media';
 $txt['media_admin_labels_index'] = 'Index';
