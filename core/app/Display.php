@@ -81,6 +81,30 @@ function Display()
 	// OK, set up for the joy that is meta description. The rest we do in the bowels of prepareDisplayContext.
 	$context['meta_description'] = '<META-DESCRIPTION>';
 
+	// Get all the important topic info.
+	$request = wesql::query('
+		SELECT
+			t.num_replies, t.num_views, t.locked, ms.subject, t.is_pinned, t.id_poll, t.id_member_started, ms.icon,
+			t.id_first_msg, t.id_last_msg, t.approved, t.unapproved_posts, t.privacy, ms.poster_time, ms.data AS msgdata,
+			' . (we::$is_guest ? 't.id_last_msg + 1' : 'IFNULL(lt.id_msg, IFNULL(lmr.id_msg, -1)) + 1') . ' AS new_from
+			' . (!empty($settings['recycle_board']) && $settings['recycle_board'] == $board ? ', id_previous_board, id_previous_topic' : '') . '
+		FROM {db_prefix}topics AS t
+			INNER JOIN {db_prefix}messages AS ms ON (ms.id_msg = t.id_first_msg)' . (we::$is_guest ? '' : '
+			LEFT JOIN {db_prefix}log_topics AS lt ON (lt.id_topic = {int:current_topic} AND lt.id_member = {int:current_member})
+			LEFT JOIN {db_prefix}log_mark_read AS lmr ON (lmr.id_board = {int:current_board} AND lmr.id_member = {int:current_member})') . '
+		WHERE t.id_topic = {int:current_topic} AND {query_see_topic}
+		LIMIT 1',
+		array(
+			'current_member' => MID,
+			'current_topic' => $topic,
+			'current_board' => $board,
+		)
+	);
+	$topicinfo = wesql::fetch_assoc($request);
+	wesql::free_result($request);
+	if (!is_array($topicinfo))
+		rejectTopic();
+
 	// Add 1 to the number of views of this topic.
 	if (!we::$user['possibly_robot'] && (empty($_SESSION['last_read_topic']) || $_SESSION['last_read_topic'] != $topic))
 	{
@@ -95,30 +119,6 @@ function Display()
 
 		$_SESSION['last_read_topic'] = $topic;
 	}
-
-	// Get all the important topic info.
-	$request = wesql::query('
-		SELECT
-			t.num_replies, t.num_views, t.locked, ms.subject, t.is_pinned, t.id_poll, t.id_member_started, ms.icon,
-			t.id_first_msg, t.id_last_msg, t.approved, t.unapproved_posts, t.privacy, ms.poster_time, ms.data AS msgdata,
-			' . (we::$is_guest ? 't.id_last_msg + 1' : 'IFNULL(lt.id_msg, IFNULL(lmr.id_msg, -1)) + 1') . ' AS new_from
-			' . (!empty($settings['recycle_board']) && $settings['recycle_board'] == $board ? ', id_previous_board, id_previous_topic' : '') . '
-		FROM {db_prefix}topics AS t
-			INNER JOIN {db_prefix}messages AS ms ON (ms.id_msg = t.id_first_msg)' . (we::$is_guest ? '' : '
-			LEFT JOIN {db_prefix}log_topics AS lt ON (lt.id_topic = {int:current_topic} AND lt.id_member = {int:current_member})
-			LEFT JOIN {db_prefix}log_mark_read AS lmr ON (lmr.id_board = {int:current_board} AND lmr.id_member = {int:current_member})') . '
-		WHERE t.id_topic = {int:current_topic}
-		LIMIT 1',
-		array(
-			'current_member' => MID,
-			'current_topic' => $topic,
-			'current_board' => $board,
-		)
-	);
-	if (wesql::num_rows($request) == 0)
-		fatal_lang_error('not_a_topic', false);
-	$topicinfo = wesql::fetch_assoc($request);
-	wesql::free_result($request);
 
 	$topicinfo['msgdata'] = !empty($topicinfo['msgdata']) ? unserialize($topicinfo['msgdata']) : array();
 	if (!empty($topicinfo['msgdata']['mv_brd']))

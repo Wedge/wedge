@@ -316,8 +316,7 @@ function can_shell_exec()
  */
 function loadBoard()
 {
-	global $txt, $context, $settings;
-	global $board_info, $board, $topic, $user_settings;
+	global $context, $settings, $board_info, $board, $topic, $user_settings;
 
 	// Start the linktree off empty..
 	$context['linktree'] = array();
@@ -355,11 +354,7 @@ function loadBoard()
 		if (!empty($topic))
 			redirectexit('topic=' . $topic . '.msg' . $_REQUEST['msg'] . '#msg' . $_REQUEST['msg']);
 		else
-		{
-			loadPermissions();
-			loadTheme();
-			fatal_lang_error('topic_gone', false);
-		}
+			rejectTopic();
 	}
 
 	// Load this board only if it is specified.
@@ -399,7 +394,7 @@ function loadBoard()
 				mem.real_name' . (!empty($topic) ? ', b.id_board' : '') . ', b.child_level, b.skin, b.skin_mobile,
 				b.override_skin, b.count_posts, b.id_profile, b.redirect, b.language, bm.permission = \'deny\' AS banned,
 				bm.permission = {literal:access} AS allowed, mco.real_name AS owner_name, mco.buddy_list AS contacts, b.board_type, b.sort_method,
-				b.sort_override, b.unapproved_topics, b.unapproved_posts' . (!empty($topic) ? ', t.approved, t.id_member_started' : '') . '
+				b.sort_override, b.unapproved_topics, b.unapproved_posts' . (!empty($topic) ? ', t.approved, t.privacy, t.id_member_started' : '') . '
 			FROM {db_prefix}boards AS b' . (!empty($topic) ? '
 				INNER JOIN {db_prefix}topics AS t ON (t.id_topic = {int:current_topic})' : '') . '
 				LEFT JOIN {db_prefix}categories AS c ON (c.id_cat = b.id_cat)
@@ -450,7 +445,8 @@ function loadBoard()
 				'profile' => $row['id_profile'],
 				'redirect' => $row['redirect'],
 				'posts_count' => empty($row['count_posts']),
-				'cur_topic_approved' => empty($topic) || $row['approved'],
+				'cur_topic_approved' => empty($topic) ? 1 : $row['approved'],
+				'cur_topic_privacy' => empty($topic) ? PRIVACY_DEFAULT : $row['privacy'],
 				'cur_topic_starter' => empty($topic) ? 0 : $row['id_member_started'],
 				'allowed_member' => $row['allowed'],
 				'banned_member' => $row['banned'],
@@ -616,32 +612,38 @@ function loadBoard()
 
 	// Hacker... you can't see this topic, I'll tell you that. (But moderators can!)
 	if (!empty($board_info['error']) && ($board_info['error'] != 'access' || !we::$is['mod']))
-	{
-		// The permissions and theme need loading, just to make sure everything goes smoothly.
-		loadPermissions();
-		loadTheme();
-
-		$_GET['board'] = '';
-		$_GET['topic'] = '';
-
-		// The linktree should not give the game away mate! However, it WILL be available to admins etc. for Who's Online so they can see what's going on.
-		$context['linktree'] = array();
-		add_linktree($context['forum_name_html_safe'], '<URL>');
-
-		// If it's a prefetching agent or we're requesting an attachment.
-		preventPrefetch($context['action'] === 'dlattach');
-
-		if (we::$is_guest)
-		{
-			loadLanguage('Errors');
-			is_not_guest($txt['topic_gone']);
-		}
-		else
-			fatal_lang_error('topic_gone', false);
-	}
+		rejectTopic();
 
 	if (we::$is['mod'])
 		we::$user['groups'][] = 3;
+}
+
+function rejectTopic()
+{
+	global $context, $txt;
+
+	// The permissions and theme need loading, just to make sure everything goes smoothly.
+	loadPermissions();
+	loadTheme();
+
+	$_GET['board'] = '';
+	$_GET['topic'] = '';
+
+	// The linktree should not give the game away, mate! However, it WILL be
+	// available to admins etc. for Who's Online, so they can see what's going on.
+	$context['linktree'] = array();
+	add_linktree($context['forum_name_html_safe'], '<URL>');
+
+	// If it's a prefetching agent or we're requesting an attachment.
+	preventPrefetch($context['action'] === 'dlattach');
+
+	if (we::$is_guest)
+	{
+		loadLanguage('Errors');
+		is_not_guest($txt['topic_gone']);
+	}
+	else
+		fatal_lang_error('topic_gone', false);
 }
 
 /**

@@ -760,7 +760,7 @@ class we
 	 */
 	public static function permissions()
 	{
-		global $settings;
+		global $settings, $topic, $board_info;
 
 		if (allowedTo('bypass_edit_disable'))
 		{
@@ -772,7 +772,7 @@ class we
 
 		// {query_see_topic}, which has basic t.approved tests as well
 		// as more elaborate topic privacy, is set up here.
-		if (self::$is_admin && false)
+		if (self::$is_admin)
 			$user['query_see_topic'] = '1=1';
 
 		elseif (self::$is_guest)
@@ -793,6 +793,20 @@ class we
 		}
 
 		wesql::register_replacement('query_see_topic', $user['query_see_topic']);
+
+		// We only need to test for topic privacy if there a $topic AND a specific action.
+		if (empty($topic) || empty($_GET['action']))
+			return;
+
+		// And only if the privacy or approval flags are giving us an alert.
+		if (isset($board_info['cur_topic_privacy']) && $board_info['cur_topic_privacy'] == PRIVACY_DEFAULT && $board_info['cur_topic_approved'] == 1)
+			return;
+
+		$request = wesql::query('SELECT 1 FROM {db_prefix}topics AS t WHERE id_topic = {int:topic} AND {query_see_topic}', array('topic' => $topic));
+		$wrong = !wesql::num_rows($request);
+		wesql::free_result($request);
+		if ($wrong)
+			rejectTopic();
 	}
 
 	/**
