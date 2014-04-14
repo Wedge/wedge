@@ -1775,7 +1775,7 @@ class wedit
 
 		// Clean up after nobbc ;)
 		$message = preg_replace_callback('~\[nobbc\](.+?)\[/nobbc\]~is', function ($a) {
-			return '[nobbc]' . strtr($a[1], array('[' => '&#91;', ']' => '&#93;', ':' => '&#58;', '@' => '&#64;')) . '[/nobbc]';
+			return '[nobbc]' . strtr($a[1], array('[' => '&#91;', ']' => '&#93;', '://' => '&#58;//', '@' => '&#64;', 'www.' => 'www&#46;')) . '[/nobbc]';
 		}, $message);
 
 		// Remove \r's... they're evil!
