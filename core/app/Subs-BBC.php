@@ -375,10 +375,9 @@ function parse_bbc($message, $type = 'generic', $bbc_options = array()) // $smil
 			{
 				// Are we inside tags that should be auto-linked?
 				$no_autolink_area = false;
-				if (!empty($open_tags))
-					foreach ($open_tags as $open_tag)
-						if (isset($no_autolink_tags[$open_tag['tag']]))
-							$no_autolink_area = true;
+				foreach ($open_tags as $open_tag)
+					if (isset($no_autolink_tags[$open_tag['tag']]))
+						$no_autolink_area = true;
 
 				// Don't go backwards.
 				// !! Don't think is the real solution....
@@ -396,8 +395,8 @@ function parse_bbc($message, $type = 'generic', $bbc_options = array()) // $smil
 
 						// Only do this if the preg survives.
 						if (is_string($result = preg_replace(array(
-							'`(?<=[\s>.(;\'"]|^)((?:http|https)://[\w%@:|-]+(?:\.[\w%-]+)*(?::\d+)?(?:/[\w~%.@,?&;=#+:\'\\\\!(){}-]*)*[/\w~%@?;=#}\\\\-])`i',
-							'`(?<=[\s>.(;\'"]|^)((?:ftp|ftps)://[\w%@:|-]+(?:\.[\w%-]+)*(?::\d+)?(?:/[\w~%.@,?&;=#(){}+:\'\\\\-]*)*[/\w~%@?;=#}\\\\-])`i',
+							'`(?<=[\s>.(;\'"]|^)(https?://[\w%@:|-]+(?:\.[\w%-]+)*(?::\d+)?(?:/[\w~%.@,?&;=#+:\'\\\\!(){}-]*)*[/\w~%@?;=#}\\\\-])`i',
+							'`(?<=[\s>.(;\'"]|^)(ftps?://[\w%@:|-]+(?:\.[\w%-]+)*(?::\d+)?(?:/[\w~%.@,?&;=#(){}+:\'\\\\-]*)*[/\w~%@?;=#}\\\\-])`i',
 							'`(?<=[\s>(\'<]|^)(www(?:\.[\w-]+)+(?::\d+)?(?:/[\w~%.@!,?&;=#(){}+:\'\\\\-]*)*[/\w~%@?;=#}\\\\-])`i'
 						), array(
 							'[url]$1[/url]',

@@ -400,14 +400,11 @@ function ob_sessrewrite($buffer)
 	// And a second replacement, in case macros added <URL> again.
 	$buffer = str_replace('<URL>', SCRIPT, $buffer);
 
+	// Page replacements. Add them via add_replacement() or the Pretty URLs admin page.
+	$pr = isset($context['ob_replacements']) ? $context['ob_replacements'] : array();
 	if (isset($settings['page_replacements']))
-	{
-		$pr = unserialize($settings['page_replacements']);
-		$buffer = str_replace(array_keys($pr), array_values($pr), $buffer);
-	}
-
-	if (isset($context['ob_replacements']))
-		$buffer = str_replace(array_keys($context['ob_replacements']), array_values($context['ob_replacements']), $buffer);
+		$pr = array_merge($pr, unserialize($settings['page_replacements']));
+	$buffer = str_replace(array_keys($pr), array_values($pr), $buffer);
 
 	// Load cached membergroup ids.
 	if (($members_groups = cache_get_data('member-groups', 5000)) === null)
