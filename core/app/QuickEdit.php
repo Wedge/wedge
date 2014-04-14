@@ -117,9 +117,6 @@ function QuickEdit()
 		}
 		else
 		{
-			loadSource('media/Aeva-Embed');
-			$_POST['message'] = westr::safe(aeva_onposting($_POST['message']), ENT_QUOTES);
-
 			wedit::preparsecode($_POST['message']);
 
 			if (westr::htmltrim(strip_tags(parse_bbc($_POST['message'], 'empty-test', array('smileys' => false)), '<img><object><embed><iframe><video><audio>')) === '')
