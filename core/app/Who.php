@@ -597,8 +597,8 @@ function determineActions($urls, $preferred_prefix = false, $override_mem = fals
 			if (!empty($error_message))
 				$data[$k] = '<img src="' . ASSETS . '/' . ($is_warn ? 'who_warn' : 'who_error') . '.gif" title="' . $error_message . '" alt="' . $error_message . '"> ' . $data[$k];
 
-			// !!! Should we store the full URL into the session, � la Noisen?
-			$data[$k] .= ' (<abbr title="' . htmlspecialchars(var_export($actions, true), ENT_QUOTES) . '">?</abbr>)';
+			// !!! Should we store the full URL into the session, à la Noisen?
+			$data[$k] .= ' (<abbr title="' . htmlspecialchars(str_replace("\n  ", "\n", preg_replace('~^array \((.*?),?\s*\)$~s', '$1', var_export($actions, true))), ENT_QUOTES) . '">?</abbr>)';
 		}
 
 	// While the above whos_online hook is good for more complex cases than action=x;sa=y, it's not particularly efficient if you're dealing with multiple lookups and so on. Thus the bulk hook too.
