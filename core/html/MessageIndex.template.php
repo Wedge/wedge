@@ -348,30 +348,30 @@ function template_messageindex_childboards()
 
 		foreach ($context['boards'] as $board)
 		{
-			$age = isset($board['age']) ? $board['age'] : ($board['new'] ? 0 : PHP_INT_MAX);
-			$age_class = !empty($board['new']) || $age < 24 * 3600 ? 'day' : ($age < 7 * 24 * 3600 ? 'week' : ($age < 31 * 24 * 3600 ? 'month' : ($age < 365 * 24 * 3600 ? 'year' : 'old')));
 			$nb = !empty($nb_new[$board['id']]) ? $nb_new[$board['id']] : '';
+			$boardstate = 'boardstate' . (SKIN_MOBILE ? ' mobile' : '');
 
 			echo '
 				<tr id="board_', $board['id'], '" class="windowbg2">
-					<td class="icon windowbg"', !empty($board['children']) ? ' rowspan="2"' : '', '>';
+					<td class="', SKIN_MOBILE ? 'info"' : 'windowbg icon"' . (!empty($board['children']) ? ' rowspan="2"' : ''), '>
+						<a href="<URL>?action=unread;board=' . $board['id'] . ';children" title="' . $txt['show_unread'] . '">';
 
 			// If this board is told to have a custom icon, use it.
 			if (!empty($board['custom_class']))
 				echo '
-							<div class="boardstate ', $board['custom_class'], '"', !empty($board['custom_title']) ? ' title="' . $board['custom_title'] . '"' : '', '></div>';
+							<div class="', $boardstate, ' ', $board['custom_class'], '"', !empty($board['custom_title']) ? ' title="' . $board['custom_title'] . '"' : '', '></div>';
 			// Is it a redirection board?
 			elseif ($board['is_redirect'])
 				echo '
-							<div class="boardstate link" title="', $txt['redirect_board'], '"></div>';
+							<div class="', $boardstate, ' link" title="', $txt['redirect_board'], '"></div>';
 			// Show an indicator of the board's recent activity.
 			else
 				echo '
-							<div class="boardstate age-', $age_class, '"></div>';
+							<div class="', $boardstate, empty($board['new']) ? '' : ' unread', '"></div>';
 
-			echo '
+				echo '</div></a>', SKIN_MOBILE ? '' : '
 					</td>
-					<td class="info">
+					<td class="info">', '
 						', $settings['display_flags'] == 'all' || ($settings['display_flags'] == 'specified' && !empty($board['language'])) ? '<img src="' . LANGUAGES . $context['languages'][$board['language']]['folder'] . '/Flag.' . $board['language'] . '.png">&nbsp; ': '', '<a', $board['redirect_newtab'] ? ' target="_blank"' : '', ' class="subject" href="', $board['href'], '" id="b', $board['id'], '">', $board['name'], '</a>';
 
 			// Has it outstanding posts for approval?
@@ -381,7 +381,7 @@ function template_messageindex_childboards()
 
 				if ($nb)
 					echo '
-						<a href="<URL>?action=unread;board=', $board['id'], '.0;children', '" class="notevoid" title="', $txt['show_unread'], '">', $nb, '</a>';
+						<a href="<URL>?action=unread;board=', $board['id'], '.0;children', '" class="note" title="', $txt['show_unread'], '">', $nb, '</a>';
 
 				if (!empty($board['description']))
 					echo '

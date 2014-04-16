@@ -1373,12 +1373,14 @@ function get_unread_numbers($posts, $straight_list = false, $is_boards = false)
 		FROM {db_prefix}messages AS m
 			LEFT JOIN {db_prefix}log_topics AS lt ON (lt.id_topic = m.id_topic AND lt.id_member = {int:id_member})
 			LEFT JOIN {db_prefix}log_mark_read AS lmr ON (lmr.id_board = m.id_board AND lmr.id_member = {int:id_member})
-		WHERE m.' . $where . ' IN ({array_int:has_unread})
+		WHERE m.' . $where . ' IN ({array_int:has_unread})' . ($is_boards ? '
+			AND (m.id_msg > {int:last_visit})' : '') . '
 			AND (m.id_msg > IFNULL(lt.id_msg, IFNULL(lmr.id_msg, 0)))
 		GROUP BY m.' . $where,
 		array(
 			'id_member' => MID,
-			'has_unread' => $has_unread
+			'has_unread' => $has_unread,
+			'last_visit' => $_SESSION['id_msg_last_visit'],
 		)
 	);
 	while ($row = wesql::fetch_assoc($request))

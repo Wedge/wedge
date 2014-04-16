@@ -1475,25 +1475,19 @@ div.top_row dd
 	width: 37px
 	height: 42px
 	font-size: 1.2em
-
-	&.link
-		opacity: .6
-		:after
-			content: "\bb"
-			position: absolute
-			bottom, right: 9px
-
-.age-week
-	opacity: .8
-
-.age-month
 	opacity: .6
 
-.age-year
-	opacity: .4
+	&.link:after
+		content: "\bb"
+		position: absolute
+		bottom, right: 9px
 
-.age-old
-	opacity: .2
+	&.unread
+		opacity: 1
+
+	&.mobile
+		float: left
+		margin-right: 8px
 
 /* More icons.
 ------------------------------------------------- */

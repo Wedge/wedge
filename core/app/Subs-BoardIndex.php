@@ -82,7 +82,7 @@ function getBoardIndex($boardIndexOptions)
 		$ignoreThisBoard = in_array($row_board['id_board'], we::$user['ignoreboards']);
 
 		$board_time = forum_time(true, $row_board['poster_time']);
-		$posted_today = $row_board['poster_name'] !== '' && ($current_time - $board_time < 24 * 3600);
+		$posted_today = $row_board['poster_name'] !== '' && (we::$is_guest ? $current_time - $board_time < 24 * 3600 : $row_board['id_msg'] > $_SESSION['id_msg_last_visit']);
 		$context['board_ids'][$row_board['id_board']] = $row_board['id_board'];
 
 		if ($boardIndexOptions['include_categories'])
@@ -105,7 +105,7 @@ function getBoardIndex($boardIndexOptions)
 				$categories[$row_board['id_cat']]['link'] = $row_board['cat_name'];
 			}
 
-			// If this board has new posts in it (and isn't the recycle bin!) then the category is new.
+			// If this board has new posts in it (and isn't the recycle bin!), then the category is 'new'.
 			if (empty($settings['recycle_enable']) || $settings['recycle_board'] != $row_board['id_board'])
 				$categories[$row_board['id_cat']]['new'] |= $posted_today;
 
@@ -151,7 +151,6 @@ function getBoardIndex($boardIndexOptions)
 					'href' => '<URL>?board=' . $row_board['id_board'] . '.0',
 					'link' => '<a href="<URL>?board=' . $row_board['id_board'] . '.0">' . $row_board['board_name'] . '</a>',
 					'language' => $row_board['language'],
-					'age' => $current_time - $board_time,
 					'new' => $posted_today,
 				);
 			}
@@ -184,7 +183,6 @@ function getBoardIndex($boardIndexOptions)
 				'can_approve_posts' => !empty(we::$user['mod_cache']['ap']) && (we::$user['mod_cache']['ap'] == array(0) || in_array($row_board['id_board'], we::$user['mod_cache']['ap'])),
 				'href' => '<URL>?board=' . $row_board['id_board'] . '.0',
 				'link' => '<a href="<URL>?board=' . $row_board['id_board'] . '.0">' . $row_board['board_name'] . '</a>',
-				'age' => $current_time - $board_time,
 				'new' => $posted_today,
 			);
 
@@ -434,7 +432,6 @@ function getBoardIndex($boardIndexOptions)
 				$err = !empty($settings['app_error_count']) ? (int) $settings['app_error_count'] : 0;
 				$thiscat['mod']['boards']['logs']['children']['err'] = array(
 					'new' => !empty($err),
-					'age' => !empty($err) ? 0 : PHP_INT_MAX,
 					'id' => 'errlog',
 					'name' => $txt['errlog'],
 					'description' => '',
