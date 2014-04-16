@@ -194,6 +194,7 @@ function ModifyProfile($post_errors = array())
 					'label' => $txt['notifications_all'],
 					'file' => 'Notifications',
 					'function' => 'weNotif::profile',
+					'sc' => 'post',
 					'subsections' => array(
 						'general' => array($txt['notifications_general']),
 						'posts' => array($txt['notifications_posts']),

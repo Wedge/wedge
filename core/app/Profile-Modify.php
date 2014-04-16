@@ -1935,7 +1935,7 @@ function notification($memID)
 		'width' => '100%',
 		'no_items_label' => $txt['notifications_boards_none'] . '<br><br>' . $txt['notifications_boards_howto'],
 		'no_items_align' => 'left',
-		'base_href' => '<URL>?action=profile;u=' . $memID . ';area=notification',
+		'base_href' => '<URL>?action=profile;u=' . $memID . ';area=notifications',
 		'default_sort_col' => 'board_name',
 		'get_items' => array(
 			'function' => 'list_getBoardNotifications',
@@ -1976,7 +1976,7 @@ function notification($memID)
 			),
 		),
 		'form' => array(
-			'href' => '<URL>?action=profile;area=notification;save',
+			'href' => '<URL>?action=profile;area=notifications;save',
 			'include_sort' => true,
 			'include_start' => true,
 			'hidden_fields' => array(
@@ -2004,7 +2004,7 @@ function notification($memID)
 		'items_per_page' => $settings['defaultMaxMessages'],
 		'no_items_label' => $txt['notifications_topics_none'] . '<br><br>' . $txt['notifications_topics_howto'],
 		'no_items_align' => 'left',
-		'base_href' => '<URL>?action=profile;u=' . $memID . ';area=notification',
+		'base_href' => '<URL>?action=profile;u=' . $memID . ';area=notifications',
 		'default_sort_col' => 'last_post',
 		'get_items' => array(
 			'function' => 'list_getTopicNotifications',
@@ -2084,7 +2084,7 @@ function notification($memID)
 			),
 		),
 		'form' => array(
-			'href' => '<URL>?action=profile;area=notification;save',
+			'href' => '<URL>?action=profile;area=notifications;save',
 			'include_sort' => true,
 			'include_start' => true,
 			'hidden_fields' => array(
