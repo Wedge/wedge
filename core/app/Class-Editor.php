@@ -1968,8 +1968,13 @@ class wedit
 				foreach ($table_array as $tag)
 					$parts[$i] .= '[/' . $tag . ']';
 			}
+			// Inside code tags, protect anything that's not parsed the regular way.
 			if ($i % 4 == 2)
-				$parts[$i] = str_ireplace(array('[nb]', '[/nb]'), array('&#91;nb]', '&#91;/nb]'), $parts[$i]);
+				$parts[$i] = str_ireplace(
+					array('[nb]', '[/nb]', '://', 'www.'),
+					array('&#91;nb]', '&#91;/nb]', '&#58;//', 'www&#46;'),
+					$parts[$i]
+				);
 		}
 
 		// Put it back together!
