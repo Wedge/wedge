@@ -9,7 +9,7 @@
 
 @language index;
 
-var can_sticky;
+var can_sticky, sticky_count = 0;
 
 $(function ()
 {
@@ -19,20 +19,21 @@ $(function ()
 	test_sticky.style.position = 'sticky';
 	can_sticky = test_sticky.style.position.indexOf('sticky') >= 0;
 
-	// Anything that should be run when coming back to the tab, too.
-	$(document).on('visibilitychange msvisibilitychange mozvisibilitychange webkitvisibilitychange', page_showing);
-	page_showing();
-
 	// Only execute this on MessageIndex pages.
-	if (!$('#messageindex').length)
+	if ($('#messageindex').length)
+		// Fix icons in MessageIndex
+		$.each('.locked .pinned .poll .my'.split(' '), function (key, val) {
+			$('.subject' + val).each(function () {
+				$('<span/>').addClass('floatright icon_' + val.slice(1)).prependTo(this);
+			});
+		});
+
+	if (!$('#forumposts').length)
 		return;
 
-	// Fix icons in MessageIndex
-	$.each('.locked .pinned .poll .my'.split(' '), function (key, val) {
-		$('.subject' + val).each(function () {
-			$('<span/>').addClass('floatright icon_' + val.slice(1)).prependTo(this);
-		});
-	});
+	// Anything that should be run when coming back to the tab, too.
+	$(window).resize(page_showing);
+	page_showing();
 });
 
 $(window).load(function ()
@@ -186,8 +187,8 @@ $(window).load(function ()
 
 function page_showing()
 {
-	if (document.hidden || document.webkitHidden || document.msHidden || document.mozHidden)
-		return;
+	if ($('.poster>div').width() < 20 && sticky_count++ < 20)
+		return setTimeout(page_showing, 50);
 
 	if (!is_touch && !can_sticky)
 		$('.poster,.poster>div').css('min-height', 0).css('position', '').width('').each(function () { $(this).width($(this).width()).css('min-height', $(this).height()); });
