@@ -28,12 +28,16 @@ $(function ()
 			});
 		});
 
+	// Run this when coming (back) to the tab.
+	$(document).on('visibilitychange msvisibilitychange mozvisibilitychange webkitvisibilitychange', page_showing);
+	page_showing();
+
 	if (!$('#forumposts').length)
 		return;
 
-	// Anything that should be run when coming back to the tab, too.
-	$(window).resize(page_showing);
-	page_showing();
+	// Run this when resizing the window.
+	$(window).resize(page_sizing);
+	page_sizing();
 });
 
 $(window).load(function ()
@@ -185,14 +189,19 @@ $(window).load(function ()
 	});
 });
 
+function page_sizing()
+{
+	if (is_touch || can_sticky)
+		return;
+
+	if ($('.poster>div').width() < 20 && sticky_count++ < 20)
+		return setTimeout(page_sizing, 50);
+
+	$('.poster,.poster>div').css('min-height', 0).css('position', '').width('').each(function () { $(this).width($(this).width()).css('min-height', $(this).height()); });
+}
+
 function page_showing()
 {
-	if ($('.poster>div').width() < 20 && sticky_count++ < 20)
-		return setTimeout(page_showing, 50);
-
-	if (!is_touch && !can_sticky)
-		$('.poster,.poster>div').css('min-height', 0).css('position', '').width('').each(function () { $(this).width($(this).width()).css('min-height', $(this).height()); });
-
 	// Relative timestamps!
 	$('time[datetime]').each(function () {
 		var time = Math.max(2, +new Date - Date.parse($(this).attr('datetime'))), str;
