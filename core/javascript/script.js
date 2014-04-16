@@ -687,6 +687,7 @@ $(window).load(function ()
  */
 
 @if member
+{
 	$(function ()
 	{
 		var
@@ -915,7 +916,7 @@ $(window).load(function ()
 		// Call this every minute or 10 minutes, depending on page visibility. Note that old browsers will call every minute on every tab... Not good :-/
 		setTimeout(auto_update, document.hidden || document.webkitHidden || document.mozHidden || document.msHidden || is_ie8down ? 600000 : 60000);
 	});
-@endif
+}
 
 
 // *** weToggle class.
@@ -954,15 +955,15 @@ function weToggle(opt)
 		// Update the new state.
 		collapsed = +bCollapse;
 
-		@if guest
+		@if guest {
 			// Update the cookie, if desired.
 			if (opt.sOption)
 				document.cookie = opt.sOption + '=' + collapsed;
-		@else
+		} @else {
 			// Set a theme option through JavaScript.
 			if (!bInit && opt.sOption)
 				$.post(weUrl('action=ajax;sa=opt;' + we_sessvar + '=' + we_sessid + (opt.sExtra || '')), { v: opt.sOption, val: collapsed });
-		@endif
+		}
 	};
 
 	// Reverse the current state.
@@ -978,8 +979,13 @@ function weToggle(opt)
 	// If cookies are enabled and our toggler cookie is set to '1', override the initial state.
 	// Note: the cookie retrieval code is below, you can turn it into a function.
 	// It's not used anywhere else in Wedge, which is why we won't bother with a weCookie object.
-	if (@if (member) opt.isCollapsed @else document.cookie.search('\\b' + opt.sOption + '\\s*=\\s*1\\b') != -1 @endif)
-		this.cs(true, true);
+	@if member {
+		if (opt.isCollapsed)
+			this.cs(true, true);
+	} @else {
+		if (document.cookie.search('\\b' + opt.sOption + '\\s*=\\s*1\\b') != -1)
+			this.cs(true, true);
+	}
 
 	// Initialize the images to be clickable.
 	$.each(opt.aSwapImages || [], function () {
@@ -1035,6 +1041,7 @@ function JumpTo(control)
 
 
 @if member
+{
 	// *** Generic privacy dropdown
 	function PrivacySelector(privacy, privacy_public, privacy_members, privacy_author)
 	{
@@ -1186,7 +1193,7 @@ function JumpTo(control)
 			.click(function () { oThought.edit(0, 0, 1); })
 			.find('span').html($txt['add_thought']);
 	}
-@endif
+}
 
 /* Optimize:
 _formSubmitted = _f

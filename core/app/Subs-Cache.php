@@ -115,7 +115,8 @@ function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow =
 		return;
 
 	// Add the 'm' keyword for member files -- using 'member' would add an extra couple of bytes per page for no reason.
-	$id .= (we::$is_guest ? '' : 'm-');
+	$id .= (we::$is_member && !we::$is_admin ? 'm-' : '');
+	$id .= (we::$is_admin ? 'a-' : '');
 	$id = !empty($settings['obfuscate_filenames']) ? md5(substr($id, 0, -1)) . '-' : $id;
 	$latest_date %= 1000000;
 
@@ -203,7 +204,9 @@ function add_plugin_js_file($plugin_name, $files = array(), $is_direct_url = fal
 	if (empty($files))
 		return;
 
-	$id = substr(strrchr($context['plugins_dir'][$plugin_name], '/'), 1) . '-' . $id . (we::$is_guest ? '' : 'member-');
+	$id = substr(strrchr($context['plugins_dir'][$plugin_name], '/'), 1) . '-' . $id;
+	$id .= (we::$is_member && !we::$is_admin ? 'm-' : '');
+	$id .= (we::$is_admin ? 'a-' : '');
 	$id = !empty($settings['obfuscate_filenames']) ? md5(substr($id, 0, -1)) . '-' : $id;
 	$latest_date %= 1000000;
 
@@ -984,11 +987,6 @@ function dynamic_admin_menu_icons()
 	return $rep;
 }
 
-function wedge_js_replace_ifs($match)
-{
-	return $match[1] == (we::$is_guest ? 'guest' : 'member') ? $match[2] : (isset($match[3]) ? $match[3] : '');
-}
-
 /**
  * Create a compact JS file that concatenates and compresses a list of existing JS files.
  *
@@ -1127,8 +1125,13 @@ function wedge_cache_js($id, &$lang_name, $latest_date, $ext, $js, $gzip = false
 		$lang_name = '';
 	}
 
-	// Member or guest? We need a (short) callback function because it preserves all quotes.
-	$final = preg_replace_callback('~@if\s*\(?(guest|member)\b\)?(.*?)(?:@else\b(.*?))?@endif\b~is', 'wedge_js_replace_ifs', $final);
+	// The @if {} (with/without @else {}) compiler directives allow you
+	// to output blocks of code only for members, guests or admins.
+	$final = preg_replace_callback(
+		'~@if\s*\(?(guest|member|admin)\s*\)?\s*({((?:(?>[^{}]+)|(?-2))*)})(?:\s*@else\s*({((?:(?>[^{}]+)|(?-2))*)}))?~i',
+		function ($match) { return !empty(we::$is[$match[1]]) ? $match[3] : (isset($match[5]) ? $match[5] : ''); },
+		$final
+	);
 
 	if (!$closure_failed && !is_callable('curl_exec') && !preg_match('~1|yes|on|true~i', ini_get('allow_url_fopen')))
 		$closure_failed = true;

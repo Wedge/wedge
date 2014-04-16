@@ -111,10 +111,10 @@ $(window).load(function ()
 		follow_me();
 	}
 
-	@if member
+	@if member {
 		// Run the post icon init code.
 		IconList();
-	@endif
+	}
 
 	/*
 		This is the code for the infinite scrolling feature.
@@ -242,6 +242,7 @@ function expandThumb(thumbID)
 }
 
 @if member
+{
 	function likePost(obj)
 	{
 		var iMessageId = $(obj).closest('.msg').attr('id').slice(3);
@@ -255,7 +256,7 @@ function expandThumb(thumbID)
 
 		return false;
 	}
-@endif
+}
 
 function go_up()
 {
@@ -270,6 +271,7 @@ function go_down()
 }
 
 @if member
+{
 	function modify_topic(topic_id, first_msg_id)
 	{
 		var cur_topic_id, cur_msg_id, $cur_subject_div, buff_subject, in_edit_mode = false,
@@ -381,7 +383,7 @@ function go_down()
 			show_edit($('subject', XMLDoc).text().php_unhtmlspecialchars().replace(/&#039;/g, "'"));
 		});
 	}
-@endif
+}
 
 
 // *** QuickReply object.
@@ -442,6 +444,7 @@ function QuickReply(opt)
 
 
 @if member
+{
 	// *** QuickEdit object.
 	function QuickEdit(tabindex)
 	{
@@ -781,4 +784,4 @@ function QuickReply(opt)
 		// Replace all message icons by icons with hoverable and clickable div's.
 		$('.can-mod .messageicon').addClass('iconbox').click(open_popup);
 	}
-@endif
+}

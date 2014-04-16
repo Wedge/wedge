@@ -420,6 +420,7 @@ weButtonBox.prototype.setSelect = function (sSelectName, sValue)
 */
 
 @if member
+{
 	function wedge_autoDraft(opt)
 	{
 		this.opt = opt;
@@ -506,4 +507,4 @@ weButtonBox.prototype.setSelect = function (sSelectName, sValue)
 			});
 		});
 	};
-@endif
+}
