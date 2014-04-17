@@ -213,14 +213,13 @@ function determine_action($action)
 		}
 	}
 	// If guest access is off, a guest can only do one of the very few following actions.
-	elseif (empty($settings['allow_guestAccess']) && we::$is_guest && (empty($action) || !in_array($action, array('coppa', 'login', 'login2', 'register', 'register2', 'reminder', 'activate', 'mailq', 'verification'))))
+	elseif (empty($settings['allow_guestAccess']) && we::$is_guest && (empty($action) || !in_array($action, array('coppa', 'login', 'login2', 'register', 'register2', 'reminder', 'activate', 'verification'))))
 	{
 		loadSource('Subs-Auth');
 		return 'KickGuest';
 	}
-	// The user might need to reagree to the agreement; post2 is here so we don't break drafts for posts
-	// because that would really suck otherwise and PMs are allowed in case someone wants to discuss it.
-	elseif (!empty($settings['agreement_force']) && (we::$user['activated'] == 6 && !we::$is_admin) && (empty($action) || !in_array($action, array('login', 'login2', 'logout', 'reminder', 'activate', 'mailq', 'post2', 'pm'))))
+	// The user might need to reagree to the agreement; post2 is here for draft compatibility, and PMs so that you can discuss said agreement.
+	elseif (!empty($settings['agreement_force']) && (we::$user['activated'] == 6 && !we::$is_admin) && (empty($action) || !in_array($action, array('login', 'login2', 'logout', 'reminder', 'activate', 'post2', 'pm'))))
 	{
 		loadSource('Subs-Auth');
 		return 'Reagree';
