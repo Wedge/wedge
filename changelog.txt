@@ -1,8 +1,9 @@
 
-Version 1.0 Alpha 1                             February ??, 2014
+Version 1.0 Alpha session                        January 21, 2014
 -----------------------------------------------------------------
 + Everything that was written in the last 14 months.
 @ This is the first public alpha. Yay!
+@ No official package released, only snapshots.
 
 Version 0.1 Alpha 2                              November 6, 2012
 -----------------------------------------------------------------
