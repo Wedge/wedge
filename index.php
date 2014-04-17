@@ -11,7 +11,7 @@
 if (defined('WEDGE'))
 	return;
 
-define('WEDGE_VERSION', '1.0-alpha-1');
+define('WEDGE_VERSION', '1.0-alpha');
 define('WEDGE', 3); // Internal snapshot number.
 
 // Get everything started up...
