@@ -88,3 +88,8 @@ a:link, a:hover, a:visited
 	font: italic .9em "Segoe UI", Arial, sans-serif
 	margin: .5em 0 2ex 2em
 	color: #666
+
+.lang_file
+	margin-top: 8px
+	.sbox
+		vertical-align: -8px

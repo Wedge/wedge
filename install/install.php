@@ -202,13 +202,22 @@ function load_lang_file()
 		// Don't use scandir(), as we're not sure about PHP 5 support for now.
 		$dir = dir($folder);
 		while ($entry = $dir->read())
+		{
 			if (substr($entry, 0, 8) == 'Install.' && substr($entry, -4) == '.php')
 			{
 				$txt = array();
 				require_once($folder . '/index.' . substr($entry, 8));
 				if (!empty($txt['lang_name']))
-					$incontext['detected_languages'][$entry] = '&lt;img src="core/languages/Flag.' . substr($entry, 8, strlen($entry) - 12) . '.png"&gt; ' . $txt['lang_name'];
+					$incontext['detected_languages'][substr($entry, 8, -4)] = '&lt;img src="core/languages/Flag.' . substr($entry, 8, -4) . '.png"&gt; ' . $txt['lang_name'];
 			}
+			elseif (is_dir($folder . '/' . $entry) && file_exists($folder . '/' . $entry . '/Install.' . $entry . '.php'))
+			{
+				$txt = array();
+				require_once($folder . '/' . $entry . '/index.' . $entry . '.php');
+				if (!empty($txt['lang_name']))
+					$incontext['detected_languages'][$entry] = '&lt;img src="core/languages/' . $entry . '/Flag.' . $entry . '.png"&gt; ' . $txt['lang_name'];
+			}
+		}
 		$dir->close();
 	}
 
@@ -245,12 +254,12 @@ function load_lang_file()
 
 	// Override the language file?
 	if (isset($_GET['lang_file']))
-		$_SESSION['installer_temp_lang'] = $_GET['lang_file'];
+		$_SESSION['installer_temp_lang'] = 'Install.' . $_GET['lang_file'] . '.php';
 	elseif (isset($GLOBALS['HTTP_GET_VARS']['lang_file']))
-		$_SESSION['installer_temp_lang'] = $GLOBALS['HTTP_GET_VARS']['lang_file'];
+		$_SESSION['installer_temp_lang'] = 'Install.' . $GLOBALS['HTTP_GET_VARS']['lang_file'] . '.php';
 
 	// Make sure it exists, if it doesn't reset it.
-	if (!isset($_SESSION['installer_temp_lang']) || preg_match('~[^.\w-]~', $_SESSION['installer_temp_lang']) === 1 || !file_exists(LANGUAGES_DIR . '/' . $_SESSION['installer_temp_lang']))
+	if (!isset($_SESSION['installer_temp_lang']) || preg_match('~[^.\w-]~', $_SESSION['installer_temp_lang']) === 1 || (!file_exists(LANGUAGES_DIR . '/' . $_SESSION['installer_temp_lang']) && !file_exists(LANGUAGES_DIR . '/' . substr($_SESSION['installer_temp_lang'], 8, -4) . '/' . $_SESSION['installer_temp_lang'])))
 	{
 		loadSource('Subs');
 		$lang = get_preferred_language();
@@ -267,7 +276,7 @@ function load_lang_file()
 		require_once(
 			file_exists(LANGUAGES_DIR . '/' . $_SESSION['installer_temp_lang']) ?
 				LANGUAGES_DIR . '/' . $_SESSION['installer_temp_lang'] :
-				LANGUAGES_DIR . '/' . str_replace(array('Install.', '.php'), '', $_SESSION['installer_temp_lang']) . '/' . $_SESSION['installer_temp_lang']
+				LANGUAGES_DIR . '/' . substr($_SESSION['installer_temp_lang'], 8, -4) . '/' . $_SESSION['installer_temp_lang']
 		);
 }
 
@@ -1950,12 +1959,13 @@ function template_welcome_message()
 	{
 		echo '
 	<div>
-		<form action="', $installurl, '">
+		<form action="', $installurl, '" class="lang_file">
 			<label>', $txt['installer_language'], ': <select name="lang_file" onchange="location = \'', $installurl, '?lang_file=\' + $(this).val();">';
 
+		$my_lang = isset($_SESSION['installer_temp_lang']) ? substr($_SESSION['installer_temp_lang'], 8, -4) : '';
 		foreach ($incontext['detected_languages'] as $lang => $name)
 			echo '
-				<option', isset($_SESSION['installer_temp_lang']) && $_SESSION['installer_temp_lang'] == $lang ? ' selected' : '', ' value="', $lang, '">', $name, '</option>';
+				<option', $my_lang == $lang ? ' selected' : '', ' value="', $lang, '">', $name, '</option>';
 
 		echo '
 			</select></label>
