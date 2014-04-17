@@ -335,6 +335,7 @@ function template_messageindex_childboards()
 
 	if (!empty($context['boards']) && (!empty($options['show_children']) || $context['start'] == 0))
 	{
+		$alt = false;
 		$nb_new = get_unread_numbers($context['board_ids'], false, true);
 
 		echo '
@@ -348,12 +349,13 @@ function template_messageindex_childboards()
 
 		foreach ($context['boards'] as $board)
 		{
+			$alt = !$alt;
 			$nb = !empty($nb_new[$board['id']]) ? $nb_new[$board['id']] : '';
 			$boardstate = 'boardstate' . (SKIN_MOBILE ? ' mobile' : '');
 
 			echo '
-				<tr id="board_', $board['id'], '" class="windowbg2">
-					<td class="', SKIN_MOBILE ? 'info"' : 'windowbg icon"' . (!empty($board['children']) ? ' rowspan="2"' : ''), '>
+				<tr id="board_', $board['id'], '" class="windowbg', $alt ? '2' : '', '">
+					<td class="', SKIN_MOBILE ? 'info"' : 'icon"' . (!empty($board['children']) ? ' rowspan="2"' : ''), '>
 						<a href="<URL>?action=unread;board=' . $board['id'] . ';children" title="' . $txt['show_unread'] . '">';
 
 			// If this board is told to have a custom icon, use it.
@@ -396,7 +398,7 @@ function template_messageindex_childboards()
 			if (!SKIN_MOBILE)
 				echo '
 					</td>
-					<td class="stats windowbg">
+					<td class="stats">
 						<p>', number_context($board['is_redirect'] ? 'num_redirects' : 'num_posts', $board['posts']), ' <br>
 						', $board['is_redirect'] ? '' : number_context('num_topics', $board['topics']), '
 						</p>
@@ -448,7 +450,11 @@ function template_messageindex_childboards()
 					$children[] = $child['new'] ? '<strong>' . $child['link'] . '</strong>' : $child['link'];
 				}
 				echo '
-				<tr id="board_', $board['id'], '_children"><td colspan="3" class="children windowbg"><strong>', $txt['sub_boards'], '</strong>: ', implode(', ', $children), '</td></tr>';
+				<tr id="board_', $board['id'], '_children">
+					<td colspan="3" class="children windowbg', $alt ? '2' : '', '">
+						<strong>', $txt['sub_boards'], '</strong>: ', implode(', ', $children), '
+					</td>
+				</tr>';
 			}
 		}
 		echo '
