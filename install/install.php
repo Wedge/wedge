@@ -267,7 +267,7 @@ function load_lang_file()
 			$_SESSION['installer_temp_lang'] = 'Install.' . $lang . '.php';
 		// Use the first one...
 		else
-			list ($_SESSION['installer_temp_lang']) = array_keys($incontext['detected_languages']);
+			$_SESSION['installer_temp_lang'] = 'Install.' . key($incontext['detected_languages']) . '.php';
 	}
 
 	// And now include the actual language file itself.
