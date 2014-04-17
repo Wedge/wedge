@@ -1775,7 +1775,7 @@ class wedit
 
 		// Clean up after nobbc ;)
 		$message = preg_replace_callback('~\[nobbc\](.+?)\[/nobbc\]~is', function ($a) {
-			return '[nobbc]' . strtr($a[1], array('[' => '&#91;', ']' => '&#93;', '://' => '&#58;//', '@' => '&#64;', 'www.' => 'www&#46;')) . '[/nobbc]';
+			return '[nobbc]' . strtr($a[1], array('[' => '&#91;', ']' => '&#93;', '://' => '&#58;//', '@' => '&#64;', 'www.' => 'www&#46;', '&' => '&amp;')) . '[/nobbc]';
 		}, $message);
 
 		// Remove \r's... they're evil!
@@ -1971,8 +1971,8 @@ class wedit
 			// Inside code tags, protect anything that's not parsed the regular way.
 			if ($i % 4 == 2)
 				$parts[$i] = str_ireplace(
-					array('[nb]', '[/nb]', '://', 'www.'),
-					array('&#91;nb]', '&#91;/nb]', '&#58;//', 'www&#46;'),
+					array('[nb]', '[/nb]', '://', 'www.', '&'),
+					array('&#91;nb]', '&#91;/nb]', '&#58;//', 'www&#46;', '&amp;'),
 					$parts[$i]
 				);
 		}
