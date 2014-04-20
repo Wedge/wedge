@@ -11,16 +11,26 @@ if (!defined('WEDGE'))
 	die('Hacking attempt...');
 
 // Cache a minified PHP file.
-function minify_php($file)
+function minify_php($file, $remove_whitespace = false)
 {
 	global $save_strings;
 
-	$php = preg_replace('~\s+~', ' ', clean_me_up($file));
-	$php = preg_replace('~(?<=[^a-zA-Z0-9_.])\s+|\s+(?=[^$a-zA-Z0-9_.])~', '', $php);
-	$php = preg_replace('~(?<=[^0-9.])\s+\.|\.\s+(?=[^0-9.])~', '.', $php); // 2 . 1 != 2.1
-	$php = str_replace(',)', ')', $php);
-	$pos = 0;
+	// Replace comments with equivalent whitespace, and protect strings.
+	$php = clean_me_up($file, $remove_whitespace);
 
+	// Do the actual process of removing whitespace.
+	if ($remove_whitespace)
+	{
+		$php = preg_replace('~\s+~', ' ', $php);
+		$php = preg_replace('~(?<=[^a-zA-Z0-9_.])\s+|\s+(?=[^$a-zA-Z0-9_.])~', '', $php);
+		$php = preg_replace('~(?<=[^0-9.])\s+\.|\.\s+(?=[^0-9.])~', '.', $php); // 2 . 1 != 2.1
+		$php = str_replace(',)', ')', $php);
+	}
+	else // Remove at least spaces in empty lines...
+		$php = preg_replace('~[\t ]+(?=\n)~', '', $php);
+
+	// Restore saved strings.
+	$pos = 0;
 	foreach ($save_strings as $str)
 		if (($pos = strpos($php, "\x0f", $pos)) !== false)
 			$php = substr_replace($php, $str, $pos, 1);
@@ -29,21 +39,20 @@ function minify_php($file)
 }
 
 // Remove comments and protect strings.
-function clean_me_up($file, $remove_comments = false)
+function clean_me_up($file, $remove_whitespace = false)
 {
 	global $save_strings, $is_output_buffer;
 
+	$search_for = array('/*', '//', "'", '"');
+
 	// Set this to true if calling loadSource within an output buffer handler.
-	if (empty($is_output_buffer))
+	if (empty($is_output_buffer) && $remove_whitespace)
 	{
-		$php = php_strip_whitespace($file);
 		$search_for = array("'", '"');
+		$php = php_strip_whitespace($file);
 	}
 	else
-	{
 		$php = file_get_contents($file);
-		$search_for = array('/*', '//', "'", '"');
-	}
 
 	$save_strings = array();
 	$pos = 0;

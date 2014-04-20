@@ -172,7 +172,7 @@ function loadSource($source_name)
 		if (isset($done[$file]))
 			continue;
 		$done[$file] = true;
-		if (defined('WEDGE_INSTALL') || strpos($file, 'getid3') !== false)
+		if (defined('WEDGE_INSTALL') || !empty($db_show_debug) || strpos($file, 'getid3') !== false)
 			$cache = APP_DIR . '/' . $file . '.php';
 		else
 		{
@@ -180,12 +180,8 @@ function loadSource($source_name)
 			if (!file_exists($cache) || filemtime($cache) < filemtime(APP_DIR . '/' . $file . '.php'))
 			{
 				copy(APP_DIR . '/' . $file . '.php', $cache);
-				// !! Disabling this temporarily (until I add a setting for it), to get proper line numbers when debugging.
-				if (false && empty($db_show_debug))
-				{
-					require_once(APP_DIR . '/Subs-MinifyPHP.php');
-					minify_php($cache);
-				}
+				require_once(APP_DIR . '/Subs-MinifyPHP.php');
+				minify_php($cache);
 			}
 		}
 		require_once($cache);
