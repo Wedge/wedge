@@ -127,13 +127,14 @@ function template_credits()
 		echo '
 		<we:cat>
 			', $txt['credits_site'], '
-		</we:cat>';
+		</we:cat>
+
+		<we:block class="windowbg2 splitter">';
 
 		if (!empty($context['site_credits']['admins']))
 		{
 			echo '
-		<div', empty($context['site_credits']['mods']) ? '' : ' class="two-columns"', '>
-			<div class="windowbg2 wrc">
+			<section>
 				<h6>', number_context('credits_admins', count($context['site_credits']['admins'])), '</h6>
 				<ul class="last">';
 
@@ -143,15 +144,14 @@ function template_credits()
 
 			echo '
 				</ul>
-			</div>
+			</section>
 		</div>';
 		}
 
 		if (!empty($context['site_credits']['mods']))
 		{
 			echo '
-		<div', empty($context['site_credits']['admins']) ? '' : ' class="two-columns"', '>
-			<div class="windowbg2 wrc">
+			<section>
 				<h6>', number_context('credits_moderators', count($context['site_credits']['mods'])), '</h6>
 				<ul class="last">';
 
@@ -161,9 +161,12 @@ function template_credits()
 
 			echo '
 				</ul>
-			</div>
+			</section>
 		</div>';
 		}
+
+		echo '
+		</we:block>';
 	}
 
 	echo '
