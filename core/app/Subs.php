@@ -898,6 +898,7 @@ function un_htmlspecialchars($string)
 }
 
 /**
+ * Location location location!
  * Returns whether $string contains any $items (can be either a string, or an array of strings.)
  * For the record, this is way faster than preg_match('~elem1|elem2~', $str).
  */
@@ -908,6 +909,16 @@ function strhas($string, $items)
 			return $item;
 
 	return false;
+}
+
+/**
+ * Performance performance performance!
+ * Case-insensitive version.
+ * Provide lowercase search items ONLY!
+ **/
+function strihas($string, $items)
+{
+	return strhas(strtolower($string), $items);
 }
 
 /**
