@@ -153,6 +153,9 @@ function Display()
 		)
 	);
 
+	if ($board_info['type'] !== 'forum')
+		wetem::before('postlist', 'display_posts:true');
+
 	$context['real_num_replies'] = $context['num_replies'] = $topicinfo['num_replies'];
 	$context['topic_first_message'] = $topicinfo['id_first_msg'];
 	$context['topic_last_message'] = $topicinfo['id_last_msg'];

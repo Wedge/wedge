@@ -8,9 +8,14 @@
  * License: http://wedge.org/license/
  */
 
-function template_display_posts()
+function template_display_posts_before()
 {
-	global $context, $board_info, $msg, $footer_coding;
+	global $context, $board_info, $footer_coding;
+	static $done = false;
+
+	if ($done)
+		return;
+	$done = true;
 
 	if (INFINITE)
 	{
@@ -32,6 +37,11 @@ function template_display_posts()
 			echo '
 			<form action="<URL>?action=quickmod2;topic=', $context['current_topic'], '.', $context['start'], '" method="post" accept-charset="UTF-8" name="quickModForm" id="quickModForm">';
 	}
+}
+
+function template_display_posts($is_blog = false)
+{
+	global $ignoredMsgs, $context, $msg;
 
 	$ignoredMsgs = array();
 	$message_skeleton = new weSkeleton('msg');
@@ -68,8 +78,20 @@ function template_display_posts()
 
 		// And finally... Render the skeleton for this message!
 		$message_skeleton->render();
+
+		// Called for a blog post..? Then it should be unique.
+		if ($is_blog)
+			break;
 	}
-	unset($msg, $message_skeleton);
+}
+
+function template_display_posts_after($is_blog = false)
+{
+	global $ignoredMsgs, $context;
+
+	if ($is_blog)
+		return;
+	$done = true;
 
 	if (!INFINITE)
 	{

@@ -283,6 +283,7 @@ hr.sep
 .blog
 	.first-post
 		background: transparent
+		margin-top: 16px
 		.inner
 			font: $blog_font_size $blog_font
 
@@ -321,7 +322,7 @@ hr.sep
 		flex: 0 0 20%
 	@else
 		display: table-cell
-		width: 14em
+		width: 20%
 	@endif
 	@if !ie[-8]
 		background: rgba(0,0,0, .025)
