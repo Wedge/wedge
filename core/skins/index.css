@@ -1481,6 +1481,8 @@ tr.titlebg
 	clear: left
 	font-size: 90%
 	padding: .2em
+	#forumposts &
+		padding: .2em 30px
 	.floatright input
 		margin-top: 3px
 	.note
