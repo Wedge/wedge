@@ -1423,8 +1423,8 @@ class wess_prefixes extends wess
 		$os = we::$os;
 		$v = $b['version'];
 		$ov = $os['version'];
-		list ($ie, $ie8down, $ie9, $ie10, $ie11, $opera, $firefox, $safari, $chrome, $ios, $android, $webkit) = array(
-			$b['ie'], $b['ie8down'], $b['ie9'], $b['ie10'], $b['ie11'], $b['opera'], $b['firefox'],
+		list ($ie, $ie8down, $ie9, $opera, $firefox, $safari, $chrome, $ios, $android, $webkit) = array(
+			$b['ie'], $b['ie8down'], $b['ie9'], $b['ie10'], $b['opera'], $b['firefox'],
 			$b['safari'] && !$os['ios'], $b['chrome'], $os['ios'], $os['android'] && $b['webkit'] && !$b['chrome'], $b['webkit']
 		);
 
@@ -1476,7 +1476,7 @@ class wess_prefixes extends wess
 		{
 			if ($ie8down || $ie9 || ($firefox && $v < 3.6) || ($opera && $v < 11.1))
 				return '';
-			return $opera || $ie10 || $ie11 ? $unchanged : $prefixed;
+			return $opera || ($ie && $v >= 10) ? $unchanged : $prefixed;
 		}
 
 		// WebKit requires some magic for column breaks.
@@ -1484,10 +1484,10 @@ class wess_prefixes extends wess
 		{
 			if ($ie8down || $ie9 || ($firefox && $v < 3.6) || ($opera && $v < 11.1))
 				return '';
-			return $opera || $ie10 || $ie11 ? $unchanged : $this->prefix . 'column-' . $unchanged;
+			return $opera || ($ie && $v >= 10) ? $unchanged : $this->prefix . 'column-' . $unchanged;
 		}
 
-		// As of July 2013, IE10+, Firefox and WebKit support this prefixed. Opera<14 and IE<10 don't.
+		// As of April 2014, IE10+, Firefox and WebKit support this prefixed. Opera<14 and IE<10 don't.
 		if ($matches[1] === 'user-select')
 		{
 			if ($firefox || $webkit || ($ie && $v >= 10))
@@ -1495,7 +1495,7 @@ class wess_prefixes extends wess
 			return '';
 		}
 
-		// As of July 2013, IE10 supports this unprefixed, and Firefox and Chrome need a prefix.
+		// As of April 2014, IE10+ supports this unprefixed, and Firefox and Chrome need a prefix.
 		if ($matches[1] === 'font-feature-settings')
 		{
 			if ($ie && $v >= 10)
@@ -1503,7 +1503,7 @@ class wess_prefixes extends wess
 			return $prefixed;
 		}
 
-		// IE6/7/8/9 don't support animations, IE10, Firefox 16+ and Opera 12.1 support them unprefixed, other browsers require a prefix.
+		// IE6/7/8/9 don't support animations, IE10+, Firefox 16+ and Opera 12.1 support them unprefixed, other browsers require a prefix.
 		if (strpos($matches[1], 'animation') === 0)
 		{
 			if ($ie8down || $ie9 || ($firefox && $v < 5) || ($opera && $v < 12) || ($safari && $v < 4))
@@ -1513,12 +1513,12 @@ class wess_prefixes extends wess
 			return $unchanged;
 		}
 
-		// IE6/7/8 don't support transforms, IE10, Firefox 16+ and Opera 12.1x (not 15) support them unprefixed, other browsers require a prefix.
+		// IE6/7/8 don't support transforms, Chrome 36+, IE10, Firefox 16+ and Opera 12.1x (not 15) support them unprefixed, other browsers require a prefix.
 		if (strpos($matches[1], 'transform') === 0)
 		{
 			if ($ie8down || ($firefox && $v < 3.5))
 				return '';
-			if ($ie9 || ($opera && $v < 12.1) || ($firefox && $v < 16) || $webkit)
+			if ($ie9 || ($opera && $v < 12.1) || ($firefox && $v < 16) || ($webkit && (!$chrome || $v < 36)))
 				return $prefixed;
 			return $unchanged;
 		}
@@ -1526,9 +1526,9 @@ class wess_prefixes extends wess
 		// Browser support level is identical for both of these, according to MDN and caniuse.com.
 		if (strpos($matches[1], 'backface-visibility') === 0 || strpos($matches[1], 'perspective') === 0)
 		{
-			if (($ie && $v >= 10) || ($firefox && $v >= 16))
+			if (($ie && $v >= 10) || ($firefox && $v >= 16) || ($chrome && $v >= 36))
 				return $unchanged;
-			if (($firefox && $v >= 15) || $chrome || $webkit)
+			if (($firefox && $v >= 15) || $webkit)
 				return $prefixed;
 			return '';
 		}
@@ -1570,11 +1570,11 @@ class wess_prefixes extends wess
 			return $prefixed;
 		}
 
-		// IE6/7/8/9 don't support transitions. IE10, Chrome 27+, Firefox 16+ and Opera 12.10+ support them unprefixed, other browsers require a prefix.
+		// IE6/7/8/9 don't support transitions. IE10+, Chrome 27+, Firefox 16+ and Opera 12.10+ support them unprefixed, other browsers require a prefix.
 		if (strpos($matches[1], 'transition') !== false)
 		{
 			// In case the transition value is 'transform', we need to prefix it on browsers that need it.
-			if ($b['ie9'] || ($b['opera'] && $v < 12.1) || ($b['firefox'] && $v < 16) || $b['webkit'])
+			if ($b['webkit'] || ($b['opera'] && $v < 12.1) || ($b['firefox'] && $v < 16))
 				$unchanged = str_replace($matches[2], preg_replace('~\btransform\b~', $this->prefix . 'transform', $matches[2]), $unchanged);
 			if ($b['ie8down'] || $b['ie9'] || ($b['firefox'] && $v < 4))
 				return '';
@@ -1621,7 +1621,7 @@ class wess_prefixes extends wess
 			return $matches[1];
 		}
 
-		// Nothing bad was found? Just ignore.
+		// Nothing bad was found? You may go, then!
 		return $unchanged;
 	}
 
