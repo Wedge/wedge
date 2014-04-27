@@ -477,8 +477,6 @@ $txt['notification_disable_board'] = 'Are you sure you wish to disable notificat
 $txt['notification_enable_topic'] = 'Are you sure you wish to enable notification of new replies for this topic?';
 $txt['notification_disable_topic'] = 'Are you sure you wish to disable notification of new replies for this topic?';
 
-$txt['report_to_mod'] = 'Report this post to a moderator';
-
 $txt['unread_topics'] = 'Unread Topics';
 $txt['unread_replies'] = 'Updated Topics';
 

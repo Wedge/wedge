@@ -79,7 +79,7 @@ function Report()
 	// This is here so that the user could, in theory, be redirected back to the topic.
 	$context['message_id'] = $_REQUEST['msg'];
 
-	$context['page_title'] = $txt['report_to_mod'];
+	$context['page_title'] = $txt['acme_report_desc'];
 	wetem::load('report');
 }
 

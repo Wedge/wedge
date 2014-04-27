@@ -167,7 +167,7 @@ function template_report()
 		<form action="<URL>?action=report;topic=', $context['current_topic'], '.0" method="post" accept-charset="UTF-8">
 			<input type="hidden" name="msg" value="' . $context['message_id'] . '">
 			<we:cat>
-				', $txt['report_to_mod'], '
+				', $txt['acme_report_desc'], '
 			</we:cat>
 			<div class="windowbg wrc">';
 
