@@ -316,6 +316,9 @@ function template_folder()
 
 			echo '
 				</div>
+			</div>
+			<div class="post">
+				<div class="inner" id="msg_', $message['id'], '"', '>', $message['body'], '</div>
 				<div class="actionbar">
 					<ul class="actions">';
 
@@ -342,30 +345,21 @@ function template_folder()
 			echo '
 						<li><a href="<URL>?action=pm;sa=pmactions;pm_actions%5B', $message['id'], '%5D=delete;f=', $context['folder'], ';start=', $context['start'], $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';', $context['session_query'], '" onclick="return ask(', $remove_confirm, ', e);" class="remove_button">', $txt['delete'], '</a></li>';
 
+			if ($context['folder'] != 'sent')
+				echo '
+						<li><a href="<URL>?action=pm;sa=report;l=', $context['current_label_id'], ';pmsg=', $message['id'], '" title="', $txt['pm_report_to_admin'], '" class="report_button">', $txt['acme_report'], '</a></li>';
+
+			if (!empty($context['message_can_unread'][$message['id']]))
+				echo '
+						<li><a href="<URL>?action=pm;sa=markunread;pmid=', $message['id'], ';', $context['session_query'], '" class="unread_button">', $txt['mark_unread'], '</a></li>';
+
 			if (empty($context['display_mode']))
 				echo '
 						<li class="inline_mod_check"><input type="checkbox" name="pms[]" id="deletedisplay', $message['id'], '" value="', $message['id'], '" onclick="$(\'#deletelisting', $message['id'], '\').prop(\'checked\', this.checked);"></li>';
 
 			echo '
 					</ul>
-				</div>
-			</div>
-			<div class="post">
-				<div class="inner" id="msg_', $message['id'], '"', '>', $message['body'], '</div>';
-
-			if ($context['folder'] != 'sent' || !empty($context['message_can_unread'][$message['id']]))
-			{
-				echo '
-				<div class="reportlinks right">';
-				if ($context['folder'] != 'sent')
-					echo '
-					<a href="<URL>?action=pm;sa=report;l=', $context['current_label_id'], ';pmsg=', $message['id'], '">', $txt['pm_report_to_admin'], '</a>&nbsp;';
-				if (!empty($context['message_can_unread'][$message['id']]))
-					echo '
-					&nbsp;<a href="<URL>?action=pm;sa=markunread;pmid=', $message['id'], ';', $context['session_query'], '">', $txt['mark_unread'], '</a>';
-				echo '
 				</div>';
-			}
 
 			// Are there any custom profile fields for above the signature?
 			if (!empty($message['member']['custom_fields']))
@@ -446,7 +440,8 @@ function template_folder()
 			</div>
 			<br class="clear">
 		</div>
-	</div></div>';
+	</div></div>
+	<hr class="sep">';
 		}
 
 		if (empty($context['display_mode']))

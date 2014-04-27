@@ -27,7 +27,7 @@
 
 .modrem a extends #modbuttons a.delete
 
-.table_list a.unreadlink
+a.unreadlink
 	font-size: .9em
 	float: right
 
@@ -136,6 +136,33 @@ for guests, because most of the time it won't be an option.
 		font-size: .9em
 		.btn
 			line-height: 13px
+
+
+@if !ie[-7]
+	@media $responsive
+		body #pm
+			.post_wrapper
+				display: block
+			.pixelicons
+				width: 25px
+				margin-top: -3px
+				i
+					width, height: 10px
+			.poster mixes .clearfix
+				padding: 3px 0
+				h4
+					float: left
+					font-size: 1.8em
+				> ul
+					float: left
+					li mixes .hide
+					li.avatar
+						display: block
+						margin-top: 4px
+						order: -1
+						img
+							max-height: 2em
+@endif
 
 #personal_drafts .actions
 	padding-right: 0

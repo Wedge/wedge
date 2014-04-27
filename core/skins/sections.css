@@ -585,9 +585,14 @@ hr.sep
 		background-image: raw-url($images/icons/online.gif)
 		background-position: 0 0
 		padding-left: 26px
+
 	.pm_button extends .vbtn
 		background-image: raw-url($images/im_on.gif)
 		background-position: 0 0
+
+	.unread_button extends .vbtn
+		background-image: raw-url($images/admin/mail.gif)
+		background-position: 5px 3px
 @endif
 
 /**
