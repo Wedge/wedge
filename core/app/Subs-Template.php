@@ -402,9 +402,10 @@ function ob_sessrewrite($buffer)
 
 	// Page replacements. Add them via add_replacement() or the Pretty URLs admin page.
 	$pr = isset($context['ob_replacements']) ? $context['ob_replacements'] : array();
-	if (isset($settings['page_replacements']))
+	if (!empty($settings['page_replacements']))
 		$pr = array_merge($pr, unserialize($settings['page_replacements']));
-	$buffer = str_replace(array_keys($pr), array_values($pr), $buffer);
+	if (!empty($pr))
+		$buffer = str_replace(array_keys($pr), array_values($pr), $buffer);
 
 	// Load cached membergroup ids.
 	if (($members_groups = cache_get_data('member-groups', 5000)) === null)
