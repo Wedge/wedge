@@ -1423,9 +1423,9 @@ class wess_prefixes extends wess
 		$os = we::$os;
 		$v = $b['version'];
 		$ov = $os['version'];
-		list ($ie, $ie8down, $ie9, $opera, $firefox, $safari, $chrome, $ios, $android, $webkit) = array(
-			$b['ie'], $b['ie8down'], $b['ie9'], $b['ie10'], $b['opera'], $b['firefox'],
-			$b['safari'] && !$os['ios'], $b['chrome'], $os['ios'], $os['android'] && $b['webkit'] && !$b['chrome'], $b['webkit']
+		list ($ie, $ie8down, $ie9, $opera, $firefox, $webkit, $safari, $chrome, $ios, $android) = array(
+			$b['ie'], $b['ie8down'], $b['ie9'], $b['opera'], $b['firefox'], $b['webkit'],
+			$b['safari'] && !$os['ios'], $b['chrome'], $os['ios'], $os['android'] && $b['webkit'] && !$b['chrome']
 		);
 
 		// Only IE6/7/8 don't support border-radius these days.
@@ -1573,11 +1573,11 @@ class wess_prefixes extends wess
 		// IE6/7/8/9 don't support transitions. IE10+, Chrome 27+, Firefox 16+ and Opera 12.10+ support them unprefixed, other browsers require a prefix.
 		if (strpos($matches[1], 'transition') !== false)
 		{
-			// In case the transition value is 'transform', we need to prefix it on browsers that need it.
-			if ($b['webkit'] || ($b['opera'] && $v < 12.1) || ($b['firefox'] && $v < 16))
-				$unchanged = str_replace($matches[2], preg_replace('~\btransform\b~', $this->prefix . 'transform', $matches[2]), $unchanged);
 			if ($b['ie8down'] || $b['ie9'] || ($b['firefox'] && $v < 4))
 				return '';
+			// In case the transition value is 'transform', we need to prefix it on browsers that need it.
+			if (($b['opera'] && $v < 12.1) || ($b['firefox'] && $v < 16) || ($b['webkit'] && (!$b['chrome'] || $v < 36)))
+				$unchanged = str_replace($matches[2], preg_replace('~\btransform\b~', $this->prefix . 'transform', $matches[2]), $unchanged);
 			if (($b['opera'] && $v < 12.1) || ($b['firefox'] && $v < 16) || ($b['chrome'] && $v < 27) || ($b['safari'] && $v < 7) || ($os['ios'] && $ov < 7))
 				return $this->prefix . $unchanged;
 			return $unchanged;
