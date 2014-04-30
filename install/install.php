@@ -11,7 +11,6 @@
 if (!defined('WEDGE'))
 	die('Hacking attempt...');
 
-define('REQUIRED_PHP_VERSION', '5.3.0');
 define('REQUIRED_MYSQL_SERVER_VERSION', '5.0.3');
 define('REQUIRED_MYSQL_CLIENT_VERSION', '5.0.3');
 
@@ -360,10 +359,6 @@ function Welcome()
 	// Done the submission?
 	if (isset($_POST['contbutt']))
 		return true;
-
-	// Check the PHP version.
-	if (!function_exists('version_compare') || (version_compare(REQUIRED_PHP_VERSION, PHP_VERSION) > 0))
-		$incontext['warning'] = $txt['error_php_too_low'];
 
 	// See if we think they have already installed it?
 	if (is_readable(ROOT_DIR . '/Settings.php'))

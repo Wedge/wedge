@@ -15,6 +15,8 @@ define('WEDGE_VERSION', '1.0-alpha');
 define('WEDGE', 3); // Internal snapshot number.
 
 // Get everything started up...
+if (version_compare(PHP_VERSION, '5.3') < 0)
+	exit('Wedge requires PHP 5.3 or better to be installed on your server.');
 if (version_compare(PHP_VERSION, '5.4') < 0 && function_exists('set_magic_quotes_runtime'))
 	@set_magic_quotes_runtime(0);
 
