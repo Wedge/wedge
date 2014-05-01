@@ -744,65 +744,76 @@ class wess_nesting extends wess
 		// Transform the CSS into a tree
 		$tree = str_replace('"', '#wedge-quote#', trim($css));
 
-		// Does this file use the regular CSS syntax?
-		$css_syntax = strpos($tree, "{\n") !== false && strpos($tree, "\n}") !== false;
-		if (!$css_syntax)
+		// Normal CSS syntax, if found, should be preserved.
+		$regular_css = array();
+		if (strpos($css, '{') !== false && strpos($css, '}') !== false)
+			$tree = preg_replace_callback(
+				'~(?<=^|[\s};])([!+>&#*@:.a-z0-9](?:[^{\n]|(?=,)\n)*?)\s*({(?>[^{}]+|(?1))*})~i',
+				function ($m) use (&$regular_css) {
+					$regular_css[] = $m[0];
+					return '.wedge_css_placeholder';
+				},
+				$tree
+			);
+
+		// Turn our simplified syntax into regular CSS.
+		// You must conform to the rules. It is my sworn duty to see that you do conform.
+		// If you're having problems indenting your code, just put it between brackets and use regular CSS.
+		$tree = preg_replace('~\v\h*(?=\v)~', '', $tree); // Delete blank lines
+		$tree = preg_replace_callback('~^(\h*)~m', function ($a) { return strlen($a[1]) . ':'; }, $tree); // Count indentation levels
+		$branches = preg_split('~\v+~', $tree);
+		$tree = $ex_string = '';
+		$levels = array(0);
+		foreach ($branches as $n => $line)
 		{
-			/*
-				Nope? Then let's have fun with our simplified syntax.
+			$l = explode(':', $line, 2);
 
-				WARNING: make sure to only use always tabs OR always spaces, and do proper
-				structure nesting. Otherwise, the file won't parse properly.
-				You must conform. It is my sworn duty to see that you do conform.
-			*/
-			$tree = preg_replace("~\n\s*\n~", "\n", $tree); // Delete blank lines
-			$tree = preg_replace_callback('~^(\h*)~m', function ($a) { return strlen($a[1]) . ':'; }, $tree); // Count indentation levels
-			$branches = explode("\n", $tree);
-			$tree = $ex_string = '';
-			$level = 0;
-			foreach ($branches as &$line)
-			{
-				$l = explode(':', $line, 2);
-				if (!isset($indent) && !empty($l[0]))
-					$indent = $l[0];
-				if (!isset($indent))
-				{
-					$tree .= $l[1] . "\n";
-					continue;
-				}
+			// Determine the previous level.
+			$level = end($levels);
 
-				// Do we have an extends/unextend line followed by a line on the same level or above it?
-				// If yes, this means we just extended a selector and should close it immediately.
-				if ($level >= $l[0] && strhas($ex_string, array(' extends ', ' unextends ')))
-					$tree .= " {\n}\n";
-
-				// Same level, and no continuation of a selector? We're probably in a list of properties.
-				elseif ($level == $l[0] && substr($ex_string, -1) !== ',')
-					$tree .= ";\n";
-				// Higher level than before? This is a child, obviously.
-				elseif ($level < $l[0])
-					$tree .= " {\n";
-
-				while ($level > $l[0])
-				{
-					$tree .= "}\n";
-					$level -= $indent;
-				}
-
-				$level = $l[0];
-				$tree .= $l[1];
-				$ex_string = $l[1];
-			}
-
-			// Did we finish the file with an extends or unextends...? Immediately open it and close it.
-			if (strhas($ex_string, array(' extends ', ' unextends ')))
+			// Do we have an extends/unextend line followed by a line on the same level or above it?
+			// If yes, this means we just extended a selector and should close it immediately.
+			if ($level >= $l[0] && strhas($ex_string, array(' extends ', ' unextends ')))
 				$tree .= " {\n}\n";
-			while ($level > 0)
+
+			// Same level, and no continuation of a selector? We're probably in a list of properties.
+			elseif ($level == $l[0] && $ex_string && substr($ex_string, -1) !== ',')
+				$tree .= strpos($ex_string, 'placeholder') !== false ? "\n" : ";\n";
+
+			// Higher level than before? This is a child, obviously.
+			elseif ($level < $l[0] && $ex_string)
 			{
-				$tree .= '}';
-				$level -= $indent;
+				$tree .= " {\n";
+				$levels[] = $l[0];
 			}
+
+			while ($level > $l[0])
+			{
+				array_pop($levels);
+				$level = end($levels);
+				$tree .= "\n" . str_repeat("\t", $level) . "}\n";
+			}
+
+			$tree .= str_repeat("\t", $l[0]) . $l[1];
+			$ex_string = $l[1];
 		}
+
+		// Did we finish the file with an extends or unextends...? Immediately open it and close it.
+		if (strhas($ex_string, array(' extends ', ' unextends ')))
+			$tree .= " {\n}\n";
+		for ($i = count($levels); $i > 1; $i--)
+			$tree .= '}';
+
+		// Okay, now we can restore normal CSS.
+		if (!empty($regular_css))
+			$tree = preg_replace_callback(
+				'~\.wedge_css_placeholder~',
+				function ($m) use ($regular_css) {
+					static $i = 0;
+					return $regular_css[$i++];
+				},
+				$tree
+			);
 
 		/*
 			'@replace' command: replaces any string with another. Just put @replace on a line, and add
@@ -826,11 +837,12 @@ class wess_nesting extends wess
 			(2) @import won't work if used inside a suffixed file, because @import is only parsed when
 				found at the start of a physical file (or within <style> tags in the main HTML.)
 		*/
+
 		$tree = preg_replace('~^(@(?:import|charset)\h+[^{}\n]*);?$~mi', '<rule selector="$1"></rule>', $tree); // Transform single-line @rules into selectors
 		$tree = preg_replace('~^([!+>&#*@:.a-z0-9][^{};]*?\h*reset);~mi', '<rule selector="$1"></rule>', $tree); // Transform single-line resets into selectors
 		$tree = preg_replace_callback('~\burl\([^)]+\)~', function ($a) { return str_replace(':', '#wedge-colon#', $a[0]); }, $tree); // Protect colons (:) inside URLs
-		$tree = preg_replace('~([a-z-, ]+)\h*:(?!//)\h*([^;}{' . ($css_syntax ? '' : '\n') . ']+?);*\h*(?=[\n}])~i', '<property name="$1" value="$2">', $tree); // Transform properties
-		$tree = preg_replace('~^([!+>&#*@:.a-z0-9](?:[^{\n]|(?=,)\n)*?)\s*{~mi', '<rule selector="$1">', $tree); // Transform selectors. Strings starting with a digit are only allowed because of keyframes.
+		$tree = preg_replace('~([a-z, -]+)\h*:(?!//)\h*([^;}{\n]+?);*\h*(?=[\n}])~i', '<property name="$1" value="$2">', $tree); // Transform properties
+		$tree = preg_replace('~(?<=^|[\s};])([!+>&#*@:.a-z0-9](?:[^{\n]|(?=,)\n)*?)\s*{~i', '<rule selector="$1">', $tree); // Transform selectors. Strings starting with a digit are only allowed because of keyframes.
 		$tree = preg_replace(array('~ {2,}~'), array(' '), $tree); // Remove extra spaces
 		$tree = str_replace(array('}', "\n"), array('</rule>', "\n\t"), $tree); // Close rules and indent everything one tab
 
@@ -849,6 +861,8 @@ class wess_nesting extends wess
 		// e.g.: ".class reset" -> removes all previous ".class" definitions
 		foreach ($this->rules as $n => &$node)
 		{
+			if (!isset($node['selector']))
+				exit('Malformed CSS file!');
 			if (strpos($node['selector'], ' reset') !== false)
 			{
 				preg_match_all('~' . $selector_regex . '\h+reset\b~i', $node['selector'], $matches, PREG_SET_ORDER);
