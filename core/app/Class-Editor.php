@@ -150,24 +150,17 @@ class wedit
 		// Turn line breaks back into br's.
 		$text = strtr($text, array("\r" => '', "\n" => '<br>'));
 
-		// Prevent conversion of all bbcode inside these bbcodes.
-		// !!! Tie in with bbc permissions ?
-		foreach (array('code', 'php', 'nobbc') as $code)
+		// Prevent conversion of all BBCode inside these tags.
+		if (strihas($text, array('[code', '[php', '[nobbc')))
 		{
-			if (strpos($text, '[' . $code) !== false)
-			{
-				$parts = preg_split('~(\[/' . $code . '\]|\[' . $code . '(?:=[^\]]+)?\])~i', $text, -1, PREG_SPLIT_DELIM_CAPTURE);
+			// Only mess with stuff inside tags.
+			$parts = self::protect_string($text);
+			foreach ($parts as $i => $part)
+				if (self::is_protected($part))
+					$parts[$i] = strtr($part, array('[' => '&#91;', ']' => '&#93;', "'" => "'"));
 
-				// Only mess with stuff inside tags.
-				for ($i = 0, $n = count($parts); $i < $n; $i++)
-				{
-					// Value of 2 means we're inside the tag.
-					if ($i % 4 == 2)
-						$parts[$i] = strtr($parts[$i], array('[' => '&#91;', ']' => '&#93;', "'" => "'"));
-				}
-				// Put our humpty dumpty message back together again.
-				$text = implode('', $parts);
-			}
+			// Put our humpty dumpty message back together again.
+			$text = implode('', $parts);
 		}
 
 		// What tags do we allow?
@@ -213,18 +206,15 @@ class wedit
 		$text = preg_replace('~<br\s*/?\>$~i', '', $text);
 
 		// Remove any formatting within code tags.
-		if (strpos($text, '[code') !== false)
+		if (strihas($text, array('[code', '[php', '[nobbc')))
 		{
 			$text = preg_replace('~<br\s*/?\>~i', '#wedge_br_nao_was_here#', $text);
-			$parts = preg_split('~(\[/code\]|\[code(?:=[^\]]+)?\])~i', $text, -1, PREG_SPLIT_DELIM_CAPTURE);
 
 			// Only mess with stuff outside [code] tags.
-			for ($i = 0, $n = count($parts); $i < $n; $i++)
-			{
-				// Value of 2 means we're inside the tag.
-				if ($i % 4 == 2)
+			$parts = self::protect_string($text);
+			foreach ($parts as $i => $part)
+				if (self::is_protected($part))
 					$parts[$i] = strip_tags($parts[$i]);
-			}
 
 			$text = strtr(implode('', $parts), array('#wedge_br_nao_was_here#' => '<br>'));
 		}
@@ -1101,7 +1091,7 @@ class wedit
 						if (!empty($inlineElements))
 						{
 							$parts[$i] .= '[/' . implode('][/', array_reverse($inlineElements)) . ']';
-							// !! $inlineElements = array(); ??
+							// !!! $inlineElements = array(); ??
 						}
 
 						$inCode = true;
@@ -1775,7 +1765,7 @@ class wedit
 
 		// Clean up after nobbc ;)
 		$message = preg_replace_callback('~\[nobbc\](.+?)\[/nobbc\]~is', function ($a) {
-			return '[nobbc]' . strtr($a[1], array('[' => '&#91;', ']' => '&#93;', '://' => '&#58;//', '@' => '&#64;', 'www.' => 'www&#46;', '&' => '&amp;')) . '[/nobbc]';
+			return '[nobbc]' . strtr($a[1], array('[' => '&#91;', ']' => '&#93;', '://' => '&#58;//', '@' => '&#64;', 'www.' => 'www&#46;')) . '[/nobbc]';
 		}, $message);
 
 		// Remove \r's... they're evil!
@@ -1822,13 +1812,11 @@ class wedit
 			return;
 
 		// Now that we've fixed all the code tags, let's fix the img and url tags...
-		$parts = preg_split('~(\[/code]|\[code[^]]*])~i', $message, -1, PREG_SPLIT_DELIM_CAPTURE);
-
-		// Only mess with stuff outside of [code] tags.
-		for ($i = 0, $n = count($parts); $i < $n; $i++)
+		// Only mess with stuff outside of [code]/[php] tags.
+		$parts = self::protect_string($message);
+		foreach ($parts as $i => $part)
 		{
-			// It goes 0 = outside, 1 = begin tag, 2 = inside, 3 = close tag, repeat.
-			if ($i % 4 == 0)
+			if (($is_protected = self::is_protected($part)) === false)
 			{
 				wedit::fixTags($parts[$i]);
 
@@ -1969,10 +1957,10 @@ class wedit
 					$parts[$i] .= '[/' . $tag . ']';
 			}
 			// Inside code tags, protect anything that's not parsed the regular way.
-			if ($i % 4 == 2)
+			if ($is_protected === true)
 				$parts[$i] = str_ireplace(
-					array('[nb]', '[/nb]', '://', 'www.', '&'),
-					array('&#91;nb]', '&#91;/nb]', '&#58;//', 'www&#46;', '&amp;'),
+					array('[nb]', '[/nb]', '://', 'www.'),
+					array('&#91;nb]', '&#91;/nb]', '&#58;//', 'www&#46;'),
 					$parts[$i]
 				);
 		}
@@ -1994,13 +1982,12 @@ class wedit
 	// This is very simple, and just removes things done by preparsecode.
 	public static function un_preparsecode($message)
 	{
-		$parts = preg_split('~(\[/code\]|\[code(?:=[^\]]+)?\])~i', $message, -1, PREG_SPLIT_DELIM_CAPTURE);
-
 		// We're going to unparse only the stuff outside [code]...
-		for ($i = 0, $n = count($parts); $i < $n; $i++)
+		$parts = self::protect_string($message);
+		foreach ($parts as $i => $part)
 		{
-			// If $i is a multiple of four (0, 4, 8, ...) then it's not a code section...
-			if ($i % 4 == 0)
+			// Is $part a protected chunk of code?
+			if (self::is_protected($part) === false)
 			{
 				$parts[$i] = preg_replace_callback('~\[html](.+?)\[/html]~i', 'wedit::unprotect_html', $parts[$i]);
 
@@ -2719,5 +2706,39 @@ class wedit
 		if (!is_array($field))
 			$field = array($field);
 		$this->editorOptions['entity_fields'] = array_unique(array_merge($this->editorOptions['entity_fields'], $field));
+	}
+
+	// Helper functions for handling special BBC tags like [code].
+	// This will return false (outside of a tag), true (inside a tag), and 1 or 0 for opening or closing tag.
+	// Everything between protectable tags is taken literally, e.g. [code][php][/code] outputs [php].
+	public static function is_protected($str)
+	{
+		global $protector;
+
+		if (!isset($protector))
+			$protector = '';
+		if ($str !== '' && $str[0] === '[')
+		{
+			$t = strtolower($str);
+			if (!$protector && ($t === '[code]' || $t === '[php]' || $t === '[nobbc]'))
+			{
+				$protector = substr($t, 1, -1);
+				return 1;
+			}
+			if ($protector && $t === '[/' . $protector . ']')
+			{
+				$protector = '';
+				return 0;
+			}
+		}
+		return !!$protector;
+	}
+
+	public static function protect_string($str)
+	{
+		global $protector;
+
+		$protector = '';
+		return preg_split('~(\[/?(?:code|php|nobbc)\b[^]]*?\])~i', $str, -1, PREG_SPLIT_DELIM_CAPTURE);
 	}
 }

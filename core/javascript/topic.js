@@ -588,7 +588,7 @@ function QuickReply(opt)
 			});
 		},
 
-		// The function called after a user wants to save his precious message.
+		// The function called after a user wants to save their precious message.
 		qe_save = function ()
 		{
 			// We cannot save if we weren't in edit mode.
@@ -601,8 +601,8 @@ function QuickReply(opt)
 				weUrl('action=quickedit;' + we_sessvar + '=' + we_sessid),
 				{
 					topic: we_topic,
-					subject: $('#qe_subject').val().replace(/&#/g, '&#38;#'),
-					message: $editor.val().replace(/&#/g, '&#38;#'),
+					subject: $('#qe_subject').val().php_htmlspecialchars(),
+					message: $editor.val().php_htmlspecialchars(),
 					msg: sCurMessageId
 				},
 				function (XMLDoc)
