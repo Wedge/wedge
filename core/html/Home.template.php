@@ -34,8 +34,8 @@ function template_main()
 		<a href="?n=' . $next . '" class="middle" style="display: inline-block; height: 16px"><div class="floatleft foldable"></div></a>', '
 		', $txt['recent_posts'], '
 	</we:cat>
-	<we:block class="tborder" style="margin: 5px 0 15px; padding: 2px; border: 1px solid #dcc; border-radius: 5px">
-		<table class="homeposts w100 cs0">';
+	<we:block class="tborder wide" style="padding: 2px; border: 1px solid #dcc; border-radius: 5px">
+		<table class="homeposts cs0">';
 
 	loadSource('../SSI');
 	$boards = ssi_recentTopicTitles($n, null, null, 'naos');

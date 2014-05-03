@@ -23,24 +23,23 @@
 ------------------------------------------------- */
 
 // The board title!
-#board_list, .board_list
+.board_list
 	box-sizing: border-box
-	margin-bottom: 10px
-	td.info a.subject
+	.info a.subject
 		font: 400 120%/120% $subject_font
 		color: $board_col
-	td.children
+	.children
 		color: #555
-		font-size: 85%
-	td.stats
+		margin-top: 4px
+	.stats
 		font-size: 90%
 		width: 15%
 		text-align: center
-	td.lastpost
+	.lastpost
 		line-height: 1.3em
 		font-size: 85%
 		width: 24%
-	td.icon
+	.icon
 		text-align: center
 		width: 6%
 
@@ -324,6 +323,7 @@ hr.sep
 		display: table-cell
 		width: 20%
 	@endif
+	min-width: 9em
 	@if !ie[-8]
 		background: rgba(0,0,0, .025)
 	@endif
@@ -1184,6 +1184,8 @@ tr.windowbg td
 
 // A generic class for showing post bodies
 .list_posts
+	clear: both
+	font: $post_font_size $post_font
 	border-top: 1px solid #b3b3bf
 	padding-top, padding-bottom: 12px
 	margin-top: 6px
@@ -1191,6 +1193,8 @@ tr.windowbg td
 
 .core_posts
 	margin-bottom: 3px
+	.actionbar
+		padding: 10px 0 0
 
 .topic
 	h4
@@ -1537,7 +1541,8 @@ body.waiting *
 
 /* Media queries. Responsive design, e.g.
    mobile-friendly rules, is done here.
-------------------------------------------------- */
+   DO NOT EXTEND ANYTHING IN A MEDIA QUERY! USE MIXES.
+------------------------------------------------------ */
 
 @if !ie[-7]
 	@media $responsive
@@ -1550,8 +1555,34 @@ body.waiting *
 			#edge
 				position: relative
 				transition: transform .5s ease
-			#forumposts
+			#forumposts, .wide
 				margin: 0 -$horizontal_content_padding
+				padding, border, border-radius: 0 !important
+			.wide tr.windowbg td
+				padding-left, padding-right: $horizontal_content_padding
+			// Turn board lists into flat divs, rather than table cells!
+			.board_list
+				display: block
+				width: 100% !important
+				text-align: inherit !important
+				tbody, tr, td
+					display: block
+					width: auto !important
+					text-align: inherit !important
+				td
+					padding-left, padding-right: 8px
+				td:empty
+					display: none
+				p
+					font-size: 90% !important
+				.icon
+					padding: 0 8px
+				.info mixes .clearfix
+			.boardstate
+				float: left
+				margin: 8px 12px 0 8px
+				.icon
+					padding: 0 !important
 			#search_form
 				.mimenu
 					left: auto

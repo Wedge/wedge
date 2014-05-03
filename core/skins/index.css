@@ -1200,6 +1200,9 @@ ul.reset, ul.reset li
 /* HTML5 overrides for deprecated alignment/width params.
 --------------------------------------------------------- */
 
+.wide > table
+	min-width: 100%
+
 .w100
 	width: 100%
 .w75

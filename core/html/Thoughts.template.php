@@ -16,8 +16,8 @@ function template_showThoughts()
 			<div class="thought_icon"></div>
 			', $txt['thoughts'], '
 		</we:cat>
-		<div class="list-thoughts">
-		<table class="w100 cs0 thoughts" id="thought_thread" data-cx="thread ', $context['thought_context'], ' ', $_REQUEST['start'], '">',
+		<div class="wide list-thoughts">
+		<table class="cs0 thoughts" id="thought_thread" data-cx="thread ', $context['thought_context'], ' ', $_REQUEST['start'], '">',
 			template_thoughts_thread(), '
 		</table>
 		</div>';
@@ -35,8 +35,8 @@ function template_showLatestThoughts()
 		<div class="pagesection">
 			', $context['page_index'], '
 		</div>
-		<div class="list-thoughts">
-		<table class="w100 cs0 thoughts" data-cx="profile ', $context['thought_context'], ' ', $_REQUEST['start'], '">',
+		<div class="wide list-thoughts">
+		<table class="cs0 thoughts" data-cx="profile ', $context['thought_context'], ' ', $_REQUEST['start'], '">',
 			template_thoughts_table(), '
 		</table>
 		</div>
@@ -63,8 +63,8 @@ function template_thoughts()
 
 	echo '
 		</we:cat>
-		<div class="list-thoughts">
-		<table class="w100 cs0 thoughts" data-cx="latest ', $context['thought_context'], ' 0">',
+		<div class="wide list-thoughts">
+		<table class="cs0 thoughts" data-cx="latest ', $context['thought_context'], ' 0">',
 			template_thoughts_table(), '
 		</table>
 		</div>';

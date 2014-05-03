@@ -30,31 +30,26 @@ function template_boards()
 			continue;
 
 		echo '
-		<table class="table_list board_list">
-			<thead id="category_', $category['id'], '">
-				<tr>
-					<td colspan="4">
-						<we:cat>';
+		<we:cat id="title_cat_', $category['id'], '">';
 
 		// If this category even can collapse, show a link to collapse it.
 		if ($category['can_collapse'])
 			echo '
-							<a class="collapse" href="', $category['collapse_href'], '">', $category['collapse_image'], '</a>';
+			<a class="collapse" href="', $category['collapse_href'], '">', $category['collapse_image'], '</a>';
 
 		if (!$is_guest && !empty($category['show_unread']))
 			echo '
-							<a class="unreadlink" href="<URL>?action=unread;c=', $category['id'], '">', $txt['view_unread_category'], '</a>';
+			<a class="unreadlink" href="<URL>?action=unread;c=', $category['id'], '">', $txt['view_unread_category'], '</a>';
 
 		if (empty($category['hide_rss']))
 			echo '
-							<a class="catfeed feed_icon" href="<URL>?action=feed;c=', $category['id'], '"></a>';
+			<a class="catfeed feed_icon" href="<URL>?action=feed;c=', $category['id'], '"></a>';
 
 		echo '
-							', $category['link'], '
-						</we:cat>
-					</td>
-				</tr>
-			</thead>';
+			', $category['link'], '
+		</we:cat>
+		<div class="wide">
+			<table class="table_list board_list" id="boards_cat_', $category['id'], '">';
 
 		// Assuming the category hasn't been collapsed...
 		if (!$category['is_collapsed'])
@@ -64,9 +59,6 @@ function template_boards()
 			children (see below.), link_children (easier to use.), children_new (are they new?),
 			topics (# of), posts (# of), link, href, and last_post. (see below.) */
 
-			echo '
-			<tbody id="category_', $category['id'], '_boards">';
-
 			foreach ($category['boards'] as $board)
 			{
 				$alt = !$alt;
@@ -75,7 +67,7 @@ function template_boards()
 
 				echo '
 				<tr id="board_', $board['id'], '" class="windowbg', $alt ? '2' : '', '">
-					<td class="', SKIN_MOBILE ? 'info"' : 'icon"' . (!empty($board['children']) ? ' rowspan="2"' : ''), '>
+					<td class="icon">
 						<a href="<URL>?action=unread;board=' . $board['id'] . ';children" title="' . $txt['show_unread'] . '">';
 
 				// If this board is told to have a custom icon, use it.
@@ -88,9 +80,9 @@ function template_boards()
 				else
 					echo '<div class="', $boardstate, empty($board['new']) ? '' : ' unread', '">';
 
-				echo '</div></a>', SKIN_MOBILE ? '' : '
+				echo '</div></a>
 					</td>
-					<td class="info">', '
+					<td class="info">
 						', $settings['display_flags'] == 'all' || ($settings['display_flags'] == 'specified' && !empty($board['language'])) ? '<img src="' . LANGUAGES . $context['languages'][$board['language']]['folder'] . '/Flag.' . $board['language'] . '.png">&nbsp; ': '', '<a', $board['redirect_newtab'] ? ' target="_blank"' : '', ' class="subject" href="', $board['href'], '" id="b', $board['id'], '">', $board['name'], '</a>';
 
 				// Has it outstanding posts for approval?
@@ -98,7 +90,7 @@ function template_boards()
 					echo '
 						<a href="<URL>?action=moderate;area=postmod;sa=', $board['unapproved_topics'] > 0 ? 'topics' : 'posts', ';brd=', $board['id'], ';', $context['session_query'], '" title="', sprintf($txt['unapproved_posts'], $board['unapproved_topics'], $board['unapproved_posts']), '" class="moderation_link">(!)</a>';
 
-				if ($nb && !$board['redirect_newtab'])
+				if ($nb && empty($board['redirect_newtab']))
 					echo '
 						<a href="<URL>?action=unread;board=', $board['id'], '.0;children', '" title="', $txt['show_unread'], '" class="note">', $nb, '</a>';
 
@@ -110,43 +102,6 @@ function template_boards()
 				if (!empty($board['moderators']))
 					echo '
 						<p class="moderators">', count($board['moderators']) === 1 ? $txt['moderator'] : $txt['moderators'], ': ', implode(', ', $board['link_moderators']), '</p>';
-
-				// Show some basic information about the number of posts, etc.
-				if (!SKIN_MOBILE)
-				{
-					$display = array();
-					foreach ($board['display'] as $item => $string)
-						if (isset($board[$item]))
-							$display[] = number_context($string, $board[$item]);
-
-					echo '
-					</td>
-					<td class="stats">
-						<p>', implode('<br>', $display),  '</p>
-					</td>
-					<td class="lastpost">';
-				}
-
-				/* The board's and children's 'last_post's have:
-				time, timestamp (a number that represents the time.), id (of the post), topic (topic id.),
-				link, href, subject, start (where they should go for the first unread post.),
-				and member. (which has id, name, link, href, username in it.) */
-				if (!empty($board['last_post']['offlimits']))
-					echo '
-						<p>', $board['last_post']['offlimits'], '</p>';
-				elseif (!empty($board['last_post']['id']))
-					echo '
-						<p>
-							', strtr($txt['last_post_author_link_time'], array(
-								'{author}' => $board['last_post']['member']['link'],
-								'{link}' => $board['last_post']['link'],
-								'{time}' => $board['last_post']['on_time'])
-							), '
-						</p>';
-
-				echo '
-					</td>
-				</tr>';
 
 				// Show the "Child Boards: " area. (There's a link_children but we're going to bold the new ones...)
 				if (!empty($board['children']))
@@ -178,20 +133,62 @@ function template_boards()
 						$children[] = $child['new'] ? '<strong>' . $child['link'] . '</strong>' : $child['link'];
 					}
 					echo '
-					<tr id="board_', $board['id'], '_children">
-						<td colspan="3" class="children windowbg', $alt ? '2' : '', '">
-							<strong>', $txt['sub_boards'], '</strong>: ', implode(', ', $children), '
-						</td>
-					</tr>';
+						<div class="children windowbg', $alt ? '2' : '', '" id="board_', $board['id'], '_children">
+							<p><strong>', $txt['sub_boards'], '</strong>: ', implode(', ', $children), '</p>
+						</div>';
 				}
-			}
 
-			echo '
-			</tbody>';
+				echo '
+					</td>';
+
+				// Show some basic information about the number of posts, etc.
+				if (!SKIN_MOBILE && false)
+				{
+					$display = array();
+					foreach ($board['display'] as $item => $string)
+						if (isset($board[$item]))
+							$display[] = number_context($string, $board[$item]);
+
+					echo '
+					<td class="stats">
+						<p>', implode('<br>', $display),  '</p>
+					</td>';
+				}
+
+				echo '
+					<td class="lastpost">';
+
+				/* The board's and children's 'last_post's have:
+				time, timestamp (a number that represents the time.), id (of the post), topic (topic id.),
+				link, href, subject, start (where they should go for the first unread post.),
+				and member. (which has id, name, link, href, username in it.) */
+				if (!empty($board['last_post']['offlimits']))
+					echo '
+						<p>', $board['last_post']['offlimits'], '</p>
+					</td>';
+				elseif (!empty($board['last_post']['id']))
+					echo '
+						<p>
+							', strtr($txt['last_post_author_link_time'], array(
+								'{author}' => $board['last_post']['member']['link'],
+								'{link}' => $board['last_post']['link'],
+								'{time}' => $board['last_post']['on_time'])
+							), '
+						</p>
+					</td>';
+				else
+					echo '</td>';
+
+				echo '
+				</tr>';
+			}
 		}
+
 		echo '
-		</table>';
+			</table>
+		</div>';
 	}
+
 	echo '
 	</div>';
 }

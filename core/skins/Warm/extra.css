@@ -348,7 +348,7 @@ $responsive_search_min_width = math($sidebar-width - 50px)
 @remove .prevnext_prev
 	font: 700 60%/1.3em $main_font
 
-@remove .board_list td.info a.subject
+@remove .board_list .info a.subject
 	font: 700 120% $head_font
 
 @remove .pinned span

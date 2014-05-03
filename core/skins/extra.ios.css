@@ -10,9 +10,9 @@
 	margin-left: 8em
 
 .board_list
-	td.stats
+	.stats
 		display: none
-	td.lastpost
+	.lastpost
 		width: 40%
 
 #navi
