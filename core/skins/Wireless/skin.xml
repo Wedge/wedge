@@ -18,4 +18,13 @@
 		</mobile>
 	</options>
 
+	<!-- Add an enclosing div around elements after the avatar. -->
+	<template name="msg_author_name" where="before">
+		echo '<div>';
+	</template>
+
+	<template name="msg_header_body" where="after">
+		echo '</div>';
+	</template>
+
 </skin>

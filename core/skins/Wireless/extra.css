@@ -13,12 +13,14 @@
 #sidebar .column
 	padding: 20px 10px 0 20px
 
+.note
+	padding: 2px 5px 3px
+
 .postheader extends .clearfix
 	display: block
 	box-sizing: border-box
 	width: auto
-	padding: 8px 12px
-	min-height: 60px
+	padding: 8px 12px 5px
 	background: rgba(0,0,0, .042) // Add a bit of contrast...
 
 	h4
@@ -30,12 +32,20 @@
 		font-weight: 400
 	h5:before
 		content: "- "
+
 	.pixelicons
 		margin-top: -2px
 	.mime
 		vertical-align: 0
+
+	// Force avatars to the left in regular posts.
 	div.avatar
-		float: left
+		display: table-cell
+		width: 1%
+		+ div
+			display: table-cell
+			vertical-align: middle
+			width: 100%
 	img.avatar
 		max-height: 40px
 		margin-right: 12px
@@ -61,9 +71,6 @@
 .mimenu ul li
 	padding: 8px
 	height: auto
-
-.list_posts
-	font-size: 85%
 
 .topic_details
 	font-size: 110%
@@ -97,5 +104,5 @@ ul.nlist
 
 $mimenu_font_size = 18px/28px
 $horizontal_content_padding = 10px
-$head_font_size = 1.3em/1.3em
-$main_font_size = 15px/130%
+$head_font_size = 1.6em/1.3em
+$main_font_size = 14.5px/130%

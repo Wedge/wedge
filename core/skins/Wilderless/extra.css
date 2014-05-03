@@ -33,11 +33,13 @@ body
 #wedge, #header, #footer
 	border-radius: 0
 
+.note
+	padding: 3px 5px 1px
+
 .postheader extends .clearfix
 	display: block
 	width: auto
-	padding: 8px 12px
-	min-height: 40px
+	padding: 8px 12px 5px
 	if !chrome || !mobile
 		top: 0
 		position: sticky // If the browser supports it, it's all for the best!
@@ -51,14 +53,22 @@ body
 		display: inline
 		line-height: 1.3em
 		font-weight: 400
+
 	h5:before
 		content: "- "
 	.pixelicons
 		margin-top: -2px
 	.mime
 		vertical-align: 0
+
+	// Force avatars to the left in regular posts.
 	div.avatar
-		float: left
+		display: table-cell
+		width: 1%
+		+ div
+			display: table-cell
+			vertical-align: middle
+			width: 100%
 	img.avatar
 		max-height: 40px
 		margin-right: 12px
@@ -84,9 +94,6 @@ body
 .mimenu ul li
 	padding: 8px
 	height: auto
-
-.list_posts
-	font-size: 85%
 
 .topic_details
 	font-size: 110%
