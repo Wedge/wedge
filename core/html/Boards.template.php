@@ -142,7 +142,7 @@ function template_boards()
 					</td>';
 
 				// Show some basic information about the number of posts, etc.
-				if (!SKIN_MOBILE && false)
+				if (!SKIN_MOBILE)
 				{
 					$display = array();
 					foreach ($board['display'] as $item => $string)
