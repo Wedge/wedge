@@ -222,7 +222,10 @@ function template_folder()
 					<div>', implode('</div>
 					<div>', $message['member']['group_badges']), '</div>
 				</li>';
+			}
 
+			if (!$message['member']['is_guest'])
+			{
 				// Show avatars, images, etc.?
 				if (!empty($settings['show_avatars']) && empty($options['hide_avatars']) && !empty($message['member']['avatar']['image']))
 					echo '
@@ -231,7 +234,10 @@ function template_folder()
 						', $message['member']['avatar']['image'], '
 					</a>
 				</li>';
+			}
 
+			if (!$message['member']['is_guest'] && !$is_mobile)
+			{
 				// Show how many posts they have made.
 				if (!isset($context['disabled_fields']['posts']))
 					echo '
