@@ -857,7 +857,7 @@ function while_we_re_here()
 	elseif (!$checked_security_files && we::$is_member && allowedTo('admin_forum'))
 	{
 		$checked_security_files = true;
-		$security_files = array('import.php', 'install.php', 'webinstall.php', 'upgrade.php', 'convert.php', 'repair_paths.php', 'repair_settings.php', 'Settings.php~', 'Settings_bak.php~');
+		$security_files = array('import.php', 'Settings.php~', 'Settings_bak.php~');
 
 		foreach ($security_files as $i => $security_file)
 			if (!file_exists(ROOT_DIR . '/' . $security_file))
