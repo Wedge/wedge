@@ -796,31 +796,6 @@ function Display()
 	// What's the oldest comment in the page..?
 	$context['mark_unread_time'] = min($board_info['type'] == 'forum' || count($messages) < 2 ? $messages : array_slice($messages, 1));
 
-	// When was the last time this topic was replied to? Should we warn them about it?
-	if (!empty($settings['oldTopicDays']))
-	{
-		// Did we already get the last message? If so, we already have the last poster message.
-		if (isset($times[$topicinfo['id_last_msg']]))
-			$lastPostTime = $times[$topicinfo['id_last_msg']];
-		else
-		{
-			$request = wesql::query('
-				SELECT poster_time
-				FROM {db_prefix}messages
-				WHERE id_msg = {int:id_last_msg}
-				LIMIT 1',
-				array(
-					'id_last_msg' => $topicinfo['id_last_msg'],
-				)
-			);
-
-			list ($lastPostTime) = wesql::fetch_row($request);
-			wesql::free_result($request);
-		}
-
-		$context['oldTopicError'] = $lastPostTime + $settings['oldTopicDays'] * 86400 < time();
-	}
-
 	// Guests can't mark topics read or for notifications, just can't sorry.
 	if (we::$is_member)
 	{
@@ -1030,6 +1005,31 @@ function Display()
 		$last_msg = max($messages);
 		$_SESSION['reagree_url'] = '<URL>?topic=' . $context['current_topic'] . '.msg' . $last_msg . '#msg' . $last_msg;
 		wetem::before('quick_reply', 'reagree_warning');
+	}
+
+	// When was the last time this topic was replied to? Should we warn them about it?
+	if ($context['can_reply'] && !empty($settings['oldTopicDays']))
+	{
+		// Did we already get the last message? If so, we already have the last poster message.
+		if (isset($times[$topicinfo['id_last_msg']]))
+			$lastPostTime = $times[$topicinfo['id_last_msg']];
+		else
+		{
+			$request = wesql::query('
+				SELECT poster_time
+				FROM {db_prefix}messages
+				WHERE id_msg = {int:id_last_msg}
+				LIMIT 1',
+				array(
+					'id_last_msg' => $topicinfo['id_last_msg'],
+				)
+			);
+
+			list ($lastPostTime) = wesql::fetch_row($request);
+			wesql::free_result($request);
+		}
+
+		$context['oldTopicError'] = $lastPostTime + $settings['oldTopicDays'] * 86400 < time();
 	}
 
 	// Load up the "double post" sequencing magic.
