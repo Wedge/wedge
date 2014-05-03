@@ -54,9 +54,8 @@ dl.settings
 	img
 		float: right
 
-.table_list
-	a.unreadlink
-		float: left
+a.unreadlink
+	float: left
 
 .table_grid
 	tr.catbg, tr.titlebg
