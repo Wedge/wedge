@@ -60,7 +60,7 @@ function template_modify_weights()
 						<span id="weight5" class="search_weight">', $context['relative_weights']['search_weight_first_message'], '%</span>
 					</dd>
 					<dt class="large_caption">
-						<a href="<URL>?action=help;in=search_weight_frequency" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
+						<a href="<URL>?action=help;in=search_weight_pinned" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
 						', $txt['search_weight_pinned'], ':
 					</dt>
 					<dd class="large_caption">
