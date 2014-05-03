@@ -951,18 +951,18 @@ function allowedTo($permissions, $boards = null)
 	if ($boards === null)
 	{
 		// Check if they can do it.
-		$perms = isset(we::$user['permissions']) ? we::$user['permissions'] : array();
+		$perms = isset(we::$user['permissions']) ? array_flip(we::$user['permissions']) : array();
 
 		// Search for any of a list of permissions.
 		if (!is_array($permissions))
-			return in_array($permissions, $perms);
+			return isset($perms[$permissions]);
 
 		// array_intersect would do this in one line, but up to hundreds of times slower...
 		$can_do = false;
+		// We only need ONE permission to be there.
 		foreach ($permissions as $perm)
 		{
-			$can_do |= in_array($perm, $perms);
-			// Did this permission pass? That's all we needed.
+			$can_do |= isset($perms[$perm]);
 			if ($can_do)
 				break;
 		}
