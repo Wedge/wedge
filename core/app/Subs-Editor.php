@@ -26,9 +26,9 @@ if (!defined('WEDGE'))
 
 function getMessageIcons($board_id)
 {
-	if (($temp = cache_get_data('posting_icons-' . $board_id, 480)) === null)
+	$icon_data = cache_get_data('posting_icons-' . $board_id, 480, function () use ($board_id)
 	{
-		$request = wesql::query('
+		return wesql::query_all('
 			SELECT title, filename
 			FROM {db_prefix}message_icons
 			WHERE id_board IN (0, {int:board_id})',
@@ -36,15 +36,7 @@ function getMessageIcons($board_id)
 				'board_id' => $board_id,
 			)
 		);
-		$icon_data = array();
-		while ($row = wesql::fetch_assoc($request))
-			$icon_data[] = $row;
-		wesql::free_result($request);
-
-		cache_put_data('posting_icons-' . $board_id, $icon_data, 480);
-	}
-	else
-		$icon_data = $temp;
+	});
 
 	$icons = array();
 	foreach ($icon_data as $icon)
@@ -59,7 +51,7 @@ function getMessageIcons($board_id)
 	return array_values($icons);
 }
 
-// Create a anti-bot verification control?
+// Create an anti-bot verification control?
 function create_control_verification(&$verificationOptions, $do_test = false)
 {
 	global $settings, $context;
@@ -70,11 +62,11 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 		// The template
 		loadTemplate('GenericControls');
 
-		// Some javascript ma'am?
+		// Some JavaScript ma'am?
 		if (!empty($verificationOptions['override_visual']) || (!empty($settings['use_captcha_images']) && !isset($verificationOptions['override_visual'])))
 			add_js_file('captcha.js');
 
-		// Skip I, J, L, O, Q, S and Z.
+		// Skip potentially confusing letters (I, J, L, O, Q, S and Z.)
 		$context['standard_captcha_range'] = array_merge(range('A', 'H'), array('K', 'M', 'N', 'P', 'R'), range('T', 'Y'));
 	}
 
@@ -122,11 +114,11 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 	if (!isset($_SESSION[$verificationOptions['id'] . '_vv']))
 		$_SESSION[$verificationOptions['id'] . '_vv'] = array();
 
+	$force_refresh = false;
+
 	// Do we need to refresh the verification?
 	if (!$do_test && (!empty($_SESSION[$verificationOptions['id'] . '_vv']['did_pass']) || empty($_SESSION[$verificationOptions['id'] . '_vv']['count']) || $_SESSION[$verificationOptions['id'] . '_vv']['count'] > 3) && empty($verificationOptions['dont_refresh']))
 		$force_refresh = true;
-	else
-		$force_refresh = false;
 
 	// This can also force a fresh, although unlikely.
 	if (($thisVerification['show_visual'] && empty($_SESSION[$verificationOptions['id'] . '_vv']['code'])) || ($thisVerification['number_questions'] && empty($_SESSION[$verificationOptions['id'] . '_vv']['q'])))
