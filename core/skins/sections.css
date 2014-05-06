@@ -803,13 +803,8 @@ ul.buttonlist extends "ul.reset, .clearfix"
 tr.windowbg td
 	padding: .3em .7em
 
-/* Styles for (fatal) errors.
+/* Styles for errors.
 ------------------------------------------------- */
-
-#fatal_error
-	width: 80%
-	margin: auto
-	padding: 25px 0 10px
 
 .errorbox
 	padding: 1em
