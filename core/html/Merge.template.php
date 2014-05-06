@@ -37,6 +37,8 @@ function template_merge()
 {
 	global $context, $txt;
 
+	add_css_file('pages'); // .merge_topics, .merge_topic
+
 	echo '
 		<div id="merge_topics">
 			<we:cat>
@@ -136,6 +138,8 @@ function template_merge()
 function template_merge_extra_options()
 {
 	global $context, $txt;
+
+	add_css_file('pages'); // .merge_options, .custom_subject
 
 	echo '
 	<div id="merge_topics">

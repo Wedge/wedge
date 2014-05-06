@@ -29,6 +29,8 @@ function template_main()
 		return false;
 	}');
 
+	add_css_file('pages'); // #edit_poll, .poll_main, .poll_options
+
 	// Start the main poll form.
 	echo '
 	<div id="edit_poll">

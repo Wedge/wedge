@@ -402,6 +402,8 @@ function template_make_poll()
 	var pollOptionTxt = ' . JavaScriptEscape($txt['option']) . ',
 		pollOptionTemplate = \'<li><label>%pollOptionTxt% %pollOptionNum%: <input name="options[%pollOptionNum%]" value="" maxlength="255" tabindex="%pollTabIndex%" class="w50"></label></li>\';');
 
+	add_css_file('pages'); // #edit_poll, .poll_main, .poll_options
+
 	echo '
 				<div id="edit_poll">
 					<fieldset id="poll_main">

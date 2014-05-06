@@ -27,6 +27,8 @@ function template_fatal_error()
 		return;
 	}
 
+	add_css_file('pages'); // #fatal_error
+
 	echo '
 	<br>
 	<div id="fatal_error">
