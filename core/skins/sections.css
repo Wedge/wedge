@@ -49,18 +49,20 @@ ul.stats
 p.moderators
 	font-size: 80%
 
-// The posting icons
-#posting_icons
-	margin: 0
-	padding: 0 1em 1.5em
-	line-height: 1em
-	font-size: .9em
-	img
-		vertical-align: -5px
-		padding: 0 2px 0 10px
+@if member
+	// The posting icons
+	#posting_icons
+		margin: 0
+		padding: 0 1em 1.5em
+		line-height: 1em
+		font-size: .9em
+		img
+			vertical-align: -5px
+			padding: 0 2px 0 10px
 
-.mark_read extends .clearfix
-	padding: 0 .5em
+	.mark_read extends .clearfix
+		padding: 0 .5em
+@endif
 
 // The newsfader
 @if $settings['show_newsfader']
@@ -105,20 +107,19 @@ section.ic
 		width, height: 16px
 		background-image: raw-url($images/hidden.png) // nor this
 
-// The small stats
-#index_common_stats
-	display: block
-	margin: 0 0 .5em
-	text-align: right
-	font-size: .9em
-	position: relative
-	top: -20px
-	line-height: 1px
+// The small stats, shown if the info center is disabled.
+@if !$settings['show_stats_index']
+	#index_common_stats
+		display: block
+		margin: 0 0 .5em
+		text-align: right
+		font-size: .9em
+		position: relative
+		top: -20px
+		line-height: 1px
+@endif
 
-img.new_posts
-	padding: 0 .1em
-
-/* Styles for the topic index.
+/* Styles for the topic list.
 ---------------------------------------------------- */
 
 // The page navigation area
@@ -307,9 +308,11 @@ hr.sep
 		font-style: italic
 		color: #a0aaa0
 
-.inline_mod_check
-	float: right
-	margin: 0 -3px 0 10px
+@if member
+	.inline_mod_check
+		float: right
+		margin: 0 -3px 0 10px
+@endif
 
 // Poster details and list of items
 .poster
@@ -637,16 +640,18 @@ ul.buttonlist extends "ul.reset, .clearfix"
 			color: #a54
 
 // YouTube embeds are popular, so they get their own CSS.
-.ytb
-	position: relative
-	width: 100%
-	height: 0
-	// Base size should be a 640x385 iframe.
-	padding-bottom: round(math(100 * 385 / 640), 2)%
-	iframe
-		position: absolute
-		width, height: 100%
-		left, top: 0
+@if $settings['embed_enabled']
+	.ytb
+		position: relative
+		width: 100%
+		height: 0
+		// Base size should be a 640x385 iframe.
+		padding-bottom: round(math(100 * 385 / 640), 2)%
+		iframe
+			position: absolute
+			width, height: 100%
+			left, top: 0
+@endif
 
 /* Styles for the quick reply area.
 ---------------------------------------------------- */
@@ -743,8 +748,7 @@ ul.buttonlist extends "ul.reset, .clearfix"
 		background-color: #fff0f0
 @endif
 
-.vv_special
-	display: none
+.vv_special mixes .hide
 
 /* Styles for the board index's topic table.
 ------------------------------------------------------- */
