@@ -290,13 +290,19 @@ function add_css()
 function add_css_file($original_files = array(), $add_link = true, $is_main = false, $ignore_files = array())
 {
 	global $settings, $context, $db_show_debug, $files;
-	static $cached_files = array();
+	static $cached_files = array(), $paths_done = array();
 
 	// Set hardcoded paths aside, e.g. plugin CSS.
 	$latest_date = 0;
 	$hardcoded_css = array();
-	foreach ((array) $original_files as $key => $path)
+	$original_files = (array) $original_files;
+	foreach ($original_files as $key => $path)
 	{
+		if (isset($paths_done[$path]))
+		{
+			unset($original_files[$key]);
+			continue;
+		}
 		if (strpos($path, '/') !== false)
 		{
 			unset($original_files[$key]);
@@ -306,10 +312,15 @@ function add_css_file($original_files = array(), $add_link = true, $is_main = fa
 				$latest_date = max($latest_date, filemtime($path));
 			}
 		}
+		$paths_done[$path] = true;
 	}
 
+	// No files left to handle..?
+	if (empty($original_files) && empty($hardcoded_css))
+		return false;
+
 	// Delete all duplicates and ensure $original_files is an array.
-	$original_files = array_merge(array('common' => 0), array_flip((array) $original_files));
+	$original_files = array_merge(array('common' => 0), array_flip($original_files));
 	$files = array_keys($original_files);
 
 	// If we didn't go through the regular theme initialization flow, get the skin options.
