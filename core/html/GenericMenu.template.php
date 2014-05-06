@@ -40,11 +40,7 @@ function template_generic_menu_sidebar()
 		{
 			// Not supposed to be printed?
 			if (empty($area['label']))
-			{
-				if (empty($area))
-					echo '<li class="sep"><a><hr></a></li>';
 				continue;
-			}
 
 			echo '<li>';
 

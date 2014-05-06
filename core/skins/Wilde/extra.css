@@ -280,12 +280,6 @@ tr.titlebg
 		clear: both
 	@endif
 
-.left_menu
-	list-style: none
-	margin: .5em 0
-	li
-		padding: 0 0 0 1em
-
 .description_board
 	font-size: 1.2em
 	border: 0

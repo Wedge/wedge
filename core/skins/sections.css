@@ -746,17 +746,6 @@ ul.buttonlist extends "ul.reset, .clearfix"
 .vv_special
 	display: none
 
-/* Styles for sidebar menus.
-------------------------------------------------------- */
-
-.left_menu
-	margin: .1em 2em .5em
-	padding: 0
-	li
-		padding: 0
-	li.sep
-		display: none // alternatively, line-height: 3px
-
 /* Styles for the board index's topic table.
 ------------------------------------------------------- */
 
