@@ -515,16 +515,17 @@ function updateSettings($changeArray, $update = false)
  * This will only work if $array doesn't have keys in common with $input.
  *
  * @param array $input The array to be modified
- * @param string $to The target array key
+ * @param string $to The target array key; for child arrays, use 'parent>child'.
  * @param array $array The array to insert
  * @param boolean $after Set to true to insert $array after $to, leave empty to insert before it.
  */
 function array_insert($input, $to, $array, $after = false)
 {
-	$offset = array_search($to, array_keys($input), true);
-	if ($after)
-		$offset++;
-	return array_merge(array_slice($input, 0, $offset, true), $array, array_slice($input, $offset, null, true));
+	$to = array_map('trim', explode('>', $to));
+	$offset = array_search($to[0], array_keys($input), true) + ($after && empty($to[1]) ? 1 : 0);
+	if (empty($to[1]))
+		return array_merge(array_slice($input, 0, $offset, true), $array, array_slice($input, $offset, null, true));
+	return array_merge(array_slice($input, 0, $offset, true), array($to[0] => array_insert($input[array_shift($to)], implode('>', $to), $array, $after)), array_slice($input, $offset + 1, null, true));
 }
 
 /**
