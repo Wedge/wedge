@@ -242,7 +242,7 @@ function createMenu($menuData, $menuOptions = array())
 	{
 		loadTemplate(isset($menuOptions['template_name']) ? $menuOptions['template_name'] : 'GenericMenu');
 		$menu_context['template_name'] = (isset($menuOptions['template_name']) ? $menuOptions['template_name'] : 'generic_menu') . '_dropdown';
-		wetem::add('top', $menu_context['template_name']);
+		wetem::add(strpos($menu_context['template_name'], 'sidebar') !== false ? 'sidebar' : 'top', $menu_context['template_name']);
 		wetem::add('top', 'generic_tabs');
 	}
 

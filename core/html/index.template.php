@@ -596,12 +596,9 @@ function template_menu_recursive($oact, $oitem, $is_root = false)
 		$class = (!empty($item['active_item']) ? ' chosen' : '') . (empty($item['items']) ? ' nodrop' : '') . (!empty($item['items']) && !$is_root ? ' subsection' : '');
 		echo '<li', $class ? ' class="' . substr($class, 1) . '"' : '', '>';
 
-		echo empty($item['icon']) && !$is_root ? '' : '<span id="m_' . ($is_root ? '' : $oact . '_') . $act . '"></span>',
+		echo empty($item['icon']) && !$is_root ? '' : '<span id="m_' . ($is_root ? '' : $oact . '_') . $act . '"></span>', $is_root ? '<h4>' : '',
 			'<a href="', $item['href'], '"', !empty($item['nofollow']) ? ' rel="nofollow"' : '', '>', $item['title'],
-			!empty($item['notice']) ? '<span class="note' . ($is_root ? 'warn' : '') . '">' . $item['notice'] . '</span>' : '', '</a>';
-
-		if ($is_root)
-			echo '</h4>';
+			!empty($item['notice']) ? '<span class="note' . ($is_root ? 'warn' : '') . '">' . $item['notice'] . '</span>' : '', '</a>', $is_root ? '</h4>' : '';
 
 		if (!empty($item['items']))
 			template_menu_recursive($act, $item['items']);
