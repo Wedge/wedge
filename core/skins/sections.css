@@ -519,7 +519,7 @@ hr.sep
 
 // Sprited action buttons
 .vbtn virtual
-	background: url($images/theme/actions.png) 0 0 no-repeat
+	background: url($images/buttons/actions.png) 0 0 no-repeat
 	padding: 0 4px 0 22px
 	height: 20px
 

@@ -328,7 +328,7 @@ $radius = 20px
 	background: #a39993
 
 @remove
-	background: url($images/theme/bg.jpg)
+	background: url($images/bg.jpg)
 
 @replace
 	wefoot1.png
