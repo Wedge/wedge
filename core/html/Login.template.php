@@ -129,6 +129,8 @@ function template_maintenance()
 	if (empty($context['disable_login_hashing']))
 		$context['main_js_files']['sha1.js'] = true;
 
+	add_css_file('pages'); // #maintenance_mode
+
 	echo '
 <form action="<URL>?action=login2" method="post" accept-charset="UTF-8"', empty($context['disable_login_hashing']) ? ' onsubmit="hashLoginPassword(this, \'' . $context['session_id'] . '\');"' : '', '>
 	<div class="login" id="maintenance_mode">
@@ -168,6 +170,8 @@ function template_admin_login()
 
 	// Since this should redirect to whatever they were doing, send all the get data.
 	$context['main_js_files']['sha1.js'] = true;
+
+	add_css_file('pages'); // #admin_login
 
 	echo '
 <form action="<URL>', $context['get_data'], '" method="post" accept-charset="UTF-8" name="frmLogin" id="frmLogin" onsubmit="hashAdminPassword(this, \'', we::$user['username'], '\', \'', $context['session_id'], '\');">

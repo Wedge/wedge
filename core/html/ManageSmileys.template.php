@@ -11,26 +11,13 @@
 // Editing the smiley sets.
 function template_editsets()
 {
-	global $context, $txt, $settings;
+	global $context;
 
 	template_show_list('smiley_set_list');
 
-	echo '
-		<br>
-		<we:cat>
-			', $txt['smiley_sets_latest'], '
-		</we:cat>
-		<div class="windowbg wrc">
-			<div id="smileysLatest">', $txt['smiley_sets_latest_fetch'], '</div>
-		</div>';
-
-	if (empty($settings['disable_wedge_js']))
-		add_js_file('<URL>?action=viewremote;filename=latest-smileys.js', true);
-
-	add_js('
-	if (typeof window.weLatestSmileys != "undefined")
-		$("#smileysLatest").html(window.weLatestSmileys);', !empty($context['selected_set']) ? '
-	changeSet("' . $context['selected_set'] . '");' : '');
+	if (!empty($context['selected_set']))
+		add_js('
+	changeSet("' . $context['selected_set'] . '");');
 }
 
 // Modifying a smiley set.

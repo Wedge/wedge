@@ -262,7 +262,7 @@ for guests, because most of the time it won't be an option.
 @endif
 
 .privacy_list_friends mixes .inline-block
-	background: url($images/icons/contacts.png) 0 0 no-repeat
+	background: url($images/icons/contacts.gif) 0 0 no-repeat
 	width, height: 10px
 	margin-right: 4px
 	vertical-align: 0

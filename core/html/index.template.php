@@ -159,8 +159,7 @@ function template_search_box()
 
 	echo '
 			<form id="search_form" action="<URL>?action=search2" method="post" accept-charset="UTF-8">
-				<input type="search" name="search" value="" class="search">
-				<input type="submit" value="', $txt['search'], '">';
+				<input type="search" name="search" value="" class="search">';
 
 	// Search within current topic?
 	if (!empty($context['current_topic']))
@@ -574,50 +573,40 @@ function template_menu()
 	global $context;
 
 	echo '
-	<div id="navi">
-		<ul id="main_menu" class="css menu">';
+	<div id="navi">';
 
-	foreach ($context['menu_items'] as $act => $item)
+	template_menu_recursive('', $context['menu_items'], true);
+
+	echo '
+	</div>';
+}
+
+// Sub-menus... And more nested action.
+function template_menu_recursive($oact, $oitem, $is_root = false)
+{
+	echo '<ul', $is_root ? ' id="main_menu" class="menu"' : '', '>';
+
+	foreach ($oitem as $act => $item)
 	{
-		$class = ($item['active_item'] ? ' chosen' : '') . (empty($item['sub_items']) ? ' nodrop' : '');
-
-		echo '<li', $class ? ' class="' . ltrim($class) . '"' : '', '><span id="m_' . $act . '"></span><h4><a href="', $item['href'], '"',
-			!empty($item['nofollow']) ? ' rel="nofollow"' : '', '>', $item['title'],
-			!empty($item['notice']) ? '<span class="note' . ($act === 'media' ? '' : 'warn') . '">' . $item['notice'] . '</span>' : '',
-			'</a></h4>';
-
-		if (!empty($item['sub_items']))
+		if (empty($item))
 		{
-			echo '<ul>';
-
-			foreach ($item['sub_items'] as $sub_item)
-			{
-				if (empty($sub_item))
-				{
-					echo '<li class="sep"><a><hr></a></li>';
-					continue;
-				}
-				echo '<li><a href="', $sub_item['href'], '">',
-				$sub_item['title'], !empty($sub_item['notice']) ? '<span class="note">' . $sub_item['notice'] . '</span>' : '', '</a>';
-
-				// 3rd-level menus
-				if (!empty($sub_item['sub_items']))
-				{
-					echo '<ul>';
-
-					foreach ($sub_item['sub_items'] as $subsub_item)
-						echo '<li><a href="', $subsub_item['href'], '">', $subsub_item['title'], '</a></li>';
-
-					echo '</ul>';
-				}
-				echo '</li>';
-			}
-			echo '</ul>';
+			echo '<li class="sep"><a><hr></a></li>';
+			continue;
 		}
+		$class = (!empty($item['active_item']) ? ' chosen' : '') . (empty($item['items']) ? ' nodrop' : '') . (!empty($item['items']) && !$is_root ? ' subsection' : '');
+		echo '<li', $class ? ' class="' . substr($class, 1) . '"' : '', '>';
+
+		echo empty($item['icon']) && !$is_root ? '' : '<span id="m_' . ($is_root ? '' : $oact . '_') . $act . '"></span>', $is_root ? '<h4>' : '',
+			'<a href="', $item['href'], '"', !empty($item['nofollow']) ? ' rel="nofollow"' : '', '>', $item['title'],
+			!empty($item['notice']) ? '<span class="note' . ($is_root ? 'warn' : '') . '">' . $item['notice'] . '</span>' : '', '</a>', $is_root ? '</h4>' : '';
+
+		if (!empty($item['items']))
+			template_menu_recursive($act, $item['items']);
+
 		echo '</li>';
 	}
-	echo '</ul>
-	</div>';
+
+	echo '</ul>';
 }
 
 function template_mini_menu($menu, $class)

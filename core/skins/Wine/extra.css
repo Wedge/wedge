@@ -85,9 +85,9 @@ h1
 	height: $banner_height
 	position: relative
 	@if ie[-9]
-		background-image: url($images/theme/bg.jpg)
+		background-image: url($images/bg.jpg)
 	@else
-		background-image: linear-gradient($head_bg, luma($head_bg, -20%)), url($images/theme/bg.jpg)
+		background-image: linear-gradient($head_bg, luma($head_bg, -20%)), url($images/bg.jpg)
 	@endif
 	@if ie6
 		h1
@@ -304,12 +304,6 @@ ul.buttonlist
 	#modbuttons a
 		background-position: 6px 5px
 @endif
-
-/* Styles for sidebar menus.
-------------------------------------------------------- */
-
-.left_menu
-	margin: .5em 2em
 
 /* Styles for the profile section.
 ------------------------------------------------- */

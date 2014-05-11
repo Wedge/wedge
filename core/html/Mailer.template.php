@@ -38,6 +38,8 @@ function template_main()
 {
 	global $context, $txt;
 
+	add_css_file('pages'); // .send_topic
+
 	echo '
 		<form action="<URL>?action=emailuser;sa=sendtopic;topic=', $context['current_topic'], '.', $context['start'], '" method="post" accept-charset="UTF-8">
 			<we:cat>
@@ -95,6 +97,8 @@ function template_main()
 function template_custom_email()
 {
 	global $context, $txt;
+
+	add_css_file('pages'); // .send_mail
 
 	echo '
 		<form action="<URL>?action=emailuser;sa=email" method="post" accept-charset="UTF-8">
@@ -162,6 +166,8 @@ function template_custom_email()
 function template_report()
 {
 	global $context, $txt;
+
+	add_css_file('pages'); // #report (on main content div, not mentioned here.)
 
 	echo '
 		<form action="<URL>?action=report;topic=', $context['current_topic'], '.0" method="post" accept-charset="UTF-8">

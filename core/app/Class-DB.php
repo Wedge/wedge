@@ -687,28 +687,22 @@ class wesql
 		return mysqli_fetch_row($result);
 	}
 
-	public static function fetch_all($result)
+	public static function fetch_all($result, $type = MYSQLI_ASSOC)
 	{
 		if ($result === false)
 			return array();
 		if (function_exists('mysqli_fetch_all')) // mysqlnd enabled, valid request?
 			return (array) mysqli_fetch_all($result, MYSQLI_ASSOC);
 		$arr = array();
-		while ($row = mysqli_fetch_assoc($result))
+		$func_name = $type === MYSQLI_ASSOC ? 'mysqli_fetch_assoc' : 'mysqli_fetch_row';
+		while ($row = $func_name($result))
 			$arr[] = $row;
 		return $arr;
 	}
 
 	public static function fetch_rows($result)
 	{
-		if ($result === false)
-			return array();
-		if (function_exists('mysqli_fetch_all'))
-			return (array) mysqli_fetch_all($result, MYSQLI_NUM);
-		$arr = array();
-		while ($row = mysqli_fetch_row($result))
-			$arr[] = $row;
-		return $arr;
+		return self::fetch_all($result, MYSQLI_NUM);
 	}
 
 	public static function free_result($result)
@@ -716,22 +710,33 @@ class wesql
 		return mysqli_free_result($result);
 	}
 
-	public static function query_all($db_string, $db_values = array(), $connection = null)
+	public static function query_get($db_string, $db_values = array(), $connection = null, $job = 'assoc')
 	{
 		$request = self::query($db_string, $db_values, $connection);
-		$all = self::fetch_all($request);
+		$results = call_user_func('self::fetch_' . $job, $request);
 		wesql::free_result($request);
 
-		return $all;
+		return $results;
+	}
+
+	public static function query_assoc($db_string, $db_values = array(), $connection = null)
+	{
+		return self::query_get($db_string, $db_values, $connection, 'assoc');
+	}
+
+	public static function query_row($db_string, $db_values = array(), $connection = null)
+	{
+		return self::query_get($db_string, $db_values, $connection, 'row');
+	}
+
+	public static function query_all($db_string, $db_values = array(), $connection = null)
+	{
+		return self::query_get($db_string, $db_values, $connection, 'all');
 	}
 
 	public static function query_rows($db_string, $db_values = array(), $connection = null)
 	{
-		$request = self::query($db_string, $db_values, $connection);
-		$all = self::fetch_rows($request);
-		wesql::free_result($request);
-
-		return $all;
+		return self::query_get($db_string, $db_values, $connection, 'rows');
 	}
 
 	public static function data_seek($result, $row_num)

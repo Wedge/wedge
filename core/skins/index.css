@@ -733,16 +733,21 @@ tr.catbg .sbox, tr.titlebg .sbox
 	background-position: -19px 0
 	width: 14px
 
-#m_login extends #m_home
-	background-position: -112px 0
-	width: 15px
+@if guest
+	#m_login extends #m_home
+		background-position: -112px 0
+		width: 15px
 
-#m_register extends #m_home
-	background-position: -130px 0
+	#m_register extends #m_home
+		background-position: -130px 0
+@endif
 
-#m_logout extends #m_home
-	background-position: -94px 0
-	width: 15px
+@if member
+	#m_profile_logout extends #m_home
+		background-position: -94px 0
+		width: 15px
+		margin: 6px 6px 0 10px
+@endif
 
 /* Styles for buttons and other form elements
 ------------------------------------------------------- */

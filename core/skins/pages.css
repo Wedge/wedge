@@ -1,0 +1,140 @@
+
+/**
+ * These styles are for specific pages in Wedge.
+ * They're included separately from index.css/sections.css
+ * because they're usually not needed, especially for guests.
+ */
+
+/* Styles for edit poll section.
+---------------------------------------------------- */
+
+#edit_poll
+	overflow: hidden
+	fieldset
+		padding: .5em
+		clear: both
+		overflow: hidden
+		> input
+			margin: .8em 0 .3em 3em
+
+ul.poll_main, dl.poll_options
+	list-style: none
+	overflow: hidden
+	padding: 0 0 .7em .7em
+	margin: 12px 0 4px
+
+ul.poll_main
+	li
+		@if ie6
+			padding-left: 0
+			margin: 0 -2em
+		@else
+			padding-left: 1em
+			margin: .2em 0
+		@endif
+	input
+		margin: .2em 0 .2em 1em
+
+dl.poll_options
+	dt
+		width: 35%
+		padding: 0 0 0 1em
+	dd
+		width: 60%
+		input
+			margin-left: 0
+
+/* Styles for the move topic section.
+---------------------------------------------------- */
+
+.move_topic
+	width: 80%
+	min-width: 200px
+	margin: auto
+	text-align: left
+
+.move_topic fieldset
+	padding: .5em
+
+/* Styles for the send topic section.
+---------------------------------------------------- */
+
+fieldset.send_topic
+	border: none
+	padding: .5em
+
+dl.send_topic
+	margin-bottom: 0
+
+dl.send_mail
+	dt
+		width: 35%
+	dd
+		width: 63%
+
+/* Styles for the report topic section.
+---------------------------------------------------- */
+
+#report dl
+	margin-bottom: 0
+	&.settings dt
+		width: 20%
+	&.settings dd
+		width: 79%
+
+/* Styles for the split topic section.
+---------------------------------------------------- */
+
+#selected, #not_selected
+	width: 49%
+
+ul.split_messages
+	li a.split_icon
+		padding: 0 .5em
+	div.post
+		padding: 1em 0 0
+		border-top: 1px solid #fff
+
+/* Styles for the merge topic section.
+---------------------------------------------------- */
+
+ul.merge_topics li
+	list-style: none
+
+dl.merge_topic
+	dt
+		width: 25%
+	dd
+		width: 72%
+
+fieldset.merge_options
+	clear: both
+
+.custom_subject
+	margin: .5em 0
+
+/* Styles for maintenance mode.
+---------------------------------------------------- */
+
+#maintenance_mode
+	width: 75%
+	min-width: 520px
+	text-align: left
+	img.floatleft
+		margin-right: 1em
+
+/* Admin password confirmation.
+---------------------------------------------------- */
+
+#admin_login .center
+	padding: 1em
+	.error
+		padding: 0 0 1em 0
+
+/* Styles for fatal errors.
+---------------------------------------------------- */
+
+#fatal_error
+	width: 80%
+	margin: auto
+	padding: 25px 0 10px

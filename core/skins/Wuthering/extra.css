@@ -261,12 +261,6 @@ tr.titlebg
 		clear: both
 	@endif
 
-.left_menu
-	list-style: none
-	margin: .5em 0
-	li
-		padding: 0 0 0 1em
-
 #statistics
 	.title final
 		margin: 4px 0
@@ -317,7 +311,7 @@ $radius = 20px
 	background: #a39993
 
 @remove
-	background: url($images/theme/bg.jpg)
+	background: url($images/bg.jpg)
 
 @replace
 	wefoot1.png
