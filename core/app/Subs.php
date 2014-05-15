@@ -1487,7 +1487,7 @@ function getRePrefix()
 
 	$context['response_prefix'] = cache_get_data('re_prefix', 'forever', function ()
 	{
-		global $context, $settings, $txt;
+		global $settings, $txt;
 
 		if ($settings['language'] === we::$user['language'])
 			$prefix = $txt['response_prefix'];

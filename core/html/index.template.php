@@ -152,7 +152,7 @@ function template_header_after()
 
 function template_search_box()
 {
-	global $context, $txt;
+	global $context;
 
 	if (empty($context['allow_search']))
 		return;
