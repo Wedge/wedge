@@ -2341,7 +2341,7 @@ function setupMenuContext()
 	}
 
 	// Remove the home separator if not needed.
-	if (empty(reset($menu_items['home']['items'])))
+	if (reset($menu_items['home']['items']) === '')
 		array_shift($menu_items['home']['items']);
 
 	$context['menu_items'] =& $menu_items;
