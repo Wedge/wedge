@@ -250,7 +250,7 @@ function list_getLanguages()
 			'available' => $settings['language'] == $lang['filename'] || in_array($lang['filename'], $langsAvailable),
 			'default' => $settings['language'] == $lang['filename'] || ($settings['language'] == '' && $lang['filename'] == 'english'),
 			'locale' => $txt['lang_locale'],
-			'name' => '<img src="' . LANGUAGES . $lang['folder'] . '/Flag.' . $lang['filename'] . '.png" style="margin-right: 8px">' . $txt['lang_name'],
+			'name' => '<img src="' . LANGUAGES . $lang['folder'] . '/Flag.' . $lang['filename'] . '.gif" style="margin-right: 8px">' . $txt['lang_name'],
 			'dictionary' => $txt['lang_dictionary'] . ' (' . $txt['lang_spelling'] . ')',
 			'rtl' => $txt['lang_rtl'],
 		);

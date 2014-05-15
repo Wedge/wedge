@@ -884,8 +884,7 @@ function dynamic_language_flags()
 	$rep = '';
 	foreach ($context['languages'] as $language)
 	{
-		$ext = file_exists(LANGUAGES_DIR . $language['folder'] . '/Flag.' . $language['filename'] . '.png') ? '.png' : '.gif';
-		$icon = str_replace(ROOT_DIR, '', LANGUAGES_DIR) . $language['folder'] . '/Flag.' . $language['filename'] . $ext;
+		$icon = str_replace(ROOT_DIR, '', LANGUAGES_DIR) . $language['folder'] . '/Flag.' . $language['filename'] . '.gif';
 		$rep .= '
 .flag_' . $language['filename'] . ' mixes .inline-block("")
 	background: url($root'. $icon . ') no-repeat 0 center
