@@ -2131,12 +2131,14 @@ function setupMenuContext()
 					'href' => $is_b ? '<URL>?board=' . $board_info['id'] . '.0' : '',
 					'show' => $is_b,
 				),
+				'',
 				'media' => array(
 					'title' => isset($txt['media_gallery']) ? $txt['media_gallery'] : 'Media',
 					'notice' => $can_view_unseen ? we::$user['media_unseen'] : '',
 					'href' => '<URL>?action=media',
 					'show' => !empty($settings['media_enabled']) && allowedTo('media_access'),
 					'notice' => $can_view_unseen ? we::$user['media_unseen'] : '',
+					'icon' => true,
 					'items' => array(
 						'home' => array(
 							'title' => $txt['media_home'],
@@ -2154,6 +2156,7 @@ function setupMenuContext()
 					'title' => $txt['members_title'],
 					'href' => '<URL>?action=mlist',
 					'show' => $context['allow_memberlist'],
+					'icon' => true,
 					'items' => array(
 						'mlist_view' => array(
 							'title' => $txt['mlist_menu_view'],
@@ -2320,6 +2323,26 @@ function setupMenuContext()
 			$menu_items[$act] = $item;
 		}
 	}
+
+	// If we explicitly requested a long menu, move all Home items to the root.
+	if (!SKIN_SHORTMENU)
+	{
+		$from_now = false;
+		foreach ($menu_items['home']['items'] as $title => $entry)
+		{
+			if ($from_now)
+			{
+				$menu_items[$title] = $entry;
+				unset($menu_items['home']['items'][$title]);
+			}
+			elseif (empty($entry))
+				$from_now = true;
+		}
+	}
+
+	// Remove the home separator if not needed.
+	if (empty(reset($menu_items['home']['items'])))
+		array_shift($menu_items['home']['items']);
 
 	$context['menu_items'] =& $menu_items;
 

@@ -1666,6 +1666,8 @@ function wedge_parse_skin_options($skin_options)
 	unset($skin_options['sidebar']);
 	if (!isset($skin_options['mobile']))
 		$skin_options['mobile'] = 0;
+	if (!isset($skin_options['shortmenu']))
+		$skin_options['shortmenu'] = 1;
 
 	// Any other variables, maybe..? e.g. SKIN_MOBILE
 	foreach ($skin_options as $key => $val)
