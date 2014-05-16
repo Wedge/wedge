@@ -100,18 +100,6 @@ a.unreadlink
 #upshrink
 	float: left
 
-#header
-	.news
-		text-align, float: left
-	.user
-		float: right
-		p
-			float: right
-			margin: 0 0 1em 1em
-		ul
-			padding-left: 0
-			padding-right: 10px
-
 // The navigation list (i.e. linktree)
 #linktree li
 	float: right

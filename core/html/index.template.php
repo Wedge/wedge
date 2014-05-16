@@ -255,8 +255,8 @@ function template_side_user_before()
 
 	echo '
 	<section>
-		<we:title>
-			<span class="greeting">', sprintf($txt['hello_member_ndt'], we::$user['name']), '</span>
+		<we:title id="greeting">
+			', sprintf($txt['hello_member_ndt'], we::$user['name']), '
 		</we:title>
 		<div id="userbox">';
 
