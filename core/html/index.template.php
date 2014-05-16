@@ -122,13 +122,13 @@ function template_wrapper_before()
 function template_header_before()
 {
 	echo '
-	<div id="header"><div class="frame">';
+	<div id="header"><div>';
 }
 
 function template_top_bar_before()
 {
 	echo '
-		<div id="top_section"><div class="frame">';
+		<div id="top_section"><div>';
 }
 
 function template_top_bar_after()
@@ -143,7 +143,7 @@ function template_header_after()
 	global $context, $settings, $options;
 
 	echo '
-		<div id="banner"', empty($options['collapse_header']) ? '' : ' class="hide"', '><div class="frame"><we:banner title="',
+		<div id="banner"', empty($options['collapse_header']) ? '' : ' class="hide"', '><div><we:banner title="',
 		$context['header_logo_url_html_safe'], '" url="', !empty($settings['home_url']) && !empty($settings['home_link']) ?
 		$settings['home_url'] : '<URL>', '">', $context['site_slogan'], '</we:banner>
 		</div></div>
@@ -402,7 +402,7 @@ function template_content_wrap_before()
 		$id = 'login';
 
 	echo '
-	<div id="content"><div class="frame"', isset($id) ? ' id="' . $id . '"' : '', '>';
+	<div id="content"><div', isset($id) ? ' id="' . $id . '"' : '', '>';
 }
 
 function template_main_wrap_before()
@@ -654,7 +654,7 @@ function template_footer()
 	// If you want to use validator.nu instead, replace the w3.org link with:
 	// "http://validator.nu/?doc=', we::$user['url'], '"
 	echo '
-	<div id="footer"><div class="frame">
+	<div id="footer"><div>
 		<ul class="reset">
 			<li id="copyright">', $txt['copyright'], '</li>
 			<li class="links">
