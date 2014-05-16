@@ -285,6 +285,9 @@ $radius = 20px
 	border-top: .54em double #ccc
 	border-bottom: .18em solid #ccc
 
+@remove #header, #navi, #footer
+	color: #ddc
+
 // Reset the sidebar position from left, to right.
 @remove #edge, #sidebar, #main
 	direction: ltr

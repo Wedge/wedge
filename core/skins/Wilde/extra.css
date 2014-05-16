@@ -313,6 +313,9 @@ $radius = 20px
 	border-top: .54em double #ccc
 	border-bottom: .18em solid #ccc
 
+@remove #header, #navi, #footer
+	color: #ddc
+
 @remove #footer
 	margin-top: 16px
 
