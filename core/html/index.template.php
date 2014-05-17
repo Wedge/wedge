@@ -654,23 +654,21 @@ function template_footer()
 	// If you want to use validator.nu instead, replace the w3.org link with:
 	// "http://validator.nu/?doc=', we::$user['url'], '"
 	echo '
-	<div id="footer"><div>
-		<ul class="reset">
-			<li id="copyright">', $txt['copyright'], '</li>
-			<li class="links">
-				<a id="site_credits" href="<URL>?action=credits">', $txt['site_credits'], '</a> |
-				<a id="button_html5" href="http://validator.w3.org/check?uri=referer" target="_blank" class="new_win" title="', $txt['valid_html5'], '">', $txt['html5'], '</a>',
-				empty($context['custom_credits']) ? '' : $context['custom_credits'], '
-			</li>';
+	<div id="footer"><div><ul>
+		<li id="copyright">', $txt['copyright'], '</li>
+		<li class="links">
+			<a id="site_credits" href="<URL>?action=credits">', $txt['site_credits'], '</a> |
+			<a id="button_html5" href="http://validator.w3.org/check?uri=referer" target="_blank" class="new_win" title="', $txt['valid_html5'], '">', $txt['html5'], '</a>',
+			empty($context['custom_credits']) ? '' : $context['custom_credits'], '
+		</li>';
 
 	// Show the load time?
 	if ($context['show_load_time'])
 		echo '
-			<li class="stats"><!-- insert stats here --></li>';
+		<li class="stats"><!-- insert stats here --></li>';
 
 	echo '
-		</ul>
-	</div></div>';
+	</ul></div></div>';
 }
 
 /**
