@@ -488,8 +488,8 @@ function ob_sessrewrite($buffer)
 
 	// Separate topic names from topic prefixes.
 	$buffer = preg_replace(
-		'~(<a\b[^>]+href="' . $preg_scripturl . '\?(?:[^"]+)?\btopic=\d+[^"]*"[^>]*>)(Re:\s)?((?:\[[^]<>]*]\s*)+)(.+?</a>)~',
-		'$3$1$2$4', $buffer
+		'~(<a\b[^>]+href="' . $preg_scripturl . '\?(?:[^"]+)?\btopic=\d+[^"]*"[^>]*>)(' . (isset($context['response_prefix']) ? preg_quote($context['response_prefix'], '~') : 'Re:\s') . ')?((?:\[[^]<>]*]\s*)+)(.+?</a>)~',
+		'$3 $1$2$4', $buffer
 	);
 
 	// If the session is not cookied, or they are a crawler, add the session ID to all URLs.
