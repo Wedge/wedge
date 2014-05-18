@@ -9,9 +9,6 @@
 
 /* Misc hacks
 ------------- */
-#content div.frame
-	width: auto
-
 .cat
 	overflow: hidden
 	width: auto

@@ -263,7 +263,7 @@ ul#noava
 	overflow: hidden
 	min-height: 70px
 
-	.frame
+	> div
 		width: 100%
 		box-sizing: border-box
 		padding: 25px 25px 10px
@@ -331,20 +331,24 @@ h1
 	@if $radius
 		border-radius: 0 0 $radius $radius
 	@endif
-	div.frame
+
+	> div
 		padding: 10px 20px
 
-	ul extends .clearfix
-		li
-			margin-left: 4px
-			line-height: 160%
-			:first-child:before
-				content: ""
-				float: left
-				background: url($images/wefoot2.png) 0 4px no-repeat
-				padding: math(height($images_dir/wefoot2.png)px + 4) math(width($images_dir/wefoot2.png)px + 18) 0 0
-		.links
-			display: block
+	ul extends .clearfix, li
+		margin, padding: 0
+		list-style: none
+	li
+		margin-left: 4px
+		line-height: 160%
+		:first-child:before
+			content: ""
+			float: left
+			background: url($images/wefoot2.png) 0 4px no-repeat
+			padding: math(height($images_dir/wefoot2.png)px + 4) math(width($images_dir/wefoot2.png)px + 18) 0 0
+	.links
+		display: block
+
 	a
 		color: #679
 		border-bottom: 1px dashed #679
@@ -367,7 +371,7 @@ $view_junk = "$settings['db_show_debug_who_log']"
 
 // Normal, standard links.
 a
-	color: #47a// #de874d, b96f17, c06002
+	color: #47a // #de874d, b96f17, c06002
 	text-decoration: none
 	cursor: pointer
 	:hover

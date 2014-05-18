@@ -160,6 +160,8 @@ img.aext
 		margin: 0 20px
 		line-height: 1.5em
 		text-align: right
+	.actions a
+		padding: 0
 
 #item-area
 	box-sizing: border-box

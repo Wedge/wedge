@@ -19,10 +19,9 @@
 	<move block="linktree" to="menu" where="after" />
 	<move block="linktree:bottom" to="content_wrap" where="after" />
 
-	<script for="ie6" include="pngfix.js ie6hover.js"><![CDATA[
+	<script for="ie6" include="ie6hover.js"><![CDATA[
 	$('input[type=checkbox], input[type=radio]').addClass('ie_check');
 	$('input[type=submit], input[type=button]').addClass('ie_button');
-	DD_belatedPNG.fix('.ping,#logo,#footer,#footer div.frame');
 	$.ie6hover();
 	]]></script>
 

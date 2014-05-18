@@ -133,7 +133,7 @@ h1
 	border-top: 1px solid #ccc
 	border-radius: 0 0 20px 20px
 	color: #333
-	div.frame
+	> div
 		padding: 10px 20px
 	a
 		color: #679
@@ -285,7 +285,7 @@ $radius = 20px
 	border-top: .54em double #ccc
 	border-bottom: .18em solid #ccc
 
-@remove #footer, #header, #navi
+@remove #header, #navi, #footer
 	color: #ddc
 
 // Reset the sidebar position from left, to right.

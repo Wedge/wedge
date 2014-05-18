@@ -42,7 +42,7 @@ table.cs0 final tr.windowbg:last-child td
 		direction: rtl
 */
 
-#content div.frame
+#content > div
 	padding-bottom: 16px
 
 #edge
@@ -97,7 +97,7 @@ h1
 	img
 		max-height: math($banner_height - 40px)
 	// We're using flexbox to easily spread out our elements.
-	.frame
+	> div
 		position: absolute
 		justify-content: space-between
 		padding-top, bottom: 0

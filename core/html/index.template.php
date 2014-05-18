@@ -122,13 +122,13 @@ function template_wrapper_before()
 function template_header_before()
 {
 	echo '
-	<div id="header"><div class="frame">';
+	<div id="header"><div>';
 }
 
 function template_top_bar_before()
 {
 	echo '
-		<div id="top_section"><div class="frame">';
+		<div id="top_section"><div>';
 }
 
 function template_top_bar_after()
@@ -143,7 +143,7 @@ function template_header_after()
 	global $context, $settings, $options;
 
 	echo '
-		<div id="banner"', empty($options['collapse_header']) ? '' : ' class="hide"', '><div class="frame"><we:banner title="',
+		<div id="banner"', empty($options['collapse_header']) ? '' : ' class="hide"', '><div><we:banner title="',
 		$context['header_logo_url_html_safe'], '" url="', !empty($settings['home_url']) && !empty($settings['home_link']) ?
 		$settings['home_url'] : '<URL>', '">', $context['site_slogan'], '</we:banner>
 		</div></div>
@@ -152,7 +152,7 @@ function template_header_after()
 
 function template_search_box()
 {
-	global $context, $txt;
+	global $context;
 
 	if (empty($context['allow_search']))
 		return;
@@ -255,8 +255,8 @@ function template_side_user_before()
 
 	echo '
 	<section>
-		<we:title>
-			<span class="greeting">', sprintf($txt['hello_member_ndt'], we::$user['name']), '</span>
+		<we:title id="greeting">
+			', sprintf($txt['hello_member_ndt'], we::$user['name']), '
 		</we:title>
 		<div id="userbox">';
 
@@ -402,7 +402,7 @@ function template_content_wrap_before()
 		$id = 'login';
 
 	echo '
-	<div id="content"><div class="frame"', isset($id) ? ' id="' . $id . '"' : '', '>';
+	<div id="content"><div', isset($id) ? ' id="' . $id . '"' : '', '>';
 }
 
 function template_main_wrap_before()
@@ -654,23 +654,21 @@ function template_footer()
 	// If you want to use validator.nu instead, replace the w3.org link with:
 	// "http://validator.nu/?doc=', we::$user['url'], '"
 	echo '
-	<div id="footer"><div class="frame">
-		<ul class="reset">
-			<li id="copyright">', $txt['copyright'], '</li>
-			<li class="links">
-				<a id="site_credits" href="<URL>?action=credits">', $txt['site_credits'], '</a> |
-				<a id="button_html5" href="http://validator.w3.org/check?uri=referer" target="_blank" class="new_win" title="', $txt['valid_html5'], '">', $txt['html5'], '</a>',
-				empty($context['custom_credits']) ? '' : $context['custom_credits'], '
-			</li>';
+	<div id="footer"><div><ul>
+		<li id="copyright">', $txt['copyright'], '</li>
+		<li class="links">
+			<a id="site_credits" href="<URL>?action=credits">', $txt['site_credits'], '</a> |
+			<a id="button_html5" href="http://validator.w3.org/check?uri=referer" target="_blank" class="new_win" title="', $txt['valid_html5'], '">', $txt['html5'], '</a>',
+			empty($context['custom_credits']) ? '' : $context['custom_credits'], '
+		</li>';
 
 	// Show the load time?
 	if ($context['show_load_time'])
 		echo '
-			<li class="stats"><!-- insert stats here --></li>';
+		<li class="stats"><!-- insert stats here --></li>';
 
 	echo '
-		</ul>
-	</div></div>';
+	</ul></div></div>';
 }
 
 /**

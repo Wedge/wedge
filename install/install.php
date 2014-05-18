@@ -207,14 +207,14 @@ function load_lang_file()
 				$txt = array();
 				require_once($folder . '/index.' . substr($entry, 8));
 				if (!empty($txt['lang_name']))
-					$incontext['detected_languages'][substr($entry, 8, -4)] = '&lt;img src="core/languages/Flag.' . substr($entry, 8, -4) . '.png"&gt; ' . $txt['lang_name'];
+					$incontext['detected_languages'][substr($entry, 8, -4)] = '&lt;img src="core/languages/Flag.' . substr($entry, 8, -4) . '.gif"&gt; ' . $txt['lang_name'];
 			}
 			elseif (is_dir($folder . '/' . $entry) && file_exists($folder . '/' . $entry . '/Install.' . $entry . '.php'))
 			{
 				$txt = array();
 				require_once($folder . '/' . $entry . '/index.' . $entry . '.php');
 				if (!empty($txt['lang_name']))
-					$incontext['detected_languages'][$entry] = '&lt;img src="core/languages/' . $entry . '/Flag.' . $entry . '.png"&gt; ' . $txt['lang_name'];
+					$incontext['detected_languages'][$entry] = '&lt;img src="core/languages/' . $entry . '/Flag.' . $entry . '.gif"&gt; ' . $txt['lang_name'];
 			}
 		}
 		$dir->close();
@@ -722,7 +722,7 @@ function DatabaseSettings()
 		// Do they meet the install requirements?
 		if ((version_compare(REQUIRED_MYSQL_CLIENT_VERSION, preg_replace('~^\D*|\-.+?$~', '', mysqli_get_client_info())) > 0) || (version_compare(REQUIRED_MYSQL_SERVER_VERSION, preg_replace('~^\D*|\-.+?$~', '', mysqli_get_server_info($db_connection))) > 0))
 		{
-			$incontext['error'] = sprintf($txt['error_db_too_low'], 'Server: ' . mysqli_get_server_info() . ' / Client: ' . mysqli_get_client_info());
+			$incontext['error'] = sprintf($txt['error_db_too_low'], 'Server: ' . mysqli_get_server_info($db_connection) . ' / Client: ' . mysqli_get_client_info());
 			return false;
 		}
 

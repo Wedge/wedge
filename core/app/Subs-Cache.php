@@ -884,8 +884,7 @@ function dynamic_language_flags()
 	$rep = '';
 	foreach ($context['languages'] as $language)
 	{
-		$ext = file_exists(LANGUAGES_DIR . $language['folder'] . '/Flag.' . $language['filename'] . '.png') ? '.png' : '.gif';
-		$icon = str_replace(ROOT_DIR, '', LANGUAGES_DIR) . $language['folder'] . '/Flag.' . $language['filename'] . $ext;
+		$icon = str_replace(ROOT_DIR, '', LANGUAGES_DIR) . $language['folder'] . '/Flag.' . $language['filename'] . '.gif';
 		$rep .= '
 .flag_' . $language['filename'] . ' mixes .inline-block("")
 	background: url($root'. $icon . ') no-repeat 0 center
@@ -1666,6 +1665,8 @@ function wedge_parse_skin_options($skin_options)
 	unset($skin_options['sidebar']);
 	if (!isset($skin_options['mobile']))
 		$skin_options['mobile'] = 0;
+	if (!isset($skin_options['shortmenu']))
+		$skin_options['shortmenu'] = 1;
 
 	// Any other variables, maybe..? e.g. SKIN_MOBILE
 	foreach ($skin_options as $key => $val)

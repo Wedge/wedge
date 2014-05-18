@@ -48,8 +48,7 @@ $post_bg2 = $window_bg2
 
 #header
 	gradient: $wilde_bg3, alpha($wilde_bg3, .2)
-	> .frame
-		padding: 10px 0 0
+	padding: 10px 0 0
 	h2, p
 		color: #000
 	input.search
@@ -313,7 +312,7 @@ $radius = 20px
 	border-top: .54em double #ccc
 	border-bottom: .18em solid #ccc
 
-@remove #footer, #header, #navi
+@remove #header, #navi, #footer
 	color: #ddc
 
 @remove #footer

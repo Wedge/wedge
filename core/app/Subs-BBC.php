@@ -1019,7 +1019,7 @@ function parse_bbc($message, $type = 'generic', $bbc_options = array()) // $smil
 				- SSI functions such as ssi_recentTopics() (they tend to crash your browser)
 			*/
 
-			if (!empty($settings['embed_enabled']) && empty($context['embed_disable']) && strpos($message, 'http://') !== false && !$print && $type != 'signature')
+			if (!empty($settings['embed_enabled']) && empty($context['embed_disable']) && strhas($message, array('http://', 'https://')) && !$print && $type != 'signature')
 				$message = aeva_main($message);
 
 			// And reverses any protection already in place
