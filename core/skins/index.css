@@ -289,11 +289,20 @@ h1
 #search_form
 	float: right
 	max-width: 50%
+	.search
+		float: right
+		max-width: 100%
+		width: 80px
+		transition: width .2s
+		&.open
+			width: 100%
+			transition: width .5s
 	.mimenu
-		width: @is (ie6, auto, 100%)
 		@if ie6
-			ul li
+			&, ul li
 				width: auto
+		@else
+			width: 100%
 		@endif
 		left: 0
 
@@ -729,12 +738,14 @@ tr.catbg .sbox, tr.titlebg .sbox
 #m_profile extends #m_home
 	background-position: 0 0
 
-#m_media extends #m_home
-	background-position: -54px 0
-	width: 18px
+#m_home_media extends #m_home
+	background-position: -54px center
+	margin: 8px 6px 0 10px
+	width: 17px
 
-#m_mlist extends #m_home
-	background-position: -19px 0
+#m_home_mlist extends #m_home
+	background-position: -19px center
+	margin: 8px 6px 0 10px
 	width: 14px
 
 @if guest

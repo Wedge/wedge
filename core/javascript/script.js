@@ -650,6 +650,7 @@ $(window).load(function ()
 	{
 		if (opened)
 			return;
+		$(this).toggleClass('open');
 		$pop.load(weUrl('action=search' + (window.we_topic ? ';topic=' + we_topic : '') + (window.we_board ? ';board=' + we_board : '')), function () {
 			$pop.hide().css('top', 0).animate({
 				opacity: 'toggle',
@@ -662,6 +663,7 @@ $(window).load(function ()
 				return;
 			opened = false;
 			$(document).off('.sf');
+			$('#search_form .search').toggleClass('open');
 			$pop.css('top', '100%').animate({
 				opacity: 'toggle',
 				top: '0%'
