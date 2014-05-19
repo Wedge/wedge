@@ -35,7 +35,7 @@ function template_main_board()
 	<form action="<URL>?action=quickmod;board=', $context['current_board'], '.', $context['start'], '" method="post" accept-charset="UTF-8" name="quickModForm" id="quickModForm">';
 
 		echo '
-	<div class="topic_table" id="messageindex">
+	<div class="wide"><div class="topic_table" id="messageindex">
 		<table class="table_grid cs0">
 			<thead>
 				<tr class="catbg">';
@@ -157,7 +157,7 @@ function template_main_board()
 		echo '
 			</tbody>
 		</table>
-	</div>
+	</div></div>
 	<a id="bot"></a>';
 
 		// Finish off the form - again.
@@ -344,7 +344,7 @@ function template_messageindex_childboards()
 		<we:cat>
 			', $txt['sub_boards'], '
 		</we:cat>
-		<div class="table_frame">
+		<div class="wide">
 			<table class="table_list board_list">
 				<tbody id="board_', $context['current_board'], '_children">';
 
@@ -428,9 +428,8 @@ function template_messageindex_childboards()
 		if (!SKIN_MOBILE)
 			echo '
 					<td class="stats">
-						<p>', number_context($board['is_redirect'] ? 'num_redirects' : 'num_posts', $board['posts']), '<br>
-						', $board['is_redirect'] ? '' : number_context('num_topics', $board['topics']), '
-						</p>
+						<div>', number_context($board['is_redirect'] ? 'num_redirects' : 'num_posts', $board['posts']), '</div>', $board['is_redirect'] ? '' : '
+						<div>' . number_context('num_topics', $board['topics']) . '</div>', '
 					</td>';
 
 		echo '
