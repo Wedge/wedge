@@ -49,14 +49,13 @@
 	background-color: #e5e5e8
 
 // A common clearfix hack for float parents, in case setting overflow: hidden on the parent isn't enough for you.
-.clearfix virtual
+.clearfix
+	:after
+		content: ""
+		display: table
+		clear: both
 	@if ie[-7]
 		zoom: 1
-	@else
-		:after
-			content: ""
-			display: table
-			clear: both
 		:before
 			content: ""
 			display: table

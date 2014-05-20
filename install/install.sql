@@ -2277,6 +2277,7 @@ VALUES
 	('newsfader_time', '5000'),
 	('show_stats_index', '1'),
 	('show_latest_member', '1'),
+	('show_signatures', '1'),
 	('show_blurb', '1'),
 	('show_gender', '1'),
 	('show_avatars', '1'),

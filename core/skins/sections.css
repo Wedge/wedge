@@ -1420,8 +1420,10 @@ body.waiting *
 				margin: 0 -$horizontal_content_padding
 				padding, border, border-radius: 0 !important
 			.wide tr.windowbg td
-				padding-left, padding-right: $horizontal_content_padding
+				padding: .5em math($horizontal_content_padding / 2)
+
 			// Turn board lists into flat divs, rather than table cells!
+			// (Apologies for the !important abuse.)
 			.board_list
 				display: block
 				width: 100% !important
@@ -1432,18 +1434,23 @@ body.waiting *
 					text-align: inherit !important
 				td
 					padding-left, padding-right: 8px
-				td:empty
-					display: none
-				p
-					font-size: 90% !important
 				.icon
-					padding: 0 8px
+					padding: 0 8px !important
+				.stats
+					display: inline-block
+					box-sizing: border-box
+					width: 40% !important
+				.lastpost
+					display: inline-block
+					box-sizing: border-box
+					width: 55% !important
+					padding-left: 0 !important
+					font-size: 90%
 				.info mixes .clearfix
+					border-bottom: 1px dotted #ccc
 			.boardstate
 				float: left
 				margin: 8px 12px 0 8px
-				.icon
-					padding: 0 !important
 			#search_form
 				.mimenu
 					left: auto

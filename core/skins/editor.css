@@ -215,4 +215,6 @@ body.rich extends .editor
 	@media all and (max-width: 600px)
 		#contactlist
 			display: none
+		.postbuttons
+			max-width: 100%
 @endif
