@@ -149,8 +149,7 @@ function template_boards()
 						if (isset($board[$item]))
 							$display[] = number_context($string, $board[$item]);
 
-					if (!empty($display))
-						echo '
+					echo '
 					<td class="stats">
 						<div>', implode('</div><div>', $display),  '</div>
 					</td>';
@@ -176,6 +175,9 @@ function template_boards()
 							), '
 						</p>
 					</td>';
+				else
+					echo '
+					<td class="lastpost"></td>';
 
 				echo '
 				</tr>';
