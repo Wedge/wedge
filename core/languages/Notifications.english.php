@@ -53,7 +53,7 @@ $txt['notifier_move_title'] = 'Moved Topics';
 $txt['notifier_move_desc'] = 'Receive notifications when anyone moves topics you started';
 $txt['notifier_move_subject'] = 'Someone moved your topic!';
 $txt['notifier_move_noaccess_html']  = '{MEMBER_LINK} moved your topic {TOPIC_LINK} to a board you cannot access.';
-$txt['notifier_move_noaccess_email'] = '{MEMBER_NAME} moved your topic {TOPIC_NAME} to a board you cannot access.';
+$txt['notifier_move_noaccess_text'] = '{MEMBER_NAME} moved your topic {TOPIC_NAME} to a board you cannot access.';
 $txt['notifier_move_html'] = '{MEMBER_LINK} moved {TOPIC_LINK} to {BOARD_LINK}.';
 $txt['notifier_move_text'] = '{MEMBER_NAME} moved {TOPIC_NAME} to {BOARD_NAME}. You can access the board here:
 
