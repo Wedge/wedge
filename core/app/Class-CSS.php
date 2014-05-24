@@ -824,11 +824,11 @@ class wess_nesting extends wess
 				rule: replace
 		*/
 		// !! @todo: rewrite this at the end of the parser so that we can specify target selectors after the @replace keyword.
-		preg_match_all('~\n\h*@replace\h*{\n\h*([^\n]+);\n\h*([^\n]*)}~i', $tree, $replacements, PREG_SET_ORDER);
+		preg_match_all('~\n\h*@replace\h*{\n\h*([^\n]+);\n\h*([^\n]*)\n?}~i', $tree, $replacements, PREG_SET_ORDER);
 		if (!empty($replacements))
 			foreach ($replacements as $replace)
 				$tree = str_replace($replace[1], $replace[2], $tree);
-		$tree = preg_replace('~\n\h*@replace\h*{\n\h*[^\n]+;\n\h*[^\n]*}~i', "\n", $tree);
+		$tree = preg_replace('~\n\h*@replace\h*{[^}]*}~i', "\n", $tree);
 
 		/*
 			And a few more pre-parsing actions...
