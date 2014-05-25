@@ -122,7 +122,7 @@ function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow =
 
 	$lang_name = !empty($settings['js_lang'][$id]) && !empty(we::$user['language']) && we::$user['language'] != $settings['language'] ? we::$user['language'] . '-' : '';
 	$can_gzip = !empty($settings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
-	$ext = $can_gzip ? (we::is('safari[-5.0]') ? '.jgz' : '.js.gz') : '.js';
+	$ext = $can_gzip ? (we::is('safari[-5.1]') ? '.jgz' : '.js.gz') : '.js';
 
 	// jQuery never gets updated, so let's be bold and shorten its filename to... The version number!
 	$is_jquery = count($files) == 1 && reset($files) == 'jquery-' . $context['jquery_version'] . '.min.js';
@@ -212,7 +212,7 @@ function add_plugin_js_file($plugin_name, $files = array(), $is_direct_url = fal
 
 	$lang_name = !empty($settings['js_lang'][$id]) && !empty(we::$user['language']) && we::$user['language'] != $settings['language'] ? we::$user['language'] . '-' : '';
 	$can_gzip = !empty($settings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
-	$ext = $can_gzip ? (we::is('safari[-5.0]') ? '.jgz' : '.js.gz') : '.js';
+	$ext = $can_gzip ? (we::is('safari[-5.1]') ? '.jgz' : '.js.gz') : '.js';
 
 	if (!file_exists(CACHE_DIR . '/js/' . $id . $lang_name . $latest_date . $ext))
 		wedge_cache_js($id, $lang_name, $latest_date, $ext, $files, $can_gzip, true);
@@ -429,7 +429,7 @@ function add_css_file($original_files = array(), $add_link = true, $is_main = fa
 	$latest_date %= 1000000;
 
 	$can_gzip = !empty($settings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
-	$ext = $can_gzip ? (we::is('safari[-5.0]') ? '.cgz' : '.css.gz') : '.css';
+	$ext = $can_gzip ? (we::is('safari[-5.1]') ? '.cgz' : '.css.gz') : '.css';
 
 	// And the language. Only do it if the skin allows for multiple languages and we're not in English mode.
 	if (isset($context['skin_available_languages']) && we::$user['language'] !== 'english')
@@ -506,7 +506,7 @@ function add_plugin_css_file($plugin_name, $original_files = array(), $add_link 
 	$latest_date %= 1000000;
 
 	$can_gzip = !empty($settings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
-	$ext = $can_gzip ? (we::is('safari[-5.0]') ? '.cgz' : '.css.gz') : '.css';
+	$ext = $can_gzip ? (we::is('safari[-5.1]') ? '.cgz' : '.css.gz') : '.css';
 
 	// Build the target folder from our plugin's file names. We don't need to show 'common-index-sections-extra-custom' in the main filename, though!
 	$target_folder = trim(str_replace(array('/', ':'), '-', strtolower($plugin_name) . '-' . implode('-', array_filter(array_diff($original_files, (array) 'common', $ignore_files)))), '-');
