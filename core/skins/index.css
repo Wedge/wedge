@@ -720,11 +720,10 @@ tr.catbg .sbox, tr.titlebg .sbox
 // It may look complicated, but it isn't. Just fetch documentation on
 // image spriting. You can also simply use single images to show icons.
 
-#m_home
-	float: left
+#m_home mixes .inline-block("")
 	width, height: 16px
 	padding: 0
-	margin: 4px 4px 0 2px
+	margin: 0 4px 0 2px
 	background-repeat: no-repeat
 	background-image: url($images/icons/sprite.png)
 	background-position: -74px 0
@@ -740,12 +739,14 @@ tr.catbg .sbox, tr.titlebg .sbox
 
 #m_home_media extends #m_home
 	background-position: -54px center
-	margin: 8px 6px 0 10px
+	vertical-align: middle
+	margin: 0 0 0 6px
 	width: 17px
 
 #m_home_mlist extends #m_home
 	background-position: -19px center
-	margin: 8px 6px 0 10px
+	vertical-align: middle
+	margin: 0 0 0 6px
 	width: 14px
 
 @if guest
@@ -760,8 +761,9 @@ tr.catbg .sbox, tr.titlebg .sbox
 @if member
 	#m_profile_logout extends #m_home
 		background-position: -94px 0
+		vertical-align: middle
 		width: 15px
-		margin: 6px 6px 0 10px
+		margin: -4px 0 0 6px
 @endif
 
 /* Styles for buttons and other form elements
@@ -886,20 +888,18 @@ input[type=file]
 .menu
 	font-family: $menu_font
 	min-height: 2em
-	margin: 0 0 @is (ie7, 0, -10px) // fixes h4's margin, see below...
-	padding: 5px 0 1px
+	margin: 0 0 @is (ie7, 0, -5px) // fixes h4's margin, see below...
+	padding: 5px 0 0
 
 	li a
 		color: #444
 		text-decoration: none
 
-	li li a
-		display: block
-		border-left: 4px solid $menu_border // #fbe2c8
+	li li a mixes .inline-block("")
 		padding: 6px 8px
 
-	h4 mixes .vertical-arrow
-		float: left
+	h4 mixes .inline-block
+		mixin: .vertical-arrow
 		padding: 3px 6px
 		font-weight: 400
 		margin: 0 2px @is (ie7, 0, 10px) 0 // 10px gives more breathing space to the dropdown's arrow...
@@ -960,6 +960,7 @@ input[type=file]
 		display: block
 		margin: 0
 		white-space: nowrap
+		border-left: 4px solid $menu_border // #fbe2c8
 
 	li:hover > ul
 		visibility: visible
@@ -1012,7 +1013,7 @@ input[type=file]
 		opacity: 1
 
 	.note
-		margin: 2px -4px 0 8px
+		margin: 2px 0 0 8px
 
 	h4 .note
 		float: none
@@ -1040,12 +1041,13 @@ li.chosen h4
 li.nodrop h4:after mixes .hide
 
 // Separator code
-li.sep
+.menu li.sep
 	a
+		display: block
 		padding: 4px 8px
 	hr
 		margin: 0
-	.menu li &:hover
+	&:hover
 		background: none
 
 #main .menu
