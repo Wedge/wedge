@@ -138,6 +138,9 @@ section.ic
 	float: right
 	padding: 4px 0 0 4px
 
+#messageindex .table_grid
+	table-layout: fixed
+
 /* Styles for the Display template (topic view).
 ---------------------------------------------------- */
 

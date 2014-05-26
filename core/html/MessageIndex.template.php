@@ -85,14 +85,12 @@ function template_main_board()
 
 		// If this person can approve items and we have some awaiting approval tell them.
 		if (!empty($context['unapproved_posts_message']))
-		{
 			echo '
 				<tr class="windowbg2">
 					<td colspan="', !empty($context['quick_moderation']) ? '5' : '4', '">
 						<span class="alert">!</span> ', $context['unapproved_posts_message'], '
 					</td>
 				</tr>';
-		}
 
 		foreach ($context['topics'] as $topic)
 		{
@@ -222,9 +220,7 @@ function template_main_blog()
 			echo '
 			<thead>
 				<tr class="catbg">
-					<th style="width: 8%">&nbsp;</th>
-					<th colspan="3"><strong>', $txt['msg_alert_none'], '</strong></th>
-					<th style="width: 8%">&nbsp;</th>
+					<th><strong>', $txt['msg_alert_none'], '</strong></th>
 				</tr>
 			</thead>';
 
@@ -233,14 +229,12 @@ function template_main_blog()
 
 		// If this person can approve items and we have some awaiting approval tell them.
 		if (!empty($context['unapproved_posts_message']))
-		{
 			echo '
 				<tr class="windowbg2">
-					<td colspan="', !empty($context['quick_moderation']) ? '3' : '2', '">
+					<td>
 						<span class="alert">!</span> ', $context['unapproved_posts_message'], '
 					</td>
 				</tr>';
-		}
 
 		$use_bg2 = true;
 		foreach ($context['topics'] as $topic)
@@ -549,13 +543,13 @@ function template_messageindex_statistics()
 
 function template_messageindex_quickmod_selection()
 {
-	global $context, $txt;
+	global $context, $txt, $board_info;
 
 	if (!empty($context['quick_moderation']))
 	{
 		echo '
 				<tr class="titlebg">
-					<td colspan="5" class="round-bottom right">
+					<td', $board_info['type'] == 'forum' ? ' colspan="5"' : '', ' class="round-bottom right">
 						<label><input type="checkbox" onclick="invertAll(this, this.form, \'topics[]\');"> ', $txt['check_all'], '</label> &nbsp;
 						<select class="qaction fixed" name="qaction"', $context['can_move'] ? ' onchange="$(\'#sbmoveItTo\').toggleClass(\'hide\', $(this).val() != \'move\');"' : '', '>
 							<option data-hide>--- ', $txt['moderate'], ' ---</option>';
