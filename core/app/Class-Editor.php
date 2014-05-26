@@ -2465,7 +2465,7 @@ class wedit
 		{
 			$can_gzip = !empty($settings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
 			$context['smiley_gzip'] = $can_gzip;
-			$context['smiley_ext'] = $can_gzip ? (we::is('safari') ? '.cgz' : '.css.gz') : '.css';
+			$context['smiley_ext'] = $can_gzip ? (we::is('safari[-5.1]') ? '.cgz' : '.css.gz') : '.css';
 			$extra = we::is('ie6,ie7') ? '-ie' : '';
 			$var_name = 'smiley-cache-' . $extra . '-' . we::$user['smiley_set'];
 			$dummy = '';
