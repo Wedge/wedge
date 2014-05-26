@@ -199,7 +199,7 @@ h1, h2, h3, h4, h5, h6
 	vertical-align: top
 	width: $sidebar-width
 	.column
-		padding: 20px $horizontal_content_padding 0
+		padding: 20px $horizontal_content_padding 0 0
 		section
 			margin: 0 0 15px
 
@@ -1368,7 +1368,7 @@ table
 
 .bbc_img
 	border: 0
-	margin: 4px 8px
+	padding: 4px 8px
 	max-width: 100%
 	// We need to avoid problems with hardcoded img width & height
 	// when width is stopped in its tracks by max-width.
@@ -1650,18 +1650,17 @@ dl#feed
 	overflow: hidden
 	padding: 5px 10px 5px
 	margin: 4px 0
-	border: 1px solid rgba(0,0,0, .15)
-	font: @ifnull ($head_font_style, 100) @ifnull ($head_font_size, 1.5em/1.3em) @ifnull ($cat_font, $head_font)
+	font: @ifnull ($head_font_style, 100) @ifnull ($head_font_size, 2em/1) @ifnull ($cat_font, $head_font)
+	@if (firefox, webkit, chrome)
+		text-rendering: optimizeLegibility
+	@endif
 	img
 		padding-right: 4px
 
 .cat extends .catbase
 	clear: left
-	letter-spacing: -.25px
-	color: #666
-	gradient: rgba(222, 222, 222, 0), rgba(222, 222, 222, .3)
-	background-color: #f4faf8
-	border-color: #ddd
+	letter-spacing: -1px
+	color: #777
 	a
 		border-bottom: 0 !important
 		text-decoration: underline !important
