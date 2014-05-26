@@ -1459,6 +1459,8 @@ body.waiting *
 			#sideshow mixes .inline-block
 			#sidebar
 				display: none
+				.column
+					padding: $horizontal_content_padding
 			input[type=text], input:not([type])
 				max-width: 100%
 @endif
