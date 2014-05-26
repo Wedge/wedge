@@ -180,8 +180,8 @@ a, #linktree a
 /* Generic, mostly color-related, classes.
 ------------------------------------------------------- */
 
-$window_bg = #eeeeea
-$window_bg2 = #e8ebee
+$window_bg = #e7eaef
+$window_bg2 = #f0f4f7
 
 /* Styles for section headers.
 ------------------------------------------------------- */
@@ -261,6 +261,9 @@ tr.titlebg
 		clear: both
 	@endif
 
+.poster h4
+	font-size: 140%
+
 #statistics
 	.title final
 		margin: 4px 0
@@ -273,11 +276,12 @@ dfn
 /* These are our CSS variable and mixin definitions.
 ------------------------------------------------------- */
 
-$main_font = "Segoe UI", Arial, sans-serif
+$main_font = Verdana, Arial, sans-serif
+$main_font_size = 78%/130%
 $head_font = $main_font
 $subcat_font = normal 1.1em $main_font
 $post_font = $main_font
-$post_font_size = 10.5pt/140%
+$post_font_size = 10pt/140%
 $board_col = #d97b33
 $radius = 20px
 
@@ -312,6 +316,9 @@ $radius = 20px
 
 @remove
 	background: url($images/bg.jpg)
+
+@remove .msg
+	background-image: *
 
 @replace
 	wefoot1.png
