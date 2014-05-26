@@ -1071,6 +1071,9 @@ function tracking($memID)
 	// Pass on to the actual function.
 	wetem::load($subActions[$context['tracking_area']][0]);
 	$subActions[$context['tracking_area']][0]($memID);
+
+	add_js('
+	breakLinks("a[href]");');
 }
 
 function trackActivity($memID)
