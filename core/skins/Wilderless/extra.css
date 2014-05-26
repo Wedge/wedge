@@ -27,8 +27,9 @@ body
 #linktree
 	padding: 0 0 10px
 
-#sidebar .column
-	padding: 20px 10px 0 20px
+#sidebar
+	background: none
+	border: 0
 
 #wedge, #header, #footer
 	border-radius: 0
