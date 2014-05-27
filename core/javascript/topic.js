@@ -28,6 +28,11 @@ $(document).on(is_ie8down ? 'load' : 'ready', function ()
 			});
 		});
 
+	// Go Up/Go Down features.
+	$('.updown').each(function (i) {
+		$(this).click(function () { $('html,body').animate({ scrollTop: i ? 0 : $(document).height() - $(window).height() }, 600); return false; });
+	});
+
 	// Run this when coming (back) to the tab.
 	$(document).on('visibilitychange msvisibilitychange mozvisibilitychange webkitvisibilitychange', page_showing);
 	page_showing();
@@ -265,18 +270,6 @@ function expandThumb(thumbID)
 
 		return false;
 	}
-}
-
-function go_up()
-{
-	$('html,body').animate({ scrollTop: 0 }, 600);
-	return false;
-}
-
-function go_down()
-{
-	$('html,body').animate({ scrollTop: $(document).height() - $(window).height() }, 600);
-	return false;
 }
 
 @if member

@@ -12,9 +12,6 @@ function template_main_board()
 {
 	global $context, $settings, $txt;
 
-	echo '
-	<a id="top"></a>';
-
 	if (!empty($settings['show_board_desc']) && $context['description'] != '')
 		echo '
 	<p class="description_board">', $context['description'], '</p>';
@@ -24,9 +21,8 @@ function template_main_board()
 	if (!$context['no_topic_listing'])
 	{
 		echo '
-	<div class="pagesection">
-		<nav>', $txt['pages'], ': ', $context['page_index'], $context['page_separator'], '<a href="#bot"><strong>', $txt['go_down'], '</strong></a></nav>',
-		empty($context['button_list']) ? '' : template_button_strip($context['button_list']), '
+	<div class="pagesection">', empty($context['button_list']) ? '' : template_button_strip($context['button_list']), '
+		<nav>', $txt['pages'], ': ', $context['page_index'], $context['page_separator'], '<a href="#" class="updown">', $txt['go_down'], '</a></nav>
 	</div>';
 
 		// If Quick Moderation is enabled, start the form.
@@ -155,8 +151,7 @@ function template_main_board()
 		echo '
 			</tbody>
 		</table>
-	</div></div>
-	<a id="bot"></a>';
+	</div></div>';
 
 		// Finish off the form - again.
 		if (!empty($context['quick_moderation']))
@@ -165,9 +160,8 @@ function template_main_board()
 	</form>';
 
 		echo '
-	<div class="pagesection">', empty($context['button_list']) ? '' :
-		template_button_strip($context['button_list']), '
-		<nav>', $txt['pages'], ': ', $context['page_index'], $context['page_separator'], '<a href="#top"><strong>', $txt['go_up'], '</strong></a></nav>
+	<div class="pagesection">', empty($context['button_list']) ? '' : template_button_strip($context['button_list']), '
+		<nav>', $txt['pages'], ': ', $context['page_index'], $context['page_separator'], '<a href="#" class="updown">', $txt['go_up'], '</a></nav>
 	</div>';
 	}
 
@@ -186,9 +180,6 @@ function template_main_blog()
 {
 	global $context, $settings, $txt, $board_info;
 
-	echo '
-	<a id="top"></a>';
-
 	if (!empty($settings['show_board_desc']) && $context['description'] != '')
 		echo '
 	<p class="description_board">', $context['description'], '</p>';
@@ -201,9 +192,8 @@ function template_main_blog()
 	<we:cat>
 		', $board_info['name'], '
 	</we:cat>
-	<div class="pagesection">
-		<nav>', $txt['pages'], ': ', $context['page_index'], $context['page_separator'], '<a href="#bot"><strong>', $txt['go_down'], '</strong></a></nav>',
-		empty($context['button_list']) ? '' : template_button_strip($context['button_list']), '
+	<div class="pagesection">', empty($context['button_list']) ? '' : template_button_strip($context['button_list']), '
+		<nav>', $txt['pages'], ': ', $context['page_index'], $context['page_separator'], '<a href="#" class="updown">', $txt['go_down'], '</a></nav>
 	</div>';
 
 		// If Quick Moderation is enabled, start the form.
@@ -296,8 +286,7 @@ function template_main_blog()
 		echo '
 			</tbody>
 		</table>
-	</div>
-	<a id="bot"></a>';
+	</div>';
 
 		// Finish off the form - again.
 		if (!empty($context['quick_moderation']))
@@ -306,9 +295,8 @@ function template_main_blog()
 	</form>';
 
 		echo '
-	<div class="pagesection">', empty($context['button_list']) ? '' :
-		template_button_strip($context['button_list']), '
-		<nav>', $txt['pages'], ': ', $context['page_index'], $context['page_separator'], '<a href="#top"><strong>', $txt['go_up'], '</strong></a></nav>
+	<div class="pagesection">', empty($context['button_list']) ? '' : template_button_strip($context['button_list']), '
+		<nav>', $txt['pages'], ': ', $context['page_index'], $context['page_separator'], '<a href="#" class="updown">', $txt['go_up'], '</a></nav>
 	</div>';
 	}
 

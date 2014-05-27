@@ -391,9 +391,8 @@ function template_postlist_before()
 	global $context, $txt;
 
 	echo '
-		<div class="pagesection">',
-			template_button_strip($context['nav_buttons']['normal']), '
-			<nav>', $txt['pages'], ': ', $context['page_index'], $context['page_separator'], '<a href="#" class="updown" onclick="return go_down();">', $txt['go_down'], '</a></nav>
+		<div class="pagesection">', template_button_strip($context['nav_buttons']['normal']), '
+			<nav>', $txt['pages'], ': ', $context['page_index'], $context['page_separator'], '<a href="#" class="updown">', $txt['go_down'], '</a></nav>
 		</div>', we::is('ie6') ? '
 		<div class="clear"></div>' : '';
 }
@@ -403,9 +402,8 @@ function template_postlist_after()
 	global $context, $txt;
 
 	echo '
-		<div class="pagesection">',
-			template_button_strip($context['nav_buttons']['normal']), '
-			<nav>', $txt['pages'], ': ', $context['page_index'], $context['page_separator'], '<a href="#" class="updown" onclick="return go_up();">', $txt['go_up'], '</a></nav>
+		<div class="pagesection">', template_button_strip($context['nav_buttons']['normal']), '
+			<nav>', $txt['pages'], ': ', $context['page_index'], $context['page_separator'], '<a href="#" class="updown">', $txt['go_up'], '</a></nav>
 		</div>';
 }
 
@@ -435,7 +433,7 @@ function template_mod_buttons()
 	global $context;
 
 	echo '
-		<div id="modbuttons">', template_button_strip($context['nav_buttons']['mod'], 'left'), '
+		<div id="modbuttons">', template_button_strip($context['nav_buttons']['mod']), '
 		</div>';
 }
 

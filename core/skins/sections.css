@@ -627,9 +627,9 @@ hr.sep
 ul.buttonlist extends "ul.reset, .clearfix"
 	margin: 5px -8px 5px 0
 	padding: 0 1% 0 0
+	float: right
 	li
 		margin, padding: 0
-		float: left
 		border-right: 1px solid #ddd
 		&.last
 			border-right: 0

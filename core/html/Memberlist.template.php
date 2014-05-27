@@ -120,8 +120,7 @@ function template_main()
 		</div>';
 
 	echo '
-		<div class="pagesection">
-			<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>';
+		<div class="pagesection">';
 
 	// If it is displaying the result of a search show a "search again" link to edit their criteria.
 	if (isset($context['old_search']))
@@ -131,6 +130,7 @@ function template_main()
 			</div>';
 
 	echo '
+			<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>
 		</div>
 	</div>';
 }

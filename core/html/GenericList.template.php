@@ -53,16 +53,16 @@ function template_show_list($list_id = null)
 		echo '
 			<div class="pagesection">';
 
-		// Show the page index (if this list doesn't intend to show all items).
-		if (!empty($cur_list['items_per_page']))
-			echo '
-				<nav>', $txt['pages'], ': ', $cur_list['page_index'], '</nav>';
-
 		if (isset($cur_list['additional_rows']['above_column_headers']))
 			echo '
 				<div class="floatright">',
 					template_additional_rows('above_column_headers', $cur_list), '
 				</div>';
+
+		// Show the page index (if this list doesn't intend to show all items).
+		if (!empty($cur_list['items_per_page']))
+			echo '
+				<nav>', $txt['pages'], ': ', $cur_list['page_index'], '</nav>';
 
 		echo '
 			</div>';
