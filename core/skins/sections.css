@@ -630,6 +630,7 @@ ul.buttonlist extends "ul.reset, .clearfix"
 	float: right
 	li
 		margin, padding: 0
+		float: left
 		border-right: 1px solid #ddd
 		&.last
 			border-right: 0
