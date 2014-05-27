@@ -460,6 +460,11 @@ class we
 		elseif ($user['language'] === '')
 			$user['language'] = get_preferred_language($settings['language']);
 
+		// Make sure that the language is activated, otherwise we switch to default language
+		if(!isset($context['languages'][$user['language']]))
+			$user['language'] = $settings['language'];
+
+
 		// Just build this here, it makes it easier to change/use - administrators can see all boards.
 		if ($is['admin'])
 		{
