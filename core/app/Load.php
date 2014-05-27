@@ -1724,7 +1724,8 @@ function loadPluginLanguage($plugin_name, $template_name, $lang = '', $fatal = t
 		$txt = array();
 
 	// Default to the user's language.
-	$lang = getUserLanguage($lang);
+	if ($lang == '')
+		$lang = isset(we::$user['language']) ? we::$user['language'] : $settings['language'];
 
 	if (!$force_reload && isset($already_loaded[$template_name]) && $already_loaded[$template_name] == $lang)
 		return $lang;
@@ -1843,7 +1844,8 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 	}
 
 	// Default to the user's language.
-	$lang = getUserLanguage($lang);
+	if ($lang == '')
+		$lang = isset(we::$user['language']) ? we::$user['language'] : $settings['language'];
 
 	if (empty($txt))
 		$txt = array();
@@ -2127,33 +2129,6 @@ function getLanguages($use_cache = true)
 		cache_put_data('known_languages', $context['languages'], !empty($settings['cache_enable']) && $settings['cache_enable'] < 1 ? 86400 : 3600);
 
 	return $context['languages'];
-}
-
-/**
- * Get the prefered language of the current User and check if the prefered language is available.
- * @param string $lang Overwrite the default lang
- * @param string $user_pref_lang Overwrite the prefered language
- */
-function getUserLanguage($lang = '', $user_pref_lang = ''){
-
-	global $context, $settings;
-
-	// If nothing else is wanted, we user default lang
-	if($lang == '')
-		$lang = $settings['language'];
-	
-	if($user_pref_lang == '')
-                $user_pref_lang = (isset(we::$user['language']) ? we::$user['language'] : '');
-
-        if(isset($context['languages']) and !empty($user_pref_lang)){
-		// Now we have to check if the Users wanted Language is available
-		if(isset($context['languages'][$user_pref_lang])){
-			$lang = $user_pref_lang;
-		}else{
-			// Perhaps we want to update the member table?!
-		}
-	}
-	return $lang;
 }
 
 /**
