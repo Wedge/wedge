@@ -267,18 +267,9 @@ function template_aeva_admin_modlog()
 
 	echo '
 	<form action="', $galurl, 'area=moderate;sa=modlog;', $context['session_query'], '" method="post">
-		<table class="w100 cp8 cs0">', !empty($context['aeva_logs']) ? '
-			<tr>
-				<td class="windowbg2 right">
-					<input type="submit" name="delete" value="'.$txt['media_admin_rm_selected'].'" style="margin-right: 10px" onclick="return ask(we_confirm, e);"><input type="submit" name="delete_all" value="'.$txt['media_admin_rm_all'].'" style="margin-right: 10px" onclick="return ask(we_confirm, e);">
-				</td>
-			</tr>' : '', '
-			<tr>
-				<td class="catbg">
-					', $txt['pages'], ': ', $context['aeva_page_index'], '
-				</td>
-			</tr>
-		</table>
+		<div class="pagesection">', empty($context['button_list']) ? '' : template_button_strip($context['button_list']), '
+			<nav>', $txt['pages'], ': ', $context['aeva_page_index'], '</nav>
+		</div>
 		<table class="w100 cp8 cs1">
 			<tr class="titlebg">
 				<td style="width: 5%">&nbsp;</td>
@@ -288,7 +279,6 @@ function template_aeva_admin_modlog()
 			</tr>';
 
 	foreach ($context['aeva_logs'] as $log)
-	{
 		echo '
 			<tr class="windowbg2">
 				<td class="middle"><input type="checkbox" name="to_delete[]" value="', $log['id'], '"></td>
@@ -296,10 +286,14 @@ function template_aeva_admin_modlog()
 				<td class="smalltext">', $log['time'], '</td>
 				<td class="smalltext"><a href="', $log['action_by_href'], '">', $log['action_by_name'], '</a></td>
 			</tr>';
-	}
 
 	echo '
+			<tr>', !empty($context['aeva_logs']) ? '
 			<tr>
+				<td class="windowbg2 right" colspan="4">
+					<input type="submit" name="delete" value="'.$txt['media_admin_rm_selected'].'" style="margin-right: 10px" onclick="return ask(we_confirm, e);"><input type="submit" name="delete_all" value="'.$txt['media_admin_rm_all'].'" style="margin-right: 10px" onclick="return ask(we_confirm, e);">
+				</td>
+			</tr>' : '', '
 		</table>
 	</form>
 	<form action="', $galurl, 'area=moderate;sa=modlog;', $context['session_query'], '" method="post">
@@ -319,7 +313,9 @@ function template_aeva_admin_reports()
 	global $galurl, $context, $txt;
 
 	echo '
-
+		<div class="pagesection">', empty($context['button_list']) ? '' : template_button_strip($context['button_list']), '
+			<nav>', $txt['pages'], ': ', $context['aeva_page_index'], '</nav>
+		</div>
 		<table class="w100 cp8 cs1">
 			<tr class="titlebg">
 				<td style="width: 2%">&nbsp;</td>

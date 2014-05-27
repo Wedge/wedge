@@ -129,12 +129,11 @@ function aeva_modCP_submissions()
 	$context['aeva_filter'] = $filter;
 	$context['aeva_total'] = $total;
 
-	// Get the subtabs
 	$context['page_title'] = $txt['media_admin_moderation'];
-	$context['aeva_header']['subtabs'] = array(
-		'items' => array('title' => 'media_items', 'url' => '<URL>?action=media;area=moderate;sa=submissions;filter=items;' . $context['session_query'], 'class' => $filter == 'items' ? 'active' : ''),
-		'comments' => array('title' => 'media_comments', 'url' => '<URL>?action=media;area=moderate;sa=submissions;filter=coms;' . $context['session_query'], 'class' => $filter == 'coms' ? 'active' : ''),
-		'albums' => array('title' => 'media_albums', 'url' => '<URL>?action=media;area=moderate;sa=submissions;filter=albums;' . $context['session_query'], 'class' => $filter == 'albums' ? 'active' : ''),
+	$context['button_list'] = array(
+		'items' => array('text' => 'media_items', 'url' => '<URL>?action=media;area=moderate;sa=submissions;filter=items;' . $context['session_query'], 'class' => $filter == 'items' ? 'active' : ''),
+		'comments' => array('text' => 'media_comments', 'url' => '<URL>?action=media;area=moderate;sa=submissions;filter=coms;' . $context['session_query'], 'class' => $filter == 'coms' ? 'active' : ''),
+		'albums' => array('text' => 'media_albums', 'url' => '<URL>?action=media;area=moderate;sa=submissions;filter=albums;' . $context['session_query'], 'class' => $filter == 'albums' ? 'active' : ''),
 	);
 
 	// HTML headers
@@ -431,9 +430,9 @@ function aeva_modCP_reports()
 	$txt['aeva2_comments'] = $txt['media_comments'] . ' (' . $amSettings['num_reported_comments'] . ')';
 
 	// Header tabs
-	$context['aeva_header']['subtabs'] = array(
-		'items' => array('title' => 'aeva2_items', 'url' => '<URL>?action=media;area=moderate;sa=reports;items;' . $context['session_query'], 'class' => $type == 'item' ? 'active' : ''),
-		'comments' => array('title' => 'aeva2_comments', 'url' => '<URL>?action=media;area=moderate;sa=reports;comments;' . $context['session_query'], 'class' => $type == 'comment' ? 'active' : ''),
+	$context['button_list'] = array(
+		'items' => array('text' => 'aeva2_items', 'url' => '<URL>?action=media;area=moderate;sa=reports;items;' . $context['session_query'], 'class' => $type == 'item' ? 'active' : ''),
+		'comments' => array('text' => 'aeva2_comments', 'url' => '<URL>?action=media;area=moderate;sa=reports;comments;' . $context['session_query'], 'class' => $type == 'comment' ? 'active' : ''),
 	);
 
 	// Load all the reports
