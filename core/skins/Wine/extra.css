@@ -42,7 +42,7 @@ table.cs0 final tr.windowbg:last-child td
 		direction: rtl
 */
 
-#content div.frame
+#content > div
 	padding-bottom: 16px
 
 #edge
@@ -85,9 +85,9 @@ h1
 	height: $banner_height
 	position: relative
 	@if ie[-9]
-		background-image: url($images/theme/bg.jpg)
+		background-image: url($images/bg.jpg)
 	@else
-		background-image: linear-gradient($head_bg, luma($head_bg, -20%)), url($images/theme/bg.jpg)
+		background-image: linear-gradient($head_bg, luma($head_bg, -20%)), url($images/bg.jpg)
 	@endif
 	@if ie6
 		h1
@@ -97,7 +97,7 @@ h1
 	img
 		max-height: math($banner_height - 40px)
 	// We're using flexbox to easily spread out our elements.
-	.frame
+	> div
 		position: absolute
 		justify-content: space-between
 		padding-top, bottom: 0
@@ -250,7 +250,6 @@ section.ic
 .posthead extends .catbase
 	margin: 0 0 4px
 	background: rgba(0,0,0, .03)
-	box-shadow: inset 0 24px 20px -8px #bbb
 	text-shadow: white 0 1px 2px
 	color: gray
 	@if ie
@@ -304,12 +303,6 @@ ul.buttonlist
 	#modbuttons a
 		background-position: 6px 5px
 @endif
-
-/* Styles for sidebar menus.
-------------------------------------------------------- */
-
-.left_menu
-	margin: .5em 2em
 
 /* Styles for the profile section.
 ------------------------------------------------- */

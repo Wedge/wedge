@@ -122,13 +122,13 @@ function template_wrapper_before()
 function template_header_before()
 {
 	echo '
-	<div id="header"><div class="frame">';
+	<div id="header"><div>';
 }
 
 function template_top_bar_before()
 {
 	echo '
-		<div id="top_section"><div class="frame">';
+		<div id="top_section"><div>';
 }
 
 function template_top_bar_after()
@@ -143,7 +143,7 @@ function template_header_after()
 	global $context, $settings, $options;
 
 	echo '
-		<div id="banner"', empty($options['collapse_header']) ? '' : ' class="hide"', '><div class="frame"><we:banner title="',
+		<div id="banner"', empty($options['collapse_header']) ? '' : ' class="hide"', '><div><we:banner title="',
 		$context['header_logo_url_html_safe'], '" url="', !empty($settings['home_url']) && !empty($settings['home_link']) ?
 		$settings['home_url'] : '<URL>', '">', $context['site_slogan'], '</we:banner>
 		</div></div>
@@ -152,15 +152,14 @@ function template_header_after()
 
 function template_search_box()
 {
-	global $context, $txt;
+	global $context;
 
 	if (empty($context['allow_search']))
 		return;
 
 	echo '
 			<form id="search_form" action="<URL>?action=search2" method="post" accept-charset="UTF-8">
-				<input type="search" name="search" value="" class="search">
-				<input type="submit" value="', $txt['search'], '">';
+				<input type="search" name="search" value="" class="search">';
 
 	// Search within current topic?
 	if (!empty($context['current_topic']))
@@ -256,8 +255,8 @@ function template_side_user_before()
 
 	echo '
 	<section>
-		<we:title>
-			<span class="greeting">', sprintf($txt['hello_member_ndt'], we::$user['name']), '</span>
+		<we:title id="greeting">
+			', sprintf($txt['hello_member_ndt'], we::$user['name']), '
 		</we:title>
 		<div id="userbox">';
 
@@ -403,7 +402,7 @@ function template_content_wrap_before()
 		$id = 'login';
 
 	echo '
-	<div id="content"><div class="frame"', isset($id) ? ' id="' . $id . '"' : '', '>';
+	<div id="content"><div', isset($id) ? ' id="' . $id . '"' : '', '>';
 }
 
 function template_main_wrap_before()
@@ -574,50 +573,40 @@ function template_menu()
 	global $context;
 
 	echo '
-	<div id="navi">
-		<ul id="main_menu" class="css menu">';
+	<div id="navi">';
 
-	foreach ($context['menu_items'] as $act => $item)
+	template_menu_recursive('', $context['menu_items'], true);
+
+	echo '
+	</div>';
+}
+
+// Sub-menus... And more nested action.
+function template_menu_recursive($oact, $oitem, $is_root = false)
+{
+	echo '<ul', $is_root ? ' id="main_menu" class="menu"' : '', '>';
+
+	foreach ($oitem as $act => $item)
 	{
-		$class = ($item['active_item'] ? ' chosen' : '') . (empty($item['sub_items']) ? ' nodrop' : '');
-
-		echo '<li', $class ? ' class="' . ltrim($class) . '"' : '', '><span id="m_' . $act . '"></span><h4><a href="', $item['href'], '"',
-			!empty($item['nofollow']) ? ' rel="nofollow"' : '', '>', $item['title'],
-			!empty($item['notice']) ? '<span class="note' . ($act === 'media' ? '' : 'warn') . '">' . $item['notice'] . '</span>' : '',
-			'</a></h4>';
-
-		if (!empty($item['sub_items']))
+		if (empty($item))
 		{
-			echo '<ul>';
-
-			foreach ($item['sub_items'] as $sub_item)
-			{
-				if (empty($sub_item))
-				{
-					echo '<li class="sep"><a><hr></a></li>';
-					continue;
-				}
-				echo '<li><a href="', $sub_item['href'], '">',
-				$sub_item['title'], !empty($sub_item['notice']) ? '<span class="note">' . $sub_item['notice'] . '</span>' : '', '</a>';
-
-				// 3rd-level menus
-				if (!empty($sub_item['sub_items']))
-				{
-					echo '<ul>';
-
-					foreach ($sub_item['sub_items'] as $subsub_item)
-						echo '<li><a href="', $subsub_item['href'], '">', $subsub_item['title'], '</a></li>';
-
-					echo '</ul>';
-				}
-				echo '</li>';
-			}
-			echo '</ul>';
+			echo '<li class="sep"><a><hr></a></li>';
+			continue;
 		}
+		$class = (!empty($item['active_item']) ? ' chosen' : '') . (empty($item['items']) ? ' nodrop' : '') . (!empty($item['items']) && !$is_root ? ' subsection' : '');
+		echo '<li', $class ? ' class="' . substr($class, 1) . '"' : '', '>';
+
+		echo empty($item['icon']) && !$is_root ? '' : '<span id="m_' . ($is_root ? '' : $oact . '_') . $act . '"></span>', $is_root ? '<h4>' : '',
+			'<a href="', $item['href'], '"', !empty($item['nofollow']) ? ' rel="nofollow"' : '', '>', $item['title'],
+			!empty($item['notice']) ? '<span class="note' . ($is_root ? 'warn' : '') . '">' . $item['notice'] . '</span>' : '', '</a>', $is_root ? '</h4>' : '';
+
+		if (!empty($item['items']))
+			template_menu_recursive($act, $item['items']);
+
 		echo '</li>';
 	}
-	echo '</ul>
-	</div>';
+
+	echo '</ul>';
 }
 
 function template_mini_menu($menu, $class)
@@ -665,23 +654,21 @@ function template_footer()
 	// If you want to use validator.nu instead, replace the w3.org link with:
 	// "http://validator.nu/?doc=', we::$user['url'], '"
 	echo '
-	<div id="footer"><div class="frame">
-		<ul class="reset">
-			<li id="copyright">', $txt['copyright'], '</li>
-			<li class="links">
-				<a id="site_credits" href="<URL>?action=credits">', $txt['site_credits'], '</a> |
-				<a id="button_html5" href="http://validator.w3.org/check?uri=referer" target="_blank" class="new_win" title="', $txt['valid_html5'], '">', $txt['html5'], '</a>',
-				empty($context['custom_credits']) ? '' : $context['custom_credits'], '
-			</li>';
+	<div id="footer"><div><ul>
+		<li id="copyright">', $txt['copyright'], '</li>
+		<li class="links">
+			<a id="site_credits" href="<URL>?action=credits">', $txt['site_credits'], '</a> |
+			<a id="button_html5" href="http://validator.w3.org/check?uri=referer" target="_blank" class="new_win" title="', $txt['valid_html5'], '">', $txt['html5'], '</a>',
+			empty($context['custom_credits']) ? '' : $context['custom_credits'], '
+		</li>';
 
 	// Show the load time?
 	if ($context['show_load_time'])
 		echo '
-			<li class="stats"><!-- insert stats here --></li>';
+		<li class="stats"><!-- insert stats here --></li>';
 
 	echo '
-		</ul>
-	</div></div>';
+	</ul></div></div>';
 }
 
 /**
@@ -798,7 +785,7 @@ function template_page_index($base_url, &$start, $max_value, $num_per_page, $fle
 }
 
 // Generate a strip of buttons.
-function template_button_strip($button_strip, $direction = 'right', $extra = '')
+function template_button_strip($button_strip, $class = '', $extra = '')
 {
 	global $context, $txt;
 
@@ -821,7 +808,7 @@ function template_button_strip($button_strip, $direction = 'right', $extra = '')
 	$buttons[count($buttons) - 1] = str_replace('<li>', '<li class="last">', $buttons[count($buttons) - 1]);
 
 	return '
-			<ul class="buttonlist' . (!empty($direction) ? ' float' . $direction : '') . (empty($buttons) ? ' hide' : '') . '"' . ($extra ? ' ' . ltrim($extra) : '') . '>' .
+			<ul class="buttonlist' . ($class ? ' ' . $class : '') . (empty($buttons) ? ' hide' : '') . '"' . ($extra ? ' ' . ltrim($extra) : '') . '>' .
 				implode('', $buttons) . '
 			</ul>';
 }

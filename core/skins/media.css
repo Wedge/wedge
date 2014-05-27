@@ -160,10 +160,12 @@ img.aext
 		margin: 0 20px
 		line-height: 1.5em
 		text-align: right
+	.actions a
+		padding: 0
 
 #item-area
 	box-sizing: border-box
-	padding: 16px 0
+	padding: 16px
 
 #media-details
 	display: @is (ie[-7], block, table-cell)

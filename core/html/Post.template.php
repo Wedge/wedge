@@ -13,7 +13,7 @@ function template_postform_before()
 {
 	global $context, $txt;
 
-	// Start the form, the header and the container for all the markup
+	// Start the form, the header and the container for all the markup.
 	echo '
 		<form action="<URL>?action=', $context['destination'], ';', empty($context['current_board']) ? '' : 'board=' . $context['current_board'], '" method="post" accept-charset="UTF-8" name="postmodify" id="postmodify" class="flow_hidden" onsubmit="', $context['becomes_approved'] ? '' : 'return say(' . JavaScriptEscape($txt['js_post_will_require_approval']) . ', e, function () { ', 'submitonce(); weSaveEntities(\'postmodify\', ', $context['postbox']->saveEntityFields(), ', \'options\');', $context['becomes_approved'] ? '' : ' });', '" enctype="multipart/form-data">
 			<we:cat>
@@ -401,6 +401,8 @@ function template_make_poll()
 	add_js('
 	var pollOptionTxt = ' . JavaScriptEscape($txt['option']) . ',
 		pollOptionTemplate = \'<li><label>%pollOptionTxt% %pollOptionNum%: <input name="options[%pollOptionNum%]" value="" maxlength="255" tabindex="%pollTabIndex%" class="w50"></label></li>\';');
+
+	add_css_file('pages'); // #edit_poll, .poll_main, .poll_options
 
 	echo '
 				<div id="edit_poll">

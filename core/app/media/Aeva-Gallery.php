@@ -403,10 +403,6 @@ function aeva_initGallery($gal_url = null)
 		add_css_file(isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'mass' ? array('media', 'up') : 'media');
 	}
 
-	$context['aeva_header'] = array(
-		'subtabs' => array(),
-		'data' => array(),
-	);
 	$data = array();
 	$data['files'] = array();
 	$data['functions'] = array();
@@ -1070,13 +1066,10 @@ function aeva_viewItem()
 		$item_data['is_resized'] = !empty($item_data['id_preview']);
 		preg_match('~\[url=([^]]+)~', $item_data['embed_url'], $match);
 		$key = (isset($match[1]) ? md5($match[1]) . '-' : '') . md5($item_data['embed_url']);
-		if (($item_data['embed_object'] = cache_get_data('aeva-embed-link-' . $key, 1200)) === null)
-		{
+		$item_data['embed_object'] = cache_get_data('aeva-embed-link-' . $key, 1200, function () use ($item_data) {
 			loadSource('media/Aeva-Embed');
-
-			$item_data['embed_object'] = aeva_embed_video($item_data['embed_url'], $item_data['id_media'], $item_data['id_preview']);
-			cache_put_data('aeva-embed-link-' . $key, $item_data['embed_object'], 1200);
-		}
+			return aeva_embed_video($item_data['embed_url'], $item_data['id_media'], $item_data['id_preview']);
+		});
 	}
 	else
 	{

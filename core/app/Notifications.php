@@ -457,7 +457,7 @@ class weNotif
 		unset($config_vars[count($config_vars) - 1]);
 
 		// Saving the settings?
-		if (isset($_GET['save']))
+		if (isset($_GET['nsave']))
 		{
 			$disabled = array();
 			$email = array();
@@ -492,7 +492,7 @@ class weNotif
 			foreach ($notifier_settings as $notifier => $setting)
 				$notifiers[$notifier]->saveProfile(MID, $setting);
 
-			redirectexit('action=profile;area=notifications');
+			redirectexit('action=profile;area=notifications;updated');
 		}
 
 		// Load the template and form
@@ -501,7 +501,7 @@ class weNotif
 
 		prepareDBSettingContext($config_vars);
 
-		$context['post_url'] = '<URL>?action=profile;area=notifications;save';
+		$context['post_url'] = '<URL>?action=profile;area=notifications;nsave';
 
 		wetem::load('show_settings');
 	}

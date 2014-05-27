@@ -83,7 +83,7 @@ function template_boards()
 				echo '</div></a>
 					</td>
 					<td class="info">
-						', $settings['display_flags'] == 'all' || ($settings['display_flags'] == 'specified' && !empty($board['language'])) ? '<img src="' . LANGUAGES . $context['languages'][$board['language']]['folder'] . '/Flag.' . $board['language'] . '.png">&nbsp; ': '', '<a', $board['redirect_newtab'] ? ' target="_blank"' : '', ' class="subject" href="', $board['href'], '" id="b', $board['id'], '">', $board['name'], '</a>';
+						', $settings['display_flags'] == 'all' || ($settings['display_flags'] == 'specified' && !empty($board['language'])) ? '<img src="' . LANGUAGES . $context['languages'][$board['language']]['folder'] . '/Flag.' . $board['language'] . '.gif">&nbsp; ': '', '<a', $board['redirect_newtab'] ? ' target="_blank"' : '', ' class="subject" href="', $board['href'], '" id="b', $board['id'], '">', $board['name'], '</a>';
 
 				// Has it outstanding posts for approval?
 				if (!empty($board['can_approve_posts']) && (!empty($board['unapproved_posts']) || !empty($board['unapproved_topics'])))
@@ -151,12 +151,9 @@ function template_boards()
 
 					echo '
 					<td class="stats">
-						<p>', implode('<br>', $display),  '</p>
+						<div>', implode('</div><div>', $display),  '</div>
 					</td>';
 				}
-
-				echo '
-					<td class="lastpost">';
 
 				/* The board's and children's 'last_post's have:
 				time, timestamp (a number that represents the time.), id (of the post), topic (topic id.),
@@ -164,10 +161,12 @@ function template_boards()
 				and member. (which has id, name, link, href, username in it.) */
 				if (!empty($board['last_post']['offlimits']))
 					echo '
+					<td class="lastpost">
 						<p>', $board['last_post']['offlimits'], '</p>
 					</td>';
 				elseif (!empty($board['last_post']['id']))
 					echo '
+					<td class="lastpost">
 						<p>
 							', strtr($txt['last_post_author_link_time'], array(
 								'{author}' => $board['last_post']['member']['link'],
@@ -177,7 +176,8 @@ function template_boards()
 						</p>
 					</td>';
 				else
-					echo '</td>';
+					echo '
+					<td class="lastpost"></td>';
 
 				echo '
 				</tr>';

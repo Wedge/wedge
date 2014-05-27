@@ -201,7 +201,7 @@ function aeva_protection($array, $input, $reverse = false)
 	unset($unaltered);
 
 	// No links remaining? No further embedding possible, so set this variable before we return.
-	if ($reverse === true && strpos($input, '<a href="http://') === false)
+	if ($reverse === true && strpos($input, '<a href="http') === false)
 		$context['aeva']['skip'] = true;
 
 	return $input;
@@ -649,13 +649,13 @@ function aeva_limits()
 function aeva_autolink_urls($input)
 {
 	// Parse any URLs.... And ensure they're not already auto-linked!
-	$input = preg_replace_callback('~(=|\[(?:url|img(?:\s[^]]*)?)])(http://|https://|ftp://|ftps://|www\.)~i', function ($match) { return $match[0] . '!<AEVA_LOOKBEHIND>!'; }, $input);
+	$input = preg_replace_callback('~(=|\[(?:url|img(?:\s[^]]*)?)])(https?://|ftps?://|www\.)~i', function ($match) { return $match[0] . '!<AEVA_LOOKBEHIND>!'; }, $input);
 
-	if (preg_match('~(?:http://|www\.)[^!]~i', $input))
+	if (preg_match('~(?:https?://|www\.)[^!]~i', $input))
 	{
 		$input = preg_replace(
 			array(
-				'`(?<=^|[\s>.(;\'"])((?:http|https|ftp|ftps)://[\w%@:|-]+(?:\.[\w%-]+)*(?::\d+)?(?:/[\w~%.@,?&;=#+:\'\\\\-]*|[({][\w~%.@,?&;=#(){}+:\'\\\\-]*)*[/\w~%@?;=#}\\\\-]?)`',
+				'`(?<=^|[\s>.(;\'"])((?:https?|ftps?)://[\w%@:|-]+(?:\.[\w%-]+)*(?::\d+)?(?:/[\w~%.@,?&;=#+:\'\\\\-]*|[({][\w~%.@,?&;=#(){}+:\'\\\\-]*)*[/\w~%@?;=#}\\\\-]?)`',
 				'`(?<=^|[\s>.(;\'"])(www(?:\.[\w-]+)+(?::\d+)?(?:/[\w~%.@,?&;=#+:\'\\\\-]*|[({][\w~%.@,?&;=#(){}+:\'\\\\-]*)*[/\w~%@?;=#}\\\\-])`i'
 			), array(
 				'[url]$1[/url]',

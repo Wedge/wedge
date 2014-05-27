@@ -1,9 +1,8 @@
 
-#header
-	li.greeting
-		font-size: 1.3em
-		font-weight: 700
-		line-height: 1.5em
+#greeting
+	font-size: 1.3em
+	font-weight: 700
+	line-height: 1.5em
 
 // These may be seen by guests, but it's unlikely, and they won't bother if the icons don't show up anyway.
 #modbuttons
@@ -24,6 +23,8 @@
 		background-image: url($images/small_lock.gif)
 	a.delete
 		background-image: url($images/small_delete.gif)
+	.buttonlist
+		float: left
 
 .modrem a extends #modbuttons a.delete
 
@@ -262,7 +263,7 @@ for guests, because most of the time it won't be an option.
 @endif
 
 .privacy_list_friends mixes .inline-block
-	background: url($images/icons/contacts.png) 0 0 no-repeat
+	background: url($images/icons/contacts.gif) 0 0 no-repeat
 	width, height: 10px
 	margin-right: 4px
 	vertical-align: 0

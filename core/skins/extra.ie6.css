@@ -53,9 +53,8 @@ li.sep
 
 #top_section
 	height: 1%
-	.frame
-		p, h2
-			display: inline
+	p, h2
+		display: inline
 
 // Generic lists header
 // Side paddings must NOT be defined here.
@@ -145,10 +144,6 @@ li.sep
 	width: 99.5%
 	margin: auto
 
-#edit_poll ul.poll_main li
-	padding-left: 0
-	margin: 0 -2em
-
 #postmodify div.roundframe
 	margin-right: 0
 
@@ -215,8 +210,8 @@ li.sep
 
 /* Misc hacks
 ------------- */
-#content div.frame
-	width: auto // expression(this.clientWidth > 1200 ? '1200px' : 'auto') tends to crash IE6.
+#wedge
+	width: expression(this.clientWidth > 1200 ? '1200px' : 'auto'); // tends to crash IE6.
 
 #footer
 	clear: both

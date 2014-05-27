@@ -9,9 +9,9 @@
 
 @language index;
 
-var can_sticky, sticky_count = 0;
+var can_sticky;
 
-$(function ()
+$(document).on(is_ie8down ? 'load' : 'ready', function ()
 {
 	// Test for position: sticky support. WebKit in iOS 6+ supports it prefixed; other supporting browsers don't use a prefix.
 	var test_sticky = document.createElement('div');
@@ -28,16 +28,14 @@ $(function ()
 			});
 		});
 
+	// Go Up/Go Down features.
+	$('.updown').each(function (i) {
+		$(this).click(function () { $('html,body').animate({ scrollTop: i ? 0 : $(document).height() - $(window).height() }, 600); return false; });
+	});
+
 	// Run this when coming (back) to the tab.
 	$(document).on('visibilitychange msvisibilitychange mozvisibilitychange webkitvisibilitychange', page_showing);
 	page_showing();
-
-	if (!$('#forumposts').length)
-		return;
-
-	// Run this when resizing the window.
-	$(window).resize(page_sizing);
-	page_sizing();
 });
 
 $(window).load(function ()
@@ -57,30 +55,33 @@ $(window).load(function ()
 		poster_css_top = parseInt($first_post.find('>div').css('top')),
 		poster_padding_bot = parseInt($first_post.css('paddingBottom')),
 		sep_height = $('hr.sep').first().outerHeight(),
-		follow_me = function ()
+		follow_me = function (e)
 		{
 			var
 				top = $(window).scrollTop(),
 				$poster,
 				$col,
+				col,
 				offset,
 				poster_top,
 				col_height,
-				poster_height;
+				poster_height,
+				$posts = $('.poster');
 
 			// On each scroll, we retrieve the top position
 			// of all posts, to see which one is in scope.
-			$('.poster').each(function ()
+			$posts.each(function (i)
 			{
 				$poster = $(this);
 				offset = $poster.offset();
 				poster_top = offset.top;
 				poster_height = $poster.height();
-				if (top < poster_top + poster_height + poster_css_top + poster_padding_bot + sep_height)
+				if (top < poster_top + poster_height + poster_css_top + poster_padding_bot + (i ? sep_height : ($posts.length > 1 ? $posts.eq(1).offset().top - $first_post.offset().top - $first_post.outerHeight() : 0)))
 					return false;
 			});
 
 			$col = $poster.find('>div');
+			col = $col[0];
 			col_height = $col.height();
 
 			// If we're above the first post, or the post is shorter than the user box, we can just forget about the effect.
@@ -88,23 +89,37 @@ $(window).load(function ()
 				$col = false;
 			// If we're close to the next post, stick the previous user box to the bottom; this increases performance.
 			else if (top >= poster_top + poster_height - col_height)
-				$col.css({
-					position: '',
-					left: '',
-					paddingTop: poster_height - col_height
-				});
+			{
+				col.style.position = '';
+				col.style.left = '';
+				col.style.paddingTop = (poster_height - col_height) + 'px';
+			}
 			// Otherwise, go ahead and 'fix' our current post's user box position.
-			else if ($col[0].style.position != 'fixed')
-				$col.css({
-					position: 'fixed',
-					left: offset.left,
-					paddingTop: 0
-				});
+			else if (col.style.position != 'fixed')
+			{
+				col.style.position = 'fixed';
+				col.style.left = offset.left + 'px';
+				col.style.paddingTop = 0;
+			}
 
-			$('.poster>div').not($col).css({
-				position: '',
-				left: '',
-				paddingTop: 0
+			$('.poster>div').each(function ()
+			{
+				var this_pos = this.style.position, this_pad = this.style.paddingTop, is_following = this_pos == 'fixed' || this_pad;
+				// Calculate float constraints if we haven't done so yet, or if we're resizing the window.
+				if ((e && e.type == 'resize') || (is_following && this.style.width == ''))
+				{
+					this.removeAttribute('style');
+					this.style.width = $(this).width() + 'px';
+				}
+				// Fix any ex-floats to a static position.
+				if ($col === false || (this != col && is_following))
+					this.removeAttribute('style');
+				else if (is_following)
+				{
+					this.style.position = this_pos;
+					if (this_pad)
+						this.style.paddingTop = this_pad;
+				}
 			});
 		};
 
@@ -112,7 +127,7 @@ $(window).load(function ()
 	// The fallback is also too unstable on mobile browsers, IE6, IE7 and old Opera.
 	if (poster_css_top && !is_touch && !can_sticky && !is_ie6 && !is_ie7 && !is_opera)
 	{
-		$(window).on('scroll resize', follow_me);
+		$(window).on('resize scroll', follow_me);
 		follow_me();
 	}
 
@@ -189,17 +204,6 @@ $(window).load(function ()
 	});
 });
 
-function page_sizing()
-{
-	if (is_touch || can_sticky)
-		return;
-
-	if ($('.poster>div').width() < 20 && sticky_count++ < 20)
-		return setTimeout(page_sizing, 50);
-
-	$('.poster,.poster>div').css('min-height', 0).css('position', '').width('').each(function () { $(this).width($(this).width()).css('min-height', $(this).height()); });
-}
-
 function page_showing()
 {
 	// Relative timestamps!
@@ -266,18 +270,6 @@ function expandThumb(thumbID)
 
 		return false;
 	}
-}
-
-function go_up()
-{
-	$('html,body').animate({ scrollTop: 0 }, 600);
-	return false;
-}
-
-function go_down()
-{
-	$('html,body').animate({ scrollTop: $(document).height() - $(window).height() }, 600);
-	return false;
 }
 
 @if member

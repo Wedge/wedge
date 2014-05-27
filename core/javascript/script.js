@@ -239,9 +239,9 @@ function invertAll(oInvertCheckbox, oForm, sMask)
 }
 
 // Shorten all raw URLs in user content. The spans allow for the actual link to be retained when copying/pasting the page content.
-function breakLinks()
+function breakLinks(where)
 {
-	$('.bbc_link').each(function () {
+	$(where || '.bbc_link').each(function () {
 		var link = $(this).text();
 		if (link == this.href && link.length > 50)
 			$(this).html(link.slice(0, 25) + '<span class="cut"><span>' + link.slice(25, -25) + '</span></span><wbr>' + link.slice(-25));
@@ -650,6 +650,7 @@ $(window).load(function ()
 	{
 		if (opened)
 			return;
+		$(this).toggleClass('open');
 		$pop.load(weUrl('action=search' + (window.we_topic ? ';topic=' + we_topic : '') + (window.we_board ? ';board=' + we_board : '')), function () {
 			$pop.hide().css('top', 0).animate({
 				opacity: 'toggle',
@@ -662,6 +663,7 @@ $(window).load(function ()
 				return;
 			opened = false;
 			$(document).off('.sf');
+			$('#search_form .search').toggleClass('open');
 			$pop.css('top', '100%').animate({
 				opacity: 'toggle',
 				top: '0%'

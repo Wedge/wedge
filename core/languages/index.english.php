@@ -640,7 +640,7 @@ $txt['form_submit'] = 'Submit';
 $txt['form_cancel'] = 'Cancel';
 
 // Media Gallery
-$txt['media_gallery'] = 'Media';
+$txt['media_gallery'] = 'Media Gallery';
 $txt['media_home'] = 'Home';
 $txt['media_unseen'] = 'Unseen';
 $txt['media_profile_sum'] = 'Summary';

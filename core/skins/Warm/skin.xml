@@ -56,10 +56,11 @@
 	]]></comment>
 
 	<!--
-		Skin options. Wedge's default theme only offers two options for skins:
+		Skin options. Wedge's default theme only offers three options for skins:
 
 		<mobile> (meaning the skin is optimized for mobile devices; default is '0')
 		<sidebar> (sidebar position; default is 'right')
+		<shortmenu> (whether the menu should have as few main entries as possible; default is '1')
 
 		You should only use 0 or 1 values for skin variables (such as <mobile>), except for <sidebar>.
 
@@ -85,16 +86,13 @@
 		You can specify an external HTTP URL, or a relative path based on $here,
 		a variable representing the current skin folder ($here/myscript.js).
 
-		In the examples below, we're applying PNG compatibility fixes to IE6
-		(loading the DD_belatedPNG script in the process); we're also allowing
-		submit buttons to be styled, and finally we're changing the layout on
-		iOS devices to show the sidebar below the main content.
+		In the examples below, we're adding support for two features on IE6:
+		hovers on LI tags, and accessing (styling) buttons by their type.
 	-->
 
-	<script for="ie6" include="pngfix.js ie6hover.js"><![CDATA[
+	<script for="ie6" include="ie6hover.js"><![CDATA[
 	$('input[type=checkbox], input[type=radio]').addClass('ie_check');
 	$('input[type=submit], input[type=button]').addClass('ie_button');
-	DD_belatedPNG.fix('.ping,#logo,#footer,#footer div.frame');
 	$.ie6hover();
 	]]></script>
 

@@ -39,7 +39,7 @@ h4, h5
 				z-index: 999
 @endif
 
-#content div.frame
+#content > div
 	margin: 0
 
 #edge
@@ -239,7 +239,6 @@ tr.titlebg th, tr.catbg th
 ------------------------------------------------------- */
 .catbase
 	background: rgba(0,0,0, .025)
-	box-shadow: none
 	border: 0
 	text-shadow: white 0 1px 2px
 	font: 400 1.3em/20px $main_font

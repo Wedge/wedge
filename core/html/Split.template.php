@@ -98,6 +98,8 @@ function template_select()
 {
 	global $context, $txt;
 
+	add_css_file('pages'); // .split_messages, #selected, #not_selected
+
 	echo '
 	<we:cat>', $txt['split'], '</we:cat>
 	<div id="split_topics">

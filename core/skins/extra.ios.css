@@ -9,12 +9,6 @@
 .postarea
 	margin-left: 8em
 
-.board_list
-	.stats
-		display: none
-	.lastpost
-		width: 40%
-
 #navi
 	padding: 8px 4px 4px
 	.menu h4

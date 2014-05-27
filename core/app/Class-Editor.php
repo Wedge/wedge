@@ -2465,7 +2465,7 @@ class wedit
 		{
 			$can_gzip = !empty($settings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
 			$context['smiley_gzip'] = $can_gzip;
-			$context['smiley_ext'] = $can_gzip ? (we::is('safari') ? '.cgz' : '.css.gz') : '.css';
+			$context['smiley_ext'] = $can_gzip ? (we::is('safari[-5.1]') ? '.cgz' : '.css.gz') : '.css';
 			$extra = we::is('ie6,ie7') ? '-ie' : '';
 			$var_name = 'smiley-cache-' . $extra . '-' . we::$user['smiley_set'];
 			$dummy = '';
@@ -2541,8 +2541,7 @@ class wedit
 						$js .= '
 				[' .
 					'\'button\', ' . (empty($this->disabled_tags[$tag['code']]) ? '1, ' : '0, ') . (!is_array($tag['image']) ?
-					(strpos($tag['image'], '//') !== false ? JavaScriptEscape($tag['image']) : JavaScriptEscape(ASSETS . '/bbc/' . $tag['image'] . '.gif')) . ', ' :
-					'[' . ($tag['image'][0] + 1) * 23 . ', ' . $tag['image'][1] * 22 . '], ') .
+					JavaScriptEscape($tag['image']) . ', ' : '[' . ($tag['image'][0] + 1) * 23 . ', ' . $tag['image'][1] * 22 . '], ') .
 					JavaScriptEscape($tag['code']) . ', ' .
 					JavaScriptEscape($tag['before']) . ', ' .
 					(isset($tag['after']) ? JavaScriptEscape($tag['after']) : '\'\'') . ', ' .
@@ -2607,7 +2606,7 @@ class wedit
 		sContainer: ' . JavaScriptEscape($bbccontainer) . ',
 		sButtonClickHandler: function (o) { oEditorHandle_' . $this->id . '.handleButtonClick(o); },
 		sSelectChangeHandler: function (o) { oEditorHandle_' . $this->id . '.handleSelectChange(o); },
-		sSprite: we_assets + \'/bbc/sprite.png\',
+		sSprite: we_assets + \'/bbc.png\',
 		aButtonRows: ['
 			. $js . '
 		],

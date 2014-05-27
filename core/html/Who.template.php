@@ -144,8 +144,7 @@ function template_credits()
 
 			echo '
 				</ul>
-			</section>
-		</div>';
+			</section>';
 		}
 
 		if (!empty($context['site_credits']['mods']))
@@ -161,8 +160,7 @@ function template_credits()
 
 			echo '
 				</ul>
-			</section>
-		</div>';
+			</section>';
 		}
 
 		echo '

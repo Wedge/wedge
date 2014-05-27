@@ -84,13 +84,12 @@ a.unreadlink
 ------------------------------------------------------- */
 .buttonlist
 	margin: 0 0 0 0.2em
-	li
-		float: right
-		a
-			margin-left: 0
-			margin-right: 12px
-			span
-				left: 8px
+	float: left
+	li a
+		margin-left: 0
+		margin-right: 12px
+		span
+			left: 8px
 
 .context.menu
 	padding-left: 0
@@ -99,18 +98,6 @@ a.unreadlink
 // The upshrink image needs some tweaking
 #upshrink
 	float: left
-
-#header
-	.news
-		text-align, float: left
-	.user
-		float: right
-		p
-			float: right
-			margin: 0 0 1em 1em
-		ul
-			padding-left: 0
-			padding-right: 10px
 
 // The navigation list (i.e. linktree)
 #linktree li
@@ -349,12 +336,6 @@ tr.titlebg td
 
 #amen
 	padding-right: 0
-
-
-/* Styles for sidebar menus.
-------------------------------------------------------- */
-.left_menu li
-	padding: 0 0.5em 0 0
 
 
 /* Styles for generic tables.

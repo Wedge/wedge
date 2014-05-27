@@ -1019,7 +1019,7 @@ function parse_bbc($message, $type = 'generic', $bbc_options = array()) // $smil
 				- SSI functions such as ssi_recentTopics() (they tend to crash your browser)
 			*/
 
-			if (!empty($settings['embed_enabled']) && empty($context['embed_disable']) && strpos($message, 'http://') !== false && !$print && $type != 'signature')
+			if (!empty($settings['embed_enabled']) && empty($context['embed_disable']) && strhas($message, array('http://', 'https://')) && !$print && $type != 'signature')
 				$message = aeva_main($message);
 
 			// And reverses any protection already in place
@@ -1204,7 +1204,7 @@ function parsesmileys(&$message)
 
 		$can_gzip = !empty($settings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
 		$context['smiley_gzip'] = $can_gzip;
-		$context['smiley_ext'] = $can_gzip ? (we::is('safari') ? '.cgz' : '.css.gz') : '.css';
+		$context['smiley_ext'] = $can_gzip ? (we::is('safari[-5.1]') ? '.cgz' : '.css.gz') : '.css';
 		$extra = we::is('ie6,ie7') ? '-ie' : '';
 		$var_name = 'smiley-cache-' . $extra . '-' . we::$user['smiley_set'];
 		if (!isset($settings[$var_name]))

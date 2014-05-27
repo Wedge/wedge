@@ -19,13 +19,6 @@ function template_aeva_header()
 		', !isset($context['page_title']) ? $txt['media_gallery'] : $context['page_title'], '
 	</we:cat>';
 
-	// Any further data to show?
-	if (!empty($context['aeva_header']['data']['description']))
-		echo '
-	<p class="description">
-		', $context['aeva_header']['data']['description'], '
-	</p>';
-
 	// Any unapproved stuff?
 	if (aeva_allowedTo('moderate') && (!empty($amSettings['num_unapproved_items']) || !empty($amSettings['num_unapproved_comments']) || !empty($amSettings['num_unapproved_albums'])))
 	{
@@ -59,23 +52,6 @@ function template_aeva_tabs()
 
 	if (!empty($context['aeva_tabs']))
 		template_show_generic_tabs($context['aeva_tabs']);
-
-	// Any sub-tabs?
-	if (empty($context['aeva_header']['subtabs']))
-		return;
-
-	$buttons = array();
-	foreach ($context['aeva_header']['subtabs'] as $key => $tab)
-		$buttons[$key] = array(
-			'text' => $tab['title'],
-			'url' => $tab['url'],
-			'class' => $tab['class']
-		);
-
-	echo '
-		<div class="pagesection">',
-			template_button_strip($buttons, ''), '
-		</div>';
 }
 
 function template_aeva_home()

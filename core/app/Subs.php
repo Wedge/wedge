@@ -515,16 +515,17 @@ function updateSettings($changeArray, $update = false)
  * This will only work if $array doesn't have keys in common with $input.
  *
  * @param array $input The array to be modified
- * @param string $to The target array key
+ * @param string $to The target array key; for child arrays, use 'parent child'.
  * @param array $array The array to insert
  * @param boolean $after Set to true to insert $array after $to, leave empty to insert before it.
  */
 function array_insert($input, $to, $array, $after = false)
 {
-	$offset = array_search($to, array_keys($input), true);
-	if ($after)
-		$offset++;
-	return array_merge(array_slice($input, 0, $offset, true), $array, array_slice($input, $offset, null, true));
+	$to = array_map('trim', explode(' ', $to));
+	$offset = array_search($to[0], array_keys($input), true) + ($after && empty($to[1]) ? 1 : 0);
+	if (empty($to[1]))
+		return array_merge(array_slice($input, 0, $offset, true), $array, array_slice($input, $offset, null, true));
+	return array_merge(array_slice($input, 0, $offset, true), array($to[0] => array_insert($input[array_shift($to)], implode(' ', $to), $array, $after)), array_slice($input, $offset + 1, null, true));
 }
 
 /**
@@ -1486,7 +1487,7 @@ function getRePrefix()
 
 	$context['response_prefix'] = cache_get_data('re_prefix', 'forever', function ()
 	{
-		global $context, $settings, $txt;
+		global $settings, $txt;
 
 		if ($settings['language'] === we::$user['language'])
 			$prefix = $txt['response_prefix'];
@@ -2119,7 +2120,7 @@ function setupMenuContext()
 			'title' => !empty($settings['home_url']) ? $txt['community'] : $txt['home'],
 			'href' => '<URL>',
 			'show' => true,
-			'sub_items' => array(
+			'items' => array(
 				'root' => array(
 					'title' => $context['forum_name'],
 					'href' => '<URL>',
@@ -2130,13 +2131,52 @@ function setupMenuContext()
 					'href' => $is_b ? '<URL>?board=' . $board_info['id'] . '.0' : '',
 					'show' => $is_b,
 				),
+				'',
+				'media' => array(
+					'title' => isset($txt['media_gallery']) ? $txt['media_gallery'] : 'Media',
+					'notice' => $can_view_unseen ? we::$user['media_unseen'] : '',
+					'href' => '<URL>?action=media',
+					'show' => !empty($settings['media_enabled']) && allowedTo('media_access'),
+					'notice' => $can_view_unseen ? we::$user['media_unseen'] : '',
+					'icon' => true,
+					'items' => array(
+						'home' => array(
+							'title' => $txt['media_home'],
+							'href' => '<URL>?action=media',
+							'show' => $can_view_unseen,
+						),
+						'unseen' => array(
+							'title' => $txt['media_unseen'],
+							'href' => '<URL>?action=media;sa=unseen',
+							'show' => $can_view_unseen,
+						),
+					),
+				),
+				'mlist' => array(
+					'title' => $txt['members_title'],
+					'href' => '<URL>?action=mlist',
+					'show' => $context['allow_memberlist'],
+					'icon' => true,
+					'items' => array(
+						'mlist_view' => array(
+							'title' => $txt['mlist_menu_view'],
+							'href' => '<URL>?action=mlist',
+							'show' => true,
+						),
+						'mlist_search' => array(
+							'title' => $txt['mlist_search'],
+							'href' => '<URL>?action=mlist;sa=search',
+							'show' => true,
+						),
+					),
+				),
 			),
 		),
 		'admin' => array(
 			'title' => $txt['admin'],
 			'href' => '<URL>?action=' . ($context['allow_admin'] ? 'admin' : 'moderate'),
 			'show' => $context['allow_admin'] || $context['allow_moderation_center'],
-			'sub_items' => array(
+			'items' => array(
 				'featuresettings' => array(
 					'title' => $txt['settings_title'],
 					'href' => '<URL>?action=admin;area=featuresettings',
@@ -2198,7 +2238,7 @@ function setupMenuContext()
 			'title' => $txt['profile'],
 			'href' => '<URL>?action=profile',
 			'show' => $context['allow_edit_profile'],
-			'sub_items' => array(
+			'items' => array(
 				'summary' => array(
 					'title' => $txt['summary'],
 					'href' => '<URL>?action=profile',
@@ -2225,41 +2265,12 @@ function setupMenuContext()
 					'href' => '<URL>?action=skin',
 					'show' => allowedTo(array('profile_extra_any', 'profile_extra_own')),
 				),
-			),
-		),
-		'media' => array(
-			'title' => isset($txt['media_gallery']) ? $txt['media_gallery'] : 'Media',
-			'notice' => $can_view_unseen ? we::$user['media_unseen'] : '',
-			'href' => '<URL>?action=media',
-			'show' => !empty($settings['media_enabled']) && allowedTo('media_access'),
-			'sub_items' => array(
-				'home' => array(
-					'title' => $txt['media_home'],
-					'href' => '<URL>?action=media',
-					'show' => $can_view_unseen,
-				),
-				'unseen' => array(
-					'title' => $txt['media_unseen'],
-					'notice' => $can_view_unseen ? we::$user['media_unseen'] : '',
-					'href' => '<URL>?action=media;sa=unseen',
-					'show' => $can_view_unseen,
-				),
-			),
-		),
-		'mlist' => array(
-			'title' => $txt['members_title'],
-			'href' => '<URL>?action=mlist',
-			'show' => $context['allow_memberlist'],
-			'sub_items' => array(
-				'mlist_view' => array(
-					'title' => $txt['mlist_menu_view'],
-					'href' => '<URL>?action=mlist',
-					'show' => true,
-				),
-				'mlist_search' => array(
-					'title' => $txt['mlist_search'],
-					'href' => '<URL>?action=mlist;sa=search',
-					'show' => true,
+				'',
+				'logout' => array(
+					'title' => $txt['logout'],
+					'href' => '<URL>?action=logout;' . $context['session_query'],
+					'show' => we::$is_member,
+					'icon' => true,
 				),
 			),
 		),
@@ -2275,16 +2286,11 @@ function setupMenuContext()
 			'show' => we::$is_guest && (empty($settings['registration_method']) || $settings['registration_method'] != 3),
 			'nofollow' => !empty(we::$user['possibly_robot']),
 		),
-		'logout' => array(
-			'title' => $txt['logout'],
-			'href' => '<URL>?action=logout;' . $context['session_query'],
-			'show' => we::$is_member,
-		),
 	);
 
 	// Amalgamate the items in the admin menu.
-	if (!empty($error_count) || !empty($items['admin']['sub_items']['reports']['notice']) || !empty($context['unapproved_members']))
-		$items['admin']['notice'] = $error_count + (int) $items['admin']['sub_items']['reports']['notice'] + (int) $context['unapproved_members'];
+	if (!empty($error_count) || !empty($items['admin']['items']['reports']['notice']) || !empty($context['unapproved_members']))
+		$items['admin']['notice'] = $error_count + (int) $items['admin']['items']['reports']['notice'] + (int) $context['unapproved_members'];
 
 	// Allow editing menu items easily.
 	// Use PHP's array_splice to add entries at a specific position.
@@ -2299,24 +2305,44 @@ function setupMenuContext()
 			$item['active_item'] = false;
 
 			// Go through the sub items if there are any.
-			if (!empty($item['sub_items']))
+			if (!empty($item['items']))
 			{
-				foreach ($item['sub_items'] as $key => $subitem)
+				foreach ($item['items'] as $key => $subitem)
 				{
 					if (empty($subitem['show']) && !empty($subitem))
-						unset($item['sub_items'][$key]);
+						unset($item['items'][$key]);
 
 					// 2nd level sub items next...
-					if (!empty($subitem['sub_items']))
-						foreach ($subitem['sub_items'] as $key2 => $subitem2)
+					if (!empty($subitem['items']))
+						foreach ($subitem['items'] as $key2 => $subitem2)
 							if (empty($subitem2['show']) && !empty($subitem2))
-								unset($item['sub_items'][$key]['sub_items'][$key2]);
+								unset($item['items'][$key]['items'][$key2]);
 				}
 			}
 
 			$menu_items[$act] = $item;
 		}
 	}
+
+	// If we explicitly requested a long menu, move all Home items to the root.
+	if (!SKIN_SHORTMENU)
+	{
+		$from_now = false;
+		foreach ($menu_items['home']['items'] as $title => $entry)
+		{
+			if ($from_now)
+			{
+				$menu_items[$title] = $entry;
+				unset($menu_items['home']['items'][$title]);
+			}
+			elseif (empty($entry))
+				$from_now = true;
+		}
+	}
+
+	// Remove the home separator if not needed.
+	if (reset($menu_items['home']['items']) === '')
+		array_shift($menu_items['home']['items']);
 
 	$context['menu_items'] =& $menu_items;
 

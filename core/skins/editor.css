@@ -47,7 +47,7 @@ body.rich extends .editor
 	height: 5px
 	padding: @is (ie, 0, 0 2px)
 	font-size: 0
-	background: #eee url($images/bbc/resize-handle.gif) no-repeat 50% 1px
+	background: #eee url($images/buttons/resize-handle.gif) no-repeat 50% 1px
 	box-sizing: border-box
 	border: 1px solid #ddd
 	border-top-width: 0
@@ -215,4 +215,6 @@ body.rich extends .editor
 	@media all and (max-width: 600px)
 		#contactlist
 			display: none
+		.postbuttons
+			max-width: 100%
 @endif
