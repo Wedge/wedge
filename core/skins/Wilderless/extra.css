@@ -71,6 +71,7 @@ body
 			vertical-align: middle
 			width: 100%
 	img.avatar
+		width: auto
 		max-height: 40px
 		margin-right: 12px
 
