@@ -1345,10 +1345,10 @@ div.top_row dd
 ------------------------------------------------- */
 
 .boardstate mixes .inline-block
-	background: url($images/boardicon.png) 0 0 no-repeat
+	background: url($board_icon) 0 0 no-repeat
 	position: relative
-	width: 37px
-	height: 42px
+	width: width($board_icon)px
+	height: height($board_icon)px
 	font-size: 1.2em
 	opacity: .6
 
@@ -1423,38 +1423,37 @@ body.waiting *
 			#forumposts, .wide
 				margin: 0 -$horizontal_content_padding
 				padding, border, border-radius: 0 !important
-			.wide tr.windowbg td
-				padding: .5em math($horizontal_content_padding / 2)
 
 			// Turn board lists into flat divs, rather than table cells!
-			// (Apologies for the !important abuse.)
+			// (Apologies for the complexity.)
 			.board_list
 				display: block
 				width: 100% !important
-				text-align: inherit !important
 				tbody, tr, td
 					display: block
-					width: auto !important
-					text-align: inherit !important
+					width: auto
+				tr mixes .clearfix
+					padding: .5em math($horizontal_content_padding / 2)
 				td
-					padding-left, padding-right: 8px
+					padding: 0
+					margin-left: math(width($board_icon) + 12px)
+				td:empty
+					display: none
 				.icon
-					padding: 0 8px !important
+					float: left
+					margin: 0
 				.stats
-					display: inline-block
-					box-sizing: border-box
-					width: 40% !important
+					width: auto
+					text-align: inherit
+					font-style: italic
+					padding-top, margin-top: 4px
+					border-top: 1px dotted #ccc
+					div mixes .inline-block("")
+					div + div:before
+						content: "\a0-\a0"
 				.lastpost
-					display: inline-block
-					box-sizing: border-box
-					width: 55% !important
-					padding-left: 0 !important
+					width: auto
 					font-size: 90%
-				.info mixes .clearfix
-					border-bottom: 1px dotted #ccc
-			.boardstate
-				float: left
-				margin: 8px 12px 0 8px
 			#search_form
 				.mimenu
 					left: auto
