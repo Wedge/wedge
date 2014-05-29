@@ -187,8 +187,6 @@ $txt['groupMembership_info'] = 'In this section of your profile you can change w
 $txt['pmprefs'] = 'Personal Messaging';
 $txt['ignoreboards'] = 'Ignore Boards Options';
 $txt['ignoreboards_info'] = 'This page lets you ignore particular boards. When a board is ignored, the new post indicator will not show up on the board index. New posts will not show up using the "unread post" search link (when searching it will not look in those boards) however, ignored boards will still appear on the board index and upon entering will show which topics have new posts. When using the "unread replies" link, new posts in an ignored board will still be shown.';
-// $txt['ignoretopics'] = 'Ignore Topics Options';
-// $txt['ignoretopics_info'] = 'This page lets you ignore particular topics. When a topic is ignored, it won\'t be shown on the various <em>Unread</em> feature pages. Ignored topics will still show up on the message index, though.';
 
 $txt['manage_account'] = 'Manage Account';
 $txt['deleteAccount'] = 'Delete this account';
