@@ -10,8 +10,8 @@
 #top_section
 	padding: 8px 15px
 
-#sidebar .column
-	padding: 20px 10px 0 20px
+body #sidebar .column
+	padding: 10px 20px
 
 .note
 	padding: 2px 5px 3px
@@ -89,6 +89,8 @@ ul.nlist
 
 @remove
 	letter-spacing: -.25px
+
+#greeting reset
 
 @replace
 	font: 3.6em/1 $serif_font

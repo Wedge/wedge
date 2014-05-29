@@ -31,6 +31,9 @@ body
 	background: none
 	border: 0
 
+body #sidebar .column
+	padding: 10px 20px
+
 #wedge, #header, #footer
 	border-radius: 0
 
