@@ -2079,16 +2079,7 @@ function getLanguages($use_cache = true)
 	// If the language array is already filled, or we wanna use the cache and it's not expired...
 	// The master copy will have everything, but if we're calling 'from cache', we only want 'available' languages.
 	if ($use_cache && (isset($context['languages']) || ($context['languages'] = cache_get_data('known_languages', !empty($settings['cache_enable']) && $settings['cache_enable'] < 1 ? 86400 : 3600)) !== null))
-	{
-		$langs = !empty($settings['langsAvailable']) ? explode(',', $settings['langsAvailable']) : array();
-		if (empty($langs))
-			$langs[] = $settings['language'];
-		foreach ($context['languages'] as $lang => $dummy)
-			if (!in_array($lang, $langs))
-				unset($context['languages'][$lang]);
-
-		return $context['languages'];
-	}
+		return getAvailableLanguages();
 
 	// Default language directories to try.
 	$language_directories = array(
@@ -2127,6 +2118,20 @@ function getLanguages($use_cache = true)
 	// Let's cash in on this deal.
 	if (!empty($settings['cache_enable']))
 		cache_put_data('known_languages', $context['languages'], !empty($settings['cache_enable']) && $settings['cache_enable'] < 1 ? 86400 : 3600);
+
+	return $use_cache ? getAvailableLanguages() : $context['languages'];
+}
+
+function getAvailableLanguages()
+{
+	global $settings, $context;
+
+	$langs = !empty($settings['langsAvailable']) ? array_flip(explode(',', $settings['langsAvailable'])) : array();
+	if (empty($langs))
+		$langs[$settings['language']] = 1;
+	foreach ($context['languages'] as $lang => $dummy)
+		if (!isset($langs[$lang]))
+			unset($context['languages'][$lang]);
 
 	return $context['languages'];
 }
