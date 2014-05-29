@@ -34,6 +34,9 @@ table.cs0 final tr.windowbg:last-child td
 	background-color: #693636
 	color: #ddc
 
+#header .mimenu
+	color: #444
+
 /* The following direction settings will magically move the sidebar to the left.
 	Apply the following to disable this in a sub-skin or custom.css:
 
