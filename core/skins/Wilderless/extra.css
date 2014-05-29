@@ -121,6 +121,9 @@ ul.nlist
 @remove
 	letter-spacing: -.25px
 
+#greeting reset
+.blog reset
+
 @replace
 	font: 3.6em/1 $serif_font
 	font: 2em/1 $serif_font

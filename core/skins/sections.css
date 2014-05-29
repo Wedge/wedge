@@ -281,10 +281,27 @@ hr.sep
 // Like #forumposts, but for blogs only.
 .blog
 	.first-post
-		background: transparent
+		background: none
 		margin-top: 16px
 		.inner
 			font: $blog_font_size $blog_font
+	.msg:not(:first-child)
+		background: none
+		.poster
+			background: none
+		.poster > div:before
+			position: relative
+			content: ""
+			left: 100%
+			top: 50px
+			width, height: 0
+			font-size: 0
+			border: 24px solid transparent
+			border-right-color: $window_bg
+			margin: 0 0 0 -36px // 24px + .poster > div's 12px right margin.
+		.postarea
+			background: $window_bg
+			border-radius: 16px
 
 // Poster and postarea + moderation area underneath
 .post_wrapper

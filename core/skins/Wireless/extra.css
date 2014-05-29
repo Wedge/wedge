@@ -47,6 +47,7 @@ body #sidebar .column
 			vertical-align: middle
 			width: 100%
 	img.avatar
+		width: auto
 		max-height: 40px
 		margin-right: 12px
 
@@ -91,6 +92,7 @@ ul.nlist
 	letter-spacing: -.25px
 
 #greeting reset
+.blog reset
 
 @replace
 	font: 3.6em/1 $serif_font
