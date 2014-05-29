@@ -276,7 +276,7 @@ class we
 			'email' => isset($user_settings['email_address']) ? $user_settings['email_address'] : '',
 			'activated' => !empty($user_settings['is_activated']) ? $user_settings['is_activated'] : 0,
 			'passwd' => isset($user_settings['passwd']) ? $user_settings['passwd'] : '',
-			'language' => empty($user_settings['lngfile']) || empty($settings['userLanguage']) ? '' : $user_settings['lngfile'],
+			'language' => self::get_preferred_language(isset($user_settings['lngfile']) ? $user_settings['lngfile'] : ''),
 			'skin' => $_SESSION['is_mobile'] ? (empty($user_settings['skin_mobile']) ? '' : $user_settings['skin_mobile']) : (empty($user_settings['skin']) ? '' : $user_settings['skin']),
 			'last_login' => empty($user_settings['last_login']) ? 0 : $user_settings['last_login'],
 			'ip' => $_SERVER['REMOTE_ADDR'],
@@ -446,20 +446,6 @@ class we
 		if (!empty($user['ignoreboards']) && empty($user['ignoreboards'][$tmp = count($user['ignoreboards']) - 1]))
 			unset($user['ignoreboards'][$tmp]);
 
-		// Do we have any languages to validate this?
-		$languages = getLanguages();
-
-		// Allow the user to change their language if it's valid.
-		if (!empty($settings['userLanguage']) && !empty($_GET['language']) && isset($languages[strtr($_GET['language'], './\\:', '____')]))
-		{
-			$user['language'] = strtr($_GET['language'], './\\:', '____');
-			$_SESSION['language'] = $user['language'];
-		}
-		elseif (!empty($settings['userLanguage']) && !empty($_SESSION['language']) && isset($languages[strtr($_SESSION['language'], './\\:', '____')]))
-			$user['language'] = strtr($_SESSION['language'], './\\:', '____');
-		elseif ($user['language'] === '')
-			$user['language'] = get_preferred_language($settings['language']);
-
 		// Just build this here, it makes it easier to change/use - administrators can see all boards.
 		if ($is['admin'])
 		{
@@ -566,6 +552,60 @@ class we
 	private static function negate($arr)
 	{
 		return -$arr;
+	}
+
+	/**
+	 * Get the user language, based, in order, on user's choice, browser's choice and admin choice.
+	 */
+	protected static function get_preferred_language($language)
+	{
+		global $settings;
+
+		$languages = getLanguages();
+		$default = $settings['language'];
+
+		// Does the admin even *allow* users to change their language?
+		if (empty($settings['userLanguage']))
+			return $default;
+
+		if (!empty($_GET['language']) && isset($languages[$temp = strtr($_GET['language'], './\\:', '____')]))
+			return $_SESSION['language'] = $temp;
+		elseif (!empty($_SESSION['language']) && isset($languages[$_SESSION['language']]))
+			return $_SESSION['language'];
+
+		// Is $language currently enabled?
+		if (isset($languages[$language]))
+			return $language;
+
+		// Otherwise rely on browser choice, if it indicated anything.
+		if (!isset($_SERVER['HTTP_ACCEPT_LANGUAGE']))
+			return $default;
+
+		// Break up string into pieces (languages and q factors.)
+		preg_match_all('/([a-z]{1,8}(-[a-z]{1,8})?)\s*(;\s*q\s*=\s*(1|0\.[0-9]+))?/i', strtolower($_SERVER['HTTP_ACCEPT_LANGUAGE']), $lang_parse);
+		if (empty($lang_parse[1]))
+			return $default;
+
+		// Create a list like ['en' => 0.8]
+		$preferred = array_combine($lang_parse[1], $lang_parse[4]);
+
+		// In IE, some items won't have a q factor, set them to 1.
+		foreach ($preferred as $key => $val)
+			if ($val === '')
+				$preferred[$key] = 1;
+
+		// Sort list based on value.
+		arsort($preferred, SORT_NUMERIC);
+
+		// Create a list like ['en-gb' => 'english-uk', 'fr' => 'french'].
+		foreach ($languages as $key => $val)
+			$langs[$val['code']] = $key;
+
+		foreach ($preferred as $key => $value)
+			if ($lang = isset($langs[$key]) ? $langs[$key] : (isset($langs[substr($key, 0, 2)]) ? $langs[substr($key, 0, 2)] : ''))
+				return $lang;
+
+		return $default;
 	}
 
 	/**
@@ -768,7 +808,7 @@ class we
 			$settings['edit_disable_time'] = 0;
 		}
 
-		$user =& we::$user;
+		$user =& self::$user;
 
 		// {query_see_topic}, which has basic t.approved tests as well
 		// as more elaborate topic privacy, is set up here.
