@@ -682,7 +682,7 @@ function loadPermissions()
 		{
 			list (we::$user['permissions']) = $temp;
 			banPermissions();
-
+			we::permissions();
 			return;
 		}
 		elseif (($temp = cache_get_data('permissions:' . $cache_groups, 240)) !== null && time() - 240 > $settings['settings_updated'])
