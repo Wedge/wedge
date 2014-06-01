@@ -31,6 +31,9 @@ body
 	background: none
 	border: 0
 
+body #sidebar .column
+	padding: 10px 20px
+
 #wedge, #header, #footer
 	border-radius: 0
 
@@ -71,6 +74,7 @@ body
 			vertical-align: middle
 			width: 100%
 	img.avatar
+		width: auto
 		max-height: 40px
 		margin-right: 12px
 
@@ -116,6 +120,9 @@ ul.nlist
 
 @remove
 	letter-spacing: -.25px
+
+#greeting reset
+.blog reset
 
 @replace
 	font: 3.6em/1 $serif_font

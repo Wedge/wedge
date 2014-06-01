@@ -785,7 +785,7 @@ function template_page_index($base_url, &$start, $max_value, $num_per_page, $fle
 }
 
 // Generate a strip of buttons.
-function template_button_strip($button_strip, $direction = 'right', $extra = '')
+function template_button_strip($button_strip, $class = '', $extra = '')
 {
 	global $context, $txt;
 
@@ -808,7 +808,7 @@ function template_button_strip($button_strip, $direction = 'right', $extra = '')
 	$buttons[count($buttons) - 1] = str_replace('<li>', '<li class="last">', $buttons[count($buttons) - 1]);
 
 	return '
-			<ul class="buttonlist' . (!empty($direction) ? ' float' . $direction : '') . (empty($buttons) ? ' hide' : '') . '"' . ($extra ? ' ' . ltrim($extra) : '') . '>' .
+			<ul class="buttonlist' . ($class ? ' ' . $class : '') . (empty($buttons) ? ' hide' : '') . '"' . ($extra ? ' ' . ltrim($extra) : '') . '>' .
 				implode('', $buttons) . '
 			</ul>';
 }

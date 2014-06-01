@@ -142,18 +142,15 @@ function template_boards()
 					</td>';
 
 				// Show some basic information about the number of posts, etc.
-				if (!SKIN_MOBILE)
-				{
-					$display = array();
-					foreach ($board['display'] as $item => $string)
-						if (isset($board[$item]))
-							$display[] = number_context($string, $board[$item]);
+				$display = array();
+				foreach ($board['display'] as $item => $string)
+					if (isset($board[$item]))
+						$display[] = number_context($string, $board[$item]);
 
-					echo '
-					<td class="stats">
-						<div>', implode('</div><div>', $display),  '</div>
-					</td>';
-				}
+				echo '
+					<td class="stats">', empty($display) ? '' : '
+						<div>' . implode('</div><div>', $display) . '</div>
+					', '</td>';
 
 				/* The board's and children's 'last_post's have:
 				time, timestamp (a number that represents the time.), id (of the post), topic (topic id.),

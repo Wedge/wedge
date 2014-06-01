@@ -403,10 +403,6 @@ function aeva_initGallery($gal_url = null)
 		add_css_file(isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'mass' ? array('media', 'up') : 'media');
 	}
 
-	$context['aeva_header'] = array(
-		'subtabs' => array(),
-		'data' => array(),
-	);
 	$data = array();
 	$data['files'] = array();
 	$data['functions'] = array();

@@ -173,6 +173,9 @@ $vmin = @is (ie9, vm, vmin)
 $responsive_max_width = 1000px
 $responsive = "all and (max-width: $responsive_max_width)"
 
+/* URL for the status icon in board lists */
+$board_icon = "$images/boardicon.png"
+
 /* List of browsers that support the STANDARD flexbox model, i.e. display: flex.
 	IE10 supports an older model, but Wess automatically rewrites your CSS for it.
 	For reference, browsers supporting the OLD, useless model were: (firefox[2-], chrome[4-], safari[3.1-] && !ios, ios[3.2-]) */

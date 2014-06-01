@@ -12,9 +12,6 @@ function template_main_board()
 {
 	global $context, $settings, $txt;
 
-	echo '
-	<a id="top"></a>';
-
 	if (!empty($settings['show_board_desc']) && $context['description'] != '')
 		echo '
 	<p class="description_board">', $context['description'], '</p>';
@@ -24,9 +21,8 @@ function template_main_board()
 	if (!$context['no_topic_listing'])
 	{
 		echo '
-	<div class="pagesection">
-		<nav>', $txt['pages'], ': ', $context['page_index'], $context['page_separator'], '<a href="#bot"><strong>', $txt['go_down'], '</strong></a></nav>',
-		empty($context['button_list']) ? '' : template_button_strip($context['button_list']), '
+	<div class="pagesection">', empty($context['button_list']) ? '' : template_button_strip($context['button_list']), '
+		<nav>', $txt['pages'], ': ', $context['page_index'], $context['page_separator'], '<a href="#" class="updown">', $txt['go_down'], '</a></nav>
 	</div>';
 
 		// If Quick Moderation is enabled, start the form.
@@ -85,14 +81,12 @@ function template_main_board()
 
 		// If this person can approve items and we have some awaiting approval tell them.
 		if (!empty($context['unapproved_posts_message']))
-		{
 			echo '
 				<tr class="windowbg2">
 					<td colspan="', !empty($context['quick_moderation']) ? '5' : '4', '">
 						<span class="alert">!</span> ', $context['unapproved_posts_message'], '
 					</td>
 				</tr>';
-		}
 
 		foreach ($context['topics'] as $topic)
 		{
@@ -157,8 +151,7 @@ function template_main_board()
 		echo '
 			</tbody>
 		</table>
-	</div></div>
-	<a id="bot"></a>';
+	</div></div>';
 
 		// Finish off the form - again.
 		if (!empty($context['quick_moderation']))
@@ -167,9 +160,8 @@ function template_main_board()
 	</form>';
 
 		echo '
-	<div class="pagesection">', empty($context['button_list']) ? '' :
-		template_button_strip($context['button_list']), '
-		<nav>', $txt['pages'], ': ', $context['page_index'], $context['page_separator'], '<a href="#top"><strong>', $txt['go_up'], '</strong></a></nav>
+	<div class="pagesection">', empty($context['button_list']) ? '' : template_button_strip($context['button_list']), '
+		<nav>', $txt['pages'], ': ', $context['page_index'], $context['page_separator'], '<a href="#" class="updown">', $txt['go_up'], '</a></nav>
 	</div>';
 	}
 
@@ -188,9 +180,6 @@ function template_main_blog()
 {
 	global $context, $settings, $txt, $board_info;
 
-	echo '
-	<a id="top"></a>';
-
 	if (!empty($settings['show_board_desc']) && $context['description'] != '')
 		echo '
 	<p class="description_board">', $context['description'], '</p>';
@@ -203,9 +192,8 @@ function template_main_blog()
 	<we:cat>
 		', $board_info['name'], '
 	</we:cat>
-	<div class="pagesection">
-		<nav>', $txt['pages'], ': ', $context['page_index'], $context['page_separator'], '<a href="#bot"><strong>', $txt['go_down'], '</strong></a></nav>',
-		empty($context['button_list']) ? '' : template_button_strip($context['button_list']), '
+	<div class="pagesection">', empty($context['button_list']) ? '' : template_button_strip($context['button_list']), '
+		<nav>', $txt['pages'], ': ', $context['page_index'], $context['page_separator'], '<a href="#" class="updown">', $txt['go_down'], '</a></nav>
 	</div>';
 
 		// If Quick Moderation is enabled, start the form.
@@ -222,9 +210,7 @@ function template_main_blog()
 			echo '
 			<thead>
 				<tr class="catbg">
-					<th style="width: 8%">&nbsp;</th>
-					<th colspan="3"><strong>', $txt['msg_alert_none'], '</strong></th>
-					<th style="width: 8%">&nbsp;</th>
+					<th><strong>', $txt['msg_alert_none'], '</strong></th>
 				</tr>
 			</thead>';
 
@@ -233,14 +219,12 @@ function template_main_blog()
 
 		// If this person can approve items and we have some awaiting approval tell them.
 		if (!empty($context['unapproved_posts_message']))
-		{
 			echo '
 				<tr class="windowbg2">
-					<td colspan="', !empty($context['quick_moderation']) ? '3' : '2', '">
+					<td>
 						<span class="alert">!</span> ', $context['unapproved_posts_message'], '
 					</td>
 				</tr>';
-		}
 
 		$use_bg2 = true;
 		foreach ($context['topics'] as $topic)
@@ -302,8 +286,7 @@ function template_main_blog()
 		echo '
 			</tbody>
 		</table>
-	</div>
-	<a id="bot"></a>';
+	</div>';
 
 		// Finish off the form - again.
 		if (!empty($context['quick_moderation']))
@@ -312,9 +295,8 @@ function template_main_blog()
 	</form>';
 
 		echo '
-	<div class="pagesection">', empty($context['button_list']) ? '' :
-		template_button_strip($context['button_list']), '
-		<nav>', $txt['pages'], ': ', $context['page_index'], $context['page_separator'], '<a href="#top"><strong>', $txt['go_up'], '</strong></a></nav>
+	<div class="pagesection">', empty($context['button_list']) ? '' : template_button_strip($context['button_list']), '
+		<nav>', $txt['pages'], ': ', $context['page_index'], $context['page_separator'], '<a href="#" class="updown">', $txt['go_up'], '</a></nav>
 	</div>';
 	}
 
@@ -549,13 +531,13 @@ function template_messageindex_statistics()
 
 function template_messageindex_quickmod_selection()
 {
-	global $context, $txt;
+	global $context, $txt, $board_info;
 
 	if (!empty($context['quick_moderation']))
 	{
 		echo '
 				<tr class="titlebg">
-					<td colspan="5" class="round-bottom right">
+					<td', $board_info['type'] == 'forum' ? ' colspan="5"' : '', ' class="round-bottom right">
 						<label><input type="checkbox" onclick="invertAll(this, this.form, \'topics[]\');"> ', $txt['check_all'], '</label> &nbsp;
 						<select class="qaction fixed" name="qaction"', $context['can_move'] ? ' onchange="$(\'#sbmoveItTo\').toggleClass(\'hide\', $(this).val() != \'move\');"' : '', '>
 							<option data-hide>--- ', $txt['moderate'], ' ---</option>';

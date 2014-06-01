@@ -1513,13 +1513,7 @@ tr.titlebg
 	.note
 		vertical-align: middle
 	nav
-		float: left
-		padding: .3em 0 .3em
-		strong
-			:before
-				content: "["
-			:after
-				content: "]"
+		padding: 5px 0
 		a[data-href]
 			font-weight: 700
 	.updown

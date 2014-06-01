@@ -58,6 +58,10 @@ h4, h5
 		text-shadow: none
 	.column
 		padding: 20px 25px 10px 15px
+		section
+			margin: 15px 0 0
+			.stats
+				padding: 0
 	ul
 		list-style-type: none
 	p
@@ -343,6 +347,9 @@ $responsive_search_min_width = math($sidebar-width - 50px)
 @remove #top_subject
 	font: 700 1em/20px $main_font
 	letter-spacing: 0
+
+@remove .cat
+	box-shadow: *
 
 @remove .prevnext_prev
 	font: 700 60%/1.3em $main_font

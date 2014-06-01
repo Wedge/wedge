@@ -138,6 +138,9 @@ section.ic
 	float: right
 	padding: 4px 0 0 4px
 
+#messageindex .table_grid
+	table-layout: fixed
+
 /* Styles for the Display template (topic view).
 ---------------------------------------------------- */
 
@@ -278,10 +281,27 @@ hr.sep
 // Like #forumposts, but for blogs only.
 .blog
 	.first-post
-		background: transparent
+		background: none
 		margin-top: 16px
 		.inner
 			font: $blog_font_size $blog_font
+	.msg:not(:first-child)
+		background: none
+		.poster
+			background: none
+		.poster > div:before
+			position: relative
+			content: ""
+			left: 100%
+			top: 50px
+			width, height: 0
+			font-size: 0
+			border: 24px solid transparent
+			border-right-color: $window_bg
+			margin: 0 0 0 -36px // 24px + .poster > div's 12px right margin.
+		.postarea
+			background: $window_bg
+			border-radius: 16px
 
 // Poster and postarea + moderation area underneath
 .post_wrapper
@@ -624,6 +644,7 @@ hr.sep
 ul.buttonlist extends "ul.reset, .clearfix"
 	margin: 5px -8px 5px 0
 	padding: 0 1% 0 0
+	float: right
 	li
 		margin, padding: 0
 		float: left
@@ -1276,6 +1297,7 @@ div.top_row dd
 #search_popup
 	padding: .8em
 	color: #444
+	white-space: normal
 	dt, dd
 		max-width: @is ("ie[9-],firefox[4-],chrome[19-],safari[6-]", "calc(100% - 1em)", 100%)
 		width: auto
@@ -1283,7 +1305,6 @@ div.top_row dd
 	#advanced_search
 		border, padding: 0
 		font-size: .9em
-		white-space: normal
 	.sbox
 		display: block
 	input[type=number]
@@ -1341,10 +1362,10 @@ div.top_row dd
 ------------------------------------------------- */
 
 .boardstate mixes .inline-block
-	background: url($images/boardicon.png) 0 0 no-repeat
+	background: url($board_icon) 0 0 no-repeat
 	position: relative
-	width: 37px
-	height: 42px
+	width: width($board_icon)px
+	height: height($board_icon)px
 	font-size: 1.2em
 	opacity: .6
 
@@ -1419,38 +1440,37 @@ body.waiting *
 			#forumposts, .wide
 				margin: 0 -$horizontal_content_padding
 				padding, border, border-radius: 0 !important
-			.wide tr.windowbg td
-				padding: .5em math($horizontal_content_padding / 2)
 
 			// Turn board lists into flat divs, rather than table cells!
-			// (Apologies for the !important abuse.)
+			// (Apologies for the complexity.)
 			.board_list
 				display: block
 				width: 100% !important
-				text-align: inherit !important
 				tbody, tr, td
 					display: block
-					width: auto !important
-					text-align: inherit !important
+					width: auto
+				tr mixes .clearfix
+					padding: .5em math($horizontal_content_padding / 2)
 				td
-					padding-left, padding-right: 8px
+					padding: 0
+					margin-left: math(width($board_icon) + 12px)
+				td:empty
+					display: none
 				.icon
-					padding: 0 8px !important
+					float: left
+					margin: 0
 				.stats
-					display: inline-block
-					box-sizing: border-box
-					width: 40% !important
+					width: auto
+					text-align: inherit
+					font-style: italic
+					padding-top, margin-top: 4px
+					border-top: 1px dotted #ccc
+					div mixes .inline-block("")
+					div + div:before
+						content: "\a0-\a0"
 				.lastpost
-					display: inline-block
-					box-sizing: border-box
-					width: 55% !important
-					padding-left: 0 !important
+					width: auto
 					font-size: 90%
-				.info mixes .clearfix
-					border-bottom: 1px dotted #ccc
-			.boardstate
-				float: left
-				margin: 8px 12px 0 8px
 			#search_form
 				.mimenu
 					left: auto

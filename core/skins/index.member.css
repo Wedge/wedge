@@ -23,6 +23,8 @@
 		background-image: url($images/small_lock.gif)
 	a.delete
 		background-image: url($images/small_delete.gif)
+	.buttonlist
+		float: left
 
 .modrem a extends #modbuttons a.delete
 
