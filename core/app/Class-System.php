@@ -557,25 +557,30 @@ class we
 	/**
 	 * Get the user language, based, in order, on user's choice, browser's choice and admin choice.
 	 */
-	protected static function get_preferred_language($language)
+	public static function get_preferred_language($user_language, $use_cache = true)
 	{
 		global $settings;
 
-		$languages = getLanguages();
-		$default = $settings['language'];
+		$languages = getLanguages($use_cache);
+		$default = isset($settings['language']) ? $settings['language'] : $user_language;
 
-		// Does the admin even *allow* users to change their language?
-		if (empty($settings['userLanguage']))
-			return $default;
+		if ($use_cache)
+		{
+			// Does the admin even *allow* users to change their language?
+			if (empty($settings['userLanguage']))
+				return $default;
 
-		if (!empty($_GET['language']) && isset($languages[$temp = strtr($_GET['language'], './\\:', '____')]))
-			return $_SESSION['language'] = $temp;
-		elseif (!empty($_SESSION['language']) && isset($languages[$_SESSION['language']]))
-			return $_SESSION['language'];
+			// Did we ask to change the language?
+			if (!empty($_GET['language']) && isset($languages[$temp = strtr($_GET['language'], './\\:', '____')]))
+				return $_SESSION['language'] = $temp;
+			// Is there a language set in the session variable? Make sure it's still allowed.
+			elseif (!empty($_SESSION['language']))
+				return $_SESSION['language'] = isset($languages[$_SESSION['language']]) ? $_SESSION['language'] : $default;
 
-		// Is $language currently enabled?
-		if (isset($languages[$language]))
-			return $language;
+			// Is $user_language currently allowed?
+			if (isset($languages[$user_language]))
+				return $user_language;
+		}
 
 		// Otherwise rely on browser choice, if it indicated anything.
 		if (!isset($_SERVER['HTTP_ACCEPT_LANGUAGE']))
