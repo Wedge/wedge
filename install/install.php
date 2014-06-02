@@ -261,7 +261,7 @@ function load_lang_file()
 	if (!isset($_SESSION['installer_temp_lang']) || preg_match('~[^.\w-]~', $_SESSION['installer_temp_lang']) === 1 || (!file_exists(LANGUAGES_DIR . '/' . $_SESSION['installer_temp_lang']) && !file_exists(LANGUAGES_DIR . '/' . substr($_SESSION['installer_temp_lang'], 8, -4) . '/' . $_SESSION['installer_temp_lang'])))
 	{
 		loadSource('Subs');
-		$lang = we::get_preferred_language('english', true);
+		$lang = we::get_preferred_language('english', false);
 		if (isset($incontext['detected_languages'][$lang]) && (file_exists(LANGUAGES_DIR . '/Install.' . $lang . '.php') || file_exists(LANGUAGES_DIR . '/' . $lang . '/Install.' . $lang . '.php')))
 			$_SESSION['installer_temp_lang'] = 'Install.' . $lang . '.php';
 		// Use the first one...
