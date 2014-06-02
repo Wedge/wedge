@@ -68,9 +68,9 @@ function loadConstants()
 		if (!empty($do_fix) || preg_match('~^http[s]?://(?:[\d.:]+|\[[\d:]+\](?::\d+)?)(?:$|/)~', $detected_url) == 1)
 		{
 			// Fix $boardurl and $scripturl
+			$scripturl = strtr($scripturl, array($boardurl => $detected_url));
+			$_SERVER['REQUEST_URL'] = strtr($_SERVER['REQUEST_URL'], array($boardurl => $detected_url));
 			$boardurl = $detected_url;
-			$scripturl = strtr($scripturl, array($oldurl => $boardurl));
-			$_SERVER['REQUEST_URL'] = strtr($_SERVER['REQUEST_URL'], array($oldurl => $boardurl));
 		}
 	}
 
