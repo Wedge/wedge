@@ -483,7 +483,7 @@ class wess_if extends wess
 		// ini_set('pcre.recursion_limit', '524');
 
 		$skipped = 0;
-		while (preg_match_all('~(?<=\n)(\h*)@if\h+([^\n]+)(\n(?>[^@]|@(?!if\h))*?)\n\1@endif~i', $css, $matches, PREG_SET_ORDER) > $skipped)
+		while (preg_match_all('~(?<=\n)(\h*)@if\h+([^\n]*)(\n(?>[^@]|@(?!if\h))*?)\n\1@endif~i', $css, $matches, PREG_SET_ORDER) > $skipped)
 		{
 			foreach ($matches as $m)
 			{
@@ -1342,16 +1342,17 @@ class wess_math extends wess
 					continue;
 				$done[$val[0]] = true;
 
+				// Get the first unit from '12px * 2em', i.e. 'px', and clean it up into '12 * 2'.
+				if (preg_match('~\d([a-z]{2,4})~', $val[1] ?: $val[5], $unit))
+					$val[1] = preg_replace('~(?<=\d)([a-z]{2,4})~', '', $val[1]);
+
 				if (isset($val[4])) // not math()?
 				{
 					$params = explode(',', $val[5]);
-					$css = str_replace($val[0], call_user_func_array($val[4], array_map('trim', $params, array_fill(0, count($params), '"\' '))), $css);
+					$css = str_replace($val[0], call_user_func_array($val[4], array_map('trim', $params, array_fill(0, count($params), '"\' '))) . (isset($unit[1]) ? $unit[1] : ''), $css);
 					continue;
 				}
 
-				// Get the first unit from '12px * 2em', i.e. 'px', and clean it up into '12 * 2'.
-				if (preg_match('~\d([a-z]{2,4})~', $val[1], $unit))
-					$val[1] = preg_replace('~(?<=\d)([a-z]{2,4})~', '', $val[1]);
 				// We now have a perfectly harmless operation here, so don't fear the eval. (return 12 * 2) + unit = 24px.
 				$css = str_replace($val[0], eval('return (' . $val[1] . ');') . (isset($unit[1]) ? $unit[1] : ''), $css);
 			}
