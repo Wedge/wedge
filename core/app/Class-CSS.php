@@ -501,7 +501,7 @@ class wess_if extends wess
 				{
 					if (strtolower(substr($parts[$i], 0, 2)) == 'if' || strtolower(substr($parts[$i], 0, 3)) == ' if') // An @elseif, maybe?
 					{
-						$match = preg_match('~^if\h*([^\n]+)~', $parts[$i], $newif) ? trim($newif[1]) : '';
+						$match = preg_match('~^if\h*([^\n]*)~', $parts[$i], $newif) ? trim($newif[1]) : 'true';
 						$parts[$i] = substr($parts[$i], strlen($newif[0]));
 					}
 
@@ -513,10 +513,10 @@ class wess_if extends wess
 					}
 
 					// And finally, the actual battery of tests.
-					if (empty($match) || we::is(we::$user['extra_tests'][] = $match))
+					if ($match !== '' && we::is(we::$user['extra_tests'][] = $match))
 						break;
 
-					$match = '';
+					$match = 'true';
 				}
 				$css = str_replace($m[0], $i < $num ? $parts[$i] : '', $css);
 			}
@@ -842,6 +842,7 @@ class wess_nesting extends wess
 		$tree = preg_replace('~^([!+>&#*@:.a-z0-9][^{};]*?\h*reset);~mi', '<rule selector="$1"></rule>', $tree); // Transform single-line resets into selectors
 		$tree = preg_replace_callback('~\burl\([^)]+\)~', function ($a) { return str_replace(':', '#wedge-colon#', $a[0]); }, $tree); // Protect colons (:) inside URLs
 		$tree = preg_replace('~([a-z, -]+)\h*:(?!//)\h*([^;}{\n]+?);*\h*(?=[\n}])~i', '<property name="$1" value="$2">', $tree); // Transform properties
+		$tree = preg_replace('~<property name="[^"]+" value="\h+">~', '', $tree); // Remove properties with empty content (e.g. background: $bg where $bg is later unset)
 		$tree = preg_replace('~(?<=^|[\s};])([!+>&#*@:.a-z0-9](?:[^{\n]|(?=,)\n)*?)\s*{~i', '<rule selector="$1">', $tree); // Transform selectors. Strings starting with a digit are only allowed because of keyframes.
 		$tree = preg_replace(array('~ {2,}~'), array(' '), $tree); // Remove extra spaces
 		$tree = str_replace(array('}', "\n"), array('</rule>', "\n\t"), $tree); // Close rules and indent everything one tab
