@@ -153,13 +153,15 @@ h1, h2, h3, h4, h5, h6
 		border-radius: $radius $radius 0 0
 @endif
 
-#wedge > div
+#content, #linktree
 	background: $main_bg
 
 #header, #navi, #footer
 	@if $head_bg
 		background-color: luma($head_bg, +3%)
 		gradient: luma($head_bg, +6%), $head_bg
+	@else
+		background: $main_bg
 	@endif
 	color: #553
 
@@ -366,7 +368,7 @@ h1
 		text-decoration: none
 
 // Behold, the power of Wess!
-$view_junk = "$settings['db_show_debug_who_log']"
+$view_junk = $settings['db_show_debug_who_log']
 
 @if $view_junk == "any" || (admin && $view_junk == "admin") || (member && ($view_junk == "regular" || $view_junk == "mod"))
 	#junk
