@@ -114,7 +114,8 @@ h1, #slogan
 		font-size: 1.1em
 	li mixes .inline-block
 		position: relative
-		padding: 5px 0 5px 36px
+		margin: 0 24px 0 12px
+		padding: 5px 0
 		:after
 			content: ""
 			margin-left: -20px
@@ -132,7 +133,6 @@ h1, #slogan
 			:after
 				background: linear-gradient(0deg, luma(#fdfdfd, -2.5%), luma(#ededed, -2.5%))
 		:first-child
-			padding-left: 12px
 			border-radius: 8px 0 0 8px
 
 #linktree_bt
@@ -176,7 +176,7 @@ h1, #slogan
 ------------------------------------------------------- */
 
 #main_menu
-	margin: 0 16px -10px
+	margin: 0 16px -5px
 
 /*
 	If you want to align the main menu, add this above...
