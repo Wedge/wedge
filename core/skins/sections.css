@@ -294,8 +294,7 @@ hr.sep
 			content: ""
 			left: 100%
 			top: 50px
-			width, height: 0
-			font-size: 0
+			width, height, font-size: 0
 			border: 24px solid transparent
 			border-right-color: $window_bg
 			margin: 0 0 0 -36px // 24px + .poster > div's 12px right margin.
@@ -779,7 +778,6 @@ ul.buttonlist extends "ul.reset, .clearfix"
 		text-align: center
 	.icon
 		text-align: center
-		padding: 0 8px
 	.subject
 		padding: 5px 8px
 	table
@@ -1446,17 +1444,19 @@ body.waiting *
 			.board_list
 				display: block
 				width: 100% !important
+				padding: .5em 0
 				tbody, tr, td
 					display: block
 					width: auto
 				tr mixes .clearfix
-					padding: .5em math($horizontal_content_padding / 2)
+					padding: .3em round(math($horizontal_content_padding / 2))
 				td
 					padding: 0
 					margin-left: math(width($board_icon) + 12px)
 				td:empty
 					display: none
 				.icon
+					width: auto
 					float: left
 					margin: 0
 				.stats
