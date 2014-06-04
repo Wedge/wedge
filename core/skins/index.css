@@ -740,13 +740,13 @@ tr.catbg .sbox, tr.titlebg .sbox
 #m_home_media extends #m_home
 	background-position: -54px center
 	vertical-align: middle
-	margin: 0 0 0 6px
+	margin: 0 8px 0 0
 	width: 17px
 
 #m_home_mlist extends #m_home
 	background-position: -19px center
 	vertical-align: middle
-	margin: 0 0 0 6px
+	margin: 0 8px 0 3px
 	width: 14px
 
 @if guest
@@ -763,7 +763,7 @@ tr.catbg .sbox, tr.titlebg .sbox
 		background-position: -94px 0
 		vertical-align: middle
 		width: 15px
-		margin: -4px 0 0 6px
+		margin: -4px 6px 0 0
 @endif
 
 /* Styles for buttons and other form elements
@@ -895,7 +895,8 @@ input[type=file]
 		color: #444
 		text-decoration: none
 
-	li li a mixes .inline-block("")
+	li li a
+		display: block
 		padding: 6px 8px
 
 	h4 mixes .inline-block
@@ -2048,6 +2049,7 @@ $alphamix = $main_bg
 		font-size: 1em
 		background: $main_bg
 		@if $border
+			padding: 8px
 			border: $border
 		@endif
 		a
