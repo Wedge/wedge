@@ -153,12 +153,14 @@ h1, h2, h3, h4, h5, h6
 		border-radius: $radius $radius 0 0
 @endif
 
-#header, #content, #linktree
+#wedge > div
 	background: $main_bg
 
 #header, #navi, #footer
-	background-color: #e3e0da
-	gradient: luma($head_bg, +6%), $head_bg
+	@if $head_bg
+		background-color: luma($head_bg, +3%)
+		gradient: luma($head_bg, +6%), $head_bg
+	@endif
 	color: #553
 
 #navi
@@ -1517,6 +1519,13 @@ tr.titlebg
 		padding: 5px 0
 		a[data-href]
 			font-weight: 700
+	strong
+		:before
+			font-weight: 400
+			content: "["
+		:after
+			font-weight: 400
+			content: "]"
 	.updown
 		font-weight: 700
 		padding-left: 1em
@@ -1782,6 +1791,7 @@ dl#feed
 
 // Actual body for the JavaScript popup
 #helf
+	background: $main_bg
 	border-radius: 12px
 	box-shadow: 2px 2px 20px 0 rgba(0,0,0, .5)
 	position: absolute
