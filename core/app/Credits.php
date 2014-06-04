@@ -24,14 +24,15 @@ if (!defined('WEDGE'))
 
 function Credits()
 {
-	global $context, $txt;
+	global $context, $txt, $memberContext;
 
 	// Don't blink. Don't even blink. Blink and you're dead.
 	loadLanguage('Who');
 
 	add_linktree($txt['site_credits'], '<URL>?action=credits');
 
-	$context['site_credits'] = array();
+	// Load the admin and moderator list for this website.
+	$context['site_credits'] = $site_team = array();
 	$query = wesql::query('
 		SELECT id_member, real_name, id_group, additional_groups
 		FROM {db_prefix}members
@@ -41,8 +42,18 @@ function Credits()
 		array()
 	);
 	while ($row = wesql::fetch_assoc($query))
-		$context['site_credits'][$row['id_group'] == 1 || (!empty($row['additional_groups']) && in_array(1, explode(',', $row['additional_groups']))) ? 'admins' : 'mods'][] = $row;
+		$site_team[$row['id_member']] = $row;
 	wesql::free_result($query);
+
+	// It's nicer with avatars, really...
+	loadMemberData(array_keys($site_team));
+	foreach ($site_team as $member => $row)
+	{
+		if (empty($memberContext[$member]['avatar']))
+			loadMemberAvatar($member, true);
+		$row['real_name'] = $memberContext[$member]['avatar']['image'] . $row['real_name'];
+		$context['site_credits'][$row['id_group'] == 1 || (!empty($row['additional_groups']) && in_array(1, explode(',', $row['additional_groups']))) ? 'admins' : 'mods'][] = $row;
+	}
 
 	$context['credits'] = array(
 		array(
@@ -65,16 +76,7 @@ function Credits()
 				'Shitiz Garg (Dragooon)',
 				'John Rayes (live627)',
 				'Thorsten Eurich (TE)',
-			),
-		),
-		array(
-			'title' => $txt['credits_special'],
-			'members' => array(
 				'Sven Rissmann (Pandos)',
-				'Lorenzo Raffio (MultiformeIngegno)',
-				'Aaron van Geffen (Aaron)',
-				'[Unknown] &amp; Karl Benson',
-				'Norodo',
 			),
 		),
 	);
@@ -97,9 +99,6 @@ function Credits()
 			),
 			sprintf(
 				$txt['credits_aeme'],
-				'Nao &#23578;',
-				'Dragooon',
-				'Karl Benson',
 				'http://aeva.noisen.com/'
 			),
 		),
