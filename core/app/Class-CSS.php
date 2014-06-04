@@ -446,6 +446,7 @@ class wess_if extends wess
 				// If we're executing this before mixins, don't bother doing variables.
 				if (!$this->test_vars && strpos($match, '$') !== false)
 				{
+					$css = preg_replace('~@is\h+\(\h+' . preg_quote($match, '~') . '~', '@is (' . preg_replace('~(?<!")(\$\w+)\b~', '"$1"', $match), $css);
 					$skipped++;
 					continue;
 				}
@@ -508,6 +509,7 @@ class wess_if extends wess
 					// If we're executing this before mixins, don't bother doing variables.
 					if (!$this->test_vars && strpos($match, '$') !== false)
 					{
+						$css = preg_replace('~@if\h+' . preg_quote($match, '~') . '~', '@if ' . preg_replace('~(?<!")(\$\w+)\b~', '"$1"', $match), $css);
 						$skipped++;
 						continue 2;
 					}
