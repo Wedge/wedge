@@ -483,7 +483,7 @@ class wess_if extends wess
 		// ini_set('pcre.recursion_limit', '524');
 
 		$skipped = 0;
-		while (preg_match_all('~(?<=\n)(\h*)@if\h+([^\n]+)(\n(?>[^@]|@(?!if\h))*?)\n\1@endif~i', $css, $matches, PREG_SET_ORDER) > $skipped)
+		while (preg_match_all('~(?<=\n)(\h*)@if\h+([^\n]*)(\n(?>[^@]|@(?!if\h))*?)\n\1@endif~i', $css, $matches, PREG_SET_ORDER) > $skipped)
 		{
 			foreach ($matches as $m)
 			{
@@ -501,7 +501,7 @@ class wess_if extends wess
 				{
 					if (strtolower(substr($parts[$i], 0, 2)) == 'if' || strtolower(substr($parts[$i], 0, 3)) == ' if') // An @elseif, maybe?
 					{
-						$match = preg_match('~^if\h*([^\n]+)~', $parts[$i], $newif) ? trim($newif[1]) : '';
+						$match = preg_match('~^if\h*([^\n]*)~', $parts[$i], $newif) ? trim($newif[1]) : 'true';
 						$parts[$i] = substr($parts[$i], strlen($newif[0]));
 					}
 
@@ -513,10 +513,10 @@ class wess_if extends wess
 					}
 
 					// And finally, the actual battery of tests.
-					if (empty($match) || we::is(we::$user['extra_tests'][] = $match))
+					if ($match !== '' && we::is(we::$user['extra_tests'][] = $match))
 						break;
 
-					$match = '';
+					$match = 'true';
 				}
 				$css = str_replace($m[0], $i < $num ? $parts[$i] : '', $css);
 			}
@@ -842,6 +842,7 @@ class wess_nesting extends wess
 		$tree = preg_replace('~^([!+>&#*@:.a-z0-9][^{};]*?\h*reset);~mi', '<rule selector="$1"></rule>', $tree); // Transform single-line resets into selectors
 		$tree = preg_replace_callback('~\burl\([^)]+\)~', function ($a) { return str_replace(':', '#wedge-colon#', $a[0]); }, $tree); // Protect colons (:) inside URLs
 		$tree = preg_replace('~([a-z, -]+)\h*:(?!//)\h*([^;}{\n]+?);*\h*(?=[\n}])~i', '<property name="$1" value="$2">', $tree); // Transform properties
+		$tree = preg_replace('~<property name="[^"]+" value="\h+">~', '', $tree); // Remove properties with empty content (e.g. background: $bg where $bg is later unset)
 		$tree = preg_replace('~(?<=^|[\s};])([!+>&#*@:.a-z0-9](?:[^{\n]|(?=,)\n)*?)\s*{~i', '<rule selector="$1">', $tree); // Transform selectors. Strings starting with a digit are only allowed because of keyframes.
 		$tree = preg_replace(array('~ {2,}~'), array(' '), $tree); // Remove extra spaces
 		$tree = str_replace(array('}', "\n"), array('</rule>', "\n\t"), $tree); // Close rules and indent everything one tab
@@ -1342,16 +1343,17 @@ class wess_math extends wess
 					continue;
 				$done[$val[0]] = true;
 
+				// Get the first unit from '12px * 2em', i.e. 'px', and clean it up into '12 * 2'.
+				if (preg_match('~\d([a-z]{2,4})~', $val[1] ?: $val[5], $unit))
+					$val[1] = preg_replace('~(?<=\d)([a-z]{2,4})~', '', $val[1]);
+
 				if (isset($val[4])) // not math()?
 				{
 					$params = explode(',', $val[5]);
-					$css = str_replace($val[0], call_user_func_array($val[4], array_map('trim', $params, array_fill(0, count($params), '"\' '))), $css);
+					$css = str_replace($val[0], call_user_func_array($val[4], array_map('trim', $params, array_fill(0, count($params), '"\' '))) . (isset($unit[1]) ? $unit[1] : ''), $css);
 					continue;
 				}
 
-				// Get the first unit from '12px * 2em', i.e. 'px', and clean it up into '12 * 2'.
-				if (preg_match('~\d([a-z]{2,4})~', $val[1], $unit))
-					$val[1] = preg_replace('~(?<=\d)([a-z]{2,4})~', '', $val[1]);
 				// We now have a perfectly harmless operation here, so don't fear the eval. (return 12 * 2) + unit = 24px.
 				$css = str_replace($val[0], eval('return (' . $val[1] . ');') . (isset($unit[1]) ? $unit[1] : ''), $css);
 			}

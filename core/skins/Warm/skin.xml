@@ -128,6 +128,7 @@
 		- Don't use the tag if you don't offer custom language styling, obviously, otherwise it will
 		  just waste several bytes per page by adding the language name to the cached file URL.
 	-->
+
 	<!languages>
 		english, french
 	</!languages>
@@ -148,6 +149,7 @@
 
 		!! NOTE: <we:nested> is not yet available in regex mode.
 	-->
+
 	<!replace>
 		<from><div id="wedge"><we:nested:div></div></from>
 		<to><div id="wedge">IT WORKED!!!! <we:nested:div> YES!!!</div></to>
@@ -171,8 +173,20 @@
 				before: Wedge will execute this function before the original function is run.
 				after: Try to guess. Hmm...
 	-->
+
 	<!template name="linktree" params="$position = 'top', $force_show = false" where="before">
 		echo $position;
 	</!template>
+
+	<!--
+		Skeleton operations
+
+		Some of the easy skeleton manipulation commands can be run directly from an XML file.
+		Available are <move>, <rename> and <remove>. Self-explained, I gather..?
+	-->
+
+	<!move block="linktree" to="menu" where="after" />
+	<!remove block="linktree:bottom" />
+	<!rename block="linktree" to="links" />
 
 </skin>

@@ -153,12 +153,14 @@ h1, h2, h3, h4, h5, h6
 		border-radius: $radius $radius 0 0
 @endif
 
-#header, #content, #linktree
+#wedge > div
 	background: $main_bg
 
 #header, #navi, #footer
-	background-color: #e3e0da
-	gradient: luma($head_bg, +6%), $head_bg
+	@if $head_bg
+		background-color: luma($head_bg, +3%)
+		gradient: luma($head_bg, +6%), $head_bg
+	@endif
 	color: #553
 
 #navi
@@ -740,13 +742,13 @@ tr.catbg .sbox, tr.titlebg .sbox
 #m_home_media extends #m_home
 	background-position: -54px center
 	vertical-align: middle
-	margin: 0 0 0 6px
+	margin: 0 8px 0 0
 	width: 17px
 
 #m_home_mlist extends #m_home
 	background-position: -19px center
 	vertical-align: middle
-	margin: 0 0 0 6px
+	margin: 0 8px 0 3px
 	width: 14px
 
 @if guest
@@ -763,7 +765,7 @@ tr.catbg .sbox, tr.titlebg .sbox
 		background-position: -94px 0
 		vertical-align: middle
 		width: 15px
-		margin: -4px 0 0 6px
+		margin: -4px 6px 0 0
 @endif
 
 /* Styles for buttons and other form elements
@@ -895,7 +897,8 @@ input[type=file]
 		color: #444
 		text-decoration: none
 
-	li li a mixes .inline-block("")
+	li li a
+		display: block
 		padding: 6px 8px
 
 	h4 mixes .inline-block
@@ -1018,6 +1021,11 @@ input[type=file]
 	h4 .note
 		float: none
 		margin: 0 0 0 4px
+
+// I hate !important, but let's not waste too much time on this...
+// This will automatically close the menu once you click it.
+.menu ul.done
+	visibility: hidden !important
 
 .menu.context
 	padding-left: 1em
@@ -1516,6 +1524,13 @@ tr.titlebg
 		padding: 5px 0
 		a[data-href]
 			font-weight: 700
+	strong
+		:before
+			font-weight: 400
+			content: "["
+		:after
+			font-weight: 400
+			content: "]"
 	.updown
 		font-weight: 700
 		padding-left: 1em
@@ -1781,6 +1796,7 @@ dl#feed
 
 // Actual body for the JavaScript popup
 #helf
+	background: $main_bg
 	border-radius: 12px
 	box-shadow: 2px 2px 20px 0 rgba(0,0,0, .5)
 	position: absolute
@@ -2048,6 +2064,7 @@ $alphamix = $main_bg
 		font-size: 1em
 		background: $main_bg
 		@if $border
+			padding: 8px
 			border: $border
 		@endif
 		a

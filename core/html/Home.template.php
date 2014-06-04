@@ -31,8 +31,8 @@ function template_main()
 	echo '
 	<we:cat style="margin-top: 16px">', $n == $next ? '' : '
 		<span class="floatright"><a href="<URL>?action=boards">' . $txt['board_index'] . '</a></span>', '
-		<a href="?n=' . $next . '" class="middle" style="display: inline-block; height: 16px"><div class="floatleft foldable"></div></a>', '
 		', $txt['recent_posts'], '
+		<a href="?n=' . $next . '" class="middle" style="display: inline-block; height: 16px"><div class="floatleft foldable"></div></a>', '
 	</we:cat>
 	<we:block class="tborder wide" style="padding: 2px; border: 1px solid #dcc; border-radius: 5px">
 		<table class="homeposts cs0">';

@@ -189,4 +189,8 @@ function template_credits()
 
 	echo '
 		</we:block>';
+
+	add_css('
+	.splitter a, .splitter img { display: inline-block; vertical-align: middle }
+	.splitter img { margin-right: 12px }');
 }

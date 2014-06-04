@@ -13,8 +13,8 @@ function template_showThoughts()
 
 	echo '
 		<we:cat>
-			<div class="thought_icon"></div>
 			', $txt['thoughts'], '
+			<div class="thought_icon"></div>
 		</we:cat>
 		<div class="wide list-thoughts">
 		<table class="cs0 thoughts" id="thought_thread" data-cx="thread ', $context['thought_context'], ' ', $_REQUEST['start'], '">',
@@ -29,8 +29,8 @@ function template_showLatestThoughts()
 
 	echo '
 		<we:cat>
-			<div class="thought_icon"></div>
 			', $txt['thoughts'], ' (', $context['total_thoughts'], ')
+			<div class="thought_icon"></div>
 		</we:cat>
 		<div class="pagesection">
 			', $context['page_index'], '
@@ -53,8 +53,8 @@ function template_thoughts()
 		echo '
 		<we:cat style="margin-top: 16px">
 			<span class="floatright"><a href="<URL>?action=thoughts">', $txt['all_pages'], '</a></span>
-			<div class="thought_icon"></div>
-			', $txt['thoughts'], '...';
+			', $txt['thoughts'], '...
+			<div class="thought_icon"></div>';
 	else
 		echo '
 		<we:cat>

@@ -32,21 +32,23 @@ function template_boards()
 		echo '
 		<we:cat id="title_cat_', $category['id'], '">';
 
-		// If this category even can collapse, show a link to collapse it.
-		if ($category['can_collapse'])
-			echo '
-			<a class="collapse" href="', $category['collapse_href'], '">', $category['collapse_image'], '</a>';
-
 		if (!$is_guest && !empty($category['show_unread']))
 			echo '
 			<a class="unreadlink" href="<URL>?action=unread;c=', $category['id'], '">', $txt['view_unread_category'], '</a>';
+
+		echo '
+			', $category['link'];
 
 		if (empty($category['hide_rss']))
 			echo '
 			<a class="catfeed feed_icon" href="<URL>?action=feed;c=', $category['id'], '"></a>';
 
+		// If this category even can collapse, show a link to collapse it.
+		if ($category['can_collapse'])
+			echo '
+			<a class="collapse" href="', $category['collapse_href'], '">', $category['collapse_image'], '</a>';
+
 		echo '
-			', $category['link'], '
 		</we:cat>
 		<div class="wide">
 			<table class="table_list board_list" id="boards_cat_', $category['id'], '">';

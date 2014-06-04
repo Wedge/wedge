@@ -36,6 +36,7 @@ class Move_Notifier extends Notifier
 			'{TOPIC_LINK}' => '<a href="' . $notification->getURL() . '">' . $data['subject'] . '</a>',
 			'{BOARD_NAME}' => $data['board'],
 			'{BOARD_LINK}' => '<a href="<URL>?board=' . $data['id_board'] . '">' . $data['board'] . '</a>',
+			'{BOARD_URL}' => '<URL>?board=' . $data['id_board'],
 		));
 	}
 

@@ -155,7 +155,7 @@ a, #linktree a
 ------------------------------------------------------- */
 
 #main_menu
-	margin: 0 16px -10px
+	margin: 0 16px -5px
 
 /*
 	If you want to align the main menu, add this above...
@@ -273,10 +273,15 @@ tr.titlebg
 dfn
 	line-height: 140%
 
+.board_list .info a.subject
+	font: 700 115%/120% $subject_font
+
 /* These are our CSS variable and mixin definitions.
 ------------------------------------------------------- */
 
-$main_font = Verdana, Arial, sans-serif
+$generic_stack = Verdana, Arial, sans-serif
+$main_font = $generic_stack
+$subject_font = $generic_stack
 $main_font_size = 78%/130%
 $head_font = $main_font
 $subcat_font = normal 1.1em $main_font

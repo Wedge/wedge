@@ -544,7 +544,7 @@ div.percent
 		padding: 1px
 		position: relative
 	.text
-		padding_top: 1pt
+		padding-top: 1pt
 		width: 100%
 		z-index: 2
 		color: black
