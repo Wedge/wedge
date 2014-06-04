@@ -411,18 +411,6 @@ $.fn.ds = function ()
 };
 
 
-$.fn.mm = function ()
-{
-	this.find('li')
-		// Clicking a link will immediately close the menu -- giving a feeling of responsiveness.
-		.has('>a,>h4>a')
-		.click(function () {
-			if (!$(this).parent().hasClass('menu'))
-				$(this).parent().hide();
-		});
-};
-
-
 /**
  * Mini-menu (mime) plugin. Yay.
  * Supposed to be generic, but good luck using it in plugins...
@@ -499,10 +487,7 @@ $(function ()
 	// Save a copy of our untreated menu, for responsiveness.
 	$('#main_menu').clone().removeClass('menu').attr('id', 'sidemenu').prependTo('#sidebar>div');
 
-	// Now replace our pure CSS menus with JS-powered versions.
-	$('.menu').mm();
-
-	// Make menu icons clickable by stealing the link from their neighbor.
+	// Make root menu icons clickable by stealing the link from their neighbor.
 	$('.menu>li>span').each(function () { $(this).wrap($('<a/>').attr('href', $(this).next().find('a').attr('href'))); });
 
 	// Bind all delayed inline events to their respective DOM elements.
@@ -526,6 +511,9 @@ $(function ()
 			.focus(function () { meta.attr('content', initial_meta + ',maximum-scale=1,user-scalable=0'); })
 			.blur(function () { meta.attr('content', initial_meta); });
 	}
+	else
+		// Clicking a link will immediately close the menu -- giving a feeling of responsiveness.
+		$('.menu a').click(function () { $(this).parentsUntil('.menu>li').addClass('done'); });
 
 	var
 		orig_sid,

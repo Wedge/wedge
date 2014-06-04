@@ -1022,6 +1022,11 @@ input[type=file]
 		float: none
 		margin: 0 0 0 4px
 
+// I hate !important, but let's not waste too much time on this...
+// This will automatically close the menu once you click it.
+.menu ul.done
+	visibility: hidden !important
+
 .menu.context
 	padding-left: 1em
 	min-height: 2.5em
