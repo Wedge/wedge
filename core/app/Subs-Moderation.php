@@ -189,27 +189,23 @@ function checkPostModeration($subject, $body)
 							break;
 
 						case 'regex':
-							$regexp = (string) $rule;
+							$regexp = preg_quote((string) $rule, '~');
+							$modifiers = !empty($rule['case-ins']) && (string) $rule['case-ins'] == 'yes' ? 'i' : '';
 							if (!empty($rule['apply']))
 							{
-								$modifiers = !empty($rule['case-ins']) && (string) $rule['case-ins'] == 'yes' ? 'i' : '';
-								switch ((string) $rule['apply'])
-								{
-									case 'begins':
-										$regexp = '~^' . preg_quote($regexp, '~') . '~' . $modifiers;
-										break;
-									case 'ends':
-										$regexp = '~' . preg_quote($regexp, '~') . '$~' . $modifiers;
-										break;
-									case 'contains':
-										$regexp = '~' . preg_quote($regexp, '~') . '~' . $modifiers;
-										break;
-									case 'matches':
-										$regexp = '~^' . preg_quote($regexp, '~') . '$~' . $modifiers;
-										break;
-								}
+								$rule['apply'] = (string) $rule['apply'];
+								if ($rule['apply'] === 'begins')
+									$regexp = '~^' . $regexp . '~';
+								elseif ($rule['apply'] === 'ends')
+									$regexp = '~' . $regexp . '$~';
+								elseif ($rule['apply'] === 'matches')
+									$regexp = '~^' . $regexp . '$~';
+								else // contains
+									$regexp = '~' . $regexp . '~';
 							}
-							$applyAction &= preg_match($regexp, $known_variables[$rule_name]['current']);
+							else
+								$regexp = '~' . $regexp . '~';
+							$applyAction &= preg_match($regexp . $modifiers, $known_variables[$rule_name]['current']);
 							break;
 					}
 				}
