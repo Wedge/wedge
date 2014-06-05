@@ -137,6 +137,7 @@ for guests, because most of the time it won't be an option.
 @if !ie[-7]
 	@media $responsive
 		body #pm
+			header.cat mixes .hide
 			.post_wrapper
 				display: block
 			.pixelicons
@@ -157,6 +158,7 @@ for guests, because most of the time it won't be an option.
 						margin-top: 4px
 						order: -1
 						img
+							width: auto
 							max-height: 2em
 @endif
 
