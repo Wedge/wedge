@@ -13,7 +13,7 @@
 @mixin .inline-block($vertical_align = middle)
 
 	display: inline-block
-	@if "$vertical_align"
+	@if $vertical_align
 		vertical-align: $vertical_align
 	@endif
 
@@ -40,13 +40,13 @@
 
 // A common header (e.g. alert box)
 .wehead virtual
-	background-color: #e2e8d8
+	background-color: @ifnull($wehead_bg, #edf2e2)
 	a
 		color: #444
 
 // A common footer (e.g. alert box)
 .wefoot virtual extends .wehead
-	background-color: #e5e5e8
+	background-color: @ifnull($wefoot_bg, #f0f0f2)
 
 // A common clearfix hack for float parents, in case setting overflow: hidden on the parent isn't enough for you.
 .clearfix
@@ -162,6 +162,7 @@ $right = @is (rtl, left, right)
 
 /* Should we have border-radius around page corners..? Set to 0 to disable. */
 $radius = 8px
+$sub_radius = 0
 
 /* Something one can remove to make more space in responsive mode... */
 $horizontal_content_padding = 30px
@@ -174,7 +175,7 @@ $responsive_max_width = 1000px
 $responsive = "all and (max-width: $responsive_max_width)"
 
 /* URL for the status icon in board lists */
-$board_icon = "$images/boardicon.png"
+$board_icon = $images/boardicon.png
 
 /* List of browsers that support the STANDARD flexbox model, i.e. display: flex.
 	IE10 supports an older model, but Wess automatically rewrites your CSS for it.

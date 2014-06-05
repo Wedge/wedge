@@ -182,11 +182,8 @@ section.block header, .wehead, .wefoot
 	a
 		color: #fff
 
-section.block header, .wehead
-	background-color: #c3afa9
-
-.wefoot
-	background-color: #afc3a9
+$wehead_bg = #c3afa9
+$wefoot_bg = #afc3a9
 
 /* Styles for section headers.
 ------------------------------------------------------- */
