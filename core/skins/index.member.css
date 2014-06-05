@@ -1,9 +1,4 @@
 
-#greeting
-	font-size: 1.3em
-	font-weight: 700
-	line-height: 1.5em
-
 // These may be seen by guests, but it's unlikely, and they won't bother if the icons don't show up anyway.
 #modbuttons
 	a
