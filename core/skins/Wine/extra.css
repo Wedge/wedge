@@ -182,11 +182,8 @@ section.block header, .wehead, .wefoot
 	a
 		color: #fff
 
-section.block header, .wehead
-	background-color: #c3afa9
-
-.wefoot
-	background-color: #afc3a9
+$wehead_bg = #c3afa9
+$wefoot_bg = #afc3a9
 
 /* Styles for section headers.
 ------------------------------------------------------- */
@@ -342,10 +339,7 @@ ul.buttonlist
 	letter-spacing: -3px
 	letter-spacing: -1px
 
-@replace
-	wefoot2.png
-	wefoot1.png
-
 $head_font_style = 400
 $head_font_size = 140%/20px
 $banner_height = 100px
+$sub_radius = 8px

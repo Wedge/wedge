@@ -72,6 +72,17 @@ body
 		display: block
 @endif
 
+/*
+::-webkit-scrollbar
+	width, height: 14px
+	background: #bfb6a3
+
+::-webkit-scrollbar-thumb
+	background-color: #e46936
+	border: 4px solid #fbfbfb
+	border-radius: 15px
+*/
+
 /* Let's be crazy... Universal selector! This should
 	prevent words from breaking the layout. Obviously,
 	reset to 'normal' on specific selectors as needed.
@@ -140,9 +151,7 @@ h1, h2, h3, h4, h5, h6
 
 #wedge
 	max-width: 1240px
-	@if $radius
-		border-radius: $radius
-	@endif
+	border-radius: $radius
 	margin: auto
 	color: #444
 	&.sliding
@@ -357,8 +366,10 @@ h1
 		:first-child:before
 			content: ""
 			float: left
-			background: url($images/wefoot2.png) 0 4px no-repeat
-			padding: math(height($images_dir/wefoot2.png)px + 4) math(width($images_dir/wefoot2.png)px + 18) 0 0
+			background: url($images/wefoot.png) 0 0 no-repeat
+			border-radius: 4px
+			padding: 40px 54px 0 0
+			margin: 3px 10px 0 0
 	.links
 		display: block
 
@@ -482,10 +493,10 @@ em
 		gradient: #fa6, #d76
 	@endif
 	color: #fff !important
-	font: 700 7.5pt/100% Tahoma, Arial, sans-serif
+	font: 700 7.5pt/115% Tahoma, Arial, sans-serif
 	text-transform: uppercase
 	margin: 0 3px
-	padding: 2px 5px 3px
+	padding: 2px 5px
 	:hover
 		text-decoration: none
 	// In topic pages, needs more space.
@@ -1490,13 +1501,17 @@ section.block extends .wrc
 	overflow: hidden
 	header extends .wehead
 		padding: 3px 12px
-		border-radius: 8px 8px 0 0
+		@if $sub_radius
+			border-radius: $sub_radius $sub_radius 0 0
+		@endif
 		margin: -0.9em -1.2em 1em
 		a
 			text-decoration: underline
 	footer extends .wefoot
 		padding: 3px 12px
-		border-radius: 0 0 8px 8px
+		@if $sub_radius
+			border-radius: 0 0 $sub_radius $sub_radius
+		@endif
 		margin: .5em -1.2em -0.9em
 	dl.settings
 		margin: 0
@@ -1591,7 +1606,7 @@ a.moderation_link
 	border: 1px solid #fff
 	font: 700 12px/15px Arial, sans-serif
 	height: 15px
-	border-radius, padding: 8px
+	border-radius, padding: $radius
 	position: absolute
 	cursor: pointer
 	opacity: 1
@@ -1674,6 +1689,11 @@ dl#feed
 	clear: left
 	letter-spacing: -1px
 	color: #777
+	@if local
+		padding: 10px
+		border-left: 5px solid #ffa500
+//		box-shadow: 0 2px 4px #ddd
+	@endif
 	a
 		border-bottom: 0 !important
 		text-decoration: underline !important
@@ -1713,9 +1733,9 @@ dl#feed
 		th
 			padding: 4px 3px
 		th:first-child
-			border-top-left-radius: 8px
+			border-top-left-radius: $sub_radius
 		th:last-child
-			border-top-right-radius: 8px
+			border-top-right-radius: $sub_radius
 	th.left
 		padding: 0 .7em
 	td, th
@@ -1762,14 +1782,16 @@ dl#feed
 	padding: 10px 10px 9px
 	background: #f5f5f5
 	border: 1px solid rgba(0,0,0, .15)
-	border-radius: 8px
+	border-radius: $sub_radius
 	dl, dt, p
 		margin: 0
 	p
 		padding: .5em
 
-.round-bottom
-	border-radius: 0 0 8px 8px
+@if $sub_radius
+	.round-bottom
+		border-radius: 0 0 $sub_radius $sub_radius
+@endif
 
 /* Used for the help popup.
 ----------------------------------------------------------- */
@@ -1799,7 +1821,7 @@ dl#feed
 // Actual body for the JavaScript popup
 #helf
 	background: $main_bg
-	border-radius: 12px
+	border-radius: $radius
 	box-shadow: 2px 2px 20px 0 rgba(0,0,0, .5)
 	position: absolute
 	transform: perspective(1000px) translateY(-20px) rotateX(-20deg)
@@ -1813,7 +1835,9 @@ dl#feed
 			overflow: hidden
 		@endif
 		text-align: center
-		border-radius: 12px 12px 0 0
+		@if $radius
+			border-radius: $radius $radius 0 0
+		@endif
 		border-bottom: 1px solid #bbb
 		font-weight: 700
 		color: #444
@@ -1823,7 +1847,9 @@ dl#feed
 			overflow: hidden
 		@endif
 		text-align: center
-		border-radius: 0 0 12px 12px
+		@if $radius
+			border-radius: 0 0 $radius $radius
+		@endif
 		border-top: 1px solid #bbb
 	section
 		padding: 16px
@@ -1833,7 +1859,9 @@ dl#feed
 		color: #444
 		&.confirm
 			padding-left: 60px
-			border-radius: 12px 12px 0 0
+			@f $radius
+				border-radius: $radius $radius 0 0
+			@endif
 			background-image: raw-url($images/aeva/failed.png)
 			background-position: 10px 50%
 			background-repeat: no-repeat
@@ -1871,7 +1899,7 @@ h6
 	color: #000
 	background: #fff
 	border: 1px solid #cbcdd3
-	border-radius: 6px
+	border-radius: $sub_radius
 	display: inline
 	padding: 2px
 	font-size: 90%
@@ -1882,7 +1910,9 @@ h6
 	z-index: 999
 	box-shadow: 0 2px 5px rgba(0,0,0, .3)
 	div
-		border-radius: 3px
+		@if $sub_radius
+			border-radius: round(math($sub_radius / 2))
+		@endif
 		padding: 2px 3px
 
 .auto_suggest_hover
@@ -1929,7 +1959,7 @@ h6
 		overflow: visible
 		position: relative
 		padding: 0 .4em 0 .1em
-		border-radius: 6px
+		border-radius: $sub_radius
 		:hover, &.hover
 			background: rgba(0,0,0,.05)
 
@@ -2011,7 +2041,9 @@ h6
 	.n_time
 		float: right
 		margin-right: -8px
-		border-radius: 3px
+		@if $sub_radius
+			border-radius: round(math($sub_radius / 2))
+		@endif
 		padding: 1px 4px
 		background-color: rgba(0,0,0, .02)
 

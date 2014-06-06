@@ -31,6 +31,9 @@ body
 	background: none
 	border: 0
 
+@remove #sitenews + #linktree:not(:empty)
+	margin-top: -7px
+
 body #sidebar .column
 	padding: 10px 20px
 
@@ -121,7 +124,6 @@ ul.nlist
 @remove
 	letter-spacing: -.25px
 
-#greeting reset
 .blog reset
 
 @replace
