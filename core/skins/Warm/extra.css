@@ -370,7 +370,3 @@ $responsive_search_min_width = math($sidebar-width - 50px)
 	#sidebar, #offside
 		direction: ltr
 */
-
-@replace
-	wefoot1.png
-	wefoot2.png

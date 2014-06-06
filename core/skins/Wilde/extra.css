@@ -22,8 +22,11 @@ body
 
 $lightgrad = #fff
 $darkgrad = #f3f2f0
+$window_bg = luma($window_bg2, -3%)
+$window_bg2 = #f8faf8
 $post_bg = $window_bg
 $post_bg2 = $window_bg2
+$sub_radius = 8px
 
 .lightgrad virtual
 	gradient: #eee, $lightgrad
@@ -328,7 +331,3 @@ $radius = 20px
 
 @remove
 	background: url($images/bg.jpg)
-
-@replace
-	wefoot1.png
-	wefoot2.png

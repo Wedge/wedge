@@ -325,10 +325,6 @@ $radius = 20px
 @remove .msg
 	background-image: *
 
-@replace
-	wefoot1.png
-	wefoot2.png
-
 @if opera[11-], ie[10-]
 	@viewport
 		width: device-width
