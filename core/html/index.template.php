@@ -575,16 +575,16 @@ function template_menu()
 	echo '
 	<div id="navi">';
 
-	template_menu_recursive('', $context['menu_items'], true);
+	template_menu_recursive($context['menu_items']);
 
 	echo '
 	</div>';
 }
 
 // Sub-menus... And more nested action.
-function template_menu_recursive($oact, $oitem, $is_root = false)
+function template_menu_recursive($oitem, $parent = '')
 {
-	echo '<ul', $is_root ? ' id="main_menu" class="menu"' : '', '>';
+	echo '<ul', $parent ? '' : ' id="main_menu" class="menu"', '>';
 
 	foreach ($oitem as $act => $item)
 	{
@@ -593,16 +593,16 @@ function template_menu_recursive($oact, $oitem, $is_root = false)
 			echo '<li class="sep"><a><hr></a></li>';
 			continue;
 		}
-		$class = (!empty($item['active_item']) ? ' chosen' : '') . (empty($item['items']) ? ' nodrop' : '') . (!empty($item['items']) && !$is_root ? ' subsection' : '');
+		$class = (!empty($item['active_item']) ? ' chosen' : '') . (empty($item['items']) ? ' nodrop' : '') . (!empty($item['items']) && $parent ? ' subsection' : '');
 		echo '<li', $class ? ' class="' . substr($class, 1) . '"' : '', '>';
 
-		echo $is_root ? '<span id="m_' . $act . '"></span><h4>' : '',
+		echo $parent ? '' : '<span id="m_' . $act . '"></span><h4>',
 			'<a href="', $item['href'], '"', !empty($item['nofollow']) ? ' rel="nofollow"' : '', '>',
-			empty($item['icon']) && !$is_root ? '' : '<span id="m_' . $oact . '_' . $act . '"></span>', $item['title'],
-			!empty($item['notice']) ? '<span class="note' . ($is_root ? 'warn' : '') . '">' . $item['notice'] . '</span>' : '', '</a>', $is_root ? '</h4>' : '';
+			empty($item['icon']) || !$parent ? '' : '<span id="m_' . $parent . '_' . $act . '"></span>', $item['title'],
+			!empty($item['notice']) ? '<span class="note' . ($parent ? '' : 'warn') . '">' . $item['notice'] . '</span>' : '', '</a>', $parent ? '' : '</h4>';
 
 		if (!empty($item['items']))
-			template_menu_recursive($act, $item['items']);
+			template_menu_recursive($item['items'], $act);
 
 		echo '</li>';
 	}

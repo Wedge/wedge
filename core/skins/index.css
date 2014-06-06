@@ -72,17 +72,6 @@ body
 		display: block
 @endif
 
-/*
-::-webkit-scrollbar
-	width, height: 14px
-	background: #bfb6a3
-
-::-webkit-scrollbar-thumb
-	background-color: #e46936
-	border: 4px solid #fbfbfb
-	border-radius: 15px
-*/
-
 /* Let's be crazy... Universal selector! This should
 	prevent words from breaking the layout. Obviously,
 	reset to 'normal' on specific selectors as needed.
@@ -1692,7 +1681,6 @@ dl#feed
 	@if local
 		padding: 10px
 		border-left: 5px solid #ffa500
-//		box-shadow: 0 2px 4px #ddd
 	@endif
 	a
 		border-bottom: 0 !important
@@ -1859,7 +1847,7 @@ dl#feed
 		color: #444
 		&.confirm
 			padding-left: 60px
-			@f $radius
+			@if $radius
 				border-radius: $radius $radius 0 0
 			@endif
 			background-image: raw-url($images/aeva/failed.png)
