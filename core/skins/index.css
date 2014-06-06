@@ -1847,7 +1847,7 @@ dl#feed
 		color: #444
 		&.confirm
 			padding-left: 60px
-			@f $radius
+			@if $radius
 				border-radius: $radius $radius 0 0
 			@endif
 			background-image: raw-url($images/aeva/failed.png)
