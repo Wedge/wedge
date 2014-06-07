@@ -1,4 +1,10 @@
 
+Version 1.0 Beta session                             June 7, 2014
+-----------------------------------------------------------------
++ Everything that was written in the last 5 months.
+@ This is the first public beta. Yay!
+@ No official package released for now, only snapshots.
+
 Version 1.0 Alpha session                        January 21, 2014
 -----------------------------------------------------------------
 + Everything that was written in the last 14 months.
