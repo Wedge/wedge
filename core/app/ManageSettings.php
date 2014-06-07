@@ -32,6 +32,9 @@ if (!defined('WEDGE'))
 	void disablePostModeration()
 		// !!!
 
+	void ModifyHomepage()
+		- Admin area for the landing page
+
 	void ModifyPrettyURLs()
 		- Admin area for Pretty URLs
 */
@@ -66,6 +69,7 @@ function ModifyFeatureSettings()
 
 	$subActions = array(
 		'basic' => 'ModifyBasicSettings',
+		'home' => 'ModifyHomepage',
 		'pretty' => 'ModifyPrettyURLs',
 	);
 
@@ -78,6 +82,9 @@ function ModifyFeatureSettings()
 		'description' => $txt['settings_desc'],
 		'tabs' => array(
 			'basic' => array(
+			),
+			'home' => array(
+				'description' => $txt['homepage_desc'],
 			),
 			'pretty' => array(
 				'description' => $txt['pretty_urls_desc'],
@@ -475,6 +482,78 @@ function ModifyPmSettings($return_config = false)
 
 	// Hacky mess for PM settings.
 	list ($settings['max_pm_recipients'], $settings['pm_posts_verification'], $settings['pm_posts_per_hour']) = explode(',', $settings['pm_spam_settings']);
+
+	wetem::load('show_settings');
+	prepareDBSettingContext($config_vars);
+}
+
+function ModifyHomepage($return_config = false)
+{
+	global $context, $txt, $settings, $boards;
+
+	loadLanguage('ManageSettings');
+	loadSource(array('ManageServer', 'Subs-Boards'));
+	getBoardTree();
+	$bids = array();
+	foreach ($boards as $id => $board)
+		if (!$board['redirect'])
+			$bids[$id] = $board['name'];
+
+	$config_vars = array(
+		'type' => array('select', 'homepage_type', array(
+			'boardlist' => $txt['homepage_boardlist'],
+			'board' => $txt['homepage_board'],
+			'action' => $txt['homepage_action'],
+			'custom' => $txt['homepage_custom'],
+		)),
+		'',
+		array('message', 'homepage_message'),
+		'',
+		array('select', 'homepage_board', $bids),
+		array('text', 'homepage_action'),
+		array('large_text', 'homepage_custom'),
+	);
+
+	foreach ($context['languages'] as $id => $lang)
+	{
+		$config_vars[] = array('text', 'homepage_blurb_title_' . $id, '', sprintf($txt['homepage_blurb_title'], $lang['name']));
+		$config_vars[] = array('large_text', 'homepage_blurb_' . $id, '', sprintf($txt['homepage_blurb'], $lang['name']));
+	}
+
+	add_js('
+	function updateHomepage()
+	{
+		$("#homepage_board").closest("dd").prev().andSelf().toggle($("#homepage_type").val() == "board");
+		$("#homepage_action").closest("dd").prev().andSelf().toggle($("#homepage_type").val() == "action");
+		$("#homepage_custom").closest("dd").prev().andSelf().toggle($("#homepage_type").val() == "custom");
+		$("[id^=homepage_blurb_]").closest("dd").prev().andSelf().toggle($("#homepage_type").val() == "custom");
+	}
+	$("#homepage_type").change(updateHomepage);
+	updateHomepage();');
+
+	$context['page_title'] = $context['settings_title'] = $txt['homepage'];
+
+	if ($return_config)
+		return $config_vars;
+
+	// Saving?
+	if (isset($_GET['save']))
+	{
+		checkSession();
+
+		$types = array('boardlist', 'board', 'action', 'custom');
+		$type = in_array($_POST['homepage_type'], $types) ? $_POST['homepage_type'] : 'custom';
+		if ($type == 'board')
+			$_POST['homepage_board'] = (int) $_POST['homepage_board'];
+		elseif ($type == 'action' && !file_exists(APP_DIR . '/' . $_POST['homepage_action'] . '.php'))
+			$_POST['homepage_action'] = 'boards';
+
+		saveSettings($config_vars);
+
+		redirectexit('action=admin;area=featuresettings;sa=home');
+	}
+
+	$context['post_url'] = '<URL>?action=admin;area=featuresettings;sa=home;save';
 
 	wetem::load('show_settings');
 	prepareDBSettingContext($config_vars);

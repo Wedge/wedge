@@ -9,21 +9,12 @@
 
 function template_main()
 {
+	// Nothing to say!
+}
+
+function template_home_topics()
+{
 	global $context, $txt;
-
-	echo '
-	<we:cat class="wtop">
-		', $txt['home_title'], '
-	</we:cat>';
-
-	if (!SKIN_MOBILE)
-		echo '
-	<div class="home-intro">
-		<div class="windowbg2 wrc">', $txt['home_intro'], '</div>
-	</div>';
-
-	if (!$context['home_show']['topics'])
-		return;
 
 	$n = isset($_REQUEST['n']) ? (int) $_REQUEST['n'] : 5;
 	$next = $n < 50 ? ($n < 20 ? ($n < 10 ? 10 : 20) : 50) : 100;
@@ -66,4 +57,29 @@ function template_main()
 	echo '
 		</table>
 	</we:block>';
+}
+
+// Output a custom introduction. HTML is accepted, unfiltered.
+function template_home_blurb()
+{
+	global $settings, $txt;
+
+	if (isset($settings['homepage_blurb_' . we::$user['language']]))
+		$lang = we::$user['language'];
+	elseif (isset($settings['homepage_blurb_' . $settings['language']]))
+		$lang = $settings['language'];
+	else
+		return;
+
+	if (!empty($settings['homepage_blurb_title_' . $lang]))
+		echo '
+	<we:cat class="wtop">
+		', $settings['homepage_blurb_title_' . $lang], '
+	</we:cat>';
+
+	if (!SKIN_MOBILE)
+		echo '
+	<div class="home-intro">
+		<div class="windowbg2 wrc">', str_replace("\n", '<br>', $settings['homepage_blurb_' . $lang]), '</div>
+	</div>';
 }

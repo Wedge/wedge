@@ -68,6 +68,8 @@ function Admin()
 					'subsections' => array(
 						'basic' => array($txt['mods_cat_features']),
 						'',
+						'home' => array($txt['homepage']),
+						'',
 						'pretty' => array($txt['pretty_urls']),
 					),
 				),

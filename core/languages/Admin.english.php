@@ -622,3 +622,7 @@ $txt['media_admin_banning'] = 'Member to ban';
 $txt['media_admin_bans_add'] = 'Add ban';
 $txt['media_cf'] = 'Custom fields';
 $txt['media_cf_add'] = 'Create a new field';
+
+// Homepage
+$txt['homepage'] = 'Homepage';
+$txt['homepage_desc'] = 'This page allows you to determine what to show your users when they visit your forum\'s root.';
