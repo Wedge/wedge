@@ -490,7 +490,6 @@ $txt['lang_file_desc_index'] = 'Main language file, all generic strings';
 $txt['lang_file_desc_Modlog'] = 'Moderation log entries';
 
 // Homepage
-$txt['homepage'] = 'Homepage';
 $txt['homepage_desc'] = 'This page allows you to determine what to show your users when they visit your forum\'s root.';
 
 $txt['homepage_type'] = 'What should the home page show?';

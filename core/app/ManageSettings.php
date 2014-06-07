@@ -516,8 +516,8 @@ function ModifyHomepage($return_config = false)
 
 	foreach ($context['languages'] as $id => $lang)
 	{
-		$config_vars[] = array('text', 'homepage_blurb_title_' . $id, '', sprintf($txt['homepage_blurb_title'], $lang['name']));
-		$config_vars[] = array('large_text', 'homepage_blurb_' . $id, '', sprintf($txt['homepage_blurb'], $lang['name']));
+		$config_vars[] = array('text', 'homepage_blurb_title_' . $id, '', sprintf($txt['homepage_blurb_title'], '<span class="flag_' . $id . '">' . $lang['name'] . '</span>'));
+		$config_vars[] = array('large_text', 'homepage_blurb_' . $id, '', sprintf($txt['homepage_blurb'], '<span class="flag_' . $id . '">' . $lang['name'] . '</span>'));
 	}
 
 	add_js('
