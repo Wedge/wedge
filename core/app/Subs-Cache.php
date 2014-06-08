@@ -1610,10 +1610,10 @@ function wedge_get_skin_options($options_only = false)
 		if (!empty($match['include']))
 		{
 			$includes = array_map('trim', explode(' ', $match['include']));
-			$has_external = strpos($match['include'], '://') !== false;
+			$has_external = strpos($match['include'], '://') !== false || strpos($match['include'], '//') === 0;
 			foreach ($includes as $val)
 			{
-				if ($has_external && strpos($val, '://') !== false)
+				if ($has_external && (strpos($val, '://') !== false || strpos($val, '//') === 0))
 					$context['header'] .= '
 	<link rel="stylesheet" href="' . $val . '">';
 				else
