@@ -135,7 +135,7 @@ function template_boards()
 						$children[] = $child['new'] ? '<strong>' . $child['link'] . '</strong>' : $child['link'];
 					}
 					echo '
-						<div class="children windowbg', $alt ? '2' : '', '" id="board_', $board['id'], '_children">
+						<div class="children" id="board_', $board['id'], '_children">
 							<p><strong>', $txt['sub_boards'], '</strong>: ', implode(', ', $children), '</p>
 						</div>';
 				}
