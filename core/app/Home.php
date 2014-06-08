@@ -58,7 +58,7 @@ function Home()
 		elseif ($item == 'thoughts')
 		{
 			loadSource('Thoughts');
-			embedThoughts();
+			embedThoughts($param ? substr($param, 1) : 10);
 		}
 
 		/* Retrieve the categories and boards.
