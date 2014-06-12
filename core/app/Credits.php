@@ -51,7 +51,7 @@ function Credits()
 	{
 		if (empty($memberContext[$member]['avatar']))
 			loadMemberAvatar($member, true);
-		$row['real_name'] = $memberContext[$member]['avatar']['image'] . $row['real_name'];
+		$row['real_name'] = (empty($memberContext[$member]['avatar']['image']) ? '' : $memberContext[$member]['avatar']['image']) . $row['real_name'];
 		$context['site_credits'][$row['id_group'] == 1 || (!empty($row['additional_groups']) && in_array(1, explode(',', $row['additional_groups']))) ? 'admins' : 'mods'][] = $row;
 	}
 
