@@ -140,7 +140,7 @@ function template_credits()
 
 			foreach ($context['site_credits']['admins'] as $admin)
 				echo '
-					<li><a href="<URL>?action=profile;u=', $admin['id_member'], '">', $admin['real_name'], '</a></li>';
+					<li', strpos($admin['real_name'], '<img') !== false ? ' class="witha"' : '', '><a href="<URL>?action=profile;u=', $admin['id_member'], '">', $admin['real_name'], '</a></li>';
 
 			echo '
 				</ul>
@@ -156,7 +156,7 @@ function template_credits()
 
 			foreach ($context['site_credits']['mods'] as $mod)
 				echo '
-					<li><a href="<URL>?action=profile;u=', $mod['id_member'], '">', $mod['real_name'], '</a></li>';
+					<li', strpos($mod['real_name'], '<img') !== false ? ' class="witha"' : '', '><a href="<URL>?action=profile;u=', $mod['id_member'], '">', $mod['real_name'], '</a></li>';
 
 			echo '
 				</ul>
@@ -182,7 +182,7 @@ function template_credits()
 			<section>
 				<h6>', $group['title'], '</h6>
 				<ul', $i === $max ? ' class="last"' : '', '>
-					<li', $i++ == 2 ? ' style="list-style-type: none"' : '', '>', implode('</li>
+					<li', $i++ == 2 ? ' class="witha"' : '', '>', implode('</li>
 					<li>', $group['members']), '</li>
 				</ul>
 			</section>';
@@ -191,6 +191,7 @@ function template_credits()
 		</we:block>';
 
 	add_css('
-	.splitter a, .splitter img { display: inline-block; vertical-align: middle }
+	.witha, .witha a { list-style-type: none; display: block }
+	.witha img { vertical-align: middle; margin: 8px 20px 8px -24px }
 	.splitter img { margin-right: 12px }');
 }
