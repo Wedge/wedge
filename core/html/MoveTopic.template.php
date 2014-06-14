@@ -87,7 +87,6 @@ function template_main()
 							</dd>
 						</dl>
 					</fieldset>
-					<br>
 					<div class="right">
 						<input type="submit" value="', $txt['move_topic'], '" onclick="return submitThisOnce(this);" accesskey="s" class="submit">
 					</div>
