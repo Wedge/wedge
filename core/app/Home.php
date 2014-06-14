@@ -25,9 +25,8 @@ function Home()
 {
 	global $context, $txt, $settings;
 
-	// Load the 'Home' template.
+	// Load the templates for blurb and topics.
 	loadTemplate('Home');
-	loadLanguage('Home');
 
 	// Set a canonical URL for this page.
 	$context['canonical_url'] = '<URL>';
