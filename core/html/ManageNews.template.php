@@ -243,7 +243,7 @@ function template_email_members()
 					</dd>
 				</dl><br class="clear">
 			</div>
-			<div class="right">
+			<div class="padding right">
 				<input type="submit" value="', $txt['admin_next'], '" class="submit">
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 			</div>
@@ -294,9 +294,9 @@ function template_email_members_compose()
 					<li><label><input type="checkbox" name="send_html" id="send_html" onclick="this.form.parse_html.disabled = !this.checked;"> ', $txt['email_as_html'], '</label></li>
 					<li><label><input type="checkbox" name="parse_html" id="parse_html" checked disabled> ', $txt['email_parsed_html'], '</label></li>
 				</ul>
-				<p>
-					<input type="submit" value="', $txt['sendtopic_send'], '" class="submit">
-				</p>
+			</div>
+			<div class="padding right">
+				<input type="submit" value="', $txt['sendtopic_send'], '" class="submit">
 			</div>
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 			<input type="hidden" name="email_force" value="', $context['email_force'], '">

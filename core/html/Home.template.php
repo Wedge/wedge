@@ -79,7 +79,7 @@ function template_home_blurb()
 
 	if (!SKIN_MOBILE)
 		echo '
-	<div class="home-intro">
-		<div class="windowbg2 wrc">', str_replace("\n", '<br>', $settings['homepage_blurb_' . $lang]), '</div>
+	<div class="windowbg2 wide home-intro">
+		<div class="wrc">', str_replace("\n", '<br>', $settings['homepage_blurb_' . $lang]), '</div>
 	</div>';
 }
