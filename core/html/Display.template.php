@@ -45,13 +45,24 @@ function template_display_posts($is_blog = false)
 
 	$ignoredMsgs = array();
 	$message_skeleton = new weSkeleton('msg');
+	if (!empty($context['blog_comments']))
+	{
+		$message_skeleton->remove('msg_author_blurb');
+		$message_skeleton->remove('msg_author_icons');
+		$message_skeleton->remove('msg_author_title');
+		$message_skeleton->remove('msg_author_badge');
+		$message_skeleton->remove('msg_author_group');
+		$message_skeleton->remove('msg_author_group_mobile');
+		$message_skeleton->remove('msg_author_postcount');
+		$message_skeleton->remove('msg_signature');
+	}
 
 	// Get all the messages...
 	while ($msg = $context['get_message']())
 	{
 		$context['ignoring'] = false;
 		if (!$msg['can_modify'] && !$msg['has_buttons'] && !$msg['can_like'] && empty($context['liked_posts'][$msg['id']]))
-			$message_skeleton->skip('msg_actionbar'); // Mamanim! Just this once!
+			$message_skeleton->skip('msg_actionbar'); // Mamanim! Please, just this once!
 
 		// Are we ignoring this message?
 		if (!empty($msg['is_ignored']))
@@ -80,7 +91,7 @@ function template_display_posts($is_blog = false)
 		$message_skeleton->render();
 
 		// Called for a blog post..? Then it should be unique.
-		if ($is_blog)
+		if ($context['blog_comments'] = $is_blog)
 			break;
 	}
 }
