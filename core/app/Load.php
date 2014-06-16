@@ -752,7 +752,7 @@ function loadPermissions()
 	}
 
 	// Remove all the permissions they shouldn't have ;)
-	we::$user['permissions'] = array_diff(array_flip(array_flip(we::$user['permissions'])), $removals);
+	we::$user['permissions'] = array_diff(array_flip(array_flip(we::$user['permissions'])), empty($removals) ? array() : $removals);
 
 	if (isset($cache_groups) && !empty($board) && $settings['cache_enable'] >= 2)
 		cache_put_data('permissions:' . $cache_groups . ':' . $board, array(we::$user['permissions'], null), 240);
