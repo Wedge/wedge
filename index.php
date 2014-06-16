@@ -11,7 +11,7 @@
 if (defined('WEDGE'))
 	return;
 
-define('WEDGE_VERSION', '1.0-alpha');
+define('WEDGE_VERSION', '1.0-beta');
 define('WEDGE', 3); // Internal snapshot number.
 
 // Get everything started up...
@@ -110,8 +110,8 @@ if (empty($action) && empty($board) && empty($topic))
 {
 	if (isset($_GET['category']) && is_numeric($_GET['category']))
 		$action = 'boards';
-	elseif (isset($settings['default_index']) && strpos($settings['default_index'], 'board') === 0)
-		$board = (int) substr($settings['default_index'], 5);
+	elseif (isset($settings['homepage_type']) && $settings['homepage_type'] == 'board')
+		$board = (int) $settings['homepage_board'];
 }
 
 // Load the current board's information.
@@ -269,12 +269,16 @@ function index_action($hook_action = 'default_action')
 			return $func;
 
 	// Otherwise, if the admin specified a custom homepage, fall back to it.
-	if (isset($settings['default_index']) && file_exists(APP_DIR . '/' . $settings['default_index'] . '.php'))
+	$ret = 'Home';
+	if (!empty($settings['homepage_type']))
 	{
-		loadSource($settings['default_index']);
-		return $settings['default_index'];
+		$type = $settings['homepage_type'];
+		if ($type == 'action' && file_exists(APP_DIR . '/' . $settings['homepage_action'] . '.php'))
+			$ret = $settings['homepage_action'];
+		elseif ($type == 'boardlist')
+			$ret = 'Boards';
 	}
 
-	loadSource('Boards');
-	return 'Boards';
+	loadSource($ret);
+	return $ret;
 }

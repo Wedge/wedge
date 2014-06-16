@@ -138,17 +138,19 @@ function sendmail($to, $subject, $message, $from = null, $message_id = null, $se
 	// In honour of those days, it's still called the 'hotmail fix'.
 	if ($hotmail_fix === null)
 	{
+		$message = str_replace('<URL>', SCRIPT, $message);
+		if (is_string($send_html))
+			$send_html = str_replace('<URL>', SCRIPT, $send_html);
+
 		if (!empty($settings['pretty_enable_filters']))
 		{
 			// Prettify all Wedge-generated URLs found in the message.
-			$message = str_replace('<URL>', SCRIPT, $message);
 			preg_match_all('~' . preg_quote(SCRIPT, '~') . '[^\s]*~', $message, $urls);
 			$message = str_replace($urls[0], prettify_urls($urls[0]), $message);
 
 			// If this is a HTML message, we also need to run through the raw text. Yes, it's a waste of time...
 			if (is_string($send_html))
 			{
-				$send_html = str_replace('<URL>', SCRIPT, $send_html);
 				preg_match_all('~' . preg_quote(SCRIPT, '~') . '[^\s]*~', $send_html, $urls);
 				$send_html = str_replace($urls[0], prettify_urls($urls[0]), $send_html);
 			}

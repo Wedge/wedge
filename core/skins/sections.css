@@ -1526,7 +1526,10 @@ body.waiting *
 
 	// Even smaller? A smartphone, maybe..?
 	@media all and (max-width: 600px)
-		dt, dd
-			clear: both
-			width: auto !important
+		body #wedge // Precedence killjoy.
+			dt, dd
+				clear: both
+				width: auto
+			dd
+				padding-left: 12px
 @endif

@@ -340,7 +340,8 @@ function cleanRequest()
 		&& strpos($full_request, '/gz/js/') === false // same, but with regenerated CSS or JS files?
 		&& strpos($full_request, '/Themes/') === false // maybe some old files from the SMF era?
 		&& strpos($full_request, '/mobiquo/tapatalk') === false // Bad bots trying to use a JS exploit?
-		&& strpos($full_request, '/apple-touch-icon') === false // iOS looking for a big icon. If it finds it, it won't execute this anyway.
+		&& strpos($full_request, '/apple-touch-icon') === false // iOS looking for a missing big icon. If it finds it, it won't execute this anyway.
+		&& strpos($full_request, '/favicon.') === false // Browser looking for a missing favicon. See above.
 		&& (!isset($_SERVER['HTTP_REFERER']) || (strpos($_SERVER['HTTP_REFERER'], 'googleusercontent.com') === false))) // Google Cache
 		{
 			log_error('File not found: ' . $full_request, 'filenotfound', null, null, isset($_SERVER['HTTP_REFERER']) ? str_replace('&amp;', '&', $_SERVER['HTTP_REFERER']) : '');

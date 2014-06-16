@@ -146,7 +146,7 @@ $txt['unknown'] = 'unknown';
 $txt['security_wrong'] = 'Administration login attempt!' . "\n" . 'Referer: %1$s' . "\n" . 'User agent: %2$s' . "\n" . 'IP: %3$s';
 
 $txt['email_as_html'] = 'Send in HTML format. (With this, you can put normal HTML in the email.)';
-$txt['email_parsed_html'] = 'Add &lt;br&gt;s and &amp;nbsp;s to this message.';
+$txt['email_parsed_html'] = 'Turn line-breaks into &lt;br&gt; tags, and keep multiple spaces as they are.';
 $txt['email_variables'] = 'In this message you can use a few &quot;variables&quot;. Click <a href="<URL>?action=help;in=emailmembers" onclick="return reqWin(this);">here</a> for more information.';
 $txt['email_force'] = 'Send this to members even if they have chosen not to receive announcements.';
 $txt['email_as_pms'] = 'Send this to these groups using personal messages.';
@@ -622,3 +622,6 @@ $txt['media_admin_banning'] = 'Member to ban';
 $txt['media_admin_bans_add'] = 'Add ban';
 $txt['media_cf'] = 'Custom fields';
 $txt['media_cf_add'] = 'Create a new field';
+
+// Homepage
+$txt['homepage'] = 'Homepage';

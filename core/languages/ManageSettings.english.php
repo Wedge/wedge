@@ -488,3 +488,26 @@ $txt['languages_orients_rtl'] = 'Right-to-Left';
 
 $txt['lang_file_desc_index'] = 'Main language file, all generic strings';
 $txt['lang_file_desc_Modlog'] = 'Moderation log entries';
+
+// Homepage
+$txt['homepage_desc'] = 'This page allows you to determine what to show your users when they visit your forum\'s root.';
+
+$txt['homepage_type'] = 'What should the home page show?';
+$txt['homepage_boardlist'] = 'Board list';
+$txt['homepage_board'] = 'Specific board';
+$txt['homepage_action'] = 'Specific action';
+$txt['homepage_custom'] = 'Custom contents';
+$txt['homepage_blurb_title'] = 'Blurb title (%s)';
+$txt['homepage_blurb'] = 'Blurb text (%s)';
+// !! Don't translate the bits between <strong> tags!
+$txt['homepage_message'] = 'Choose "Board list" to show the full list of available boards; "Specific board" to direct users to a specific board in the list (make sure to
+	choose which board, of course!); "Specific action" to direct them to a custom page on your forum (for instance, create files /app/Mine.php and /html/Mine.template.php,
+	then enter "Mine" in the specific action box); and finally, "Custom contents" will allow you to show multiple elements at the same time. Enter one element per line
+	(they\'ll be shown in order of appearance), from the following list:<br>
+
+		<br><strong>blurb</strong>: a custom text; an introduction, maybe.
+		<br><strong>topics</strong>: a list of the latest updated topics. Add \':x\' to start with x topics instead of 5, e.g. \'topics:10\'.
+		<br><strong>thoughts</strong>: a list of the latest thoughts. Add \':x\' to show x thoughts instead of 10, e.g. \'thoughts:5\'.
+		<br><strong>boards</strong>: the full list of boards.
+		<br><strong>info</strong>: the information center (statistics). Desktop browsers show it in the sidebar.
+	';

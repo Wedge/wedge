@@ -59,49 +59,40 @@ function template_error_log()
 				<a href="<URL>?action=help;in=error_log" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
 				', $txt['errlog'], '
 			</we:title>
-		</div>
-		<table class="table_grid cs1" id="error_log">';
+		</div>';
 
 	if (empty($context['errors']))
 	{
 		echo '
-			<tr>
-				<td class="windowbg2">', $txt['errlog_no_entries'], '</td>
-			</tr>
-		</table><br>
+		<div class="windowbg2 wrc">', $txt['errlog_no_entries'], '</div>
 	</form>';
 
 		return;
 	}
 
 	echo '
-			<tr>
-				<td colspan="3" class="windowbg">
-					&nbsp;&nbsp;', $txt['apply_filter_of_type'], ':';
+		<div class="windowbg wrc">
+			', $txt['apply_filter_of_type'], ':';
 
 	$error_types = array();
 	foreach ($context['error_types'] as $type => $details)
 		$error_types[] = ($details['is_selected'] ? '<img src="' . ASSETS . '/selected.gif"> ' : '') . '<a href="' . $details['url'] . '"' . ($details['is_selected'] ? ' style="font-weight: bold"' : '') . ' title="' . $details['description'] . '">' . $details['label'] . '</a>';
 
 	echo '
-					', implode('&nbsp;|&nbsp;', $error_types), '
-				</td>
-			</tr>
-			<tr>
-				<td colspan="3" class="windowbg">
-					&nbsp;&nbsp;', $txt['pages'], ': ', $context['page_index'], '
-				</td>
-			</tr>';
+			', implode('&nbsp;|&nbsp;', $error_types), '
+		</div>';
 
 	if ($context['has_filter'])
 		echo '
-			<tr>
-				<td colspan="3" class="windowbg">
-					<strong>', $txt['applying_filter'], ':</strong> ', $context['filter']['entity'], ' ', $context['filter']['value']['html'], ' (<a href="<URL>?action=admin;area=logs;sa=errorlog', $context['sort_direction'] == 'down' ? ';desc' : '', '">', $txt['clear_filter'], '</a>)
-				</td>
-			</tr>';
+		<div class="windowbg wrc">
+			<strong>', $txt['applying_filter'], ':</strong> ', $context['filter']['entity'], ' ', $context['filter']['value']['html'], ' (<a href="<URL>?action=admin;area=logs;sa=errorlog', $context['sort_direction'] == 'down' ? ';desc' : '', '">', $txt['clear_filter'], '</a>)
+		</div>';
 
 	echo '
+		<div class="pagesection"><nav>
+			', $txt['pages'], ': ', $context['page_index'], '
+		</nav></div>
+		<table class="table_grid cs1" id="error_log">
 			<tr class="titlebg left">
 				<td colspan="3">
 					<div class="floatright"><input type="submit" value="', $txt['remove_selection'], '" class="delete"> <input type="submit" name="delall" value="', $context['has_filter'] ? $txt['remove_filtered_results'] : $txt['remove_all'], '" onclick="return ask(', JavaScriptEscape($txt['sure_about_errorlog_remove']), ', e);" class="delete"></div>
@@ -163,12 +154,11 @@ function template_error_log()
 					<label style="line-height: 24px"><input type="checkbox" id="check_all2" onclick="invertAll(this, this.form, \'delete[]\'); this.form.check_all1.checked = this.checked;"> <strong>', $txt['check_all'], '</strong></label>
 				</td>
 			</tr>
-			<tr>
-				<td colspan="3" class="windowbg">
-					&nbsp;&nbsp;', $txt['pages'], ': ', $context['page_index'], '
-				</td>
-			</tr>
-		</table><br>';
+		</table>
+		<div class="pagesection"><nav>
+			', $txt['pages'], ': ', $context['page_index'], '
+		</nav></div>
+		<br>';
 
 	if ($context['sort_direction'] == 'down')
 		echo '

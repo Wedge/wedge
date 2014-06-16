@@ -187,6 +187,7 @@ function template_admin_login()
 			<div class="error">', $txt['admin_incorrect_password'], '</div>';
 
 	echo '
+			<input name="user" value="" style="display: none">
 			<strong>', $txt['password'], ':</strong>
 			<input type="password" name="admin_pass" size="24">
 			<a href="<URL>?action=help;in=securityDisable_why" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>

@@ -123,72 +123,72 @@ $generic_stack = "Franklin Gothic Medium", "Franklin Gothic", "Segoe UI", Helvet
 	$generic_stack = HelveticaNeue-Light, "Helvetica Neue Light", "Helvetica Neue", Helvetica, sans-serif
 @endif
 
-$main_font = Arial, sans-serif
-$main_font_size = 88%/130%
-$menu_font = $main_font
-$big_font = $generic_stack
-$head_font = $generic_stack
+$main_font		= Arial, sans-serif
+$main_font_size	= 88%/130%
+$menu_font		= $main_font
+$big_font		= $generic_stack
+$head_font		= $generic_stack
 
-$subject_font = $generic_stack
-$mono_font = Consolas, "Dejavu Sans Mono", Menlo, "Lucida Console", "Courier New", monospace
-$serif_font = Georgia, serif
+$subject_font	= $generic_stack
+$mono_font		= Consolas, "Dejavu Sans Mono", Menlo, "Lucida Console", "Courier New", monospace
+$serif_font		= Georgia, serif
 
-$post_font_size = 100%/133%
-$post_font = $main_font
-$blog_font_size = 100%/140%
-$blog_font = $post_font
+$post_font_size	= 100%/133%
+$post_font		= $main_font
+$blog_font_size	= 100%/140%
+$blog_font		= $post_font
 
-$main_bg = #fff
-$head_bg = #f6f6f0 // Used to be luma(#e3e0da, -3%)
-$reddish = #c60
-$menu_border = rgba(220, 224, 220, .95)
-$menu_gradient =	@is (ie[-8], "average", "linear-gradient")(rgba(232, 236, 232, .96), rgba(255, 255, 255, .96))
-$sidebar-width =	@is (webkit, "282px", "280px") // Webkit screws up on padding/border in table mode
-$max-width =		@is (ie6, "width", "max-width")
+$main_bg		= #fff
+$head_bg		= #f6f6f0 // Used to be luma(#e3e0da, -3%)
+$reddish		= #c60
+$menu_border	= rgba(220, 224, 220, .95)
+$menu_gradient	= @is (ie[-8], "average", "linear-gradient")(rgba(232, 236, 232, .96), rgba(255, 255, 255, .96))
+$sidebar-width	= @is (webkit, "282px", "280px") // Webkit screws up on padding/border in table mode
+$max-width		= @is (ie6, "width", "max-width")
 
 /* .windowbg classes are used to alternate colors between general blocks.
 	Suggestions for $window_bg:  luma($window_bg2, -3%) // luma(#e3e0d0, +13%) // #f2f3ea // #f9f6f0
 	Suggestions for $window_bg2: #f8faf8 // luma(#e3e0d0, +11%) // luma(hue($main_bg, -20), -.5%) // #f3f7f3 // transparent */
 $window_bg = ""
 $window_bg2 = ""
-$window_bg3 = #f0f0f0
-$board_col = #d97b33
+$window_bg3		= #f0f0f0
+$board_col		= #d97b33
 
 /* The .msg class should, by default, alternate between these two colors. */
 $post_bg = #f2f3ee
 $post_bg2 = #f3f7f3
 
 /* float: $left will return float: right on RTL setups. */
-$left = @is (rtl, right, left)
-$right = @is (rtl, left, right)
+$left			= @is (rtl, right, left)
+$right			= @is (rtl, left, right)
 
 /* Should we have border-radius around page corners..? Set to 0 to disable. */
-$radius = 8px
-$sub_radius = 0
+$radius			= 8px
+$sub_radius		= 0
 
 /* Something one can remove to make more space in responsive mode... */
 $horizontal_content_padding = 30px
 
 /* helper var for vmin. Keep using non-vmin fallbacks, though! */
-$vmin = @is (ie9, vm, vmin)
+$vmin			= @is (ie9, vm, vmin)
 
 /* Maximum window width for the browser to trigger the low-res responsive CSS mode. */
 $responsive_max_width = 1000px
-$responsive = "all and (max-width: $responsive_max_width)"
+$responsive		= "all and (max-width: $responsive_max_width)"
 
 /* URL for the status icon in board lists */
-$board_icon = $images/boardicon.png
+$board_icon		= $images/boardicon.png
 
 /* List of browsers that support the STANDARD flexbox model, i.e. display: flex.
 	IE10 supports an older model, but Wess automatically rewrites your CSS for it.
 	For reference, browsers supporting the OLD, useless model were: (firefox[2-], chrome[4-], safari[3.1-] && !ios, ios[3.2-]) */
-$can_flex = @is ("firefox[22-], opera[12.1-], chrome[27-], ie[10-], safari[7-]")
+$can_flex		= @is ("firefox[22-], opera[12.1-], chrome[27-], ie[10-], safari[7-]")
 
 /* List browsers that support CSS3 animations (Wedge adds prefixes automatically.) */
-$can_animate = @is ("chrome, firefox[5-], opera[12-], ie[10-], safari[4-], ios[3.2-], android[2.1-]")
+$can_animate	= @is ("chrome, firefox[5-], opera[12-], ie[10-], safari[4-], ios[3.2-], android[2.1-]")
 
 /* List browsers that support CSS filters (not the old IE ones!). Note that Firefox[3.5-] supports filter: url() with SVG filters. */
-$can_filter = @is ("chrome[18-], safari[6-]")
+$can_filter		= @is ("chrome[18-], safari[6-]")
 
 /* List browsers that support position: sticky. iOS needs a prefix, others do not. Firefox 27+, Chrome and Opera Blink support it as of Jan 2014, but through a flag. */
-$can_sticky = @is ("ios[6-], firefox[27-]")
+$can_sticky		= @is ("ios[6-], firefox[27-]")

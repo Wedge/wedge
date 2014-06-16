@@ -51,7 +51,7 @@ function Credits()
 	{
 		if (empty($memberContext[$member]['avatar']))
 			loadMemberAvatar($member, true);
-		$row['real_name'] = $memberContext[$member]['avatar']['image'] . $row['real_name'];
+		$row['real_name'] = (empty($memberContext[$member]['avatar']['image']) ? '' : $memberContext[$member]['avatar']['image']) . $row['real_name'];
 		$context['site_credits'][$row['id_group'] == 1 || (!empty($row['additional_groups']) && in_array(1, explode(',', $row['additional_groups']))) ? 'admins' : 'mods'][] = $row;
 	}
 
@@ -66,7 +66,7 @@ function Credits()
 		array(
 			'title' => $txt['credits_groups_dev'],
 			'members' => array(
-				'<img src="' . PROTOCOL . (PROTOCOL == 'https://' ? 'secure.' : '') . 'gravatar.com/avatar/0879c588019800e5349fe171d69e1c28" class="opaque left" style="margin: 8px 20px 8px -24px"><br><br>Ren&eacute;-Gilles Deberdt<br>(Nao &#23578;)<br class="clear">',
+				'<img src="' . PROTOCOL . (PROTOCOL == 'https://' ? 'secure.' : '') . 'gravatar.com/avatar/0879c588019800e5349fe171d69e1c28" class="opaque left"><br><br>Ren&eacute;-Gilles Deberdt<br>(Nao &#23578;)<br class="clear">',
 			),
 		),
 		array(
