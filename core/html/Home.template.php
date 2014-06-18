@@ -14,7 +14,7 @@ function template_main()
 
 function template_home_topics($n = 0)
 {
-	global $context, $txt;
+	global $txt;
 
 	$n = $n ?: isset($_REQUEST['n']) ? (int) $_REQUEST['n'] : 5;
 	$next = $n < 50 ? ($n < 20 ? ($n < 10 ? 10 : 20) : 50) : 100;
@@ -62,7 +62,7 @@ function template_home_topics($n = 0)
 // Output a custom introduction. HTML is accepted, unfiltered.
 function template_home_blurb()
 {
-	global $settings, $txt;
+	global $settings;
 
 	if (isset($settings['homepage_blurb_' . we::$user['language']]))
 		$lang = we::$user['language'];

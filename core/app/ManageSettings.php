@@ -489,7 +489,7 @@ function ModifyPmSettings($return_config = false)
 
 function ModifyHomepage($return_config = false)
 {
-	global $context, $txt, $settings, $boards;
+	global $context, $txt, $boards;
 
 	loadLanguage('ManageSettings');
 	loadSource(array('ManageServer', 'Subs-Boards'));
