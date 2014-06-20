@@ -703,9 +703,9 @@ function ModifyProfile($post_errors = array())
 	}
 	// If it's you then we should redirect upon save.
 	elseif (!empty($profile_vars) && we::$user['is_owner'])
-		redirectexit('action=profile;area=' . $current_area . ';updated');
+		redirectexit('action=profile;area=' . $current_area . (isset($_GET['sa']) ? ';sa=' . $_GET['sa'] : '') . ';updated');
 	elseif (!empty($force_redirect))
-		redirectexit('action=profile' . (we::$user['is_owner'] ? '' : ';u=' . $memID) . ';area=' . $current_area);
+		redirectexit('action=profile' . (we::$user['is_owner'] ? '' : ';u=' . $memID) . ';area=' . $current_area . (isset($_GET['sa']) ? ';sa=' . $_GET['sa'] : ''));
 
 	// Call the appropriate subaction function.
 	call_user_func_array($profile_include_data['function'], array($memID));

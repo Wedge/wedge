@@ -1554,7 +1554,7 @@ function template_notification()
 	// The main containing header.
 	echo '
 			<div class="windowbg2 wrc">
-				<form action="<URL>?action=profile;area=notification;save" method="post" accept-charset="UTF-8" id="notify_options" class="flow_hidden">';
+				<form action="<URL>?action=profile;area=notifications;sa=posts;save" method="post" accept-charset="UTF-8" id="notify_options" class="flow_hidden">';
 
 	// Allow notification on announcements to be disabled?
 	if (!empty($settings['allow_disableAnnounce']))
