@@ -1091,14 +1091,14 @@ class wess_nesting extends wess
 		foreach ($this->rules as &$node)
 		{
 			// Is this rule actually an at-rule? They need special treatment.
-			if ($node['selector'][0] === '@')
+			if ($node['selector'][0] === '@' && stripos($node['selector'], '@viewport') !== 0)
 			{
 				if (stripos($node['selector'], '@import') === 0 || stripos($node['selector'], '@charset') === 0)
 				{
 					$css .= $node['selector'] . ';';
 					continue;
 				}
-				// Blocks starting with @media, @keyframes, @supports, @viewport...
+				// Blocks starting with @media, @keyframes, @supports...
 				if (preg_match('~^@[a-z]+~i', $node['selector']))
 				{
 					// Are we already in a @keyword block? Then close it first...
@@ -1696,7 +1696,7 @@ class wess_prefixes extends wess
 		if (($b['opera'] && $v < 12.1) || ($b['firefox'] && $v < 16) || $b['webkit'])
 			$css = str_replace('@keyframes ', '@' . $this->prefix . 'keyframes ', $css);
 
-		// IE 10+ and Presto 11+ support @viewport, but prefixed. Other browsers...? No idea.
+		// IE 10+ and Presto 11+ (Opera Classic) support @viewport, but prefixed. Other browsers...? No idea.
 		if (($b['opera'] && $v >= 11) || ($b['ie'] && $v >= 10))
 			$css = str_replace('@viewport', '@' . $this->prefix . 'viewport', $css);
 
