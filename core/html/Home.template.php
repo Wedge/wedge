@@ -71,15 +71,17 @@ function template_home_blurb()
 	else
 		return;
 
-	if (!empty($settings['homepage_blurb_title_' . $lang]))
-		echo '
+	if (!SKIN_MOBILE)
+	{
+		if (!empty($settings['homepage_blurb_title_' . $lang]))
+			echo '
 	<we:cat class="wtop">
 		', $settings['homepage_blurb_title_' . $lang], '
 	</we:cat>';
 
-	if (!SKIN_MOBILE)
 		echo '
 	<div class="windowbg2 wide home-intro">
 		<div class="wrc">', str_replace("\n", '<br>', $settings['homepage_blurb_' . $lang]), '</div>
 	</div>';
+	}
 }
