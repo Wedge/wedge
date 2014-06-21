@@ -51,11 +51,6 @@ $darkgrad = #f3f2f0
 #main
 	padding-top: 0
 
-#sidebar
-	border: 1px solid #ccc
-	border-right: 0
-	border-radius: 8px 0 0 8px
-
 #top_section
 	background: none
 	border: 0
@@ -233,6 +228,19 @@ $window_bg2 = #f0f4f7
 	.menu ul unextends .lightgrad
 @endif
 
+@replace
+	font: 700 60%/1.3em $main_font
+	font: 700 70%/1.3em $main_font
+
+@remove .posthead
+	color: gray
+
+@remove #top_subject
+	color: gray
+
+#top_subject
+	font-size: 90%
+
 /* A few more header styles...
 ------------------------------------------------------- */
 
@@ -262,7 +270,8 @@ tr.titlebg
 	@endif
 
 .poster h4
-	font-size: 140%
+	font-size: 120%
+	font-weight: 700
 
 #statistics
 	.title final
@@ -325,10 +334,5 @@ $radius = 20px
 @remove .msg
 	background-image: *
 
-@if opera[11-], ie[10-]
-	@viewport
-		width: device-width
-		zoom: 1 // initial-scale
-		min-zoom: .7 // minimum-scale
-		max-zoom: 2 // maximum-scale
-@endif
+@remove .poster
+	background: *

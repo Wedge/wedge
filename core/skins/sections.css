@@ -292,15 +292,21 @@ hr.sep
 		.poster > div:before
 			position: relative
 			content: ""
+			float: left // Without this, all of .poster is moved down.
 			left: 100%
-			top: 50px
+			top: 52px
 			width, height, font-size: 0
 			border: 24px solid transparent
 			border-right-color: $window_bg
 			margin: 0 0 0 -36px // 24px + .poster > div's 12px right margin.
 		.postarea
 			background: $window_bg
-			border-radius: 16px
+			border-radius: 16px 0 0 16px
+	.msg:nth-of-type(even)
+		.poster > div:before
+			border-right-color: $window_bg2
+		.postarea
+			background: $window_bg2
 
 // Poster and postarea + moderation area underneath
 .post_wrapper
@@ -856,7 +862,7 @@ tr.windowbg td
 // The basic user info on the left
 #basicinfo
 	flex: 0 1 20%
-	margin: 10px 10px 0 0
+	margin: 0 10px 0 0
 	min-width: 180px
 	width: 20%
 	float: left
@@ -913,7 +919,7 @@ tr.windowbg td
 
 #detailedinfo extends #profile_box
 	flex: 1 1 79.5%
-	margin: 10px 0 0 0
+	margin: 0
 	width: 75%
 	float: right
 	dl.noborder
@@ -1153,8 +1159,6 @@ tr.windowbg td
 .list-thoughts
 	margin: 5px 0 15px
 	padding: 2px
-	border: 1px solid #dcc
-	border-radius: 5px
 	@if ie6
 		ul
 			margin, padding: 0 0 0 8px
@@ -1419,10 +1423,23 @@ div.top_row dd
 body.waiting *
 	cursor: progress
 
-/* Media queries. Responsive design, e.g.
-   mobile-friendly rules, is done here.
+/* Media queries.
+   Responsive (mobile-friendly) design is done here.
    DO NOT EXTEND ANYTHING IN A MEDIA QUERY! USE MIXES.
 ------------------------------------------------------ */
+
+.wide
+	border: 1px solid #dcc
+	border-radius: 5px
+
+// Old Opera and IE 10+ Mobile support a special tag that saves some HTML calls.
+@if opera[11-], ie[10-]
+	@viewport
+		width: device-width
+		zoom: 1 // initial-scale
+		min-zoom: .7 // minimum-scale
+		max-zoom: 2 // maximum-scale
+@endif
 
 @if !ie[-7]
 	@media $responsive
@@ -1453,8 +1470,6 @@ body.waiting *
 				td
 					padding: 0
 					margin-left: math(width($board_icon) + 12px)
-				td:empty
-					display: none
 				.icon
 					width: auto
 					float: left
@@ -1465,6 +1480,11 @@ body.waiting *
 					font-style: italic
 					padding-top, margin-top: 4px
 					border-top: 1px dotted #ccc
+					// Android 4.1's stock browser is buggy and always considers :empty to be true. 4.2 is untested, 4.3 is fixed.
+					@if !(android[-4.2.9] && webkit && !chrome)
+						:empty
+							display: none
+					@endif
 					div mixes .inline-block("")
 					div + div:before
 						content: "\a0-\a0"

@@ -130,14 +130,6 @@ ul.nlist
 	font: 3.6em/1 $serif_font
 	font: 2em/1 $serif_font
 
-@if opera[11-], ie[10-]
-	@viewport
-		width: device-width
-		zoom: 1 // initial-scale
-		min-zoom: .7 // minimum-scale
-		max-zoom: 2 // maximum-scale
-@endif
-
 $big_font = Roboto Light, sans-serif-light, Segoe UI, Arial, sans-serif
 $head_font = Roboto Light, sans-serif-light, Segoe UI, Arial, sans-serif
 $mimenu_font_size = 18px/28px
