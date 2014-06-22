@@ -21,6 +21,7 @@ if (version_compare(PHP_VERSION, '5.4') < 0 && function_exists('set_magic_quotes
 	@set_magic_quotes_runtime(0);
 
 error_reporting(E_ALL | E_STRICT);
+@ini_set('memory_limit', '128M');
 $time_start = microtime(true);
 
 // Makes sure that headers can be sent!
