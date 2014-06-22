@@ -63,7 +63,8 @@ function getBoardList($boardListOptions = array())
 		FROM {db_prefix}boards AS b
 			LEFT JOIN {db_prefix}categories AS c ON (c.id_cat = b.id_cat)' . (empty($where) ? '' : '
 		WHERE ' . implode('
-			AND ', $where)),
+			AND ', $where)) . '
+		ORDER BY b.board_order',
 		$where_parameters
 	);
 

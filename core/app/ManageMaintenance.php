@@ -220,7 +220,8 @@ function MaintainTopics()
 		FROM {db_prefix}boards AS b
 			LEFT JOIN {db_prefix}categories AS c ON (c.id_cat = b.id_cat)
 		WHERE {query_see_board}
-			AND redirect = {string:empty}',
+			AND redirect = {string:empty}
+		ORDER BY b.board_order',
 		array(
 			'empty' => '',
 		)

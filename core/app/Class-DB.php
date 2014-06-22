@@ -280,7 +280,7 @@ class wesql
 		// Get the file and line numbers.
 		list ($file, $line) = self::error_backtrace('', '', 'return');
 
-		// Decide which connection to use
+		// Decide which connection to use.
 		$connection = $connection === null ? self::$_db_con : $connection;
 
 		// This is the error message...

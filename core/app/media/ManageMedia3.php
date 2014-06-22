@@ -34,10 +34,7 @@ function aeva_admin_embed()
 		// We need to access Aeva's aeva_fetch function to grab url files
 		loadSource('media/Aeva-Embed');
 
-		// Unlikely, but we might need more umph.
-		ini_set('memory_limit', '64M');
-
-		// Domo arigato, misutaa Robotto
+		// Dômo arigatô, misutâ Robotto.
 		$url = 'http://www.google.com/robots.txt';
 
 		// Fetch the file... Now or never.
