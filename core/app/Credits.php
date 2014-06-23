@@ -24,7 +24,7 @@ if (!defined('WEDGE'))
 
 function Credits()
 {
-	global $context, $txt, $memberContext;
+	global $context, $settings, $txt, $memberContext;
 
 	// Don't blink. Don't even blink. Blink and you're dead.
 	loadLanguage('Who');
@@ -88,7 +88,7 @@ function Credits()
 			'members' => $txt['translation_credits'],
 		);
 
-	$context['credits'][] = array(
+	$context['credits']['copyright'] = array(
 		'title' => $txt['credits_copyright'],
 		'members' => array(
 			sprintf(
@@ -97,12 +97,11 @@ function Credits()
 				'http://wedge.org/license/',
 				2010
 			),
-			sprintf(
-				$txt['credits_aeme'],
-				'http://aeva.noisen.com/'
-			),
 		),
 	);
+
+	if (!empty($settings['embed_enabled']) || !empty($settings['media_enabled']))
+		$context['credits']['copyright']['members'][] = sprintf($txt['credits_aeme'], 'http://aeva.noisen.com/');
 
 	$context['plugin_credits'] = array();
 

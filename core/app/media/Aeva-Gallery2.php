@@ -2646,9 +2646,6 @@ function aeva_massDownloadCreate()
 	elseif (!isset($_SESSION['aeva_mdl']))
 		fatal_lang_error('media_accessDenied', !empty($amSettings['log_access_errors']));
 
-	// Try gathering the memory we need...
-	ini_set('memory_limit', '128M');
-
 	// Let's see if we're starting afresh
 	if (!empty($_SESSION['aeva_mdl']['num_done']) && !file_exists($amSettings['data_dir_path'] . '/tmp/' . MID . '_' . $_SESSION['aeva_mdl']['album'] . '_data'))
 		$_SESSION['aeva_mdl']['num_done'] = 0;

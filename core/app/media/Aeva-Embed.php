@@ -695,9 +695,6 @@ function aeva_lookup_and_match($regex, $url, $fetch_title = '')
 	// Don't timeout.
 	@set_time_limit(600);
 
-	// Hmm we might need more...
-	ini_set('memory_limit', '64M');
-
 	// Go get 'em tiger
 	$data = @aeva_fetch($url);
 

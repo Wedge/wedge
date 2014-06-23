@@ -15,7 +15,6 @@ if (!defined('WEDGE'))
 function ViewRemote()
 {
 	wetem::hide();
-	ini_set('memory_limit', '32M');
 
 	if (empty($_REQUEST['filename']) || !is_string($_REQUEST['filename']))
 		fatal_lang_error('no_access', false);

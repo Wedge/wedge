@@ -34,7 +34,7 @@ $sub_radius = 8px
 .darkgrad virtual
 	gradient: #bcbcbb, $darkgrad
 
-.wehead, .cat
+.wehead
 	box-shadow: inset 0 8px 12px -8px #eee, 1px 1px 3px #aa9
 
 #sidebar .title final
@@ -75,11 +75,7 @@ h1
 	padding-bottom: 0
 
 #sidebar
-	background: $window_bg2
 	display: @is (ie[-7], block, table-cell)
-	border: 1px solid #eee
-	border-right: 0
-	border-radius: 8px 0 0 8px
 	.title
 		font-size: 1.1em
 		padding: 4px 4px 4px 8px
@@ -223,7 +219,6 @@ h1, #slogan
 	font: 1.2em/1.2 $head_font
 
 .cat final
-	background-color: #f5fcf5
 	color: #b77
 
 .title.blog mixes .inline-block
@@ -239,7 +234,6 @@ h1, #slogan
 
 .title extends .cat
 	color: #888
-	background-color: #f8f8f8
 	a
 		color: #666 !important
 		:hover

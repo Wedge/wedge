@@ -56,20 +56,13 @@ table.cs0 final tr.windowbg:last-child td
 	direction: ltr
 
 #sidebar
-	background: $window_bg
 	display: @is (ie[-7], block, table-cell)
-	border: 1px solid #ccc
-	border-left: 0
-	border-radius: 0 8px 8px 0
 	.title
 		font-size: 1.2em
 		padding: 4px 4px 4px 8px
-	a
-		color: #a54
-		border-bottom: 1px dotted #600
-		text-decoration: none
-	.column
-		padding: 14px 12px 12px
+
+body #sidebar .column // body allows this to override responsive values
+	padding: 10px 20px
 
 #header h2
 	color: #fc9

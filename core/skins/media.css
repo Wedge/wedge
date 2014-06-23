@@ -166,6 +166,9 @@ img.aext
 #item-area
 	box-sizing: border-box
 	padding: 16px
+	img
+		max-width: 100%
+		height: auto
 
 #media-details
 	display: @is (ie[-7], block, table-cell)

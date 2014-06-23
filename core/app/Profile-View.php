@@ -2099,7 +2099,8 @@ function showPermissions($memID)
 		SELECT b.id_board, b.name, b.id_profile, b.member_groups, IFNULL(mods.id_member, 0) AS is_mod
 		FROM {db_prefix}boards AS b
 			LEFT JOIN {db_prefix}moderators AS mods ON (mods.id_board = b.id_board AND mods.id_member = {int:current_member})
-		WHERE {query_see_board}',
+		WHERE {query_see_board}
+		ORDER BY b.board_order',
 		array(
 			'current_member' => $memID,
 		)

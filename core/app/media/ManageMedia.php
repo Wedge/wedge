@@ -449,9 +449,6 @@ function aeva_admin_FTPImport()
 	// Sending the albums and thus... starting the import?
 	if (isset($_POST['aeva_submit']) || !empty($_REQUEST['start']))
 	{
-		// Grab the memory
-		ini_set('memory_limit', '128M');
-
 		// Albums set?
 		if (isset($_POST['aeva_folder']))
 		{

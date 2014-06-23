@@ -434,7 +434,11 @@ function MLSearch()
 	if (isset($_REQUEST['search'], $_REQUEST['fields']))
 	{
 		$_POST['search'] = trim(isset($_GET['search']) ? $_GET['search'] : $_POST['search']);
-		$_POST['fields'] = isset($_GET['fields']) ? explode(',', $_GET['fields']) : $_POST['fields'];
+		// Escape things, just in case...
+		if (function_exists('get_magic_quotes_gpc') && !get_magic_quotes_gpc())
+			$_POST['fields'] = explode(',', addslashes(isset($_GET['fields']) ? $_GET['fields'] : implode(',', $_POST['fields'])));
+		else
+			$_POST['fields'] = isset($_GET['fields']) ? explode(',', $_GET['fields']) : $_POST['fields'];
 
 		$context['old_search'] = $_REQUEST['search'];
 		$context['old_search_value'] = urlencode($_REQUEST['search']);
@@ -450,23 +454,35 @@ function MLSearch()
 			'search' => '%' . strtr(westr::htmlspecialchars($_POST['search'], ENT_QUOTES), array('_' => '\\_', '%' => '\\%', '*' => '%')) . '%',
 		);
 
+		$confirmed = array();
+
 		// Search for a name?
 		if (in_array('name', $_POST['fields']))
+		{
 			$fields = array('member_name', 'real_name');
+			$confirmed[] = 'name';
+		}
 		else
 			$fields = array();
 
 		// Search for websites.
 		if (in_array('website', $_POST['fields']))
+		{
 			$fields += array(3 => 'website_title', 'website_url');
+			$confirmed[] = 'website';
+		}
 		// Search for groups.
 		if (in_array('group', $_POST['fields']))
+		{
 			$fields += array(5 => 'IFNULL(group_name, {string:blank_string})');
+			$confirmed[] = 'group';
+		}
 		// Search for an email address?
 		if (in_array('email', $_POST['fields']))
 		{
-			$fields += array(2 => allowedTo('moderate_forum') ? 'email_address' : '(hide_email = 0 AND email_address');
 			$condition = allowedTo('moderate_forum') ? '' : ')';
+			$fields += array(2 => allowedTo('moderate_forum') ? 'email_address' : '(hide_email = 0 AND email_address');
+			$confirmed[] = 'email';
 		}
 		else
 			$condition = '';
@@ -482,8 +498,13 @@ function MLSearch()
 				$customJoin[] = 'LEFT JOIN {db_prefix}themes AS t' . $curField . ' ON (t' . $curField . '.variable = {string:t' . $curField . '} AND t' . $curField . '.id_member = mem.id_member)';
 				$query_parameters['t' . $curField] = $curField;
 				$fields += array($customCount++ => 'IFNULL(t' . $curField . '.value, {string:blank_string})');
+				$confirmed[] = $field;
 			}
 		}
+
+		// No search fields? That means you're trying to hack things.
+		if (empty($confirmed))
+			fatal_lang_error('invalid_search_string', false);
 
 		$query = $_POST['search'] == '' ? '= {string:blank_string}' : 'LIKE {string:search}';
 
@@ -500,7 +521,7 @@ function MLSearch()
 		list ($numResults) = wesql::fetch_row($request);
 		wesql::free_result($request);
 
-		$context['page_index'] = template_page_index('<URL>?action=mlist;sa=search;search=' . $_POST['search'] . ';fields=' . implode(',', $_POST['fields']), $_REQUEST['start'], $numResults, $settings['defaultMaxMembers']);
+		$context['page_index'] = template_page_index('<URL>?action=mlist;sa=search;search=' . $_POST['search'] . ';fields=' . implode(',', $confirmed), $_REQUEST['start'], $numResults, $settings['defaultMaxMembers']);
 
 		// Find the members from the database.
 		// !!! SLOW This query is slow.

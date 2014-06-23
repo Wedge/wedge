@@ -260,7 +260,6 @@ function resizeImageFile($source, $destination, $max_width, $max_height, $prefer
 	);
 
 	loadSource('Class-WebGet');
-	ini_set('memory_limit', '90M');
 
 	$success = false;
 
