@@ -1039,7 +1039,12 @@ function db_debug_junk()
 	}
 
 	if ($show_debug_query)
+	{
 		$temp .= '<a href="' . SCRIPT . '?action=viewquery" target="_blank" class="new_win">' . sprintf($txt['debug_queries_used' . ($warnings == 0 ? '' : '_and_warnings')], $db_count, $warnings) . '</a> - <a href="' . SCRIPT . '?action=viewquery;sa=hide">' . $txt['debug_' . (empty($_SESSION['view_queries']) ? 'show' : 'hide') . '_queries'] . '</a>';
+		// Add a quick link to an HTML5 validator, mostly for debug purposes. Because out of the box, Wedge is as valid as you can realistically get.
+		// If you want to use validator.nu instead, replace the w3.org link with: "http://validator.nu/?doc=', we::$user['url'], '"
+		$temp .= ' - <a href="http://validator.w3.org/check?uri=referer" target="_blank" class="new_win">' . $txt['html5_validation'] . '</a>';
+	}
 	else
 		$temp .= sprintf($txt['debug_queries_used'], $db_count);
 

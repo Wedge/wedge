@@ -651,16 +651,14 @@ function template_footer()
 {
 	global $context, $txt;
 
-	// Show the credits page (forum admin/mod team and credits), and a link to an HTML conformity checker, for geeks.
-	// If you want to use validator.nu instead, replace the w3.org link with:
-	// "http://validator.nu/?doc=', we::$user['url'], '"
+	// Show the credits page (forum admin/mod team and credits).
 	echo '
 	<div id="footer"><div><ul>
 		<li id="copyright">', $txt['copyright'], '</li>
 		<li class="links">
-			<a id="site_credits" href="<URL>?action=credits">', $txt['site_credits'], '</a> |
-			<a id="button_html5" href="http://validator.w3.org/check?uri=referer" target="_blank" class="new_win" title="', $txt['valid_html5'], '">', $txt['html5'], '</a>',
-			empty($context['custom_credits']) ? '' : $context['custom_credits'], '
+			<a id="site_credits" href="<URL>?action=credits">', $txt['site_credits'], '</a>',
+			empty($context['custom_credits']) ? '' : '
+			' . $context['custom_credits'], '
 		</li>';
 
 	// Show the load time?
