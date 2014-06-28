@@ -1113,6 +1113,13 @@ function loadMemberContext($user, $full_profile = false)
 	global $memberContext, $user_profile, $txt, $context, $settings;
 	static $ban_threshold = null, $dataLoaded = array();
 
+	if (is_array($user))
+	{
+		foreach ($user as $uid)
+			loadMemberContext($uid);
+		return;
+	}
+
 	// If this person's data is already loaded, skip it.
 	if (isset($dataLoaded[$user]))
 		return true;
@@ -1288,6 +1295,13 @@ function loadMemberAvatar($user, $force = false)
 {
 	global $settings, $memberContext, $user_profile;
 	static $dataLoaded = array(), $avatar_width = null, $avatar_height = null;
+
+	if (is_array($user))
+	{
+		foreach ($user as $uid)
+			loadMemberAvatar($uid);
+		return;
+	}
 
 	// If this person's avatar is already loaded, skip it.
 	if (isset($dataLoaded[$user]) && !$force)
