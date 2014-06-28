@@ -592,23 +592,73 @@ function template_showPosts()
 }
 
 // Template for showing all the buddies of the current user.
-function template_editBuddies()
+function template_editContactList()
 {
-	global $context, $txt;
+	global $context, $txt, $memberContext;
+
+	// Can they add this member as a buddy?
+	if (!we::$user['is_owner'])
+		return;
 
 	echo '
 		<we:cat>
-			<img src="', ASSETS, '/icons/profile_sm.gif">', $txt['editBuddies'], '
+			<a href="<URL>?action=help;in=contacts" class="help" onclick="return reqWin(this);"></a> <img src="', ASSETS, '/icons/profile_sm.gif">', $txt['editBuddies'], '
 		</we:cat>
 
-		<table class="table_grid w100 cs1 cp4 center">
+		<form name="contacts" method="post" action="<URL>?action=profile;area=contacts;sa=edit;', $context['session_query'], '">
+		<table class="table_grid w100 cs1 cp4">
 			<tr class="catbg">
-				<th class="left" style="width: 20%">', $txt['name'], '</th>
-				<th>', $txt['online_status'], '</th>
-				<th>', $txt['email'], '</th>
+				<th style="width: 1%"></th>
+				<th>', $txt['name'], '</th>
+				<th>', ucfirst($txt['hidden']), '</th>
 				<th>', $txt['buddy_remove'], '</th>
 			</tr>';
 
+	foreach ($context['profile_lists'] as $id_list => $list_row)
+	{
+		$count = count($list_row['members']);
+		echo '
+			<tr><td colspan="5"><div class="privacy_list_', $list_row['list_type'], '"></div>', generic_contacts($list_row['name']), $count ? ' (' . $count . ')' : '', '</td></tr>';
+		foreach ($list_row['members'] as $mid => $row)
+		{
+			$member = $memberContext[$mid];
+			echo '
+			<tr>
+				<td class="right">', empty($member['avatar']) ? '' : '<img src="' . $member['avatar']['href'] . '" class="avatar opaque" style="max-height: 50px; width: auto">', '</td>
+				<td>
+					', $context['can_send_pm'] ? '<a href="' . $member['online']['href'] . '" title="' . $member['online']['text'] . '">' : '', '<img src="', $member['online']['image_href'], '" alt="', $member['online']['text'], '">', $context['can_send_pm'] ? '</a>' : '', '
+					', $member['link'], '
+				</td>
+				<td><input type="checkbox" class="hiddenbox" id="hi_', $id_list, '_', $mid, '"', $row['hidden'] ? ' checked' : '', '></td>
+				<td><input type="button" class="delete" id="re_', $id_list, '_', $mid, '" value="', $txt['remove'], '"></td>
+			</tr>';
+		}
+	}
+
+	add_js('
+	$("input.hiddenbox").click(function () {
+		show_ajax();
+		$.get(
+			weUrl("action=profile;area=contacts;sa=edit;hide;uli=" + this.id.slice(3) + ";" + we_sessvar + "=" + we_sessid),
+			function (chk) {
+				hide_ajax();
+				$(this).prop("checked", chk);
+			}
+		);
+	});
+	$("input.delete").click(function () {
+		$(this).closest("tr").fadeOut(500, function () { $(this).remove(); });
+		$.get(
+			weUrl("action=profile;area=contacts;sa=edit;del;uli=" + this.id.slice(3) + ";" + we_sessvar + "=" + we_sessid)
+		);
+	});');
+
+	echo '
+			</table>
+			</form>
+		</div>';
+
+/*
 	// If they don't have any buddies don't list them!
 	if (empty($context['buddies']))
 		echo '
@@ -658,6 +708,7 @@ function template_editBuddies()
 		', min_chars(), ',
 		sControlId: \'new_buddy\'
 	});');
+*/
 }
 
 // Template for showing the ignore list of the current user.

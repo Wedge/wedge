@@ -1245,7 +1245,7 @@ function editContacts($memID)
 
 	// Create the tabs for the template.
 	$context[$context['profile_menu_name']]['tab_data'] = array(
-		'title' => $txt['editBuddyIgnoreLists'],
+		'title' => $txt['buddies'],
 		'description' => $txt['buddy_ignore_desc'],
 		'icon' => 'profile_sm.gif',
 		'tabs' => array(
@@ -1486,8 +1486,107 @@ function editContactList($memID)
 		// Back to the buddy list!
 		redirectexit('action=profile;u=' . $memID . ';area=lists;sa=buddies');
 	}
+	elseif (isset($_GET['uli']))
+	{
+		checkSession('get');
+		$data = explode('_', $_GET['uli']);
 
-	// Get all the users "buddies"...
+		if (isset($_GET['del']))
+		{
+			cache_put_data('contacts_' . $memID, null, 3000);
+			wesql::query('
+				DELETE FROM {db_prefix}contacts
+				WHERE id_member = {int:user}
+				AND id_list = {int:list}
+				AND id_owner = {int:me}',
+				array(
+					'user' => $data[1],
+					'list' => $data[0],
+					'me' => $memID, // Make sure we're the legitimate owner!
+				)
+			);
+			return_raw('ok');
+		}
+
+		wesql::query('
+			UPDATE {db_prefix}contacts
+			SET hidden = !hidden
+			WHERE id_member = {int:user}
+			AND id_list = {int:list}
+			AND id_owner = {int:me}',
+			array(
+				'user' => $data[1],
+				'list' => $data[0],
+				'me' => $memID,
+			)
+		);
+		$request = wesql::query('
+			SELECT hidden
+			FROM {db_prefix}contacts
+			WHERE id_member = {int:user}
+			AND id_list = {int:list}',
+			array(
+				'user' => $data[1],
+				'list' => $data[0],
+			)
+		);
+		list ($hidden) = wesql::fetch_row($request);
+		wesql::free_result($request);
+		return_raw($hidden);
+	}
+
+	// Get the list IDs of your contact lists.
+	$lists = array();
+	$request = wesql::query('
+		SELECT l.id_list, l.name, l.list_type, l.id_owner, l.visibility, l.added, l.position
+		FROM {db_prefix}contact_lists AS l
+		WHERE l.id_owner = {int:user}
+		ORDER BY l.position, l.id_list',
+		array(
+			'user' => $memID,
+		)
+	);
+	while ($row = wesql::fetch_assoc($request))
+		$lists[$row['id_list']] = array_merge($row, array('members' => array()));
+	wesql::free_result($request);
+
+	// Get the member IDs of your contacts.
+	$contacts = array();
+	$request = wesql::query('
+		SELECT
+			c.id_member, c.id_list, c.list_type, c.hidden, c.added, c.position,
+			m.real_name, m.show_online, IFNULL(lo.log_time, 0) AS is_online
+		FROM {db_prefix}contacts AS c
+		INNER JOIN {db_prefix}members AS m ON m.id_member = c.id_member
+		LEFT JOIN {db_prefix}log_online AS lo ON lo.id_member = c.id_member
+		WHERE c.id_owner = {int:user}
+		ORDER BY c.position, c.added',
+		array(
+			'user' => $memID,
+		)
+	);
+	while ($row = wesql::fetch_assoc($request))
+	{
+		$lists[$row['id_list']]['members'][$row['id_member']] = $row;
+		$contacts[$row['id_member']] = $row;
+	}
+	wesql::free_result($request);
+
+	$context['can_send_pm'] = allowedTo('pm_send');
+
+	if (!empty($contacts))
+	{
+		$members = array_keys($contacts);
+		loadMemberData($members, false, 'profile');
+		loadMemberContext($members);
+		loadMemberAvatar($members);
+	}
+
+	$context['profile_contacts'] = $contacts;
+	$context['profile_lists'] = $lists;
+
+
+	// Get all the user's "buddies"...
 	$buddies = array();
 
 	if (!empty($buddiesArray))
