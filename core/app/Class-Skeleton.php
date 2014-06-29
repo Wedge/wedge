@@ -96,12 +96,12 @@ final class weSkeleton
 	/**
 	 * This is where we render the HTML page!
 	 */
-	function render()
+	function render($from = null)
 	{
 		if ($this->id === 'main' && empty($this->layers['default']))
 			fatal_lang_error('default_layer_missing');
-		$here = reset($this->skeleton);
-		$key = key($this->skeleton);
+		$here = $from ? $this->layers[$from] : reset($this->skeleton);
+		$key = $from ? $from : key($this->skeleton);
 		$this->render_recursive($here, $key);
 		$this->skip = array();
 	}
@@ -806,6 +806,7 @@ final class weSkeletonItem
 final class wetem
 {
 	private static $main = null; // container for main skeleton
+	public static $hooks = null; // container for regular hooks; made public so that hooks can deal with it.
 
 	// There can be only one main skeleton.
 	private function __clone()
@@ -821,6 +822,16 @@ final class wetem
 			return;
 
 		self::$main = new weSkeleton('main');
+		self::$hooks = new weSkeleton('hooks');
+		self::$hooks->hide();
+	}
+
+	// This is how you do wetem::add() to a regular hook instead of a skeleton layer.
+	static function add_hook($target, $contents = '')
+	{
+		if (!self::$hooks->has_layer($target))
+			self::$hooks->layer($target, 'default', 'add');
+		return self::$hooks->add($target, $contents);
 	}
 
 	static function has($item)									{ return self::$main->has($item); }
