@@ -260,7 +260,7 @@ class we
 		if (isset($_COOKIE['guest_skin']))
 		{
 			if ($id_member === 0)
-				$user_settings['skin'] = $_COOKIE['guest_skin'];
+				$user_settings['skin'] = $user_settings['skin_mobile'] = $_COOKIE['guest_skin'];
 			else
 			{
 				loadSource('Subs-Auth');
