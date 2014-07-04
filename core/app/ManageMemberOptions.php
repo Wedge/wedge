@@ -577,7 +577,7 @@ function ShowCustomProfiles()
 	}
 	wesql::free_result($request);
 
-	add_jquery_ui();
+	add_js_file('sortable.min.js');
 	add_css('
 	#sortable { width: 98% }');
 }

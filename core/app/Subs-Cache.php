@@ -234,36 +234,6 @@ function add_plugin_js_file($plugin_name, $files = array(), $is_direct_url = fal
 }
 
 /**
- * If you want to use jQuery UI in your plugins, call this simple function.
- * This allows you to ensure it's included once, and uses the correct version
- * of jQuery UI relative to the current version of jQuery used in Wedge.
- * Oh, and please avoid including jQuery UI if you can do without it... So heavy.
- */
-function add_jquery_ui()
-{
-	global $settings;
-	static $done = false;
-
-	if ($done)
-		return;
-	$done = true;
-
-	// !! Note: should we add an $add_css flag to add the CSS file?
-	// http://code.jquery.com/ui/$version/themes/base/jquery-ui.css
-	$version = '1.10.0';
-	$remote = array(
-		'google' =>		'ajax.googleapis.com/ajax/libs/jqueryui/' . $version . '/jquery-ui.min.js',
-		'microsoft' =>	'ajax.aspnetcdn.com/ajax/jquery.ui/' . $version . '/jquery-ui.min.js',
-		'jquery' =>		'code.jquery.com/ui/' . $version . '/jquery-ui.min.js',
-	);
-
-	if (empty($settings['jquery_origin']) || $settings['jquery_origin'] === 'local')
-		add_js_file('jquery-ui-' . $version . '.min.js');
-	else
-		add_js_file('//' . $remote[$settings['jquery_origin']]);
-}
-
-/**
  * This function adds a string to the header's inline CSS.
  * Several strings can be passed as parameters, allowing for easier conversion from an "echo" to an "add_css()" call.
  * Please note that, obviously, this function will do nothing if you call wetem::hide() or generally don't output the HTML head.

@@ -361,8 +361,10 @@ function ManageBoardsMain()
 		$context['board_list'] = &$cat_tree;
 
 		wetem::load('board_list');
-		add_jquery_ui();
-		add_js_file('nested.js');
+		add_js_file(array(
+			'sortable.min.js',
+			'nested.js'
+		));
 	}
 }
 
