@@ -679,6 +679,12 @@ ul.buttonlist extends "ul.reset, .clearfix"
 			left, top: 0
 @endif
 
+input.modify extends .edit_button
+	background-position: 4px -58px
+	background-color: #f0f0d0
+	padding: 3px 5px 4px 26px
+	height: auto
+
 /* Styles for the quick reply area.
 ---------------------------------------------------- */
 

@@ -770,6 +770,6 @@ function template_callback_badge_order()
 			</ul>';
 
 	add_js('
-		$(\'#sortable\').sortable({ handle: \'.handle\' });
-		$(\'#sortable\').disableSelection();');
+	$(\'#sortable\').sortable({ handle: \'.handle\' });
+	$(\'#sortable\').disableSelection();');
 }

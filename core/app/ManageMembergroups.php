@@ -1220,7 +1220,7 @@ function ModifyMembergroupSettings($return_config = false)
 	wetem::load('show_settings');
 
 	// Doing badges is complicated.
-	add_jquery_ui();
+	add_js_file('sortable.min.js');
 	$context['badges'] = array();
 	$request = wesql::query('
 		SELECT id_group, group_name, min_posts, online_color, show_when, display_order, stars

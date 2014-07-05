@@ -175,6 +175,23 @@ function deleteMembers($users, $check_not_admin = false, $merge_to = false)
 			$log_inserts
 		);
 
+	// Lonely!
+	wesql::query('
+		DELETE FROM {db_prefix}contact_lists
+		WHERE id_owner IN ({array_int:users})',
+		array(
+			'users' => $users,
+		)
+	);
+	wesql::query('
+		DELETE FROM {db_prefix}contacts
+		WHERE id_owner IN ({array_int:users})
+		OR id_member IN ({array_int:users})',
+		array(
+			'users' => $users,
+		)
+	);
+
 	// Make these peoples' posts guest posts.
 	wesql::query('
 		UPDATE {db_prefix}messages

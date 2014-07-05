@@ -86,3 +86,4 @@ $txt['debug_query_which_took'] = 'which took %1$s seconds.';
 $txt['debug_query_which_took_at'] = 'which took %1$s seconds at %2$s into request.';
 $txt['debug_show_queries'] = '<strong>Expand Queries</strong>';
 $txt['debug_hide_queries'] = '<strong>Hide Queries</strong>';
+$txt['html5_validation'] = '<strong>HTML5 Validation</strong>';

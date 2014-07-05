@@ -105,11 +105,11 @@ function template_summary()
 		echo '
 			<div id="contacts">
 				<h6><a href="<URL>?action=help;in=contacts" class="help" onclick="return reqWin(this);"></a> ', $txt['buddies'], '</h6>
-				<form name="contacts" method="post" action="<URL>?action=profile;area=contacts;sa=edit;', $context['session_query'], '">
+				<form name="contacts" method="post" action="<URL>?action=profile;area=contacts;', $context['session_query'], '">
 					<input type="hidden" name="uid" value="', $context['id_member'], '">
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">';
 
-		$lists = array_flip(array('custom', 'friends', 'family', 'known', 'work', 'follow', 'restrict'));
+		$lists = array_flip(array('friends', 'family', 'known', 'work', 'follow', 'custom', 'restrict', 'new'));
 		foreach ($lists as $id_list => $dummy)
 			$lists[$id_list] = array();
 
@@ -120,12 +120,19 @@ function template_summary()
 		{
 			if (empty($per_type))
 				$per_type = array($list_type => array('{' . $list_type . '}', $list_type));
+			else
+				$has_physical_list = true;
+			if (empty($has_physical_list) && $list_type === 'new')
+				continue;
 			foreach ($per_type as $id_list => $list)
 			{
+				if ($list_type === 'new' || $list_type === 'restrict')
+					echo '<hr>';
 				$count = isset(we::$user['contacts']['users'][$id_list]) ? count(we::$user['contacts']['users'][$id_list]) : 0;
+				$exists = is_integer($id_list);
 				echo '
-					<label><input type="checkbox" name="c[', $id_list, ']"', is_integer($id_list) && isset(we::$user['contacts']['users'][$id_list][$context['id_member']]) ? ' checked' : '', '> ',
-					'<div class="privacy_list_', $list_type, '"></div>', generic_contacts($list[0]), $count ? ' (' . $count . ')' : '', '</label><br>';
+					<label><input type="checkbox" name="c[', $id_list, ']"', $exists && isset(we::$user['contacts']['users'][$id_list][$context['id_member']]) ? ' checked' : '', '> ',
+					$list_type === 'new' ? '' : '<div class="privacy_list_' . $list_type . '"></div>', $exists ? '' : '<em>', generic_contacts($list[0]), $exists ? '' : '</em>', $count ? ' (' . $count . ')' : '', '</label><br>';
 			}
 		}
 
@@ -592,23 +599,207 @@ function template_showPosts()
 }
 
 // Template for showing all the buddies of the current user.
-function template_editBuddies()
+function template_editContactList()
 {
-	global $context, $txt;
+	global $context, $txt, $memberContext;
 
 	echo '
 		<we:cat>
-			<img src="', ASSETS, '/icons/profile_sm.gif">', $txt['editBuddies'], '
+			<a href="<URL>?action=help;in=contacts" class="help" onclick="return reqWin(this);"></a> <img src="', ASSETS, '/icons/profile_sm.gif">', $txt['editBuddies'], '
 		</we:cat>
 
-		<table class="table_grid w100 cs1 cp4 center">
-			<tr class="catbg">
-				<th class="left" style="width: 20%">', $txt['name'], '</th>
-				<th>', $txt['online_status'], '</th>
-				<th>', $txt['email'], '</th>
-				<th>', $txt['buddy_remove'], '</th>
-			</tr>';
+		<p class="description">
+			', $txt['edit_contacts_desc'], '
+		</p>
 
+		<form name="contacts" method="post" action="<URL>?action=profile;area=contacts;', $context['session_query'], '">';
+
+	$need_sortable = false;
+	foreach ($context['profile_lists'] as $id_list => $list_row)
+	{
+		$count = count($list_row['members']);
+
+		echo '
+			<div style="border: 1px solid #ccc"><div class="padding windowbg" data-id="', $id_list, '">
+				<div>
+					<div class="privacy_list_', $list_row['list_type'], '" style="margin-top: 8px"></div>
+					<strong style="font-size: 120%">', generic_contacts($list_row['name']), '</strong>', $count ? ' <span class="count">(' . $count . ')</span>' : '';
+
+		if (we::$user['is_owner'])
+		{
+			echo '
+					&nbsp;<input type="button" class="modify" style="font-size: 90%" value="', $txt['modify'], '" onclick="$(this).parent().next().slideToggle()">
+				</div>
+				<div class="hide" style="font-size: 90%; border-top: 1px solid #ddd; padding-top: 6px; margin-top: 8px">
+					<label>
+						', $txt['list_type'], '
+						<select class="list_type">';
+
+			foreach (array('friends', 'family', 'known', 'work', 'follow', 'custom', 'restrict') as $lt)
+				echo '
+							<option value="', $lt, '"', $list_row['list_type'] == $lt ? ' selected' : '', '>', $txt['contacts_' . $lt], '</option>', $lt == 'custom' ? '
+							<option class="hr"></option>' : '';
+
+			echo '
+						</select>
+					</label>
+					<label>
+						', $txt['list_name'], '
+						<input class="list_name" style="width: 250px; font-size: 12px; font-family: monospace" value="', westr::safe($list_row['name']), '">
+					</label>
+					<label>
+						', $txt['list_visibility'], '
+						<select class="list_visibility">
+							<option value="everyone"', $list_row['visibility'] == 'everyone' ? ' selected' : '', '>', $txt['list_everyone'], '</option>
+							<option value="all-contacts"', $list_row['visibility'] == 'all-contacts' ? ' selected' : '', '>', $txt['list_all_contacts'], '</option>
+							<option value="just-this-group"', $list_row['visibility'] == 'just-this-group' ? ' selected' : '', '>', $txt['list_just_this_group'], '</option>
+							<option value="just-this-member"', $list_row['visibility'] == 'just-this-member' ? ' selected' : '', '>', $txt['list_just_this_member'], '</option>
+							<option value="just-me"', $list_row['visibility'] == 'just-me' ? ' selected' : '', '>', $txt['list_just_me'], '</option>
+						</select>
+					</label>
+					<input type="button" class="delete" style="font-size: 90%" value="', $txt['remove'], '">';
+		}
+
+		echo '
+				</div>
+			</div>';
+
+		if (!empty($list_row['members']))
+		{
+			if ($can_sort = count($list_row['members']) > 1)
+				add_css_file('pages');
+			$need_sortable |= $can_sort;
+			$first = true;
+			$alt = false;
+
+			echo '
+			<table class="w100 cs1 cp4', $can_sort ? ' sortable' : '', '">';
+
+			foreach ($list_row['members'] as $mid => $row)
+			{
+				$member = $memberContext[$mid];
+				$alt = !$alt;
+				echo '
+				<tr class="windowbg', $alt ? '2' : '', '" data-id="', $mid, '">', $can_sort ? '
+					<td class="handle"></td>' : '', '
+					<td class="right"', $first ? ' style="width: 100px"' : '', '>', empty($member['avatar']) ? '' : '<img src="' . $member['avatar']['href'] . '" class="avatar opaque" style="max-height: 50px; width: auto">', '</td>
+					<td>
+						', $context['can_send_pm'] ? '<a href="' . $member['online']['href'] . '" title="' . $member['online']['text'] . '">' : '', '<img src="', $member['online']['image_href'], '" alt="', $member['online']['text'], '">', $context['can_send_pm'] ? '</a>' : '', '
+						', $member['link'], '
+					</td>
+					<td class="right">
+						<label>', ucfirst($txt['hidden']), ' <input type="checkbox" class="hiddenbox" id="hi_', $id_list, '_', $mid, '"', $row['hidden'] ? ' checked' : '', '></label>
+						<input type="button" class="delete" id="re_', $id_list, '_', $mid, '" value="', $txt['remove'], '">
+					</td>
+				</tr>';
+				$first = false;
+			}
+
+			echo '
+			</table></div>';
+		}
+	}
+
+	if ($need_sortable)
+	{
+		add_js_file('sortable.min.js');
+		add_js('
+	$(".sortable tbody").sortable({
+		axis: "y",
+		handle: ".handle",
+		helper: function (e, ui) {
+			ui.children().each(function () {
+				$(this).width($(this).width());
+			});
+			return ui;
+		},
+		update: function (e, ui) {
+			var alt = "", orders = [];
+			$(this).find("tr").each(function () {
+				alt = alt ? "" : "2";
+				orders.push($(this).attr("class", "windowbg" + alt).data("id"));
+			});
+			$.post(
+				weUrl("action=profile;area=contacts;order;uli=" + $(this).parent().prev().data("id") + ";" + we_sessvar + "=" + we_sessid),
+				{ order: orders.join(",") }
+			);
+		}
+	}).disableSelection();');
+	}
+
+	add_js('
+	$("input.list_name").blur(function () {
+		show_ajax();
+		var that = this;
+		$.post(
+			weUrl("action=profile;area=contacts;name;uli=" + $(this).closest("div[data-id]").data("id") + ";" + we_sessvar + "=" + we_sessid),
+			{ target: $(this).val() },
+			function (name) {
+				hide_ajax();
+				$(that).closest("div[data-id]").find("strong").first().html(name);
+			}
+		);
+	}).keypress(function (e) {
+		if (e.which == 13)
+			$(this).trigger("blur");
+	});
+	$("select.list_type").change(function () {
+		show_ajax();
+		var that = this, type = $(this).val();
+		$.get(
+			weUrl("action=profile;area=contacts;type=" + type + ";uli=" + $(this).closest("div[data-id]").data("id") + ";" + we_sessvar + "=" + we_sessid),
+			function () {
+				hide_ajax();
+				var t = $(that).closest("div[data-id]").find("[class^=privacy_list_]");
+				t.attr("class", "privacy_list_" + type);
+			}
+		);
+		var $name = $(this).parent().next().find("input");
+		if ($name.val().indexOf("{") === 0)
+			$name.val("{" + $(this).val() + "}").trigger("blur");
+	});
+	$("select.list_visibility").change(function () {
+		show_ajax();
+		$.get(
+			weUrl("action=profile;area=contacts;visi;to=" + $(this).val() + ";uli=" + $(this).closest("div[data-id]").data("id") + ";" + we_sessvar + "=" + we_sessid),
+			function (chk) {
+				hide_ajax();
+				$(this).val(chk);
+			}
+		);
+	});
+	$("input.hiddenbox").click(function () {
+		show_ajax();
+		$.get(
+			weUrl("action=profile;area=contacts;hide;uli=" + this.id.slice(3) + ";" + we_sessvar + "=" + we_sessid),
+			function (chk) {
+				hide_ajax();
+				$(this).prop("checked", chk);
+			}
+		);
+	});
+	$("input.delete").click(function () {
+		var that = this, id = this.id ? this.id.slice(3) : $(this).closest("div[data-id]").data("id");
+		ask(' . JavaScriptEscape($txt['generic_confirm_request']) . ', "", function (ok) {
+			if (!ok)
+				return;
+			var $count = $("div[data-id=" + parseInt(id) + "]").find(".count").first();
+			if ($count.length)
+				$count.text("(" + Math.max(0, $count.text().slice(1, -1) - 1) + ")");
+			$.get(
+				weUrl("action=profile;area=contacts;del;uli=" + id + ";" + we_sessvar + "=" + we_sessid)
+			);
+			$(that).closest((id + "").indexOf("_") == -1 ? "div[data-id]" : "tr").fadeOut(500, function () {
+				$(this).remove();
+			});
+		});
+	});');
+
+	echo '
+		</table>
+		</form>';
+
+/*
 	// If they don't have any buddies don't list them!
 	if (empty($context['buddies']))
 		echo '
@@ -658,6 +849,7 @@ function template_editBuddies()
 		', min_chars(), ',
 		sControlId: \'new_buddy\'
 	});');
+*/
 }
 
 // Template for showing the ignore list of the current user.

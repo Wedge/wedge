@@ -138,3 +138,15 @@ fieldset.merge_options
 	width: 80%
 	margin: auto
 	padding: 25px 0 10px
+
+/* Styles for profile pages.
+---------------------------------------------------- */
+
+.sortable td.handle
+	border: 1px dotted gray
+	border-left: 0
+	padding: 1px
+	width: 7px !important
+	background: linear-gradient(90deg, #bbb 0px, transparent 1px, transparent 3px)
+	background-size: 3px 10px
+	cursor: n-resize

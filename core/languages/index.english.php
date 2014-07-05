@@ -495,10 +495,6 @@ $txt['feed_everywhere'] = 'All:';
 $txt['feed_posts'] = '<a href="%1$s">posts</a>';
 $txt['feed_topics'] = '<a href="%1$s">topics</a>';
 
-// Footer strings
-$txt['valid_html5'] = 'Valid HTML5!';
-$txt['html5'] = 'HTML5';
-
 $txt['guest'] = 'Guest';
 $txt['guests'] = 'Guests';
 $txt['user'] = 'User';
@@ -513,7 +509,8 @@ $txt['contacts_work'] = 'Colleagues';
 $txt['contacts_family'] = 'Family';
 $txt['contacts_follow'] = 'Followed';
 $txt['contacts_restrict'] = 'Restricted';
-$txt['contacts_custom'] = '<em>New list</em>';
+$txt['contacts_custom'] = 'Other';
+$txt['contacts_new'] = 'New list';
 $txt['is_buddy'] = 'Is in my contact list';
 $txt['is_not_buddy'] = 'Isn\'t in my contact list';
 

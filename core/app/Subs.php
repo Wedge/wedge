@@ -2383,6 +2383,9 @@ function call_hook($hook, $parameters = array(), $plugin_id = '')
 {
 	global $settings;
 
+	if (wetem::$hooks && wetem::$hooks->has($hook))
+		wetem::$hooks->render($hook);
+
 	if (empty($settings['hooks'][$hook]))
 		return array();
 

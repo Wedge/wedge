@@ -1233,32 +1233,21 @@ function editContacts($memID)
 	global $context, $txt, $settings;
 
 	// Do a quick check to ensure people aren't getting here illegally!
-	if (!we::$user['is_owner'] || empty($settings['enable_buddylist']))
+	if (empty($settings['enable_buddylist']))
 		fatal_lang_error('no_access', false);
 
-	$subActions = array(
-		'new' => array('addContactList', $txt['editBuddies']),
-		'edit' => array('editContactList', $txt['editIgnoreList']),
-	);
-
-	$context['list_area'] = isset($_GET['sa'], $subActions[$_GET['sa']]) ? $_GET['sa'] : 'buddies';
-
-	// Create the tabs for the template.
-	$context[$context['profile_menu_name']]['tab_data'] = array(
-		'title' => $txt['editBuddyIgnoreLists'],
-		'description' => $txt['buddy_ignore_desc'],
-		'icon' => 'profile_sm.gif',
-		'tabs' => array(
-			'new' => array(),
-			'edit' => array(),
-		),
-	);
+//	$subActions = array(
+//		'new' => array('addContactList', $txt['editBuddies']),
+//		'edit' => array('editContactList', $txt['editIgnoreList']),
+//	);
 
 	// Pass on to the actual function.
-	wetem::load($subActions[$context['list_area']][0]);
-	$subActions[$context['list_area']][0]($memID);
+	wetem::load('editContactList');
+	editContactList($memID);
 }
 
+// !! Currently not being used; to remove.
+/*
 function addContactList($memID)
 {
 	global $context, $user_profile, $memberContext;
@@ -1361,6 +1350,7 @@ function addContactList($memID)
 		$context['buddies'][$buddy] = $memberContext[$buddy];
 	}
 }
+*/
 
 function editContactList($memID)
 {
@@ -1368,9 +1358,11 @@ function editContactList($memID)
 
 	// For making changes!
 	$buddiesArray = array_filter(explode(',', $user_profile[$memID]['buddy_list']));
+	$canChangeOther = allowedTo('profile_extra_any');
+	$canChange = $canChangeOther || allowedTo('profile_extra_own');
 
 	// Adding or removing a contact from one or more lists, maybe..?
-	if (isset($_POST['uid']))
+	if (isset($_POST['uid']) && $canChange)
 	{
 		checkSession('post');
 
@@ -1385,6 +1377,9 @@ function editContactList($memID)
 		{
 			if ((int) $clist == 0)
 			{
+				// 'New lists' should be of the custom type by default.
+				if ($clist === 'new')
+					$clist = 'custom';
 				wesql::insert('ignore',
 					'{db_prefix}contact_lists',
 					array('id_owner' => 'int', 'name' => 'string', 'list_type' => 'string', 'added' => 'int'),
@@ -1411,21 +1406,47 @@ function editContactList($memID)
 				wesql::query('
 					DELETE FROM {db_prefix}contacts
 					WHERE id_member = {int:user}
-					AND id_list = {int:list}
-					AND id_owner = {int:me}',
+					AND id_list = {int:list}' . ($canChangeOther ? '' : '
+					AND id_owner = {int:me}'),
 					array(
 						'user' => $user,
 						'list' => $clist,
 						'me' => $memID, // Make sure we're the legitimate owner!
 					)
 				);
+
+			// At this point, would be nice to know if we're friendly to each other.
+/*			$request = wesql::query('
+				SELECT id_list FROM {db_prefix}contacts
+				WHERE (id_owner = {int:user} AND id_member = {int:me} AND list_type != {literal:restrict})
+				OR (id_owner = {int:me} AND id_member = {int:user} AND list_type != {literal:restrict})',
+				array(
+					'user' => $user,
+					'me' => we::$id,
+				)
+			);
+			$is_synchronous = wesql::num_rows($request) > 0;
+			wesql::free_result($request);
+
+			// And then save it. Not sure it'll be very useful, but it's not too costly...
+			wesql::query('
+				UPDATE {db_prefix}contacts
+				SET id_synchronous = {int:sync}
+				WHERE (id_owner = {int:user} AND id_member = {int:me})
+				OR (id_owner = {int:me} AND id_member = {int:user})',
+				array(
+					'user' => $user,
+					'me' => we::$id,
+					'sync' => (int) $is_synchronous,
+				)
+			);*/
 		}
 		cache_put_data('contacts_' . $memID, null, 3000);
 		redirectexit('action=profile;u=' . $user);
 	}
 
-	// !! The rest should be removed, once it's all set and done.
-
+	// !! This should be removed, once it's all set and done.
+/*
 	// Removing a buddy?
 	if (isset($_GET['remove']))
 	{
@@ -1486,8 +1507,149 @@ function editContactList($memID)
 		// Back to the buddy list!
 		redirectexit('action=profile;u=' . $memID . ';area=lists;sa=buddies');
 	}
+*/
 
-	// Get all the users "buddies"...
+	if (isset($_GET['uli']) && $canChange)
+	{
+		checkSession('get');
+		$data = explode('_', $_GET['uli']);
+
+		// Deleting a contact from a list, or an entire list..?
+		if (isset($_GET['del']))
+		{
+			cache_put_data('contacts_' . $memID, null, 3000);
+			wesql::query('
+				DELETE FROM {db_prefix}contacts
+				WHERE ' . (isset($data[1]) ? 'id_member = {int:user}
+				AND ' : '') . 'id_list = {int:list}' . ($canChangeOther ? '' : '
+				AND id_owner = {int:me}'),
+				array(
+					'user' => isset($data[1]) ? $data[1] : 0,
+					'list' => $data[0],
+					'me' => $memID, // Make sure we're the legitimate owner!
+				)
+			);
+			if (!isset($data[1]))
+				wesql::query('
+					DELETE FROM {db_prefix}contact_lists
+					WHERE id_list = {int:list}' . ($canChangeOther ? '' : '
+					AND id_owner = {int:me}'),
+					array(
+						'list' => $data[0],
+						'me' => $memID, // Make sure we're the legitimate owner!
+					)
+				);
+			return_raw('ok');
+		}
+
+		if (isset($_GET['order'], $_POST['order']))
+		{
+			$query = '
+				UPDATE {db_prefix}contacts
+				SET position = CASE id_member';
+
+			foreach (explode(',', $_POST['order']) as $sort => $id)
+				$query .= '
+					WHEN ' . (int) $id . ' THEN ' . (int) $sort;
+
+			$query .= '
+					ELSE 0
+				END
+				WHERE id_list = {int:list}' . ($canChangeOther ? '' : '
+				AND id_owner = {int:me}');
+
+			wesql::query($query, array('list' => $data[0]));
+			return_raw('ok');
+		}
+
+		if (isset($_GET['name']) || isset($_GET['type']) || isset($_GET['visi']))
+		{
+			$what = isset($_GET['name']) ? 'name' : (isset($_GET['type']) ? 'list_type' : (isset($_GET['visi']) ? 'visibility' : ''));
+			$target = isset($_GET['name']) ? $_POST['target'] : (isset($_GET['type']) ? $_GET['type'] : (isset($_GET['visi']) ? $_GET['to'] : ''));
+			cache_put_data('contacts_' . $memID, null, 3000);
+			wesql::query('
+				UPDATE {db_prefix}contact_lists
+				SET ' . $what . ' = {string:target}
+				WHERE id_list = {int:list}' . ($canChangeOther ? '' : '
+				AND id_owner = {int:me}'),
+				array(
+					'target' => $target,
+					'list' => $data[0],
+					'me' => $memID,
+				)
+			);
+			return_raw(isset($_GET['name']) ? generic_contacts($target) : $target);
+		}
+
+		$request = wesql::query('
+			SELECT hidden
+			FROM {db_prefix}contacts
+			WHERE id_member = {int:user}
+			AND id_list = {int:list}' . ($canChangeOther ? '' : '
+			AND id_owner = {int:me}'),
+			array(
+				'user' => $data[1],
+				'list' => $data[0],
+			)
+		);
+		list ($hidden) = wesql::fetch_row($request);
+		wesql::free_result($request);
+		return_raw($hidden);
+	}
+
+	// Get the list IDs of your contact lists.
+	$lists = array();
+	$request = wesql::query('
+		SELECT l.id_list, l.name, l.list_type, l.id_owner, l.visibility, l.added, l.position
+		FROM {db_prefix}contact_lists AS l
+		WHERE l.id_owner = {int:user}
+		ORDER BY l.position, l.id_list',
+		array(
+			'user' => $memID,
+		)
+	);
+	while ($row = wesql::fetch_assoc($request))
+		$lists[$row['id_list']] = array_merge($row, array('members' => array()));
+	wesql::free_result($request);
+
+	// Get the member IDs of your contacts.
+	$contacts = array();
+	$request = wesql::query('
+		SELECT
+			c.id_member, c.id_list, c.list_type, c.hidden, c.added, c.position,
+			m.real_name, m.show_online, IFNULL(lo.log_time, 0) AS is_online
+		FROM {db_prefix}contacts AS c
+		INNER JOIN {db_prefix}members AS m ON m.id_member = c.id_member
+		LEFT JOIN {db_prefix}log_online AS lo ON lo.id_member = c.id_member
+		WHERE c.id_owner = {int:user}
+		ORDER BY c.position, c.added',
+		array(
+			'user' => $memID,
+		)
+	);
+	while ($row = wesql::fetch_assoc($request))
+	{
+		$lists[$row['id_list']]['members'][$row['id_member']] = $row;
+		$contacts[$row['id_member']] = $row;
+	}
+	wesql::free_result($request);
+
+	$context['can_send_pm'] = allowedTo('pm_send');
+
+	if (!empty($contacts))
+	{
+		$members = array_keys($contacts);
+		loadMemberData($members, false, 'profile');
+		loadMemberContext($members);
+		loadMemberAvatar($members);
+	}
+
+	$context['profile_contacts'] = $contacts;
+	$context['profile_lists'] = $lists;
+
+	// !! This should be removed, once it's all set and done.
+	// Get all the user's "buddies"...
+/*
 	$buddies = array();
 
 	if (!empty($buddiesArray))
@@ -1520,6 +1682,7 @@ function editContactList($memID)
 		loadMemberContext($buddy);
 		$context['buddies'][$buddy] = $memberContext[$buddy];
 	}
+*/
 }
 
 // Show all the user's buddies, as well as an add/delete interface.

@@ -220,8 +220,8 @@ function template_boards_newsfader()
 		</we:cat>
 		<ul class="reset" id="fadeScroller">';
 
-			foreach ($context['news_lines'] as $news)
-				echo '
+		foreach ($context['news_lines'] as $news)
+			echo '
 			<li>', $news, '</li>';
 
 		echo '

@@ -45,7 +45,7 @@ function template_display_posts($is_blog = false)
 
 	$ignoredMsgs = array();
 	$message_skeleton = new weSkeleton('msg');
-	if (!empty($context['blog_comments']))
+	if (!empty($context['blog_comments'])) // After a blog post? Simplify comments.
 	{
 		$message_skeleton->remove('msg_author_blurb');
 		$message_skeleton->remove('msg_author_icons');
@@ -58,6 +58,7 @@ function template_display_posts($is_blog = false)
 	}
 
 	// Get all the messages...
+	$number = 0;
 	while ($msg = $context['get_message']())
 	{
 		$context['ignoring'] = false;
@@ -90,7 +91,8 @@ function template_display_posts($is_blog = false)
 		// And finally... Render the skeleton for this message!
 		$message_skeleton->render();
 
-		// Called for a blog post..? Then it should be unique.
+		if (!$number++)
+			call_hook('first_post_done');
 		if ($context['blog_comments'] = $is_blog)
 			break;
 	}

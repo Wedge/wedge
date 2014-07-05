@@ -333,11 +333,20 @@ $txt['posts_per_day'] = 'per day';
 
 $txt['pm_settings_desc'] = 'From this page you can change a variety of personal messaging options, including how messages are displayed and who may send them to you.';
 
-$txt['buddy_ignore_desc'] = 'This area allows you to maintain your contacts and ignore list for this forum. Adding members to these lists will, amongst other things, help control mail and PM traffic, depending on your preferences.';
+$txt['edit_contacts_desc'] = 'This area allows you to manage your contact lists for this forum. Add members to list to control how they can access your content.';
 
 $txt['buddy_add'] = 'Add to...';
 $txt['buddy_remove'] = 'Remove from...';
 $txt['no_buddies'] = 'You currently have no contacts';
+
+$txt['list_type'] = 'Type';
+$txt['list_name'] = 'Name';
+$txt['list_visibility'] = 'Who can see this?';
+$txt['list_everyone'] = 'Everyone|Everyone will be able to see this contact list and its members.';
+$txt['list_all_contacts'] = 'All my contacts|My contacts will be able to see who\'s part of this list, even if they\'re not in it.';
+$txt['list_just_this_group'] = 'Contacts in this list|Contacts in this list will see themselves and everyone in the list.';
+$txt['list_just_this_member'] = 'Individual contacts|Contacts in this list will see they\'re in it, but won\'t see who else is.';
+$txt['list_just_me'] = 'Just me|No one will see this list.';
 
 $txt['ignore_add'] = 'Add To Ignore List';
 $txt['ignore_remove'] = 'Remove From Ignore List';

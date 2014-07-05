@@ -215,7 +215,7 @@ function create_main_htaccess()
 	$file .= '
 
 <IfModule mod_headers.c>
-	<FilesMatch "avatar_[0-9]_[0-9]+\.(jpg|jpeg|png|gif)$">
+	<FilesMatch "avatar_[0-9]+_[0-9]+\.(jpg|jpeg|png|gif)$">
 		Header set Expires "Thu, 21 March 2025 03:42:00 GMT"
 	</FilesMatch>
 </IfModule>';

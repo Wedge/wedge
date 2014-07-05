@@ -245,7 +245,7 @@ function EditNews()
 				'parsed' => preg_replace('~<([/]?)form[^>]*?[>]*>~i', '<em class="smalltext">&lt;$1form&gt;</em>', parse_bbc(substr($line, 1), 'news')),
 			);
 
-	add_jquery_ui();
+	add_js_file('sortable.min.js');
 	add_css('
 	#sortable { width: 98% } #sortable .floatright { margin-left: 1em; margin-right: 1em }');
 	wetem::load('edit_news');
