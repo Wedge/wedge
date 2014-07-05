@@ -836,11 +836,6 @@ input.new mixes .button-padding
 	background: url($images/buttons/new.png) 5px center no-repeat
 	background-color: #e0eaf6
 
-// Let's un-raw this once we start using it a bit more, all right..?
-input.modify mixes .button-padding
-	background: raw-url($images/buttons/modify.gif) 5px center no-repeat
-	background-color: #f3f3c8
-
 input.cancel
 	background-color: #fff0e3
 	padding-left: 5px

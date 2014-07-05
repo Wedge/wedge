@@ -509,7 +509,8 @@ $txt['contacts_work'] = 'Colleagues';
 $txt['contacts_family'] = 'Family';
 $txt['contacts_follow'] = 'Followed';
 $txt['contacts_restrict'] = 'Restricted';
-$txt['contacts_custom'] = '<em>New list</em>';
+$txt['contacts_custom'] = 'Other';
+$txt['contacts_new'] = 'New list';
 $txt['is_buddy'] = 'Is in my contact list';
 $txt['is_not_buddy'] = 'Isn\'t in my contact list';
 

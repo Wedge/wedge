@@ -235,17 +235,14 @@ function ModifyProfile($post_errors = array())
 					),
 				),
 				'contacts' => array(
-					'label' => $txt['editBuddyIgnoreLists'],
+					'label' => $txt['buddies'],
 					'file' => 'Profile-Modify',
 					'function' => 'editContacts',
-					'enabled' => false, // !! !empty($settings['enable_buddylist']) && we::$user['is_owner'],
+					'enabled' => !empty($settings['enable_buddylist']),
 					'sc' => 'post',
-					'subsections' => array(
-						'edit' => array($txt['editBuddies']),
-					),
 					'permission' => array(
 						'own' => array('profile_extra_any', 'profile_extra_own'),
-						'any' => array(),
+						'any' => array('profile_extra_any'),
 					),
 				),
 				'lists' => array(
