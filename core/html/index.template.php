@@ -221,7 +221,8 @@ function template_logo_toggler()
 {
 	global $options;
 
-	echo '
+	if (we::$is_member)
+		echo '
 			<div id="upshrink"', empty($options['collapse_header']) ? ' class="fold"' : '', '>›</div>';
 }
 

@@ -621,16 +621,18 @@ $(function ()
 
 $(window).load(function ()
 {
-	$('#upshrink').attr('title', $txt['upshrink_description']);
+	@if member {
+		$('#upshrink').attr('title', $txt['upshrink_description']);
 
-	// You may change the ID names for the elements in the index template,
-	// but you'll have to add_js() the code below, with the new IDs in place.
-	new weToggle({
-		isCollapsed: !!window.we_colhead,
-		aSwapContainers: ['banner'],
-		aSwapImages: ['upshrink'],
-		sOption: 'collapse_header'
-	});
+		// You may change the ID names for the elements in the index template,
+		// but you'll have to add_js() the code below, with the new IDs in place.
+		new weToggle({
+			isCollapsed: !!window.we_colhead,
+			aSwapContainers: ['banner'],
+			aSwapImages: ['upshrink'],
+			sOption: 'collapse_header'
+		});
+	}
 
 	// Show a pop-up with more options when focusing the quick search box.
 	var opened, $pop = $('<div class="mimenu right">').appendTo($('#search_form').addClass('mime'));
