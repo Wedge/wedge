@@ -314,6 +314,7 @@ class we
 			'users' => array(),
 			'groups' => array(),
 			'ignored' => array(),
+			'all' => array(),
 			'privacy' => PRIVACY_DEFAULT,
 		);
 
@@ -333,9 +334,8 @@ class we
 				);
 				while ($row = wesql::fetch_assoc($request))
 				{
-					// A list of ignored users can always be useful, can't it..?
-					if ($row['list_type'] == 'restrict')
-						$temp['ignored'][$row['id_member']] = 1;
+					// Make sure to ignore restricted users.
+					$temp[$row['list_type'] == 'restrict' ? 'ignored' : 'all'][$row['id_member']] = 1;
 					$temp['users'][$row['id_list']][$row['id_member']] = 1;
 				}
 				wesql::free_result($request);
@@ -408,6 +408,8 @@ class we
 		$user['contacts'] = $temp;
 		$user['groups'] = array_flip(array_flip($user['groups']));
 		$user['privacy_list'] =& $temp['privacy'];
+		$user['buddies'] = array_keys($temp['all']);
+		unset($temp['all']);
 
 		$is = array(
 			'guest' => $id_member == 0,
