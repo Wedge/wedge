@@ -178,6 +178,7 @@ function Recent()
 				SELECT m.id_msg
 				FROM {db_prefix}messages AS m
 					INNER JOIN {db_prefix}boards AS b ON (b.id_board = m.id_board)
+					INNER JOIN {db_prefix}topics AS t ON (t.id_topic = m.id_topic) AND {query_see_topic}
 				WHERE ' . $query_this_board . '
 					AND m.approved = {int:is_approved}
 				ORDER BY m.id_msg DESC
