@@ -1845,6 +1845,16 @@ function get_privacy_type($privacy)
 		($privacy > 99 ? (isset(we::$user['contacts']['lists'][$privacy][1]) ? 'list_' . we::$user['contacts']['lists'][$privacy][1] : 'list') : ''))));
 }
 
+function get_privacy_icon($privacy)
+{
+	global $txt;
+
+	if (!($type = get_privacy_type($privacy)) || $type === 'public')
+		return '';
+
+	return '<div class="privacy_' . $type . '" title="' . (strpos($type, 'list') === 0 ? $txt['privacy_list'] : $txt['privacy_' . $type]) . '"></div>';
+}
+
 function get_privacy_options($privacy = null)
 {
 	global $txt;
