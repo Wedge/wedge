@@ -532,6 +532,7 @@ function rebuildModCache()
 
 	// Then, same again, just the boards this time!
 	$board_query = allowedTo('moderate_forum') ? '1=1' : '0=1';
+	$boards_mod = array();
 
 	if (we::$is_member)
 	{
@@ -545,7 +546,6 @@ function rebuildModCache()
 			WHERE id_member = {int:me}',
 			array('me' => MID)
 		);
-		$boards_mod = array();
 		while ($row = wesql::fetch_assoc($request))
 			$boards_mod[] = $row['id_board'];
 		wesql::free_result($request);
