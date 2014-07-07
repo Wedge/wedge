@@ -513,58 +513,43 @@ function rebuildModCache()
 	// What groups can they moderate?
 	$group_query = allowedTo('manage_membergroups') ? '1=1' : '0=1';
 
-	if ($group_query == '0=1')
+	if ($group_query === '0=1')
 	{
 		$request = wesql::query('
 			SELECT id_group
 			FROM {db_prefix}group_moderators
-			WHERE id_member = {int:current_member}',
-			array(
-				'current_member' => MID,
-			)
+			WHERE id_member = {int:me}',
+			array('me' => MID)
 		);
 		$groups = array();
 		while ($row = wesql::fetch_assoc($request))
 			$groups[] = $row['id_group'];
 		wesql::free_result($request);
 
-		if (empty($groups))
-			$group_query = '0=1';
-		else
+		if (!empty($groups))
 			$group_query = 'id_group IN (' . implode(',', $groups) . ')';
 	}
 
 	// Then, same again, just the boards this time!
 	$board_query = allowedTo('moderate_forum') ? '1=1' : '0=1';
 
-	if ($board_query == '0=1')
-	{
-		$boards = boardsAllowedTo('moderate_board', true);
-
-		if (empty($boards))
-			$board_query = '0=1';
-		else
-			$board_query = 'id_board IN (' . implode(',', $boards) . ')';
-	}
-
-	// What boards are they the moderator of?
-	$boards_mod = array();
 	if (we::$is_member)
 	{
+		if ($board_query === '0=1' && count($boards = boardsAllowedTo('moderate_board', true)) > 0)
+			$board_query = 'id_board IN (' . implode(',', $boards) . ')';
+
+		// What boards can they moderate?
 		$request = wesql::query('
 			SELECT id_board
 			FROM {db_prefix}moderators
-			WHERE id_member = {int:current_member}',
-			array(
-				'current_member' => MID,
-			)
+			WHERE id_member = {int:me}',
+			array('me' => MID)
 		);
+		$boards_mod = array();
 		while ($row = wesql::fetch_assoc($request))
 			$boards_mod[] = $row['id_board'];
 		wesql::free_result($request);
 	}
-
-	$mod_query = empty($boards_mod) ? '0=1' : 'b.id_board IN (' . implode(',', $boards_mod) . ')';
 
 	$_SESSION['mc'] = array(
 		'time' => time(),
@@ -574,7 +559,7 @@ function rebuildModCache()
 		'bq' => $board_query,
 		'ap' => boardsAllowedTo('approve_posts'),
 		'mb' => $boards_mod,
-		'mq' => $mod_query,
+		'mq' => empty($boards_mod) ? '0=1' : 'b.id_board IN (' . implode(',', $boards_mod) . ')',
 	);
 
 	we::$user['mod_cache'] = $_SESSION['mc'];
