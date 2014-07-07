@@ -712,13 +712,13 @@ function sendpm($recipients, $subject, $message, $store_outbox = true, $from = n
 // Prepare text strings for sending as email body or header.
 function mimespecialchars($string, $with_charset = true, $hotmail_fix = false, $br = "\r\n")
 {
-	// This is the fun part....
-	if (preg_match('~&#\d{2,8};~', $string) && !$hotmail_fix)
-		$string = westr::entity_to_utf8($string);
-
 	// Convert all special characters to HTML entities... just for Hotmail :-\
 	if ($hotmail_fix)
 		return array(westr::utf8_to_entity($string), '7bit');
+
+	// This is the fun part....
+	if (preg_match('~&#\d{2,8};~', $string))
+		$string = westr::entity_to_utf8($string);
 
 	// We don't need to mess with the body if no special characters are in it...
 	if (preg_match('~[^\x09\x0a\x0d\x20-\x7f]~', $string))
