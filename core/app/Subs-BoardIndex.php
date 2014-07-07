@@ -39,16 +39,17 @@ function getBoardIndex($boardIndexOptions)
 		SELECT' . ($boardIndexOptions['include_categories'] ? '
 			c.id_cat, c.name AS cat_name, c.cat_order,' : '') . '
 			b.id_board, b.name AS board_name, b.description,
-			CASE WHEN b.redirect != {string:blank_string} THEN 1 ELSE 0 END AS is_redirect, b.redirect_newtab,
+			CASE WHEN b.redirect != {empty} THEN 1 ELSE 0 END AS is_redirect, b.redirect_newtab,
 			b.num_posts, b.num_topics, b.unapproved_posts, b.unapproved_topics, b.id_parent, b.language,
 			IFNULL(m.poster_time, 0) AS poster_time, IFNULL(mem.member_name, m.poster_name) AS poster_name,
 			m.subject, m.id_topic, IFNULL(mem.real_name, m.poster_name) AS real_name, b.offlimits_msg,' . ($boardIndexOptions['include_categories'] ? '
 			c.can_collapse, IFNULL(cc.id_member, 0) AS is_collapsed,' : '') . '
-			IFNULL(mem.id_member, 0) AS id_member, m.id_msg,
+			IFNULL(mem.id_member, 0) AS id_member, m.id_msg, t.id_topic AS topic_exists,
 			IFNULL(mods_mem.id_member, 0) AS id_moderator, mods_mem.real_name AS mod_real_name
 		FROM {db_prefix}boards AS b' . ($boardIndexOptions['include_categories'] ? '
 			LEFT JOIN {db_prefix}categories AS c ON (c.id_cat = b.id_cat)' : '') . '
 			LEFT JOIN {db_prefix}messages AS m ON (m.id_msg = b.id_last_msg)
+			LEFT JOIN {db_prefix}topics AS t ON (m.id_topic = m.id_msg) AND {query_see_topic}
 			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = m.id_member)' . ($boardIndexOptions['include_categories'] ? '
 			LEFT JOIN {db_prefix}collapsed_categories AS cc ON (cc.id_cat = c.id_cat AND cc.id_member = {int:current_member})' : '') . '
 			LEFT JOIN {db_prefix}moderators AS mods ON (mods.id_board = b.id_board)
@@ -62,7 +63,6 @@ function getBoardIndex($boardIndexOptions)
 			'current_member' => MID,
 			'child_level' => $boardIndexOptions['base_level'],
 			'category' => $boardIndexOptions['category'],
-			'blank_string' => '',
 		)
 	);
 
@@ -78,6 +78,33 @@ function getBoardIndex($boardIndexOptions)
 	// Run through the categories and boards (or only boards)....
 	while ($row_board = wesql::fetch_assoc($result_boards))
 	{
+		// If our Last Message in this particular board isn't visible to us, we should recalculate it.
+		// This has a small cost, but it's better than hurting people by saying they can't read something.
+		if (empty($row_board['topic_exists']) && $row_board['num_topics'] > 0)
+		{
+			$visible_board = wesql::query_get('
+				SELECT
+					IFNULL(m.poster_time, 0) AS poster_time, IFNULL(mem.member_name, m.poster_name) AS poster_name,
+					m.subject, m.id_topic, IFNULL(mem.real_name, m.poster_name) AS real_name,
+					IFNULL(mem.id_member, 0) AS id_member, m.id_msg
+				FROM {db_prefix}boards AS b
+					INNER JOIN {db_prefix}topics AS t ON (t.id_board = b.id_board) AND {query_see_topic}
+					LEFT JOIN {db_prefix}messages AS m ON (m.id_msg = t.id_last_msg)
+					LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = m.id_member)
+				WHERE b.id_board = {int:board}
+				ORDER BY m.id_msg DESC
+				LIMIT 1',
+				array(
+					'board' => $row_board['id_board'],
+				)
+			);
+			// If we have no visible topics in this board, it probably means it's a secret board we forgot to hide. Just skip it, then!
+			// !! Should we insist on showing it, though..?
+			if (empty($visible_board))
+				continue;
+			$row_board = array_merge($row_board, $visible_board);
+		}
+
 		// Perhaps we are ignoring this board?
 		$ignoreThisBoard = in_array($row_board['id_board'], we::$user['ignoreboards']);
 
