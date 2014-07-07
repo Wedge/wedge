@@ -692,7 +692,7 @@ class wesql
 		if ($result === false)
 			return array();
 		if (function_exists('mysqli_fetch_all')) // mysqlnd enabled, valid request?
-			return (array) mysqli_fetch_all($result, MYSQLI_ASSOC);
+			return (array) mysqli_fetch_all($result, $type);
 		$arr = array();
 		$func_name = $type === MYSQLI_ASSOC ? 'mysqli_fetch_assoc' : 'mysqli_fetch_row';
 		while ($row = $func_name($result))
