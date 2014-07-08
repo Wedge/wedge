@@ -95,3 +95,12 @@ function upgrade_step_3()
 {
 	return wedb::drop_table('{db_prefix}log_boards');
 }
+
+// 1.0-alpha-1, July 2014. Adding index to sessions to prevent a possible slow query.
+function upgrade_step_4()
+{
+	$request = wesql::query('
+	ALTER TABLE
+		{db_prefix}sessions
+	ADD KEY 'last_update' ('last_update')');
+}
