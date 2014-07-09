@@ -102,5 +102,5 @@ function upgrade_step_4()
 	$request = wesql::query('
 	ALTER TABLE
 		{db_prefix}sessions
-	ADD KEY 'last_update' ('last_update')');
+	ADD KEY last_update (last_update)');
 }
