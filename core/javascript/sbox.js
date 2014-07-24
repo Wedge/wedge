@@ -29,7 +29,7 @@
 		var
 			keyfunc = is_opera ? 'keypress.sb keydown.sb' : 'keydown.sb',
 			fixed = $orig.hasClass('fixed'), // Should dropdown expand to widest and display conform to whatever is selected?
-			resizeTimeout,
+			resize_timeout,
 			via_keyboard,
 			has_changed,
 			scrollbar,
@@ -119,7 +119,7 @@
 					.mousedown(false) // Prevent double clicks
 					.hover(function () { $(this).toggleClass('hover'); })
 					// When the user explicitly clicks the display. closeAndUnbind calls closeSB and cancels the current selection.
-					.click(function () { $sb.hasClass('open') ? closeAndUnbind(1) : openSB(0, 1); });
+					.click(displayClick);
 				$items.not('.disabled')
 					.hover(
 						// Use selectItem() instead of setSelected() to do the display animation on hover.
@@ -135,8 +135,8 @@
 				if (!is_ie8down)
 					$(window).on('resize.sb', function ()
 					{
-						clearTimeout(resizeTimeout);
-						resizeTimeout = setTimeout(function () { if ($sb.hasClass('open')) openSB(1); }, 50);
+						clearTimeout(resize_timeout);
+						resize_timeout = setTimeout(function () { if ($sb.hasClass('open')) openSB(1); }, 50);
 					});
 			}
 			else
@@ -214,6 +214,10 @@
 				scrollbar.st($selected.is(':hidden') ? 0 : $selected.position().top, $selected.height());
 			else
 				$dd.scrollTop($dd.scrollTop() + $selected.offset().top - $dd.offset().top - $dd.height() / 2 + $selected.outerHeight(true) / 2);
+		},
+
+		displayClick = function () {
+			$sb.hasClass('open') ? closeAndUnbind(1) : openSB(0, 1);
 		},
 
 		// Show, reposition, and reset dropdown markup.
@@ -489,6 +493,8 @@
 			else if (wasFocused)
 				focusSB();
 		};
+
+		this.open = displayClick;
 
 		loadSB();
 	},

@@ -164,6 +164,9 @@ function Display()
 	if ($settings['postmod_active'] && allowedTo('approve_posts'))
 		$context['real_num_replies'] += $topicinfo['unapproved_posts'] - ($topicinfo['approved'] ? 0 : 1);
 
+	if ($board_info['type'] !== 'forum' && $context['real_num_replies'] < 1)
+		$context['no_replies'] = true;
+
 	// If this topic has unapproved posts, we need to work out how many posts the user can see, for page indexing.
 	// We also need to discount the first post if this is a blog board.
 	$including_first = $topicinfo['approved'] && $board_info['type'] == 'forum' ? 1 : 0;

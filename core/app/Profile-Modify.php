@@ -1581,12 +1581,23 @@ function editContactList($memID)
 			return_raw(isset($_GET['name']) ? generic_contacts($target) : $target);
 		}
 
+		wesql::query('
+			UPDATE {db_prefix}contacts
+			SET hidden = !hidden
+			WHERE id_member = {int:user}
+			AND id_list = {int:list}' . ($canChangeOther ? '' : '
+			AND id_owner = {int:me}'),
+			array(
+				'user' => $data[1],
+				'list' => $data[0],
+				'me' => $memID,
+			)
+		);
 		$request = wesql::query('
 			SELECT hidden
 			FROM {db_prefix}contacts
 			WHERE id_member = {int:user}
-			AND id_list = {int:list}' . ($canChangeOther ? '' : '
-			AND id_owner = {int:me}'),
+			AND id_list = {int:list}',
 			array(
 				'user' => $data[1],
 				'list' => $data[0],

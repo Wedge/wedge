@@ -1953,7 +1953,7 @@ function host_from_ip($ip)
 {
 	global $settings;
 
-	if (($host = cache_get_data('hostlookup-' . $ip, 600)) !== null)
+	if (($host = cache_get_data('hostlookup-' . $ip, 86400)) !== null)
 		return $host;
 	$t = microtime(true);
 
@@ -2019,8 +2019,13 @@ function host_from_ip($ip)
 		$host = @gethostbyaddr($ip);
 
 	// It took a long time, so let's cache it!
-	if (microtime(true) - $t > 0.5)
-		cache_put_data('hostlookup-' . $ip, $host, 600);
+	if (($ftime = microtime(true) - $t) > 0.5)
+	{
+		cache_put_data('hostlookup-' . $ip, $host, 86400);
+		// If this took more than 3 seconds, we *probably* should disable it if the setting was never set in the first place.
+		if ($ftime > 3 && !isset($settings['disableHostnameLookup']))
+			updateSettings(array('disableHostnameLookup' => 1));
+	}
 
 	return $host;
 }

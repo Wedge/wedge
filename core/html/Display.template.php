@@ -403,7 +403,8 @@ function template_postlist_before()
 {
 	global $context, $txt;
 
-	echo '
+	if (empty($context['no_replies']))
+		echo '
 		<div class="pagesection">', template_button_strip($context['nav_buttons']['normal']), '
 			<nav>', $txt['pages'], ': ', $context['page_index'], $context['page_separator'], '<a href="#" class="updown">', $txt['go_down'], '</a></nav>
 		</div>', we::is('ie6') ? '

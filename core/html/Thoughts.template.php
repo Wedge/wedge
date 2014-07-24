@@ -85,16 +85,13 @@ function template_thoughts_thread()
 			<tr><td class="windowbg', $col, ' thought"><ul><li id="t', $id, '">
 				<div>';
 
-		$privacy_icon = get_privacy_type($thought['privacy']);
-
 		if (empty($thought['owner_name']))
-			echo $privacy_icon && $privacy_icon != 'public' ? '<div class="privacy_' . $privacy_icon . '"></div> ' : ' ', $thought['text'], '
+			echo get_privacy_icon($thought['privacy']), $thought['text'], '
 				</div>';
 		else
 			echo '
-					<a class="more_button thome" data-id="' . $id . '">' . $txt['actions_button'] . '</a>',
-					$privacy_icon && $privacy_icon != 'public' ? '<div class="privacy_' . $privacy_icon . '"></div>' : '', '
-					<a href="<URL>?action=profile;u=', $thought['id_member'], '">', $thought['owner_name'], '</a>
+					<a class="more_button thome" data-id="', $id, '">', $txt['actions_button'], '</a>', get_privacy_icon($thought['privacy']),
+					'<a href="<URL>?action=profile;u=', $thought['id_member'], '">', $thought['owner_name'], '</a>
 					<span class="date">(', $thought['updated'], ')</span> &raquo; ', $thought['text'], template_thought_likes($id), '
 				</div>';
 
@@ -117,12 +114,10 @@ function template_sub_thoughts(&$thought)
 	echo '<ul>';
 	foreach ($thought['sub'] as $id => $tho)
 	{
-		$privacy_icon = get_privacy_type($tho['privacy']);
 		if (empty($tho['owner_name']))
-			echo '<li id="t', $id, '"><div>', $privacy_icon && $privacy_icon != 'public' ? '<div class="privacy_' . $privacy_icon . '"></div>' : '', $tho['text'], '</div>';
+			echo '<li id="t', $id, '"><div>', get_privacy_icon($thought['privacy']), $tho['text'], '</div>';
 		else
-			echo '<li id="t', $id, '"><div><a class="more_button thome" data-id="', $id, '">', $txt['actions_button'], '</a>',
-			$privacy_icon && $privacy_icon != 'public' ? '<div class="privacy_' . $privacy_icon . '"></div>' : '',
+			echo '<li id="t', $id, '"><div><a class="more_button thome" data-id="', $id, '">', $txt['actions_button'], '</a>', get_privacy_icon($thought['privacy']),
 			'<a href="<URL>?action=profile;u=', $tho['id_member'], '">', $tho['owner_name'], '</a> <span class="date">(', $tho['updated'], ')</span> &raquo; ',
 			parse_bbc($tho['text'], 'thought', array('user' => $tho['id_member'])), template_thought_likes($id), '</div>';
 
@@ -153,13 +148,12 @@ function template_thoughts_table()
 	{
 		foreach ($context['thoughts'] as $id => $thought)
 		{
-			$privacy_icon = get_privacy_type($thought['privacy']);
 			$col = empty($col) ? 2 : '';
 			echo '
 			<tr class="windowbg', $col, '">
 				<td class="bc">', $thought['updated'], '</td>
 				<td><a class="more_button thome" data-id="', $id, '">', $txt['actions_button'], '</a>',
-				$privacy_icon && $privacy_icon != 'public' ? '<div class="privacy_' . $privacy_icon . '"></div>' : '', '<a href="<URL>?action=profile;u=', $thought['id_member'], '" id="t', $id, '">',
+				get_privacy_icon($thought['privacy']), '<a href="<URL>?action=profile;u=', $thought['id_member'], '" id="t', $id, '">',
 				$thought['owner_name'], '</a> &raquo; ', $thought['text'], template_thought_likes($id), '</td>
 			</tr>';
 		}
@@ -168,13 +162,12 @@ function template_thoughts_table()
 	{
 		foreach ($context['thoughts'] as $id => $thought)
 		{
-			$privacy_icon = get_privacy_type($thought['privacy']);
 			$col = empty($col) ? 2 : '';
 			echo '
 			<tr class="windowbg', $col, '">
 				<td>', $thought['updated'], '
 				<div class="more_button thome" data-id="', $id, '">', $txt['actions_button'], '</div><br>',
-				$privacy_icon && $privacy_icon != 'public' ? '<div class="privacy_' . $privacy_icon . '"></div>' : '', '<a href="<URL>?action=profile;u=', $thought['id_member'], '" id="t', $id, '">',
+				get_privacy_icon($thought['privacy']), '<a href="<URL>?action=profile;u=', $thought['id_member'], '" id="t', $id, '">',
 				$thought['owner_name'], '</a> &raquo; ', $thought['text'], template_thought_likes($id), '</td>
 			</tr>';
 		}
