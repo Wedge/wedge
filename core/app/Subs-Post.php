@@ -124,7 +124,7 @@ function sendmail($to, $subject, $message, $from = null, $message_id = null, $se
 	// Use sendmail if it's set or if no SMTP server is set.
 	$use_sendmail = empty($settings['mail_type']) || $settings['smtp_host'] == '';
 
-	// Line breaks need to be \r\n only in windows or for SMTP.
+	// Line breaks need to be \r\n only in Windows or for SMTP.
 	// ($context['server']['is_windows'] isn't always loaded at this point.)
 	$br = strpos(PHP_OS, 'WIN') === 0 || !$use_sendmail ? "\r\n" : "\n";
 
