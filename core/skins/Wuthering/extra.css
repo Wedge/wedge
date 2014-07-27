@@ -6,14 +6,15 @@
 
 body
 	text-align: center
-	background: #faefe6
+	background: #e9eef2
+	background: linear-gradient(to bottom, #37597c, #e9eef2 500px), #e9eef2
 	color: #333
 	padding: 15px
 
 #helf
 	text-align: $left
 
-$lightgrad = #faf8f6
+$lightgrad = #fff
 $darkgrad = #f3f2f0
 
 .lightgrad virtual
@@ -27,8 +28,12 @@ $darkgrad = #f3f2f0
 
 #wedge
 	text-align: $left
-	box-shadow: 0 0 6px #777
+	box-shadow: 0 0 5px #777
 	border: 1px solid #999
+	background: #fff
+	background: linear-gradient(to bottom, #c9d7e8, #fff 30%, #fff 92%, #e1e9f3)
+	padding: 0 5px 15px
+	border: 3px solid #fff
 
 #navi
 	background: $lightgrad
@@ -42,8 +47,12 @@ $darkgrad = #f3f2f0
 		background-color: rgb(235,225,215)
 		color: #000
 
-#content
-	background: #faf8f6
+#banner
+	border-radius: $radius
+	gradient: #c3cfde, #fff
+
+#header
+	background: linear-gradient(to bottom, #c3cfde, #fff)
 
 #edge
 	padding: 8px 0 0
@@ -56,7 +65,7 @@ $darkgrad = #f3f2f0
 	border: 0
 
 h1
-	font: italic 700 3em "Segoe UI", sans-serif
+	font: 700 3em "Segoe UI", sans-serif
 	letter-spacing: -2px
 	text-shadow: white 0 1px 2px
 	a
@@ -66,14 +75,10 @@ h1
 	letter-spacing: -1px
 	text-shadow: #ddd 1px 1px 2px
 
-#banner
-	gradient: #ccc, #fff
-
 #linktree li unextends .horizontal-arrow
 
 // The navigation list
 #linktree
-	background: #faf8f6
 	margin: 0
 	padding: 15px 20px 5px // The linktree is one level up, so it needs to compensate its increased width.
 	ul
@@ -113,8 +118,9 @@ h1
 			padding-left: 8px
 			border-radius: 8px 0 0 8px
 
-#linktree_bt
+#wedge > div:last-child
 	padding: 0 20px 20px
+	border-radius: 0 0 $radius $radius
 
 @media $responsive
 	body
@@ -124,12 +130,11 @@ h1
 
 // The footer with copyright links etc.
 #footer extends .lightgrad
-	background-color: #f4f2f3
-	border-top: 1px solid #ccc
-	border-radius: 0 0 20px 20px
+	background: none
+	border: 0
 	color: #333
 	> div
-		padding: 10px 20px
+		padding: 20px 20px 10px
 	a
 		color: #679
 
@@ -184,7 +189,8 @@ $window_bg2 = #f0f4f7
 	padding: 4px 8px
 	margin-top: 8px
 	text-shadow: none
-	font: italic 1.15em/1.2 $head_font
+	letter-spacing: -.2px
+	font: 1.15em/1.2 $head_font
 
 .cat final
 	background-color: #e5ece5
@@ -297,7 +303,8 @@ $subcat_font = normal 1.1em $main_font
 $post_font = $main_font
 $post_font_size = 10pt/140%
 $board_col = #d97b33
-$radius = 20px
+$radius = 10px
+$main_bg = #fff
 
 @remove
 	border-top: .54em double #ccc
