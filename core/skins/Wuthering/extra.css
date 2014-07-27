@@ -31,7 +31,7 @@ $darkgrad = #f3f2f0
 	box-shadow: 0 0 5px #777
 	border: 1px solid #999
 	background: #fff
-	background: linear-gradient(to bottom, #c9d7e8, #fff 30%, #fff 92%, #e1e9f3)
+	background: linear-gradient(to bottom, #c9d7e8, #fff 150px, #fff 92%, #e0e8f2)
 	padding: 0 5px 15px
 	border: 3px solid #fff
 
@@ -58,7 +58,7 @@ $darkgrad = #f3f2f0
 	padding: 8px 0 0
 
 #main
-	padding-top: 0
+	padding: 0 5px 12px
 
 #top_section
 	background: none
@@ -150,6 +150,12 @@ a, #linktree a
 .cat input[type=checkbox]
 	margin: 5px -3px 0 7px
 
+ul.buttonlist a
+	font-weight: 400
+	font-size: .8em
+	text-transform: uppercase
+	border: 0
+	padding: 5px
 
 /* Styles for the dropdown menus.
 ------------------------------------------------------- */
@@ -301,7 +307,7 @@ $main_font_size = 78%/130%
 $head_font = $main_font
 $subcat_font = normal 1.1em $main_font
 $post_font = $main_font
-$post_font_size = 10pt/140%
+$post_font_size = 1em/140%
 $board_col = #d97b33
 $radius = 10px
 $main_bg = #fff
