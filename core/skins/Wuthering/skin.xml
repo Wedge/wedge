@@ -22,6 +22,7 @@
 
 	<move block="linktree" to="menu" where="after" />
 	<move block="linktree:bottom" to="content_wrap" where="after" />
+	<move block="footer" to="wrapper" where="after" />
 
 	<script for="ie6" include="ie6hover.js"><![CDATA[
 	$('input[type=checkbox], input[type=radio]').addClass('ie_check');
