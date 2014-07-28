@@ -761,44 +761,44 @@ class wess_nesting extends wess
 		// Turn our simplified syntax into regular CSS.
 		// You must conform to the rules. It is my sworn duty to see that you do conform.
 		// If you're having problems indenting your code, just put it between brackets and use regular CSS.
-		$tree = preg_replace('~\v\h*(?=\v)~', '', $tree); // Delete blank lines
-		$tree = preg_replace_callback('~^(\h*)~m', function ($a) { return strlen($a[1]) . ':'; }, $tree); // Count indentation levels
-		$branches = preg_split('~\v+~', $tree);
+		$tree = preg_replace('~\v\h+(?=\v)~', '', $tree); // Delete blank lines
+		$atree = preg_split('~\v+~', $tree);
 		$tree = $ex_string = '';
 		$levels = array(0);
-		foreach ($branches as $n => $line)
+		foreach (array_map('ltrim', $atree) as $n => $line)
 		{
-			$l = explode(':', $line, 2);
+			$l = strlen($atree[$n]) - strlen($line);
 
 			// Determine the previous level.
 			$level = end($levels);
 
 			// Do we have an extends/unextend line followed by a line on the same level or above it?
 			// If yes, this means we just extended a selector and should close it immediately.
-			if ($level >= $l[0] && strhas($ex_string, array(' extends ', ' unextends ')))
+			if ($level >= $l && strhas($ex_string, array(' extends ', ' unextends ')))
 				$tree .= " {\n}\n";
 
 			// Same level, and no continuation of a selector? We're probably in a list of properties.
-			elseif ($level == $l[0] && $ex_string && substr($ex_string, -1) !== ',')
+			elseif ($level == $l && $ex_string && substr($ex_string, -1) !== ',')
 				$tree .= strpos($ex_string, 'placeholder') !== false ? "\n" : ";\n";
 
 			// Higher level than before? This is a child, obviously.
-			elseif ($level < $l[0] && $ex_string)
+			elseif ($level < $l && $ex_string)
 			{
 				$tree .= " {\n";
-				$levels[] = $l[0];
+				$levels[] = $l;
 			}
 
-			while ($level > $l[0])
+			while ($level > $l)
 			{
 				array_pop($levels);
 				$level = end($levels);
 				$tree .= "\n" . str_repeat("\t", $level) . "}\n";
 			}
 
-			$tree .= str_repeat("\t", $l[0]) . $l[1];
-			$ex_string = $l[1];
+			$tree .= str_repeat("\t", $l) . $line;
+			$ex_string = $line;
 		}
+		unset($atree);
 
 		// Did we finish the file with an extends or unextends...? Immediately open it and close it.
 		if (strhas($ex_string, array(' extends ', ' unextends ')))
