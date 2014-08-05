@@ -1010,7 +1010,7 @@ class we
 	private static function loose($var)
 	{
 		if (is_array($var))
-			return $var[1] == '' || $var[1] == '0' ? 'false' : 'true';
+			$var = $var[1];
 		return $var == '' || $var == '0' ? 'false' : ($var == '1' ? 'true' : (string) $var);
 	}
 
