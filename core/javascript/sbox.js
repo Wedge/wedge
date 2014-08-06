@@ -216,8 +216,9 @@
 				$dd.scrollTop($dd.scrollTop() + $selected.offset().top - $dd.offset().top - $dd.height() / 2 + $selected.outerHeight(true) / 2);
 		},
 
-		displayClick = function () {
+		displayClick = function (e) {
 			$sb.hasClass('open') ? closeAndUnbind(1) : openSB(0, 1);
+			e.stopPropagation();
 		},
 
 		// Show, reposition, and reset dropdown markup.
