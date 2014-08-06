@@ -944,13 +944,12 @@ class we
 				$string = preg_replace_callback('~!([^\s]*)~', 'we::parse_negative', $string);
 
 			// A boolean test for a stand-alone variable, i.e. != "" is implied.
-			$loose = false;
-			while (strpos($string, '"') !== false && $loose = true)
-				$string = preg_replace_callback('~"([^"]*)"?+~', 'we::loose', $string);
+			while (strpos($string, '"') !== false)
+				$string = preg_replace_callback('~"([^"]*)"?+~', 'we::loose_bool', $string);
 
 			// If we forgot/ignored quotes on numbers, we'll still try to detect them.
-			if (strpos($string, ' ') === false && preg_match('~^[-.]*\d~', $string) && $loose = true)
-				$string = preg_replace_callback('~(.+)~', 'we::loose', $string);
+			if (strpos($string, ' ') === false && preg_match('~^[-.]*\d~', $string))
+				$string = preg_replace_callback('~(.+)~', 'we::loose_bool', $string);
 
 			if (!empty(self::$is[$string]))
 				return $string;
@@ -958,8 +957,6 @@ class we
 			$bracket = strpos($string, '['); // Is there a version request?
 			$request = $bracket === false ? $string : substr($string, 0, $bracket);
 
-			if ($loose && !isset($browser[$request]) && !isset(self::$os[$request])) // Non-browser/OS number or quoted string? Return that...
-				return $string;
 			if (empty($browser[$request]) && empty(self::$os[$request]))
 				continue;
 
@@ -1006,11 +1003,14 @@ class we
 		}
 	}
 
-	private static function loose($var)
+	private static function loose($var) // This one returns ambiguous strings untouched.
 	{
-		if (is_array($var))
-			$var = $var[1];
 		return $var ? ($var == '1' ? 'true' : (string) $var) : 'false';
+	}
+
+	private static function loose_bool($var) // That one just returns true.
+	{
+		return $var[1] && $var[1] != 'false' ? 'true' : 'false';
 	}
 
 	// This is the variable test parser. Do not use () inside the variables to be tested. Some valid examples:
