@@ -181,11 +181,15 @@
 		{
 			if ($sb.hasClass('open'))
 			{
+				scrollbar = '';
 				$display.blur();
 				$sb.removeClass('open');
+				$dd.removeClass('has_bar');
 				$dd
 					.animate(is_opera ? { opacity: 'toggle' } : { opacity: 'toggle', height: 'toggle' }, instantClose == 1 ? 0 : 100)
 					.attr('aria-hidden', true);
+				$dd.find('.scrollbar').remove();
+				$dd.find('.overview').contents().unwrap().unwrap();
 			}
 			$(document).off('.sb');
 		},
@@ -218,7 +222,7 @@
 
 		displayClick = function (e) {
 			$sb.hasClass('open') ? closeAndUnbind(1) : openSB(0, 1);
-			e.stopPropagation();
+			e && e.stopPropagation();
 		},
 
 		// Show, reposition, and reset dropdown markup.
@@ -255,7 +259,7 @@
 
 				// Show scrollbars if the dropdown is taller than 250 pixels (or the viewport height).
 				// Touch-enabled phones have poor usability and shouldn't bother -- let them stretch all the way.
-				ddMaxHeight = Math.min(Math.max(500, ddHeight / 5), ddHeight, Math.max(bottomSpace, topSpace - 50) - 50),
+				ddMaxHeight = Math.max(Math.min(ddHeight, 50), Math.min(Math.max(500, ddHeight / 5), ddHeight, Math.max(bottomSpace, topSpace - 50) - 50)),
 
 				// If we have enough space below the button, or if we don't have enough room above either, show a dropdown.
 				// Otherwise, show a drop-up, but only if there's enough size, or the space above is more comfortable.
@@ -265,7 +269,7 @@
 			if (ddMaxHeight < ddHeight)
 			{
 				$dd.height(ddMaxHeight - ddHeight + $dd.height());
-				scrollbar ? scrollbar.init() : scrollbar = new ScrollBar($dd);
+				scrollbar = new ScrollBar($dd);
 				centerOnSelected();
 			}
 
@@ -484,7 +488,6 @@
 			// Destroy existing data
 			$sb.remove();
 			$orig.removeClass('sb').off('.sb');
-			scrollbar = '';
 			$(window).off('.sb');
 
 			loadSB();
@@ -537,23 +540,6 @@
 				});
 		};
 
-		that.init = function ()
-		{
-			viewportAxis = $dd.height();
-			$dd.find('.viewport').height(viewportAxis);
-			$scrollbar = $dd.find('.scrollbar').height(viewportAxis);
-			$content = $dd.find('.overview');
-			contentAxis = $content.height();
-			$thumb = $scrollbar.find('div');
-
-			scrollbarRatio = contentAxis / viewportAxis;
-			thumbAxis = Math.min(viewportAxis, viewportAxis / scrollbarRatio);
-
-			// Set size.
-			iMouse = $thumb.offset().top;
-			$thumb.height(thumbAxis);
-		};
-
 		// Scroll to...
 		that.st = function (iTop, iHeight)
 		{
@@ -568,11 +554,24 @@
 		if ($dd.find('.viewport').length)
 			return;
 
+		// Gentlemen, start your engines.
 		$dd.addClass('has_bar').width(Math.min($dd.width(), $(window).width() - 25));
 		$dd.contents().wrapAll('<div class="viewport"><div class="overview">');
 		$dd.append('<div class="scrollbar"><div>');
 
-		that.init();
+		viewportAxis = $dd.height();
+		$dd.find('.viewport').height(viewportAxis);
+		$scrollbar = $dd.find('.scrollbar').height(viewportAxis);
+		$content = $dd.find('.overview');
+		contentAxis = $content.height();
+		$thumb = $scrollbar.find('div');
+
+		scrollbarRatio = contentAxis / viewportAxis;
+		thumbAxis = Math.min(viewportAxis, viewportAxis / scrollbarRatio);
+
+		// Set size.
+		iMouse = $thumb.offset().top;
+		$thumb.height(thumbAxis);
 
 		// Set events
 		$scrollbar.mousedown(drag);
