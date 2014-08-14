@@ -241,6 +241,7 @@
 				.css({ visibility: 'hidden' })
 				.width('')
 				.height('')
+				.removeClass('above')
 				.find('.viewport')
 					.height('');
 
