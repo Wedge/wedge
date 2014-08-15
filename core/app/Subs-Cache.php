@@ -721,7 +721,9 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 
 	// Remove extra whitespace. Note that this breaks additions and substractions in calc(), as they need their own whitespace.
 	// I'll be fixing this, eventually. But needs more regexes, more CPU time, and this means more kitties getting slaughtered. :(
+	$final = preg_replace('~\s\[~', '#wedge-bracket#', $final);
 	$final = preg_replace('~\s*([][+:;,>{}\s])\s*~', '$1', $final);
+	$final = str_replace('#wedge-bracket#', ' [', $final);
 
 	// This is a bit quirky, like me, as we want to simplify paths but may still break non-path strings in the process.
 	// At this point in the code, thought, strings should be hidden from view so it sounds okay to do that.
