@@ -217,52 +217,47 @@ for guests, because most of the time it won't be an option.
 	width: width($images_dir/icons/thought.gif)px
 	height: height($images_dir/icons/thought.gif)px
 
-.privacy_default mixes .inline-block // Green
-	@if $can_filter
-		-prefix-filter: sepia(1) contrast(.6) brightness(1.3) hue-rotate(30deg) saturate(5) // Green
-		background: url($images/icons/privacy.gif) 0 center no-repeat
-		width, min-height: 10px
-	@else
-		background: url($images/icons/privacy.png) 0 -10px no-repeat
-		width, height: 10px
-	@endif
+.privacy
+	cursor: pointer
+	user-select: none
+
+.prv_sel
+	display: block
+	position: relative
+	// Hide selector display from view.
+	.display
+		display: inline
+		position: absolute
+		clip: rect(1px, 1px, 1px, 1px)
+		width, height: 1px
+	// Main text will be hidden by dropdown if it opens upward.
+	.above
+		top: -1em
+
+.privacy_icon virtual mixes .inline-block("") // Green
+	color: #fff
+	background-color: #aed350
+	font-weight: 400
 	margin-right: 4px
+	padding: 0 4px
+	transform: scaleX(-1)
+	:before
+		content: "\b6"
 
-@if $can_filter
-	.privacy_public extends .privacy_default // Uses the same icon.
+.privacy_public extends .privacy_icon // Uses the same icon.
+.privacy_members extends .privacy_icon // Golden
+	background-color: #dcc36c
+.privacy_group extends .privacy_icon // Blue
+	background-color: #82b9c8
+.privacy_list extends .privacy_icon // Purple
+	background-color: luma(#d3a7d1, -20%)
+.privacy_author extends .privacy_icon // Red
+	background-color: #d07848
 
-	.privacy_members extends .privacy_default // Golden
-		-prefix-filter: sepia(1) contrast(.6) brightness(1.3) hue-rotate(0deg) saturate(5)
-
-	.privacy_group extends .privacy_default // Blue
-		-prefix-filter: sepia(1) contrast(.6) brightness(1.3) hue-rotate(200deg)
-
-	.privacy_list extends .privacy_default // Purple
-		-prefix-filter: sepia(1) contrast(.6) brightness(1.3) hue-rotate(270deg) saturate(2)
-
-	.privacy_author extends .privacy_default // Red
-		-prefix-filter: sepia(1) contrast(.6) brightness(1.3) hue-rotate(310deg) saturate(20)
-@else
-	.privacy_public extends .privacy_default // Uses the same icon.
-
-	.privacy_members extends .privacy_default
-		background-position: 0 -20px
-
-	.privacy_group extends .privacy_default // Blue
-		background-position: 0 -30px
-
-	.privacy_list extends .privacy_default
-		background-position: 0 -40px
-
-	.privacy_author extends .privacy_default
-		background-position: 0 -50px
-@endif
-
-.privacy_list_friends mixes .inline-block
+.privacy_list_friends
+	display: inline
 	background: raw-url($images/icons/contacts_friends.gif) 0 center no-repeat
-	width, height: 10px
-	margin-right: 4px
-	vertical-align: 0
+	padding-left: 15px
 
 .privacy_list_known extends .privacy_list_friends
 	background: raw-url($images/icons/contacts_known.gif) 0 center no-repeat
