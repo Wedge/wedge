@@ -24,7 +24,6 @@
 .modrem a extends #modbuttons a.delete
 
 a.unreadlink
-	font-size: .9em
 	float: right
 
 // The quick edit button
@@ -220,7 +219,7 @@ for guests, because most of the time it won't be an option.
 
 .privacy_default mixes .inline-block // Green
 	@if $can_filter
-		-prefix-filter: sepia(1) hue-rotate(60deg)
+		-prefix-filter: sepia(1) contrast(.6) brightness(1.3) hue-rotate(30deg) saturate(5) // Green
 		background: url($images/icons/privacy.gif) 0 center no-repeat
 		width, min-height: 10px
 	@else
@@ -233,16 +232,16 @@ for guests, because most of the time it won't be an option.
 	.privacy_public extends .privacy_default // Uses the same icon.
 
 	.privacy_members extends .privacy_default // Golden
-		-prefix-filter: sepia(1) hue-rotate(0deg) saturate(5)
+		-prefix-filter: sepia(1) contrast(.6) brightness(1.3) hue-rotate(0deg) saturate(5)
 
 	.privacy_group extends .privacy_default // Blue
-		-prefix-filter: sepia(1) hue-rotate(200deg)
+		-prefix-filter: sepia(1) contrast(.6) brightness(1.3) hue-rotate(200deg)
 
 	.privacy_list extends .privacy_default // Purple
-		-prefix-filter: sepia(1) hue-rotate(270deg) saturate(2)
+		-prefix-filter: sepia(1) contrast(.6) brightness(1.3) hue-rotate(270deg) saturate(2)
 
 	.privacy_author extends .privacy_default // Red
-		-prefix-filter: sepia(1) hue-rotate(300deg) saturate(5)
+		-prefix-filter: sepia(1) contrast(.6) brightness(1.3) hue-rotate(310deg) saturate(20)
 @else
 	.privacy_public extends .privacy_default // Uses the same icon.
 
