@@ -231,31 +231,6 @@ $sites = array(
 
 	// Now the rest in alphabetical/numerical order
 	array(
-		'id' => '123',
-		'title' => '123video',
-		'website' => 'http://www.123video.nl',
-		'type' => 'video',
-		// http://www.123video.nl/playvideos.asp?MovieID=67244
-		'pattern' => 'http://(?:www\.)?123video\.nl/(?:playvideos\.asp\?[^"]*?MovieID=|123video_share\.swf\?mediaSrc=)(\d{1,8})',
-		'movie' => 'http://www.123video.nl/123video_share.swf?mediaSrc=$2',
-		'size' => array(420, 339),
-		'fix-html-pattern' => '<object [^>]*><param name="movie" value="$1" />.*?</object>',
-		'fix-html-url' => 'http://www.123video.nl/playvideos.asp?MovieID=$2',
-	),
-	array(
-		'id' => '9yo',
-		'title' => '9You',
-		'website' => 'http://www.9You.com',
-		'type' => 'video',
-		// http://v.9you.com/watch/xuzegfifj.html
-		// http://v.9you.com/player/17x2px1nu
-		'pattern' => 'http://(?:www\.|v\.)?9you\.com/(?:player|watch)/([0-9a-z]{9})',
-		'movie' => 'http://v.9you.com/player/$2',
-		'size' => array(420, 380),
-		'fix-html-pattern' => '<object[^<>]*?><param name="movie" value="$1"></param><param name="allowScriptAccess" value="always"></param><embed[^<>]*?></embed></object>',
-		'fix-html-url' => 'http://v.9you.com/watch/$2.html',
-	),
-	array(
 		'id' => 'abc',
 		'title' => 'ABC News',
 		'website' => 'http://www.abcnews.go.com',
@@ -283,7 +258,7 @@ $sites = array(
 	),
 	array(
 		'id' => 'allo',
-		'title' => 'AlloCin&eacute;',
+		'title' => 'AlloCiné',
 		'website' => 'http://www.allocine.fr',
 		'type' => 'video',
 		'pattern' => 'http://www\.allocine\.fr/video.*?gen_cmedia=(\d+).*?\.html',
@@ -1189,19 +1164,6 @@ $sites = array(
 		'fix-html-url' => 'http://www.jujunation.com/music.php?music_id=$1',
 	),
 	array(
-		'id' => 'justin',
-		'title' => 'JustinTV',
-		'website' => 'http://www.justin.tv',
-		'type' => 'pop',
-		'pattern' => 'http://(?:\w{0,3}\.)?justin\.tv/(\w*)',
-		'movie' => 'http://www.justin.tv/widgets/jtv_player.swf?channel=$2&auto_play=false',
-		'size' => array(468, 383),
-		'show-link' => true,
-		'show-flashvars' => true,
-		// http://fr.justin.tv/spacevidcast
-		'lookup-title' => true,
-	),
-	array(
 		'id' => 'kal',
 		'title' => 'Kaltura network',
 		'website' => 'http://www.kaltura.com',
@@ -1739,7 +1701,7 @@ $sites = array(
 	),
 	array(
 		'id' => 'tag',
-		'title' => 'TagT&eacute;l&eacute;',
+		'title' => 'TagTélé',
 		'website' => 'http://www.tagtele.com',
 		'type' => 'video',
 		'pattern' => 'http://www\.tagtele\.com/(?:v/|videos/voir/)(\d{1,12})',

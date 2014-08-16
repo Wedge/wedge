@@ -575,7 +575,7 @@ function wedge_get_css_filename($add)
  */
 function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false, $ext = '.css', $additional_vars = array())
 {
-	global $css_vars, $context, $settings;
+	global $css_vars, $context, $settings, $time_start;
 
 	$final_folder = substr(CACHE_DIR . '/css/' . $folder, 0, -1);
 	$cachekey = 'css_files-' . $folder . implode('-', $ids);
@@ -593,6 +593,7 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 			return $folder . $full_name;
 	}
 
+	$sleep_time = microtime(true);
 	we::$user['extra_tests'] = array();
 
 	if (!empty($folder) && $folder != '/' && !file_exists($final_folder))
@@ -718,8 +719,11 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 	// Remove the 'final' keyword.
 	$final = preg_replace('~\s+final\b~', '', $final);
 
-	// Remove extra whitespace.
+	// Remove extra whitespace. Note that this breaks additions and substractions in calc(), as they need their own whitespace.
+	// I'll be fixing this, eventually. But needs more regexes, more CPU time, and this means more kitties getting slaughtered. :(
+	$final = preg_replace('~\s\[~', '#wedge-bracket#', $final);
 	$final = preg_replace('~\s*([][+:;,>{}\s])\s*~', '$1', $final);
+	$final = str_replace('#wedge-bracket#', ' [', $final);
 
 	// This is a bit quirky, like me, as we want to simplify paths but may still break non-path strings in the process.
 	// At this point in the code, thought, strings should be hidden from view so it sounds okay to do that.
@@ -798,6 +802,9 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 		$final = gzencode($final, 9);
 
 	@file_put_contents($final_file, $final);
+
+	// Don't take generation times into account for our stats. It's only done once in a while anyway...
+	$time_start += microtime(true) - $sleep_time;
 
 	return $folder . $full_name;
 }
@@ -982,9 +989,10 @@ function dynamic_admin_menu_icons()
  */
 function wedge_cache_js($id, &$lang_name, $latest_date, $ext, $js, $gzip = false, $full_path = false)
 {
-	global $settings, $comments, $txt;
+	global $settings, $comments, $txt, $time_start;
 	static $closure_failed = false;
 
+	$sleep_time = microtime(true);
 	$final = '';
 	$dir = $full_path ? '' : ROOT_DIR . '/core/javascript/';
 	$no_packing = array();
@@ -1251,7 +1259,10 @@ function wedge_cache_js($id, &$lang_name, $latest_date, $ext, $js, $gzip = false
 	if ($gzip)
 		$final = gzencode($final, 9);
 
-	file_put_contents(CACHE_DIR . '/js/' . $id . $lang_name . $latest_date . $ext, $final);
+	@file_put_contents(CACHE_DIR . '/js/' . $id . $lang_name . $latest_date . $ext, $final);
+
+	// Don't take generation times into account for our stats. It's only done once in a while anyway...
+	$time_start += microtime(true) - $sleep_time;
 }
 
 /**

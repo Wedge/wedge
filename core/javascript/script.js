@@ -418,7 +418,17 @@ $.fn.ds = function ()
 
 $.fn.mime = function (oList, oStrings)
 {
-	this.each(function ()
+	return this.mimenu(oList, oStrings);
+};
+
+$.fn.title = function (oContents)
+{
+	return this.mimenu(oContents, '', true);
+};
+
+$.fn.mimenu = function (oContents, oStrings, is_top)
+{
+	return this.each(function ()
 	{
 		if (this.className.indexOf('processed') >= 0 || $(this).addClass('processed').parent().hasClass('mime'))
 			return;
@@ -426,48 +436,61 @@ $.fn.mime = function (oList, oStrings)
 		var
 			$mime = $(this),
 			id = $mime.data('id') || ($mime.closest('.msg').attr('id') || '').slice(3), // Extract the context id from the parent message
-			$men = $('<div class="mimenu"><ul class="actions"></ul></div>').hide(),
-			pms;
+			$men = $('<div class="mimenu">').hide(),
+			pms, $contents = $('<ul>'),
+			hiddenPosition, visiblePosition,
+			wi, he;
 
-		$.each(oList ? oList[id] || [] : [], function ()
+		if (oContents && oContents[id])
 		{
-			pms = oStrings[this.slice(0, 2)];
+			$contents.addClass('actions');
+			$.each(oContents[id], function ()
+			{
+				pms = oStrings[this.slice(0, 2)];
 
-			$('<a>')
-				.html(pms[0].wereplace({ 1: id, 2: this.slice(3) }))
-				.attr('title', pms[1])
-				.attr('class', pms[3])
-				.attr('href', pms[2] ? (pms[2][0] == '?' ? $mime.attr('href') || '' : '') + pms[2].wereplace({ 1: id, 2: this.slice(3) }) : $mime.attr('href') || '')
-				.click(new Function('e', pms[4] ? pms[4].wereplace({ 1: id, 2: this.slice(3) }) : '')) // eval, bad! No user input, good!
-				.click(function () { $men.stop(true).animate(hiddenPosition, 200, function () { $men.hide(); }); }) // Close menu if clicked.
-				.wrap('<li>').parent()
-				.appendTo($men.find('ul'));
-		});
+				$('<a>')
+					.html(pms[0].wereplace({ 1: id, 2: this.slice(3) }))
+					.attr('title', pms[1])
+					.attr('class', pms[3])
+					.attr('href', pms[2] ? (pms[2][0] == '?' ? $mime.attr('href') || '' : '') + pms[2].wereplace({ 1: id, 2: this.slice(3) }) : $mime.attr('href') || '')
+					.click(new Function('e', pms[4] ? pms[4].wereplace({ 1: id, 2: this.slice(3) }) : '')) // eval, bad! No user input, good!
+					.wrap('<li>').parent()
+					.appendTo($contents);
+			});
+		}
+		else
+			$contents.html(oContents);
 
+		$men.html($contents).click(function () { $men.stop(true).animate(hiddenPosition, 200, function () { $men.hide(); }); }); // Close menu if clicked.
 		$mime.wrap('<span class="mime"></span>').after($men).parent().hover(
-			function () { $men.stop(true).show().animate(visiblePosition, 300, function () { $men.css('overflow', 'visible'); }); },
-			function () { $men.stop(true).animate(hiddenPosition, 200, function () { $men.hide(); }); }
-		);
+			function ()
+			{
+				$men.show();
+				wi = $men.width();
+				he = $men.height();
+				$men.toggleClass('right', $mime.offset().left > $(window).width() / 2).toggleClass('top', is_top || false);
 
-		var
-			wi = $men.width(),
-			he = $men.height(),
-
-			// If we start from halfway into it, the animation looks nicer.
-			hiddenPosition = {
-				opacity: 0,
-				width:  wi / 2,
-				height: he / 2,
-				paddingTop: 0
+				// If we start from halfway into it, the animation looks nicer.
+				hiddenPosition = {
+					opacity: 0,
+					width:  wi / 2,
+					height: he / 2,
+					paddingTop: 0,
+					paddingBottom: 0
+				};
+				visiblePosition = {
+					opacity: 1,
+					width: wi,
+					height: he,
+					paddingTop: $men.css('paddingTop'),
+					paddingBottom: $men.css('paddingBottom')
+				};
+				$men.css(hiddenPosition).stop(true).show().animate(visiblePosition, 300, function () { $men.attr('style', '').css('overflow', 'visible'); });
 			},
-			visiblePosition = {
-				opacity: 1,
-				width: wi,
-				height: he,
-				paddingTop: $men.css('paddingTop')
-			};
-
-		$men.css(hiddenPosition).toggleClass('right', $mime.offset().left > $(window).width() / 2);
+			function () {
+				$men.stop(true).animate(hiddenPosition, 200, function () { $men.attr('style', '').hide(); });
+			}
+		);
 	});
 };
 

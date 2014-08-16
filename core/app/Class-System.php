@@ -867,11 +867,11 @@ class we
 			return self::$cache[$string];
 
 		if (isset(self::$is[$string]))
-			return self::$cache[$string] = empty(self::$is[$string]) ? false : $string;
+			return self::$cache[$string] = (empty(self::$is[$string]) ? false : $string);
 		if (isset(self::$browser[$string]))
-			return self::$cache[$string] = empty(self::$browser[$string]) ? false : $string;
+			return self::$cache[$string] = (empty(self::$browser[$string]) ? false : $string);
 		if (isset(self::$os[$string]))
-			return self::$cache[$string] = empty(self::$os[$string]) ? false : $string;
+			return self::$cache[$string] = (empty(self::$os[$string]) ? false : $string);
 
 		return self::$cache[$string] = self::analyze($string);
 	}
@@ -945,11 +945,11 @@ class we
 
 			// A boolean test for a stand-alone variable, i.e. != "" is implied.
 			while (strpos($string, '"') !== false)
-				$string = preg_replace_callback('~"([^"]*)"?+~', 'we::loose', $string);
+				$string = preg_replace_callback('~"([^"]*)"?+~', 'we::loose_bool', $string);
 
 			// If we forgot/ignored quotes on numbers, we'll still try to detect them.
 			if (strpos($string, ' ') === false && preg_match('~^[-.]*\d~', $string))
-				$string = preg_replace_callback('~(.+)~', 'we::loose', $string);
+				$string = preg_replace_callback('~(.+)~', 'we::loose_bool', $string);
 
 			if (!empty(self::$is[$string]))
 				return $string;
@@ -959,6 +959,7 @@ class we
 
 			if (empty($browser[$request]) && empty(self::$os[$request]))
 				continue;
+
 			if ($bracket === false)
 				return $string;
 
@@ -1002,16 +1003,14 @@ class we
 		}
 	}
 
-	private static function no_operator_vars($var)
+	private static function loose($var) // This one returns ambiguous strings untouched.
 	{
-		return $var[1] != '' && $var[1] != '0' && $var[1] != 'false' ? 'true' : 'false';
+		return $var ? ($var == '1' ? 'true' : (string) $var) : 'false';
 	}
 
-	private static function loose($var)
+	private static function loose_bool($var) // That one just returns true.
 	{
-		if (is_array($var))
-			return $var[1] == '' || $var[1] == '0' ? 'false' : 'true';
-		return $var == '' || $var == '0' ? 'false' : ($var == '1' ? 'true' : (string) $var);
+		return $var[1] && $var[1] != 'false' ? 'true' : 'false';
 	}
 
 	// This is the variable test parser. Do not use () inside the variables to be tested. Some valid examples:

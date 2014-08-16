@@ -132,12 +132,12 @@ function template_summary()
 				$exists = is_integer($id_list);
 				echo '
 					<label><input type="checkbox" name="c[', $id_list, ']"', $exists && isset(we::$user['contacts']['users'][$id_list][$context['id_member']]) ? ' checked' : '', '> ',
-					$list_type === 'new' ? '' : '<div class="privacy_list_' . $list_type . '"></div>', $exists ? '' : '<em>', generic_contacts($list[0]), $exists ? '' : '</em>', $count ? ' (' . $count . ')' : '', '</label><br>';
+					$list_type === 'new' ? '' : '<div class="privacy_list_' . $list_type . '">', $exists ? '' : '<em>', generic_contacts($list[0]), $exists ? '' : '</em>', $count ? ' (' . $count . ')' : '', $list_type == 'new' ? '' : '</div>', '</label><br>';
 			}
 		}
 
 		echo '
-					<input type="submit" class="save">
+					<input type="submit" class="save" value="', $txt['save'], '">
 				</form>
 			</div>';
 	}
@@ -149,27 +149,27 @@ function template_summary()
 
 	if (we::$user['is_owner'] || we::$is_admin)
 		echo '
-				<dt>', $txt['username'], ':</dt>
+				<dt>', $txt['username'], $txt[':'], '</dt>
 				<dd>', $context['member']['username'], '</dd>';
 
 	if (!isset($context['disabled_fields']['posts']))
 		echo '
-				<dt>', $txt['profile_posts'], ':</dt>
+				<dt>', $txt['profile_posts'], $txt[':'], '</dt>
 				<dd><a href="<URL>?action=profile;u=', $context['id_member'], ';area=showposts">', $context['member']['posts'], '</a> (', $context['member']['posts_per_day'], ' ', $txt['posts_per_day'], ')</dd>';
 
 	if (!isset($context['disabled_fields']['gender']) && !empty($context['member']['gender']))
 		echo '
-				<dt>', $txt['gender'], ':</dt>
+				<dt>', $txt['gender'], $txt[':'], '</dt>
 				<dd>', $txt[$context['member']['gender']], '</dd>';
 
-	if ($context['member']['age'] !== $txt['not_applicable'])
+	if ($context['member']['age'] !== $txt['not_applicable'] && profile_can_see('age'))
 		echo '
-				<dt>', $txt['age'], ':</dt>
-				<dd>', $context['member']['age'] . ($context['member']['today_is_birthday'] ? '<br><img src="' . ASSETS . '/cake.png">' : ''), '</dd>';
+				<dt>', profile_privacy_icon('age', $txt['age'] . $txt[':']), '</dt>
+				<dd>', $context['member']['age'], $context['member']['today_is_birthday'] ? '<br><img src="' . ASSETS . '/cake.png">' : '', '</dd>';
 
-	if (!isset($context['disabled_fields']['location']) && !empty($context['member']['location']))
+	if (!isset($context['disabled_fields']['location']) && !empty($context['member']['location']) && profile_can_see('location'))
 		echo '
-				<dt>', $txt['location'], ':</dt>
+				<dt>', profile_privacy_icon('location', $txt['location'] . $txt[':']), '</dt>
 				<dd>', $context['member']['location'], '</dd>';
 
 	// Only show the email address fully if the one looking at the profile is an admin they can see it anyway.
@@ -188,9 +188,9 @@ function template_summary()
 				<dt>', $txt['personal_text'], ': </dt>
 				<dd>', $context['member']['blurb'], '</dd>';
 
-	if (!empty($context['member']['action']))
+	if (!empty($context['member']['action']) && profile_can_see('action'))
 		echo '
-				<dt>', $txt['current_action'], ':</dt>
+				<dt>', profile_privacy_icon('action', $txt['current_action'] . $txt[':']), '</dt>
 				<dd>', $context['member']['action'], '</dd>';
 
 	echo '
@@ -202,7 +202,7 @@ function template_summary()
 		$shown = false;
 		foreach ($context['custom_fields'] as $field)
 		{
-			if ($field['placement'] != 0 || empty($field['output_html']))
+			if ($field['placement'] != 0 || empty($field['output_html']) || !profile_can_see('custom_' . $field))
 				continue;
 
 			if (!$shown)
@@ -213,7 +213,7 @@ function template_summary()
 			}
 
 			echo '
-				<dt>', $field['name'], ':</dt>
+				<dt>', profile_privacy_icon('custom_' . $field, $field['name'] . $txt[':']), '</dt>
 				<dd>', $field['output_html'], '</dd>';
 		}
 
@@ -280,7 +280,7 @@ function template_summary()
 			echo '
 				<dt class="clear"><span class="alert">', $txt['user_is_banned'], '</span>&nbsp;[<a href="#" onclick="$(\'#ban_info\').toggle(); return false;">' . $txt['view_ban'] . '</a>]</dt>
 				<dt class="clear hide" id="ban_info">
-					<strong>', $txt['user_banned_by_following'], ':</strong>';
+					<strong>', $txt['user_banned_by_following'], $txt[':'], '</strong>';
 
 			foreach ($context['member']['bans'] as $ban)
 				echo '
@@ -297,7 +297,7 @@ function template_summary()
 	if ($context['can_see_ip'])
 	{
 		if (!empty($context['member']['ip']))
-		echo '
+			echo '
 				<dt>', $txt['ip'], ': </dt>
 				<dd><a href="<URL>?action=profile;u=', $context['member']['id'], ';area=tracking;sa=ip;searchip=', $context['member']['ip'], '">', $context['member']['ip'], '</a></dd>';
 
@@ -307,22 +307,26 @@ function template_summary()
 				<dd>', $context['member']['hostname'], '</dd>';
 	}
 
-	echo '
-				<dt>', $txt['local_time'], ':</dt>
+	if (profile_can_see('time'))
+		echo '
+				<dt>', profile_privacy_icon('time', $txt['local_time'] . $txt[':']), '</dt>
 				<dd>', $context['member']['local_time'], '</dd>';
 
-	if (!empty($settings['userLanguage']) && !empty($context['member']['language']))
+	if (!empty($settings['userLanguage']) && !empty($context['member']['language']) && profile_can_see('language'))
 		echo '
-				<dt>', $txt['language'], ':</dt>
+				<dt>', profile_privacy_icon('language', $txt['language'] . $txt[':']), '</dt>
 				<dd>', $context['member']['language'], '</dd>';
 
-	echo '
+	$can_see_reg = profile_can_see('registered');
+	$can_see_log = profile_can_see('login');
+	if ($can_see_reg || $can_see_log)
+		echo '
 			</dl>
-			<dl>
-				<dt>', $txt['date_registered'], ': </dt>
-				<dd>', $context['member']['registered'], '</dd>
-				<dt>', $txt['lastLoggedIn'], ': </dt>
-				<dd>', $context['member']['last_login'], '</dd>
+			<dl>', $can_see_reg ? '
+				<dt>' . profile_privacy_icon('registered', $txt['date_registered'] . $txt[':']) . '</dt>
+				<dd>' . $context['member']['registered'] . '</dd>' : '', $can_see_log ? '
+				<dt>' . profile_privacy_icon('login', $txt['lastLoggedIn'] . $txt[':']) . '</dt>
+				<dd>' . $context['member']['last_login'] . '</dd>' : '', '
 			</dl>';
 
 	// Are there any custom profile fields for the summary?
@@ -331,8 +335,9 @@ function template_summary()
 		$shown = false;
 		foreach ($context['custom_fields'] as $field)
 		{
-			if ($field['placement'] != 2 || empty($field['output_html']))
+			if ($field['placement'] != 2 || empty($field['output_html']) || !profile_can_see('custom_' . $field))
 				continue;
+
 			if (!$shown)
 			{
 				$shown = true;
@@ -340,8 +345,9 @@ function template_summary()
 			<div class="custom_fields">
 				<ul class="reset nolist">';
 			}
+
 			echo '
-					<li>', $field['output_html'], '</li>';
+					<li>', profile_privacy_icon('custom_' . $field, $field['output_html']), '</li>';
 		}
 		if ($shown)
 				echo '
@@ -353,7 +359,7 @@ function template_summary()
 	if ($context['signature_enabled'] && !empty($context['member']['signature']))
 		echo '
 			<div class="signature" style="padding: 0; border: 0">
-				<h5>', $txt['signature'], ':</h5>
+				<h5>', $txt['signature'], $txt[':'], '</h5>
 				', $context['member']['signature'], '
 			</div>';
 
@@ -650,11 +656,11 @@ function template_editContactList()
 					<label>
 						', $txt['list_visibility'], '
 						<select class="list_visibility">
-							<option value="everyone"', $list_row['visibility'] == 'everyone' ? ' selected' : '', '>', $txt['list_everyone'], '</option>
-							<option value="all-contacts"', $list_row['visibility'] == 'all-contacts' ? ' selected' : '', '>', $txt['list_all_contacts'], '</option>
-							<option value="just-this-group"', $list_row['visibility'] == 'just-this-group' ? ' selected' : '', '>', $txt['list_just_this_group'], '</option>
-							<option value="just-this-member"', $list_row['visibility'] == 'just-this-member' ? ' selected' : '', '>', $txt['list_just_this_member'], '</option>
-							<option value="just-me"', $list_row['visibility'] == 'just-me' ? ' selected' : '', '>', $txt['list_just_me'], '</option>
+							<option value="everyone"', $list_row['visibility'] == 'everyone' ? ' selected' : '', '>&lt;span class="privacy_public"&gt;&lt;/span&gt;', $txt['list_everyone'], '</option>
+							<option value="all-contacts"', $list_row['visibility'] == 'all-contacts' ? ' selected' : '', '>&lt;span class="privacy_list"&gt;&lt;/span&gt;', $txt['list_all_contacts'], '</option>
+							<option value="just-this-group"', $list_row['visibility'] == 'just-this-group' ? ' selected' : '', '>&lt;span class="privacy_list"&gt;&lt;/span&gt;', $txt['list_just_this_group'], '</option>
+							<option value="just-this-member"', $list_row['visibility'] == 'just-this-member' ? ' selected' : '', '>&lt;span class="privacy_list"&gt;&lt;/span&gt;', $txt['list_just_this_member'], '</option>
+							<option value="just-me"', $list_row['visibility'] == 'just-me' ? ' selected' : '', '>&lt;span class="privacy_author"&gt;&lt;/span&gt;', $txt['list_just_me'], '</option>
 						</select>
 					</label>
 					<input type="button" class="delete" style="font-size: 90%" value="', $txt['remove'], '">';
@@ -835,7 +841,7 @@ function template_editContactList()
 			</we:title>
 			<div class="roundframe">
 				<label>
-					<strong>', $txt['who_member'], ':</strong>
+					<strong>', $txt['who_member'], $txt[':'], '</strong>
 					<input name="new_buddy" id="new_buddy" size="25">
 				</label>
 				<input type="submit" value="', $txt['buddy_add_button'], '" class="new">
@@ -904,7 +910,7 @@ function template_editIgnoreList()
 			</we:title>
 			<div class="roundframe">
 				<label>
-					<strong>', $txt['who_member'], ':</strong>
+					<strong>', $txt['who_member'], $txt[':'], '</strong>
 					<input name="new_ignore" id="new_ignore" size="25">
 				</label>
 				<input type="submit" value="', $txt['add'], '" class="new">
@@ -952,18 +958,18 @@ function template_trackActivity()
 
 	// Lists of IP addresses used in messages / error messages.
 	echo '
-					<dt>', $txt['ips_in_messages'], ':</dt>
+					<dt>', $txt['ips_in_messages'], $txt[':'], '</dt>
 					<dd>
 						', count($context['ips']) > 0 ? implode(', ', $context['ips']) : '(' . $txt['none'] . ')', '
 					</dd>
-					<dt>', $txt['ips_in_errors'], ':</dt>
+					<dt>', $txt['ips_in_errors'], $txt[':'], '</dt>
 					<dd>
 						', count($context['ips']) > 0 ? implode(', ', $context['error_ips']) : '(' . $txt['none'] . ')', '
 					</dd>';
 
 	// List any members that have used the same IP addresses as the current member.
 	echo '
-					<dt>', $txt['members_in_range'], ':</dt>
+					<dt>', $txt['members_in_range'], $txt[':'], '</dt>
 					<dd>
 						', count($context['members_in_range']) > 0 ? implode(', ', $context['members_in_range']) : '(' . $txt['none'] . ')', '
 					</dd>
@@ -1133,7 +1139,7 @@ function template_showPermissions()
 				', $txt['showPermissions_restricted_boards'], '
 			</we:cat>
 			<div class="windowbg wrc smalltext">
-				', $txt['showPermissions_restricted_boards_desc'], ':<br>';
+				', $txt['showPermissions_restricted_boards_desc'], $txt[':'], '<br>';
 
 			foreach ($context['no_access_boards'] as $no_access_board)
 				echo '
@@ -1267,15 +1273,15 @@ function template_statPanel()
 			</we:cat>
 			<div class="windowbg2 wrc">
 				<dl>
-					<dt>', $txt['statPanel_total_time_online'], ':</dt>
+					<dt>', $txt['statPanel_total_time_online'], $txt[':'], '</dt>
 					<dd>', $context['time_logged_in'], '</dd>
-					<dt>', $txt['statPanel_total_posts'], ':</dt>
+					<dt>', $txt['statPanel_total_posts'], $txt[':'], '</dt>
 					<dd>', $context['num_posts'], ' ', $txt['statPanel_posts'], '</dd>
-					<dt>', $txt['statPanel_total_topics'], ':</dt>
+					<dt>', $txt['statPanel_total_topics'], $txt[':'], '</dt>
 					<dd>', $context['num_topics'], ' ', $txt['statPanel_topics'], '</dd>
-					<dt>', $txt['statPanel_users_polls'], ':</dt>
+					<dt>', $txt['statPanel_users_polls'], $txt[':'], '</dt>
 					<dd>', $context['num_polls'], ' ', $txt['statPanel_polls'], '</dd>
-					<dt>', $txt['statPanel_users_votes'], ':</dt>
+					<dt>', $txt['statPanel_users_votes'], $txt[':'], '</dt>
 					<dd>', $context['num_votes'], ' ', $txt['statPanel_votes'], '</dd>
 				</dl>
 			</div>
@@ -1623,7 +1629,7 @@ function template_profile_pm_settings()
 
 	echo '
 								<dt>
-										<label for="pm_prefs">', $txt['pm_display_mode'], ':</label>
+										<label for="pm_prefs">', $txt['pm_display_mode'], $txt[':'], '</label>
 								</dt>
 								<dd>
 										<select name="pm_prefs" id="pm_prefs">
@@ -2214,7 +2220,7 @@ function template_profileInfractions_issue()
 					</dl>
 					<hr>
 					<dl class="settings">
-						<dt>', $txt['infraction_duration'], ':</dt>
+						<dt>', $txt['infraction_duration'], $txt[':'], '</dt>
 						<dd id="duration"></dd>
 						<dt>', $txt['this_points'], '</dt>
 						<dd id="points"></dd>
@@ -2289,7 +2295,7 @@ function template_profileInfractions_issue()
 						<dd><input name="reason" maxlength="200" class="w75"></dd>
 					</dl>
 					<dl class="settings">
-						<dt>', $txt['infraction_duration'], ':</dt>
+						<dt>', $txt['infraction_duration'], $txt[':'], '</dt>
 						<dd id="duration"></dd>
 						<dt>', $txt['this_points'], '</dt>
 						<dd id="points"></dd>
@@ -2623,7 +2629,7 @@ function template_error_message()
 
 	echo '
 		<div class="windowbg" id="profile_error">
-			<span>', !empty($context['custom_error_title']) ? $context['custom_error_title'] : $txt['profile_errors_occurred'], ':</span>
+			<span>', !empty($context['custom_error_title']) ? $context['custom_error_title'] : $txt['profile_errors_occurred'], $txt[':'], '</span>
 			<ul class="reset">';
 
 		// Cycle through each error and display an error message.
@@ -2663,7 +2669,7 @@ function template_profile_group_manage()
 						</select>
 					</dd>
 					<dt>
-						<strong>', $txt['additional_membergroups'], ':</strong>
+						<strong>', $txt['additional_membergroups'], $txt[':'], '</strong>
 					</dt>
 					<dd>
 						<span id="additional_groupsList">
@@ -2706,7 +2712,7 @@ function template_profile_birthdate()
 	// Just show the pretty box!
 	echo '
 					<dt>
-						<strong>', $txt['dob'], ':</strong>
+						<strong>', $txt['dob'], $txt[':'], '</strong>
 						<dfn>', $txt['dob_year'], ' - ', $txt['dob_month'], ' - ', $txt['dob_day'], '</dfn>
 					</dt>
 					<dd>
@@ -2723,7 +2729,7 @@ function template_profile_signature_modify()
 
 	echo '
 					<dt>
-						<strong>', $txt['signature'], ':</strong>
+						<strong>', $txt['signature'], $txt[':'], '</strong>
 						<dfn>', $txt['sig_info'], '</dfn>';
 	if (!empty($context['signature_minposts']))
 		echo '
@@ -2969,7 +2975,7 @@ function template_profile_timeoffset_modify()
 
 	echo '
 					<dt>
-						<strong', (isset($context['modify_error']['bad_offset']) ? ' class="error"' : ''), '>', $txt['my_time_offset'], ':</strong>
+						<strong', (isset($context['modify_error']['bad_offset']) ? ' class="error"' : ''), '>', $txt['my_time_offset'], $txt[':'], '</strong>
 						<dfn>', $txt['personal_time_offset'], '</dfn>
 					</dt>
 					<dd>
@@ -2984,7 +2990,7 @@ function template_profile_smiley_pick()
 
 	echo '
 					<dt>
-						<strong>', $txt['smileys_current'], ':</strong>
+						<strong>', $txt['smileys_current'], $txt[':'], '</strong>
 					</dt>
 					<dd>
 						<select name="smiley_set" onchange="$(\'#smileypr\').attr(\'src\', this.selectedIndex == 0 ? \'', ASSETS, '/blank.gif\' : \'', SMILEYS, '/\' + (this.selectedIndex != 1 ? $(this).val() : \'', $settings['smiley_sets_default'], '\') + \'/smiley.gif\');">';
