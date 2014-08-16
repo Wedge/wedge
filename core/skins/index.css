@@ -647,6 +647,9 @@ select.sb
 			padding: @is (mobile, 12px 8px, 4px 6px)
 			text-decoration: none
 
+		.pitem:hover
+			background-color: #eee
+
 		.selected .item
 			background-color: #eee
 
@@ -700,6 +703,11 @@ select.sb
 			:hover
 				background: #e8ece8
 				background: linear-gradient(90deg, #ddd, #e8ece8, #ccc)
+
+	/* Multiple selections get a checkbox. */
+	input[type=checkbox]
+		margin: 0 8px 0 0
+		vertical-align: -2px
 
 #sidebar .sbox
 	max-width: 200px
