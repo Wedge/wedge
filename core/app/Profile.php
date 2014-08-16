@@ -29,6 +29,30 @@ function ModifyProfile($post_errors = array())
 	global $txt, $context, $user_profile, $cur_profile;
 	global $settings, $memberContext, $profile_vars, $post_errors;
 
+	if (AJAX && isset($_GET['prv'], $_GET['pa']))
+	{
+		checkSession('get');
+
+		// Public, Members and Just Me settings are exclusive.
+		$prvs = array_flip(explode(',', $_GET['prv']));
+		if (isset($prvs[PRIVACY_DEFAULT]))
+			$_GET['prv'] = PRIVACY_DEFAULT;
+		elseif (isset($prvs[PRIVACY_MEMBERS]))
+			$_GET['prv'] = PRIVACY_MEMBERS;
+		elseif (isset($prvs[PRIVACY_AUTHOR]) || isset($prvs['null']))
+			$_GET['prv'] = PRIVACY_AUTHOR;
+
+		loadCustomFields(we::$id);
+		$allowed = array('age', 'location', 'action', 'time', 'language', 'registered', 'login');
+		// Let modders modify privacy-enabled elements easily.
+		call_hook('profile_privacy', array(&$allowed));
+		foreach ($context['custom_fields'] as $field)
+			$allowed[] = 'custom_' . $field;
+		if (preg_match('~^[-\d][-\d,]*$~', $_GET['prv']) && in_array($_GET['pa'], $allowed))
+			updateMyData(array('privacy' => array_merge(isset(we::$user['data']['privacy']) ? we::$user['data']['privacy'] : array(), array($_GET['pa'] => $_GET['prv']))));
+		return_raw($_GET['prv']);
+	}
+
 	// Don't reload this as we may have processed error strings.
 	if (empty($post_errors))
 		loadLanguage('Profile');
@@ -841,4 +865,31 @@ function loadCustomFields($memID, $area = 'summary')
 		);
 	}
 	wesql::free_result($request);
+}
+
+function profile_can_see($area)
+{
+	static $lists = null;
+	global $user_profile, $context;
+
+	$profile = $user_profile[$context['id_member']];
+	$data = isset($profile['data']['privacy'][$area]) ? $profile['data']['privacy'][$area] : '';
+	if (empty($data) || we::$user['is_owner'])
+		return true;
+	if ($data == PRIVACY_AUTHOR && we::$id != $profile['id_member'])
+		return false;
+	if ($lists === null)
+		$lists = explode(',', we::$user['privacy_list']);
+	return count(array_intersect(explode(',', $data), $lists)) > 0;
+}
+
+function profile_privacy_icon($area, $text)
+{
+	static $lists = null;
+	global $user_profile, $context;
+
+	$profile = $user_profile[$context['id_member']];
+	$privacy = isset($profile['data']['privacy'][$area]) ? $profile['data']['privacy'][$area] : PRIVACY_DEFAULT;
+
+	return get_privacy_widget($privacy, we::$user['is_owner'], $text, $area);
 }

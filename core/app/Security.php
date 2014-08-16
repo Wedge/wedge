@@ -1855,25 +1855,96 @@ function get_privacy_icon($privacy)
 	return '<div class="privacy_' . $type . '" title="' . (strpos($type, 'list') === 0 ? $txt['privacy_list'] : $txt['privacy_' . $type]) . '"></div>';
 }
 
-function get_privacy_options($privacy = null)
+// This is currently tailored for profile privacy... Then again, it's what matters the most.
+function get_privacy_widget($privacy, $can_edit = false, $text = '', $area = '')
+{
+	global $txt, $context;
+
+	if (we::$is_guest)
+		return $text;
+
+	$list = array(
+		PRIVACY_DEFAULT => 'public',
+		PRIVACY_MEMBERS => 'members',
+		PRIVACY_AUTHOR => 'author',
+	);
+	$privacy = explode(',', $privacy);
+	$shown_privacy = min($privacy);
+	foreach ($privacy as $this_privacy)
+	{
+		if (isset(we::$user['contacts']['lists'][$this_privacy]))
+			$list[$this_privacy] = 'list';
+		elseif (isset(we::$user['contacts']['groups'][-$this_privacy]))
+			$list[$this_privacy] = 'group';
+	}
+
+	$prvlist = '';
+	foreach (array('default', 'public', 'members', 'group', 'list', 'author') as $prv)
+		$prvlist .= '
+		"' . $prv . '": ' . JavaScriptEscape($txt['privacy_' . $prv]) . ',';
+
+	add_js_unique('
+	prv_opt = {' . substr($prvlist, 0, -1) . '
+	};
+	$(".privacy").each(function () {
+		$(this).title(
+			' . JavaScriptEscape($txt['privacy_bubble']) . '.replace("{PRIVACY}", prv_opt[$(this).find("div").first().attr("class").replace("privacy_", "")])' . ($can_edit ? '
+			+ ' . JavaScriptEscape('<br>' . $txt['privacy_can_edit']) : '') . '
+		);
+	});
+	$(".prv_sel").change(function (e) {
+		show_ajax();
+		var that = $(this), v = that.val(), prv, tmp;
+		$.get(weUrl("action=profile;u=' . we::$id . ';prv=" + v + ";pa=" + that.parent().find(".privacy").attr("id").slice(3) + ";" + we_sessvar + "=" + we_sessid), function (ret) {
+			hide_ajax();
+			$.each(ret.split(","), function (index, val) {
+				tmp = "";
+				if (val == ' . PRIVACY_DEFAULT . ')
+					tmp = "public";
+				else if (val == ' . PRIVACY_MEMBERS . ')
+					tmp = "members";
+				else if (val == ' . PRIVACY_AUTHOR . ')
+					tmp = "author";
+				if (tmp)
+				{
+					prv = tmp;
+					return false;
+				}
+				prv = val > 0 ? "list" : "group";
+			});
+			that.siblings(".mime").find(".privacy>div").attr("class", "privacy_" + prv);
+		});
+	});
+	$(".privacy").click(function (e) {
+		var p = $(this).parent().siblings("select").data("sb");
+		p && p.open();
+		return false;
+	});');
+
+	return '
+		<span class="privacy"' . ($area ? ' id="pa_' . $area . '"' : '') . '><div class="privacy_' . $list[$shown_privacy] . '"></div>' . $text . '</span>
+		<select class="prv_sel" multiple>' . get_privacy_options(array_flip($privacy)) . '</select>';
+}
+
+function get_privacy_options($privacy = array())
 {
 	global $txt;
 
-	$pr = '<option value="' . PRIVACY_DEFAULT . '"' . ($privacy == PRIVACY_DEFAULT ? ' selected' : '') . '>&lt;div class="privacy_public"&gt;&lt;/div&gt;' . $txt['privacy_public'] . '</option>';
-	$pr .= '<option value="' . PRIVACY_MEMBERS . '"' . ($privacy == PRIVACY_MEMBERS ? ' selected' : '') . '>&lt;div class="privacy_members"&gt;&lt;/div&gt;' . $txt['privacy_members'] . '</option>';
-	$pr .= '<option value="' . PRIVACY_AUTHOR . '"' . ($privacy == PRIVACY_AUTHOR ? ' selected' : '') . '>&lt;div class="privacy_author"&gt;&lt;/div&gt;' . $txt['privacy_author'] . '</option>';
+	$pr = '<option value="' . PRIVACY_DEFAULT . '"' . (isset($privacy[PRIVACY_DEFAULT]) ? ' selected' : '') . ' class="single"">&lt;div class="privacy_public"&gt;&lt;/div&gt;' . $txt['privacy_public'] . '</option>';
+	$pr .= '<option value="' . PRIVACY_MEMBERS . '"' . (isset($privacy[PRIVACY_MEMBERS]) ? ' selected' : '') . ' class="single">&lt;div class="privacy_members"&gt;&lt;/div&gt;' . $txt['privacy_members'] . '</option>';
+	$pr .= '<option value="' . PRIVACY_AUTHOR . '"' . (isset($privacy[PRIVACY_AUTHOR]) ? ' selected' : '') . ' class="single">&lt;div class="privacy_author"&gt;&lt;/div&gt;' . $txt['privacy_author'] . '</option>';
 	if (!empty(we::$user['contacts']['lists']))
 	{
 		$pr .= '<optgroup label="' . $txt['privacy_list'] . '">';
 		foreach (we::$user['contacts']['lists'] as $id => $p)
-			$pr .= '<option value="' . $id . '"' . ($privacy == $id ? ' selected' : '') . '>&lt;div class="privacy_list_' . $p[1] . '"&gt;&lt;/div&gt;' . generic_contacts($p[0]) . '</option>';
+			$pr .= '<option value="' . $id . '"' . (isset($privacy[$id]) ? ' selected' : '') . '>&lt;div class="privacy_list_' . $p[1] . '"&gt;&lt;/div&gt;' . generic_contacts($p[0]) . '</option>';
 		$pr .= '</optgroup>';
 	}
 	if (!empty(we::$user['contacts']['groups']))
 	{
 		$pr .= '<optgroup label="' . $txt['privacy_group'] . '">';
 		foreach (we::$user['contacts']['groups'] as $id => $p)
-			$pr .= '<option value="-' . $id . '"' . ($privacy == -$id ? ' selected' : '') . '>&lt;div class="privacy_group"&gt;&lt;/div&gt;' . ($p[1] >= 0 ? '&lt;em&gt;' . $p[0] . '&lt;/em&gt; &lt;small&gt;' . $p[1] . '&lt;/small&gt;' : $p[0]) . '</option>';
+			$pr .= '<option value="-' . $id . '"' . (isset($privacy[-$id]) ? ' selected' : '') . '>&lt;div class="privacy_group"&gt;&lt;/div&gt;' . ($p[1] >= 0 ? '&lt;em&gt;' . $p[0] . '&lt;/em&gt; &lt;small&gt;' . $p[1] . '&lt;/small&gt;' : $p[0]) . '</option>';
 		$pr .= '</optgroup>';
 	}
 	return $pr;
