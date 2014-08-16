@@ -259,28 +259,28 @@ for guests, because most of the time it won't be an option.
 @endif
 
 .privacy_list_friends mixes .inline-block
-	background: url($images/icons/contacts.gif) 0 0 no-repeat
+	background: raw-url($images/icons/contacts_friends.gif) 0 center no-repeat
 	width, height: 10px
 	margin-right: 4px
 	vertical-align: 0
 
 .privacy_list_known extends .privacy_list_friends
-	background-position: 0 -10px
+	background: raw-url($images/icons/contacts_known.gif) 0 center no-repeat
 
 .privacy_list_family extends .privacy_list_friends
-	background-position: 0 -20px
+	background: raw-url($images/icons/contacts_family.gif) 0 center no-repeat
 
 .privacy_list_work extends .privacy_list_friends
-	background-position: 0 -30px
+	background: raw-url($images/icons/contacts_work.gif) 0 center no-repeat
 
 .privacy_list_follow extends .privacy_list_friends
-	background-position: 0 -40px
+	background: raw-url($images/icons/contacts_follow.gif) 0 center no-repeat
 
 .privacy_list_custom extends .privacy_list_friends
-	background-position: 0 -50px
+	background: raw-url($images/icons/contacts_custom.gif) 0 center no-repeat
 
 .privacy_list_restrict extends .privacy_list_friends
-	background-position: 0 -60px
+	background: raw-url($images/icons/contacts_restrict.gif) 0 center no-repeat
 
 .iconbox
 	text-align: center
