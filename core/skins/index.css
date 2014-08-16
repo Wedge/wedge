@@ -916,7 +916,7 @@ input[type=file]
 			top: 100%
 		@endif
 		position: absolute
-		z-index: 42
+		z-index: 1000
 		visibility: hidden
 		margin, padding: 0
 		border: 1px solid #bbb
@@ -1083,12 +1083,6 @@ li.nodrop h4:after mixes .hide
 		height: 12px
 		position: absolute
 
-// Right-aligned menus need to push the arrow to the right.
-.mimenu.right > ul
-	:before, :after
-		left: auto
-		right: 15px
-
 // Main menus need a darker arrow.
 .menu > li > ul
 	:after
@@ -1125,7 +1119,7 @@ li.nodrop h4:after mixes .hide
 ---------------------------------------------------- */
 
 // Wrapper span that will contain the menu...
-.mime mixes .inline-block
+.mime mixes .inline-block("")
 	position: relative
 	@if ie[-7]
 		z-index: 1
@@ -1137,15 +1131,12 @@ li.nodrop h4:after mixes .hide
 
 // Styling for the mini-menu container below the parent link...
 .mimenu
-	z-index: 47
+	z-index: 1000
 	position: absolute
 	padding: 10px 0 0
 	font: @ifnull ($mimenu_font_style, 400) @ifnull ($mimenu_font_size, 14px/20px) @ifnull ($mimenu_font, $main_font)
 	top: 100%
 	left: -10px
-	&.right
-		left: auto
-		right: -10px
 
 	// ...And for the mini-menu itself (phew.)
 	> ul extends .arrow_above
@@ -1164,6 +1155,31 @@ li.nodrop h4:after mixes .hide
 			margin: 0
 			padding: 1px 2px
 			text-align: left
+
+	// Right-aligned menus need to push the arrow to the right.
+	&.right
+		left: auto
+		right: -10px
+		> ul
+			:before, :after
+				left: auto
+				right: 15px
+
+	// All style changes needed to flip the mini-menu on the X axis.
+	&.top
+		top: auto
+		padding: 0 0 10px
+		bottom: 100%
+		> ul
+			:before, :after
+				top: 100%
+				border-bottom-color: transparent
+			:before
+				border-top-color: #b5b5b5
+			:after
+				border-top-color: #fbfbf8
+			> li:first-child:after
+				top: 100%
 
 /* Common positioning/sizing classes to ease styling.
 ------------------------------------------------------- */
@@ -1607,8 +1623,7 @@ a.moderation_link
 /* Definition lists
 ------------------------------------------------------- */
 
-dl
-	overflow: hidden
+dl mixes .clearfix
 	margin, padding: 0
 
 // Lists with settings use these a lot.
