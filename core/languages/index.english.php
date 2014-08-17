@@ -20,6 +20,9 @@ $txt['number_format'] = '1,234.00';
 $txt['time_format'] = '%B %@, %Y, %I:%M %p';
 $txt['time_format_this_year'] = '%B %@, %I:%M %p';
 
+// Some languages need punctuation before a colon.
+$txt[':'] = ':';
+
 // %@ is a special format that adds a suffix to a day (1-31), e.g. 1st, 2nd...
 // If your language doesn't have any prefixes/suffixes it could use, just set it to $txt['day_suffix'] = '%s';
 $txt['day_suffix'] = array(
@@ -631,6 +634,9 @@ $txt['privacy_members'] = 'Members';
 $txt['privacy_group'] = 'Membergroup';
 $txt['privacy_list'] = 'Contacts';
 $txt['privacy_author'] = 'Just me';
+
+$txt['privacy_bubble'] = 'Visible to: <strong>{PRIVACY}</strong>.';
+$txt['privacy_can_edit'] = 'Click to change privacy.';
 
 // Do not use double quotes in the form_* text strings. (Why would you?)
 $txt['form_submit'] = 'Submit';

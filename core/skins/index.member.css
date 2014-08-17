@@ -24,7 +24,6 @@
 .modrem a extends #modbuttons a.delete
 
 a.unreadlink
-	font-size: .9em
 	float: right
 
 // The quick edit button
@@ -218,70 +217,65 @@ for guests, because most of the time it won't be an option.
 	width: width($images_dir/icons/thought.gif)px
 	height: height($images_dir/icons/thought.gif)px
 
-.privacy_default mixes .inline-block // Green
-	@if $can_filter
-		-prefix-filter: sepia(1) hue-rotate(60deg)
-		background: url($images/icons/privacy.gif) 0 center no-repeat
-		width, min-height: 10px
-	@else
-		background: url($images/icons/privacy.png) 0 -10px no-repeat
-		width, height: 10px
-	@endif
+.privacy
+	cursor: pointer
+	user-select: none
+
+.prv_sel
+	display: block
+	position: relative
+	// Hide selector display from view.
+	.display
+		display: inline
+		position: absolute
+		clip: rect(1px, 1px, 1px, 1px)
+		width, height: 1px
+	// Main text will be hidden by dropdown if it opens upward.
+	.above
+		top: -1em
+
+.privacy_icon virtual mixes .inline-block("") // Green
+	color: #fff
+	background-color: #aed350
+	font-weight: 400
 	margin-right: 4px
+	padding: 0 4px
+	transform: scaleX(-1)
+	:before
+		content: "\b6"
 
-@if $can_filter
-	.privacy_public extends .privacy_default // Uses the same icon.
+.privacy_public extends .privacy_icon // Uses the same icon.
+.privacy_members extends .privacy_icon // Golden
+	background-color: #dcc36c
+.privacy_group extends .privacy_icon // Blue
+	background-color: #82b9c8
+.privacy_list extends .privacy_icon // Purple
+	background-color: luma(#d3a7d1, -20%)
+.privacy_author extends .privacy_icon // Red
+	background-color: #d07848
 
-	.privacy_members extends .privacy_default // Golden
-		-prefix-filter: sepia(1) hue-rotate(0deg) saturate(5)
-
-	.privacy_group extends .privacy_default // Blue
-		-prefix-filter: sepia(1) hue-rotate(200deg)
-
-	.privacy_list extends .privacy_default // Purple
-		-prefix-filter: sepia(1) hue-rotate(270deg) saturate(2)
-
-	.privacy_author extends .privacy_default // Red
-		-prefix-filter: sepia(1) hue-rotate(300deg) saturate(5)
-@else
-	.privacy_public extends .privacy_default // Uses the same icon.
-
-	.privacy_members extends .privacy_default
-		background-position: 0 -20px
-
-	.privacy_group extends .privacy_default // Blue
-		background-position: 0 -30px
-
-	.privacy_list extends .privacy_default
-		background-position: 0 -40px
-
-	.privacy_author extends .privacy_default
-		background-position: 0 -50px
-@endif
-
-.privacy_list_friends mixes .inline-block
-	background: url($images/icons/contacts.gif) 0 0 no-repeat
-	width, height: 10px
-	margin-right: 4px
-	vertical-align: 0
+.privacy_list_friends
+	display: inline
+	background: raw-url($images/icons/contacts_friends.gif) 0 center no-repeat
+	padding-left: 15px
 
 .privacy_list_known extends .privacy_list_friends
-	background-position: 0 -10px
+	background: raw-url($images/icons/contacts_known.gif) 0 center no-repeat
 
 .privacy_list_family extends .privacy_list_friends
-	background-position: 0 -20px
+	background: raw-url($images/icons/contacts_family.gif) 0 center no-repeat
 
 .privacy_list_work extends .privacy_list_friends
-	background-position: 0 -30px
+	background: raw-url($images/icons/contacts_work.gif) 0 center no-repeat
 
 .privacy_list_follow extends .privacy_list_friends
-	background-position: 0 -40px
+	background: raw-url($images/icons/contacts_follow.gif) 0 center no-repeat
 
 .privacy_list_custom extends .privacy_list_friends
-	background-position: 0 -50px
+	background: raw-url($images/icons/contacts_custom.gif) 0 center no-repeat
 
 .privacy_list_restrict extends .privacy_list_friends
-	background-position: 0 -60px
+	background: raw-url($images/icons/contacts_restrict.gif) 0 center no-repeat
 
 .iconbox
 	text-align: center

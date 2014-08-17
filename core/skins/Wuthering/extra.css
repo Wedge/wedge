@@ -50,9 +50,13 @@ $darkgrad = #f3f2f0
 #banner
 	border-radius: $radius
 	gradient: #c3cfde, #fff
+	@if ie[-9]
+		> div
+			filter: none
+	@endif
 
 #header
-	background: linear-gradient(to bottom, #c3cfde, #fff)
+	gradient: #c3cfde, #fff
 
 #edge
 	padding: 8px 0 0

@@ -81,7 +81,7 @@
 
 			// Cache all sb items
 			$items = $dd.children().not('.optgroup');
-			setSelected($orig_item = $items.filter('.selected'));
+			setSelected($orig_item = $items.filter('.selected,:has(input:checked)').first());
 
 			$dd.children().first().addClass('first');
 			$dd.children().last().addClass('last');
@@ -155,25 +155,25 @@
 			// you can use the magic word: <option data-hide>
 			var visible = $option.attr('data-hide') !== '';
 
-			return $('<div id="sbo' + ++unique + '" role="option">')
+			return $('<div id="sbo' + ++unique + '" role="option" class="pitem">')
 				.data('orig', $option)
 				.data('value', $option.attr('value') || '')
 				.attr('aria-disabled', !!$option.is(':disabled'))
 				.toggleClass('disabled', !visible || $option.is(':disabled,.hr'))
-				.toggleClass('selected', $option.is(':selected'))
+				.toggleClass('selected', $option.is(':selected') && (!$orig.attr('multiple') || $option.hasClass('single')))
 				.toggle(visible)
 				.append(
 					$('<div class="item">')
 						.attr('style', $option.attr('style') || '')
 						.addClass($option.attr('class'))
-						.append(optionFormat($option))
+						.append(optionFormat($option, !$orig.attr('multiple') || $option.hasClass('single') ? '' : '<input type="checkbox" onclick="this.checked = !this.checked;"' + ($option.is(':selected') ? ' checked' : '') + '>'))
 				);
 		},
 
 		// Formatting for the display
-		optionFormat = function ($dom)
+		optionFormat = function ($dom, extra)
 		{
-			return '<div class="text">' + (($dom.text ? $dom.text().split('|').join('</div><div class="details">') : $dom + '') || '&nbsp;') + '</div>';
+			return '<div class="text">' + (extra || '') + (($dom.text ? $dom.text().split('|').join('</div><div class="details">') : $dom + '') || '&nbsp;') + '</div>';
 		},
 
 		// Hide and reset dropdown markup
@@ -181,11 +181,14 @@
 		{
 			if ($sb.hasClass('open'))
 			{
+				scrollbar = '';
 				$display.blur();
 				$sb.removeClass('open');
-				$dd
-					.animate(is_opera ? { opacity: 'toggle' } : { opacity: 'toggle', height: 'toggle' }, instantClose == 1 ? 0 : 100)
-					.attr('aria-hidden', true);
+				$dd.removeClass('has_bar');
+				$dd.animate(is_opera ? { opacity: 'toggle' } : { opacity: 'toggle', height: 'toggle' }, instantClose == 1 ? 0 : 100);
+				$dd.attr('aria-hidden', true);
+				$dd.find('.scrollbar').remove();
+				$dd.find('.overview').contents().unwrap().unwrap();
 			}
 			$(document).off('.sb');
 		},
@@ -218,7 +221,7 @@
 
 		displayClick = function (e) {
 			$sb.hasClass('open') ? closeAndUnbind(1) : openSB(0, 1);
-			e.stopPropagation();
+			e && e.stopPropagation();
 		},
 
 		// Show, reposition, and reset dropdown markup.
@@ -237,6 +240,7 @@
 				.css({ visibility: 'hidden' })
 				.width('')
 				.height('')
+				.removeClass('above')
 				.find('.viewport')
 					.height('');
 
@@ -255,7 +259,7 @@
 
 				// Show scrollbars if the dropdown is taller than 250 pixels (or the viewport height).
 				// Touch-enabled phones have poor usability and shouldn't bother -- let them stretch all the way.
-				ddMaxHeight = Math.min(Math.max(500, ddHeight / 5), ddHeight, Math.max(bottomSpace, topSpace - 50) - 50),
+				ddMaxHeight = Math.max(Math.min(ddHeight, 50), Math.min(Math.max(500, ddHeight / 5), ddHeight, Math.max(bottomSpace, topSpace - 50) - 50)),
 
 				// If we have enough space below the button, or if we don't have enough room above either, show a dropdown.
 				// Otherwise, show a drop-up, but only if there's enough size, or the space above is more comfortable.
@@ -265,7 +269,7 @@
 			if (ddMaxHeight < ddHeight)
 			{
 				$dd.height(ddMaxHeight - ddHeight + $dd.height());
-				scrollbar ? scrollbar.init() : scrollbar = new ScrollBar($dd);
+				scrollbar = new ScrollBar($dd);
 				centerOnSelected();
 			}
 
@@ -292,7 +296,7 @@
 		},
 
 		// When the user selects an item in any manner
-		selectItem = function ($item, no_open)
+		selectItem = function ($item, no_open, is_clicking)
 		{
 			var $newtex = $item.find('.text'), $oritex = $display.find('.text'), oriwi = $oritex.width(), newwi;
 
@@ -300,7 +304,7 @@
 			if (!no_open && !$sb.hasClass('open'))
 				openSB();
 
-			setSelected($item);
+			setSelected($item, is_clicking);
 
 			// Update the title attr and the display markup
 			$oritex
@@ -312,7 +316,7 @@
 				$oritex.stop(true, true).width(oriwi).delay(100).animate({ width: newwi });
 		},
 
-		setSelected = function ($item)
+		setSelected = function ($item, is_clicking)
 		{
 			// If the select box has just been rebuilt, reset its selection.
 			// Good to know: !$items.has($item).length is 60 times slower.
@@ -321,9 +325,17 @@
 			if (!$item[0].parentNode === $dd[0])
 				$item = $orig_item;
 
-			// Change the selection to this item
-			$selected = $item.addClass('selected');
-			$items.not($selected).removeClass('selected');
+			// Change the selection to the first selected item in the list
+			if ($orig.attr('multiple') && !$item.has('>.single').length)
+				$selected = $items.filter('.selected,:has(input:checked)').first();
+			else
+			{
+				// Change the selection to this item
+				$selected = $item.addClass('selected');
+				$items.not($selected).removeClass('selected');
+				if (is_clicking)
+					$items.not($selected).find('input').prop('checked', false);
+			}
 			$sb.attr('aria-activedescendant', $selected.attr('id'));
 		},
 
@@ -333,26 +345,41 @@
 			has_changed = $orig.val() !== $selected.data('value') && !$selected.hasClass('disabled');
 
 			// Update the original <select>
-			$orig.find('option')[0].selected = false;
-			$selected.data('orig')[0].selected = true;
+			if ($orig.attr('multiple'))
+				$items.each(function () {
+					if ($(this).data('orig')[0].selected != $(this).find('input').prop('checked'))
+						$(this).data('orig')[0].selected = $(this).find('input').prop('checked') || $(this).hasClass('selected');
+				});
+			else
+			{
+				$orig.find('option')[0].selected = false;
+				$selected.data('orig')[0].selected = true;
+			}
+
 			$orig_item = $selected;
 		},
 
 		// When the user explicitly clicks an item
 		clickSBItem = function (e)
 		{
-			if (e.which == 1)
+			if (e.which == 1 && (!$orig.attr('multiple') || $(this).has('>.single').length))
 			{
-				selectItem($(this));
+				selectItem($(this), false, true);
 				updateOriginal();
 				closeAndUnbind();
 				focusSB();
-
-				if (has_changed)
-				{
-					$orig.triggerHandler('change');
-					has_changed = false;
-				}
+			}
+			else if (e.which == 1)
+			{
+				$items.filter('.selected').removeClass('selected');
+				$(this).find('input').prop('checked', !$(this).find('input').prop('checked'));
+				setSelected($(this));
+				updateOriginal();
+			}
+			if (has_changed)
+			{
+				$orig.triggerHandler('change');
+				has_changed = false;
 			}
 
 			return false;
@@ -484,7 +511,6 @@
 			// Destroy existing data
 			$sb.remove();
 			$orig.removeClass('sb').off('.sb');
-			scrollbar = '';
 			$(window).off('.sb');
 
 			loadSB();
@@ -537,23 +563,6 @@
 				});
 		};
 
-		that.init = function ()
-		{
-			viewportAxis = $dd.height();
-			$dd.find('.viewport').height(viewportAxis);
-			$scrollbar = $dd.find('.scrollbar').height(viewportAxis);
-			$content = $dd.find('.overview');
-			contentAxis = $content.height();
-			$thumb = $scrollbar.find('div');
-
-			scrollbarRatio = contentAxis / viewportAxis;
-			thumbAxis = Math.min(viewportAxis, viewportAxis / scrollbarRatio);
-
-			// Set size.
-			iMouse = $thumb.offset().top;
-			$thumb.height(thumbAxis);
-		};
-
 		// Scroll to...
 		that.st = function (iTop, iHeight)
 		{
@@ -568,11 +577,24 @@
 		if ($dd.find('.viewport').length)
 			return;
 
+		// Gentlemen, start your engines.
 		$dd.addClass('has_bar').width(Math.min($dd.width(), $(window).width() - 25));
 		$dd.contents().wrapAll('<div class="viewport"><div class="overview">');
 		$dd.append('<div class="scrollbar"><div>');
 
-		that.init();
+		viewportAxis = $dd.height();
+		$dd.find('.viewport').height(viewportAxis);
+		$scrollbar = $dd.find('.scrollbar').height(viewportAxis);
+		$content = $dd.find('.overview');
+		contentAxis = $content.height();
+		$thumb = $scrollbar.find('div');
+
+		scrollbarRatio = contentAxis / viewportAxis;
+		thumbAxis = Math.min(viewportAxis, viewportAxis / scrollbarRatio);
+
+		// Set size.
+		iMouse = $thumb.offset().top;
+		$thumb.height(thumbAxis);
 
 		// Set events
 		$scrollbar.mousedown(drag);

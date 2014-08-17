@@ -581,7 +581,7 @@ class wess_color extends wess
 		$nodupes = array();
 
 		// No need for a recursive regex, as we shouldn't have more than one level of nested brackets...
-		while (preg_match_all('~(strength|brightness|luma|saturation|hue|complement|average|alpha|channels)\(((?:(?:rgb|hsl)a?\([^()]+\)|[^()])+)\)~i', $css, $matches))
+		while (preg_match_all('~(strength|luma|saturation|hue|complement|average|alpha|channels)\(((?:(?:rgb|hsl)a?\([^()]+\)|[^()])+)\)~i', $css, $matches))
 		{
 			foreach ($matches[0] as $i => $dec)
 			{
@@ -623,7 +623,6 @@ class wess_color extends wess
 
 				/*
 					This is where we run our color functions...
-					- 'brightness' is an alias to 'luma'.
 					- 'strength' is a version of 'luma' that makes bright colors brighter, and dark colors darker.
 					- 'luma', 'saturation', 'alpha' and 'channels' change their behavior based on the value:
 						Use '+' or '-' signs to indicate a change relative to the old value.
@@ -654,7 +653,7 @@ class wess_color extends wess
 					$hsl['a'] = $this->op($hsl['a']);
 
 				// Change color luma, i.e. lightness, i.e. overall brightness. 'Luma' sounded better.
-				elseif ($code === 'luma' || $code === 'brightness' || $code == 'strength')
+				elseif ($code === 'luma' || $code === 'strength')
 					$hsl['l'] = $this->op($hsl['l'], 0, $code === 'strength' && $hsl['l'] < 0.5);
 
 				// Change color saturation (if up, gets color further away from grayscale)
