@@ -62,7 +62,7 @@ $darkgrad = #f3f2f0
 	padding: 8px 0 0
 
 #main
-	padding: 0 5px 12px
+	padding-top: 0
 
 #top_section
 	background: none
@@ -304,6 +304,7 @@ dfn
 /* These are our CSS variable and mixin definitions.
 ------------------------------------------------------- */
 
+$horizontal_content_padding = 5px
 $generic_stack = Verdana, Arial, sans-serif
 $main_font = $generic_stack
 $subject_font = $generic_stack
