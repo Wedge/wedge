@@ -1891,7 +1891,10 @@ function get_privacy_widget($privacy, $can_edit = false, $text = '', $area = '')
 			' . JavaScriptEscape($txt['privacy_bubble']) . '.replace("{PRIVACY}", prv_opt[$(this).find("div").first().attr("class").replace("privacy_", "")])' . ($can_edit ? '
 			+ ' . JavaScriptEscape('<br>' . $txt['privacy_can_edit']) : '') . '
 		);
-	});
+	});');
+
+	if ($can_edit)
+		add_js_unique('
 	$(".prv_sel").change(function (e) {
 		show_ajax();
 		var that = $(this), v = that.val(), prv, tmp;
@@ -1922,8 +1925,8 @@ function get_privacy_widget($privacy, $can_edit = false, $text = '', $area = '')
 	});');
 
 	return '
-		<span class="privacy"' . ($area ? ' id="pa_' . $area . '"' : '') . '><div class="privacy_' . $list[$shown_privacy] . '"></div>' . $text . '</span>
-		<select class="prv_sel" multiple>' . get_privacy_options(array_flip($privacy)) . '</select>';
+		<span class="privacy"' . ($area ? ' id="pa_' . $area . '"' : '') . '><div class="privacy_' . $list[$shown_privacy] . '"></div>' . $text . '</span>' . ($can_edit ? '
+		<select class="prv_sel" multiple>' . get_privacy_options(array_flip($privacy)) . '</select>' : '');
 }
 
 function get_privacy_options($privacy = array())
