@@ -123,7 +123,7 @@ h1
 			border-radius: 8px 0 0 8px
 
 #wedge > div:last-child
-	padding: 0 20px 20px
+	padding-bottom: 20px
 	border-radius: 0 0 $radius $radius
 
 @media $responsive
