@@ -221,7 +221,7 @@ for guests, because most of the time it won't be an option.
 	cursor: pointer
 	user-select: none
 
-.prv_sel
+div.prv_sel
 	display: block
 	position: relative
 	// Hide selector display from view.
