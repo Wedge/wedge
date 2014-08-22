@@ -2068,7 +2068,8 @@ CREATE TABLE {$db_prefix}sessions (
 	session_id char(32) NOT NULL,
 	last_update int(10) unsigned NOT NULL,
 	data text NOT NULL,
-	PRIMARY KEY (session_id)
+	PRIMARY KEY (session_id),
+	KEY last_update (last_update)
 ) ENGINE=MyISAM;
 
 #

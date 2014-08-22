@@ -1847,6 +1847,7 @@ function knownHooks()
 			'info_center',
 			'media_areas',
 			'profile_areas',
+			'profile_privacy',
 			'suggest',
 			'thought',
 			'select_quickmod',

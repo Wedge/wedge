@@ -857,6 +857,7 @@ function loadCustomFields($memID, $area = 'summary')
 			'name' => $row['field_name'],
 			'desc' => $row['field_desc'],
 			'type' => $row['field_type'],
+			'privacy' => 'custom_' . $row['field_name'],
 			'input_html' => $input_html,
 			'output_html' => $output_html,
 			'placement' => $row['placement'],
@@ -887,6 +888,9 @@ function profile_privacy_icon($area, $text)
 {
 	static $lists = null;
 	global $user_profile, $context;
+
+	if (empty($area))
+		return $text;
 
 	$profile = $user_profile[$context['id_member']];
 	$privacy = isset($profile['data']['privacy'][$area]) ? $profile['data']['privacy'][$area] : PRIVACY_DEFAULT;

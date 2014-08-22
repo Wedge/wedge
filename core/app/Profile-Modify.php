@@ -308,6 +308,7 @@ function loadProfileFields($force_reload = false)
 			'options' => function () { global $context; return $context['profile_languages']; },
 			'label' => $txt['preferred_language'],
 			'permission' => 'profile_identity',
+			'privacy' => 'language',
 			'preload' => 'profileLoadLanguages',
 			'enabled' => !empty($settings['userLanguage']),
 			'value' => empty($cur_profile['lngfile']) ? $settings['language'] : $cur_profile['lngfile'],
@@ -336,6 +337,7 @@ function loadProfileFields($force_reload = false)
 			'log_change' => true,
 			'size' => 50,
 			'permission' => 'profile_extra',
+			'privacy' => 'location',
 		),
 		// The username is not always editable - so adjust it as such.
 		'member_name' => array(
@@ -608,6 +610,7 @@ function loadProfileFields($force_reload = false)
 			'type' => 'select',
 			'options' => function () { return get_wedge_timezones(); },
 			'permission' => 'profile_extra',
+			'privacy' => 'time',
 			'label' => $txt['time_zone'],
 		),
 		'personal_text' => array(
@@ -1099,7 +1102,7 @@ function makeCustomFieldChanges($memID, $area, $sanitize = true)
 
 	// Load the fields we are saving too - make sure we save valid data (etc).
 	$request = wesql::query('
-		SELECT col_name, field_name, field_desc, field_type, field_length, field_options, default_value, show_reg, mask, can_edit
+		SELECT col_name, field_type, field_length, field_options, default_value, mask, can_edit
 		FROM {db_prefix}custom_fields
 		WHERE ' . $where . '
 			AND active = {int:is_active}',
