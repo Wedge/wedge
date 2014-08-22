@@ -1104,25 +1104,6 @@ li.nodrop h4:after mixes .hide
 			color: #fff
 @endif
 
-#sidemenu mixes .hide
-	border-bottom: 1px solid #ccc
-	margin: 0 0 10px
-	padding: 0 0 10px
-	h4 mixes .inline-block
-		font-size: 1.4em
-		line-height: 1.6em
-		padding: 0 6px
-		font-weight: 400
-	ul
-		display: block
-		margin: 0
-		padding: 0 0 0 20px
-	li
-		padding: 4px 8px
-		margin: 0
-		display: block
-		font-size: 1.1em
-
 /* Styles for the mini-menus.
 ---------------------------------------------------- */
 

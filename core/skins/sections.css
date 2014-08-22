@@ -1545,16 +1545,42 @@ body.waiting *
 				letter-spacing: -1px
 				img
 					margin-top: 0
-			#main_menu mixes .hide
-			#sidemenu
-				display: block
 
 	// Even smaller? A smartphone, maybe..?
 	@media all and (max-width: 600px)
 		body #wedge // Precedence killjoy.
+			overflow: hidden
+
 			dt, dd
 				clear: both
 				width: auto
 			dd
 				padding-left: 12px
+
+			// Develop sub-menus into their parents.
+			.menu
+				li.subsection > a:after
+					content: ""
+
+				li:hover ul ul, li:hover ul ul ul
+					visibility: visible
+					opacity: 1
+					transition: none
+
+				li li > ul
+					box-shadow: none
+					background-color: rgba(255, 255, 255, .6)
+					position: relative
+					border: 0
+					left: 0
+					font-size: 90%
+					font-style: italic
+					> li
+						border: 0
+						&:not(.sep) > a:before
+							content: "\2022\a0\a0"
+				@if !ie
+					li:hover li > ul
+						transform: none
+				@endif
 @endif
