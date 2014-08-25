@@ -40,10 +40,10 @@ function template_home_topics($n = 0)
 		echo '
 			<tr class="windowbg', $alt, '">', $is_mobile ? '' : '
 				<td class="latestp1">
-					<div>' . timeformat($post['timestamp']) . ' ' . $txt['by'] . ' ' . $post['poster']['link'] . '</div>
+					<div>' . $post['time'] . ' ' . $txt['by'] . ' ' . $post['poster']['link'] . '</div>
 				</td>', '
 				<td class="latestp2">', $is_mobile ? '
-					' . timeformat($post['timestamp']) . ' ' . $txt['by'] . ' ' . $post['poster']['link'] . '<br>' : '', '
+					' . $post['time'] . ' ' . $txt['by'] . ' ' . $post['poster']['link'] . '<br>' : '', '
 					', $post['board']['link'], ' &gt; ';
 
 		if ($post['is_new'] && we::$is_member)
