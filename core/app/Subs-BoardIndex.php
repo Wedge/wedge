@@ -49,7 +49,7 @@ function getBoardIndex($boardIndexOptions)
 		FROM {db_prefix}boards AS b' . ($boardIndexOptions['include_categories'] ? '
 			LEFT JOIN {db_prefix}categories AS c ON (c.id_cat = b.id_cat)' : '') . '
 			LEFT JOIN {db_prefix}messages AS m ON (m.id_msg = b.id_last_msg)
-			LEFT JOIN {db_prefix}topics AS t ON (m.id_topic = m.id_msg) AND {query_see_topic}
+			LEFT JOIN {db_prefix}topics AS t ON (t.id_topic = m.id_topic) AND {query_see_topic}
 			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = m.id_member)' . ($boardIndexOptions['include_categories'] ? '
 			LEFT JOIN {db_prefix}collapsed_categories AS cc ON (cc.id_cat = c.id_cat AND cc.id_member = {int:current_member})' : '') . '
 			LEFT JOIN {db_prefix}moderators AS mods ON (mods.id_board = b.id_board)
@@ -392,7 +392,7 @@ function getBoardIndex($boardIndexOptions)
 				'link' => '<a href="<URL>?action=moderate;area=groups;sa=requests">' . $txt['group_requests'] . '</a>',
 				'language' => '',
 			);
-			// Lastly, we need to set the last post. I realise it's not actually 'off limits' but that's the mechanism to reuse here.
+			// Lastly, we need to set the last post. I realize it's not actually 'off limits' but that's the mechanism to reuse here.
 			$requests = cache_quick_get('groupreq_boardindex-' . $user_group_key, 'ModerationCenter', 'cache_getBoardIndexGroupReq', array());
 			if (!empty($requests['id_request']))
 			{

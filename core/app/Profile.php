@@ -829,9 +829,7 @@ function loadCustomFields($memID, $area = 'summary')
 			$input_html .= '</fieldset>';
 		}
 		elseif ($row['field_type'] == 'text')
-		{
 			$input_html = '<input name="customfield[' . $row['col_name'] . ']" ' . ($row['field_length'] != 0 ? 'maxlength="' . $row['field_length'] . '"' : '') . ' size="' . ($row['field_length'] == 0 || $row['field_length'] >= 50 ? 50 : ($row['field_length'] > 30 ? 30 : ($row['field_length'] > 10 ? 20 : 10))) . '" value="' . $value . '"' . ($area == 'register' && $row['show_reg'] > 1 ? ' required' : '') . '>';
-		}
 		else
 		{
 			@list ($rows, $cols) = @explode(',', $row['default_value']);
