@@ -202,7 +202,7 @@ function template_summary()
 		$shown = false;
 		foreach ($context['custom_fields'] as $field)
 		{
-			if ($field['placement'] != 0 || empty($field['output_html']) || !profile_can_see('custom_' . $field))
+			if ($field['placement'] != 0 || empty($field['output_html']) || !profile_can_see('custom_' . $field['colname']))
 				continue;
 
 			if (!$shown)
@@ -213,7 +213,7 @@ function template_summary()
 			}
 
 			echo '
-				<dt>', profile_privacy_icon('custom_' . $field, $field['name'] . $txt[':']), '</dt>
+				<dt>', profile_privacy_icon('custom_' . $field['colname'], $field['name'] . $txt[':']), '</dt>
 				<dd>', $field['output_html'], '</dd>';
 		}
 
@@ -335,7 +335,7 @@ function template_summary()
 		$shown = false;
 		foreach ($context['custom_fields'] as $field)
 		{
-			if ($field['placement'] != 2 || empty($field['output_html']) || !profile_can_see('custom_' . $field))
+			if ($field['placement'] != 2 || empty($field['output_html']) || !profile_can_see('custom_' . $field['colname']))
 				continue;
 
 			if (!$shown)
@@ -347,7 +347,7 @@ function template_summary()
 			}
 
 			echo '
-					<li>', profile_privacy_icon('custom_' . $field, $field['output_html'] . $txt[':']), '</li>';
+					<li>', profile_privacy_icon('custom_' . $field['colname'], $field['output_html'] . $txt[':']), '</li>';
 		}
 		if ($shown)
 				echo '
