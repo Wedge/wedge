@@ -94,9 +94,12 @@ function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow =
 	$id = '';
 	$latest_date = 0;
 
+	$full_path = array();
 	foreach ($files as $fid => $file)
 	{
-		if (!file_exists($add = ROOT_DIR . '/core/javascript/' . $file)) // !! Temp?
+		if (file_exists($add = ROOT_DIR . '/core/javascript/' . $file)) // !! Temp?
+			$files[$fid] = ROOT_DIR . '/core/javascript/' . $file;
+		elseif (!file_exists($add = $file))
 		{
 			unset($files[$fid]);
 			continue;
@@ -129,7 +132,7 @@ function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow =
 	$final_name = $is_jquery ? $context['jquery_version'] : $id . $lang_name . $latest_date;
 	if (!file_exists(CACHE_DIR . '/js/' . $final_name . $ext))
 	{
-		wedge_cache_js($id, $lang_name, $latest_date, $ext, $files, $can_gzip);
+		wedge_cache_js($id, $lang_name, $latest_date, $ext, $files, $can_gzip, true);
 		if ($is_jquery)
 			@rename(CACHE_DIR . '/js/' . $id . $lang_name . $latest_date . $ext, CACHE_DIR . '/js/' . $final_name . $ext);
 	}
@@ -1510,6 +1513,7 @@ function wedge_get_skin_options($options_only = false)
 	}
 	$context['template_folders'][] = TEMPLATES_DIR;
 	$context['css_folders'] = array_reverse($css_folders);
+	$folder = reset($css_folders);
 
 	// From root to deepest.
 	foreach (array_reverse($context['skin_folders']) as $fold)
@@ -1616,7 +1620,7 @@ function wedge_get_skin_options($options_only = false)
 			$includes = array_map('trim', explode(' ', $match['include']));
 			$has_here = strpos($match['include'], '$here') !== false;
 			foreach ($includes as $val)
-				add_js_file($has_here ? str_replace('$here', str_replace($root_dir . '/', '', $folder), $val) : $val);
+				add_js_file($has_here ? str_replace('$here', SKINS_DIR . '/' . $folder, $val) : $val);
 		}
 		if (!empty($match['value']))
 			add_js(rtrim($match['value'], "\t"));

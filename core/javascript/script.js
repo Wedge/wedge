@@ -507,9 +507,6 @@ $(function ()
 	// Transform existing select boxes into our super boxes.
 	$('select').sb();
 
-	// Save a copy of our untreated menu, for responsiveness.
-	$('#main_menu').clone().removeClass('menu').attr('id', 'sidemenu').prependTo('#sidebar>div');
-
 	// Make root menu icons clickable by stealing the link from their neighbor.
 	$('.menu>li>span').each(function () { $(this).wrap($('<a/>').attr('href', $(this).next().find('a').attr('href'))); });
 

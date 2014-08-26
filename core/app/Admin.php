@@ -14,7 +14,7 @@ if (!defined('WEDGE'))
 /*	This file, unpredictable as this might be, handles basic administration.
 
 	void Admin()
-		- initialises all the basic context required for the admin center.
+		- initializes all the basic context required for the admin center.
 		- passes execution onto the relevant admin section.
 		- if the passed section is not found it shows the admin home page.
 

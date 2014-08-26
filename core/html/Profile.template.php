@@ -202,7 +202,7 @@ function template_summary()
 		$shown = false;
 		foreach ($context['custom_fields'] as $field)
 		{
-			if ($field['placement'] != 0 || empty($field['output_html']) || !profile_can_see('custom_' . $field))
+			if ($field['placement'] != 0 || empty($field['output_html']) || !profile_can_see('custom_' . $field['colname']))
 				continue;
 
 			if (!$shown)
@@ -213,7 +213,7 @@ function template_summary()
 			}
 
 			echo '
-				<dt>', profile_privacy_icon('custom_' . $field, $field['name'] . $txt[':']), '</dt>
+				<dt>', profile_privacy_icon('custom_' . $field['colname'], $field['name'] . $txt[':']), '</dt>
 				<dd>', $field['output_html'], '</dd>';
 		}
 
@@ -335,7 +335,7 @@ function template_summary()
 		$shown = false;
 		foreach ($context['custom_fields'] as $field)
 		{
-			if ($field['placement'] != 2 || empty($field['output_html']) || !profile_can_see('custom_' . $field))
+			if ($field['placement'] != 2 || empty($field['output_html']) || !profile_can_see('custom_' . $field['colname']))
 				continue;
 
 			if (!$shown)
@@ -347,7 +347,7 @@ function template_summary()
 			}
 
 			echo '
-					<li>', profile_privacy_icon('custom_' . $field, $field['output_html']), '</li>';
+					<li>', profile_privacy_icon('custom_' . $field['colname'], $field['output_html'] . $txt[':']), '</li>';
 		}
 		if ($shown)
 				echo '
@@ -1468,7 +1468,10 @@ function template_edit_options()
 			echo '
 					<dt>
 						', $field['type'] == 'check' ? '<label for="' . $key . '">' : '',
-						'<strong', !empty($field['is_error']) ? ' class="error"' : '', '>', $field['label'], '</strong>',
+						profile_privacy_icon(
+							empty($field['privacy']) ? '' : $field['privacy'],
+							'<strong' . (!empty($field['is_error']) ? ' class="error"' : '') . '>' . $field['label'] . $txt[':'] . '</strong>'
+						),
 						$field['type'] == 'check' ? '</label>' : '';
 
 			// Does it have any subtext to show?
@@ -2712,7 +2715,7 @@ function template_profile_birthdate()
 	// Just show the pretty box!
 	echo '
 					<dt>
-						<strong>', $txt['dob'], $txt[':'], '</strong>
+						', profile_privacy_icon('age', '<strong>' . $txt['dob'] . $txt[':'] . '</strong>'), '
 						<dfn>', $txt['dob_year'], ' - ', $txt['dob_month'], ' - ', $txt['dob_day'], '</dfn>
 					</dt>
 					<dd>
@@ -2944,7 +2947,7 @@ function template_profile_timeformat_modify()
 	echo '
 					<dt>
 						<a href="<URL>?action=help;in=time_format" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
-						<strong>', $txt['choose_time_format'], '</strong>
+						<strong>', $txt['choose_time_format'], $txt[':'], '</strong>
 						<dfn>', $txt['date_format'], '</dfn>
 					</dt>
 					<dd>
@@ -2975,7 +2978,7 @@ function template_profile_timeoffset_modify()
 
 	echo '
 					<dt>
-						<strong', (isset($context['modify_error']['bad_offset']) ? ' class="error"' : ''), '>', $txt['my_time_offset'], $txt[':'], '</strong>
+						<strong', isset($context['modify_error']['bad_offset']) ? ' class="error"' : '', '>', $txt['my_time_offset'], $txt[':'], '</strong>
 						<dfn>', $txt['personal_time_offset'], '</dfn>
 					</dt>
 					<dd>
