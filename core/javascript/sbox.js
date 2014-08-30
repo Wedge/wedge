@@ -46,7 +46,7 @@
 			$sb = $('<div class="sbox ' + ($orig.attr('class') || '') + '" id="sb' + ($orig.attr('id') || ++unique) + '" role="listbox">')
 				.attr('aria-haspopup', true);
 
-			$display = $('<div class="display" id="sbd' + ++unique + '">')
+			$display = $('<div class="display" id="sbd' + (++unique) + '">')
 				// Generate the display markup
 				.append(optionFormat($orig.data('default') || $orig.find('option:selected')))
 				.append('<div class="btn">&#9660;</div>');
@@ -155,7 +155,7 @@
 			// you can use the magic word: <option data-hide>
 			var visible = $option.attr('data-hide') !== '';
 
-			return $('<div id="sbo' + ++unique + '" role="option" class="pitem">')
+			return $('<div id="sbo' + (++unique) + '" role="option" class="pitem">')
 				.data('orig', $option)
 				.data('value', $option.attr('value') || '')
 				.attr('aria-disabled', !!$option.is(':disabled'))
