@@ -174,7 +174,7 @@ function template_admin_login()
 	add_css_file('pages'); // #admin_login
 
 	echo '
-<form action="<URL>', $context['get_data'], '" method="post" accept-charset="UTF-8" name="frmLogin" id="frmLogin" onsubmit="hashAdminPassword(this, \'', we::$user['username'], '\', \'', $context['session_id'], '\');">
+<form action="', we::$user['url'], '" method="post" accept-charset="UTF-8" name="frmLogin" id="frmLogin" onsubmit="hashAdminPassword(this, \'', we::$user['username'], '\', \'', $context['session_id'], '\');">
 	<div class="login" id="admin_login">
 		<we:cat>
 			<img src="', ASSETS, '/icons/online.gif">
