@@ -442,7 +442,7 @@ class we
 
 		// The URL in your address bar. Also contains the query string.
 		// Do not print this without sanitizing first!
-		$user['url'] = (empty($_SERVER['REAL_HTTP_HOST']) ? $user['server'] : substr($user['server'], 0, strpos($user['server'], '/')) . '//' . $_SERVER['HTTP_HOST']) . $_SERVER['REQUEST_URI'];
+		$user['url'] = (empty($_SERVER['REAL_HTTP_HOST']) ? $user['server'] : PROTOCOL . $_SERVER['HTTP_HOST']) . $_SERVER['REQUEST_URI'];
 
 		// Make sure that the last item in the ignore boards array is valid. If the list was too long it could have an ending comma that could cause problems.
 		if (!empty($user['ignoreboards']) && empty($user['ignoreboards'][$tmp = count($user['ignoreboards']) - 1]))
