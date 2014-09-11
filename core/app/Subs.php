@@ -873,16 +873,17 @@ function forum_time($use_user_offset = true, $timestamp = null)
  * A quick helper function to avoid typing these tags everywhere.
  *
  * @param int $timestamp Unix timestamp to transform.
- * @param string $on_time Date formatted through on_timeformat(), if any.
+ * @param string $on_time Default date text to show. If empty, shows "Today" or "On March 21", for instance.
+ * @param bool $use_time_offset Set to false if $timestamp is already adjusted to the user's timezone, to avoid doing it twice...
  *
- * @return string A valid <time> tag. Cheers.
+ * @return string A valid <time> tag. You're welcome.
  */
-function time_tag($timestamp, $on_time = '')
+function time_tag($timestamp, $on_time = '', $use_time_offset = true)
 {
 	if (!$on_time)
 		$on_time = on_timeformat($timestamp);
 
-	return '<time datetime="' . date(DATE_W3C, forum_time(true, $timestamp)) . '">' . $on_time . '</time>';
+	return '<time datetime="' . date(DATE_W3C, $use_time_offset ? forum_time(true, $timestamp) : $timestamp) . '">' . $on_time . '</time>';
 }
 
 /**
