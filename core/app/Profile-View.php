@@ -372,7 +372,7 @@ function showDrafts($memID)
 				'no_edit' => !empty($row['id_context']) && empty($row['id_topic']),
 			),
 			'on_time' => on_timeformat($row['post_time']),
-			'timestamp' => forum_time(true, $row['post_time']),
+			'timestamp' => $row['post_time'],
 			'icon' => $row['extra']['post_icon'],
 		);
 
@@ -663,7 +663,7 @@ function showPosts($memID)
 			'subject' => $row['subject'],
 			'start' => 'msg' . $row['id_msg'],
 			'on_time' => on_timeformat($row['poster_time']),
-			'timestamp' => forum_time(true, $row['poster_time']),
+			'timestamp' => $row['poster_time'],
 			'id' => $row['id_msg'],
 			'can_reply' => false,
 			'can_delete' => false,
@@ -1340,7 +1340,7 @@ function list_getUserErrors($start, $items_per_page, $sort, $where, $where_vars 
 			'message' => strtr($row['message'], array('&lt;span class=&quot;remove&quot;&gt;' => '', '&lt;/span&gt;' => '')),
 			'url' => $row['url'],
 			'time' => timeformat($row['log_time']),
-			'timestamp' => forum_time(true, $row['log_time']),
+			'timestamp' => $row['log_time'],
 		);
 	wesql::free_result($request);
 
@@ -1393,7 +1393,7 @@ function list_getIPMessages($start, $items_per_page, $sort, $where, $where_vars 
 			'id' => $row['id_msg'],
 			'subject' => $row['subject'],
 			'time' => timeformat($row['poster_time']),
-			'timestamp' => forum_time(true, $row['poster_time'])
+			'timestamp' => $row['poster_time'],
 		);
 	wesql::free_result($request);
 

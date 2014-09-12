@@ -548,7 +548,7 @@ function Unread()
 					'link' => !empty($row['id_first_member']) ? '<a href="<URL>?action=profile;u=' . $row['id_first_member'] . '" title="' . $txt['view_profile'] . '">' . $row['first_poster_name'] . '</a>' : $row['first_poster_name']
 				),
 				'time' => timeformat($row['first_poster_time']),
-				'timestamp' => forum_time(true, $row['first_poster_time']),
+				'timestamp' => $row['first_poster_time'],
 				'subject' => $row['first_subject'],
 				'preview' => $row['first_body'],
 				'icon' => $row['first_icon'],
@@ -565,7 +565,7 @@ function Unread()
 					'link' => !empty($row['id_last_member']) ? '<a href="<URL>?action=profile;u=' . $row['id_last_member'] . '">' . $row['last_poster_name'] . '</a>' : $row['last_poster_name']
 				),
 				'time' => timeformat($row['last_poster_time']),
-				'timestamp' => forum_time(true, $row['last_poster_time']),
+				'timestamp' => $row['last_poster_time'],
 				'subject' => $row['last_subject'],
 				'preview' => $row['last_body'],
 				'icon' => $row['last_icon'],

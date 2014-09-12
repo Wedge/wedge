@@ -394,7 +394,7 @@ function SplitSelectTopics()
 			'alternate' => $counter % 2,
 			'subject' => $row['subject'],
 			'time' => timeformat($row['poster_time']),
-			'timestamp' => forum_time(true, $row['poster_time']),
+			'timestamp' => $row['poster_time'],
 			'body' => $row['body'],
 			'poster' => $row['real_name'],
 		);
@@ -435,7 +435,7 @@ function SplitSelectTopics()
 				'alternate' => $counter % 2,
 				'subject' => $row['subject'],
 				'time' => timeformat($row['poster_time']),
-				'timestamp' => forum_time(true, $row['poster_time']),
+				'timestamp' => $row['poster_time'],
 				'body' => $row['body'],
 				'poster' => $row['real_name']
 			);

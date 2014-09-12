@@ -305,13 +305,13 @@ function MergeExecute($topics = array())
 			'subject' => $row['subject'],
 			'started' => array(
 				'time' => timeformat($row['time_started']),
-				'timestamp' => forum_time(true, $row['time_started']),
+				'timestamp' => $row['time_started'],
 				'href' => empty($row['id_member_started']) ? '' : SCRIPT . '?action=profile;u=' . $row['id_member_started'],
 				'link' => empty($row['id_member_started']) ? $row['name_started'] : '<a href="<URL>?action=profile;u=' . $row['id_member_started'] . '">' . $row['name_started'] . '</a>'
 			),
 			'updated' => array(
 				'time' => timeformat($row['time_updated']),
-				'timestamp' => forum_time(true, $row['time_updated']),
+				'timestamp' => $row['time_updated'],
 				'href' => empty($row['id_member_updated']) ? '' : SCRIPT . '?action=profile;u=' . $row['id_member_updated'],
 				'link' => empty($row['id_member_updated']) ? $row['name_updated'] : '<a href="<URL>?action=profile;u=' . $row['id_member_updated'] . '">' . $row['name_updated'] . '</a>'
 			)

@@ -194,7 +194,7 @@ function Who()
 			'ip' => allowedTo('manage_bans') ? format_ip($row['ip']) : '',
 			// It is *going* to be today or yesterday, so why keep that information in there?
 			'time' => strtr(timeformat($row['log_time']), array($txt['today'] => '', $txt['yesterday'] => '')),
-			'timestamp' => forum_time(true, $row['log_time']),
+			'timestamp' => $row['log_time'],
 			'query' => $actions,
 			'is_hidden' => $row['show_online'] == 0,
 			'id_spider' => $row['id_spider']

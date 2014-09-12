@@ -1646,11 +1646,11 @@ function prepareSearchContext($reset = false)
 		'subject' => $message['subject'],
 		'subject_highlighted' => $subject_highlighted,
 		'on_time' => on_timeformat($message['poster_time']),
-		'timestamp' => forum_time(true, $message['poster_time']),
+		'timestamp' => $message['poster_time'],
 		'counter' => $counter,
 		'modified' => array(
 			'on_time' => on_timeformat($message['modified_time']),
-			'timestamp' => forum_time(true, $message['modified_time']),
+			'timestamp' => $message['modified_time'],
 			'name' => $message['modified_name']
 		),
 		'body' => $message['body'],
