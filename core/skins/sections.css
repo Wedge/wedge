@@ -1524,6 +1524,8 @@ body.waiting *
 				gradient: #fff, rgba(255,255,255,.66)
 				padding: 2px 5px
 				z-index: 99
+				:before
+					left: 10px
 
 			// Try to fit #top_section into one line.
 			#search_form
