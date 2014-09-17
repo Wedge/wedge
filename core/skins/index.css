@@ -289,6 +289,7 @@ h1
 	float: right
 	max-width: 50%
 	.search
+		border: 1px solid #ddd
 		position: relative
 		z-index: 1
 		float: right
@@ -473,8 +474,7 @@ em
 	text-decoration: none
 
 // The 'New' icon, generally speaking.
-.note mixes .inline-block
-	vertical-align: .1em
+.note mixes .inline-block(.1em)
 	border-radius: 7px
 	@if ie[-9], ios[-5.1]
 		background-color: #eb8c66
