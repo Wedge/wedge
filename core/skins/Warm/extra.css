@@ -238,7 +238,6 @@ tr.titlebg th, tr.catbg th
 .windowbg3
 	background: rgba(50%, 75%, 50%, .1) // #cacdd3
 
-
 /* Styles for section headers.
 ------------------------------------------------------- */
 .catbase
@@ -320,7 +319,7 @@ tr.titlebg th, tr.catbg th
 /* These are our CSS variable and mixin definitions.
 ------------------------------------------------------- */
 
-$main_bg   = rgb(246,248,239)
+$main_bg   = #fff
 $head_bg   = rgba(233,235,186,.66)
 $body_bg   = #f6f8ef
 $side_bg   = #e8e3cb
