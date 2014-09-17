@@ -292,10 +292,11 @@ h1
 		float: right
 		max-width: 100%
 		width: 80px
-		transition: width .2s
+		transition: all .2s
 		&.open
+			min-width: 200px
 			width: 100%
-			transition: width .5s
+			transition: all .2s
 	.mimenu
 		@if ie6
 			&, ul li
