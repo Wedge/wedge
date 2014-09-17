@@ -1522,10 +1522,10 @@ body.waiting *
 				top, right: 3px
 				border: 1px solid #ccc
 				gradient: #fff, rgba(255,255,255,.66)
-				padding: 2px 5px
+				padding: 25px 0 0 28px
 				z-index: 99
 				:before
-					left: 10px
+					left: 6px
 
 			// Try to fit #top_section into one line.
 			#search_form
