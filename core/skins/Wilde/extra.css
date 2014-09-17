@@ -298,7 +298,7 @@ dfn
 ------------------------------------------------------- */
 
 $main_font = "Segoe UI", Arial, sans-serif
-$head_font = $main_font
+$head_font = "Segoe UI Semibold", $main_font
 $subcat_font = normal 1.1em $main_font
 $post_font = $main_font
 $post_font_size = 11pt/140%
