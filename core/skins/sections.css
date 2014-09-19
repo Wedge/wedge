@@ -153,6 +153,12 @@ section.ic
 	box-sizing: border-box
 	@if ie[-7]
 		div mixes .inline-block
+	@elseif $can_flex
+		display: flex
+		flex-wrap: wrap
+		align-items: center
+		> div
+			flex: 1 1 auto
 	@else
 		display: table
 		> div
@@ -285,16 +291,15 @@ hr.sep
 		margin-top: 16px
 		.inner
 			font: $blog_font_size $blog_font
-	.msg:not(:first-child)
+	.msg, .msg .poster
 		background: none
-		.poster
-			background: none
+	.msg:not(:first-child)
 		.poster > div:before
 			position: relative
 			content: ""
 			float: left // Without this, all of .poster is moved down.
 			left: 100%
-			top: 52px
+			top: 40px
 			width, height, font-size: 0
 			border: 24px solid transparent
 			border-right-color: $window_bg
@@ -955,8 +960,10 @@ tr.windowbg td
 
 // If the screen is too small, show the avatar on top
 @media all and (max-width: 900px)
-	.prevnext_prev
-		display: none
+	@if !$can_flex
+		.prevnext_prev
+			display: none
+	@endif
 	#profile_home
 		display: block
 	#basicinfo, #detailedinfo
@@ -1187,15 +1194,11 @@ tr.windowbg td
 		margin: 4px 0
 		border: 1px solid #fff
 		background: #f0fff0
-	@if member
-		// Make life easier for members...
+	// Make life easier for members...
+	@if member && ie[-7]
 		.mimenu final
-			@if ie[-7]
-				left: 100%
-				top: -1em
-			@else
-				top: 80%
-			@endif
+			left: 100%
+			top: -1em
 	@endif
 
 #thought_thread
@@ -1496,6 +1499,14 @@ body.waiting *
 				.lastpost
 					width: auto
 					font-size: 90%
+			.thoughts
+				td
+					display: block
+					width: auto
+				@if $window_bg == $window_bg2
+					.bc
+						border-top: 1px solid #ddd // Add some contrast
+				@endif
 			#search_form
 				.mimenu
 					left: auto
