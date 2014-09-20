@@ -50,8 +50,9 @@ body #sidebar .column
 	display: block
 	width: auto
 	padding: 8px 12px 5px
-	if !chrome || !mobile
+	@if $can_sticky
 		top: 0
+		z-index: 999 // Any elements that create a new stacking context, such as action buttons, would trigger a bug otherwise.
 		position: sticky // If the browser supports it, it's all for the best!
 	@endif
 	background: #edefed // Add a bit of contrast...
