@@ -35,8 +35,10 @@ h4, h5
 				top, right: 3px
 				border: 1px solid #ccc
 				gradient: rgba(255,255,255,1), rgba(255,255,255,.66)
-				padding: 5px
+				padding: 30px 0 0 32px
 				z-index: 999
+				:before
+					left: 8px
 @endif
 
 #content > div
@@ -192,8 +194,10 @@ dl#feed
 /* Styles for the dropdown menus.
 ------------------------------------------------------- */
 #navi
-	border-bottom: 1px dotted #000
 	gradient: rgba(232, 236, 232, .96), rgba(255, 255, 255, .96)
+
+@remove #navi
+	border-bottom: *
 
 #main_menu
 	padding: 5px 0 0
@@ -322,9 +326,8 @@ tr.titlebg th, tr.catbg th
 $main_bg   = #fff
 $head_bg   = rgba(233,235,186,.66)
 $body_bg   = #f6f8ef
-$side_bg   = #e8e3cb
+$side_bg   = #fff
 $side_col  = #333
-$footer_bg = luma($side_bg, +70%)
 $main_font = "Open Sans", Verdana, Arial, sans-serif
 $post_font = "Open Sans", Verdana, Arial, sans-serif
 $main_font_size = 88%/140%
