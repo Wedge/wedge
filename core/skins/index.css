@@ -289,7 +289,7 @@ h1
 	float: right
 	max-width: 50%
 	.search
-		border: 1px solid #ddd
+		border: 1px solid #bbb
 		position: relative
 		z-index: 1
 		float: right
@@ -560,7 +560,7 @@ select.sb
 	/* Display area (always visible) */
 	.display
 		background: rgba(255,255,255,.5)
-		border: 1px solid #abadb3
+		border: 1px solid #bbb
 		color: #000
 		cursor: default
 		font-weight: 400
