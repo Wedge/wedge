@@ -279,6 +279,9 @@ function cleanRequest()
 		wesql::free_result($query);
 	}
 
+	if (isset($_POST['admin_pass'], $_POST['user']))
+		unset($_POST['user']);
+
 	if ($do_pretty)
 	{
 		// URL has the form domain.com/profile/User?
