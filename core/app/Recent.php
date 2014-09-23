@@ -271,7 +271,7 @@ function Recent()
 			'start' => $row['num_replies'],
 			'subject' => $row['subject'],
 			'on_time' => on_timeformat($row['poster_time']),
-			'timestamp' => forum_time(true, $row['poster_time']),
+			'timestamp' => $row['poster_time'],
 			'first_poster' => array(
 				'id' => $row['id_first_member'],
 				'name' => $row['first_poster_name'],

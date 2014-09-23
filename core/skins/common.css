@@ -119,6 +119,7 @@
 
 /* A generic font stack for display purposes (titles, large text...) */
 $generic_stack = "Franklin Gothic Medium", "Franklin Gothic", "Segoe UI", Helvetica, Arial, sans-serif
+
 @if ios // Helvetica Light looks good on my iPod.
 	$generic_stack = HelveticaNeue-Light, "Helvetica Neue Light", "Helvetica Neue", Helvetica, sans-serif
 @endif
@@ -128,7 +129,8 @@ $main_font_size	= 88%/130%
 $menu_font		= $main_font
 $big_font		= $generic_stack
 $head_font		= $generic_stack
-
+$head_font_style	= ""
+$head_font_size	= 1.7em/1
 $subject_font	= $generic_stack
 $mono_font		= Consolas, "Dejavu Sans Mono", Menlo, "Lucida Console", "Courier New", monospace
 $serif_font		= Georgia, serif
@@ -149,14 +151,14 @@ $max-width		= @is (ie6, "width", "max-width")
 /* .windowbg classes are used to alternate colors between general blocks.
 	Suggestions for $window_bg:  luma($window_bg2, -3%) // luma(#e3e0d0, +13%) // #f2f3ea // #f9f6f0
 	Suggestions for $window_bg2: #f8faf8 // luma(#e3e0d0, +11%) // luma(hue($main_bg, -20), -.5%) // #f3f7f3 // transparent */
-$window_bg = ""
-$window_bg2 = ""
+$window_bg		= #fcfcfc
+$window_bg2		= #fff
 $window_bg3		= #f0f0f0
 $board_col		= #d97b33
 
 /* The .msg class should, by default, alternate between these two colors. */
-$post_bg = #f2f3ee
-$post_bg2 = #f3f7f3
+$post_bg		= $window_bg	// #f2f3ee
+$post_bg2		= $window_bg2	// #f3f7f3
 
 /* float: $left will return float: right on RTL setups. */
 $left			= @is (rtl, right, left)
@@ -190,5 +192,5 @@ $can_animate	= @is ("chrome, firefox[5-], opera[12-], ie[10-], safari[4-], ios[3
 /* List browsers that support CSS filters (not the old IE ones!). Note that Firefox[3.5-] supports filter: url() with SVG filters. */
 $can_filter		= @is ("chrome[18-], safari[6-]")
 
-/* List browsers that support position: sticky. iOS needs a prefix, others do not. Firefox 27+, Chrome and Opera Blink support it as of Jan 2014, but through a flag. */
-$can_sticky		= @is ("ios[6-], firefox[27-]")
+/* List browsers that support position: sticky. iOS needs a prefix, others do not. Support data is as of September 2014. */
+$can_sticky		= @is ("ios[6.1-] || (firefox[32-] && !mobile)")

@@ -1345,11 +1345,11 @@ function prepareDisplayContext($reset = false)
 		'icon_url' => ASSETS . '/post/' . $message['icon'] . '.gif',
 		'subject' => $message['subject'],
 		'on_time' => on_timeformat($message['poster_time']),
-		'timestamp' => $message['poster_time'], // Don't apply time offset here. This isn't used, but doesn't cost anything to include here, so...
+		'timestamp' => $message['poster_time'], // Don't apply time offset here.
 		'counter' => $board_info['type'] == 'forum' ? $counter : ($counter == $context['start'] ? 0 : $counter),
 		'modified' => array(
 			'on_time' => on_timeformat($message['modified_time']),
-			'timestamp' => forum_time(true, $message['modified_time']),
+			'timestamp' => $message['modified_time'],
 			'name' => $message['modified_name'],
 			'member' => $message['modified_member'],
 		),

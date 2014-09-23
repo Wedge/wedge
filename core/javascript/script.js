@@ -630,7 +630,6 @@ $(function ()
 		.attr('id', 'sideshow')
 		.attr('title', $txt['sideshow'])
 		.click(function () { sidebar_shown ? hide_sidebar() : show_sidebar(); })
-		.append('<div/><div/><div/>')
 		.prependTo('#top_section>div');
 });
 
