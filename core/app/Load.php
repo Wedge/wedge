@@ -2374,7 +2374,7 @@ function loadDatabase()
 		wesql::fix_prefix($db_prefix, $db_name);
 
 	// Most database systems have not set UTF-8 as their default input charset.
-	if (!mysqli_set_charset('utf8'))
+	if (!mysqli_set_charset($con, 'utf8'))
 		wesql::query('SET NAMES utf8');
 }
 
