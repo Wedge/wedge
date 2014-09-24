@@ -317,16 +317,28 @@ function template_summary()
 				<dt>', profile_privacy_icon('language', $txt['language'] . $txt[':']), '</dt>
 				<dd>', $context['member']['language'], '</dd>';
 
+	echo '
+			</dl>';
+
 	$can_see_reg = profile_can_see('registered');
 	$can_see_log = profile_can_see('login');
 	if ($can_see_reg || $can_see_log)
 		echo '
-			</dl>
 			<dl>', $can_see_reg ? '
 				<dt>' . profile_privacy_icon('registered', $txt['date_registered'] . $txt[':']) . '</dt>
 				<dd>' . $context['member']['registered'] . '</dd>' : '', $can_see_log ? '
 				<dt>' . profile_privacy_icon('login', $txt['lastLoggedIn'] . $txt[':']) . '</dt>
 				<dd>' . $context['member']['last_login'] . '</dd>' : '', '
+			</dl>';
+
+	if (!empty($context['member']['last_post']))
+		echo '
+			<dl>
+				<dt>', $txt['last_post'], '</dt>
+				<dd>', strtr($txt['last_post_time_link'], array(
+							'{time}' => $context['member']['last_post']['on_time'],
+							'{link}' => $context['member']['last_post']['link'])
+						), '</dd>
 			</dl>';
 
 	// Are there any custom profile fields for the summary?
