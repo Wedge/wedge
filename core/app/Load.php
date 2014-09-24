@@ -985,11 +985,12 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 	if (!empty($loaded_ids) && $set == 'profile')
 	{
 		$row = wesql::query_all('
-			SELECT id_member, poster_time, id_msg, id_topic, subject
-			FROM {db_prefix}messages
-			WHERE id_member' . (count($new_loaded_ids) == 1 ? ' = {int:loaded_ids}' : ' IN ({array_int:loaded_ids})') . '
+			SELECT m.id_member, m.poster_time, m.id_msg, m.id_topic, m.subject
+			FROM {db_prefix}messages AS m
+			LEFT JOIN {db_prefix}topics AS t ON t.id_topic = m.id_topic
+			WHERE m.id_member' . (count($new_loaded_ids) == 1 ? ' = {int:loaded_ids}' : ' IN ({array_int:loaded_ids})') . '
 				AND {query_see_topic}
-			ORDER BY id_msg DESC
+			ORDER BY m.id_msg DESC
 			LIMIT 1',
 			array(
 				'loaded_ids' => count($new_loaded_ids) == 1 ? $new_loaded_ids[0] : $new_loaded_ids,
