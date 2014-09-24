@@ -194,6 +194,7 @@ $txt['error_occurred'] = 'An Error Has Occurred!';
 $txt['logout'] = 'Logout';
 $txt['started_by'] = 'Started by';
 $txt['last_post_author_link_time'] = '<strong>Last post</strong> by {author} in {link} {time}';
+$txt['last_post_time_link'] = '{time} in {link}';
 $txt['last_post_time_author'] = '{time} by {author}';
 $txt['board_off_limits'] = 'This board is off-limits to you.';
 
