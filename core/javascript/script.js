@@ -74,6 +74,10 @@ String.prototype.wereplace = function (oReplacements)
 	return sResult;
 };
 
+// This gets subpixel precision on browsers that use it, such as Firefox and Chrome with DirectWrite enabled.
+$.fn.realWidth  = function () { return parseFloat(getComputedStyle(this[0]).width); };
+$.fn.realHeight = function () { return parseFloat(getComputedStyle(this[0]).height); };
+
 /*
 	A stylable alert() alternative.
 	@string string: HTML content to show.

@@ -247,7 +247,7 @@
 			// Hide .details so that the new width won't be influenced by it.
 			$dd.find('.details').toggle();
 			// Set dropdown width to at least the display area's width, and at most the screen's width minus (potential) scrollbar width.
-			$dd.width(Math.min($(window).width() - 25, Math.max($dd.width(), $display.outerWidth() - $dd.outerWidth(true) + $dd.width())));
+			$dd.width(Math.min($(window).width() - 25, Math.max($dd.realWidth(), $display.outerWidth() - $dd.outerWidth(true) + $dd.realWidth())));
 			// Now we can reset.
 			$dd.find('.details').toggle();
 
