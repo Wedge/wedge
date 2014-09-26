@@ -114,7 +114,7 @@
 		Open Sans is one of the lightest ones you could find, though.
 	-->
 
-	<css include="http://fonts.googleapis.com/css?family=Open+Sans:400,400italic,700"></css>
+	<css include="//fonts.googleapis.com/css?family=Open+Sans:400,400italic,700"></css>
 
 	<!--
 		Available languages: a comma-separated (or newline-separated) list of languages.
