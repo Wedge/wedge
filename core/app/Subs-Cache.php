@@ -868,7 +868,7 @@ function dynamic_language_flags()
 		$rep .= '
 .flag_' . $language['filename'] . ' mixes .inline-block("")
 	background: url($root'. $icon . ') no-repeat 0 center
-	padding-left: math(width($root_dir'. $icon . ') + 6px)
+	padding-left: math(width($root_dir'. $icon . '))px
 	min-height: height($root_dir'. $icon . ')px';
 	}
 	return $rep;
