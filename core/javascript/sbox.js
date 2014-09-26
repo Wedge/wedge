@@ -48,7 +48,7 @@
 
 			$display = $('<div class="display" id="sbd' + (++unique) + '">')
 				// Generate the display markup
-				.append(optionFormat($orig.data('default') || $orig.find('option:selected')))
+				.append(optionFormat($orig.data('default') || $orig.find('option:selected')).replace(/<small>.*?<\/small>/, ''))
 				.append('<div class="btn">&#9660;</div>');
 
 			// Generate the dropdown markup
@@ -309,8 +309,9 @@
 			// Update the title attr and the display markup
 			$oritex
 				.width('')
-				.html($newtex.html() || '&nbsp;')
+				.html(($newtex.html() || '&nbsp;').replace(/<small>.*?<\/small>/, ''))
 				.attr('title', $newtex.text().php_unhtmlspecialchars());
+
 			newwi = $oritex.width();
 			if (!fixed)
 				$oritex.stop(true, true).width(oriwi).delay(100).animate({ width: newwi });
