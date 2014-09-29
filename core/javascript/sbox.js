@@ -246,8 +246,8 @@
 
 			// Hide .details so that the new width won't be influenced by it.
 			$dd.find('.details').toggle();
-			// Set dropdown width to at least the display area's width, and at most the screen's width minus (potential) scrollbar width.
-			$dd.width(Math.min($(window).width() - 25, Math.max($dd.realWidth(), $display.outerWidth() - $dd.outerWidth(true) + $dd.realWidth())));
+			// Set dropdown width to at least the display area's width, and at most the body's width.
+			$dd.width(Math.min($('body').width(), Math.max($dd.realWidth(), $display.outerWidth() - $dd.outerWidth(true) + $dd.realWidth())));
 			// Now we can reset.
 			$dd.find('.details').toggle();
 
@@ -282,7 +282,7 @@
 				.css({
 					visibility: 'visible',
 					marginTop: showDown ? 0 : -ddMaxHeight - $display.outerHeight(),
-					marginLeft: Math.min(0, $(window).width() - $dd.outerWidth() - $sb.offset().left)
+					marginLeft: Math.min(0, $('body').width() - $dd.outerWidth() - $sb.offset().left)
 				})
 				.hide();
 
@@ -579,7 +579,7 @@
 			return;
 
 		// Gentlemen, start your engines.
-		$dd.addClass('has_bar').width(Math.min($dd.width(), $(window).width() - 25));
+		$dd.addClass('has_bar').width(Math.min($dd.width(), $('body').width()));
 		$dd.contents().wrapAll('<div class="viewport"><div class="overview">');
 		$dd.append('<div class="scrollbar"><div>');
 
