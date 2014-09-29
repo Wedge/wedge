@@ -545,10 +545,12 @@ select.sb
 	text-align: left
 	margin: 1px
 
-	.text mixes .inline-block
-		vertical-align: baseline
+	.text mixes .inline-block("baseline")
+		width: 100%
 		small
 			color: #aaa
+			float: right
+			margin-left: 5px
 
 	.details
 		font-style: italic

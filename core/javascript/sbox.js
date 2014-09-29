@@ -245,11 +245,14 @@
 					.height('');
 
 			// Hide .details so that the new width won't be influenced by it.
+			// Also, floated <small>'s will screw up calculations, at least in Chrome.
 			$dd.find('.details').toggle();
+			$dd.find('small').css('float', 'none');
 			// Set dropdown width to at least the display area's width, and at most the body's width.
 			$dd.width(Math.min($('body').width(), Math.max($dd.realWidth(), $display.outerWidth() - $dd.outerWidth(true) + $dd.realWidth())));
 			// Now we can reset.
 			$dd.find('.details').toggle();
+			$dd.find('small').css('float', '');
 
 			var
 				// Figure out if we should show above/below the display box, first by calculating the free space around it.
