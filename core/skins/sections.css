@@ -1539,7 +1539,6 @@ body.waiting *
 			// Try to fit #top_section into one line.
 			#search_form
 				max-width: 33%
-				input[type=submit] mixes .hide
 				input.search
 					max-width: 100%
 				.mimenu
