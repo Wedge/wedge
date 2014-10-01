@@ -1306,8 +1306,10 @@ div.top_row dd
 	white-space: normal
 	dt, dd
 		max-width: @is ("ie[9-],firefox[4-],chrome[19-],safari[6-]", "calc(100% - 1em)", 100%)
-		width: auto
+		width: 100%
 		clear: both
+	dt
+		width: auto
 	#advanced_search
 		border, padding: 0
 		font-size: .9em
