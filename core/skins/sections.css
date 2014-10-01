@@ -1317,6 +1317,9 @@ div.top_row dd
 		display: block
 	input[type=number]
 		width: 60px
+	.mimenu
+		left: auto
+		min-width: @ifnull($responsive_search_min_width, 300px)
 
 /* Styles for the search results page.
 ------------------------------------------------- */
@@ -1505,11 +1508,6 @@ body.waiting *
 					.bc
 						border-top: 1px solid #ddd // Add some contrast
 				@endif
-			#search_form
-				.mimenu
-					left: auto
-					right: 0
-					min-width: @ifnull($responsive_search_min_width, 300px)
 			#sideshow mixes .inline-block
 			#sidebar
 				display: none
@@ -1541,8 +1539,6 @@ body.waiting *
 				max-width: 33%
 				input.search
 					max-width: 100%
-				.mimenu
-					min-width: math(@ifnull($responsive_search_min_width, 250px) + 50px)
 			.menu > li > span
 				margin-top: 8px
 			#upshrink

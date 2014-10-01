@@ -665,7 +665,10 @@ $(window).load(function ()
 			return;
 		$(this).toggleClass('open');
 		$pop.load(weUrl('action=search' + (window.we_topic ? ';topic=' + we_topic : '') + (window.we_board ? ';board=' + we_board : '')), function () {
-			$pop.hide().css('top', 0).animate({
+			$pop.css({
+				top: 0,
+				right: Math.min($pop.offset().left, 0)
+			}).hide().animate({
 				opacity: 'toggle',
 				top: '100%'
 			}).find('select').sb();
