@@ -658,43 +658,47 @@ $(window).load(function ()
 	}
 
 	// Show a pop-up with more options when focusing the quick search box.
-	var opened, $pop = $('<div class="mimenu right">').appendTo($('#search_form').addClass('mime'));
-	$('#search_form .search').focus(function ()
-	{
-		if (opened)
-			return;
-		$(this).toggleClass('open');
-		$pop.load(weUrl('action=search' + (window.we_topic ? ';topic=' + we_topic : '') + (window.we_board ? ';board=' + we_board : '')), function () {
+	var
+		loaded,
+		$pop = $('<div class="mimenu right">').appendTo('#search_form'),
+		$that = $('#search_form .search'),
+		animate_search = function (open) {
+			var start = $pop.parent().offset().top, end = start + $pop.parent().height();
 			$pop.css({
-				top: 0,
-				right: Math.min($pop.offset().left, 0)
-			}).hide().animate({
+				top: open ? start : end,
+				// Calculate the optimal width for the box.
+				right: $('body').width() - Math.max($pop.width() - 15, $pop.parent().offset().left + $pop.parent().width())
+			}).toggle(!open).animate({
 				opacity: 'toggle',
-				top: '100%'
-			}).find('select').sb();
-		});
-		opened = true;
-		$(document).on('click.sf', function (e) {
-			if ($(e.target).closest('#search_form').length)
-				return;
-			opened = false;
-			$(document).off('.sf');
-			$('#search_form .search').toggleClass('open');
-			$pop.css('top', '100%').animate({
-				opacity: 'toggle',
-				top: '0%'
+				top: open ? end : start
 			});
-		}).on('keyup.sf', function (e) {
-			// keydown target holds previous element, keyup holds next one. Found this by myself, eheh.
-			if (e.altKey || e.ctrlKey || e.keyCode != 9 || $(e.target).closest('#search_form').length)
-				return;
-			opened = false;
-			$(document).off('.sf');
-			$pop.css('top', '100%').animate({
-				opacity: 'toggle',
-				top: '0%'
+		};
+
+	$that.focus(function ()
+	{
+		if ($that.hasClass('open'))
+			return;
+		$that.addClass('open');
+		if (!loaded)
+			$pop.load(weUrl('action=search' + (window.we_topic ? ';topic=' + we_topic : '') + (window.we_board ? ';board=' + we_board : '')), function () {
+				loaded = true;
+				$pop.find('select').sb();
+				if ($that.hasClass('open'))
+					animate_search(true);
 			});
-		});
+		else
+			animate_search(true);
+		$(document)
+			.off('.sf')
+			.on('click.sf keyup.sf', function (e) {
+				// Close popup if clicking or tabbing out of it.
+				// keydown target holds current element, keyup holds next one. Found this by myself, eheh.
+				if ((e.keyCode && (e.keyCode != 9 || e.altKey || e.ctrlKey)) || $(e.target).closest('#search_form').length)
+					return;
+				$that.removeClass('open');
+				$(document).off('.sf');
+				animate_search(false);
+			});
 	});
 });
 
