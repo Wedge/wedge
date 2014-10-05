@@ -1087,7 +1087,7 @@ function wedge_show_skins(&$style, $show_defaults = false, $current_skin = '', $
 	$output = '';
 	foreach ($style as $sty)
 	{
-		$intro = !$show_defaults || $filler ? $filler . ($current == $last ? '&#9492;' : '&#9500;') . '&mdash; ' : '';
+		$intro = !$show_defaults || $filler ? $filler . ($current == $last ? '&#9492;' : '&#9500;') . '&mdash;&nbsp;' : '';
 		$output .= '<option value="' . westr::safe($sty['dir']) . '"' . ($current_skin == $sty['dir'] ? ' selected' : '') . '>' . $intro . $sty['name'];
 		$context['skin_names'][$sty['dir']] = $sty['name'];
 		if ($show_defaults)
@@ -1095,7 +1095,7 @@ function wedge_show_skins(&$style, $show_defaults = false, $current_skin = '', $
 			if ($sty['dir'] == $settings['theme_skin_guests'])
 				$output .= ' &lt;small&gt;' . $txt['skin_default'] . '&lt;/small&gt;';
 			elseif ($sty['dir'] == $settings['theme_skin_guests_mobile'])
-				$output .=' &lt;small&gt;' . $txt['skin_default_mobile'] . '&lt;/small&gt;';
+				$output .= ' &lt;small&gt;' . $txt['skin_default_mobile'] . '&lt;/small&gt;';
 		}
 		$output .= '</option>';
 		if (!empty($sty['skins']))
