@@ -1308,13 +1308,16 @@ div.top_row dd
 		max-width: @is ("ie[9-],firefox[4-],chrome[19-],safari[6-]", "calc(100% - 1em)", 100%)
 		width: auto
 		clear: both
+		text-align: left
 	#advanced_search
 		border, padding: 0
 		font-size: .9em
 	.sbox
 		display: block
-	input[type=number]
-		width: 60px
+	.mimenu
+		left: auto
+		min-width: @ifnull($responsive_search_min_width, 300px)
+		max-width: 100%
 
 /* Styles for the search results page.
 ------------------------------------------------- */
@@ -1503,11 +1506,6 @@ body.waiting *
 					.bc
 						border-top: 1px solid #ddd // Add some contrast
 				@endif
-			#search_form
-				.mimenu
-					left: auto
-					right: 0
-					min-width: @ifnull($responsive_search_min_width, 300px)
 			#sideshow mixes .inline-block
 			#sidebar
 				display: none
@@ -1537,11 +1535,8 @@ body.waiting *
 			// Try to fit #top_section into one line.
 			#search_form
 				max-width: 33%
-				input[type=submit] mixes .hide
 				input.search
 					max-width: 100%
-				.mimenu
-					min-width: math(@ifnull($responsive_search_min_width, 250px) + 50px)
 			.menu > li > span
 				margin-top: 8px
 			#upshrink
@@ -1562,7 +1557,7 @@ body.waiting *
 
 			dt, dd
 				clear: both
-				width: auto
+				width: 100%
 			dd
 				padding-left: 12px
 

@@ -48,7 +48,7 @@
 
 			$display = $('<div class="display" id="sbd' + (++unique) + '">')
 				// Generate the display markup
-				.append(optionFormat($orig.data('default') || $orig.find('option:selected')))
+				.append(optionFormat($orig.data('default') || $orig.find('option:selected')).replace(/<small>.*?<\/small>/, ''))
 				.append('<div class="btn">&#9660;</div>');
 
 			// Generate the dropdown markup
@@ -245,11 +245,14 @@
 					.height('');
 
 			// Hide .details so that the new width won't be influenced by it.
+			// Also, floated <small>'s will screw up calculations, at least in Chrome.
 			$dd.find('.details').toggle();
-			// Set dropdown width to at least the display area's width, and at most the screen's width minus (potential) scrollbar width.
-			$dd.width(Math.min($(window).width() - 25, Math.max($dd.width(), $display.outerWidth() - $dd.outerWidth(true) + $dd.width())));
+			$dd.find('small').css('float', 'none');
+			// Set dropdown width to at least the display area's width, and at most the body's width.
+			$dd.width(Math.min($('body').width(), Math.max($dd.realWidth(), $display.outerWidth() - $dd.outerWidth(true) + $dd.realWidth())));
 			// Now we can reset.
 			$dd.find('.details').toggle();
+			$dd.find('small').css('float', '');
 
 			var
 				// Figure out if we should show above/below the display box, first by calculating the free space around it.
@@ -282,7 +285,7 @@
 				.css({
 					visibility: 'visible',
 					marginTop: showDown ? 0 : -ddMaxHeight - $display.outerHeight(),
-					marginLeft: Math.min(0, $(window).width() - $dd.outerWidth() - $sb.offset().left)
+					marginLeft: Math.min(0, $('body').width() - $dd.outerWidth() - $sb.offset().left)
 				})
 				.hide();
 
@@ -309,8 +312,9 @@
 			// Update the title attr and the display markup
 			$oritex
 				.width('')
-				.html($newtex.html() || '&nbsp;')
+				.html(($newtex.html() || '&nbsp;').replace(/<small>.*?<\/small>/, ''))
 				.attr('title', $newtex.text().php_unhtmlspecialchars());
+
 			newwi = $oritex.width();
 			if (!fixed)
 				$oritex.stop(true, true).width(oriwi).delay(100).animate({ width: newwi });
@@ -578,7 +582,7 @@
 			return;
 
 		// Gentlemen, start your engines.
-		$dd.addClass('has_bar').width(Math.min($dd.width(), $(window).width() - 25));
+		$dd.addClass('has_bar').width(Math.min($dd.width(), $('body').width()));
 		$dd.contents().wrapAll('<div class="viewport"><div class="overview">');
 		$dd.append('<div class="scrollbar"><div>');
 

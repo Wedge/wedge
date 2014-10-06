@@ -1205,7 +1205,7 @@ function loadMemberContext($user, $full_profile = false)
 		'email' => $profile['email_address'],
 		'show_email' => showEmailAddress(!empty($profile['hide_email']), $profile['id_member']),
 		'registered' => empty($profile['date_registered']) ? $txt['not_applicable'] : timeformat($profile['date_registered']),
-		'registered_timestamp' => empty($profile['date_registered']) ? 0 : forum_time(true, $profile['date_registered']),
+		'registered_timestamp' => empty($profile['date_registered']) ? 0 : $profile['date_registered'],
 		'blurb' => $profile['personal_text'],
 		'gender' => $profile['gender'] == 2 ? 'female' : ($profile['gender'] == 1 ? 'male' : ''),
 		'website' => array(

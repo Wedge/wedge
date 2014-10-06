@@ -300,14 +300,6 @@ h1
 			min-width: 200px
 			width: 100%
 			transition: all .2s
-	.mimenu
-		@if ie6
-			&, ul li
-				width: auto
-		@else
-			width: 100%
-		@endif
-		left: 0
 
 // The navigation list (i.e. linktree)
 #linktree
@@ -545,10 +537,12 @@ select.sb
 	text-align: left
 	margin: 1px
 
-	.text mixes .inline-block
-		vertical-align: baseline
+	.text mixes .inline-block("baseline")
+		width: 100%
 		small
 			color: #aaa
+			float: right
+			margin-left: 5px
 
 	.details
 		font-style: italic

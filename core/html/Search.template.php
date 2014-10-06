@@ -207,7 +207,7 @@ function template_search_ajax()
 			<div id="advanced_search">
 				<dl>
 					<dt>', $txt['by_user'], ':</dt>
-					<dd><input id="userspec" name="userspec" value="', empty($context['search_params']['userspec']) ? '*' : $context['search_params']['userspec'], '" size="30"></dd>
+					<dd><input class="w100" id="userspec" name="userspec" value="', empty($context['search_params']['userspec']) ? '*' : $context['search_params']['userspec'], '"></dd>
 					<dt>', $txt['search_order'], ':</dt>
 					<dd>
 						<select id="sort" name="sort">

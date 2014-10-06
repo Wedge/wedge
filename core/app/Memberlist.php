@@ -601,6 +601,6 @@ function printMemberListRows($request)
 				$context['members'][$member]['mlist_cf'][$field['colname']] = $field['value'];
 
 		$context['members'][$member]['post_percent'] = round(($context['members'][$member]['real_posts'] * 100) / $most_posts);
-		$context['members'][$member]['registered_date'] = strftime('%Y-%m-%d', $context['members'][$member]['registered_timestamp']);
+		$context['members'][$member]['registered_date'] = strftime('%Y-%m-%d', forum_time(true, $context['members'][$member]['registered_timestamp'] ?: time()));
 	}
 }
