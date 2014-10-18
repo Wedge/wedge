@@ -144,7 +144,7 @@ function Memberlist()
 		$context['colspan']++;
 	}
 	if (!empty($context['custom_fields']))
-		$context['columns'] = array_insert($context['columns'], 'id_group', $context['custom_fields']);
+		$context['columns'] = array_insert($context['columns'], 'group', $context['custom_fields']);
 
 	add_linktree($txt['members_list'], '<URL>?action=mlist');
 
