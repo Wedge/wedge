@@ -89,7 +89,7 @@ function PrintPage()
 			'member' => $row['poster_name'],
 			'on_time' => on_timeformat($row['poster_time'], false),
 			'timestamp' => $row['poster_time'],
-			'body' => parse_bbc($row['body'], 'post', array('print' => true)),
+			'body' => parse_bbc($row['body'], 'post', array('print' => true, 'cache' => $row['id_msg'])),
 		);
 
 		if (!isset($context['topic_subject']))
