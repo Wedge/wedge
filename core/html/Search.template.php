@@ -91,8 +91,8 @@ function template_main()
 		echo '
 			<br>
 			<fieldset class="flow_hidden">
-				<label><input type="radio" name="all_boards" value="1" onclick="$(\'#searchBoardsExpand\').hide(300);"', $context['boards_check_all'] ? ' checked' : '', '> ', $txt['all_boards'], '</label>
-				<br><label><input type="radio" name="all_boards" value="0" onclick="$(\'#searchBoardsExpand\').show(300);"', $context['boards_check_all'] ? '' : ' checked', '> ', $txt['choose_board'], '</label>
+				<label><input type="radio" name="all_boards" value="1" onclick="$(\'#searchBoardsExpand\').hide(300); $(\'#search_where\').val(\'everywhere\');"', $context['boards_check_all'] ? ' checked' : '', '> ', $txt['all_boards'], '</label>
+				<br><label><input type="radio" name="all_boards" value="0" onclick="$(\'#searchBoardsExpand\').show(300); $(\'#search_where\').val(\'board\');"', $context['boards_check_all'] ? '' : ' checked', '> ', $txt['choose_board'], '</label>
 				<div id="searchBoardsExpand"', $context['boards_check_all'] ? ' class="hide"' : '', '>
 					<ul class="ignoreboards floatleft">';
 
@@ -146,6 +146,7 @@ function template_main()
 				</div>
 				<hr class="clear">
 				<div class="padding clearfix">
+					<input type="hidden" id="search_where" name="search_type" value="">
 					<input type="submit" value="', $txt['search'], '" class="submit floatright">
 				</div>
 			</fieldset>';
