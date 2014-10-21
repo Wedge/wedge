@@ -2389,6 +2389,9 @@ function call_hook($hook, $parameters = array(), $plugin_id = '')
 {
 	global $settings;
 
+	if (isset($_GET['viewhooks']) && we::$is_admin)
+		echo '<div style="display: inline-block; background: ', empty($settings['hooks'][$hook]) ? 'red' : 'green', '; border: 1px solid white; border-radius: 2px; width: 8px; height: 8px" title="', westr::safe($hook), '"></div>';
+
 	if (wetem::$hooks && wetem::$hooks->has($hook))
 		wetem::$hooks->render($hook);
 
