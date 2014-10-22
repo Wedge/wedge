@@ -492,7 +492,7 @@ function removeTopics($topics, $decreasePostCount = true, $ignoreRecycling = fal
 	if (!empty($messages))
 	{
 		wesql::query('
-			DELETE FROM {db_prefix}likes
+			DELETE FROM {db_prefix}reactions
 			WHERE id_content IN ({array_int:messages})
 				AND content_type = {literal:post}',
 			array(

@@ -386,7 +386,14 @@ function setupThoughtMenu()
 		$menu = array();
 
 		if (!empty($tho['can_like']))
-			$menu[] = empty($context['liked_posts'][$tho['id']]['you']) ? 'lk' : 'uk';
+		{
+			$you = false;
+			if (!empty($context['liked_posts'][$tho['id']]))
+				foreach ($context['liked_posts'][$tho['id']] as $reaction_type)
+					if (!empty($reaction_type['you']))
+						$you = true;
+			$menu[] = $you ? 'uk' : 'lk';
+		}
 
 		$menu[] = 'cx/' . ($tho['id_master'] ? $tho['id_master'] : $tho['id']);
 

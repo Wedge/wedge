@@ -330,7 +330,7 @@ function deleteMembers($users, $check_not_admin = false, $merge_to = false)
 		)
 	);
 	wesql::query('
-		DELETE FROM {db_prefix}likes
+		DELETE FROM {db_prefix}reactions
 		WHERE id_member IN ({array_int:users})',
 		array(
 			'users' => $users,

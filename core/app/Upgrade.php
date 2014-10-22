@@ -99,8 +99,36 @@ function upgrade_step_3()
 // 1.0-alpha-1, July 2014. Adding index to sessions to prevent a possible slow query.
 function upgrade_step_4()
 {
-	$request = wesql::query('
-	ALTER TABLE
-		{db_prefix}sessions
-	ADD KEY last_update (last_update)');
+	wesql::query('ALTER TABLE {db_prefix}sessions ADD KEY last_update (last_update)');
+}
+
+// 1.0-beta, October 2014.
+function upgrade_step_5()
+{
+	// Renaming 'likes' to 'reactions', and adding reaction types.
+	wesql::query('RENAME TABLE {db_prefix}likes TO {db_prefix}reactions');
+	wesql::query('ALTER TABLE {db_prefix}reactions ADD reaction_type unsigned mediumint(8) NOT NULL default 0 AFTER content_type');
+	wesql::query('ALTER TABLE {db_prefix}reactions ADD ip unsigned int(10) default 0 AFTER id_member');
+	wesql::query('ALTER TABLE {db_prefix}reactions CHANGE like_time reaction_time unsigned int(10) NOT NULL default 0');
+
+	updateSettings(array(
+		'reactions' => array(
+			array('like',	'^_^'),
+			array('funny',	':lol:'),
+			array('love',	'8-)'),
+			array('what',	':^^;:'),
+			array('unsure', ':unsure:'),
+			array('meh',	'-_-'),
+			array('sad',	':sob:'),
+			array('thanks',	':thanks:'),
+		)
+	));
+
+	// While we're at it, change all IP fields to make twice more room for future IP entries...
+	wesql::query('ALTER TABLE {db_prefix}log_actions CHANGE ip ip unsigned int(10) NOT NULL default 0');
+	wesql::query('ALTER TABLE {db_prefix}log_errors CHANGE ip ip unsigned int(10) NOT NULL default 0');
+	wesql::query('ALTER TABLE {db_prefix}log_floodcontrol CHANGE ip ip unsigned int(10) NOT NULL default 0');
+	wesql::query('ALTER TABLE {db_prefix}log_intrusion CHANGE ip ip unsigned int(10) NOT NULL default 0');
+	wesql::query('ALTER TABLE {db_prefix}log_reported_comments CHANGE member_ip member_ip unsigned int(10) NOT NULL default 0');
+	wesql::query('ALTER TABLE {db_prefix}messages CHANGE poster_ip poster_ip unsigned int(10) NOT NULL default 0');
 }

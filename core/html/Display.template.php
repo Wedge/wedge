@@ -137,7 +137,7 @@ function template_display_posts_after($is_blog = false)
 	template_mini_menu('user', 'umme');
 	template_mini_menu('action', 'acme');
 
-	// Collapse any ignored messages. If a message has a 'like', at least show the action bar, in case the user
+	// Collapse any ignored messages. If a message has a 'reaction', at least show the action bar, in case the user
 	// would like to read it anyway. (Maybe they're ignoring someone only because of their signal/noise ratio?)
 	if (!empty($ignoredMsgs))
 		foreach ($ignoredMsgs as $msgid)

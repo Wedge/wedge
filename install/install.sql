@@ -780,19 +780,6 @@ CREATE TABLE {$db_prefix}language_changes (
 ) ENGINE=MyISAM;
 
 #
-# Table structure for table `likes`
-#
-CREATE TABLE {$db_prefix}likes (
-	id_content int(10) unsigned NOT NULL default 0,
-	content_type char(6) NOT NULL default '',
-	id_member mediumint(8) unsigned NOT NULL default 0,
-	like_time int(10) unsigned NOT NULL default 0,
-	PRIMARY KEY (id_content, content_type, id_member),
-	KEY (id_content, content_type),
-	KEY (id_member)
-) ENGINE=MyISAM;
-
-#
 # Table structure for table `log_actions`
 #
 
@@ -2007,6 +1994,21 @@ CREATE TABLE {$db_prefix}privacy_topics (
 	id_topic mediumint(8) unsigned NOT NULL,
 	privacy int(10) NOT NULL default 0,
 	PRIMARY KEY (id_topic, privacy)
+) ENGINE=MyISAM;
+
+#
+# Table structure for table `reactions`
+#
+CREATE TABLE {$db_prefix}reactions (
+	id_content int(10) unsigned NOT NULL default 0,
+	content_type char(6) NOT NULL default '',
+	reaction_type mediumint(8) unsigned NOT NULL default 0,
+	id_member mediumint(8) unsigned NOT NULL default 0,
+	ip int(10) unsigned NOT NULL default 0,
+	reaction_time int(10) unsigned NOT NULL default 0,
+	PRIMARY KEY (id_content, content_type, id_member),
+	KEY (id_content, content_type),
+	KEY (id_member)
 ) ENGINE=MyISAM;
 
 #

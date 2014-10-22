@@ -95,8 +95,8 @@ function Like()
 
 	// Does the current user already like said content?
 	$request = wesql::query('
-		SELECT like_time
-		FROM {db_prefix}likes
+		SELECT reaction_time
+		FROM {db_prefix}reactions
 		WHERE id_content = {int:id_content}
 			AND content_type = {string:content_type}
 			AND id_member = {int:user}',
@@ -112,7 +112,7 @@ function Like()
 	{
 		// We had a row. Kill it.
 		wesql::query('
-			DELETE FROM {db_prefix}likes
+			DELETE FROM {db_prefix}reactions
 			WHERE id_content = {int:id_content}
 				AND content_type = {string:content_type}
 				AND id_member = {int:user}',
@@ -127,10 +127,11 @@ function Like()
 	else
 	{
 		// No we didn't, insert it.
+		$reaction_type = !empty($_REQUEST['rtype']) ? (int) $_REQUEST['rtype'] : 0;
 		wesql::insert('',
-			'{db_prefix}likes',
-			array('id_content' => 'int', 'content_type' => 'string-6', 'id_member' => 'int', 'like_time' => 'int'),
-			array($id_content, $content_type, MID, $like_time)
+			'{db_prefix}reactions',
+			array('id_content' => 'int', 'content_type' => 'string-6', 'reaction_type' => 'int', 'id_member' => 'int', 'reaction_time' => 'int'),
+			array($id_content, $content_type, $reaction_type, MID, $like_time)
 		);
 		$now_liked = true;
 
@@ -170,11 +171,11 @@ function Like()
 		$context['liked_posts'] = array();
 
 		$request = wesql::query('
-			SELECT id_content, id_member
-			FROM {db_prefix}likes
+			SELECT id_content, id_member, reaction_type
+			FROM {db_prefix}reactions
 			WHERE id_content = {int:id_content}
 				AND content_type = {string:content_type}
-			ORDER BY like_time',
+			ORDER BY reaction_time',
 			array(
 				'id_content' => $id_content,
 				'content_type' => $content_type,
@@ -185,11 +186,11 @@ function Like()
 		{
 			// If it's us, log it as being us.
 			if ($row['id_member'] == MID)
-				$context['liked_posts'][$row['id_content']]['you'] = true;
-			elseif (empty($context['liked_posts'][$row['id_content']]['others']))
-				$context['liked_posts'][$row['id_content']]['others'] = 1;
+				$context['liked_posts'][$row['id_content']][$row['reaction_type']]['you'] = true;
+			elseif (empty($context['liked_posts'][$row['id_content']][$row['reaction_type']]['others']))
+				$context['liked_posts'][$row['id_content']][$row['reaction_type']]['others'] = 1;
 			else
-				$context['liked_posts'][$row['id_content']]['others']++;
+				$context['liked_posts'][$row['id_content']][$row['reaction_type']]['others']++;
 		}
 		wesql::free_result($request);
 
@@ -216,18 +217,18 @@ function DisplayLike()
 	$likes = array();
 
 	$request = wesql::query('
-		SELECT id_member, like_time
-		FROM {db_prefix}likes
+		SELECT id_member, reaction_time, reaction_type
+		FROM {db_prefix}reactions
 		WHERE id_content = {int:cid}
 			AND content_type = {string:type}
-		ORDER BY like_time DESC',
+		ORDER BY reaction_time DESC',
 		array(
 			'cid' => $_GET['cid'],
 			'type' => $_GET['type'],
 		)
 	);
 	while ($row = wesql::fetch_assoc($request))
-		$likes[$row['id_member']] = $row['like_time'];
+		$likes[$row['id_member']] = $row['reaction_time'];
 
 	wesql::free_result($request);
 

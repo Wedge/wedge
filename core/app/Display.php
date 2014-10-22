@@ -1669,11 +1669,11 @@ function prepareLikeContext($messages, $type = 'post')
 
 	// First, get everyone who has marked this as Like.
 	$request = wesql::query('
-		SELECT id_content, id_member
-		FROM {db_prefix}likes
+		SELECT id_content, id_member, reaction_type
+		FROM {db_prefix}reactions
 		WHERE id_content IN ({array_int:messages})
 			AND content_type = {string:type}
-		ORDER BY like_time',
+		ORDER BY reaction_time',
 		array(
 			'messages' => $messages,
 			'type' => $type,
@@ -1687,11 +1687,11 @@ function prepareLikeContext($messages, $type = 'post')
 
 		// If it's us, log it as being us.
 		if ($row['id_member'] == MID)
-			$context['liked_posts'][$row['id_content']]['you'] = true;
-		elseif (empty($context['liked_posts'][$row['id_content']]['others']))
-			$context['liked_posts'][$row['id_content']]['others'] = 1;
+			$context['liked_posts'][$row['id_content']][$row['reaction_type']]['you'] = true;
+		elseif (empty($context['liked_posts'][$row['id_content']][$row['reaction_type']]['others']))
+			$context['liked_posts'][$row['id_content']][$row['reaction_type']]['others'] = 1;
 		else
-			$context['liked_posts'][$row['id_content']]['others']++;
+			$context['liked_posts'][$row['id_content']][$row['reaction_type']]['others']++;
 	}
 	wesql::free_result($request);
 }

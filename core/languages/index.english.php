@@ -97,21 +97,21 @@ $txt['num_redirects'] = array(0 => 'No redirections', 1 => '1 redirection', 'n' 
 $txt['num_replies'] = array(0 => 'No reply', 1 => '1 reply', 'n' => '%s replies');
 $txt['num_views'] = array(0 => 'Never viewed', 1 => '1 view', 'n' => '%s views');
 
-// Likes. What you've done implied past tense, while when you haven't liked it thus far, implies a present tense for everyone else.
+// Reactions.
 $txt['you_like_this'] = array(
-	0 => 'You like this.',
-	1 => 'You and 1 other person like this.',
-	'n' => 'You and %1$s other people like this.',
+	0 => 'You reacted to this.',
+	1 => 'You and someone else reacted to this.',
+	'n' => 'You and %1$s other people reacted to this.',
 );
 $txt['like_this'] = array(
-	1 => '1 person likes this.',
-	'n' => '%1$s people have liked this.',
+	1 => '1 reaction.',
+	'n' => '%1$s reactions.',
 );
-$txt['like'] = 'Like';
+$txt['like'] = 'React';
 $txt['unlike'] = 'Unlike';
 
-$txt['nobody_likes_this'] = 'Nobody likes this.';
-$txt['likes_header'] = array(1 => '1 person likes this.', 'n' => '%s people like this.');
+$txt['nobody_likes_this'] = 'No reactions.';
+$txt['likes_header'] = array(1 => '1 reaction.', 'n' => '%s reactions.');
 
 $txt['choose_pass'] = 'Choose password';
 $txt['verify_pass'] = 'Verify password';
@@ -156,9 +156,9 @@ $txt['usermenu_trackip'] = '<span style="color: #aaa">IP: %2%</span>';
 $txt['usermenu_trackip_desc'] = 'Track this IP address';
 
 // Action menu strings (per post)
-$txt['acme_like'] = 'Like';
-$txt['acme_like_desc'] = 'Like this post';
-$txt['acme_unlike'] = 'Unlike';
+$txt['acme_like'] = 'React';
+$txt['acme_like_desc'] = 'React to this post';
+$txt['acme_unlike'] = 'No reaction';
 $txt['acme_unlike_desc'] = 'Unlike this post';
 $txt['acme_quote'] = 'Quote';
 $txt['acme_quote_desc'] = 'Reply to this post';

@@ -480,14 +480,14 @@ function Stats()
 	if ($temp !== $temp2)
 		cache_put_data('stats_total_time_members', $temp2, 480);
 
-	// Top 10 liked posts.
+	// Top 10 posts that gathered reactions.
 	$likes_result = wesql::query('
-		SELECT COUNT(k.id_member) AS likes, m.id_member, m.real_name, msg.id_msg, msg.id_topic, msg.subject
-		FROM {db_prefix}likes AS k
+		SELECT COUNT(k.id_member) AS reactions, m.id_member, m.real_name, msg.id_msg, msg.id_topic, msg.subject
+		FROM {db_prefix}reactions AS k
 			INNER JOIN {db_prefix}messages AS msg ON k.id_content = msg.id_msg AND k.content_type = {literal:post}
 			LEFT JOIN {db_prefix}members AS m ON msg.id_member = m.id_member
 		GROUP BY msg.id_msg
-		ORDER BY likes DESC
+		ORDER BY reactions DESC
 		LIMIT 10'
 	);
 	$max_num_likes = 0;
@@ -495,7 +495,7 @@ function Stats()
 	while ($row_likes = wesql::fetch_assoc($likes_result))
 	{
 		$context['top_likes'][] = array(
-			'num_likes' => $row_likes['likes'],
+			'num_likes' => $row_likes['reactions'],
 			'subject' => $row_likes['subject'],
 			'member_name' => $row_likes['real_name'],
 			'id_member' => $row_likes['id_member'],
@@ -503,7 +503,7 @@ function Stats()
 			'link' => '<a href="<URL>?topic=' . $row_likes['id_topic'] . '.msg' . $row_likes['id_msg'] . '#msg' . $row_likes['id_msg'] . '">' . shorten_subject($row_likes['subject'], 35) . '</a> (<a href="<URL>?action=profile;u=' . $row_likes['id_member'] . '">' . $row_likes['real_name'] . '</a>)'
 		);
 
-		$max_num_likes = max($max_num_likes, $row_likes['likes']);
+		$max_num_likes = max($max_num_likes, $row_likes['reactions']);
 	}
 	wesql::free_result($likes_result);
 
@@ -513,15 +513,15 @@ function Stats()
 		$context['top_likes'][$i]['num_likes'] = comma_format($context['top_likes'][$i]['num_likes']);
 	}
 
-	// Top 10 liked authors.
+	// Top 10 authors that gathered reactions.
 	$likes_result = wesql::query('
-		SELECT COUNT(k.id_content) AS likes, m.id_member, m.real_name
-		FROM {db_prefix}likes AS k
+		SELECT COUNT(k.id_content) AS reactions, m.id_member, m.real_name
+		FROM {db_prefix}reactions AS k
 		LEFT JOIN {db_prefix}messages AS msg ON k.id_content = msg.id_msg AND k.content_type = {literal:post}
 		LEFT JOIN {db_prefix}thoughts AS th ON k.id_content = th.id_thought AND k.content_type = {literal:think}
 		JOIN {db_prefix}members AS m ON m.id_member = IFNULL(msg.id_member, th.id_member)
 		GROUP BY m.id_member
-		ORDER BY likes DESC
+		ORDER BY reactions DESC
 		LIMIT 10'
 	);
 	$max_num_likes = 0;
@@ -529,12 +529,12 @@ function Stats()
 	while ($row_likes = wesql::fetch_assoc($likes_result))
 	{
 		$context['top_author_likes'][] = array(
-			'num_likes' => $row_likes['likes'],
+			'num_likes' => $row_likes['reactions'],
 			'member_name' => $row_likes['real_name'],
 			'id_member' => $row_likes['id_member']
 		);
 
-		$max_num_likes = max($max_num_likes, $row_likes['likes']);
+		$max_num_likes = max($max_num_likes, $row_likes['reactions']);
 	}
 	wesql::free_result($likes_result);
 
