@@ -768,7 +768,7 @@ function Display()
 	);
 
 	$all_posters = array();
-	if ($board_info['type'] != 'forum')
+	if ($board_info['type'] != 'forum' && !INFINITE)
 	{
 		// Always get the first poster and message.
 		$messages = array($topicinfo['id_first_msg']);
@@ -1227,8 +1227,8 @@ function Display()
 	// All of this... FOR THAT?!
 	if (INFINITE)
 	{
-		wetem::replace(array('postlist_infinite' => array('display_posts')));
-		wetem::hide();
+		wetem::replace(array('postlist_infinite' => array('display_posts'))); // We replace the entire contents of the <default> layer with this.
+		wetem::hide(); // And of course, no chrome around the post list.
 	}
 
 	// Generic processing that doesn't apply to per-post handling.

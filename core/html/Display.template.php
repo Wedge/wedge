@@ -41,11 +41,11 @@ function template_display_posts_before()
 
 function template_display_posts($is_blog = false)
 {
-	global $ignoredMsgs, $context, $msg;
+	global $ignoredMsgs, $context, $msg, $board_info;
 
 	$ignoredMsgs = array();
 	$message_skeleton = new weSkeleton('msg');
-	if (!empty($context['blog_comments'])) // After a blog post? Simplify comments.
+	if (!empty($context['blog_comments']) || (INFINITE && isset($board_info) && $board_info['type'] !== 'forum')) // After a blog post? Simplify comments.
 	{
 		$message_skeleton->remove('msg_author_blurb');
 		$message_skeleton->remove('msg_author_icons');
