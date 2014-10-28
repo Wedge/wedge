@@ -172,6 +172,7 @@ $(window).load(function ()
 		// Did we reach the end of the page..?
 		if (ready_to_show && $(window).scrollTop() >= $(document).height() - $(window).height())
 		{
+			show_ajax();
 			requested = false;
 			ready_to_show = false;
 
@@ -201,6 +202,7 @@ $(window).load(function ()
 
 			// Prepare all new posts for follow_me and relative dates.
 			page_showing();
+			hide_ajax();
 		}
 	});
 });
