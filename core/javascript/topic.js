@@ -180,6 +180,7 @@ $(window).load(function ()
 				$(this).find('.updown').siblings().remove().end().before($('#pinf').clone().contents());
 			});
 			$('#pinf').remove();
+			$new_page.find('.first-post').removeClass('first-post');
 
 			// We have to re-run the event delayer, as it has new values to insert...
 			// !! Is it worth putting it into its own function in script.js..?
