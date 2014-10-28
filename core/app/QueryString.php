@@ -279,6 +279,9 @@ function cleanRequest()
 		wesql::free_result($query);
 	}
 
+	if (isset($_POST['admin_pass'], $_POST['user']))
+		unset($_POST['user']);
+
 	if ($do_pretty)
 	{
 		// URL has the form domain.com/profile/User?
@@ -306,10 +309,10 @@ function cleanRequest()
 	// Reject anything with a query string or unusual extensions.
 	if (strpos($full_request, '?') === false && in_array(strtolower(strrchr($full_request, '.')), array('.gif', '.jpg', '.jpeg', '.png', '.css', '.js', '.gz', '.cgz', '.jgz')))
 	{
-		$is_cache_file = in_array(strtolower(strrchr($full_request, '.')), array('.gz', '.cgz', '.jgz'));
+		$is_cache_file = in_array(strtolower(strrchr($full_request, '.')), array('.css', '.js', '.gz', '.cgz', '.jgz'));
 		if ($is_cache_file) // A cached file? Try to redirect to the latest version.
 		{
-			$regex = '~/gz(/.+?-)[0-9]+\.(js\.gz|css\.gz|cgz|jgz)$~';
+			$regex = '~/gz(/.+?-)[0-9]+\.(js|js\.gz|css|css\.gz|cgz|jgz)$~';
 			if (preg_match($regex, $full_request, $filename))
 			{
 				// There are probably faster ways to retrieve an 'existing' cached version.

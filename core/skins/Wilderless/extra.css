@@ -1,6 +1,6 @@
 
 /*!
- * Wireless (Default mobile) skin for Wedge
+ * Wilderless, another mobile skin for Wedge
  * © 2010 René-Gilles Deberdt, http://wedge.org
  */
 
@@ -19,6 +19,8 @@ body
 
 #top_section
 	padding: 8px 15px
+
+#m_profile extends img.avatar
 
 #edge
 	padding: 5px 0
@@ -39,15 +41,18 @@ body #sidebar .column
 #wedge, #header, #footer
 	border-radius: 0
 
-.note
-	padding: 3px 5px 1px
+@if android, ios
+	.note
+		padding: 3px 5px 1px
+@endif
 
 .postheader extends .clearfix
 	display: block
 	width: auto
 	padding: 8px 12px 5px
-	if !chrome || !mobile
+	@if $can_sticky
 		top: 0
+		z-index: 999 // Any elements that create a new stacking context, such as action buttons, would trigger a bug otherwise.
 		position: sticky // If the browser supports it, it's all for the best!
 	@endif
 	background: #edefed // Add a bit of contrast...
@@ -101,6 +106,13 @@ body #sidebar .column
 .mimenu ul li
 	padding: 8px
 	height: auto
+
+// It screws up search popups though, so let's counter that...
+#search_popup
+	padding: 0
+
+#search_form
+	padding-top: 3px
 
 .topic_details
 	font-size: 110%

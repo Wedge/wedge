@@ -919,7 +919,7 @@ function Display()
 			)
 		);
 
-		// Since the anchor information is needed on the top of the page we load these variables beforehand.
+		// Since the anchor information is needed on the top of the page, we load these variables beforehand.
 		$context['first_message'] = empty($options['view_newest_first']) || $board_info['type'] != 'forum' ? min($messages) : max($messages);
 		if (empty($options['view_newest_first']))
 			$context['first_new_message'] = isset($context['start_from']) && empty($_REQUEST['start']) && empty($context['start_from']);
@@ -1345,11 +1345,11 @@ function prepareDisplayContext($reset = false)
 		'icon_url' => ASSETS . '/post/' . $message['icon'] . '.gif',
 		'subject' => $message['subject'],
 		'on_time' => on_timeformat($message['poster_time']),
-		'timestamp' => $message['poster_time'], // Don't apply time offset here. This isn't used, but doesn't cost anything to include here, so...
+		'timestamp' => $message['poster_time'], // Don't apply time offset here.
 		'counter' => $board_info['type'] == 'forum' ? $counter : ($counter == $context['start'] ? 0 : $counter),
 		'modified' => array(
 			'on_time' => on_timeformat($message['modified_time']),
-			'timestamp' => forum_time(true, $message['modified_time']),
+			'timestamp' => $message['modified_time'],
 			'name' => $message['modified_name'],
 			'member' => $message['modified_member'],
 		),
@@ -1357,7 +1357,7 @@ function prepareDisplayContext($reset = false)
 		'new' => !$message['is_read'] && !$is_new,
 		'edited' => $message['is_read'] && $message['id_msg_modified'] > $topicinfo['new_from'] && we::$is_member,
 		'approved' => $message['approved'],
-		'first_new' => isset($context['start_from']) && $context['start_from'] == $counter,
+		'first_new' => isset($context['start_from']) && $context['start_from'] == $counter - ($board_info['type'] != 'forum' ? 1 : 0),
 		'is_message_author' => $is_me,
 		'is_ignored' => !empty($settings['enable_buddylist']) && !empty($options['posts_apply_ignore_list']) && in_array($message['id_member'], we::$user['ignoreusers']),
 		'can_approve' => !$message['approved'] && $context['can_approve'],

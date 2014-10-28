@@ -211,7 +211,7 @@ function template_language_selector()
 
 	foreach ($context['languages'] as $id => $language)
 		echo '
-				<option value="', $id, '"', we::$user['language'] == $id ? ' selected' : '', '>&lt;span class="flag_', $language['filename'], '"&gt;', westr::htmlspecialchars($language['name']), '&lt;/span&gt;</option>';
+				<option value="', $id, '"', we::$user['language'] == $id ? ' selected' : '', '>&lt;span class="flag_', $language['filename'], '"&gt;&lt;/span&gt; &lt;small&gt;', westr::htmlspecialchars($language['name']), '&lt;/small&gt;</option>';
 
 	echo '
 			</select></form>';

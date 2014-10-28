@@ -108,7 +108,7 @@ function getBoardIndex($boardIndexOptions)
 		// Perhaps we are ignoring this board?
 		$ignoreThisBoard = in_array($row_board['id_board'], we::$user['ignoreboards']);
 
-		$board_time = forum_time(true, $row_board['poster_time']);
+		$board_time = $row_board['poster_time'];
 		$posted_today = $row_board['poster_name'] !== '' && (we::$is_guest ? $current_time - $board_time < 24 * 3600 : $row_board['id_msg'] > $_SESSION['id_msg_last_visit']);
 		$context['board_ids'][$row_board['id_board']] = $row_board['id_board'];
 

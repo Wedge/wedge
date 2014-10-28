@@ -981,6 +981,29 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 		wesql::free_result($request);
 	}
 
+	// Load last post data. Can't restrict to $loaded_ids, in case a previous user was loaded through a non-profile set...
+	if (!empty($loaded_ids) && $set == 'profile')
+	{
+		$row = wesql::query_all('
+			SELECT m.id_member, m.poster_time, m.id_msg, m.id_topic, m.subject
+			FROM {db_prefix}messages AS m
+			LEFT JOIN {db_prefix}topics AS t ON t.id_topic = m.id_topic
+			WHERE m.id_member' . (count($new_loaded_ids) == 1 ? ' = {int:loaded_ids}' : ' IN ({array_int:loaded_ids})') . '
+				AND {query_see_topic}
+			ORDER BY m.id_msg DESC
+			LIMIT 1',
+			array(
+				'loaded_ids' => count($new_loaded_ids) == 1 ? $new_loaded_ids[0] : $new_loaded_ids,
+			)
+		);
+
+		foreach ($row as $last)
+			$user_profile[$last['id_member']]['last_post'] = array(
+				'on_time' => on_timeformat($last['poster_time']),
+				'link' => '<a href="' . SCRIPT . '?topic=' . $last['id_topic'] . '.msg' . $last['id_msg'] . '#new">' . $last['subject'] . '</a>',
+			);
+	}
+
 	if (!empty($new_loaded_ids) && $set !== 'minimal')
 	{
 		$request = wesql::query('
@@ -1182,7 +1205,7 @@ function loadMemberContext($user, $full_profile = false)
 		'email' => $profile['email_address'],
 		'show_email' => showEmailAddress(!empty($profile['hide_email']), $profile['id_member']),
 		'registered' => empty($profile['date_registered']) ? $txt['not_applicable'] : timeformat($profile['date_registered']),
-		'registered_timestamp' => empty($profile['date_registered']) ? 0 : forum_time(true, $profile['date_registered']),
+		'registered_timestamp' => empty($profile['date_registered']) ? 0 : $profile['date_registered'],
 		'blurb' => $profile['personal_text'],
 		'gender' => $profile['gender'] == 2 ? 'female' : ($profile['gender'] == 1 ? 'male' : ''),
 		'website' => array(
@@ -1196,6 +1219,7 @@ function loadMemberContext($user, $full_profile = false)
 		'posts' => comma_format($profile['posts']),
 		'last_login' => empty($profile['last_login']) ? $txt['never'] : timeformat($profile['last_login']),
 		'last_login_timestamp' => empty($profile['last_login']) ? 0 : forum_time(0, $profile['last_login']),
+		'last_post' => empty($profile['last_post']) ? 0 : $profile['last_post'],
 		'ip' => isset($profile['member_ip']) ? htmlspecialchars($profile['member_ip']) : '',
 		'ip2' => isset($profile['member_ip2']) ? htmlspecialchars($profile['member_ip2']) : '',
 		'online' => array(
@@ -1550,7 +1574,7 @@ function loadTheme($skin = '', $initialize = true)
 	$context['macros'] = array();
 	$context['skeleton'] = array();
 	$context['skeleton_ops'] = array();
-	$context['jquery_version'] = we::is('ie[-8],firefox[-3.6]') ? '1.11.0' : '2.1.0';
+	$context['jquery_version'] = we::is('ie[-8],firefox[-3.6]') ? '1.11.1' : '2.1.1';
 	loadSource('Subs-Cache');
 
 	// If output is an Ajax request, or printer-friendly
@@ -2374,7 +2398,8 @@ function loadDatabase()
 		wesql::fix_prefix($db_prefix, $db_name);
 
 	// Most database systems have not set UTF-8 as their default input charset.
-	wesql::query('SET NAMES utf8');
+	if (!mysqli_set_charset($con, 'utf8'))
+		wesql::query('SET NAMES utf8');
 }
 
 function importing_cleanup()

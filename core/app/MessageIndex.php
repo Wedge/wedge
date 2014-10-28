@@ -413,7 +413,7 @@ function MessageIndex()
 						'link' => !empty($row['first_id_member']) ? '<a href="<URL>?action=profile;u=' . $row['first_id_member'] . '" title="' . $txt['view_profile'] . '">' . $row['first_display_name'] . '</a>' : $row['first_display_name']
 					),
 					'on_time' => on_timeformat($row['first_poster_time']),
-					'timestamp' => forum_time(true, $row['first_poster_time']),
+					'timestamp' => $row['first_poster_time'],
 					'subject' => $row['first_subject'],
 					'preview' => $row['first_body'],
 					'icon' => $row['first_icon'],
@@ -431,7 +431,7 @@ function MessageIndex()
 						'link' => !empty($row['last_id_member']) ? '<a href="<URL>?action=profile;u=' . $row['last_id_member'] . '">' . $row['last_display_name'] . '</a>' : $row['last_display_name']
 					),
 					'on_time' => on_timeformat($row['last_poster_time']),
-					'timestamp' => forum_time(true, $row['last_poster_time']),
+					'timestamp' => $row['last_poster_time'],
 					'subject' => $row['last_subject'],
 					'preview' => $row['last_body'],
 					'icon' => $row['last_icon'],

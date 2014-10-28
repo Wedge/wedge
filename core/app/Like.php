@@ -237,13 +237,11 @@ function DisplayLike()
 
 	$members = array_keys($likes);
 	$members_actual = loadMemberData($members);
+
+	// So, we couldn't find all the members? Let's get rid of the ones we're not interested in...
 	if (count($members_actual) != count($members))
-	{
-		// So we couldn't find all the members. Let's get rid of the ones we're not interested in.
-		$diff = array_diff($members, (array) $members_actual);
-		foreach ($diff as $diff_item)
+		foreach (array_diff($members, (array) $members_actual) as $diff_item)
 			unset($likes[$diff_item]);
-	}
 
 	loadTemplate('GenericPopup');
 	loadLanguage('Help');

@@ -249,8 +249,7 @@ function adminLogin()
 		$context['incorrect_password'] = true;
 	}
 
-	// Figure out the get data and post data.
-	$context['get_data'] = '?' . construct_query_string($_GET);
+	// Figure out the $_POST data.
 	$context['post_data'] = '';
 
 	// Now go through $_POST. Make sure the session hash is sent.
@@ -284,38 +283,6 @@ function adminLogin_outputPostVars($k, $v)
 
 		return $ret;
 	}
-}
-
-function construct_query_string($get)
-{
-	$query_string = '';
-
-	// Awww, darn. The SCRIPT contains GET stuff!
-	$q = strpos(SCRIPT, '?');
-	if ($q !== false)
-	{
-		parse_str(preg_replace('/&(\w+)(?=&|$)/', '&$1=', strtr(substr(SCRIPT, $q + 1), ';', '&')), $temp);
-
-		foreach ($get as $k => $v)
-		{
-			// Only if it's not already in the SCRIPT!
-			if (!isset($temp[$k]))
-				$query_string .= urlencode($k) . '=' . urlencode($v) . ';';
-			// If it changed, put it out there, but with an ampersand.
-			elseif ($temp[$k] != $get[$k])
-				$query_string .= urlencode($k) . '=' . urlencode($v) . '&amp;';
-		}
-	}
-	// Add up all the data from $_GET into get_data.
-	else
-		foreach ($get as $k => $v)
-			$query_string .= urlencode($k) . '=' . urlencode($v) . ';';
-
-	preg_match('~;(action=[^;]+)~i', $query_string, $match);
-	if (!empty($match))
-		$query_string = $match[1] . ';' . str_replace($match[0], '', $query_string);
-
-	return substr($query_string, 0, -1);
 }
 
 // Find members by email address, username, or real name.

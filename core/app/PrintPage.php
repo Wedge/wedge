@@ -65,7 +65,7 @@ function PrintPage()
 
 	// Split the topics up so we can print them.
 	$request = wesql::query('
-		SELECT subject, poster_time, body, IFNULL(mem.real_name, poster_name) AS poster_name
+		SELECT m.id_msg, m.subject, m.poster_time, m.body, IFNULL(mem.real_name, m.poster_name) AS poster_name
 		FROM {db_prefix}messages AS m
 			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = m.id_member)
 		WHERE m.id_topic = {int:current_topic}' . ($settings['postmod_active'] && !allowedTo('approve_posts') ? '
@@ -88,8 +88,8 @@ function PrintPage()
 			'subject' => $row['subject'],
 			'member' => $row['poster_name'],
 			'on_time' => on_timeformat($row['poster_time'], false),
-			'timestamp' => forum_time(true, $row['poster_time']),
-			'body' => parse_bbc($row['body'], 'post', array('print' => true)),
+			'timestamp' => $row['poster_time'],
+			'body' => parse_bbc($row['body'], 'post', array('print' => true, 'cache' => $row['id_msg'])),
 		);
 
 		if (!isset($context['topic_subject']))

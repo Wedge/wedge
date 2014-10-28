@@ -3549,11 +3549,12 @@ function aeva_testPixel(&$im, $x, $y)
 	}
 	else
 		$col = ($at & 0x7f000000) >> 24;
+
 	return $col > 0;
 }
 
 // Test whether the current image is transparent or not.
-// If GD isn't installed on the server, PNG and GIF images are assumed to be.
+// If GD isn't installed on the server, PNG and GIF images are assumed to be opaque.
 function aeva_isTransparent($path, $real_path = false)
 {
 	$ext = substr($real_path ? $real_path : $path, -3);
@@ -3569,13 +3570,14 @@ function aeva_isTransparent($path, $real_path = false)
 
 	$is_transparent = ($im !== false) && (
 		aeva_testPixel($im, 0, 0) ||
-		aeva_testPixel($im, $w-1, 0) ||
-		aeva_testPixel($im, 0, $h-1) ||
-		aeva_testPixel($im, $w-1, $h-1)
+		aeva_testPixel($im, $w - 1, 0) ||
+		aeva_testPixel($im, 0, $h - 1) ||
+		aeva_testPixel($im, $w - 1, $h - 1)
 	);
 
 	if ($im)
 		imagedestroy($im);
+
 	return $is_transparent;
 }
 

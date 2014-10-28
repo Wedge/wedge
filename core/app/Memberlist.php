@@ -144,7 +144,7 @@ function Memberlist()
 		$context['colspan']++;
 	}
 	if (!empty($context['custom_fields']))
-		$context['columns'] = array_insert($context['columns'], 'id_group', $context['custom_fields']);
+		$context['columns'] = array_insert($context['columns'], 'group', $context['custom_fields']);
 
 	add_linktree($txt['members_list'], '<URL>?action=mlist');
 
@@ -601,6 +601,6 @@ function printMemberListRows($request)
 				$context['members'][$member]['mlist_cf'][$field['colname']] = $field['value'];
 
 		$context['members'][$member]['post_percent'] = round(($context['members'][$member]['real_posts'] * 100) / $most_posts);
-		$context['members'][$member]['registered_date'] = strftime('%Y-%m-%d', $context['members'][$member]['registered_timestamp']);
+		$context['members'][$member]['registered_date'] = strftime('%Y-%m-%d', forum_time(true, $context['members'][$member]['registered_timestamp'] ?: time()));
 	}
 }

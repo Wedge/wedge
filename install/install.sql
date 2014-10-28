@@ -801,7 +801,7 @@ CREATE TABLE {$db_prefix}log_actions (
 	id_log tinyint(3) unsigned NOT NULL default 1,
 	log_time int(10) unsigned NOT NULL default 0,
 	id_member mediumint(8) unsigned NOT NULL default 0,
-	ip int(10) NOT NULL default 0,
+	ip int(10) unsigned NOT NULL default 0,
 	action varchar(30) NOT NULL default '',
 	id_board mediumint(8) unsigned NOT NULL default 0,
 	id_topic mediumint(8) unsigned NOT NULL default 0,
@@ -870,7 +870,7 @@ CREATE TABLE {$db_prefix}log_errors (
 	id_error mediumint(8) unsigned NOT NULL auto_increment,
 	log_time int(10) unsigned NOT NULL default 0,
 	id_member mediumint(8) unsigned NOT NULL default 0,
-	ip int(10) NOT NULL default 0,
+	ip int(10) unsigned NOT NULL default 0,
 	url text NOT NULL,
 	message text NOT NULL,
 	error_type varchar(255) NOT NULL default 'general',
@@ -888,7 +888,7 @@ CREATE TABLE {$db_prefix}log_errors (
 #
 
 CREATE TABLE {$db_prefix}log_floodcontrol (
-	ip int(10) NOT NULL default 0,
+	ip int(10) unsigned NOT NULL default 0,
 	log_time int(10) unsigned NOT NULL default 0,
 	log_type varchar(8) NOT NULL default 'post',
 	PRIMARY KEY (ip, log_type(8))
@@ -956,7 +956,7 @@ CREATE TABLE {$db_prefix}log_intrusion (
 	id_event int(10) unsigned NOT NULL auto_increment,
 	id_member mediumint(8) unsigned NOT NULL default 0,
 	error_type char(16) NOT NULL default '                ',
-	ip int(10) NOT NULL default 0,
+	ip int(10) unsigned NOT NULL default 0,
 	event_time int(10) unsigned NOT NULL,
 	http_method char(4) NOT NULL default '    ',
 	request_uri varchar(255) NOT NULL default '',
@@ -1054,7 +1054,7 @@ CREATE TABLE {$db_prefix}log_reported_comments (
 	id_member mediumint(8) unsigned NOT NULL,
 	membername varchar(255) NOT NULL default '',
 	email_address varchar(255) NOT NULL default '',
-	member_ip int(10) NOT NULL default 0,
+	member_ip int(10) unsigned NOT NULL default 0,
 	comment varchar(255) NOT NULL default '',
 	time_sent int(10) NOT NULL,
 	PRIMARY KEY (id_comment),
@@ -1687,7 +1687,7 @@ CREATE TABLE {$db_prefix}messages (
 	subject varchar(255) NOT NULL default '',
 	poster_name varchar(255) NOT NULL default '',
 	poster_email varchar(255) NOT NULL default '',
-	poster_ip int(10) NOT NULL default 0,
+	poster_ip int(10) unsigned NOT NULL default 0,
 	smileys_enabled tinyint(4) NOT NULL default 1,
 	modified_time int(10) unsigned NOT NULL default 0,
 	modified_name varchar(255) NOT NULL default '',

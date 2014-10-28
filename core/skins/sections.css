@@ -153,6 +153,12 @@ section.ic
 	box-sizing: border-box
 	@if ie[-7]
 		div mixes .inline-block
+	@elseif $can_flex
+		display: flex
+		flex-wrap: wrap
+		align-items: center
+		> div
+			flex: 1 1 auto
 	@else
 		display: table
 		> div
@@ -285,16 +291,15 @@ hr.sep
 		margin-top: 16px
 		.inner
 			font: $blog_font_size $blog_font
-	.msg:not(:first-child)
+	.msg, .msg .poster
 		background: none
-		.poster
-			background: none
+	.msg:not(:first-child)
 		.poster > div:before
 			position: relative
 			content: ""
 			float: left // Without this, all of .poster is moved down.
 			left: 100%
-			top: 52px
+			top: 40px
 			width, height, font-size: 0
 			border: 24px solid transparent
 			border-right-color: $window_bg
@@ -442,10 +447,6 @@ hr.sep
 			display: flex
 			flex-direction: column
 			flex: 1 0 auto
-			@if firefox
-			.actionbar
-				flex: 0 0 1.5em
-			@endif
 		.merged
 			flex: none
 		@endif
@@ -955,8 +956,10 @@ tr.windowbg td
 
 // If the screen is too small, show the avatar on top
 @media all and (max-width: 900px)
-	.prevnext_prev
-		display: none
+	@if !$can_flex
+		.prevnext_prev
+			display: none
+	@endif
 	#profile_home
 		display: block
 	#basicinfo, #detailedinfo
@@ -1187,15 +1190,11 @@ tr.windowbg td
 		margin: 4px 0
 		border: 1px solid #fff
 		background: #f0fff0
-	@if member
-		// Make life easier for members...
+	// Make life easier for members...
+	@if member && ie[-7]
 		.mimenu final
-			@if ie[-7]
-				left: 100%
-				top: -1em
-			@else
-				top: 80%
-			@endif
+			left: 100%
+			top: -1em
 	@endif
 
 #thought_thread
@@ -1309,13 +1308,16 @@ div.top_row dd
 		max-width: @is ("ie[9-],firefox[4-],chrome[19-],safari[6-]", "calc(100% - 1em)", 100%)
 		width: auto
 		clear: both
+		text-align: left
 	#advanced_search
 		border, padding: 0
 		font-size: .9em
 	.sbox
 		display: block
-	input[type=number]
-		width: 60px
+	.mimenu
+		left: auto
+		min-width: @ifnull($responsive_search_min_width, 300px)
+		max-width: 100%
 
 /* Styles for the search results page.
 ------------------------------------------------- */
@@ -1496,11 +1498,14 @@ body.waiting *
 				.lastpost
 					width: auto
 					font-size: 90%
-			#search_form
-				.mimenu
-					left: auto
-					right: 0
-					min-width: @ifnull($responsive_search_min_width, 300px)
+			.thoughts
+				td
+					display: block
+					width: auto
+				@if $window_bg == $window_bg2
+					.bc
+						border-top: 1px solid #ddd // Add some contrast
+				@endif
 			#sideshow mixes .inline-block
 			#sidebar
 				display: none
@@ -1522,17 +1527,16 @@ body.waiting *
 				top, right: 3px
 				border: 1px solid #ccc
 				gradient: #fff, rgba(255,255,255,.66)
-				padding: 2px 5px
+				padding: 25px 0 0 28px
 				z-index: 99
+				:before
+					left: 6px
 
 			// Try to fit #top_section into one line.
 			#search_form
 				max-width: 33%
-				input[type=submit] mixes .hide
 				input.search
 					max-width: 100%
-				.mimenu
-					min-width: math(@ifnull($responsive_search_min_width, 250px) + 50px)
 			.menu > li > span
 				margin-top: 8px
 			#upshrink
@@ -1553,7 +1557,7 @@ body.waiting *
 
 			dt, dd
 				clear: both
-				width: auto
+				width: 100%
 			dd
 				padding-left: 12px
 

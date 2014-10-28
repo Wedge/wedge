@@ -174,27 +174,24 @@ h1, h2, h3, h4, h5, h6
 
 #sideshow mixes .hide
 	cursor: pointer
-	padding: 5px 0 0 1em
 	float: right
-	width: 16px
-	// These will still need a px-based fallback, for a few years at least.
-	@if mobile
-		width: 5$vmin
-	@endif
-	div
-		@if mobile
-			height: 2px
-			height: .66$vmin
-			margin: 3px 0
-			margin: .7$vmin 0
-		@else
-			height: 2px
-			margin: 3px 0
-		@endif
-		background: #888
+	position: relative
+	padding: 30px 0 0 36px
+	:before
+		content: ""
+		position: absolute
+		top: 50%
+		left: 12px
+		width: 16px
+		height: 2px
+		margin-top: -1px
+		background: #aaa
+		box-shadow: 0 5px 0 0 #aaa, 0 -5px 0 0 #aaa
 		transition: all .3s ease
-	:hover div
-		background: #600
+	:hover:before
+		background: #000
+		box-shadow: 0 5px 0 0 #000, 0 -5px 0 0 #000
+		transition: all .8s ease
 
 #sidebar
 	display: table-cell
@@ -292,21 +289,17 @@ h1
 	float: right
 	max-width: 50%
 	.search
+		border: 1px solid #bbb
+		position: relative
+		z-index: 1
 		float: right
 		max-width: 100%
 		width: 80px
-		transition: width .2s
+		transition: all .2s
 		&.open
+			min-width: 200px
 			width: 100%
-			transition: width .5s
-	.mimenu
-		@if ie6
-			&, ul li
-				width: auto
-		@else
-			width: 100%
-		@endif
-		left: 0
+			transition: all .2s
 
 // The navigation list (i.e. linktree)
 #linktree
@@ -473,8 +466,7 @@ em
 	text-decoration: none
 
 // The 'New' icon, generally speaking.
-.note mixes .inline-block
-	vertical-align: .1em
+.note mixes .inline-block(.1em)
 	border-radius: 7px
 	@if ie[-9], ios[-5.1]
 		background-color: #eb8c66
@@ -545,10 +537,12 @@ select.sb
 	text-align: left
 	margin: 1px
 
-	.text mixes .inline-block
-		vertical-align: baseline
+	.text mixes .inline-block("baseline")
+		width: 100%
 		small
 			color: #aaa
+			float: right
+			margin-left: 5px
 
 	.details
 		font-style: italic
@@ -560,7 +554,7 @@ select.sb
 	/* Display area (always visible) */
 	.display
 		background: rgba(255,255,255,.5)
-		border: 1px solid #abadb3
+		border: 1px solid #bbb
 		color: #000
 		cursor: default
 		font-weight: 400
@@ -1712,9 +1706,6 @@ dl#feed
 .table_grid
 	border-collapse: separate
 	margin-top: .1em
-	// The header bars for some tables.
-	tr.catbg th
-		white-space: nowrap
 	tr.catbg, tr.titlebg
 		font-size: 10pt
 		th
