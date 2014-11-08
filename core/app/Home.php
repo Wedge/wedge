@@ -38,6 +38,7 @@ function Home()
 	{
 		$item = trim($item);
 		$param = strpos($item, ':') !== false ? strrchr($item, ':') : '';
+		$item = str_replace($param, '', $item);
 
 		/* Got anything to say?
 		------------------------- */
