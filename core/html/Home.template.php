@@ -16,7 +16,7 @@ function template_home_topics($n = 0)
 {
 	global $txt;
 
-	$n = $n ?: isset($_REQUEST['n']) ? (int) $_REQUEST['n'] : 5;
+	$n = $n ?: (isset($_REQUEST['n']) ? (int) $_REQUEST['n'] : 5);
 	$next = $n < 50 ? ($n < 20 ? ($n < 10 ? 10 : 20) : 50) : 100;
 
 	echo '
