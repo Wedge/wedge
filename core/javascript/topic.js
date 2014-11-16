@@ -172,6 +172,7 @@ $(window).load(function ()
 		// Did we reach the end of the page..?
 		if (ready_to_show && $(window).scrollTop() >= $(document).height() - $(window).height())
 		{
+			show_ajax();
 			requested = false;
 			ready_to_show = false;
 
@@ -180,6 +181,7 @@ $(window).load(function ()
 				$(this).find('.updown').siblings().remove().end().before($('#pinf').clone().contents());
 			});
 			$('#pinf').remove();
+			$new_page.find('.first-post').removeClass('first-post');
 
 			// We have to re-run the event delayer, as it has new values to insert...
 			// !! Is it worth putting it into its own function in script.js..?
@@ -200,6 +202,7 @@ $(window).load(function ()
 
 			// Prepare all new posts for follow_me and relative dates.
 			page_showing();
+			hide_ajax();
 		}
 	});
 });

@@ -488,7 +488,7 @@ function template_edit_agreement()
 
 		foreach ($context['languages'] as $lang)
 			echo '
-				<li><span class="flag_', $lang['filename'], '"><a href="<URL>?action=admin;area=regcenter;sa=agreement;agreelang=', $lang['filename'], '">', $lang['name'], '</a></span></li>';
+				<li><a href="<URL>?action=admin;area=regcenter;sa=agreement;agreelang=', $lang['filename'], '"><span class="flag_', $lang['filename'], '"></span> ', $lang['name'], '</a></li>';
 
 		echo '
 			</ul>

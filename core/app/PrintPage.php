@@ -65,7 +65,7 @@ function PrintPage()
 
 	// Split the topics up so we can print them.
 	$request = wesql::query('
-		SELECT subject, poster_time, body, IFNULL(mem.real_name, poster_name) AS poster_name
+		SELECT m.id_msg, m.subject, m.poster_time, m.body, IFNULL(mem.real_name, m.poster_name) AS poster_name
 		FROM {db_prefix}messages AS m
 			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = m.id_member)
 		WHERE m.id_topic = {int:current_topic}' . ($settings['postmod_active'] && !allowedTo('approve_posts') ? '

@@ -91,8 +91,13 @@ function template_main()
 		echo '
 			<br>
 			<fieldset class="flow_hidden">
+<<<<<<< HEAD
 				<label><input type="radio" name="all_boards" value="1" onclick="$(\'#searchBoardsExpand\').hide(300); document.forms.searchform[\'search_type\'].value=\'everywhere\';"', $context['boards_check_all'] ? ' checked' : '', '> ', $txt['all_boards'], '</label>
 				<br><label><input type="radio" name="all_boards" value="0" onclick="$(\'#searchBoardsExpand\').show(300); document.forms.searchform[\'search_type\'].value=\'board\';"', $context['boards_check_all'] ? '' : ' checked', '> ', $txt['choose_board'], '</label>
+=======
+				<label><input type="radio" name="all_boards" value="1" onclick="$(\'#searchBoardsExpand\').hide(300); $(\'#search_where\').val(\'everywhere\');"', $context['boards_check_all'] ? ' checked' : '', '> ', $txt['all_boards'], '</label>
+				<br><label><input type="radio" name="all_boards" value="0" onclick="$(\'#searchBoardsExpand\').show(300); $(\'#search_where\').val(\'board\');"', $context['boards_check_all'] ? '' : ' checked', '> ', $txt['choose_board'], '</label>
+>>>>>>> 8f040711c09c1ba0d3ac929f9348d74b3b59a13b
 				<div id="searchBoardsExpand"', $context['boards_check_all'] ? ' class="hide"' : '', '>
 					<ul class="ignoreboards floatleft">';
 
@@ -146,7 +151,11 @@ function template_main()
 				</div>
 				<hr class="clear">
 				<div class="padding clearfix">
+<<<<<<< HEAD
 					<input type="hidden" name="search_type" value="">
+=======
+					<input type="hidden" id="search_where" name="search_type" value="">
+>>>>>>> 8f040711c09c1ba0d3ac929f9348d74b3b59a13b
 					<input type="submit" value="', $txt['search'], '" class="submit floatright">
 				</div>
 			</fieldset>';

@@ -768,7 +768,7 @@ function Display()
 	);
 
 	$all_posters = array();
-	if ($board_info['type'] != 'forum')
+	if ($board_info['type'] != 'forum' && !INFINITE)
 	{
 		// Always get the first poster and message.
 		$messages = array($topicinfo['id_first_msg']);
@@ -1227,8 +1227,8 @@ function Display()
 	// All of this... FOR THAT?!
 	if (INFINITE)
 	{
-		wetem::replace(array('postlist_infinite' => array('display_posts')));
-		wetem::hide();
+		wetem::replace(array('postlist_infinite' => array('display_posts'))); // We replace the entire contents of the <default> layer with this.
+		wetem::hide(); // And of course, no chrome around the post list.
 	}
 
 	// Generic processing that doesn't apply to per-post handling.
@@ -1437,48 +1437,45 @@ function prepareDisplayContext($reset = false)
 	}
 
 	// Bit longer, but this should be helpful too... The per-post menu.
-	if ($output['member']['id'] != 0)
+	$menu = array();
+
+	// Maybe we can approve it, maybe we should?
+	if ($output['can_approve'])
+		$menu[] = 'ap';
+
+	// How about... even... remove it entirely?!
+	if ($output['can_remove'])
+		$menu[] = 're';
+
+	// What about splitting it off the rest of the topic?
+	if ($context['can_split'] && !empty($context['real_num_replies']))
+		$menu[] = 'sp';
+
+	// Can we merge this post to the previous one? (Normally requires same author)
+	if ($output['can_mergeposts'])
+		$menu[] = 'me/' . $output['last_post_id'];
+
+	// Can we restore topics?
+	if ($context['can_restore_msg'])
+		$menu[] = 'rs';
+
+	if ($context['can_report_moderator'] && !$is_me)
+		$menu[] = 'rp';
+
+	if ($context['can_issue_warning'] && !$is_me && !$output['member']['is_guest'])
+		$menu[] = 'wa/' . $output['member']['id'];
+
+	if ($ignore && !$is_me && !$output['member']['is_guest'])
+		$menu[] = ($output['is_ignored'] ? 'ri' : 'ai') . '/' . $output['member']['id'];
+
+	// If we can't do anything, it's not even worth recording the last message ID...
+	if (!empty($menu))
 	{
-		$menu = array();
-
-		// Maybe we can approve it, maybe we should?
-		if ($output['can_approve'])
-			$menu[] = 'ap';
-
-		// How about... even... remove it entirely?!
-		if ($output['can_remove'])
-			$menu[] = 're';
-
-		// What about splitting it off the rest of the topic?
-		if ($context['can_split'] && !empty($context['real_num_replies']))
-			$menu[] = 'sp';
-
-		// Can we merge this post to the previous one? (Normally requires same author)
-		if ($output['can_mergeposts'])
-			$menu[] = 'me/' . $output['last_post_id'];
-
-		// Can we restore topics?
-		if ($context['can_restore_msg'])
-			$menu[] = 'rs';
-
-		if ($context['can_report_moderator'] && !$is_me)
-			$menu[] = 'rp';
-
-		if ($context['can_issue_warning'] && !$is_me && !$output['member']['is_guest'])
-			$menu[] = 'wa/' . $output['member']['id'];
-
-		if ($ignore && !$is_me)
-			$menu[] = ($output['is_ignored'] ? 'ri' : 'ai') . '/' . $output['member']['id'];
-
-		// If we can't do anything, it's not even worth recording the last message ID...
-		if (!empty($menu))
-		{
-			$context['mini_menu']['action'][$output['id']] = $menu;
-			$amenu = array();
-			foreach ($menu as $mid => $name)
-				$amenu[substr($name, 0, 2)] = true;
-			$context['mini_menu_items_show']['action'] += $amenu;
-		}
+		$context['mini_menu']['action'][$output['id']] = $menu;
+		$amenu = array();
+		foreach ($menu as $mid => $name)
+			$amenu[substr($name, 0, 2)] = true;
+		$context['mini_menu_items_show']['action'] += $amenu;
 	}
 
 	// Don't forget to set this to true in the following hook if you're going to add a non-menu button.
