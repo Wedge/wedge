@@ -764,28 +764,7 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 		}
 	}
 
-	// We may want to apply page replacements to CSS files as well.
-	$rep = array();
-	if (isset($settings['page_replacements']))
-		$rep = unserialize($settings['page_replacements']);
-	if (isset($context['ob_replacements']))
-		$rep = array_merge($rep, $context['ob_replacements']);
-	if (!empty($rep))
-		$final = str_replace(array_keys($rep), array_values($rep), $final);
-
-	// Turn url(ROOT/image) into url(/image), but *only* if the CSS file is served from inside ROOT!
-	// We're going to go through page replacements to ensure mydomain/gz/css/ isn't turned into something else.
-	$set_relative = true;
-	if (!empty($rep))
-		foreach ($rep as $key => $val)
-			$set_relative &= strpos($key, 'gz/css') === false;
-
-	if ($set_relative)
-	{
-		preg_match('~.*://[^/]+~', ROOT, $root_root);
-		if (!empty($root_root))
-			$final = str_replace('url(' . $root_root[0], 'url(', $final);
-	}
+	wedge_process_css_replacements($final);
 
 	// Restore comments as requested.
 	if (!empty($comments))
@@ -850,6 +829,32 @@ function wedge_replace_numbered_placeholders($str, $arr, &$final)
 	{
 		$index = intval(substr($final, $pos + $len));
 		$final = substr_replace($final, $arr[$index], $pos, $len + strlen($index));
+	}
+}
+
+function wedge_process_css_replacements(&$final)
+{
+	global $context, $settings;
+
+	// We may want to apply page replacements to CSS files as well.
+	$rep = isset($context['ob_replacements']) ? $context['ob_replacements'] : array();
+	if (!empty($settings['page_replacements']) && ($extra_pr = unserialize($settings['page_replacements'])) !== false)
+		$rep = array_merge($rep, $extra_pr);
+	if (!empty($rep))
+		$final = str_replace(array_keys($rep), array_values($rep), $final);
+
+	// Turn url(ROOT/image) into url(/image), but *only* if the CSS file is served from inside ROOT!
+	// We're going to go through page replacements to ensure mydomain/gz/css/ isn't turned into something else.
+	$set_relative = true;
+	if (!empty($rep))
+		foreach ($rep as $key => $val)
+			$set_relative &= strpos($key, 'gz/css') === false;
+
+	if ($set_relative)
+	{
+		preg_match('~.*://[^/]+~', ROOT, $root_root);
+		if (!empty($root_root))
+			$final = str_replace('url(' . $root_root[0], 'url(', $final);
 	}
 }
 
@@ -1281,7 +1286,7 @@ function wedge_cache_smileys($set, $smileys, $extra)
 
 	$final_gzip = $final_raw = '';
 	$path = ASSETS_DIR . '/smileys/' . $set . '/';
-	$url = (strpos(str_replace('://', '', ROOT), '/') === false && strpos(SMILEYS, ROOT) === 0 ? '' : '../..') . str_replace(ROOT, '', SMILEYS) . '/' . $set . '/';
+	$url = SMILEYS . '/' . $set . '/';
 
 	// Delete other cached versions, if they exist.
 	clean_cache($context['smiley_ext'], 'smileys' . $extra, CACHE_DIR . '/css');
@@ -1304,6 +1309,9 @@ function wedge_cache_smileys($set, $smileys, $extra)
 	// We can't apply a mixin here, but as .smiley is a naturally inline tag anyway, .inline-block isn't needed.
 	$final = '.smiley{display:inline-block;vertical-align:middle;text-indent:100%;white-space:nowrap;overflow:hidden}' . $final_raw . $final_gzip;
 	unset($final_raw, $final_gzip);
+
+	wedge_process_css_replacements($final);
+
 	if ($context['smiley_gzip'])
 		$final = gzencode($final, 9);
 
