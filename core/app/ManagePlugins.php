@@ -1096,6 +1096,7 @@ function EnablePlugin()
 function DisablePlugin($manifest = null, $plugin = null)
 {
 	global $context, $settings;
+	static $flushed = false;
 
 	// We might be coming from the user's request or a separate process. If from elsewhere, we don't need to do all the checks.
 	if (empty($manifest) || empty($plugin))
