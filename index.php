@@ -175,7 +175,7 @@ function loadSource($source_name)
 		if (isset($done[$file]))
 			continue;
 		$done[$file] = true;
-		if (defined('WEDGE_INSTALL') || !empty($db_show_debug) || strpos($file, 'getid3') !== false)
+		if (defined('WEDGE_INSTALL') || strpos($file, 'getid3') !== false)
 			$cache = APP_DIR . '/' . $file . '.php';
 		else
 		{
@@ -184,6 +184,7 @@ function loadSource($source_name)
 			{
 				copy(APP_DIR . '/' . $file . '.php', $cache);
 				require_once(APP_DIR . '/Subs-MinifyPHP.php');
+				apply_plugin_mods($file . '.php', $cache);
 				minify_php($cache);
 			}
 		}
