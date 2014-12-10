@@ -369,6 +369,7 @@ function PluginReadme()
 function EnablePlugin()
 {
 	global $context, $settings, $maintenance;
+	static $flushed = false;
 
 	checkSession('request');
 
@@ -415,6 +416,13 @@ function EnablePlugin()
 			fatal_lang_error('fatal_install_error_maint_mode', false);
 	}
 
+	// Ensure PHP files will be flushed.
+	if (!$flushed)
+	{
+		$flushed = true;
+		clean_cache('php', '', CACHE_DIR . '/app');
+	}
+
 	// Hooks associated with this plugin.
 	$hooks_required = array();
 	$hook_data = array();
@@ -456,7 +464,7 @@ function EnablePlugin()
 			$hooks_provided[(string) $attrs['type']][] = (string) $provided;
 		}
 
-	// Add all the other hooks available
+	// Add all the other hooks available.
 	foreach ($context['enabled_plugins'] as $plugin)
 	{
 		$plugin = unserialize($settings['plugin_' . $plugin]);
@@ -1121,6 +1129,13 @@ function DisablePlugin($manifest = null, $plugin = null)
 	{
 		$list = '<ul><li>' . implode('</li><li>', $test) . '</li></ul>';
 		fatal_lang_error('fatal_conflicted_plugins', false, array($list));
+	}
+
+	// Ensure PHP files will be flushed.
+	if (!$flushed)
+	{
+		$flushed = true;
+		clean_cache('php', '', CACHE_DIR . '/app');
 	}
 
 	// Database changes: disable script

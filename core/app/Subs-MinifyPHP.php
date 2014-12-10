@@ -1,6 +1,8 @@
 <?php
 /**
  * This file manages the minification of PHP files.
+ * Note that, like anything not loaded through loadSource,
+ * you CANNOT edit it directly from a plugin!
  *
  * Wedge (http://wedge.org)
  * Copyright © 2010 René-Gilles Deberdt, wedge.org
@@ -125,4 +127,113 @@ function find_next(&$php, $pos, $search_for)
 	if ($escaped)
 		return find_next($php, ++$next, $search_for);
 	return $next;
+}
+
+function wedge_parse_mod_tags(&$file, $name, $params = array())
+{
+	$tags = array();
+	if (strpos($file, '</' . $name . '>') === false)
+		return $tags;
+	$params = (array) $params;
+
+	// The CDATA stuff, to be honest, is only there for XML warriors. It doesn't actually allow you to use </$name> inside it.
+	if (!preg_match_all('~<' . $name . '\b([^>]*)>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</' . $name . '>~s', $file, $matches, PREG_SET_ORDER))
+		return $tags;
+
+	$empty_list = array();
+	foreach ($params as $param)
+		$empty_list[$param] = '';
+	foreach ($matches as $match)
+	{
+		$item = $empty_list;
+		$item['value'] = $match[2];
+		// No parameters? Just return now...
+		if (empty($match[1]))
+		{
+			$tags[] = $item;
+			continue;
+		}
+
+		// Now we'll retrieve the parameters individually, to allow for any param order.
+		foreach ($params as $param)
+			if (preg_match('~\b' . $param . '="([^"]*)"~', $match[1], $val))
+				$item[$param] = $val[1];
+		$tags[] = $item;
+	}
+	return $tags;
+}
+
+// Edit a source file from within a plugin.
+function apply_plugin_mods($cache, $file)
+{
+	global $context;
+	static $oplist = array();
+
+	// Phase 1: Waste no time if no plugins are enabled.
+	if (empty($context['enabled_plugins']))
+		return;
+
+	$this_file = $error = false;
+	foreach ($context['enabled_plugins'] as $plugin)
+	{
+		$mod = ROOT_DIR . '/plugins/' . $plugin . '/mods.xml';
+		if (empty($datalist[$mod]) && !file_exists($mod))
+			continue;
+		if (!isset($oplist[$mod]))
+		{
+			$data = file_get_contents($mod);
+			$oplist[$mod] = wedge_parse_mod_tags($data, 'file', 'name');
+		}
+		$tags = $oplist[$mod];
+		$ops = array();
+		foreach ($oplist[$mod] as $perfile)
+			if (isset($perfile['name']) && $perfile['name'] == $cache)
+				$ops[] = $perfile['value'];
+		if (empty($ops))
+			continue;
+		$ops = implode($ops);
+		$ops = wedge_parse_mod_tags($ops, 'operation');
+		if (empty($ops))
+			continue;
+		if ($this_file === false)
+			$this_file = file_get_contents($file);
+
+		// Phase 2: ???
+		foreach ($ops as $op)
+		{
+			$where = wedge_parse_mod_tags($op['value'], 'search', 'position');
+			$add = wedge_parse_mod_tags($op['value'], 'add');
+			if (empty($where[0]) || empty($add[0]))
+				continue;
+			$offset = strpos($this_file, $where[0]['value']);
+			if ($offset === false)
+			{
+				$error = true;
+				break;
+			}
+			$save_me = true;
+			$position = isset($where[0]['position']) && in_array($where[0]['position'], array('before', 'after', 'replace')) ? $where[0]['position'] : 'after';
+			if ($position == 'before')
+				$this_file = substr_replace($this_file, $add[0], $offset, 0);
+			elseif ($position == 'after')
+				$this_file = substr_replace($this_file, $add[0], $offset + strlen($where[0]['value']), 0);
+			elseif ($position == 'replace')
+				$this_file = substr_replace($this_file, $add[0], $offset, strlen($where[0]['value']));
+		}
+
+		// If an error was found, I'm afraid we'll have to rollback.
+		if ($error)
+		{
+			$context['enabled_plugins'] = array_diff($context['enabled_plugins'], $plugin);
+			log_error('Couldn\'t apply data from <em>' . $plugin . '</em> plugin to file <tt>' . $cache . '</tt>. Disabling plugin automatically.');
+			updateSettings(array('enabled_plugins' => implode(',', $context['enabled_plugins'])));
+			clean_cache('php', '', CACHE_DIR . '/app');
+			exit('Plugin error. Please reload this page.');
+		}
+		$error = false;
+	}
+
+	// Phase 3: PROFIT!
+	if (!empty($save_me))
+		file_put_contents($file, $this_file);
 }
