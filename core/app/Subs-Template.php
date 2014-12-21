@@ -1098,8 +1098,9 @@ function db_debug_junk()
  *
  * @param string $filename The full path of the template to be loaded.
  * @param bool $once Whether to check that this template is uniquely loaded (for some templates, workflow dictates that it can be loaded only once, so passing it to require_once is an unnecessary performance hurt)
+ * @param bool $no_caching Whether or not the file should be cached. Language files use this, and shouldn't be cached. Please note that preventing caching for a file will also prevent modding it.
  */
-function template_include($filename, $once = false)
+function template_include($filename, $once = false, $no_caching = false)
 {
 	global $settings, $txt;
 	static $templates = array();
@@ -1110,30 +1111,35 @@ function template_include($filename, $once = false)
 	// Don't include the file more than once, if $once is true.
 	if ($once && in_array($filename, $templates))
 		return;
+
 	// Add this file to the include list, whether $once is true or not.
-	else
-		$templates[] = $filename;
+	$templates[] = $filename;
 
-	// Are we going to use eval?
-	if (empty($settings['disableTemplateEval']))
+	$cache = $no_caching ? $filename : ROOT_DIR . '/gz/html/' . str_replace(array(ROOT_DIR . '/', '/', '..'), array('', '_', 'UP'), $filename);
+	$settings['current_include_filename'] = $cache; // For debugging purposes...
+	$file_found = file_exists($cache);
+
+	if (!$no_caching && (!$file_found || filemtime($cache) < filemtime($filename)))
 	{
-		$file_found = file_exists($filename) && eval('?' . '>' . rtrim(file_get_contents($filename))) !== false;
-		$settings['current_include_filename'] = $filename;
+		if (!file_exists($filename))
+		{
+			loadSource('ManageErrors');
+			handleTemplateErrors($filename);
+		}
+		require_once(APP_DIR . '/Subs-MinifyPHP.php');
+		apply_plugin_mods($filename, $cache);
+		minify_php($cache);
+
+		$file_found = file_exists($cache) && eval('?' . '>' . rtrim(file_get_contents($cache))) !== false;
 	}
+	elseif ($once && $file_found)
+		require_once($cache);
+	elseif ($file_found)
+		require($cache);
 	else
-	{
-		$file_found = file_exists($filename);
-
-		if ($once && $file_found)
-			require_once($filename);
-		elseif ($file_found)
-			require($filename);
-	}
-
-	if ($file_found !== true)
 	{
 		loadSource('ManageErrors');
-		handleTemplateErrors($filename);
+		handleTemplateErrors($cache);
 	}
 }
 

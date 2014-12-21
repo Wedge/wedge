@@ -63,6 +63,7 @@ function create_generic_folders($force = false)
 		'attachments' => true,
 		'gz' => array(
 			'app',
+			'html',
 			'keys',
 			'css',
 			'js',

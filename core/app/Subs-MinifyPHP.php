@@ -169,6 +169,15 @@ function apply_plugin_mods($cache, $file)
 	global $context;
 	static $oplist = array();
 
+	$is_template = strpos($cache, '.template.php') !== false;
+	$folder = ROOT_DIR . '/gz/' . ($is_template ? 'html' : 'app');
+	if (!file_exists($folder))
+	{
+		mkdir($folder);
+		copy(ROOT_DIR . '/gz/index.php', $folder . '/index.php');
+	}
+	copy($cache, $file);
+
 	// Phase 1: Waste no time if no plugins are enabled.
 	if (empty($context['enabled_plugins']))
 		return;
@@ -185,9 +194,14 @@ function apply_plugin_mods($cache, $file)
 			$oplist[$mod] = wedge_parse_mod_tags($data, 'file', 'name');
 		}
 		$tags = $oplist[$mod];
+
+		// Now we'll be looking for <file name="filename"> tags; the name parameter accepts partial
+		// names, such as 'Home.php' or 'Home.template.php', or more specific paths. Don't use
+		// 'Home' if you don't want to touch both the app and html files with the same prefix!
+		// Also, to avoid patching a plugin's templates, use 'core/html/...' as needed.
 		$ops = array();
 		foreach ($oplist[$mod] as $perfile)
-			if (isset($perfile['name']) && $perfile['name'] == $cache)
+			if (isset($perfile['name']) && strpos($cache, $perfile['name']) !== false)
 				$ops[] = $perfile['value'];
 		if (empty($ops))
 			continue;
@@ -228,6 +242,7 @@ function apply_plugin_mods($cache, $file)
 			log_error('Couldn\'t apply data from <em>' . $plugin . '</em> plugin to file <tt>' . $cache . '</tt>. Disabling plugin automatically.');
 			updateSettings(array('enabled_plugins' => implode(',', $context['enabled_plugins'])));
 			clean_cache('php', '', CACHE_DIR . '/app');
+			clean_cache('php', '', CACHE_DIR . '/html');
 			exit('Plugin error. Please reload this page.');
 		}
 		$error = false;

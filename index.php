@@ -182,9 +182,8 @@ function loadSource($source_name)
 			$cache = ROOT_DIR . '/gz/app/' . str_replace(array('/', '..'), array('_', 'UP'), $file) . '.php';
 			if (!file_exists($cache) || filemtime($cache) < filemtime(APP_DIR . '/' . $file . '.php'))
 			{
-				copy(APP_DIR . '/' . $file . '.php', $cache);
 				require_once(APP_DIR . '/Subs-MinifyPHP.php');
-				apply_plugin_mods($file . '.php', $cache);
+				apply_plugin_mods(APP_DIR . '/' . $file . '.php', $cache);
 				minify_php($cache);
 			}
 		}

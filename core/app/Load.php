@@ -1801,7 +1801,7 @@ function loadPluginLanguage($plugin_name, $template_name, $lang = '', $fatal = t
 	{
 		if (file_exists($context['plugins_dir'][$plugin_name] . '/' . $template_name . '.' . $load_lang . '.php'))
 		{
-			template_include($context['plugins_dir'][$plugin_name] . '/' . $template_name . '.' . $load_lang . '.php');
+			template_include($context['plugins_dir'][$plugin_name] . '/' . $template_name . '.' . $load_lang . '.php', false, true);
 			$found = true;
 		}
 	}
@@ -1937,9 +1937,9 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 			foreach ($language_attempts as $attempt)
 			{
 				if (file_exists($folder . '/' . $template . '.' . $attempt . '.php'))
-					template_include($folder . '/' . $template . '.' . $attempt . '.php');
+					template_include($folder . '/' . $template . '.' . $attempt . '.php', false, true);
 				elseif (file_exists($folder . '/' . $attempt . '/' . $template . '.' . $attempt . '.php'))
-					template_include($folder . '/' . $attempt . '/' . $template . '.' . $attempt . '.php');
+					template_include($folder . '/' . $attempt . '/' . $template . '.' . $attempt . '.php', false, true);
 				else
 					continue;
 				$found = true;
