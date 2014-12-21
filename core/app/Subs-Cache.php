@@ -578,7 +578,7 @@ function wedge_get_css_filename($add)
  */
 function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false, $ext = '.css', $additional_vars = array())
 {
-	global $css_vars, $context, $settings, $time_start;
+	global $css_vars, $context, $time_start;
 
 	$final_folder = substr(CACHE_DIR . '/css/' . $folder, 0, -1);
 	$cachekey = 'css_files-' . $folder . implode('-', $ids);

@@ -239,7 +239,7 @@ function apply_plugin_mods($cache, $file)
 		if ($error)
 		{
 			$context['enabled_plugins'] = array_diff($context['enabled_plugins'], $plugin);
-			log_error('Couldn\'t apply data from <em>' . $plugin . '</em> plugin to file <tt>' . $cache . '</tt>. Disabling plugin automatically.');
+			log_error('Couldn\'t apply data from "' . $plugin . '" plugin to file "' . $cache . '". Disabling plugin automatically.');
 			updateSettings(array('enabled_plugins' => implode(',', $context['enabled_plugins'])));
 			clean_cache('php', '', CACHE_DIR . '/app');
 			clean_cache('php', '', CACHE_DIR . '/html');

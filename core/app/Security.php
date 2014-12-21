@@ -1858,7 +1858,7 @@ function get_privacy_icon($privacy)
 // This is currently tailored for profile privacy... Then again, it's what matters the most.
 function get_privacy_widget($privacy, $can_edit = false, $text = '', $area = '')
 {
-	global $txt, $context;
+	global $txt;
 
 	if (we::$is_guest)
 		return $text;
