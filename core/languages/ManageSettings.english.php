@@ -26,7 +26,6 @@ $txt['jquery_local'] = 'This server (merged with script.js)';
 $txt['jquery_jquery'] = 'jQuery CDN';
 $txt['jquery_google'] = 'Google CDN';
 $txt['jquery_microsoft'] = 'Microsoft CDN';
-$txt['disableTemplateEval'] = 'Disable evaluation of templates';
 $txt['db_show_debug'] = 'Show debug information';
 $txt['db_show_debug_who'] = 'Show debug information to which users:';
 $txt['db_show_debug_who_log'] = 'Show debug query log to which users:';

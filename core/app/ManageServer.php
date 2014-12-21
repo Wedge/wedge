@@ -561,7 +561,6 @@ function ModifyDebugSettings($return_config = false)
 	update_show_debug();');
 
 	$config_vars = array(
-		array('check', 'disableTemplateEval'),
 		array('check', 'timeLoadPageEnable'),
 		'',
 		array('check', 'enableErrorQueryLogging'),
