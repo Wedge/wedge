@@ -378,6 +378,7 @@ function EnablePlugin()
 		fatal_lang_error('fatal_not_valid_plugin', false);
 
 	$manifest = safe_sxml_load(ROOT_DIR . '/plugins/' . $_GET['plugin'] . '/plugin-info.xml');
+	$has_modsxml = file_exists(ROOT_DIR . '/plugins/' . $_GET['plugin'] . '/mods.xml');
 	if ($manifest === false || empty($manifest['id']) || empty($manifest->name) || empty($manifest->author) || empty($manifest->version))
 		fatal_lang_error('fatal_not_valid_plugin', false);
 
@@ -417,10 +418,11 @@ function EnablePlugin()
 	}
 
 	// Ensure PHP files will be flushed.
-	if (!$flushed)
+	if (!$flushed && $has_modsxml)
 	{
 		$flushed = true;
 		clean_cache('php', '', CACHE_DIR . '/app');
+		clean_cache('php', '', CACHE_DIR . '/html');
 	}
 
 	// Hooks associated with this plugin.
@@ -1124,7 +1126,7 @@ function DisablePlugin($manifest = null, $plugin = null)
 	// Disabling is much simpler than enabling.
 
 	$manifest_id = (string) $manifest['id'];
-
+	$has_modsxml = file_exists(ROOT_DIR . '/plugins/' . $_GET['plugin'] . '/mods.xml');
 	$test = test_hooks_conflict($manifest);
 	if (!empty($test))
 	{
@@ -1133,10 +1135,11 @@ function DisablePlugin($manifest = null, $plugin = null)
 	}
 
 	// Ensure PHP files will be flushed.
-	if (!$flushed)
+	if (!$flushed && $has_modsxml)
 	{
 		$flushed = true;
 		clean_cache('php', '', CACHE_DIR . '/app');
+		clean_cache('php', '', CACHE_DIR . '/html');
 	}
 
 	// Database changes: disable script
