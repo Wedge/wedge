@@ -74,7 +74,7 @@ function template_main()
 						<label><input type="checkbox" name="subject_only" id="subject_only" value="1"', !empty($context['search_params']['subject_only']) ? ' checked' : '', '> ', $txt['search_subject_only'], '</label>
 					</dd>
 					<dt class="between">', $txt['search_post_age'], ':</dt>
-					<dd>', $txt['search_between'], ' <input type="number" name="minage" value="', empty($context['search_params']['minage']) ? '0' : $context['search_params']['minage'], '" size="5" maxlength="4" min="0" max="9999">&nbsp;', $txt['search_and'], '&nbsp;<input type="number" name="maxage" value="', empty($context['search_params']['maxage']) ? '9999' : $context['search_params']['maxage'], '" size="5" maxlength="4" min="0" max="9999"> ', $txt['days_word'], '</dd>
+					<dd>', $txt['search_between'], ' <input type="number" pattern="\d*" name="minage" value="', empty($context['search_params']['minage']) ? '0' : $context['search_params']['minage'], '" size="5" maxlength="4" min="0" max="9999">&nbsp;', $txt['search_and'], '&nbsp;<input type="number" pattern="[0-9]*" name="maxage" value="', empty($context['search_params']['maxage']) ? '9999' : $context['search_params']['maxage'], '" size="5" maxlength="4" min="0" max="9999"> ', $txt['days_word'], '</dd>
 				</dl>';
 
 	// If $context['search_params']['topic'] is set, that means we're searching just one topic.
@@ -223,7 +223,7 @@ function template_search_ajax()
 						<label><input type="checkbox" name="subject_only" id="subject_only" value="1"', !empty($context['search_params']['subject_only']) ? ' checked' : '', '> ', $txt['search_subject_only'], '</label>
 					</dd>
 					<dt class="between">', $txt['search_post_age'], ':</dt>
-					<dd>', $txt['search_between'], ' <input type="number" name="minage" value="', empty($context['search_params']['minage']) ? '0' : $context['search_params']['minage'], '" size="5" maxlength="4" min="0" max="9999"> ', $txt['search_and'], ' <input type="number" name="maxage" value="', empty($context['search_params']['maxage']) ? '9999' : $context['search_params']['maxage'], '" size="5" maxlength="4" min="0" max="9999"> ', $txt['days_word'], '</dd>
+					<dd>', $txt['search_between'], ' <input type="number" pattern="\d*" name="minage" value="', empty($context['search_params']['minage']) ? '0' : $context['search_params']['minage'], '" size="5" maxlength="4" min="0" max="9999"> ', $txt['search_and'], ' <input type="number" pattern="[0-9]*" name="maxage" value="', empty($context['search_params']['maxage']) ? '9999' : $context['search_params']['maxage'], '" size="5" maxlength="4" min="0" max="9999"> ', $txt['days_word'], '</dd>
 				</dl>';
 
 	// If $context['search_params']['topic'] is set, that means we're searching just one topic.
