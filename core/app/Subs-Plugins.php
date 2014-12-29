@@ -844,7 +844,7 @@ function get_maint_requirements($manifest)
 
 function test_hooks_conflict($manifest)
 {
-	global $settings;
+	global $settings, $my_plugins;
 
 	// This could be interesting, actually. Does this plugin declare any hooks that any other active plugin uses?
 	if (!empty($manifest->hooks->provides))
@@ -863,7 +863,7 @@ function test_hooks_conflict($manifest)
 		// So now we know what hooks this plugin offers. Now let's see what other plugins use this.
 		if (!empty($hooks_provided))
 		{
-			$plugins = explode(',', $settings['enabled_plugins']);
+			$plugins = !empty($my_plugins) ? explode(',', $my_plugins) : array();
 			foreach ($plugins as $plugin)
 			{
 				if ($plugin == $_GET['plugin'] || !file_exists($plug_dir . $plugin . '/plugin-info.xml'))

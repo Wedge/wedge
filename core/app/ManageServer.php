@@ -419,8 +419,8 @@ function ModifyCacheSettings($return_config = false)
 
 		if ($detected['Memcached'])
 		{
-			loadSource('Subs-Admin');
-			updateSettingsFile(array('memcached_servers' => "'" . $memcached_servers . "'"));
+			loadSource('Subs-CachePHP');
+			updateSettingsFile(array('memcached_servers' => $memcached_servers));
 		}
 
 		redirectexit('action=admin;area=serversettings;sa=cache;' . $context['session_query']);
@@ -886,23 +886,23 @@ function saveSettings(&$config_vars)
 		$name = $config_var[1];
 
 		if ($type == 'password' && isset($_POST[$name][1]) && $_POST[$name][0] == $_POST[$name][1])
-			$new_settings[$name] = '\'' . addcslashes($_POST[$name][0], '\'\\') . '\'';
+			$new_settings[$name] = (string) $_POST[$name][0];
 
 		if ($type == 'select' && isset($_POST[$name]) && isset($config_var[2][$_POST[$name]]))
-			$new_settings[$name] = '\'' . addcslashes($_POST[$name], '\'\\') . '\'';
+			$new_settings[$name] = (string) $_POST[$name];
 
 		elseif (($type == 'text' || $type == 'email') && isset($_POST[$name]))
-			$new_settings[$name] = '\'' . addcslashes($_POST[$name], '\'\\') . '\'';
+			$new_settings[$name] = (string) $_POST[$name];
 
 		elseif ($type == 'int' && isset($_POST[$name])) // None so far.
 			$new_settings[$name] = (int) $_POST[$name];
 
 		elseif ($type == 'check')
-			$new_settings[$name] = !empty($_POST[$name]) ? '1' : '0';
+			$new_settings[$name] = !empty($_POST[$name]) ? 1 : 0;
 	}
 
 	// Save the relevant settings in the Settings.php file.
-	loadSource('Subs-Admin');
+	loadSource('Subs-CachePHP');
 
 	if (!empty($new_settings))
 		updateSettingsFile($new_settings);

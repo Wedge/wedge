@@ -175,14 +175,14 @@ function loadSource($source_name)
 		if (isset($done[$file]))
 			continue;
 		$done[$file] = true;
-		if (defined('WEDGE_INSTALL') || strpos($file, 'getid3') !== false)
+		if (defined('WEDGE_INSTALL') || $file === 'Subs-CachePHP' || strpos($file, 'getid3') !== false)
 			$cache = APP_DIR . '/' . $file . '.php';
 		else
 		{
 			$cache = ROOT_DIR . '/gz/app/' . str_replace(array('/', '..'), array('_', 'UP'), $file) . '.php';
 			if (!file_exists($cache) || filemtime($cache) < filemtime(APP_DIR . '/' . $file . '.php'))
 			{
-				require_once(APP_DIR . '/Subs-MinifyPHP.php');
+				loadSource('Subs-CachePHP');
 				apply_plugin_mods(APP_DIR . '/' . $file . '.php', $cache);
 				minify_php($cache);
 			}

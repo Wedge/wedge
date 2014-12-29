@@ -12,8 +12,6 @@ if (!defined('WEDGE'))
 	die('Hacking attempt...');
 
 /*	This file contains functions that are specifically done by administrators.
-	The most important function in this file for mod makers happens to be the
-	updateSettingsFile() function, but it shouldn't be used often anyway.
 
 	void getServerVersions(array checkFor)
 		- get a list of versions that are currently installed on the server.
@@ -26,15 +24,6 @@ if (!defined('WEDGE'))
 		- returns an array containing information on source files, templates
 		  and language files found in the default theme directory (grouped by
 		  language).
-
-	void updateSettingsFile(array config_vars)
-		- updates the Settings.php file with the changes in config_vars.
-		- expects config_vars to be an associative array, with the keys as the
-		  variable names in Settings.php, and the values the varaible values.
-		- does not escape or quote values.
-		- preserves case, formatting, and additional options in file.
-		- writes nothing if the resulting file would be less than 10 lines
-		  in length (sanity check for read lock.)
 
 	void updateAdminPreferences()
 		- saves the admins current preferences to the database.
@@ -258,106 +247,6 @@ function getFileVersions(&$versionOptions)
 			ksort($version_info['language_versions'][$language]);
 	}
 	return $version_info;
-}
-
-// Update the Settings.php file.
-function updateSettingsFile($config_vars)
-{
-	// When was Settings.php last changed?
-	$last_settings_change = filemtime(ROOT_DIR . '/Settings.php');
-
-	// Load the file. Break it up based on \r or \n, and then clean out extra characters.
-	$settingsArray = trim(file_get_contents(ROOT_DIR . '/Settings.php'));
-	if (strpos($settingsArray, "\n") !== false)
-		$settingsArray = explode("\n", $settingsArray);
-	elseif (strpos($settingsArray, "\r") !== false)
-		$settingsArray = explode("\r", $settingsArray);
-	else
-		return false;
-
-	// Make sure we got a good file.
-	if (count($config_vars) == 1 && isset($config_vars['db_last_error']))
-	{
-		$temp = trim(implode("\n", $settingsArray));
-		if (substr($temp, 0, 5) != '<?php' || substr($temp, -2) != '?' . '>')
-			return false;
-		if (strpos($temp, 'boardurl') === false || strpos($temp, 'cookiename') === false)
-			return false;
-	}
-
-	// Presumably, the file has to have stuff in it for this function to be called :P.
-	if (count($settingsArray) < 10)
-		return false;
-
-	foreach ($settingsArray as $k => $dummy)
-		$settingsArray[$k] = strtr($dummy, array("\r" => '')) . "\n";
-
-	for ($i = 0, $n = count($settingsArray); $i < $n; $i++)
-	{
-		// Don't trim or bother with it if it's not a variable.
-		if ($settingsArray[$i][0] !== '$')
-			continue;
-
-		$settingsArray[$i] = rtrim($settingsArray[$i]) . "\n";
-
-		// Look through the variables to set....
-		foreach ($config_vars as $var => $val)
-		{
-			if (strncasecmp($settingsArray[$i], '$' . $var, 1 + strlen($var)) == 0)
-			{
-				$comment = strstr(substr($settingsArray[$i], strpos($settingsArray[$i], ';')), '#');
-				$settingsArray[$i] = '$' . $var . ' = ' . $val . ';' . ($comment == '' ? '' : "\t\t" . rtrim($comment)) . "\n";
-
-				// This one's been 'used', so to speak.
-				unset($config_vars[$var]);
-			}
-		}
-
-		if (substr(trim($settingsArray[$i]), 0, 2) == '?' . '>')
-			$end = $i;
-	}
-
-	// This should never happen, but apparently it is happening.
-	if (empty($end) || $end < 10)
-		$end = count($settingsArray) - 1;
-
-	// Still more? Add them at the end.
-	if (!empty($config_vars))
-	{
-		if (trim($settingsArray[$end]) == '?' . '>')
-			$settingsArray[$end++] = '';
-		else
-			$end++;
-
-		foreach ($config_vars as $var => $val)
-			$settingsArray[$end++] = '$' . $var . ' = ' . $val . ';' . "\n";
-
-		$settingsArray[$end++] = "\n";
-		$settingsArray[$end] = '?' . '>';
-	}
-	else
-		$settingsArray[$end] = trim($settingsArray[$end]);
-
-	// Sanity error checking: the file needs to be at least 12 lines.
-	if (count($settingsArray) < 12)
-		return false;
-
-	$settingsArray = implode('', $settingsArray);
-	$temp = ROOT_DIR . '/Settings-' . mt_rand(1, 10000) . '.php';
-
-	// Try to avoid a few pitfalls, like a possible race condition or low diskspace.
-	if (file_put_contents($temp, $settingsArray, LOCK_EX) !== strlen($settingsArray))
-	{
-		@unlink($temp);
-		return false;
-	}
-
-	// Make sure it hasn't changed since we requested the update.
-	clearstatcache();
-
-	if (filemtime(ROOT_DIR . '/Settings.php') === $last_settings_change)
-		if (!rename($temp, ROOT_DIR . '/Settings.php'))
-			@unlink($temp);
 }
 
 function updateAdminPreferences()

@@ -1,6 +1,6 @@
 <?php
 /**
- * This file manages the minification of PHP files.
+ * This file manages the minification and caching of PHP files.
  * Note that, like anything not loaded through loadSource,
  * you CANNOT edit it directly from a plugin!
  *
@@ -166,7 +166,7 @@ function wedge_parse_mod_tags(&$file, $name, $params = array())
 // Edit a source file from within a plugin.
 function apply_plugin_mods($cache, $file)
 {
-	global $context;
+	global $context, $settings, $my_plugins;
 	static $oplist = array();
 
 	$is_template = strpos($cache, '.template.php') !== false;
@@ -179,8 +179,11 @@ function apply_plugin_mods($cache, $file)
 	copy($cache, $file);
 
 	// Phase 1: Waste no time if no plugins are enabled.
-	if (empty($context['enabled_plugins']))
+	if (empty($my_plugins) && empty($settings['enabled_plugins']))
 		return;
+
+	if (empty($my_plugins))
+		$my_plugins = $settings['enabled_plugins'];
 
 	$this_file = $error = false;
 	foreach ($context['enabled_plugins'] as $plugin)
@@ -240,7 +243,7 @@ function apply_plugin_mods($cache, $file)
 		{
 			$context['enabled_plugins'] = array_diff($context['enabled_plugins'], $plugin);
 			log_error('Couldn\'t apply data from "' . $plugin . '" plugin to file "' . $cache . '". Disabling plugin automatically.');
-			updateSettings(array('enabled_plugins' => implode(',', $context['enabled_plugins'])));
+			updateSettingsFile(array('my_plugins' => implode(',', $context['enabled_plugins'])));
 			clean_cache('php', '', CACHE_DIR . '/app');
 			clean_cache('php', '', CACHE_DIR . '/html');
 			exit('Plugin error. Please reload this page.');
@@ -251,4 +254,107 @@ function apply_plugin_mods($cache, $file)
 	// Phase 3: PROFIT!
 	if (!empty($save_me))
 		file_put_contents($file, $this_file);
+}
+
+// Update the Settings.php file with the changes in $config_vars.
+// Works similarly to updateSettings().
+function updateSettingsFile($config_vars)
+{
+	// When was Settings.php last changed?
+	$last_settings_change = filemtime(ROOT_DIR . '/Settings.php');
+
+	// Load the file. Break it up based on \r or \n, and then clean out extra characters.
+	$settingsArray = trim(file_get_contents(ROOT_DIR . '/Settings.php'));
+	if (strpos($settingsArray, "\n") !== false)
+		$settingsArray = explode("\n", $settingsArray);
+	elseif (strpos($settingsArray, "\r") !== false)
+		$settingsArray = explode("\r", $settingsArray);
+	else
+		return false;
+
+	// Make sure we got a good file.
+	if (count($config_vars) == 1 && isset($config_vars['db_last_error']))
+	{
+		$temp = trim(implode("\n", $settingsArray));
+		if (substr($temp, 0, 5) != '<?php' || substr($temp, -2) != '?' . '>')
+			return false;
+		if (strpos($temp, 'boardurl') === false || strpos($temp, 'cookiename') === false)
+			return false;
+	}
+
+	// Presumably, the file has to have stuff in it for this function to be called :P.
+	if (count($settingsArray) < 10)
+		return false;
+
+	foreach ($settingsArray as $k => $dummy)
+		$settingsArray[$k] = strtr($dummy, array("\r" => '')) . "\n";
+
+	for ($i = 0, $n = count($settingsArray); $i < $n; $i++)
+	{
+		// Don't trim or bother with it if it's not a variable.
+		if ($settingsArray[$i][0] !== '$')
+			continue;
+
+		$settingsArray[$i] = rtrim($settingsArray[$i]) . "\n";
+
+		// Look through the variables to set....
+		foreach ($config_vars as $var => $val)
+		{
+			if (strncasecmp($settingsArray[$i], '$' . $var, 1 + strlen($var)) == 0)
+			{
+				if (is_string($val))
+					$val = '\'' . addcslashes($val, '\'\\') . '\'';
+				$comment = strstr(substr($settingsArray[$i], strpos($settingsArray[$i], ';')), '#');
+				$settingsArray[$i] = '$' . $var . ' = ' . $val . ';' . ($comment == '' ? '' : "\t\t" . rtrim($comment)) . "\n";
+
+				// This one's been 'used', so to speak.
+				unset($config_vars[$var]);
+			}
+		}
+
+		if (substr(trim($settingsArray[$i]), 0, 2) == '?' . '>')
+			$end = $i;
+	}
+
+	// This should never happen, but apparently it is happening.
+	if (empty($end) || $end < 10)
+		$end = count($settingsArray) - 1;
+
+	// Still more? Add them at the end.
+	if (!empty($config_vars))
+	{
+		if (trim($settingsArray[$end]) == '?' . '>')
+			$settingsArray[$end++] = '';
+		else
+			$end++;
+
+		foreach ($config_vars as $var => $val)
+			$settingsArray[$end++] = '$' . $var . ' = ' . (is_string($val) ? '\'' . addcslashes($val, '\'\\') . '\'' : $val) . ';' . "\n";
+
+		$settingsArray[$end++] = "\n";
+		$settingsArray[$end] = '?' . '>';
+	}
+	else
+		$settingsArray[$end] = trim($settingsArray[$end]);
+
+	// Sanity error checking: the file needs to be at least 12 lines.
+	if (count($settingsArray) < 12)
+		return false;
+
+	$settingsArray = implode('', $settingsArray);
+	$temp = ROOT_DIR . '/Settings-' . mt_rand(1, 10000) . '.php';
+
+	// Try to avoid a few pitfalls, like a possible race condition or low diskspace.
+	if (file_put_contents($temp, $settingsArray, LOCK_EX) !== strlen($settingsArray))
+	{
+		@unlink($temp);
+		return false;
+	}
+
+	// Make sure it hasn't changed since we requested the update.
+	clearstatcache();
+
+	if (filemtime(ROOT_DIR . '/Settings.php') === $last_settings_change)
+		if (!rename($temp, ROOT_DIR . '/Settings.php'))
+			@unlink($temp);
 }

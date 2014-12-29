@@ -25,7 +25,7 @@ if (!defined('WEDGE'))
  */
 function loadSettings()
 {
-	global $settings, $context, $action_list, $action_no_log;
+	global $settings, $context, $action_list, $action_no_log, $my_plugins;
 
 	// This is where it all began.
 	$context = array(
@@ -161,8 +161,15 @@ function loadSettings()
 	$context['enabled_plugins'] = array();
 	if (!empty($settings['enabled_plugins']))
 	{
+		// Convert an old Wedge variable.
+		loadSource('Subs-CachePHP');
+		updateSettingsFile(array('my_plugins' => $my_plugins = (string) $settings['enabled_plugins']));
+		wesql::query('DELETE FROM {db_prefix}settings WHERE variable = {literal:enabled_plugins}');
+	}
+	if (!empty($my_plugins))
+	{
 		// Step through the list we think we have enabled.
-		$plugins = explode(',', $settings['enabled_plugins']);
+		$plugins = explode(',', $my_plugins);
 		$hook_stack = array();
 		foreach ($plugins as $plugin)
 		{
@@ -196,7 +203,10 @@ function loadSettings()
 				$reset_plugins = true;
 		}
 		if (isset($reset_plugins))
-			updateSettings(array('enabled_plugins' => implode(',', $context['enabled_plugins'])));
+		{
+			loadSource('Subs-CachePHP');
+			updateSettingsFile(array('my_plugins' => implode(',', $context['enabled_plugins'])));
+		}
 
 		// Having got all the hooks, figure out the priority ordering and commit to the master list.
 		foreach ($hook_stack as $hook => $hooks_by_priority)

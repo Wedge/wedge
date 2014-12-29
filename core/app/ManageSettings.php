@@ -622,7 +622,7 @@ function ModifyPrettyURLs($return_config = false)
 				if (empty($val))
 					unset($_POST['from'][$key], $_POST['to'][$key]);
 
-		loadSource('Subs-Admin');
+		loadSource('Subs-CachePHP');
 		updateSettings(
 			array(
 				'pretty_enable_filters' => $is_enabled,

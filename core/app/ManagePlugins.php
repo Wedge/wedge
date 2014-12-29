@@ -234,7 +234,8 @@ function ListPlugins()
 				$context['available_plugins'][$id]['enabled'] = true;
 			}
 
-		updateSettings(array('enabled_plugins' => implode(',', $context['enabled_plugins'])));
+		loadSource('Subs-CachePHP');
+		updateSettingsFile(array('my_plugins' => implode(',', $context['enabled_plugins'])));
 	}
 
 	// 4. Go through the remaining disabled plugins and check that they're not trying to activate where there's another plugin with the same id already enabled.
@@ -368,7 +369,7 @@ function PluginReadme()
 
 function EnablePlugin()
 {
-	global $context, $settings, $maintenance;
+	global $context, $settings, $maintenance, $my_plugins;
 	static $flushed = false;
 
 	checkSession('request');
@@ -378,7 +379,6 @@ function EnablePlugin()
 		fatal_lang_error('fatal_not_valid_plugin', false);
 
 	$manifest = safe_sxml_load(ROOT_DIR . '/plugins/' . $_GET['plugin'] . '/plugin-info.xml');
-	$has_modsxml = file_exists(ROOT_DIR . '/plugins/' . $_GET['plugin'] . '/mods.xml');
 	if ($manifest === false || empty($manifest['id']) || empty($manifest->name) || empty($manifest->author) || empty($manifest->version))
 		fatal_lang_error('fatal_not_valid_plugin', false);
 
@@ -418,7 +418,7 @@ function EnablePlugin()
 	}
 
 	// Ensure PHP files will be flushed.
-	if (!$flushed && $has_modsxml)
+	if (!$flushed && file_exists(ROOT_DIR . '/plugins/' . $_GET['plugin'] . '/mods.xml'))
 	{
 		$flushed = true;
 		clean_cache('php', '', CACHE_DIR . '/app');
@@ -1072,11 +1072,12 @@ function EnablePlugin()
 		foreach ($details as $hooked_details)
 			$plugin_details[$point][] = (string) $hooked_details['function'] . '|' . (string) $hooked_details['filename'] . '|' . $manifest_id . $hooked_details['priority'];
 
-	$enabled_plugins = !empty($settings['enabled_plugins']) ? explode(',', $settings['enabled_plugins']) : array();
+	$enabled_plugins = !empty($my_plugins) ? explode(',', $my_plugins) : array();
 	$enabled_plugins[] = $_GET['plugin'];
+	loadSource('Subs-CachePHP');
+	updateSettingsFile(array('my_plugins' => implode(',', $enabled_plugins)));
 	updateSettings(
 		array(
-			'enabled_plugins' => implode(',', $enabled_plugins),
 			'plugin_' . $_GET['plugin'] => serialize($plugin_details),
 			'settings_updated' => time(),
 			'plugins_admin' => $admin_cache,
@@ -1126,7 +1127,6 @@ function DisablePlugin($manifest = null, $plugin = null)
 	// Disabling is much simpler than enabling.
 
 	$manifest_id = (string) $manifest['id'];
-	$has_modsxml = file_exists(ROOT_DIR . '/plugins/' . $_GET['plugin'] . '/mods.xml');
 	$test = test_hooks_conflict($manifest);
 	if (!empty($test))
 	{
@@ -1135,7 +1135,7 @@ function DisablePlugin($manifest = null, $plugin = null)
 	}
 
 	// Ensure PHP files will be flushed.
-	if (!$flushed && $has_modsxml)
+	if (!$flushed && file_exists(ROOT_DIR . '/plugins/' . $_GET['plugin'] . '/mods.xml'))
 	{
 		$flushed = true;
 		clean_cache('php', '', CACHE_DIR . '/app');
@@ -1193,9 +1193,10 @@ function DisablePlugin($manifest = null, $plugin = null)
 	// Note that the internal cache of per-plugin hook info is cleared, not removed. When actually removing the plugin, then we'd purge it.
 	// It's not like we have to call remove_hook or anything, because the whole point is that we don't 'add' them in the first place...
 	$enabled_plugins = array_diff($context['enabled_plugins'], array($_GET['plugin']));
+	loadSource('Subs-CachePHP');
+	updateSettingsFile(array('my_plugins' => implode(',', $enabled_plugins)));
 	updateSettings(
 		array(
-			'enabled_plugins' => implode(',', $enabled_plugins),
 			'plugin_' . $_GET['plugin'] => '',
 			'settings_updated' => time(),
 			'plugins_admin' => $admin_cache,
