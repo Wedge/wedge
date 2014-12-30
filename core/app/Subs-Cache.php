@@ -1753,8 +1753,9 @@ function clean_cache($extensions = 'php', $filter = '', $force_folder = '', $rem
 		elseif ($cache_system === 'zend' && ($zend_cache_folder = ini_get('zend_accelerator.output_cache_dir')))
 			clean_cache('', '', $zend_cache_folder . '/.php_cache_api');
 
-		// Also get the source and language caches!
+		// Also get the source, template and language caches!
 		clean_cache('php', '', CACHE_DIR . '/app');
+		clean_cache('php', '', CACHE_DIR . '/html');
 		clean_cache('php', '', CACHE_DIR . '/lang');
 	}
 

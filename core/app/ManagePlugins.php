@@ -417,12 +417,14 @@ function EnablePlugin()
 			fatal_lang_error('fatal_install_error_maint_mode', false);
 	}
 
-	// Ensure PHP files will be flushed.
+	// Ensure cached files will be flushed.
 	if (!$flushed && file_exists(ROOT_DIR . '/plugins/' . $_GET['plugin'] . '/mods.xml'))
 	{
 		$flushed = true;
 		clean_cache('php', '', CACHE_DIR . '/app');
 		clean_cache('php', '', CACHE_DIR . '/html');
+		clean_cache('css');
+		clean_cache('js');
 	}
 
 	// Hooks associated with this plugin.
@@ -1134,12 +1136,14 @@ function DisablePlugin($manifest = null, $plugin = null)
 		fatal_lang_error('fatal_conflicted_plugins', false, array($list));
 	}
 
-	// Ensure PHP files will be flushed.
+	// Ensure cached files will be flushed.
 	if (!$flushed && file_exists(ROOT_DIR . '/plugins/' . $_GET['plugin'] . '/mods.xml'))
 	{
 		$flushed = true;
 		clean_cache('php', '', CACHE_DIR . '/app');
 		clean_cache('php', '', CACHE_DIR . '/html');
+		clean_cache('css');
+		clean_cache('js');
 	}
 
 	// Database changes: disable script
