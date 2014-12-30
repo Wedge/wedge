@@ -164,29 +164,29 @@ function wedge_parse_mod_tags(&$file, $name, $params = array())
 }
 
 // Edit a source file from within a plugin.
-function apply_plugin_mods($cache, $file)
+// $no_caching will skip the gz/ caching process and return your modded file as a string.
+function apply_plugin_mods($source, $dest, $no_caching = false)
 {
 	global $context, $settings, $my_plugins;
 	static $oplist = array();
 
-	$is_template = strpos($cache, '.template.php') !== false;
-	$folder = ROOT_DIR . '/gz/' . ($is_template ? 'html' : 'app');
-	if (!file_exists($folder))
+	if (!$no_caching)
 	{
-		mkdir($folder);
-		copy(ROOT_DIR . '/gz/index.php', $folder . '/index.php');
+		$folder = ROOT_DIR . '/gz/' . (strpos($source, '.template.php') !== false ? 'html' : 'app');
+		if (!file_exists($folder))
+		{
+			mkdir($folder);
+			copy(ROOT_DIR . '/gz/index.php', $folder . '/index.php');
+		}
+		copy($source, $dest);
 	}
-	copy($cache, $file);
 
-	// Phase 1: Waste no time if no plugins are enabled.
-	if (empty($my_plugins) && empty($settings['enabled_plugins']))
-		return;
+	$my_plugins = !isset($my_plugins) ? (!empty($settings['enabled_plugins']) ? $settings['enabled_plugins'] : '') : $my_plugins;
+	$enabled_plugins = isset($context['enabled_plugins']) ? $context['enabled_plugins'] : explode(',', $my_plugins);
 
-	if (empty($my_plugins))
-		$my_plugins = $settings['enabled_plugins'];
-
-	$this_file = $error = false;
-	foreach ($context['enabled_plugins'] as $plugin)
+	$error = false;
+	$this_file = $no_caching ? file_get_contents($source) : false;
+	foreach ($enabled_plugins as $plugin)
 	{
 		$mod = ROOT_DIR . '/plugins/' . $plugin . '/mods.xml';
 		if (empty($datalist[$mod]) && !file_exists($mod))
@@ -204,7 +204,7 @@ function apply_plugin_mods($cache, $file)
 		// Also, to avoid patching a plugin's templates, use 'core/html/...' as needed.
 		$ops = array();
 		foreach ($oplist[$mod] as $perfile)
-			if (isset($perfile['name']) && strpos($cache, $perfile['name']) !== false)
+			if (isset($perfile['name']) && strpos($source, $perfile['name']) !== false)
 				$ops[] = $perfile['value'];
 		if (empty($ops))
 			continue;
@@ -213,9 +213,8 @@ function apply_plugin_mods($cache, $file)
 		if (empty($ops))
 			continue;
 		if ($this_file === false)
-			$this_file = file_get_contents($file);
+			$this_file = file_get_contents($dest);
 
-		// Phase 2: ???
 		foreach ($ops as $op)
 		{
 			$where = wedge_parse_mod_tags($op['value'], 'search', 'position');
@@ -241,9 +240,11 @@ function apply_plugin_mods($cache, $file)
 		// If an error was found, I'm afraid we'll have to rollback.
 		if ($error)
 		{
-			$context['enabled_plugins'] = array_diff($context['enabled_plugins'], $plugin);
-			log_error('Couldn\'t apply data from "' . $plugin . '" plugin to file "' . $cache . '". Disabling plugin automatically.');
-			updateSettingsFile(array('my_plugins' => implode(',', $context['enabled_plugins'])));
+			$enabled_plugins = array_diff($enabled_plugins, $plugin);
+			if (isset($context['enabled_plugins']))
+				$context['enabled_plugins'] = $enabled_plugins;
+			log_error('Couldn\'t apply data from "' . $plugin . '" plugin to file "' . $source . '". Disabling plugin automatically.');
+			updateSettingsFile(array('my_plugins' => $my_plugins = implode(',', $enabled_plugins)));
 			clean_cache('php', '', CACHE_DIR . '/app');
 			clean_cache('php', '', CACHE_DIR . '/html');
 			exit('Plugin error. Please reload this page.');
@@ -251,9 +252,10 @@ function apply_plugin_mods($cache, $file)
 		$error = false;
 	}
 
-	// Phase 3: PROFIT!
+	if ($no_caching)
+		return $this_file;
 	if (!empty($save_me))
-		file_put_contents($file, $this_file);
+		file_put_contents($dest, $this_file);
 }
 
 // Update the Settings.php file with the changes in $config_vars.
