@@ -659,9 +659,10 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 	$deep_folder = rtrim(SKINS_DIR . '/' . end($context['css_folders']), '/');
 
 	// Load all CSS files in order, replace $here with the current folder while we're at it, and mark local sections.
+	loadSource('Subs-CachePHP');
 	foreach ((array) $css as $file)
 	{
-		$local = file_get_contents($file);
+		$local = apply_plugin_mods($file, '', true);
 		if (dirname($file) === $deep_folder && strpos(strtolower($local), 'local') !== false)
 			$local = preg_replace('~@(is\h+\([^),]*|(?:else)?if\h+[^\n]*)\blocal\b~i', '@$1true', $local);
 		$final .= str_replace('$here', str_replace(ROOT_DIR, ROOT, dirname($file)), $local);
@@ -1013,9 +1014,10 @@ function wedge_cache_js($id, &$lang_name, $latest_date, $ext, $js, $gzip = false
 
 	$minify = empty($settings['minify']) ? 'none' : $settings['minify'];
 
+	loadSource('Subs-CachePHP');
 	foreach ($js as $file)
 	{
-		$cont = file_get_contents($dir . $file);
+		$cont = apply_plugin_mods($dir . $file, '', true);
 
 		// We make sure to remove any minified files, to be re-added later.
 		if (strpos($file, '.min.js') !== false)
