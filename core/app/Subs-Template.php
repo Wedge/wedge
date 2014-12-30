@@ -1126,7 +1126,7 @@ function template_include($filename, $once = false, $no_caching = false)
 			loadSource('ManageErrors');
 			handleTemplateErrors($filename);
 		}
-		require_once(APP_DIR . '/Subs-MinifyPHP.php');
+		loadSource('Subs-CachePHP');
 		apply_plugin_mods($filename, $cache);
 		minify_php($cache);
 
