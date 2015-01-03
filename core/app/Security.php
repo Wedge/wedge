@@ -1582,10 +1582,6 @@ function checkUserRequest_request()
 				return $context['behavior_error'] = 'behav_rogue_chars';
 	}
 
-	// Should not use lowercase 'via' header (only known if on Apache). Clearswift does, though they shouldn't.
-	if (isset($context['http_headers']['via']) && strpos($context['http_headers']['via'], 'Clearswift') === false && strpos($context['http_headers']['User-Agent'], 'CoralWebPrx') === false)
-		return $context['behavior_error'] = 'behav_invalid_via';
-
 	// A known referrer spammer
 	if (isset($context['http_headers']['Via']) && (stripos($context['http_headers']['Via'], 'pinappleproxy') !== false || stripos($context['http_headers']['Via'], 'PCNETSERVER') !== false || stripos($context['http_headers']['Via'], 'Invisiware') !== false))
 		return $context['behavior_error'] = 'behav_banned_via_proxy';
@@ -1602,6 +1598,10 @@ function checkUserRequest_request()
 	// OK, are we doing the big scary strict tests? If not, bail. Some of these tests will fail on weird things like some corporate proxy servers so we don't do them by default.
 	if (empty($settings['performStrictBehavior']))
 		return false;
+
+	// Should not use lowercase 'via' header (only known if on Apache). Clearswift does, though they shouldn't.
+	if (isset($context['http_headers']['via']) && strpos($context['http_headers']['via'], 'Clearswift') === false && strpos($context['http_headers']['User-Agent'], 'CoralWebPrx') === false)
+		return $context['behavior_error'] = 'behav_invalid_via';
 
 	// Proxy-Connection isn't a real header.
 	// !! Doesn't this get thrown on Firefox < v18 when a proxy is enabled?
