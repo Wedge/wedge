@@ -1712,80 +1712,6 @@ class ftp_connection
 	}
 }
 
-function updateSettingsFile($vars)
-{
-	// Modify Settings.php.
-	$settingsArray = file(ROOT_DIR . '/Settings.php');
-
-	// !!! Do we just want to read the file in clean, and split it this way always?
-	if (count($settingsArray) == 1)
-		$settingsArray = preg_split('~[\r\n]~', $settingsArray[0]);
-
-	for ($i = 0, $n = count($settingsArray); $i < $n; $i++)
-	{
-		if (empty($settingsArray[$i]))
-			continue;
-
-		if (trim($settingsArray[$i]) == '?' . '>')
-		{
-			$settingsArray[$i] = '';
-			continue;
-		}
-
-		// Don't trim or bother with it if it's not a variable.
-		if ($settingsArray[$i][0] != '$')
-			continue;
-
-		$settingsArray[$i] = rtrim($settingsArray[$i]) . "\n";
-
-		foreach ($vars as $var => $val)
-		{
-			if (strncasecmp($settingsArray[$i], '$' . $var, 1 + strlen($var)) != 0)
-				continue;
-
-			$comment = strstr($settingsArray[$i], '#');
-			$settingsArray[$i] = '$' . $var . ' = ' . (is_numeric($val) ? $val : "'$val'") . ';' . ($comment != '' ? "\t\t" . $comment : "\n");
-			unset($vars[$var]);
-		}
-	}
-
-	// Uh oh... the file wasn't empty... was it?
-	if (!empty($vars))
-	{
-		$settingsArray[$i++] = '';
-		foreach ($vars as $var => $val)
-			$settingsArray[$i++] = '$' . $var . ' = \'' . $val . '\';' . "\n";
-	}
-
-	// Blank out the file - done to fix an oddity with some servers.
-	$fp = @fopen(ROOT_DIR . '/Settings.php', 'w');
-	if (!$fp)
-		return false;
-	fclose($fp);
-
-	$fp = fopen(ROOT_DIR . '/Settings.php', 'r+');
-
-	// Gotta have one of these ;)
-	if (trim($settingsArray[0]) != '<?php')
-		fwrite($fp, "<?php\n");
-
-	$lines = count($settingsArray);
-	$last_line = '';
-	for ($i = 0; $i < $lines - 1; $i++)
-	{
-		$line = trim($settingsArray[$i]);
-		// Skip multiple blank lines
-		if ($line !== '' || $last_line !== '')
-			fwrite($fp, strtr($settingsArray[$i], "\r", ''));
-		$last_line = $line;
-	}
-
-	fwrite($fp, $settingsArray[$i] . ($last_line !== '' || trim($settingsArray[$i - 2]) !== '' ? "\n" : '') . '?' . '>');
-	fclose($fp);
-
-	return true;
-}
-
 // Create an .htaccess file to prevent mod_security. Wedge has filtering built-in.
 function fixModSecurity()
 {
@@ -1834,7 +1760,7 @@ function init_variables()
 {
 	global $incontext, $txt, $context, $settings;
 
-	loadSource(array('Subs-Auth', 'Class-String'));
+	loadSource(array('Subs-Auth', 'Class-String', 'Subs-CachePHP'));
 
 	westr::getInstance();
 	we::getInstance(false);
