@@ -230,16 +230,17 @@ function page_showing()
 		$(this).html(str).attr('title', $(this).data('t'));
 	});
 
-	// This is a weird bug in Chrome and Firefox, due to an inconsistency in the flexbox specs.
+	// This is a weird bug in Chrome, due to an inconsistency in the flexbox specs.
 	// If a horizontal (but no vertical) scrollbar is set on an element inside a flex container,
-	// the scrollbar will be 'ignored' by the layout engine. Forcing the element's flex to none fixes this in Chrome,
-	// but Firefox doesn't want to know about it, and we need to disable flex on these posts.
-	if (is_chrome || is_firefox)
-		$('.post code').each(function () {
-			if (is_firefox)
-				$(this).parentsUntil('.post_wrapper').each(function () { if ($(this).css('display') == 'flex') $(this).css('display', 'block'); });
-			else if (this.scrollWidth > this.offsetWidth && this.scrollHeight <= this.offsetHeight)
-				$(this).css('flex', 'none');
+	// the scrollbar will be 'ignored' by the layout engine. Forcing the element's flex to none fixes this.
+	if (is_chrome)
+		$('.post code').css('flex', 'none');
+
+	// max-width inside a container with undefined width gives undefined results in Firefox,
+	// more precisely it just ignores the max-width, so we have to force a width on containers.
+	if (is_firefox)
+		$('.post:has(code,img)').each(function () {
+			$(this).find('code,img').hide().end().width($(this).width()).find('code,img').show();
 		});
 }
 
