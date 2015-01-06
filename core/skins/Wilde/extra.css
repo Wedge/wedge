@@ -61,7 +61,7 @@ $sub_radius = 8px
 h1
 	width: auto
 	letter-spacing: -2px
-	font: 700 3em/.8em $big_font
+	font: 100 3em/.8em $big_font
 	a
 		color: #78a
 
@@ -299,6 +299,7 @@ dfn
 
 $main_font = "Segoe UI", Arial, sans-serif
 $head_font = "Segoe UI Semibold", $main_font
+$big_font = Helvetica, Arial, sans-serif
 $subcat_font = normal 1.1em $main_font
 $post_font = $main_font
 $post_font_size = 11pt/140%
@@ -308,6 +309,10 @@ $radius = 20px
 @remove
 	border-top: .54em double #ccc
 	border-bottom: .18em solid #ccc
+
+@remove #top_section
+	background: *
+	border-bottom: *
 
 @remove #header, #navi, #footer
 	color: #ddc
