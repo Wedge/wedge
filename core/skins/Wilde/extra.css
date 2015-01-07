@@ -310,10 +310,6 @@ $radius = 20px
 	border-top: .54em double #ccc
 	border-bottom: .18em solid #ccc
 
-@remove #top_section
-	background: *
-	border-bottom: *
-
 @remove #header, #navi, #footer
 	color: #ddc
 

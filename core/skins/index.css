@@ -242,8 +242,10 @@ ul#noava
 // Top header
 #top_section
 	padding: 8px 30px
-	border-bottom: 1px solid $separator_col
-	background: $main_bg
+	@if local
+		border-bottom: 1px solid $separator_col
+		background: $main_bg
+	@endif
 
 @if $context['languages']
 	#flags mixes .inline-block // Language flags
