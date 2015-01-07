@@ -1956,10 +1956,11 @@ function cache_get_data($orig_key, $ttl = 120, $put_callback = null)
 		$cache_hits[$cache_count]['s'] = isset($val) ? strlen($val) : 0;
 	}
 
-	// If the operation requires re-caching, return null to let the script know.
+	// We good?
 	if (!empty($val))
 		return unserialize($val);
 
+	// If the operation requires manual re-caching, return null to let the script know.
 	if ($put_callback === null)
 		return null;
 
