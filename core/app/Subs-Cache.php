@@ -578,7 +578,7 @@ function wedge_get_css_filename($add)
  */
 function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false, $ext = '.css', $additional_vars = array())
 {
-	global $css_vars, $context, $settings, $time_start;
+	global $css_vars, $context, $time_start;
 
 	$final_folder = substr(CACHE_DIR . '/css/' . $folder, 0, -1);
 	$cachekey = 'css_files-' . $folder . implode('-', $ids);
@@ -659,9 +659,10 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 	$deep_folder = rtrim(SKINS_DIR . '/' . end($context['css_folders']), '/');
 
 	// Load all CSS files in order, replace $here with the current folder while we're at it, and mark local sections.
+	loadSource('Subs-CachePHP');
 	foreach ((array) $css as $file)
 	{
-		$local = file_get_contents($file);
+		$local = apply_plugin_mods($file, '', true);
 		if (dirname($file) === $deep_folder && strpos(strtolower($local), 'local') !== false)
 			$local = preg_replace('~@(is\h+\([^),]*|(?:else)?if\h+[^\n]*)\blocal\b~i', '@$1true', $local);
 		$final .= str_replace('$here', str_replace(ROOT_DIR, ROOT, dirname($file)), $local);
@@ -764,28 +765,7 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 		}
 	}
 
-	// We may want to apply page replacements to CSS files as well.
-	$rep = array();
-	if (isset($settings['page_replacements']))
-		$rep = unserialize($settings['page_replacements']);
-	if (isset($context['ob_replacements']))
-		$rep = array_merge($rep, $context['ob_replacements']);
-	if (!empty($rep))
-		$final = str_replace(array_keys($rep), array_values($rep), $final);
-
-	// Turn url(ROOT/image) into url(/image), but *only* if the CSS file is served from inside ROOT!
-	// We're going to go through page replacements to ensure mydomain/gz/css/ isn't turned into something else.
-	$set_relative = true;
-	if (!empty($rep))
-		foreach ($rep as $key => $val)
-			$set_relative &= strpos($key, 'gz/css') === false;
-
-	if ($set_relative)
-	{
-		preg_match('~.*://[^/]+~', ROOT, $root_root);
-		if (!empty($root_root))
-			$final = str_replace('url(' . $root_root[0], 'url(', $final);
-	}
+	wedge_process_css_replacements($final);
 
 	// Restore comments as requested.
 	if (!empty($comments))
@@ -850,6 +830,32 @@ function wedge_replace_numbered_placeholders($str, $arr, &$final)
 	{
 		$index = intval(substr($final, $pos + $len));
 		$final = substr_replace($final, $arr[$index], $pos, $len + strlen($index));
+	}
+}
+
+function wedge_process_css_replacements(&$final)
+{
+	global $context, $settings;
+
+	// We may want to apply page replacements to CSS files as well.
+	$rep = isset($context['ob_replacements']) ? $context['ob_replacements'] : array();
+	if (!empty($settings['page_replacements']) && ($extra_pr = unserialize($settings['page_replacements'])) !== false)
+		$rep = array_merge($rep, $extra_pr);
+	if (!empty($rep))
+		$final = str_replace(array_keys($rep), array_values($rep), $final);
+
+	// Turn url(ROOT/image) into url(/image), but *only* if the CSS file is served from inside ROOT!
+	// We're going to go through page replacements to ensure mydomain/gz/css/ isn't turned into something else.
+	$set_relative = true;
+	if (!empty($rep))
+		foreach ($rep as $key => $val)
+			$set_relative &= strpos($key, 'gz/css') === false;
+
+	if ($set_relative)
+	{
+		preg_match('~.*://[^/]+~', ROOT, $root_root);
+		if (!empty($root_root))
+			$final = str_replace('url(' . $root_root[0], 'url(', $final);
 	}
 }
 
@@ -1008,9 +1014,10 @@ function wedge_cache_js($id, &$lang_name, $latest_date, $ext, $js, $gzip = false
 
 	$minify = empty($settings['minify']) ? 'none' : $settings['minify'];
 
+	loadSource('Subs-CachePHP');
 	foreach ($js as $file)
 	{
-		$cont = file_get_contents($dir . $file);
+		$cont = apply_plugin_mods($dir . $file, '', true);
 
 		// We make sure to remove any minified files, to be re-added later.
 		if (strpos($file, '.min.js') !== false)
@@ -1281,7 +1288,7 @@ function wedge_cache_smileys($set, $smileys, $extra)
 
 	$final_gzip = $final_raw = '';
 	$path = ASSETS_DIR . '/smileys/' . $set . '/';
-	$url = (strpos(str_replace('://', '', ROOT), '/') === false && strpos(SMILEYS, ROOT) === 0 ? '' : '../..') . str_replace(ROOT, '', SMILEYS) . '/' . $set . '/';
+	$url = SMILEYS . '/' . $set . '/';
 
 	// Delete other cached versions, if they exist.
 	clean_cache($context['smiley_ext'], 'smileys' . $extra, CACHE_DIR . '/css');
@@ -1304,6 +1311,9 @@ function wedge_cache_smileys($set, $smileys, $extra)
 	// We can't apply a mixin here, but as .smiley is a naturally inline tag anyway, .inline-block isn't needed.
 	$final = '.smiley{display:inline-block;vertical-align:middle;text-indent:100%;white-space:nowrap;overflow:hidden}' . $final_raw . $final_gzip;
 	unset($final_raw, $final_gzip);
+
+	wedge_process_css_replacements($final);
+
 	if ($context['smiley_gzip'])
 		$final = gzencode($final, 9);
 
@@ -1743,8 +1753,9 @@ function clean_cache($extensions = 'php', $filter = '', $force_folder = '', $rem
 		elseif ($cache_system === 'zend' && ($zend_cache_folder = ini_get('zend_accelerator.output_cache_dir')))
 			clean_cache('', '', $zend_cache_folder . '/.php_cache_api');
 
-		// Also get the source and language caches!
+		// Also get the source, template and language caches!
 		clean_cache('php', '', CACHE_DIR . '/app');
+		clean_cache('php', '', CACHE_DIR . '/html');
 		clean_cache('php', '', CACHE_DIR . '/lang');
 	}
 
@@ -1945,10 +1956,11 @@ function cache_get_data($orig_key, $ttl = 120, $put_callback = null)
 		$cache_hits[$cache_count]['s'] = isset($val) ? strlen($val) : 0;
 	}
 
-	// If the operation requires re-caching, return null to let the script know.
+	// We good?
 	if (!empty($val))
 		return unserialize($val);
 
+	// If the operation requires manual re-caching, return null to let the script know.
 	if ($put_callback === null)
 		return null;
 

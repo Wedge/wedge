@@ -25,7 +25,7 @@ if (!defined('WEDGE'))
  */
 function loadSettings()
 {
-	global $settings, $context, $action_list, $action_no_log;
+	global $settings, $context, $action_list, $action_no_log, $my_plugins;
 
 	// This is where it all began.
 	$context = array(
@@ -161,8 +161,15 @@ function loadSettings()
 	$context['enabled_plugins'] = array();
 	if (!empty($settings['enabled_plugins']))
 	{
+		// Convert an old Wedge variable.
+		loadSource('Subs-CachePHP');
+		updateSettingsFile(array('my_plugins' => $my_plugins = (string) $settings['enabled_plugins']));
+		wesql::query('DELETE FROM {db_prefix}settings WHERE variable = {literal:enabled_plugins}');
+	}
+	if (!empty($my_plugins))
+	{
 		// Step through the list we think we have enabled.
-		$plugins = explode(',', $settings['enabled_plugins']);
+		$plugins = explode(',', $my_plugins);
 		$hook_stack = array();
 		foreach ($plugins as $plugin)
 		{
@@ -196,7 +203,10 @@ function loadSettings()
 				$reset_plugins = true;
 		}
 		if (isset($reset_plugins))
-			updateSettings(array('enabled_plugins' => implode(',', $context['enabled_plugins'])));
+		{
+			loadSource('Subs-CachePHP');
+			updateSettingsFile(array('my_plugins' => implode(',', $context['enabled_plugins'])));
+		}
 
 		// Having got all the hooks, figure out the priority ordering and commit to the master list.
 		foreach ($hook_stack as $hook => $hooks_by_priority)
@@ -1801,7 +1811,7 @@ function loadPluginLanguage($plugin_name, $template_name, $lang = '', $fatal = t
 	{
 		if (file_exists($context['plugins_dir'][$plugin_name] . '/' . $template_name . '.' . $load_lang . '.php'))
 		{
-			template_include($context['plugins_dir'][$plugin_name] . '/' . $template_name . '.' . $load_lang . '.php');
+			template_include($context['plugins_dir'][$plugin_name] . '/' . $template_name . '.' . $load_lang . '.php', false, true);
 			$found = true;
 		}
 	}
@@ -1937,9 +1947,9 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 			foreach ($language_attempts as $attempt)
 			{
 				if (file_exists($folder . '/' . $template . '.' . $attempt . '.php'))
-					template_include($folder . '/' . $template . '.' . $attempt . '.php');
+					template_include($folder . '/' . $template . '.' . $attempt . '.php', false, true);
 				elseif (file_exists($folder . '/' . $attempt . '/' . $template . '.' . $attempt . '.php'))
-					template_include($folder . '/' . $attempt . '/' . $template . '.' . $attempt . '.php');
+					template_include($folder . '/' . $attempt . '/' . $template . '.' . $attempt . '.php', false, true);
 				else
 					continue;
 				$found = true;

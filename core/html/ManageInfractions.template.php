@@ -226,7 +226,7 @@ function template_edit_infraction()
 	{
 		echo '
 						<fieldset class="custom_note hide" id="fs_', $id_lang, '">
-							<legend><span class="flag_', $id_lang, '"><a href="#" onclick="$(\'#fs_', $id_lang, '\').hide(); $(\'#fs_', $id_lang, '_link\').show(); return false;">', $lang['name'], '</a></span> <div class="foldable fold"></div></legend>
+							<legend><a href="#" onclick="$(\'#fs_', $id_lang, '\').hide(); $(\'#fs_', $id_lang, '_link\').show(); return false;"><span class="flag_', $id_lang, '"></span> ', $lang['name'], '</a> <div class="foldable fold"></div></legend>
 							<dl class="settings">
 								<dt>', $txt['notification_subject'], '</dt>
 								<dd><input class="w100" name="subject[', $id_lang, ']" value="', !empty($context['infraction_details']['template_msg'][$id_lang]['subject']) ? $context['infraction_details']['template_msg'][$id_lang]['subject'] : '', '"></dd>
@@ -236,7 +236,7 @@ function template_edit_infraction()
 								</dd>
 							</dl>
 						</fieldset>
-						<div id="fs_', $id_lang, '_link" class="custom_note hide"><span class="flag_', $id_lang, '"><a href="#" onclick="$(\'#fs_', $id_lang, '\').show(); $(\'#fs_', $id_lang, '_link\').hide(); return false;">', $lang['name'], '</a></span> <div class="foldable"></div></div>';
+						<div id="fs_', $id_lang, '_link" class="custom_note hide"><a href="#" onclick="$(\'#fs_', $id_lang, '\').show(); $(\'#fs_', $id_lang, '_link\').hide(); return false;"><span class="flag_', $id_lang, '"></span> ', $lang['name'], '</a> <div class="foldable"></div></div>';
 	}
 
 	// Back to your regularly scheduled template.

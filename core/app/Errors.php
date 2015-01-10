@@ -422,12 +422,10 @@ function show_db_error($loadavg = false)
 
 		if ($db_last_error < time() - 3600 * 24 * 3 && empty($maintenance) && !empty($db_error_send))
 		{
-			loadSource('Subs-Admin');
-
 			// Log when we last did this.
 			@touch(CACHE_DIR . '/error.lock');
 
-			// Language files aren't loaded yet :(.
+			// Language files aren't loaded yet :(
 			$db_error = @wesql::error($db_connection);
 			@mail($webmaster_email, $mbname . ': Wedge Database Error!', 'There has been a problem with the database!' . ($db_error == '' ? '' : "\nMySQL reported:\n" . $db_error) . "\n\n" . 'This is a notice email to let you know that Wedge could not connect to the database, contact your host if this continues.');
 		}

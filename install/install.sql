@@ -2269,7 +2269,6 @@ VALUES
 	('embed_wmp', '0'),
 	('embed_real', '0'),
 	('embed_swf', '0'),
-	('disableTemplateEval', '1'),
 	('disableHostnameLookup', '1'),
 	('default_index', 'Home'),
 	('pm_enabled', '1'),

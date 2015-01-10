@@ -47,6 +47,9 @@ $db_persist = 0;
 $db_error_send = 1;
 $db_show_debug = 0;
 $db_last_error = 0;
+
+# Enabled plugins
+$my_plugins = \'\';
 ';
 
 	foreach (array('/Settings_bak.php', '/Settings.php') as $target)
@@ -63,6 +66,7 @@ function create_generic_folders($force = false)
 		'attachments' => true,
 		'gz' => array(
 			'app',
+			'html',
 			'keys',
 			'css',
 			'js',

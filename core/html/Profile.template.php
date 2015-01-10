@@ -530,7 +530,7 @@ function template_showPosts()
 				// How about... even... remove it entirely?!
 				if ($post['can_delete'])
 					echo '
-						<li><a href="<URL>?action=deletemsg;msg=', $post['id'], ';topic=', $post['topic'], ';profile;u=', $context['member']['id'], ';start=', $context['start'], ';', $context['session_query'], '" class="remove_button" onclick="return ask(', $remove_confirm, ', e);">', $txt['remove'], '</a></li>';
+						<li><a href="<URL>?action=deletemsg;msg=', $post['id'], ';topic=', $post['topic'], $context['current_member'] ? ';profile;u=' . $context['member']['id'] . ';start=' . $context['start'] : '', ';', $context['session_query'], '" class="remove_button" onclick="return ask(', $remove_confirm, ', e);">', $txt['remove'], '</a></li>';
 
 				echo '
 					</ul>';
@@ -716,6 +716,18 @@ function template_editContactList()
 			echo '
 			</table></div>';
 		}
+	}
+
+	if (we::$user['is_owner'] && we::$is_admin)
+	{
+		echo '
+			<div style="border: 1px solid #ccc"><div class="padding windowbg" data-id="new">
+				<div>
+					<div class="privacy_list_custom" style="margin-top: 8px"></div>
+					<strong style="font-size: 120%">', generic_contacts('{new}'), '</strong>
+					&nbsp;<input type="button" class="new" style="font-size: 90%" value="', $txt['new'], '" onclick="">
+				</div>
+			</div>';
 	}
 
 	if ($need_sortable)

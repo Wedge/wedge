@@ -21,7 +21,7 @@ function upgrade_db()
 	// We'll need some of the database helpers, and updateSettingsFile.
 	// We're calling updateSettingsFile for each DB upgrade, so that we can
 	// resume upgrading easily if the server somehow times out.
-	loadSource(array('Class-DBHelper', 'Subs-Admin'));
+	loadSource(array('Class-DBHelper', 'Subs-CachePHP'));
 
 	$t = microtime(true);
 	while ($v++ < WEDGE)
@@ -32,7 +32,7 @@ function upgrade_db()
 
 		// If it failed, skip the rest and let the page 'happen'. Hopefully it'll work on the next page load.
 		// If it worked, increase $we_shot by one. If Settings.php isn't writable, then again, stop everything.
-		if ($result === false || updateSettingsFile(array('we_shot' => $v)) === false)
+		if ($result === false || updateSettingsFile(array('we_shot' => (int) $v)) === false)
 			return;
 
 		// If we've been doing this for more than a second, let the page refresh first.

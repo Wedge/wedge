@@ -675,7 +675,7 @@ function DatabaseSettings()
 		);
 
 		// God I hope it saved!
-		if (!updateSettingsFile($vars) && IS_WINDOWS)
+		if (!installSettingsFile($vars) && IS_WINDOWS)
 		{
 			$incontext['error'] = $txt['error_windows_chmod'];
 			return false;
@@ -708,7 +708,7 @@ function DatabaseSettings()
 			if ($db_connection != null)
 			{
 				$db_user = $_POST['db_prefix'] . $db_user;
-				updateSettingsFile(array('db_user' => $db_user));
+				installSettingsFile(array('db_user' => $db_user));
 			}
 		}
 
@@ -753,7 +753,7 @@ function DatabaseSettings()
 				if (wesql::select_db($_POST['db_prefix'] . $db_name, $db_connection))
 				{
 					$db_name = $_POST['db_prefix'] . $db_name;
-					updateSettingsFile(array('db_name' => $db_name));
+					installSettingsFile(array('db_name' => $db_name));
 				}
 			}
 
@@ -806,7 +806,7 @@ function ForumSettings()
 		);
 
 		// Must save!
-		if (!updateSettingsFile($vars) && IS_WINDOWS)
+		if (!installSettingsFile($vars) && IS_WINDOWS)
 		{
 			$incontext['error'] = $txt['error_windows_chmod'];
 			return false;
@@ -1126,7 +1126,7 @@ function AdminAccount()
 
 		// Update the main contact email?
 		if (!empty($_POST['email']) && (empty($webmaster_email) || $webmaster_email == 'noreply@myserver.com'))
-			updateSettingsFile(array('webmaster_email' => $_POST['email']));
+			installSettingsFile(array('webmaster_email' => $_POST['email']));
 
 		// Work out whether we're going to have dodgy characters and remove them.
 		$invalid_characters = preg_match('~[<>&"\'=\\\]~', $_POST['username']) != 0;
@@ -1348,7 +1348,7 @@ function DeleteInstall()
 	wesql::free_result($request);
 
 	// Revoke install mode, and save our first known 'proper' settings.
-	updateSettingsFile(array('maintenance' => 0));
+	installSettingsFile(array('maintenance' => 0));
 	@copy(ROOT_DIR . '/Settings.php', ROOT_DIR . '/Settings_bak.php');
 
 	// Now is the perfect time to fetch the Wedge files.
@@ -1712,7 +1712,7 @@ class ftp_connection
 	}
 }
 
-function updateSettingsFile($vars)
+function installSettingsFile($vars)
 {
 	// Modify Settings.php.
 	$settingsArray = file(ROOT_DIR . '/Settings.php');
