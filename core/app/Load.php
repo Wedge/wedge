@@ -1883,7 +1883,7 @@ function loadPluginLanguage($plugin_name, $template_name, $lang = '', $fatal = t
 function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload = false, $fallback = false)
 {
 	global $context, $settings, $db_show_debug, $txt;
-	static $already_loaded = array();
+	static $already_loaded = array(), $reps = null;
 
 	if ($force_reload === 'all')
 	{
@@ -1932,28 +1932,32 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 			$txt = array();
 		}
 
-		$language_folders = array(
-			LANGUAGES_DIR,
-		);
-
 		// First, load the English files, for a solid fallback, then the user's language.
 		if (!isset($language_attempts))
 			$language_attempts = array_flip(array_flip(array('english', ($pos = strpos($lang, '-')) !== false ? substr($lang, 0, $pos) : $lang, $lang)));
 
 		// Now try to find the actual language file. Custom files are always considered found.
 		$found = $template === 'Custom';
-		foreach ($language_folders as $folder)
+		$rep_str = '';
+		foreach ($language_attempts as $attempt)
 		{
-			foreach ($language_attempts as $attempt)
-			{
-				if (file_exists($folder . '/' . $template . '.' . $attempt . '.php'))
-					template_include($folder . '/' . $template . '.' . $attempt . '.php', false, true);
-				elseif (file_exists($folder . '/' . $attempt . '/' . $template . '.' . $attempt . '.php'))
-					template_include($folder . '/' . $attempt . '/' . $template . '.' . $attempt . '.php', false, true);
-				else
-					continue;
-				$found = true;
-			}
+			if ($reps === null && file_exists(LANGUAGES_DIR . '/' . $attempt . '/replacements.xml'))
+				$rep_str .= file_get_contents(LANGUAGES_DIR . '/' . $attempt . '/replacements.xml');
+
+			if (file_exists(LANGUAGES_DIR . '/' . $template . '.' . $attempt . '.php'))
+				template_include(LANGUAGES_DIR . '/' . $template . '.' . $attempt . '.php', false, true);
+			elseif (file_exists(LANGUAGES_DIR . '/' . $attempt . '/' . $template . '.' . $attempt . '.php'))
+				template_include(LANGUAGES_DIR . '/' . $attempt . '/' . $template . '.' . $attempt . '.php', false, true);
+			else
+				continue;
+			$found = true;
+		}
+		if ($reps === null)
+		{
+			loadSource('Subs-CachePHP');
+			$reps = wedge_parse_mod_tags($rep_str, 'replace', array('from', 'regex', 'file'));
+			foreach ($reps as $key => $val)
+				$reps[$key]['file'] = array_flip(array_map('trim', explode(',', $val['file'])));
 		}
 
 		// Nothing to be found! Log the error, but *try* to continue normally.
@@ -1994,6 +1998,17 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 				}
 			}
 			wesql::free_result($request);
+
+			// This should be the right time to apply language replacements.
+			foreach ($reps as $rep)
+			{
+				if (!empty($rep['file']) && !isset($rep['file'][$lang]))
+					continue;
+				$from = $rep['from'] ?: '"' . $rep['regex'] . '"s';
+				$func = $rep['from'] ? 'str_replace' : 'preg_replace';
+				foreach ($txt as $key => $val)
+					$txt[$key] = $func($from, $rep['value'], $val);
+			}
 
 			// Now cache this sucker.
 			$filename = CACHE_DIR . '/lang/' . $lang . '_' . $template . '.php';
