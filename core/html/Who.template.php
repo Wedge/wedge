@@ -172,7 +172,7 @@ function template_credits()
 			', $txt['credits_software'], '
 		</we:cat>
 
-		<we:block class="windowbg2 splitter">';
+		<we:block class="windowbg2">';
 
 	$i = 1;
 	$max = count($context['credits']);
@@ -182,7 +182,7 @@ function template_credits()
 			<section>
 				<h6>', $group['title'], '</h6>
 				<ul', $i === $max ? ' class="last"' : '', '>
-					<li', $i++ == 2 ? ' class="witha"' : '', '>', implode('</li>
+					<li>', implode('</li>
 					<li>', $group['members']), '</li>
 				</ul>
 			</section>';

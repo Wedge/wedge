@@ -1,41 +1,36 @@
 
-MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
-MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMND8O$$$ZODNMMMMMMMMMMMMMMMMMMMMMM
-MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMN87???????????????7DMMMMMMMMMMMMMMMMMMMM
-MMMMMMMMMMMMMMMMMMMMMMMMMMMMN8$????????????????????????$NMMMMMMMMMMMMMMMMM
-MMMMMMMMMMMMMMMMMMMMMMMM87???????????????????????????????ZMMMMMMMMMMMMMMMM
-MMMMMMMMMMMMMMMMMMMM7??????????????????????????????????????OMMMMMMMMMMMMMM
-MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMNDOZ7I??????????????????IOMMMMMMMMMMMM
-MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM8Z????????????????MMMMMMMMMMM
-MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMDZ7???????????$MMMMMMMMMM
-MMMMMMMMMMMMMDO$7777777$$ZODNMMMMMMMMMMMMMMMMMMMMMMMZ?+?????????ZMMMMMMMMM
-MMMMMMMMMNI=======================+?7O8NMMMMMMMMMMMMMMMNZI????????DMMMMMMM
-MMMMMMMMN+===============================+7ZNMMMMMMMMMMMMM8I???????8MMMMMM
-MMMMMMMZ=======================================IZNMMMMMMMMMMMD$?????MMMMMM
-MMMMMN7=============================================ONMMMMMMMMMDI???$MMMMM
-MMMMN?=================================================+7NMMMMMMMMZI?$MMMM
-MMMM?===================++??I7$ZOOOO888OOZ$$7I?+++========+$NMMMMMMM7+ZMMM
-MMMM===========I7Z8NMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMNDO$?====?MMMMMMMONMM
-MMMZ===++78NMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMN8??DMMMMMMMM
-MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
-
    Wedge is a modern community management system built in PHP and MySQL.
 
-    Created by René-Gilles Deberdt and Peter Spicer on August 25, 2010.
+MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+MMMZ===++78NMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMN8??DMMMMMMMM
+MMMM===========I7Z8NMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMNDO$?====?MMMMMMMMMMM
+MMMM?===================++??I7$ZOOOO888OOZ$$7I?+++========+$NMMMMMMMMMMMMM
+MMMMN?=================================================+7NMMMMMMMMMMMMMMMM
+MMMMMN7=============================================ONMMMMMMMMMMMMMMMMMMMM
+MMMMMMMZ=======================================IZNMMMMMMMMMMMMMMMMMMMMMMMM
+MMMMMMMMN+===============================+7ZNMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+MMMMMMMMMNI=======================+?7O8NMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+MMMMMMMMMMMMMDO$7777777$$ZODNMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+
+    Started by René-Gilles Deberdt and Peter Spicer on August 25, 2010.
 
 --------------------------------------------------------------------------
 
 
 Director:		Nao 尚 (René-Gilles Deberdt)
 
-Contributors:	Arantor (Peter Spicer) -- former co-developer
-				Dragooon (Shitiz Garg) -- gallery, notifications
-				live627 (John Rayes) -- various improvements
-				TE (Thorsten Eurich) -- importer code
-				Pandos (Sven Rissmann)
+Contributors:	Arantor (Peter Spicer) -- co-developer (2010-2013)
+				TE (Thorsten Eurich) -- importer code (2011-2012)
+				Dragooon (Shitiz Garg) -- notifications (2012-2013)
+				live627 (John Rayes) -- improvements & testing (2010-2014)
+				Pandos (Sven Rissmann) -- improvements & testing (2014-)
 
-Thanks:			MultiformeIngegno (Lorenzo Raffio)
-				Aaron (Aaron van Geffen)
+Thanks:			MultiformeIngegno (Lorenzo Raffio) -- testing (2010-)
+				Aaron (Aaron van Geffen) -- testing (2010-2014)
+				CerealGuy -- modding system testing (2014-)
 
 Based on:		Simple Machines Forum 2.0
 					-- © Simple Machines and its contributors 2011, http://www.simplemachines.org/
@@ -54,7 +49,7 @@ Aeva Media (media gallery)
 	-- Initial embedding code by karlbenson and Nao 尚, © Karl Benson & René-Gilles Deberdt 2007-2011.
 	-- closed license, used under permission from both authors.
 
-Bad Behaviour 2.1.x (anti-hack code)
+Bad Behaviour 2.2.x (anti-hack code)
 	-- © Michael Hampton 2011, http://bad-behavior.ioerror.us/
 	-- used under the LGPL v3 license, http://www.gnu.org/licenses/lgpl.html under 4) as a Combined Work.
 		-- 4a: notice here given.
@@ -63,22 +58,14 @@ Bad Behaviour 2.1.x (anti-hack code)
 		-- 4d0: the Minimal Corresponding Source is available upon request however in isolation will be of little practical use due to intra-application dependencies.
 		-- 4e: not applicable.
 
-Notification system
-	-- Initial code by Dragooon, © Shitiz Garg 2012, https://github.com/Dragooon/WeNotif
-	-- used under the Modified BSD license.
-
-Move Notifier ('Your topic has been moved' notifications)
-	-- Initial code by live627, © John Rayes 2013.
-	-- used under the Modified BSD license.
-
 MultiAttach (multiple attachment selector)
 	-- © The-Stickman.com 2005, http://the-stickman.com/web-development/javascript/upload-multiple-files-with-a-single-file-element/
 	-- used under the MIT license, http://opensource.org/licenses/mit-license.php
 
 JW Player 4.4.157 (media playback)
-	-- © Long Tail Video 2013, http://www.longtailvideo.com/jw-player/
-	-- free version, suitable only for non-commercial sites - for commercial sites, contact LongTail Video, or disable use of
-		video/audio in the media gallery. We will eventually replace the library with an open-source one, to remove this restriction.
+	-- © JW Player 2013, http://www.jwplayer.com/
+	-- free version, suitable only for non-commercial sites - for commercial sites, contact the JW Player team, or disable use of
+		video/audio in the media gallery. I shall eventually replace the library with an open-source one, to remove this restriction.
 
 Yahoo UI Uploader (Flash/AJAX mass uploader)
 	-- © Yahoo! Inc., 2006-2013, http://yuilibrary.com/
