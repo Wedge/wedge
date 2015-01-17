@@ -326,7 +326,7 @@
 			// Good to know: !$items.has($item).length is 60 times slower.
 			// !$items.filter($item).length is about 30 times slower.
 			// !in_array($item[0], $items.get()) is 5 to 6 times slower.
-			if (!$item[0].parentNode === $dd[0])
+			if ($item.length && $item[0].parentNode !== $dd[0])
 				$item = $orig_item;
 
 			// Change the selection to the first selected item in the list
