@@ -124,7 +124,11 @@ function reqWin(from, desired_width, string, modal_type, callback, e)
 		close_window = function ()
 		{
 			$('#popup,#helf').removeClass('show');
-			setTimeout(function () { $('#popup').remove(); }, 300);
+			setTimeout(function () {
+				if (/^[.#]/.test(string + ''))
+					$(string).append($('#helf .confirm').contents());
+				$('#popup').remove();
+			}, 300);
 		},
 		animate_popup = function ()
 		{
@@ -174,7 +178,7 @@ function reqWin(from, desired_width, string, modal_type, callback, e)
 
 	if (modal_type)
 		$('#helf')
-			.html('<section class="nodrag confirm">' + string + '</section><footer><input type="button" class="submit'
+			.html('<section class="nodrag confirm"></section><footer><input type="button" class="submit'
 				+ (modal_type == 1 ? ' floatleft" /><input type="button" class="delete floatright" />' : '" />') + '</footer>')
 			.each(animate_popup)
 			.find('input')
@@ -207,6 +211,9 @@ function reqWin(from, desired_width, string, modal_type, callback, e)
 				if (!$(e.target).closest('#helf').length)
 					close_window();
 			});
+
+	if (string)
+		$('#helf .confirm').append(/^[.#]/.test(string + '') ? $(string).contents() : string);
 
 	// Return false so the click won't follow the link ;)
 	return false;
