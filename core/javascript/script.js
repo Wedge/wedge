@@ -86,7 +86,7 @@ $.fn.realHeight = function () { return parseFloat(getComputedStyle(this[0]).heig
 */
 function say(string, e, callback)
 {
-	return _modalDone || reqWin('', 350, string, 2, callback || (e && !e.target ? e : 0), e && e.target ? e : 0);
+	return reqWin('', 350, string, 0, callback || (e && !e.target ? e : 0), e && e.target ? e : 0);
 }
 
 /*
