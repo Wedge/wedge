@@ -171,7 +171,7 @@ function aeva_moveItems()
 		);
 
 	// Moving?
-	if (isset($_POST['submit_aeva']))
+	if (isset($_POST['submit_aeva'], $_POST['album']) && (int) $_POST['album'] > 0)
 	{
 		// Let's make sure it is in a correct album
 		$album_id = (int) $_POST['album'];
