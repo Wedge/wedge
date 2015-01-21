@@ -816,7 +816,7 @@ input[type=submit], input[type=button]
 	border-radius: 6px
 	margin: 0
 	@if firefox
-		padding: 1px 2px 2px
+		padding: 2px 5px
 	@elseif ie9
 		padding: 4px 4px 2px
 	@else
