@@ -170,7 +170,7 @@ function reqWin(from, desired_width, string, is_modal, callback, e)
 			$this
 				.find('.submit,.delete') // Find OK and Cancel buttons, give them proper labels and associate with a close_window call.
 				.click(function () {
-					close_window($this.hasClass('submit'));
+					close_window($(this).hasClass('submit'));
 				})
 				.each(function () {
 					if ($(this).val() == '')
