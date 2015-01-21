@@ -117,9 +117,10 @@ function reqWin(from, desired_width, string, modal_type, callback, e)
 	var
 		help_page = from && from.href ? from.href : from,
 		title = from && from.href ? $(from).text() : 0,
-		// window.innerHeight doesn't work in oldIE, and $(window).height() sometimes returns the body height in Chrome...
-		viewport_width = $(window).width(),
-		viewport_height = window.innerHeight || $(window).height(),
+		// window.inner*: doesn't work in oldIE, includes scrollbar size in desktop (bad), works for mobile zooms (good).
+		// $(window).*(): works well in desktop, but sometimes returns the <body> size in Chrome (bad), returns the unzoomed viewport in mobile (bad).
+		viewport_width = Math.min(window.innerWidth || $(window).width(), $(window).width()),
+		viewport_height = Math.min(window.innerHeight || $(window).height(), $(window).height()),
 		previous_target = $('#helf').data('src'),
 		close_window = function ()
 		{
