@@ -34,9 +34,6 @@ $sub_radius = 8px
 .darkgrad virtual
 	gradient: #bcbcbb, $darkgrad
 
-.wehead
-	box-shadow: inset 0 8px 12px -8px #eee, 1px 1px 3px #aa9
-
 #sidebar .title final
 	border-bottom: 1px solid #ccc
 
