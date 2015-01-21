@@ -1790,7 +1790,7 @@ dl#feed
 // Container for the JavaScript popup version
 #popup
 	position: fixed
-	z-index: 1
+	z-index: 15
 	left, top: 0
 	opacity: 0
 	transform: perspective(1000px)
