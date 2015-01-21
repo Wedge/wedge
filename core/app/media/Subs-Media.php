@@ -1364,10 +1364,10 @@ function aeva_deleteItems($id, $rmFiles = true, $log = true)
 		aeva_increaseSettings('num_unapproved_items', -$num_unapproved);
 
 	foreach ($album_counter as $id_album => $to_decrement)
-		wesql::query("UPDATE {db_prefix}media_albums SET num_items = num_items - {int:decrement} WHERE id_album = {int:album}",array('decrement' => $to_decrement, 'album' => $id_album));
+		wesql::query('UPDATE {db_prefix}media_albums SET num_items = num_items - {int:decrement} WHERE id_album = {int:album}', array('decrement' => $to_decrement, 'album' => $id_album));
 
 	// Remove the comments
-	$request = wesql::query("SELECT id_comment FROM {db_prefix}media_comments WHERE id_media IN ({array_int:media})",array('media' => $ids));
+	$request = wesql::query('SELECT id_comment FROM {db_prefix}media_comments WHERE id_media IN ({array_int:media})', array('media' => $ids));
 	$c_id = array();
 	while ($row = wesql::fetch_assoc($request))
 		$c_id[] = $row['id_comment'];
@@ -3369,6 +3369,7 @@ function aeva_updateSettings($setting, $new_value, $replace = false)
 	);
 
 	$amSettings[$setting] = $new_value;
+	cache_put_data('aeva_settings', null, 3600);
 }
 
 function aeva_increaseSettings($setting, $add = 1)
@@ -3390,6 +3391,7 @@ function aeva_increaseSettings($setting, $add = 1)
 	);
 
 	$amSettings[$setting] += $add;
+	cache_put_data('aeva_settings', null, 3600);
 }
 
 function aeva_theme_url($file)
