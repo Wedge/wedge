@@ -323,10 +323,9 @@
 		setSelected = function ($item, is_clicking)
 		{
 			// If the select box has just been rebuilt, reset its selection.
-			// Good to know: !$items.has($item).length is 60 times slower.
-			// !$items.filter($item).length is about 30 times slower.
-			// !in_array($item[0], $items.get()) is 5 to 6 times slower.
-			if ($item.length && $item[0].parentNode !== $dd[0])
+			// Good to know: !$items.has($item).length is 7 to 10 times slower,
+			// and !$items.filter($item).length is about 3 to 5 times slower.
+			if (!$item.length || !in_array($item[0], $items.get()))
 				$item = $orig_item;
 
 			// Change the selection to the first selected item in the list
@@ -458,16 +457,9 @@
 				updateOriginal();
 				e.preventDefault();
 			}
-			else if (e.keyCode == 38) // up
+			else if (e.keyCode == 38 || e.keyCode == 40) // up & down
 			{
-				selectItem($enabled.eq($enabled.index($selected) - 1), true);
-				centerOnSelected();
-				updateOriginal();
-				e.preventDefault();
-			}
-			else if (e.keyCode == 40) // down
-			{
-				selectItem($enabled.eq(($enabled.index($selected) + 1) % $enabled.length), true);
+				selectItem($enabled.eq(($enabled.index($selected) + (e.keyCode == 38 ? -1 : 1)) % $enabled.length), true);
 				centerOnSelected();
 				updateOriginal();
 				e.preventDefault();
