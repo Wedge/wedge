@@ -62,7 +62,7 @@ table.cs0 final tr.windowbg:last-child td
 		padding: 4px 4px 4px 8px
 
 body #sidebar .column // body allows this to override responsive values
-	padding: 10px 20px
+	padding: 10px 10px 10px 30px
 
 #header h2
 	color: #fc9
