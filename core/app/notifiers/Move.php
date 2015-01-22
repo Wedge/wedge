@@ -1,6 +1,8 @@
 <?php
 /**
  * Contains functions for notifying users based on topic moves.
+ * Original code released by live627 under the Modified BSD license.
+ * © John Rayes 2013.
  *
  * Wedge (http://wedge.org)
  * Copyright © 2010 René-Gilles Deberdt, wedge.org

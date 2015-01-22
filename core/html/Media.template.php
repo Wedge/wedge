@@ -447,12 +447,12 @@ function template_aeva_item_details()
 		echo '
 			<we:block header="', westr::safe($txt['media_extra_info']), '">';
 
-		echo $amSettings['use_zoom'] ? '
-				<div class="info"><img src="' . ASSETS . '/aeva/magnifier.png" class="vam"> <a href="#" class="zoom is_html">'
+		echo '
+				<div class="info"><img src="' . ASSETS . '/aeva/magnifier.png" class="vam"> <a href="#" onclick="return say(\'#view_meta_entries\');">'
 				. $txt['media_meta_entries'] . '</a> (' . count($item['extra_info']) . ')
-				<div class="zoom-html">
-					<div class="ae_header" style="margin-bottom: 8px"><we:title>' . $txt['media_extra_info'] . '</we:title></div>' : '', '
-					<div class="smalltext meta">';
+				<div class="hide" id="view_meta_entries">
+					<header>' . $txt['media_extra_info'] . '</header>
+					<section class="meta">';
 
 		foreach ($item['extra_info'] as $info => $data)
 			if (!empty($data))
@@ -460,8 +460,8 @@ function template_aeva_item_details()
 						<div class="info"><b>', $txt['media_meta_' . $info], '</b>: ', $data, '</div>';
 
 		echo '
-					</div>
-				</div>', $amSettings['use_zoom'] ? '</div>' : '', '
+					</section>
+				</div></div>
 			</we:block>';
 	}
 
@@ -500,30 +500,25 @@ function template_aeva_item_actions()
 		<div class="actionbar"><ul class="actions">';
 
 	if ($item['can_report'])
-	{
 		echo '
 			<li>
-				<a href="', $galurl, 'sa=report;type=item;in=', $item['id_media'] . '"', $amSettings['use_zoom'] ? ' class="zoom is_html"' : '', '>
+				<a href="', $galurl, 'sa=report;type=item;in=', $item['id_media'] . '" onclick="ask(\'#report_item\'); return false;">
 					<img src="', ASSETS, '/aeva/report.png">&nbsp;', $txt['media_report_this_item'], '
-				</a>';
-
-		if ($amSettings['use_zoom'])
-			echo '
-				<div class="zoom-html">
+				</a>
+				<div class="hide" id="report_item">
 					<form action="', $galurl, 'sa=report;type=item;in=', $item['id_media'], '" method="post">
-						<h3>', $txt['media_reporting_this_item'], '</h3>
-						<hr>', $txt['media_reason'], '<br>
+					<header>', $txt['media_reporting_this_item'], '</header>
+					<section>
+						', $txt['media_reason'], '<br>
 						<textarea rows="8" style="width: 98%" name="reason"></textarea>
-						<p class="mgra">
-							<input type="submit" value="', $txt['media_submit'], '" class="submit" name="submit_aeva">
-							<input type="button" onclick="return hs.close(this);" value="', $txt['media_close'], '" class="cancel">
-						</p>
+					</section>
+					<footer>
+						<input type="submit" value="', $txt['media_submit'], '" class="submit floatleft" name="submit_aeva">
+						<input type="button" value="', $txt['media_close'], '" class="delete floatright">
+					</footer>
 					</form>
-				</div>';
-
-		echo '
+				</div>
 			</li>';
-	}
 
 	if ($item['can_edit'])
 		echo '
@@ -540,47 +535,42 @@ function template_aeva_item_actions()
 				<a href="', $galurl, 'sa=media;in=', $item['id_media'], ';dl"><img src="', ASSETS, '/aeva/download.png">&nbsp;', $txt['media_download_this_item'], '</a>
 			</li>';
 
-	if ($item['can_edit'] && !empty($context['aeva_move_albums']))
+	if ($item['can_edit'] && !empty($context['aeva_album_list']) && count($context['aeva_album_list']) > 1)
 	{
 		echo '
 			<li>
-				<a href="', $galurl, 'sa=move;in=', $item['id_media'], '"', $amSettings['use_zoom'] ? ' class="zoom is_html"' : '', '><img src="', ASSETS, '/aeva/arrow_out.png">&nbsp;', $txt['media_move_item'], '</a>';
-
-		if ($amSettings['use_zoom'])
-		{
-			echo '
-				<div class="zoom-html">
-					<h3>', $txt['media_moving_this_item'], '</h3>
-					<h2>', sprintf($txt['media_album_is'], $item['album_name']), '</h2>
-					<hr>
+				<a href="', $galurl, 'sa=move;in=', $item['id_media'], '" onclick="ask(\'#move_item\'); return false;"><img src="', ASSETS, '/aeva/arrow_out.png">&nbsp;', $txt['media_move_item'], '</a>
+				<div class="hide" id="move_item">
 					<form action="', $galurl, 'sa=move;in=', $item['id_media'], '" method="post">
+					<header>', $txt['media_moving_this_item'], '</header>
+					<section>
+						<h2>', sprintf($txt['media_album_is'], $item['album_name']), '</h2>
+						<hr>
 						', $txt['media_album_to_move'], ':
 						<select name="album">';
 
-				foreach ($context['aeva_move_albums'] as $album => $name)
-				{
-					if ($name[2] === '')
-						echo '
-							</optgroup>';
-					elseif ($name[2] == 'begin')
-						echo '
-							<optgroup label="', $name[0], '">';
-					else
-						echo '
-								<option value="', $album, '"', $name[1] ? ' disabled' : '', '>', $name[0], '</option>';
-				}
-
+		foreach ($context['aeva_move_albums'] as $album => $name)
+		{
+			if ($name[2] === '')
 				echo '
-						</select>
-						<p class="mgra">
-							<input type="submit" value="', $txt['media_submit'], '" class="submit" name="submit_aeva">
-							<input type="button" onclick="return $(\'#zoom-close\').click();" value="', $txt['media_close'], '" class="cancel">
-						</p>
-					</form>
-				</div>';
+							</optgroup>';
+			elseif ($name[2] == 'begin')
+				echo '
+							<optgroup label="', $name[0], '">';
+			else
+				echo '
+								<option value="', $album, '"', $name[1] ? ' disabled' : '', '>', $name[0], '</option>';
 		}
 
 		echo '
+						</select>
+					</section>
+					<footer>
+						<input type="submit" value="', $txt['media_submit'], '" class="submit floatleft" name="submit_aeva">
+						<input type="button" value="', $txt['media_close'], '" class="delete floatright">
+					</footer>
+					</form>
+				</div>
 			</li>';
 	}
 
@@ -595,21 +585,24 @@ function template_aeva_item_actions()
 	{
 		echo '
 			<li>
-				<a href="#" class="zoom is_html"><img src="', ASSETS, '/aeva/playlist.png">&nbsp;', $txt['media_add_to_playlist'], '</a>
+				<a href="#" onclick="ask(\'#add_to_playlist\'); return false;"><img src="', ASSETS, '/aeva/playlist.png">&nbsp;', $txt['media_add_to_playlist'], '</a>
 
-				<div class="zoom-html">
+				<div class="hide" id="add_to_playlist">
 					<form action="', $galurl, 'sa=item;in=', $item['id_media'], '" method="post" style="line-height: 2.2em">
-					<span style="float: left">', $txt['media_playlists'], '</span>
-					<span style="float: right">', $txt['media_add_to_playlist'], '&nbsp;
-						<select name="add_to_playlist">';
+					<header>', $txt['media_playlists'], '</header>
+					<section>
+						', $txt['media_add_to_playlist'], '&nbsp;
+						<select>';
 
 		foreach ($item['playlists']['mine'] as $p)
 			echo '<option value="', $p['id'], '">', $p['name'], '</option>';
 
 		echo '
 						</select>
+					</section>
+					<footer>
 						<input type="submit" value="', $txt['media_submit'], '" name="submit_playlist">
-					</span>
+					</footer>
 					</form>
 				</div>
 			</li>';

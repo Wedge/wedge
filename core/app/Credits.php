@@ -55,31 +55,7 @@ function Credits()
 		$context['site_credits'][$row['id_group'] == 1 || (!empty($row['additional_groups']) && in_array(1, explode(',', $row['additional_groups']))) ? 'admins' : 'mods'][] = $row;
 	}
 
-	$context['credits'] = array(
-		array(
-			'title' => $txt['credits_groups_ps'],
-			'members' => array(
-				'Ren&eacute;-Gilles Deberdt',
-				'Peter Spicer',
-			),
-		),
-		array(
-			'title' => $txt['credits_groups_dev'],
-			'members' => array(
-				'<img src="' . PROTOCOL . (PROTOCOL == 'https://' ? 'secure.' : '') . 'gravatar.com/avatar/0879c588019800e5349fe171d69e1c28" class="opaque left"><br><br>Ren&eacute;-Gilles Deberdt<br>(Nao &#23578;)<br class="clear">',
-			),
-		),
-		array(
-			'title' => $txt['credits_groups_contributors'],
-			'members' => array(
-				'Peter Spicer (Arantor)',
-				'Shitiz Garg (Dragooon)',
-				'John Rayes (live627)',
-				'Thorsten Eurich (TE)',
-				'Sven Rissmann (Pandos)',
-			),
-		),
-	);
+	$context['credits'] = array();
 
 	// Give the translators some credit for their hard work.
 	if (!empty($txt['translation_credits']))
@@ -94,8 +70,10 @@ function Credits()
 			sprintf(
 				$txt['credits_wedge'],
 				'René-Gilles Deberdt',
+				'http://wedge.org/',
+				'http://wedge.org/profile/Nao/',
 				'http://wedge.org/license/',
-				2010
+				'2010-' . date('Y')
 			),
 		),
 	);

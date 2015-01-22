@@ -86,7 +86,7 @@ $.fn.realHeight = function () { return parseFloat(getComputedStyle(this[0]).heig
 */
 function say(string, e, callback)
 {
-	return _modalDone || reqWin('', 350, string, 2, callback || (e && !e.target ? e : 0), e && e.target ? e : 0);
+	return reqWin('', 350, string, 0, callback || (e && !e.target ? e : 0), e && e.target ? e : 0);
 }
 
 /*
@@ -107,38 +107,75 @@ function ask(string, e, callback)
 	@mixed desired_width: use custom width. Omit or set to 0 for default (480px). Height is always auto.
 
 	@string string: if provided, this is the contents. Otherwise, it will be retrieved through Ajax.
-	@int modal_type: is this a modal pop-up? (i.e. requires attention) 0 = no, 1 = confirm, 2 = alert
+	@int is_modal: is this a modal pop-up? (i.e. requires a choice from the user)
 	@function callback: if this is a modal pop-up (confirm, alert...), you can set a function to call with a boolean
 						param (true = OK, false = Cancel). You can force cancelling the event by returning false from it.
 	@object e: again, if this is a modal pop-up, we may need to re-call the original event.
 */
-function reqWin(from, desired_width, string, modal_type, callback, e)
+function reqWin(from, desired_width, string, is_modal, callback, e)
 {
 	var
 		help_page = from && from.href ? from.href : from,
 		title = from && from.href ? $(from).text() : 0,
-		// window.innerHeight doesn't work in oldIE, and $(window).height() sometimes returns the body height in Chrome...
-		viewport_width = $(window).width(),
-		viewport_height = window.innerHeight || $(window).height(),
+		// window.inner*: doesn't work in oldIE, includes scrollbar size in desktop (bad), works for mobile zooms (good).
+		// $(window).*(): works well in desktop, but sometimes returns the <body> size in Chrome (bad), returns the unzoomed viewport in mobile (bad).
+		viewport_width = Math.min(window.innerWidth || $(window).width(), $(window).width()),
+		viewport_height = Math.min(window.innerHeight || $(window).height(), $(window).height()),
 		previous_target = $('#helf').data('src'),
-		close_window = function ()
+		close_window = function (is_ok)
 		{
 			$('#popup,#helf').removeClass('show');
-			setTimeout(function () { $('#popup').remove(); }, 300);
+			setTimeout(function () {
+				if (/^[.#]/.test(string + ''))
+					$(string).append($('#helf').contents());
+
+				$('#popup').remove();
+
+				// Run the callback function, if any. It may ask for the trigger to be cancelled.
+				if ((callback && callback.call(e ? e.target : this, is_ok) === false) || !e || !is_ok)
+					return;
+
+				_modalDone = true;
+
+				// The location trick is required by non-HTML5 browsers.
+				// To save 4 bytes here, <a> tags only accept ask() through onclick.
+				if (e.target.href)
+					location = e.target.href;
+				else
+					$(e.target).trigger(e.type);
+				_modalDone = false;
+			}, 300);
 		},
-		animate_popup = function ()
+		content_loaded = function ()
 		{
-			var $section = $('section', this);
+			var $this = $(this), $section = $this.find('section').first();
+			if (!$section.length)
+				$section = $('<section>').append($this.contents()).appendTo($this);
+			if (!$this.find('header').first().length)
+				$this.prepend('<header>' + title + '</header>');
+			if (!$this.find('footer').first().length)
+				$this.append('<footer><input type="button" class="submit' + (is_modal ? ' floatleft"><input type="button" class="delete floatright' : '') + '"></footer>');
 
 			// Ensure that the popup never goes past the viewport boundaries.
 			$section
+				.addClass('nodrag')
 				.width(Math.min(desired_width || 480, viewport_width - 20))
 				.css({
-					maxWidth: viewport_width - 20 - $(this).width() + $section.width(),
-					maxHeight: viewport_height - 20 - $(this).height() + $section.height()
+					maxWidth: viewport_width - 20 - $this.width() + $section.width(),
+					maxHeight: viewport_height - 20 - $this.height() + $section.height()
 				});
 
-			$(this).css({ left: (viewport_width - $(this).width()) / 2, top: (viewport_height - $(this).height()) / 2 }).ds();
+			$this.css({ left: (viewport_width - $this.width()) / 2, top: (viewport_height - $this.height()) / 2 }).ds();
+
+			$this
+				.find('.submit,.delete') // Find OK and Cancel buttons, give them proper labels and associate with a close_window call.
+				.click(function () {
+					close_window($(this).hasClass('submit'));
+				})
+				.each(function () {
+					if ($(this).val() == '')
+						$(this).val($(this).hasClass('delete') ? we_cancel : we_ok);
+				});
 
 			$('#popup,#helf').addClass('show');
 		};
@@ -172,41 +209,21 @@ function reqWin(from, desired_width, string, modal_type, callback, e)
 		)
 	);
 
-	if (modal_type)
-		$('#helf')
-			.html('<section class="nodrag confirm">' + string + '</section><footer><input type="button" class="submit'
-				+ (modal_type == 1 ? ' floatleft" /><input type="button" class="delete floatright" />' : '" />') + '</footer>')
-			.each(animate_popup)
-			.find('input')
-			.val(we_cancel)
-			.click(function () {
-				close_window();
-				if (callback && callback.call(e ? e.target : this, $(this).hasClass('submit')) === false)
-					return;
-				if (e && $(this).hasClass('submit'))
-				{
-					_modalDone = true;
-					// The location trick is required by non-HTML5 browsers.
-					// To save 4 bytes here, <a> tags only accept ask() through onclick.
-					if (e.target.href)
-						location = e.target.href;
-					else
-						$(e.target).trigger(e.type);
-					_modalDone = false;
-				}
-			})
-			.filter('.submit')
-			.val(we_ok);
+	if (help_page)
+		$('#helf').load(help_page, content_loaded);
 	else
 		$('#helf')
-			.load(help_page, { t: title }, animate_popup)
-			// Clicking anywhere on the page should close the popup.
-			.parent() // #popup
-			.click(function (e) {
-				// If we clicked somewhere in the popup, don't close it, because we may want to select text.
-				if (!$(e.target).closest('#helf').length)
-					close_window();
-			});
+			.html(/^[.#]/.test(string + '') ? $(string).contents() : string)
+			.each(content_loaded);
+
+	$('#helf')
+		// Clicking anywhere on the page should close the popup.
+		.parent() // #popup
+		.click(function (e) {
+			// If we clicked somewhere in the popup, don't close it, because we may want to select text.
+			if (!is_modal && !$(e.target).closest('#helf').length)
+				close_window(false);
+		});
 
 	// Return false so the click won't follow the link ;)
 	return false;

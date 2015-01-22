@@ -136,13 +136,11 @@ $txt['credits_site'] = 'The Team';
 $txt['credits_admins'] = array(1 => 'Administrator', 'n' => 'Administrators');
 $txt['credits_moderators'] = array(1 => 'Moderator', 'n' => 'Moderators');
 $txt['credits_software'] = 'The Wedge Team (forum engine)';
-$txt['credits_wedge'] = 'Wedge is copyright © %3$d by %1$s, all rights reserved. It is distributed under the <a href="%2$s">Wedge license</a>.';
+$txt['credits_wedge'] = '<a href="%2$s">Wedge</a> is copyright © %5$s by <a href="%3$s">%1$s</a>, all rights reserved. It is distributed under the <a href="%4$s">Wedge license</a>.';
 $txt['credits_aeme'] = 'Uses portions from <a href="%s">Aeva Media</a>.';
 $txt['credits_copyright'] = 'Copyrights';
 $txt['credits_plugins'] = 'Plugins';
-$txt['credits_groups_ps'] = 'Founders';
 $txt['credits_groups_dev'] = 'Developers';
-$txt['credits_groups_contributors'] = 'Contributors';
 
 // Uncomment the following string, and replace English with the name of your language.
 $txt['credits_groups_language'] = 'English translation';

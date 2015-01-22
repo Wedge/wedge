@@ -1192,28 +1192,25 @@ function aeva_viewItem()
 		loadLanguage('ManageMedia');
 
 	// Moveable/Commentable albums?
-	if ($amSettings['use_zoom'])
+	$allowed_albums = albumsAllowedTo('add_' . $item_data['type'] . 's');
+	// This one only selects the user's own albums... Would this save processing time for admins with large galleries?
+	//	aeva_getAlbums(aeva_allowedTo('moderate') ? 'a.album_of = ' . (int) MID : (empty($allowed_albums) ? '1=0' : 'a.id_album IN (' . implode(',', $allowed_albums) . ')'), 1, false, 'a.album_of, a.child_level, a.a_order');
+	aeva_getAlbums(aeva_allowedTo('moderate') ? '' : (empty($allowed_albums) ? '1=0' : 'a.id_album IN (' . implode(',', array_keys($allowed_albums)) . ')'), 1, false, 'a.album_of, a.child_level, a.a_order');
+	$sep = $prev_owner = -1;
+	foreach ($context['aeva_album_list'] as $k => $list)
 	{
-		$allowed_albums = albumsAllowedTo('add_' . $item_data['type'] . 's');
-		// This one only selects the user's own albums... Would this save processing time for admins with large galleries?
-		//	aeva_getAlbums(aeva_allowedTo('moderate') ? 'a.album_of = ' . (int) MID : (empty($allowed_albums) ? '1=0' : 'a.id_album IN (' . implode(',', $allowed_albums) . ')'), 1, false, 'a.album_of, a.child_level, a.a_order');
-		aeva_getAlbums(aeva_allowedTo('moderate') ? '' : (empty($allowed_albums) ? '1=0' : 'a.id_album IN (' . implode(',', array_keys($allowed_albums)) . ')'), 1, false, 'a.album_of, a.child_level, a.a_order');
-		$sep = $prev_owner = -1;
-		foreach ($context['aeva_album_list'] as $k => $list)
+		$new_owner = $context['aeva_albums'][$list]['owner']['id'];
+		if ($prev_owner != $new_owner)
 		{
-			$new_owner = $context['aeva_albums'][$list]['owner']['id'];
-			if ($prev_owner != $new_owner)
-			{
-				if ($prev_owner > -1)
-					$albums['sep' . ++$sep] = array('', false, '');
-				$albums['sep' . ++$sep] = array($context['aeva_albums'][$list]['owner']['name'], false, 'begin');
-				$prev_owner = $new_owner;
-			}
-			$albums[$list] = array(str_repeat('-', $context['aeva_albums'][$list]['child_level']) . ' ' . westr::cut($context['aeva_albums'][$list]['name'], 42), $list == $item_data['album_id'], null);
+			if ($prev_owner > -1)
+				$albums['sep' . ++$sep] = array('', false, '');
+			$albums['sep' . ++$sep] = array($context['aeva_albums'][$list]['owner']['name'], false, 'begin');
+			$prev_owner = $new_owner;
 		}
-		$albums['sep' . ++$sep] = array('', false, '');
-		$context['aeva_move_albums'] =& $albums;
+		$albums[$list] = array(str_repeat('-', $context['aeva_albums'][$list]['child_level']) . ' ' . westr::cut($context['aeva_albums'][$list]['name'], 42), $list == $item_data['album_id'], null);
 	}
+	$albums['sep' . ++$sep] = array('', false, '');
+	$context['aeva_move_albums'] =& $albums;
 
 	// Custom fields?
 	$item_data['custom_fields'] = aeva_loadCustomFields($item_data['id_media']);

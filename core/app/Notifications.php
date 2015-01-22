@@ -1,6 +1,9 @@
 <?php
 /**
  * Contains functions for handling the entire notification system.
+ * The original notification system code was written by Dragooon
+ * under the Modified BSD license, used with permission.
+ * https://github.com/Dragooon/WeNotif - © Shitiz Garg 2012
  *
  * Wedge (http://wedge.org)
  * Copyright © 2010 René-Gilles Deberdt, wedge.org
