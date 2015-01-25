@@ -18,7 +18,7 @@ $txt['installer_language_set'] = 'Set';
 $txt['congratulations'] = 'Congratulations, the installation process is complete!';
 $txt['congratulations_help'] = 'If at any time you need support, or Wedge fails to work properly, please remember that <a href="http://wedge.org/" target="_blank">help is available</a> if you need it.';
 $txt['still_writable'] = 'Your installation directory is still writable. It\'s a good idea to chmod it so that it is not writable for security reasons.';
-$txt['delete_installer'] = 'Click here to delete this install.php file now.';
+$txt['delete_installer'] = 'Click here to delete the installer now.';
 $txt['delete_installer_maybe'] = '<em>(Doesn\'t work on all servers!)</em>';
 $txt['go_to_your_forum'] = 'Now you can see <a href="%1$s">your newly installed forum</a> and begin to use it. You should first make sure you are logged in, after which you will be able to access the administration center.';
 $txt['good_luck'] = 'Good luck!<br>The Wedge Team.';
@@ -90,7 +90,7 @@ $txt['install_settings_url_info'] = 'This is the URL to your forum, <strong>with
 $txt['install_settings_compress'] = 'Gzip Output';
 $txt['install_settings_compress_title'] = 'Compress output to save bandwidth.';
 // In this string, you can translate 'pass_string' to change what it says when the test passes. Ensure that the sentence is URL-encoded like below.
-$txt['install_settings_compress_info'] = 'This feature does not work properly on all servers, but can save you a lot of bandwidth.<br>Click <a href="install.php?obgz=1&amp;pass_string=This%20feature%20is%20available!" onclick="return reqWin(this, 200);" target="_blank">here</a> to test it. If it says "<strong>This feature is available</strong>", you\'re good to go.';
+$txt['install_settings_compress_info'] = 'This feature does not work properly on all servers, but can save you a lot of bandwidth.<br>Click <a href="index.php?obgz=1&amp;pass_string=This%20feature%20is%20available!" onclick="return reqWin(this, 200);" target="_blank">here</a> to test it. If it says "<strong>This feature is available</strong>", you\'re good to go.';
 $txt['install_settings_dbsession'] = 'Database Sessions';
 $txt['install_settings_dbsession_title'] = 'Use the database for sessions instead of using files.';
 $txt['install_settings_dbsession_info1'] = 'This feature is almost always for the best, as it makes sessions more dependable.';
