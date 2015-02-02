@@ -87,15 +87,21 @@ function template_generic_menu_dropdown()
 			!empty($section['notice']) ? '<div class="note">' . $section['notice'] . '</div>' : '', '</h4>', !empty($section['areas']) ? '<ul>' : '';
 
 		// For every area of this section show a link to that area (bold if it's currently selected.)
+		$was_data = false;
+		$last_id = end((array_keys($section['areas']))); // (()) are needed.
 		foreach ($section['areas'] as $id => $area)
 		{
 			// Not supposed to be printed?
 			if (empty($area['label']))
 			{
-				if (empty($area))
+				if (empty($area) && $was_data && $id != $last_id)
+				{
 					echo '<li class="sep"><a><hr></a></li>';
+					$was_data = false;
+				}
 				continue;
 			}
+			$was_data = true;
 
 			$class = ($id == $menu_context['current_area'] ? ' active' : '') . (!empty($area['subsections']) ? ' subsection' : '');
 			$class = empty($class) ? '' : ' class="' . ltrim($class) . '"';
@@ -108,14 +114,17 @@ function template_generic_menu_dropdown()
 			{
 				echo '<ul>';
 
+				$sub_was_data = false;
+				$sub_last_id = end((array_keys($area['subsections']))); // (()) are needed.
 				foreach ($area['subsections'] as $sa => $sub)
 				{
 					if (empty($sub))
 					{
-						if (is_numeric($sa))
+						if (is_numeric($sa) && $sub_was_data && $sa != $sub_last_id)
 							echo '<li class="sep"><a><hr></a></li>';
 						continue;
 					}
+					$sub_was_data = true;
 
 					$url = isset($sub['url']) ? $sub['url'] : (isset($area['url']) ? $area['url'] : $menu_context['base_url'] . ';area=' . $id) . ';sa=' . $sa;
 
