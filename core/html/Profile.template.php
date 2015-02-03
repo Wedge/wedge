@@ -700,7 +700,7 @@ function template_editContactList()
 				echo '
 				<tr class="windowbg', $alt ? '2' : '', '" data-id="', $mid, '">', $can_sort ? '
 					<td class="handle"></td>' : '', '
-					<td class="right"', $first ? ' style="width: 100px"' : '', '>', empty($member['avatar']) ? '' : '<img src="' . $member['avatar']['href'] . '" class="avatar opaque" style="max-height: 50px; width: auto">', '</td>
+					<td class="right"', $first ? ' style="width: 100px"' : '', '>', empty($member['avatar']['href']) ? '' : '<img src="' . $member['avatar']['href'] . '" class="avatar opaque" style="max-height: 50px; width: auto">', '</td>
 					<td>
 						', $context['can_send_pm'] ? '<a href="' . $member['online']['href'] . '" title="' . $member['online']['text'] . '">' : '', '<img src="', $member['online']['image_href'], '" alt="', $member['online']['text'], '">', $context['can_send_pm'] ? '</a>' : '', '
 						', $member['link'], '
@@ -2801,7 +2801,7 @@ function template_profile_signature_modify()
 		{
 			oldSignature = currentSignature;
 
-			if (currentSignature.replace(/\r/g, "").length > maxLength)
+			if (maxLength > 0 && currentSignature.replace(/\r/g, "").length > maxLength)
 				document.forms.creator.signature.value = currentSignature.replace(/\r/g, "").slice(0, maxLength);
 			currentSignature = document.forms.creator.signature.value.replace(/\r/g, "");
 		}
