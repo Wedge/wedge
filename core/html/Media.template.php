@@ -592,7 +592,7 @@ function template_aeva_item_actions()
 					<header>', $txt['media_playlists'], '</header>
 					<section>
 						', $txt['media_add_to_playlist'], '&nbsp;
-						<select>';
+						<select name="add_to_playlist">';
 
 		foreach ($item['playlists']['mine'] as $p)
 			echo '<option value="', $p['id'], '">', $p['name'], '</option>';
