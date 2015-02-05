@@ -602,6 +602,7 @@ function template_aeva_item_actions()
 					</section>
 					<footer>
 						<input type="submit" value="', $txt['media_submit'], '" name="submit_playlist">
+						<input type="button" value="', $txt['media_close'], '" class="delete">
 					</footer>
 					</form>
 				</div>
