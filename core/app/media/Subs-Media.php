@@ -1904,7 +1904,7 @@ function aeva_createFile(&$ops)
 	// Rename the file for now
 	if ($ops['is_uploading'])
 	{
-		@move_uploaded_file($ops['filepath'], $amSettings['data_dir_path'] . '/tmp/' . $ops['filename']);
+		move_uploaded_file($ops['filepath'], $amSettings['data_dir_path'] . '/tmp/' . $ops['filename']);
 		$ops['filepath'] = $amSettings['data_dir_path'] . '/tmp/' . $ops['filename'];
 	}
 
@@ -1986,13 +1986,14 @@ function aeva_createFile(&$ops)
 		$width, $height, $ops['cur_dest'], $ops['album'], $meta
 	);
 
-	// Move the file
-	if ($ops['is_uploading'])
-		@rename($ops['filepath'], $ops['destination'] . '/' . aeva_getEncryptedFilename($ops['filename'], $id_file));
-	else
-		@copy($ops['filepath'], $ops['destination'] . '/' . aeva_getEncryptedFilename($ops['filename'], $id_file));
-
+	// Move the file -- if it fails, 
 	$ops['new_dest'] = $ops['destination'] . '/' . aeva_getEncryptedFilename($ops['filename'], $id_file);
+	if ($ops['is_uploading'])
+		@rename($ops['filepath'], $ops['new_dest']);
+	if (!$ops['is_uploading'] || !file_exists($ops['new_dest']))
+		@copy($ops['filepath'], $ops['new_dest']);
+	if ($ops['is_uploading'])
+		@unlink($ops['filepath']);
 
 	// Re-open it
 	$file = new media_handler;
