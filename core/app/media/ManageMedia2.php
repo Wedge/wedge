@@ -177,7 +177,7 @@ function aeva_admin_maintenance_regenerate()
 		$total_done++;
 		$dest_file = $amSettings['data_dir_path'] . '/' . $row['file_dir'];
 		$dest_preview = $amSettings['data_dir_path'] . '/' . (empty($row['preview_dir']) ? $row['file_dir'] : $row['preview_dir']);
-		$dest_thumb = empty($row['thumb_dir']) || $row['thumb_dir'] == 'generic_images' ? $dest_preview : $amSettings['data_dir_path'] . '/' . $row['thumb_dir'];
+		$dest_thumb = empty($row['thumb_dir']) || $row['thumb_dir'] == 'icons' ? $dest_preview : $amSettings['data_dir_path'] . '/' . $row['thumb_dir'];
 		// If this is on the same domain, it's a thumbnail-less local video, so it shouldn't be rebuilt
 		$can_rebuild_from_orig = $row['type'] == 'image' || ($row['type'] == 'embed' && !aeva_sameDomain($row['embed_url'])) || ($row['type'] == 'video' && $ffmpeg_enabled);
 
@@ -1014,7 +1014,7 @@ function aeva_cleanTree($directory, $phase, $start_from = '')
 
 			if (is_dir($dirfile))
 			{
-				if ($file != 'generic_images' && $file != 'ftp' && $file != 'tmp' && (!$not_there_yet || $dirfile == substr($start_from, 0, strlen($dirfile))))
+				if ($file != 'icons' && $file != 'ftp' && $file != 'tmp' && (!$not_there_yet || $dirfile == substr($start_from, 0, strlen($dirfile))))
 					aeva_cleanTree($dirfile, $phase, $start_from);
 			}
 			elseif ($file != 'index.php' && !$not_there_yet)

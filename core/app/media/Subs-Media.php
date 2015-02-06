@@ -399,7 +399,7 @@ function getMediaPath($mid, $type = 'main', $security_override = false)
 		$allowed_types = aeva_allowed_types(false, true);
 		if (in_array($ext, $allowed_types['do']))
 		{
-			$path = $amSettings['data_dir_path'] . '/generic_images/';
+			$path = $amSettings['data_dir_path'] . '/icons/';
 			$filename = (!file_exists($path . $ext . '.png') ? 'default' : $ext) . '.png';
 			$path .= $filename;
 		}
@@ -2035,7 +2035,7 @@ function aeva_createThumbFile($id_file, $file, &$ops)
 		$allowed_types = aeva_allowed_types(false, true);
 		if (in_array($ext2, $allowed_types['do']))
 		{
-			$path = $amSettings['data_dir_path'] . '/generic_images/';
+			$path = $amSettings['data_dir_path'] . '/icons/';
 			$filename = (!file_exists($path . $ext2 . '.png') ? 'default' : $ext2) . '.png';
 			$file2 = new media_handler;
 			$file2->init($path . $filename);
