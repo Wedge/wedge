@@ -306,7 +306,7 @@ function error_handler($error_level, $error_string, $file, $line)
 
 	$error_type = strpos(strtolower($error_string), 'undefined') !== false ? 'undefined_vars' : 'general';
 
-	$message = log_error($error_level . ': ' . $error_string, $error_type, $file, $line);
+	$message = log_error(($error_level % 255 == E_ERROR ? 'Error' : ($error_level % 255 == E_WARNING ? 'Warning' : 'Notice')) . " (level $error_level): " . $error_string, $error_type, $file, $line);
 
 	// Let's give hooks a chance to output a bit differently
 	call_hook('output_error', array(&$message, $error_type, $error_level, $file, $line));
