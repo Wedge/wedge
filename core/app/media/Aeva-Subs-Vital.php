@@ -264,7 +264,7 @@ function aeva_embedObject($obj, $id_file, $cur_width = 0, $cur_height = 0, $desc
 		if ($type == 'audio' && !we::is('ie[-8]'))
 		{
 			add_js_file('player.js');
-			add_js("\n\tspectrum();");
+			add_js("\n\t" . 'spectrum("#player");');
 		}
 
 		switch ($mime)
