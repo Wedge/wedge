@@ -691,7 +691,7 @@ function aeva_extList()
 		'm4p' => 'audio/mp4a-latm',
 		'm4a' => 'audio/mp4a-latm',
 		'a-latm' => 'audio/mp4a-latm',
-		'ogg' => 'application/ogg',
+		'ogg' => 'audio/ogg',
 		'rpm' => 'audio/x-pn-RealAudio-plugin',
 		'mka' => 'audio/x-matroska',
 		'wav' => 'audio/wav',

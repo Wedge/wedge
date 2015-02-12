@@ -206,6 +206,9 @@ if (!defined('WEDGE'))
 
 	array aeva_getItemData(int item)
 		- Requests all the data of a specific item
+
+	string init_videojs()
+		- Returns a string (or head link) that includes all necessary data for invoking a VideoJS object.
 */
 
 // Checks whether the user is banned
@@ -2036,7 +2039,11 @@ function aeva_createThumbFile($id_file, $file, &$ops)
 		if (in_array($ext2, $allowed_types['do']))
 		{
 			$path = $amSettings['data_dir_path'] . '/icons/';
-			$filename = (!file_exists($path . $ext2 . '.png') ? 'default' : $ext2) . '.png';
+			// We might have to re-copy the original generic icons, in case they were deleted by mistake...
+			if (!file_exists($path . $ext2 . '.png') && file_exists(ASSETS_DIR . '/icons/media/' . $ext2 . '.png'))
+				foreach (glob(ASSETS_DIR . '/icons/media/*.png') as $png_file)
+					copy($png_file, $path . basename($png_file));
+			$filename = (file_exists($path . $ext2 . '.png') ? $ext2 : 'default') . '.png';
 			$file2 = new media_handler;
 			$file2->init($path . $filename);
 			$thumb = $file2->createThumbnail($amSettings['data_dir_path'] . '/tmp/tmp_thumb_' . $id_file . '.png', $ops['max_thumb_width'], $ops['max_thumb_height']);
@@ -3650,4 +3657,26 @@ function aeva_showStars($rating, $class = 'aevera')
 		$title_star = $rating . '.5';
 
 	return '<img src="' . ASSETS . '/aeva/star' . $star . '.gif"' . ($class ? ' class="' . $class . '"' : '') . ' alt="' . $title_star . '" title="' . $title_star . '">';
+}
+
+function init_videojs()
+{
+	global $context;
+	static $done = false;
+
+	if ($done)
+		return;
+	$done = true;
+
+	add_js_file('//vjs.zencdn.net/4.11/video.js');
+
+	// In some situations, it's probably cleaner to have the link tag in the body, as the head might not get output.
+	if (AJAX || INFINITE || WEDGE == 'SSI' || $context['action'] === 'feed')
+		return '
+	<link rel="stylesheet" property="stylesheet" href="http://vjs.zencdn.net/4.11/video-js.css">';
+
+	$context['header'] .= '
+	<link rel="stylesheet" href="http://vjs.zencdn.net/4.11/video-js.css">';
+
+	return '';
 }

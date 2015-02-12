@@ -128,10 +128,6 @@ $txt['media_admin_settings_default_tag_type'] = 'Default size within [media] tag
 $txt['media_admin_settings_default_tag_type_desc'] = 'Choose the image type that should be shown by default when no type is specified on [media id=xxx type=xxx] tags.';
 $txt['media_admin_settings_my_docs'] = 'Allowed Document files';
 $txt['media_admin_settings_my_docs_desc'] = 'You can choose the extensions allowed for uploaded Documents. Use comma as a separator (eg. "zip,pdf"). The default list of supported file types, in case you want to reset it, is: %s';
-$txt['media_admin_settings_player_color'] = 'Audio/video player\'s front color';
-$txt['media_admin_settings_player_color_desc'] = 'In hexadecimal code. By default, white (FFFFFF)';
-$txt['media_admin_settings_player_bcolor'] = 'Audio/video player\'s background color';
-$txt['media_admin_settings_player_bcolor_desc'] = 'In hexadecimal code. By default, black (000000)';
 $txt['media_admin_settings_audio_player_width'] = 'Audio player\'s width';
 $txt['media_admin_settings_audio_player_width_desc'] = 'In pixels. By default, 400';
 $txt['media_admin_settings_phpini_desc'] = 'This server-side variable limits upload sizes. You can set it via a php.ini file, see details on the right';
