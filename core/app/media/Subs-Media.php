@@ -206,6 +206,9 @@ if (!defined('WEDGE'))
 
 	array aeva_getItemData(int item)
 		- Requests all the data of a specific item
+
+	string init_videojs()
+		- Returns a string (or head link) that includes all necessary data for invoking a VideoJS object.
 */
 
 // Checks whether the user is banned
@@ -399,7 +402,7 @@ function getMediaPath($mid, $type = 'main', $security_override = false)
 		$allowed_types = aeva_allowed_types(false, true);
 		if (in_array($ext, $allowed_types['do']))
 		{
-			$path = $amSettings['data_dir_path'] . '/generic_images/';
+			$path = $amSettings['data_dir_path'] . '/icons/';
 			$filename = (!file_exists($path . $ext . '.png') ? 'default' : $ext) . '.png';
 			$path .= $filename;
 		}
@@ -1904,7 +1907,7 @@ function aeva_createFile(&$ops)
 	// Rename the file for now
 	if ($ops['is_uploading'])
 	{
-		@move_uploaded_file($ops['filepath'], $amSettings['data_dir_path'] . '/tmp/' . $ops['filename']);
+		move_uploaded_file($ops['filepath'], $amSettings['data_dir_path'] . '/tmp/' . $ops['filename']);
 		$ops['filepath'] = $amSettings['data_dir_path'] . '/tmp/' . $ops['filename'];
 	}
 
@@ -1986,13 +1989,14 @@ function aeva_createFile(&$ops)
 		$width, $height, $ops['cur_dest'], $ops['album'], $meta
 	);
 
-	// Move the file
-	if ($ops['is_uploading'])
-		@rename($ops['filepath'], $ops['destination'] . '/' . aeva_getEncryptedFilename($ops['filename'], $id_file));
-	else
-		@copy($ops['filepath'], $ops['destination'] . '/' . aeva_getEncryptedFilename($ops['filename'], $id_file));
-
+	// Move the file -- if it fails, 
 	$ops['new_dest'] = $ops['destination'] . '/' . aeva_getEncryptedFilename($ops['filename'], $id_file);
+	if ($ops['is_uploading'])
+		@rename($ops['filepath'], $ops['new_dest']);
+	if (!$ops['is_uploading'] || !file_exists($ops['new_dest']))
+		@copy($ops['filepath'], $ops['new_dest']);
+	if ($ops['is_uploading'])
+		@unlink($ops['filepath']);
 
 	// Re-open it
 	$file = new media_handler;
@@ -2034,8 +2038,12 @@ function aeva_createThumbFile($id_file, $file, &$ops)
 		$allowed_types = aeva_allowed_types(false, true);
 		if (in_array($ext2, $allowed_types['do']))
 		{
-			$path = $amSettings['data_dir_path'] . '/generic_images/';
-			$filename = (!file_exists($path . $ext2 . '.png') ? 'default' : $ext2) . '.png';
+			$path = $amSettings['data_dir_path'] . '/icons/';
+			// We might have to re-copy the original generic icons, in case they were deleted by mistake...
+			if (!file_exists($path . $ext2 . '.png') && file_exists(ASSETS_DIR . '/icons/media/' . $ext2 . '.png'))
+				foreach (glob(ASSETS_DIR . '/icons/media/*.png') as $png_file)
+					copy($png_file, $path . basename($png_file));
+			$filename = (file_exists($path . $ext2 . '.png') ? $ext2 : 'default') . '.png';
 			$file2 = new media_handler;
 			$file2->init($path . $filename);
 			$thumb = $file2->createThumbnail($amSettings['data_dir_path'] . '/tmp/tmp_thumb_' . $id_file . '.png', $ops['max_thumb_width'], $ops['max_thumb_height']);
@@ -3649,4 +3657,26 @@ function aeva_showStars($rating, $class = 'aevera')
 		$title_star = $rating . '.5';
 
 	return '<img src="' . ASSETS . '/aeva/star' . $star . '.gif"' . ($class ? ' class="' . $class . '"' : '') . ' alt="' . $title_star . '" title="' . $title_star . '">';
+}
+
+function init_videojs()
+{
+	global $context;
+	static $done = false;
+
+	if ($done)
+		return;
+	$done = true;
+
+	add_js_file('//vjs.zencdn.net/4.11/video.js');
+
+	// In some situations, it's probably cleaner to have the link tag in the body, as the head might not get output.
+	if (AJAX || INFINITE || WEDGE == 'SSI' || $context['action'] === 'feed')
+		return '
+	<link rel="stylesheet" property="stylesheet" href="http://vjs.zencdn.net/4.11/video-js.css">';
+
+	$context['header'] .= '
+	<link rel="stylesheet" href="http://vjs.zencdn.net/4.11/video-js.css">';
+
+	return '';
 }

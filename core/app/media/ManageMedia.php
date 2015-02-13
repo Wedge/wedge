@@ -199,8 +199,6 @@ function aeva_admin_settings()
 
 		'title_misc' => array('title', 'layout'),
 		'show_sub_albums_on_index' => array('yesno', 'layout'),
-		'player_color' => array('small_text', 'layout'),
-		'player_bcolor' => array('small_text', 'layout'),
 		'audio_player_width' => array('small_text', 'layout', null, null, $txt['media_pixels']),
 		'use_zoom' => array('yesno', 'layout'),
 		'disable_playlists' => array('yesno', 'layout'),

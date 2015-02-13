@@ -540,22 +540,6 @@ function MergeExecute($topics = array())
 
 	wesql::free_result($request);
 
-	if (!empty($settings['pretty_enable_cache']))
-	{
-		wesql::query('
-			DELETE FROM {db_prefix}pretty_topic_urls
-			WHERE id_topic IN ({array_int:deleted_topics})',
-			array(
-				'deleted_topics' => $deleted_topics,
-			)
-		);
-		wesql::query('
-			DELETE FROM {db_prefix}pretty_urls_cache
-			WHERE (url_id LIKE "%' . implode('%") OR (url_id LIKE "%', $deleted_topics) . '%")',
-			array()
-		);
-	}
-
 	// Assign the first topic ID to be the merged topic.
 	$id_topic = min($topics);
 
@@ -575,6 +559,22 @@ function MergeExecute($topics = array())
 			'deleted_topics' => $deleted_topics,
 		)
 	);
+
+	// Also delete any corresponding Pretty URL cache entries.
+	if (!empty($settings['pretty_enable_cache']))
+	{
+		wesql::query('
+			DELETE FROM {db_prefix}pretty_topic_urls
+			WHERE id_topic IN ({array_int:deleted_topics})',
+			array(
+				'deleted_topics' => $deleted_topics,
+			)
+		);
+		wesql::query('
+			DELETE FROM {db_prefix}pretty_urls_cache
+			WHERE (url_id LIKE "%' . implode('%") OR (url_id LIKE "%', $deleted_topics) . '%")'
+		);
+	}
 
 	// Asssign the properties of the newly merged topic.
 	wesql::query('

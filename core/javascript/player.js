@@ -1,11 +1,14 @@
 /*!
- * Helper functions used by media playlists.
+ * Helper functions used by the media gallery.
  *
  * Wedge (http://wedge.org)
  * Copyright © 2010 René-Gilles Deberdt, wedge.org
  * License: http://wedge.org/license/
  */
 
+/**
+ * Playlist functions.
+ */
 
 var
 	myfile = weUrl('action%3Dmedia;sa%3Dmedia;in%3D'),
@@ -52,7 +55,8 @@ function addListeners()
 		setTimeout(addListeners, 100);
 }
 
-function itemListener(obj)
+/*
+videojs('player').on('play', function (obj)
 {
 	if (obj.index != currentItem[currentPlayer])
 	{
@@ -60,7 +64,8 @@ function itemListener(obj)
 		currentItem[currentPlayer] = obj.index;
 		setItemStyle(currentItem[currentPlayer]);
 	}
-}
+});
+*/
 
 function stateListener(obj) // IDLE, BUFFERING, PLAYING, PAUSED, COMPLETED
 {
@@ -77,22 +82,22 @@ function stateListener(obj) // IDLE, BUFFERING, PLAYING, PAUSED, COMPLETED
 
 function recreatePlayer(pid, fid)
 {
-	if (currentPlayer != pid)
+/*	if (currentPlayer != pid)
 		player[currentPlayer].sendEvent('STOP');
 	currentPlayer = pid;
 	if (!lnFlag && player[pid])
-		player[pid].sendEvent('ITEM', fid);
+		player[pid].sendEvent('ITEM', fid);*/
 }
 
 function mover(obj, idx)
 {
-	obj.className = idx == currentItem[currentPlayer] ? 'playinghi' : 'playlisthi';
+	obj.className = videojs('video').pl.current == currentItem[currentPlayer] ? 'playinghi' : 'playlisthi';
 }
 
 function mout(obj, idx)
 {
 	lnFlag = 0;
-	obj.className = idx == currentItem[currentPlayer] ? 'playinglo' : 'playlistlo';
+	obj.className = videojs('video').pl.current == currentItem[currentPlayer] ? 'playinglo' : 'playlistlo';
 }
 
 function scrollMe()
@@ -150,42 +155,70 @@ function weplay(opt)
 	$.each(foxp[swo], function () {
 		var mytype = ['image', 'video', 'sound'][this[2]];
 		myplaylist[swo].push({
-			file: myfile + this[0] + (mytype == 'image' ? ';preview' : '') + ';.' + this[3],
-			image: myfile + this[0] + (mytype == 'image' ? ';preview' : ';thumba'),
-			type: mytype, duration: this[1]
+			src: [myfile + this[0] + (mytype == 'image' ? ';preview' : '') + ';.' + this[3]],
+			poster: myfile + this[0] + (mytype == 'image' ? ';preview' : ';thumba'),
+			type: mytype, duration: this[1],
+			title: ''
 		});
 	});
 
 	var fvars = {
 		file: myfile + opt.id,
 		image: myfile + opt.id + (opt.type == 'image' ? ';preview' : ';thumba'),
-		plugins: opt.plugins,
 		showdigits: 'true',
 		repeat: 'always',
-		type: opt.type,
-		duration: opt.duration
+		type: opt.type
 	};
 
-	if (opt.bcol)
-		fvars.backcolor = opt.bcol;
-	if (opt.scol)
-		fvars.screencolor = opt.scol;
+	var player = videojs('video');
+	player.playList(myplaylist[swo], {
+		getVideoSource: function (vid, cb) { cb(vid.src, vid.poster); }
+	});
+	$('a[data-action=prev]').click(function (e) { player.prev(); });
+	$('a[data-action=next]').click(function (e) { player.next(); });
+}
 
-	swfobject.embedSWF(
-		opt.player,
-		'aefoxy' + swo,
-		'100%',
-		opt.height,
-		'9',
-		opt.install || null,
-		fvars,
-		{
-			allowFullscreen: 'true',
-			allowScriptAccess: 'always'
-		},
-		{
-			id: 'player' + swo,
-			name: 'player' + swo
-		}
-	);
+/*!
+ * Spectrum analyzer for audio files in the media gallery.
+ * Code adapted from: http://ianreah.com/
+ */
+
+function spectrum(where)
+{
+	var $spectrum = $('<div/>').addClass('spectrum').insertAfter(where), context = new (window.AudioContext || window.webkitAudioContext || 'void')();
+	if (!spectrum.length || !context)
+		return;
+
+	// Create the analyzer, ask for 128 bars if possible.
+	var update, analyser = context.createAnalyser();
+	analyser.fftSize = 128;
+
+	// Build the DOM elements
+	var
+		frequencyData = new Uint8Array(analyser.frequencyBinCount),
+		barSpacingPercent = 100 / analyser.frequencyBinCount, i;
+
+	for (i = 0; i < analyser.frequencyBinCount; i++)
+		$('<div/>').css('left', i * barSpacingPercent + '%').appendTo($spectrum);
+	var bars = $spectrum.children('div'), freq_center = Math.round(bars.length / 2) - 1;
+
+	// Hook up the audio routing...
+	// player -> analyser -> speakers
+	// (Do this after the player is ready to play - https://code.google.com/p/chromium/issues/detail?id=112368#c4)
+	$(where).bind('canplay', function ()
+	{
+		var src = context.createMediaElementSource(this);
+		src ? src.connect(analyser) : 0;
+		analyser.connect(context.destination);
+	});
+
+	// Kick it off...
+	(update = function () {
+		requestAnimationFrame(update);
+		// Get the frequency data
+		analyser.getByteFrequencyData(frequencyData);
+		// Update the spectrum bars, spread evenly.
+		for (i = 0; i < frequencyData.length; i++)
+			bars[freq_center + (i % 2 == 0 ? -1 : 1) * Math.round(i / 2)].style.height = frequencyData[i] + 'px';
+	})();
 }

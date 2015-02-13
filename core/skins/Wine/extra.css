@@ -160,6 +160,9 @@ h1
 			color: #fff
 			a
 				color: #fff
+
+	.mg_item_type
+		color: #e5e5e5
 @endif
 
 @if ie6

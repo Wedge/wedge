@@ -491,3 +491,30 @@ table.aelista
 	#sidebar section.block
 		width: 180px
 @endif
+
+.spectrum
+	height: 255px
+	position: relative
+	margin: 10px
+	> div
+		width: 1.4%
+		height: 1px
+		background: linear-gradient(to bottom, transparent, #ee7600)
+		display: inline-block
+		position: absolute
+		bottom: 0
+
+#player.vjs-audio // #player is needed for precedence over media-js.css, which normally comes later in the HTML.
+	.vjs-big-play-button
+		height: 1em
+		left: 50%
+		margin-left: -2.1em
+		top: 50%
+		margin-top: -.6em
+		:before
+			line-height: 1em
+
+#player
+	.vjs-time-controls
+		font-size: 1.2em
+		line-height: 2.6em

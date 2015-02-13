@@ -228,8 +228,6 @@ function aeva_embedObject($obj, $id_file, $cur_width = 0, $cur_height = 0, $desc
 		$type = $obj->media_type();
 
 	$output = '';
-	$pcol = !empty($amSettings['player_color']) ? ($amSettings['player_color'][0] == '#' ? substr($amSettings['player_color'], 1) : $amSettings['player_color']) : '';
-	$bcol = !empty($context['aeva_override_bcolor']) ? $context['aeva_override_bcolor'] : (!empty($amSettings['player_bcolor']) ? ($amSettings['player_bcolor'][0] == '#' ? substr($amSettings['player_bcolor'], 1) : $amSettings['player_bcolor']) : '');
 	$pwid = !empty($context['aeva_override_player_width']) ? $context['aeva_override_player_width'] : (!empty($amSettings['audio_player_width']) ? min($amSettings['max_preview_width'], max(100, (int) $amSettings['audio_player_width'])) : 400);
 	$preview_image = $galurl . 'sa=media;in=' . $id_file . (!empty($context['aeva_has_preview']) || $type == 'image' ? ';preview' : ';thumb');
 	$show_audio_preview = $type == 'audio' && $context['action'] === 'media';
@@ -240,7 +238,6 @@ function aeva_embedObject($obj, $id_file, $cur_width = 0, $cur_height = 0, $desc
 		<div class="centered" style="width: ' . max($cur_width, $pwid) . 'px">
 		<img src="' . $preview_image . '"' . ($cur_width > 0 && $cur_height > 0 ? ' width="' . $cur_width . '" height="' . $cur_height . '"' : '') . ' class="center" style="padding-bottom: 8px">';
 
-	$ext = aeva_getExt($obj->src);
 	if ($type == 'image')
 	{
 		$output .= '
@@ -256,49 +253,49 @@ function aeva_embedObject($obj, $id_file, $cur_width = 0, $cur_height = 0, $desc
 		<a href="' . $galurl . 'sa=media;in=' . $id_file . ';dl" title="' . westr::htmlspecialchars($desc) . '">'
 		. '<img src="' . $preview_image . '" width="' . $width . '" height="' . $height . '"></a>';
 	}
-	elseif ($type == 'video' || ($type == 'audio' && in_array($ext, array('mp3', 'm4a', 'm4p', 'a-latm'))))
+	else
 	{
 		$mime = $obj->getMimeType($obj->src);
 
 		$qt = false;
-		$width = empty($cur_width) ? 500 : $cur_width;
-		$height = empty($cur_height) ? 470 : $cur_height;
+		$width = empty($cur_width) ? 640 : $cur_width;
+		$height = empty($cur_height) ? 360 : $cur_height;
+
+		if ($type == 'audio' && !we::is('ie[-8]'))
+		{
+			add_js_file('player.js');
+			add_js("\n\t" . 'spectrum("#player");');
+		}
 
 		switch ($mime)
 		{
 			case 'audio/mpeg':
 			case 'audio/mp4a-latm':
-				// Hopefully getid3 should be able to return durations for all file types...
-				$duration = $obj->getInfo();
+			case 'audio/ogg':
 				$width = $pwid;
-				$height = 80;
+				$height = $show_audio_preview ? 40 : 80;
+				if (we::is('ie[-8]'))
+					break;
 
 			case 'video/x-flv':
 			case 'video/x-m4v':
 			case 'video/mp4':
 			case 'video/3gpp':
+			case 'video/webm':
+			case 'video/x-matroska':
+				$output .= init_videojs();
 
-				if (AJAX || INFINITE || WEDGE == 'SSI' || $context['action'] === 'feed')
-				{
-					$output .= '
-		<embed src="' . aeva_theme_url('player.swf') . '" flashvars="file=' . $galurl . 'sa=media;in=' . $id_file . $increm
-		. (!empty($pcol) ? '&amp;backcolor=' . $pcol : '') . (!empty($bcol) ? '&amp;screencolor=' . $bcol : '')
-		. ($show_audio_preview ? '' : 'amp;image=' . $preview_image) . '&amp;type=' . ($type != 'audio' ? $type : 'sound&amp;plugins=spectrumvisualizer-1&amp;showdigits=true&amp;repeat=always&amp;duration='
-		. floor($duration['duration'])) . '" width="' . $width . '" height="' . ($height+20) . '" allowscriptaccess="always" allowfullscreen="true" wmode="transparent">';
-				}
-				else
-				{
-					if (!$swfobjects++)
-						add_js_file('http://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js', true);
+				add_js('
+	if ("localStorage" in window && videojs("player").volume().length)
+		videojs("player").volume(localStorage.getItem("volume") || 1).onVolumeChange = function (val) { localStorage.setItem("volume", val); };');
 
-					$output .= '
-		<div id="sob'. $swfobjects . '">&nbsp;</div>
-		<script><!-- // --><![CDATA[
-			var fvars = { file: "' . $galurl . 'sa=media;in=' . $id_file . $increm . '", ' . (!empty($pcol) ? 'backcolor: "' . $pcol . '", ' : '') . (!empty($bcol) ? 'screencolor: "' . $bcol . '", ' : '')
-			. ($show_audio_preview ? '' : 'image: "' . $preview_image . '", ') . 'type: "' . ($type != 'audio' ? $type : 'sound", plugins: "spectrumvisualizer-1", showdigits: true, repeat: "always", duration: "' . floor($duration['duration'])) . '" };
-			swfobject.embedSWF("' . aeva_theme_url('player.swf') . '", "sob' . $swfobjects . '", "' . $width . '", "' . ($height+20) . '", "9", "", fvars, { allowFullscreen: "true", allowScriptAccess: "always", wmode: "transparent" });
-		// ]]></script>';
-				}
+				$tag = $type == 'audio' ? 'audio' : 'video';
+
+				$output .= '
+		<' . $tag . ' width="' . $width . '" height="' . $height . '"' . ($type == 'audio' ? ' loop ' : ' ') . 'controls class="video-js vjs-default-skin" data-setup="{}" id="player"'
+			. ($show_audio_preview ? '' : ' poster="' . $preview_image . '"') . '>
+			<source src="' . $galurl . 'sa=media;in=' . $id_file . $increm . '" type="' . $mime . '" />
+		</' . $tag . '>';
 
 				return $show_audio_preview ? $output . '
 		</div>' : $output;
@@ -355,28 +352,9 @@ function aeva_embedObject($obj, $id_file, $cur_width = 0, $cur_height = 0, $desc
 			$output .= '
 		</object>';
 	}
-	elseif ($type == 'audio')
-	{
-		// Audio, but no mp3..............
 
-		if ($ext == 'ogg')
-			$output .= '
-		<audio src="' . $galurl . 'sa=media;in=' . $id_file . ';v" width="' . $pwid . '" height="50" controls="controls">
-			<object style="border: 1px solid #999" type="application/ogg" data="' . $galurl . 'sa=media;in=' . $id_file . ';v" width="' . $pwid . '" height="50">
-				<param name="wmode" value="transparent">
-			</object>
-		</audio>';
-		else
-			$output .= '
-		<audio src="' . $galurl . 'sa=media;in=' . $id_file . ';v" width="' . $pwid . '" height="50" controls="controls">
-			<embed src="' . $galurl . 'sa=media;in=' . $id_file . ';v' . (isset($_COOKIE[$cookiename]) ? ';upcook=' . urlencode(base64_encode($_COOKIE[$cookiename])) : '')
-			. '" width="' . $pwid . '" height="50" autoplay="false" autostart="0" loop="true" wmode="transparent">
-		</audio>';
-
-		$output .= '
-		</div>';
-	}
-	return $output;
+	return $show_audio_preview ? $output . '
+		</div>' : $output;
 }
 
 function aeva_initZoom($autosize, $peralbum = array())

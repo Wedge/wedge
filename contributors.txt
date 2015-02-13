@@ -15,22 +15,19 @@ MMMMMMMMMMMMMDO$7777777$$ZODNMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
 MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
 MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
 
-    Started by René-Gilles Deberdt and Peter Spicer on August 25, 2010.
-
---------------------------------------------------------------------------
 
 
-Director:		Nao 尚 (René-Gilles Deberdt)
+Director:		René-Gilles Deberdt (Nao 尚), started on August 25, 2010.
 
-Contributors:	Arantor (Peter Spicer) -- co-developer (2010-2013)
-				TE (Thorsten Eurich) -- importer code (2011-2012)
-				Dragooon (Shitiz Garg) -- notifications (2012-2013)
-				live627 (John Rayes) -- improvements & testing (2010-2014)
-				Pandos (Sven Rissmann) -- improvements & testing (2014-)
+Contributors:	Peter Spicer -- co-developer (2010-2013)
+				Thorsten Eurich -- importer code (2011-2012)
+				Shitiz Garg -- notifications (2012-2013)
+				John Rayes -- improvements & testing (2010-2014)
+				Sven Rissmann -- improvements & testing (2014)
 
-Thanks:			MultiformeIngegno (Lorenzo Raffio) -- testing (2010-)
-				Aaron (Aaron van Geffen) -- testing (2010-2014)
-				CerealGuy -- modding system testing (2014-)
+Thanks:			Lorenzo Raffio -- testing (2010-2014)
+				Aaron van Geffen -- testing (2010-2014)
+				Leon Scott Kennedy -- testing (2014)
 
 Based on:		Simple Machines Forum 2.0
 					-- © Simple Machines and its contributors 2011, http://www.simplemachines.org/
@@ -45,8 +42,8 @@ Wedge also contains code and elements from other products, in no particular orde
 
 Aeva Media (media gallery)
 	-- Original website: http://aeva.noisen.com/
-	-- Initial gallery code by Dragooon and Nao 尚, © Shitiz Garg & René-Gilles Deberdt 2008-2010.
-	-- Initial embedding code by karlbenson and Nao 尚, © Karl Benson & René-Gilles Deberdt 2007-2011.
+	-- Initial gallery code © Shitiz Garg & René-Gilles Deberdt, 2008-2010.
+	-- Initial embedding code © Karl Benson & René-Gilles Deberdt, 2007-2011.
 	-- closed license, used under permission from both authors.
 
 Bad Behaviour 2.2.x (anti-hack code)
@@ -61,11 +58,6 @@ Bad Behaviour 2.2.x (anti-hack code)
 MultiAttach (multiple attachment selector)
 	-- © The-Stickman.com 2005, http://the-stickman.com/web-development/javascript/upload-multiple-files-with-a-single-file-element/
 	-- used under the MIT license, http://opensource.org/licenses/mit-license.php
-
-JW Player 4.4.157 (media playback)
-	-- © JW Player 2013, http://www.jwplayer.com/
-	-- free version, suitable only for non-commercial sites - for commercial sites, contact the JW Player team, or disable use of
-		video/audio in the media gallery. I shall eventually replace the library with an open-source one, to remove this restriction.
 
 Yahoo UI Uploader (Flash/AJAX mass uploader)
 	-- © Yahoo! Inc., 2006-2013, http://yuilibrary.com/

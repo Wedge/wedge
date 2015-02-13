@@ -403,9 +403,9 @@ function aeva_foxy_playlists()
 	<div style="padding: 8px"><img src="' . ASSETS . '/aeva/camera_add.png"> <b><a href="' . $galurl . 'sa=playlists;new">' . $txt['media_new_playlist'] . '</a></b></div>';
 	}
 	$o .= '
-	<h3 class="titlebg"><span class="left"><span></span></span>
+	<we:title2>
 		' . $txt['media_playlists'] . '
-	</h3>' . $pi;
+	</we:title2>' . $pi;
 
 	if (empty($playlists))
 		$o .= $txt['media_tag_no_items'];
@@ -1013,7 +1013,7 @@ function aeva_foxy_get_xml_comments()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// FLASH PLAYLISTS
+// PLAYLISTS
 ///////////////////////////////////////////////////////////////////////////////
 
 function aeva_foxy_album($id, $type, $wid = 0, $details = '', $sort = 'm.id_media DESC', $field_sort = 0)
@@ -1030,15 +1030,12 @@ function aeva_foxy_album($id, $type, $wid = 0, $details = '', $sort = 'm.id_medi
 	$box = $exts = '';
 	$pwid = !empty($wid) ? $wid : (!empty($amSettings['audio_player_width']) ? min($amSettings['max_preview_width'], max(100, (int) $amSettings['audio_player_width'])) : 500);
 
-	// All extensions supported by both Aeva Media and JW Player. I've commented out all file formats that JW claims to support but I couldn't get to work.
-	// You may want to add m4a support for audio files, but it didn't work out for me (probably due to JW Player not supporting AM file names for this specific type)
-	// $exts .= "'3gp', 'm4a', ";
-
+	// All extensions hopefully supported by most browsers.
 	$all_types = $type == 'media' || $type == 'playl' || $type == 'ids';
 	if ($type == 'audio' || $all_types)
-		$exts .= "'mp3', ";
+		$exts .= "'mp3', 'm4a', ";
 	if ($type == 'video' || $all_types)
-		$exts .= "'mp4', 'm4v', 'f4v', 'flv', '3g2', ";
+		$exts .= "'mp4', 'm4v', 'f4v', 'flv', '3gp', '3g2', ";
 	if ($type == 'photo' || $all_types)
 		$exts .= "'jpg', 'jpe', 'peg', 'png', 'gif', ";
 
@@ -1336,8 +1333,6 @@ function aeva_foxy_album($id, $type, $wid = 0, $details = '', $sort = 'm.id_medi
 	if (!in_array('none', $details))
 		$box .= '<br><br>';
 
-	add_js_file('http://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js', true);
-
 	return $box . aeva_foxy_fill_player($playlist, $type, $details, 0, $pwid, 430, $thei + 20);
 }
 
@@ -1353,14 +1348,13 @@ function aeva_foxy_fill_player(&$playlist, $type, &$details, $play = 0, $wid = 4
 		max-height: '. $hei . 'px;
 	}');
 
-	add_js_file('player.js');
-
-	$pcol = !empty($amSettings['player_color']) ? ($amSettings['player_color'][0] == '#' ? substr($amSettings['player_color'], 1) : $amSettings['player_color']) : '';
-	$bcol = !empty($context['aeva_override_bcolor']) ? $context['aeva_override_bcolor'] : (!empty($amSettings['player_bcolor']) ? ($amSettings['player_bcolor'][0] == '#' ? substr($amSettings['player_bcolor'], 1) : $amSettings['player_bcolor']) : '');
-
-	$tx = (!empty($_REQUEST['sa']) && $_REQUEST['sa'] == 'search' ? '<!-- aeva_page_index -->' : '') . '
+	$tx = init_videojs() . (!empty($_REQUEST['sa']) && $_REQUEST['sa'] == 'search' ? '<!-- aeva_page_index -->' : '') . '
 <table class="foxy_album w100 centered">
-<tr><td style="height: ' . $thei . 'px"><div id="aefoxy' . $swo . '" style="overflow: auto; height: ' . $thei . 'px">&nbsp;</div></td></tr>
+<tr><td style="height: ' . $thei . 'px">' /* <div id="aefoxy' . $swo . '" style="overflow: auto; height: ' . $thei . 'px">&nbsp;</div> */ . '
+	<video id="video" class="video-js vjs-default-skin" controls data-setup="" width="640" height="360"></video>
+	<a href="#" onclick="return false;" data-action="prev">&lt;&lt;</a>
+	<a href="#" onclick="return false;" data-action="next">&gt;&gt;</a>
+</td></tr>
 <tr><td><div id="foxlist' . $swo . '" class="foxy_playlist" onmousedown="return false;">
 	<table class="w100 cp4 cs0">';
 	$c = '';
@@ -1416,10 +1410,12 @@ function aeva_foxy_fill_player(&$playlist, $type, &$details, $play = 0, $wid = 4
 <div id="info"></div>
 </td></tr></table>' . (!empty($_REQUEST['sa']) && $_REQUEST['sa'] == 'search' ? '<!-- aeva_page_index -->' : '');
 
+	add_js_file('player.js');
+	add_js_file('playlists.js');
+
 	add_js('
 	var swo = ', $swo, ';
-	if (typeof foxp == "undefined")
-		foxp = [];
+	foxp = window.fox || foxp;
 	foxp[swo] = [[');
 
 	$arrtypes = array(
@@ -1439,12 +1435,6 @@ function aeva_foxy_fill_player(&$playlist, $type, &$details, $play = 0, $wid = 4
 		swo: "', $swo, '",
 		id: ', $first['id'], ',
 		type: "', $first['type'], '",
-		player: "', aeva_theme_url('player.swf'), '",
-		plugins: "', aeva_theme_url('eq.swf'), '",', !empty($pcol) ? '
-		bcol: "' . $pcol . '",' : '', !empty($bcol) ? '
-		scol: "' . $bcol . '",' : '', '
-		duration: ', floor($first['duration']), ',
-		install: "', ROOT, '/expressInstall.swf",
 		height: ', $thei, '
 	});');
 

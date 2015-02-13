@@ -37,7 +37,8 @@ function minify_php($file, $remove_whitespace = false)
 		if (($pos = strpos($php, "\x0f", $pos)) !== false)
 			$php = substr_replace($php, $str, $pos, 1);
 
-	file_put_contents($file, $php);
+	if (file_put_contents($file, $php, LOCK_EX) !== strlen($php))
+		@unlink($file);
 }
 
 // Remove comments and protect strings.

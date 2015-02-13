@@ -73,10 +73,10 @@ function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow =
 
 	// Delete all duplicates and already cached files.
 	$files = array_diff(array_keys(array_flip($files)), $done_files);
-	$done_files = array_merge($done_files, $files);
 	if (empty($files))
 		return;
 
+	$done_files = array_merge($done_files, $files);
 	if ($is_direct_url || strpos($files[0], '://') !== false || strpos($files[0], '//') === 0)
 	{
 		if (!empty($footer_coding))
