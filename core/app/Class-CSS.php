@@ -764,6 +764,7 @@ class wess_nesting extends wess
 		$atree = preg_split('~\v+~', $tree);
 		$tree = $ex_string = '';
 		$levels = array(0);
+
 		foreach (array_map('ltrim', $atree) as $n => $line)
 		{
 			$l = strlen($atree[$n]) - strlen($line);
@@ -1340,7 +1341,7 @@ class wess_math extends wess
 		{
 			foreach ($matches as $val)
 			{
-				if (isset($done[$val[0]]))
+				if (isset($done[$val[0]]) && (!isset($val[4]) || $val[4] !== 'rand'))
 					continue;
 				$done[$val[0]] = true;
 
@@ -1351,7 +1352,8 @@ class wess_math extends wess
 				if (isset($val[4])) // not math()?
 				{
 					$params = explode(',', $val[5]);
-					$css = str_replace($val[0], call_user_func_array($val[4], array_map('trim', $params, array_fill(0, count($params), '"\' '))) . (isset($unit[1]) ? $unit[1] : ''), $css);
+					$result = call_user_func_array($val[4], array_map('trim', $params, array_fill(0, count($params), '"\' '))) . (isset($unit[1]) ? $unit[1] : '');
+					$css = $val[4] === 'rand' ? substr_replace($css, $result, strpos($css, $val[0]), strlen($val[0])) : str_replace($val[0], $result, $css);
 					continue;
 				}
 
