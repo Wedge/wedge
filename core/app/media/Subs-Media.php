@@ -2589,7 +2589,7 @@ function aeva_showThumbnail($data)
 				if (in_array($item['type'], array('audio', 'doc')))
 					$ob_height = $item['h_thumb'];
 				$context['aeva_has_preview'] = $item['has_preview'];
-				$box .= aeva_embedObject($file, $id, $ob_width, $ob_height, $item['title']);
+				$box .= aeva_embedObject($file, $id, $ob_width, $ob_height, $item['title'], $file->media_type());
 				if ($item['is_new'])
 				{
 					media_markSeen($item['id']);

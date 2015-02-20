@@ -1351,7 +1351,7 @@ function aeva_foxy_fill_player(&$playlist, $type, &$details, $play = 0, $wid = 4
 	$tx = init_videojs() . (!empty($_REQUEST['sa']) && $_REQUEST['sa'] == 'search' ? '<!-- aeva_page_index -->' : '') . '
 <table class="foxy_album w100 centered">
 <tr><td style="height: ' . $thei . 'px">' /* <div id="aefoxy' . $swo . '" style="overflow: auto; height: ' . $thei . 'px">&nbsp;</div> */ . '
-	<video id="video" class="video-js vjs-default-skin" controls data-setup="" width="640" height="360"></video>
+	<video id="video" class="video-js vjs-default-skin" controls width="640" height="360"></video>
 	<a href="#" onclick="return false;" data-action="prev">&lt;&lt;</a>
 	<a href="#" onclick="return false;" data-action="next">&gt;&gt;</a>
 </td></tr>

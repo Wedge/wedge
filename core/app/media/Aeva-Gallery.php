@@ -1085,10 +1085,11 @@ function aeva_viewItem()
 		{
 			$file = new media_handler;
 			$file->init($path, null, null, $amSettings['show_extra_info'] == 1);
+			$type = $file->media_type();
 
 			$item_data['embed_object'] = aeva_embedObject($file,
 				$item_data['id_media'], $item_data['type'] == 'video' ? $item_data['width'] : $item_data['preview_width'],
-				$item_data['type'] == 'video' ? $item_data['height'] : $item_data['preview_height'], $item_data['title']
+				$item_data['type'] == 'video' ? $item_data['height'] : $item_data['preview_height'], $item_data['title'], $type
 			);
 
 			if ($amSettings['show_extra_info'] == 1)
@@ -1125,7 +1126,7 @@ function aeva_viewItem()
 			if (!empty($settings['cache_enable']))
 			{
 				$cache = array(
-					'embed_object' => strpos($item_data['embed_object'], 'swfobject.embedSWF') === false ? $item_data['embed_object'] : 'no_cache',
+					'embed_object' => $type === 'image' || $type === 'doc' ? $item_data['embed_object'] : 'no_cache',
 					'extra_info' => $item_data['extra_info'],
 					'is_resized' => $item_data['is_resized']
 				);

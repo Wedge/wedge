@@ -222,7 +222,7 @@ function aeva_get_dir_list_subfolders($dirs, $data, &$_list)
 function aeva_embedObject($obj, $id_file, $cur_width = 0, $cur_height = 0, $desc = '', $type = null)
 {
 	global $galurl, $context, $amSettings, $cookiename;
-	static $swfobjects = 0;
+	static $player = -1;
 
 	if (empty($type))
 		$type = $obj->media_type();
@@ -256,6 +256,7 @@ function aeva_embedObject($obj, $id_file, $cur_width = 0, $cur_height = 0, $desc
 	else
 	{
 		$mime = $obj->getMimeType($obj->src);
+		$player = $player + 1 ?: '';
 
 		$qt = false;
 		$width = empty($cur_width) ? 640 : $cur_width;
@@ -286,13 +287,14 @@ function aeva_embedObject($obj, $id_file, $cur_width = 0, $cur_height = 0, $desc
 				$output .= init_videojs();
 
 				add_js('
-	if ("localStorage" in window && videojs("player").volume().length)
-		videojs("player").volume(localStorage.getItem("volume") || 1).onVolumeChange = function (val) { localStorage.setItem("volume", val); };');
+	videojs("player' . $player . '");
+	if ("localStorage" in window)
+		videojs("player' . $player . '").volume(localStorage.getItem("volume") || 1).onVolumeChange = function (val) { localStorage.setItem("volume", val); };');
 
 				$tag = $type == 'audio' ? 'audio' : 'video';
 
 				$output .= '
-		<' . $tag . ' width="' . $width . '" height="' . $height . '"' . ($type == 'audio' ? ' loop ' : ' ') . 'controls class="video-js vjs-default-skin" data-setup="{}" id="player"'
+		<' . $tag . ' width="' . $width . '" height="' . $height . '"' . ($type == 'audio' ? ' loop ' : ' ') . 'controls class="video-js vjs-default-skin" id="player' . $player . '"'
 			. ($show_audio_preview ? '' : ' poster="' . $preview_image . '"') . '>
 			<source src="' . $galurl . 'sa=media;in=' . $id_file . $increm . '" type="' . $mime . '" />
 		</' . $tag . '>';
