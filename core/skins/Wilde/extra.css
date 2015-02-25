@@ -186,6 +186,12 @@ h1, #slogan
 .menu ul extends .lightgrad
 	background-color: #fff8f1
 
+li.chosen:after
+	content: ""
+	position: absolute
+	left, right: 0
+	bottom: 5px
+	border-bottom: 2px solid darker(#fff8f1, 30%)
 
 /* Some BBC related styles.
 ------------------------------------------------------- */

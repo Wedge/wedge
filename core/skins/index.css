@@ -1047,11 +1047,7 @@ input[type=file]
 		:after mixes .hide
 
 li.chosen h4
-	background-color: #95a89d
 	font-weight: 700
-	color: #fff
-	a
-		color: #fff
 
 // Hide arrows from menu items with no sub-menus.
 li.nodrop h4:after mixes .hide
@@ -1682,7 +1678,7 @@ dl#feed
 	color: #777
 	@if local
 		padding: 10px
-		border-left: 5px solid #ffa500
+		border-left: 4px solid #ffa500
 	@endif
 	a
 		border-bottom: 0 !important
