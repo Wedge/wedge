@@ -1376,7 +1376,11 @@ div.top_row dd
 	width: width($board_icon)px
 	height: height($board_icon)px
 	font-size: 1.2em
-	opacity: .6
+	@if chrome, safari[6-]
+		-prefix-filter: saturate(0)
+	@else
+		opacity: .6
+	@end
 
 	&.link:after
 		content: "\bb"
@@ -1384,7 +1388,11 @@ div.top_row dd
 		bottom, right: 9px
 
 	&.unread
-		opacity: 1
+		@if chrome, safari[6-]
+			-prefix-filter: hue-rotate(180deg) saturate(10)
+		@else
+			opacity: 1
+		@endif
 
 	&.mobile
 		float: left
