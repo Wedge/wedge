@@ -1775,7 +1775,7 @@ class wess_base64 extends wess
 				{
 					$img_raw = file_get_contents($absolut);
 					if ($img_ext == 'svg')
-						$img_data = 'url("data:image/svg+xml;' . preg_replace('~^.*?(?=\<svg)~s', '', str_replace(array('"', "\t", "\n"), array('\'', ' ', ' '), $img_raw)) . '")';
+						$img_data = 'url("data:image/svg+xml;utf8,' . preg_replace('~^.*?(?=\<svg)~s', '', str_replace(array('"', "\t", "\n"), array('\'', ' ', ' '), $img_raw)) . '")';
 					else
 						$img_data = 'url(data:image/' . ($img_ext == 'svgz' ? 'svg+xml' : $img_ext) . ';base64,' . base64_encode($img_raw) . ')';
 					$css = str_replace('url(' . $img . ')', $img_data, $css);
