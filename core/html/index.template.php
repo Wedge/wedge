@@ -47,7 +47,7 @@ function template_html_before()
 	// Our all-time favorites don't really like HTML5...
 	if (we::is('ie8down'))
 		echo '
-	<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>';
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>';
 
 	echo theme_base_css(), '
 	<!-- Powered by Wedge, © R.-G. Deberdt - http://wedge.org -->
