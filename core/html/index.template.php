@@ -47,7 +47,7 @@ function template_html_before()
 	// Our all-time favorites don't really like HTML5...
 	if (we::is('ie8down'))
 		echo '
-	<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>';
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>';
 
 	echo theme_base_css(), '
 	<!-- Powered by Wedge, © R.-G. Deberdt - http://wedge.org -->
@@ -526,7 +526,7 @@ function template_linktree($position = 'top', $force_show = false)
 	<div id="linktree_bt">';
 	else
 		echo '
-	<div id="linktree" itemtype="http://schema.org/WebPage" itemscope>';
+	<div id="linktree" itemtype="//schema.org/WebPage" itemscope>';
 
 	// If linktree is empty, just return - also allow an override.
 	if (!empty($context['linktree']) && ($linksize = count($context['linktree'])) !== 1 && (empty($context['dont_default_linktree']) || $force_show))
