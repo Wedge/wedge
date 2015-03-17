@@ -892,7 +892,7 @@ function time_tag($timestamp, $on_time = '')
  */
 function un_htmlspecialchars($string)
 {
-	return strtr(htmlspecialchars_decode($string, ENT_QUOTES), array('&#039;' => '\'', '&nbsp;' => ' '));
+	return strtr(htmlspecialchars_decode($string, ENT_QUOTES), array('&#039;' => '\'', '&#39;' => '\'', '&nbsp;' => ' '));
 }
 
 /**
