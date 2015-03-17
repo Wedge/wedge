@@ -489,7 +489,7 @@ function ModifyPmSettings($return_config = false)
 
 function ModifyHomepage($return_config = false)
 {
-	global $context, $txt, $boards;
+	global $context, $settings, $txt, $boards;
 
 	loadLanguage('ManageSettings');
 	loadSource(array('ManageServer', 'Subs-Boards'));
@@ -499,6 +499,11 @@ function ModifyHomepage($return_config = false)
 		if (!$board['redirect'])
 			$bids[$id] = $board['name'];
 
+	if (empty($settings['homepage_type']))
+		$settings['homepage_type'] = 'custom';
+	if (empty($settings['homepage_custom']))
+		$settings['homepage_custom'] = "topics\nthoughts\nboards\ninfo";
+
 	$config_vars = array(
 		'type' => array('select', 'homepage_type', array(
 			'boardlist' => $txt['homepage_boardlist'],
@@ -507,11 +512,11 @@ function ModifyHomepage($return_config = false)
 			'custom' => $txt['homepage_custom'],
 		)),
 		'',
-		array('message', 'homepage_message'),
-		'',
 		array('select', 'homepage_board', $bids),
 		array('text', 'homepage_action'),
 		array('large_text', 'homepage_custom'),
+		'',
+		array('message', 'homepage_message'),
 	);
 
 	foreach ($context['languages'] as $id => $lang)
@@ -526,6 +531,7 @@ function ModifyHomepage($return_config = false)
 		$("#homepage_board").closest("dd").prev().andSelf().toggle($("#homepage_type").val() == "board");
 		$("#homepage_action").closest("dd").prev().andSelf().toggle($("#homepage_type").val() == "action");
 		$("#homepage_custom").closest("dd").prev().andSelf().toggle($("#homepage_type").val() == "custom");
+		$("#homepage_custom").closest("dl").prev().toggle($("#homepage_type").val() != "boardlist");
 		$("[id^=homepage_blurb_]").closest("dd").prev().andSelf().toggle($("#homepage_type").val() == "custom");
 	}
 	$("#homepage_type").change(updateHomepage);

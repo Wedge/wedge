@@ -690,9 +690,9 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 	$final = preg_replace('~//[ \t][^\n]*~', '', $final); // Strip remaining comments like me. OMG does this mean I'm gonn
 
 	// Just like comments, we're going to preserve content tags.
-	preg_match_all('~(?<=\s)content\s*:([^\n]+)~', $final, $contags);
+	preg_match_all('~(?<=\s)content\h*:\h*(.*?)[\h;]*(?=[}\v])~', $final, $contags);
 	$context['reset_content_counter'] = true;
-	$final = preg_replace_callback('~(?<=\s)content\s*:[^\n]+~', 'wedge_hide_content', $final);
+	$final = preg_replace_callback('~(?<=\s)content\h*:\h*.*?[\h;]*(?=[}\v])~', 'wedge_hide_content', $final);
 
 	foreach ($plugins as $plugin)
 		$plugin->process($final);

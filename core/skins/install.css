@@ -1,6 +1,14 @@
 
+#wedge
+	background-color: rgba(255, 250, 230, .7)
+	border-radius: 0
+
 #header
 	padding-left: 1em
+	border-bottom: 1px solid #bdb5b5
+
+#footer a
+	color: #000
 
 #banner > div
 	display: block

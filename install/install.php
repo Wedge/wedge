@@ -53,7 +53,7 @@ $incontext['steps'] = array(
 	3 => array(4, $txt['install_step_forum'], 'ForumSettings', 40),
 	4 => array(5, $txt['install_step_databasechange'], 'DatabasePopulation', 15),
 	5 => array(6, $txt['install_step_admin'], 'AdminAccount', 20),
-	6 => array(7, $txt['install_step_delete'], 'DeleteInstall', 0),
+	6 => array(7, $txt['install_step_done'], 'DoneInstall', 0),
 );
 
 // Default title...
@@ -68,7 +68,7 @@ foreach ($incontext['steps'] as $num => $step)
 {
 	// We need to declare we're in the installer so that updateSettings doesn't get called.
 	// But we need to leave it callable in the final step of the installer for when the admin is created.
-	$incontext['enable_update_settings'] = $step[2] == 'DeleteInstall';
+	$incontext['enable_update_settings'] = $step[2] == 'DoneInstall';
 
 	if ($num >= $incontext['current_step'])
 	{
@@ -139,38 +139,6 @@ function initialize_inputs()
 	if (!function_exists('get_magic_quotes_gpc') || @get_magic_quotes_gpc() == 0)
 		foreach ($_POST as $k => $v)
 			$_POST[$k] = addslashes($v);
-
-	// This is really quite simple; if ?delete is in the URL, delete the installer...
-	// @todo: do this when first visiting the forum instead. It should be done anyway...
-	if (isset($_GET['delete']))
-	{
-		if (isset($_SESSION['installer_temp_ftp']))
-		{
-			$ftp = new ftp_connection($_SESSION['installer_temp_ftp']['server'], $_SESSION['installer_temp_ftp']['port'], $_SESSION['installer_temp_ftp']['username'], $_SESSION['installer_temp_ftp']['password']);
-			$ftp->chdir($_SESSION['installer_temp_ftp']['path'] . '/install');
-
-			$ftp->unlink('install.php');
-			$ftp->unlink('install.sql');
-
-			// We won't bother with CSS/JS caches here, it poses no security threat. Let the user do the job themselves...
-			$ftp->close();
-
-			unset($_SESSION['installer_temp_ftp']);
-		}
-		else
-		{
-			@unlink(ROOT_DIR . '/install/install.php');
-			@unlink(ROOT_DIR . '/install/install.sql');
-
-			// Empty CSS and JavaScript caches, in case user chose to enable compression during the install process.
-			clean_cache('css');
-			clean_cache('js');
-		}
-
-		// Now just output a blank GIF... (Same code as in the verification code generator.)
-		header('Content-Type: image/gif');
-		exit("\x47\x49\x46\x38\x39\x61\x01\x00\x01\x00\x80\x00\x00\x00\x00\x00\x00\x00\x00\x21\xF9\x04\x01\x00\x00\x00\x00\x2C\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02\x02\x44\x01\x00\x3B");
-	}
 
 	// Make sure a timezone is set, it isn't always. But let's use the system derived one as much as possible.
 	date_default_timezone_set(@date_default_timezone_get());
@@ -1259,12 +1227,12 @@ function AdminAccount()
 }
 
 // Final step, clean up and a complete message!
-function DeleteInstall()
+function DoneInstall()
 {
 	global $txt, $incontext, $settings;
 
 	$incontext['page_title'] = $txt['congratulations'];
-	$incontext['block'] = 'delete_install';
+	$incontext['block'] = 'done_install';
 	$incontext['continue'] = 0;
 
 	load_database();
@@ -1365,9 +1333,12 @@ function DeleteInstall()
 		logAction('install', array('version' => WEDGE_VERSION), 'admin');
 	}
 
+	// Empty CSS and JavaScript caches, in case user chose to enable compression during the install process.
+	clean_cache('css');
+	clean_cache('js');
+
 	// Some final context for the template.
 	$incontext['dir_still_writable'] = is_writable(ROOT_DIR) && IS_WINDOWS;
-	$incontext['probably_delete_install'] = isset($_SESSION['installer_temp_ftp']) || is_writable(ROOT_DIR) || is_writable(__FILE__);
 
 	return false;
 }
@@ -2280,8 +2251,8 @@ function template_admin_account()
 		</div>';
 }
 
-// Tell them it's done, and to delete.
-function template_delete_install()
+// Tell them it's done.
+function template_done_install()
 {
 	global $incontext, $installurl, $txt;
 
@@ -2294,21 +2265,6 @@ function template_delete_install()
 	if ($incontext['dir_still_writable'])
 		echo '
 		<em>', $txt['still_writable'], '</em><br>
-		<br>';
-
-	// Don't show the box if it's like 99% sure it won't work :P.
-	if ($incontext['probably_delete_install'])
-		echo '
-		<div style="margin: 1ex; font-weight: bold">
-			<label><input type="checkbox" onclick="doTheDelete();"> ', $txt['delete_installer'], !isset($_SESSION['installer_temp_ftp']) ? ' ' . $txt['delete_installer_maybe'] : '', '</label>
-		</div>
-		<script><!-- // --><![CDATA[
-			function doTheDelete()
-			{
-				$.get("', $installurl, '?delete=1&ts_" + $.now());
-				this.disabled = true;
-			}
-		// ]]></script>
 		<br>';
 
 	echo '
