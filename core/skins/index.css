@@ -1678,7 +1678,8 @@ dl#feed
 	color: #777
 	@if local
 		padding: 10px
-		border-left: 4px solid #ffa500
+		border-radius: 4px
+		gradient: #f6f6f0, #fff
 	@endif
 	a
 		border-bottom: 0 !important
