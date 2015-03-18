@@ -116,7 +116,7 @@ function reqWin(from, desired_width, string, is_modal, callback, e)
 {
 	var
 		help_page = from && from.href ? from.href : from,
-		title = from && from.href ? $(from).text() : 0,
+		title = $(from).hasClass('fadein') ? $(from).parent().attr('title') : (from && from.href ? $(from).text() : 0),
 		// window.inner*: doesn't work in oldIE, includes scrollbar size in desktop (bad), works for mobile zooms (good).
 		// $(window).*(): works well in desktop, but sometimes returns the <body> size in Chrome (bad), returns the unzoomed viewport in mobile (bad).
 		viewport_width = Math.min(window.innerWidth || $(window).width(), $(window).width()),
