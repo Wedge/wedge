@@ -152,9 +152,9 @@ function template_header_after()
 
 function template_search_box()
 {
-	global $context;
+	global $context, $settings;
 
-	if (empty($context['allow_search']))
+	if (we::$is_guest && empty($settings['allow_guestAccess']) || empty($context['allow_search']))
 		return;
 
 	echo '
@@ -323,7 +323,10 @@ function template_side_maintenance()
 // Show the Quick Access (JumpTo) select box.
 function template_sidebar_quick_access()
 {
-	global $txt;
+	global $txt, $settings;
+
+	if (we::$is_guest && empty($settings['allow_guestAccess']))
+		return;
 
 	add_js('
 	new JumpTo("jump_to");');
