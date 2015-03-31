@@ -241,11 +241,11 @@ function apply_plugin_mods($source, $dest, $no_caching = false)
 		// If an error was found, I'm afraid we'll have to rollback.
 		if ($error)
 		{
-			$enabled_plugins = array_diff($enabled_plugins, $plugin);
+			$enabled_plugins = array_diff($enabled_plugins, array($plugin));
 			if (isset($context['enabled_plugins']))
 				$context['enabled_plugins'] = $enabled_plugins;
 			log_error('Couldn\'t apply data from "' . $plugin . '" plugin to file "' . $source . '". Disabling plugin automatically.');
-			updateSettingsFile(array('my_plugins' => $my_plugins = implode(',', $enabled_plugins)));
+			updateSettingsFile(array('my_plugins' => implode(',', $enabled_plugins)));
 			clean_cache('php', '', CACHE_DIR . '/app');
 			clean_cache('php', '', CACHE_DIR . '/html');
 			exit('Plugin error. Please reload this page.');
