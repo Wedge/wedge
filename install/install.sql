@@ -634,7 +634,7 @@ CREATE TABLE {$db_prefix}categories (
 	id_cat tinyint(4) unsigned NOT NULL auto_increment,
 	cat_order tinyint(4) NOT NULL default 0,
 	name varchar(255) NOT NULL default '',
-	can_collapse bit(1) NOT NULL default 1,
+	can_collapse tinyint(1) NOT NULL default 1,
 	PRIMARY KEY (cat_order, id_cat),
 	UNIQUE id_cat (id_cat)
 ) ENGINE=MyISAM;
@@ -682,7 +682,7 @@ CREATE TABLE {$db_prefix}contacts (
 	id_owner mediumint(8) unsigned NOT NULL default 0,
 	id_list mediumint(8) unsigned NOT NULL default 0,
 	list_type enum('friends', 'family', 'known', 'work', 'follow', 'restrict', 'custom') NOT NULL default 'friends',
-	is_synchronous bit(1) NOT NULL default 0,
+	is_synchronous tinyint(1) NOT NULL default 0,
 	hidden tinyint(1) unsigned NOT NULL default 0,
 	added int(10) unsigned NOT NULL default 0,
 	position tinyint(4) NOT NULL default 0,
@@ -774,7 +774,7 @@ CREATE TABLE {$db_prefix}language_changes (
 	lang_key varchar(64) NOT NULL,
 	lang_string text NOT NULL,
 	serial tinyint(3) unsigned NOT NULL,
-	is_plugin bit(1) NOT NULL default 0,
+	is_plugin tinyint(1) NOT NULL default 0,
 	PRIMARY KEY (id_lang, is_plugin, lang_file, lang_key),
 	KEY lang_file (id_lang, is_plugin, lang_file)
 ) ENGINE=MyISAM;
@@ -1197,7 +1197,7 @@ CREATE TABLE {$db_prefix}mail_queue (
 	headers text NOT NULL,
 	send_html tinyint(3) NOT NULL default 0,
 	priority tinyint(3) NOT NULL default 1,
-	private bit(1) NOT NULL default 0,
+	private tinyint(1) NOT NULL default 0,
 	PRIMARY KEY (id_mail),
 	KEY time_sent (time_sent),
 	KEY mail_priority (priority, id_mail)
@@ -1211,7 +1211,7 @@ CREATE TABLE {$db_prefix}mail_queue (
 CREATE TABLE {$db_prefix}media_albums (
 	id_album int(10) unsigned NOT NULL auto_increment,
 	album_of mediumint(8) unsigned NOT NULL default 0,
-	featured bit(1) NOT NULL default 0,
+	featured tinyint(1) NOT NULL default 0,
 	name varchar(255) NOT NULL default '',
 	description text NOT NULL,
 	master int(10) unsigned NOT NULL default 0,
@@ -1269,10 +1269,10 @@ CREATE TABLE {$db_prefix}media_fields (
 	name varchar(100) NOT NULL default '',
 	type varchar(20) NOT NULL default 'text',
 	options text NOT NULL,
-	required bit(1) NOT NULL default 0,
-	searchable bit(1) NOT NULL default 0,
+	required tinyint(1) NOT NULL default 0,
+	searchable tinyint(1) NOT NULL default 0,
 	description text NOT NULL,
-	bbc bit(1) NOT NULL default 0,
+	bbc tinyint(1) NOT NULL default 0,
 	albums text NOT NULL,
 	PRIMARY KEY (id_field)
 ) ENGINE=MyISAM;
@@ -1618,8 +1618,8 @@ CREATE TABLE {$db_prefix}members (
 	unread_notifications smallint(5) unsigned NOT NULL default 0,
 	notify_email_period tinyint(3) NOT NULL default 7,
 	notify_email_last_sent int(10) NOT NULL default 0,
-	hey_not bit(1) NOT NULL default 0,
-	hey_pm bit(1) NOT NULL default 0,
+	hey_not tinyint(1) NOT NULL default 0,
+	hey_pm tinyint(1) NOT NULL default 0,
 	data text NOT NULL,
 	PRIMARY KEY (id_member),
 	KEY member_name (member_name),

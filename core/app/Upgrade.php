@@ -104,3 +104,45 @@ function upgrade_step_4()
 		{db_prefix}sessions
 	ADD KEY last_update (last_update)');
 }
+
+// 1.0-alpha-1, March 2015. Changing bit fields to tinyint. bit is a synonym for tinyint and can cause problems in some ways.
+function upgrade_step_5()
+{
+	$request = wesql::query('
+	ALTER TABLE
+		{db_prefix}categories
+	modify can_collapse tinyint(1)');
+
+	$request = wesql::query('
+	ALTER TABLE
+		{db_prefix}contacts
+	modify is_synchronous tinyint(1)');
+
+	$request = wesql::query('
+	ALTER TABLE
+		{db_prefix}language_changes
+	modify is_plugin tinyint(1)');
+
+	$request = wesql::query('
+	ALTER TABLE
+		{db_prefix}mail_queue
+	modify private tinyint(1)');
+
+	$request = wesql::query('
+	ALTER TABLE
+		{db_prefix}media_albums
+	modify featured tinyint(1)');
+
+	$request = wesql::query('
+	ALTER TABLE
+		{db_prefix}media_fields
+	modify required tinyint(1),
+	modify searchable tinyint(1),
+	modify bbc tinyint(1)');
+
+	$request = wesql::query('
+	ALTER TABLE
+		{db_prefix}members
+	modify hey_not tinyint(1),
+	modify hey_pm tinyint(1)');
+}
