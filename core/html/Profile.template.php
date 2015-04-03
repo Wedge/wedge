@@ -175,17 +175,17 @@ function template_summary()
 	// Only show the email address fully if the one looking at the profile is an admin they can see it anyway.
 	if ($context['member']['show_email'] == 'yes_permission_override')
 		echo '
-				<dt>', $txt['email'], ': </dt>
+				<dt>', $txt['email'], $txt[':'], '</dt>
 				<dd><em><a href="<URL>?action=emailuser;sa=email;uid=', $context['member']['id'], '">', $context['member']['email'], '</a></em></dd>';
 
 	if (!empty($settings['titlesEnable']) && !empty($context['member']['title']))
 		echo '
-				<dt>', $txt['custom_title'], ': </dt>
+				<dt>', $txt['custom_title'], $txt[':'], '</dt>
 				<dd>', $context['member']['title'], '</dd>';
 
 	if (!empty($context['member']['blurb']))
 		echo '
-				<dt>', $txt['personal_text'], ': </dt>
+				<dt>', $txt['personal_text'], $txt[':'], '</dt>
 				<dd>', $context['member']['blurb'], '</dd>';
 
 	if (!empty($context['member']['action']) && profile_can_see('action'))
@@ -298,12 +298,12 @@ function template_summary()
 	{
 		if (!empty($context['member']['ip']))
 			echo '
-				<dt>', $txt['ip'], ': </dt>
+				<dt>', $txt['ip'], $txt[':'], ' </dt>
 				<dd><a href="<URL>?action=profile;u=', $context['member']['id'], ';area=tracking;sa=ip;searchip=', $context['member']['ip'], '">', $context['member']['ip'], '</a></dd>';
 
 		if (empty($settings['disableHostnameLookup']) && !empty($context['member']['ip']))
 			echo '
-				<dt>', $txt['hostname'], ': </dt>
+				<dt>', $txt['hostname'], $txt[':'], ' </dt>
 				<dd>', $context['member']['hostname'], '</dd>';
 	}
 
@@ -1107,7 +1107,7 @@ function template_trackReported()
 				<strong>', $report['board_link'], ' / <a href="', $report['topic_href'], '">', $report['subject'], '</a></strong> ', $txt['mc_reportedp_by'], ' <strong>', $report['author']['link'], '</strong> (', number_context('mc_reportedp_count', $report['num_reports']), ')
 			</div>
 			<div class="clear smalltext">
-				« ', $txt['mc_reportedp_last_reported'], ': ', $report['last_updated'], ' »<br>';
+				« ', $txt['mc_reportedp_last_reported'], $txt[':'], ' ', $report['last_updated'], ' »<br>';
 
 		// Prepare the comments...
 		$comments = array();
@@ -1115,7 +1115,7 @@ function template_trackReported()
 			$comments[$comment['member']['id']] = $comment['member']['link'];
 
 		echo '
-				« ', $txt['mc_reportedp_reported_by'], ': ', implode(', ', $comments), ' »
+				« ', $txt['mc_reportedp_reported_by'], $txt[':'], ' ', implode(', ', $comments), ' »
 			</div>
 			<hr>
 			', $report['body'], '
@@ -1264,7 +1264,7 @@ function template_showPermissions()
 							<span class="alert">', $txt['showPermissions_denied'], ':&nbsp;', implode(', ', $permission['groups']['denied']), '</span>';
 				else
 					echo '
-							', $txt['showPermissions_given'], ': &nbsp;', implode(', ', $permission['groups']['allowed']);
+							', $txt['showPermissions_given'], $txt[':'], ' &nbsp;', implode(', ', $permission['groups']['allowed']);
 
 				echo '
 						</td>
@@ -1577,7 +1577,7 @@ function template_edit_options()
 		{
 			echo '
 					<dt>
-						<strong>', $field['name'], ': </strong>
+						<strong>', $field['name'], $txt[':'], '</strong>
 						<dfn>', $field['desc'], '</dfn>
 					</dt>
 					<dd>
@@ -1603,7 +1603,7 @@ function template_edit_options()
 		echo '
 				<dl>
 					<dt>
-						<strong', isset($context['modify_error']['bad_password']) || isset($context['modify_error']['no_password']) ? ' class="error"' : '', '>', $txt['current_password'], ': </strong>
+						<strong', isset($context['modify_error']['bad_password']) || isset($context['modify_error']['no_password']) ? ' class="error"' : '', '>', $txt['current_password'], $txt[':'], '</strong>
 						<dfn>', $txt['required_security_reasons'], '</dfn>
 					</dt>
 					<dd>
@@ -2576,7 +2576,7 @@ function template_deleteAccount()
 		echo '
 				<div class="alert">', $txt['own_profile_confirm'], '</div>
 				<div style="margin: 15px 0 0">
-					<strong', (isset($context['modify_error']['bad_password']) || isset($context['modify_error']['no_password']) ? ' class="error"' : ''), '>', $txt['current_password'], ': </strong>
+					<strong', (isset($context['modify_error']['bad_password']) || isset($context['modify_error']['no_password']) ? ' class="error"' : ''), '>', $txt['current_password'], $txt[':'], '</strong>
 					<input type="password" name="oldpasswrd" size="20">&nbsp;&nbsp;&nbsp;&nbsp;
 					<input type="submit" value="', $txt['yes'], '" class="delete">
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
@@ -2632,7 +2632,7 @@ function template_profile_save()
 		echo '
 					<dl>
 						<dt>
-							<strong', isset($context['modify_error']['bad_password']) || isset($context['modify_error']['no_password']) ? ' class="error"' : '', '>', $txt['current_password'], ': </strong>
+							<strong', isset($context['modify_error']['bad_password']) || isset($context['modify_error']['no_password']) ? ' class="error"' : '', '>', $txt['current_password'], $txt[':'], '</strong>
 							<dfn>', $txt['required_security_reasons'], '</dfn>
 						</dt>
 						<dd>
@@ -2677,7 +2677,7 @@ function template_profile_group_manage()
 	echo '
 					<dt>
 						<a href="<URL>?action=help;in=primary_membergroup" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
-						<strong>', $txt['primary_membergroup'], ': </strong>
+						<strong>', $txt['primary_membergroup'], $txt[':'], '</strong>
 						<dfn>', $txt['primary_membergroup_subtext'], '</dfn>
 					</dt>
 					<dd>
@@ -3006,7 +3006,7 @@ function template_profile_timeoffset_modify()
 						<dfn>', $txt['personal_time_offset'], '</dfn>
 					</dt>
 					<dd>
-						<input name="time_offset" id="time_offset" size="5" maxlength="5" value="', $context['member']['time_offset'], '"> <a href="#" onclick="$(this).val(autoDetectTimeOffset(+new Date(', $context['current_forum_time_js'], '000))); return false;">', $txt['timeoffset_autodetect'], '</a><br>', $txt['current_time'], ': <em>', $context['current_forum_time'], '</em>
+						<input name="time_offset" id="time_offset" size="5" maxlength="5" value="', $context['member']['time_offset'], '"> <a href="#" onclick="$(this).val(autoDetectTimeOffset(+new Date(', $context['current_forum_time_js'], '000))); return false;">', $txt['timeoffset_autodetect'], '</a><br>', $txt['current_time'], $txt[':'], ' <em>', $context['current_forum_time'], '</em>
 					</dd>';
 }
 
