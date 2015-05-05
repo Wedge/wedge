@@ -1923,10 +1923,10 @@ function match_cidr($ip, $cidr_block)
 				return false;
 
 			// OK, so we need to figure out what's going on with these last digits.
-			$cidr_ip = substr($cidr_ip, $whole_digits, 1);
-			$ip = substr($ip, $whole_digits, 1);
+			$cidr_ip = hexdec(substr($cidr_ip, $whole_digits, 1));
+            $ip = hexdec(substr($ip, $whole_digits, 1));
+            $mask = 16 - pow(2, $mask % 4);
 
-			$mask = 16 - (2 ^ ($mask % 4));
 			return ($cidr_ip & $mask) == ($ip & $mask);
 		}
 	}

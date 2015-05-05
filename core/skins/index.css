@@ -243,6 +243,7 @@ ul#noava
 #top_section
 	padding: 8px 30px
 	@if local
+		border-radius: 8px
 		border-bottom: 1px solid $separator_col
 		background: $main_bg
 	@endif
