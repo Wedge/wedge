@@ -121,6 +121,9 @@ img.aext
 		.item_heading
 			border-left: 0
 
+#aeva_form
+	text-align: left
+
 // Thumbnail hover boxes may sometimes be cut off...
 #recent_pics, #random_pics
 	overflow: visible
