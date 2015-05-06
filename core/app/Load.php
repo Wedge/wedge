@@ -1584,7 +1584,7 @@ function loadTheme($skin = '', $initialize = true)
 	$context['macros'] = array();
 	$context['skeleton'] = array();
 	$context['skeleton_ops'] = array();
-	$context['jquery_version'] = we::is('ie[-8],firefox[-3.6]') ? '1.11.1' : '2.1.1';
+	$context['jquery_version'] = we::is('ie[-8],firefox[-3.6]') ? '1.11.3' : '2.1.4';
 	loadSource('Subs-Cache');
 
 	// If output is an Ajax request, or printer-friendly
