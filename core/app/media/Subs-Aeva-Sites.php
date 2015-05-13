@@ -129,7 +129,7 @@ $sites = array(
 		'website' => 'http://www.youtube.com',
 		'type' => 'pop',
 		'plugin' => 'html',
-		'pattern' => 'http://(?:video\.google\.(?:com|com?\.[a-z]{2}|[a-z]{2})/[^"]*?)?(?:(?:www|[a-z]{2})\.)?youtu(?:be\.com/[^"#[]*?(?:[&/?;]|&amp;|%[23]F)(?:video_id=|v(?:/|=|%3D|%2F))|\.be/)([\w-]{11})',
+		'pattern' => 'https?://(?:video\.google\.(?:com|com?\.[a-z]{2}|[a-z]{2})/[^"]*?)?(?:(?:www|[a-z]{2})\.)?youtu(?:be\.com/[^"#[]*?(?:[&/?;]|&amp;|%[23]F)(?:video_id=|v(?:/|=|%3D|%2F))|\.be/)([\w-]{11})',
 		// If you want to force the use of Flash, remove the 'plugin' line above, set ui-height to 25 and replace the 'movie' line with the one below:
 		// 'movie' => 'http://www.youtube-nocookie.com/v/$2?version=3',
 		'movie' => '<div class="ytb"><iframe class="aext" src="http://www.youtube-nocookie.com/embed/$2?theme=light" type="text/html" scrolling="no" marginheight="0" marginwidth="0" frameborder="0"></iframe></div>',
@@ -139,9 +139,9 @@ $sites = array(
 		// http://www.youtube.com/watch?v=M29NUeffJNA - Example of "Embedding Disabled By Request"
 		'fix-html-pattern' => '<object [^>]*><param name="movie" value="http://www\.youtube\.com/v/([\w-]{11})(?:&[^"]*)?">.*?</object>',
 		'fix-html-url' => 'http://www.youtube.com/watch?v=$1',
-		'lookup-url' => 'http://(?:video\.google\.(?:com|com?\.[a-z]{2}|[a-z]{2})/[^"]*?)?(?:(?:www|[a-z]{2})\.)?youtube\.com/[^"#[]*?(?:[&/?;]|&amp;|%[23]F)(?:video_id=|v(?:/|=|%3D|%2F))([\w-]{11})[^]#[]*',
-		'lookup-actual-url' => 'http://gdata.youtube.com/feeds/api/videos/$1?v=2',
-		'lookup-final-url' => 'http://www.youtube.com/watch?v=$1',
+		'lookup-url' => 'https?://(?:video\.google\.(?:com|com?\.[a-z]{2}|[a-z]{2})/[^"]*?)?(?:(?:www|[a-z]{2})\.)?youtube\.com/[^"#[]*?(?:[&/?;]|&amp;|%[23]F)(?:video_id=|v(?:/|=|%3D|%2F))([\w-]{11})[^]#[]*',
+		'lookup-actual-url' => 'https://www.googleapis.com/youtube/v3/videos?id=$1',
+		'lookup-final-url' => 'https://www.youtube.com/watch?v=$1',
 		'lookup-title-skip' => true,
 		'lookup-pattern' => array(
 			'id' => '<id>.*?:([\w-]+)</id>',
