@@ -1230,6 +1230,15 @@ dl.stats
 		clear, float, text-align: right
 		width: 45%
 
+
+dl.statsbar
+	dt
+		text-overflow: ellipsis;
+		overflow: hidden;
+		max-width: 50%;
+		height: 1.2em;
+		white-space: nowrap;
+
 .post_like
 	float: left
 	height: 20px
