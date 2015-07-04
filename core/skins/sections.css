@@ -1231,13 +1231,9 @@ dl.stats
 		width: 45%
 
 
-dl.statsbar
-	dt
-		text-overflow: ellipsis;
-		overflow: hidden;
+dl.statsbar extends dl.stats
+	dt extends .shorten
 		max-width: 50%;
-		height: 1.2em;
-		white-space: nowrap;
 
 .post_like
 	float: left

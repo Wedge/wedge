@@ -151,7 +151,7 @@ function template_main()
 				<img src="', ASSETS, '/stats_posters.gif">
 				', $txt['top_posters'], '
 			</h6>
-			<dl class="stats statsbar">';
+			<dl class="statsbar">';
 
 	foreach ($context['top_posters'] as $poster)
 	{
@@ -179,7 +179,7 @@ function template_main()
 				<img src="', ASSETS, '/stats_board.gif">
 				', $txt['top_boards'], '
 			</h6>
-			<dl class="stats statsbar">';
+			<dl class="statsbar">';
 
 	foreach ($context['top_boards'] as $board)
 	{
@@ -207,7 +207,7 @@ function template_main()
 				<img src="', ASSETS, '/stats_replies.gif">
 				', $txt['top_topics_replies'], '
 			</h6>
-			<dl class="stats statsbar">';
+			<dl class="statsbar">';
 
 	foreach ($context['top_topics_replies'] as $topic)
 	{
@@ -234,7 +234,7 @@ function template_main()
 				<img src="', ASSETS, '/stats_views.gif">
 				', $txt['top_topics_views'], '
 			</h6>
-			<dl class="stats statsbar">';
+			<dl class="statsbar">';
 
 	foreach ($context['top_topics_views'] as $topic)
 	{
@@ -260,7 +260,7 @@ function template_main()
 				<img src="', ASSETS, '/stats_replies.gif">
 				', $txt['top_starters'], '
 			</h6>
-			<dl class="stats statsbar">';
+			<dl class="statsbar">';
 
 	foreach ($context['top_starters'] as $poster)
 	{
@@ -288,7 +288,7 @@ function template_main()
 				<img src="', ASSETS, '/stats_views.gif">
 				', $txt['most_time_online'], '
 			</h6>
-			<dl class="stats statsbar">';
+			<dl class="statsbar">';
 
 	foreach ($context['top_time_online'] as $poster)
 	{
@@ -316,7 +316,7 @@ function template_main()
 				<span class="like_button" style="vertical-align: 2px; padding: 0 11px 0"></span>
 				', $txt['top_liked'], '
 			</h6>
-			<dl class="stats statsbar">';
+			<dl class="statsbar">';
 
 	foreach ($context['top_likes'] as $like)
 	{
@@ -344,7 +344,7 @@ function template_main()
 				<span class="like_button" style="vertical-align: 2px; padding: 0 11px 0"></span>
 				', $txt['top_liked_posters'], '
 			</h6>
-			<dl class="stats statsbar">';
+			<dl class="statsbar">';
 
 	foreach ($context['top_author_likes'] as $like)
 	{

@@ -527,6 +527,13 @@ em
 .sort_down extends .sort_up
 	background-position: 0 -12px
 
+// Shortens text and adds ... to the end
+.shorten
+	text-overflow: ellipsis;
+	overflow: hidden;
+	height: 1.2em;
+	white-space: nowrap;
+
 /* Custom Select box styles
 --------------------------------------------------------- */
 
