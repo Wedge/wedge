@@ -159,6 +159,9 @@ function ob_sessrewrite($buffer)
 	// Very fast on-the-fly replacement of <URL>...
 	$buffer = str_replace('<URL>', SCRIPT, $buffer);
 
+	// Same for <PROT>...
+	$buffer = str_replace('<PROT>', (empty($_SERVER['https']) ? 'http://' : 'https://'), $buffer);
+
 	// And a quick fix for FTP clients uploading CRLF versions.
 	if (strpos($buffer, "\r\n") !== false)
 		$buffer = str_replace("\r\n", "\n", $buffer);
