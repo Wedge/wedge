@@ -144,6 +144,7 @@ function ob_sessrewrite($buffer)
 {
 	global $settings, $context, $session_var, $board_info, $is_output_buffer;
 	global $txt, $time_start, $db_count, $cached_urls, $use_cache, $members_groups;
+	global $_SERVER;
 
 	// Just quit if SCRIPT is set to nothing, or the SID is not defined. (SSI?)
 	if (SCRIPT == '' || !defined('SID'))
@@ -160,7 +161,7 @@ function ob_sessrewrite($buffer)
 	$buffer = str_replace('<URL>', SCRIPT, $buffer);
 
 	// Same for <PROT>...
-	$buffer = str_replace('<PROT>', (empty($_SERVER['https']) ? 'http://' : 'https://'), $buffer);
+	$buffer = str_replace('<PROT>', (empty($_SERVER['HTTPS']) ? 'http://' : 'https://'), $buffer);
 
 	// And a quick fix for FTP clients uploading CRLF versions.
 	if (strpos($buffer, "\r\n") !== false)
