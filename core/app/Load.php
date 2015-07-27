@@ -1780,7 +1780,7 @@ function loadPluginLanguage($plugin_name, $template_name, $lang = '', $fatal = t
 
 	$key = $plugin_name . ':' . $template_name;
 	$file_key = valid_filename($key);
-	
+
 	// Try to get from cache. If successful, clean up and return.
 	if (file_exists($filename = CACHE_DIR . '/lang/' . $lang . '_' . $file_key . '.php'))
 	{
