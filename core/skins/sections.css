@@ -1233,7 +1233,7 @@ dl.stats
 
 dl.statsbar extends dl.stats
 	dt extends .shorten
-		max-width: 50%;
+		max-width: 50%
 
 .post_like
 	float: left

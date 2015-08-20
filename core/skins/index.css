@@ -529,10 +529,10 @@ em
 
 // Shortens text and adds ... to the end
 .shorten
-	text-overflow: ellipsis;
-	overflow: hidden;
-	height: 1.2em;
-	white-space: nowrap;
+	text-overflow: ellipsis
+	overflow: hidden
+	height: 1.2em
+	white-space: nowrap
 
 /* Custom Select box styles
 --------------------------------------------------------- */
