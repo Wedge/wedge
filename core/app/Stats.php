@@ -282,7 +282,7 @@ function Stats()
 				'id' => $row_topic_reply['id_board'],
 				'name' => $row_topic_reply['name'],
 				'href' => '<URL>?board=' . $row_topic_reply['id_board'] . '.0',
-				'link' => '<a href="<URL>?board=' . $row_topic_reply['id_board'] . '.0">' . shorten_subject($row_topic_reply['name'], 35) . '</a>'
+				'link' => '<a href="<URL>?board=' . $row_topic_reply['id_board'] . '.0">' . $row_topic_reply['name'] . '</a>'
 			),
 			'subject' => $row_topic_reply['subject'],
 			'num_replies' => $row_topic_reply['num_replies'],
@@ -352,7 +352,7 @@ function Stats()
 			'subject' => $row_topic_views['subject'],
 			'num_views' => $row_topic_views['num_views'],
 			'href' => '<URL>?topic=' . $row_topic_views['id_topic'] . '.0',
-			'link' => '<a href="<URL>?topic=' . $row_topic_views['id_topic'] . '.0">' . shorten_subject($row_topic_views['subject'], 35) . '</a>'
+			'link' => '<a href="<URL>?topic=' . $row_topic_views['id_topic'] . '.0">' .$row_topic_views['subject'] . '</a>'
 		);
 
 		$max_num_views = max($max_num_views, $row_topic_views['num_views']);
@@ -500,7 +500,7 @@ function Stats()
 			'member_name' => $row_likes['real_name'],
 			'id_member' => $row_likes['id_member'],
 			'href' => '<URL>?topic=' . $row_likes['id_topic'] . '.msg' . $row_likes['id_msg'] . '#msg' . $row_likes['id_msg'],
-			'link' => '<a href="<URL>?topic=' . $row_likes['id_topic'] . '.msg' . $row_likes['id_msg'] . '#msg' . $row_likes['id_msg'] . '">' . shorten_subject($row_likes['subject'], 35) . '</a> (<a href="<URL>?action=profile;u=' . $row_likes['id_member'] . '">' . $row_likes['real_name'] . '</a>)'
+			'link' => '<a href="<URL>?topic=' . $row_likes['id_topic'] . '.msg' . $row_likes['id_msg'] . '#msg' . $row_likes['id_msg'] . '">' . $row_likes['subject'] . '</a> (<a href="<URL>?action=profile;u=' . $row_likes['id_member'] . '">' . $row_likes['real_name'] . '</a>)'
 		);
 
 		$max_num_likes = max($max_num_likes, $row_likes['likes']);

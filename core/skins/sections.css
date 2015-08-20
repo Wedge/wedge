@@ -1230,6 +1230,11 @@ dl.stats
 		clear, float, text-align: right
 		width: 45%
 
+
+dl.statsbar extends dl.stats
+	dt extends .shorten
+		max-width: 50%;
+
 .post_like
 	float: left
 	height: 20px
