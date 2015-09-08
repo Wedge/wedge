@@ -156,12 +156,8 @@ function ob_sessrewrite($buffer)
 		$old_load_time = microtime(true);
 	}
 
-	// Very fast on-the-fly replacement of <URL>...
-	$buffer = str_replace('<URL>', SCRIPT, $buffer);
-
-
-	// Same for <PROT>...
-	$buffer = str_replace('<PROT>', PROTOCOL, $buffer);
+	// Very fast on-the-fly replacement of <URL> and <PROT>...
+	$buffer = str_replace(array('<URL>', '<PROT>'), array(SCRIPT, PROTOCOL), $buffer);
 
 	// And a quick fix for FTP clients uploading CRLF versions.
 	if (strpos($buffer, "\r\n") !== false)
