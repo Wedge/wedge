@@ -176,7 +176,7 @@ $horizontal_content_padding = 30px
 $vmin			= @is (ie9, vm, vmin)
 
 /* Maximum window width for the browser to trigger the low-res responsive CSS mode. */
-$responsive_max_width = 1000px
+$responsive_max_width = 1150px
 $responsive		= "all and (max-width: $responsive_max_width)"
 
 /* URL for the status icon in board lists */

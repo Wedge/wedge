@@ -265,7 +265,7 @@ class we
 			{
 				loadSource('Subs-Auth');
 				$cookie_url = url_parts(!empty($settings['localCookies']), !empty($settings['globalCookies']));
-				setcookie('guest_skin', '', time() - 3600, $cookie_url[1], $cookie_url[0], 0);
+				setcookie('guest_skin', '', time() - 3600, $cookie_url[1], $cookie_url[0], 0, true);
 			}
 		}
 

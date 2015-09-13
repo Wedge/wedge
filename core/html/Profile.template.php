@@ -718,18 +718,6 @@ function template_editContactList()
 		}
 	}
 
-	if (we::$user['is_owner'] && we::$is_admin)
-	{
-		echo '
-			<div style="border: 1px solid #ccc"><div class="padding windowbg" data-id="new">
-				<div>
-					<div class="privacy_list_custom" style="margin-top: 8px"></div>
-					<strong style="font-size: 120%">', generic_contacts('{new}'), '</strong>
-					&nbsp;<input type="button" class="new" style="font-size: 90%" value="', $txt['new'], '" onclick="">
-				</div>
-			</div>';
-	}
-
 	if ($need_sortable)
 	{
 		add_js_file('sortable.min.js');
