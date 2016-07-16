@@ -29,7 +29,7 @@ $txt['user_refresh_install'] = 'Forum Refreshed';
 $txt['user_refresh_install_desc'] = 'While installing, the installer found that (with the details you provided) one or more of the tables this installer might create already existed.<br>Any missing tables in your installation have been recreated with the default data, but no data was deleted from existing tables.';
 
 $txt['default_topic_subject'] = 'Welcome to Wedge!';
-$txt['default_topic_message'] = 'Welcome to the Wedge forum software!<br><br>We hope you enjoy using your forum.&nbsp; If you have any problems, please feel free to <a href="http://wedge.org/">ask us for assistance</a>.<br><br>Thanks!<br>The Wedge Team.';
+$txt['default_topic_message'] = 'Welcome to the Wedge forum software!<br><br>We hope you enjoy using your forum.&nbsp; If you have any problems, please feel free to [url=http://wedge.org/]ask us for assistance[/url].<br><br>Thanks!<br>The Wedge Team.';
 $txt['default_board_name'] = 'General Discussion';
 $txt['default_board_description'] = 'Feel free to talk about anything and everything in this board.';
 $txt['default_board_url'] = 'general';
