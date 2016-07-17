@@ -428,6 +428,7 @@ hr.sep
 		background: #e799a3
 
 .postarea
+	width: 75%
 	padding: 0 15px
 	@if $can_flex
 		display: flex
