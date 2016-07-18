@@ -50,7 +50,6 @@ body #sidebar .column
 
 .postarea
 	display: block
-	width: auto // mostly for IE6
 	margin-left: 0
 
 @remove .postarea
