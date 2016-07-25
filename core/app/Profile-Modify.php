@@ -2554,13 +2554,14 @@ function profileLoadLanguages()
 	getLanguages();
 
 	// Setup our languages. There's no funny business, we only have one set of language files per language these days.
+	$use_flags = !empty($context['languages']) && count($context['languages']) > 1;
 	foreach ($context['languages'] as $lang)
-		$context['profile_languages'][$lang['filename']] = '&lt;span class="flag_' . $lang['filename'] . '"&gt;&lt;/span&gt; ' . $lang['name'];
+		$context['profile_languages'][$lang['filename']] = ($use_flags ? '&lt;span class="flag_' . $lang['filename'] . '"&gt;&lt;/span&gt; ' : '') . $lang['name'];
 
 	ksort($context['profile_languages']);
 
 	// Return whether we should proceed with this.
-	return count($context['profile_languages']) > 1 ? true : false;
+	return count($context['profile_languages']) > 1;
 }
 
 // Load all the group info for the profile.
