@@ -213,7 +213,7 @@ $.fn.zoomedia = function (options)
 	{
 		double_clicked = false;
 		$fullsize = $zoom_desc.find('.fullsize').attr('href'); // $zoom_desc or $anchor.next('.zoom-overlay')
-		$zoom_desc.find('.fullsize').next().andSelf().remove();
+		$zoom_desc.find('.fullsize').next().addBack().remove();
 		if ($fullsize && img && img.src != $fullsize)
 		{
 			show_ajax($img);
