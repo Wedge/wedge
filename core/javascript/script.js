@@ -659,7 +659,7 @@ $(function ()
  * This is the list of non-critical functions that should be executed once the DOM is fully loaded, including images.
  */
 
-$(window).load(function ()
+$(window).on('load', function ()
 {
 	@if member {
 		$('#upshrink').attr('title', $txt['upshrink_description']);

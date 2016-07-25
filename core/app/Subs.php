@@ -1770,7 +1770,7 @@ function setupThemeContext($forceload = false)
 
 		add_js('
 	var we_avatarMaxSize = [' . (int) $settings['avatar_max_width_external'] . ', ' . (int) $settings['avatar_max_height_external'] . '];
-	$(window).load(we_avatarResize);');
+	$(window).on("load", we_avatarResize);');
 	}
 
 	// This looks weird, but it's because Boards.php references the variable.

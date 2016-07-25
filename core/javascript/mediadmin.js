@@ -13,7 +13,7 @@ function admin_toggle(id)
 	{
 		var $img = $('#img_' + id);
 		if ($img[0])
-			$img.load(function () {
+			$img.on('load', function () {
 				$('#tr_expand_' + id).show().find('td').children().hide().slideDown();
 				$(this).off();
 			}).attr('src', weUrl('action=media;sa=media;in=' + id + ';icon'));
