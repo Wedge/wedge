@@ -69,7 +69,8 @@ function loadConstants()
 		{
 			// Fix $boardurl and $scripturl
 			$scripturl = strtr($scripturl, array($boardurl => $detected_url));
-			$_SERVER['REQUEST_URL'] = strtr($_SERVER['REQUEST_URL'], array($boardurl => $detected_url));
+			if (!empty($_SERVER['REQUEST_URL']))
+				$_SERVER['REQUEST_URL'] = strtr($_SERVER['REQUEST_URL'], array($boardurl => $detected_url));
 			$boardurl = $detected_url;
 		}
 	}
