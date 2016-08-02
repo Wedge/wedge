@@ -732,7 +732,7 @@ function prepareDBSettingContext(&$config_vars)
 
 		if (!empty($config_var['file']))
 		{
-			global $$name;
+			global ${$name};
 			$var['value'] = htmlspecialchars($$name);
 		}
 		elseif (isset($config_var['value']))
