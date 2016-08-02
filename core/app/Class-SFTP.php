@@ -9335,7 +9335,7 @@ class Crypt_RSA
 		}
 
 		foreach ($ciphertext as $c) {
-			$temp = $this->$decrypt($c);
+			$temp = $this->{$decrypt}($c);
 			if ($temp === false) {
 				return false;
 			}
