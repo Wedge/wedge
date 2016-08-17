@@ -701,7 +701,7 @@ input.modify extends .edit_button
 	padding: 0 10px
 
 #qr_options
-	padding: 5px 9px 0
+	padding: 12px 9px 0
 	form textarea
 		height: 100px
 		margin: .25em 0 0
