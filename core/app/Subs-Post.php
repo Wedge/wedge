@@ -1173,7 +1173,7 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 		'{db_prefix}messages',
 		array(
 			'id_board' => 'int', 'id_topic' => 'int', 'id_member' => 'int', 'subject' => 'string-255', 'id_parent' => 'int',
-			'body' => isset($settings['max_messageLength']) &&  $settings['max_messageLength'] == 0 || $settings['max_messageLength'] > 65534 ? ($settings['max_messageLength'] == 0 ? 'string' : 'string-' . $settings['max_messageLength']) : 'string-65534', // determine string type based on $settings['max_messageLength']
+			'body' => isset($settings['max_messageLength']) && ($settings['max_messageLength'] == 0 || $settings['max_messageLength'] > 65534) ? ($settings['max_messageLength'] == 0 ? 'string' : 'string-' . $settings['max_messageLength']) : 'string-65534', // determine string type based on $settings['max_messageLength']
 			'poster_name' => 'string-255', 'poster_email' => 'string-255', 'poster_time' => 'int', 'poster_ip' => 'int',
 			'smileys_enabled' => 'int', 'modified_name' => 'string', 'icon' => 'string-16', 'approved' => 'int', 'data' => 'string',
 		),
