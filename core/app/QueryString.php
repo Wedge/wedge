@@ -65,7 +65,7 @@ function loadConstants()
 			$do_fix = true;
 
 		// Okay, #4 - perhaps it's an IP address? We're gonna want to use that one, then. (Assuming it's the IP or something...)
-		if (!empty($do_fix) || preg_match('~^http[s]?://(?:[\d.:]+|\[[\d:]+\](?::\d+)?)(?:$|/)~', $detected_url) == 1)
+		if (!empty($do_fix) || preg_match('~^https?://(?:[\d.:]+|\[[\d:]+\](?::\d+)?)(?:$|/)~', $detected_url) == 1)
 		{
 			// Fix $boardurl and $scripturl
 			$scripturl = strtr($scripturl, array($boardurl => $detected_url));

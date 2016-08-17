@@ -71,11 +71,11 @@ function loadSettings()
 	/*
 		I am the Gatekeeper. Are you the Keymaster?
 
-		Here's the monstrous $action array - $action => array($file, [[$function], $plugin_id]).
+		Here's the monstrous $action_list array - $action_list => array($file, [[$function], $plugin_id]).
 		If the function name is the same as the loadSource file name, e.g. Admin.php, to run Admin(), you can declare it as a string.
 		Only add $plugin_id if it's for a plugin, otherwise just have (one or) two items in the list.
 
-		Add custom actions to to the $action_list array this way:
+		Add custom actions to $action_list array this way:
 
 		'my-action' => array('MyFile.php', 'MyFunction'),
 
@@ -1584,7 +1584,7 @@ function loadTheme($skin = '', $initialize = true)
 	$context['macros'] = array();
 	$context['skeleton'] = array();
 	$context['skeleton_ops'] = array();
-	$context['jquery_version'] = we::is('ie[-8],firefox[-3.6]') ? '1.11.3' : '2.1.4';
+	$context['jquery_version'] = we::is('ie[-8],firefox[-3.6]') ? '1.12.4' : '3.1.0';
 	loadSource('Subs-Cache');
 
 	// If output is an Ajax request, or printer-friendly

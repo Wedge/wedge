@@ -1117,7 +1117,7 @@ function next_time($regularity, $unit, $offset)
 	{
 		$off = date('i', $offset);
 
-		// If it's now just pretend it ain't,
+		// If it's now, just pretend it ain't.
 		if ($off == $curMin)
 			$next_time = time() + $regularity;
 		else
@@ -1132,16 +1132,14 @@ function next_time($regularity, $unit, $offset)
 			$next_time = time() + 60 * ($off - $curMin);
 		}
 	}
-	// Otherwise, work out what the offset would be with todays date.
+	// Otherwise, work out what the offset would be with today's date.
 	else
 	{
 		$next_time = mktime(date('H', $offset), date('i', $offset), 0, date('m'), date('d'), date('Y'));
 
 		// Make the time offset in the past!
 		if ($next_time > time())
-		{
 			$next_time -= 86400;
-		}
 
 		// Default we'll jump in hours.
 		$applyOffset = 3600;
@@ -1156,9 +1154,7 @@ function next_time($regularity, $unit, $offset)
 
 		// Just add on the offset.
 		while ($next_time <= time())
-		{
 			$next_time += $applyOffset;
-		}
 	}
 
 	return $next_time;
