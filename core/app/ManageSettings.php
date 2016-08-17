@@ -528,11 +528,11 @@ function ModifyHomepage($return_config = false)
 	add_js('
 	function updateHomepage()
 	{
-		$("#homepage_board").closest("dd").prev().andSelf().toggle($("#homepage_type").val() == "board");
-		$("#homepage_action").closest("dd").prev().andSelf().toggle($("#homepage_type").val() == "action");
-		$("#homepage_custom").closest("dd").prev().andSelf().toggle($("#homepage_type").val() == "custom");
+		$("#homepage_board").closest("dd").prev().addBack().toggle($("#homepage_type").val() == "board");
+		$("#homepage_action").closest("dd").prev().addBack().toggle($("#homepage_type").val() == "action");
+		$("#homepage_custom").closest("dd").prev().addBack().toggle($("#homepage_type").val() == "custom");
 		$("#homepage_custom").closest("dl").prev().toggle($("#homepage_type").val() != "boardlist");
-		$("[id^=homepage_blurb_]").closest("dd").prev().andSelf().toggle($("#homepage_type").val() == "custom");
+		$("[id^=homepage_blurb_]").closest("dd").prev().addBack().toggle($("#homepage_type").val() == "custom");
 	}
 	$("#homepage_type").change(updateHomepage);
 	updateHomepage();');

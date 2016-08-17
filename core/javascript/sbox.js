@@ -72,7 +72,7 @@
 						$dd.append($optgroup = $('<div class="optgroup"><div class="label">' + $og.attr('label') + '</div>'));
 						$og.find('option').each(function () { $dd.append(createOption($(this)).addClass('sub')); });
 						if ($og.is(':disabled'))
-							$optgroup.nextAll().andSelf()
+							$optgroup.nextAll().addBack()
 								.addClass('disabled').attr('aria-disabled', true);
 					}
 					else

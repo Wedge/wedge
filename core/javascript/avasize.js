@@ -14,7 +14,7 @@ function we_avatarResize()
 		tempAvatars[i] = new Image;
 		tempAvatars[i].avatar = this;
 
-		$(tempAvatars[i++]).load(function ()
+		$(tempAvatars[i++]).on('load', function ()
 		{
 			var ava = this.avatar;
 			ava.width = this.width;

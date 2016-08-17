@@ -152,7 +152,7 @@ class weget
 			// Secure connections require a little more work
 			if ($this->secure)
 			{
-				curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, true); // Verify the certificates with these two
+				curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 2); // Verify the certificates with these two
 				curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, true);
 				curl_setopt($curl, CURLOPT_FORBID_REUSE, true); // Name says it all
 			}
@@ -176,12 +176,12 @@ class weget
 		}
 		// Stuff specific for FTP uses.
 		elseif ($this->protocol == 'ftp')
-		{
-			curl_setopt($curl, CURLOPT_USERPWD, "anonymous:" . $webmaster_email);
-		}
+			curl_setopt($curl, CURLOPT_USERPWD, 'anonymous:' . $webmaster_email);
 
 		$data = curl_exec($curl);
 		curl_close($curl);
+		if ($data === false)
+			$data = file_get_contents($this->url);
 
 		return $data;
 	}
@@ -303,7 +303,7 @@ class weget
 	private function unchunk($data)
 	{
 		$fp = 0;
-		$outData = "";
+		$outData = '';
 		while ($fp < strlen($data))
 		{
 			$rawnum = substr($data, $fp, strpos(substr($data, $fp), "\r\n") + 2);

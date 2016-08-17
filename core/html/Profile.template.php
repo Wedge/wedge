@@ -2853,7 +2853,7 @@ function template_profile_avatar_select()
 
 	function previewExternalAvatar(src)
 	{
-		$("#external_avatar").load(function () {
+		$("#external_avatar").on("load", function () {
 			var	maxHeight = ', !empty($settings['avatar_max_height_external']) ? $settings['avatar_max_height_external'] : 0, ',
 				maxWidth = ', !empty($settings['avatar_max_width_external']) ? $settings['avatar_max_width_external'] : 0, ';
 			if (maxWidth != 0 && $(this).width() > maxWidth)

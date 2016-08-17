@@ -1963,7 +1963,7 @@ function template_welcome_message()
 	// For the latest version stuff.
 	echo '
 		<script><!-- // --><![CDATA[
-			$(window).load(function () {
+			$(window).on("load", function () {
 				if (!("weVersion" in window))
 					return;
 

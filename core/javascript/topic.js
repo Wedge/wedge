@@ -38,7 +38,7 @@ $(document).on(is_ie8down ? 'load' : 'ready', function ()
 	page_showing();
 });
 
-$(window).load(function ()
+$(window).on('load', function ()
 {
 	// Only execute this on Display pages.
 	if (!$('#forumposts').length)

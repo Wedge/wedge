@@ -213,11 +213,11 @@ $.fn.zoomedia = function (options)
 	{
 		double_clicked = false;
 		$fullsize = $zoom_desc.find('.fullsize').attr('href'); // $zoom_desc or $anchor.next('.zoom-overlay')
-		$zoom_desc.find('.fullsize').next().andSelf().remove();
+		$zoom_desc.find('.fullsize').next().addBack().remove();
 		if ($fullsize && img && img.src != $fullsize)
 		{
 			show_ajax($img);
-			$img.off('load.zoom').load(function ()
+			$img.off('load.zoom').on('load', function ()
 			{
 				var
 					wt = img.naturalWidth,
@@ -244,7 +244,7 @@ $.fn.zoomedia = function (options)
 					rezoom();
 				// Stupid IE forces us to emulate natural properties through a hidden img...
 				else
-					$('<img>').load(function () {
+					$('<img>').on('load', function () {
 						wt = this.width;
 						ht = this.height;
 						$(this).remove();

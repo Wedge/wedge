@@ -640,7 +640,7 @@ $(function ()
 	// Catch the wheel button (or middle-click), and if it's not attempting to open a link, toggle the sidebar.
 	$(document).on(is_firefox ? 'mouseup' : 'mousedown', function (e)
 	{
-		if (e.which == 2 && !$(e.target).closest('a').andSelf().filter('a').length && !$('#sideshow').is(':hidden') && !$.hasData(e.target))
+		if (e.which == 2 && !$(e.target).closest('a').addBack().filter('a').length && !$('#sideshow').is(':hidden') && !$.hasData(e.target))
 		{
 			sidebar_shown ? hide_sidebar() : show_sidebar();
 			e.preventDefault();
@@ -659,7 +659,7 @@ $(function ()
  * This is the list of non-critical functions that should be executed once the DOM is fully loaded, including images.
  */
 
-$(window).load(function ()
+$(window).on('load', function ()
 {
 	@if member {
 		$('#upshrink').attr('title', $txt['upshrink_description']);
@@ -838,7 +838,7 @@ $(window).load(function ()
 								{
 									var was_new = that.hasClass('n_new');
 
-									that.removeClass('n_new').next('.n_prev').andSelf().hide(300, function () { $(this).remove(); });
+									that.removeClass('n_new').next('.n_prev').addBack().hide(300, function () { $(this).remove(); });
 									if (was_new)
 									{
 										we_notifs--;
