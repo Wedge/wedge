@@ -665,9 +665,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = true, $from = n
 
 		$insertRows = array();
 		foreach ($all_to as $to)
-		{
 			$insertRows[] = array($id_pm, $to, in_array($to, $recipients['bcc']) ? 1 : 0, isset($deletes[$to]) ? 1 : 0, 1);
-		}
 
 		wesql::insert('',
 			'{db_prefix}pm_recipients',

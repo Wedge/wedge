@@ -137,8 +137,6 @@ for guests, because most of the time it won't be an option.
 	@media $responsive
 		body #pm
 			header.cat mixes .hide
-			.post_wrapper
-				display: block
 			.pixelicons
 				width: 25px
 				margin-top: -3px
