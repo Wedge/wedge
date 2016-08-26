@@ -792,7 +792,7 @@ $(window).on('load', function ()
 			show_notification = function (url, toggle, $button, $popup, url_preview, toggle_callback, preview_callback, is_generic_notification)
 			{
 				show_ajax($button, [0, 30]);
-				$popup.load(url, function (data)
+				$popup.load(url, function ()
 				{
 					hide_ajax();
 
