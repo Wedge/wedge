@@ -145,6 +145,10 @@ function ob_sessrewrite($buffer)
 	global $settings, $context, $session_var, $board_info, $is_output_buffer;
 	global $txt, $time_start, $db_count, $cached_urls, $use_cache, $members_groups;
 
+	// SID may be undefined because of other issues. Just in case...
+	if (!defined('SID') && ($sid = session_id()) != '')
+		define('SID', $sid);
+
 	// Just quit if SCRIPT is set to nothing, or the SID is not defined. (SSI?)
 	if (SCRIPT == '' || !defined('SID'))
 		return $buffer;

@@ -11,7 +11,7 @@
 
 var can_sticky;
 
-$(document).on(is_ie8down ? 'load' : 'ready', function ()
+$(function ()
 {
 	// Test for position: sticky support. WebKit in iOS 6+ supports it prefixed; other supporting browsers don't use a prefix.
 	var test_sticky = document.createElement('div');

@@ -1969,7 +1969,7 @@ h6
 			visibility: hidden
 			transform: perspective(500px) translateY(-10px) rotateX(-45deg)
 			transform-origin: 50% 0
-			width: 420px
+			width: 500px
 			min-width: 200px
 			transition: all .3s ease
 			cursor: auto
