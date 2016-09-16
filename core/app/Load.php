@@ -994,7 +994,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 	// Load last post data. Can't restrict to $loaded_ids, in case a previous user was loaded through a non-profile set...
 	if (!empty($loaded_ids) && $set == 'profile')
 	{
-		$row = wesql::query_all('
+		$last = wesql::get_assoc('
 			SELECT m.id_member, m.poster_time, m.id_msg, m.id_topic, m.subject
 			FROM {db_prefix}messages AS m
 			LEFT JOIN {db_prefix}topics AS t ON t.id_topic = m.id_topic
@@ -1002,12 +1002,10 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 				AND {query_see_topic}
 			ORDER BY m.id_msg DESC
 			LIMIT 1',
-			array(
-				'loaded_ids' => count($new_loaded_ids) == 1 ? $new_loaded_ids[0] : $new_loaded_ids,
-			)
+			array('loaded_ids' => count($new_loaded_ids) == 1 ? $new_loaded_ids[0] : $new_loaded_ids)
 		);
 
-		foreach ($row as $last)
+		if (!empty($last))
 			$user_profile[$last['id_member']]['last_post'] = array(
 				'on_time' => on_timeformat($last['poster_time']),
 				'link' => '<a href="' . SCRIPT . '?topic=' . $last['id_topic'] . '.msg' . $last['id_msg'] . '#new">' . $last['subject'] . '</a>',
@@ -2319,7 +2317,7 @@ function sessionRead($session_id)
 	list ($sess_data) = wesql::fetch_row($result);
 	wesql::free_result($result);
 
-	return isset($sess_data) ? $sess_data : false;
+	return empty($sess_data) ? '' : $sess_data;
 }
 
 /**

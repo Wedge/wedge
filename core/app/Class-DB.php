@@ -79,27 +79,27 @@ class wesql
 		self::register_replacement('db_prefix', $db_prefix);
 	}
 
-	public static function quote($db_string, $db_values, $connection = null)
+	public static function quote($query, $db_values, $connection = null)
 	{
 		global $db_callback;
 
 		// Only bother if there's something to replace.
-		if (strpos($db_string, '{') !== false)
+		if (strpos($query, '{') !== false)
 		{
 			// This is needed by the callback function.
 			$db_callback = array($db_values, $connection == null ? self::$_db_con : $connection);
 
 			// Do the quoting and escaping
-			$db_string = preg_replace_callback('~{([a-z_]+)(?::([a-zA-Z0-9_-]+))?}~', 'wesql::replace_value', $db_string);
+			$query = preg_replace_callback('~{([a-z_]+)(?::([a-zA-Z0-9_-]+))?}~', 'wesql::replace_value', $query);
 
 			// Clear this global variable.
 			$db_callback = array();
 		}
 
-		return $db_string;
+		return $query;
 	}
 
-	public static function query($db_string, $db_values = array(), $connection = null)
+	public static function query($query, $db_values = array(), $connection = null)
 	{
 		global $db_cache, $db_count, $db_show_debug, $time_start;
 		global $db_unbuffered, $db_callback, $settings;
@@ -124,27 +124,27 @@ class wesql
 		// One more query....
 		$db_count = !isset($db_count) ? 1 : $db_count + 1;
 
-		if (empty($settings['disableQueryCheck']) && strpos($db_string, '\'') !== false && empty($db_values['security_override']))
+		if (empty($settings['disableQueryCheck']) && strpos($query, '\'') !== false && empty($db_values['security_override']))
 			wesql::error_backtrace('Hacking attempt...', 'Illegal character (\') used in query...', true);
 
 		// Use "ORDER BY null" to prevent Mysql doing filesorts for Group By clauses without an Order By
-		if (strpos($db_string, 'GROUP BY') !== false && strpos($db_string, 'ORDER BY') === false && strpos($db_string, 'INSERT') === false && strpos($db_string, 'REPLACE') === false)
+		if (strpos($query, 'GROUP BY') !== false && strpos($query, 'ORDER BY') === false && strpos($query, 'INSERT') === false && strpos($query, 'REPLACE') === false)
 		{
 			// Add before LIMIT
-			if ($pos = strpos($db_string, 'LIMIT '))
-				$db_string = substr($db_string, 0, $pos) . "\t\t\tORDER BY null\n" . substr($db_string, $pos, strlen($db_string));
+			if ($pos = strpos($query, 'LIMIT '))
+				$query = substr($query, 0, $pos) . "\t\t\tORDER BY null\n" . substr($query, $pos, strlen($query));
 			else
 				// Append it.
-				$db_string .= "\n\t\t\tORDER BY null";
+				$query .= "\n\t\t\tORDER BY null";
 		}
 
-		if (empty($db_values['security_override']) && (!empty($db_values) || strpos($db_string, '{db_prefix}') !== false))
+		if (empty($db_values['security_override']) && (!empty($db_values) || strpos($query, '{db_prefix}') !== false))
 		{
 			// Pass some values to the global space for use in the callback function.
 			$db_callback = array($db_values, $connection);
 
 			// Inject the values passed to this function.
-			$db_string = preg_replace_callback('~{([a-z_]+)(?::([a-zA-Z0-9_-]+))?}~', 'wesql::replace_value', $db_string);
+			$query = preg_replace_callback('~{([a-z_]+)(?::([a-zA-Z0-9_-]+))?}~', 'wesql::replace_value', $query);
 
 			// This shouldn't be residing in global space any longer.
 			$db_callback = array();
@@ -169,7 +169,7 @@ class wesql
 
 			$st = microtime(true);
 			// Don't overload it.
-			$db_cache[$db_count]['q'] = $db_count < 50 ? $db_string : '...';
+			$db_cache[$db_count]['q'] = $db_count < 50 ? $query : '...';
 			$db_cache[$db_count]['f'] = $file;
 			$db_cache[$db_count]['l'] = $line;
 			$db_cache[$db_count]['s'] = $st - $time_start;
@@ -183,15 +183,15 @@ class wesql
 			$pos = -1;
 			while (true)
 			{
-				$pos = strpos($db_string, '\'', $pos + 1);
+				$pos = strpos($query, '\'', $pos + 1);
 				if ($pos === false)
 					break;
-				$clean .= substr($db_string, $old_pos, $pos - $old_pos);
+				$clean .= substr($query, $old_pos, $pos - $old_pos);
 
 				while (true)
 				{
-					$pos1 = strpos($db_string, '\'', $pos + 1);
-					$pos2 = strpos($db_string, '\\', $pos + 1);
+					$pos1 = strpos($query, '\'', $pos + 1);
+					$pos2 = strpos($query, '\\', $pos + 1);
 					if ($pos1 === false)
 						break;
 					elseif ($pos2 == false || $pos2 > $pos1)
@@ -206,7 +206,7 @@ class wesql
 
 				$old_pos = $pos + 1;
 			}
-			$clean .= substr($db_string, $old_pos);
+			$clean .= substr($query, $old_pos);
 			$clean = trim(strtolower(preg_replace($allowed_comments_from, $allowed_comments_to, $clean)));
 
 			// Comments? We don't use comments in our queries, we leave 'em outside!
@@ -219,13 +219,13 @@ class wesql
 				$fail = true;
 
 			if (!empty($fail) && function_exists('log_error'))
-				self::error_backtrace('Hacking attempt...', 'Hacking attempt...' . "\n" . $db_string, E_USER_ERROR);
+				self::error_backtrace('Hacking attempt...', 'Hacking attempt...' . "\n" . $query, E_USER_ERROR);
 		}
 
-		$ret = @mysqli_query($connection, $db_string, empty($db_unbuffered) ? MYSQLI_STORE_RESULT : MYSQLI_USE_RESULT);
+		$ret = @mysqli_query($connection, $query, empty($db_unbuffered) ? MYSQLI_STORE_RESULT : MYSQLI_USE_RESULT);
 
 		if ($ret === false && empty($db_values['db_error_skip']))
-			$ret = self::serious_error($db_string, $connection);
+			$ret = self::serious_error($query, $connection);
 
 		// Debugging.
 		if (!empty($db_show_debug))
@@ -266,7 +266,7 @@ class wesql
 		return mysqli_error($connection === null ? self::$_db_con : $connection);
 	}
 
-	public static function serious_error($db_string, $connection = null)
+	public static function serious_error($query, $connection = null)
 	{
 		global $txt, $context, $webmaster_email, $settings, $db_last_error, $db_persist;
 		global $db_server, $db_user, $db_passwd, $db_name, $db_show_debug, $ssi_db_user, $ssi_db_passwd;
@@ -299,7 +299,7 @@ class wesql
 
 		// Log the error.
 		if ($query_errno != 1213 && $query_errno != 1205 && function_exists('log_error'))
-			log_error((empty($txt) ? 'Database error' : $txt['database_error']) . ': ' . $query_error . (!empty($settings['enableErrorQueryLogging']) ? "\n\n$db_string" : ''), 'database', $file, $line);
+			log_error((empty($txt) ? 'Database error' : $txt['database_error']) . ': ' . $query_error . (!empty($settings['enableErrorQueryLogging']) ? "\n\n$query" : ''), 'database', $file, $line);
 
 		// Database error auto fixing ;)
 		if (function_exists('cache_get_data') && (!isset($settings['autoFixDatabase']) || $settings['autoFixDatabase'] == '1'))
@@ -316,7 +316,7 @@ class wesql
 				// We know there's a problem... but what? Try to auto detect.
 				if ($query_errno == 1030 && strpos($query_error, ' 127 ') !== false)
 				{
-					preg_match_all('~(?:[\n\r]|^)[^\']+?(?:FROM|JOIN|UPDATE|TABLE) ((?:[^\n\r(]+?(?:, )?)*)~s', $db_string, $matches);
+					preg_match_all('~(?:[\n\r]|^)[^\']+?(?:FROM|JOIN|UPDATE|TABLE) ((?:[^\n\r(]+?(?:, )?)*)~s', $query, $matches);
 
 					$fix_tables = array();
 					foreach ($matches[1] as $tables)
@@ -364,7 +364,7 @@ class wesql
 				$settings['cache_enable'] = $old_cache;
 
 				// Try the query again...?
-				$ret = self::query($db_string, false, false);
+				$ret = self::query($query, false, false);
 				if ($ret !== false)
 					return $ret;
 			}
@@ -393,7 +393,7 @@ class wesql
 					// Try a deadlock more than once more.
 					for ($n = 0; $n < 4; $n++)
 					{
-						$ret = self::query($db_string, false, false);
+						$ret = self::query($query, false, false);
 
 						$new_errno = mysqli_errno(self::$_db_con);
 						if ($ret !== false || in_array($new_errno, array(1205, 1213)))
@@ -412,7 +412,7 @@ class wesql
 
 		// Nothing's defined yet... just die with it.
 		if (empty($context) || empty($txt))
-			exit($db_string . '<br><br>' . $query_error);
+			exit($query . '<br><br>' . $query_error);
 
 		// Show an error message, if possible.
 		$context['error_title'] = $txt['database_error'];
@@ -422,7 +422,7 @@ class wesql
 			$context['error_message'] = $txt['try_again'];
 
 		if (allowedTo('admin_forum') && !empty($db_show_debug))
-			$context['error_message'] .= '<br><br>' . nl2br($db_string, false);
+			$context['error_message'] .= '<br><br>' . nl2br($query, false);
 
 		// It's already been logged... don't log it again.
 		fatal_error($context['error_message'], false);
@@ -564,7 +564,7 @@ class wesql
 				return (string) (int) $replacement;
 
 			case 'string':
-				return sprintf('\'%1$s\'', mysqli_real_escape_string($connection, $replacement));
+				return sprintf('\'%1$s\'', handle_utf8mb4(mysqli_real_escape_string($connection, $replacement)));
 
 			case 'array_int':
 				if (is_array($replacement))
@@ -592,7 +592,7 @@ class wesql
 						self::error_backtrace('Database error, given array of string values is empty. (' . $matches[2] . ')', '', E_USER_ERROR);
 
 					foreach ($replacement as $key => $value)
-						$replacement[$key] = sprintf('\'%1$s\'', mysqli_real_escape_string($connection, $value));
+						$replacement[$key] = sprintf('\'%1$s\'', handle_utf8mb4(mysqli_real_escape_string($connection, $value)));
 
 					return implode(', ', $replacement);
 				}
@@ -616,6 +616,11 @@ class wesql
 			default:
 				self::error_backtrace('Undefined type used in the database query. (' . $matches[1] . ':' . $matches[2] . ')');
 		}
+	}
+
+	public static handle_utf8mb4($str)
+	{
+		return $str;
 	}
 
 	public static function error_backtrace($error_message, $log_message = '', $error_type = false, $file = null, $line = null)
@@ -710,33 +715,44 @@ class wesql
 		return mysqli_free_result($result);
 	}
 
-	public static function query_get($db_string, $db_values = array(), $connection = null, $job = 'assoc')
+	/*
+		A simplified query system.
+		- get() returns a variable if a single column was specified. (Use get_assoc() if this is unwanted.)
+		- Returns an array of variables if multiple columns were specified.
+		Use get_all() or get_rows() to get an array of arrays. Avoid on large tables, it would hurt memory.
+		On other methods (get/get_assoc/get_row), LIMIT 1 is implied, but you should add it for better performance.
+
+		$single_var = wesql::get('SELECT var1 FROM table');
+		$array_of_assoc_rows = wesql::get_all('SELECT var1 FROM table');
+		list ($var1, $var2) = wesql::get('SELECT var1, var2 FROM table LIMIT 1');
+	*/
+	public static function get($query, $db_values = array(), $connection = null, $job = '')
 	{
-		$request = self::query($db_string, $db_values, $connection);
-		$results = call_user_func('self::fetch_' . $job, $request);
+		$request = self::query($query, $db_values, $connection);
+		$results = call_user_func('self::fetch_' . ($job ?: 'assoc'), $request);
 		wesql::free_result($request);
 
-		return $results;
+		return $job || !is_array($results) || count($results) > 1 ? $results : reset($results);
 	}
 
-	public static function query_assoc($db_string, $db_values = array(), $connection = null)
+	public static function get_assoc($query, $db_values = array(), $connection = null)
 	{
-		return self::query_get($db_string, $db_values, $connection, 'assoc');
+		return self::get($query, $db_values, $connection, 'assoc');
 	}
 
-	public static function query_row($db_string, $db_values = array(), $connection = null)
+	public static function get_row($query, $db_values = array(), $connection = null)
 	{
-		return self::query_get($db_string, $db_values, $connection, 'row');
+		return self::get($query, $db_values, $connection, 'row');
 	}
 
-	public static function query_all($db_string, $db_values = array(), $connection = null)
+	public static function get_all($query, $db_values = array(), $connection = null)
 	{
-		return self::query_get($db_string, $db_values, $connection, 'all');
+		return self::get($query, $db_values, $connection, 'all');
 	}
 
-	public static function query_rows($db_string, $db_values = array(), $connection = null)
+	public static function get_rows($query, $db_values = array(), $connection = null)
 	{
-		return self::query_get($db_string, $db_values, $connection, 'rows');
+		return self::get($query, $db_values, $connection, 'rows');
 	}
 
 	public static function data_seek($result, $row_num)

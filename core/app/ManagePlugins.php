@@ -1594,25 +1594,24 @@ function editPluginRepo()
 		$repo_id = (int) $_GET['editrepo'];
 		if ($repo_id > 0)
 		{
-			$query = wesql::query('
+			$row = wesql::get_assoc('
 				SELECT id_server, name, url, username, password, status
 				FROM {db_prefix}plugin_servers
-				WHERE id_server = {int:repo}',
+				WHERE id_server = {int:repo}
+				LIMIT 1',
 				array(
 					'repo' => $repo_id,
 				)
 			);
-			while ($row = wesql::fetch_assoc($query))
+			if (!empty($row))
 				$context['repository'] = array(
 					'name' => $row['name'],
 					'url' => $row['url'],
 					'username' => $row['username'],
 					'password' => $row['password'],
 					'status' => $row['status'],
+					'id_server' => $repo_id,
 				);
-			wesql::free_result($query);
-			if (!empty($context['repository']))
-				$context['repository']['id_server'] = $repo_id;
 			else
 				fatal_lang_error('plugins_edit_invalid_error', false);
 		}
