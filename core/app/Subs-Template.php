@@ -160,6 +160,12 @@ function ob_sessrewrite($buffer)
 		$old_load_time = microtime(true);
 	}
 
+	if ($skip_it = strpos($buffer, '<ob:ignore>'))
+	{
+		$skip_buffer = substr($buffer, $skip_it, strpos($buffer, '</ob:ignore>') - $skip_it);
+		$buffer = str_replace($skip_buffer, '<ob:ignored>', $buffer);
+	}
+
 	// Very fast on-the-fly replacement of <URL> and <PROT>...
 	$buffer = str_replace(array('<URL>', '<PROT>'), array(SCRIPT, PROTOCOL), $buffer);
 
@@ -670,6 +676,9 @@ function ob_sessrewrite($buffer)
 	// Takes bandwidth, but only does it for validator bots. They started the war.
 	if (isset(we::$ua) && strpos(strtolower(we::$ua), 'validator') !== false)
 		$buffer = preg_replace('~<img\s((?:[^a>]|a(?!lt\b))+)>~', '<img alt $1>', $buffer);
+
+	if ($skip_it)
+		$buffer = str_replace('<ob:ignored>', $skip_buffer, $buffer);
 
 	// Return the changed buffer, and make a final optimization.
 	return preg_replace("~\s</script>\s*<script>|\s<script>\s*</script>~", '', $buffer);
