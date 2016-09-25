@@ -21,6 +21,7 @@ if (version_compare(PHP_VERSION, '5.4') < 0 && function_exists('set_magic_quotes
 	@set_magic_quotes_runtime(0);
 
 error_reporting(E_ALL | E_STRICT);
+@ini_set('display_errors', '1');
 @ini_set('memory_limit', '128M');
 $time_start = microtime(true);
 
