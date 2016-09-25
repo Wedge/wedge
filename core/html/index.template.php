@@ -251,11 +251,13 @@ function template_side_user_before()
 {
 	global $txt, $context, $settings;
 
+	echo '
+	<section>';
+
 	if (we::$is_guest && empty($settings['enable_quick_login']))
 		return;
 
 	echo '
-	<section>
 		<we:title id="greeting">
 			', sprintf($txt['hello_member_ndt'], we::$user['name']), '
 		</we:title>
@@ -529,7 +531,7 @@ function template_linktree($position = 'top', $force_show = false)
 	<div id="linktree_bt">';
 	else
 		echo '
-	<div id="linktree" itemtype="//schema.org/WebPage" itemscope>';
+	<div id="linktree" itemtype="http://schema.org/WebPage" itemscope>';
 
 	// If linktree is empty, just return - also allow an override.
 	if (!empty($context['linktree']) && ($linksize = count($context['linktree'])) !== 1 && (empty($context['dont_default_linktree']) || $force_show))
