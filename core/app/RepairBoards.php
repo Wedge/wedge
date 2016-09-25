@@ -176,6 +176,19 @@ function loadForumTests()
 
 	// This great array contains all of our error checks, fixes, etc etc etc.
 	$errorTests = array(
+		// In case you moved your forum and have pretty URLs enabled, board URLs will need updating.
+		'fix_board_urls' => array(
+			'check_query' => '
+				SELECT COUNT(*)
+				FROM {db_prefix}boards
+				WHERE CHAR_LENGTH(url) != urllen',
+			'check_type' => 'count',
+			'fix_it_query' => '
+				UPDATE {db_prefix}boards
+				SET urllen = CHAR_LENGTH(url)
+				WHERE CHAR_LENGTH(url) != urllen',
+			'message' => 'fix_board_urls',
+		),
 		// Make a last-ditch-effort check to get rid of topics with zeros..
 		'zero_topics' => array(
 			'check_query' => '

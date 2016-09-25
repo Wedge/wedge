@@ -328,7 +328,7 @@ function OptimizeTables()
 	$context['optimized_tables'] = array();
 	foreach ($tables as $table)
 	{
-		// Optimize the table! We use backticks here because it might be a custom table.
+		// Optimize the table!
 		$data_freed = wedb::optimize_table($table['table_name']);
 
 		if ($data_freed > 0)
