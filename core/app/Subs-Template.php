@@ -162,8 +162,8 @@ function ob_sessrewrite($buffer)
 
 	if ($skip_it = strpos($buffer, '<ob:ignore>'))
 	{
-		$skip_buffer = substr($buffer, $skip_it, strpos($buffer, '</ob:ignore>') - $skip_it);
-		$buffer = str_replace($skip_buffer, '<ob:ignored>', $buffer);
+		$skip_buffer = substr($buffer, $skip_it + 11, strpos($buffer, '</ob:ignore>') - $skip_it - 11);
+		$buffer = str_replace(array($skip_buffer, '<ob:ignore></ob:ignore>'), array('', '<ob:ignored>'), $buffer);
 	}
 
 	// Very fast on-the-fly replacement of <URL> and <PROT>...
