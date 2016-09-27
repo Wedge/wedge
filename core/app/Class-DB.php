@@ -564,7 +564,7 @@ class wesql
 				return (string) (int) $replacement;
 
 			case 'string':
-				return sprintf('\'%1$s\'', handle_utf8mb4(mysqli_real_escape_string($connection, $replacement)));
+				return sprintf('\'%1$s\'', self::handle_utf8mb4(mysqli_real_escape_string($connection, $replacement)));
 
 			case 'array_int':
 				if (is_array($replacement))
@@ -618,7 +618,7 @@ class wesql
 		}
 	}
 
-	public static handle_utf8mb4($str)
+	public static function handle_utf8mb4($str)
 	{
 		return $str;
 	}

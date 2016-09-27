@@ -427,16 +427,31 @@ hr.sep
 		background: #e799a3
 
 .postarea
-	width: 0
-	padding: 0 15px
 	@if $can_flex
 		display: flex
 		flex-direction: column
-		flex: 1 0 1em
 	@else
 		display: table-cell
-		position: relative // Needed for quick-edit in IE 6-8.
 	@endif
+
+	@if firefox  // firefox needs special treatment
+		@if $can_flex
+			flex: 1 0 49em
+		@else
+			width: 78%
+		@endif
+		min-width: 49em
+		vertical-align: top
+	@else
+		width: 0
+		@if $can_flex
+			flex: 1 0 1em
+		@else
+			position: relative // Needed for quick-edit in IE 6-8.
+		@endif
+	@endif
+
+	padding: 0 15px
 	/* Soft-merged posts shouldn't have a background. */
 	.msg
 		background: none
