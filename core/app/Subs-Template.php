@@ -145,6 +145,10 @@ function ob_sessrewrite($buffer)
 	global $settings, $context, $session_var, $board_info, $is_output_buffer;
 	global $txt, $time_start, $db_count, $cached_urls, $use_cache, $members_groups;
 
+	// SID may be undefined because of other issues. Just in case...
+	if (!defined('SID') && ($sid = session_id()) != '')
+		define('SID', $sid);
+
 	// Just quit if SCRIPT is set to nothing, or the SID is not defined. (SSI?)
 	if (SCRIPT == '' || !defined('SID'))
 		return $buffer;
@@ -154,6 +158,12 @@ function ob_sessrewrite($buffer)
 	{
 		$old_db_count = $db_count;
 		$old_load_time = microtime(true);
+	}
+
+	if ($skip_it = strpos($buffer, '<ob:ignore>'))
+	{
+		$skip_buffer = substr($buffer, $skip_it, strpos($buffer, '</ob:ignore>') - $skip_it);
+		$buffer = str_replace($skip_buffer, '<ob:ignored>', $buffer);
 	}
 
 	// Very fast on-the-fly replacement of <URL> and <PROT>...
@@ -667,6 +677,9 @@ function ob_sessrewrite($buffer)
 	if (isset(we::$ua) && strpos(strtolower(we::$ua), 'validator') !== false)
 		$buffer = preg_replace('~<img\s((?:[^a>]|a(?!lt\b))+)>~', '<img alt $1>', $buffer);
 
+	if ($skip_it)
+		$buffer = str_replace('<ob:ignored>', $skip_buffer, $buffer);
+
 	// Return the changed buffer, and make a final optimization.
 	return preg_replace("~\s</script>\s*<script>|\s<script>\s*</script>~", '', $buffer);
 }
@@ -1042,8 +1055,8 @@ function db_debug_junk()
 	{
 		$temp .= '<a href="' . SCRIPT . '?action=viewquery" target="_blank" class="new_win">' . sprintf($txt['debug_queries_used' . ($warnings == 0 ? '' : '_and_warnings')], $db_count, $warnings) . '</a> - <a href="' . SCRIPT . '?action=viewquery;sa=hide">' . $txt['debug_' . (empty($_SESSION['view_queries']) ? 'show' : 'hide') . '_queries'] . '</a>';
 		// Add a quick link to an HTML5 validator, mostly for debug purposes. Because out of the box, Wedge is as valid as you can realistically get.
-		// If you want to use validator.nu instead, replace the w3.org link with: "http://validator.nu/?doc=', we::$user['url'], '"
-		$temp .= ' - <a href="http://validator.w3.org/check?uri=referer" target="_blank" class="new_win">' . $txt['html5_validation'] . '</a>';
+		// If you want to use validator.nu instead, replace the w3.org link with: "//validator.nu/?doc=', we::$user['url'], '"
+		$temp .= ' - <a href="//validator.w3.org/check?uri=referer" target="_blank" class="new_win">' . $txt['html5_validation'] . '</a>';
 	}
 	else
 		$temp .= sprintf($txt['debug_queries_used'], $db_count);

@@ -78,11 +78,11 @@ function getBoardIndex($boardIndexOptions)
 	// Run through the categories and boards (or only boards)....
 	while ($row_board = wesql::fetch_assoc($result_boards))
 	{
-		// If our Last Message in this particular board isn't visible to us, we should recalculate it.
+		// If our last message in this particular board isn't visible to us, we should recalculate it.
 		// This has a small cost, but it's better than hurting people by saying they can't read something.
 		if (empty($row_board['topic_exists']) && $row_board['num_topics'] > 0)
 		{
-			$visible_board = wesql::query_get('
+			$visible_board = wesql::get('
 				SELECT
 					IFNULL(m.poster_time, 0) AS poster_time, IFNULL(mem.member_name, m.poster_name) AS poster_name,
 					m.subject, m.id_topic, IFNULL(mem.real_name, m.poster_name) AS real_name,

@@ -1343,27 +1343,26 @@ function populateDuplicateMembers(&$members)
 	wesql::free_result($request);
 
 	// Now we have all the duplicate members, stick them with their respective member in the list.
-	if (!empty($duplicate_members))
-		foreach ($members as $key => $member)
+	if (empty($duplicate_members))
+		return;
+
+	foreach ($members as $key => $member)
+	{
+		if (isset($duplicate_members[$member['member_ip']]))
+			$members[$key]['duplicate_members'] = $duplicate_members[$member['member_ip']];
+		if ($member['member_ip'] != $member['member_ip2'] && isset($duplicate_members[$member['member_ip2']]))
+			$members[$key]['duplicate_members'] = array_merge($member['duplicate_members'], $duplicate_members[$member['member_ip2']]);
+
+		// Check we don't have lots of the same member.
+		$member_track = array($member['id_member']);
+		foreach ($members[$key]['duplicate_members'] as $duplicate_id_member => $duplicate_member)
 		{
-			if (isset($duplicate_members[$member['member_ip']]))
-				$members[$key]['duplicate_members'] = $duplicate_members[$member['member_ip']];
-			if ($member['member_ip'] != $member['member_ip2'] && isset($duplicate_members[$member['member_ip2']]))
-				$members[$key]['duplicate_members'] = array_merge($member['duplicate_members'], $duplicate_members[$member['member_ip2']]);
-
-			// Check we don't have lots of the same member.
-			$member_track = array($member['id_member']);
-			foreach ($members[$key]['duplicate_members'] as $duplicate_id_member => $duplicate_member)
-			{
-				if (in_array($duplicate_member['id'], $member_track))
-				{
-					unset($members[$key]['duplicate_members'][$duplicate_id_member]);
-					continue;
-				}
-
+			if (in_array($duplicate_member['id'], $member_track))
+				unset($members[$key]['duplicate_members'][$duplicate_id_member]);
+			else
 				$member_track[] = $duplicate_member['id'];
-			}
 		}
+	}
 }
 
 // Generate a random validation code.
@@ -1371,14 +1370,5 @@ function generateValidationCode()
 {
 	global $settings;
 
-	$request = wesql::query('
-		SELECT RAND()',
-		array(
-		)
-	);
-
-	list ($dbRand) = wesql::fetch_row($request);
-	wesql::free_result($request);
-
-	return substr(preg_replace('/\W/', '', sha1(microtime() . mt_rand() . $dbRand . $settings['rand_seed'])), 0, 10);
+	return substr(preg_replace('/\W/', '', sha1(microtime() . mt_rand() . wesql::get('SELECT RAND()') . $settings['rand_seed'])), 0, 10);
 }

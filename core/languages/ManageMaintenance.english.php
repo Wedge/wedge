@@ -1,6 +1,7 @@
 <?php
 // Version: 2.0; ManageMaintenance
 
+$txt['fix_board_urls'] = 'Found boards with incorrect Pretty URL length.';
 $txt['repair_zero_ids'] = 'Found topics and/or messages with topic or message IDs of 0.';
 $txt['repair_missing_topics'] = 'Message #%1$d is in non-existent topic #%2$d.';
 $txt['repair_missing_messages'] = 'Topic #%1$d contains no (actual) messages.';

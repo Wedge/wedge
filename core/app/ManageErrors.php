@@ -211,8 +211,8 @@ function ViewErrorLog()
 		foreach ($context['errors'] as $id => $dummy)
 		{
 			$memID = $context['errors'][$id]['member']['id'];
-			$context['errors'][$id]['member']['username'] = $members[$memID]['member_name'];
-			$context['errors'][$id]['member']['name'] = $members[$memID]['real_name'];
+			$context['errors'][$id]['member']['username'] = isset($members[$memID]['member_name']) ? $members[$memID]['member_name'] : '(?)';
+			$context['errors'][$id]['member']['name'] = isset($members[$memID]['real_name']) ? $members[$memID]['real_name'] : '(?)';
 			$context['errors'][$id]['member']['href'] = empty($memID) ? '' : '<URL>?action=profile;u=' . $memID;
 			$context['errors'][$id]['member']['link'] = empty($memID) ? $txt['guest_title'] : '<a href="<URL>?action=profile;u=' . $memID . '">' . $context['errors'][$id]['member']['name'] . '</a>';
 		}
