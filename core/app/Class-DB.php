@@ -564,7 +564,7 @@ class wesql
 				return (string) (int) $replacement;
 
 			case 'string':
-				return sprintf('\'%1$s\'', self::escape_string_replacement($connection, $replacement));
+				return sprintf('\'%1$s\'', self::escape_string_replacement($replacement, $connection));
 
 			case 'array_int':
 				if (is_array($replacement))
@@ -592,7 +592,7 @@ class wesql
 						self::error_backtrace('Database error, given array of string values is empty. (' . $matches[2] . ')', '', E_USER_ERROR);
 
 					foreach ($replacement as $key => $value)
-						$replacement[$key] = sprintf('\'%1$s\'', self::escape_string_replacement($connection, $value));
+						$replacement[$key] = sprintf('\'%1$s\'', self::escape_string_replacement($value, $connection));
 
 					return implode(', ', $replacement);
 				}
@@ -765,9 +765,9 @@ class wesql
 		return mysqli_num_rows($result);
 	}
 
-	public static function escape_string_replacement($str)
+	public static function escape_string_replacement($str, $connection = null)
 	{
-		return mysqli_real_escape_string($str);
+		return mysqli_real_escape_string($connection === null ? self::$_db_con : $connection, $str);
 	}
 
 	public static function escape_string($string)
