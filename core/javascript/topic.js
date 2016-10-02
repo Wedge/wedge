@@ -198,7 +198,7 @@ $(window).on('load', function ()
 				history.replaceState(null, '', next_link);
 
 			// Move all posts at the same (DOM) level as their predecessors, and fade them in.
-			$new_page.children().hide().fadeIn(800).first().unwrap();
+			$new_page.children().not('script').hide().fadeIn(800).first().unwrap();
 
 			// Prepare all new posts for follow_me and relative dates.
 			page_showing();
