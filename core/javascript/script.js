@@ -554,7 +554,7 @@ $(function ()
 	}
 	else
 		// Clicking a link will immediately close the menu -- giving a feeling of responsiveness.
-		$('.menu a').click(function () { $(this).parentsUntil('.menu>li').addClass('done'); });
+		$('.menu a').click(function (e) { if (e.which != 2) $(this).parentsUntil('.menu>li').addClass('done'); });
 
 	var
 		orig_sid,
