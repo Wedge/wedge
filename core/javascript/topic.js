@@ -427,7 +427,7 @@ function QuickReply(opt)
 	{
 		var cont = $('#' + opt.sContainerId);
 		$('#' + opt.sImageId).toggleClass('fold', bCollapsed);
-		bCollapsed ? cont.slideDown(150) : cont.slideUp(200);
+		bCollapsed ? cont.slideDown(150) && $('#message').focus() : cont.slideUp(200);
 		bCollapsed = !bCollapsed;
 
 		return false;
