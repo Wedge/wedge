@@ -212,7 +212,7 @@ h1, h2, h3, h4, h5, h6
 	@if member
 		img.avatar
 			float: right
-			margin: 0 .2em 0 1em
+			margin: 0 .2em 0 .8em
 			padding: 0
 			$max-width: 70px
 			height: auto
@@ -223,8 +223,7 @@ h1, h2, h3, h4, h5, h6
 		margin: 0
 	ul
 		margin: 0 0 4px 2px
-		padding: 0
-		list-style: disc
+		padding: 0 0 0 20px
 
 img.opaque
 	box-shadow: #766 1px 1px 3px

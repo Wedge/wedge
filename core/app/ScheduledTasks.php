@@ -127,6 +127,8 @@ function AutoTask()
 
 			// The function must exist or we are wasting our time, plus do some timestamp checking, and database check!
 			$sched_function = strpos($row['task'], '::') !== false ? explode('::', $row['task']) : 'scheduled_' . $row['task'];
+			if (!is_callable($sched_function))
+				$sched_function = $row['task'];
 			if (is_callable($sched_function) && (!isset($_GET['ts']) || $_GET['ts'] == $row['next_time']) && $affected_rows)
 			{
 				ignore_user_abort(true);
@@ -152,6 +154,7 @@ function AutoTask()
 			elseif (!is_callable($sched_function))
 			{
 				// If it doesn't exist now, odds are it won't exist in the future either... just need to check this on its own.
+				log_error('Scheduled task <em>' . $sched_function . '</em> isn\'t callable. Disabling it until further notice.');
 				wesql::query('
 					UPDATE {db_prefix}scheduled_tasks
 					SET disabled = 1
@@ -168,12 +171,9 @@ function AutoTask()
 		$request = wesql::query('
 			SELECT next_time
 			FROM {db_prefix}scheduled_tasks
-			WHERE disabled = {int:not_disabled}
+			WHERE disabled = 0
 			ORDER BY next_time ASC
-			LIMIT 1',
-			array(
-				'not_disabled' => 0,
-			)
+			LIMIT 1'
 		);
 		// No new task scheduled yet?
 		if (wesql::num_rows($request) === 0)

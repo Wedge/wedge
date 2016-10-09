@@ -150,7 +150,11 @@ function ScheduledTasks()
 			// The functions got to exist for us to use it.
 			$sched_function = strpos($row['task'], '::') !== false ? explode('::', $row['task']) : 'scheduled_' . $row['task'];
 			if (!is_callable($sched_function))
-				continue;
+			{
+				$sched_function = $row['task'];
+				if (!is_callable($sched_function))
+					continue;
+			}
 
 			// Try to stop a timeout, this would be bad...
 			@set_time_limit(300);
