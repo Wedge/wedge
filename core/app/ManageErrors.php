@@ -137,6 +137,9 @@ function ViewErrorLog()
 		if (strpos($row['error_type'], ':') !== false && empty($txt['errortype_' . $row['error_type']]))
 			$txt['errortype_' . $row['error_type']] = substr(strrchr($row['error_type'], ':'), 1);
 
+		if ($possibly_robot = (strpos($row['url'], 'b:') === 0))
+			$row['url'] = substr($row['url'], 2);
+
 		$context['errors'][$row['id_error']] = array(
 			'alternate' => $i %2 == 0,
 			'member' => array(
@@ -146,6 +149,7 @@ function ViewErrorLog()
 			),
 			'time' => timeformat($row['log_time']),
 			'timestamp' => $row['log_time'],
+			'bot' => $possibly_robot,
 			'url' => array(
 				'html' => $row['url'] ? htmlspecialchars(($row['url'][0] === '?' ? SCRIPT : '') . $row['url']) : '',
 				'href' => base64_encode(wesql::escape_wildcard_string($row['url']))

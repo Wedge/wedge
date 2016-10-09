@@ -147,6 +147,9 @@ function log_error($error_message, $error_type = 'general', $file = null, $line 
 	if (isset($found_filename))
 		$file = '';
 
+	if (!empty(we::$user['possibly_robot']))
+		$query_string = 'b:' . $query_string;
+
 	// Don't log the same error countless times, as we can get in a cycle of depression...
 	$error_info = array(we::$id, time(), get_ip_identifier(we::$user['ip']), $query_string, $error_message, $error_type, $file, $line);
 	if (empty($last_error) || $last_error != $error_info)

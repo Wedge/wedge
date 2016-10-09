@@ -109,7 +109,7 @@ function template_error_log()
 				</td>
 				<td class="w50">
 					<a href="<URL>?action=admin;area=logs;sa=errorlog', $context['sort_direction'] == 'down' ? ';desc' : '', ';filter=id_member;value=', $error['member']['id'], '" title="', $txt['apply_filter'], ': ', $txt['filter_only_member'], '"><img src="', ASSETS, '/filter.gif" alt="', $txt['apply_filter'], ': ', $txt['filter_only_member'], '"></a>
-					<strong>', $error['member']['link'], '</strong><br>';
+					<strong>', $error['member']['link'], '</strong>', $error['bot'] ? ' (bot?)' : '', '<br>';
 		if (!empty($error['member']['display_ip']))
 			echo '
 					<a href="<URL>?action=admin;area=logs;sa=errorlog', $context['sort_direction'] == 'down' ? ';desc' : '', ';filter=ip;value=', $error['member']['ip'], '" title="', $txt['apply_filter'], ': ', $txt['filter_only_ip'], '"><img src="', ASSETS, '/filter.gif" alt="', $txt['apply_filter'], ': ', $txt['filter_only_ip'], '"></a>
