@@ -1417,13 +1417,13 @@ function spamProtection($error_type)
 		'sendtopc' => $settings['spamWaitTime'] * 4,
 		'sendmail' => $settings['spamWaitTime'] * 5,
 		'report' => $settings['spamWaitTime'] * 4,
-		'search' => !empty($settings['search_floodcontrol_time']) ? $settings['search_floodcontrol_time'] : 1,
+		'search' => isset($settings['search_floodcontrol_time']) ? $settings['search_floodcontrol_time'] : 1,
 	);
 
+	$timeLimit = isset($timeOverrides[$error_type]) ? $timeOverrides[$error_type] : $settings['spamWaitTime'];
+
 	// Moderators are free...
-	if (!allowedTo('moderate_board'))
-		$timeLimit = isset($timeOverrides[$error_type]) ? $timeOverrides[$error_type] : $settings['spamWaitTime'];
-	else
+	if (allowedTo('moderate_board') && $timeLimit > 2)
 		$timeLimit = 2;
 
 	// Delete old entries...
