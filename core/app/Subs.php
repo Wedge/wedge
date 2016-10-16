@@ -1426,6 +1426,10 @@ function spamProtection($error_type)
 	if (allowedTo('moderate_board') && $timeLimit > 2)
 		$timeLimit = 2;
 
+	// Flood control is disabled, so don't waste time
+	if($timeLimit == 0)
+		return false;
+
 	// Delete old entries...
 	wesql::query('
 		DELETE FROM {db_prefix}log_floodcontrol
