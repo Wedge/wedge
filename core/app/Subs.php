@@ -1699,7 +1699,7 @@ function setupThemeContext($forceload = false)
 		if ($avatar['url'] == '' && !empty($avatar['id_attach']))
 			$avatar['href'] = $avatar['custom_dir'] ? $settings['custom_avatar_url'] . '/' . $avatar['filename'] : '<URL>?action=dlattach;attach=' . $avatar['id_attach'] . ';type=avatar';
 		// Full URL?
-		elseif (strpos($avatar['url'], 'http://') === 0)
+		elseif (preg_match('~^(?:https?:)?//~', $avatar['url']))
 		{
 			$avatar['href'] = $avatar['url'];
 
