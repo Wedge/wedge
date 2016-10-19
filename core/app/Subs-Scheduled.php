@@ -44,16 +44,28 @@ function ImperativeTask()
 
 	foreach ($tasks as $task)
 	{
+		$immediate = !empty($task['details']['immediate']);
 		if (isset($task['details']['source']))
 			loadSource($task['details']['source']);
 		if (empty($task['details']['parameters']))
 			$task['details']['parameters'] = array();
 
-		$response = call_user_func_array($task['details']['function'], array($task['details']['parameters']));
-		if (!empty($response))
+		if (!$immediate)
+			$response = call_user_func_array($task['details']['function'], array($task['details']['parameters']));
+		else
+			wesql::query('
+				DELETE FROM {db_prefix}scheduled_imperative
+				WHERE id_instr = ({int:task})',
+				array(
+					'task' => $task['id'],
+				)
+			);
+		if (!empty($response) || $immediate)
 			$done_tasks[] = $task['id'];
 		else
 			log_error('Imperative task ' . $task['details']['function'] . ' did not complete successfully. Task details: ' . serialize($task), 'general'); // !!! Probably for debugging but won't hurt to leave in place for now.
+		if ($immediate)
+			call_user_func_array($task['details']['function'], array($task['details']['parameters']));
 	}
 
 	if (!empty($done_tasks))
