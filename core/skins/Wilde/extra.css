@@ -40,7 +40,11 @@ $sub_radius = 8px
 #wedge
 	text-align: $left
 	box-shadow: 0 0 10px #aaa
-	border: 1px solid #aaa
+
+#content
+	border: 1px solid
+	border-image: linear-gradient(0deg, #fff, #aaa 10%, #aaa 90%, #fff) 1 100%
+	border-width: 0 1px
 
 #navi
 	background: $lightgrad
@@ -58,7 +62,7 @@ $sub_radius = 8px
 h1
 	width: auto
 	letter-spacing: -2px
-	font: 100 3em/.8em $big_font
+	font: 700 1.7em/1em $big_font
 	a
 		color: #78a
 
@@ -144,7 +148,7 @@ h1, #slogan
 @media $responsive
 	body
 		padding: 0 15px
-		#wedge
+		#content
 			border: 0
 		.wrc, .msg, .poster
 			border-radius: 0
@@ -302,7 +306,7 @@ dfn
 
 $main_font = "Segoe UI", Arial, sans-serif
 $head_font = "Segoe UI Semibold", $main_font
-$big_font = Helvetica, Arial, sans-serif
+$big_font = $main_font
 $subcat_font = normal 1.1em $main_font
 $post_font = $main_font
 $post_font_size = 11pt/140%
