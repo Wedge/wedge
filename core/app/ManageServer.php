@@ -632,6 +632,11 @@ function FetchPHPInfo($return_config = false)
 	$context['toc'] = empty($matches[1]) || empty($matches[2]) ? array() : array_combine($matches[1], $matches[2]);
 	$context['phpinfo'] = preg_replace('~(<a name="[^"]+">)([^<]+)</a>~i', '$1</a>$2', $context['phpinfo']);
 
+	// Some paths are way too long.
+	$context['phpinfo'] = preg_replace('~:/(?!/)~', ':&shy;/', $context['phpinfo']);
+	$context['phpinfo'] = preg_replace('~;(?=[cd]:)~i', ';&shy;', $context['phpinfo']);
+	$context['phpinfo'] = str_replace('%', '%&shy', $context['phpinfo']);
+
 	// Time to do some judicious header editing. First, the PHP logo and stuff.
 	$context['php_header_icons'] = array();
 	$context['phpinfo_version'] = '';
