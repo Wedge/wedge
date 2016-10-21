@@ -744,10 +744,11 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 	// Group as many matches as we can, into a :matches() selector. This is new in CSS4 and implemented
 	// in WebKit and Firefox as of this writing. Because I couldn't find a clean source indicating when
 	// support was added, I'll stick to MDN's list, and use :any until :matches is officialized.
+	// Note: Safari 9+ added support for :matches proper.
 	$selector = '([abipqsu]|[!+>&#*@:.a-z0-9][^{};,\n"()\~+> ]+?)'; // like $selector_regex, but lazy (+?) and without compounds (\~+> ).
 	if (we::is('chrome[12-],firefox[4-],safari[5.2-]') && preg_match_all('~(?:^|})' . $selector . '([>+: ][^,{]+)(?:,' . $selector . '\2)+(?={)~', $final, $matches, PREG_SET_ORDER))
 	{
-		$magic = we::$browser['webkit'] ? ':-webkit-any' : ':-moz-any';
+		$magic = we::$browser['webkit'] ? (we::$browser['safari'] && we::$browser['version'] >= 9 ? ':matches' : ':-webkit-any') : ':-moz-any';
 		foreach ($matches as $m)
 		{
 			// The spec says pseudo-elements aren't allowed INSIDE :matches, but implementations seem to also refuse them NEXT to :matches.
