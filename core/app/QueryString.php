@@ -286,7 +286,7 @@ function cleanRequest()
 	if ($do_pretty)
 	{
 		// URL has the form domain.com/profile/User?
-		if (preg_match('~/' . (isset($settings['pretty_prefix_profile']) ? $settings['pretty_prefix_profile'] : 'profile/') . '([^/?]*)~', $query_string, $m))
+		if (preg_match('`/' . (isset($settings['pretty_prefix_profile']) ? $settings['pretty_prefix_profile'] : 'profile/') . '([^/?]*)`', $query_string, $m))
 		{
 			if (empty($m[1]) && empty($_GET['u']))
 				$_GET['u'] = 0;
