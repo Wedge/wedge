@@ -1422,6 +1422,10 @@ function spamProtection($error_type)
 
 	$timeLimit = isset($timeOverrides[$error_type]) ? $timeOverrides[$error_type] : $settings['spamWaitTime'];
 
+	// Flood control is disabled, so don't waste time.
+	if (!$timeLimit)
+		return false;
+
 	// Moderators are free...
 	if (allowedTo('moderate_board') && $timeLimit > 2)
 		$timeLimit = 2;
