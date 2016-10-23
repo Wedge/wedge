@@ -156,7 +156,7 @@ function cleanRequest()
 		$_GET = array();
 
 		// Was this redirected? If so, get the REDIRECT_QUERY_STRING.
-		$_SERVER['QUERY_STRING'] = urldecode(substr($_SERVER['QUERY_STRING'], 0, 5) === 'url=/' ? $_SERVER['REDIRECT_QUERY_STRING'] : $_SERVER['QUERY_STRING']);
+		$_SERVER['QUERY_STRING'] = substr($_SERVER['QUERY_STRING'], 0, 5) === 'url=/' ? $_SERVER['REDIRECT_QUERY_STRING'] : $_SERVER['QUERY_STRING'];
 
 		// Replace ';' with '&' and '&something&' with '&something=&'. (This is done for compatibility...)
 		parse_str(preg_replace('~&(\w+)(?=&|$)~', '&$1=', strtr($_SERVER['QUERY_STRING'], array(';?' => '&', ';' => '&', '%00' => '', "\0" => ''))), $_GET);
@@ -165,7 +165,7 @@ function cleanRequest()
 		if (function_exists('get_magic_quotes_gpc') && @get_magic_quotes_gpc() != 0 && empty($settings['integrate_magic_quotes']))
 			$_GET = $removeMagicQuoteFunction($_GET);
 	}
-	elseif (!$supports_semicolon)
+	elseif ($supports_semicolon)
 	{
 		if (function_exists('get_magic_quotes_gpc') && @get_magic_quotes_gpc() != 0 && empty($settings['integrate_magic_quotes']))
 			$_GET = $removeMagicQuoteFunction($_GET);
