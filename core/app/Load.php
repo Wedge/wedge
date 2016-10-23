@@ -1375,8 +1375,8 @@ function loadMemberAvatar($user, $force = false)
 		}
 		else
 		{
-			$image = stristr($profile['avatar'], 'http://') ? $profile['avatar'] : AVATARS . '/' . $profile['avatar'];
-			$image_tag = stristr($profile['avatar'], 'http://') ? '<img class="avatar" src="' . $profile['avatar'] . '"' . $avatar_width . $avatar_height . '>' : '<img class="avatar" src="' . AVATARS . '/' . htmlspecialchars($profile['avatar']) . '">';
+			$image = strpos($profile['avatar'], '://') !== false || strpos($profile['avatar'], '//') === 0 ? $profile['avatar'] : AVATARS . '/' . $profile['avatar'];
+			$image_tag = $image === $profile['avatar'] ? '<img class="avatar" src="' . $image . '"' . $avatar_width . $avatar_height . '>' : '<img class="avatar" src="' . AVATARS . '/' . htmlspecialchars($profile['avatar']) . '">';
 		}
 		$memberContext[$user]['avatar'] = array(
 			'name' => $profile['avatar'],

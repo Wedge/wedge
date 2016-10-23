@@ -58,134 +58,135 @@ function AutoTask()
 
 	// Special case for doing the mail queue.
 	if (isset($_GET['scheduled']) && $_GET['scheduled'] == 'mailq')
-		ReduceMailQueue();
-	else
 	{
-		// Select the next task to do.
-		$request = wesql::query('
-			SELECT id_task, task, next_time, time_offset, time_regularity, time_unit, sourcefile
-			FROM {db_prefix}scheduled_tasks
-			WHERE disabled = {int:not_disabled}
-				AND next_time <= {int:current_time}
-			ORDER BY next_time ASC
-			LIMIT 1',
+		ReduceMailQueue();
+		exit;
+	}
+
+	// Select the next task to do.
+	$request = wesql::query('
+		SELECT id_task, task, next_time, time_offset, time_regularity, time_unit, sourcefile
+		FROM {db_prefix}scheduled_tasks
+		WHERE disabled = {int:not_disabled}
+			AND next_time <= {int:current_time}
+		ORDER BY next_time ASC
+		LIMIT 1',
+		array(
+			'not_disabled' => 0,
+			'current_time' => time(),
+		)
+	);
+	if (wesql::num_rows($request) != 0)
+	{
+		// The two important things really...
+		$row = wesql::fetch_assoc($request);
+
+		// When should this next be run?
+		$next_time = next_time($row['time_regularity'], $row['time_unit'], $row['time_offset']);
+
+		// How long in seconds it the gap?
+		$duration = $row['time_regularity'];
+		if ($row['time_unit'] == 'm')
+			$duration *= 60;
+		elseif ($row['time_unit'] == 'h')
+			$duration *= 3600;
+		elseif ($row['time_unit'] == 'd')
+			$duration *= 86400;
+		elseif ($row['time_unit'] == 'w')
+			$duration *= 604800;
+
+		// If we were really late running this task actually skip the next one.
+		if (time() + ($duration / 2) > $next_time)
+			$next_time += $duration;
+
+		// Update it now, so no others run this!
+		wesql::query('
+			UPDATE {db_prefix}scheduled_tasks
+			SET next_time = {int:next_time}
+			WHERE id_task = {int:id_task}
+				AND next_time = {int:current_next_time}',
 			array(
-				'not_disabled' => 0,
-				'current_time' => time(),
+				'next_time' => $next_time,
+				'id_task' => $row['id_task'],
+				'current_next_time' => $row['next_time'],
 			)
 		);
-		if (wesql::num_rows($request) != 0)
+		$affected_rows = wesql::affected_rows();
+
+		// Does this task need us to load a file? The filename entry will be plugin;plugin-id;file
+		// But the plugin does have to be active too.
+		if (!empty($row['sourcefile']))
 		{
-			// The two important things really...
-			$row = wesql::fetch_assoc($request);
-
-			// When should this next be run?
-			$next_time = next_time($row['time_regularity'], $row['time_unit'], $row['time_offset']);
-
-			// How long in seconds it the gap?
-			$duration = $row['time_regularity'];
-			if ($row['time_unit'] == 'm')
-				$duration *= 60;
-			elseif ($row['time_unit'] == 'h')
-				$duration *= 3600;
-			elseif ($row['time_unit'] == 'd')
-				$duration *= 86400;
-			elseif ($row['time_unit'] == 'w')
-				$duration *= 604800;
-
-			// If we were really late running this task actually skip the next one.
-			if (time() + ($duration / 2) > $next_time)
-				$next_time += $duration;
-
-			// Update it now, so no others run this!
-			wesql::query('
-				UPDATE {db_prefix}scheduled_tasks
-				SET next_time = {int:next_time}
-				WHERE id_task = {int:id_task}
-					AND next_time = {int:current_next_time}',
-				array(
-					'next_time' => $next_time,
-					'id_task' => $row['id_task'],
-					'current_next_time' => $row['next_time'],
-				)
-			);
-			$affected_rows = wesql::affected_rows();
-
-			// Does this task need us to load a file? The filename entry will be plugin;plugin-id;file
-			// But the plugin does have to be active too.
-			if (!empty($row['sourcefile']))
+			if (strpos($row['sourcefile'], 'plugin;') === 0)
 			{
-				if (strpos($row['sourcefile'], 'plugin;') === 0)
-				{
-					list (, $plugin_id, $filename) = explode(';', $row['sourcefile']);
-					if (!empty($filename) && !empty($context['plugins_dir'][$plugin_id]))
-						loadPluginSource($plugin_id, $filename);
-				}
-				else
-					loadSource($row['sourcefile']);
+				list (, $plugin_id, $filename) = explode(';', $row['sourcefile']);
+				if (!empty($filename) && !empty($context['plugins_dir'][$plugin_id]))
+					loadPluginSource($plugin_id, $filename);
 			}
+			else
+				loadSource($row['sourcefile']);
+		}
 
-			// The function must exist or we are wasting our time, plus do some timestamp checking, and database check!
-			$sched_function = strpos($row['task'], '::') !== false ? explode('::', $row['task']) : 'scheduled_' . $row['task'];
-			if (!is_callable($sched_function))
-				$sched_function = $row['task'];
-			if (is_callable($sched_function) && (!isset($_GET['ts']) || $_GET['ts'] == $row['next_time']) && $affected_rows)
+		// The function must exist or we are wasting our time, plus do some timestamp checking, and database check!
+		$sched_function = strpos($row['task'], '::') !== false ? explode('::', $row['task']) : 'scheduled_' . $row['task'];
+		if (!is_callable($sched_function))
+			$sched_function = $row['task'];
+		if (is_callable($sched_function) && (!isset($_GET['ts']) || $_GET['ts'] == $row['next_time']) && $affected_rows)
+		{
+			ignore_user_abort(true);
+
+			// Do the task...
+			$completed = call_user_func($sched_function);
+
+			// Log that we did it ;)
+			if ($completed)
 			{
-				ignore_user_abort(true);
-
-				// Do the task...
-				$completed = call_user_func($sched_function);
-
-				// Log that we did it ;)
-				if ($completed)
-				{
-					$total_time = round(microtime(true) - $time_start, 3);
-					wesql::insert('',
-						'{db_prefix}log_scheduled_tasks',
-						array(
-							'id_task' => 'int', 'time_run' => 'int', 'time_taken' => 'float',
-						),
-						array(
-							$row['id_task'], time(), (int) $total_time,
-						)
-					);
-				}
-			}
-			elseif (!is_callable($sched_function))
-			{
-				// If it doesn't exist now, odds are it won't exist in the future either... just need to check this on its own.
-				log_error('Scheduled task <em>' . $sched_function . '</em> isn\'t callable. Disabling it until further notice.');
-				wesql::query('
-					UPDATE {db_prefix}scheduled_tasks
-					SET disabled = 1
-					WHERE id_task = {int:id_task}',
+				$total_time = round(microtime(true) - $time_start, 3);
+				wesql::insert('',
+					'{db_prefix}log_scheduled_tasks',
 					array(
-						'id_task' => $row['id_task'],
+						'id_task' => 'int', 'time_run' => 'int', 'time_taken' => 'float',
+					),
+					array(
+						$row['id_task'], time(), (int) $total_time,
 					)
 				);
 			}
 		}
-		wesql::free_result($request);
-
-		// Get the next timestamp right.
-		$request = wesql::query('
-			SELECT next_time
-			FROM {db_prefix}scheduled_tasks
-			WHERE disabled = 0
-			ORDER BY next_time ASC
-			LIMIT 1'
-		);
-		// No new task scheduled yet?
-		if (wesql::num_rows($request) === 0)
-			$nextEvent = time() + 86400;
-		else
-			list ($nextEvent) = wesql::fetch_row($request);
-		wesql::free_result($request);
-
-		updateSettings(array('next_task_time' => $nextEvent));
+		elseif (!is_callable($sched_function))
+		{
+			// If it doesn't exist now, odds are it won't exist in the future either... just need to check this on its own.
+			log_error('Scheduled task <em>' . $sched_function . '</em> isn\'t callable. Disabling it until further notice.');
+			wesql::query('
+				UPDATE {db_prefix}scheduled_tasks
+				SET disabled = 1
+				WHERE id_task = {int:id_task}',
+				array(
+					'id_task' => $row['id_task'],
+				)
+			);
+		}
 	}
+	wesql::free_result($request);
 
-	// Shall we return?
+	// Get the next timestamp right.
+	$request = wesql::query('
+		SELECT next_time
+		FROM {db_prefix}scheduled_tasks
+		WHERE disabled = 0
+		ORDER BY next_time ASC
+		LIMIT 1'
+	);
+	// No new task scheduled yet?
+	if (wesql::num_rows($request) === 0)
+		$nextEvent = time() + 86400;
+	else
+		list ($nextEvent) = wesql::fetch_row($request);
+	wesql::free_result($request);
+
+	updateSettings(array('next_task_time' => $nextEvent));
+
+	// If a bot called for this, return and show the page.
 	if (!isset($_GET['scheduled']))
 		return true;
 
