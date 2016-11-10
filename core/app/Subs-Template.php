@@ -1161,7 +1161,8 @@ function template_include($filename, $once = false, $no_caching = false)
  *
  * The function can be used to load just stylesheets as well as loading templates; neither is required for the other to operate. Both templates and stylesheets loaded here will be logged if full debugging is on.
  *
- * @param mixed $template_name Name of a template file to load from the current template folder (with .template.php suffix), falling back to locating it in the default template directory. Alternatively if loading stylesheets only, supply boolean false instead.
+ * @param mixed $template_name Name of a template file to load from the current template folder (with .template.php suffix), falling back to locating it in the default template directory.
+							   Alternatively if loading stylesheets only, supply boolean false instead. Finally, use a lambda function if you don't want to bother creating a template for a small page.
  * @param bool $fatal Whether to exit execution with a fatal error if the template file could not be loaded. (Note: this is never used in the Wedge code base.)
  * @return bool Returns true on success, false on failure (assuming $fatal is false; otherwise the fatal error will suspend execution)
  */
@@ -1172,6 +1173,13 @@ function loadTemplate($template_name, $fatal = true)
 	// No template to load?
 	if ($template_name === false)
 		return true;
+
+	if (is_callable($template_name))
+	{
+		loadTemplate('Generic');
+		$context['closure'] = $template_name;
+		return;
+	}
 
 	$loaded = false;
 	foreach ($context['template_folders'] as $template_dir)
