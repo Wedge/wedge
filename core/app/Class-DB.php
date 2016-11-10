@@ -560,7 +560,7 @@ class wesql
 		{
 			case 'int':
 				if (!is_numeric($replacement) || (string) $replacement !== (string) (int) $replacement)
-					self::error_backtrace('Wrong value type sent to the database. Integer expected. (' . $matches[2] . ')', '', E_USER_ERROR);
+					self::error_backtrace('Wrong value type sent to the database. Integer expected. (' . $matches[2] . ' set to ' . $replacement . ')', '', E_USER_ERROR);
 				return (string) (int) $replacement;
 
 			case 'string':

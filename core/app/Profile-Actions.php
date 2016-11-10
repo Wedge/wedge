@@ -207,7 +207,7 @@ function deleteAccount2($profile_vars, $post_errors, $memID)
 		loadSource('Logout');
 		Logout(true);
 
-		redirectExit();
+		redirectexit();
 	}
 }
 
