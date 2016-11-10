@@ -1174,11 +1174,11 @@ function loadTemplate($template_name, $fatal = true)
 	if ($template_name === false)
 		return true;
 
-	if (is_callable($template_name))
+	if (!is_string($template_name) && is_callable($template_name))
 	{
 		loadTemplate('Generic');
 		$context['closure'] = $template_name;
-		return;
+		return true;
 	}
 
 	$loaded = false;
