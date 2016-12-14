@@ -244,12 +244,15 @@
 				.find('.viewport')
 					.height('');
 
-			// Hide .details so that the new width won't be influenced by it.
-			// Also, floated <small>'s will screw up calculations, at least in Chrome.
-			$dd.find('.details').toggle();
+			// Floated <small>'s will screw up calculations, at least in Chrome.
 			$dd.find('small').css('float', 'none');
-			// Set dropdown width to at least the display area's width, and at most the body's width.
-			$dd.width(Math.min($('body').width(), Math.max($dd.realWidth(), $display.outerWidth() - $dd.outerWidth(true) + $dd.realWidth())));
+			var $temp_width = $dd.realWidth();
+
+			// Hide .details so that the new width won't be too influenced by it.
+			$dd.find('.details').toggle();
+
+			// Set dropdown width to at least the display area's width (averaged between no details and details), and at most the body's width.
+			$dd.width(Math.min($('body').width(), Math.max(($dd.realWidth() + $temp_width) / 2, $display.outerWidth() - $dd.outerWidth(true) + $dd.realWidth())));
 			// Now we can reset.
 			$dd.find('.details').toggle();
 			$dd.find('small').css('float', '');
