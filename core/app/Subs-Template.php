@@ -56,10 +56,6 @@ function obExit($start = null, $do_finish = null, $from_index = false, $from_fat
 	// Has the template been started yet?
 	if ($do_start)
 	{
-		// Generate a HTML-safe version of the page title: notably, remove any tags and encode entities. What a messy call though...
-		if (empty($context['page_title_html_safe']))
-			$context['page_title_html_safe'] = empty($context['page_title']) ? '' : westr::htmlspecialchars(un_htmlspecialchars(strip_tags($context['page_title'])), ENT_COMPAT, false, false);
-
 		// Try to get rid of ?PHPSESSID for robots.
 		if (empty($context['canonical_url']) && we::$user['possibly_robot'] && empty($context['robot_no_index']) && strpos(we::$user['url'], ($sn = session_name()) . '=') !== false)
 			if (we::$user['url'] != ($correcturl = preg_replace('~(?:\?' . $sn . '=[^&;]*$|\b' . $sn . '=[^&;]*[&;])~', '', we::$user['url'])))
@@ -166,8 +162,11 @@ function ob_sessrewrite($buffer)
 		$buffer = str_replace(array($skip_buffer, '<ob:ignore></ob:ignore>'), array('', '<ob:ignored>'), $buffer);
 	}
 
-	// Very fast on-the-fly replacement of <URL> and <PROT>...
-	$buffer = str_replace(array('<URL>', '<PROT>'), array(SCRIPT, PROTOCOL), $buffer);
+	// Generate a HTML-safe version of the page title: notably, remove any tags and encode entities. What a messy call though...
+	$page_title = $context['page_title'] ? westr::htmlspecialchars(un_htmlspecialchars(strip_tags($context['page_title'])), ENT_COMPAT, false, false) : '';
+
+	// Very fast on-the-fly replacement of post-processing variables like URL and protocol...
+	$buffer = str_replace(array('<URL>', '<PROT>', '<PAGE_TITLE>'), array(SCRIPT, PROTOCOL, $page_title), $buffer);
 
 	// And a quick fix for FTP clients uploading CRLF versions.
 	if (strpos($buffer, "\r\n") !== false)

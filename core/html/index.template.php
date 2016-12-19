@@ -51,7 +51,7 @@ function template_html_before()
 
 	echo theme_base_css(), '
 	<!-- Powered by Wedge, © R.-G. Deberdt - http://wedge.org -->
-	<title>', $context['page_title_html_safe'], !empty($context['page_indicator']) ? $context['page_indicator'] : '', '</title>';
+	<title><PAGE_TITLE>', !empty($context['page_indicator']) ? $context['page_indicator'] : '', '</title>';
 
 	// If the forum is in a sub-folder, it needs to explicitly set a favicon URL.
 	if (strpos(str_replace('://', '', ROOT), '/') !== false)
