@@ -168,14 +168,17 @@ function ModifySettings()
 		$context['settings_not_writable'] = !is_writable(ROOT_DIR . '/Settings.php');
 		$settings_backup_fail = !@is_writable(ROOT_DIR . '/Settings_bak.php') || !@copy(ROOT_DIR . '/Settings.php', ROOT_DIR . '/Settings_bak.php');
 
-		if ($context['settings_not_writable'])
-			$context['settings_message'] = '<p class="center"><strong>' . $txt['settings_not_writable'] . '</strong></p><br>';
-		elseif ($settings_backup_fail)
-			$context['settings_message'] = '<p class="center"><strong>' . $txt['admin_backup_fail'] . '</strong></p><br>';
-	}
+		$subActions[$_REQUEST['sa']]();
 
+		$context['settings_message'] = empty($context['settings_message']) ? '' : $context['settings_message'];
+		if ($context['settings_not_writable'])
+			$context['settings_message'] .= '<p class="center error"><strong>' . $txt['settings_not_writable'] . '</strong></p>';
+		elseif ($settings_backup_fail)
+			$context['settings_message'] .= '<p class="center error"><strong>' . $txt['admin_backup_fail'] . '</strong></p>';
+	}
 	// Call the right function for this sub-action.
-	$subActions[$_REQUEST['sa']]();
+	else
+		$subActions[$_REQUEST['sa']]();
 }
 
 // General forum settings - forum name, maintenance mode, etc.
