@@ -1349,7 +1349,7 @@ class ftp_connection
 	var $connection = 'no_connection', $error = false, $last_message, $pasv = array();
 
 	// Create a new FTP connection...
-	function ftp_connection($ftp_server, $ftp_port = 21, $ftp_user = 'anonymous', $ftp_pass = 'ftpclient@wedge.org')
+	function __construct($ftp_server, $ftp_port = 21, $ftp_user = 'anonymous', $ftp_pass = 'ftpclient@wedge.org')
 	{
 		if ($ftp_server !== null)
 			$this->connect($ftp_server, $ftp_port, $ftp_user, $ftp_pass);
