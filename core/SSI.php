@@ -296,10 +296,11 @@ function ssi_queryPosts($query_where = '', $query_where_params = array(), $query
 			AND m.approved = {int:is_approved}' : '') . '
 			' . (empty($query_where) ? '' : 'AND ' . $query_where) . '
 		ORDER BY ' . $query_order . '
-		' . ($query_limit == '' ? '' : 'LIMIT ' . $query_limit),
+		' . ($query_limit == '' ? '' : 'LIMIT {int:query_limit}'),
 		array_merge($query_where_params, array(
 			'current_member' => MID,
 			'is_approved' => 1,
+			'query_limit' => $query_limit,
 		))
 	);
 	$posts = array();
@@ -537,7 +538,7 @@ function ssi_topPoster($topNumber = 1, $output_method = 'echo')
 		SELECT id_member, real_name, posts
 		FROM {db_prefix}members
 		ORDER BY posts DESC
-		LIMIT ' . $topNumber,
+		LIMIT {int:topnumber}',
 		array(
 		)
 	);
@@ -548,7 +549,8 @@ function ssi_topPoster($topNumber = 1, $output_method = 'echo')
 			'name' => $row['real_name'],
 			'href' => SCRIPT . '?action=profile;u=' . $row['id_member'],
 			'link' => '<a href="' . SCRIPT . '?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>',
-			'posts' => $row['posts']
+			'posts' => $row['posts'],
+			'topnumber' => $topNumber
 		);
 	wesql::free_result($request);
 
@@ -576,10 +578,11 @@ function ssi_topBoards($num_top = 10, $output_method = 'echo')
 		WHERE {query_wanna_see_board}' . (!empty($settings['recycle_enable']) && $settings['recycle_board'] > 0 ? '
 			AND b.id_board != {int:recycle_board}' : '') . '
 		ORDER BY b.num_posts DESC
-		LIMIT ' . $num_top,
+		LIMIT {int:num_top}',
 		array(
 			'current_member' => MID,
 			'recycle_board' => (int) $settings['recycle_board'],
+			'num_top' => $num_top,
 		)
 	);
 	$boards = array();
@@ -1520,9 +1523,11 @@ function ssi_boardNews($id_board = null, $limit = null, $start = null, $length =
 		WHERE t.id_board = {int:current_board}
 			AND {query_see_topic}
 		ORDER BY id_first_msg DESC
-		LIMIT ' . $start . ', ' . $limit,
+		LIMIT {int:start} {int:limit}',
 		array(
 			'current_board' => $id_board,
+			'start' => $start,
+			'limit' => $limit,
 		)
 	);
 	$posts = array();
@@ -1543,9 +1548,10 @@ function ssi_boardNews($id_board = null, $limit = null, $start = null, $length =
 			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = m.id_member)
 		WHERE t.id_first_msg IN ({array_int:post_list})
 		ORDER BY t.id_first_msg DESC
-		LIMIT ' . count($posts),
+		LIMIT {int:posts}',
 		array(
 			'post_list' => $posts,
+			'posts' => $posts,
 		)
 	);
 	$return = array();
