@@ -404,8 +404,9 @@ function ssi_recentTopics($num_recent = 8, $exclude_boards = null, $include_boar
 			AND {query_wanna_see_board}' . (empty(we::$user['can_skip_approval']) ? '
 			AND ml.approved = {int:is_approved}' : '') . '
 		ORDER BY t.id_last_msg DESC
-		LIMIT ' . $num_recent,
+		LIMIT {int:num_recent}',
 		array(
+			'num_recent' => $num_recent,
 			'include_boards' => empty($include_boards) ? '' : $include_boards,
 			'exclude_boards' => empty($exclude_boards) ? '' : $exclude_boards,
 			'min_message_id' => $settings['maxMsgID'] - 35 * $num_recent,
