@@ -1320,6 +1320,7 @@ table
 		border-bottom: 0
 		font-size: 80%
 		padding: .3em
+		text-align: left;
 
 // A quote, usually from another post.
 .bbc_quote
