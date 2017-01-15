@@ -225,7 +225,7 @@ function apply_plugin_mods($source, $dest, $no_caching = false)
 			$offset = strpos($this_file, $where[0]['value']);
 			if ($offset === false)
 			{
-				$error = true;
+				$error = 'Couldn\'t find "'.$where[0]['value'].'"';
 				break;
 			}
 			$save_me = true;
@@ -239,12 +239,12 @@ function apply_plugin_mods($source, $dest, $no_caching = false)
 		}
 
 		// If an error was found, I'm afraid we'll have to rollback.
-		if ($error)
+		if ($error !== false)
 		{
 			$enabled_plugins = array_diff($enabled_plugins, array($plugin));
 			if (isset($context['enabled_plugins']))
 				$context['enabled_plugins'] = $enabled_plugins;
-			log_error('Couldn\'t apply data from "' . $plugin . '" plugin to file "' . $source . '". Disabling plugin automatically.');
+			log_error('Couldn\'t apply data from "' . $plugin . '" plugin to file "' . $source . '". '.($error !== true > 1 ? 'Error: '.$error.'. ' : '').'Disabling plugin automatically.');
 			updateSettingsFile(array('my_plugins' => implode(',', $enabled_plugins)));
 			clean_cache('php', '', CACHE_DIR . '/app');
 			clean_cache('php', '', CACHE_DIR . '/html');
