@@ -451,7 +451,7 @@ class wesql
 		{
 			foreach ($data as $id => $row)
 			{
-				$set = '';
+				$set = array();
 				$where_val = reset($columns);
 				$where_key = key($columns);
 				foreach ($columns as $key => $val)
