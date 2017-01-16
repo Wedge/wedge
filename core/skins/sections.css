@@ -740,7 +740,7 @@ input.modify extends .edit_button
 		.login
 			dt, dd
 				float, text-align: left
-				width: 100% !important				
+				width: 100% !important
 
 	#login #main
 		vertical-align: middle
