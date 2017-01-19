@@ -163,7 +163,7 @@ function ob_sessrewrite($buffer)
 	}
 
 	// Generate a HTML-safe version of the page title: notably, remove any tags and encode entities. What a messy call though...
-	$page_title = $context['page_title'] ? westr::htmlspecialchars(un_htmlspecialchars(strip_tags($context['page_title'])), ENT_COMPAT, false, false) : '';
+	$page_title = isset($context['page_title']) ? westr::htmlspecialchars(un_htmlspecialchars(strip_tags($context['page_title'])), ENT_COMPAT, false, false) : '';
 
 	// Very fast on-the-fly replacement of post-processing variables like URL and protocol...
 	$buffer = str_replace(array('<URL>', '<PROT>', '<PAGE_TITLE>'), array(SCRIPT, PROTOCOL, $page_title), $buffer);
