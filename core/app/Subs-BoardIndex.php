@@ -33,6 +33,10 @@ function getBoardIndex($boardIndexOptions)
 			'timestamp' => 0,
 			'ref' => 0,
 		);
+	$extra = '';
+
+	if ($boardIndexOptions['include_categories'])
+		$extra =  ' ORDER BY c.cat_order';
 
 	// Find all boards and categories, as well as related information. This will be sorted by the natural order of boards and categories, which we control.
 	$result_boards = wesql::query('
@@ -57,7 +61,7 @@ function getBoardIndex($boardIndexOptions)
 		WHERE {query_list_board}' . (empty($boardIndexOptions['category']) ? '' : '
 			AND b.id_cat = {int:category}') . (empty($boardIndexOptions['countChildPosts']) ? (empty($boardIndexOptions['base_level']) ? '' : '
 			AND b.child_level >= {int:child_level}') : '
-			AND b.child_level BETWEEN ' . $boardIndexOptions['base_level'] . ' AND ' . ($boardIndexOptions['base_level'] + 1)) . (empty($boardIndexOptions['category']) ? '' : '
+			AND b.child_level BETWEEN ' . $boardIndexOptions['base_level'] . ' AND ' . ($boardIndexOptions['base_level'] + 1)) . $extra, . (empty($boardIndexOptions['category']) ? '' : '
 			ORDER BY b.board_order'),
 		array(
 			'current_member' => MID,
