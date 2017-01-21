@@ -872,11 +872,9 @@ function Post($post_errors = array())
 					// Make sure the directory isn't full.
 					$dirSize = 0;
 					$dir = @scandir($current_attach_dir) or fatal_lang_error('cant_access_upload_path', 'critical');
+					$dir = $dir === false ? array() : array_diff($dir, array('.', '..'));
 					foreach ($dir as $file)
 					{
-						if ($file == '.' || $file == '..')
-							continue;
-
 						if (preg_match('~^post_tmp_\d+_\d+$~', $file) != 0)
 						{
 							// Temp file is more than 5 hours old!

@@ -591,11 +591,9 @@ function MaintainFiles()
 	foreach ($attach_dirs as $id => $attach_dir)
 	{
 		$dir = @scandir($attach_dir) or fatal_lang_error('cant_access_upload_path', 'critical');
+		$dir = array_diff($dir, array('.', '..'));
 		foreach ($dir as $file)
 		{
-			if ($file == '.' || $file == '..')
-				continue;
-
 			if (preg_match('~^post_tmp_\d+_\d+$~', $file) != 0)
 			{
 				// Temp file is more than 5 hours old!
