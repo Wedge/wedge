@@ -173,8 +173,16 @@ function parse_bbc($message, $type = 'generic', $bbc_options = array()) // $smil
 				$bbcode['parameters'] = unserialize($row['params']);
 			if (!empty($row['validate_func']))
 				$bbcode['validate'] = create_function('&$tag, &$data, $disabled', $row['validate_func']);
-			if ($row['quoted'] != 'none')
+			if ($row['quoted'] !== 'none')
 				$bbcode['quoted'] = $row['quoted'];
+
+			// User-contributed links opened in a new tab might be a security issue.
+			if ($row['tag'] === 'url')
+			{
+				$noopener = we::is('chrome[49-],opera[36-],firefox[52-]') ? 'noopener' : 'noreferrer';
+				$row['before_code'] = str_replace('rel="nofollow"', 'rel="nofollow ' . $noopener . '"', $row['before_code']);
+				$row['content'] = str_replace('rel="nofollow"', 'rel="nofollow ' . $noopener . '"', $row['content']);
+			}
 
 			foreach ($explode_list as $db_field => $bbc_field)
 				if (!empty($row[$db_field]))
