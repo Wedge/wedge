@@ -2269,7 +2269,7 @@ function setupMenuContext()
 				'skin' => array(
 					'title' => $txt['change_skin'],
 					'href' => '<URL>?action=skin',
-					'show' => allowedTo(array('profile_extra_any', 'profile_extra_own')),
+					'show' => allowedTo(array('profile_extra_any', 'profile_extra_own')) && (we::$is_member || empty(we::$user['possibly_robot'])),
 				),
 				'',
 				'logout' => array(
