@@ -267,7 +267,7 @@ function latestThoughts($memID = 0)
 				ho.updated, ho.thought, ho.id_thought, ho.id_parent, ho.id_member,
 				ho.id_master, h.id_member AS id_parent_owner, ho.privacy,
 				m.real_name AS owner_name, m_parent.real_name AS parent_name,
-				m.posts, h_child.id_thought > 0 AS has_children
+				m.posts, MIN(h_child.id_thought) > 0 AS has_children
 			FROM
 				{db_prefix}thoughts AS ho
 			LEFT JOIN
