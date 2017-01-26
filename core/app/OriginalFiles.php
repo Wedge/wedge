@@ -249,7 +249,7 @@ function create_main_htaccess()
 	php_value upload_max_filesize "4M"' /* This sets a larger upload file size. */ . '
 
 	# Optimization
-	php_value arg_separator.input "&;"' /* If PHP does this, Wedge won't have to redo it. */ . '
+	php_value arg_separator.input "&;"' /* Either set this here or in php.ini, or Wedge will have to add a compatibility layer... */ . '
 	php_flag always_populate_raw_post_data off
 	php_flag register_argc_argv off' /* Wedge doesn't use these two, might as well disable them. */ . '
 	php_flag magic_quotes_gpc off' /* Magic quotes suck. Die. Forever. */ . '
