@@ -101,7 +101,7 @@ function create_generic_folder($root_dir, $folder, $force = false)
 	if (!$force || !file_exists($path))
 		mkdir($path);
 
-	// We need to put and index.php file in all folders.
+	// Add an index.php file to all folders.
 	if (!$force || !file_exists($path . '/index.php'))
 		file_put_contents($path . '/index.php', '<' . '?php
 // Redirect to the upper level.
