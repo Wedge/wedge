@@ -497,7 +497,7 @@ function cleanRequest()
 			if (!empty($_SERVER[$header]))
 				$_SERVER['HTTP_X_FORWARDED_FOR'] = $_SERVER[$header];
 		}
-		$context['additional_headers']['X-Detected-Remote-Address'] = $_SERVER['REMOTE_ADDR'];
+		$context['additional_headers']['x-detected-remote-address'] = $_SERVER['REMOTE_ADDR'];
 		if (!empty($settings['reverse_proxy_ips']))
 			$reverse_proxies = explode("\n", $settings['reverse_proxy_ips']); // We don't want this set if we're not knowingly using them.
 	}
@@ -740,20 +740,20 @@ function htmltrim__recursive($var, $level = 0)
  * - Uses apache_request_headers() if running on Apache as a CGI module (recommended).
  * - If this is not available, $_SERVER will be examined for HTTP_ variables which should translate to headers. (This process works on PHP-CLI, IIS and lighttpd at least)
  *
- * @return array A key/value pair of the HTTP headers for this request.
+ * @return array A key/value pair of the HTTP headers for this request, all lowercased, for better compatibility with weird headers like X-Real-IP.
  */
 function get_http_headers()
 {
 	if (is_callable('apache_request_headers'))
-		return apache_request_headers();
+		return array_change_key_case(apache_request_headers());
 
 	$headers = array();
 	foreach ($_SERVER as $key => $value)
 		if (strpos($key, 'HTTP_') === 0)
-			$headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($key, 5)))))] = $value;
+			$headers[strtolower(str_replace('_', '-', substr($key, 5)))] = $value;
 
-	if (!empty($_SERVER['REAL_HTTP_HOST']) && $_SERVER['REAL_HTTP_HOST'] != $headers['Host'])
-		$headers['Host'] = $_SERVER['REAL_HTTP_HOST'];
+	if (!empty($_SERVER['REAL_HTTP_HOST']) && $_SERVER['REAL_HTTP_HOST'] != $headers['host'])
+		$headers['host'] = $_SERVER['REAL_HTTP_HOST'];
 
 	return $headers;
 }
