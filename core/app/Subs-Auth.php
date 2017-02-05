@@ -220,7 +220,7 @@ function InMaintenance()
 
 	// Basic template stuff..
 	wetem::load('maintenance');
-	$context['title'] =& $mtitle;
+	$context['title'] = westr::safe($mtitle);
 	$context['description'] =& $mmessage;
 	$context['page_title'] = $txt['maintain_mode'];
 }
