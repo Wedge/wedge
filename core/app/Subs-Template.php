@@ -1139,8 +1139,7 @@ function template_include($filename, $once = false, $no_caching = false)
 			handleTemplateErrors($filename);
 		}
 		loadSource('Subs-CachePHP');
-		apply_plugin_mods($filename, $cache);
-		minify_php($cache);
+		cache_source_file($filename, $cache);
 
 		$file_found = file_exists($cache) && eval('?' . '>' . rtrim(file_get_contents($cache))) !== false;
 	}
