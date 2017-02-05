@@ -120,7 +120,7 @@ function aeva_get_num_files($path)
 
 	$files = scandir($path);
 
-	return count($files) - (in_array('.', $files) ? 1 : 0) - (in_array('..', $files) ? 1 : 0);
+	return $files === false ? 0 : count(array_diff($files, array('.', '..')));
 }
 
 function aeva_get_dir_map($path)
