@@ -158,12 +158,10 @@ header(\'Location: ../\');');
 </Files>
 
 <IfModule mod_mime.c>
-	AddEncoding x-gzip .gz' . ($folder == 'gz/js' ? '
-	AddEncoding x-gzip .jgz
+	AddEncoding x-gzip gz' . ($folder == 'gz/js' ? ' jgz
 	<FilesMatch "\.(js\.gz|jgz)$">
 		ForceType text/javascript
-	</FilesMatch>' : '
-	AddEncoding x-gzip .cgz
+	</FilesMatch>' : ' cgz
 	<FilesMatch "\.(css\.gz|cgz)$">
 		ForceType text/css
 	</FilesMatch>') . '
@@ -171,7 +169,7 @@ header(\'Location: ../\');');
 
 <IfModule mod_headers.c>
 	Header set Cache-Control "max-age=2592000"
-	Header set Expires "Thu, 21 March 2025 03:42:00 GMT"
+	Header set Expires "Thu, 21 March ' . (date('Y') + 20) . ' 03:42:00 GMT"
 	Header set Vary "Accept-Encoding"
 </IfModule>
 
