@@ -1217,6 +1217,7 @@ function checkUserBehavior()
 	);
 
 	if (!empty($_SERVER['REMOTE_ADDR']) && $_SERVER['REMOTE_ADDR'] != 'unknown')
+	{
 		foreach ($whitelist['ip'] as $item)
 		{
 			if (strpos($item, '/') === false)
@@ -1228,6 +1229,7 @@ function checkUserBehavior()
 			elseif (match_cidr($_SERVER['REMOTE_ADDR'], $item))
 				return true;
 		}
+	}
 
 	if (!empty($context['http_headers']['user-agent']))
 	{
@@ -1640,6 +1642,8 @@ function checkUserRequest_useragent()
 {
 	global $context, $settings;
 
+	$ip = $_SERVER['BAN_CHECK_IP'];
+
 	$ua = $context['http_headers']['user-agent'];
 	$lua = strtolower($ua);
 
@@ -1652,7 +1656,7 @@ function checkUserRequest_useragent()
 	// Some browsers are just special however. Konqueror is on the surface, straightforward, but there's a Yahoo dev project that isn't a real browser but calls itself Konqueror, so we have to do the normal browser test but exclude if it's this.
 	elseif (strhas($lua, 'konqueror') && !we::$is_member)
 	{
-		if (!isset($context['http_headers']['accept']) && (!strhas($lua, 'yahooseeker/cafekelsa') || !match_cidr($_SERVER['REMOTE_ADDR'], '209.73.160.0/19')))
+		if (!isset($context['http_headers']['accept']) && (!strhas($lua, 'yahooseeker/cafekelsa') || !match_cidr($ip, '209.73.160.0/19')))
 			return $context['behavior_error'] = 'behav_no_accept';
 	}
 	// Ah, Internet Explorer. We already got rid of Opera, which sometimes sends MSIE in the headers.
@@ -1668,25 +1672,25 @@ function checkUserRequest_useragent()
 	// Is it claiming to be Yahoo's bot?
 	elseif (strhas($lua, array('yahoo! slurp', 'yahoo! searchmonkey')))
 	{
-		if (we::$is_member || !match_cidr($_SERVER['REMOTE_ADDR'], array('202.160.176.0/20', '67.195.0.0/16', '203.209.252.0/24', '72.30.0.0/16', '98.136.0.0/14', '74.6.0.0/16')) || (empty($settings['disableHostnameLookup']) && !test_ip_host($_SERVER['REMOTE_ADDR'], 'crawl.yahoo.net')))
+		if (we::$is_member || !match_cidr($ip, array('202.160.176.0/20', '67.195.0.0/16', '203.209.252.0/24', '72.30.0.0/16', '98.136.0.0/14', '74.6.0.0/16')) || (empty($settings['disableHostnameLookup']) && !test_ip_host($ip, 'crawl.yahoo.net')))
 			return $context['behavior_error'] = 'behav_not_yahoobot';
 	}
 	// Is it claiming to be MSN's bot?
 	elseif (strhas($lua, array('bingbot', 'msnbot', 'ms search')))
 	{
-		if (we::$is_member || (empty($settings['disableHostnameLookup']) && !test_ip_host($_SERVER['REMOTE_ADDR'], 'msn.com')))
+		if (we::$is_member || (empty($settings['disableHostnameLookup']) && !test_ip_host($ip, 'msn.com')))
 			return $context['behavior_error'] = 'behav_not_msnbot';
 	}
 	// Is it claiming to be Googlebot, even?
 	elseif (strhas($lua, array('googlebot', 'mediapartners-google', 'google web preview')))
 	{
-		if (we::$is_member || !match_cidr($_SERVER['REMOTE_ADDR'], array('66.249.64.0/19', '64.233.160.0/19', '72.14.192.0/18', '203.208.32.0/19', '74.125.0.0/16', '216.239.32.0/19', '209.85.128.0/17')) || (empty($settings['disableHostnameLookup']) && !test_ip_host($_SERVER['REMOTE_ADDR'], 'googlebot.com')))
+		if (we::$is_member || !match_cidr($ip, array('66.249.64.0/19', '64.233.160.0/19', '72.14.192.0/18', '203.208.32.0/19', '74.125.0.0/16', '216.239.32.0/19', '209.85.128.0/17')) || (empty($settings['disableHostnameLookup']) && !test_ip_host($ip, 'googlebot.com')))
 			return $context['behavior_error'] = 'behav_not_googlebot';
 	}
 	// What about Baidu? I know we don't really like Baidu, but it's even generating fake bots now.
 	elseif (strhas($lua, 'baidu'))
 	{
-		if (we::$is_member || !match_cidr($_SERVER['REMOTE_ADDR'], array('119.63.192.0/21', '123.125.71.0/24', '180.76.0.0/16', '220.181.0.0/16')))
+		if (we::$is_member || !match_cidr($ip, array('119.63.192.0/21', '123.125.71.0/24', '180.76.0.0/16', '220.181.0.0/16')))
 			return $context['behavior_error'] = 'behav_not_baidu';
 	}
 	// OK, so presumably this is some kind of Mozilla derivative? No guarantee it's actually Firefox, though. All main browsers claim to be Mozilla.

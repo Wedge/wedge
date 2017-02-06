@@ -493,7 +493,7 @@ function cleanRequest()
 		// We already check for X-Forwarded-For anyway in Wedge. But if we happen to have something else, let's use that.
 		if (!empty($settings['reverse_proxy_header']) && $settings['reverse_proxy_header'] != 'X-Forwarded-For')
 		{
-			$header = 'HTTP_' . strtoupper($settings['reverse_proxy_header']);
+			$header = 'HTTP_' . strtoupper(str_replace('-', '_', $settings['reverse_proxy_header']));
 			if (!empty($_SERVER[$header]))
 				$_SERVER['HTTP_X_FORWARDED_FOR'] = $_SERVER[$header];
 		}
