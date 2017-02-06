@@ -181,10 +181,10 @@ function loadSource($source_name)
 		else
 		{
 			$cache = ROOT_DIR . '/gz/app/' . str_replace(array('/', '..'), array('_', 'UP'), $file) . '.php';
-			if (!file_exists($cache) || filemtime($cache) < filemtime(APP_DIR . '/' . $file . '.php'))
+			if (!file_exists($cache) || filemtime($cache) < filemtime($dest = APP_DIR . '/' . $file . '.php'))
 			{
 				loadSource('Subs-CachePHP');
-				cache_source_file(APP_DIR . '/' . $file . '.php', $cache);
+				cache_source_file($dest, $cache);
 			}
 		}
 		require_once($cache);
@@ -256,13 +256,7 @@ function determine_action($action)
 		loadSource($target[0]);
 
 	// Remember, if the function is the same as the filename, you may declare it just once.
-	$func_name = isset($target[1]) ? $target[1] : $target[0];
-
-	if (is_callable($func_name))
-		return $func_name;
-
-	log_error('An error occurred while loading a file. ' . print_r($target, true) . ' -- filesize: ' . filesize(APP_DIR . '/' . $target[0] . '.php'));
-	return index_action('fallback_action');
+	return isset($target[1]) ? $target[1] : $target[0];
 }
 
 function index_action($hook_action = 'default_action')
