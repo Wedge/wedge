@@ -15,8 +15,10 @@ if (!defined('WEDGE'))
 // Build the cached version of our source file
 function cache_source_file($source, $dest)
 {
-	apply_plugin_mods($source, $dest);
-	minify_php($dest);
+	$dest_locked = substr($dest, 0, -4).'-'.mt_rand(10000, 99999).'.php';
+	apply_plugin_mods($source, $dest_locked);
+	minify_php($dest_locked);
+	rename($dest_locked, $dest);
 }
 
 // Cache a minified PHP file.
