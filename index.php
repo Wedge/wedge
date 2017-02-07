@@ -176,12 +176,13 @@ function loadSource($source_name)
 		if (isset($done[$file]))
 			continue;
 		$done[$file] = true;
+		$dest = APP_DIR . '/' . $file . '.php';
 		if (defined('WEDGE_INSTALL') || $file === 'Subs-CachePHP' || strpos($file, 'getid3') !== false)
-			$cache = APP_DIR . '/' . $file . '.php';
+			$cache = $dest;
 		else
 		{
 			$cache = ROOT_DIR . '/gz/app/' . str_replace(array('/', '..'), array('_', 'UP'), $file) . '.php';
-			if (!file_exists($cache) || filemtime($cache) < filemtime($dest = APP_DIR . '/' . $file . '.php'))
+			if (!file_exists($cache) || filemtime($cache) < filemtime($dest))
 			{
 				loadSource('Subs-CachePHP');
 				cache_source_file($dest, $cache);
