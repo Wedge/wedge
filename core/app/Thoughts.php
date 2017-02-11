@@ -280,7 +280,7 @@ function latestThoughts($memID = 0)
 				{db_prefix}members AS m_parent ON (h.id_member = m_parent.id_member)
 			WHERE
 				ho.id_thought IN ({array_int:think})
-			GROUP BY ho.id_thought
+			GROUP BY ho.id_thought, ho.updated, ho.thought, ho.id_parent, ho.id_member, ho.id_master, h.id_member, ho.privacy
 			ORDER BY ho.id_thought DESC',
 			array(
 				'think' => $think,
