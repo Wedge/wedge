@@ -1125,8 +1125,8 @@ function redirectexit($setLocation = '', $refresh = false, $permanent = false)
 	if ($is_internal = !preg_match('~^(?:http|ftp)s?://~', $setLocation))
 		$setLocation = SCRIPT . ($setLocation != '' ? '?' . $setLocation : '');
 
-	// Put the session ID in.
-	if (defined('SID') && SID != '')
+	// Put the session ID in, if it's not already in a cookie.
+	if (defined('SID') && SID != '' && (!isset($_COOKIE[session_name()]) || $_COOKIE[session_name()] !== session_id()))
 		$setLocation = preg_replace('/^' . preg_quote(SCRIPT, '/') . '(?!\?' . preg_quote(SID, '/') . ')\\??/', SCRIPT . '?' . SID . ';', $setLocation);
 	// Keep that debug in their for template debugging!
 	elseif (isset($_GET['debug']))
