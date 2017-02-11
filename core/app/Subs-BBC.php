@@ -1421,6 +1421,13 @@ function wedge_callback_str_shuffle($match)
 }
 
 function loadBBCodes() {
+
+	// This is some weird "fix/security enhancement" for url tags. Will keep it,
+	// even if i don't know what this does. Will be used on all before + content
+	// fields on all url tags
+	// User-contributed links opened in a new tab might be a security issue.
+	$noopener = we::is('chrome[49-],opera[36-],firefox[52-]') ? 'noopener' : 'noreferrer';
+
 	$bbcodes = [
 	  [
 	    'tag' => 'abbr',
@@ -2039,7 +2046,7 @@ function loadBBCodes() {
 	    'trim' => 'none',
 	    'type' => 'unparsed_content',
 	    'validate' => 'bbc_validate_url_content',
-	    'content' => '<a href="$1" class="bbc_link" rel="nofollow" target="_blank">$1</a>',
+	    'content' => '<a href="$1" class="bbc_link" rel="nofollow '.$noopener.'" target="_blank">$1</a>',
 	  ],
 	  [
 	    'tag' => 'url',
@@ -2055,7 +2062,7 @@ function loadBBCodes() {
 	      2 => 'url',
 	      3 => 'iurl',
 	    ],
-	    'before' => '<a href="$1" class="bbc_link" rel="nofollow" target="_blank">',
+	    'before' => '<a href="$1" class="bbc_link" rel="nofollow '.$noopener.'" target="_blank">',
 	    'after' => '</a>',
 	    'disabled_after' => '($1)',
 	  ],
