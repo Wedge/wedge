@@ -714,33 +714,28 @@ input.modify extends .edit_button
 	.login
 		margin: auto
 		dl
-			overflow: none
-			clear: right !important
+			clear: right
 		dt, dd
 			margin: 0 0 .4em
-			width: 44% !important
+			width: 44%
 			padding: .1em
 		dt
 			float: left
-			clear: both !important
+			clear: both
 			text-align: right
 			font-weight: 700
 		dd
-			width: 54% !important
+			width: 54%
 			float: right
 			text-align: left
-			padding-left: 0px !important
-			clear: none !important
 		p
 			text-align: center
-		input
-			max-width: 100%
 
-	@media (max-width: 450px)
+	@media (max-width: 600px)
 		.login
 			dt, dd
-				float, text-align: left
-				width: 100% !important
+				text-align: left
+				width: 100%
 
 	#login #main
 		vertical-align: middle

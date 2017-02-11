@@ -270,7 +270,8 @@ $txt['help_enableCompressedOutput'] = 'This option will compress output to lower
 		zlib to be installed.';
 $txt['help_enableCompressedData'] = 'This option will compress CSS and JS files to gzip format after caching them. It requires zlib to be installed, and the correct .htaccess
 		settings to be initialized. This will save your server the hassle of gzipping these files on the fly each time they are requested.
-		If it doesn\'t work, the stylesheets and JavaScript will be inactive and you should immediately disable the setting.';
+		If it doesn\'t work, the stylesheets and JavaScript will be inactive and you should immediately disable the setting.
+		<br><br>Please note: this feature can conflict with reverse proxies like Nginx, if they\'re set up to serve *.gz files directly. Add an exception to declare them as text files, or remove the extension from your static file list.';
 $txt['help_obfuscate_filenames'] = 'This option will modify the filenames for JavaScript and CSS files when they\'re being cached. Its only point is to allow JavaScript
 		developers to make life harder for evil script thieves who\'re after your work, yes you, personally, it\'s a conspiracy, they want your head.<br><br>
 		Anyway, if names are encrypted, they won\'t be able to find the unminified original files. Obviously, if minification is disabled, it\'s utterly pointless. Just saying.';

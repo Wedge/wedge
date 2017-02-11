@@ -556,7 +556,7 @@ select.sb
 	.text mixes .inline-block("baseline")
 		width: 100%
 		small
-			color: #aaa
+			color: #888
 			float: right
 			margin-left: 5px
 
