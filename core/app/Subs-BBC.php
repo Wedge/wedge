@@ -576,8 +576,8 @@ function parse_bbc($message, $type = 'generic', $bbc_options = array()) // $smil
 					$key = strtok(ltrim($matches[$i]), '=');
 					if (isset($possible['parameters'][$key]['value']))
 						$params['{' . $key . '}'] = strtr($possible['parameters'][$key]['value'], array('$1' => $matches[$i + 1]));
-					elseif (isset($possible['parameters'][$key]['validate']))
-						$params['{' . $key . '}'] = $possible['parameters'][$key]['validate']($matches[$i + 1]);
+					elseif (isset($possible['parameters'][$key]['process']))
+						$params['{' . $key . '}'] = $possible['parameters'][$key]['process']($matches[$i + 1]);
 					else
 						$params['{' . $key . '}'] = $matches[$i + 1];
 
@@ -750,8 +750,8 @@ function parse_bbc($message, $type = 'generic', $bbc_options = array()) // $smil
 			if (!empty($tag['block_level']) && substr($data, 0, 4) === '<br>')
 				$data = substr($data, 4);
 
-			if (isset($tag['validate']))
-				$tag['validate']($tag, $data, $disabled);
+			if (isset($tag['process']))
+				$tag['process']($tag, $data, $disabled);
 
 			$code = strtr($tag['content'], array('$1' => $data));
 			$message = substr($message, 0, $pos) . "\n" . $code . "\n" . substr($message, $pos2 + 3 + $tag['len']);
@@ -792,8 +792,8 @@ function parse_bbc($message, $type = 'generic', $bbc_options = array()) // $smil
 				$data[0] = substr($data[0], 4);
 
 			// Validation for my parking, please!
-			if (isset($tag['validate']))
-				$tag['validate']($tag, $data, $disabled);
+			if (isset($tag['process']))
+				$tag['process']($tag, $data, $disabled);
 
 			$code = strtr($tag['content'], array('$1' => $data[0], '$2' => $data[1]));
 			$message = substr($message, 0, $pos) . "\n" . $code . "\n" . substr($message, $pos3 + 3 + $tag['len']);
@@ -846,8 +846,8 @@ function parse_bbc($message, $type = 'generic', $bbc_options = array()) // $smil
 			$data = explode(',', ',' . substr($message, $pos1, $pos2 - $pos1));
 			$data[0] = substr($message, $pos2 + 1, $pos3 - $pos2 - 1);
 
-			if (isset($tag['validate']))
-				$tag['validate']($tag, $data, $disabled);
+			if (isset($tag['process']))
+				$tag['process']($tag, $data, $disabled);
 
 			$code = $tag['content'];
 			foreach ($data as $k => $d)
@@ -864,8 +864,8 @@ function parse_bbc($message, $type = 'generic', $bbc_options = array()) // $smil
 
 			$data = explode(',', substr($message, $pos1, $pos2 - $pos1));
 
-			if (isset($tag['validate']))
-				$tag['validate']($tag, $data, $disabled);
+			if (isset($tag['process']))
+				$tag['process']($tag, $data, $disabled);
 
 			// Fix after, for disabled code mainly.
 			foreach ($data as $k => $d)
@@ -903,8 +903,8 @@ function parse_bbc($message, $type = 'generic', $bbc_options = array()) // $smil
 			$data = substr($message, $pos1, $pos2 - $pos1);
 
 			// Validation for my parking, please!
-			if (isset($tag['validate']))
-				$tag['validate']($tag, $data, $disabled);
+			if (isset($tag['process']))
+				$tag['process']($tag, $data, $disabled);
 
 			// For parsed content, we must recurse to avoid security problems.
 			if ($tag['type'] !== 'unparsed_equals')
@@ -1490,7 +1490,7 @@ function loadBBCodes() {
 	    'block_level' => true,
 	    'trim' => 'none',
 	    'type' => 'unparsed_content',
-	    'validate' => 'bbc_validate_code',
+	    'process' => 'bbc_validate_code',
 	    'content' => '<div class="bbc_code"><header>{{code}}: <a href="#" onclick="return weSelectText(this);" class="codeoperation">{{code_select}}</a></header>',
 	  ],
 	  [
@@ -1499,7 +1499,7 @@ function loadBBCodes() {
 	    'block_level' => true,
 	    'trim' => 'none',
 	    'type' => 'unparsed_equals_content',
-	    'validate' => 'bbc_validate_code_equals',
+	    'process' => 'bbc_validate_code_equals',
 	    'content' => '<div class="bbc_code"><header>{{code}}: ($2) <a href="#" onclick="return weSelectText(this);" class="codeoperation">{{code_select}}</a></header>',
 	  ],
 	  [
@@ -1518,7 +1518,7 @@ function loadBBCodes() {
 	    'block_level' => false,
 	    'trim' => 'none',
 	    'type' => 'unparsed_content',
-	    'validate' => 'bbc_validate_email',
+	    'process' => 'bbc_validate_email',
 	    'content' => '<a href="mailto:$1" class="bbc_email">$1</a>',
 	  ],
 	  [
@@ -1544,7 +1544,7 @@ function loadBBCodes() {
 	    'block_level' => false,
 	    'trim' => 'none',
 	    'type' => 'unparsed_commas_content',
-	    'validate' => 'bbc_validate_flash',
+	    'process' => 'bbc_validate_flash',
 	    'content' => '<object width="$2" height="$3" data="$1"><param name="movie" value="$1"><param name="play" value="true"><param name="loop" value="true"><param name="quality" value="high"><param name="allowscriptaccess" value="never"><embed src="$1" type="application/x-shockwave-flash" allowscriptaccess="never" width="$2" height="$3"></object>',
 	    'disabled_content' => '<a href="$1" target="_blank" class="new_win">$1</a>',
 	    'test' => '\\d+,\\d+\\]',
@@ -1565,7 +1565,7 @@ function loadBBCodes() {
 	    'block_level' => false,
 	    'trim' => 'none',
 	    'type' => 'unparsed_content',
-	    'validate' => 'bbc_validate_ftp_content',
+	    'process' => 'bbc_validate_ftp_content',
 	    'content' => '<a href="$1" class="bbc_ftp new_win" target="_blank">$1</a>',
 	  ],
 	  [
@@ -1574,7 +1574,7 @@ function loadBBCodes() {
 	    'block_level' => false,
 	    'trim' => 'none',
 	    'type' => 'unparsed_equals',
-	    'validate' => 'bbc_validate_ftp_equals',
+	    'process' => 'bbc_validate_ftp_equals',
 	    'disallow_children' =>
 	    [
 	      0 => 'email',
@@ -1642,7 +1642,7 @@ function loadBBCodes() {
 	        'match' => '(\\d+)',
 	      ],
 	    ],
-	    'validate' => 'bbc_validate_img_1',
+	    'process' => 'bbc_validate_img_1',
 	    'content' => '<img src="$1" alt="{alt}"{width}{height} class="bbc_img resized{align}">',
 	    'disabled_content' => '($1)',
 	  ],
@@ -1652,7 +1652,7 @@ function loadBBCodes() {
 	    'block_level' => false,
 	    'trim' => 'none',
 	    'type' => 'unparsed_content',
-	    'validate' => 'bbc_validate_img_2',
+	    'process' => 'bbc_validate_img_2',
 	    'content' => '<img src="$1" class="bbc_img">',
 	    'disabled_content' => '($1)',
 	  ],
@@ -1662,7 +1662,7 @@ function loadBBCodes() {
 	    'block_level' => false,
 	    'trim' => 'none',
 	    'type' => 'unparsed_content',
-	    'validate' => 'bbc_validate_iurl',
+	    'process' => 'bbc_validate_iurl',
 	    'content' => '<a href="$1" class="bbc_link">$1</a>',
 	  ],
 	  [
@@ -1671,7 +1671,7 @@ function loadBBCodes() {
 	    'block_level' => false,
 	    'trim' => 'none',
 	    'type' => 'unparsed_equals',
-	    'validate' => 'bbc_validate_iurl_equals',
+	    'process' => 'bbc_validate_iurl_equals',
 	    'disallow_children' =>
 	    [
 	      0 => 'email',
@@ -1771,7 +1771,7 @@ function loadBBCodes() {
 	    'block_level' => false,
 	    'trim' => 'none',
 	    'type' => 'unparsed_content',
-	    'validate' => 'bbc_validate_mergedate',
+	    'process' => 'bbc_validate_mergedate',
 	    'content' => '<div class="mergedate">{{search_date_posted}} $1</div>',
 	  ],
 	  [
@@ -1796,7 +1796,7 @@ function loadBBCodes() {
 	    'block_level' => true,
 	    'trim' => 'none',
 	    'type' => 'unparsed_content',
-	    'validate' => 'bbc_validate_php',
+	    'process' => 'bbc_validate_php',
 	    'content' => '<div class="php_code"><code>$1</code></div>',
 	    'disabled_content' => '$1',
 	  ],
@@ -1866,7 +1866,7 @@ function loadBBCodes() {
 	      'date' =>
 	      [
 	        'match' => '(\\d+)',
-	        'validate' => 'on_timeformat',
+	        'process' => 'on_timeformat',
 	      ],
 	    ],
 	    'before' => '<div class="bbc_quote"><header>{{quote_from}} {author} <a href="<URL>?{link}">{date}</a></header><div><blockquote>',
@@ -1927,7 +1927,7 @@ function loadBBCodes() {
 	    'block_level' => false,
 	    'trim' => 'none',
 	    'type' => 'unparsed_equals',
-	    'validate' => 'bbc_validate_size',
+	    'process' => 'bbc_validate_size',
 	    'before' => '<span style="font-size: $1" class="bbc_size">',
 	    'after' => '</span>',
 	    'test' => '[1-7]\\]',
@@ -2002,7 +2002,7 @@ function loadBBCodes() {
 	    'block_level' => false,
 	    'trim' => 'none',
 	    'type' => 'unparsed_content',
-	    'validate' => 'bbc_validate_time',
+	    'process' => 'bbc_validate_time',
 	    'content' => '$1',
 	  ],
 	  [
@@ -2045,7 +2045,7 @@ function loadBBCodes() {
 	    'block_level' => false,
 	    'trim' => 'none',
 	    'type' => 'unparsed_content',
-	    'validate' => 'bbc_validate_url_content',
+	    'process' => 'bbc_validate_url_content',
 	    'content' => '<a href="$1" class="bbc_link" rel="nofollow '.$noopener.'" target="_blank">$1</a>',
 	  ],
 	  [
@@ -2054,7 +2054,7 @@ function loadBBCodes() {
 	    'block_level' => false,
 	    'trim' => 'none',
 	    'type' => 'unparsed_equals',
-	    'validate' => 'bbc_validate_url_equals',
+	    'process' => 'bbc_validate_url_equals',
 	    'disallow_children' =>
 	    [
 	      0 => 'email',
@@ -2084,13 +2084,13 @@ function loadBBCodes() {
 		'parsed_tags_allowed' => 'parsed_tags_allowed',
 	);
 
-	$load_from_db = false;
+	$load_from_db = true;
 	if($load_from_db) {
 		$result = wesql::query('
 			SELECT id_bbcode, tag, len, bbctype, before_code, after_code, content, disabled_before,
 				disabled_after, disabled_content, block_level, test, disallow_children,
 				require_parents, require_children, parsed_tags_allowed, quoted, params, trim_wspace,
-				inject_code_plugin, inject_code_file, inject_code_func
+				process_plugin, process_file, process_func
 			FROM {db_prefix}bbcode'
 		);
 		while ($row = wesql::fetch_assoc($result))
@@ -2106,23 +2106,23 @@ function loadBBCodes() {
 			if (!empty($row['params']))
 				$bbcode['parameters'] = unserialize($row['params']);
 			#if (!empty($row['validate_func']))
-			#	$bbcode['validate'] = create_function('&$tag, &$data, $disabled', $row['validate_func']);
+			#	$bbcode['process'] = create_function('&$tag, &$data, $disabled', $row['validate_func']);
 			if ($row['quoted'] !== 'none')
 				$bbcode['quoted'] = $row['quoted'];
 
-			if (!empty($row['inject_code_func'])) {
+			if (!empty($row['process_func'])) {
 				// Maybe our function is not in Subs-BBC.php so we have to load some
 				// additional files
-				if(!empty($row['inject_code_file'])) {
-					if(!empty($row['inject_code_plugin'])) {
-						loadPluginSource($row['inject_code_plugin'], $row['inject_code_file']);
+				if(!empty($row['process_file'])) {
+					if(!empty($row['process_plugin'])) {
+						loadPluginSource($row['process_plugin'], $row['process_file']);
 					} else {
-						loadSource($row['inject_code_file']);
+						loadSource($row['process_file']);
 					}
 				}
-				$inject_code_func = 'bbc_'.$row['inject_code_func'];
-				if(function_exists($inject_code_func)) {
-					$bbcode['validate'] = $inject_code_func;
+				$process_func = 'bbc_'.$row['process_func'];
+				if(function_exists($process_func)) {
+					$bbcode['process'] = $process_func;
 				} else {
 					throw new Exception('Uncallable validate_func for BBC `'.$row['tag'].'` with id '.$row['id_bbcode']);
 				}
