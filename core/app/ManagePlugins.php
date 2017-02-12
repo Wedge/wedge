@@ -805,7 +805,6 @@ function EnablePlugin()
 				'disabled_content' => !empty($bbcode->disabled->content) ? (string) $bbcode->disabled->content : '',
 				'block_level' => !empty($bbcode['block-level']) && ((string) $bbcode['block-level'] == 'yes') ? 1 : 0,
 				'test' => !empty($bbcode->test) ? (string) $bbcode->test : '',
-				'validate_func' => !empty($bbcode->{'validate-func'}) ? (string) $bbcode->{'validate-func'} : '',
 				'disallow_children' => '',
 				'require_parents' => '',
 				'require_children' => '',
@@ -814,6 +813,10 @@ function EnablePlugin()
 				'params' => '',
 				'trim_wspace' => !empty($bbcode['trim_wspace']) ? (string) $bbcode['trim_wspace'] : 'none',
 				'id_plugin' => $manifest_id,
+				'process_plugin' => !empty($bbcode->{'process'}['plugin']) ? (string) $bbcode->{'process'}['plugin'] : $manifest_id,
+				'process_file' => !empty($bbcode->{'process'}['file']) ? (string) $bbcode->{'process'}['file'] : '',
+				'process_func' => !empty($bbcode->{'process'}['function']) ? (string) $bbcode->{'process'}['function'] : '',
+
 			);
 
 			// Checking the type and some other stuff. Doing it here after we've typecast them. It won't always work cleanly otherwise.
@@ -898,7 +901,7 @@ function EnablePlugin()
 				case 'parsed':
 					$rules = array(
 						'require' => array('before_code', 'after_code'),
-						'disallow' => array('content', 'validate_func', 'parsed_tags_allowed'),
+						'disallow' => array('content', 'process_func', 'parsed_tags_allowed'),
 					);
 					break;
 				case 'unparsed_equals':
@@ -924,7 +927,7 @@ function EnablePlugin()
 						continue;
 					$rules = array(
 						'require' => array('content'),
-						'disallow' => array('before_code', 'after_code', 'test', 'params', 'disallow_children', 'require_children', 'require_parents', 'validate_func', 'parsed_tags_allowed'),
+						'disallow' => array('before_code', 'after_code', 'test', 'params', 'disallow_children', 'require_children', 'require_parents', 'process_func', 'parsed_tags_allowed'),
 					);
 					break;
 				case 'unparsed_commas':
@@ -1000,7 +1003,6 @@ function EnablePlugin()
 					'disabled_content' => 'string',
 					'block_level' => 'string',
 					'test' => 'string',
-					'validate_func' => 'string',
 					'disallow_children' => 'string',
 					'require_parents' => 'string',
 					'require_children' => 'string',
@@ -1009,6 +1011,9 @@ function EnablePlugin()
 					'params' => 'string',
 					'trim_wspace' => 'string',
 					'id_plugin' => 'string',
+					'process_plugin' => 'string',
+					'process_file' => 'string',
+					'process_func' => 'string'
 				),
 				$new_bbcode
 			);
