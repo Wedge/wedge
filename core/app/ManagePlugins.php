@@ -861,7 +861,8 @@ function EnablePlugin()
 			}
 
 			if (!empty($bbcode->{'process'}['function'])) {
-				$this_bbcode['process_plugin'] = !empty($bbcode->{'process'}['plugin']) ? (string) $bbcode->{'process'}['plugin'] : $manifest_id;
+				if(empty($bbcode->{'process'}['load-from-core']) || $bbcode->{'process'}['load-from-core'] != 'yes')
+					$this_bbcode['process_plugin'] = !empty($bbcode->{'process'}['plugin']) ? (string) $bbcode->{'process'}['plugin'] : $manifest_id;
 				$this_bbcode['process_file'] = !empty($bbcode->{'process'}['file']) ? (string) $bbcode->{'process'}['file'] : '';
 				$this_bbcode['process_func'] = strpos($bbcode->{'process'}['function'], 'bbc_') === 0 ? substr((string) $bbcode->{'process'}['function'], 4, -1) : (string) $bbcode->{'process'}['function'];
 			}
