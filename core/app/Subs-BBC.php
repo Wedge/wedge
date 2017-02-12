@@ -730,12 +730,19 @@ function parse_bbc($message, $type = 'generic', $bbc_options = array()) // $smil
 			}
 		}
 
-		// No type means 'parsed_content'.
+		// No type means 'parsed'.
 		if (!isset($tag['type']))
 		{
+			$pos2 = stripos($message, '[/' . substr($message, $pos + 1, $tag['len']) . ']', $pos1);
 			// !!! Check for end tag first, so people can say "I like that [i] tag"?
 			$open_tags[] = $tag;
-			$message = substr($message, 0, $pos) . "\n" . $tag['before'] . "\n" . substr($message, $pos1);
+
+			$data = substr($message, $pos1, $pos2-$pos1);
+
+			if (isset($tag['process']))
+				$tag['process']($tag, $data, $disabled, $params);
+
+			$message = substr($message, 0, $pos) . "\n" . $tag['before'] . "\n" . $data . substr($message, $pos2 + 3 + $tag['len']);
 			$pos += strlen($tag['before']) + 1;
 		}
 		// Don't parse the content, just skip it.
@@ -751,7 +758,7 @@ function parse_bbc($message, $type = 'generic', $bbc_options = array()) // $smil
 				$data = substr($data, 4);
 
 			if (isset($tag['process']))
-				$tag['process']($tag, $data, $disabled);
+				$tag['process']($tag, $data, $disabled, $params);
 
 			$code = strtr($tag['content'], array('$1' => $data));
 			$message = substr($message, 0, $pos) . "\n" . $code . "\n" . substr($message, $pos2 + 3 + $tag['len']);
@@ -793,7 +800,7 @@ function parse_bbc($message, $type = 'generic', $bbc_options = array()) // $smil
 
 			// Validation for my parking, please!
 			if (isset($tag['process']))
-				$tag['process']($tag, $data, $disabled);
+				$tag['process']($tag, $data, $disabled, $params);
 
 			$code = strtr($tag['content'], array('$1' => $data[0], '$2' => $data[1]));
 			$message = substr($message, 0, $pos) . "\n" . $code . "\n" . substr($message, $pos3 + 3 + $tag['len']);
@@ -827,6 +834,10 @@ function parse_bbc($message, $type = 'generic', $bbc_options = array()) // $smil
 			else
 			{
 				$pos2 = strpos($message, ']', $pos);
+
+				if (isset($tag['process']))
+					$tag['process']($tag, '', $disabled);
+
 				$message = substr($message, 0, $pos) . "\n" . $tag['content'] . "\n" . substr($message, $pos2 + 1);
 				$pos += strlen($tag['content']) + 1;
 			}
@@ -847,7 +858,7 @@ function parse_bbc($message, $type = 'generic', $bbc_options = array()) // $smil
 			$data[0] = substr($message, $pos2 + 1, $pos3 - $pos2 - 1);
 
 			if (isset($tag['process']))
-				$tag['process']($tag, $data, $disabled);
+				$tag['process']($tag, $data, $disabled, $params);
 
 			$code = $tag['content'];
 			foreach ($data as $k => $d)
@@ -862,10 +873,12 @@ function parse_bbc($message, $type = 'generic', $bbc_options = array()) // $smil
 			if ($pos2 === false)
 				continue;
 
+			log_error($tag['type']);
+
 			$data = explode(',', substr($message, $pos1, $pos2 - $pos1));
 
 			if (isset($tag['process']))
-				$tag['process']($tag, $data, $disabled);
+				$tag['process']($tag, $data, $disabled, $params);
 
 			// Fix after, for disabled code mainly.
 			foreach ($data as $k => $d)
@@ -904,7 +917,7 @@ function parse_bbc($message, $type = 'generic', $bbc_options = array()) // $smil
 
 			// Validation for my parking, please!
 			if (isset($tag['process']))
-				$tag['process']($tag, $data, $disabled);
+				$tag['process']($tag, $data, $disabled, $params);
 
 			// For parsed content, we must recurse to avoid security problems.
 			if ($tag['type'] !== 'unparsed_equals')
@@ -2121,6 +2134,7 @@ function loadBBCodes() {
 					}
 				}
 				$process_func = 'bbc_'.$row['process_func'];
+
 				if(function_exists($process_func)) {
 					$bbcode['process'] = $process_func;
 				} else {
@@ -2157,8 +2171,7 @@ function loadBBCodes() {
 	return $bbcodes;
 }
 
-function bbc_validate_code(&$tag, &$data, &$disabled) {
-	log_error('hallo');
+function bbc_validate_code(&$tag, &$data, &$disabled, &$params) {
 	if (!isset($disabled['code']))
 	{
 		if (we::is('gecko,opera'))
@@ -2189,7 +2202,7 @@ function bbc_validate_code(&$tag, &$data, &$disabled) {
 			$data = str_replace('<br>', '&#13;', $data);
 	}
 }
-function bbc_validate_code_equals(&$tag, &$data, &$disabled) {
+function bbc_validate_code_equals(&$tag, &$data, &$disabled, &$params) {
 	if (!isset($disabled['code']))
 	{
 		if (we::is('gecko,opera'))
@@ -2220,71 +2233,71 @@ function bbc_validate_code_equals(&$tag, &$data, &$disabled) {
 			$data[0] = str_replace('<br>', '&#13;', $data[0]);
 	}
 }
-function bbc_validate_email(&$tag, &$data, &$disabled) {
+function bbc_validate_email(&$tag, &$data, &$disabled, &$params) {
 	$data = strtr($data, array('<br>' => ''));
 }
-function bbc_validate_flash(&$tag, &$data, &$disabled) {
+function bbc_validate_flash(&$tag, &$data, &$disabled, &$params) {
 	if (isset($disabled['url']))
 		$tag['content'] = '$1';
 	elseif (strpos($data[0], 'http://') !== 0 && strpos($data[0], 'https://') !== 0)
 		$data[0] = 'http://' . $data[0];
 }
-function bbc_validate_ftp_content(&$tag, &$data, &$disabled) {
+function bbc_validate_ftp_content(&$tag, &$data, &$disabled, &$params) {
 	$data = strtr($data, array('<br>' => ''));
 	if (strpos($data, 'ftp://') !== 0 && strpos($data, 'ftps://') !== 0)
 		$data = 'ftp://' . $data;
 }
-function bbc_validate_ftp_equals(&$tag, &$data, &$disabled) {
+function bbc_validate_ftp_equals(&$tag, &$data, &$disabled, &$params) {
 	if (strpos($data, 'ftp://') !== 0 && strpos($data, 'ftps://') !== 0)
 		$data = 'ftp://' . $data;
 }
-function bbc_validate_img_1(&$tag, &$data, &$disabled) {
+function bbc_validate_img_1(&$tag, &$data, &$disabled, &$params) {
 	$data = strtr($data, array('<br>' => ''));
 	if (strpos($data, 'http://') !== 0 && strpos($data, 'https://') !== 0)
 		$data = 'http://' . $data;
 	add_js_unique('$("img.resized").click(function () { this.style.width = this.style.height = (this.style.width == "auto" ? null : "auto"); });');
 }
-function bbc_validate_img_2(&$tag, &$data, &$disabled) {
+function bbc_validate_img_2(&$tag, &$data, &$disabled, &$params) {
 	$data = strtr($data, array('<br>' => ''));
 	if (strpos($data, 'http://') !== 0 && strpos($data, 'https://') !== 0)
 		$data = 'http://' . $data;
 }
-function bbc_validate_iurl(&$tag, &$data, &$disabled) {
+function bbc_validate_iurl(&$tag, &$data, &$disabled, &$params) {
 	$data = strtr($data, array('<br>' => ''));
 	if (strpos($data, 'http://') !== 0 && strpos($data, 'https://') !== 0)
 		$data = 'http://' . $data;
 }
-function bbc_validate_iurl_equals(&$tag, &$data, &$disabled) {
+function bbc_validate_iurl_equals(&$tag, &$data, &$disabled, &$params) {
 	if (substr($data, 0, 1) == '#')
 		$data = '#post_' . substr($data, 1);
 	elseif (strpos($data, 'http://') !== 0 && strpos($data, 'https://') !== 0)
 		$data = 'http://' . $data;
 }
-function bbc_validate_mergedate(&$tag, &$data, &$disabled) {
+function bbc_validate_mergedate(&$tag, &$data, &$disabled, &$params) {
 	if (is_numeric($data)) $data = timeformat($data);
 }
-function bbc_validate_php(&$tag, &$data, &$disabled) {
+function bbc_validate_php(&$tag, &$data, &$disabled, &$params) {
 	$add_begin = substr(trim($data), 0, 5) != '&lt;';
 	$data = highlight_php_code($add_begin ? '&lt;?php ' . $data . '?&gt;' : $data);
 	if ($add_begin)
 		$data = preg_replace(array('~^(.+?)&lt;\?.{0,40}?php(?:&nbsp;|\s)~', '~\?&gt;((?:</(font|span)>)*)$~'), '$1', $data, 2);
 }
-function bbc_validate_size(&$tag, &$data, &$disabled) {
+function bbc_validate_size(&$tag, &$data, &$disabled, &$params) {
 	$sizes = array(1 => 8, 2 => 10, 3 => 12, 4 => 14, 5 => 18, 6 => 24, 7 => 36);
 	$data = $sizes[$data] . 'pt';
 }
-function bbc_validate_time(&$tag, &$data, &$disabled) {
+function bbc_validate_time(&$tag, &$data, &$disabled, &$params) {
 	if (is_numeric($data))
 		$data = timeformat($data);
 	else
 		$tag['content'] = '[time]$1[/time]';
 }
-function bbc_validate_url_content(&$tag, &$data, &$disabled) {
+function bbc_validate_url_content(&$tag, &$data, &$disabled, &$params) {
 	$data = strtr($data, array('<br>' => ''));
 	if (strpos($data, 'http://') !== 0 && strpos($data, 'https://') !== 0)
 		$data = 'http://' . $data;
 }
-function bbc_validate_url_equals(&$tag, &$data, &$disabled) {
+function bbc_validate_url_equals(&$tag, &$data, &$disabled, &$params) {
 	if (strpos($data, 'http://') !== 0 && strpos($data, 'https://') !== 0)
 		$data = 'http://' . $data;
 }

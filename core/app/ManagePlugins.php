@@ -793,6 +793,7 @@ function EnablePlugin()
 			if (empty($bbcode['tag']) || empty($bbcode['type']))
 				continue;
 
+
 			$this_bbcode = array(
 				'tag' => (string) $bbcode['tag'],
 				'len' => strlen((string) $bbcode['tag']),
@@ -864,7 +865,7 @@ function EnablePlugin()
 				if(empty($bbcode->{'process'}['load-from-core']) || $bbcode->{'process'}['load-from-core'] != 'yes')
 					$this_bbcode['process_plugin'] = !empty($bbcode->{'process'}['plugin']) ? (string) $bbcode->{'process'}['plugin'] : $manifest_id;
 				$this_bbcode['process_file'] = !empty($bbcode->{'process'}['file']) ? (string) $bbcode->{'process'}['file'] : '';
-				$this_bbcode['process_func'] = strpos($bbcode->{'process'}['function'], 'bbc_') === 0 ? substr((string) $bbcode->{'process'}['function'], 4, -1) : (string) $bbcode->{'process'}['function'];
+				$this_bbcode['process_func'] = strpos($bbcode->{'process'}['function'], 'bbc_') === 0 ? substr((string) $bbcode->{'process'}['function'], 4) : (string) $bbcode->{'process'}['function'];
 			}
 
 			// Lastly, parameters
@@ -908,7 +909,7 @@ function EnablePlugin()
 				case 'parsed':
 					$rules = array(
 						'require' => array('before_code', 'after_code'),
-						'disallow' => array('content', 'process_func', 'parsed_tags_allowed'),
+						'disallow' => array('content', 'parsed_tags_allowed'),
 					);
 					break;
 				case 'unparsed_equals':
@@ -934,7 +935,7 @@ function EnablePlugin()
 						continue;
 					$rules = array(
 						'require' => array('content'),
-						'disallow' => array('before_code', 'after_code', 'test', 'params', 'disallow_children', 'require_children', 'require_parents', 'process_func', 'parsed_tags_allowed'),
+						'disallow' => array('before_code', 'after_code', 'test', 'params', 'disallow_children', 'require_children', 'require_parents', 'parsed_tags_allowed'),
 					);
 					break;
 				case 'unparsed_commas':
