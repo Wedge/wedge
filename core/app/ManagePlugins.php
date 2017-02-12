@@ -813,9 +813,9 @@ function EnablePlugin()
 				'params' => '',
 				'trim_wspace' => !empty($bbcode['trim_wspace']) ? (string) $bbcode['trim_wspace'] : 'none',
 				'id_plugin' => $manifest_id,
-				'process_plugin' => !empty($bbcode->{'process'}['plugin']) ? (string) $bbcode->{'process'}['plugin'] : $manifest_id,
-				'process_file' => !empty($bbcode->{'process'}['file']) ? (string) $bbcode->{'process'}['file'] : '',
-				'process_func' => !empty($bbcode->{'process'}['function']) ? (string) $bbcode->{'process'}['function'] : '',
+				'process_plugin' => '',
+				'process_file' => '',
+				'process_func' => '',
 
 			);
 
@@ -858,6 +858,12 @@ function EnablePlugin()
 					$temp[] = (string) $tag;
 				if (!empty($temp))
 					$this_bbcode['parsed_tags_allowed'] = implode(',', $temp);
+			}
+
+			if (!empty($bbcode->{'process'}['function'])) {
+				$this_bbcode['process_plugin'] = !empty($bbcode->{'process'}['plugin']) ? (string) $bbcode->{'process'}['plugin'] : $manifest_id;
+				$this_bbcode['process_file'] = !empty($bbcode->{'process'}['file']) ? (string) $bbcode->{'process'}['file'] : '';
+				$this_bbcode['process_func'] = strpos($bbcode->{'process'}['function'], 'bbc_') === 0 ? substr((string) $bbcode->{'process'}['function'], 4, -1) : (string) $bbcode->{'process'}['function'];
 			}
 
 			// Lastly, parameters
