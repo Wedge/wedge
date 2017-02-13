@@ -733,16 +733,21 @@ function parse_bbc($message, $type = 'generic', $bbc_options = array()) // $smil
 		// No type means 'parsed'.
 		if (!isset($tag['type']))
 		{
+			// We want to make things clear
+			$tag['type'] = 'parsed';
+
 			$pos2 = stripos($message, '[/' . substr($message, $pos + 1, $tag['len']) . ']', $pos1);
 			// !!! Check for end tag first, so people can say "I like that [i] tag"?
 			$open_tags[] = $tag;
 
-			$data = substr($message, $pos1, $pos2-$pos1);
+			$content = substr($message, $pos1, $pos2-$pos1);
 
-			if (isset($tag['process']))
-				$tag['process']($tag, $data, $disabled, $params);
+			if (isset($tag['process'])) {
+				$params = null;
+				$tag['process']($tag, $content, $disabled, $params);
+			}
 
-			$message = substr($message, 0, $pos) . "\n" . $tag['before'] . "\n" . $data . substr($message, $pos2 + 3 + $tag['len']);
+			$message = substr($message, 0, $pos) . "\n" . $tag['before'] . "\n" . $content . substr($message, $pos2 + 3 + $tag['len']);
 			$pos += strlen($tag['before']) + 1;
 		}
 		// Don't parse the content, just skip it.
@@ -752,15 +757,18 @@ function parse_bbc($message, $type = 'generic', $bbc_options = array()) // $smil
 			if ($pos2 === false)
 				continue;
 
-			$data = substr($message, $pos1, $pos2 - $pos1);
+			$content = substr($message, $pos1, $pos2 - $pos1);
 
-			if (!empty($tag['block_level']) && substr($data, 0, 4) === '<br>')
-				$data = substr($data, 4);
+			if (!empty($tag['block_level']) && substr($content, 0, 4) === '<br>')
+				$content = substr($data, 4);
 
-			if (isset($tag['process']))
-				$tag['process']($tag, $data, $disabled, $params);
 
-			$code = strtr($tag['content'], array('$1' => $data));
+			if (isset($tag['process'])) {
+				$params = null;
+				$tag['process']($tag, $content, $disabled, $params);
+			}
+
+			$code = strtr($tag['content'], array('$1' => $content));
 			$message = substr($message, 0, $pos) . "\n" . $code . "\n" . substr($message, $pos2 + 3 + $tag['len']);
 
 			$pos += strlen($code) + 1;
@@ -790,19 +798,17 @@ function parse_bbc($message, $type = 'generic', $bbc_options = array()) // $smil
 			if ($pos3 === false)
 				continue;
 
-			$data = array(
-				substr($message, $pos2 + ($quoted ? 7 : 1), $pos3 - $pos2 - ($quoted ? 7 : 1)),
-				substr($message, $pos1, $pos2 - $pos1)
-			);
+			$params = array(substr($message, $pos1, $pos2 - $pos1));
+			$content = substr($message, $pos2 + ($quoted ? 7 : 1), $pos3 - $pos2 - ($quoted ? 7 : 1));
 
-			if (!empty($tag['block_level']) && substr($data[0], 0, 4) === '<br>')
-				$data[0] = substr($data[0], 4);
+			if (!empty($tag['block_level']) && substr($content, 0, 4) === '<br>')
+				$content = substr($content, 4);
 
 			// Validation for my parking, please!
 			if (isset($tag['process']))
-				$tag['process']($tag, $data, $disabled, $params);
+				$tag['process']($tag, $content, $disabled, $params);
 
-			$code = strtr($tag['content'], array('$1' => $data[0], '$2' => $data[1]));
+			$code = strtr($tag['content'], array('$1' => $content, '$2' => $params[0]));
 			$message = substr($message, 0, $pos) . "\n" . $code . "\n" . substr($message, $pos3 + 3 + $tag['len']);
 			$pos += strlen($code) + 1;
 		}
@@ -835,8 +841,11 @@ function parse_bbc($message, $type = 'generic', $bbc_options = array()) // $smil
 			{
 				$pos2 = strpos($message, ']', $pos);
 
-				if (isset($tag['process']))
-					$tag['process']($tag, '', $disabled);
+				if (isset($tag['process'])) {
+					$params = null;
+					$content = '';
+					$tag['process']($tag, $content, $disabled, $params);
+				}
 
 				$message = substr($message, 0, $pos) . "\n" . $tag['content'] . "\n" . substr($message, $pos2 + 1);
 				$pos += strlen($tag['content']) + 1;
@@ -854,14 +863,15 @@ function parse_bbc($message, $type = 'generic', $bbc_options = array()) // $smil
 				continue;
 
 			// We want $1 to be the content, and the rest to be csv.
-			$data = explode(',', ',' . substr($message, $pos1, $pos2 - $pos1));
-			$data[0] = substr($message, $pos2 + 1, $pos3 - $pos2 - 1);
+			$params = explode(',', substr($message, $pos1, $pos2 - $pos1));
+			$content = substr($message, $pos2 + 1, $pos3 - $pos2 - 1);
 
-			if (isset($tag['process']))
-				$tag['process']($tag, $data, $disabled, $params);
+			if (isset($tag['process'])) {
+				$tag['process']($tag, $content, $disabled, $params);
+			}
 
 			$code = $tag['content'];
-			foreach ($data as $k => $d)
+			foreach (array_merge([$content], $params) as $k => $d)
 				$code = strtr($code, array('$' . ($k + 1) => trim($d)));
 			$message = substr($message, 0, $pos) . "\n" . $code . "\n" . substr($message, $pos3 + 3 + $tag['len']);
 			$pos += strlen($code) + 1;
@@ -873,24 +883,31 @@ function parse_bbc($message, $type = 'generic', $bbc_options = array()) // $smil
 			if ($pos2 === false)
 				continue;
 
-			log_error($tag['type']);
+			$params = explode(',', substr($message, $pos1, $pos2 - $pos1));
 
-			$data = explode(',', substr($message, $pos1, $pos2 - $pos1));
-
-			if (isset($tag['process']))
-				$tag['process']($tag, $data, $disabled, $params);
+			if (isset($tag['process'])) {
+				$pos3 = strrpos($message, '[');
+				$content = substr($message, $pos2+1, $pos3-$pos2-1);
+				$tag['process']($tag, $content, $disabled, $params);
+			}
 
 			// Fix after, for disabled code mainly.
-			foreach ($data as $k => $d)
+			foreach ($params as $k => $d)
 				$tag['after'] = strtr($tag['after'], array('$' . ($k + 1) => trim($d)));
 
 			$open_tags[] = $tag;
 
 			// Replace them out, $1, $2, $3, $4, etc.
 			$code = $tag['before'];
-			foreach ($data as $k => $d)
+			foreach ($params as $k => $d)
 				$code = strtr($code, array('$' . ($k + 1) => trim($d)));
-			$message = substr($message, 0, $pos) . "\n" . $code . "\n" . substr($message, $pos2 + 1);
+
+			// This is not nice, but this will make sure we don't break things if those changes aren't applied correctly
+			if (isset($tag['process'])) {
+				$message = substr($message, 0, $pos) . "\n" . $code . "\n" . $content . substr($message, $pos3);
+			} else {
+				$message = substr($message, 0, $pos) . "\n" . $code . "\n" . substr($message, $pos2 + 1);
+			}
 			$pos += strlen($code) + 1;
 		}
 		// A tag set to a value, parsed or not.
@@ -916,8 +933,11 @@ function parse_bbc($message, $type = 'generic', $bbc_options = array()) // $smil
 			$data = substr($message, $pos1, $pos2 - $pos1);
 
 			// Validation for my parking, please!
-			if (isset($tag['process']))
-				$tag['process']($tag, $data, $disabled, $params);
+			if (isset($tag['process'])) {
+				$pos3 = strrpos($message, '[');
+				$content = substr($message, $pos2 + ($quoted ? 7 : 1), $pos3 - $pos2 - ($quoted ? 7 : 1));
+				$tag['process']($tag, $content, $disabled, [$data]);
+			}
 
 			// For parsed content, we must recurse to avoid security problems.
 			if ($tag['type'] !== 'unparsed_equals')
@@ -928,7 +948,11 @@ function parse_bbc($message, $type = 'generic', $bbc_options = array()) // $smil
 			$open_tags[] = $tag;
 
 			$code = strtr($tag['before'], array('$1' => $data));
-			$message = substr($message, 0, $pos) . "\n" . $code . "\n" . substr($message, $pos2 + ($quoted ? 7 : 1));
+			if (isset($tag['process'])) {
+				$message = substr($message, 0, $pos) . "\n" . $code . "\n" . $content . substr($message, $pos3);
+			} else {
+				$message = substr($message, 0, $pos) . "\n" . $code . "\n" . substr($message, $pos2 + ($quoted ? 7 : 1));
+			}
 			$pos += strlen($code) + 1;
 		}
 
