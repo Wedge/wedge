@@ -1808,7 +1808,7 @@ function loadBBCodes() {
 	    'block_level' => false,
 	    'trim' => 'none',
 	    'type' => 'unparsed_content',
-	    'process' => 'bbc_validate_mergedate',
+	    'process' => 'bbc_mergedate_timeformat',
 	    'content' => '<div class="mergedate">{{search_date_posted}} $1</div>',
 	  ],
 	  [
@@ -1833,7 +1833,7 @@ function loadBBCodes() {
 	    'block_level' => true,
 	    'trim' => 'none',
 	    'type' => 'unparsed_content',
-	    'process' => 'bbc_validate_php',
+	    'process' => 'bbc_php_syntax_highlight',
 	    'content' => '<div class="php_code"><code>$1</code></div>',
 	    'disabled_content' => '$1',
 	  ],
@@ -1964,7 +1964,7 @@ function loadBBCodes() {
 	    'block_level' => false,
 	    'trim' => 'none',
 	    'type' => 'unparsed_equals',
-	    'process' => 'bbc_validate_size',
+	    'process' => 'bbc_size_translate_to_pt',
 	    'before' => '<span style="font-size: $1" class="bbc_size">',
 	    'after' => '</span>',
 	    'test' => '[1-7]\\]',
@@ -2039,7 +2039,7 @@ function loadBBCodes() {
 	    'block_level' => false,
 	    'trim' => 'none',
 	    'type' => 'unparsed_content',
-	    'process' => 'bbc_validate_time',
+	    'process' => 'bbc_time_timeformat',
 	    'content' => '$1',
 	  ],
 	  [
@@ -2195,6 +2195,9 @@ function loadBBCodes() {
 	return $bbcodes;
 }
 
+// THE FOLLOWING FUNCTIONS ARE USED FOR BBC PROCESSING.
+// See 'process' fields on bbc tags in loadBBCodes()
+
 function bbc_code_process(&$tag, &$content, &$disabled, &$params) {
 	if (!isset($disabled['code']))
 	{
@@ -2237,12 +2240,14 @@ function bbc_flash_set_prot(&$tag, &$content, &$disabled, &$params) {
 	elseif (strpos($content, 'http://') !== 0 && strpos($content, 'https://') !== 0)
 		$content = 'http://' . $content;
 }
+
 function bbc_ftp_trim_and_set_prot(&$tag, &$content, &$disabled, &$params) {
 	if($tag['type'] == 'unparsed_content')
 		bbc_general_trim($tag, $content, $disabled, $params);
 	if (strpos($content, 'ftp://') !== 0 && strpos($content, 'ftps://') !== 0)
 		$content = 'ftp://' . $content;
 }
+
 function bbc_img_trim_set_prot_and_add_js(&$tag, &$content, &$disabled, &$params) {
 	bbc_general_trim($tag, $content, $disabled, $params);
 	if (strpos($content, 'http://') !== 0 && strpos($content, 'https://') !== 0)
@@ -2250,6 +2255,7 @@ function bbc_img_trim_set_prot_and_add_js(&$tag, &$content, &$disabled, &$params
 	if (isset($tag['paramaters']))
 		add_js_unique('$("img.resized").click(function () { this.style.width = this.style.height = (this.style.width == "auto" ? null : "auto"); });');
 }
+
 function bbc_iurl_trim_set_post_and_set_prot(&$tag, &$content, &$disabled, &$params) {
 	if ($tag['type'] == 'unparsed_content')
 		bbc_general_trim($tag, $content, $disabled, $params);
@@ -2258,25 +2264,30 @@ function bbc_iurl_trim_set_post_and_set_prot(&$tag, &$content, &$disabled, &$par
 	elseif (strpos($content, 'http://') !== 0 && strpos($content, 'https://') !== 0)
 		$content = 'http://' . $content;
 }
-function bbc_validate_mergedate(&$tag, &$content, &$disabled, &$params) {
+
+function bbc_mergedate_timeformat(&$tag, &$content, &$disabled, &$params) {
 	if (is_numeric($content)) $content = timeformat($content);
 }
-function bbc_validate_php(&$tag, &$content, &$disabled, &$params) {
+
+function bbc_php_syntax_highlight(&$tag, &$content, &$disabled, &$params) {
 	$add_begin = substr(trim($content), 0, 5) != '&lt;';
 	$content = highlight_php_code($add_begin ? '&lt;?php ' . $content . '?&gt;' : $content);
 	if ($add_begin)
 		$content = preg_replace(array('~^(.+?)&lt;\?.{0,40}?php(?:&nbsp;|\s)~', '~\?&gt;((?:</(font|span)>)*)$~'), '$1', $content, 2);
 }
-function bbc_validate_size(&$tag, &$content, &$disabled, &$params) {
+
+function bbc_size_translate_to_pt(&$tag, &$content, &$disabled, &$params) {
 	$sizes = array(1 => 8, 2 => 10, 3 => 12, 4 => 14, 5 => 18, 6 => 24, 7 => 36);
 	$content = $sizes[$content] . 'pt';
 }
-function bbc_validate_time(&$tag, &$content, &$disabled, &$params) {
+
+function bbc_time_timeformat(&$tag, &$content, &$disabled, &$params) {
 	if (is_numeric($content))
 		$content = timeformat($content);
 	else
 		$tag['content'] = '[time]$1[/time]';
 }
+
 function bbc_url_trim_and_set_prot(&$tag, &$content, &$disabled, &$params) {
 	if($tag['type'] == 'unparsed_content')
 		bbc_general_trim($tag, $content, $disabled, $params);
