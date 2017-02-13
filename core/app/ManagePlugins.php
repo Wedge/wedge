@@ -790,10 +790,10 @@ function EnablePlugin()
 		foreach ($manifest->bbcodes->bbcode as $bbcode)
 		{
 			// bbcode must declare itself as having a tag and what type of tag it is
-			if (empty($bbcode['tag']) || empty($bbcode['type']))
+			if (empty($bbcode['tag']) || empty($bbcode['type'])) {
+				trigger_error('A BBCode defined inside the Plugin `'.$manifest_id.'` couldn\'t get loaded because it is missing tag or type. Problematic part of XML:'."\n".'```'.$bbcode->asXML().'```');
 				continue;
-
-
+			}
 			$this_bbcode = array(
 				'tag' => (string) $bbcode['tag'],
 				'len' => strlen((string) $bbcode['tag']),
@@ -819,10 +819,11 @@ function EnablePlugin()
 				'process_func' => '',
 
 			);
-
 			// Checking the type and some other stuff. Doing it here after we've typecast them. It won't always work cleanly otherwise.
-			if (!in_array($this_bbcode['bbctype'], $valid_types) || !in_array($this_bbcode['quoted'], $valid_quoted) || !in_array($this_bbcode['trim_wspace'], $valid_trim))
+			if (!in_array($this_bbcode['bbctype'], $valid_types) || !in_array($this_bbcode['quoted'], $valid_quoted) || !in_array($this_bbcode['trim_wspace'], $valid_trim)) {
+				trigger_error('A BBCode defined inside the Plugin `'.$manifest_id.'` coulnd\'t get loaded because it has an invalid type for at least one the fields `bbctype`, `quoted` or `trim_wspace`. Problematic Part of XML: ```'.$bbcode->asXML().'```');
 				continue;
+			}
 
 			// OK, now we need to parse the remaining content that we couldn't have done in the above because of our nice XML structure.
 			if (!empty($bbcode->{'disallow-children'}))
@@ -964,6 +965,7 @@ function EnablePlugin()
 				foreach ($rules['disallow'] as $item)
 					if (!empty($this_bbcode[$item]))
 					{
+						trigger_error('A BBCode defined inside the Plugin `'.$manifest_id.'` couldn\'t get loaded because it has set the field `'.$item.'` even if it\'s disallowed for this bbctype `'.$this_bbcode['bbctype'].'`. Problematic Part of XML: ```'.$bbcode->asXML().'```');
 						$found = true;
 						break;
 					}
@@ -978,6 +980,7 @@ function EnablePlugin()
 				foreach ($rules['require'] as $item)
 					if (empty($this_bbcode[$item]))
 					{
+						trigger_error('A BBCode defined inside the Plugin `'.$manifest_id.'` couldn\'t get loaded because it has NOT set the field `'.$item.'` even if it\'s required for this bbctype `'.$this_bbcode['bbctype'].'`. Problematic Part of XML: ```'.$bbcode->asXML().'```');
 						$found = false;
 						break;
 					}
