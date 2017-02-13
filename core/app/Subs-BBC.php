@@ -1527,7 +1527,7 @@ function loadBBCodes() {
 	    'block_level' => true,
 	    'trim' => 'none',
 	    'type' => 'unparsed_content',
-	    'process' => 'bbc_validate_code',
+	    'process' => 'bbc_process_code',
 	    'content' => '<div class="bbc_code"><header>{{code}}: <a href="#" onclick="return weSelectText(this);" class="codeoperation">{{code_select}}</a></header>',
 	  ],
 	  [
@@ -1536,7 +1536,7 @@ function loadBBCodes() {
 	    'block_level' => true,
 	    'trim' => 'none',
 	    'type' => 'unparsed_equals_content',
-	    'process' => 'bbc_validate_code_equals',
+	    'process' => 'bbc_process_code',
 	    'content' => '<div class="bbc_code"><header>{{code}}: ($2) <a href="#" onclick="return weSelectText(this);" class="codeoperation">{{code_select}}</a></header>',
 	  ],
 	  [
@@ -2195,14 +2195,14 @@ function loadBBCodes() {
 	return $bbcodes;
 }
 
-function bbc_validate_code(&$tag, &$data, &$disabled, &$params) {
+function bbc_process_code(&$tag, &$content, &$disabled, &$params) {
 	if (!isset($disabled['code']))
 	{
 		if (we::is('gecko,opera'))
 			$tag['content'] .= '<span class="bbc_pre"><code>$1</code></span></div>';
 		else
 			$tag['content'] .= '<code>$1</code></div>';
-		$php_parts = preg_split('~(&lt;\?php|\?&gt;)~', $data, -1, PREG_SPLIT_DELIM_CAPTURE);
+		$php_parts = preg_split('~(&lt;\?php|\?&gt;)~', $content, -1, PREG_SPLIT_DELIM_CAPTURE);
 		for ($php_i = 0, $php_n = count($php_parts); $php_i < $php_n; $php_i++)
 		{
 			// Do PHP code coloring?
@@ -2217,46 +2217,16 @@ function bbc_validate_code(&$tag, &$data, &$disabled, &$params) {
 			$php_parts[$php_i] = highlight_php_code($php_string . $php_parts[$php_i]);
 		}
 		// Fix the PHP code stuff...
-		$data = str_replace("<span class=\"bbc_pre\">\t</span>", "\t", implode('', $php_parts));
+		$content = str_replace("<span class=\"bbc_pre\">\t</span>", "\t", implode('', $php_parts));
 		// Older browsers are annoying, aren't they?
 		if (!we::is('gecko'))
-			$data = str_replace("\t", "<span class=\"bbc_pre\">\t</span>", $data);
+			$content = str_replace("\t", "<span class=\"bbc_pre\">\t</span>", $content);
 		// Fix IE line breaks to actually be copyable.
 		if (we::is('ie'))
-			$data = str_replace('<br>', '&#13;', $data);
+			$content = str_replace('<br>', '&#13;', $content);
 	}
 }
-function bbc_validate_code_equals(&$tag, &$data, &$disabled, &$params) {
-	if (!isset($disabled['code']))
-	{
-		if (we::is('gecko,opera'))
-			$tag['content'] .= '<span class="bbc_pre"><code>$1</code></span></div>';
-		else
-			$tag['content'] .= '<code>$1</code></div>';
-		$php_parts = preg_split('~(&lt;\?php|\?&gt;)~', $data[0], -1, PREG_SPLIT_DELIM_CAPTURE);
-		for ($php_i = 0, $php_n = count($php_parts); $php_i < $php_n; $php_i++)
-		{
-			// Do PHP code coloring?
-			if ($php_parts[$php_i] != '&lt;?php')
-				continue;
-			$php_string = '';
-			while ($php_i + 1 < count($php_parts) && $php_parts[$php_i] != '?&gt;')
-			{
-				$php_string .= $php_parts[$php_i];
-				$php_parts[$php_i++] = '';
-			}
-			$php_parts[$php_i] = highlight_php_code($php_string . $php_parts[$php_i]);
-		}
-		// Fix the PHP code stuff...
-		$data[0] = str_replace("<span class=\"bbc_pre\">\t</span>", "\t", implode('', $php_parts));
-		// Older browsers are annoying, aren't they?
-		if (!we::is('gecko'))
-			$data[0] = str_replace("\t", "<span class=\"bbc_pre\">\t</span>", $data[0]);
-		// Fix IE line breaks to actually be copyable.
-		if (we::is('ie'))
-			$data[0] = str_replace('<br>', '&#13;', $data[0]);
-	}
-}
+
 function bbc_validate_email(&$tag, &$data, &$disabled, &$params) {
 	$data = strtr($data, array('<br>' => ''));
 }
