@@ -12,7 +12,7 @@ if (defined('WEDGE'))
 	return;
 
 define('WEDGE_VERSION', '1.0-beta');
-define('WEDGE', 5); // Internal snapshot number.
+define('WEDGE', 6); // Internal snapshot number.
 
 // Get everything started up...
 if (version_compare(PHP_VERSION, '5.3') < 0)
