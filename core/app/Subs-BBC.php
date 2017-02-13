@@ -2253,7 +2253,7 @@ function bbc_img_trim_set_prot_and_add_js(&$tag, &$content, &$disabled, &$params
 function bbc_iurl_trim_set_post_and_set_prot(&$tag, &$content, &$disabled, &$params) {
 	if ($tag['type'] == 'unparsed_content')
 		bbc_general_trim($tag, $content, $disabled, $params);
-	if ($tag['type'] == 'unparsed_equals') && substr($content, 0, 1) == '#')
+	if ($tag['type'] == 'unparsed_equals' && substr($content, 0, 1) == '#')
 		$content = '#post_' . substr($content, 1);
 	elseif (strpos($content, 'http://') !== 0 && strpos($content, 'https://') !== 0)
 		$content = 'http://' . $content;
