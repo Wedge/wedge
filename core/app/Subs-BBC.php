@@ -1527,7 +1527,7 @@ function loadBBCodes() {
 	    'block_level' => true,
 	    'trim' => 'none',
 	    'type' => 'unparsed_content',
-	    'process' => 'bbc_process_code',
+	    'process' => 'bbc_code_process',
 	    'content' => '<div class="bbc_code"><header>{{code}}: <a href="#" onclick="return weSelectText(this);" class="codeoperation">{{code_select}}</a></header>',
 	  ],
 	  [
@@ -1536,7 +1536,7 @@ function loadBBCodes() {
 	    'block_level' => true,
 	    'trim' => 'none',
 	    'type' => 'unparsed_equals_content',
-	    'process' => 'bbc_process_code',
+	    'process' => 'bbc_code_process',
 	    'content' => '<div class="bbc_code"><header>{{code}}: ($2) <a href="#" onclick="return weSelectText(this);" class="codeoperation">{{code_select}}</a></header>',
 	  ],
 	  [
@@ -1555,7 +1555,7 @@ function loadBBCodes() {
 	    'block_level' => false,
 	    'trim' => 'none',
 	    'type' => 'unparsed_content',
-	    'process' => 'bbc_validate_email',
+	    'process' => 'bbc_general_trim',
 	    'content' => '<a href="mailto:$1" class="bbc_email">$1</a>',
 	  ],
 	  [
@@ -1581,7 +1581,7 @@ function loadBBCodes() {
 	    'block_level' => false,
 	    'trim' => 'none',
 	    'type' => 'unparsed_commas_content',
-	    'process' => 'bbc_validate_flash',
+	    'process' => 'bbc_flash_set_prot',
 	    'content' => '<object width="$2" height="$3" data="$1"><param name="movie" value="$1"><param name="play" value="true"><param name="loop" value="true"><param name="quality" value="high"><param name="allowscriptaccess" value="never"><embed src="$1" type="application/x-shockwave-flash" allowscriptaccess="never" width="$2" height="$3"></object>',
 	    'disabled_content' => '<a href="$1" target="_blank" class="new_win">$1</a>',
 	    'test' => '\\d+,\\d+\\]',
@@ -1602,7 +1602,7 @@ function loadBBCodes() {
 	    'block_level' => false,
 	    'trim' => 'none',
 	    'type' => 'unparsed_content',
-	    'process' => 'bbc_validate_ftp_content',
+	    'process' => 'bbc_ftp_trim_and_set_prot',
 	    'content' => '<a href="$1" class="bbc_ftp new_win" target="_blank">$1</a>',
 	  ],
 	  [
@@ -1611,7 +1611,7 @@ function loadBBCodes() {
 	    'block_level' => false,
 	    'trim' => 'none',
 	    'type' => 'unparsed_equals',
-	    'process' => 'bbc_validate_ftp_equals',
+	    'process' => 'bbc_ftp_trim_and_set_prot',
 	    'disallow_children' =>
 	    [
 	      0 => 'email',
@@ -1679,7 +1679,7 @@ function loadBBCodes() {
 	        'match' => '(\\d+)',
 	      ],
 	    ],
-	    'process' => 'bbc_validate_img_1',
+	    'process' => 'bbc_img_trim_set_prot_and_add_js',
 	    'content' => '<img src="$1" alt="{alt}"{width}{height} class="bbc_img resized{align}">',
 	    'disabled_content' => '($1)',
 	  ],
@@ -1689,7 +1689,7 @@ function loadBBCodes() {
 	    'block_level' => false,
 	    'trim' => 'none',
 	    'type' => 'unparsed_content',
-	    'process' => 'bbc_validate_img_2',
+	    'process' => 'bbc_img_trim_set_prot_and_add_js',
 	    'content' => '<img src="$1" class="bbc_img">',
 	    'disabled_content' => '($1)',
 	  ],
@@ -1699,7 +1699,7 @@ function loadBBCodes() {
 	    'block_level' => false,
 	    'trim' => 'none',
 	    'type' => 'unparsed_content',
-	    'process' => 'bbc_validate_iurl',
+	    'process' => 'bbc_iurl_trim_set_post_and_set_prot',
 	    'content' => '<a href="$1" class="bbc_link">$1</a>',
 	  ],
 	  [
@@ -1708,7 +1708,7 @@ function loadBBCodes() {
 	    'block_level' => false,
 	    'trim' => 'none',
 	    'type' => 'unparsed_equals',
-	    'process' => 'bbc_validate_iurl_equals',
+	    'process' => 'bbc_iurl_trim_set_post_and_set_prot',
 	    'disallow_children' =>
 	    [
 	      0 => 'email',
@@ -2082,7 +2082,7 @@ function loadBBCodes() {
 	    'block_level' => false,
 	    'trim' => 'none',
 	    'type' => 'unparsed_content',
-	    'process' => 'bbc_validate_url_content',
+	    'process' => 'bbc_url_trim_and_set_prot',
 	    'content' => '<a href="$1" class="bbc_link" rel="nofollow '.$noopener.'" target="_blank">$1</a>',
 	  ],
 	  [
@@ -2091,7 +2091,7 @@ function loadBBCodes() {
 	    'block_level' => false,
 	    'trim' => 'none',
 	    'type' => 'unparsed_equals',
-	    'process' => 'bbc_validate_url_equals',
+	    'process' => 'bbc_url_trim_and_set_prot',
 	    'disallow_children' =>
 	    [
 	      0 => 'email',
@@ -2195,7 +2195,7 @@ function loadBBCodes() {
 	return $bbcodes;
 }
 
-function bbc_process_code(&$tag, &$content, &$disabled, &$params) {
+function bbc_code_process(&$tag, &$content, &$disabled, &$params) {
 	if (!isset($disabled['code']))
 	{
 		if (we::is('gecko,opera'))
@@ -2227,71 +2227,59 @@ function bbc_process_code(&$tag, &$content, &$disabled, &$params) {
 	}
 }
 
-function bbc_validate_email(&$tag, &$data, &$disabled, &$params) {
-	$data = strtr($data, array('<br>' => ''));
+function bbc_general_trim(&$tag, &$content, &$disabled, &$params) {
+	$content = strtr($content, array('<br>' => ''));
 }
-function bbc_validate_flash(&$tag, &$data, &$disabled, &$params) {
+
+function bbc_flash_set_prot(&$tag, &$content, &$disabled, &$params) {
 	if (isset($disabled['url']))
 		$tag['content'] = '$1';
-	elseif (strpos($data[0], 'http://') !== 0 && strpos($data[0], 'https://') !== 0)
-		$data[0] = 'http://' . $data[0];
+	elseif (strpos($content, 'http://') !== 0 && strpos($content, 'https://') !== 0)
+		$content = 'http://' . $content;
 }
-function bbc_validate_ftp_content(&$tag, &$data, &$disabled, &$params) {
-	$data = strtr($data, array('<br>' => ''));
-	if (strpos($data, 'ftp://') !== 0 && strpos($data, 'ftps://') !== 0)
-		$data = 'ftp://' . $data;
+function bbc_ftp_trim_and_set_prot(&$tag, &$content, &$disabled, &$params) {
+	if($tag['type'] == 'unparsed_content')
+		bbc_general_trim($tag, $content, $disabled, $params);
+	if (strpos($content, 'ftp://') !== 0 && strpos($content, 'ftps://') !== 0)
+		$content = 'ftp://' . $content;
 }
-function bbc_validate_ftp_equals(&$tag, &$data, &$disabled, &$params) {
-	if (strpos($data, 'ftp://') !== 0 && strpos($data, 'ftps://') !== 0)
-		$data = 'ftp://' . $data;
+function bbc_img_trim_set_prot_and_add_js(&$tag, &$content, &$disabled, &$params) {
+	bbc_general_trim($tag, $content, $disabled, $params);
+	if (strpos($content, 'http://') !== 0 && strpos($content, 'https://') !== 0)
+		$content = 'http://' . $content;
+	if (isset($tag['paramaters']))
+		add_js_unique('$("img.resized").click(function () { this.style.width = this.style.height = (this.style.width == "auto" ? null : "auto"); });');
 }
-function bbc_validate_img_1(&$tag, &$data, &$disabled, &$params) {
-	$data = strtr($data, array('<br>' => ''));
-	if (strpos($data, 'http://') !== 0 && strpos($data, 'https://') !== 0)
-		$data = 'http://' . $data;
-	add_js_unique('$("img.resized").click(function () { this.style.width = this.style.height = (this.style.width == "auto" ? null : "auto"); });');
+function bbc_iurl_trim_set_post_and_set_prot(&$tag, &$content, &$disabled, &$params) {
+	if ($tag['type'] == 'unparsed_content')
+		bbc_general_trim($tag, $content, $disabled, $params);
+	if ($tag['type'] == 'unparsed_equals') && substr($content, 0, 1) == '#')
+		$content = '#post_' . substr($content, 1);
+	elseif (strpos($content, 'http://') !== 0 && strpos($content, 'https://') !== 0)
+		$content = 'http://' . $content;
 }
-function bbc_validate_img_2(&$tag, &$data, &$disabled, &$params) {
-	$data = strtr($data, array('<br>' => ''));
-	if (strpos($data, 'http://') !== 0 && strpos($data, 'https://') !== 0)
-		$data = 'http://' . $data;
+function bbc_validate_mergedate(&$tag, &$content, &$disabled, &$params) {
+	if (is_numeric($content)) $content = timeformat($content);
 }
-function bbc_validate_iurl(&$tag, &$data, &$disabled, &$params) {
-	$data = strtr($data, array('<br>' => ''));
-	if (strpos($data, 'http://') !== 0 && strpos($data, 'https://') !== 0)
-		$data = 'http://' . $data;
-}
-function bbc_validate_iurl_equals(&$tag, &$data, &$disabled, &$params) {
-	if (substr($data, 0, 1) == '#')
-		$data = '#post_' . substr($data, 1);
-	elseif (strpos($data, 'http://') !== 0 && strpos($data, 'https://') !== 0)
-		$data = 'http://' . $data;
-}
-function bbc_validate_mergedate(&$tag, &$data, &$disabled, &$params) {
-	if (is_numeric($data)) $data = timeformat($data);
-}
-function bbc_validate_php(&$tag, &$data, &$disabled, &$params) {
-	$add_begin = substr(trim($data), 0, 5) != '&lt;';
-	$data = highlight_php_code($add_begin ? '&lt;?php ' . $data . '?&gt;' : $data);
+function bbc_validate_php(&$tag, &$content, &$disabled, &$params) {
+	$add_begin = substr(trim($content), 0, 5) != '&lt;';
+	$content = highlight_php_code($add_begin ? '&lt;?php ' . $content . '?&gt;' : $content);
 	if ($add_begin)
-		$data = preg_replace(array('~^(.+?)&lt;\?.{0,40}?php(?:&nbsp;|\s)~', '~\?&gt;((?:</(font|span)>)*)$~'), '$1', $data, 2);
+		$content = preg_replace(array('~^(.+?)&lt;\?.{0,40}?php(?:&nbsp;|\s)~', '~\?&gt;((?:</(font|span)>)*)$~'), '$1', $content, 2);
 }
-function bbc_validate_size(&$tag, &$data, &$disabled, &$params) {
+function bbc_validate_size(&$tag, &$content, &$disabled, &$params) {
 	$sizes = array(1 => 8, 2 => 10, 3 => 12, 4 => 14, 5 => 18, 6 => 24, 7 => 36);
-	$data = $sizes[$data] . 'pt';
+	$content = $sizes[$content] . 'pt';
 }
-function bbc_validate_time(&$tag, &$data, &$disabled, &$params) {
-	if (is_numeric($data))
-		$data = timeformat($data);
+function bbc_validate_time(&$tag, &$content, &$disabled, &$params) {
+	if (is_numeric($content))
+		$content = timeformat($content);
 	else
 		$tag['content'] = '[time]$1[/time]';
 }
-function bbc_validate_url_content(&$tag, &$data, &$disabled, &$params) {
-	$data = strtr($data, array('<br>' => ''));
-	if (strpos($data, 'http://') !== 0 && strpos($data, 'https://') !== 0)
-		$data = 'http://' . $data;
-}
-function bbc_validate_url_equals(&$tag, &$data, &$disabled, &$params) {
-	if (strpos($data, 'http://') !== 0 && strpos($data, 'https://') !== 0)
-		$data = 'http://' . $data;
+function bbc_url_trim_and_set_prot(&$tag, &$content, &$disabled, &$params) {
+	if($tag['type'] == 'unparsed_content')
+		bbc_general_trim($tag, $content, $disabled, $params);
+	if (strpos($content, 'http://') !== 0 && strpos($content, 'https://') !== 0)
+		$content = 'http://' . $content;
 }
