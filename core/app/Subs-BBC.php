@@ -760,8 +760,7 @@ function parse_bbc($message, $type = 'generic', $bbc_options = array()) // $smil
 			$content = substr($message, $pos1, $pos2 - $pos1);
 
 			if (!empty($tag['block_level']) && substr($content, 0, 4) === '<br>')
-				$content = substr($data, 4);
-
+				$content = substr($content, 4);
 
 			if (isset($tag['process'])) {
 				$parameters = ["indexed" => null, "associative" => empty($params) ? null : $params];
@@ -2125,70 +2124,62 @@ function loadBBCodes() {
 		'parsed_tags_allowed' => 'parsed_tags_allowed',
 	);
 
-	$load_from_db = true;
-	if($load_from_db) {
-		$result = wesql::query('
-			SELECT id_bbcode, tag, len, bbctype, before_code, after_code, content, disabled_before,
-				disabled_after, disabled_content, block_level, test, disallow_children,
-				require_parents, require_children, parsed_tags_allowed, quoted, params, trim_wspace,
-				process_plugin, process_file, process_func
-			FROM {db_prefix}bbcode'
+	$result = wesql::query('
+		SELECT id_bbcode, tag, len, bbctype, before_code, after_code, content, disabled_before,
+			disabled_after, disabled_content, block_level, test, disallow_children,
+			require_parents, require_children, parsed_tags_allowed, quoted, params, trim_wspace,
+			process_plugin, process_file, process_func
+		FROM {db_prefix}bbcode'
+	);
+
+    while ($row = wesql::fetch_assoc($result))
+	{
+		$bbcode = array(
+			'tag' => $row['tag'],
+			'len' => $row['len'],
+			'block_level' => !empty($row['block_level']),
+			'trim' => $row['trim_wspace'],
 		);
-		while ($row = wesql::fetch_assoc($result))
-		{
-			$bbcode = array(
-				'tag' => $row['tag'],
-				'len' => $row['len'],
-				'block_level' => !empty($row['block_level']),
-				'trim' => $row['trim_wspace'],
-			);
-			if ($row['bbctype'] !== 'parsed')
-				$bbcode['type'] = $row['bbctype'];
-			if (!empty($row['params']))
-				$bbcode['parameters'] = unserialize($row['params']);
-			#if (!empty($row['validate_func']))
-			#	$bbcode['process'] = create_function('&$tag, &$data, $disabled', $row['validate_func']);
-			if ($row['quoted'] !== 'none')
-				$bbcode['quoted'] = $row['quoted'];
+		if ($row['bbctype'] !== 'parsed')
+			$bbcode['type'] = $row['bbctype'];
+		if (!empty($row['params']))
+			$bbcode['parameters'] = unserialize($row['params']);
+		#if (!empty($row['validate_func']))
+		#	$bbcode['process'] = create_function('&$tag, &$data, $disabled', $row['validate_func']);
+		if ($row['quoted'] !== 'none')
+			$bbcode['quoted'] = $row['quoted'];
 
-			if (!empty($row['process_func'])) {
-				// Maybe our function is not in Subs-BBC.php so we have to load some
-				// additional files
-				if(!empty($row['process_file'])) {
-					if(!empty($row['process_plugin'])) {
-						loadPluginSource($row['process_plugin'], $row['process_file']);
-					} else {
-						loadSource($row['process_file']);
-					}
-				}
-				$process_func = 'bbc_'.$row['process_func'];
-
-				if(function_exists($process_func)) {
-					$bbcode['process'] = $process_func;
+		if (!empty($row['process_func'])) {
+			// Maybe our function is not in Subs-BBC.php so we have to load some
+			// additional files
+			if(!empty($row['process_file'])) {
+				if(!empty($row['process_plugin'])) {
+					loadPluginSource($row['process_plugin'], $row['process_file']);
 				} else {
-					throw new Exception('Uncallable validate_func for BBC `'.$row['tag'].'` with id '.$row['id_bbcode']);
+					loadSource($row['process_file']);
 				}
 			}
-			// User-contributed links opened in a new tab might be a security issue.
-			#if ($row['tag'] === 'url')
-			#{
-			#	$noopener = we::is('chrome[49-],opera[36-],firefox[52-]') ? 'noopener' : 'noreferrer';
-			#	$row['before_code'] = str_replace('rel="nofollow"', 'rel="nofollow ' . $noopener . '"', $row['before_code']);
-			#	$row['content'] = str_replace('rel="nofollow"', 'rel="nofollow ' . $noopener . '"', $row['content']);
-			#}
+			$process_func = 'bbc_'.$row['process_func'];
 
-			foreach ($explode_list as $db_field => $bbc_field)
-				if (!empty($row[$db_field]))
-					$bbcode[$bbc_field] = explode(',', $row[$db_field]);
-
-			# Reformat Array structure to "bbc structure" from DB structure
-			foreach ($field_list as $db_field => $bbc_field)
-				if (!empty($row[$db_field]))
-					$bbcode[$bbc_field] = trim($row[$db_field]);
-			$bbcodes[] = $bbcode;
+			if(function_exists($process_func)) {
+				$bbcode['process'] = $process_func;
+			} else {
+				trigger_error('Uncallable validate_func for BBC `'.$row['tag'].'` with id '.$row['id_bbcode']);
+			}
 		}
-		wesql::free_result($result);
+
+		foreach ($explode_list as $db_field => $bbc_field)
+			if (!empty($row[$db_field]))
+				$bbcode[$bbc_field] = explode(',', $row[$db_field]);
+
+		# Reformat Array structure to "bbc structure" from DB structure
+		foreach ($field_list as $db_field => $bbc_field)
+			if (!empty($row[$db_field]))
+				$bbcode[$bbc_field] = trim($row[$db_field]);
+
+		$bbcodes[] = $bbcode;
 	}
+    wesql::free_result($result);
 
 	// Now iterate over all bbcodes and parse language strings
 	foreach($bbcodes as &$bbcode)
@@ -2253,7 +2244,6 @@ function bbc_ftp_trim_and_set_prot(&$tag, &$content, &$disabled, &$params) {
 }
 
 function bbc_img_trim_set_prot_and_add_js(&$tag, &$content, &$disabled, &$params) {
-	log_error(var_export(['tag' => $tag, 'content' => $content, 'disabled' => $disabled, 'params' => $params], true));
 	bbc_general_trim($tag, $content, $disabled, $params);
 	if (strpos($content, 'http://') !== 0 && strpos($content, 'https://') !== 0)
 		$content = 'http://' . $content;
