@@ -45,7 +45,7 @@ function minify_php($file, $remove_whitespace = false)
 	{
 		$pos = find_next($php, $pos, $search_for);
 		if ($pos === false)
-			return $php;
+			break;
 
 		$look_for = $php[$pos];
 		if ($look_for === '/')
@@ -59,7 +59,7 @@ function minify_php($file, $remove_whitespace = false)
 		{
 			$next = find_next($php, $pos + 1, $look_for);
 			if ($next === false) // Shouldn't be happening.
-				return $php;
+				break;
 			if ($php[$next] === "\r" && $php[$next + 1] === "\n")
 				$next++;
 			$save_strings[] = substr($php, $pos, $next + 1 - $pos);
@@ -69,7 +69,7 @@ function minify_php($file, $remove_whitespace = false)
 
 		$end = find_next($php, $pos + 1, $look_for);
 		if ($end === false)
-			return $php;
+			break;
 		if (!is_array($look_for))
 			$end += strlen($look_for);
 		$temp = substr($php, $pos, $end - $pos);
