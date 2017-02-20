@@ -120,7 +120,7 @@
 /* A generic font stack for display purposes (titles, large text...) */
 $generic_stack = "Franklin Gothic Medium", "Franklin Gothic", "Segoe UI", Helvetica, Arial, sans-serif
 
-@if ios // Helvetica Light looks good on my iPod.
+@if ios // iOS favors Helvetica Light.
 	$generic_stack = HelveticaNeue-Light, "Helvetica Neue Light", "Helvetica Neue", Helvetica, sans-serif
 @endif
 

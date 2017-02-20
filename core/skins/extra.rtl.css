@@ -71,11 +71,6 @@ a.unreadlink
 	padding: 0 0 0 0.5em
 	float, text-align: right
 
-// The dropdown menu toggle image
-#menu_toggle
-	float: left
-	margin: 10px 0 0 7px
-
 .menu
 	float, clear: right
 

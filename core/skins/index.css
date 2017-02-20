@@ -50,6 +50,10 @@
 
 html
 	min-height: 100%
+	// IE (tested v11) is forcing a horizontal scrollbar otherwise.
+	@if ie
+		overflow-x: hidden
+	@endif
 	overflow-y: scroll
 	background: #369																			// For old browsers...
 	background: fixed linear-gradient(45deg, #505b66, #a0a6ab 500px, #505b66 1000px, #505b66)	// Fallback background for browsers that support linear gradients...
@@ -1653,7 +1657,6 @@ dfn
 
 dl#feed
 	clear: right
-	overflow: auto
 	margin: 10px 0 0
 	padding: 0
 	dt, dd
@@ -1884,7 +1887,7 @@ h6
 	:first-child
 		margin-top: 0
 
-/* Styles used by the auto suggest control.
+/* Styles used by the auto-suggest control.
 ------------------------------------------------------- */
 
 .auto_suggest mixes .hide
@@ -1910,15 +1913,6 @@ h6
 .auto_suggest_hover
 	background-color: #eee
 	cursor: pointer
-
-// The dropdown menu toggle icon
-#menu_toggle
-	float: left
-	margin: 10px 12px 0 0
-
-#sidebar_toggle
-	float: right
-	margin: 3px 0 0 7px
 
 /* Styles for a typical table.
 ------------------------------------------------------- */
