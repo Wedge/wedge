@@ -101,13 +101,13 @@ function template_info_center_personalmsg()
 {
 	global $context, $txt, $settings;
 
-	if (we::$is_guest || !empty($settings['show_stats_index']))
+	if (we::$is_guest || !empty($settings['show_stats_index']) || empty($context['allow_pm']))
 		return;
 
 	echo '
 	<section class="ic">
 		<we:title>
-			', $context['allow_pm'] ? '<a href="<URL>?action=pm">' : '', '<img src="', ASSETS, '/message_sm.gif" alt="', $txt['personal_message'], '">', $context['allow_pm'] ? '</a>' : '', '
+			<a href="<URL>?action=pm"><img src="', ASSETS, '/message_sm.gif" alt="', $txt['personal_message'], '"></a>
 			', $txt['personal_messages'], '
 		</we:title>
 		<p class="pminfo">
