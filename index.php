@@ -175,7 +175,6 @@ function loadSource($source_name)
 	{
 		if (isset($done[$file]))
 			continue;
-		$done[$file] = true;
 		$dest = APP_DIR . '/' . $file . '.php';
 		if (defined('WEDGE_INSTALL') || $file === 'Subs-CachePHP' || strpos($file, 'getid3') !== false)
 			$cache = $dest;
@@ -189,6 +188,7 @@ function loadSource($source_name)
 			}
 		}
 		require_once($cache);
+		$done[$file] = true;
 	}
 }
 
