@@ -296,7 +296,7 @@ fieldset dl
 .modify_boards
 	padding: 0 0.5em
 
-#sbboardskin, #sbboardskin_mobile
+.mono
 	font-family: $mono_font
 
 /* Styles for the manage members section.
@@ -670,5 +670,3 @@ textarea.ban
 			width: 81%
 			textarea
 				width: 100%
-
-$mono_font = Consolas, "Dejavu Sans Mono", Monaco, "Lucida Console", "Courier New", monospace
