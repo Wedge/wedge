@@ -1265,7 +1265,7 @@ function checkUserBehavior()
 			'{db_prefix}log_intrusion',
 			array(
 				'id_member' => 'int', 'error_type' => 'string', 'ip' => 'int', 'event_time' => 'int', 'http_method' => 'string',
-				'request_uri' => 'string-255', 'protocol' => 'string', 'user_agent' => 'string-255', 'headers' => 'string', 'request_entity' => 'string',
+				'request_uri' => 'string-255', 'protocol' => 'string-10', 'user_agent' => 'string-255', 'headers' => 'string', 'request_entity' => 'string',
 			),
 			array(
 				MID, substr($context['behavior_error'], 6), get_ip_identifier($_SERVER['REMOTE_ADDR']), time(), $_SERVER['REQUEST_METHOD'],
