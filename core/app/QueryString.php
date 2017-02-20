@@ -212,7 +212,7 @@ function cleanRequest()
 	//	$_SERVER['HTTP_HOST'] = strpos($_SERVER['HTTP_HOST'], ':') === false ? $_SERVER['HTTP_HOST'] : substr($_SERVER['HTTP_HOST'], 0, strpos($_SERVER['HTTP_HOST'], ':'));
 	$do_pretty = !empty($settings['pretty_enable_filters']);
 	if ($do_pretty)
-		$query_string = str_replace(substr(ROOT, strpos(ROOT, '://') + 3), '/', $full_request);
+		$qs = str_replace(substr(ROOT, strpos(ROOT, '://') + 3), '/', $full_request);
 
 	$board = 0;
 	if (isset($_GET['board']) && is_numeric($_GET['board']))
@@ -241,6 +241,7 @@ function cleanRequest()
 			$_SERVER['REAL_HTTP_HOST'] = $_SERVER['HTTP_HOST'];
 			$_SERVER['HTTP_HOST'] = $full_board['url'];
 			$_SERVER['REQUEST_URI'] = $ru = str_replace($full_board['url'], '', $full_request);
+			$qs = str_replace(substr(ROOT, strpos(ROOT, '://') + 3), '/', $ru);
 
 			// We will now be analyzing the request URI to find our topic ID and various options...
 
@@ -254,13 +255,15 @@ function cleanRequest()
 				$_GET['month'] = str_replace('/', '', $m[1]);
 				$_GET['start'] = empty($m[2]) ? 0 : $m[2];
 				$_GET['pretty'] = 1;
+				$qs = str_replace($m[0], '', $qs);
 			}
 			// URL: /1234/topic/new/?something or /1234/topic/2/?something (get topic ID 1234, named 'topic')
-			elseif (preg_match('~^/(\d+)/(?:[^/]+)/(\d+|msg\d+|from\d+|new)?~u', $ru, $m))
+			elseif (preg_match('~^/(\d+)/(?:[^/]+)(?:/(\d+|msg\d+|from\d+|new)?)~u', $ru, $m))
 			{
 				$_GET['topic'] = $m[1];
 				$_GET['start'] = empty($m[2]) ? 0 : $m[2];
 				$_GET['pretty'] = 1;
+				$qs = str_replace($m[0], '', $qs);
 			}
 			// URL: /cat/hello/?something or /tag/me/p15/ (get all topics from category 'hello', or page 2 of all topics with tag 'me')
 			elseif (preg_match('~^/(cat|tag)/([^/]+)(?:/p(\d+))?~u', $ru, $m))
@@ -268,12 +271,14 @@ function cleanRequest()
 				$_GET[$m[1]] = $m[2];
 				$_GET['start'] = empty($m[3]) ? 0 : $m[3];
 				$_GET['pretty'] = 1;
+				$qs = str_replace($m[0], '', $qs);
 			}
 			// URL: /p15/ (board index, page 2)
 			elseif (preg_match('~^/p(\d+)~', $ru, $m))
 			{
 				$_GET['start'] = empty($m[1]) ? 0 : $m[1];
 				$_GET['pretty'] = 1;
+				$qs = str_replace($m[0], '', $qs);
 			}
 		}
 		else
@@ -287,7 +292,7 @@ function cleanRequest()
 	if ($do_pretty)
 	{
 		// URL has the form domain.com/profile/User?
-		if (preg_match('`/' . (isset($settings['pretty_prefix_profile']) ? $settings['pretty_prefix_profile'] : 'profile/') . '([^/?]*)`', $query_string, $m))
+		if (preg_match('`/' . (isset($settings['pretty_prefix_profile']) ? $settings['pretty_prefix_profile'] : 'profile/') . '([^/?]*)`', $qs, $m))
 		{
 			if (empty($m[1]) && empty($_GET['u']))
 				$_GET['u'] = 0;
@@ -300,7 +305,7 @@ function cleanRequest()
 			$_GET['category'] = (int) $m[1];
 
 		// If URL has the form domain.com/wahetever/do/action, it's an action. Really.
-		if (preg_match('~/' . (isset($settings['pretty_prefix_action']) ? $settings['pretty_prefix_action'] : 'do/') . '([a-zA-Z0-9]+)~', $query_string, $m) && isset($action_list[$m[1]]))
+		if (preg_match('~/*' . (isset($settings['pretty_prefix_action']) ? $settings['pretty_prefix_action'] : 'do/') . '([a-zA-Z0-9]+)~', $qs, $m) && isset($action_list[$m[1]]))
 			$_GET['action'] = $m[1];
 	}
 
