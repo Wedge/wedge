@@ -304,7 +304,7 @@ function error_handler($error_level, $error_string, $file, $line)
 
 		// Debugging! This should look like a PHP error message.
 		echo '<br>
-<strong>', $error_level % 255 == E_ERROR ? 'Error' : ($error_level % 255 == E_WARNING ? 'Warning' : 'Notice'), '</strong>: ', $error_string, ' in <strong>', $file, '</strong> on line <strong>', $line, '</strong><br>';
+<strong>', $error_level % 255 == E_ERROR ? 'Error' : ($error_level % 255 == E_WARNING ? 'Warning' : 'Notice'), '</strong>: ', $error_string, ' in <strong>', basename($file), '</strong> on line <strong>', $line, '</strong><br>';
 	}
 
 	$error_type = strpos(strtolower($error_string), 'undefined') !== false ? 'undefined_vars' : 'general';
