@@ -301,6 +301,9 @@ tr.titlebg
 dfn
 	line-height: 140%
 
+.pixelicons
+	margin: -1px -4px 0 0
+
 /* These are our CSS variable and mixin definitions.
 ------------------------------------------------------- */
 
