@@ -307,8 +307,7 @@ function EditSmileySets()
 					)
 				);
 				while ($row = wesql::fetch_assoc($request))
-					if (isset($smileys[strtolower($row['filename'])]))
-						unset($smileys[strtolower($row['filename'])]);
+					unset($smileys[strtolower($row['filename'])]);
 				wesql::free_result($request);
 
 				$context['current_set']['can_import'] = count($smileys);
@@ -1352,8 +1351,7 @@ function ImportSmileys($smileyPath)
 		)
 	);
 	while ($row = wesql::fetch_assoc($request))
-		if (isset($smileys[strtolower($row['filename'])]))
-			unset($smileys[strtolower($row['filename'])]);
+		unset($smileys[strtolower($row['filename'])]);
 	wesql::free_result($request);
 
 	$request = wesql::query('

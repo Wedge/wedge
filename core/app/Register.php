@@ -400,8 +400,7 @@ function Register2()
 	while ($row = wesql::fetch_assoc($request))
 	{
 		// Don't allow overriding of the theme variables.
-		if (isset($regOptions['theme_vars'][$row['col_name']]))
-			unset($regOptions['theme_vars'][$row['col_name']]);
+		unset($regOptions['theme_vars'][$row['col_name']]);
 
 		// Not actually showing it then?
 		if (!$row['show_reg'])

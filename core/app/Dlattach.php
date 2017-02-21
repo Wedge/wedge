@@ -174,8 +174,7 @@ function Dlattach()
 	else
 	{
 		header('Content-Type: application/octet' . (we::is('ie,opera') ? '' : '-') . 'stream');
-		if (isset($_REQUEST['image']))
-			unset($_REQUEST['image']);
+		unset($_REQUEST['image']);
 	}
 
 	// Set up sending the file with its headers. The filename should be in UTF-8 but of course, browsers don't always expect that...

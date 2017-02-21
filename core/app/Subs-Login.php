@@ -92,8 +92,7 @@ function DoLogin()
 	setLoginCookie(60 * $settings['cookieTime'], $user_settings['id_member'], sha1($user_settings['passwd'] . $user_settings['password_salt']));
 
 	// Reset the login threshold.
-	if (isset($_SESSION['failed_login']))
-		unset($_SESSION['failed_login']);
+	unset($_SESSION['failed_login']);
 
 	we::$cache = array();
 	we::$is_guest = false;
@@ -305,7 +304,7 @@ function validatePasswordFlood($id_member, $password_flood_value = false, $was_c
 	// Destroy any session or cookie data about this member, as they validated wrong.
 	loadSource('Subs-Auth');
 	setLoginCookie(-3600, 0);
-	if (isset($_SESSION['login_' . $cookiename]))
+	if ($cookiename)
 		unset($_SESSION['login_' . $cookiename]);
 
 	// We need a member!

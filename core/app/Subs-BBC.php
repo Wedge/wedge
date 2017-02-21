@@ -1034,9 +1034,7 @@ function parse_bbc($message, $type = 'generic', $bbc_options = array()) // $smil
 			$message = aeva_reverse_protection($message);
 
 			// Reset any technical reasons to stop
-			unset($context['embed_disable']);
-			if (isset($context['aeva']['skip']))
-				unset($context['aeva']['skip']);
+			unset($context['embed_disable'], $context['aeva']['skip']);
 		}
 
 		if (empty($disabled['media']) && stripos($message, '[media') !== false)

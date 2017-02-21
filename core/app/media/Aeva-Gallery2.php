@@ -1354,10 +1354,7 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 	);
 
 	if ($is_edit)
-	{
-		unset($context['aeva_form']['position']);
-		unset($context['aeva_form']['target']);
-	}
+		unset($context['aeva_form']['position'], $context['aeva_form']['target']);
 	unset($context['aeva_form'][aeva_allowedTo('manage') ? 'owner_name' : 'owner_change']);
 
 	// No need to show profile select boxes if there's only a default profile to choose from...
@@ -2631,8 +2628,7 @@ function aeva_massDownloadCreate()
 			$total_filesize += $album_items[$v]['filesize'];
 		}
 
-		if (isset($_SESSION['aeva_mdl']))
-			unset($_SESSION['aeva_mdl']);
+		unset($_SESSION['aeva_mdl']);
 
 		$_SESSION['aeva_mdl'] = array(
 			'items' => $_POST['items'],

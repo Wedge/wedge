@@ -3720,8 +3720,7 @@ function groupMembership2($profile_vars, $memID)
 	{
 		if ($old_profile['id_group'] != 0)
 			$addGroups[$old_profile['id_group']] = -1;
-		if (isset($addGroups[$group_id]))
-			unset($addGroups[$group_id]);
+		unset($addGroups[$group_id]);
 		$newPrimary = $group_id;
 	}
 

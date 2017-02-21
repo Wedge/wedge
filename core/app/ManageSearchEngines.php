@@ -422,8 +422,7 @@ function SpiderCheck()
 {
 	global $settings;
 
-	if (isset($_SESSION['id_robot']))
-		unset($_SESSION['id_robot']);
+	unset($_SESSION['id_robot']);
 	$_SESSION['robot_check'] = time();
 
 	// We cache the spider data for five minutes if we can.

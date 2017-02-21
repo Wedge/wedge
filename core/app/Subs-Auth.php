@@ -241,10 +241,7 @@ function adminLogin()
 		$txt['security_wrong'] = sprintf($txt['security_wrong'], isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : $txt['unknown'], $_SERVER['HTTP_USER_AGENT'], format_ip(we::$user['ip']));
 		log_error($txt['security_wrong'], 'critical');
 
-		if (isset($_POST['admin_hash_pass']))
-			unset($_POST['admin_hash_pass']);
-		if (isset($_POST['admin_pass']))
-			unset($_POST['admin_pass']);
+		unset($_POST['admin_hash_pass'], $_POST['admin_pass']);
 
 		$context['incorrect_password'] = true;
 	}
