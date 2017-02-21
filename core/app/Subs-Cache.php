@@ -1297,8 +1297,14 @@ function wedge_cache_smileys($set, $smileys, $extra)
 	foreach ($smileys as $name => $smiley)
 	{
 		$filename = $path . $smiley['file'];
+		$cur_url = $url;
 		if (!file_exists($filename))
-			continue;
+		{
+			if (!file_exists($tmp = ASSETS_DIR . '/smileys/default/' . $smiley['file']))
+				continue;
+			$filename = $tmp;
+			$cur_url = SMILEYS . '/default/';
+		}
 		// Only small files should be embedded, really. 4KB should have a fair bandwidth/hit ratio.
 		if ($extra || ($smiley['embed'] && filesize($filename) > 4096) || !$context['smiley_gzip'])
 			$smiley['embed'] = false;
@@ -1306,7 +1312,7 @@ function wedge_cache_smileys($set, $smileys, $extra)
 		$ext = strtolower(substr($filename, strrpos($filename, '.') + 1));
 		$stream = 'final_' . ($smiley['embed'] ? 'gzip' : 'raw');
 		$$stream .= '.' . $name . '{width:' . $width . 'px;height:' . $height . 'px;background:url('
-				. ($smiley['embed'] ? 'data:image/' . $ext . ';base64,' . base64_encode(file_get_contents($filename)) : $url . $smiley['file']) . ')}';
+				. ($smiley['embed'] ? 'data:image/' . $ext . ';base64,' . base64_encode(file_get_contents($filename)) : $cur_url . $smiley['file']) . ')}';
 	}
 
 	// We can't apply a mixin here, but as .smiley is a naturally inline tag anyway, .inline-block isn't needed.
@@ -1377,7 +1383,7 @@ function theme_base_js($indenting = 0)
 	return (!empty($context['remote_js_files']) ? '
 ' . $tab . '<script src="' . implode('"></script>
 ' . $tab . '<script src="', $context['remote_js_files']) . '"></script>
-	<script>window.$ || document.write(\'<script src="' . add_js_file('jquery-' . $context['jquery_version'] . '.min.js', false, true) . '"><\/script>\');</script>' : '') . '
+	<script>window.$||document.write(\'<script src="' . add_js_file('jquery-' . $context['jquery_version'] . '.min.js', false, true) . '"><\/script>\')</script>' : '') . '
 ' . $tab . '<script src="' . add_js_file(
 		array_keys($context['main_js_files']), false, true,
 		array_diff($context['main_js_files'], array_filter($context['main_js_files']))
