@@ -304,8 +304,7 @@ function validatePasswordFlood($id_member, $password_flood_value = false, $was_c
 	// Destroy any session or cookie data about this member, as they validated wrong.
 	loadSource('Subs-Auth');
 	setLoginCookie(-3600, 0);
-	if ($cookiename)
-		unset($_SESSION['login_' . $cookiename]);
+	unset($_SESSION['login_' . $cookiename]);
 
 	// We need a member!
 	if (!$id_member)
