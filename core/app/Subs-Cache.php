@@ -1281,9 +1281,8 @@ function wedge_cache_js($id, &$lang_name, $latest_date, $ext, $js, $gzip = false
  *
  * @param string $set The current smiley folder
  * @param array $smileys The list of smileys to cache
- * @param string $extra '-ie', if using oldIE, which doesn't support base64 encoding.
  */
-function wedge_cache_smileys($set, $smileys, $extra)
+function wedge_cache_smileys($set, $smileys)
 {
 	global $context, $settings;
 
@@ -1292,7 +1291,7 @@ function wedge_cache_smileys($set, $smileys, $extra)
 	$url = SMILEYS . '/' . $set . '/';
 
 	// Delete other cached versions, if they exist.
-	clean_cache($context['smiley_ext'], 'smileys' . $extra, CACHE_DIR . '/css');
+	clean_cache($context['smiley_ext'], 'smileys', CACHE_DIR . '/css');
 
 	foreach ($smileys as $name => $smiley)
 	{
@@ -1306,7 +1305,7 @@ function wedge_cache_smileys($set, $smileys, $extra)
 			$cur_url = SMILEYS . '/default/';
 		}
 		// Only small files should be embedded, really. 4KB should have a fair bandwidth/hit ratio.
-		if ($extra || ($smiley['embed'] && filesize($filename) > 4096) || !$context['smiley_gzip'])
+		if (($smiley['embed'] && filesize($filename) > 4096) || !$context['smiley_gzip'])
 			$smiley['embed'] = false;
 		list ($width, $height) = getimagesize($filename);
 		$ext = strtolower(substr($filename, strrpos($filename, '.') + 1));
@@ -1324,7 +1323,7 @@ function wedge_cache_smileys($set, $smileys, $extra)
 	if ($context['smiley_gzip'])
 		$final = gzencode($final, 9);
 
-	file_put_contents(CACHE_DIR . '/css/smileys' . $extra . ($set == 'default' ? '' : '-' . $set) . '-' . $context['smiley_now'] . $context['smiley_ext'], $final);
+	file_put_contents(CACHE_DIR . '/css/smileys' . ($set == 'default' ? '' : '-' . $set) . '-' . $settings['smiley_cache'] . $context['smiley_ext'], $final);
 }
 
 /**

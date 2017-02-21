@@ -2466,18 +2466,15 @@ class wedit
 			$can_gzip = !empty($settings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
 			$context['smiley_gzip'] = $can_gzip;
 			$context['smiley_ext'] = $can_gzip ? (we::is('safari[-5.1]') ? '.cgz' : (we::is('ie[11-]') ? '.gz.css' : '.css.gz')) : '.css';
-			$extra = we::is('ie6,ie7') ? '-ie' : '';
-			$var_name = 'smiley-cache-' . $extra . '-' . we::$user['smiley_set'];
 			$dummy = '';
 			$max = 0;
 
 			// Retrieve the current smiley cache's URL. If not available, attempt to regenerate it.
 			while (empty($exists) && $max++ < 3)
 			{
-				if (!isset($settings[$var_name]))
-					updateSettings(array($var_name => time() % 1000));
-				$context['smiley_now'] = $settings[$var_name];
-				$filename = '/css/smileys' . $extra . (we::$user['smiley_set'] == 'default' ? '' : '-' . we::$user['smiley_set']) . '-' . $context['smiley_now'] . $context['smiley_ext'];
+				if (!isset($settings['smiley_cache']))
+					updateSettings(array('smiley_cache' => time() % 1000));
+				$filename = '/css/smileys' . (we::$user['smiley_set'] == 'default' ? '' : '-' . we::$user['smiley_set']) . '-' . $settings['smiley_cache'] . $context['smiley_ext'];
 				$exists = file_exists(CACHE_DIR . $filename);
 				if (!$exists)
 					parsesmileys($dummy);

@@ -1211,13 +1211,10 @@ function parsesmileys(&$message)
 		$can_gzip = !empty($settings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
 		$context['smiley_gzip'] = $can_gzip;
 		$context['smiley_ext'] = $can_gzip ? (we::is('safari[-5.1]') ? '.cgz' : (we::is('ie[11-]') ? '.gz.css' : '.css.gz')) : '.css';
-		$extra = we::is('ie6,ie7') ? '-ie' : '';
-		$var_name = 'smiley-cache-' . $extra . '-' . we::$user['smiley_set'];
-		if (!isset($settings[$var_name]))
-			updateSettings(array($var_name => time() % 1000));
-		$context['smiley_now'] = $settings[$var_name];
+		if (!isset($settings['smiley_cache']))
+			updateSettings(array('smiley_cache' => time() % 1000));
 
-		if (!file_exists(CACHE_DIR . '/css/smileys' . $extra . (we::$user['smiley_set'] == 'default' ? '' : '-' . we::$user['smiley_set']) . '-' . $context['smiley_now'] . $context['smiley_ext']))
+		if (!file_exists(CACHE_DIR . '/css/smileys' . (we::$user['smiley_set'] == 'default' ? '' : '-' . we::$user['smiley_set']) . '-' . $settings['smiley_cache'] . $context['smiley_ext']))
 		{
 			// We're only going to cache the smileys that show up on the post editor by default.
 			// The reason is to help save bandwidth by only storing whatever is most likely to be used.
@@ -1227,7 +1224,7 @@ function parsesmileys(&$message)
 			if (!empty($cache))
 			{
 				loadSource('Subs-Cache');
-				wedge_cache_smileys(we::$user['smiley_set'], $cache, $extra);
+				wedge_cache_smileys(we::$user['smiley_set'], $cache);
 			}
 		}
 
@@ -1247,11 +1244,11 @@ function replace_smileys($match)
 	{
 		if (empty($smiley_css_done))
 		{
-			global $context;
+			global $context, $settings;
 
 			$smiley_css_done = true;
 			$context['header'] .= '
-	<link rel="stylesheet" href="' . CACHE . '/css/smileys' . (we::is('ie6,ie7') ? '-ie' : '') . (we::$user['smiley_set'] == 'default' ? '' : '-' . we::$user['smiley_set']) . '-' . $context['smiley_now'] . $context['smiley_ext'] . '">';
+	<link rel="stylesheet" href="' . CACHE . '/css/smileys' . (we::$user['smiley_set'] == 'default' ? '' : '-' . we::$user['smiley_set']) . '-' . $settings['smiley_cache'] . $context['smiley_ext'] . '">';
 		}
 		return $smileyPregReplace[$match[1]];
 	}
