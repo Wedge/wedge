@@ -1461,10 +1461,6 @@ function wedge_callback_str_shuffle($match)
 }
 
 function loadBBCodes() {
-
-	// This is some weird "fix/security enhancement" for url tags. Will keep it,
-	// even if i don't know what this does. Will be used on all before + content
-	// fields on all url tags
 	// User-contributed links opened in a new tab might be a security issue.
 	$noopener = we::is('chrome[49-],opera[36-],firefox[52-]') ? 'noopener' : 'noreferrer';
 
