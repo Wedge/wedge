@@ -747,7 +747,7 @@ function parse_bbc($message, $type = 'generic', $bbc_options = array()) // $smil
 				$tag['process']($tag, $content, $disabled, $parameters);
 			}
 
-			$message = substr($message, 0, $pos) . "\n" . $tag['before'] . "\n" . $content . substr($message, $pos2 + 3 + $tag['len']);
+			$message = substr($message, 0, $pos) . "\n" . $tag['before'] . "\n" . $content . substr($message, $pos2);
 			$pos += strlen($tag['before']) + 1;
 		}
 		// Don't parse the content, just skip it.
