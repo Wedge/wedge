@@ -1127,7 +1127,7 @@ function redirectexit($setLocation = '', $refresh = false, $permanent = false)
 
 	// Put the session ID in, if it's not already in a cookie.
 	if (defined('SID') && SID != '' && (!isset($_COOKIE[session_name()]) || $_COOKIE[session_name()] !== session_id()))
-		$setLocation = preg_replace('/^' . preg_quote(SCRIPT, '/') . '(?!\?' . preg_quote(SID, '/') . ')\\??/', SCRIPT . '?' . SID . ';', $setLocation);
+		$setLocation = preg_replace('/^' . preg_quote(SCRIPT, '/') . '(?!\?' . preg_quote(SID, '/') . ')\\??/', SCRIPT . '?' . westr::safe(SID) . ';', $setLocation);
 	// Keep that debug in their for template debugging!
 	elseif (isset($_GET['debug']))
 		$setLocation = preg_replace('/^' . preg_quote(SCRIPT, '/') . '\\??/', SCRIPT . '?debug;', $setLocation);
@@ -2296,7 +2296,7 @@ function setupMenuContext()
 
 	// Amalgamate the items in the admin menu.
 	if (!empty($error_count) || !empty($items['admin']['items']['reports']['notice']) || !empty($context['unapproved_members']))
-		$items['admin']['notice'] = $error_count + (int) $items['admin']['items']['reports']['notice'] + (int) $context['unapproved_members'];
+		$items['admin']['notice'] = (int) $error_count + (int) $items['admin']['items']['reports']['notice'] + (int) $context['unapproved_members'];
 
 	// Allow editing menu items easily.
 	// Use PHP's array_splice to add entries at a specific position.
