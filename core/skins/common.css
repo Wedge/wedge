@@ -56,9 +56,6 @@
 		clear: both
 	@if ie[-7]
 		zoom: 1
-		:before
-			content: ""
-			display: table
 	@endif
 
 .vertical-arrow virtual

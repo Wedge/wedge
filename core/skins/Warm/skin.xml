@@ -33,7 +33,7 @@
 	</type>
 
 	<!--
-		Parent skin.
+		Parent skin's folder name.
 
 		Wedge skins can inherit each other. Skins without a parent tag directly inherit the root skin, Weaving.
 	-->
