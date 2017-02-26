@@ -1480,7 +1480,7 @@ class wess_prefixes extends wess
 			return $unchanged;
 		}
 
-		// IE6 and IE7 don't support box-sizing, while Mozilla, and older Androids and Safaris require a prefix.
+		// IE6 and IE7 don't support box-sizing, while Mozilla (as of February 2017!), and older Androids and Safaris require a prefix.
 		if ($matches[1] === 'box-sizing')
 		{
 			if ($ie && $v < 8)
@@ -1490,12 +1490,12 @@ class wess_prefixes extends wess
 			return $unchanged;
 		}
 
-		// IE6/7/8/9 don't support columns, IE10 and Opera support them, other browsers require a prefix.
+		// IE6/7/8/9 don't support columns, IE10, Chrome 50+, Firefox 52+ and Opera support them, others require a prefix.
 		if (strpos($matches[1], 'column') === 0)
 		{
 			if ($ie8down || $ie9 || ($firefox && $v < 3.6) || ($opera && $v < 11.1))
 				return '';
-			return $opera || ($ie && $v >= 10) ? $unchanged : $prefixed;
+			return $opera || ($chrome && $v >= 50) || ($firefox && $v >= 52) || ($ie && $v >= 10) ? $unchanged : $prefixed;
 		}
 
 		// WebKit requires some magic for column breaks.
@@ -1506,28 +1506,30 @@ class wess_prefixes extends wess
 			return $opera || ($ie && $v >= 10) ? $unchanged : $this->prefix . 'column-' . $unchanged;
 		}
 
-		// As of April 2014, IE10+, Firefox and WebKit support this prefixed. Opera<14 and IE<10 don't.
+		// As of April 2014, IE10+, Firefox and WebKit support this prefixed (unprefixed for Chrome 54+). Opera<14 and IE<10 don't.
 		if ($matches[1] === 'user-select')
 		{
+			if ($chrome && $v >= 54)
+				return $unchanged;
 			if ($firefox || $webkit || ($ie && $v >= 10))
 				return $prefixed;
 			return '';
 		}
 
-		// As of April 2014, IE10+ supports this unprefixed, and Firefox and Chrome need a prefix.
+		// IE10+, Chrome 48+ and Firefox 34+ support this unprefixed.
 		if ($matches[1] === 'font-feature-settings')
 		{
-			if ($ie && $v >= 10)
+			if (($chrome && $v >= 48) || ($firefox && $v >= 34) || ($ie && $v >= 10))
 				return $unchanged;
-			return $prefixed;
+			return $ie ? '' : $prefixed;
 		}
 
-		// IE6/7/8/9 don't support animations, IE10+, Firefox 16+ and Opera 12.1 support them unprefixed, other browsers require a prefix.
+		// IE6-9 don't support animations, IE10+, Firefox 16+, Chrome 43+ and Opera 12.1 support them unprefixed, other browsers require a prefix.
 		if (strpos($matches[1], 'animation') === 0)
 		{
 			if ($ie8down || $ie9 || ($firefox && $v < 5) || ($opera && $v < 12) || ($safari && $v < 4))
 				return '';
-			if (($opera && $v < 12.1) || ($firefox && $v < 16) || $webkit)
+			if (($opera && $v < 12.1) || ($firefox && $v < 16) || ($chrome && $v < 43) || ($safari && $v < 9))
 				return $prefixed;
 			return $unchanged;
 		}
@@ -1537,7 +1539,7 @@ class wess_prefixes extends wess
 		{
 			if ($ie8down || ($firefox && $v < 3.5))
 				return '';
-			if ($ie9 || ($opera && $v < 12.1) || ($firefox && $v < 16) || ($webkit && (!$chrome || $v < 36)))
+			if ($ie9 || ($opera && $v < 12.1) || ($firefox && $v < 16) || ($chrome && $v < 36) || ($safari && $v < 9))
 				return $prefixed;
 			return $unchanged;
 		}
