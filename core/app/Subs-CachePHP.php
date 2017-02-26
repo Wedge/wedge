@@ -15,6 +15,17 @@ if (!defined('WEDGE'))
 // Build the cached version of our source file
 function cache_source_file($source, $dest)
 {
+	// First of all, make sure we're not caching a partially uploaded file. Give it a few seconds to finish.
+	$tries = 8;
+	clearstatcache(true, $source);
+	while (time() - filemtime($source) < 3 && $tries--)
+	{
+		sleep(1);
+		clearstatcache(true, $source);
+	}
+	if ($tries < 0)
+		exit('An error occurred while loading this page; please contact an administrator if this happens repeatedly.');
+
 	$dest_locked = substr($dest, 0, -4) . '-' . mt_rand(999, 999999999) . '.php';
 	apply_plugin_mods($source, $dest_locked);
 	minify_php($dest_locked);
