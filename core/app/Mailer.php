@@ -227,7 +227,7 @@ function CustomEmail()
 
 		// Check we have a body (etc).
 		if (trim($_POST['email_body']) == '' || trim($_POST['email_subject']) == '')
-			fatal_lang_error('email_missing_data');
+			fatal_lang_error('email_missing_data', false);
 
 		// We use a template in case they want to customize!
 		$replacements = array(
