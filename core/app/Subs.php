@@ -2130,7 +2130,7 @@ function setupMenuContext()
 				'root' => array(
 					'title' => $context['forum_name'],
 					'href' => '<URL>',
-					'show' => $is_b,
+					'show' => $is_b || we::is('mobile'),
 				),
 				'board' => array(
 					'title' => $is_b ? $board_info['name'] : '',
