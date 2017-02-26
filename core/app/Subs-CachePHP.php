@@ -48,14 +48,7 @@ function minify_php($file, $remove_whitespace = false)
 			break;
 
 		$look_for = $php[$pos];
-		if ($look_for === '/')
-		{
-			if ($php[$pos + 1] === '/') // Remove //
-				$look_for = array("\r", "\n", "\r\n");
-			else // Remove /* ... */
-				$look_for = '*/';
-		}
-		else
+		if ($look_for !== '/')
 		{
 			$next = find_next($php, $pos + 1, $look_for);
 			if ($next === false) // Shouldn't be happening.
@@ -66,6 +59,11 @@ function minify_php($file, $remove_whitespace = false)
 			$php = substr_replace($php, "\x0f", $pos, $next + 1 - $pos);
 			continue;
 		}
+
+		if ($php[$pos + 1] === '/') // Remove //
+			$look_for = array("\r", "\n", "\r\n");
+		else // Remove /* ... */
+			$look_for = '*/';
 
 		$end = find_next($php, $pos + 1, $look_for);
 		if ($end === false)
