@@ -2309,14 +2309,17 @@ function setupMenuContext()
 		if (!empty($item['show']))
 		{
 			$item['active_item'] = false;
+			$was_sep = true;
 
 			// Go through the sub items if there are any.
 			if (!empty($item['items']))
 			{
 				foreach ($item['items'] as $key => $subitem)
 				{
-					if (empty($subitem['show']) && !empty($subitem))
+					if ((empty($subitem['show']) && !empty($subitem)) || ($was_sep && $subitem === ''))
 						unset($item['items'][$key]);
+					else
+						$was_sep = $subitem === '';
 
 					// 2nd level sub items next...
 					if (!empty($subitem['items']))
