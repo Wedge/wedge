@@ -522,6 +522,7 @@ function template_linktree($position = 'top', $force_show = false)
 {
 	global $context;
 
+	// Typically, we'll only show it at the bottom on topic pages (where 'bottom_linktree' is set to true.)
 	if ($position === 'bottom' && empty($context['bottom_linktree']) && !$force_show)
 		return;
 
