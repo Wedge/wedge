@@ -88,7 +88,7 @@
 	@if $can_animate
 		width, height: 11px
 		border-radius: 100%
-		border: 1px solid rgba(0,0,0,0.5)
+		border: 1px solid rgba(0,0,0,.5)
 		border-top-color: transparent
 		box-shadow: 1px 1px 7px #777
 		animation: spin 1s infinite linear

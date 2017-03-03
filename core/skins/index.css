@@ -1504,7 +1504,7 @@ section.block extends .wrc
 		@if $sub_radius
 			border-radius: $sub_radius $sub_radius 0 0
 		@endif
-		margin: -0.9em -1.2em 1em
+		margin: -.9em -1.2em 1em
 		a
 			text-decoration: underline
 	footer extends .wefoot
@@ -1512,7 +1512,7 @@ section.block extends .wrc
 		@if $sub_radius
 			border-radius: 0 0 $sub_radius $sub_radius
 		@endif
-		margin: .5em -1.2em -0.9em
+		margin: .5em -1.2em -.9em
 	dl.settings
 		margin: 0
 

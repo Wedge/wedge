@@ -690,9 +690,10 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 	$final = preg_replace('~//[ \t][^\n]*~', '', $final); // Strip remaining comments like me. OMG does this mean I'm gonn
 
 	// Just like comments, we're going to preserve content tags.
-	preg_match_all('~(?<=\s)content\h*:\h*(.*?)[\h;]*(?=[}\v])~', $final, $contags);
+	$final = preg_replace('~(?<=\s)content\h*:\h*~', 'content:', $final);
+	preg_match_all('~(?<=\s)content:(.*?)[\h;]*(?=[}\v])~', $final, $contags);
 	$context['reset_content_counter'] = true;
-	$final = preg_replace_callback('~(?<=\s)content\h*:\h*.*?[\h;]*(?=[}\v])~', 'wedge_hide_content', $final);
+	$final = preg_replace_callback('~(?<=\s)content:.*?[\h;]*(?=[}\v])~', 'wedge_hide_content', $final);
 
 	foreach ($plugins as $plugin)
 		$plugin->process($final);
@@ -803,7 +804,7 @@ function wedge_hide_content()
 		$i = 0;
 		unset($context['reset_content_counter']);
 	}
-	return 'content: wedge' . $i++;
+	return 'content:wedge' . $i++;
 }
 
 function wedge_replace_theme_vars($match)
@@ -1951,7 +1952,7 @@ function cache_get_data($orig_key, $ttl = 120, $put_callback = null)
 	// Otherwise it's the file cache!
 	elseif (file_exists(CACHE_DIR . '/keys/' . $key . '.php') && @filesize(CACHE_DIR . '/keys/' . $key . '.php') > 10)
 	{
-		@include(CACHE_DIR . '/keys/' . $key . '.php');
+		include(CACHE_DIR . '/keys/' . $key . '.php');
 		if (empty($valid))
 			@unlink(CACHE_DIR . '/keys/' . $key . '.php');
 	}
