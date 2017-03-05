@@ -16,7 +16,7 @@ function template_notifications_list()
 		<ul class="nlist"><li>
 			<span class="floatright" style="margin: 0 4px 4px 0">', !$context['unread_count'] ? '' : '
 				<a href="<URL>?action=notification;sa=markread" class="n_markread" onclick="$(\'.notifs.notif .notevoid\').html(0); notload(this.href); return false;">' . $txt['notifications_short_mark_as_read'] . '</a> |', '
-				<a href="<URL>?action=profile;area=notifications" class="n_settings"><span id="m_admin"></span><span class="n_setdesc">', $txt['notifications_short_settings'], '</span></a>
+				<a href="<URL>?action=profile;area=notifications" class="n_settings"><span id="m_admin"></span><span', !$context['unread_count'] ? '>' : ' class="n_setdesc">', $txt['notifications_short_settings'], '</span></a>
 			</span>
 			<span class="floatleft" style="margin: 0 0 4px 4px">
 				', !empty(we::$user['data']['n_all']) ? '<a href="<URL>?action=notification;show=unread" onclick="notload(this.href); return false;">' . $txt['notifications_short_unread'] . '</a>' : '<strong>' . $txt['notifications_short_unread'] . '</strong>', ' |
