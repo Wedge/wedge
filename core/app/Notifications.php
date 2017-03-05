@@ -314,6 +314,15 @@ class weNotif
 				exit();
 			redirectexit();
 		}
+		elseif ($sa == 'markread')
+		{
+			// Reset unread status on my notifications, as well as the unread notification count.
+			wesql::query('UPDATE {db_prefix}notifications SET unread = 0 WHERE id_member = {int:me}', array('me' => we::$id));
+			wesql::query('UPDATE {db_prefix}members SET unread_notifications = 0 WHERE id_member = {int:me}', array('me' => we::$id));
+
+			// Flush the cache
+			cache_put_data('quick_notification_' . we::$id, null, 86400);
+		}
 
 		if ($sa == 'preview' && isset($_REQUEST['in']))
 		{
@@ -586,6 +595,7 @@ class weNotif
 				'time' => time() - ($settings['notifications_prune_days'] * 86400),
 			)
 		);
+		wedb::optimize_table('{db_prefix}notifications');
 	}
 
 	/**

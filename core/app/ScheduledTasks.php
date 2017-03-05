@@ -467,7 +467,7 @@ function scheduled_daily_maintenance()
 	return true;
 }
 
-// Auto optimize the database?
+// Auto-optimize the database?
 function scheduled_auto_optimize()
 {
 	global $settings, $db_prefix;
@@ -499,7 +499,7 @@ function scheduled_auto_optimize()
 	// Get all the tables.
 	$tables = wedb::list_tables(false, $db_prefix . '%');
 
-	// Actually do the optimisation.
+	// Actually do the optimization.
 	foreach ($tables as $table)
 		wedb::optimize_table($table);
 

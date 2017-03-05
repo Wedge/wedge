@@ -382,7 +382,7 @@ $txt['delete'] = 'Delete';
 
 $txt['kilobyte'] = 'kB';
 
-$txt['more_stats'] = '[More Stats]';
+$txt['more_stats'] = 'More Stats';
 
 $txt['code'] = 'Code';
 $txt['code_select'] = '[Select]';

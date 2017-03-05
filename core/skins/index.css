@@ -474,7 +474,7 @@ em
 	margin-top: 0
 
 // Fold/unfold icon
-.upshrinks mixes .inline-block
+.upshrinks virtual mixes .inline-block
 	background: url($images/upshrinks.png) no-repeat
 	text-decoration: none
 
@@ -2041,6 +2041,20 @@ h6
 		margin-left: 8px
 		border-left: 3px solid #da7
 		border-bottom: 1px solid #ccc
+
+	.n_markread
+		display: inline-block
+
+	.n_settings
+		display: inline-block
+		color: #666
+		#m_admin
+			margin-bottom: -2px
+
+	@media all and (max-width: 600px)
+		.n_setdesc
+			display: none
+
 @endif
 
 // Used by the Ajax loader. No need to declare it everywhere...
