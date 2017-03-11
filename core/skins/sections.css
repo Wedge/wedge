@@ -361,7 +361,7 @@ hr.sep
 	> div
 		width: 100%
 		top: 6px
-		@if $can_sticky || chrome
+		@if $can_sticky
 			position: @is (ios, -prefix-sticky, sticky)
 		@endif
 
