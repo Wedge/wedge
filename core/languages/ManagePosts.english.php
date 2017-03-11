@@ -7,6 +7,8 @@ $txt['enableEmbeddedFlash'] = 'Allow Flash embedding in posts';
 $txt['enableEmbeddedFlash_warning'] = 'May be a security risk!';
 $txt['additional_options_collapsable'] = 'Enable collapsible additional post options';
 
+$txt['max_subjectLength'] = 'Maximum allowed subject size';
+$txt['max_subjectLength_zero'] = '0 for no max. Attention: for values > 255 you have to alter the messages table.';
 $txt['max_messageLength'] = 'Maximum allowed post size';
 $txt['max_messageLength_zero'] = '0 for no max.';
 $txt['topicSummaryPosts'] = 'Posts to show on topic summary';

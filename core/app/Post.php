@@ -353,8 +353,10 @@ function Post($post_errors = array())
 		$form_message = westr::htmlspecialchars($_REQUEST['message'], ENT_QUOTES);
 
 		// Make sure the subject isn't too long - taking into account special characters.
-		if (westr::strlen($form_subject) > 100)
-			$form_subject = westr::substr($form_subject, 0, 100);
+		$len_form_subject = westr::strlen($form_subject);
+        $max_subject_length = !empty($settings['max_subjectLength']) ? $settings['max_subjectLength'] : 80;
+		if ($len_form_subject > $max_subject_length)
+            $post_errors[] = ['subject_too_long', [$max_subject_length, $len_form_subject]];
 
 		// Have we inadvertently trimmed off the subject of useful information?
 		if (!in_array('no_subject', $post_errors) && westr::htmltrim($form_subject) === '')
@@ -364,7 +366,6 @@ function Post($post_errors = array())
 		if (!empty($post_errors))
 		{
 			loadLanguage('Errors');
-
 			foreach ($post_errors as $error)
 			{
 				if (is_array($error))
@@ -372,7 +373,7 @@ function Post($post_errors = array())
 					$error_id = $error[0];
 					// Not really used, but we'll still set that.
 					$context['post_error'][$error_id] = true;
-					$context['post_error']['messages'][] = sprintf($txt['error_' . $error_id], $error[1]);
+					$context['post_error']['messages'][] = vsprintf($txt['error_' . $error_id], $error[1]);
 				}
 				else
 				{

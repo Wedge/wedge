@@ -355,7 +355,7 @@ function template_post_header_before()
 
 function template_post_subject()
 {
-	global $context, $txt;
+	global $context, $txt, $settings;
 
 	// Now show the subject box for this post.
 	echo '
@@ -381,7 +381,7 @@ function template_post_subject()
 	echo '
 						</div>
 						<div>
-							<input name="subject" id="subject"', $context['subject'] == '' ? '' : ' value="' . $context['subject'] . '"', ' tabindex="', $context['tabindex']++, '" maxlength="80" class="w100">
+							<input name="subject" id="subject"', $context['subject'] == '' ? '' : ' value="' . $context['subject'] . '"', ' tabindex="', $context['tabindex']++, '" maxlength="', isset($settings['max_subjectLength']) ? ($settings['max_subjectLength'] == 0 ? -1 : $settings['max_subjectLength']) : 80 ,'" class="w100">
 						</div>
 					</div>';
 }
