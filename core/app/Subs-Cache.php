@@ -1910,10 +1910,21 @@ function cache_put_data($key, $val, $ttl = 120)
 			if (file_put_contents(CACHE_DIR . '/keys/' . $key . '.php', $cache_data, LOCK_EX) !== strlen($cache_data))
 				@unlink(CACHE_DIR . '/keys/' . $key . '.php');
 		}
+		invalidate_opcache($key);
 	}
 
 	if (!empty($db_show_debug))
 		$cache_hits[$cache_count]['t'] = microtime(true) - $st;
+}
+
+function invalidate_opcache($key)
+{
+	// Invalidate opcode and APC caches if available.
+	if (function_exists('opcache_invalidate'))
+		opcache_invalidate(CACHE_DIR . '/keys/' . $key . '.php', true);
+
+	if (function_exists('apc_delete_file'))
+		apc_delete_file(CACHE_DIR . '/keys/' . $key . '.php');
 }
 
 /**
@@ -1954,7 +1965,10 @@ function cache_get_data($orig_key, $ttl = 120, $put_callback = null)
 	{
 		include(CACHE_DIR . '/keys/' . $key . '.php');
 		if (empty($valid))
+		{
 			@unlink(CACHE_DIR . '/keys/' . $key . '.php');
+			invalidate_opcache($key);
+		}
 	}
 
 	if (!empty($db_show_debug))
