@@ -207,6 +207,7 @@ function ModifyPostSettings($return_config = false)
 			array('check', 'additional_options_collapsable'),
 		'',
 			// Posting limits...
+			array('int', 'max_subjectLength', 'subtext' => $txt['max_subjectLength_zero'], 'postinput' => $txt['manageposts_characters']),
 			array('int', 'max_messageLength', 'subtext' => $txt['max_messageLength_zero'], 'postinput' => $txt['manageposts_characters']),
 			array('int', 'topicSummaryPosts', 'postinput' => $txt['manageposts_posts']),
 		'',
