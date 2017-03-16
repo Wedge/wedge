@@ -132,70 +132,9 @@ function parse_bbc($message, $type = 'generic', $bbc_options = array()) // $smil
 		return $message;
 	}
 
-	if ($master_codes === null)
-	{
-		$strlower = array_combine(range(' ', "\xFF"), str_split(strtolower(implode('', range(' ', "\xFF")))));
+	$strlower = array_combine(range(' ', "\xFF"), str_split(strtolower(implode('', range(' ', "\xFF")))));
 
-		$field_list = array(
-			'before_code' => 'before',
-			'after_code' => 'after',
-			'content' => 'content',
-			'disabled_before' => 'disabled_before',
-			'disabled_after' => 'disabled_after',
-			'disabled_content' => 'disabled_content',
-			'test' => 'test',
-		);
-		$explode_list = array(
-			'disallow_children' => 'disallow_children',
-			'require_children' => 'require_children',
-			'require_parents' => 'require_parents',
-			'parsed_tags_allowed' => 'parsed_tags_allowed',
-		);
-
-		$result = wesql::query('
-			SELECT tag, len, bbctype, before_code, after_code, content, disabled_before,
-				disabled_after, disabled_content, block_level, test, validate_func, disallow_children,
-				require_parents, require_children, parsed_tags_allowed, quoted, params, trim_wspace
-			FROM {db_prefix}bbcode'
-		);
-
-		while ($row = wesql::fetch_assoc($result))
-		{
-			$bbcode = array(
-				'tag' => $row['tag'],
-				'len' => $row['len'],
-				'block_level' => !empty($row['block_level']),
-				'trim' => $row['trim_wspace'],
-			);
-			if ($row['bbctype'] !== 'parsed')
-				$bbcode['type'] = $row['bbctype'];
-			if (!empty($row['params']))
-				$bbcode['parameters'] = unserialize($row['params']);
-			if (!empty($row['validate_func']))
-				$bbcode['validate'] = create_function('&$tag, &$data, $disabled', $row['validate_func']);
-			if ($row['quoted'] !== 'none')
-				$bbcode['quoted'] = $row['quoted'];
-
-			// User-contributed links opened in a new tab might be a security issue.
-			if ($row['tag'] === 'url')
-			{
-				$noopener = we::is('chrome[49-],opera[36-],firefox[52-]') ? 'noopener' : 'noreferrer';
-				$row['before_code'] = str_replace('rel="nofollow"', 'rel="nofollow ' . $noopener . '"', $row['before_code']);
-				$row['content'] = str_replace('rel="nofollow"', 'rel="nofollow ' . $noopener . '"', $row['content']);
-			}
-
-			foreach ($explode_list as $db_field => $bbc_field)
-				if (!empty($row[$db_field]))
-					$bbcode[$bbc_field] = explode(',', $row[$db_field]);
-			foreach ($field_list as $db_field => $bbc_field)
-				if (!empty($row[$db_field]))
-					$bbcode[$bbc_field] = preg_replace_callback('~{{(\w+)}}~', 'parse_lang_strings', trim($row[$db_field]));
-
-			// Reformat it from DB structure
-			$master_codes[] = $bbcode;
-		}
-		wesql::free_result($result);
-	}
+	$master_codes = loadBBCodes();
 
 	// If we are not doing every tag then we don't cache this run.
 	if (!empty($parse_tags) && !empty($bbc_codes))
@@ -637,8 +576,8 @@ function parse_bbc($message, $type = 'generic', $bbc_options = array()) // $smil
 					$key = strtok(ltrim($matches[$i]), '=');
 					if (isset($possible['parameters'][$key]['value']))
 						$params['{' . $key . '}'] = strtr($possible['parameters'][$key]['value'], array('$1' => $matches[$i + 1]));
-					elseif (isset($possible['parameters'][$key]['validate']))
-						$params['{' . $key . '}'] = $possible['parameters'][$key]['validate']($matches[$i + 1]);
+					elseif (isset($possible['parameters'][$key]['process']))
+						$params['{' . $key . '}'] = $possible['parameters'][$key]['process']($matches[$i + 1]);
 					else
 						$params['{' . $key . '}'] = $matches[$i + 1];
 
@@ -791,12 +730,24 @@ function parse_bbc($message, $type = 'generic', $bbc_options = array()) // $smil
 			}
 		}
 
-		// No type means 'parsed_content'.
+		// No type means 'parsed'.
 		if (!isset($tag['type']))
 		{
+			// We want to make things clear
+			$tag['type'] = 'parsed';
+
+			$pos2 = stripos($message, '[/' . substr($message, $pos + 1, $tag['len']) . ']', $pos1);
 			// !!! Check for end tag first, so people can say "I like that [i] tag"?
 			$open_tags[] = $tag;
-			$message = substr($message, 0, $pos) . "\n" . $tag['before'] . "\n" . substr($message, $pos1);
+
+			$content = substr($message, $pos1, $pos2-$pos1);
+
+			if (isset($tag['process'])) {
+				$parameters = ["indexed" => null, "associative" => empty($params) ? null : $params];
+				$tag['process']($tag, $content, $disabled, $parameters);
+			}
+
+			$message = substr($message, 0, $pos) . "\n" . $tag['before'] . "\n" . $content . substr($message, $pos2);
 			$pos += strlen($tag['before']) + 1;
 		}
 		// Don't parse the content, just skip it.
@@ -806,15 +757,17 @@ function parse_bbc($message, $type = 'generic', $bbc_options = array()) // $smil
 			if ($pos2 === false)
 				continue;
 
-			$data = substr($message, $pos1, $pos2 - $pos1);
+			$content = substr($message, $pos1, $pos2 - $pos1);
 
-			if (!empty($tag['block_level']) && substr($data, 0, 4) === '<br>')
-				$data = substr($data, 4);
+			if (!empty($tag['block_level']) && substr($content, 0, 4) === '<br>')
+				$content = substr($content, 4);
 
-			if (isset($tag['validate']))
-				$tag['validate']($tag, $data, $disabled);
+			if (isset($tag['process'])) {
+				$parameters = ["indexed" => null, "associative" => empty($params) ? null : $params];
+				$tag['process']($tag, $content, $disabled, $parameters);
+			}
 
-			$code = strtr($tag['content'], array('$1' => $data));
+			$code = strtr($tag['content'], array('$1' => $content));
 			$message = substr($message, 0, $pos) . "\n" . $code . "\n" . substr($message, $pos2 + 3 + $tag['len']);
 
 			$pos += strlen($code) + 1;
@@ -844,19 +797,18 @@ function parse_bbc($message, $type = 'generic', $bbc_options = array()) // $smil
 			if ($pos3 === false)
 				continue;
 
-			$data = array(
-				substr($message, $pos2 + ($quoted ? 7 : 1), $pos3 - $pos2 - ($quoted ? 7 : 1)),
-				substr($message, $pos1, $pos2 - $pos1)
-			);
+			$params_indexed = array(substr($message, $pos1, $pos2 - $pos1));
+			$content = substr($message, $pos2 + ($quoted ? 7 : 1), $pos3 - $pos2 - ($quoted ? 7 : 1));
 
-			if (!empty($tag['block_level']) && substr($data[0], 0, 4) === '<br>')
-				$data[0] = substr($data[0], 4);
+			if (!empty($tag['block_level']) && substr($content, 0, 4) === '<br>')
+				$content = substr($content, 4);
 
 			// Validation for my parking, please!
-			if (isset($tag['validate']))
-				$tag['validate']($tag, $data, $disabled);
+			if (isset($tag['process']))
+				$parameters = ["indexed" => $params_indexed, "associative" => empty($params) ? null : $params];
+				$tag['process']($tag, $content, $disabled, $parameters);
 
-			$code = strtr($tag['content'], array('$1' => $data[0], '$2' => $data[1]));
+			$code = strtr($tag['content'], array('$1' => $content, '$2' => $params_indexed[0]));
 			$message = substr($message, 0, $pos) . "\n" . $code . "\n" . substr($message, $pos3 + 3 + $tag['len']);
 			$pos += strlen($code) + 1;
 		}
@@ -888,6 +840,13 @@ function parse_bbc($message, $type = 'generic', $bbc_options = array()) // $smil
 			else
 			{
 				$pos2 = strpos($message, ']', $pos);
+
+				if (isset($tag['process'])) {
+					$parameters = ["indexed" => null, "associative" => empty($params) ? null : $params];
+					$content = '';
+					$tag['process']($tag, $content, $disabled, $parameters);
+				}
+
 				$message = substr($message, 0, $pos) . "\n" . $tag['content'] . "\n" . substr($message, $pos2 + 1);
 				$pos += strlen($tag['content']) + 1;
 			}
@@ -904,14 +863,16 @@ function parse_bbc($message, $type = 'generic', $bbc_options = array()) // $smil
 				continue;
 
 			// We want $1 to be the content, and the rest to be csv.
-			$data = explode(',', ',' . substr($message, $pos1, $pos2 - $pos1));
-			$data[0] = substr($message, $pos2 + 1, $pos3 - $pos2 - 1);
+			$params_indexed = explode(',', substr($message, $pos1, $pos2 - $pos1));
+			$content = substr($message, $pos2 + 1, $pos3 - $pos2 - 1);
 
-			if (isset($tag['validate']))
-				$tag['validate']($tag, $data, $disabled);
+			if (isset($tag['process'])) {
+				$parameters = ["indexed" => $params_indexed, "associative" => empty($params) ? null : $params];
+				$tag['process']($tag, $content, $disabled, $parameters);
+			}
 
 			$code = $tag['content'];
-			foreach ($data as $k => $d)
+			foreach (array_merge([$content], $params_indexed) as $k => $d)
 				$code = strtr($code, array('$' . ($k + 1) => trim($d)));
 			$message = substr($message, 0, $pos) . "\n" . $code . "\n" . substr($message, $pos3 + 3 + $tag['len']);
 			$pos += strlen($code) + 1;
@@ -923,22 +884,32 @@ function parse_bbc($message, $type = 'generic', $bbc_options = array()) // $smil
 			if ($pos2 === false)
 				continue;
 
-			$data = explode(',', substr($message, $pos1, $pos2 - $pos1));
+			$params_indexed = explode(',', substr($message, $pos1, $pos2 - $pos1));
 
-			if (isset($tag['validate']))
-				$tag['validate']($tag, $data, $disabled);
+			if (isset($tag['process'])) {
+				$pos3 = strrpos($message, '[');
+				$content = substr($message, $pos2+1, $pos3-$pos2-1);
+				$parameters = ["indexed" => $params_indexed, "associative" => empty($params) ? null : $params];
+				$tag['process']($tag, $content, $disabled, $parameters);
+			}
 
 			// Fix after, for disabled code mainly.
-			foreach ($data as $k => $d)
+			foreach ($params_indexed as $k => $d)
 				$tag['after'] = strtr($tag['after'], array('$' . ($k + 1) => trim($d)));
 
 			$open_tags[] = $tag;
 
 			// Replace them out, $1, $2, $3, $4, etc.
 			$code = $tag['before'];
-			foreach ($data as $k => $d)
+			foreach ($params_indexed as $k => $d)
 				$code = strtr($code, array('$' . ($k + 1) => trim($d)));
-			$message = substr($message, 0, $pos) . "\n" . $code . "\n" . substr($message, $pos2 + 1);
+
+			// This is not nice, but this will make sure we don't break things if those changes aren't applied correctly
+			if (isset($tag['process'])) {
+				$message = substr($message, 0, $pos) . "\n" . $code . "\n" . $content . substr($message, $pos3);
+			} else {
+				$message = substr($message, 0, $pos) . "\n" . $code . "\n" . substr($message, $pos2 + 1);
+			}
 			$pos += strlen($code) + 1;
 		}
 		// A tag set to a value, parsed or not.
@@ -964,8 +935,12 @@ function parse_bbc($message, $type = 'generic', $bbc_options = array()) // $smil
 			$data = substr($message, $pos1, $pos2 - $pos1);
 
 			// Validation for my parking, please!
-			if (isset($tag['validate']))
-				$tag['validate']($tag, $data, $disabled);
+			if (isset($tag['process'])) {
+				$pos3 = strrpos($message, '[');
+				$content = substr($message, $pos2 + ($quoted ? 7 : 1), $pos3 - $pos2 - ($quoted ? 7 : 1));
+				$parameters = ["indexed" => [$data], "associative" => empty($params) ? null : $params];
+				$tag['process']($tag, $content, $disabled, $parameters);
+			}
 
 			// For parsed content, we must recurse to avoid security problems.
 			if ($tag['type'] !== 'unparsed_equals')
@@ -976,7 +951,11 @@ function parse_bbc($message, $type = 'generic', $bbc_options = array()) // $smil
 			$open_tags[] = $tag;
 
 			$code = strtr($tag['before'], array('$1' => $data));
-			$message = substr($message, 0, $pos) . "\n" . $code . "\n" . substr($message, $pos2 + ($quoted ? 7 : 1));
+			if (isset($tag['process'])) {
+				$message = substr($message, 0, $pos) . "\n" . $code . "\n" . $content . substr($message, $pos3);
+			} else {
+				$message = substr($message, 0, $pos) . "\n" . $code . "\n" . substr($message, $pos2 + ($quoted ? 7 : 1));
+			}
 			$pos += strlen($code) + 1;
 		}
 
@@ -1474,4 +1453,830 @@ function wedge_post_process($message, $regex_find, $regex_replace = null, $regex
 function wedge_callback_str_shuffle($match)
 {
 	return str_shuffle($match[0]);
+}
+
+function loadBBCodes() {
+	// User-contributed links opened in a new tab might be a security issue.
+	$noopener = we::is('chrome[49-],opera[36-],firefox[52-]') ? 'noopener' : 'noreferrer';
+
+	$bbcodes = [
+	  [
+	    'tag' => 'abbr',
+	    'len' => '4',
+	    'block_level' => false,
+	    'trim' => 'none',
+	    'type' => 'unparsed_equals',
+	    'quoted' => 'optional',
+	    'before' => '<abbr title="$1">',
+	    'after' => '</abbr>',
+	    'disabled_after' => '($1)',
+	  ],
+	  [
+	    'tag' => 'anchor',
+	    'len' => '6',
+	    'block_level' => false,
+	    'trim' => 'none',
+	    'type' => 'unparsed_equals',
+	    'before' => '<span id="post_$1">',
+	    'after' => '</span>',
+	    'test' => '[#]?([A-Za-z][A-Za-z0-9_\\-]*)\\]',
+	  ],
+	  [
+	    'tag' => 'b',
+	    'len' => '1',
+	    'block_level' => false,
+	    'trim' => 'none',
+	    'before' => '<strong>',
+	    'after' => '</strong>',
+	  ],
+	  [
+	    'tag' => 'bdo',
+	    'len' => '3',
+	    'block_level' => true,
+	    'trim' => 'none',
+	    'type' => 'unparsed_equals',
+	    'before' => '<bdo dir="$1">',
+	    'after' => '</bdo>',
+	    'test' => '(rtl|ltr)\\]',
+	  ],
+	  [
+	    'tag' => 'br',
+	    'len' => '2',
+	    'block_level' => false,
+	    'trim' => 'none',
+	    'type' => 'closed',
+	    'content' => '<br>',
+	  ],
+	  [
+	    'tag' => 'center',
+	    'len' => '6',
+	    'block_level' => true,
+	    'trim' => 'none',
+	    'before' => '<div class="center">',
+	    'after' => '</div>',
+	  ],
+	  [
+	    'tag' => 'code',
+	    'len' => '4',
+	    'block_level' => true,
+	    'trim' => 'none',
+	    'type' => 'unparsed_content',
+	    'process' => 'bbc_code_process',
+	    'content' => '<div class="bbc_code"><header>{{code}}: <a href="#" onclick="return weSelectText(this);" class="codeoperation">{{code_select}}</a></header>',
+	  ],
+	  [
+	    'tag' => 'code',
+	    'len' => '4',
+	    'block_level' => true,
+	    'trim' => 'none',
+	    'type' => 'unparsed_equals_content',
+	    'process' => 'bbc_code_process',
+	    'content' => '<div class="bbc_code"><header>{{code}}: ($2) <a href="#" onclick="return weSelectText(this);" class="codeoperation">{{code_select}}</a></header>',
+	  ],
+	  [
+	    'tag' => 'color',
+	    'len' => '5',
+	    'block_level' => false,
+	    'trim' => 'none',
+	    'type' => 'unparsed_equals',
+	    'before' => '<span style="color: $1" class="bbc_color">',
+	    'after' => '</span>',
+	    'test' => '(#[\\da-fA-F]{3}|#[\\da-fA-F]{6}|[A-Za-z]{1,20}|rgb\\(\\d{1,3}, ?\\d{1,3}, ?\\d{1,3}\\))\\]',
+	  ],
+	  [
+	    'tag' => 'email',
+	    'len' => '5',
+	    'block_level' => false,
+	    'trim' => 'none',
+	    'type' => 'unparsed_content',
+	    'process' => 'bbc_general_trim',
+	    'content' => '<a href="mailto:$1" class="bbc_email">$1</a>',
+	  ],
+	  [
+	    'tag' => 'email',
+	    'len' => '5',
+	    'block_level' => false,
+	    'trim' => 'none',
+	    'type' => 'unparsed_equals',
+	    'disallow_children' =>
+	    [
+	      0 => 'email',
+	      1 => 'ftp',
+	      2 => 'url',
+	      3 => 'iurl',
+	    ],
+	    'before' => '<a href="mailto:$1" class="bbc_email">',
+	    'after' => '</a>',
+	    'disabled_after' => '($1)',
+	  ],
+	  [
+	    'tag' => 'flash',
+	    'len' => '5',
+	    'block_level' => false,
+	    'trim' => 'none',
+	    'type' => 'unparsed_commas_content',
+	    'process' => 'bbc_flash_set_prot',
+	    'content' => '<object width="$2" height="$3" data="$1"><param name="movie" value="$1"><param name="play" value="true"><param name="loop" value="true"><param name="quality" value="high"><param name="allowscriptaccess" value="never"><embed src="$1" type="application/x-shockwave-flash" allowscriptaccess="never" width="$2" height="$3"></object>',
+	    'disabled_content' => '<a href="$1" target="_blank" class="new_win">$1</a>',
+	    'test' => '\\d+,\\d+\\]',
+	  ],
+	  [
+	    'tag' => 'font',
+	    'len' => '4',
+	    'block_level' => false,
+	    'trim' => 'none',
+	    'type' => 'unparsed_equals',
+	    'before' => '<span style="font-family: $1" class="bbc_font">',
+	    'after' => '</span>',
+	    'test' => '[A-Za-z0-9_,\\-\\s]+?\\]',
+	  ],
+	  [
+	    'tag' => 'ftp',
+	    'len' => '3',
+	    'block_level' => false,
+	    'trim' => 'none',
+	    'type' => 'unparsed_content',
+	    'process' => 'bbc_ftp_trim_and_set_prot',
+	    'content' => '<a href="$1" class="bbc_ftp new_win" target="_blank">$1</a>',
+	  ],
+	  [
+	    'tag' => 'ftp',
+	    'len' => '3',
+	    'block_level' => false,
+	    'trim' => 'none',
+	    'type' => 'unparsed_equals',
+	    'process' => 'bbc_ftp_trim_and_set_prot',
+	    'disallow_children' =>
+	    [
+	      0 => 'email',
+	      1 => 'ftp',
+	      2 => 'url',
+	      3 => 'iurl',
+	    ],
+	    'before' => '<a href="$1" class="bbc_ftp new_win" target="_blank">',
+	    'after' => '</a>',
+	    'disabled_after' => '($1)',
+	  ],
+	  [
+	    'tag' => 'html',
+	    'len' => '4',
+	    'block_level' => true,
+	    'trim' => 'none',
+	    'type' => 'unparsed_content',
+	    'content' => '$1',
+	    'disabled_content' => '$1',
+	  ],
+	  [
+	    'tag' => 'hr',
+	    'len' => '2',
+	    'block_level' => true,
+	    'trim' => 'none',
+	    'type' => 'closed',
+	    'content' => '<hr>',
+	  ],
+	  [
+	    'tag' => 'i',
+	    'len' => '1',
+	    'block_level' => false,
+	    'trim' => 'none',
+	    'before' => '<em>',
+	    'after' => '</em>',
+	  ],
+	  [
+	    'tag' => 'img',
+	    'len' => '3',
+	    'block_level' => false,
+	    'trim' => 'none',
+	    'type' => 'unparsed_content',
+	    'parameters' =>
+	    [
+	      'alt' =>
+	      [
+	        'optional' => true,
+	      ],
+	      'align' =>
+	      [
+	        'optional' => true,
+	        'value' => ' $1',
+	        'match' => '(right|left|center)',
+	      ],
+	      'width' =>
+	      [
+	        'optional' => true,
+	        'value' => ' width="$1"',
+	        'match' => '(\\d+)',
+	      ],
+	      'height' =>
+	      [
+	        'optional' => true,
+	        'value' => ' height="$1"',
+	        'match' => '(\\d+)',
+	      ],
+	    ],
+	    'process' => 'bbc_img_trim_set_prot_and_add_js',
+	    'content' => '<img src="$1" alt="{alt}"{width}{height} class="bbc_img resized{align}">',
+	    'disabled_content' => '($1)',
+	  ],
+	  [
+	    'tag' => 'img',
+	    'len' => '3',
+	    'block_level' => false,
+	    'trim' => 'none',
+	    'type' => 'unparsed_content',
+	    'process' => 'bbc_img_trim_set_prot_and_add_js',
+	    'content' => '<img src="$1" class="bbc_img">',
+	    'disabled_content' => '($1)',
+	  ],
+	  [
+	    'tag' => 'iurl',
+	    'len' => '4',
+	    'block_level' => false,
+	    'trim' => 'none',
+	    'type' => 'unparsed_content',
+	    'process' => 'bbc_iurl_trim_set_post_and_set_prot',
+	    'content' => '<a href="$1" class="bbc_link">$1</a>',
+	  ],
+	  [
+	    'tag' => 'iurl',
+	    'len' => '4',
+	    'block_level' => false,
+	    'trim' => 'none',
+	    'type' => 'unparsed_equals',
+	    'process' => 'bbc_iurl_trim_set_post_and_set_prot',
+	    'disallow_children' =>
+	    [
+	      0 => 'email',
+	      1 => 'ftp',
+	      2 => 'url',
+	      3 => 'iurl',
+	    ],
+	    'before' => '<a href="$1" class="bbc_link">',
+	    'after' => '</a>',
+	    'disabled_after' => '($1)',
+	  ],
+	  [
+	    'tag' => 'left',
+	    'len' => '4',
+	    'block_level' => true,
+	    'trim' => 'none',
+	    'before' => '<div class="left">',
+	    'after' => '</div>',
+	  ],
+	  [
+	    'tag' => 'li',
+	    'len' => '2',
+	    'block_level' => true,
+	    'trim' => 'outside',
+	    'require_parents' =>
+	    [
+	      0 => 'list',
+	    ],
+	    'before' => '<li>',
+	    'after' => '</li>',
+	    'disabled_before' => '',
+	    'disabled_after' => '<br>',
+	  ],
+	  [
+	    'tag' => 'list',
+	    'len' => '4',
+	    'block_level' => true,
+	    'trim' => 'inside',
+	    'require_children' =>
+	    [
+	      0 => 'li',
+	      1 => 'list',
+	    ],
+	    'before' => '<ul class="bbc_list">',
+	    'after' => '</ul>',
+	  ],
+	  [
+	    'tag' => 'list',
+	    'len' => '4',
+	    'block_level' => true,
+	    'trim' => 'inside',
+	    'parameters' =>
+	    [
+	      'type' =>
+	      [
+	        'match' => '(none|disc|circle|square|decimal|decimal-leading-zero|lower-roman|upper-roman|lower-alpha|upper-alpha|lower-greek|lower-latin|upper-latin|hebrew|armenian|georgian|cjk-ideographic|hiragana|katakana|hiragana-iroha|katakana-iroha)',
+	      ],
+	    ],
+	    'require_children' =>
+	    [
+	      0 => 'li',
+	      1 => 'list',
+	    ],
+	    'before' => '<ul class="bbc_list" style="list-style-type: {type}">',
+	    'after' => '</ul>',
+	  ],
+	  [
+	    'tag' => 'ltr',
+	    'len' => '3',
+	    'block_level' => true,
+	    'trim' => 'none',
+	    'before' => '<div dir="ltr">',
+	    'after' => '</div>',
+	  ],
+	  [
+	    'tag' => 'me',
+	    'len' => '2',
+	    'block_level' => true,
+	    'trim' => 'none',
+	    'type' => 'unparsed_equals',
+	    'quoted' => 'optional',
+	    'before' => '<div class="meaction">* $1&nbsp;',
+	    'after' => '</div>',
+	    'disabled_before' => '/me',
+	  ],
+	  [
+	    'tag' => 'media',
+	    'len' => '5',
+	    'block_level' => false,
+	    'trim' => 'none',
+	    'type' => 'closed',
+	    'content' => '',
+	  ],
+	  [
+	    'tag' => 'mergedate',
+	    'len' => '9',
+	    'block_level' => false,
+	    'trim' => 'none',
+	    'type' => 'unparsed_content',
+	    'process' => 'bbc_mergedate_timeformat',
+	    'content' => '<div class="mergedate">{{search_date_posted}} $1</div>',
+	  ],
+	  [
+	    'tag' => 'more',
+	    'len' => '4',
+	    'block_level' => false,
+	    'trim' => 'none',
+	    'type' => 'closed',
+	    'content' => '',
+	  ],
+	  [
+	    'tag' => 'nobbc',
+	    'len' => '5',
+	    'block_level' => false,
+	    'trim' => 'none',
+	    'type' => 'unparsed_content',
+	    'content' => '$1',
+	  ],
+	  [
+	    'tag' => 'php',
+	    'len' => '3',
+	    'block_level' => true,
+	    'trim' => 'none',
+	    'type' => 'unparsed_content',
+	    'process' => 'bbc_php_syntax_highlight',
+	    'content' => '<div class="php_code"><code>$1</code></div>',
+	    'disabled_content' => '$1',
+	  ],
+	  [
+	    'tag' => 'pre',
+	    'len' => '3',
+	    'block_level' => false,
+	    'trim' => 'none',
+	    'before' => '<span class="bbc_pre">',
+	    'after' => '</span>',
+	  ],
+	  [
+	    'tag' => 'quote',
+	    'len' => '5',
+	    'block_level' => true,
+	    'trim' => 'none',
+	    'before' => '<div class="bbc_quote"><header>{{quote_noun}}</header><div><blockquote>',
+	    'after' => '</blockquote></div></div>',
+	  ],
+	  [
+	    'tag' => 'quote',
+	    'len' => '5',
+	    'block_level' => true,
+	    'trim' => 'none',
+	    'parameters' =>
+	    [
+	      'author' =>
+	      [
+	        'match' => '(.{1,192}?)',
+	        'quoted' => true,
+	      ],
+	    ],
+	    'before' => '<div class="bbc_quote"><header>{{quote_from}} {author}</header><div><blockquote>',
+	    'after' => '</blockquote></div></div>',
+	  ],
+	  [
+	    'tag' => 'quote',
+	    'len' => '5',
+	    'block_level' => true,
+	    'trim' => 'none',
+	    'type' => 'parsed_equals',
+	    'quoted' => 'optional',
+	    'parsed_tags_allowed' =>
+	    [
+	      0 => 'url',
+	      1 => 'iurl',
+	      2 => 'ftp',
+	    ],
+	    'before' => '<div class="bbc_quote"><header>{{quote_from}} $1</header><div><blockquote>',
+	    'after' => '</blockquote></div></div>',
+	  ],
+	  [
+	    'tag' => 'quote',
+	    'len' => '5',
+	    'block_level' => true,
+	    'trim' => 'none',
+	    'parameters' =>
+	    [
+	      'author' =>
+	      [
+	        'match' => '([^<>]{1,192}?)',
+	      ],
+	      'link' =>
+	      [
+	        'match' => '(topic=[\\dmsg#\\./]{1,40}(?:;start=[\\dmsg#\\./]{1,40})?|action=profile;u=\\d+|msg=\\d+)',
+	      ],
+	      'date' =>
+	      [
+	        'match' => '(\\d+)',
+	        'process' => 'on_timeformat',
+	      ],
+	    ],
+	    'before' => '<div class="bbc_quote"><header>{{quote_from}} {author} <a href="<URL>?{link}">{date}</a></header><div><blockquote>',
+	    'after' => '</blockquote></div></div>',
+	  ],
+	  [
+	    'tag' => 'quote',
+	    'len' => '5',
+	    'block_level' => true,
+	    'trim' => 'none',
+	    'parameters' =>
+	    [
+	      'author' =>
+	      [
+	        'match' => '(.{1,192}?)',
+	      ],
+	    ],
+	    'before' => '<div class="bbc_quote"><header>{{quote_from}} {author}</header><div><blockquote>',
+	    'after' => '</blockquote></div></div>',
+	  ],
+	  [
+	    'tag' => 'right',
+	    'len' => '5',
+	    'block_level' => true,
+	    'trim' => 'none',
+	    'before' => '<div class="right">',
+	    'after' => '</div>',
+	  ],
+	  [
+	    'tag' => 'rtl',
+	    'len' => '3',
+	    'block_level' => true,
+	    'trim' => 'none',
+	    'before' => '<div dir="rtl">',
+	    'after' => '</div>',
+	  ],
+	  [
+	    'tag' => 's',
+	    'len' => '1',
+	    'block_level' => false,
+	    'trim' => 'none',
+	    'before' => '<del>',
+	    'after' => '</del>',
+	  ],
+	  [
+	    'tag' => 'size',
+	    'len' => '4',
+	    'block_level' => false,
+	    'trim' => 'none',
+	    'type' => 'unparsed_equals',
+	    'before' => '<span style="font-size: $1" class="bbc_size">',
+	    'after' => '</span>',
+	    'test' => '([1-9][\\d]?p[xt]|small(?:er)?|large[r]?|x[x]?-(?:small|large)|medium|(0\\.[1-9]|[1-9](\\.[\\d][\\d]?)?)?em)\\]',
+	  ],
+	  [
+	    'tag' => 'size',
+	    'len' => '4',
+	    'block_level' => false,
+	    'trim' => 'none',
+	    'type' => 'unparsed_equals',
+	    'process' => 'bbc_size_translate_to_pt',
+	    'before' => '<span style="font-size: $1" class="bbc_size">',
+	    'after' => '</span>',
+	    'test' => '[1-7]\\]',
+	  ],
+	  [
+	    'tag' => 'spoiler',
+	    'len' => '7',
+	    'block_level' => true,
+	    'trim' => 'none',
+	    'before' => '<div class="spoiler"><header><input type="button" value="{{spoiler}}" onclick="$(this.parentNode.parentNode.lastChild).toggle(); return false;">{{click_for_spoiler}}</header><blockquote>',
+	    'after' => '</blockquote></div>',
+	  ],
+	  [
+	    'tag' => 'spoiler',
+	    'len' => '7',
+	    'block_level' => true,
+	    'trim' => 'none',
+	    'type' => 'parsed_equals',
+	    'quoted' => 'optional',
+	    'parsed_tags_allowed' =>
+	    [
+	      0 => ' ',
+	    ],
+	    'before' => '<div class="spoiler"><header><input type="button" value="$1" onclick="$(this.parentNode.parentNode.lastChild).toggle(); return false;">{{click_for_spoiler}}</header><blockquote>',
+	    'after' => '</blockquote></div>',
+	  ],
+	  [
+	    'tag' => 'sub',
+	    'len' => '3',
+	    'block_level' => false,
+	    'trim' => 'none',
+	    'before' => '<sub>',
+	    'after' => '</sub>',
+	  ],
+	  [
+	    'tag' => 'sup',
+	    'len' => '3',
+	    'block_level' => false,
+	    'trim' => 'none',
+	    'before' => '<sup>',
+	    'after' => '</sup>',
+	  ],
+	  [
+	    'tag' => 'table',
+	    'len' => '5',
+	    'block_level' => true,
+	    'trim' => 'inside',
+	    'require_children' =>
+	    [
+	      0 => 'tr',
+	    ],
+	    'before' => '<table class="bbc_table">',
+	    'after' => '</table>',
+	  ],
+	  [
+	    'tag' => 'td',
+	    'len' => '2',
+	    'block_level' => true,
+	    'trim' => 'outside',
+	    'require_parents' =>
+	    [
+	      0 => 'tr',
+	    ],
+	    'before' => '<td>',
+	    'after' => '</td>',
+	    'disabled_before' => '',
+	    'disabled_after' => '',
+	  ],
+	  [
+	    'tag' => 'time',
+	    'len' => '4',
+	    'block_level' => false,
+	    'trim' => 'none',
+	    'type' => 'unparsed_content',
+	    'process' => 'bbc_time_timeformat',
+	    'content' => '$1',
+	  ],
+	  [
+	    'tag' => 'tr',
+	    'len' => '2',
+	    'block_level' => true,
+	    'trim' => 'both',
+	    'require_children' =>
+	    [
+	      0 => 'td',
+	    ],
+	    'require_parents' =>
+	    [
+	      0 => 'table',
+	    ],
+	    'before' => '<tr>',
+	    'after' => '</tr>',
+	    'disabled_before' => '',
+	    'disabled_after' => '',
+	  ],
+	  [
+	    'tag' => 'tt',
+	    'len' => '2',
+	    'block_level' => false,
+	    'trim' => 'none',
+	    'before' => '<span class="bbc_tt">',
+	    'after' => '</span>',
+	  ],
+	  [
+	    'tag' => 'u',
+	    'len' => '1',
+	    'block_level' => false,
+	    'trim' => 'none',
+	    'before' => '<span class="bbc_u">',
+	    'after' => '</span>',
+	  ],
+	  [
+	    'tag' => 'url',
+	    'len' => '3',
+	    'block_level' => false,
+	    'trim' => 'none',
+	    'type' => 'unparsed_content',
+	    'process' => 'bbc_url_trim_and_set_prot',
+	    'content' => '<a href="$1" class="bbc_link" rel="nofollow '.$noopener.'" target="_blank">$1</a>',
+	  ],
+	  [
+	    'tag' => 'url',
+	    'len' => '3',
+	    'block_level' => false,
+	    'trim' => 'none',
+	    'type' => 'unparsed_equals',
+	    'process' => 'bbc_url_trim_and_set_prot',
+	    'disallow_children' =>
+	    [
+	      0 => 'email',
+	      1 => 'ftp',
+	      2 => 'url',
+	      3 => 'iurl',
+	    ],
+	    'before' => '<a href="$1" class="bbc_link" rel="nofollow '.$noopener.'" target="_blank">',
+	    'after' => '</a>',
+	    'disabled_after' => '($1)',
+	  ],
+	];
+
+	$field_list = array(
+		'before_code' => 'before',
+		'after_code' => 'after',
+		'content' => 'content',
+		'disabled_before' => 'disabled_before',
+		'disabled_after' => 'disabled_after',
+		'disabled_content' => 'disabled_content',
+		'test' => 'test',
+	);
+	$explode_list = array(
+		'disallow_children' => 'disallow_children',
+		'require_children' => 'require_children',
+		'require_parents' => 'require_parents',
+		'parsed_tags_allowed' => 'parsed_tags_allowed',
+	);
+
+	$result = wesql::query('
+		SELECT id_bbcode, tag, len, bbctype, before_code, after_code, content, disabled_before,
+			disabled_after, disabled_content, block_level, test, disallow_children,
+			require_parents, require_children, parsed_tags_allowed, quoted, params, trim_wspace,
+			process_plugin, process_file, process_func
+		FROM {db_prefix}bbcode'
+	);
+
+    while ($row = wesql::fetch_assoc($result))
+	{
+		$bbcode = array(
+			'tag' => $row['tag'],
+			'len' => $row['len'],
+			'block_level' => !empty($row['block_level']),
+			'trim' => $row['trim_wspace'],
+		);
+		if ($row['bbctype'] !== 'parsed')
+			$bbcode['type'] = $row['bbctype'];
+		if (!empty($row['params']))
+			$bbcode['parameters'] = unserialize($row['params']);
+		#if (!empty($row['validate_func']))
+		#	$bbcode['process'] = create_function('&$tag, &$data, $disabled', $row['validate_func']);
+		if ($row['quoted'] !== 'none')
+			$bbcode['quoted'] = $row['quoted'];
+
+		if (!empty($row['process_func'])) {
+			// Maybe our function is not in Subs-BBC.php so we have to load some
+			// additional files
+			if(!empty($row['process_file'])) {
+				if(!empty($row['process_plugin'])) {
+					loadPluginSource($row['process_plugin'], $row['process_file']);
+				} else {
+					loadSource($row['process_file']);
+				}
+			}
+			$process_func = 'bbc_'.$row['process_func'];
+
+			if(function_exists($process_func)) {
+				$bbcode['process'] = $process_func;
+			} else {
+				trigger_error('Uncallable validate_func for BBC `'.$row['tag'].'` with id '.$row['id_bbcode']);
+			}
+		}
+
+		foreach ($explode_list as $db_field => $bbc_field)
+			if (!empty($row[$db_field]))
+				$bbcode[$bbc_field] = explode(',', $row[$db_field]);
+
+		# Reformat Array structure to "bbc structure" from DB structure
+		foreach ($field_list as $db_field => $bbc_field)
+			if (!empty($row[$db_field]))
+				$bbcode[$bbc_field] = trim($row[$db_field]);
+
+		$bbcodes[] = $bbcode;
+	}
+    wesql::free_result($result);
+
+	// Now iterate over all bbcodes and parse language strings
+	foreach($bbcodes as &$bbcode)
+		foreach($field_list as $db_field => $bbc_field)
+			if (!empty($bbcode[$bbc_field]))
+				$bbcode[$bbc_field] = preg_replace_callback('~{{(\w+)}}~', 'parse_lang_strings', $bbcode[$bbc_field]);
+
+	return $bbcodes;
+}
+
+// THE FOLLOWING FUNCTIONS ARE USED FOR BBC PROCESSING.
+// See 'process' fields on bbc tags in loadBBCodes()
+
+function bbc_code_process(&$tag, &$content, &$disabled, &$params) {
+	if (!isset($disabled['code']))
+	{
+		if (we::is('gecko,opera'))
+			$tag['content'] .= '<span class="bbc_pre"><code>$1</code></span></div>';
+		else
+			$tag['content'] .= '<code>$1</code></div>';
+		$php_parts = preg_split('~(&lt;\?php|\?&gt;)~', $content, -1, PREG_SPLIT_DELIM_CAPTURE);
+		for ($php_i = 0, $php_n = count($php_parts); $php_i < $php_n; $php_i++)
+		{
+			// Do PHP code coloring?
+			if ($php_parts[$php_i] != '&lt;?php')
+				continue;
+			$php_string = '';
+			while ($php_i + 1 < count($php_parts) && $php_parts[$php_i] != '?&gt;')
+			{
+				$php_string .= $php_parts[$php_i];
+				$php_parts[$php_i++] = '';
+			}
+			$php_parts[$php_i] = highlight_php_code($php_string . $php_parts[$php_i]);
+		}
+		// Fix the PHP code stuff...
+		$content = str_replace("<span class=\"bbc_pre\">\t</span>", "\t", implode('', $php_parts));
+		// Older browsers are annoying, aren't they?
+		if (!we::is('gecko'))
+			$content = str_replace("\t", "<span class=\"bbc_pre\">\t</span>", $content);
+		// Fix IE line breaks to actually be copyable.
+		if (we::is('ie'))
+			$content = str_replace('<br>', '&#13;', $content);
+	}
+}
+
+function bbc_general_trim(&$tag, &$content, &$disabled, &$params) {
+	$content = strtr($content, array('<br>' => ''));
+}
+
+function bbc_flash_set_prot(&$tag, &$content, &$disabled, &$params) {
+	if (isset($disabled['url']))
+		$tag['content'] = '$1';
+	elseif (strpos($content, 'http://') !== 0 && strpos($content, 'https://') !== 0)
+		$content = 'http://' . $content;
+}
+
+function bbc_ftp_trim_and_set_prot(&$tag, &$content, &$disabled, &$params) {
+	if($tag['type'] == 'unparsed_content')
+		bbc_general_trim($tag, $content, $disabled, $params);
+	if (strpos($content, 'ftp://') !== 0 && strpos($content, 'ftps://') !== 0)
+		$content = 'ftp://' . $content;
+}
+
+function bbc_img_trim_set_prot_and_add_js(&$tag, &$content, &$disabled, &$params) {
+	bbc_general_trim($tag, $content, $disabled, $params);
+	if (strpos($content, 'http://') !== 0 && strpos($content, 'https://') !== 0)
+		$content = 'http://' . $content;
+	if (isset($tag['paramaters']))
+		add_js_unique('$("img.resized").click(function () { this.style.width = this.style.height = (this.style.width == "auto" ? null : "auto"); });');
+}
+
+function bbc_iurl_trim_set_post_and_set_prot(&$tag, &$content, &$disabled, &$params) {
+	if ($tag['type'] == 'unparsed_content')
+		bbc_general_trim($tag, $content, $disabled, $params);
+	if ($tag['type'] == 'unparsed_equals' && substr($content, 0, 1) == '#')
+		$content = '#post_' . substr($content, 1);
+	elseif (strpos($content, 'http://') !== 0 && strpos($content, 'https://') !== 0)
+		$content = 'http://' . $content;
+}
+
+function bbc_mergedate_timeformat(&$tag, &$content, &$disabled, &$params) {
+	if (is_numeric($content)) $content = timeformat($content);
+}
+
+function bbc_php_syntax_highlight(&$tag, &$content, &$disabled, &$params) {
+	$add_begin = substr(trim($content), 0, 5) != '&lt;';
+	$content = highlight_php_code($add_begin ? '&lt;?php ' . $content . '?&gt;' : $content);
+	if ($add_begin)
+		$content = preg_replace(array('~^(.+?)&lt;\?.{0,40}?php(?:&nbsp;|\s)~', '~\?&gt;((?:</(font|span)>)*)$~'), '$1', $content, 2);
+}
+
+function bbc_size_translate_to_pt(&$tag, &$content, &$disabled, &$params) {
+	$sizes = array(1 => 8, 2 => 10, 3 => 12, 4 => 14, 5 => 18, 6 => 24, 7 => 36);
+	$content = $sizes[$content] . 'pt';
+}
+
+function bbc_time_timeformat(&$tag, &$content, &$disabled, &$params) {
+	if (is_numeric($content))
+		$content = timeformat($content);
+	else
+		$tag['content'] = '[time]$1[/time]';
+}
+
+function bbc_url_trim_and_set_prot(&$tag, &$content, &$disabled, &$params) {
+	if($tag['type'] == 'unparsed_content')
+		bbc_general_trim($tag, $content, $disabled, $params);
+	if (strpos($content, 'http://') !== 0 && strpos($content, 'https://') !== 0)
+		$content = 'http://' . $content;
 }

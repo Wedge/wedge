@@ -146,3 +146,25 @@ function upgrade_step_5()
 	modify hey_not tinyint(1),
 	modify hey_pm tinyint(1)');
 }
+
+function upgrade_step_6()
+{
+	$request = wesql::query('
+	DELETE FROM {db_prefix}bbcode WHERE id_plugin = ""
+	');
+
+	$request = wesql::query('
+	ALTER TABLE
+		{db_prefix}bbcode
+	DROP COLUMN validate_func
+	');
+
+	$request = wesql::query('
+	ALTER TABLE
+		{db_prefix}bbcode
+	ADD COLUMN process_plugin varchar(255) NOT NULL default '',
+	ADD COLUMN process_file varchar(255) NOT NULL default '',
+	ADD COLUMN process_func varchar(255) NOT NULL default ''
+	');
+
+}

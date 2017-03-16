@@ -101,7 +101,6 @@ CREATE TABLE {$db_prefix}bbcode (
 	disabled_content text NOT NULL,
 	block_level tinyint(3) unsigned NOT NULL default 0,
 	test varchar(255) NOT NULL default '',
-	validate_func text NOT NULL,
 	disallow_children varchar(255) NOT NULL default '',
 	require_parents varchar(255) NOT NULL default '',
 	require_children varchar(255) NOT NULL default '',
@@ -110,72 +109,12 @@ CREATE TABLE {$db_prefix}bbcode (
 	params text NOT NULL,
 	trim_wspace enum('none', 'inside', 'outside', 'both') NOT NULL,
 	id_plugin varchar(255) NOT NULL default '',
+	process_plugin varchar(255) NOT NULL default '',
+	process_file varchar(255) NOT NULL default '',
+	process_func varchar(255) NOT NULL default '',
 	PRIMARY KEY (id_bbcode)
 ) ENGINE=MyISAM;
 
-#
-# Dumping data for table `bbcode`
-#
-
-INSERT INTO {$db_prefix}bbcode
-	(`id_bbcode`, `tag`, `len`, `bbctype`, `before_code`, `after_code`, `content`, `disabled_before`, `disabled_after`, `disabled_content`, `block_level`, `test`, `validate_func`, `disallow_children`, `require_parents`, `require_children`, `parsed_tags_allowed`, `quoted`, `params`, `trim_wspace`, `id_plugin`)
-VALUES
-	(1, 'abbr', 4, 'unparsed_equals', '<abbr title="$1">', '</abbr>', '', '', ' ($1)', '', 0, '', '', '', '', '', '', 'optional', '', 'none', ''),
-	(2, 'anchor', 6, 'unparsed_equals', '<span id="post_$1">', '</span>', '', '', '', '', 0, '[#]?([A-Za-z][A-Za-z0-9_\\-]*)\\]', '', '', '', '', '', 'none', '', 'none', ''),
-	(3, 'b', 1, 'parsed', '<strong>', '</strong>', '', '', '', '', 0, '', '', '', '', '', '', 'none', '', 'none', ''),
-	(4, 'bdo', 3, 'unparsed_equals', '<bdo dir="$1">', '</bdo>', '', '', '', '', 1, '(rtl|ltr)\\]', '', '', '', '', '', 'none', '', 'none', ''),
-	(5, 'br', 2, 'closed', '', '', '<br>', '', '', '', 0, '', '', '', '', '', '', 'none', '', 'none', ''),
-	(6, 'center', 6, 'parsed', '<div class="center">', '</div>', '', '', '', '', 1, '', '', '', '', '', '', 'none', '', 'none', ''),
-	(7, 'code', 4, 'unparsed_content', '', '', '<div class="bbc_code"><header>{{code}}: <a href="#" onclick="return weSelectText(this);" class="codeoperation">{{code_select}}</a></header>', '', '', '', 1, '', 'if (!isset($disabled[''code'']))\n{\n	if (we::is(''gecko,opera''))\n		$tag[''content''] .= ''<span class="bbc_pre"><code>$1</code></span></div>'';\n	else\n		$tag[''content''] .= ''<code>$1</code></div>'';\n\n	$php_parts = preg_split(''~(&lt;\\?php|\\?&gt;)~'', $data, -1, PREG_SPLIT_DELIM_CAPTURE);\n\n	for ($php_i = 0, $php_n = count($php_parts); $php_i < $php_n; $php_i++)\n	{\n		// Do PHP code coloring?\n		if ($php_parts[$php_i] != ''&lt;?php'')\n			continue;\n\n		$php_string = '''';\n		while ($php_i + 1 < count($php_parts) && $php_parts[$php_i] != ''?&gt;'')\n		{\n			$php_string .= $php_parts[$php_i];\n			$php_parts[$php_i++] = '''';\n		}\n		$php_parts[$php_i] = highlight_php_code($php_string . $php_parts[$php_i]);\n	}\n\n	// Fix the PHP code stuff...\n	$data = str_replace("<span class=\\"bbc_pre\\">\\t</span>", "\\t", implode('''', $php_parts));\n\n	// Older browsers are annoying, aren''t they?\n	if (!we::is(''gecko''))\n		$data = str_replace("\\t", "<span class=\\"bbc_pre\\">\\t</span>", $data);\n\n	// Fix IE line breaks to actually be copyable.\n	if (we::is(''ie''))\n		$data = str_replace(''<br>'', ''&#13;'', $data);\n}', '', '', '', '', 'none', '', 'none', ''),
-	(8, 'code', 4, 'unparsed_equals_content', '', '', '<div class="bbc_code"><header>{{code}}: ($2) <a href="#" onclick="return weSelectText(this);" class="codeoperation">{{code_select}}</a></header>', '', '', '', 1, '', 'if (!isset($disabled[''code'']))\n{\n	if (we::is(''gecko,opera''))\n		$tag[''content''] .= ''<span class="bbc_pre"><code>$1</code></span></div>'';\n	else\n		$tag[''content''] .= ''<code>$1</code></div>'';\n\n	$php_parts = preg_split(''~(&lt;\\?php|\\?&gt;)~'', $data[0], -1, PREG_SPLIT_DELIM_CAPTURE);\n\n	for ($php_i = 0, $php_n = count($php_parts); $php_i < $php_n; $php_i++)\n	{\n		// Do PHP code coloring?\n		if ($php_parts[$php_i] != ''&lt;?php'')\n			continue;\n\n		$php_string = '''';\n		while ($php_i + 1 < count($php_parts) && $php_parts[$php_i] != ''?&gt;'')\n		{\n			$php_string .= $php_parts[$php_i];\n			$php_parts[$php_i++] = '''';\n		}\n		$php_parts[$php_i] = highlight_php_code($php_string . $php_parts[$php_i]);\n	}\n\n	// Fix the PHP code stuff...\n	$data[0] = str_replace("<span class=\\"bbc_pre\\">\\t</span>", "\\t", implode('''', $php_parts));\n\n	// Older browsers are annoying, aren''t they?\n	if (!we::is(''gecko''))\n		$data[0] = str_replace("\\t", "<span class=\\"bbc_pre\\">\\t</span>", $data[0]);\n\n	// Fix IE line breaks to actually be copyable.\n	if (we::is(''ie''))\n		$data[0] = str_replace(''<br>'', ''&#13;'', $data[0]);\n}', '', '', '', '', 'none', '', 'none', ''),
-	(9, 'color', 5, 'unparsed_equals', '<span style="color: $1" class="bbc_color">', '</span>', '', '', '', '', 0, '(#[\\da-fA-F]{3}|#[\\da-fA-F]{6}|[A-Za-z]{1,20}|rgb\\(\\d{1,3}, ?\\d{1,3}, ?\\d{1,3}\\))\\]', '', '', '', '', '', 'none', '', 'none', ''),
-	(10, 'email', 5, 'unparsed_content', '', '', '<a href="mailto:$1" class="bbc_email">$1</a>', '', '', '', 0, '', '$data = strtr($data, array(''<br>'' => ''''));', '', '', '', '', 'none', '', 'none', ''),
-	(11, 'email', 5, 'unparsed_equals', '<a href="mailto:$1" class="bbc_email">', '</a>', '', '', '($1)', '', 0, '', '', 'email,ftp,url,iurl', '', '', '', 'none', '', 'none', ''),
-	(12, 'flash', 5, 'unparsed_commas_content', '', '', '<object width="$2" height="$3" data="$1"><param name="movie" value="$1"><param name="play" value="true"><param name="loop" value="true"><param name="quality" value="high"><param name="allowscriptaccess" value="never"><embed src="$1" type="application/x-shockwave-flash" allowscriptaccess="never" width="$2" height="$3"></object>', '', '', '<a href="$1" target="_blank" class="new_win">$1</a>', 0, '\\d+,\\d+\\]', 'if (isset($disabled[''url'']))\n	$tag[''content''] = ''$1'';\nelseif (strpos($data[0], ''http://'') !== 0 && strpos($data[0], ''https://'') !== 0)\n	$data[0] = ''http://'' . $data[0];', '', '', '', '', 'none', '', 'none', ''),
-	(13, 'font', 4, 'unparsed_equals', '<span style="font-family: $1" class="bbc_font">', '</span>', '', '', '', '', 0, '[A-Za-z0-9_,\\-\\s]+?\\]', '', '', '', '', '', 'none', '', 'none', ''),
-	(14, 'ftp', 3, 'unparsed_content', '', '', '<a href="$1" class="bbc_ftp new_win" target="_blank">$1</a>', '', '', '', 0, '', '$data = strtr($data, array(''<br>'' => ''''));\nif (strpos($data, ''ftp://'') !== 0 && strpos($data, ''ftps://'') !== 0)\n	$data = ''ftp://'' . $data;', '', '', '', '', 'none', '', 'none', ''),
-	(15, 'ftp', 3, 'unparsed_equals', '<a href="$1" class="bbc_ftp new_win" target="_blank">', '</a>', '', '', ' ($1)', '', 0, '', 'if (strpos($data, ''ftp://'') !== 0 && strpos($data, ''ftps://'') !== 0)\n	$data = ''ftp://'' . $data;', 'email,ftp,url,iurl', '', '', '', 'none', '', 'none', ''),
-	(16, 'html', 4, 'unparsed_content', '', '', '$1', '', '', '$1', 1, '', '', '', '', '', '', 'none', '', 'none', ''),
-	(17, 'hr', 2, 'closed', '', '', '<hr>', '', '', '', 1, '', '', '', '', '', '', 'none', '', 'none', ''),
-	(18, 'i', 1, 'parsed', '<em>', '</em>', '', '', '', '', 0, '', '', '', '', '', '', 'none', '', 'none', ''),
-	(19, 'img', 3, 'unparsed_content', '', '', '<img src="$1" alt="{alt}"{width}{height} class="bbc_img resized{align}">', '', '', '($1)', 0, '', '$data = strtr($data, array(''<br>'' => ''''));\nif (strpos($data, ''http://'') !== 0 && strpos($data, ''https://'') !== 0)\n	$data = ''http://'' . $data;\nadd_js_unique(''\n\t$("img.resized").click(function () { this.style.width = this.style.height = (this.style.width == "auto" ? null : "auto"); });'');', '', '', '', '', 'none', 'a:4:{s:3:"alt";a:1:{s:8:"optional";b:1;}s:5:"align";a:3:{s:8:"optional";b:1;s:5:"value";s:3:" $1";s:5:"match";s:19:"(right|left|center)";}s:5:"width";a:3:{s:8:"optional";b:1;s:5:"value";s:11:" width="$1"";s:5:"match";s:5:"(\\d+)";}s:6:"height";a:3:{s:8:"optional";b:1;s:5:"value";s:12:" height="$1"";s:5:"match";s:5:"(\\d+)";}}', 'none', ''),
-	(20, 'img', 3, 'unparsed_content', '', '', '<img src="$1" class="bbc_img">', '', '', '($1)', 0, '', '$data = strtr($data, array(''<br>'' => ''''));\nif (strpos($data, ''http://'') !== 0 && strpos($data, ''https://'') !== 0)\n	$data = ''http://'' . $data;', '', '', '', '', 'none', '', 'none', ''),
-	(21, 'iurl', 4, 'unparsed_content', '', '', '<a href="$1" class="bbc_link">$1</a>', '', '', '', 0, '', '$data = strtr($data, array(''<br>'' => ''''));\nif (strpos($data, ''http://'') !== 0 && strpos($data, ''https://'') !== 0)\n	$data = ''http://'' . $data;', '', '', '', '', 'none', '', 'none', ''),
-	(22, 'iurl', 4, 'unparsed_equals', '<a href="$1" class="bbc_link">', '</a>', '', '', '($1)', '', 0, '', 'if (substr($data, 0, 1) == ''#'')\n	$data = ''#post_'' . substr($data, 1);\nelseif (strpos($data, ''http://'') !== 0 && strpos($data, ''https://'') !== 0)\n	$data = ''http://'' . $data;', 'email,ftp,url,iurl', '', '', '', 'none', '', 'none', ''),
-	(23, 'left', 4, 'parsed', '<div class="left">', '</div>', '', '', '', '', 1, '', '', '', '', '', '', 'none', '', 'none', ''),
-	(24, 'li', 2, 'parsed', '<li>', '</li>', '', ' ', '<br>', '', 1, '', '', '', 'list', '', '', 'none', '', 'outside', ''),
-	(25, 'list', 4, 'parsed', '<ul class="bbc_list">', '</ul>', '', '', '', '', 1, '', '', '', '', 'li,list', '', 'none', '', 'inside', ''),
-	(26, 'list', 4, 'parsed', '<ul class="bbc_list" style="list-style-type: {type}">', '</ul>', '', '', '', '', 1, '', '', '', '', 'li,list', '', 'none', 'a:1:{s:4:"type";a:1:{s:5:"match";s:227:"(none|disc|circle|square|decimal|decimal-leading-zero|lower-roman|upper-roman|lower-alpha|upper-alpha|lower-greek|lower-latin|upper-latin|hebrew|armenian|georgian|cjk-ideographic|hiragana|katakana|hiragana-iroha|katakana-iroha)";}}', 'inside', ''),
-	(27, 'ltr', 3, 'parsed', '<div dir="ltr">', '</div>', '', '', '', '', 1, '', '', '', '', '', '', 'none', '', 'none', ''),
-	(28, 'me', 2, 'unparsed_equals', '<div class="meaction">* $1&nbsp;', '</div>', '', '/me ', '', '', 1, '', '', '', '', '', '', 'optional', '', 'none', ''),
-	(29, 'media', 5, 'closed', '', '', ' ', '', '', '', 0, '', '', '', '', '', '', 'none', '', 'none', ''),
-	(30, 'mergedate', 9, 'unparsed_content', '', '', '<div class="mergedate">{{search_date_posted}} $1</div>', '', '', '', 0, '', 'if (is_numeric($data)) $data = timeformat($data);', '', '', '', '', 'none', '', 'none', ''),
-	(31, 'more', 4, 'closed', '', '', ' ', '', '', '', 0, '', '', '', '', '', '', 'none', '', 'none', ''),
-	(32, 'nobbc', 5, 'unparsed_content', '', '', '$1', '', '', '', 0, '', '', '', '', '', '', 'none', '', 'none', ''),
-	(33, 'php', 3, 'unparsed_content', '', '', '<div class="php_code"><code>$1</code></div>', '', '', '$1', 1, '', '$add_begin = substr(trim($data), 0, 5) != ''&lt;'';\n$data = highlight_php_code($add_begin ? ''&lt;?php '' . $data . ''?&gt;'' : $data);\nif ($add_begin)\n	$data = preg_replace(array(''~^(.+?)&lt;\\?.{0,40}?php(?:&nbsp;|\\s)~'', ''~\\?&gt;((?:</(font|span)>)*)$~''), ''$1'', $data, 2);', '', '', '', '', 'none', '', 'none', ''),
-	(34, 'pre', 3, 'parsed', '<span class="bbc_pre">', '</span>', '', '', '', '', 0, '', '', '', '', '', '', 'none', '', 'none', ''),
-	(35, 'quote', 5, 'parsed', '<div class="bbc_quote"><header>{{quote_noun}}</header><div><blockquote>', '</blockquote></div></div>', '', '', '', '', 1, '', '', '', '', '', '', 'none', '', 'none', ''),
-	(36, 'quote', 5, 'parsed', '<div class="bbc_quote"><header>{{quote_from}} {author}</header><div><blockquote>', '</blockquote></div></div>', '', '', '', '', 1, '', '', '', '', '', '', 'none', 'a:1:{s:6:"author";a:2:{s:5:"match";s:11:"(.{1,192}?)";s:6:"quoted";b:1;}}', 'none', ''),
-	(37, 'quote', 5, 'parsed_equals', '<div class="bbc_quote"><header>{{quote_from}} $1</header><div><blockquote>', '</blockquote></div></div>', '', '', '', '', 1, '', '', '', '', '', 'url,iurl,ftp', 'optional', '', 'none', ''),
-	(38, 'quote', 5, 'parsed', '<div class="bbc_quote"><header>{{quote_from}} {author} <a href="<URL>?{link}">{date}</a></header><div><blockquote>', '</blockquote></div></div>', '', '', '', '', 1, '', '', '', '', '', '', 'none', 'a:3:{s:6:"author";a:1:{s:5:"match";s:15:"([^<>]{1,192}?)";}s:4:"link";a:1:{s:5:"match";s:83:"(topic=[\\dmsg#\\./]{1,40}(?:;start=[\\dmsg#\\./]{1,40})?|action=profile;u=\\d+|msg=\\d+)";}s:4:"date";a:2:{s:5:"match";s:5:"(\\d+)";s:8:"validate";s:13:"on_timeformat";}}', 'none', ''),
-	(39, 'quote', 5, 'parsed', '<div class="bbc_quote"><header>{{quote_from}} {author}</header><div><blockquote>', '</blockquote></div></div>', '', '', '', '', 1, '', '', '', '', '', '', 'none', 'a:1:{s:6:"author";a:1:{s:5:"match";s:11:"(.{1,192}?)";}}', 'none', ''),
-	(40, 'right', 5, 'parsed', '<div class="right">', '</div>', '', '', '', '', 1, '', '', '', '', '', '', 'none', '', 'none', ''),
-	(41, 'rtl', 3, 'parsed', '<div dir="rtl">', '</div>', '', '', '', '', 1, '', '', '', '', '', '', 'none', '', 'none', ''),
-	(42, 's', 1, 'parsed', '<del>', '</del>', '', '', '', '', 0, '', '', '', '', '', '', 'none', '', 'none', ''),
-	(43, 'size', 4, 'unparsed_equals', '<span style="font-size: $1" class="bbc_size">', '</span>', '', '', '', '', 0, '([1-9][\\d]?p[xt]|small(?:er)?|large[r]?|x[x]?-(?:small|large)|medium|(0\\.[1-9]|[1-9](\\.[\\d][\\d]?)?)?em)\\]', '', '', '', '', '', 'none', '', 'none', ''),
-	(44, 'size', 4, 'unparsed_equals', '<span style="font-size: $1" class="bbc_size">', '</span>', '', '', '', '', 0, '[1-7]\\]', '$sizes = array(1 => 8, 2 => 10, 3 => 12, 4 => 14, 5 => 18, 6 => 24, 7 => 36);\n$data = $sizes[$data] . ''pt'';', '', '', '', '', 'none', '', 'none', ''),
-	(45, 'spoiler', 7, 'parsed', '<div class="spoiler"><header><input type="button" value="{{spoiler}}" onclick="$(this.parentNode.parentNode.lastChild).toggle(); return false;">{{click_for_spoiler}}</header><blockquote>', '</blockquote></div>', '', '', '', '', 1, '', '', '', '', '', '', 'none', '', 'none', ''),
-	(46, 'spoiler', 7, 'parsed_equals', '<div class="spoiler"><header><input type="button" value="$1" onclick="$(this.parentNode.parentNode.lastChild).toggle(); return false;">{{click_for_spoiler}}</header><blockquote>', '</blockquote></div>', '', '', '', '', 1, '', '', '', '', '', ' ', 'optional', '', 'none', ''),
-	(47, 'sub', 3, 'parsed', '<sub>', '</sub>', '', '', '', '', 0, '', '', '', '', '', '', 'none', '', 'none', ''),
-	(48, 'sup', 3, 'parsed', '<sup>', '</sup>', '', '', '', '', 0, '', '', '', '', '', '', 'none', '', 'none', ''),
-	(49, 'table', 5, 'parsed', '<table class="bbc_table">', '</table>', '', '', '', '', 1, '', '', '', '', 'tr', '', 'none', '', 'inside', ''),
-	(50, 'td', 2, 'parsed', '<td>', '</td>', '', ' ', ' ', '', 1, '', '', '', 'tr', '', '', 'none', '', 'outside', ''),
-	(51, 'time', 4, 'unparsed_content', '', '', '$1', '', '', '', 0, '', 'if (is_numeric($data))\n	$data = timeformat($data);\nelse\n	$tag[''content''] = ''[time]$1[/time]'';', '', '', '', '', 'none', '', 'none', ''),
-	(52, 'tr', 2, 'parsed', '<tr>', '</tr>', '', ' ', ' ', '', 1, '', '', '', 'table', 'td', '', 'none', '', 'both', ''),
-	(53, 'tt', 2, 'parsed', '<span class="bbc_tt">', '</span>', '', '', '', '', 0, '', '', '', '', '', '', 'none', '', 'none', ''),
-	(54, 'u', 1, 'parsed', '<span class="bbc_u">', '</span>', '', '', '', '', 0, '', '', '', '', '', '', 'none', '', 'none', ''),
-	(55, 'url', 3, 'unparsed_content', '', '', '<a href="$1" class="bbc_link" rel="nofollow" target="_blank">$1</a>', '', '', '', 0, '', '$data = strtr($data, array(''<br>'' => ''''));\nif (strpos($data, ''http://'') !== 0 && strpos($data, ''https://'') !== 0)\n	$data = ''http://'' . $data;', '', '', '', '', 'none', '', 'none', ''),
-	(56, 'url', 3, 'unparsed_equals', '<a href="$1" class="bbc_link" rel="nofollow" target="_blank">', '</a>', '', '', '($1)', '', 0, '', 'if (strpos($data, ''http://'') !== 0 && strpos($data, ''https://'') !== 0)\n	$data = ''http://'' . $data;', 'email,ftp,url,iurl', '', '', '', 'none', '', 'none', '');
 # --------------------------------------------------------
 
 #

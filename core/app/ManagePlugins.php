@@ -790,9 +790,10 @@ function EnablePlugin()
 		foreach ($manifest->bbcodes->bbcode as $bbcode)
 		{
 			// bbcode must declare itself as having a tag and what type of tag it is
-			if (empty($bbcode['tag']) || empty($bbcode['type']))
+			if (empty($bbcode['tag']) || empty($bbcode['type'])) {
+				trigger_error('A BBCode defined inside the Plugin `'.$manifest_id.'` couldn\'t get loaded because it is missing tag or type. Problematic part of XML:'."\n".'```'.$bbcode->asXML().'```');
 				continue;
-
+			}
 			$this_bbcode = array(
 				'tag' => (string) $bbcode['tag'],
 				'len' => strlen((string) $bbcode['tag']),
@@ -805,7 +806,6 @@ function EnablePlugin()
 				'disabled_content' => !empty($bbcode->disabled->content) ? (string) $bbcode->disabled->content : '',
 				'block_level' => !empty($bbcode['block-level']) && ((string) $bbcode['block-level'] == 'yes') ? 1 : 0,
 				'test' => !empty($bbcode->test) ? (string) $bbcode->test : '',
-				'validate_func' => !empty($bbcode->{'validate-func'}) ? (string) $bbcode->{'validate-func'} : '',
 				'disallow_children' => '',
 				'require_parents' => '',
 				'require_children' => '',
@@ -814,11 +814,16 @@ function EnablePlugin()
 				'params' => '',
 				'trim_wspace' => !empty($bbcode['trim_wspace']) ? (string) $bbcode['trim_wspace'] : 'none',
 				'id_plugin' => $manifest_id,
-			);
+				'process_plugin' => '',
+				'process_file' => '',
+				'process_func' => '',
 
+			);
 			// Checking the type and some other stuff. Doing it here after we've typecast them. It won't always work cleanly otherwise.
-			if (!in_array($this_bbcode['bbctype'], $valid_types) || !in_array($this_bbcode['quoted'], $valid_quoted) || !in_array($this_bbcode['trim_wspace'], $valid_trim))
+			if (!in_array($this_bbcode['bbctype'], $valid_types) || !in_array($this_bbcode['quoted'], $valid_quoted) || !in_array($this_bbcode['trim_wspace'], $valid_trim)) {
+				trigger_error('A BBCode defined inside the Plugin `'.$manifest_id.'` coulnd\'t get loaded because it has an invalid type for at least one the fields `bbctype`, `quoted` or `trim_wspace`. Problematic Part of XML: ```'.$bbcode->asXML().'```');
 				continue;
+			}
 
 			// OK, now we need to parse the remaining content that we couldn't have done in the above because of our nice XML structure.
 			if (!empty($bbcode->{'disallow-children'}))
@@ -855,6 +860,13 @@ function EnablePlugin()
 					$temp[] = (string) $tag;
 				if (!empty($temp))
 					$this_bbcode['parsed_tags_allowed'] = implode(',', $temp);
+			}
+
+			if (!empty($bbcode->{'process'}['function'])) {
+				if(empty($bbcode->{'process'}['load-from-core']) || $bbcode->{'process'}['load-from-core'] != 'yes')
+					$this_bbcode['process_plugin'] = !empty($bbcode->{'process'}['plugin']) ? (string) $bbcode->{'process'}['plugin'] : $manifest_id;
+				$this_bbcode['process_file'] = !empty($bbcode->{'process'}['file']) ? (string) $bbcode->{'process'}['file'] : '';
+				$this_bbcode['process_func'] = strpos($bbcode->{'process'}['function'], 'bbc_') === 0 ? substr((string) $bbcode->{'process'}['function'], 4) : (string) $bbcode->{'process'}['function'];
 			}
 
 			// Lastly, parameters
@@ -898,7 +910,7 @@ function EnablePlugin()
 				case 'parsed':
 					$rules = array(
 						'require' => array('before_code', 'after_code'),
-						'disallow' => array('content', 'validate_func', 'parsed_tags_allowed'),
+						'disallow' => array('content', 'parsed_tags_allowed'),
 					);
 					break;
 				case 'unparsed_equals':
@@ -924,7 +936,7 @@ function EnablePlugin()
 						continue;
 					$rules = array(
 						'require' => array('content'),
-						'disallow' => array('before_code', 'after_code', 'test', 'params', 'disallow_children', 'require_children', 'require_parents', 'validate_func', 'parsed_tags_allowed'),
+						'disallow' => array('before_code', 'after_code', 'test', 'params', 'disallow_children', 'require_children', 'require_parents', 'parsed_tags_allowed'),
 					);
 					break;
 				case 'unparsed_commas':
@@ -953,6 +965,7 @@ function EnablePlugin()
 				foreach ($rules['disallow'] as $item)
 					if (!empty($this_bbcode[$item]))
 					{
+						trigger_error('A BBCode defined inside the Plugin `'.$manifest_id.'` couldn\'t get loaded because it has set the field `'.$item.'` even if it\'s disallowed for this bbctype `'.$this_bbcode['bbctype'].'`. Problematic Part of XML: ```'.$bbcode->asXML().'```');
 						$found = true;
 						break;
 					}
@@ -967,6 +980,7 @@ function EnablePlugin()
 				foreach ($rules['require'] as $item)
 					if (empty($this_bbcode[$item]))
 					{
+						trigger_error('A BBCode defined inside the Plugin `'.$manifest_id.'` couldn\'t get loaded because it has NOT set the field `'.$item.'` even if it\'s required for this bbctype `'.$this_bbcode['bbctype'].'`. Problematic Part of XML: ```'.$bbcode->asXML().'```');
 						$found = false;
 						break;
 					}
@@ -1000,7 +1014,6 @@ function EnablePlugin()
 					'disabled_content' => 'string',
 					'block_level' => 'string',
 					'test' => 'string',
-					'validate_func' => 'string',
 					'disallow_children' => 'string',
 					'require_parents' => 'string',
 					'require_children' => 'string',
@@ -1009,6 +1022,9 @@ function EnablePlugin()
 					'params' => 'string',
 					'trim_wspace' => 'string',
 					'id_plugin' => 'string',
+					'process_plugin' => 'string',
+					'process_file' => 'string',
+					'process_func' => 'string'
 				),
 				$new_bbcode
 			);
