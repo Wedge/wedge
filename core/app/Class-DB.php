@@ -623,7 +623,7 @@ class wesql
 		if (empty($log_message))
 			$log_message = $error_message;
 
-		$trace_log = debug_backtrace(version_compare(PHP_VERSION, '5.3.6') < 0 ? false : DEBUG_BACKTRACE_IGNORE_ARGS);
+		$trace_log = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
 		foreach ($trace_log as $step)
 		{
 			// Found it?

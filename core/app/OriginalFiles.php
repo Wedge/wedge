@@ -234,7 +234,6 @@ function create_main_htaccess()
 	php_flag session.use_cookies on' /* Using cookies for sessions is much more secure. */ . '
 	php_flag session.use_trans_sid off' /* If it is really necessary, Wedge will do this - and it does it better. */ . '
 	php_flag register_globals off' /* This is generally a bad thing to have on unless you need it on. */ . '
-	php_flag magic_quotes_sybase off' /* This setting goes against Wedge's expectations on secure request variables. */ . '
 
 	# Functionality
 	php_value session.gc_maxlifetime 2880' /* A longer session length is preferrable when posting long messages. */ . '
@@ -250,7 +249,6 @@ function create_main_htaccess()
 	php_value arg_separator.input "&;"' /* Either set this here or in php.ini, or Wedge will have to add a compatibility layer... */ . '
 	php_flag always_populate_raw_post_data off
 	php_flag register_argc_argv off' /* Wedge doesn't use these two, might as well disable them. */ . '
-	php_flag magic_quotes_gpc off' /* Magic quotes suck. Die. Forever. */ . '
 	php_flag implicit_flush off' /* This is a really bad setting for connections, and is best off just generally. */ . '
 
 </IfModule>';

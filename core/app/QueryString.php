@@ -97,13 +97,11 @@ function loadConstants()
  *
  * By the time we're done, everything should have slashes (regardless of php.ini).
  *
- * - Identifies which function to run to handle magic_quotes.
  * - Removes $HTTP_POST_* if set.
  * - Aborts if someone is trying to set $GLOBALS via $_REQUEST or the cookies (in the case of register_globals being on)
  * - Aborts if someone is trying to use numeric keys (e.g. index.php?1=2) in $_POST, $_GET or $_FILES and dumps them if found in $_COOKIE.
  * - Ensure we have the current querystring, and that it's valid.
  * - Check if the server is using ; as the separator, and parse the URL if not.
- * - Cleans input strings dependent on magic_quotes settings.
  * - Process everything in $_GET to ensure it all has entities.
  * - Rebuild $_REQUEST to be $_POST and $_GET only (never $_COOKIE)
  * - Check if $topic and $board are set and push them into the global space.
@@ -144,9 +142,6 @@ function cleanRequest()
 
 	define('INVALID_IP', '00000000000000000000000000000000');
 
-	// Determine what function will be used to reverse magic quotes.
-	$removeMagicQuoteFunction = ini_get('magic_quotes_sybase') || strtolower(ini_get('magic_quotes_sybase')) == 'on' ? 'unescapestring__recursive' : 'stripslashes__recursive';
-
 	$supports_semicolon = strpos(ini_get('arg_separator.input'), ';') !== false;
 
 	// Are we going to need to parse the ; out?
@@ -161,16 +156,9 @@ function cleanRequest()
 
 		// Replace ';' with '&' and '&something&' with '&something=&'. (This is done for compatibility...)
 		parse_str(preg_replace('~&(\w+)(?=&|$)~', '&$1=', strtr($_SERVER['QUERY_STRING'], array(';?' => '&', ';' => '&', '%00' => '', "\0" => ''))), $_GET);
-
-		// Magic quotes still applies with parse_str - so clean it up.
-		if (function_exists('get_magic_quotes_gpc') && @get_magic_quotes_gpc() != 0 && empty($settings['integrate_magic_quotes']))
-			$_GET = $removeMagicQuoteFunction($_GET);
 	}
 	elseif ($supports_semicolon)
 	{
-		if (function_exists('get_magic_quotes_gpc') && @get_magic_quotes_gpc() != 0 && empty($settings['integrate_magic_quotes']))
-			$_GET = $removeMagicQuoteFunction($_GET);
-
 		// Search engines will send action=profile%3Bu=1, which confuses PHP.
 		foreach ($_GET as $k => $v)
 		{
@@ -200,8 +188,6 @@ function cleanRequest()
 	if (!empty($_SERVER['REQUEST_URI']) && strpos($_SERVER['REQUEST_URI'], basename(SCRIPT) . '/') !== false)
 	{
 		parse_str(substr(preg_replace('~&(\w+)(?=&|$)~', '&$1=', strtr(preg_replace('~/([^,/]+),~', '/$1=', substr($_SERVER['REQUEST_URI'], strpos($_SERVER['REQUEST_URI'], basename(SCRIPT)) + strlen(basename(SCRIPT)))), '/', '&')), 1), $temp);
-		if (function_exists('get_magic_quotes_gpc') && @get_magic_quotes_gpc() != 0 && empty($settings['integrate_magic_quotes']))
-			$temp = $removeMagicQuoteFunction($temp);
 		$_GET += $temp;
 	}
 
@@ -359,17 +345,6 @@ function cleanRequest()
 			updateErrorCount();
 		}
 		exit('404 Not Found');
-	}
-
-	// If magic quotes are on, we have some work to do...
-	if (function_exists('get_magic_quotes_gpc') && @get_magic_quotes_gpc() != 0)
-	{
-		$_ENV = $removeMagicQuoteFunction($_ENV);
-		$_POST = $removeMagicQuoteFunction($_POST);
-		$_COOKIE = $removeMagicQuoteFunction($_COOKIE);
-		foreach ($_FILES as $k => $dummy)
-			if (isset($_FILES[$k]['name']))
-				$_FILES[$k]['name'] = $removeMagicQuoteFunction($_FILES[$k]['name']);
 	}
 
 	// Add entities to GET. This is kinda like the slashes on everything else.

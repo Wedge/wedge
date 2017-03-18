@@ -96,9 +96,7 @@ function initialize_inputs()
 {
 	global $incontext;
 
-	// Turn off magic quotes runtime and enable error reporting.
-	if (function_exists('set_magic_quotes_runtime'))
-		@set_magic_quotes_runtime(0);
+	// Enable error reporting.
 	error_reporting(E_ALL);
 
 	if (!isset($_GET['obgz']))
@@ -136,9 +134,8 @@ function initialize_inputs()
 	}
 
 	// Add slashes, as long as they aren't already being added.
-	if (!function_exists('get_magic_quotes_gpc') || @get_magic_quotes_gpc() == 0)
-		foreach ($_POST as $k => $v)
-			$_POST[$k] = addslashes($v);
+	foreach ($_POST as $k => $v)
+		$_POST[$k] = addslashes($v);
 
 	// Make sure a timezone is set, it isn't always. But let's use the system derived one as much as possible.
 	date_default_timezone_set(@date_default_timezone_get());

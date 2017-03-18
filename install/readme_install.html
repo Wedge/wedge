@@ -128,10 +128,9 @@
 					<ul>
 						<li>Any web server that properly supports PHP, such as <strong><a href="http://httpd.apache.org/" target="_blank">Apache</a></strong> or <a href="http://www.microsoft.com/iis" target="_blank">Internet Information Services (IIS)</a>.</li>
 						<li>
-							<strong><a href="http://www.php.net" target="_blank">PHP</a> 5.3</strong> or higher, with the <a href="http://php.net/manual/en/book.mysqli.php">mysqli</a> extension. If PHP is installed as a CGI rather than Apache module, you will need to ensure your <kbd>php.ini</kbd> file has the following settings:
+							<strong><a href="http://www.php.net" target="_blank">PHP</a> 5.4</strong> or higher, with the <a href="http://php.net/manual/en/book.mysqli.php">mysqli</a> extension. If PHP is installed as a CGI rather than Apache module, you will need to ensure your <kbd>php.ini</kbd> file has the following settings:
 							<ul>
 								<li>the <kbd>engine</kbd> directive must be On.</li>
-								<li>the <kbd><a href="http://www.php.net/sybase#ini.magic-quotes-sybase" target="_blank">magic_quotes_sybase</a></kbd> directive must be set to Off.</li>
 								<li>the <kbd><a href="http://www.php.net/session#ini.session.save-path" target="_blank">session.save_path</a></kbd> directive must be set to a valid directory.</li>
 								<li>the <kbd><a href="http://www.php.net/manual/en/ini.core.php#ini.file-uploads" target="_blank">file_uploads</a></kbd> directive must be On.</li>
 								<li>the <kbd><a href="http://www.php.net/manual/en/ini.core.php#ini.upload-tmp-dir" target="_blank">upload_tmp_dir</a></kbd> must be set to a valid directory.</li>
@@ -146,6 +145,7 @@
 						<li>Your server should be running on <a href="http://www.linux.org/" target="_blank">Linux</a>, or another Unix-based operating system.</li>
 						<li>The <a href="http://aspell.sf.net/" target="_blank">GNU Aspell</a> and <a href="http://ftp.gnu.org/gnu/aspell/dict/" target="_blank">its dictionaries</a> for spell checking support.</li>
 						<li>The <a href="http://httpd.apache.org/" target="_blank">Apache</a> web server, preferably version 2.2.16 or above.</li>
+						<li>Do yourself a favor and make sure PHP is at least version 7.0 -- it is that much faster.</li>
 						<li>For Pretty URLs support, you'll need to enable the <kbd>dir</kbd> and <kbd>version</kbd> <a href="http://httpd.apache.org/docs/current/mod/" target="_blank">modules</a> in Apache. If you can't, or your server version is older than 2.2.16, enable <kbd>rewrite</kbd> instead.</li>
 						<li>
 							Ensure the additional following <kbd><a href="http://www.php.net/ini" target="_blank">php.ini</a></kbd> settings are correctly set:

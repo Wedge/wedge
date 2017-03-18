@@ -112,13 +112,6 @@ class getID3
 	// public: constructor
 	public function __construct() {
 
-		// Check for PHP version
-		$required_php_version = '5.0.5';
-		if (version_compare(PHP_VERSION, $required_php_version, '<')) {
-			$this->startup_error .= 'getID3() requires PHP v'.$required_php_version.' or higher - you are running v'.PHP_VERSION;
-			return false;
-		}
-
 		// Check memory
 		$this->memory_limit = ini_get('memory_limit');
 		if (preg_match('#([0-9]+)M#i', $this->memory_limit, $matches)) {
@@ -143,20 +136,6 @@ class getID3
 
 		if (intval(ini_get('mbstring.func_overload')) > 0) {
 			$this->warning('WARNING: php.ini contains "mbstring.func_overload = '.ini_get('mbstring.func_overload').'", this may break things.');
-		}
-
-		// Check for magic_quotes_runtime
-		if (function_exists('get_magic_quotes_runtime')) {
-			if (get_magic_quotes_runtime()) {
-				return $this->startup_error('magic_quotes_runtime must be disabled before running getID3(). Surround getid3 block by set_magic_quotes_runtime(0) and set_magic_quotes_runtime(1).');
-			}
-		}
-
-		// Check for magic_quotes_gpc
-		if (function_exists('magic_quotes_gpc')) {
-			if (get_magic_quotes_gpc()) {
-				return $this->startup_error('magic_quotes_gpc must be disabled before running getID3(). Surround getid3 block by set_magic_quotes_gpc(0) and set_magic_quotes_gpc(1).');
-			}
 		}
 
 		// Load support library

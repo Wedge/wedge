@@ -45,7 +45,7 @@ function log_error($error_message, $error_type = 'general', $file = null, $line 
 	if ($file == null)
 	{
 		// We weren't given a filename but we need it at least for identifying if this is a plugin or not. We need to find if we came here via the fatal error handlers first.
-		$array = debug_backtrace(version_compare(PHP_VERSION, '5.3.6') < 0 ? false : DEBUG_BACKTRACE_IGNORE_ARGS);
+		$array = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
 		for ($i = 0, $c = count($array); $i < $c; $i++)
 			if (!empty($array[$i]['function']) && in_array($array[$i]['function'], array('fatal_error', 'fatal_lang_error')))
 			{
