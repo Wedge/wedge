@@ -69,20 +69,24 @@ function template_boards()
 
 				echo '
 				<tr id="board_', $board['id'], '" class="windowbg', $alt ? '2' : '', '">
-					<td class="icon">
-						<a href="<URL>?action=unread;board=' . $board['id'] . ';children" title="' . $txt['show_unread'] . '">';
+					<td class="icon">';
 
-				// If this board is told to have a custom icon, use it.
-				if (!empty($board['custom_class']))
-					echo '<div class="', $boardstate, ' ', $board['custom_class'], '"', !empty($board['custom_title']) ? ' title="' . $board['custom_title'] . '"' : '', '>';
 				// Is it a redirection board?
-				elseif ($board['is_redirect'])
-					echo '<div class="', $boardstate, ' link" title="', $txt['redirect_board'], '">';
-				// Show an indicator of the board's recent activity.
+				if ($board['is_redirect'])
+					echo '<div class="', $boardstate, ' link" title="', $txt['redirect_board'], '"></div>';
 				else
-					echo '<div class="', $boardstate, empty($board['new']) ? '' : ' unread', '">';
+				{
+					echo '<a href="<URL>?action=unread;board=' . $board['id'] . ';children" title="' . $txt['show_unread'] . '">';
 
-				echo '</div></a>
+					// If this board is told to have a custom icon, use it.
+					if (!empty($board['custom_class']))
+						echo '<div class="', $boardstate, ' ', $board['custom_class'], '"', !empty($board['custom_title']) ? ' title="' . $board['custom_title'] . '"' : '', '></div></a>';
+					// Show an indicator of the board's recent activity.
+					else
+						echo '<div class="', $boardstate, empty($board['new']) ? '' : ' unread', '"></div></a>';
+				}
+
+				echo '
 					</td>
 					<td class="info">
 						', $settings['display_flags'] == 'all' || ($settings['display_flags'] == 'specified' && !empty($board['language'])) ? '<img src="' . LANGUAGES . $context['languages'][$board['language']]['folder'] . '/Flag.' . $board['language'] . '.gif">&nbsp; ': '', '<a', $board['redirect_newtab'] ? ' target="_blank"' : '', ' class="subject" href="', $board['href'], '" id="b', $board['id'], '">', $board['name'], '</a>';
