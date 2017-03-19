@@ -1043,7 +1043,7 @@ function parse_bbc($message, $type = 'generic', $bbc_options = array()) // $smil
 	}
 
 	// Cache the output if it took some time...
-	if (isset($cache_key, $cache_t) && microtime(true) - $cache_t > 0.05)
+	if (isset($cache_key, $cache_t) && microtime(true) - $cache_t > .05)
 		cache_put_data($cache_key, $message, 240);
 
 	// If this was a force parse revert if needed.
@@ -1981,7 +1981,7 @@ function loadBBCodes()
 		'trim' => 'none',
 		'type' => 'unparsed_content',
 		'validate' => 'bbc_validate_url_content',
-		'content' => '<a href="$1" class="bbc_link" rel="nofollow '.$noopener.'" target="_blank">$1</a>',
+		'content' => '<a href="$1" class="bbc_link" rel="nofollow ' . $noopener . '" target="_blank">$1</a>',
 	],
 	[
 		'tag' => 'url',
@@ -1991,7 +1991,7 @@ function loadBBCodes()
 		'type' => 'unparsed_equals',
 		'validate' => 'bbc_validate_url_equals',
 		'disallow_children' => ['email', 'ftp', 'url', 'iurl'],
-		'before' => '<a href="$1" class="bbc_link" rel="nofollow '.$noopener.'" target="_blank">',
+		'before' => '<a href="$1" class="bbc_link" rel="nofollow ' . $noopener . '" target="_blank">',
 		'after' => '</a>',
 		'disabled_after' => '($1)',
 	]];
@@ -2005,30 +2005,10 @@ function loadBBCodes()
 		'disabled_content' => 'disabled_content',
 		'test' => 'test',
 	);
-	$explode_list = array(
-		'disallow_children' => 'disallow_children',
-		'require_children' => 'require_children',
-		'require_parents' => 'require_parents',
-		'parsed_tags_allowed' => 'parsed_tags_allowed',
-	);
-	$field_list = array(
-		'before_code' => 'before',
-		'after_code' => 'after',
-		'content' => 'content',
-		'disabled_before' => 'disabled_before',
-		'disabled_after' => 'disabled_after',
-		'disabled_content' => 'disabled_content',
-		'test' => 'test',
-	);
-	$explode_list = array(
-		'disallow_children' => 'disallow_children',
-		'require_children' => 'require_children',
-		'require_parents' => 'require_parents',
-		'parsed_tags_allowed' => 'parsed_tags_allowed',
-	);
+	$explode_list = array('disallow_children', 'require_children', 'require_parents', 'parsed_tags_allowed');
 
-	// NOTE: As long as we didn't delete the default bbcodes from database, we only want
-	// to load BBCodes inserted by plugins. Otherwise we will have all default BBCodes twice.
+	// !! TODO: remove default BBCodes from the database from the upgrade script,
+	// and remove the id_plugin test below.  We don't want to load all default codes twice.
 	$result = wesql::query('
 		SELECT id_bbcode, tag, len, bbctype, before_code, after_code, content, disabled_before,
 			disabled_after, disabled_content, block_level, test, disallow_children,
@@ -2054,9 +2034,9 @@ function loadBBCodes()
 		if ($row['quoted'] !== 'none')
 			$bbcode['quoted'] = $row['quoted'];
 
-		foreach ($explode_list as $db_field => $bbc_field)
-			if (!empty($row[$db_field]))
-				$bbcode[$bbc_field] = explode(',', $row[$db_field]);
+		foreach ($explode_list as $field)
+			if (!empty($row[$field]))
+				$bbcode[$field] = explode(',', $row[$field]);
 
 		// Reformat array structure to "BBC structure" from DB structure, and parse lang strings.
 		foreach ($field_list as $db_field => $bbc_field)
