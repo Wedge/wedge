@@ -69,12 +69,12 @@ class wess
 		$m1 = $l <= 0.5 ? $l * ($s + 1) : $l + $s - $l * $s;
 		$m2 = $l * 2 - $m1;
 
-		return array(
+		return [
 			'r' => wess::hue2rgb($m1, $m2, $h + 1 / 3) * 255,
 			'g' => wess::hue2rgb($m1, $m2, $h) * 255,
 			'b' => wess::hue2rgb($m1, $m2, $h - 1 / 3) * 255,
 			'a' => $a
-		);
+		];
 	}
 
 	/**
@@ -92,7 +92,7 @@ class wess
 		$l = ($max + $min) / 2;
 
 		if ($max === $min)
-			return array('h' => 0, 's' => 0, 'l' => $l * 100, 'a' => $a);
+			return ['h' => 0, 's' => 0, 'l' => $l * 100, 'a' => $a];
 
 		if ($max === $r)
 		{
@@ -106,26 +106,26 @@ class wess
 		else
 			$h = (($r - $g) / $c) + 4;
 
-		return array(
+		return [
 			'h' => $h * 60,
 			's' => $c / ($l <= 0.5 ? $l + $l : 2 - $l - $l) * 100,
 			'l' => $l * 100,
 			'a' => $a
-		);
+		];
 	}
 
 	// Converts from a string to a RGBA or HSLA color
 	protected static function string2color($data)
 	{
 		// We'll only support the standard (non-CSS3) color names. Who uses 'PapayaWhip' anyway?
-		static $colors = array(
+		static $colors = [
 			'aqua'		=> '00ffff', 'black'	=> '000000', 'blue'		=> '0000ff',
 			'fuchsia'	=> 'ff00ff', 'gray'		=> '808080', 'green'	=> '008000',
 			'grey'		=> '808080', 'lime'		=> '00ff00', 'maroon'	=> '800000',
 			'navy'		=> '000080', 'olive'	=> '808000', 'purple'	=> '800080',
 			'red'		=> 'ff0000', 'silver'	=> 'c0c0c0', 'teal'		=> '008080',
 			'white'		=> 'ffffff', 'yellow'	=> 'ffff00'
-		);
+		];
 
 		if (!function_exists('to_max'))
 		{
@@ -146,20 +146,20 @@ class wess
 			$data = trim($data[0]);
 			if (!isset($colors[$data]))
 				return false;
-			$color = array(hexdec(substr($colors[$data], 0, 2)), hexdec(substr($colors[$data], 2, 2)), hexdec(substr($colors[$data], -2)), 1);
+			$color = [hexdec(substr($colors[$data], 0, 2)), hexdec(substr($colors[$data], 2, 2)), hexdec(substr($colors[$data], -2)), 1];
 		}
 		elseif ($rgb[2] !== '' && $rgb[1] === 'rgb')
-			$color = array(to_max($rgb[2]), to_max($rgb[3]), to_max($rgb[4]), !isset($rgb[5]) || $rgb[5] === '' ? 1 : to_max((float) $rgb[5], 1));
+			$color = [to_max($rgb[2]), to_max($rgb[3]), to_max($rgb[4]), !isset($rgb[5]) || $rgb[5] === '' ? 1 : to_max((float) $rgb[5], 1)];
 		elseif ($rgb[2] !== '')
-			$hsl = array('h' => to_max($rgb[2], 360), 's' => to_max($rgb[3], 100), 'l' => to_max($rgb[4], 100), 'a' => $rgb[5] === '' ? 1 : to_max((float) $rgb[5], 1));
+			$hsl = ['h' => to_max($rgb[2], 360), 's' => to_max($rgb[3], 100), 'l' => to_max($rgb[4], 100), 'a' => $rgb[5] === '' ? 1 : to_max((float) $rgb[5], 1)];
 		elseif ($rgb[6] !== '' && isset($rgb[6][3]))
-			$color = array(hexdec(substr($rgb[6], 0, 2)), hexdec(substr($rgb[6], 2, 2)), hexdec(substr($rgb[6], -2)), 1);
+			$color = [hexdec(substr($rgb[6], 0, 2)), hexdec(substr($rgb[6], 2, 2)), hexdec(substr($rgb[6], -2)), 1];
 		elseif ($rgb[6] !== '')
-			$color = array(hexdec($rgb[6][0] . $rgb[6][0]), hexdec($rgb[6][1] . $rgb[6][1]), hexdec($rgb[6][2] . $rgb[6][2]), 1);
+			$color = [hexdec($rgb[6][0] . $rgb[6][0]), hexdec($rgb[6][1] . $rgb[6][1]), hexdec($rgb[6][2] . $rgb[6][2]), 1];
 		else
-			$color = array(255, 255, 255, 1);
+			$color = [255, 255, 255, 1];
 
-		return array($rgb[0], $color, $hsl);
+		return [$rgb[0], $color, $hsl];
 	}
 
 	function process(&$css) {}
@@ -167,7 +167,7 @@ class wess
 
 class wess_mixin extends wess
 {
-	var $default = array();
+	var $default = [];
 	var $target;
 
 	private function def($a)
@@ -177,7 +177,7 @@ class wess_mixin extends wess
 
 	function process(&$css)
 	{
-		$mix = array();
+		$mix = [];
 
 		// Find mixin declarations, capture their tab level and stop at the first empty or unindented line.
 		if (preg_match_all('~@mixin\h+(?:{([^}]+)}\h*)?([\w.-]+)(?:\(([^()]+)\))?[^\v]*\v+(\h+)([^\v]*\n+)((?:\4\h*[^\v]*\v+)*)~i', $css, $mixins, PREG_SET_ORDER))
@@ -210,7 +210,7 @@ class wess_mixin extends wess
 		// We'll repeat the process as long as there are mixin calls left, allowing for nested mixins.
 		for ($loop = 0; $loop < 10; $loop++)
 		{
-			$repa = array();
+			$repa = [];
 			$selector_regex = '([abipqsu]|[!+>&#*@:.a-z0-9][^{};,\n"()]+)';
 
 			// Search for 'mixin: .otherclass' rules.
@@ -237,7 +237,7 @@ class wess_mixin extends wess
 						{
 							$this->default = $def;
 							$this->target = $tg;
-							$rep = preg_replace_callback('~\$%(\d+)%~', array($this, 'def'), $rep);
+							$rep = preg_replace_callback('~\$%(\d+)%~', [$this, 'def'], $rep);
 						}
 					}
 					// Or is this a simple non-mixin selector we want to mix with? (Child selectors aren't allowed for these.)
@@ -273,7 +273,7 @@ class wess_mixin extends wess
 						{
 							$this->default = $def;
 							$this->target = $tg;
-							$rep = preg_replace_callback('~\$%(\d+)%~', array($this, 'def'), $rep);
+							$rep = preg_replace_callback('~\$%(\d+)%~', [$this, 'def'], $rep);
 						}
 					}
 					// Or is this a simple non-mixin selector we want to mix with? (Child selectors aren't allowed for these.)
@@ -310,7 +310,7 @@ class wess_dynamic extends wess
 {
 	function process(&$css)
 	{
-		static $done = array();
+		static $done = [];
 
 		if (preg_match_all('~@dynamic\h+([a-z0-9_]+)(?:\h+\([^)]*\))?~i', $css, $functions, PREG_SET_ORDER))
 		{
@@ -356,7 +356,7 @@ class wess_var extends wess
 		global $css_vars, $alphamix;
 
 		// Reuse CSS variables from Wedge.
-		$css_vars = isset($css_vars) ? $css_vars : array();
+		$css_vars = isset($css_vars) ? $css_vars : [];
 
 		/*
 			Double quotes are only required for empty strings.
@@ -578,7 +578,7 @@ class wess_color extends wess
 	// Now, go with the actual color parsing.
 	function process(&$css)
 	{
-		$nodupes = array();
+		$nodupes = [];
 
 		// No need for a recursive regex, as we shouldn't have more than one level of nested brackets...
 		while (preg_match_all('~(strength|luma|saturation|hue|complement|average|alpha|channels)\(((?:(?:rgb|hsl)a?\([^()]+\)|[^()])+)\)~i', $css, $matches))
@@ -609,7 +609,7 @@ class wess_color extends wess
 				$color = $rgb[1];
 				$hsl = $rgb[2];
 				$arg = array_map('trim', explode(',', substr($m, strlen($rgb[0]))));
-				$parg = array();
+				$parg = [];
 				while ($arg && $arg[0] === '')
 					array_shift($arg);
 
@@ -654,7 +654,7 @@ class wess_color extends wess
 
 				// Change color luma, i.e. lightness, i.e. overall brightness. 'Luma' sounded better.
 				elseif ($code === 'luma' || $code === 'strength')
-					$hsl['l'] = $this->op($hsl['l'], 0, $code === 'strength' && $hsl['l'] < 0.5);
+					$hsl['l'] = $this->op($hsl['l'], 0, $code === 'strength' && $hsl['l'] < 50);
 
 				// Change color saturation (if up, gets color further away from grayscale)
 				elseif ($code === 'saturation')
@@ -673,19 +673,19 @@ class wess_color extends wess
 				{
 					if ($color === 0)
 						$color = wess::hsl2rgb($hsl['h'], $hsl['s'], $hsl['l'], $hsl['a']);
-					$nc = array(
+					$nc = [
 						'r' => $this->op($color[0], 0),
 						'g' => $this->op($color[1], 1),
 						'b' => $this->op($color[2], 2),
 						'a' => $this->op($color[3], 3)
-					);
+					];
 				}
 
 				else
 				{
 					// Do modders want to add their own color processor? Send them all the data they might need.
 					// If they want even more, send them the author. Careful though, he's French. He bites.
-					$hook = call_hook('css_color', array(&$nc, &$hsl, &$color, &$arg, &$parg, &$dec));
+					$hook = call_hook('css_color', [&$nc, &$hsl, &$color, &$arg, &$parg, &$dec]);
 
 					// Attention modders: at the end of your hook function, set $nc or $hsl,
 					// and then *return true* to tell Wedge you were here. Oh, and Brooks too.
@@ -712,7 +712,7 @@ class wess_func extends wess
 		if (!preg_match_all('~\b(width|height)\(([^)]+)\)~i', $css, $matches))
 			return;
 
-		$done = array();
+		$done = [];
 		foreach ($matches[2] as $i => $file)
 		{
 			if (isset($done[$file]))
@@ -721,7 +721,7 @@ class wess_func extends wess
 
 			// Get dimensions from file. Try to turn it into absolute path if a URL was given.
 			list ($width, $height) = @getimagesize(str_replace(ROOT, ROOT_DIR, $file));
-			$css = str_replace(array('width(' . $file . ')', 'height(' . $file . ')'), array($width, $height), $css);
+			$css = str_replace(['width(' . $file . ')', 'height(' . $file . ')'], [$width, $height], $css);
 		}
 	}
 }
@@ -746,7 +746,7 @@ class wess_nesting extends wess
 		$tree = str_replace('"', '#wedge-quote#', trim($css));
 
 		// Normal CSS syntax, if found, should be preserved.
-		$regular_css = array();
+		$regular_css = [];
 		if (strpos($css, '{') !== false && strpos($css, '}') !== false)
 			$tree = preg_replace_callback(
 				'~(?<=^|[\s};])([!+>&#*@:.a-z0-9](?:[^{\n]|(?=,)\n)*?)\s*({(?>[^{}]+|(?1))*})~i',
@@ -763,7 +763,7 @@ class wess_nesting extends wess
 		$tree = preg_replace('~\v\h+(?=\v)~', '', $tree); // Delete blank lines
 		$atree = preg_split('~\v+~', $tree);
 		$tree = $ex_string = '';
-		$levels = array(0);
+		$levels = [0];
 
 		foreach (array_map('ltrim', $atree) as $n => $line)
 		{
@@ -774,7 +774,7 @@ class wess_nesting extends wess
 
 			// Do we have an extends/unextend line followed by a line on the same level or above it?
 			// If yes, this means we just extended a selector and should close it immediately.
-			if ($level >= $l && strhas($ex_string, array(' extends ', ' unextends ')))
+			if ($level >= $l && strhas($ex_string, [' extends ', ' unextends ']))
 				$tree .= " {\n}\n";
 
 			// Same level, and no continuation of a selector? We're probably in a list of properties.
@@ -801,7 +801,7 @@ class wess_nesting extends wess
 		unset($atree);
 
 		// Did we finish the file with an extends or unextends...? Immediately open it and close it.
-		if (strhas($ex_string, array(' extends ', ' unextends ')))
+		if (strhas($ex_string, [' extends ', ' unextends ']))
 			$tree .= " {\n}\n";
 		for ($i = count($levels); $i > 1; $i--)
 			$tree .= '}';
@@ -846,8 +846,8 @@ class wess_nesting extends wess
 		$tree = preg_replace('~([a-z, -]+)\h*:(?!//)\h*([^;}{\n]+?);*\h*(?=[\n}])~i', '<property name="$1" value="$2">', $tree); // Transform properties
 		$tree = preg_replace('~<property name="[^"]+" value="\h+">~', '', $tree); // Remove properties with empty content (e.g. background: $bg where $bg is later unset)
 		$tree = preg_replace('~(?<=^|[\s};])([!+>&#*@:.a-z0-9](?:[^{\n]|(?=,)\n)*?)\s*{~i', '<rule selector="$1">', $tree); // Transform selectors. Strings starting with a digit are only allowed because of keyframes.
-		$tree = preg_replace(array('~ {2,}~'), array(' '), $tree); // Remove extra spaces
-		$tree = str_replace(array('}', "\n"), array('</rule>', "\n\t"), $tree); // Close rules and indent everything one tab
+		$tree = preg_replace('~ {2,}~', ' ', $tree); // Remove extra spaces
+		$tree = str_replace(['}', "\n"], ['</rule>', "\n\t"], $tree); // Close rules and indent everything one tab
 
 		 // Parse the XML into a crawlable DOM
 		$this->pierce($tree);
@@ -857,7 +857,7 @@ class wess_nesting extends wess
 		 ******************************************************************************/
 
 		$css = $standard_nest = '';
-		$bases = $virtuals = $used_virtuals = $removals = $selector_removals = $unextends = array();
+		$bases = $virtuals = $used_virtuals = $removals = $selector_removals = $unextends = [];
 		$selector_regex = '((?<![a-z])[abipqsu]|[!+>&#*@:.a-z0-9][^{};,\n"]+)';
 
 		// 'reset' keyword: remove earlier occurrences of a selector.
@@ -939,7 +939,7 @@ class wess_nesting extends wess
 			*/
 			if (strpos($node['selector'], '@remove') === 0)
 			{
-				$sels = preg_match('~@remove\h+(?:from\h+)?([^\n]+)~', $node['selector'], $sels) ? array_map('trim', explode(',', trim(str_replace('#wedge-quote#', '"', $sels[1]), "\x00..\x20\""))) : array();
+				$sels = preg_match('~@remove\h+(?:from\h+)?([^\n]+)~', $node['selector'], $sels) ? array_map('trim', explode(',', trim(str_replace('#wedge-quote#', '"', $sels[1]), "\x00..\x20\""))) : [];
 				foreach ($node['props'] as $remove)
 				{
 					if (empty($sels))
@@ -990,12 +990,12 @@ class wess_nesting extends wess
 					// And if we have multiple inheritance, add each selector to the base list.
 					$targets = array_map('trim', explode(',', trim($m[2], '"')));
 					foreach ($targets as $target)
-						$bases[] = array(
+						$bases[] = [
 							$target, // Add to this class in the tree...
 							preg_quote($target),
 							$path, // ...The current selector
 							$n,
-						);
+						];
 					$node['selector'] = str_replace($m[0], $m[1], $save_selector);
 				}
 			}
@@ -1009,7 +1009,7 @@ class wess_nesting extends wess
 				$selectors = $this->split_selectors($this->rules[$node['parent']]['selector']);
 				foreach ($selectors as &$here)
 				{
-					$parent = empty($this->rules[$node['parent']]['parent']) ? array() : $this->get_ancestors($this->rules[$this->rules[$node['parent']]['parent']]);
+					$parent = empty($this->rules[$node['parent']]['parent']) ? [] : $this->get_ancestors($this->rules[$this->rules[$node['parent']]['parent']]);
 					$path = $this->parse_ancestors(array_merge((array) $here, $parent), true);
 
 					if (strpos($node['value'], '&') !== false)
@@ -1018,12 +1018,12 @@ class wess_nesting extends wess
 					$path = implode(',', $path);
 					$targets = $this->split_selectors($node['value']);
 					foreach ($targets as $target)
-						$bases[] = array(
+						$bases[] = [
 							$target, // Add to this class in the tree...
 							preg_quote($target),
 							$path, // ...The current selector
 							$node['id'],
-						);
+						];
 				}
 				if (isset($this->rules[$node['parent']]))
 					unset($this->rules[$node['parent']]['props'][$node['id']]);
@@ -1044,12 +1044,12 @@ class wess_nesting extends wess
 				$bases[$i][2] = $selectors[0];
 				unset($selectors[0]);
 				foreach ($selectors as $sel)
-					$bases[] = array(
+					$bases[] = [
 						$base[0],
 						$base[1],
 						$sel,
 						$base[3],
-					);
+					];
 			}
 		}
 
@@ -1066,7 +1066,7 @@ class wess_nesting extends wess
 			$this->unset_recursive($n2);
 
 		// Now that all your base are belong to us, we'll just regroup them!
-		$extends = array();
+		$extends = [];
 		foreach ($bases as $base)
 		{
 			if (isset($extends[$base[0]]))
@@ -1074,7 +1074,7 @@ class wess_nesting extends wess
 			else
 			{
 				$extends[$base[0]] = $base;
-				$extends[$base[0]][2] = array($extends[$base[0]][0] => $extends[$base[0]][2]);
+				$extends[$base[0]][2] = [$extends[$base[0]][0] => $extends[$base[0]][2]];
 			}
 		}
 
@@ -1114,12 +1114,12 @@ class wess_nesting extends wess
 			foreach ($selectors as $key => $val)
 				if (strpos($val, '&gt;') !== false)
 					$selectors[$key] = str_replace('&gt;', '>', $val);
-			$done = array();
+			$done = [];
 			$changed = true;
 
 			while ($changed)
 			{
-				$done_temp = array();
+				$done_temp = [];
 				$changed = false;
 				foreach ($extends as $name => $base)
 				{
@@ -1166,7 +1166,7 @@ class wess_nesting extends wess
 			sort($selectors);
 			$selector = implode(',', $selectors);
 
-			$specific_removals = array();
+			$specific_removals = [];
 			foreach ($selectors as $removable_selector)
 				if (isset($selector_removals[$removable_selector]))
 					$specific_removals += $selector_removals[$removable_selector];
@@ -1231,7 +1231,7 @@ class wess_nesting extends wess
 	private function parse_ancestors($node, $is_ancestors = false)
 	{
 		$ancestors = $is_ancestors ? $node : $this->get_ancestors($node);
-		$growth = array();
+		$growth = [];
 
 		foreach ($ancestors as $selector)
 		{
@@ -1243,7 +1243,7 @@ class wess_nesting extends wess
 				continue;
 			}
 
-			$fresh = array();
+			$fresh = [];
 
 			foreach ($these as $tSelector)
 			{
@@ -1283,9 +1283,9 @@ class wess_nesting extends wess
 		preg_match_all('~<(/?)([a-z]+)\h*(?:name="([^"]*)"\h*)?(?:(?:value|selector)="([^"]*)")?[^>]*>~s', $data, $tags, PREG_SET_ORDER);
 
 		$id = 1;
-		$parent = array(0);
+		$parent = [0];
 		$level = 0;
-		$rules = $props = array();
+		$rules = $props = [];
 		$rule = 'rule';
 		$property = 'property';
 
@@ -1296,24 +1296,24 @@ class wess_nesting extends wess
 			{
 				if ($tag[2] === $rule)
 				{
-					$rules[$id] = array(
+					$rules[$id] = [
 						'selector' => $tag[4],
 						'parent' => $parent[$level],
-						'children' => array(),
-						'props' => array(),
-					);
+						'children' => [],
+						'props' => [],
+					];
 					if (!empty($parent[$level]))
 						$rules[$parent[$level]]['children'][] = $id;
 					$parent[++$level] = $id++;
 				}
 				elseif ($tag[2] === $property)
 				{
-					$props[$id] = array(
+					$props[$id] = [
 						'name' => $tag[3],
 						'value' => $tag[4],
 						'id' => $id,
 						'parent' => $parent[$level],
-					);
+					];
 					$rules[$parent[$level]]['props'][$id] =& $props[$id];
 					$id++;
 				}
@@ -1336,7 +1336,7 @@ class wess_math extends wess
 	function process(&$css)
 	{
 		$limit = 0;
-		$done = array();
+		$done = [];
 		while (preg_match_all('~\b(?:math\h*(\(((?>[\h\d.+/*%-]+|(?<=\d)([a-z]{2,4}))|(?1))*\))|(abs|boolval|ceil|floatval|floor|fmod|intval|max|min|rand|round)\h*\(([^()]*)\))~', $css, $matches, PREG_SET_ORDER) && $limit++ < 50)
 		{
 			foreach ($matches as $val)
@@ -1372,7 +1372,7 @@ class wess_rgba extends wess
 	private static function rgba2rgb($input)
 	{
 		global $alphamix;
-		static $cache = array();
+		static $cache = [];
 
 		if (isset($cache[$input[0]]))
 			return $cache[$input[0]];
@@ -1396,7 +1396,7 @@ class wess_rgba extends wess
 			$alphamix = $rgb[1];
 		}
 		elseif (!isset($alphamix))
-			$alphamix = array(255, 255, 255);
+			$alphamix = [255, 255, 255];
 
 		$ma = 1 - $a;
 		$r = $a * $r + $ma * $alphamix[0];
@@ -1442,10 +1442,10 @@ class wess_prefixes extends wess
 		$os = we::$os;
 		$v = $b['version'];
 		$ov = $os['version'];
-		list ($ie, $ie8down, $ie9, $opera, $firefox, $webkit, $safari, $chrome, $ios, $android) = array(
+		list ($ie, $ie8down, $ie9, $opera, $firefox, $webkit, $safari, $chrome, $ios, $android) = [
 			$b['ie'], $b['ie8down'], $b['ie9'], $b['opera'], $b['firefox'], $b['webkit'],
 			$b['safari'] && !$os['ios'], $b['chrome'], $os['ios'], $os['android'] && $b['webkit'] && !$b['chrome']
-		);
+		];
 
 		// Only IE6/7/8 don't support border-radius these days.
 		if (strpos($matches[1], '-radius') !== false)
@@ -1606,7 +1606,7 @@ class wess_prefixes extends wess
 
 		// The final flexbox model (Chrome 21+, Opera 12.1, IE11+, Safari 7+) is final, as the name says, and shouldn't require a prefix. Silly WebKit...
 		if ((($b['safari'] && $v >= 7) || ($os['ios'] && $ov >= 7) || ($b['chrome'] && $v >= 21 && $v < 29)) && strpos($matches[1], 'flex') !== false)
-			return str_replace(array('inline-flex', 'flex'), array($this->prefix . 'inline-flex', $this->prefix . 'flex'), $unchanged);
+			return str_replace(['inline-flex', 'flex'], [$this->prefix . 'inline-flex', $this->prefix . 'flex'], $unchanged);
 
 		// There's a need for min/max-resolution to be rewritten for some browsers.
 		if (strpos($matches[1], 'resolution') !== false)
@@ -1649,7 +1649,7 @@ class wess_prefixes extends wess
 	function process(&$css)
 	{
 		// Some prominent CSS3 may or may not need a prefix. Wedge will take care of that for you.
-		$rules = array(
+		$rules = [
 
 			'border(?:-[a-z-]+)?-radius',	// Rounded corners
 			'box-shadow',					// Rectangular drop shadows
@@ -1666,12 +1666,12 @@ class wess_prefixes extends wess
 			'backface-visibility',			// 3D
 			'perspective(?:-origin)?',		// 3D
 
-		);
+		];
 		foreach ($rules as $val)
-			$css = preg_replace_callback('~(?<!-)(' . $val . '):[^\n;]+[\n;]~', array($this, 'fix_rules'), $css);
+			$css = preg_replace_callback('~(?<!-)(' . $val . '):[^\n;]+[\n;]~', [$this, 'fix_rules'], $css);
 
 		// Same thing for a few more rules that need a more elaborate detection...
-		$values = array(
+		$values = [
 
 			'background(?:-image)?:([^\n;]*?(?<!-o-)(?:linear|radial)-gradient\([^)]+\)[^\n;]*)',	// Gradients (linear, radial, repeating...)
 			'transition(?:-[a-z-]+)?:([^\n;]*)',			// Animated transitions (we need to fix 'transform' values, if any.)
@@ -1680,9 +1680,9 @@ class wess_prefixes extends wess
 			'\brect\h*\(([^)]+)\)',							// rect() function, needs commas except in IE 6/7
 			'\bcalc\h*\(',									// calc() function
 
-		);
+		];
 		foreach ($values as $val)
-			$css = preg_replace_callback('~(?<!-)(' . $val . ')~', array($this, 'fix_values'), $css);
+			$css = preg_replace_callback('~(?<!-)(' . $val . ')~', [$this, 'fix_values'], $css);
 
 		// And now for some 'easy' rules that don't need our regex machine,
 		// or custom rules that are better served individually.
@@ -1711,7 +1711,7 @@ class wess_prefixes extends wess
 		// but it's not 100% compatible, so you might want to check your CSS in an actual IE 10 browser, just in case.
 		if ($b['ie'] && $v == 10)
 			$css = preg_replace(
-				array(
+				[
 					'~\bdisplay\h*:\h*(flex|inline-flex)\b~',
 					'~\bflex\h*:~',
 					'~\border\h*:~',
@@ -1724,8 +1724,8 @@ class wess_prefixes extends wess
 					'~\bflex-wrap\h*:~',
 					'~\bspace-between\b~',
 					'~\bflex-(start|end)\b~',
-				),
-				array(
+				],
+				[
 					'display:-ms-$1box',
 					'-ms-flex:',
 					'-ms-flex-order:',
@@ -1738,7 +1738,7 @@ class wess_prefixes extends wess
 					'-ms-flex-wrap:',
 					'justify',
 					'$1',
-				),
+				],
 				$css
 			);
 
@@ -1759,7 +1759,7 @@ class wess_base64 extends wess
 
 	function process(&$css)
 	{
-		$images = array();
+		$images = [];
 		if (preg_match_all('~(?<!raw-)url\(([^)]+)\)~i', $css, $matches))
 		{
 			foreach ($matches[1] as $img)
@@ -1777,7 +1777,7 @@ class wess_base64 extends wess
 				{
 					$img_raw = file_get_contents($absolut);
 					if ($img_ext == 'svg')
-						$img_data = 'url("data:image/svg+xml;utf8,' . preg_replace('~^.*?(?=\<svg)~s', '', str_replace(array('"', "\t", "\n"), array('\'', ' ', ' '), $img_raw)) . '")';
+						$img_data = 'url("data:image/svg+xml;utf8,' . preg_replace('~^.*?(?=\<svg)~s', '', str_replace(['"', "\t", "\n"], ['\'', ' ', ' '], $img_raw)) . '")';
 					else
 						$img_data = 'url(data:image/' . ($img_ext == 'svgz' ? 'svg+xml' : $img_ext) . ';base64,' . base64_encode($img_raw) . ')';
 					$css = str_replace('url(' . $img . ')', $img_data, $css);
