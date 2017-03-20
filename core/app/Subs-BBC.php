@@ -1442,7 +1442,7 @@ function loadBBCodes()
 		'type' => 'unparsed_equals',
 		'before' => '<span id="post_$1">',
 		'after' => '</span>',
-		'test' => '[#]?([A-Za-z][A-Za-z0-9_\\-]*)\\]',
+		'test' => '#?([A-Za-z][A-Za-z0-9_-]*)]',
 	],
 	[
 		'tag' => 'b',
@@ -1460,7 +1460,7 @@ function loadBBCodes()
 		'type' => 'unparsed_equals',
 		'before' => '<bdo dir="$1">',
 		'after' => '</bdo>',
-		'test' => '(rtl|ltr)\\]',
+		'test' => '(rtl|ltr)]',
 	],
 	[
 		'tag' => 'br',
@@ -1504,7 +1504,7 @@ function loadBBCodes()
 		'type' => 'unparsed_equals',
 		'before' => '<span style="color: $1" class="bbc_color">',
 		'after' => '</span>',
-		'test' => '(#[\\da-fA-F]{3}|#[\\da-fA-F]{6}|[A-Za-z]{1,20}|rgb\\(\\d{1,3}, ?\\d{1,3}, ?\\d{1,3}\\))\\]',
+		'test' => '(#[\da-fA-F]{3}|#[\da-fA-F]{6}|[A-Za-z]{1,20}|rgb\(\d{1,3}, ?\d{1,3}, ?\d{1,3}\))]',
 	],
 	[
 		'tag' => 'email',
@@ -1535,7 +1535,7 @@ function loadBBCodes()
 		'validate' => 'bbc_validate_flash',
 		'content' => '<object width="$2" height="$3" data="$1"><param name="movie" value="$1"><param name="play" value="true"><param name="loop" value="true"><param name="quality" value="high"><param name="allowscriptaccess" value="never"><embed src="$1" type="application/x-shockwave-flash" allowscriptaccess="never" width="$2" height="$3"></object>',
 		'disabled_content' => '<a href="$1" target="_blank" class="new_win">$1</a>',
-		'test' => '\\d+,\\d+\\]',
+		'test' => '\d+,\d+]',
 	],
 	[
 		'tag' => 'font',
@@ -1545,7 +1545,7 @@ function loadBBCodes()
 		'type' => 'unparsed_equals',
 		'before' => '<span style="font-family: $1" class="bbc_font">',
 		'after' => '</span>',
-		'test' => '[A-Za-z0-9_,\\-\\s]+?\\]',
+		'test' => '[A-Za-z0-9_,\s-]+?]',
 	],
 	[
 		'tag' => 'ftp',
@@ -1609,12 +1609,12 @@ function loadBBCodes()
 			'width' => [
 				'optional' => true,
 				'value' => ' width="$1"',
-				'match' => '(\\d+)',
+				'match' => '(\d+)',
 			],
 			'height' => [
 				'optional' => true,
 				'value' => ' height="$1"',
-				'match' => '(\\d+)',
+				'match' => '(\d+)',
 			],
 		],
 		'validate' => 'bbc_validate_img_1',
@@ -1803,16 +1803,9 @@ function loadBBCodes()
 		'block_level' => true,
 		'trim' => 'none',
 		'parameters' => [
-			'author' => [
-				'match' => '([^<>]{1,192}?)',
-			],
-			'link' => [
-				'match' => '(topic=[\\dmsg#\\./]{1,40}(?:;start=[\\dmsg#\\./]{1,40})?|action=profile;u=\\d+|msg=\\d+)',
-			],
-			'date' => [
-				'match' => '(\\d+)',
-				'validate' => 'on_timeformat',
-			],
+			'author' => ['match' => '([^<>]{1,192}?)'],
+			'link' => ['match' => '(topic=[\dmsg#./]{1,40}(?:;start=[\dmsg#./]{1,40})?|action=profile;u=\d+|msg=\d+)'],
+			'date' => ['match' => '(\d+)', 'validate' => 'on_timeformat'],
 		],
 		'before' => '<div class="bbc_quote"><header>' . $txt['quote_from'] . ' {author} <a href="<URL>?{link}">{date}</a></header><div><blockquote>',
 		'after' => '</blockquote></div></div>',
@@ -1862,7 +1855,7 @@ function loadBBCodes()
 		'type' => 'unparsed_equals',
 		'before' => '<span style="font-size: $1" class="bbc_size">',
 		'after' => '</span>',
-		'test' => '([1-9][\\d]?p[xt]|small(?:er)?|large[r]?|x[x]?-(?:small|large)|medium|(0\\.[1-9]|[1-9](\\.[\\d][\\d]?)?)?em)\\]',
+		'test' => '([1-9]\d?p[xt]|small(?:er)?|large[r]?|x[x]?-(?:small|large)|medium|(0\.[1-9]|[1-9](\.\d\d?)?)?em)]',
 	],
 	[
 		'tag' => 'size',
@@ -1876,7 +1869,7 @@ function loadBBCodes()
 		},
 		'before' => '<span style="font-size: $1" class="bbc_size">',
 		'after' => '</span>',
-		'test' => '[1-7]\\]',
+		'test' => '[1-7]]',
 	],
 	[
 		'tag' => 'spoiler',
