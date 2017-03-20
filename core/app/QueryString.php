@@ -35,6 +35,8 @@ function loadConstants()
 	{
 		$detected_url = PROTOCOL;
 		$detected_url .= empty($_SERVER['HTTP_HOST']) ? $_SERVER['SERVER_NAME'] . (empty($_SERVER['SERVER_PORT']) || $_SERVER['SERVER_PORT'] == '80' ? '' : ':' . $_SERVER['SERVER_PORT']) : $_SERVER['HTTP_HOST'];
+		if (WEDGE === 'SSI' && $detected_url !== $boardurl && substr($boardurl, 0, 6) !== substr($detected_url, 0, 6))
+			$boardurl = preg_replace('~^https?://~', PROTOCOL, $boardurl);
 		$temp = preg_replace('~/' . basename($scripturl) . '(/.+)?$~', '', strtr(dirname($_SERVER['PHP_SELF']), '\\', '/'));
 		if ($temp != '/')
 			$detected_url .= $temp;
