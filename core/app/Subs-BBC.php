@@ -2045,7 +2045,6 @@ function loadBBCodes()
 
 function bbc_validate_code(&$tag, &$data, &$disabled)
 {
-	log_error('hallo');
 	if (isset($disabled['code']))
 		return;
 
