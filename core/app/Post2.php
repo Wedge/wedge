@@ -411,7 +411,7 @@ function Post2()
 	$_POST['message'] = isset($_POST['message']) ? westr::htmlspecialchars($_POST['message'], ENT_QUOTES) : '';
 
     // At this point, we want to make sure the subject isn't too long.
-    $len_form_subject = westr::strlen($form_subject);
+    $len_form_subject = westr::strlen($_POST['subject']);
     $max_subject_length = !empty($settings['max_subjectLength']) ? $settings['max_subjectLength'] : 80;
 	if (westr::htmltrim($_POST['subject']) === '')
 		$post_errors[] = 'no_subject';
