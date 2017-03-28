@@ -1205,6 +1205,9 @@ function wedge_cache_js($id, &$lang_name, $latest_date, $ext, $js, $gzip = false
 		if (!empty($comments[0]))
 			$final = str_replace($comments[0], 'WEDGE_COMMENT();', $final);
 
+		$final = preg_replace('~/\*.*?\*/~s', '', $final); // Strip multi-line comments
+		$final = preg_replace('~//[^\n]*~', '', $final); // Strip remaining comments like me. OMG does this mean I'm gonn
+
 		loadSource('Class-Packer');
 		$packer = new Packer;
 		$final = $packer->pack($final);
