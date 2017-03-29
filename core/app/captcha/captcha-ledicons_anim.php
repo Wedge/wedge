@@ -137,7 +137,7 @@ class captcha_ledicons_anim extends captcha_ledicons
 
 	protected function paint_led($id, $x, $y, $image = null)
 	{
-		imagecopy ($image, $this->leds[$id], $x, $y, 0, 0, 4, 4);
+		imagecopy($image, $this->leds[$id], $x, $y, 0, 0, 4, 4);
 	}
 
 	protected function assign_colors($image)

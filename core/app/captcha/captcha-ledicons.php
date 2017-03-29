@@ -215,7 +215,7 @@ class captcha_ledicons
 	public function __destruct()
 	{
 		// Make sure we clean up the main image when we're done.
-		if (!empty($this->image))
+		if (is_resource($this->image))
 			@imagedestroy($this->image);
 
 		// Make sure we clean up any leds we created. Doing it this way means we have freedom later if we expand this to multi-colored or something.

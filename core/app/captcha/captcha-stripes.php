@@ -76,7 +76,7 @@ class captcha_stripes
 	public function __destruct()
 	{
 		// Make sure we clean up the main image when we're done.
-		if (!empty($this->image))
+		if (is_resource($this->image))
 			@imagedestroy($this->image);
 	}
 }
