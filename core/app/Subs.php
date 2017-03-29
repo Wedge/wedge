@@ -1470,7 +1470,8 @@ function preventPrefetch($always = false)
 
 	if ($always || (empty($settings['allow_prefetching']) && isset($_SERVER['HTTP_X_MOZ']) && $_SERVER['HTTP_X_MOZ'] == 'prefetch'))
 	{
-		while (@ob_end_clean());
+		while (ob_get_length())
+			ob_end_clean();
 		header('HTTP/1.1 403' . ($always ? '' : ' Prefetch') . ' Forbidden');
 		exit;
 	}

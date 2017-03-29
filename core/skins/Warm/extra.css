@@ -202,7 +202,7 @@ dl#feed
 #main_menu
 	padding: 5px 0 0
 	li.chosen h4
-		background-color: luma($reddish, +3%) !important
+		background-color: #deb !important
 
 /* Custom BBCode styling.
 ------------------------------------------------------- */
