@@ -1381,28 +1381,45 @@ div.top_row dd
 ------------------------------------------------- */
 
 .boardstate mixes .inline-block
-	background: url($board_icon) 0 0 no-repeat
-	position: relative
-	width: width($board_icon)px
-	height: height($board_icon)px
-	font-size: 1.2em
-	@if chrome, safari[6-]
-		-prefix-filter: saturate(0)
+	@if ie[-8]
+		background: url($board_icon) 0 0 no-repeat
+		width: width($board_icon)px
+		height: height($board_icon)px
 	@else
-		opacity: .6
-	@end
+		position: relative
+		background: #ced9e0
+		font-size: 1.2em
+		transform: rotate(-10deg)
+		border: 1px solid rgba(0,0,0,.3)
+		box-shadow: 1px 1px 3px #999
+		width: 23px
+		height: 28px
+		border-radius: 4px
+		margin: 8px 4px 0
+		:before
+			transform: rotate(15deg)
+			border: 1px solid rgba(0,0,0,.3)
+			box-shadow: 1px 1px 3px rgba(0,0,0,.3)
+			width: 23px
+			height: 28px
+			border-radius: 4px
+			margin: 6px 4px 0
+			content: ""
+			background: #fff
+			display: block
 
-	&.link:after
-		content: "\bb"
-		position: absolute
-		bottom, right: 9px
+		&.link:after
+			content: "\bb"
+			transform: rotate(15deg)
+			position: absolute
+			font-size: 1.4em
+			bottom, right: 0
 
-	&.unread
-		@if chrome, safari[6-]
-			-prefix-filter: hue-rotate(180deg) saturate(10)
-		@else
-			opacity: 1
-		@endif
+	@endif
+	@if member
+		&.unread
+			background: saturation(hue(#ced9e0, 50%), +100)
+	@endif
 
 	&.mobile
 		float: left
