@@ -119,9 +119,7 @@ function obExit($start = null, $do_finish = null, $from_index = false, $from_fat
 		if (!isset($settings['app_error_count']))
 			$settings['app_error_count'] = 0;
 		if (!empty($context['app_error_count']))
-			updateSettings(array(
-				'app_error_count' => $settings['app_error_count'] + $context['app_error_count'],
-			));
+			updateSettings(['app_error_count' => $settings['app_error_count'] + $context['app_error_count']]);
 		exit;
 	}
 }
@@ -834,7 +832,7 @@ function start_output()
 
 	header('Content-Type: text/' . (AJAX ? 'xml' : 'html') . '; charset=UTF-8');
 
-	$context['show_load_time'] = !empty($settings['timeLoadPageEnable']);
+	$context['show_load_time'] = !empty($settings['timeLoadPageEnable']) || we::$is_admin;
 }
 
 /**
