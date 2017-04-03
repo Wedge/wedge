@@ -2012,7 +2012,7 @@ h6
 		float: left
 		margin-top: 5px
 		img
-			max-width: 50px
+			max-width, max-height: 50px
 
 	.n_new
 		border-right: 3px solid #d76

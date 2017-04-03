@@ -268,7 +268,7 @@ function template_side_user_before()
 	{
 		echo empty(we::$user['avatar']['image']) ? '
 			<ul id="noava">' : '
-			' . we::$user['avatar']['image'] . '
+			<a href="<URL>?action=profile;u=' . we::$id . '">' . we::$user['avatar']['image'] . '</a>
 			<ul>', '
 				<li><a href="<URL>?action=unread">', $txt['show_unread'], '</a></li>
 				<li><a href="<URL>?action=unreadreplies">', $txt['show_unread_replies'], '</a></li>';
