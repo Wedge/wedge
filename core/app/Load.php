@@ -2337,7 +2337,7 @@ function sessionWrite($session_id, $data)
 	return wesql::insert('update',
 		'{db_prefix}sessions',
 		array('session_id' => 'string', 'data' => 'string', 'last_update' => 'int'),
-		array($session_id, $data, time())
+		array($session_id, substr($data, 0, 65535), time())
 	);
 }
 
@@ -2349,15 +2349,14 @@ function sessionWrite($session_id, $data)
  */
 function sessionDestroy($session_id)
 {
-	if (preg_match('~^[a-zA-Z0-9,-]{16,32}$~', $session_id) == 0)
+	global $db_link, $db_prefix;
+
+	if (!preg_match('~^[a-zA-Z0-9,-]{16,32}$~', $session_id) || !isset($db_link))
 		return false;
 
 	// Just delete the row...
-	wesql::query('
-		DELETE FROM {db_prefix}sessions
-		WHERE session_id = {string:session_id}',
-		array('session_id' => $session_id)
-	);
+	mysqli_query($db_link, 'DELETE FROM ' . $db_prefix . 'sessions WHERE session_id = "' . mysqli_real_escape_string($db_link, $session_id) . '"');
+
 	return true;
 }
 
@@ -2368,21 +2367,17 @@ function sessionDestroy($session_id)
  */
 function sessionGC($max_lifetime)
 {
-	global $settings;
+	global $db_link, $db_prefix, $settings;
 
 	// Just set to the default or lower? Ignore it for a higher value. (Hopefully)
 	if (!empty($settings['databaseSession_lifetime']) && ($max_lifetime <= 1440 || $settings['databaseSession_lifetime'] > $max_lifetime))
 		$max_lifetime = max($settings['databaseSession_lifetime'], 60);
 
 	// Clean up ;)
-	wesql::query('
-		DELETE FROM {db_prefix}sessions
-		WHERE last_update < {int:last_update}',
-		array('last_update' => time() - $max_lifetime)
-	);
+	mysqli_query($db_link, 'DELETE FROM ' . $db_prefix . 'sessions WHERE last_update < ' . (int) (time() - $max_lifetime));
 
-	if (mt_rand(1, 10) == 3 && wesql::affected_rows() > 0)
-		wesql::query('OPTIMIZE TABLE {db_prefix}sessions');
+	if (mt_rand(1, 10) == 3 && mysqli_affected_rows($db_link) > 0)
+		mysqli_query($db_link, 'OPTIMIZE TABLE ' . $db_prefix . 'sessions');
 
 	return true;
 }
