@@ -49,7 +49,7 @@ class wesql
 
 	public static function connect($db_server, $db_name, $db_user, $db_passwd, $db_prefix, $db_options = array())
 	{
-		global $mysql_set_mode, $mysql_autocommit, $mysql_strict_mode, $db_link;
+		global $mysql_set_mode, $db_link;
 
 		// Attempt to connect. (And in non SSI mode, also select the database)
 		$connection = mysqli_connect((!empty($db_options['persist']) ? 'p:' : '') . $db_server, $db_user, $db_passwd, empty($db_options['dont_select_db']) ? $db_name : '') or die(mysqli_connect_error());
@@ -63,19 +63,11 @@ class wesql
 				show_db_error();
 		}
 
-		// This is just for compatibility purposes.
 		if (isset($mysql_set_mode) && $mysql_set_mode === true)
-			mysqli_query($connection, 'SET SESSION sql_mode = \'\', AUTOCOMMIT = 1', array(), false);
-		elseif (isset($mysql_strict_mode) || isset($mysql_autocommit))
-		{
-			$request = @mysqli_query($connection, 'SELECT @@sql_mode');
-			$modes = mysqli_fetch_row($request);
-			$modes = $modes ? $modes[0] : '';
-			mysqli_free_result($request);
-			if (isset($mysql_strict_mode) && $mysql_strict_mode === false)
-				$modes = implode(',', array_diff(explode(',', $modes), array('ONLY_FULL_GROUP_BY', 'STRICT_TRANS_TABLES')));
-			mysqli_query($connection, 'SET SESSION sql_mode = "' . mysqli_real_escape_string($connection, $modes) . '"' . (empty($mysql_autocommit) ? '' : ', AUTOCOMMIT = 1'));
-		}
+			wesql::query('SET sql_mode = \'\', AUTOCOMMIT = 1',
+			array(),
+			false
+		);
 
 		// Otherwise set, and return true so that we can tell we did manage a connection.
 		return self::$link = $db_link = $connection;
