@@ -14,8 +14,8 @@ if (!defined('WEDGE'))
 class wesql
 {
 	protected static $instance; // container for self
-	protected static $_db_con; // store the database connection (normally)
 	protected static $callback_values; // store the special replacements for we::$user items
+	public static $link; // store the database connection (normally)
 
 	// What kind of class are you, anyway? One of a kind!
 	private function __clone()
@@ -44,12 +44,12 @@ class wesql
 
 	public static function is_connected()
 	{
-		return (bool) self::$_db_con;
+		return (bool) self::$link;
 	}
 
 	public static function connect($db_server, $db_name, $db_user, $db_passwd, $db_prefix, $db_options = array())
 	{
-		global $mysql_set_mode;
+		global $mysql_set_mode, $mysql_autocommit, $mysql_strict_mode, $db_link;
 
 		// Attempt to connect. (And in non SSI mode, also select the database)
 		$connection = mysqli_connect((!empty($db_options['persist']) ? 'p:' : '') . $db_server, $db_user, $db_passwd, empty($db_options['dont_select_db']) ? $db_name : '') or die(mysqli_connect_error());
@@ -63,14 +63,22 @@ class wesql
 				show_db_error();
 		}
 
+		// This is just for compatibility purposes.
 		if (isset($mysql_set_mode) && $mysql_set_mode === true)
-			wesql::query('SET sql_mode = \'\', AUTOCOMMIT = 1',
-			array(),
-			false
-		);
+			mysqli_query($connection, 'SET SESSION sql_mode = \'\', AUTOCOMMIT = 1', array(), false);
+		elseif (isset($mysql_strict_mode) || isset($mysql_autocommit))
+		{
+			$request = @mysqli_query($connection, 'SELECT @@sql_mode');
+			$modes = mysqli_fetch_row($request);
+			$modes = $modes ? $modes[0] : '';
+			mysqli_free_result($request);
+			if (isset($mysql_strict_mode) && $mysql_strict_mode === false)
+				$modes = implode(',', array_diff(explode(',', $modes), array('ONLY_FULL_GROUP_BY', 'STRICT_TRANS_TABLES')));
+			mysqli_query($connection, 'SET SESSION sql_mode = "' . mysqli_real_escape_string($connection, $modes) . '"' . (empty($mysql_autocommit) ? '' : ', AUTOCOMMIT = 1'));
+		}
 
 		// Otherwise set, and return true so that we can tell we did manage a connection.
-		return self::$_db_con = $connection;
+		return self::$link = $db_link = $connection;
 	}
 
 	public static function fix_prefix(&$db_prefix, $db_name)
@@ -87,7 +95,7 @@ class wesql
 		if (strpos($query, '{') !== false)
 		{
 			// This is needed by the callback function.
-			$db_callback = array($db_values, $connection == null ? self::$_db_con : $connection);
+			$db_callback = array($db_values, $connection == null ? self::$link : $connection);
 
 			// Do the quoting and escaping
 			$query = preg_replace_callback('~{([a-z_]+)(?::([a-zA-Z0-9_-]+))?}~', 'wesql::replace_value', $query);
@@ -119,7 +127,7 @@ class wesql
 		);
 
 		// Decide which connection to use.
-		$connection = $connection === null ? self::$_db_con : $connection;
+		$connection = $connection === null ? self::$link : $connection;
 
 		// One more query....
 		$db_count = !isset($db_count) ? 1 : $db_count + 1;
@@ -175,22 +183,26 @@ class wesql
 			$db_cache[$db_count]['s'] = $st - $time_start;
 		}
 
-		// First, we clean strings out of the query, reduce whitespace, lowercase, and trim - so we can check it over.
-		if (empty($settings['disableQueryCheck']))
+		// Do we need to test our query for hacking attempts? First we'll do a quick check to see if it's needed at all.
+		if (empty($settings['disableQueryCheck']) && (strpos($query, '/*') > 2 || strhas(strtolower($query), array('--', ';', 'sleep', 'benchmark'))))
 		{
+			// First, we clean strings out of the query, reduce whitespace, lowercase, and trim - so we can check it over.
 			$clean = '';
 			$old_pos = 0;
 			$pos = -1;
 			while (true)
 			{
-				$pos = strpos($query, '\'', $pos + 1);
-				if ($pos === false)
+				$pos1 = strpos($query, '\'', $pos + 1);
+				$pos2 = strpos($query, '"', $pos + 1);
+				if ($pos1 === false && $pos2 === false)
 					break;
+				$pos = min($pos1 === false ? PHP_INT_MAX : $pos1, $pos2 === false ? PHP_INT_MAX : $pos2);
+				$look_for = $query[$pos];
 				$clean .= substr($query, $old_pos, $pos - $old_pos);
 
 				while (true)
 				{
-					$pos1 = strpos($query, '\'', $pos + 1);
+					$pos1 = strpos($query, $look_for, $pos + 1);
 					$pos2 = strpos($query, '\\', $pos + 1);
 					if ($pos1 === false)
 						break;
@@ -213,9 +225,9 @@ class wesql
 			if (strpos($clean, '/*') > 2 || strhas($clean, array('--', ';')))
 				$fail = true;
 			// Trying to change passwords, slow us down, or something?
-			elseif (strpos($clean, 'sleep') !== false && preg_match('~(^|[^a-z])sleep($|[^[_a-z])~s', $clean) != 0)
+			elseif (strhas($clean, 'sleep') && preg_match('~(^|[^a-z])sleep($|[^[_a-z])~s', $clean) != 0)
 				$fail = true;
-			elseif (strpos($clean, 'benchmark') !== false && preg_match('~(^|[^a-z])benchmark($|[^[a-z])~s', $clean) != 0)
+			elseif (strhas($clean, 'benchmark') && preg_match('~(^|[^a-z])benchmark($|[^[a-z])~s', $clean) != 0)
 				$fail = true;
 
 			if (!empty($fail) && function_exists('log_error'))
@@ -236,19 +248,19 @@ class wesql
 
 	public static function affected_rows($connection = null)
 	{
-		return mysqli_affected_rows($connection === null ? self::$_db_con : $connection);
+		return mysqli_affected_rows($connection === null ? self::$link : $connection);
 	}
 
 	public static function insert_id($connection = null)
 	{
-		$connection = $connection === null ? self::$_db_con : $connection;
+		$connection = $connection === null ? self::$link : $connection;
 		return mysqli_insert_id($connection);
 	}
 
 	public static function transaction($operation = 'commit', $connection = null)
 	{
 		// Determine whether to use the known connection or not.
-		$connection = $connection === null ? self::$_db_con : $connection;
+		$connection = $connection === null ? self::$link : $connection;
 
 		switch ($operation)
 		{
@@ -263,7 +275,7 @@ class wesql
 
 	public static function error($connection = null)
 	{
-		return mysqli_error($connection === null ? self::$_db_con : $connection);
+		return mysqli_error($connection === null ? self::$link : $connection);
 	}
 
 	public static function serious_error($query, $connection = null)
@@ -281,7 +293,7 @@ class wesql
 		list ($file, $line) = self::error_backtrace('', '', 'return');
 
 		// Decide which connection to use.
-		$connection = $connection === null ? self::$_db_con : $connection;
+		$connection = $connection === null ? self::$link : $connection;
 
 		// This is the error message...
 		$query_error = mysqli_error($connection);
@@ -374,28 +386,28 @@ class wesql
 			// Check for the "lost connection" or "deadlock found" errors - and try it just one more time.
 			if (in_array($query_errno, array(1205, 1213, 2006, 2013)))
 			{
-				if (in_array($query_errno, array(2006, 2013)) && self::$_db_con == $connection)
+				if (in_array($query_errno, array(2006, 2013)) && self::$link == $connection)
 				{
 					// Are we in SSI mode? If so try that username and password first
 					if (WEDGE == 'SSI' && !empty($ssi_db_user) && !empty($ssi_db_passwd))
-						self::$_db_con = @mysqli_connect((!empty($db_persist) ? 'p:' : '') . $db_server, $ssi_db_user, $ssi_db_passwd);
+						self::$link = @mysqli_connect((!empty($db_persist) ? 'p:' : '') . $db_server, $ssi_db_user, $ssi_db_passwd);
 
 					// Fall back to the regular username and password if need be
-					if (!self::$_db_con)
-						self::$_db_con = @mysqli_connect((!empty($db_persist) ? 'p:' : '') . $db_server, $db_user, $db_passwd);
+					if (!self::$link)
+						self::$link = @mysqli_connect((!empty($db_persist) ? 'p:' : '') . $db_server, $db_user, $db_passwd);
 
-					if (!self::$_db_con || !@mysqli_select_db(self::$_db_con, $db_name))
-						self::$_db_con = false;
+					if (!self::$link || !@mysqli_select_db(self::$link, $db_name))
+						self::$link = false;
 				}
 
-				if (self::$_db_con)
+				if (self::$link)
 				{
 					// Try a deadlock more than once more.
 					for ($n = 0; $n < 4; $n++)
 					{
 						$ret = self::query($query, false, false);
 
-						$new_errno = mysqli_errno(self::$_db_con);
+						$new_errno = mysqli_errno(self::$link);
 						if ($ret !== false || in_array($new_errno, array(1205, 1213)))
 							break;
 					}
@@ -432,7 +444,7 @@ class wesql
 	{
 		global $db_prefix;
 
-		$connection = self::$_db_con;
+		$connection = self::$link;
 
 		// With nothing to insert, simply return.
 		if (empty($data))
@@ -532,7 +544,7 @@ class wesql
 
 		list ($values, $connection) = $db_callback;
 		if ($connection === null)
-			$connection = self::$_db_con;
+			$connection = self::$link;
 
 		if (!is_object($connection))
 			show_db_error();
@@ -724,6 +736,8 @@ class wesql
 	public static function get($query, $db_values = array(), $connection = null, $job = '')
 	{
 		$request = self::query($query, $db_values, $connection);
+		if ($request !== true && !is_a($request, 'mysqli_result'))
+			return false;
 		$results = call_user_func('self::fetch_' . ($job ?: 'assoc'), $request);
 		wesql::free_result($request);
 
@@ -767,7 +781,7 @@ class wesql
 
 	public static function escape_string_replacement($str, $connection = null)
 	{
-		return mysqli_real_escape_string($connection === null ? self::$_db_con : $connection, $str);
+		return mysqli_real_escape_string($connection === null ? self::$link : $connection, $str);
 	}
 
 	public static function escape_string($string)
@@ -782,12 +796,11 @@ class wesql
 
 	public static function server_info($connection = null)
 	{
-		return mysqli_get_server_info($connection === null ? self::$_db_con : $connection);
+		return mysqli_get_server_info($connection === null ? self::$link : $connection);
 	}
 
 	public static function select_db($db_name, $connection = null)
 	{
-		$connection = $connection === null ? self::$_db_con : $connection;
-		return mysqli_select_db($connection, $db_name);
+		return mysqli_select_db($connection === null ? self::$link : $connection, $db_name);
 	}
 }
