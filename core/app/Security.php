@@ -884,7 +884,8 @@ function checkSession($type = 'post', $from_action = '', $is_fatal = true)
 	{
 		if (AJAX)
 		{
-			while (@ob_end_clean());
+			while (ob_get_length())
+				ob_end_clean();
 			header('HTTP/1.1 403 Forbidden - Session timeout');
 			exit;
 		}

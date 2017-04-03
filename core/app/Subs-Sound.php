@@ -90,7 +90,8 @@ function createWaveFile($word)
 	$sample_rate = 16000;
 
 	// Disable compression.
-	ob_end_clean();
+	if (ob_get_length())
+		ob_end_clean();
 	header('Content-Encoding: none');
 
 	// Output the wav.

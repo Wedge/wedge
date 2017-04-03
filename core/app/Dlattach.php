@@ -104,7 +104,8 @@ function Dlattach()
 	$filename = getAttachmentFilename($real_filename, $_REQUEST['attach'], $id_folder, false, $file_hash);
 
 	// This is done to clear any output that was made before now. Remember, at this point, we are normally using compressed output so unless the result is textual and under 4MB, make sure gzhandler is OFF.
-	ob_end_clean();
+	while (ob_get_length())
+		ob_end_clean();
 	if (!empty($settings['enableCompressedOutput']) && @filesize($filename) <= 4194304 && in_array($file_ext, array('txt', 'html', 'htm', 'js', 'doc', 'pdf', 'docx', 'rtf', 'css', 'php', 'log', 'xml', 'sql', 'c', 'java')))
 		@ob_start('ob_gzhandler');
 	else
