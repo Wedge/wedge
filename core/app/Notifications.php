@@ -486,7 +486,7 @@ class weNotif
 
 			updateMemberData(MID, array(
 				'data' => serialize($data),
-				'notify_email_period' => max(1, (int) $_POST['notify_period']),
+				'notify_email_period' => min(120, max(1, (int) $_POST['notify_period'])),
 			));
 
 			// Store the notifier settings
