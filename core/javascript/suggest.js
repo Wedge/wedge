@@ -139,38 +139,21 @@ weAutoSuggest.prototype.registerCallback = function (sCallbackType, sCallback)
 weAutoSuggest.prototype.handleSubmit = function()
 {
 	// Do we have something that matches the current text?
-	for (var bReturnValue = true, entryId = entryName = null, i = 0; i < this.aCache.length; i++)
+	for (var entryId = entryName = null, sLastSearch = this.sLastSearch.toLowerCase(), i = 0; i < this.aCache.length; i++)
 	{
-		var sLastSearch = this.sLastSearch.toLowerCase(), entry = this.aCache[i];
-
-		if (sLastSearch == entry.sItemName.toLowerCase().slice(0, sLastSearch.length))
+		if (sLastSearch == this.aCache[i].sItemName.toLowerCase().slice(0, sLastSearch.length))
 		{
+			entryId = this.aCache[i].sItemId;
+			entryName = this.aCache[i].sItemName;
+
 			// Exact match?
-			if (sLastSearch.length == entry.sItemName.length)
-			{
-				// This is the one!
-				entryId = entry.sItemId;
-				entryName = entry.sItemName;
+			if (sLastSearch.length == this.aCache[i].sItemName.length)
 				break;
-			}
-			// Not an exact match, but it'll do for now.
-			else if (entryId != null)
-				bReturnValue = false;
-			else
-			{
-				entryId = entry.sItemId;
-				entryName = entry.sItemName;
-			}
 		}
 	}
 
-	if (entryId == null || !bReturnValue || !this.bItemList)
-		return bReturnValue;
-	else
-	{
+	if (entryId != null && !!this.bItemList)
 		this.addItemLink(entryId, entryName, true);
-		return false;
-	}
 };
 
 // Positions the box correctly on the window.
@@ -355,7 +338,7 @@ weAutoSuggest.prototype.itemMouseLeave = function (oCurElement)
 
 weAutoSuggest.prototype.onSuggestionReceived = function (XMLDoc)
 {
-	var i, ac = [];
+	var ac = [];
 
 	$('item', XMLDoc).each(function (i) {
 		ac[i] = { sItemId: $(this).attr('id'), sItemName: $(this).text() };
@@ -411,8 +394,8 @@ weAutoSuggest.prototype.autoSuggestUpdate = function ()
 	var sRealLastSearch = this.sLastSearch;
 	this.sLastSearch = sSearchString;
 
-	// Either nothing or we've completed a sentence.
-	if (sSearchString == '' || sSearchString.slice(-1) == '"')
+	// Have we completed a sentence?
+	if (sSearchString.slice(-1) == '"')
 		return this.populateDiv([]);
 
 	// Nothing?
