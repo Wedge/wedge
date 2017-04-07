@@ -342,7 +342,7 @@ function ajaxRating()
 // which is sometimes required for security reasons.
 function weUrl(url)
 {
-	return we_script.replace(/:\/\/[^\/]+/g, '://' + location.host) + (we_script.indexOf('?') == -1 ? '?' : (we_script.search(/[?&;]$/) == -1 ? ';' : '')) + url;
+	return url.indexOf(we_script) >= 0 ? url : we_script.replace(/:\/\/[^\/]+/g, '://' + location.host) + (we_script.indexOf('?') == -1 ? '?' : (we_script.search(/[?&;]$/) == -1 ? ';' : '')) + url;
 }
 
 // Get the text in a code tag.
@@ -936,6 +936,9 @@ $(window).on('load', function ()
 				count = count.split(';');
 				if (count[0] !== '' && count[0] != window.we_notifs)
 				{
+					// Are there less notifications than before? Maybe we opened the popup from another tab...
+					if (we_notifs > count[0])
+						$shade.prev().addClass('notevoid').removeClass('note');
 					we_notifs = count[0];
 					is_up_to_date = false;
 					$shade.prev().text(we_notifs);
@@ -943,6 +946,8 @@ $(window).on('load', function ()
 				}
 				if (count[1] !== '-1' && count[1] != window.we_pms)
 				{
+					if (we_pms > count[1])
+						$pmshade.prev().addClass('notevoid').removeClass('note');
 					we_pms = count[1];
 					is_pm_up_to_date = false;
 					$pmshade.prev().text(we_pms);
