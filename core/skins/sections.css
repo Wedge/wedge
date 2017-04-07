@@ -1592,7 +1592,7 @@ body.waiting *
 
 			dt, dd
 				clear: both
-				width: 100%
+				width, max-width: 100%
 			dd
 				padding-left: 12px
 
