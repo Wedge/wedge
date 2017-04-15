@@ -5,13 +5,13 @@ Welcome to Wedge.
 The leading bulletin board/forum/blog software for the new Internet.
 
 Nah, just kidding, it's a pretty innocent package that's hardly going to hit the headlines, ever.
-Still, it represents about 7 man-years of work for two skilled and very dedicated developers.
+Still, it represents about 8 man-years of work from skilled and very dedicated developers.
 And it's software to be proud of. Hopefully, it will make your lives a bit less unbearable.
 
 Installing from the GitHub repo
 -------------------------------
 
-First, ensure that your server meets the requirements (PHP 5.3, MySQL 5, etc.)
+First, ensure that your server meets the requirements (PHP 5.4, MySQL 5, etc.)
 
 Go to the `github.com/Wedge/wedge` repository.
 If you're already there, then hello!
@@ -80,9 +80,10 @@ Can you read me my rights?
 
 Read license.txt, and if you don't get all of the legalese, it just means:
 - Currently, Wedge is free of charge, but it's not free to redistribute. As such, it's
-  not 'free and open source' software, but it's definitely open source.
+  not 'free and open source' software, but it's definitely open source. If you want to turn
+  one of its components into a MIT-licensed generic library, just ask me, I might do it.
 - You can't redistribute the package by yourself. If you ever find yourself in the need
-  to do so, drop me a PM at wedge.org (user name is Nao, it's easy, the guy's everywhere.)
+  to do so, go to wedge.org and drop a PM to Nao.
 - And other details that most people shouldn't have to bother with. Still, be respectful. Thanks.
 
 -- René-Gilles Deberdt (Nao), from Paris, France.

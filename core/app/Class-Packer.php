@@ -730,7 +730,6 @@ class Shrinker {
 						$count++;
 					}
 				}
-				$this->total = max(@$this->total, $count);
 			}
 			$replacement = $prefix.'~'.count($this->blocks).'~';
 			array_push($this->blocks, $block);

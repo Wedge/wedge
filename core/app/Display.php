@@ -796,15 +796,15 @@ function Display()
 	call_hook('display_message_list', array(&$messages, &$times, &$all_posters));
 	$posters = array_unique($all_posters);
 
-	// What's the oldest comment in the page..?
-	$context['mark_unread_time'] = min($board_info['type'] == 'forum' || count($messages) < 2 ? $messages : array_slice($messages, 1));
-
 	// Guests can't mark topics read or for notifications, just can't sorry.
 	if (we::$is_member)
 	{
+		// What's the oldest comment in the page..?
+		$oldest_comment = min($board_info['type'] == 'forum' || count($messages) < 2 ? $messages : array_slice($messages, 1));
+
 		// In case the page is being pre-fetched for infinite scrolling, mark it as
 		// partially unread only, in case the user actually didn't read the posts.
-		$mark_at_msg = INFINITE ? $context['mark_unread_time'] - 1 : max($messages);
+		$mark_at_msg = INFINITE ? $oldest_comment - 1 : max($messages);
 		if ($mark_at_msg >= $topicinfo['id_last_msg'])
 			$mark_at_msg = $settings['maxMsgID'];
 		if ($mark_at_msg >= $topicinfo['new_from'])
@@ -1196,7 +1196,7 @@ function Display()
 		'normal' => array(
 			'reply' => array('test' => 'can_reply', 'text' => 'reply', 'url' => '<URL>?action=post;topic=' . $context['current_topic'] . '.' . $context['start'] . ';last=' . $context['topic_last_message'], 'class' => 'active'),
 			($context['is_marked_notify'] ? 'unnotify' : 'notify') => array('test' => 'can_mark_notify', 'text' => $context['is_marked_notify'] ? 'unnotify' : 'notify', 'custom' => 'onclick="return ask(' . JavaScriptEscape($txt['notification_' . ($context['is_marked_notify'] ? 'disable_topic' : 'enable_topic')]) . ', e);"', 'url' => '<URL>?action=notify;sa=' . ($context['is_marked_notify'] ? 'off' : 'on') . ';topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_query']),
-			'mark_unread' => array('test' => 'can_mark_unread', 'text' => 'mark_unread', 'url' => '<URL>?action=markasread;sa=topic;t=' . $context['mark_unread_time'] . ';topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_query']),
+			'mark_unread' => array('test' => 'can_mark_unread', 'text' => 'mark_unread', 'url' => '<URL>?action=markasread;sa=topic;t=' . min(max($messages), $topicinfo['new_from']) . ';topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_query']),
 			'send' => array('test' => 'can_send_topic', 'text' => 'send_topic', 'url' => '<URL>?action=emailuser;sa=sendtopic;topic=' . $context['current_topic'] . '.0'),
 			'print' => array('text' => 'print', 'custom' => 'rel="nofollow"', 'url' => '<URL>?action=printpage;topic=' . $context['current_topic'] . '.0'),
 		),

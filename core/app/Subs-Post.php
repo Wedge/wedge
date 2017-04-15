@@ -678,7 +678,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = true, $from = n
 
 	censorText($message);
 	censorText($subject);
-	$message = trim(un_htmlspecialchars(strip_tags(strtr(parse_bbc(htmlspecialchars($message), 'pm-notify', array('smileys' => false)), array('<br>' => "\n", '</div>' => "\n", '</li>' => "\n", '&#91;' => '[', '&#93;' => ']')))));
+	$message = trim(un_htmlspecialchars(strip_tags(strtr(parse_bbc(westr::htmlspecialchars($message), 'pm-notify', array('smileys' => false)), array('<br>' => "\n", '</div>' => "\n", '</li>' => "\n", '&#91;' => '[', '&#93;' => ']')))));
 
 	$replacements = array(
 		'SENDERNAME' => un_htmlspecialchars($from['name']),

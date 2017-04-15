@@ -45,7 +45,7 @@ class Notification
 	public static function get($id = null, $id_member = null, $count = 1, $unread = false, $object = null, $notifier = '')
 	{
 		if (empty($id) && empty($id_member))
-			return array();
+			return [];
 
 		$request = wesql::query('
 			SELECT *
@@ -57,13 +57,14 @@ class Notification
 				AND notifier = {string:notifier}' : '') . '
 			ORDER BY time DESC' . ($count ? '
 			LIMIT {int:count}' : ''),
-			array(
+			[
 				'id' => (int) $id,
 				'member' => (int) $id_member,
 				'count' => (int) $count,
 				'object' => (int) $object,
 				'notifier' => $notifier,
-			));
+			]
+		);
 		return self::fetchNotifications($request);
 	}
 
@@ -76,7 +77,7 @@ class Notification
 	 */
 	protected static function fetchNotifications($request)
 	{
-		$notifications = array();
+		$notifications = [];
 		$notifiers = weNotif::getNotifiers();
 
 		while ($row = wesql::fetch_assoc($request))
@@ -113,11 +114,11 @@ class Notification
 				AND id_object IN ({array_int:object})
 				AND notifier = {string:notifier}
 				AND unread = 1',
-			array(
+			[
 				'member' => (int) $id_member,
 				'object' => (array) $objects,
 				'notifier' => $notifier->getName(),
-			)
+			]
 		);
 		$affected_rows = wesql::affected_rows();
 
@@ -127,10 +128,10 @@ class Notification
 				UPDATE {db_prefix}members
 				SET unread_notifications = unread_notifications - {int:count}
 				WHERE id_member = {int:member}',
-				array(
+				[
 					'count' => $affected_rows,
 					'member' => (int) $id_member,
-				)
+				]
 			);
 
 			// Flush the cache
@@ -152,7 +153,7 @@ class Notification
 	 * @return Notification
 	 * @throws Exception, upon the failure of creating a notification for whatever reason
 	 */
-	public static function issue($notifier_name, $id_member, $id_object, $data = array())
+	public static function issue($notifier_name, $id_member, $id_object, $data = [])
 	{
 		loadSource('Subs-Post');
 
@@ -162,7 +163,6 @@ class Notification
 			throw new Exception('Object cannot be empty for notification');
 
 		$members = (array) $id_member;
-		$return_single = !is_array($id_member);
 
 		// Load the pending member's preferences for checking email notification and disabled notifiers.
 		$request = wesql::query('
@@ -170,21 +170,21 @@ class Notification
 			FROM {db_prefix}members
 			WHERE id_member IN ({array_int:member})
 			LIMIT {int:limit}',
-			array(
+			[
 				'member' => $members,
 				'limit' => count($members),
-			)
+			]
 		);
-		$members = array();
+		$members = [];
 		while ($row = wesql::fetch_assoc($request))
 		{
-			$member_data = empty($row['data']) ? array() : unserialize($row['data']);
-			$members[$row['id_member']] = array(
+			$member_data = empty($row['data']) ? [] : unserialize($row['data']);
+			$members[$row['id_member']] = [
 				'id' => $row['id_member'],
-				'disabled_notifiers' => empty($member_data['disabled_notifiers']) ? array() : $member_data['disabled_notifiers'],
-				'email_notifiers' => empty($member_data['email_notifiers']) ? array() : $member_data['email_notifiers'],
+				'disabled_notifiers' => empty($member_data['disabled_notifiers']) ? [] : $member_data['disabled_notifiers'],
+				'email_notifiers' => empty($member_data['email_notifiers']) ? [] : $member_data['email_notifiers'],
 				'email' => $row['email_address'],
-			);
+			];
 		}
 		wesql::free_result($request);
 
@@ -197,16 +197,16 @@ class Notification
 			SELECT *
 			FROM {db_prefix}notifications
 			WHERE notifier = {string:notifier}
-				AND id_member IN ({array_int:member})
+				AND id_member IN ({array_int:members})
 				AND id_object = {int:object}
 				AND unread = 1
 			LIMIT {int:limit}',
-			array(
+			[
 				'notifier' => $notifier_name,
 				'object' => $id_object,
-				'member' => array_keys($members),
+				'members' => array_keys($members),
 				'limit' => count($members),
-			)
+			]
 		);
 		// If we do, then we run it by the notifier.
 		while ($row = wesql::fetch_assoc($request))
@@ -232,10 +232,10 @@ class Notification
 		$time = time();
 
 		if (empty($members))
-			return array();
+			return [];
 
 		// Process individual member's notification.
-		$notifications = array();
+		$notifications = [];
 		foreach ($members as $id_member => $pref)
 		{
 			if (in_array($notifier_name, $pref['disabled_notifiers']))
@@ -243,14 +243,14 @@ class Notification
 
 			// Create the row
 			wesql::insert('', '{db_prefix}notifications',
-				array('id_member' => 'int', 'id_member_from' => 'int', 'notifier' => 'string-50', 'id_object' => 'int', 'time' => 'int', 'unread' => 'int', 'data' => 'string'),
-				array($id_member, MID, $notifier_name, $id_object, $time, 1, serialize((array) $data))
+				['id_member' => 'int', 'id_member_from' => 'int', 'notifier' => 'string-50', 'id_object' => 'int', 'time' => 'int', 'unread' => 'int', 'data' => 'string'],
+				[$id_member, MID, $notifier_name, $id_object, $time, 1, serialize((array) $data)]
 			);
 			$id_notification = wesql::insert_id();
 
 			if (!empty($id_notification))
 			{
-				$notifications[$id_member] = new self(array(
+				$notifications[$id_member] = new self([
 					'id_notification' => $id_notification,
 					'id_member' => $id_member,
 					'id_member_from' => MID,
@@ -258,7 +258,7 @@ class Notification
 					'time' => $time,
 					'unread' => 1,
 					'data' => serialize((array) $data),
-				), $notifier);
+				], $notifier);
 
 				// Send the e-mail?
 				if (!empty($pref['email_notifiers'][$notifier_name]) && $pref['email_notifiers'][$notifier_name] === 1)
@@ -281,18 +281,16 @@ class Notification
 			SET unread_notifications = unread_notifications + 1,
 				hey_not = 1
 			WHERE id_member IN ({array_int:member})',
-			array(
-				'member' => array_keys($notifications),
-			)
+			['member' => array_keys($notifications)]
 		);
 
 		// Run the post notify hook
 		$notifier->afterNotify($notifications);
 
 		// Run the general hook
-		call_hook('notification_new', array($notifications));
+		call_hook('notification_new', [$notifications]);
 
-		return $return_single ? array_pop($notifications) : $notifications;
+		return is_array($id_member) ? $notifications : array_pop($notifications);
 	}
 
 	/**
@@ -335,9 +333,7 @@ class Notification
 			UPDATE {db_prefix}members
 			SET unread_notifications = unread_notifications - 1
 			WHERE id_member = {int:member}',
-			array(
-				'member' => $this->getMember(),
-			)
+			['member' => $this->getMember()]
 		);
 
 		// Flush the cache
@@ -383,11 +379,11 @@ class Notification
 			UPDATE {db_prefix}notifications
 			SET {raw:column} = {string:value}
 			WHERE id_notification = {int:notification}',
-			array(
+			[
 				'column' => addslashes($column),
 				'value' => $value,
 				'notification' => $this->getID(),
-			)
+			]
 		);
 	}
 

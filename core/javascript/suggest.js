@@ -14,13 +14,13 @@ function weAutoSuggest(oOptions)
 	this.opt = oOptions;
 
 	// Nothing else for now.
-	this.opt.sSearchType = 'member';
+	this.sSearchType = this.opt.sSearchType || 'member';
 
 	// Store the handle to the text box.
 	var oText = $('#' + this.opt.sControlId), that = this;
 
-	this.opt.sItemTemplate = this.opt.sItemTemplate || '<input type="hidden" name="%post_name%[]" value="%item_id%"><a href="%item_href%" class="extern" onclick="window.open(this.href, \'_blank\'); return false;">%item_name%</a>&nbsp;<img src="%assets_url%/pm_recipient_delete.gif" alt="%delete_text%" title="%delete_text%"> &nbsp; ';
-
+	this.sItemTemplate = this.opt.sItemTemplate || '<input type="hidden" name="%post_name%[]" value="%item_id%"><a href="%item_href%" class="extern" onclick="window.open(this.href, \'_blank\'); return false;">%item_name%</a>&nbsp;<img src="%assets_url%/pm_recipient_delete.gif" alt="%delete_text%" title="%delete_text%"> &nbsp; ';
+	this.sURLMask = this.opt.sURLMask || 'action=profile;u=%item_id%';
 	this.oTextHandle = oText;
 	this.oSuggestDivHandle = null;
 	this.oXmlRequestHandle = null;
@@ -35,9 +35,6 @@ function weAutoSuggest(oOptions)
 	this.sLastDirtySearch = '';
 	this.sLastSearch = '';
 
-	// Should selected items be added to a list?
-	this.bItemList = !!this.opt.bItemList;
-
 	// Create a div that'll contain the results later on.
 	this.oSuggestDivHandle = $('<div></div>').addClass('auto_suggest').hide().appendTo('body')[0];
 
@@ -50,7 +47,8 @@ function weAutoSuggest(oOptions)
 		.on('keyup change focus', function () { return that.autoSuggestUpdate(); })
 		.blur(function () { return that.autoSuggestHide(); });
 
-	if (this.bItemList)
+	// Do we allow multiple items to be selected, and added to a list? (e.g. member search)
+	if (this.bItemList = !!this.opt.bItemList)
 		this.oItemList = $('<div></div>').insertBefore(oText);
 
 	// Are there any items that should be added in advance?
@@ -141,42 +139,21 @@ weAutoSuggest.prototype.registerCallback = function (sCallbackType, sCallback)
 weAutoSuggest.prototype.handleSubmit = function()
 {
 	// Do we have something that matches the current text?
-	for (var bReturnValue = true, entryId = entryName = null, i = 0; i < this.aCache.length; i++)
+	for (var entryId = entryName = null, sLastSearch = this.sLastSearch.toLowerCase(), i = 0; i < this.aCache.length; i++)
 	{
-		var sLastSearch = this.sLastSearch.toLowerCase(), entry = this.aCache[i];
-
-		if (sLastSearch == entry.sItemName.toLowerCase().slice(0, sLastSearch.length))
+		if (sLastSearch == this.aCache[i].sItemName.toLowerCase().slice(0, sLastSearch.length))
 		{
+			entryId = this.aCache[i].sItemId;
+			entryName = this.aCache[i].sItemName;
+
 			// Exact match?
-			if (sLastSearch.length == entry.sItemName.length)
-			{
-				// This is the one!
-				entryId = entry.sItemId;
-				entryName = entry.sItemName;
+			if (sLastSearch.length == this.aCache[i].sItemName.length)
 				break;
-			}
-			// Not an exact match, but it'll do for now.
-			else
-			{
-				// If we have two matches don't find anything.
-				if (entryId != null)
-					bReturnValue = false;
-				else
-				{
-					entryId = entry.sItemId;
-					entryName = entry.sItemName;
-				}
-			}
 		}
 	}
 
-	if (entryId == null || !bReturnValue || !this.bItemList)
-		return bReturnValue;
-	else
-	{
+	if (entryId != null && !!this.bItemList)
 		this.addItemLink(entryId, entryName, true);
-		return false;
-	}
 };
 
 // Positions the box correctly on the window.
@@ -206,7 +183,11 @@ weAutoSuggest.prototype.itemClicked = function (oCurElement)
 
 	// Otherwise clear things down.
 	else
-		this.oTextHandle.val(oCurElement.innerHTML.php_unhtmlspecialchars());
+	{
+		this.oTextHandle.val(oCurElement.innerText.php_unhtmlspecialchars());
+		if ($(oCurElement).find('a'))
+			location.href = $(oCurElement).find('a').attr('href');
+	}
 
 	this.oRealTextHandle.val(this.oTextHandle.val());
 	this.autoSuggestActualHide();
@@ -259,10 +240,10 @@ weAutoSuggest.prototype.addItemLink = function (sItemId, sItemName, bFromSubmit)
 	if (!$('#' + eid).length)
 	{
 		$('<span id="' + eid + '"></span>').html(
-			this.opt.sItemTemplate.wereplace({
+			this.sItemTemplate.wereplace({
 				post_name: this.opt.sPostName,
 				item_id: sItemId,
-				item_href: weUrl((this.opt.sURLMask || 'action=profile;u=%item_id%').wereplace({ item_id: sItemId })),
+				item_href: weUrl(this.sURLMask.wereplace({ item_id: sItemId })),
 				item_name: sItemName,
 				assets_url: we_assets,
 				delete_text: this.opt.sTextDeleteItem || $txt['autosuggest_delete_item']
@@ -329,7 +310,7 @@ weAutoSuggest.prototype.populateDiv = function (aResults)
 		// Create the sub element, and attach some events to it so we can do stuff.
 		aNewDisplayData[i] = $('<div></div>')
 			.data({ sItemId: aResults[i].sItemId, that: this })
-			.html(aResults[i].sItemName)
+			.html(this.sSearchType == 'member' ? aResults[i].sItemName : '<a href="' + this.sURLMask.wereplace({ item_id: aResults[i].sItemId }) + '">' + aResults[i].sItemName + '</a>')
 			.mouseenter(function (oEvent) { $(this).data('that').itemMouseEnter(this); })
 			.mouseleave(function (oEvent) { $(this).data('that').itemMouseLeave(this); })
 			.click(function (oEvent) { $(this).data('that').itemClicked(this); })[0];
@@ -357,7 +338,7 @@ weAutoSuggest.prototype.itemMouseLeave = function (oCurElement)
 
 weAutoSuggest.prototype.onSuggestionReceived = function (XMLDoc)
 {
-	var i, ac = [];
+	var ac = [];
 
 	$('item', XMLDoc).each(function (i) {
 		ac[i] = { sItemId: $(this).attr('id'), sItemName: $(this).text() };
@@ -413,8 +394,8 @@ weAutoSuggest.prototype.autoSuggestUpdate = function ()
 	var sRealLastSearch = this.sLastSearch;
 	this.sLastSearch = sSearchString;
 
-	// Either nothing or we've completed a sentence.
-	if (sSearchString == '' || sSearchString.slice(-1) == '"')
+	// Have we completed a sentence?
+	if (sSearchString.slice(-1) == '"')
 		return this.populateDiv([]);
 
 	// Nothing?
@@ -454,7 +435,7 @@ weAutoSuggest.prototype.autoSuggestUpdate = function ()
 		this.oXmlRequestHandle.abort();
 
 	var data = {
-		suggest_type: this.opt.sSearchType,
+		suggest_type: this.sSearchType,
 		search: sSearchString,
 		time: $.now()
 	};

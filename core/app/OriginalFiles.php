@@ -101,7 +101,7 @@ function create_generic_folder($root_dir, $folder, $force = false)
 	if (!$force || !file_exists($path))
 		mkdir($path);
 
-	// We need to put and index.php file in all folders.
+	// Add an index.php file to all folders.
 	if (!$force || !file_exists($path . '/index.php'))
 		file_put_contents($path . '/index.php', '<' . '?php
 // Redirect to the upper level.
@@ -158,12 +158,10 @@ header(\'Location: ../\');');
 </Files>
 
 <IfModule mod_mime.c>
-	AddEncoding x-gzip .gz' . ($folder == 'gz/js' ? '
-	AddEncoding x-gzip .jgz
+	AddEncoding x-gzip gz' . ($folder == 'gz/js' ? ' jgz
 	<FilesMatch "\.(js\.gz|jgz)$">
 		ForceType text/javascript
-	</FilesMatch>' : '
-	AddEncoding x-gzip .cgz
+	</FilesMatch>' : ' cgz
 	<FilesMatch "\.(css\.gz|cgz)$">
 		ForceType text/css
 	</FilesMatch>') . '
@@ -171,7 +169,7 @@ header(\'Location: ../\');');
 
 <IfModule mod_headers.c>
 	Header set Cache-Control "max-age=2592000"
-	Header set Expires "Thu, 21 March 2025 03:42:00 GMT"
+	Header set Expires "Thu, 21 March ' . (date('Y') + 20) . ' 03:42:00 GMT"
 	Header set Vary "Accept-Encoding"
 </IfModule>
 
@@ -236,7 +234,6 @@ function create_main_htaccess()
 	php_flag session.use_cookies on' /* Using cookies for sessions is much more secure. */ . '
 	php_flag session.use_trans_sid off' /* If it is really necessary, Wedge will do this - and it does it better. */ . '
 	php_flag register_globals off' /* This is generally a bad thing to have on unless you need it on. */ . '
-	php_flag magic_quotes_sybase off' /* This setting goes against Wedge's expectations on secure request variables. */ . '
 
 	# Functionality
 	php_value session.gc_maxlifetime 2880' /* A longer session length is preferrable when posting long messages. */ . '
@@ -249,10 +246,9 @@ function create_main_htaccess()
 	php_value upload_max_filesize "4M"' /* This sets a larger upload file size. */ . '
 
 	# Optimization
-	php_value arg_separator.input "&;"' /* If PHP does this, Wedge won't have to redo it. */ . '
+	php_value arg_separator.input "&;"' /* Either set this here or in php.ini, or Wedge will have to add a compatibility layer... */ . '
 	php_flag always_populate_raw_post_data off
 	php_flag register_argc_argv off' /* Wedge doesn't use these two, might as well disable them. */ . '
-	php_flag magic_quotes_gpc off' /* Magic quotes suck. Die. Forever. */ . '
 	php_flag implicit_flush off' /* This is a really bad setting for connections, and is best off just generally. */ . '
 
 </IfModule>';

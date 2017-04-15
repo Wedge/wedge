@@ -171,7 +171,7 @@ final class weSkeleton
 		}
 		else
 		{
-			$result = $this->before($target, $new_name);
+			$result = $this->before($target, $new_name) !== false;
 			$result &= $this->remove($target);
 		}
 		return $result ? $new_name : false;

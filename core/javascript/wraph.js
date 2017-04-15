@@ -327,7 +327,7 @@ window.Wraph = function (cx, options, zoom_hook)
 			}
 
 			line_height += options.tooltips.padding.top;
-			height = line_height * tpl.length +  + options.tooltips.padding.bottom;
+			height = line_height * tpl.length + options.tooltips.padding.bottom;
 
 			// check relative position
 			for (i in position)

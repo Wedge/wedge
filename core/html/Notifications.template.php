@@ -14,13 +14,14 @@ function template_notifications_list()
 	if (AJAX)
 		echo '
 		<ul class="nlist"><li>
-			<span class="floatright">
-				<a href="<URL>?action=notification" style="color: #888">', $txt['notifications_short_all'], '</a> |
-				<span style="display: inline-block"><a href="<URL>?action=profile;area=notifications" style="color: #666"><span id="m_admin" style="margin-top: 1px"></span> ', $txt['notifications_short_settings'], '</a></span>&nbsp;
+			<span class="floatright" style="margin: 0 4px 4px 0">', !$context['unread_count'] ? '' : '
+				<a href="<URL>?action=notification;sa=markread" class="n_markread" onclick="$(\'.notifs.notif .notevoid\').html(0); notload(this.href); return false;">' . $txt['notifications_short_mark_as_read'] . '</a> |', '
+				<a href="<URL>?action=profile;area=notifications" class="n_settings"><span id="m_admin"></span><span', !$context['unread_count'] ? '>' : ' class="n_setdesc">', $txt['notifications_short_settings'], '</span></a>
 			</span>
-			<span class="floatleft" style="margin-bottom: 4px">
-				&nbsp;', !empty(we::$user['data']['n_all']) ? '<a href="<URL>?action=notification;show=unread" onclick="notload(this.href); return false;">' . $txt['notifications_short_unread'] . '</a>' : '<strong>' . $txt['notifications_short_unread'] . '</strong>', ' |
-				', empty(we::$user['data']['n_all']) ? '<a href="<URL>?action=notification;show=latest" onclick="notload(this.href); return false;">' . $txt['notifications_short_latest'] . '</a>' : '<strong>' . $txt['notifications_short_latest'] . '</strong>', '
+			<span class="floatleft" style="margin: 0 0 4px 4px">
+				', !empty(we::$user['data']['n_all']) ? '<a href="<URL>?action=notification;show=unread" onclick="notload(this.href); return false;">' . $txt['notifications_short_unread'] . '</a>' : '<strong>' . $txt['notifications_short_unread'] . '</strong>', ' |
+				', empty(we::$user['data']['n_all']) ? '<a href="<URL>?action=notification;show=latest" onclick="notload(this.href); return false;">' . $txt['notifications_short_latest'] . '</a>' : '<strong>' . $txt['notifications_short_latest'] . '</strong>', ' |
+				<a href="<URL>?action=notification" style="color: #888">', $txt['notifications_short_all'], '</a>
 			</span>
 			<div class="n_container">';
 	else

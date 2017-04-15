@@ -358,7 +358,7 @@ function showDrafts($memID)
 			'subject' => $row['subject'],
 			'body' => $row['body'],
 			'counter' => $counter,
-			'alternate' => $counter % 2,
+			'alternate' => $counter & 1,
 			'board' => array(
 				'id' => $row['id_board'],
 				'name' => empty($row['bname']) ? $txt['drafts_noboard'] : $row['bname'],
@@ -650,7 +650,7 @@ function showPosts($memID)
 			'can_see' => $ignore_perms ? (we::$is_admin || in_array($row['id_board'], we::$user['qsb_boards'])) : true,
 			'body' => $row['body'],
 			'counter' => $counter,
-			'alternate' => $counter % 2,
+			'alternate' => $counter & 1,
 			'category' => array(
 				'name' => $row['cname'],
 				'id' => $row['id_cat']
@@ -2012,7 +2012,7 @@ function trackReported($memID)
 		$report_ids[] = $row['id_report'];
 		$context['reports'][$row['id_report']] = array(
 			'id' => $row['id_report'],
-			'alternate' => $i % 2,
+			'alternate' => $i & 1,
 			'topic_href' => '<URL>?topic=' . $row['id_topic'] . '.msg' . $row['id_msg'] . '#msg' . $row['id_msg'],
 			'report_href' => '<URL>?action=moderate;area=reports;report=' . $row['id_report'],
 			'board_link' => '<a href="<URL>?board=' . $row['id_board'] . '.0">' . $row['board_name'] . '</a>',

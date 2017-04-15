@@ -4,7 +4,8 @@
 $txt['notifications'] = 'Notifications';
 $txt['notifications_short_unread'] = 'Unread';
 $txt['notifications_short_latest'] = 'Latest';
-$txt['notifications_short_all'] = 'View all';
+$txt['notifications_short_all'] = 'All';
+$txt['notifications_short_mark_as_read'] = 'Mark as read';
 $txt['notifications_short_settings'] = 'Settings';
 $txt['notifications_short_unread_pms'] = 'Unread';
 $txt['notifications_short_inbox'] = 'Inbox';

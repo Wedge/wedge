@@ -467,7 +467,7 @@ function scheduled_daily_maintenance()
 	return true;
 }
 
-// Auto optimize the database?
+// Auto-optimize the database?
 function scheduled_auto_optimize()
 {
 	global $settings, $db_prefix;
@@ -499,7 +499,7 @@ function scheduled_auto_optimize()
 	// Get all the tables.
 	$tables = wedb::list_tables(false, $db_prefix . '%');
 
-	// Actually do the optimisation.
+	// Actually do the optimization.
 	foreach ($tables as $table)
 		wedb::optimize_table($table);
 
@@ -1310,12 +1310,10 @@ function scheduled_weekly_maintenance()
 				SELECT id_report
 				FROM {db_prefix}log_reported
 				WHERE time_started < {int:time_started}
-					AND closed = {int:not_closed}
-					AND ignore_all = {int:not_ignored}',
+					AND closed = 1
+					AND ignore_all = 0',
 				array(
 					'time_started' => $t,
-					'not_closed' => 0,
-					'not_ignored' => 0,
 				)
 			);
 

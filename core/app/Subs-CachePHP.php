@@ -12,40 +12,32 @@
 if (!defined('WEDGE'))
 	die('Hacking attempt...');
 
+// Build the cached version of our source file
+function cache_source_file($source, $dest)
+{
+	// First of all, make sure we're not caching a partially uploaded file. Give it a few seconds to finish.
+	$tries = 8;
+	clearstatcache(true, $source);
+	while (time() - filemtime($source) < 3 && $tries--)
+	{
+		sleep(1);
+		clearstatcache(true, $source);
+	}
+	if ($tries < 0)
+		exit('An error occurred while loading this page; please contact an administrator if this happens repeatedly.');
+
+	$dest_locked = substr($dest, 0, -4) . '-' . mt_rand(999, 999999999) . '.php';
+	apply_plugin_mods($source, $dest_locked);
+	minify_php($dest_locked);
+	rename($dest_locked, $dest);
+}
+
 // Cache a minified PHP file.
 function minify_php($file, $remove_whitespace = false)
 {
-	global $save_strings;
+	global $is_output_buffer;
 
 	// Replace comments with equivalent whitespace, and protect strings.
-	$php = clean_me_up($file, $remove_whitespace);
-
-	// Do the actual process of removing whitespace.
-	if ($remove_whitespace)
-	{
-		$php = preg_replace('~\s+~', ' ', $php);
-		$php = preg_replace('~(?<=[^a-zA-Z0-9_.])\s+|\s+(?=[^$a-zA-Z0-9_.])~', '', $php);
-		$php = preg_replace('~(?<=[^0-9.])\s+\.|\.\s+(?=[^0-9.])~', '.', $php); // 2 . 1 != 2.1
-		$php = str_replace(',)', ')', $php);
-	}
-	else // Remove at least spaces in empty lines...
-		$php = preg_replace('~[\t ]+(?=\n)~', '', $php);
-
-	// Restore saved strings.
-	$pos = 0;
-	foreach ($save_strings as $str)
-		if (($pos = strpos($php, "\x0f", $pos)) !== false)
-			$php = substr_replace($php, $str, $pos, 1);
-
-	if (file_put_contents($file, $php, LOCK_EX) !== strlen($php))
-		@unlink($file);
-}
-
-// Remove comments and protect strings.
-function clean_me_up($file, $remove_whitespace = false)
-{
-	global $save_strings, $is_output_buffer;
-
 	$search_for = array('/*', '//', "'", '"');
 
 	// Set this to true if calling loadSource within an output buffer handler.
@@ -64,21 +56,14 @@ function clean_me_up($file, $remove_whitespace = false)
 	{
 		$pos = find_next($php, $pos, $search_for);
 		if ($pos === false)
-			return $php;
+			break;
 
 		$look_for = $php[$pos];
-		if ($look_for === '/')
-		{
-			if ($php[$pos + 1] === '/') // Remove //
-				$look_for = array("\r", "\n", "\r\n");
-			else // Remove /* ... */
-				$look_for = '*/';
-		}
-		else
+		if ($look_for !== '/')
 		{
 			$next = find_next($php, $pos + 1, $look_for);
 			if ($next === false) // Shouldn't be happening.
-				return $php;
+				break;
 			if ($php[$next] === "\r" && $php[$next + 1] === "\n")
 				$next++;
 			$save_strings[] = substr($php, $pos, $next + 1 - $pos);
@@ -86,9 +71,14 @@ function clean_me_up($file, $remove_whitespace = false)
 			continue;
 		}
 
+		if ($php[$pos + 1] === '/') // Remove //
+			$look_for = array("\r", "\n", "\r\n");
+		else // Remove /* ... */
+			$look_for = '*/';
+
 		$end = find_next($php, $pos + 1, $look_for);
 		if ($end === false)
-			return $php;
+			break;
 		if (!is_array($look_for))
 			$end += strlen($look_for);
 		$temp = substr($php, $pos, $end - $pos);
@@ -97,6 +87,26 @@ function clean_me_up($file, $remove_whitespace = false)
 		$php = substr_replace($php, str_pad(str_repeat("\n", $breaks), $end - $pos), $pos, $end - $pos);
 		$pos = $end + 1;
 	}
+
+	// Do the actual process of removing whitespace. Not normally done in Wedge.
+	if ($remove_whitespace)
+	{
+		$php = preg_replace('~\s+~', ' ', $php);
+		$php = preg_replace('~(?<=[^a-zA-Z0-9_.])\s+|\s+(?=[^$a-zA-Z0-9_.])~', '', $php);
+		$php = preg_replace('~(?<=[^0-9.])\s+\.|\.\s+(?=[^0-9.])~', '.', $php); // 2 . 1 != 2.1
+		$php = str_replace(',)', ')', $php);
+	}
+	else // Remove at least spaces in empty lines...
+		$php = preg_replace('~[\t ]+(?=\n)~', '', $php);
+
+	// Restore saved strings.
+	$pos = 0;
+	foreach ($save_strings as $str)
+		if (($pos = strpos($php, "\x0f", $pos)) !== false)
+			$php = substr_replace($php, $str, $pos, 1);
+
+	if (file_put_contents($file, $php, LOCK_EX) !== strlen($php))
+		@unlink($file);
 }
 
 function find_next(&$php, $pos, $search_for)
@@ -225,7 +235,7 @@ function apply_plugin_mods($source, $dest, $no_caching = false)
 			$offset = strpos($this_file, $where[0]['value']);
 			if ($offset === false)
 			{
-				$error = true;
+				$error = 'Couldn\'t find "' . $where[0]['value'] . '"';
 				break;
 			}
 			$save_me = true;
@@ -239,12 +249,12 @@ function apply_plugin_mods($source, $dest, $no_caching = false)
 		}
 
 		// If an error was found, I'm afraid we'll have to rollback.
-		if ($error)
+		if ($error !== false)
 		{
 			$enabled_plugins = array_diff($enabled_plugins, array($plugin));
 			if (isset($context['enabled_plugins']))
 				$context['enabled_plugins'] = $enabled_plugins;
-			log_error('Couldn\'t apply data from "' . $plugin . '" plugin to file "' . $source . '". Disabling plugin automatically.');
+			log_error('Couldn\'t apply data from "' . $plugin . '" plugin to file "' . $source . '". ' . ($error !== true ? 'Error: ' . $error . '. ' : '') . 'Disabling plugin automatically.');
 			updateSettingsFile(array('my_plugins' => implode(',', $enabled_plugins)));
 			clean_cache('php', '', CACHE_DIR . '/app');
 			clean_cache('php', '', CACHE_DIR . '/html');

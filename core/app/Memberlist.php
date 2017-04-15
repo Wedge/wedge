@@ -435,10 +435,7 @@ function MLSearch()
 	{
 		$_POST['search'] = trim(isset($_GET['search']) ? $_GET['search'] : $_POST['search']);
 		// Escape things, just in case...
-		if (function_exists('get_magic_quotes_gpc') && !get_magic_quotes_gpc())
-			$_POST['fields'] = explode(',', addslashes(isset($_GET['fields']) ? $_GET['fields'] : implode(',', $_POST['fields'])));
-		else
-			$_POST['fields'] = isset($_GET['fields']) ? explode(',', $_GET['fields']) : $_POST['fields'];
+		$_POST['fields'] = explode(',', addslashes(isset($_GET['fields']) ? $_GET['fields'] : implode(',', $_POST['fields'])));
 
 		$context['old_search'] = $_REQUEST['search'];
 		$context['old_search_value'] = urlencode($_REQUEST['search']);

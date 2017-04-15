@@ -268,7 +268,7 @@ function template_side_user_before()
 	{
 		echo empty(we::$user['avatar']['image']) ? '
 			<ul id="noava">' : '
-			' . we::$user['avatar']['image'] . '
+			<a href="<URL>?action=profile;u=' . we::$id . '">' . we::$user['avatar']['image'] . '</a>
 			<ul>', '
 				<li><a href="<URL>?action=unread">', $txt['show_unread'], '</a></li>
 				<li><a href="<URL>?action=unreadreplies">', $txt['show_unread_replies'], '</a></li>';
@@ -522,6 +522,7 @@ function template_linktree($position = 'top', $force_show = false)
 {
 	global $context;
 
+	// Typically, we'll only show it at the bottom on topic pages (where 'bottom_linktree' is set to true.)
 	if ($position === 'bottom' && empty($context['bottom_linktree']) && !$force_show)
 		return;
 

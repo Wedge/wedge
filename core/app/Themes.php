@@ -1087,7 +1087,7 @@ function wedge_show_skins(&$style, $show_defaults = false, $current_skin = '', $
 	$output = '';
 	foreach ($style as $sty)
 	{
-		$intro = !$show_defaults || $filler ? $filler . ($current == $last ? '&#9492;' : '&#9500;') . '&mdash;&nbsp;' : '';
+		$intro = !$show_defaults || $filler ? '&lt;span class=mono&gt;' . $filler . ($current == $last ? '&#9492;' : '&#9500;') . '&mdash;&nbsp;&lt;/span&gt;' : '';
 		$output .= '<option value="' . westr::safe($sty['dir']) . '"' . ($current_skin == $sty['dir'] ? ' selected' : '') . '>' . $intro . $sty['name'];
 		$context['skin_names'][$sty['dir']] = $sty['name'];
 		if ($show_defaults)

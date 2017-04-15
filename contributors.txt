@@ -17,17 +17,17 @@ MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
 
 
 
-Director:		René-Gilles Deberdt (Nao 尚), started on August 25, 2010.
+Author:			René-Gilles Deberdt (Nao 尚), started on August 25, 2010.
 
 Contributors:	Peter Spicer -- co-developer (2010-2013)
 				Thorsten Eurich -- importer code (2011-2012)
 				Shitiz Garg -- notifications (2012-2013)
 				John Rayes -- improvements & testing (2010-2014)
 				Sven Rissmann -- improvements & testing (2014)
+				Leon Scott Kennedy -- improvements & testing (2014-2017)
 
 Thanks:			Lorenzo Raffio -- testing (2010-2014)
 				Aaron van Geffen -- testing (2010-2014)
-				Leon Scott Kennedy -- testing (2014)
 
 Based on:		Simple Machines Forum 2.0
 					-- © Simple Machines and its contributors 2011, http://www.simplemachines.org/

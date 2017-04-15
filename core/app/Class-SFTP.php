@@ -5094,14 +5094,6 @@ function crypt_random($min = 0, $max = 0x7FFFFFFF)
 		return abs($random) % ($max - $min) + $min;
 	}
 
-	if (version_compare(PHP_VERSION, '5.2.5', '<=')) {
-		static $seeded;
-		if (!isset($seeded)) {
-			$seeded = true;
-			mt_srand(fmod(time() * getmypid(), 0x7FFFFFFF) ^ fmod(1000000 * lcg_value(), 0x7FFFFFFF));
-		}
-	}
-
 	static $crypto;
 
 	if (!isset($crypto)) {

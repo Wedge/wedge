@@ -291,10 +291,8 @@ function EditSmileySets()
 				$smileys = array();
 				$dir = dir(ASSETS_DIR . '/smileys/' . $context['current_set']['path']);
 				while ($entry = $dir->read())
-				{
 					if (in_array(strrchr($entry, '.'), array('.jpg', '.gif', '.jpeg', '.png')))
 						$smileys[strtolower($entry)] = $entry;
-				}
 				$dir->close();
 
 				// Exclude the smileys that are already in the database.
@@ -307,8 +305,7 @@ function EditSmileySets()
 					)
 				);
 				while ($row = wesql::fetch_assoc($request))
-					if (isset($smileys[strtolower($row['filename'])]))
-						unset($smileys[strtolower($row['filename'])]);
+					unset($smileys[strtolower($row['filename'])]);
 				wesql::free_result($request);
 
 				$context['current_set']['can_import'] = count($smileys);
@@ -532,10 +529,8 @@ function AddSmiley()
 		{
 			$writeErrors = array();
 			foreach ($context['smiley_sets'] as $set)
-			{
 				if (!is_writable(ASSETS_DIR . '/smileys/' . un_htmlspecialchars($set['path'])))
 					$writeErrors[] = $set['path'];
-			}
 			if (!empty($writeErrors))
 				fatal_lang_error('smileys_upload_error_notwritable', true, array(implode(', ', $writeErrors)));
 		}
@@ -1352,8 +1347,7 @@ function ImportSmileys($smileyPath)
 		)
 	);
 	while ($row = wesql::fetch_assoc($request))
-		if (isset($smileys[strtolower($row['filename'])]))
-			unset($smileys[strtolower($row['filename'])]);
+		unset($smileys[strtolower($row['filename'])]);
 	wesql::free_result($request);
 
 	$request = wesql::query('
@@ -1683,6 +1677,7 @@ function sortSmileyTable()
 // A helper function to easily wipe out the smiley cache, both in the file cache and in the CSS cache.
 function cleanSmileyCache($clean_cache = true)
 {
+	updateSettings(array('smiley_cache' => time() % 1000));
 	cache_put_data('smiley_parser', null, 'forever');
 	cache_put_data('smiley_poster', null, 'forever');
 	if ($clean_cache)

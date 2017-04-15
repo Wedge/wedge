@@ -35,6 +35,8 @@ function loadConstants()
 	{
 		$detected_url = PROTOCOL;
 		$detected_url .= empty($_SERVER['HTTP_HOST']) ? $_SERVER['SERVER_NAME'] . (empty($_SERVER['SERVER_PORT']) || $_SERVER['SERVER_PORT'] == '80' ? '' : ':' . $_SERVER['SERVER_PORT']) : $_SERVER['HTTP_HOST'];
+		if (WEDGE === 'SSI' && $detected_url !== $boardurl && substr($boardurl, 0, 6) !== substr($detected_url, 0, 6))
+			$boardurl = preg_replace('~^https?://~', PROTOCOL, $boardurl);
 		$temp = preg_replace('~/' . basename($scripturl) . '(/.+)?$~', '', strtr(dirname($_SERVER['PHP_SELF']), '\\', '/'));
 		if ($temp != '/')
 			$detected_url .= $temp;
@@ -97,13 +99,11 @@ function loadConstants()
  *
  * By the time we're done, everything should have slashes (regardless of php.ini).
  *
- * - Identifies which function to run to handle magic_quotes.
  * - Removes $HTTP_POST_* if set.
  * - Aborts if someone is trying to set $GLOBALS via $_REQUEST or the cookies (in the case of register_globals being on)
  * - Aborts if someone is trying to use numeric keys (e.g. index.php?1=2) in $_POST, $_GET or $_FILES and dumps them if found in $_COOKIE.
  * - Ensure we have the current querystring, and that it's valid.
  * - Check if the server is using ; as the separator, and parse the URL if not.
- * - Cleans input strings dependent on magic_quotes settings.
  * - Process everything in $_GET to ensure it all has entities.
  * - Rebuild $_REQUEST to be $_POST and $_GET only (never $_COOKIE)
  * - Check if $topic and $board are set and push them into the global space.
@@ -144,9 +144,6 @@ function cleanRequest()
 
 	define('INVALID_IP', '00000000000000000000000000000000');
 
-	// Determine what function will be used to reverse magic quotes.
-	$removeMagicQuoteFunction = ini_get('magic_quotes_sybase') || strtolower(ini_get('magic_quotes_sybase')) == 'on' ? 'unescapestring__recursive' : 'stripslashes__recursive';
-
 	$supports_semicolon = strpos(ini_get('arg_separator.input'), ';') !== false;
 
 	// Are we going to need to parse the ; out?
@@ -157,19 +154,13 @@ function cleanRequest()
 
 		// Was this redirected? If so, get the REDIRECT_QUERY_STRING.
 		$_SERVER['QUERY_STRING'] = substr($_SERVER['QUERY_STRING'], 0, 5) === 'url=/' ? $_SERVER['REDIRECT_QUERY_STRING'] : $_SERVER['QUERY_STRING'];
+		$_SERVER['QUERY_STRING'] = preg_replace('~%3b([a-z0-9]+)%3d([^%;]*)~i', ';$1=$2', $_SERVER['QUERY_STRING']);
 
 		// Replace ';' with '&' and '&something&' with '&something=&'. (This is done for compatibility...)
 		parse_str(preg_replace('~&(\w+)(?=&|$)~', '&$1=', strtr($_SERVER['QUERY_STRING'], array(';?' => '&', ';' => '&', '%00' => '', "\0" => ''))), $_GET);
-
-		// Magic quotes still applies with parse_str - so clean it up.
-		if (function_exists('get_magic_quotes_gpc') && @get_magic_quotes_gpc() != 0 && empty($settings['integrate_magic_quotes']))
-			$_GET = $removeMagicQuoteFunction($_GET);
 	}
 	elseif ($supports_semicolon)
 	{
-		if (function_exists('get_magic_quotes_gpc') && @get_magic_quotes_gpc() != 0 && empty($settings['integrate_magic_quotes']))
-			$_GET = $removeMagicQuoteFunction($_GET);
-
 		// Search engines will send action=profile%3Bu=1, which confuses PHP.
 		foreach ($_GET as $k => $v)
 		{
@@ -199,8 +190,6 @@ function cleanRequest()
 	if (!empty($_SERVER['REQUEST_URI']) && strpos($_SERVER['REQUEST_URI'], basename(SCRIPT) . '/') !== false)
 	{
 		parse_str(substr(preg_replace('~&(\w+)(?=&|$)~', '&$1=', strtr(preg_replace('~/([^,/]+),~', '/$1=', substr($_SERVER['REQUEST_URI'], strpos($_SERVER['REQUEST_URI'], basename(SCRIPT)) + strlen(basename(SCRIPT)))), '/', '&')), 1), $temp);
-		if (function_exists('get_magic_quotes_gpc') && @get_magic_quotes_gpc() != 0 && empty($settings['integrate_magic_quotes']))
-			$temp = $removeMagicQuoteFunction($temp);
 		$_GET += $temp;
 	}
 
@@ -211,7 +200,7 @@ function cleanRequest()
 	//	$_SERVER['HTTP_HOST'] = strpos($_SERVER['HTTP_HOST'], ':') === false ? $_SERVER['HTTP_HOST'] : substr($_SERVER['HTTP_HOST'], 0, strpos($_SERVER['HTTP_HOST'], ':'));
 	$do_pretty = !empty($settings['pretty_enable_filters']);
 	if ($do_pretty)
-		$query_string = str_replace(substr(ROOT, strpos(ROOT, '://') + 3), '/', $full_request);
+		$qs = str_replace(substr(ROOT, strpos(ROOT, '://') + 3), '/', $full_request);
 
 	$board = 0;
 	if (isset($_GET['board']) && is_numeric($_GET['board']))
@@ -240,6 +229,7 @@ function cleanRequest()
 			$_SERVER['REAL_HTTP_HOST'] = $_SERVER['HTTP_HOST'];
 			$_SERVER['HTTP_HOST'] = $full_board['url'];
 			$_SERVER['REQUEST_URI'] = $ru = str_replace($full_board['url'], '', $full_request);
+			$qs = str_replace(substr(ROOT, strpos(ROOT, '://') + 3), '/', $ru);
 
 			// We will now be analyzing the request URI to find our topic ID and various options...
 
@@ -253,13 +243,15 @@ function cleanRequest()
 				$_GET['month'] = str_replace('/', '', $m[1]);
 				$_GET['start'] = empty($m[2]) ? 0 : $m[2];
 				$_GET['pretty'] = 1;
+				$qs = str_replace($m[0], '', $qs);
 			}
 			// URL: /1234/topic/new/?something or /1234/topic/2/?something (get topic ID 1234, named 'topic')
-			elseif (preg_match('~^/(\d+)/(?:[^/]+)/(\d+|msg\d+|from\d+|new)?~u', $ru, $m))
+			elseif (preg_match('~^/(\d+)/(?:[^/]+)(?:/(\d+|msg\d+|from\d+|new)?)~u', $ru, $m))
 			{
 				$_GET['topic'] = $m[1];
 				$_GET['start'] = empty($m[2]) ? 0 : $m[2];
 				$_GET['pretty'] = 1;
+				$qs = str_replace($m[0], '', $qs);
 			}
 			// URL: /cat/hello/?something or /tag/me/p15/ (get all topics from category 'hello', or page 2 of all topics with tag 'me')
 			elseif (preg_match('~^/(cat|tag)/([^/]+)(?:/p(\d+))?~u', $ru, $m))
@@ -267,12 +259,14 @@ function cleanRequest()
 				$_GET[$m[1]] = $m[2];
 				$_GET['start'] = empty($m[3]) ? 0 : $m[3];
 				$_GET['pretty'] = 1;
+				$qs = str_replace($m[0], '', $qs);
 			}
 			// URL: /p15/ (board index, page 2)
 			elseif (preg_match('~^/p(\d+)~', $ru, $m))
 			{
 				$_GET['start'] = empty($m[1]) ? 0 : $m[1];
 				$_GET['pretty'] = 1;
+				$qs = str_replace($m[0], '', $qs);
 			}
 		}
 		else
@@ -286,7 +280,7 @@ function cleanRequest()
 	if ($do_pretty)
 	{
 		// URL has the form domain.com/profile/User?
-		if (preg_match('`/' . (isset($settings['pretty_prefix_profile']) ? $settings['pretty_prefix_profile'] : 'profile/') . '([^/?]*)`', $query_string, $m))
+		if (preg_match('`/' . (isset($settings['pretty_prefix_profile']) ? $settings['pretty_prefix_profile'] : 'profile/') . '([^/?]*)`', $qs, $m))
 		{
 			if (empty($m[1]) && empty($_GET['u']))
 				$_GET['u'] = 0;
@@ -299,7 +293,7 @@ function cleanRequest()
 			$_GET['category'] = (int) $m[1];
 
 		// If URL has the form domain.com/wahetever/do/action, it's an action. Really.
-		if (preg_match('~/' . (isset($settings['pretty_prefix_action']) ? $settings['pretty_prefix_action'] : 'do/') . '([a-zA-Z0-9]+)~', $query_string, $m) && isset($action_list[$m[1]]))
+		if (preg_match('~/*' . (isset($settings['pretty_prefix_action']) ? $settings['pretty_prefix_action'] : 'do/') . '([a-zA-Z0-9]+)~', $qs, $m) && isset($action_list[$m[1]]))
 			$_GET['action'] = $m[1];
 	}
 
@@ -353,17 +347,6 @@ function cleanRequest()
 			updateErrorCount();
 		}
 		exit('404 Not Found');
-	}
-
-	// If magic quotes are on, we have some work to do...
-	if (function_exists('get_magic_quotes_gpc') && @get_magic_quotes_gpc() != 0)
-	{
-		$_ENV = $removeMagicQuoteFunction($_ENV);
-		$_POST = $removeMagicQuoteFunction($_POST);
-		$_COOKIE = $removeMagicQuoteFunction($_COOKIE);
-		foreach ($_FILES as $k => $dummy)
-			if (isset($_FILES[$k]['name']))
-				$_FILES[$k]['name'] = $removeMagicQuoteFunction($_FILES[$k]['name']);
 	}
 
 	// Add entities to GET. This is kinda like the slashes on everything else.
@@ -492,11 +475,11 @@ function cleanRequest()
 		// We already check for X-Forwarded-For anyway in Wedge. But if we happen to have something else, let's use that.
 		if (!empty($settings['reverse_proxy_header']) && $settings['reverse_proxy_header'] != 'X-Forwarded-For')
 		{
-			$header = 'HTTP_' . strtoupper($settings['reverse_proxy_header']);
+			$header = 'HTTP_' . strtoupper(str_replace('-', '_', $settings['reverse_proxy_header']));
 			if (!empty($_SERVER[$header]))
 				$_SERVER['HTTP_X_FORWARDED_FOR'] = $_SERVER[$header];
 		}
-		$context['additional_headers']['X-Detected-Remote-Address'] = $_SERVER['REMOTE_ADDR'];
+		$context['additional_headers']['x-detected-remote-address'] = $_SERVER['REMOTE_ADDR'];
 		if (!empty($settings['reverse_proxy_ips']))
 			$reverse_proxies = explode("\n", $settings['reverse_proxy_ips']); // We don't want this set if we're not knowingly using them.
 	}
@@ -739,20 +722,20 @@ function htmltrim__recursive($var, $level = 0)
  * - Uses apache_request_headers() if running on Apache as a CGI module (recommended).
  * - If this is not available, $_SERVER will be examined for HTTP_ variables which should translate to headers. (This process works on PHP-CLI, IIS and lighttpd at least)
  *
- * @return array A key/value pair of the HTTP headers for this request.
+ * @return array A key/value pair of the HTTP headers for this request, all lowercased, for better compatibility with weird headers like X-Real-IP.
  */
 function get_http_headers()
 {
 	if (is_callable('apache_request_headers'))
-		return apache_request_headers();
+		return array_change_key_case(apache_request_headers());
 
 	$headers = array();
 	foreach ($_SERVER as $key => $value)
 		if (strpos($key, 'HTTP_') === 0)
-			$headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($key, 5)))))] = $value;
+			$headers[strtolower(str_replace('_', '-', substr($key, 5)))] = $value;
 
-	if (!empty($_SERVER['REAL_HTTP_HOST']) && $_SERVER['REAL_HTTP_HOST'] != $headers['Host'])
-		$headers['Host'] = $_SERVER['REAL_HTTP_HOST'];
+	if (!empty($_SERVER['REAL_HTTP_HOST']) && $_SERVER['REAL_HTTP_HOST'] != $headers['host'])
+		$headers['host'] = $_SERVER['REAL_HTTP_HOST'];
 
 	return $headers;
 }

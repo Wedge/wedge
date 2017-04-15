@@ -410,8 +410,14 @@ function Post2()
 	$_POST['subject'] = isset($_POST['subject']) ? westr::htmlspecialchars($_POST['subject'], ENT_QUOTES) : '';
 	$_POST['message'] = isset($_POST['message']) ? westr::htmlspecialchars($_POST['message'], ENT_QUOTES) : '';
 
+    // At this point, we want to make sure the subject isn't too long.
+    $len_form_subject = westr::strlen($_POST['subject']);
+    $max_subject_length = !empty($settings['max_subjectLength']) ? $settings['max_subjectLength'] : 80;
 	if (westr::htmltrim($_POST['subject']) === '')
 		$post_errors[] = 'no_subject';
+    elseif ($len_form_subject > $max_subject_length)
+        $post_errors[] = ['subject_too_long', [$max_subject_length, $len_form_subject]];
+
 	if (westr::htmltrim($_POST['message']) === '')
 		$post_errors[] = 'no_message';
 	elseif (!empty($settings['max_messageLength']) && westr::strlen($_POST['message']) > $settings['max_messageLength'])
@@ -574,10 +580,6 @@ function Post2()
 	$_POST['subject'] = strtr($_POST['subject'], array("\r" => '', "\n" => '', "\t" => ''));
 	$_POST['guestname'] = htmlspecialchars($_POST['guestname']);
 	$_POST['email'] = htmlspecialchars($_POST['email']);
-
-	// At this point, we want to make sure the subject isn't too long.
-	if (westr::strlen($_POST['subject']) > 100)
-		$_POST['subject'] = westr::substr($_POST['subject'], 0, 100);
 
 	// Make the poll...
 	if (isset($_REQUEST['poll']))

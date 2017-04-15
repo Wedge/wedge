@@ -125,7 +125,7 @@ function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow =
 
 	$lang_name = !empty($settings['js_lang'][$id]) && !empty(we::$user['language']) && we::$user['language'] != $settings['language'] ? we::$user['language'] . '-' : '';
 	$can_gzip = !empty($settings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
-	$ext = $can_gzip ? (we::is('safari[-5.1]') ? '.jgz' : (we::is('ie[11-]') ? '.gz.js' : '.js.gz')) : '.js';
+	$ext = $can_gzip ? (we::is('safari[-5.1]') ? '.jgz' : '.js.gz') : '.js';
 
 	// jQuery never gets updated, so let's be bold and shorten its filename to... The version number!
 	$is_jquery = count($files) == 1 && reset($files) == 'jquery-' . $context['jquery_version'] . '.min.js';
@@ -215,7 +215,7 @@ function add_plugin_js_file($plugin_name, $files = array(), $is_direct_url = fal
 
 	$lang_name = !empty($settings['js_lang'][$id]) && !empty(we::$user['language']) && we::$user['language'] != $settings['language'] ? we::$user['language'] . '-' : '';
 	$can_gzip = !empty($settings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
-	$ext = $can_gzip ? (we::is('safari[-5.1]') ? '.jgz' : (we::is('ie[11-]') ? '.gz.js' : '.js.gz')) : '.js';
+	$ext = $can_gzip ? (we::is('safari[-5.1]') ? '.jgz' : '.js.gz') : '.js';
 
 	if (!file_exists(CACHE_DIR . '/js/' . $id . $lang_name . $latest_date . $ext))
 		wedge_cache_js($id, $lang_name, $latest_date, $ext, $files, $can_gzip, true);
@@ -402,7 +402,7 @@ function add_css_file($original_files = array(), $add_link = true, $is_main = fa
 	$latest_date %= 1000000;
 
 	$can_gzip = !empty($settings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
-	$ext = $can_gzip ? (we::is('safari[-5.1]') ? '.cgz' : (we::is('ie[11-]') ? '.gz.css' : '.css.gz')) : '.css';
+	$ext = $can_gzip ? (we::is('safari[-5.1]') ? '.cgz' : '.css.gz') : '.css';
 
 	// And the language. Only do it if the skin allows for multiple languages and we're not in English mode.
 	if (isset($context['skin_available_languages']) && we::$user['language'] !== 'english')
@@ -479,7 +479,7 @@ function add_plugin_css_file($plugin_name, $original_files = array(), $add_link 
 	$latest_date %= 1000000;
 
 	$can_gzip = !empty($settings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
-	$ext = $can_gzip ? (we::is('safari[-5.1]') ? '.cgz' : (we::is('ie[11-]') ? '.gz.css' : '.css.gz')) : '.css';
+	$ext = $can_gzip ? (we::is('safari[-5.1]') ? '.cgz' : '.css.gz') : '.css';
 
 	// Build the target folder from our plugin's file names. We don't need to show 'common-index-sections-extra-custom' in the main filename, though!
 	$target_folder = trim(str_replace(array('/', ':'), '-', strtolower($plugin_name) . '-' . implode('-', array_filter(array_diff($original_files, (array) 'common', $ignore_files)))), '-');
@@ -573,7 +573,7 @@ function wedge_get_css_filename($add)
  * @param integer $latest_date The most recent filedate (Unix timestamp format), to be used to differentiate the latest copy from expired ones.
  * @param string $css The CSS file to process, or an array of CSS files to process, in order, with complete path names.
  * @param boolean $gzip Set to true if you want the final file to be compressed with gzip.
- * @param string $ext The extension for the final file. Default is '.css', some browsers (old Safari, IE 11) may have problems with '.css.gz' if gzipping is enabled.
+ * @param string $ext The extension for the final file. Default is '.css', some browsers may have problems with '.css.gz' if gzipping is enabled.
  * @return array $additional_vars An array of key-pair values to associate custom CSS variables with their intended replacements.
  */
 function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false, $ext = '.css', $additional_vars = array())
@@ -690,9 +690,10 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 	$final = preg_replace('~//[ \t][^\n]*~', '', $final); // Strip remaining comments like me. OMG does this mean I'm gonn
 
 	// Just like comments, we're going to preserve content tags.
-	preg_match_all('~(?<=\s)content\h*:\h*(.*?)[\h;]*(?=[}\v])~', $final, $contags);
+	$final = preg_replace('~(?<=\s)content\h*:\h*~', 'content:', $final);
+	preg_match_all('~(?<=\s)content:(.*?)[\h;]*(?=[}\v])~', $final, $contags);
 	$context['reset_content_counter'] = true;
-	$final = preg_replace_callback('~(?<=\s)content\h*:\h*.*?[\h;]*(?=[}\v])~', 'wedge_hide_content', $final);
+	$final = preg_replace_callback('~(?<=\s)content:.*?[\h;]*(?=[}\v])~', 'wedge_hide_content', $final);
 
 	foreach ($plugins as $plugin)
 		$plugin->process($final);
@@ -803,7 +804,7 @@ function wedge_hide_content()
 		$i = 0;
 		unset($context['reset_content_counter']);
 	}
-	return 'content: wedge' . $i++;
+	return 'content:wedge' . $i++;
 }
 
 function wedge_replace_theme_vars($match)
@@ -1204,6 +1205,9 @@ function wedge_cache_js($id, &$lang_name, $latest_date, $ext, $js, $gzip = false
 		if (!empty($comments[0]))
 			$final = str_replace($comments[0], 'WEDGE_COMMENT();', $final);
 
+		$final = preg_replace('~/\*.*?\*/~s', '', $final); // Strip multi-line comments
+		$final = preg_replace('~\s//[^\n]*~', '', $final); // Strip single-line comments
+
 		loadSource('Class-Packer');
 		$packer = new Packer;
 		$final = $packer->pack($final);
@@ -1281,9 +1285,8 @@ function wedge_cache_js($id, &$lang_name, $latest_date, $ext, $js, $gzip = false
  *
  * @param string $set The current smiley folder
  * @param array $smileys The list of smileys to cache
- * @param string $extra '-ie', if using oldIE, which doesn't support base64 encoding.
  */
-function wedge_cache_smileys($set, $smileys, $extra)
+function wedge_cache_smileys($set, $smileys)
 {
 	global $context, $settings;
 
@@ -1292,21 +1295,27 @@ function wedge_cache_smileys($set, $smileys, $extra)
 	$url = SMILEYS . '/' . $set . '/';
 
 	// Delete other cached versions, if they exist.
-	clean_cache($context['smiley_ext'], 'smileys' . $extra, CACHE_DIR . '/css');
+	clean_cache($context['smiley_ext'], 'smileys', CACHE_DIR . '/css');
 
 	foreach ($smileys as $name => $smiley)
 	{
 		$filename = $path . $smiley['file'];
+		$cur_url = $url;
 		if (!file_exists($filename))
-			continue;
+		{
+			if (!file_exists($tmp = ASSETS_DIR . '/smileys/default/' . $smiley['file']))
+				continue;
+			$filename = $tmp;
+			$cur_url = SMILEYS . '/default/';
+		}
 		// Only small files should be embedded, really. 4KB should have a fair bandwidth/hit ratio.
-		if ($extra || ($smiley['embed'] && filesize($filename) > 4096) || !$context['smiley_gzip'])
+		if (($smiley['embed'] && filesize($filename) > 4096) || !$context['smiley_gzip'])
 			$smiley['embed'] = false;
 		list ($width, $height) = getimagesize($filename);
 		$ext = strtolower(substr($filename, strrpos($filename, '.') + 1));
 		$stream = 'final_' . ($smiley['embed'] ? 'gzip' : 'raw');
 		$$stream .= '.' . $name . '{width:' . $width . 'px;height:' . $height . 'px;background:url('
-				. ($smiley['embed'] ? 'data:image/' . $ext . ';base64,' . base64_encode(file_get_contents($filename)) : $url . $smiley['file']) . ')}';
+				. ($smiley['embed'] ? 'data:image/' . $ext . ';base64,' . base64_encode(file_get_contents($filename)) : $cur_url . $smiley['file']) . ')}';
 	}
 
 	// We can't apply a mixin here, but as .smiley is a naturally inline tag anyway, .inline-block isn't needed.
@@ -1318,7 +1327,7 @@ function wedge_cache_smileys($set, $smileys, $extra)
 	if ($context['smiley_gzip'])
 		$final = gzencode($final, 9);
 
-	file_put_contents(CACHE_DIR . '/css/smileys' . $extra . ($set == 'default' ? '' : '-' . $set) . '-' . $context['smiley_now'] . $context['smiley_ext'], $final);
+	file_put_contents(CACHE_DIR . '/css/smileys' . ($set == 'default' ? '' : '-' . $set) . '-' . $settings['smiley_cache'] . $context['smiley_ext'], $final);
 }
 
 /**
@@ -1377,7 +1386,7 @@ function theme_base_js($indenting = 0)
 	return (!empty($context['remote_js_files']) ? '
 ' . $tab . '<script src="' . implode('"></script>
 ' . $tab . '<script src="', $context['remote_js_files']) . '"></script>
-	<script>window.$ || document.write(\'<script src="' . add_js_file('jquery-' . $context['jquery_version'] . '.min.js', false, true) . '"><\/script>\');</script>' : '') . '
+	<script>window.$||document.write(\'<script src="' . add_js_file('jquery-' . $context['jquery_version'] . '.min.js', false, true) . '"><\/script>\')</script>' : '') . '
 ' . $tab . '<script src="' . add_js_file(
 		array_keys($context['main_js_files']), false, true,
 		array_diff($context['main_js_files'], array_filter($context['main_js_files']))
@@ -1904,10 +1913,21 @@ function cache_put_data($key, $val, $ttl = 120)
 			if (file_put_contents(CACHE_DIR . '/keys/' . $key . '.php', $cache_data, LOCK_EX) !== strlen($cache_data))
 				@unlink(CACHE_DIR . '/keys/' . $key . '.php');
 		}
+		invalidate_opcache($key);
 	}
 
 	if (!empty($db_show_debug))
 		$cache_hits[$cache_count]['t'] = microtime(true) - $st;
+}
+
+function invalidate_opcache($key)
+{
+	// Invalidate opcode and APC caches if available.
+	if (function_exists('opcache_invalidate'))
+		opcache_invalidate(CACHE_DIR . '/keys/' . $key . '.php', true);
+
+	if (function_exists('apc_delete_file'))
+		apc_delete_file(CACHE_DIR . '/keys/' . $key . '.php');
 }
 
 /**
@@ -1946,9 +1966,12 @@ function cache_get_data($orig_key, $ttl = 120, $put_callback = null)
 	// Otherwise it's the file cache!
 	elseif (file_exists(CACHE_DIR . '/keys/' . $key . '.php') && @filesize(CACHE_DIR . '/keys/' . $key . '.php') > 10)
 	{
-		@include(CACHE_DIR . '/keys/' . $key . '.php');
+		include(CACHE_DIR . '/keys/' . $key . '.php');
 		if (empty($valid))
+		{
 			@unlink(CACHE_DIR . '/keys/' . $key . '.php');
+			invalidate_opcache($key);
+		}
 	}
 
 	if (!empty($db_show_debug))

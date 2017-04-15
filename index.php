@@ -15,12 +15,10 @@ define('WEDGE_VERSION', '1.0-beta');
 define('WEDGE', 5); // Internal snapshot number.
 
 // Get everything started up...
-if (version_compare(PHP_VERSION, '5.3') < 0)
-	exit('Wedge requires PHP 5.3 or better to be installed on your server.');
-if (version_compare(PHP_VERSION, '5.4') < 0 && function_exists('set_magic_quotes_runtime'))
-	@set_magic_quotes_runtime(0);
+if (version_compare(PHP_VERSION, '5.4') < 0)
+	exit('You need at least PHP 5.4 on your server to use Wedge!');
 
-error_reporting(E_ALL | E_STRICT);
+error_reporting(E_ALL);
 @ini_set('display_errors', '1');
 @ini_set('memory_limit', '128M');
 $time_start = microtime(true);
@@ -175,20 +173,20 @@ function loadSource($source_name)
 	{
 		if (isset($done[$file]))
 			continue;
-		$done[$file] = true;
+		$dest = APP_DIR . '/' . $file . '.php';
 		if (defined('WEDGE_INSTALL') || $file === 'Subs-CachePHP' || strpos($file, 'getid3') !== false)
-			$cache = APP_DIR . '/' . $file . '.php';
+			$cache = $dest;
 		else
 		{
 			$cache = ROOT_DIR . '/gz/app/' . str_replace(array('/', '..'), array('_', 'UP'), $file) . '.php';
-			if (!file_exists($cache) || filemtime($cache) < filemtime(APP_DIR . '/' . $file . '.php'))
+			if (!file_exists($cache) || filemtime($cache) < filemtime($dest))
 			{
 				loadSource('Subs-CachePHP');
-				apply_plugin_mods(APP_DIR . '/' . $file . '.php', $cache);
-				minify_php($cache);
+				cache_source_file($dest, $cache);
 			}
 		}
 		require_once($cache);
+		$done[$file] = true;
 	}
 }
 

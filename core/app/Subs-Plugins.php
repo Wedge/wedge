@@ -790,9 +790,9 @@ function testRequiredVersions($manifest_element)
 	// So, minimum versions? PHP?
 	if (!empty($min_versions['php']))
 	{
-		// Users might insert 5 or 5.3 or 5.3.0. version_compare considers 5.3 to be less than 5.3.0. So we have to normalize it.
+		// Users might insert 5 or 5.4 or 5.4.0. version_compare() considers 5.4 to be less than 5.4.0, so we have to normalize it.
 		preg_match('~^\d(\.\d){2}~', $min_versions['php'] . '.0.0', $matches);
-		if (!empty($matches[0]) && version_compare($matches[0], PHP_VERSION, '>='))
+		if (!empty($matches[0]) && version_compare(PHP_VERSION, $matches[0], '<'))
 			$required_versions['php'] = array($matches[0], PHP_VERSION);
 	}
 
@@ -803,7 +803,7 @@ function testRequiredVersions($manifest_element)
 		$mysql_version = wedb::get_version();
 
 		preg_match('~^\d(\.\d){2}~', $min_versions['mysql'] . '.0.0', $matches);
-		if (!empty($matches[0]) && version_compare($matches[0], $mysql_version, '>='))
+		if (!empty($matches[0]) && version_compare($mysql_version, $matches[0], '<'))
 			$required_versions['mysql'] = array($matches[0], $mysql_version);
 	}
 

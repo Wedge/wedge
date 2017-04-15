@@ -1125,9 +1125,9 @@ function redirectexit($setLocation = '', $refresh = false, $permanent = false)
 	if ($is_internal = !preg_match('~^(?:http|ftp)s?://~', $setLocation))
 		$setLocation = SCRIPT . ($setLocation != '' ? '?' . $setLocation : '');
 
-	// Put the session ID in.
-	if (defined('SID') && SID != '')
-		$setLocation = preg_replace('/^' . preg_quote(SCRIPT, '/') . '(?!\?' . preg_quote(SID, '/') . ')\\??/', SCRIPT . '?' . SID . ';', $setLocation);
+	// Put the session ID in, if it's not already in a cookie.
+	if (defined('SID') && SID != '' && (!isset($_COOKIE[session_name()]) || $_COOKIE[session_name()] !== session_id()))
+		$setLocation = preg_replace('/^' . preg_quote(SCRIPT, '/') . '(?!\?' . preg_quote(SID, '/') . ')\\??/', SCRIPT . '?' . westr::safe(SID) . ';', $setLocation);
 	// Keep that debug in their for template debugging!
 	elseif (isset($_GET['debug']))
 		$setLocation = preg_replace('/^' . preg_quote(SCRIPT, '/') . '\\??/', SCRIPT . '?debug;', $setLocation);
@@ -1470,7 +1470,8 @@ function preventPrefetch($always = false)
 
 	if ($always || (empty($settings['allow_prefetching']) && isset($_SERVER['HTTP_X_MOZ']) && $_SERVER['HTTP_X_MOZ'] == 'prefetch'))
 	{
-		while (@ob_end_clean());
+		while (ob_get_length())
+			ob_end_clean();
 		header('HTTP/1.1 403' . ($always ? '' : ' Prefetch') . ' Forbidden');
 		exit;
 	}
@@ -2130,7 +2131,7 @@ function setupMenuContext()
 				'root' => array(
 					'title' => $context['forum_name'],
 					'href' => '<URL>',
-					'show' => $is_b,
+					'show' => $is_b || we::is('mobile'),
 				),
 				'board' => array(
 					'title' => $is_b ? $board_info['name'] : '',
@@ -2269,7 +2270,7 @@ function setupMenuContext()
 				'skin' => array(
 					'title' => $txt['change_skin'],
 					'href' => '<URL>?action=skin',
-					'show' => allowedTo(array('profile_extra_any', 'profile_extra_own')),
+					'show' => allowedTo(array('profile_extra_any', 'profile_extra_own')) && (we::$is_member || empty(we::$user['possibly_robot'])),
 				),
 				'',
 				'logout' => array(
@@ -2296,7 +2297,7 @@ function setupMenuContext()
 
 	// Amalgamate the items in the admin menu.
 	if (!empty($error_count) || !empty($items['admin']['items']['reports']['notice']) || !empty($context['unapproved_members']))
-		$items['admin']['notice'] = $error_count + (int) $items['admin']['items']['reports']['notice'] + (int) $context['unapproved_members'];
+		$items['admin']['notice'] = (int) $error_count + (int) $items['admin']['items']['reports']['notice'] + (int) $context['unapproved_members'];
 
 	// Allow editing menu items easily.
 	// Use PHP's array_splice to add entries at a specific position.
@@ -2309,14 +2310,17 @@ function setupMenuContext()
 		if (!empty($item['show']))
 		{
 			$item['active_item'] = false;
+			$was_sep = true;
 
 			// Go through the sub items if there are any.
 			if (!empty($item['items']))
 			{
 				foreach ($item['items'] as $key => $subitem)
 				{
-					if (empty($subitem['show']) && !empty($subitem))
+					if ((empty($subitem['show']) && !empty($subitem)) || ($was_sep && $subitem === ''))
 						unset($item['items'][$key]);
+					else
+						$was_sep = $subitem === '';
 
 					// 2nd level sub items next...
 					if (!empty($subitem['items']))

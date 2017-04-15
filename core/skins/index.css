@@ -50,6 +50,10 @@
 
 html
 	min-height: 100%
+	// IE (tested v11) is forcing a horizontal scrollbar otherwise.
+	@if ie
+		overflow-x: hidden
+	@endif
 	overflow-y: scroll
 	background: #369																			// For old browsers...
 	background: fixed linear-gradient(45deg, #505b66, #a0a6ab 500px, #505b66 1000px, #505b66)	// Fallback background for browsers that support linear gradients...
@@ -470,7 +474,7 @@ em
 	margin-top: 0
 
 // Fold/unfold icon
-.upshrinks mixes .inline-block
+.upshrinks virtual mixes .inline-block
 	background: url($images/upshrinks.png) no-repeat
 	text-decoration: none
 
@@ -556,7 +560,7 @@ select.sb
 	.text mixes .inline-block("baseline")
 		width: 100%
 		small
-			color: #aaa
+			color: #888
 			float: right
 			margin-left: 5px
 
@@ -1320,6 +1324,7 @@ table
 		border-bottom: 0
 		font-size: 80%
 		padding: .3em
+		text-align: left
 
 // A quote, usually from another post.
 .bbc_quote
@@ -1499,7 +1504,7 @@ section.block extends .wrc
 		@if $sub_radius
 			border-radius: $sub_radius $sub_radius 0 0
 		@endif
-		margin: -0.9em -1.2em 1em
+		margin: -.9em -1.2em 1em
 		a
 			text-decoration: underline
 	footer extends .wefoot
@@ -1507,7 +1512,7 @@ section.block extends .wrc
 		@if $sub_radius
 			border-radius: 0 0 $sub_radius $sub_radius
 		@endif
-		margin: .5em -1.2em -0.9em
+		margin: .5em -1.2em -.9em
 	dl.settings
 		margin: 0
 
@@ -1652,7 +1657,6 @@ dfn
 
 dl#feed
 	clear: right
-	overflow: auto
 	margin: 10px 0 0
 	padding: 0
 	dt, dd
@@ -1883,7 +1887,7 @@ h6
 	:first-child
 		margin-top: 0
 
-/* Styles used by the auto suggest control.
+/* Styles used by the auto-suggest control.
 ------------------------------------------------------- */
 
 .auto_suggest mixes .hide
@@ -1909,15 +1913,6 @@ h6
 .auto_suggest_hover
 	background-color: #eee
 	cursor: pointer
-
-// The dropdown menu toggle icon
-#menu_toggle
-	float: left
-	margin: 10px 12px 0 0
-
-#sidebar_toggle
-	float: right
-	margin: 3px 0 0 7px
 
 /* Styles for a typical table.
 ------------------------------------------------------- */
@@ -2017,7 +2012,7 @@ h6
 		float: left
 		margin-top: 5px
 		img
-			max-width: 50px
+			max-width, max-height: 50px
 
 	.n_new
 		border-right: 3px solid #d76
@@ -2046,6 +2041,20 @@ h6
 		margin-left: 8px
 		border-left: 3px solid #da7
 		border-bottom: 1px solid #ccc
+
+	.n_markread
+		display: inline-block
+
+	.n_settings
+		display: inline-block
+		color: #666
+		#m_admin
+			margin-bottom: -2px
+
+	@media all and (max-width: 600px)
+		.n_setdesc
+			display: none
+
 @endif
 
 // Used by the Ajax loader. No need to declare it everywhere...

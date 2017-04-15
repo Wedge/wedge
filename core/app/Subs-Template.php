@@ -119,9 +119,7 @@ function obExit($start = null, $do_finish = null, $from_index = false, $from_fat
 		if (!isset($settings['app_error_count']))
 			$settings['app_error_count'] = 0;
 		if (!empty($context['app_error_count']))
-			updateSettings(array(
-				'app_error_count' => $settings['app_error_count'] + $context['app_error_count'],
-			));
+			updateSettings(['app_error_count' => $settings['app_error_count'] + $context['app_error_count']]);
 		exit;
 	}
 }
@@ -163,7 +161,7 @@ function ob_sessrewrite($buffer)
 	}
 
 	// Generate a HTML-safe version of the page title: notably, remove any tags and encode entities. What a messy call though...
-	$page_title = $context['page_title'] ? westr::htmlspecialchars(un_htmlspecialchars(strip_tags($context['page_title'])), ENT_COMPAT, false, false) : '';
+	$page_title = isset($context['page_title']) ? westr::htmlspecialchars(un_htmlspecialchars(strip_tags($context['page_title'])), ENT_COMPAT, false, false) : '';
 
 	// Very fast on-the-fly replacement of post-processing variables like URL and protocol...
 	$buffer = str_replace(array('<URL>', '<PROT>', '<PAGE_TITLE>'), array(SCRIPT, PROTOCOL, $page_title), $buffer);
@@ -834,7 +832,7 @@ function start_output()
 
 	header('Content-Type: text/' . (AJAX ? 'xml' : 'html') . '; charset=UTF-8');
 
-	$context['show_load_time'] = !empty($settings['timeLoadPageEnable']);
+	$context['show_load_time'] = !empty($settings['timeLoadPageEnable']) || we::$is_admin;
 }
 
 /**
@@ -1139,8 +1137,7 @@ function template_include($filename, $once = false, $no_caching = false)
 			handleTemplateErrors($filename);
 		}
 		loadSource('Subs-CachePHP');
-		apply_plugin_mods($filename, $cache);
-		minify_php($cache);
+		cache_source_file($filename, $cache);
 
 		$file_found = file_exists($cache) && eval('?' . '>' . rtrim(file_get_contents($cache))) !== false;
 	}

@@ -473,8 +473,7 @@ function ShowCustomProfiles()
 		$disable_fields = array_flip($standard_fields);
 		if (!empty($_POST['active']))
 			foreach ($_POST['active'] as $value)
-				if (isset($disable_fields[$value]))
-					unset($disable_fields[$value]);
+				unset($disable_fields[$value]);
 
 		// What we have left!
 		$changes['disabled_profile_fields'] = empty($disable_fields) ? '' : implode(',', array_keys($disable_fields));

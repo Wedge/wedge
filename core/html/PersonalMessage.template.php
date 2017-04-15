@@ -57,14 +57,13 @@ function template_pm_popup()
 
 	echo '
 		<ul class="nlist"><li>
-			<span class="floatright">', $context['can_send'] ? '
+			<span class="floatright" style="margin: 0 4px 4px 0">', $context['can_send'] ? '
 				<a href="<URL>?action=pm;sa=send" style="color: #888">' . $txt['notifications_short_write_pm'] . '</a> |' : '', $context['show_drafts'] ? '
 				<a href="<URL>?action=pm;sa=showdrafts" style="color: #888">' . $txt['notifications_short_drafts'] . '</a> |' : '', '
-				<span style="display: inline-block"><a href="<URL>?action=pm;sa=settings" style="color: #666"><span id="m_admin" style="margin-top: 1px"></span>
-				', $txt['notifications_short_settings'], '</a></span>&nbsp;
+				<a href="<URL>?action=pm;sa=settings" class="n_settings"><span id="m_admin"></span><span class="n_setdesc">', $txt['notifications_short_settings'], '</a></span>
 			</span>
-			<span class="floatleft" style="margin-bottom: 4px">
-				&nbsp;<strong>', $txt['notifications_short_unread_pms'], '</strong> |
+			<span class="floatleft" style="margin: 0 0 4px 4px">
+				<strong>', $txt['notifications_short_unread_pms'], '</strong> |
 				<a href="<URL>?action=pm" style="color: #888">', $txt['notifications_short_inbox'], '</a> |
 				<a href="<URL>?action=pm;f=sent" style="color: #888">', $txt['notifications_short_sent'], '</a>
 			</span>

@@ -279,7 +279,7 @@ function aeva_foxy_playlists()
 		LEFT JOIN {db_prefix}media_items AS i ON (i.id_media = pld.id_media)
 		LEFT JOIN {db_prefix}media_albums AS a ON (i.album_id = a.id_album)
 		WHERE pl.id_member = {int:me} ' . (we::$is_admin ? 'OR pl.id_member = 0' : 'AND pl.id_member != 0') . '
-		GROUP BY pl.id_playlist
+		GROUP BY pl.id_playlist, i.title
 		ORDER BY pl.id_playlist ASC',
 		array('me' => MID)
 	);
@@ -321,7 +321,7 @@ function aeva_foxy_playlists()
 		INNER JOIN {db_prefix}media_items AS i ON (i.id_media = pld.id_media)
 		INNER JOIN {db_prefix}media_albums AS a ON (i.album_id = a.id_album AND {query_see_album_hidden})
 		LEFT JOIN {db_prefix}members AS m ON (m.id_member = pl.id_member)
-		GROUP BY pld.id_playlist
+		GROUP BY pld.id_playlist, i.title
 		ORDER BY pl.id_playlist ASC
 		LIMIT {int:start},20',
 		array('start' => $start)
@@ -437,7 +437,7 @@ function aeva_foxy_my_playlists()
 		LEFT JOIN {db_prefix}media_items AS i ON (i.id_media = pld.id_media)
 		LEFT JOIN {db_prefix}media_albums AS a ON (i.album_id = a.id_album)
 		WHERE pl.id_member = {int:me} ' . (we::$is_admin ? 'OR pl.id_member = 0' : 'AND pl.id_member != 0') . '
-		GROUP BY pl.id_playlist
+		GROUP BY pl.id_playlist, i.title
 		ORDER BY pl.id_playlist ASC',
 		array('me' => MID)
 	);

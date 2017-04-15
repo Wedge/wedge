@@ -56,9 +56,6 @@
 		clear: both
 	@if ie[-7]
 		zoom: 1
-		:before
-			content: ""
-			display: table
 	@endif
 
 .vertical-arrow virtual
@@ -91,7 +88,7 @@
 	@if $can_animate
 		width, height: 11px
 		border-radius: 100%
-		border: 1px solid rgba(0,0,0,0.5)
+		border: 1px solid rgba(0,0,0,.5)
 		border-top-color: transparent
 		box-shadow: 1px 1px 7px #777
 		animation: spin 1s infinite linear
@@ -120,7 +117,7 @@
 /* A generic font stack for display purposes (titles, large text...) */
 $generic_stack = "Franklin Gothic Medium", "Franklin Gothic", "Segoe UI", Helvetica, Arial, sans-serif
 
-@if ios // Helvetica Light looks good on my iPod.
+@if ios // iOS favors Helvetica Light.
 	$generic_stack = HelveticaNeue-Light, "Helvetica Neue Light", "Helvetica Neue", Helvetica, sans-serif
 @endif
 
@@ -190,8 +187,8 @@ $can_flex		= @is ("firefox[22-], opera[12.1-], chrome[27-], ie[10-], safari[7-]"
 /* List browsers that support CSS3 animations (Wedge adds prefixes automatically.) */
 $can_animate	= @is ("chrome, firefox[5-], opera[12-], ie[10-], safari[4-], ios[3.2-], android[2.1-]")
 
-/* List browsers that support CSS filters (not the old IE ones!). Note that Firefox[3.5-] supports filter: url() with SVG filters. */
-$can_filter		= @is ("chrome[18-], safari[6-]")
+/* List browsers that support CSS filters (not the old IE ones!). */
+$can_filter		= @is ("chrome[18-], firefox[35-], safari[6-], android[4.4-]")
 
-/* List browsers that support position: sticky. iOS needs a prefix, others do not. Support data is as of September 2014. */
-$can_sticky		= @is ("ios[6.1-] || (firefox[32-] && !mobile)")
+/* List browsers that support position: sticky. iOS needs a prefix, others do not. Support data is as of March 2017. */
+$can_sticky		= @is ("ios[6.1-] || chrome[56-] || (firefox[32-] && !mobile)")

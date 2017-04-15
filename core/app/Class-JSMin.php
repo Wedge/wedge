@@ -95,6 +95,7 @@ class JSMin
 		if ($this->output !== '') // min already run
 			return $this->output;
 
+		$this->input = str_replace('+ +', "+\xa0+", $this->input);
 		$this->action(self::ACTION_DELETE_A_B);
 
 		while ($this->a !== null)
@@ -120,6 +121,7 @@ class JSMin
 			}
 			$this->action($command);
 		}
+		$this->output = str_replace("\xa0", ' ', $this->output);
 		$this->output = trim($this->output);
 		return $this->output;
 	}

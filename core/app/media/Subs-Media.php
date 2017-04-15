@@ -485,6 +485,11 @@ function aeva_createAlbumSubdir($album_id)
 		return false;
 }
 
+function file_exists_insensitive($file)
+{
+	return file_exists($file) || in_array(strtolower($file), array_map('strtolower', glob(dirname($file) . '/*', GLOB_NOSORT)));
+}
+
 // This creates a directory for a album, assuming that the entry for the album exists.
 function aeva_createAlbumDir($album_id, $create_sub_dir = true)
 {
@@ -503,16 +508,16 @@ function aeva_createAlbumDir($album_id, $create_sub_dir = true)
 	$row = wesql::fetch_assoc($result);
 	$row['name'] = str_replace(array(' ', '.', '-', '_', '\\', '/', '#', '&', '*'), '_', $row['name']);
 	$new_path_to_album = '/albums/' . $row['name'];
-	$new_dir_name = 'albums/'.$row['name'];
+	$new_dir_name = 'albums/' . $row['name'];
 	wesql::free_result($result);
 
 	// Make sure it doesn't exist
 	$i = 0;
-	while (file_exists($amSettings['data_dir_path'] . $new_path_to_album))
+	while (file_exists_insensitive($amSettings['data_dir_path'] . $new_path_to_album))
 	{
 		$i++;
 		$new_path_to_album = '/albums/' . $row['name'] . '_' . $i;
-		$new_dir_name = 'albums/'.$row['name'] . '_' . $i;
+		$new_dir_name = 'albums/' . $row['name'] . '_' . $i;
 	}
 
 	// Now create it!

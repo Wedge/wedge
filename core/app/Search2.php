@@ -1561,7 +1561,7 @@ function prepareSearchContext($reset = false)
 				$message['body'] = '';
 				foreach ($matches[0] as $index => $match)
 				{
-					$match = strtr(htmlspecialchars($match, ENT_QUOTES), array("\n" => '&nbsp;'));
+					$match = strtr(westr::htmlspecialchars($match, ENT_QUOTES), array("\n" => '&nbsp;'));
 					$message['body'] .= '<strong>&hellip;&hellip;</strong>&nbsp;' . $match . '&nbsp;<strong>&hellip;&hellip;</strong>';
 				}
 			}
