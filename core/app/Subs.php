@@ -18,10 +18,6 @@ loadSource(array(
 	'Class-Skeleton',
 ));
 
-// Fallback for unlikely missing JSON.
-if (!function_exists('json_encode') || !function_exists('json_decode'))
-	loadSource('Class-JSON');
-
 /**
  * This function updates some internal statistics as necessary.
  *
