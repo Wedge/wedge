@@ -1772,12 +1772,15 @@ class wess_base64 extends wess
 				$path = strpos($this->folder . $imgr, '../') !== false ? CACHE_DIR . '/css/' . $this->folder . $imgr : ROOT_DIR . $imgr;
 				$absolut = realpath($path);
 
-				// Only small files should be embedded, really. We're saving on hits, not bandwidth.
-				if (file_exists($absolut) && filesize($absolut) <= ($img_ext == 'svg' ? 15000 : 3072))
+				// Only small files should be embedded, really. We're saving on hits, not bandwidth. Also, IE8 doesn't support inline SVG.
+				if (file_exists($absolut) && filesize($absolut) <= ($img_ext == 'svg' ? 15000 : 3072) && ($img_ext != 'svg' || !we::is('ie[-8]')))
 				{
 					$img_raw = file_get_contents($absolut);
+					if ($img_ext == 'svg' && !we::is('chrome'))
+						$img_raw = str_replace(['%20', '%3D', '%3A', '%2F', '%22'], [' ', '=', ':', '/', "'"], rawurlencode($img_raw));
+					// NOTE: " xmlns='http://www.w3.org/2000/svg'" should be removable as per inline SVG standards, but apparently embedded backgrounds want it.
 					if ($img_ext == 'svg')
-						$img_data = 'url("data:image/svg+xml;utf8,' . preg_replace('~^.*?(?=\<svg)~s', '', str_replace(['"', "\t", "\n"], ['\'', ' ', ' '], $img_raw)) . '")';
+						$img_data = 'url("data:image/svg+xml,' . preg_replace('~^.*?(?=\<svg)~s', '', str_replace(['"', "\t", "\n"], ["'", ' ', ' '], $img_raw)) . '")';
 					else
 						$img_data = 'url(data:image/' . ($img_ext == 'svgz' ? 'svg+xml' : $img_ext) . ';base64,' . base64_encode($img_raw) . ')';
 					$css = str_replace('url(' . $img . ')', $img_data, $css);
