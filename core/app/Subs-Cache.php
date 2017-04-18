@@ -1910,24 +1910,23 @@ function cache_put_data($key, $val, $ttl = 120)
 			$cache_data = '<' . '?php if(defined(\'WEDGE\')&&$valid=' . ($ttl === PHP_INT_MAX ? '1' : 'time()<' . (time() + $ttl)) . ')$val=\'' . addcslashes($val, '\\\'') . '\';';
 
 			// Check that the cache write was successful. If it fails due to low diskspace, remove the cache file.
-			if (file_put_contents(CACHE_DIR . '/keys/' . $key . '.php', $cache_data, LOCK_EX) !== strlen($cache_data))
-				@unlink(CACHE_DIR . '/keys/' . $key . '.php');
+			$dest_locked = CACHE_DIR . '/keys/' . $key . '-' . mt_rand(999, 999999999) . '.php';
+			if (file_put_contents($dest_locked, $cache_data) !== strlen($cache_data))
+				unlink($desk_locked);
+			else
+				rename($dest_locked, CACHE_DIR . '/keys/' . $key . '.php');
 		}
-		invalidate_opcache($key);
+
+		// Invalidate opcode and APC caches if available.
+		if (function_exists('opcache_invalidate'))
+			opcache_invalidate(CACHE_DIR . '/keys/' . $key . '.php', true);
+
+		if (function_exists('apc_delete_file'))
+			apc_delete_file(CACHE_DIR . '/keys/' . $key . '.php');
 	}
 
 	if (!empty($db_show_debug))
 		$cache_hits[$cache_count]['t'] = microtime(true) - $st;
-}
-
-function invalidate_opcache($key)
-{
-	// Invalidate opcode and APC caches if available.
-	if (function_exists('opcache_invalidate'))
-		opcache_invalidate(CACHE_DIR . '/keys/' . $key . '.php', true);
-
-	if (function_exists('apc_delete_file'))
-		apc_delete_file(CACHE_DIR . '/keys/' . $key . '.php');
 }
 
 /**
@@ -1965,14 +1964,7 @@ function cache_get_data($orig_key, $ttl = 120, $put_callback = null)
 		$val = xcache_get($key);
 	// Otherwise it's the file cache!
 	elseif (file_exists(CACHE_DIR . '/keys/' . $key . '.php') && @filesize(CACHE_DIR . '/keys/' . $key . '.php') > 10)
-	{
 		include(CACHE_DIR . '/keys/' . $key . '.php');
-		if (empty($valid))
-		{
-			@unlink(CACHE_DIR . '/keys/' . $key . '.php');
-			invalidate_opcache($key);
-		}
-	}
 
 	if (!empty($db_show_debug))
 	{

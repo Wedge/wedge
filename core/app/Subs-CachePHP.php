@@ -72,11 +72,11 @@ function minify_php($file, $remove_whitespace = false)
 		}
 
 		if ($php[$pos + 1] === '/') // Remove //
-			$look_for = array("\r", "\n", "\r\n");
+			$look_for = ["\r", "\n", "\r\n", '?' . '>'];
 		else // Remove /* ... */
 			$look_for = '*/';
 
-		$end = find_next($php, $pos + 1, $look_for);
+		$end = find_next($php, $pos + 1, $look_for, true);
 		if ($end === false)
 			break;
 		if (!is_array($look_for))
@@ -109,7 +109,7 @@ function minify_php($file, $remove_whitespace = false)
 		@unlink($file);
 }
 
-function find_next(&$php, $pos, $search_for)
+function find_next(&$php, $pos, $search_for, $in_comment = false)
 {
 	if (is_array($search_for))
 	{
@@ -131,12 +131,15 @@ function find_next(&$php, $pos, $search_for)
 			return false;
 	}
 
-	$check_before = $next;
-	$escaped = false;
-	while (--$check_before >= 0 && $php[$check_before] == '\\')
-		$escaped = !$escaped;
-	if ($escaped)
-		return find_next($php, ++$next, $search_for);
+	if (!$in_comment)
+	{
+		$check_before = $next;
+		$escaped = false;
+		while (--$check_before >= 0 && $php[$check_before] == '\\')
+			$escaped = !$escaped;
+		if ($escaped)
+			return find_next($php, ++$next, $search_for);
+	}
 	return $next;
 }
 
