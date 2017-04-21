@@ -213,6 +213,8 @@
 		// Reposition the scroll of the dropdown so the selected option is centered (or appropriately onscreen)
 		centerOnSelected = function ()
 		{
+			if (!$selected.length)
+				return;
 			if (scrollbar)
 				scrollbar.st($selected.is(':hidden') ? 0 : $selected.position().top, $selected.height());
 			else
