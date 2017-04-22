@@ -295,6 +295,8 @@ function ViewMemberlist()
 		// Can they see all IP addresses? If not, they shouldn't see any.
 		if (!allowedTo('manage_bans'))
 			unset($params['ip']);
+		elseif (isset($_POST['ip']))
+			$_POST['ip'] = expand_ip($_POST['ip']);
 
 		// !!! Validate a little more.
 

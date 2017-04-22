@@ -1963,7 +1963,7 @@ function cache_get_data($orig_key, $ttl = 120, $put_callback = null)
 	elseif ($cache_system === 'xcache')
 		$val = xcache_get($key);
 	// Otherwise it's the file cache!
-	elseif (file_exists(CACHE_DIR . '/keys/' . $key . '.php') && @filesize(CACHE_DIR . '/keys/' . $key . '.php') > 10)
+	elseif (file_exists(CACHE_DIR . '/keys/' . $key . '.php') && filesize(CACHE_DIR . '/keys/' . $key . '.php') > 10)
 		include(CACHE_DIR . '/keys/' . $key . '.php');
 
 	if (!empty($db_show_debug))
