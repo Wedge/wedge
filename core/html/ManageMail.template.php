@@ -72,7 +72,7 @@ function template_email_template_list()
 
 		foreach ($group as $item)
 			echo '
-				<dt><a href="<URL>?action=admin;area=mailqueue;sa=templates;emaillang=english;email=', $item, '">', $item, '</a></dt>
+				<dt><a href="<URL>?action=admin;area=mailqueue;sa=templates;emaillang=', isset($_POST['emaillang']) ? $_POST['emaillang'] : 'english', ';email=', $item, '">', $item, '</a></dt>
 				<dd>
 					<div>', $txt['emailtemplate_' . $item]['desc'], '</div>
 					<div class="roundframe smalltext">', westr::nl2br(westr::cut($txt['emailtemplate_' . $item]['body'], 100)), '</div>
