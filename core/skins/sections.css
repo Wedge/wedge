@@ -152,8 +152,7 @@ section.ic
 		div mixes .inline-block
 	@elseif $can_flex
 		display: flex
-		flex-wrap: wrap
-		align-items: center
+		align-items: stretch
 		> div
 			flex: 1 1 auto
 	@else
@@ -169,6 +168,10 @@ section.ic
 	text-align: center
 	color: gray
 	letter-spacing: -1px
+	width: 60%
+
+#top_subject, .prevnext_prev
+	word-wrap: break-word
 
 // Previous/next topic links inside .posthead
 .prevnext_prev
