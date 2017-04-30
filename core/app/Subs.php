@@ -600,7 +600,7 @@ function return_json($json)
 {
 	clean_output();
 	header('Content-Type: application/json; charset=UTF-8');
-	exit(str_replace('\\/', '/', json_encode($json)));
+	exit(json_encode($json, JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK));
 }
 
 /**
@@ -796,7 +796,7 @@ function timeformat($log_time, $show_today = true, $offset_type = false)
 				$str = str_replace($token, $txt[$text_label][(int) strftime($token === '%a' || $token === '%A' ? '%w' : '%m', $time)], $str);
 
 	// Windows doesn't support %e; on some versions, strftime fails altogether if used, so let's prevent that.
-	if ($context['server']['is_windows'] && strpos($str, '%e') !== false)
+	if (!empty($context['server']['is_windows']) && strpos($str, '%e') !== false)
 		$str = str_replace('%e', '%#d', $str);
 
 	if (strpos($str, '%@') !== false)
