@@ -878,9 +878,7 @@ function profileInfractions($memID)
 	}
 	// So, we're getting a list of infractions from the ol' log.
 	else
-	{
 		get_validated_infraction_log($memID, true);
-	}
 }
 
 function profileBan($memID)

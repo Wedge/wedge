@@ -600,7 +600,7 @@ function get_validated_infraction_log($memID, $keep_all = true)
 			'issued_by' => $row['issued_by'],
 			'issued_by_name' => $row['issued_by_name'],
 			'issue_date' => $row['issue_date'],
-			'issue_date_format' => timeformat($row['issue_date']),
+			'issue_date_format' => timeformat($row['issue_date'], false, 'forum'),
 			'expire_date' => $expiry,
 			'expire_date_format' => $expiry_str,
 			'reason' => $row['reason'],
@@ -679,7 +679,8 @@ function get_validated_infraction_log($memID, $keep_all = true)
 				$context['current_sanctions_levels'][$infraction] = true;
 
 	// There are certain things we do not wish to... let slip.
-	if ($memID == MID)
+	// (We test for MID because if this is being executed as an imperative, the user object isn't defined yet.)
+	if (defined('MID') && $memID == MID)
 	{
 		unset($context['current_sanctions']['soft_ban'], $context['current_sanctions_levels']['soft_ban']);
 		$context['can_issue_warning'] = false;

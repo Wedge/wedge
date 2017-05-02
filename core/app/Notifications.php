@@ -595,6 +595,8 @@ class weNotif
 				'time' => time() - ($settings['notifications_prune_days'] * 86400),
 			)
 		);
+
+		loadSource('Class-DBHelper');
 		wedb::optimize_table('{db_prefix}notifications');
 	}
 
