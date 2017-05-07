@@ -32,7 +32,7 @@ Importing data from my old forum
 - Supported source forums include SMF 1.1, SMF 2.0, MyBB 1.6 and a few others that are totally untested. Well, really, only SMF 2.0 import is tested and supported for now.
 - Importing Aeva Media items and Custom folder attachments isn't supported for now. Feel free to bother @eurich so that he gets started on these! ;)
 
-[![Download](https://img.shields.io/badge/downloads-importer-brightgreen.svg)](https://github.com/Wedge/importer/)
+[![Download](https://img.shields.io/badge/Wedge-importer-brightgreen.svg)](https://github.com/Wedge/importer/)
 
 What's a 'forum' software?
 --------------------------
