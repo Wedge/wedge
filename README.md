@@ -71,9 +71,9 @@ No one can be told you what Wedge really is. You have to read the website for yo
 Plus, it saves me the hassle. And I'm lazy. See? I can't even come up with my own quotes.
 
 - [![Download](https://img.shields.io/badge/Wedge-Forum-brightgreen.svg)](https://wedge.org)
-- [![Download](https://img.shields.io/badge/Wedge-Blog-brightgreen.svg)](https://wedge.org/blog/ (development blog, spectacularly failing at being noob-friendly.)
-- [![Download](https://img.shields.io/badge/Pub-Faqs-brightgreen.svg)](https://wedge.org/pub/faq/ (mostly outdated, but we're working on it.)
-- [![Download](https://img.shields.io/badge/Pub-Feats-brightgreen.svg)](https://wedge.org/pub/feats/ (a list of features introduced in the first few years.)
+- [![Download](https://img.shields.io/badge/Wedge-Blog-brightgreen.svg)](https://wedge.org/blog/) (development blog, spectacularly failing at being noob-friendly.)
+- [![Download](https://img.shields.io/badge/Pub-Faqs-brightgreen.svg)](https://wedge.org/pub/faq/) (mostly outdated, but we're working on it.)
+- [![Download](https://img.shields.io/badge/Pub-Feats-brightgreen.svg)](https://wedge.org/pub/feats/) (a list of features introduced in the first few years.)
 
 Can you read me my rights?
 --------------------------
