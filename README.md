@@ -32,7 +32,7 @@ Importing data from my old forum
 - Supported source forums include SMF 1.1, SMF 2.0, MyBB 1.6 and a few others that are totally untested. Well, really, only SMF 2.0 import is tested and supported for now.
 - Importing Aeva Media items and Custom folder attachments isn't supported for now. Feel free to bother @eurich so that he gets started on these! ;)
 
-https://github.com/Wedge/importer/
+[![Download](https://img.shields.io/badge/downloads-importer-brightgreen.svg)](https://github.com/Wedge/importer/)
 
 What's a 'forum' software?
 --------------------------
@@ -70,10 +70,10 @@ What more can you tell me about Wedge?
 No one can be told you what Wedge really is. You have to read the website for yourself.
 Plus, it saves me the hassle. And I'm lazy. See? I can't even come up with my own quotes.
 
-- http://wedge.org
-- http://wedge.org/blog/ (development blog, spectacularly failing at being noob-friendly.)
-- http://wedge.org/pub/faq/ (mostly outdated, but we're working on it.)
-- http://wedge.org/pub/feats/ (a list of features introduced in the first few years.)
+- [![Download](https://img.shields.io/badge/Wedge-Forum-brightgreen.svg)](https://wedge.org)
+- [![Download](https://img.shields.io/badge/Wedge-Blog-brightgreen.svg)](https://wedge.org/blog/ (development blog, spectacularly failing at being noob-friendly.)
+- [![Download](https://img.shields.io/badge/Pub-Faqs-brightgreen.svg)](https://wedge.org/pub/faq/ (mostly outdated, but we're working on it.)
+- [![Download](https://img.shields.io/badge/Pub-Feats-brightgreen.svg)](https://wedge.org/pub/feats/ (a list of features introduced in the first few years.)
 
 Can you read me my rights?
 --------------------------
@@ -86,4 +86,4 @@ Read license.txt, and if you don't get all of the legalese, it just means:
   to do so, go to wedge.org and drop a PM to Nao.
 - And other details that most people shouldn't have to bother with. Still, be respectful. Thanks.
 
--- René-Gilles Deberdt (Nao), from Paris, France.
+-- RenÃ©-Gilles Deberdt (Nao), from Paris, France.
