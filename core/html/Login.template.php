@@ -12,11 +12,8 @@ function template_login()
 {
 	global $context, $settings, $txt;
 
-	if (empty($context['disable_login_hashing']))
-		$context['main_js_files']['sha1.js'] = true;
-
 	echo '
-		<form action="<URL>?action=login2" name="frmLogin" id="frmLogin" method="post" accept-charset="UTF-8" ', empty($context['disable_login_hashing']) ? ' onsubmit="hashLoginPassword(this, \'' . $context['session_id'] . '\');"' : '', '>
+		<form action="<URL>?action=login2" name="frmLogin" id="frmLogin" method="post" accept-charset="UTF-8">
 		<div class="login">
 			<we:cat>
 				<img src="', ASSETS, '/icons/online.gif">
@@ -59,7 +56,6 @@ function template_login()
 				</dl>
 				<p><input type="submit" value="', $txt['login'], '" class="submit"></p>
 				<p class="smalltext"><a href="<URL>?action=reminder">', $txt['forgot_your_password'], '</a></p>
-				<input type="hidden" name="hash_passwrd" value="">
 			</div>
 		</div></form>';
 
@@ -73,12 +69,8 @@ function template_kick_guest()
 {
 	global $context, $settings, $txt;
 
-	// This isn't that much... just like normal login but with a message at the top.
-	if (empty($context['disable_login_hashing']))
-		$context['main_js_files']['sha1.js'] = true;
-
 	echo '
-	<form action="<URL>?action=login2" method="post" accept-charset="UTF-8" name="frmLogin" id="frmLogin"', empty($context['disable_login_hashing']) ? ' onsubmit="hashLoginPassword(this, \'' . $context['session_id'] . '\');"' : '', '>
+	<form action="<URL>?action=login2" method="post" accept-charset="UTF-8" name="frmLogin" id="frmLogin">
 		<div class="login">
 			<we:cat>
 				', $txt['warning'], '
@@ -125,14 +117,10 @@ function template_maintenance()
 {
 	global $context, $txt, $settings;
 
-	// Display the administrator's message at the top.
-	if (empty($context['disable_login_hashing']))
-		$context['main_js_files']['sha1.js'] = true;
-
 	add_css_file('pages'); // #maintenance_mode
 
 	echo '
-<form action="<URL>?action=login2" method="post" accept-charset="UTF-8"', empty($context['disable_login_hashing']) ? ' onsubmit="hashLoginPassword(this, \'' . $context['session_id'] . '\');"' : '', '>
+<form action="<URL>?action=login2" method="post" accept-charset="UTF-8">
 	<div class="login" id="maintenance_mode">
 		<we:cat>
 			', $context['title'], '

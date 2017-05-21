@@ -608,7 +608,7 @@ function registerMember(&$regOptions, $return_errors = false)
 	$regOptions['register_vars'] = array(
 		'member_name' => $regOptions['username'],
 		'email_address' => $regOptions['email'],
-		'passwd' => sha1(strtolower($regOptions['username']) . $regOptions['password']),
+		'passwd' => password_hash($regOptions['password'], PASSWORD_DEFAULT, ['costs' => 10]),
 		'password_salt' => substr(md5(mt_rand()), 0, 4),
 		'posts' => 0,
 		'date_registered' => time(),
