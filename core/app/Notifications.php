@@ -255,7 +255,10 @@ class weNotif
 		$sa = !empty($_REQUEST['sa']) ? $_REQUEST['sa'] : '';
 
 		if (we::$is_guest)
-			fatal_lang_error('no_access', $sa == 'unread' ? false : 'general');
+			if ($sa == 'unread')
+				return_raw('no');
+			else
+				fatal_lang_error('no_access', 'general');
 
 		if ($sa == 'redirect' && isset($_REQUEST['in']))
 		{
