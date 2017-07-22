@@ -122,7 +122,7 @@ function getBoardIndex($boardIndexOptions)
 					'name' => $row_board['cat_name'],
 					'cat_order' => $row_board['cat_order'],
 					'is_collapsed' => isset($row_board['can_collapse']) && $row_board['can_collapse'] == 1 && $row_board['is_collapsed'] > 0,
-					'can_collapse' => (isset($row_board['can_collapse']) && $row_board['can_collapse'] == 1) && empty($_GET['category']),
+					'can_collapse' => (isset($row_board['can_collapse']) && $row_board['can_collapse'] == 1) && empty($_GET['category']) && we::$is_member,
 					'collapse_href' => isset($row_board['can_collapse']) ? '<URL>?action=collapse;c=' . $row_board['id_cat'] . ';sa=' . ($row_board['is_collapsed'] > 0 ? 'expand;' : 'collapse;') . $context['session_query'] . '#category_' . $row_board['id_cat'] : '',
 					'collapse_image' => isset($row_board['can_collapse']) ? '<div class="catfold' . ($row_board['is_collapsed'] > 0 ? '' : ' fold') . '"></div>' : '',
 					'href' => '<URL>?category=' . $row_board['id_cat'],
