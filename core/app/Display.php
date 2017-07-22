@@ -1120,76 +1120,76 @@ function Display()
 		),
 	);
 
-	$context['mini_menu']['action'] = array();
-	$context['mini_menu_items_show']['action'] = array();
-	$context['mini_menu_items']['action'] = array(
-		'lk' => array(
+	$context['mini_menu']['action'] = [];
+	$context['mini_menu_items_show']['action'] = [];
+	$context['mini_menu_items']['action'] = !empty($context['possibly_robot']) ? [] : [
+		'lk' => [
 			'caption' => 'acme_like',
 			'action' => '<URL>?action=like;topic=' . $context['current_topic'] . ';msg=%1%;' . $context['session_query'] . '',
 			'class' => 'like_button',
-		),
-		'uk' => array(
+		],
+		'uk' => [
 			'caption' => 'acme_unlike',
 			'action' => '<URL>?action=like;topic=' . $context['current_topic'] . ';msg=%1%;' . $context['session_query'] . '',
 			'class' => 'unlike_button',
-		),
-		'qu' => array(
+		],
+		'qu' => [
 			'caption' => 'acme_quote',
 			'action' => '<URL>?action=post;quote=%1%;topic=' . $context['current_topic'] . ';last=' . $context['topic_last_message'] . '',
 			'class' => 'quote_button',
-		),
-		'mo' => array(
+		],
+		'mo' => [
 			'caption' => 'acme_modify',
 			'action' => '<URL>?action=post;msg=%1%;topic=' . $context['current_topic'] . '',
 			'class' => 'edit_button',
-		),
-		'ap' => array(
+		],
+		'ap' => [
 			'caption' => 'acme_approve',
 			'action' => '<URL>?action=moderate;area=postmod;sa=approve;topic=' . $context['current_topic'] . ';msg=%1%;' . $context['session_query'] . '',
 			'class' => 'approve_button',
-		),
-		're' => array(
+		],
+		're' => [
 			'caption' => 'acme_remove',
 			'action' => '<URL>?action=deletemsg;topic=' . $context['current_topic'] . ';msg=%1%;' . $context['session_query'] . '',
 			'class' => 'remove_button',
 			'click' => substr(JavaScriptEscape('return ask(' . JavaScriptEscape($txt['remove_message_confirm']) . ', e)'), 1, -1),
-		),
-		'sp' => array(
+		],
+		'sp' => [
 			'caption' => 'acme_split',
 			'action' => '<URL>?action=splittopics;topic=' . $context['current_topic'] . ';at=%1%',
 			'class' => 'split_button',
-		),
-		'me' => array(
+		],
+		'me' => [
 			'caption' => 'acme_merge',
 			'action' => '<URL>?action=mergeposts;pid=%1%;msgid=%2%;topic=' . $context['current_topic'] . '',
 			'class' => 'mergepost_button',
-		),
-		'rs' => array(
+		],
+		'rs' => [
 			'caption' => 'acme_restore',
 			'action' => '<URL>?action=restoretopic;msgs=%1%;' . $context['session_query'] . '',
 			'class' => 'restore_button',
-		),
-		'rp' => array(
+		],
+		'rp' => [
 			'caption' => 'acme_report',
 			'action' => '<URL>?action=report;topic=' . $context['current_topic'] . ';msg=%1%',
 			'class' => 'report_button',
-		),
-		'wa' => array(
+		],
+		'wa' => [
 			'caption' => 'acme_warn',
 			'action' => '<URL>?action=profile;u=%2%;area=infractions;warn;for=post:%1%',
 			'class' => 'warn_button',
-		),
-		'ai' => array(
+		],
+		'ai' => [
 			'caption' => 'usermenu_ignore',
 			'action' => '<URL>?action=profile;area=lists;sa=ignore;add=%2%;msg=%1%;' . $context['session_query'],
 			'class' => 'unlike_button',
-		),
-		'ri' => array(
+		],
+		'ri' => [
 			'caption' => 'usermenu_unignore',
 			'action' => '<URL>?action=profile;area=lists;sa=ignore;remove=%2%;msg=%1%;' . $context['session_query'],
 			'class' => 'like_button',
-		),
-	);
+		],
+	];
 
 	// Lastly, set up the navigation items that we're going to be using.
 	$context['nav_buttons'] = array(
