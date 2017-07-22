@@ -310,20 +310,19 @@ class wess_dynamic extends wess
 {
 	function process(&$css)
 	{
-		static $done = [];
-
 		if (preg_match_all('~@dynamic\h+([a-z0-9_]+)(?:\h+\([^)]*\))?~i', $css, $functions, PREG_SET_ORDER))
 		{
+			$done = [];
 			foreach ($functions as $func)
 			{
+				if (isset($done[$func[0]]))
+					continue;
+				$done[$func[0]] = true;
 				$callback = 'dynamic_' . $func[1];
 				if (is_callable($callback))
 				{
-					if (isset($done[$func[0]]))
-						continue;
 					$data = isset($func[2]) ? call_user_func_array($callback, array_map('trim', explode(',', $func[2]))) : $callback();
 					$css = preg_replace('~' . preg_quote($func[0], '~') . '~i', $data, $css);
-					$done[$func[0]] = true;
 				}
 			}
 		}
@@ -1446,6 +1445,7 @@ class wess_prefixes extends wess
 			$b['ie'], $b['ie8down'], $b['ie9'], $b['opera'], $b['firefox'], $b['webkit'],
 			$b['safari'] && !$os['ios'], $b['chrome'], $os['ios'], $os['android'] && $b['webkit'] && !$b['chrome']
 		];
+		$operium = $chrome && strpos(we::$ua, 'OPR/') !== false;
 
 		// Only IE6/7/8 don't support border-radius these days.
 		if (strpos($matches[1], '-radius') !== false)
@@ -1554,8 +1554,15 @@ class wess_prefixes extends wess
 			return '';
 		}
 
-		// Hyphens aren't supported or always require a prefix, for now.
-		return $both;
+		// Hyphens are only supported with prefixes, for now.
+		if (strpos($matches[1], 'hyphens') === 0)
+		{
+			if (($chrome && !$operium && $v >= 55) || ($safari && $v > 5) || $firefox || ($ie && $v >= 10))
+				return $prefixed;
+			return '';
+		}
+
+		return '';
 	}
 
 	/**
