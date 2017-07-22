@@ -1204,7 +1204,7 @@ function scheduled_fetchRemoteFiles()
 
 	loadSource('Class-WebGet');
 	// This is only a dummy. weget requires being given a URL, but it doesn't have to actually use it.
-	$weget = new weget('http://wedge.org/');
+	$weget = new weget('https://wedge.org/');
 
 	// Just in case we run into a problem.
 	loadLanguage('Errors', $settings['language'], false);
@@ -1212,7 +1212,7 @@ function scheduled_fetchRemoteFiles()
 	foreach ($js_files as $id_file => $file)
 	{
 		// Create the url
-		$server = empty($file['path']) || substr($file['path'], 0, 7) != 'http://' ? 'http://wedge.org' : '';
+		$server = empty($file['path']) || substr($file['path'], 0, 7) != 'http://' ? 'https://wedge.org' : '';
 		$url = $server . (!empty($file['path']) ? $file['path'] : $file['path']) . $file['filename'] . (!empty($file['parameters']) ? '?' . $file['parameters'] : '');
 
 		// Get the file
