@@ -34,7 +34,7 @@ function add_js()
  */
 function add_js_unique($code)
 {
-	static $uniques = array();
+	static $uniques = [];
 
 	if (isset($uniques[$code]))
 		return;
@@ -63,10 +63,10 @@ function add_js_inline()
  * @param boolean $is_out_of_flow Set to true if you want to get the URL immediately and not put it into the JS flow. Used for jQuery/script.js.
  * @return string The generated code for direct inclusion in the source code, if $out_of_flow is set. Otherwise, nothing.
  */
-function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow = false, $ignore_files = array())
+function add_js_file($files = [], $is_direct_url = false, $is_out_of_flow = false, $ignore_files = [])
 {
 	global $context, $settings, $footer_coding;
-	static $done_files = array();
+	static $done_files = [];
 
 	if (!is_array($files))
 		$files = (array) $files;
@@ -94,7 +94,7 @@ function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow =
 	$id = '';
 	$latest_date = 0;
 
-	$full_path = array();
+	$full_path = [];
 	foreach ($files as $fid => $file)
 	{
 		if (file_exists($add = ROOT_DIR . '/core/javascript/' . $file)) // !! Temp?
@@ -162,10 +162,10 @@ function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow =
  * @param boolean $is_out_of_flow Set to true if you want to get the URL immediately and not put it into the JS flow. Used for jQuery/script.js.
  * @return string The generated code for direct inclusion in the source code, if $out_of_flow is set. Otherwise, nothing.
  */
-function add_plugin_js_file($plugin_name, $files = array(), $is_direct_url = false, $is_out_of_flow = false)
+function add_plugin_js_file($plugin_name, $files = [], $is_direct_url = false, $is_out_of_flow = false)
 {
 	global $context, $settings, $footer_coding;
-	static $done_files = array();
+	static $done_files = [];
 
 	if (empty($context['plugins_dir'][$plugin_name]))
 		return;
@@ -258,16 +258,17 @@ function add_css()
  * @param mixed $original_files A filename or an array of filenames, with a relative path set to the theme root folder. Just specify the filename, like 'index', if it's a file from the current skin.
  * @param boolean $add_link Set to false if you want Wedge to return the URL instead of automatically adding the link to your page header.
  * @param boolean $is_main Determines whether this is the primary CSS file list (index.css and other files), which gets special treatment.
+ * @param mixed $ignore_files A set of filenames that shouldn't be used as keywords in the final cached filename. (e.g. they're not used in special cases.)
  * @return string The generated code for direct inclusion in the source code, if $out_of_flow is set. Otherwise, nothing.
  */
-function add_css_file($original_files = array(), $add_link = true, $is_main = false, $ignore_files = array())
+function add_css_file($original_files = [], $add_link = true, $is_main = false, $ignore_files = [])
 {
 	global $settings, $context, $db_show_debug, $files;
-	static $cached_files = array(), $paths_done = array();
+	static $cached_files = [], $paths_done = [];
 
 	// Set hardcoded paths aside, e.g. plugin CSS.
 	$latest_date = 0;
-	$hardcoded_css = array();
+	$hardcoded_css = [];
 	$original_files = (array) $original_files;
 	foreach ($original_files as $key => $path)
 	{
@@ -293,7 +294,7 @@ function add_css_file($original_files = array(), $add_link = true, $is_main = fa
 		return false;
 
 	// Delete all duplicates and ensure $original_files is an array.
-	$original_files = array_merge(array('common' => 0), array_flip($original_files));
+	$original_files = array_merge(['common' => 0], array_flip($original_files));
 	$files = array_keys($original_files);
 
 	// If we didn't go through the regular theme initialization flow, get the skin options.
@@ -302,9 +303,9 @@ function add_css_file($original_files = array(), $add_link = true, $is_main = fa
 
 	$fallback_folder = rtrim(SKINS_DIR . '/' . reset($context['css_folders']), '/') . '/';
 	$deep_folder = rtrim(SKINS_DIR . '/' . end($context['css_folders']), '/') . '/';
-	$found_suffixes = array();
-	$found_files = array();
-	$css = array();
+	$found_suffixes = [];
+	$found_files = [];
+	$css = [];
 
 	// Pre-cache a special keyword that always returns true.
 	we::$cache['global'] = 'global';
@@ -317,7 +318,7 @@ function add_css_file($original_files = array(), $add_link = true, $is_main = fa
 			$fallback_folder = '';
 
 		if (empty($cached_files[$fold]))
-			$cached_files[$fold] = array_diff((array) @scandir($fold ? $fold : '', 1), array('.', '..', '.htaccess', 'index.php', 'skin.xml', 'custom.xml'));
+			$cached_files[$fold] = array_diff((array) @scandir($fold ? $fold : '', 1), ['.', '..', '.htaccess', 'index.php', 'skin.xml', 'custom.xml']);
 
 		// A 'local' suffix means the file should only be parsed if it's in the same folder as the current skin.
 		we::$cache['local'] = $fold == $deep_folder ? 'local' : false;
@@ -373,7 +374,7 @@ function add_css_file($original_files = array(), $add_link = true, $is_main = fa
 		$fold = $fallback_folder;
 
 		if (empty($cached_files[$fold]))
-			$cached_files[$fold] = array_diff((array) @scandir($fold ? $fold : '', 1), array('.', '..', '.htaccess', 'index.php', 'skin.xml', 'custom.xml'));
+			$cached_files[$fold] = array_diff((array) @scandir($fold ? $fold : '', 1), ['.', '..', '.htaccess', 'index.php', 'skin.xml', 'custom.xml']);
 
 		foreach ($cached_files[$fold] as $file)
 		{
@@ -428,7 +429,7 @@ function add_css_file($original_files = array(), $add_link = true, $is_main = fa
 	<link rel="stylesheet" href="' . $final_script . '">';
 }
 
-function add_plugin_css_file($plugin_name, $original_files = array(), $add_link = false, $ignore_files = array())
+function add_plugin_css_file($plugin_name, $original_files = [], $add_link = false, $ignore_files = [])
 {
 	global $context, $settings;
 
@@ -440,7 +441,7 @@ function add_plugin_css_file($plugin_name, $original_files = array(), $add_link 
 
 	// Delete all duplicates.
 	$files = array_keys(array_flip($original_files));
-	$basefiles = array();
+	$basefiles = [];
 
 	// Plugin CSS files don't support suffixes for now.
 	// Use @if tests inside them, they should work.
@@ -472,9 +473,9 @@ function add_plugin_css_file($plugin_name, $original_files = array(), $add_link 
 	// We need to cache different versions for different browsers, even if we don't have overrides available.
 	// This is because Wedge also transforms regular CSS to add vendor prefixes and the like.
 	$id = array_filter(array_merge(
-		array($context['enabled_plugins'][$plugin_name]),
+		[$context['enabled_plugins'][$plugin_name]],
 		$basefiles,
-		we::$user['language'] !== 'english' ? (array) we::$user['language'] : array()
+		we::$user['language'] !== 'english' ? (array) we::$user['language'] : []
 	));
 	$latest_date %= 1000000;
 
@@ -482,10 +483,10 @@ function add_plugin_css_file($plugin_name, $original_files = array(), $add_link 
 	$ext = $can_gzip ? (we::is('safari[-5.1]') ? '.cgz' : '.css.gz') : '.css';
 
 	// Build the target folder from our plugin's file names. We don't need to show 'common-index-sections-extra-custom' in the main filename, though!
-	$target_folder = trim(str_replace(array('/', ':'), '-', strtolower($plugin_name) . '-' . implode('-', array_filter(array_diff($original_files, (array) 'common', $ignore_files)))), '-');
+	$target_folder = trim(str_replace(['/', ':'], '-', strtolower($plugin_name) . '-' . implode('-', array_filter(array_diff($original_files, (array) 'common', $ignore_files)))), '-');
 
 	// Cache final file and retrieve its name.
-	$final_script = CACHE . '/css/' . wedge_cache_css_files($target_folder . ($target_folder ? '/' : ''), $id, $latest_date, $files, $can_gzip, $ext, array('$plugindir' => $context['plugins_url'][$plugin_name]));
+	$final_script = CACHE . '/css/' . wedge_cache_css_files($target_folder . ($target_folder ? '/' : ''), $id, $latest_date, $files, $can_gzip, $ext, ['$plugindir' => $context['plugins_url'][$plugin_name]]);
 
 	if ($final_script == CACHE . '/css/')
 		return false;
@@ -556,10 +557,10 @@ function wedge_get_css_filename($add)
 	if (isset($suffix['admin']))
 		unset($suffix['member']);
 	if (isset($suffix[we::$os['os']]))
-		$suffix = array(str_replace('dows', '', we::$os['os'] . we::$os['version']) => true) + array_diff_key($suffix, array(we::$os['os'] => 1));
+		$suffix = [str_replace('dows', '', we::$os['os'] . we::$os['version']) => true] + array_diff_key($suffix, [we::$os['os'] => 1]);
 
 	if (!empty(we::$browser['agent']))
-		$suffix = array(we::$browser['agent'] . (!empty(we::$browser['version']) ? we::$browser['version'] : '') => 1) + $suffix;
+		$suffix = [we::$browser['agent'] . (!empty(we::$browser['version']) ? we::$browser['version'] : '') => 1] + $suffix;
 	$id = implode('-', array_keys($suffix));
 
 	return $id ? (empty($settings['obfuscate_filenames']) ? $id : md5($id)) : '';
@@ -569,14 +570,14 @@ function wedge_get_css_filename($add)
  * Create a compact CSS file that concatenates, pre-parses and compresses a list of existing CSS files.
  *
  * @param mixed $folder The target folder (relative to the cache folder.)
- * @param mixed $ids An array of filename radixes, such as array('index', 'member', 'extra').
+ * @param mixed $ids An array of filename radixes, such as ['index', 'member', 'extra'].
  * @param integer $latest_date The most recent filedate (Unix timestamp format), to be used to differentiate the latest copy from expired ones.
  * @param string $css The CSS file to process, or an array of CSS files to process, in order, with complete path names.
  * @param boolean $gzip Set to true if you want the final file to be compressed with gzip.
  * @param string $ext The extension for the final file. Default is '.css', some browsers may have problems with '.css.gz' if gzipping is enabled.
  * @return array $additional_vars An array of key-pair values to associate custom CSS variables with their intended replacements.
  */
-function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false, $ext = '.css', $additional_vars = array())
+function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false, $ext = '.css', $additional_vars = [])
 {
 	global $css_vars, $context, $time_start;
 
@@ -597,7 +598,7 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 	}
 
 	$sleep_time = microtime(true);
-	we::$user['extra_tests'] = array();
+	we::$user['extra_tests'] = [];
 
 	if (!empty($folder) && $folder != '/' && !file_exists($final_folder))
 	{
@@ -611,7 +612,7 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 	// Load Wess, our sweet, short and fast CSS parser :)
 	loadSource('Class-CSS');
 
-	$plugins = array(
+	$plugins = [
 		new wess_dynamic(),		// Dynamic replacements through callback functions
 		new wess_if(),			// CSS conditions, first pass (browser tests)
 		new wess_mixin(),		// CSS mixins (mixin hello($world: 0))
@@ -622,7 +623,7 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 		new wess_if(true),		// CSS conditions, second pass (variable tests)
 		new wess_nesting(),		// Nested selectors (.hello { .world { color: 0 } }) + selector inheritance (.hello { base: .world })
 		new wess_prefixes(),	// Automatically adds browser prefixes for many frequent elements, or manually through -prefix.
-	);
+	];
 
 	// rgba to rgb conversion for IE 6-8, and a hack for IE9.
 	if (we::is('ie[-9]'))
@@ -636,15 +637,15 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 
 	// Default CSS variables (paths are absolute or, if forum is in a sub-folder, relative to the CSS cache folder)
 	// !!! If subdomains are allowed, should we use absolute paths instead?
-	$languages = isset($context['skin_available_languages']) ? $context['skin_available_languages'] : array('english');
-	$css_vars = array(
+	$languages = isset($context['skin_available_languages']) ? $context['skin_available_languages'] : ['english'];
+	$css_vars = [
 		'$language' => isset(we::$user['language']) && in_array(we::$user['language'], $languages) ? we::$user['language'] : $languages[0],
 		'$images_dir' => ASSETS_DIR,
 		'$theme_dir' => SKINS_DIR,
 		'$root_dir' => ROOT_DIR,
 		'$images' => ASSETS,
 		'$root' => ROOT,
-	);
+	];
 	if (!empty($additional_vars))
 		foreach ($additional_vars as $key => $val)
 			$css_vars[$key] = $val;
@@ -679,7 +680,7 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 	$final = preg_replace_callback('~\$(context|settings|theme|txt)\[([\'"])(.*?)\2]~', 'wedge_replace_theme_vars', $final);
 
 	// CSS is always minified. It takes just a sec' to do, and doesn't impair anything.
-	$final = str_replace(array("\r\n", "\r"), "\n", $final); // Always use \n line endings.
+	$final = str_replace(["\r\n", "\r"], "\n", $final); // Always use \n line endings.
 	$final = preg_replace('~/\*(?!!).*?\*/~s', '', $final); // Strip comments except for copyrights.
 
 	// And this is where we preserve some of the comments.
@@ -703,14 +704,14 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 		// Okay, so there are better ways to handle these... For instance, a test on android[-4.0] will store
 		// a keyword if you're on Android, even 4.1+. But right now, it's better than what we had before.
 		preg_match_all('~[bcm][0-9]+|[a-z]+~i', preg_replace('~".*?"~', '', implode(' ', array_flip(array_flip(array_merge($ids, we::$user['extra_tests']))))), $matches);
-		$add = array_diff(array_flip(array_flip($matches[0])), array_keys(we::$browser), array('global', 'local', 'true'));
+		$add = array_diff(array_flip(array_flip($matches[0])), array_keys(we::$browser), ['global', 'local', 'true']);
 	}
 
 	// Cache all tests.
 	cache_put_data($cachekey, empty($add) ? $ids : $add, 'forever');
 
 	// And we've finally got our full, working filename...
-	$id = wedge_get_css_filename(isset($add) ? $add : array());
+	$id = wedge_get_css_filename(isset($add) ? $add : []);
 
 	$full_name = ($id ? $id . '-' : '') . $latest_date . $ext;
 	$final_file = $final_folder . '/' . $full_name;
@@ -737,8 +738,8 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 
 	// Remove double quote hacks, remaining whitespace, and no-base64 tricks.
 	$final = str_replace(
-		array('#wedge-quote#', "\n\n", ';;', ';}', "}\n", "\t", ' !important', 'raw-url('),
-		array('"', "\n", ';', '}', '}', ' ', '!important', 'url('),
+		['#wedge-quote#', "\n\n", ';;', ';}', "}\n", "\t", ' !important', 'raw-url('],
+		['"', "\n", ';', '}', '}', ' ', '!important', 'url('],
 		$final
 	);
 
@@ -753,13 +754,13 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 		foreach ($matches as $m)
 		{
 			// The spec says pseudo-elements aren't allowed INSIDE :matches, but implementations seem to also refuse them NEXT to :matches.
-			if (strpos($m[0], ':') !== false && strhas($m[0], array(':before', ':after', ':first-letter', ':first-line', ':selection')))
+			if (strpos($m[0], ':') !== false && strhas($m[0], [':before', ':after', ':first-letter', ':first-line', ':selection']))
 				continue;
 			$final = str_replace(
 				$m[0],
 				($m[0][0] === '}' ? '}' : '') . $magic . '(' . str_replace(
-					array($m[2] . ',', $m[2] . '{', '}'),
-					array(',', '', ''),
+					[$m[2] . ',', $m[2] . '{', '}'],
+					[',', '', ''],
 					$m[0] . '{'
 				) . ')' . $m[2],
 				$final
@@ -840,7 +841,7 @@ function wedge_process_css_replacements(&$final)
 	global $context, $settings;
 
 	// We may want to apply page replacements to CSS files as well.
-	$rep = isset($context['ob_replacements']) ? $context['ob_replacements'] : array();
+	$rep = isset($context['ob_replacements']) ? $context['ob_replacements'] : [];
 	if (!empty($settings['page_replacements']) && ($extra_pr = unserialize($settings['page_replacements'])) !== false)
 		$rep = array_merge($rep, $extra_pr);
 	if (!empty($rep))
@@ -889,15 +890,13 @@ function dynamic_group_colors()
 	if (defined('WEDGE_INSTALLER'))
 		return '';
 
-	$bius = array('b', 'i', 'u', 's');
+	$bius = ['b', 'i', 'u', 's'];
 	$rep = '';
 	$request = wesql::query('
 		SELECT id_group, online_color, format
 		FROM {db_prefix}membergroups AS g
 		WHERE g.online_color != {string:blank} OR g.format != {string:blank}',
-		array(
-			'blank' => '',
-		)
+		['blank' => '']
 	);
 	while ($row = wesql::fetch_assoc($request))
 	{
@@ -921,7 +920,7 @@ function dynamic_group_colors()
 	font-style: italic';
 
 			// Now we do underline and strikethrough which nest.
-			$text_decoration = array();
+			$text_decoration = [];
 			if (in_array('u', $row['format']))
 				$text_decoration[] = 'underline';
 			if (in_array('s', $row['format']))
@@ -961,13 +960,13 @@ function dynamic_admin_menu_icons()
 			if (!is_array($val))
 				continue;
 			if (isset($val[$needle]))
-				$ina[] = array($key, $val[$needle]);
+				$ina[] = [$key, $val[$needle]];
 			else
 				array_search_key($needle, $val);
 		}
 	}
 
-	$ina = array();
+	$ina = [];
 	array_search_key('icon', $admin_areas);
 
 	$rep = '';
@@ -1006,7 +1005,7 @@ function wedge_cache_js($id, &$lang_name, $latest_date, $ext, $js, $gzip = false
 	$sleep_time = microtime(true);
 	$final = '';
 	$dir = $full_path ? '' : ROOT_DIR . '/core/javascript/';
-	$no_packing = array();
+	$no_packing = [];
 
 	// Delete cached versions, unless they have the same timestamp (i.e. up to date.)
 	if (is_array($files = glob(CACHE_DIR . '/js/' . $id. '*' . $ext, GLOB_NOSORT)))
@@ -1031,7 +1030,7 @@ function wedge_cache_js($id, &$lang_name, $latest_date, $ext, $js, $gzip = false
 		elseif (preg_match('~/\* Optimize:\n(.*?)\n\*/~s', $cont, $match))
 		{
 			$match = explode("\n", $match[1]);
-			$search = $replace = array();
+			$search = $replace = [];
 			foreach ($match as $variable)
 			{
 				$pair = explode(' = ', $variable);
@@ -1043,7 +1042,7 @@ function wedge_cache_js($id, &$lang_name, $latest_date, $ext, $js, $gzip = false
 				$cont = preg_replace('~/\* Optimize:\n(.*?)\n\*/~s', '', $cont);
 		}
 		// An UglifyJS-inspired trick. We're taking it on the safe side though.
-		$cont = preg_replace(array('~\bfalse\b~', '~\btrue\b~'), array('!1', '!0'), $cont);
+		$cont = preg_replace(['~\bfalse\b~', '~\btrue\b~'], ['!1', '!0'], $cont);
 		$final .= $cont;
 	}
 
@@ -1072,7 +1071,7 @@ function wedge_cache_js($id, &$lang_name, $latest_date, $ext, $js, $gzip = false
 			$use_update = !empty($settings['js_lang']);
 			$settings['js_lang'][$id] = $langlist;
 			$save = $settings['js_lang'];
-			updateSettings(array('js_lang' => serialize($settings['js_lang'])), $use_update);
+			updateSettings(['js_lang' => serialize($settings['js_lang'])], $use_update);
 			$settings['js_lang'] = $save;
 			// We need to fix the language string for first time use. $lang_name is passed by reference.
 			$lang_name = !empty(we::$user['language']) && we::$user['language'] != $settings['language'] ? we::$user['language'] . '-' : '';
@@ -1121,7 +1120,7 @@ function wedge_cache_js($id, &$lang_name, $latest_date, $ext, $js, $gzip = false
 	{
 		unset($settings['js_lang'][$id]);
 		$save = $settings['js_lang'];
-		updateSettings(array('js_lang' => serialize($settings['js_lang'])), true);
+		updateSettings(['js_lang' => serialize($settings['js_lang'])], true);
 		$settings['js_lang'] = $save;
 		$lang_name = '';
 	}
@@ -1169,13 +1168,13 @@ function wedge_cache_js($id, &$lang_name, $latest_date, $ext, $js, $gzip = false
 			$packed_js = file_get_contents(
 				'http://closure-compiler.appspot.com/compile',
 				false, stream_context_create(
-					array('http' => array(
+					['http' => [
 						'method' => 'POST',
 						'header' => 'Content-type: application/x-www-form-urlencoded',
 						'content' => $data,
 						'max_redirects' => 0,
 						'timeout' => 15,
-					))
+					]]
 				)
 			);
 		}
@@ -1266,8 +1265,8 @@ function wedge_cache_js($id, &$lang_name, $latest_date, $ext, $js, $gzip = false
 	// Remove the copyright years and version information, in case you're a paranoid android.
 	// Then remove the extra whitespace that we may have added around comments to avoid glitches.
 	$final = preg_replace(
-		array('~/\*!(?:[^*]|\*[^/])*?@package Wedge.*?\*/~s', '~(^|\n)\n/\*~', '~\*/\n~'),
-		array("/*!\n * @package Wedge\n * @copyright René-Gilles Deberdt, wedge.org\n * @license http://wedge.org/license/\n */", '$1/*', '*/'),
+		['~/\*!(?:[^*]|\*[^/])*?@package Wedge.*?\*/~s', '~(^|\n)\n/\*~', '~\*/\n~'],
+		["/*!\n * @package Wedge\n * @copyright René-Gilles Deberdt, wedge.org\n * @license http://wedge.org/license/\n */", '$1/*', '*/'],
 		$final
 	);
 
@@ -1343,7 +1342,7 @@ function theme_base_css()
 	{
 		clean_cache('css', $one_month_ago);
 		clean_cache('js', $one_month_ago);
-		updateSettings(array('last_cache_purge' => time()));
+		updateSettings(['last_cache_purge' => time()]);
 	}
 
 	// We only generate the cached file at the last moment (i.e. when first needed.)
@@ -1406,7 +1405,7 @@ function wedge_get_extension($file)
 	return $ext;
 }
 
-function wedge_get_skeleton_operations($set, $op, $required_vars = array())
+function wedge_get_skeleton_operations($set, $op, $required_vars = [])
 {
 	global $context;
 
@@ -1419,7 +1418,7 @@ function wedge_get_skeleton_operations($set, $op, $required_vars = array())
 		$pos_id = array_search('id', $v[1], true);
 		$id = $pos_id !== false ? $v[2][$pos_id] : 'main';
 		$match_all = true;
-		$arr = array($op);
+		$arr = [$op];
 		foreach ($required_vars as $var)
 		{
 			$match_all &= ($pos = array_search($var, $v[1], true)) !== false;
@@ -1440,7 +1439,7 @@ function wedge_skin_conditions(&$str)
 
 	foreach ($ifs as $if)
 	{
-		$exe = array_merge(explode('<else>', $if[3]), array(''));
+		$exe = array_merge(explode('<else>', $if[3]), ['']);
 		$str = str_replace($if[0], str_replace("\n" . $if[1], "\n" . substr($if[1], 0, -1), $exe[(int) !we::is(trim($if[2]))]), $str);
 	}
 }
@@ -1449,11 +1448,11 @@ function wedge_skin_conditions(&$str)
  * A helper function to parse skin tags in any order, e.g. <css for="ie[-8]" include="file"> or <css include="file" for="ie[-8]">.
  * Specifying params is required, to prevent undefined index errors when accessing the param by name directly. Plus, it's cleaner.
  */
-function wedge_parse_skin_tags(&$file, $name, $params = array())
+function wedge_parse_skin_tags(&$file, $name, $params = [])
 {
 	global $board_info;
 
-	$tags = array();
+	$tags = [];
 	if (strpos($file, '</' . $name . '>') === false)
 		return $tags;
 	$params = (array) $params;
@@ -1462,7 +1461,7 @@ function wedge_parse_skin_tags(&$file, $name, $params = array())
 	if (!preg_match_all('~<' . $name . '\b([^>]*)>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</' . $name . '>~s', $file, $matches, PREG_SET_ORDER))
 		return $tags;
 
-	$empty_list = array();
+	$empty_list = [];
 	foreach ($params as $param)
 		$empty_list[$param] = '';
 	foreach ($matches as $match)
@@ -1502,14 +1501,14 @@ function wedge_get_skin_options($options_only = false)
 {
 	global $context;
 
-	$skin_options = array();
+	$skin_options = [];
 	$skeleton = $macros = $set = '';
 
 	// We will rebuild the skin folder list, in case we have a replace-type skin in our path.
 	$root_dir = SKINS_DIR;
-	$context['skin_folders'] = array();
-	$context['template_folders'] = array();
-	$css_folders = array(ltrim(isset($context['skin']) ? $context['skin'] : '', '/'));
+	$context['skin_folders'] = [];
+	$context['template_folders'] = [];
+	$css_folders = [ltrim(isset($context['skin']) ? $context['skin'] : '', '/')];
 
 	loadSource('Themes');
 	$test_folders = wedge_get_skin_list(true); // Get a linear list of skins.
@@ -1574,29 +1573,29 @@ function wedge_get_skin_options($options_only = false)
 		return;
 
 	// Any conditional directives inside the skin.xml or skeleton.xml files..?
-	$sources = $skeleton ? array(&$set, &$skeleton) : array(&$set);
+	$sources = $skeleton ? [&$set, &$skeleton] : [&$set];
 	foreach ($sources as &$source)
 	{
 		wedge_skin_conditions($source);
 
 		// Did we ask to do post-loading operations on blocks/layers of the skeleton?
-		wedge_get_skeleton_operations($source, 'move', array('block', 'to', 'where'));
-		wedge_get_skeleton_operations($source, 'rename', array('block', 'to'));
-		wedge_get_skeleton_operations($source, 'remove', array('block'));
+		wedge_get_skeleton_operations($source, 'move', ['block', 'to', 'where']);
+		wedge_get_skeleton_operations($source, 'rename', ['block', 'to']);
+		wedge_get_skeleton_operations($source, 'remove', ['block']);
 	}
 
 	// Now, find skeletons and feed them to the $context['skeleton'] array for later parsing.
-	$matches = $skeleton ? wedge_parse_skin_tags($skeleton, 'skeleton', 'id') : array();
+	$matches = $skeleton ? wedge_parse_skin_tags($skeleton, 'skeleton', 'id') : [];
 	foreach ($matches as $match)
 		$context['skeleton'][empty($match['id']) ? 'main' : $match['id']] = $match['value'];
 
 	// Gather macros here.
 	$matches = wedge_parse_skin_tags($macros, 'macro', 'name');
 	foreach ($matches as $match)
-		$context['macros'][$match['name']] = array(
+		$context['macros'][$match['name']] = [
 			'has_if' => strpos($match['value'], '<if:') !== false,
 			'body' => $match['value']
-		);
+		];
 
 	if (!$set)
 		return;
@@ -1604,7 +1603,7 @@ function wedge_get_skin_options($options_only = false)
 	$matches = wedge_parse_skin_tags($set, 'replace', 'regex');
 	foreach ($matches as $match)
 		if (preg_match('~<from>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</from>\s*<to>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</to>~', $match['value'], $from_to))
-			$context['skin_replace'][trim($from_to[1], "\x00..\x1F")] = array(trim($from_to[2], "\x00..\x1F"), !empty($match['regex']));
+			$context['skin_replace'][trim($from_to[1], "\x00..\x1F")] = [trim($from_to[2], "\x00..\x1F"), !empty($match['regex'])];
 
 	// Add inline CSS or CSS files to all pages.
 	$matches = wedge_parse_skin_tags($set, 'css', 'include');
@@ -1647,16 +1646,16 @@ function wedge_get_skin_options($options_only = false)
 	}
 
 	// Override template functions directly.
-	$matches = wedge_parse_skin_tags($set, 'template', array('name', 'param(?:s|eters)?', 'where'));
+	$matches = wedge_parse_skin_tags($set, 'template', ['name', 'param(?:s|eters)?', 'where']);
 	foreach ($matches as $match)
-		$context['template_' . ($match['where'] != 'before' && $match['where'] != 'after' ? 'override' : $match['where']) . 's']['template_' . preg_replace('~^template_~', '', $match['name'])] = array($match['param(?:s|eters)?'], $match['value']);
+		$context['template_' . ($match['where'] != 'before' && $match['where'] != 'after' ? 'override' : $match['where']) . 's']['template_' . preg_replace('~^template_~', '', $match['name'])] = [$match['param(?:s|eters)?'], $match['value']];
 
 	$matches = wedge_parse_skin_tags($set, 'languages');
 	foreach ($matches as $match)
 		$context['skin_available_languages'] = array_filter(preg_split('~[\s,]+~', $match['value']));
 
 	// If you write a plugin that adds new skin options, plug it into this!
-	call_hook('skin_parser', array(&$set, &$skeleton, &$macros));
+	call_hook('skin_parser', [&$set, &$skeleton, &$macros]);
 }
 
 function wedge_parse_skin_options($skin_options)
@@ -1694,7 +1693,7 @@ function uncache()
 	clean_cache();
 	clean_cache('css');
 	clean_cache('js');
-	updateSettings(array('last_cache_purge' => time()));
+	updateSettings(['last_cache_purge' => time()]);
 
 	// Redirect to the current page, if possible.
 	redirectexit(isset($_SERVER['HTTP_REFERER']) && strpos($_SERVER['HTTP_REFERER'], ROOT) !== false ? $_SERVER['HTTP_REFERER'] : '');
@@ -1718,13 +1717,13 @@ function clean_cache($extensions = 'php', $filter = '', $force_folder = '', $rem
 	if ($extensions === 'css')
 	{
 		$folder = CACHE_DIR . '/css';
-		$extensions = array('css', 'cgz', 'css.gz');
+		$extensions = ['css', 'cgz', 'css.gz'];
 		$is_recursive = true;
 	}
 	elseif ($extensions === 'js')
 	{
 		$folder = CACHE_DIR . '/js';
-		$extensions = array('js', 'jgz', 'js.gz');
+		$extensions = ['js', 'jgz', 'js.gz'];
 	}
 	elseif (!is_array($extensions))
 		$extensions = ltrim($extensions, '.');
@@ -1990,7 +1989,7 @@ function cache_prepare_key($key, $val = '', $type = 'get')
 
 	$cache_count = isset($cache_count) ? $cache_count + 1 : 1;
 	if (!empty($db_show_debug))
-		$cache_hits[$cache_count] = $type == 'get' ? array('k' => $key, 'd' => 'get') : array('k' => $key, 'd' => 'put', 's' => $val === null ? 0 : strlen(serialize($val)));
+		$cache_hits[$cache_count] = $type == 'get' ? ['k' => $key, 'd' => 'get'] : ['k' => $key, 'd' => 'put', 's' => $val === null ? 0 : strlen(serialize($val))];
 
 	if (empty($settings['cache_hash']))
 	{
