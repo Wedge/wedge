@@ -493,7 +493,7 @@ function template_insert_javascript()
 
 	echo '
 	we_script = "<URL>";
-	we_assets = "', ASSETS, '";', '
+	we_assets = "', ASSETS, '";
 	we_sessid = "', $context['session_id'], '";
 	we_sessvar = "', $context['session_var'], '";', $context['server']['iso_case_folding'] && isset($context['main_js_files']['sha1.js']) ? '
 	we_iso_case_folding = 1;' : '', empty($options['collapse_header']) ? '' : '

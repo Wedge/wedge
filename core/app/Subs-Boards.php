@@ -1079,7 +1079,7 @@ function getBoardTree($restrict = false)
 					'id' => $row['id_cat'],
 					'name' => $row['cat_name'],
 					'order' => $row['cat_order'],
-					'can_collapse' => $row['can_collapse']
+					'can_collapse' => $row['can_collapse'] && we::$is_member
 				),
 				'is_first' => empty($cat_tree),
 				'last_board_order' => $last_board_order,

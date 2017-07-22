@@ -271,7 +271,7 @@ function updateMyData($data)
 
 	foreach ($data as $key => $val)
 	{
-		we::$user['data'][$key] = $val;
+		we::$user['data'][$key] = is_numeric($val) && (int) $val == $val ? (int) $val : $val;
 		if ($val === '')
 			unset(we::$user['data'][$key]);
 	}

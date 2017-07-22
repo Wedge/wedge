@@ -265,8 +265,8 @@ function error_handler($error_level, $error_string, $file, $line)
 {
 	global $settings, $db_show_debug;
 
-	// Ignore errors if default reporting behavior was overridden (e.g. through SSI.)
-	if (error_reporting() === 0)
+	// Ignore errors if default reporting behavior was overridden (e.g. through SSI or a @ suppressor.)
+	if (!(error_reporting() & $error_level))
 		return;
 
 	if (strpos($file, 'eval()') !== false && !empty($settings['current_include_filename']))
@@ -304,12 +304,12 @@ function error_handler($error_level, $error_string, $file, $line)
 
 		// Debugging! This should look like a PHP error message.
 		echo '<br>
-<strong>', $error_level % 255 == E_ERROR ? 'Error' : ($error_level % 255 == E_WARNING ? 'Warning' : 'Notice'), '</strong>: ', $error_string, ' in <strong>', basename($file), '</strong> on line <strong>', $line, '</strong><br>';
+<strong>', $error_level & (E_ERROR | E_USER_ERROR) ? 'Error' : ($error_level & E_WARNING ? 'Warning' : 'Notice'), '</strong>: ', $error_string, ' in <strong>', basename($file), '</strong> on line <strong>', $line, '</strong><br>';
 	}
 
 	$error_type = strpos(strtolower($error_string), 'undefined') !== false ? 'undefined_vars' : 'general';
 
-	$message = log_error(($error_level % 255 == E_ERROR ? 'Error' : ($error_level % 255 == E_WARNING ? 'Warning' : 'Notice')) . " (level $error_level): " . $error_string, $error_type, $file, $line);
+	$message = log_error(($error_level & (E_ERROR | E_USER_ERROR) ? 'Error' : ($error_level & E_WARNING ? 'Warning' : 'Notice')) . " (level $error_level): " . $error_string, $error_type, $file, $line);
 
 	// Let's give hooks a chance to output a bit differently
 	call_hook('output_error', array(&$message, $error_type, $error_level, $file, $line));
@@ -319,16 +319,16 @@ function error_handler($error_level, $error_string, $file, $line)
 		return;
 
 	// If this is an E_ERROR or E_USER_ERROR.... die. Violently so.
-	if ($error_level % 255 == E_ERROR)
+	if ($error_level & (E_ERROR | E_USER_ERROR))
 		obExit(false);
 	else
 		return;
 
-	// If this is an E_ERROR, E_USER_ERROR, E_WARNING, or E_USER_WARNING.... die. Violently so.
-	if ($error_level % 255 == E_ERROR || $error_level % 255 == E_WARNING)
+	// Trigger a fatal error if it's not a simple notice.
+	if (!($error_level & (E_NOTICE | E_USER_NOTICE)))
 		fatal_error(allowedTo('admin_forum') ? $message : $error_string, false);
 
-	die('Hacking attempt...');
+	exit();
 }
 
 /**

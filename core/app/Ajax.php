@@ -94,7 +94,7 @@ function SetOption()
 {
 	global $options;
 
-	// Check the session id.
+	// Check the session ID.
 	checkSession('get');
 
 	// If no variables are provided, leave the hell out of here.
@@ -187,7 +187,7 @@ function Thought()
 		exit;
 
 	// !! Should we use censorText at store time, or display time...? we::$user (Load.php:1696) begs to differ.
-	$text = isset($_POST['text']) ? westr::htmlspecialchars(trim($_POST['text']), ENT_QUOTES) : '';
+	$text = isset($_POST['text']) ? westr::htmlspecialchars(trim($_POST['text']), ENT_NOQUOTES) : '';
 
 	if (!empty($text))
 	{
@@ -218,9 +218,7 @@ function Thought()
 			LEFT JOIN {db_prefix}members AS m ON t.id_member = m.id_member
 			WHERE id_thought = {int:id_parent}
 			LIMIT 1',
-			array(
-				'id_parent' => $pid,
-			)
+			['id_parent' => $pid]
 		);
 		list ($parent_id, $parent_name) = wesql::fetch_row($request);
 		wesql::free_result($request);
@@ -248,10 +246,10 @@ function Thought()
 			WHERE id_thought = {int:original_id}' . (allowedTo('moderate_forum') ? '' : '
 			AND id_member = {int:id_member}
 			LIMIT 1'),
-			array(
+			[
 				'id_member' => MID,
 				'original_id' => $_GET['in'],
-			)
+			]
 		);
 		list ($thought) = wesql::fetch_row($request);
 		wesql::free_result($request);
@@ -268,10 +266,10 @@ function Thought()
 			INNER JOIN {db_prefix}members AS m ON m.id_member = t.id_member
 			WHERE t.id_thought = {int:original_id}' . (allowedTo('moderate_forum') ? '' : '
 			AND t.id_member = {int:id_member}'),
-			array(
+			[
 				'id_member' => MID,
 				'original_id' => $oid,
-			)
+			]
 		);
 		list ($last_thought, $last_text, $last_member, $last_name) = wesql::fetch_row($request);
 		wesql::free_result($request);
@@ -287,9 +285,8 @@ function Thought()
 			call_hook('thought_delete', array(&$last_thought, &$last_text));
 			wesql::query('
 				DELETE FROM {db_prefix}thoughts
-				WHERE id_thought = {int:id_thought}', array(
-					'id_thought' => $last_thought,
-				)
+				WHERE id_thought = {int:id_thought}',
+				['id_thought' => $last_thought]
 			);
 		}
 		// If it's similar to the earlier version, don't update the time.
@@ -300,12 +297,13 @@ function Thought()
 			wesql::query('
 				UPDATE {db_prefix}thoughts
 				SET updated = {raw:updated}, thought = {string:thought}, privacy = {int:privacy}
-				WHERE id_thought = {int:id_thought}', array(
+				WHERE id_thought = {int:id_thought}',
+				[
 					'id_thought' => $last_thought,
 					'privacy' => $privacy,
 					'updated' => $update,
 					'thought' => $text
-				)
+				]
 			);
 			call_hook('thought_update', array(&$last_thought, &$privacy, &$update, &$text));
 		}
@@ -315,14 +313,14 @@ function Thought()
 		// Okay, so this is a new thought... Insert it, we'll cache it if it's not a comment.
 		wesql::query('
 			INSERT IGNORE INTO {db_prefix}thoughts (id_parent, id_member, id_master, privacy, updated, thought)
-			VALUES ({int:id_parent}, {int:id_member}, {int:id_master}, {int:privacy}, {int:updated}, {string:thought})', array(
+			VALUES ({int:id_parent}, {int:id_member}, {int:id_master}, {int:privacy}, {int:updated}, {string:thought})', [
 				'id_parent' => $pid,
 				'id_member' => MID,
 				'id_master' => $mid,
 				'privacy' => $privacy,
 				'updated' => time(),
 				'thought' => $text
-			)
+			]
 		);
 		$last_thought = wesql::insert_id();
 

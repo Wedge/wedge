@@ -18,7 +18,7 @@ function cache_source_file($source, $dest)
 	// First of all, make sure we're not caching a partially uploaded file. Give it a few seconds to finish.
 	$tries = 8;
 	clearstatcache(true, $source);
-	while (time() - filemtime($source) < 3 && $tries--)
+	while (time() - filemtime($source) < 2 && $tries--)
 	{
 		sleep(1);
 		clearstatcache(true, $source);

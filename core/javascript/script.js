@@ -253,9 +253,9 @@ function in_array(variable, theArray)
 // Invert all checkboxes at once by clicking a single checkbox.
 function invertAll(oInvertCheckbox, oForm, sMask)
 {
-	$.each(oForm, function () {
-		if (this.name && !this.disabled && (!sMask || this.name.indexOf(sMask) === 0|| this.id.indexOf(sMask) === 0))
-			this.checked = oInvertCheckbox.checked;
+	$(oForm).find('input[type=checkbox]').each(function () {
+		if (this.name && !this.disabled && (!sMask || this.name.indexOf(sMask) === 0 || this.id.indexOf(sMask) === 0) && this.checked != oInvertCheckbox.checked)
+			this.click();
 	});
 }
 
@@ -456,7 +456,7 @@ $.fn.mimenu = function (oContents, oStrings, is_top)
 
 		var
 			$mime = $(this),
-			id = $mime.data('id') || ($mime.closest('.msg').attr('id') || '').slice(3), // Extract the context id from the parent message
+			id = this.getAttribute('data-id') || ($mime.closest('.msg').attr('id') || '').slice(3), // Extract the context id from the parent message
 			$men = $('<div class="mimenu">').hide(),
 			pms, $contents = $('<ul>'),
 			hiddenPosition, visiblePosition,
@@ -734,11 +734,14 @@ $(window).on('load', function ()
 			is_pm_up_to_date = false,
 			is_opened = false,
 			is_pm_opened = false,
+			no_updates = false,
 			original_title = document.title,
 			$notif_button = $('.notifs.notif'),
 			$pm_button = $('.notifs.npm'),
 			$shade = $('<div/>').addClass('mimenu').appendTo($notif_button),
 			$pmshade = $('<div/>').addClass('mimenu').appendTo($pm_button),
+			$not_num = $notif_button.find('span').first(),
+			$pm_num = $pm_button.find('span').first(),
 
 			toggle_me = function ()
 			{
@@ -797,7 +800,7 @@ $(window).on('load', function ()
 					hide_ajax();
 
 					// Opening the popup accomplished .note's mission, so we can remove that.
-					$popup.prev().addClass('notevoid').removeClass('note');
+					$button.find('span').first().addClass('notevoid').removeClass('note');
 
 					$(this).find('.n_container')
 						.css('max-height', ($(window).height() - $(this).find('.n_container').offset().top) * .9)
@@ -806,7 +809,7 @@ $(window).on('load', function ()
 
 					$(this).find('.n_item').each(function ()
 					{
-						var that = $(this), id = $(this).data('id');
+						var that = $(this), id = this.getAttribute('data-id');
 
 						$(this)
 							.hover(function () { $(this).toggleClass('windowbg3').find('.n_read').toggle(); })
@@ -842,7 +845,7 @@ $(window).on('load', function ()
 									if (was_new)
 									{
 										we_notifs--;
-										$shade.prev().text(we_notifs);
+										$not_num.text(we_notifs);
 										document.title = (we_notifs > 0 ? '(' + we_notifs + ') ' : '') + original_title;
 
 										$.post(weUrl('action=notification;sa=markread;in=' + id));
@@ -874,7 +877,7 @@ $(window).on('load', function ()
 					{
 						this.removeClass('n_new');
 						we_notifs--;
-						$shade.prev().text(we_notifs);
+						$not_num.text(we_notifs);
 						document.title = (we_notifs > 0 ? '(' + we_notifs + ') ' : '') + original_title;
 
 						$.post(weUrl('action=notification;sa=markread;in=' + id));
@@ -886,8 +889,8 @@ $(window).on('load', function ()
 
 		$notif_button.click(function (e)
 		{
-			if (e.target != this)
-				return true;
+			if ($(e.target).closest($shade).length)
+				return;
 
 			if (is_pm_opened)
 				toggle_me_pm();
@@ -903,7 +906,7 @@ $(window).on('load', function ()
 
 		$pm_button.click(function (e)
 		{
-			if (e.target != this)
+			if ($(e.target).closest($pmshade).length)
 				return true;
 
 			if (is_opened)
@@ -930,27 +933,36 @@ $(window).on('load', function ()
 		// Update the notification count...
 		var auto_update = function ()
 		{
+			if (no_updates)
+				return;
+
 			$.post(weUrl('action=notification;sa=unread'), function (count)
 			{
+				// Logged off in another tab? Stop updating this one...
+				if (count == 'no')
+				{
+					no_updates = true;
+					return;
+				}
 				// The response is x;y where x = notifications, y = unread PMs
 				count = count.split(';');
 				if (count[0] !== '' && count[0] != window.we_notifs)
 				{
 					// Are there less notifications than before? Maybe we opened the popup from another tab...
 					if (we_notifs > count[0])
-						$shade.prev().addClass('notevoid').removeClass('note');
+						$not_num.addClass('notevoid').removeClass('note');
 					we_notifs = count[0];
 					is_up_to_date = false;
-					$shade.prev().text(we_notifs);
+					$not_num.text(we_notifs);
 					document.title = (we_notifs > 0 ? '(' + we_notifs + ') ' : '') + original_title;
 				}
 				if (count[1] !== '-1' && count[1] != window.we_pms)
 				{
 					if (we_pms > count[1])
-						$pmshade.prev().addClass('notevoid').removeClass('note');
+						$pm_num.addClass('notevoid').removeClass('note');
 					we_pms = count[1];
 					is_pm_up_to_date = false;
-					$pmshade.prev().text(we_pms);
+					$pm_num.text(we_pms);
 				}
 			});
 
@@ -1089,16 +1101,16 @@ function JumpTo(control)
 	// *** Generic privacy dropdown
 	function PrivacySelector(privacy, privacy_public, privacy_members, privacy_author)
 	{
-		var s, p, pr = '<option value="' + privacy_public + '"' + (privacy == privacy_public ? ' selected' : '') + '>&lt;div class="privacy_public"&gt;&lt;/div&gt;' + $txt['privacy_public'] + '</option>';
-		pr += '<option value="' + privacy_members + '"' + (privacy == privacy_members ? ' selected' : '') + '>&lt;div class="privacy_members"&gt;&lt;/div&gt;' + $txt['privacy_members'] + '</option>';
-		pr += '<option value="' + privacy_author + '"' + (privacy == privacy_author ? ' selected' : '') + '>&lt;div class="privacy_author"&gt;&lt;/div&gt;' + $txt['privacy_author'] + '</option>';
+		var s, p, pr = '<option value="' + privacy_public + '"' + (privacy == privacy_public ? ' selected' : '') + '>&lt;div class="privacy_public">&lt;/div>' + $txt['privacy_public'] + '</option>';
+		pr += '<option value="' + privacy_members + '"' + (privacy == privacy_members ? ' selected' : '') + '>&lt;div class="privacy_members">&lt;/div>' + $txt['privacy_members'] + '</option>';
+		pr += '<option value="' + privacy_author + '"' + (privacy == privacy_author ? ' selected' : '') + '>&lt;div class="privacy_author">&lt;/div>' + $txt['privacy_author'] + '</option>';
 		if (!$.isEmptyObject(we_lists))
 		{
 			pr += '<optgroup label="' + $txt['privacy_list'] + '">';
 			for (p in we_lists)
 			{
 				s = we_lists[p].split('|');
-				pr += '<option value="' + s[0] + '"' + (privacy == s[0] ? ' selected' : '') + '>&lt;div class="privacy_list_' + s[1] + '"&gt;&lt;/div&gt;' + s[2] + '</option>';
+				pr += '<option value="' + s[0] + '"' + (privacy == s[0] ? ' selected' : '') + '>&lt;div class="privacy_list_' + s[1] + '">&lt;/div>' + s[2] + '</option>';
 			}
 			pr += '</optgroup>';
 		}
@@ -1108,7 +1120,7 @@ function JumpTo(control)
 			for (p in we_groups)
 			{
 				s = we_groups[p].split('|');
-				pr += '<option value="-' + s[0] + '"' + (privacy == -s[0] ? ' selected' : '') + '>&lt;div class="privacy_group"&gt;&lt;/div&gt;' + (s[1] >= 0 ? '&lt;em&gt;' + s[2] + '&lt;/em&gt; &lt;small&gt;' + s[1] + '&lt;/small&gt;' : s[2]) + '</option>';
+				pr += '<option value="-' + s[0] + '"' + (privacy == -s[0] ? ' selected' : '') + '>&lt;div class="privacy_group">&lt;/div>' + (s[1] >= 0 ? '&lt;em>' + s[2] + '&lt;/em> &lt;small>' + s[1] + '&lt;/small>' : s[2]) + '</option>';
 			}
 			pr += '</optgroup>';
 		}

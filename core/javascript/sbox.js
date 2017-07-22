@@ -317,7 +317,7 @@
 			// Update the title attr and the display markup
 			$oritex
 				.width('')
-				.html(($newtex.html() || '&nbsp;').replace(/<small>.*?<\/small>/, ''))
+				.html(($newtex.html() || '&nbsp;').replace(/<small>.*?<\/small>/, '').replace(/<input.*?>/, ''))
 				.attr('title', $newtex.text().php_unhtmlspecialchars());
 
 			newwi = $oritex.width();

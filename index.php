@@ -156,12 +156,6 @@ if (!empty($settings['xmlnews_enable']) && !empty($settings['xmlnews_sidebar']) 
 // I have only one thing to say to you... Bye!
 obExit(null, null, true);
 
-// Since we're not leaving obExit the special route, we need to make sure we update the error count.
-if (!isset($settings['app_error_count']))
-	$settings['app_error_count'] = 0;
-if (!empty($context['app_error_count']))
-	updateSettings(array('app_error_count' => $settings['app_error_count'] + $context['app_error_count']));
-
 // Loads a named file from the app folder. Uses cache if possible.
 // $source_name can be a string or an array of strings.
 function loadSource($source_name)

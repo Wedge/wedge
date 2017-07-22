@@ -168,7 +168,7 @@ $txt['help_time_format'] = '
 	<em>* Grayed out characters do not work on Windows-based servers.</em>';
 
 $txt['help_live_news'] = '
-	This box shows recently updated announcements from <a href="http://wedge.org/" target="_blank" class="new_win">wedge.org</a>.
+	This box shows recently updated announcements from <a href="https://wedge.org/" target="_blank" class="new_win">wedge.org</a>.
 	You should check here every now and then for updates, new releases, and important information from Wedge.';
 
 $txt['help_registrations'] = '
@@ -478,7 +478,7 @@ $txt['help_coppaPost'] = 'The contact boxes are required so that forms granting 
 
 $txt['help_allow_hideOnline'] = 'With this option enabled all members will be able to hide their online status from other users (except administrators). If disabled only users who can moderate the forum can hide their presence. Note that disabling this option will not change any existing member\'s status - it just stops them from hiding themselves in the future.';
 
-$txt['help_latest_themes'] = 'This area shows a few of the latest and most popular themes from <a href="http://wedge.org/" target="_blank" class="new_win">wedge.org</a>. It may not show up properly if your computer can\'t find <a href="http://wedge.org/" target="_blank" class="new_win">wedge.org</a>, though.';
+$txt['help_latest_themes'] = 'This area shows a few of the latest and most popular themes from <a href="https://wedge.org/" target="_blank" class="new_win">wedge.org</a>. It may not show up properly if your computer can\'t find <a href="https://wedge.org/" target="_blank" class="new_win">wedge.org</a>, though.';
 
 $txt['help_error_plugin_repo'] = 'The last time this repository was called, to see if it had any updated plugins for your forum, it could not be contacted properly, and you should probably check the URL of the repository to make sure it still exists. Also, if it requires a username and password, you may wish to re-enter the details to check them.';
 $txt['help_plugins_repo_active'] = 'If a repository is not marked active, you will still be able to select the browse function, but it will not be called automatically for updates, so you will not automatically be notified if any of your plugins has an available update.';
@@ -495,10 +495,10 @@ $txt['help_permissions_board'] = 'If a board is set to \'Global,\' it means that
 $txt['help_permissions_quickgroups'] = 'These allow you to use the "default" permission setups - standard means \'nothing special\', restrictive means \'like a guest\', moderator means \'what a moderator has\', and lastly \'maintenance\' means permissions very close to those of an administrator.';
 $txt['help_permissions_deny'] = 'Denying permissions can be useful when you want take away permission from certain members. You can add a membergroup with a \'deny\'-permission to the members you wish to deny a permission.<br><br>Use with care, a denied permission will stay denied no matter what other membergroups the member is in.';
 $txt['help_permissions_postgroups'] = 'Enabling permissions for post count based groups will allow you to attribute permissions to members that have posted a certain amount of messages. The permissions of the post count based groups are <em>added</em> to the permissions of the regular membergroups.';
-$txt['help_membergroup_guests'] = 'The Guests membergroup are all users that are not logged in.';
-$txt['help_membergroup_regular_members'] = 'The Regular Members are all members that are logged in, but that have no primary membergroup assigned.';
-$txt['help_membergroup_administrator'] = 'The administrator can, per definition, do anything and see any board. There are no permission settings for the administrator.';
-$txt['help_membergroup_moderator'] = 'The Moderator membergroup is a special membergroup. Permissions and settings assigned to this group apply to moderators but only <em>on the boards they moderate</em>. Outside these boards they\'re just like any other member.';
+$txt['help_membergroup_guests'] = 'The <i>Guests</i> group implicitly contains all users that are not logged in.';
+$txt['help_membergroup_regular_members'] = 'The <i>Regular Members</i> group implicitly contains all members that are logged in, but that have no primary membergroup assigned.';
+$txt['help_membergroup_administrator'] = 'The <i>Administrator</i> can, per definition, do anything and see any board. There are no permission settings for the administrator.';
+$txt['help_membergroup_moderator'] = 'The <i>Moderator</i> group is a special membergroup. Permissions and settings assigned to this group apply to moderators but only <em>on the boards they moderate</em>. Outside these boards they\'re just like any other member.';
 $txt['help_membergroups'] = 'In Wedge, there are two types of groups that your members can be part of. These are:
 	<ul class="list">
 		<li><strong>Regular Groups:</strong> A regular group is a group to which members are not automatically put into. To assign a member to be in a group simply go to their profile and click "Account Settings". From here you can assign them any number of regular groups to which they will be part.</li>

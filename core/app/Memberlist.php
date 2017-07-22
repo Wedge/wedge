@@ -405,7 +405,7 @@ function MLSearch()
 		FROM {db_prefix}custom_fields
 		WHERE active = {int:active}
 			AND can_search = {int:can_search}
-			AND (field_type = {literal:text} OR field_type = {literal:textarea})',
+			AND field_type IN ({literal:text}, {literal:textarea})',
 		array(
 			'active' => 1,
 			'can_search' => 1,

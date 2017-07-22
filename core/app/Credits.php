@@ -70,9 +70,9 @@ function Credits()
 			sprintf(
 				$txt['credits_wedge'],
 				'René-Gilles Deberdt',
-				'http://wedge.org/',
-				'http://wedge.org/profile/Nao/',
-				'http://wedge.org/license/',
+				'https://wedge.org/',
+				'https://wedge.org/profile/Nao/',
+				'https://wedge.org/license/',
 				'2010-' . date('Y')
 			),
 		),
