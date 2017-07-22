@@ -113,15 +113,14 @@ function obExit($start = null, $do_finish = null, $from_index = false, $from_fat
 	// Hand off the output to the portal, etc. we're integrated with.
 	call_hook('exit', array($do_finish));
 
+	if (!isset($settings['app_error_count']))
+		$settings['app_error_count'] = 0;
+	if (!empty($context['app_error_count']))
+		updateSettings(['app_error_count' => $settings['app_error_count'] + $context['app_error_count']]);
+
 	// Don't exit if we're coming from index.php; that will pass through normally.
 	if (!$from_index)
-	{
-		if (!isset($settings['app_error_count']))
-			$settings['app_error_count'] = 0;
-		if (!empty($context['app_error_count']))
-			updateSettings(['app_error_count' => $settings['app_error_count'] + $context['app_error_count']]);
 		exit;
-	}
 }
 
 /**
