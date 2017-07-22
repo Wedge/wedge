@@ -410,7 +410,7 @@ $txt['go_up'] = 'Go Up';
 $txt['go_down'] = 'Go Down';
 
 $txt['site_credits'] = 'Website credits';
-$txt['copyright'] = 'Powered by <a href="http://wedge.org/" target="_blank" class="new_win">Wedge</a>';
+$txt['copyright'] = 'Powered by <a href="https://wedge.org/" target="_blank" class="new_win">Wedge</a>';
 $txt['dynamic_replacements'] = '<abbr title="Dynamic Replacements">DR</abbr>';
 
 $txt['template_block_error'] = 'Unable to find the "%1$s" template block.';

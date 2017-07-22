@@ -210,7 +210,7 @@ function load_lang_file()
 		<p>In some cases, FTP clients do not properly upload files with this many folders. Please double check to make sure you <strong>have uploaded all the files in the distribution</strong>.</p>
 		<p>If that doesn\'t help, please make sure this install.php file is in the same place as the assets folder.</p>
 
-		<p>If you continue to get this error message, feel free to <a href="http://wedge.org/">look to us for support</a>.</p>
+		<p>If you continue to get this error message, feel free to <a href="https://wedge.org/">look to us for support</a>.</p>
 	</div></body>
 </html>';
 		exit;
@@ -1844,7 +1844,7 @@ function template_install_above()
 	</head>
 	<body><div id="wedge">
 	<div id="header">
-		<img src="http://wedge.org/wedge.png" id="logo">
+		<img src="https://wedge.org/wedge.png" id="logo">
 		<div class="frame">
 			<div id="banner" class="flow_hidden"><div class="frame">
 				<h1 class="forumtitle"><a>', $txt['wedge_installer'], '</a></h1>
@@ -1902,7 +1902,7 @@ function template_install_below()
 	echo '
 	</div></div></div></div></div></div>
 	<div id="footer"><div class="frame" style="height: 30px; line-height: 30px">
-		<a href="http://wedge.org/" title="Free Forum Software" target="_blank" class="new_win">Wedge &copy; 2010, René-Gilles Deberdt</a>
+		<a href="https://wedge.org/" title="Free Forum Software" target="_blank" class="new_win">Wedge &copy; 2010, René-Gilles Deberdt</a>
 	</div></div>
 	</div>
 	<script><!-- // --><![CDATA[
@@ -1938,7 +1938,7 @@ function template_welcome_message()
 	}
 
 	echo '
-	<script src="http://wedge.org/files/current-version.js?version=' . urlencode(WEDGE_VERSION) . '"></script>
+	<script src="https://wedge.org/files/current-version.js?version=' . urlencode(WEDGE_VERSION) . '"></script>
 	<form action="', $incontext['form_url'], '" method="post">
 		<p>', sprintf($txt['install_welcome_desc'], 'Wedge ' . WEDGE_VERSION), '</p>
 		<div id="version_warning">

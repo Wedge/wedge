@@ -116,7 +116,7 @@ $txt['live'] = 'Live from Wedge...';
 $txt['remove_all'] = 'Remove All';
 $txt['approve_new_members'] = 'Admin must approve all new members';
 
-$txt['version_check_desc'] = 'This shows you the versions of your server, as well as comparing your installation\'s files to the latest version. If any of these files are out of date, you should download and upgrade to the latest version at <a href="http://wedge.org/" target="_blank" class="new_win">wedge.org</a>.';
+$txt['version_check_desc'] = 'This shows you the versions of your server, as well as comparing your installation\'s files to the latest version. If any of these files are out of date, you should download and upgrade to the latest version at <a href="https://wedge.org/" target="_blank" class="new_win">wedge.org</a>.';
 $txt['version_check_more'] = '(more detailed)';
 
 $txt['lfyi'] = 'Unable to retrieve Wedge.org\'s latest news.';
