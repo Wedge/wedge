@@ -279,8 +279,8 @@ class we
 			'language' => self::get_preferred_language(isset($user_settings['lngfile']) ? $user_settings['lngfile'] : ''),
 			'skin' => $_SESSION['is_mobile'] ? (empty($user_settings['skin_mobile']) ? '' : $user_settings['skin_mobile']) : (empty($user_settings['skin']) ? '' : $user_settings['skin']),
 			'last_login' => empty($user_settings['last_login']) ? 0 : $user_settings['last_login'],
-			'ip' => $_SERVER['REMOTE_ADDR'],
-			'ip2' => $_SERVER['BAN_CHECK_IP'],
+			'ip' => $_SERVER['BAN_CHECK_IP'],
+			'ip2' => $_SERVER['REMOTE_ADDR'],
 			'posts' => empty($user_settings['posts']) ? 0 : $user_settings['posts'],
 			'time_format' => empty($user_settings['time_format']) ? '' : $user_settings['time_format'],
 			'time_offset' => isset($offset) ? $offset : (empty($user_settings['time_offset']) ? 0 : $user_settings['time_offset']),
@@ -640,11 +640,11 @@ class we
 	{
 		global $context;
 
-		// The following determines the user agent (browser) as best it can.
+		// The following determines the user agent (browser) as well as it can.
 		$ua = self::$ua;
 		$browser['opera'] = strpos($ua, 'Opera') !== false;
 
-		// Detect Webkit and related
+		// Detect Webkit and related, such as Opera 12+
 		$browser['webkit'] = $is_webkit = strpos($ua, 'AppleWebKit') !== false;
 		$browser['chrome'] = $is_webkit && strhas($ua, array('Chrome', 'CriOS'));
 		$browser['safari'] = $is_webkit && !$browser['chrome'] && strpos($ua, 'Safari') !== false;
