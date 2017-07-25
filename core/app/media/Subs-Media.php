@@ -3598,6 +3598,9 @@ function aeva_isTransparent($path, $real_path = false)
 
 function aeva_resetTransparency($id_file, $path)
 {
+	if (empty($id_file))
+		return false;
+
 	$is_transparent = aeva_isTransparent($path);
 	wesql::query('
 		UPDATE {db_prefix}media_files
