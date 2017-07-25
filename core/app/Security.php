@@ -1260,7 +1260,7 @@ function checkUserBehavior()
 				$headers .= ($headers != '' ? '<br>' : '') . htmlspecialchars($k . '=' . ($k != 'x-forwarded-for' ? $v : format_ip($v)));
 
 		foreach ($_POST as $k => $v)
-			$entity .= ($entity != '' ? '<br>' : '') . htmlspecialchars($k . '=' . $v);
+			$entity .= ($entity != '' ? '<br>' : '') . htmlspecialchars($k . '=' . (is_array($v) ? print_r($v, true) : $v));
 
 		wesql::insert('',
 			'{db_prefix}log_intrusion',
@@ -1671,6 +1671,7 @@ function checkUserRequest_useragent()
 			return $context['behavior_error'] = 'behav_te_not_msie';
 	}
 	// Is it claiming to be Yahoo's bot?
+/*
 	elseif (strhas($lua, array('yahoo! slurp', 'yahoo! searchmonkey')))
 	{
 		if (we::$is_member || !match_cidr($ip, array('202.160.176.0/20', '67.195.0.0/16', '203.209.252.0/24', '72.30.0.0/16', '98.136.0.0/14', '74.6.0.0/16')) || (empty($settings['disableHostnameLookup']) && !test_ip_host($ip, 'crawl.yahoo.net')))
@@ -1694,6 +1695,7 @@ function checkUserRequest_useragent()
 		if (we::$is_member || !match_cidr($ip, array('119.63.192.0/21', '123.125.71.0/24', '180.76.0.0/16', '220.181.0.0/16')))
 			return $context['behavior_error'] = 'behav_not_baidu';
 	}
+*/
 	// OK, so presumably this is some kind of Mozilla derivative? No guarantee it's actually Firefox, though. All main browsers claim to be Mozilla.
 	elseif (strpos($lua, 'mozilla') === 0)
 	{
