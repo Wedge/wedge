@@ -2960,10 +2960,10 @@ function aeva_fillMediaArray($request, $all_albums = true)
 			'transparent' => isset($row['transparency']) && $row['transparency'] == 'transparent',
 			'thumb_url' => isset($row['thumb_dir']) && !empty($amSettings['clear_thumbnames']) ? $clearurl . '/' . str_replace('%2F', '/', urlencode($row['thumb_dir'])) . '/' . aeva_getEncryptedFilename($row['thumb_file'], $row['id_thumb'], true) : $galurl . 'sa=media;in=' . $row['id_media'] . ';thumb',
 		);
-		if ($row['transparency'] == '' && $row['type'] == 'image')
+		if ($row['transparency'] == '')
 		{
-			$path = $clearurl . '/' . str_replace('%2F', '/', urlencode($row['thumb_dir'])) . '/' . aeva_getEncryptedFilename($row['thumb_file'], $row['id_thumb'], true);
-			$items[$row['id_media']]['transparent'] = aeva_resetTransparency($row['id_thumb'], $path);
+			$path = empty($row['id_thumb']) ? '' : $clearurl . '/' . str_replace('%2F', '/', urlencode($row['thumb_dir'])) . '/' . aeva_getEncryptedFilename($row['thumb_file'], $row['id_thumb'], true);
+			$items[$row['id_media']]['transparent'] = empty($row['id_thumb']) ? false : aeva_resetTransparency($row['id_thumb'], $path);
 		}
 	}
 	wesql::free_result($request);
