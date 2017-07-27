@@ -2962,8 +2962,8 @@ function aeva_fillMediaArray($request, $all_albums = true)
 		);
 		if ($row['transparency'] == '')
 		{
-			$path = $clearurl . '/' . str_replace('%2F', '/', urlencode($row['thumb_dir'])) . '/' . aeva_getEncryptedFilename($row['thumb_file'], $row['id_thumb'], true);
-			$items[$row['id_media']]['transparent'] = aeva_resetTransparency($row['id_thumb'], $path);
+			$path = empty($row['id_thumb']) ? '' : $clearurl . '/' . str_replace('%2F', '/', urlencode($row['thumb_dir'])) . '/' . aeva_getEncryptedFilename($row['thumb_file'], $row['id_thumb'], true);
+			$items[$row['id_media']]['transparent'] = empty($row['id_thumb']) ? false : aeva_resetTransparency($row['id_thumb'], $path);
 		}
 	}
 	wesql::free_result($request);
@@ -3598,6 +3598,9 @@ function aeva_isTransparent($path, $real_path = false)
 
 function aeva_resetTransparency($id_file, $path)
 {
+	if (empty($id_file))
+		return false;
+
 	$is_transparent = aeva_isTransparent($path);
 	wesql::query('
 		UPDATE {db_prefix}media_files
