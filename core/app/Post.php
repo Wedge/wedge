@@ -141,6 +141,7 @@ function Post($post_errors = array())
 			$lastPostTime
 		) = wesql::fetch_row($request);
 		wesql::free_result($request);
+		$context['current_privacy'] = explode(',', $context['current_privacy']);
 
 		// If this topic already has a poll, they sure can't add another.
 		if (isset($_REQUEST['poll']) && $pollID > 0)
@@ -169,7 +170,7 @@ function Post($post_errors = array())
 	}
 	else
 	{
-		$context['current_privacy'] = PRIVACY_DEFAULT;
+		$context['current_privacy'] = [PRIVACY_DEFAULT];
 		$context['becomes_approved'] = true;
 		if (!empty($board))
 			isAllowedTo('post_new');
@@ -366,6 +367,7 @@ function Post($post_errors = array())
 		if (!empty($post_errors))
 		{
 			loadLanguage('Errors');
+
 			foreach ($post_errors as $error)
 			{
 				if (is_array($error))
