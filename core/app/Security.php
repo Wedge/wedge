@@ -1936,13 +1936,14 @@ function get_privacy_widget($privacy, $can_edit = false, $text = '', $area = '')
 
 	return '
 		<span class="privacy"' . ($area ? ' id="pa_' . $area . '"' : '') . '><div class="privacy_' . $list[$shown_privacy] . '"></div>' . $text . '</span>' . ($can_edit ? '
-		<select class="prv_sel" multiple>' . get_privacy_options(array_flip($privacy)) . '</select>' : '');
+		<select class="prv_sel" multiple>' . get_privacy_options($privacy) . '</select>' : '');
 }
 
-function get_privacy_options($privacy = array())
+function get_privacy_options($privacy = [])
 {
 	global $txt;
 
+	$privacy = array_flip($privacy);
 	$pr = '<option value="' . PRIVACY_DEFAULT . '"' . (isset($privacy[PRIVACY_DEFAULT]) ? ' selected' : '') . ' class="single"">&lt;div class="privacy_public">&lt;/div>' . $txt['privacy_public'] . '</option>';
 	$pr .= '<option value="' . PRIVACY_MEMBERS . '"' . (isset($privacy[PRIVACY_MEMBERS]) ? ' selected' : '') . ' class="single">&lt;div class="privacy_members">&lt;/div>' . $txt['privacy_members'] . '</option>';
 	$pr .= '<option value="' . PRIVACY_AUTHOR . '"' . (isset($privacy[PRIVACY_AUTHOR]) ? ' selected' : '') . ' class="single">&lt;div class="privacy_author">&lt;/div>' . $txt['privacy_author'] . '</option>';
