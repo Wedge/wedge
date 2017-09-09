@@ -1143,27 +1143,27 @@ function aeva_generate_embed_thumb($link, $id_album, $id_file = 0, $folder = '')
 	$thumbs = array(
 		'YouTube' => array(
 			'func' => 'youtubeCreateThumb',
-			'pattern' => 'http://(?:video\.google\.(?:com|com?\.[a-z]{2}|[a-z]{2})/[^"]*?)?(?:(?:www|[a-z]{2})\.)?youtu(?:be\.com/[^"#[]*?(?:[&/?;]|&amp;|%[23]F)(?:video_id=|v(?:/|=|%3D|%2F))|\.be)([\w-]{11})',
+			'pattern' => 'https?://(?:video\.google\.(?:com|com?\.[a-z]{2}|[a-z]{2})/[^"]*?)?(?:(?:www|[a-z]{2})\.)?youtu(?:be\.com/[^"#[]*?(?:[&/?;]|&amp;|%[23]F)(?:video_id=|v(?:/|=|%3D|%2F))|\.be/)([\w-]{11})',
 		),
 		'Dailymotion' => array(
 			'func' => 'dailymotionCreateThumb',
-			'pattern' => 'http://(?:www\.)?dailymotion\.(?:com|alice\.it)/(?:[^"]*?video|swf)/([a-z0-9]{1,18})',
+			'pattern' => 'https?://(?:www\.)?dailymotion\.(?:com|alice\.it)/(?:[^"]*?video|swf)/([a-z0-9]{1,18})',
 		),
 		'GoogleVideo' => array(
 			'func' => 'googleCreateThumb',
-			'pattern' => 'http://video\.google\.(com|com?\.[a-z]{2}|[a-z]{2})/(?:videoplay|url|googleplayer\.swf)\?[^"]*?docid=([\w-]{1,20})',
+			'pattern' => 'https?://video\.google\.(com|com?\.[a-z]{2}|[a-z]{2})/(?:videoplay|url|googleplayer\.swf)\?[^"]*?docid=([\w-]{1,20})',
 		),
 		'GoogleMaps' => array(
 			'func' => 'gmapsCreateThumb',
-			'pattern' => 'http://maps\.google\.[^">]+/\w*?\?[^">]+',
+			'pattern' => 'https?://maps\.google\.[^">]+/\w*?\?[^">]+',
 		),
 		'MetaCafe' => array(
 			'func' => 'metacafeCreateThumb',
-			'pattern' => 'http://(?:www\.)?metacafe\.com/(?:watch|fplayer)/([\w-]{1,20})/',
+			'pattern' => 'https?://(?:www\.)?metacafe\.com/(?:watch|fplayer)/([\w-]{1,20})/',
 		),
 		'Vimeo' => array(
 			'func' => 'vimeoCreateThumb',
-			'pattern' => 'http://(?:www\.)?vimeo\.com/(\d{1,12})',
+			'pattern' => 'https?://(?:www\.)?vimeo\.com/(\d{1,12})',
 		),
 	);
 
