@@ -22,7 +22,7 @@ body
 
 $lightgrad = #fff
 $darkgrad = #f3f2f0
-$window_bg = luma($window_bg2, -3%)
+$window_bg = #eff2ef
 $window_bg2 = #f8faf8
 $post_bg = $window_bg
 $post_bg2 = $window_bg2
