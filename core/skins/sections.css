@@ -1395,7 +1395,7 @@ div.top_row dd
 		width: 23px
 		height: 28px
 		border-radius: 4px
-		margin: 8px 4px 0
+		margin: 8px 4px 12px
 		:before
 			transform: rotate(15deg)
 			border: 1px solid rgba(0,0,0,.3)

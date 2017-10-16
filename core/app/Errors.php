@@ -151,7 +151,7 @@ function log_error($error_message, $error_type = 'general', $file = null, $line 
 		$query_string = 'b:' . $query_string;
 
 	// Don't log the same error countless times, as we can get in a cycle of depression...
-	$error_info = array(we::$id, time(), get_ip_identifier(we::$user['ip']), $query_string, $error_message, $error_type, $file, $line);
+	$error_info = array(we::$id, time(), get_ip_identifier(we::$user['ip']), $query_string, substr($error_message, -65534), $error_type, $file, $line);
 	if (empty($last_error) || $last_error != $error_info)
 	{
 		// Insert the error into the database.
@@ -250,6 +250,17 @@ function fatal_lang_error($error, $log = 'general', $sprintf = array(), $header 
 	setup_fatal_error_context($error_message);
 }
 
+function get_error_type($error_level)
+{
+	$levels = [
+		'E_ERROR', 'E_WARNING', 'E_PARSE', 'E_NOTICE', 'E_CORE_ERROR', 'E_CORE_WARNING', 'E_COMPILE_ERROR', 'E_COMPILE_WARNING',
+		'E_USER_ERROR', 'E_USER_WARNING', 'E_USER_NOTICE', 'E_STRICT', 'E_RECOVERABLE_ERROR', 'E_DEPRECATED', 'E_USER_DEPRECATED'
+	];
+	foreach ($levels as $level)
+		if ($error_level & constant($level))
+			return ucwords(str_replace('_', ' ', strtolower(substr($level, 2))));
+}
+
 /**
  * Handler for regular PHP errors.
  *
@@ -268,6 +279,8 @@ function error_handler($error_level, $error_string, $file, $line)
 	// Ignore errors if default reporting behavior was overridden (e.g. through SSI or a @ suppressor.)
 	if (!(error_reporting() & $error_level))
 		return;
+
+	$error_type = get_error_type($error_level);
 
 	if (strpos($file, 'eval()') !== false && !empty($settings['current_include_filename']))
 	{
@@ -292,7 +305,7 @@ function error_handler($error_level, $error_string, $file, $line)
 	if (!empty($db_show_debug))
 	{
 		// Commonly, undefined indexes will occur inside attributes; try to show them anyway!
-		if ($error_level % 255 != E_ERROR)
+		if ($error_level & (E_NOTICE | E_USER_NOTICE))
 		{
 			$temporary = ob_get_contents();
 			if (substr($temporary, -2) == '="')
@@ -303,32 +316,27 @@ function error_handler($error_level, $error_string, $file, $line)
 		}
 
 		// Debugging! This should look like a PHP error message.
-		echo '<br>
-<strong>', $error_level & (E_ERROR | E_USER_ERROR) ? 'Error' : ($error_level & E_WARNING ? 'Warning' : 'Notice'), '</strong>: ', $error_string, ' in <strong>', basename($file), '</strong> on line <strong>', $line, '</strong><br>';
+			echo '<br>
+<strong>', $error_type, '</strong>: ', $error_string, ' in <strong>', basename($file), '</strong> on line <strong>', $line, '</strong><br>';
 	}
 
 	$error_type = strpos(strtolower($error_string), 'undefined') !== false ? 'undefined_vars' : 'general';
 
-	$message = log_error(($error_level & (E_ERROR | E_USER_ERROR) ? 'Error' : ($error_level & E_WARNING ? 'Warning' : 'Notice')) . " (level $error_level): " . $error_string, $error_type, $file, $line);
+	$message = log_error($error_type . " (level $error_level): " . $error_string, $error_type, $file, $line);
 
 	// Let's give hooks a chance to output a bit differently
 	call_hook('output_error', array(&$message, $error_type, $error_level, $file, $line));
 
-	// Dying on these errors only causes MORE problems (blank pages!)
+	// Some mysterious errors may be better handled by PHP itself.
 	if ($file == 'Unknown')
+		return true;
+
+	// If this isn't an unrecoverable error, we can try and finish rendering our page.
+	if (!($error_level & (E_ERROR | E_USER_ERROR)))
 		return;
 
-	// If this is an E_ERROR or E_USER_ERROR.... die. Violently so.
-	if ($error_level & (E_ERROR | E_USER_ERROR))
-		obExit(false);
-	else
-		return;
-
-	// Trigger a fatal error if it's not a simple notice.
-	if (!($error_level & (E_NOTICE | E_USER_NOTICE)))
-		fatal_error(allowedTo('admin_forum') ? $message : $error_string, false);
-
-	exit();
+	fatal_error(allowedTo('admin_forum') ? $message : $error_string, false);
+	obExit(false); // fatal_error() should end with an exit(), but just in case-- obExit will do it as well.
 }
 
 /**
@@ -386,10 +394,10 @@ function setup_fatal_error_context($error_message)
 			exit;
 	}
 
-	// We want whatever for the header, and a footer. (footer includes block!)
+	// We want whatever for the header, and a footer. (Footer includes block!)
 	obExit(null, true, false, true);
 
-	trigger_error('Hacking attempt...', E_USER_ERROR);
+	exit;
 }
 
 /**
