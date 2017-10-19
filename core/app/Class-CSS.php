@@ -136,7 +136,7 @@ class wess
 		}
 
 		// Extract color data
-		preg_match('~(?:(rgb|hsl)a?\(\h*(\d+%?)\h*,\h*(\d+%?)\h*,\h*(\d+%?)(?:\h*\,\h*(\d*(?:\.\d+)?%?))?\h*\)|#([0-9a-f]{6}|[0-9a-f]{3}))~', $data, $rgb);
+		preg_match('~(?:(rgb|hsl)a?\(\h*(\d+%?)\h*,\h*(\d+%?)\h*,\h*(\d+%?)(?:\h*\,\h*(\d*(?:\.\d+)?%?))?\h*\)|#([0-9a-f]{6}|[0-9a-f]{3}))~', $data = strtolower($data), $rgb);
 
 		$color = $hsl = 0;
 		if (empty($rgb[0]))
