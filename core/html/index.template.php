@@ -84,8 +84,7 @@ function template_html_before()
 	<link rel="next" href="', $context['links']['next'], '">';
 	}
 
-	if (!we::is('opera[11-], ie[10-]'))
-		echo '
+	echo '
 	<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=2,minimum-scale=0.7">';
 
 	if (!empty($context['meta_description']))

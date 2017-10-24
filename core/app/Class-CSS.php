@@ -1090,7 +1090,7 @@ class wess_nesting extends wess
 		foreach ($this->rules as &$node)
 		{
 			// Is this rule actually an at-rule? They need special treatment.
-			if ($node['selector'][0] === '@' && stripos($node['selector'], '@viewport') !== 0)
+			if ($node['selector'][0] === '@')
 			{
 				if (stripos($node['selector'], '@import') === 0 || stripos($node['selector'], '@charset') === 0)
 				{
@@ -1702,16 +1702,12 @@ class wess_prefixes extends wess
 		if ($b['ie'] && $v == 6)
 			$css = preg_replace('~\bmin-height\b~', 'height', $css);
 
-		// IE 6-9 don't support keyframes; IE 10, Firefox 16+ and Opera 12.10+ support them unprefixed, other browsers require a prefix.
-		if (($b['opera'] && $v < 12.1) || ($b['firefox'] && $v < 16) || $b['webkit'])
+		// IE 6-9 don't support keyframes; IE 10, Firefox 16+, Chrome 43+, Safari 9+ and Opera 12.10/30+ support them unprefixed, other browsers require a prefix.
+		if (($b['opera'] && $v > 12.1 && $v < 30) || ($b['chrome'] && $v < 43) || ($b['firefox'] && $v < 16) || ($b['safari'] && $v < 9))
 			$css = str_replace('@keyframes ', '@' . $this->prefix . 'keyframes ', $css);
 
-		// IE 10+ and Presto 11+ (Opera Classic) support @viewport, but prefixed. Other browsers...? No idea.
-		if (($b['opera'] && $v >= 11) || ($b['ie'] && $v >= 10))
-			$css = str_replace('@viewport', '@' . $this->prefix . 'viewport', $css);
-
 		// Chrome 21-28 and Safari 7+ support the final flexbox model... But with a prefix.
-		if (($b['safari'] && $v >= 7) || ($os['ios'] && $ov >= 7) || ($b['chrome'] && $v >= 21 && $v < 29))
+		if (($b['safari'] && $v >= 7 && $v < 9) || ($os['ios'] && $ov >= 7 && $ov < 9) || ($b['chrome'] && $v >= 21 && $v < 29))
 			$css = preg_replace('~\b(order|justify-content|align-(?:content|items|self)|flex(?:-[a-z]+)?)\h*:~', $this->prefix . '$1:', $css);
 
 		// IE 10 is a special case for flexboxing. It supports an older syntax, which we'll convert below,
