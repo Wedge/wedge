@@ -1474,15 +1474,6 @@ body.waiting *
 	border: 1px solid #dcc
 	border-radius: 5px
 
-// Old Opera and IE 10+ Mobile support a special tag that saves some HTML calls.
-@if opera[11-], ie[10-]
-	@viewport
-		width: device-width
-		zoom: 1 // initial-scale
-		min-zoom: .7 // minimum-scale
-		max-zoom: 2 // maximum-scale
-@endif
-
 @if !ie[-7]
 	@media $responsive
 		body
