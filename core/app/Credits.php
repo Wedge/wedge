@@ -70,16 +70,16 @@ function Credits()
 			sprintf(
 				$txt['credits_wedge'],
 				'René-Gilles Deberdt',
-				'https://wedge.org/',
-				'https://wedge.org/profile/Nao/',
-				'https://wedge.org/license/',
+				'//wedge.org/',
+				'//wedge.org/profile/Nao/',
+				'//wedge.org/license/',
 				'2010-' . date('Y')
 			),
 		),
 	);
 
 	if (!empty($settings['embed_enabled']) || !empty($settings['media_enabled']))
-		$context['credits']['copyright']['members'][] = sprintf($txt['credits_aeme'], 'http://aeva.noisen.com/');
+		$context['credits']['copyright']['members'][] = sprintf($txt['credits_aeme'], '//aeva.noisen.com/');
 
 	$context['plugin_credits'] = array();
 

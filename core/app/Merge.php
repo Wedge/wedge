@@ -240,8 +240,8 @@ function MergeExecute($topics = array())
 		fatal_lang_error('merge_need_more_topics');
 
 	// Make sure every topic is numeric, or some nasty things could be done with the DB.
-	foreach ($topics as $id => $topic)
-		$topics[$id] = (int) $topic;
+	foreach ($topics as $id => $tp)
+		$topics[$id] = (int) $tp;
 
 	// Joy of all joys, make sure they're not pi**ing about with unapproved topics they can't see :P
 	if ($settings['postmod_active'])
@@ -415,8 +415,8 @@ function MergeExecute($topics = array())
 		}
 
 		$context['topics'] = $topic_data;
-		foreach ($topic_data as $id => $topic)
-			$context['topics'][$id]['selected'] = $topic['id'] == $firstTopic;
+		foreach ($topic_data as $id => $tp)
+			$context['topics'][$id]['selected'] = $tp['id'] == $firstTopic;
 
 		$context['page_title'] = $txt['merge'];
 		wetem::load('merge_extra_options');
