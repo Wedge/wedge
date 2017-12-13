@@ -1433,8 +1433,9 @@ div.top_row dd
 	padding-left: math(width($images_dir/icons/feed.gif)px + 4)
 	min-height: height($images_dir/icons/feed.gif)px
 	text-decoration: none
-	.catfeed &
-		margin-left: -4px
+	&.catfeed
+		margin: 0 3px
+		vertical-align: -2px
 
 .arrow_left mixes .inline-block
 	base: .arrows
