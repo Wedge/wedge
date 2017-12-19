@@ -1911,7 +1911,7 @@ function cache_put_data($key, $val, $ttl = 120)
 			// Check that the cache write was successful. If it fails due to low diskspace, remove the cache file.
 			$dest_locked = CACHE_DIR . '/keys/' . $key . '-' . mt_rand(999, 999999999) . '.php';
 			if (file_put_contents($dest_locked, $cache_data) !== strlen($cache_data))
-				unlink($desk_locked);
+				unlink($dest_locked);
 			else
 				rename($dest_locked, CACHE_DIR . '/keys/' . $key . '.php');
 		}
