@@ -272,11 +272,11 @@ function template_modfilter_edit()
 			<div class="pagesection">
 				<div class="floatright">
 					<div class="additional_row right">
-						<input id="btnSave" type="submit" class="save" value="', $txt['modfilter_save_this_rule'], '">';
+						<input type="submit" id="btnSave" class="save" value="', $txt['modfilter_save_this_rule'], '">';
 
 	if (!empty($context['prev_id']))
 		echo '
-						<input name="delete" type="submit" class="delete" value="', $txt['modfilter_remove_this_rule'], '">';
+						<input type="submit" name="delete" class="delete" value="', $txt['modfilter_remove_this_rule'], '">';
 
 	echo '
 					</div>
@@ -395,7 +395,7 @@ function template_modfilter_groups()
 		</div>
 		<div class="pagesection ruleSave">
 			<div class="floatright">
-				<input class="new" type="submit" value="', $txt['modfilter_condition_done'], '" onclick="addGroups(e);">
+				<input type="submit" class="new" value="', $txt['modfilter_condition_done'], '" onclick="addGroups(e);">
 			</div>
 		</div>';
 
@@ -454,7 +454,7 @@ function template_modfilter_boards()
 	echo '
 		<div class="pagesection ruleSave">
 			<div class="floatright">
-				<input class="new" type="submit" value="', $txt['modfilter_condition_done'], '" onclick="addBoards(e);">
+				<input type="submit" class="new" value="', $txt['modfilter_condition_done'], '" onclick="addBoards(e);">
 			</div>
 		</div>';
 
@@ -523,7 +523,7 @@ function template_modfilter_warning()
 		<input size="5" name="warning" style="padding: 3px 5px 5px 5px" onchange="validateWarning();"> ', $txt['modfilter_warning_is_post'], '
 		<div class="pagesection ruleSave">
 			<div class="floatright">
-				<input class="new" type="submit" value="', $txt['modfilter_condition_done'], '" onclick="addWarning(e);">
+				<input type="submit" class="new" value="', $txt['modfilter_condition_done'], '" onclick="addWarning(e);">
 			</div>
 		</div>';
 
@@ -589,7 +589,7 @@ function template_regex_modfilter($type)
 		<label><input type="checkbox" name="casesens"> ', $txt['modfilter_be_case_sensitive'], '</label>
 		<div class="pagesection ruleSave">
 			<div class="floatright">
-				<input class="new" type="submit" value="', $txt['modfilter_condition_done'], '" onclick="add' . $utype . '(e);">
+				<input type="submit" class="new" value="', $txt['modfilter_condition_done'], '" onclick="add' . $utype . '(e);">
 			</div>
 		</div>';
 
@@ -646,7 +646,7 @@ function template_range_modfilter($type)
 		<input size="5" name="', $type, '" style="padding: 3px 5px 5px 5px" onchange="validate', $utype, '();">
 		<div class="pagesection ruleSave">
 			<div class="floatright">
-				<input class="new" type="submit" value="', $txt['modfilter_condition_done'], '" onclick="add', $utype, '(e);">
+				<input type="submit" class="new" value="', $txt['modfilter_condition_done'], '" onclick="add', $utype, '(e);">
 			</div>
 		</div>';
 

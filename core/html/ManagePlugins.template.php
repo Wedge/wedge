@@ -163,13 +163,13 @@ function template_remove()
 			<fieldset>
 				<legend>', $txt['remove_plugin_nodelete'], '</legend>
 				', $txt['remove_plugin_nodelete_desc'], '<br>
-				<input name="nodelete" type="submit" class="save floatright" value="', $txt['remove_plugin_nodelete'], '">
+				<input type="submit" name="nodelete" class="save floatright" value="', $txt['remove_plugin_nodelete'], '">
 			</fieldset>
 			<br>
 			<fieldset>
 				<legend>', $txt['remove_plugin_delete'], '</legend>
 				', $txt['remove_plugin_delete_desc'], '<br>
-				<input name="delete" type="submit" class="delete floatright" value="', $txt['remove_plugin_delete'], '"', !empty($context['requires_maint']) ? ' disabled' : '', '>';
+				<input type="submit" name="delete" class="delete floatright" value="', $txt['remove_plugin_delete'], '"', !empty($context['requires_maint']) ? ' disabled' : '', '>';
 	if (!empty($context['requires_maint']))
 		echo '
 				<div class="errorbox plugin_error">', $txt['remove_plugin_maint'], '</div>';
@@ -355,13 +355,13 @@ function template_upload_duplicate_detected()
 			<fieldset>
 				<legend>', $txt['plugin_duplicate_cancel'], '</legend>
 				', $txt['plugin_duplicate_cancel_desc'], '<br>
-				<input name="cancel" type="submit" class="delete floatright" value="', $txt['plugin_duplicate_cancel'], '">
+				<input type="submit" name="cancel" class="delete floatright" value="', $txt['plugin_duplicate_cancel'], '">
 			</fieldset>
 			<br>
 			<fieldset>
 				<legend>', $txt['plugin_duplicate_proceed'], '</legend>
 				', $txt['plugin_duplicate_proceed_desc'], '<br>
-				<input name="upgrade" type="submit" class="submit floatright" value="', $txt['plugin_duplicate_proceed'], '">
+				<input type="submit" name="upgrade" class="submit floatright" value="', $txt['plugin_duplicate_proceed'], '">
 			</fieldset>
 		</div>
 		<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
