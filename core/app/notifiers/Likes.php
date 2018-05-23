@@ -49,7 +49,7 @@ class Likes_Thought_Notifier extends Notifier
 				'{MEMBER_NAME}' => $data['member']['name'],
 				'{MEMBER_LINK}' => '<a href="' . $member_url . '">' . $data['member']['name'] . '</a>',
 				'{MEMBER_URL}' => $member_url,
-				'{OBJECT_NAME}' => $data['subject'],
+				'{OBJECT_NAME}' => parse_bbc($data['subject']),
 			)
 		);
 	}
