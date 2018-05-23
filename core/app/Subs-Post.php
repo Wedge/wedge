@@ -211,7 +211,7 @@ function sendmail($to, $subject, $message, $from = null, $message_id = null, $se
 	// The mime boundary separates the different alternative versions.
 	$mime_boundary = 'We' . md5($message . time());
 
-	// Using mime, as it allows to send a plain unencoded alternative.
+	// Using Mime, as it allows to send a plain unencoded alternative.
 	$headers .= 'Mime-Version: 1.0' . $br;
 	$headers .= 'Content-Type: multipart/alternative; boundary=' . $mime_boundary . $br;
 	$headers .= 'Content-Transfer-Encoding: 7bit' . $br;
@@ -407,8 +407,8 @@ function sendpm($recipients, $subject, $message, $store_outbox = true, $from = n
 		we::$user['name'] = $from['name'];
 
 	// This is the one that will go in their inbox.
-	$htmlmessage = westr::htmlspecialchars($message, ENT_QUOTES);
-	$htmlsubject = westr::htmlspecialchars($subject);
+	$htmlmessage = westr::htmlspecialchars($message, ENT_NOQUOTES);
+	$htmlsubject = westr::htmlspecialchars($subject, ENT_NOQUOTES);
 	wedit::preparsecode($htmlmessage);
 
 	// Integrated PMs
@@ -678,7 +678,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = true, $from = n
 
 	censorText($message);
 	censorText($subject);
-	$message = trim(un_htmlspecialchars(strip_tags(strtr(parse_bbc(westr::htmlspecialchars($message), 'pm-notify', array('smileys' => false)), array('<br>' => "\n", '</div>' => "\n", '</li>' => "\n", '&#91;' => '[', '&#93;' => ']')))));
+	$message = trim(un_htmlspecialchars(strip_tags(strtr(parse_bbc(westr::htmlspecialchars($message, ENT_NOQUOTES), 'pm-notify', array('smileys' => false)), array('<br>' => "\n", '</div>' => "\n", '</li>' => "\n", '&#91;' => '[', '&#93;' => ']')))));
 
 	$replacements = array(
 		'SENDERNAME' => un_htmlspecialchars($from['name']),
@@ -710,7 +710,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = true, $from = n
 // Prepare text strings for sending as email body or header.
 function mimespecialchars($string, $with_charset = true, $hotmail_fix = false, $br = "\r\n")
 {
-	// Convert all special characters to HTML entities... just for Hotmail :-\
+	// Convert all special characters to HTML entities... just for Hotmail :-/
 	if ($hotmail_fix)
 		return array(westr::utf8_to_entity($string), '7bit');
 
@@ -2589,8 +2589,8 @@ function saveDraft($is_pm, $id_context = 0)
 		return false;
 
 	// Clean up and sanitize what we may or may not have.
-	$subject = isset($_POST['subject']) ? westr::htmltrim(westr::htmlspecialchars($_POST['subject'])) : '';
-	$message = isset($_POST['message']) ? westr::htmlspecialchars($_POST['message'], ENT_QUOTES) : '';
+	$subject = isset($_POST['subject']) ? westr::htmltrim(westr::htmlspecialchars($_POST['subject'], ENT_NOQUOTES)) : '';
+	$message = isset($_POST['message']) ? westr::htmlspecialchars($_POST['message'], ENT_NOQUOTES) : '';
 
 	if ($subject === '' && westr::htmltrim($message) === '')
 	{
