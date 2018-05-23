@@ -383,7 +383,8 @@ function ModifyCacheSettings($return_config = false)
 
 	// Detect available optimizers.
 	$detected = array();
-	$detected['APC'] = function_exists('apc_fetch') && function_exists('apc_store') && is_callable('apc_store');
+	$detected['APC'] = function_exists('apcu_fetch') && function_exists('apcu_store') && is_callable('apcu_store');
+	$detected['APC'] |= function_exists('apc_fetch') && function_exists('apc_store') && is_callable('apc_store');
 	$detected['Zend'] = (function_exists('output_cache_put') && is_callable('output_cache_put')) || (function_exists('zend_shm_cache_store') && is_callable('zend_shm_cache_store'));
 	$detected['Memcached'] = function_exists('memcache_get') && function_exists('memcache_set') && is_callable('memcache_set');
 	$detected['XCache'] = function_exists('xcache_set') && is_callable('xcache_set') && ini_get('xcache.var_size') > 0;
