@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!--
+	See Wine/Warm/skin.xml for descriptions.
+-->
+<skin>
+
+	<name>
+		Night Shift
+	</name>
+
+	<type>
+		add
+	</type>
+
+	<comment><![CDATA[
+		By Jurien
+	]]></comment>
+
+	<move block="linktree" to="menu" where="after" />
+	<move block="linktree:bottom" to="content_wrap" where="after" />
+
+	<script for="ie6" include="ie6hover.js"><![CDATA[
+	$('input[type=checkbox], input[type=radio]').addClass('ie_check');
+	$('input[type=submit], input[type=button]').addClass('ie_button');
+	$.ie6hover();
+	]]></script>
+
+</skin>
