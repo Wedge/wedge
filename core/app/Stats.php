@@ -38,14 +38,12 @@ function Stats()
 		fatal_lang_error('cannot_view_stats', false);
 
 	// Get averages...
-	$result = wesql::query('
+	$row = wesql::get('
 		SELECT
 			SUM(posts) AS posts, SUM(topics) AS topics, SUM(registers) AS registers,
 			SUM(most_on) AS most_on, MIN(date) AS date, SUM(hits) AS hits
 		FROM {db_prefix}log_activity'
 	);
-	$row = wesql::fetch_assoc($result);
-	wesql::free_result($result);
 
 	// This would be the amount of time the forum has been up... in days...
 	$total_days_up = ceil((time() - strtotime($row['date'])) / (60 * 60 * 24));
@@ -75,31 +73,17 @@ function Stats()
 	$context['num_hits'] = comma_format($row['hits'], 0);
 
 	// How many users are online now.
-	$result = wesql::query('
-		SELECT COUNT(*)
-		FROM {db_prefix}log_online'
-	);
-	list ($context['users_online']) = wesql::fetch_row($result);
-	wesql::free_result($result);
+	$context['users_online'] = wesql::get('SELECT COUNT(*) FROM {db_prefix}log_online');
 
 	// Statistics such as number of boards, categories, etc.
-	$result = wesql::query('
+	$context['num_boards'] = wesql::get('
 		SELECT COUNT(*)
 		FROM {db_prefix}boards AS b
 		WHERE b.redirect = {string:blank_redirect}',
-		array(
-			'blank_redirect' => '',
-		)
+		['blank_redirect' => '']
 	);
-	list ($context['num_boards']) = wesql::fetch_row($result);
-	wesql::free_result($result);
 
-	$result = wesql::query('
-		SELECT COUNT(*)
-		FROM {db_prefix}categories AS c'
-	);
-	list ($context['num_categories']) = wesql::fetch_row($result);
-	wesql::free_result($result);
+	$context['num_categories'] = wesql::get('SELECT COUNT(*) FROM {db_prefix}categories AS c');
 
 	// Format the numbers nicely.
 	$context['users_online'] = comma_format($context['users_online']);
@@ -154,17 +138,13 @@ function Stats()
 	$date = strftime('%Y-%m-%d', forum_time(false));
 
 	// Members online so far today.
-	$result = wesql::query('
+	$context['online_today'] = wesql::get('
 		SELECT most_on
 		FROM {db_prefix}log_activity
 		WHERE date = {date:today_date}
 		LIMIT 1',
-		array(
-			'today_date' => $date,
-		)
+		['today_date' => $date]
 	);
-	list ($context['online_today']) = wesql::fetch_row($result);
-	wesql::free_result($result);
 
 	$context['online_today'] = comma_format((int) $context['online_today']);
 

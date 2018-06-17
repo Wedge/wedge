@@ -364,7 +364,7 @@ function setup_fatal_error_context($error_message)
 		return false;
 
 	// Maybe they came from dlattach or similar?
-	if (WEDGE != 'SSI' && empty($context['theme_loaded']))
+	if (WEDGE != 'SSI' && empty($context['theme_loaded']) && empty($context['current_block']))
 		loadTheme();
 
 	// Don't bother indexing errors mate...
@@ -379,7 +379,10 @@ function setup_fatal_error_context($error_message)
 
 	// Load the template and set the block.
 	loadTemplate('Errors');
-	wetem::load('fatal_error');
+	if (!empty($context['current_block']))
+		execBlock('fatal_error');
+	else
+		wetem::hide('fatal_error');
 
 	// If this is SSI, what do they want us to do?
 	if (WEDGE == 'SSI')
@@ -395,7 +398,8 @@ function setup_fatal_error_context($error_message)
 	}
 
 	// We want whatever for the header, and a footer. (Footer includes block!)
-	obExit(null, true, false, true);
+	if (empty($context['current_block']))
+		obExit(null, true, false, true);
 
 	exit;
 }
@@ -411,20 +415,26 @@ function show_db_error($loadavg = false)
 {
 	global $mbname, $maintenance, $mtitle, $mmessage, $settings;
 	global $db_connection, $webmaster_email, $db_last_error, $db_error_send;
+	static $called = false;
+
+	if ($called)
+		return;
 
 	// Just check we're not in any buffers, just in case.
-	while (ob_get_length())
-		ob_end_clean();
+	while (@ob_end_clean());
 
-	// Don't cache this page!
-	header('Expires: Wed, 25 Aug 2010 17:00:00 GMT');
-	header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
-	header('Cache-Control: no-cache');
+	if (!headers_sent())
+	{
+		// Don't cache this page!
+		header('Expires: Wed, 25 Aug 2010 17:00:00 GMT');
+		header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
+		header('Cache-Control: no-cache');
 
-	// Send the right error codes.
-	header('HTTP/1.1 503 Service Temporarily Unavailable');
-	header('Status: 503 Service Temporarily Unavailable');
-	header('Retry-After: 3600');
+		// Send the right error codes.
+		header('HTTP/1.1 503 Service Temporarily Unavailable');
+		header('Status: 503 Service Temporarily Unavailable');
+		header('Retry-After: 3600');
+	}
 
 	if ($loadavg == false)
 	{
@@ -483,6 +493,7 @@ function show_db_error($loadavg = false)
 	</body>
 </html>';
 
+	$called = true;
 	exit;
 }
 

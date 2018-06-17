@@ -1225,6 +1225,8 @@ function execBlock($block_name, $fatal = false)
 	if (empty($block_name))
 		return;
 
+	$context['current_block'] = $block_name;
+
 	if (!empty($db_show_debug))
 		$context['debug']['blocks'][$block_name] = isset($context['debug']['blocks'][$block_name]) ? $context['debug']['blocks'][$block_name] + 1 : 1;
 

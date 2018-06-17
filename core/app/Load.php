@@ -2257,7 +2257,7 @@ function loadSession()
 		elseif (ini_get('session.gc_maxlifetime') <= 1440 && !empty($settings['databaseSession_lifetime']))
 			ini_set('session.gc_maxlifetime', max($settings['databaseSession_lifetime'], 60));
 
-		session_start();
+		@session_start();
 
 		// Change it so the cache settings are a little looser than default.
 		if (!empty($settings['databaseSession_loose']))
@@ -2351,14 +2351,15 @@ function sessionWrite($session_id, $data)
  */
 function sessionDestroy($session_id)
 {
-	global $db_link, $db_prefix;
-
-	if (!preg_match('~^[a-zA-Z0-9,-]{16,32}$~', $session_id) || !isset($db_link))
+	if (preg_match('~^[a-zA-Z0-9,-]{16,32}$~', $session_id) == 0)
 		return false;
 
 	// Just delete the row...
-	mysqli_query($db_link, 'DELETE FROM ' . $db_prefix . 'sessions WHERE session_id = "' . mysqli_real_escape_string($db_link, $session_id) . '"');
-
+	wesql::query('
+		DELETE FROM {db_prefix}sessions
+		WHERE session_id = {string:session_id}',
+		array('session_id' => $session_id)
+	);
 	return true;
 }
 

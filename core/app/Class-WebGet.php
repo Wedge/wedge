@@ -148,6 +148,8 @@ class weget
 			curl_setopt($curl, CURLOPT_USERAGENT, $this->user_agent); // User agent to supply
 			curl_setopt($curl, CURLOPT_HEADER, false); // We don't want the header in the output
 			curl_setopt($curl, CURLOPT_NOBODY, false); // But we DO want the body
+			curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 0);
+			curl_setopt($curl, CURLOPT_TIMEOUT, 30);
 
 			// Secure connections require a little more work
 			if ($this->secure)
@@ -179,10 +181,18 @@ class weget
 			curl_setopt($curl, CURLOPT_USERPWD, 'anonymous:' . $webmaster_email);
 
 		$data = curl_exec($curl);
-		curl_close($curl);
 		if ($data === false)
-			$data = file_get_contents($this->url);
-
+		{
+			$curl_info = curl_getinfo($curl);
+			curl_close($curl);
+			$curl_failed = true;
+			if ($curl_info['http_code'] == 404)
+				return 'Error 404';
+			if ($curl_info['http_code'] >= 300)
+				$data = file_get_contents($this->url, false, stream_context_create(['http' => ['timeout' => 30]]));
+		}
+		else
+			curl_close($curl);
 		return $data;
 	}
 

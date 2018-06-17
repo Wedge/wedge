@@ -329,7 +329,7 @@ function Feed()
 	<link rel="alternate" type="text/html" href="', ROOT, '" />
 	<updated>', gmstrftime('%Y-%m-%dT%H:%M:%SZ'), '</updated>
 	<subtitle type="html">', cdata_parse(strip_tags(str_replace('{forum_name}', $context['forum_name'], $txt['xml_feed_desc']))), '</subtitle>
-	<generator uri="http://wedge.org" version="', WEDGE_VERSION, '">
+	<generator uri="https://wedge.org" version="', WEDGE_VERSION, '">
 		Wedge
 	</generator>
 	<author>

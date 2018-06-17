@@ -692,9 +692,9 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 
 	// Just like comments, we're going to preserve content tags.
 	$final = preg_replace('~(?<=\s)content\h*:\h*~', 'content:', $final);
-	preg_match_all('~(?<=\s)content:(.*?)[\h;]*(?=[}\v])~', $final, $contags);
+	preg_match_all('~(?<=\s)content:\h*"(.*?)[\h;]*(?=[}\v])~', $final, $contags);
 	$context['reset_content_counter'] = true;
-	$final = preg_replace_callback('~(?<=\s)content:.*?[\h;]*(?=[}\v])~', 'wedge_hide_content', $final);
+	$final = preg_replace_callback('~(?<=\s)content:\h*"(.*?)[\h;]*(?=[}\v])~', 'wedge_hide_content', $final);
 
 	foreach ($plugins as $plugin)
 		$plugin->process($final);
@@ -795,7 +795,7 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 	return $folder . $full_name;
 }
 
-function wedge_hide_content()
+function wedge_hide_content($tx)
 {
 	global $context;
 	static $i;
@@ -804,6 +804,11 @@ function wedge_hide_content()
 	{
 		$i = 0;
 		unset($context['reset_content_counter']);
+	}
+	if (strpos($tx[1], 'url(') !== false)
+	{
+		$i++;
+		return $tx[0];
 	}
 	return 'content:wedge' . $i++;
 }

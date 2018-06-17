@@ -107,7 +107,7 @@ class wesql
 		return $query;
 	}
 
-	public static function query($query, $db_values = array(), $connection = null)
+	public static function query($query, $db_values = array(), $connection = null, $testing = false)
 	{
 		global $db_cache, $db_count, $db_show_debug, $time_start;
 		global $db_unbuffered, $db_callback, $settings;
@@ -234,7 +234,10 @@ class wesql
 				self::error_backtrace('Hacking attempt...', 'Hacking attempt...' . "\n" . $query, E_USER_ERROR);
 		}
 
-		$ret = @mysqli_query($connection, $query, empty($db_unbuffered) ? MYSQLI_STORE_RESULT : MYSQLI_USE_RESULT);
+		if ($testing)
+			exit(print_r($query, true));
+		else
+			$ret = @mysqli_query($connection, $query, empty($db_unbuffered) ? MYSQLI_STORE_RESULT : MYSQLI_USE_RESULT);
 
 		if ($ret === false && empty($db_values['db_error_skip']))
 			$ret = self::serious_error($query, $connection);

@@ -474,7 +474,7 @@ function ThemeInstall()
 
 		// Let's add a theme_info.xml to this theme.
 		$xml_info = '<?xml version="1.0"?' . '>
-<theme-info xmlns="http://wedge.org/files/xml/theme-info.dtd" xmlns:we="http://wedge.org/">
+<theme-info xmlns="https://wedge.org/files/xml/theme-info.dtd" xmlns:we="https://wedge.org/">
 	<!-- For the id, always use something unique - put your name, a colon, and then the package name. -->
 	<id>wedge:' . westr::strtolower(str_replace(array(' '), '_', $_REQUEST['copy'])) . '</id>
 	<version>' . WEDGE_VERSION . '</version>
@@ -483,7 +483,7 @@ function ThemeInstall()
 	<!-- Author: your email address or contact information. The name attribute is optional. -->
 	<author name="Author">dummy@dummy.com</author>
 	<!-- Website... where to get updates and more information. -->
-	<website>http://wedge.org/</website>
+	<website>https://wedge.org/</website>
 	<!-- Templates to load on startup. Default is "index". -->
 	<templates>' . (empty($theme_templates) ? 'index' : $theme_templates) . '</templates>
 </theme-info>';
