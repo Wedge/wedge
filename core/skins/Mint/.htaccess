@@ -1,0 +1,4 @@
+<FilesMatch "\.(css|xml)$">
+	Order Deny,Allow
+	Deny from all
+</FilesMatch>
