@@ -1,0 +1,15 @@
+
+.cat input[type=checkbox]
+	margin: 0 4px
+
+/* Misc hacks
+------------------------------------------------------- */
+.cat final
+	overflow: hidden
+
+.title final
+	overflow: hidden
+
+.cat
+	overflow: hidden
+	width: auto
