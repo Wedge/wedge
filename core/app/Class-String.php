@@ -317,7 +317,7 @@ class westr extends westr_mb
 		static $test_mb = false, $strlen;
 
 		if (empty($string))
-			return $ellipsis ? '&hellip;' : '';
+			return '';
 
 		if (!$check_multibyte)
 			return rtrim(preg_replace('~&#?\w*$~', '', substr($string, 0, $max_length))) . ($ellipsis && strlen($string) > $max_length ? '&hellip;' : '');

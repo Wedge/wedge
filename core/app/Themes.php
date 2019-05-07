@@ -522,7 +522,7 @@ function ThemeInstall()
 		elseif (isset($_REQUEST['theme_gz']))
 		{
 			// Check that the theme is from wedge.org, for now... maybe add mirroring later.
-			if (preg_match('~^http://[\w-]+\.wedge\.org/~', $_REQUEST['theme_gz']) == 0 || strpos($_REQUEST['theme_gz'], 'dlattach') !== false)
+			if (preg_match('~^https://[\w-]+\.wedge\.org/~', $_REQUEST['theme_gz']) == 0 || strpos($_REQUEST['theme_gz'], 'dlattach') !== false)
 				fatal_lang_error('only_on_wedge');
 
 			$extracted = read_tgz_file($_REQUEST['theme_gz'], ROOT_DIR . '/Themes/' . $theme_name, false, true);
