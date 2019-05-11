@@ -1641,6 +1641,7 @@ class wess_prefixes extends wess
 		// IE9+/Firefox 16+/Chrome 27+ support this unprefixed, Safari 6 needs a prefix.
 		if (strpos($matches[1], 'calc') !== false)
 		{
+			$matches[1] = str_replace($matches[2], str_replace(' ', '#wedge-space#', $matches[2]), $matches[1]);
 			if (($b['ie'] && $v >= 9) || ($b['chrome'] && $v >= 27) || ($b['firefox'] && $v >= 16))
 				return $matches[1];
 			if (($b['chrome'] && $v >= 19) || ($b['firefox'] && $v >= 4) || ($b['safari'] && $v == 6) || ($os['ios'] && $ov >= 6 && $ov < 7))
@@ -1685,7 +1686,7 @@ class wess_prefixes extends wess
 			'display:\h*(flex|inline-flex)\b',				// Final flexbox model declarations
 			'\b(min|max)-resolution:\h*([\d.]+)(dppx|dpi)',	// Useful for responsive design
 			'\brect\h*\(([^)]+)\)',							// rect() function, needs commas except in IE 6/7
-			'\bcalc\h*\(',									// calc() function
+			'\bcalc\h*\(((?>[^(]|\((?!\))|(?R))+?)\)',		// calc() function
 
 		];
 		foreach ($values as $val)

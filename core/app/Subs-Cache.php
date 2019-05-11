@@ -725,8 +725,7 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 	// Remove the 'final' keyword.
 	$final = preg_replace('~\s+final\b~', '', $final);
 
-	// Remove extra whitespace. Note that this breaks additions and substractions in calc(), as they need their own whitespace.
-	// I'll be fixing this, eventually. But needs more regexes, more CPU time, and this means more kitties getting slaughtered. :(
+	// Remove extra whitespace.
 	$final = preg_replace('~\s\[~', '#wedge-bracket#', $final);
 	$final = preg_replace('~\s*([][+:;,>{}\s])\s*~', '$1', $final);
 	$final = str_replace('#wedge-bracket#', ' [', $final);
@@ -738,8 +737,8 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 
 	// Remove double quote hacks, remaining whitespace, and no-base64 tricks.
 	$final = str_replace(
-		['#wedge-quote#', "\n\n", ';;', ';}', "}\n", "\t", ' !important', 'raw-url('],
-		['"', "\n", ';', '}', '}', ' ', '!important', 'url('],
+		['#wedge-quote#', '#wedge-space#', "\n\n", ';;', ';}', "}\n", "\t", ' !important', 'raw-url('],
+		['"', ' ', "\n", ';', '}', '}', ' ', '!important', 'url('],
 		$final
 	);
 
