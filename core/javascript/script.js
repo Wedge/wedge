@@ -9,6 +9,8 @@
 
 @language index;
 
+'use strict';
+
 var
 	oThought,
 	weEditors = [],
@@ -272,10 +274,10 @@ function breakLinks(where)
 // Shows the page numbers by clicking the dots.
 function expandPages(spanNode, firstPage, lastPage, perPage)
 {
-	var i = firstPage, pageLimit = 50, baseURL = $(spanNode).data('href');
+	var i = firstPage, pageLimit = 20, baseURL = $(spanNode).data('href');
 
 	// Prevent too many pages from being loaded at once.
-	if ((lastPage - firstPage) / perPage > pageLimit)
+	if ((lastPage - firstPage) / perPage > pageLimit * 2)
 	{
 		var oldLastPage = lastPage;
 		lastPage = firstPage + perPage * pageLimit;
@@ -286,7 +288,11 @@ function expandPages(spanNode, firstPage, lastPage, perPage)
 		$(spanNode).before('<a href="' + baseURL.replace(/%1\$d/, i).replace(/%%/g, '%') + '">' + (1 + i / perPage) + '</a> ');
 
 	if (oldLastPage)
-		$(spanNode).off().click(function () { expandPages(this, lastPage, oldLastPage, perPage); });
+	{
+		for (i = oldLastPage - perPage; i > oldLastPage - perPage * pageLimit; i -= perPage)
+			$(spanNode).after(' <a href="' + baseURL.replace(/%1\$d/, i).replace(/%%/g, '%') + '">' + (1 + i / perPage) + '</a>');
+		$(spanNode).off().click(function () { expandPages(this, lastPage, oldLastPage - perPage * pageLimit, perPage); });
+	}
 	else
 		$(spanNode).remove();
 }
