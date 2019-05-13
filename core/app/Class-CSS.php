@@ -1685,8 +1685,8 @@ class wess_prefixes extends wess
 			'transition(?:-[a-z-]+)?:([^\n;]*)',			// Animated transitions (we need to fix 'transform' values, if any.)
 			'display:\h*(flex|inline-flex)\b',				// Final flexbox model declarations
 			'\b(min|max)-resolution:\h*([\d.]+)(dppx|dpi)',	// Useful for responsive design
-			'\brect\h*\(([^)]+)\)',							// rect() function, needs commas except in IE 6/7
-			'\bcalc\h*\(((?>[^(]|\((?!\))|(?R))+?)\)',		// calc() function
+			'\brect\h*\(([^)]+)\)',							// rect() function, needs commas except in IE 6/7. Useless..?
+			'\bcalc\h*(\((?>[^()]|(?2))*\))',				// calc() function, recursive
 
 		];
 		foreach ($values as $val)
