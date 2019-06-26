@@ -1651,32 +1651,14 @@ function setupThemeContext($forceload = false)
 	foreach ($context['news_lines'] as $id => &$item)
 	{
 		// The letter is allowed to be e, m, s or a for everyone, signed-in members, staff or admins only
-		switch ($item[0])
-		{
-			case 'a':
-				if (!we::$is_admin && !allowedTo('admin_forum'))
-				{
-					unset($context['news_lines'][$id]);
-					continue;
-				}
-				break;
-			case 's':
-				if (!we::$is_admin && !allowedTo(array('moderate_forum', 'moderate_board')))
-				{
-					unset($context['news_lines'][$id]);
-					continue;
-				}
-				break;
-			case 'm':
-				if (we::$is_guest)
-				{
-					unset($context['news_lines'][$id]);
-					continue;
-				}
-				break;
-		}
-
-		$item = substr($item, 1);
+		if ($item[0] === 'a' && !we::$is_admin && !allowedTo('admin_forum'))
+			unset($context['news_lines'][$id]);
+		elseif ($item[0] === 's' && !we::$is_admin && !allowedTo(array('moderate_forum', 'moderate_board')))
+			unset($context['news_lines'][$id]);
+		elseif ($item[0] === 'm' && we::$is_guest)
+			unset($context['news_lines'][$id]);
+		else
+			$item = substr($item, 1);
 	}
 	$context['fader_news_lines'] = array();
 	// Gotta be special for the javascript.
