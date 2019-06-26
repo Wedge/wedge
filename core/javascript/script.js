@@ -542,7 +542,8 @@ $(function ()
 	{
 		var that = $(this);
 		$.each(that.attr('data-eve').split(' '), function () {
-			that.on(eves[this][0], eves[this][1]);
+			if (eves[this]) // Prefetching of the next forum page may cause this to be executed by mistake, see topic.js for the working version.
+				that.on(eves[this][0], eves[this][1]);
 		});
 	});
 
@@ -1150,21 +1151,25 @@ function JumpTo(control)
 
 			var
 				thought = $('#thought' + tid), edited_thought = thought.find('span').first().html(),
+				edit_handler = function (cur_text)
+				{
+					oid = is_new ? 0 : thought.data('oid') || 0;
 
-				cur_text = is_new ? '' : (edited_thought.indexOf('<') == -1 ?
-					edited_thought.php_unhtmlspecialchars() : $.ajax(weUrl('action=ajax;sa=thought') + ';in=' + tid, { async: false }).responseText), p, lists;
+					// Hide current thought, and add tools to write new thought.
+					thought.toggle(is_new && is_new !== 1).after('<form id="thought_form"><input type="text" maxlength="255" id="ntho"><select id="npriv">'
+						+ PrivacySelector((thought.data('prv') + '').split(','), privacy_public, privacy_members, privacy_author)
+						+ '</select><input type="submit" class="save"><input type="button" class="cancel"></form>');
+					$('#npriv')
+						.next().val(we_submit).click(function () { return oThought.submit(tid, mid || tid); })	// Save button
+						.next().val(we_cancel).click(cancel);													// Cancel button
+					$('#ntho').focus().val(cur_text);
+					$('#npriv').sb();
+				};
 
-			oid = is_new ? 0 : thought.data('oid') || 0;
-
-			// Hide current thought, and add tools to write new thought.
-			thought.toggle(is_new && is_new !== 1).after('<form id="thought_form"><input type="text" maxlength="255" id="ntho"><select id="npriv">'
-				+ PrivacySelector((thought.data('prv') + '').split(','), privacy_public, privacy_members, privacy_author)
-				+ '</select><input type="submit" class="save"><input type="button" class="cancel"></form>');
-			$('#npriv')
-				.next().val(we_submit).click(function () { return oThought.submit(tid, mid || tid); })	// Save button
-				.next().val(we_cancel).click(cancel);													// Cancel button
-			$('#ntho').focus().val(cur_text);
-			$('#npriv').sb();
+			if (is_new || edited_thought.indexOf('<') == -1)
+				edit_handler(is_new ? '' : edited_thought.php_unhtmlspecialchars());
+			else
+				$.post(weUrl('action=ajax;sa=thought') + ';in=' + tid, edit_handler);
 
 			return false;
 		};
