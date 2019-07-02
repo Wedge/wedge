@@ -364,7 +364,7 @@ class wess_var extends wess
 			that can be queried with we::is(). Like this:
 
 				$variable = "rgba(2,4,6,.5)";
-				$variable {ie6,ie7,ie8} = rgb(1,2,3);
+				$variable {ie10,firefox3} = rgb(1,2,3);
 
 			The only reason we're not accepting ":" in declarations is that
 			we want to be able to do this: (Check the last line carefully)
@@ -1475,17 +1475,17 @@ class wess_prefixes extends wess
 				return '';
 			if (($firefox && $v < 4) || ($ios && $ov < 5) || ($safari && $v < 5.1))
 				return $prefixed;
-			if ($android)
+			if ($android && $v < 4)
 				return $both;
 			return $unchanged;
 		}
 
-		// IE6 and IE7 don't support box-sizing, while Mozilla (as of February 2017!), and older Androids and Safaris require a prefix.
+		// IE6 and IE7 don't support box-sizing, while older Mozillas, Androids and Safaris require a prefix.
 		if ($matches[1] === 'box-sizing')
 		{
 			if ($ie && $v < 8)
 				return '';
-			if ($firefox || ($ios && $ov < 5) || ($safari && $v < 5.1) || ($android && $ov < 4))
+			if (($firefox && $v < 29) || ($ios && $ov < 5) || ($safari && $v < 5.1) || ($android && $ov < 4))
 				return $prefixed;
 			return $unchanged;
 		}
@@ -1503,7 +1503,7 @@ class wess_prefixes extends wess
 		{
 			if ($ie8down || $ie9 || ($firefox && $v < 3.6) || ($opera && $v < 11.1))
 				return '';
-			return $opera || ($ie && $v >= 10) ? $unchanged : $this->prefix . 'column-' . $unchanged;
+			return $opera || ($firefox && $v >= 65) || ($ie && $v >= 10) ? $unchanged : $this->prefix . 'column-' . $unchanged;
 		}
 
 		// As of April 2014, IE10+, Firefox and WebKit support this prefixed (unprefixed for Chrome 54+). Opera<14 and IE<10 don't.
@@ -1558,7 +1558,7 @@ class wess_prefixes extends wess
 		if (strpos($matches[1], 'hyphens') === 0)
 		{
 			if (($chrome && !$operium && $v >= 55) || ($safari && $v > 5) || $firefox || ($ie && $v >= 10))
-				return $prefixed;
+				return $chrome || ($firefox && $v >= 43) ? $unchanged : $prefixed;
 			return '';
 		}
 
@@ -1611,8 +1611,8 @@ class wess_prefixes extends wess
 			return $unchanged;
 		}
 
-		// The final flexbox model (Chrome 21+, Opera 12.1, IE11+, Safari 7+) is final, as the name says, and shouldn't require a prefix. Silly WebKit...
-		if ((($b['safari'] && $v >= 7) || ($os['ios'] && $ov >= 7) || ($b['chrome'] && $v >= 21 && $v < 29)) && strpos($matches[1], 'flex') !== false)
+		// The final flexbox model (Chrome 21+, Opera 12.1, IE11+, Safari 7+) is final, as the name says, and shouldn't require a prefix. WebKit was a bit slow to react.
+		if ((($b['safari'] && $v >= 7 && $v < 9) || ($os['ios'] && $ov >= 7 && $ov < 9) || ($b['chrome'] && $v >= 21 && $v < 29)) && strpos($matches[1], 'flex') !== false)
 			return str_replace(['inline-flex', 'flex'], [$this->prefix . 'inline-flex', $this->prefix . 'flex'], $unchanged);
 
 		// There's a need for min/max-resolution to be rewritten for some browsers.
