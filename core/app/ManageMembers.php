@@ -295,11 +295,14 @@ function ViewMemberlist()
 		// Can they see all IP addresses? If not, they shouldn't see any.
 		if (!allowedTo('manage_bans'))
 			unset($params['ip']);
-		elseif (isset($_POST['ip']))
+		elseif (isset($_POST['ip']) && $_POST['ip'] !== '')
+		{
 			$_POST['ip'] = expand_ip($_POST['ip']);
+			if ($_POST['ip'] == INVALID_IP)
+				unset($_POST['ip']);
+		}
 
 		// !!! Validate a little more.
-
 		// Loop through every field of the form.
 		$query_parts = array();
 		$where_params = array();
