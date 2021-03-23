@@ -625,8 +625,8 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 		new wess_prefixes(),	// Automatically adds browser prefixes for many frequent elements, or manually through -prefix.
 	];
 
-	// rgba to rgb conversion for IE 6-8, and a hack for IE9.
-	if (we::is('ie[-9]'))
+	// A hack for IE9.
+	if (we::is('ie9'))
 		$plugins[] = new wess_rgba();
 
 	// No need to start the Base64 plugin if we can't gzip the result or the browser can't see it...
@@ -742,22 +742,21 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 		$final
 	);
 
-	// Group as many matches as we can, into a :matches() selector. This is new in CSS4 and implemented
-	// in WebKit and Firefox as of this writing. Because I couldn't find a clean source indicating when
-	// support was added, I'll stick to MDN's list, and use :any until :matches is officialized.
-	// Note: Safari 9+ added support for :matches proper.
+	// Group as many selectors as we can into a :where() selector. This is preferred over :is() because of specificity reasons,
+	// meaning :where(), unlike :is(), doesn't affect any overrides you would want to apply to one of its components.
+	// For this reason, support for earlier implementations (:any and :matches) was dropped from Wedge.
 	$selector = '([abipqsu]|[!+>&#*@:.a-z0-9][^{};,\n"()\~+> ]+?)'; // like $selector_regex, but lazy (+?) and without compounds (\~+> ).
-	if (we::is('chrome[12-],firefox[4-],safari[5.2-]') && preg_match_all('~(?:^|})' . $selector . '([>+: ][^,{]+)(?:,' . $selector . '\2)+(?={)~', $final, $matches, PREG_SET_ORDER))
+	if (we::is('chrome[88-],firefox[78-],safari[14-]') && preg_match_all('~(?:^|})' . $selector . '([>+: ][^,{]+)(?:,' . $selector . '\2)+(?={)~', $final, $matches, PREG_SET_ORDER))
 	{
-		$magic = we::$browser['webkit'] ? (we::$browser['safari'] && we::$browser['version'] >= 9 ? ':matches' : ':-webkit-any') : ':-moz-any';
 		foreach ($matches as $m)
 		{
 			// The spec says pseudo-elements aren't allowed INSIDE :matches, but implementations seem to also refuse them NEXT to :matches.
+			// !! Note: should check whether this is still the case with :where().
 			if (strpos($m[0], ':') !== false && strhas($m[0], [':before', ':after', ':first-letter', ':first-line', ':selection']))
 				continue;
 			$final = str_replace(
 				$m[0],
-				($m[0][0] === '}' ? '}' : '') . $magic . '(' . str_replace(
+				($m[0][0] === '}' ? '}' : '') . ':where(' . str_replace(
 					[$m[2] . ',', $m[2] . '{', '}'],
 					[',', '', ''],
 					$m[0] . '{'
