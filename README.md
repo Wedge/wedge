@@ -4,9 +4,7 @@ Welcome to Wedge.
 
 The leading bulletin board/forum/blog software for the new Internet.
 
-Nah, just kidding, it's a pretty innocent package that's hardly going to hit the headlines, ever.
-Still, it represents about 8 man-years of work from skilled and very dedicated developers.
-And it's software to be proud of. Hopefully, it will make your lives a bit less unbearable.
+That'll show them.
 
 Installing from the GitHub repo
 -------------------------------
