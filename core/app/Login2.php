@@ -129,6 +129,7 @@ function Login2()
 		$context['default_username'] = westr::safe($_POST['user']);
 	}
 
+
 	// Are we using any sort of hook to validate the login?
 	if (in_array('retry', call_hook('validate_login', array($_POST['user'], isset($_POST['hash_passwrd']) && strlen($_POST['hash_passwrd']) == 40 ? $_POST['hash_passwrd'] : null, $settings['cookieTime'])), true))
 	{
@@ -136,7 +137,6 @@ function Login2()
 		$context['disable_login_hashing'] = true;
 		return;
 	}
-
 	// Only check this if we allow for username logins.
 	if (empty($settings['login_type']) || $settings['login_type'] == 1)
 	{
@@ -180,170 +180,69 @@ function Login2()
 	$user_settings = wesql::fetch_assoc($request);
 	wesql::free_result($request);
 
-	// Figure out the password using Wedge's encryption - if what they typed is right.
-	if (isset($_POST['hash_passwrd']) && strlen($_POST['hash_passwrd']) == 40)
-	{
-		// Needs upgrading?
-		if (strlen($user_settings['passwd']) != 40)
-		{
-			$context['login_errors'] = array($txt['login_hash_error']);
-			$context['disable_login_hashing'] = true;
-			unset($user_settings);
-			return;
-		}
-		// Challenge passed.
-		elseif ($_POST['hash_passwrd'] == sha1($user_settings['passwd'] . $sc))
-			$sha_passwd = $user_settings['passwd'];
-		else
-		{
-			// Don't allow this!
-			validatePasswordFlood($user_settings['id_member'], $user_settings['passwd_flood']);
+    // password options passed to password_hash()
+    $password_hash_options = ['cost' => 10];
+    // set to true if you want to force rehash
+    $force_rehash = false;
+    // is the password fine or not?!
+    $password_verify = false;
 
-			$_SESSION['failed_login'] = isset($_SESSION['failed_login']) ? $_SESSION['failed_login'] + 1 : 1;
+    // First check if password in db is still an old wedge styled sha1 password
+    if(strlen($user_settings['passwd']) == 40) {
 
-			if ($_SESSION['failed_login'] >= $settings['failed_login_threshold'])
-				redirectexit('action=reminder');
-			else
-			{
-				if (!empty($settings['enableErrorPasswordLogging']))
-					log_error($txt['incorrect_password'] . ' - <span class="remove">' . $user_settings['member_name'] . '</span>', 'password');
+        // ok, it's an old one. Now we have to generate an old styled
+        // wedge password.
+        $sha_passwd = sha1(strtolower($user_settings['member_name']) . un_htmlspecialchars($_POST['passwrd']));
 
-				$context['disable_login_hashing'] = true;
-				$context['login_errors'] = array($txt['incorrect_password']);
-				unset($user_settings);
-				return;
-			}
-		}
-	}
-	else
-		$sha_passwd = sha1(strtolower($user_settings['member_name']) . un_htmlspecialchars($_POST['passwrd']));
+        // check if password is correct
+        if($sha_passwd == $user_settings['passwd']) {
+            // password is fine
+            $password_verify = true;
+            // make sure that we rehash later to set update the password in db
+            $force_rehash = true;
+        }
 
-	// Bad password! Thought you could fool the database?!
-	if ($user_settings['passwd'] != $sha_passwd)
-	{
-		// Let's be cautious, no hacking please. Thanx.
-		validatePasswordFlood($user_settings['id_member'], $user_settings['passwd_flood']);
+    } else {
+        // Not an old password, so we can just use password_verify
+        $password_verify = password_verify($_POST['passwrd'], $user_settings['passwd']);
+    }
 
-		// Maybe we were too hasty... let's try some other authentication methods.
-		$other_passwords = array();
+    if ($password_verify === true) {
+        // password seems fine
 
-		// None of the below cases will be used most of the time (because the salt is normally set.)
-		if ($user_settings['password_salt'] == '')
-		{
-			// YaBB SE, Discus, MD5 (used a lot), SHA-1 (used some), SMF 1.0.x, IkonBoard, and none at all.
-			$other_passwords[] = crypt($_POST['passwrd'], substr($_POST['passwrd'], 0, 2));
-			$other_passwords[] = crypt($_POST['passwrd'], substr($user_settings['passwd'], 0, 2));
-			$other_passwords[] = md5($_POST['passwrd']);
-			$other_passwords[] = sha1($_POST['passwrd']);
-			$other_passwords[] = md5_hmac($_POST['passwrd'], strtolower($user_settings['member_name']));
-			$other_passwords[] = md5($_POST['passwrd'] . strtolower($user_settings['member_name']));
-			$other_passwords[] = md5(md5($_POST['passwrd']));
-			$other_passwords[] = $_POST['passwrd'];
+        // It's possible that we need to rehash because PASSWORD_DEFAULT Alogrithm changed or $force_rehash is true
+        if ($force_rehash === true || password_needs_rehash($user_settings['passwd'], PASSWORD_DEFAULT, $password_hash_options) === true) {
+            // hash the passed password with the new algorithm
+            $password_hash = password_hash($_POST['passwrd'], PASSWORD_DEFAULT, $password_hash_options);
 
-			// This one is a strange one... MyPHP, crypt() on the MD5 hash.
-			$other_passwords[] = crypt(md5($_POST['passwrd']), md5($_POST['passwrd']));
+            // make sure hashing worked as it should
+            if($password_hash === false || $password_hash == null) {
+                log_error('Couldn\'t hash password.');
+                $context['login_errors'] = array('Internal error. Sorry. Tell admin.');
+                return;
+            }
 
-			// Snitz style - SHA-256. Technically, this is a downgrade, but most PHP configurations don't support sha256 anyway.
-			if (strlen($user_settings['passwd']) == 64 && function_exists('mhash') && defined('MHASH_SHA256'))
-				$other_passwords[] = bin2hex(mhash(MHASH_SHA256, $_POST['passwrd']));
-
-			// phpBB3 users new hashing. We now support it as well. ;)
-			$other_passwords[] = phpBB3_password_check($_POST['passwrd'], $user_settings['passwd']);
-
-			// APBoard 2 Login Method.
-			$other_passwords[] = md5(crypt($_POST['passwrd'], 'CRYPT_MD5'));
-
-			// Anything else?
-			call_hook('other_passwords', array(&$other_passwords));
-		}
-		// The hash should be 40 if it's SHA-1, so we're safe with more here too.
-		elseif (strlen($user_settings['passwd']) == 32)
-		{
-			// vBulletin 3 style hashing? Let's welcome them with open arms. \o/
-			$other_passwords[] = md5(md5($_POST['passwrd']) . $user_settings['password_salt']);
-
-			// Hmm.. p'raps it's Invision 2 style?
-			$other_passwords[] = md5(md5($user_settings['password_salt']) . md5($_POST['passwrd']));
-
-			// Some common md5 ones.
-			$other_passwords[] = md5($user_settings['password_salt'] . $_POST['passwrd']);
-			$other_passwords[] = md5($_POST['passwrd'] . $user_settings['password_salt']);
-		}
-		elseif (strlen($user_settings['passwd']) == 40)
-		{
-			// Maybe they are using a hash from before the password fix.
-			$other_passwords[] = sha1(strtolower($user_settings['member_name']) . un_htmlspecialchars($_POST['passwrd']));
-
-			// BurningBoard3 style of hashing.
-			$other_passwords[] = sha1($user_settings['password_salt'] . sha1($user_settings['password_salt'] . sha1($_POST['passwrd'])));
-
-			// Perhaps we converted to UTF-8 and have a valid password being hashed differently.
-			if (!empty($settings['previousCharacterSet']) && $settings['previousCharacterSet'] != 'utf8')
-			{
-				// Try iconv first, for no particular reason.
-				if (function_exists('iconv'))
-					$other_passwords['iconv'] = sha1(strtolower(iconv('UTF-8', $settings['previousCharacterSet'], $user_settings['member_name'])) . un_htmlspecialchars(iconv('UTF-8', $settings['previousCharacterSet'], $_POST['passwrd'])));
-
-				// Say it aint so, iconv failed!
-				if (empty($other_passwords['iconv']) && function_exists('mb_convert_encoding'))
-					$other_passwords[] = sha1(strtolower(mb_convert_encoding($user_settings['member_name'], 'UTF-8', $settings['previousCharacterSet'])) . un_htmlspecialchars(mb_convert_encoding($_POST['passwrd'], 'UTF-8', $settings['previousCharacterSet'])));
-			}
+            // and update the database
+            $user_settings['passwd'] = $password_hash;
+			updateMemberData($user_settings['id_member'], array('passwd' => $user_settings['passwd']));
 		}
 
-		// SMF's sha1 function can give a funny result on Linux...
-		// If we've now got the real one, let the old SMF one be valid!
-		if (strpos(strtolower(PHP_OS), 'win') !== 0)
-			$other_passwords[] = sha1_smf(strtolower($user_settings['member_name']) . un_htmlspecialchars($_POST['passwrd']));
+        // now proceed with login
+        DoLogin();
+    } else {
+        // password is not fine
+        validatePasswordFlood($user_settings['id_member'], $user_settings['passwd_flood']);
 
-		// Whichever encryption it was using, let's make it use Wedge's now. ;)
-		if (in_array($user_settings['passwd'], $other_passwords))
-		{
-			$user_settings['passwd'] = $sha_passwd;
-			$user_settings['password_salt'] = substr(md5(mt_rand()), 0, 4);
-
-			// Update the password and set up the hash.
-			updateMemberData($user_settings['id_member'], array('passwd' => $user_settings['passwd'], 'password_salt' => $user_settings['password_salt'], 'passwd_flood' => ''));
-		}
-		// Okay, they for sure didn't enter the password!
-		else
-		{
-			// They've messed up again - keep a count to see if they need a hand.
-			$_SESSION['failed_login'] = isset($_SESSION['failed_login']) ? $_SESSION['failed_login'] + 1 : 1;
-
-			// Hmm... don't remember it, do you? Here, try the password reminder. ;)
-			if ($_SESSION['failed_login'] >= $settings['failed_login_threshold'])
-				redirectexit('action=reminder');
-			// We'll give you another chance...
-			else
-			{
-				// Log an error so we know that it didn't go well in the error log.
-				if (!empty($settings['enableErrorPasswordLogging']))
-					log_error($txt['incorrect_password'] . ' - <span class="remove">' . $user_settings['member_name'] . '</span>', 'password');
-
-				$context['login_errors'] = array($txt['incorrect_password']);
-				return;
-			}
-		}
-	}
-	elseif (!empty($user_settings['passwd_flood']))
-	{
-		// Let's be sure they weren't a little hacker.
-		validatePasswordFlood($user_settings['id_member'], $user_settings['passwd_flood'], true);
-
-		// If we got here then we can reset the flood counter.
-		updateMemberData($user_settings['id_member'], array('passwd_flood' => ''));
-	}
-
-	// Correct password, but they've got no salt; fix it!
-	if ($user_settings['password_salt'] == '')
-	{
-		$user_settings['password_salt'] = substr(md5(mt_rand()), 0, 4);
-		updateMemberData($user_settings['id_member'], array('password_salt' => $user_settings['password_salt']));
-	}
-
-	// Check their activation status.
-	if (!checkActivation())
-		return;
-
-	DoLogin();
+        $_SESSION['failed_login'] = isset($_SESSION['failed_login']) ? $_SESSION['failed_login'] + 1 : 1;
+        if ($_SESSION['failed_login'] >= $settings['failed_login_threshold'])
+            redirectexit('action=reminder');
+        else
+        {
+            if (!empty($settings['enableErrorPasswordLogging']))
+                log_error($txt['incorrect_password'] . ' - <span class="remove">' . $user_settings['member_name'] . '</span>', 'password');
+            $context['disable_login_hashing'] = true;
+            $context['login_errors'] = array($txt['incorrect_password']);
+            unset($user_settings);
+        }
+    }
 }
