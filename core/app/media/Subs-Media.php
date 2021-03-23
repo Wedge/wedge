@@ -3486,7 +3486,8 @@ function aeva_mkdir($dir, $chmod)
 		return (bool) $success;
 	}
 
-	return @mkdir($amSettings['data_dir_path'] . $dir, $chmod);
+	// Create the folder. In case we're trying to create a folder that already exists, make it look like we just created it.
+	return @file_exists($amSettings['data_dir_path'] . $dir) || @mkdir($amSettings['data_dir_path'] . $dir, $chmod);
 }
 
 // Reset everyone's Unseen counter to zero.
