@@ -742,16 +742,18 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 		$final
 	);
 
+/*
 	// Group as many selectors as we can into a :where() selector. This is preferred over :is() because of specificity reasons,
 	// meaning :where(), unlike :is(), doesn't affect any overrides you would want to apply to one of its components.
 	// For this reason, support for earlier implementations (:any and :matches) was dropped from Wedge.
+	// !! Disabling this for now, as it's causing problems with existing skins that were built with :is() in mind.
 	$selector = '([abipqsu]|[!+>&#*@:.a-z0-9][^{};,\n"()\~+> ]+?)'; // like $selector_regex, but lazy (+?) and without compounds (\~+> ).
 	if (we::is('chrome[88-],firefox[78-],safari[14-]') && preg_match_all('~(?:^|})' . $selector . '([>+: ][^,{]+)(?:,' . $selector . '\2)+(?={)~', $final, $matches, PREG_SET_ORDER))
 	{
 		foreach ($matches as $m)
 		{
 			// The spec says pseudo-elements aren't allowed INSIDE :matches, but implementations seem to also refuse them NEXT to :matches.
-			// !! Note: should check whether this is still the case with :where().
+			// !! Note: should check whether this is still the case with :where(), as they're now allowed inside :is().
 			if (strpos($m[0], ':') !== false && strhas($m[0], [':before', ':after', ':first-letter', ':first-line', ':selection']))
 				continue;
 			$final = str_replace(
@@ -765,6 +767,7 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 			);
 		}
 	}
+*/
 
 	wedge_process_css_replacements($final);
 
