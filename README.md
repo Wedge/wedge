@@ -6,7 +6,8 @@ The leading bulletin board/forum/blog software for the new Internet.
 
 Nah, just kidding, it's a pretty innocent package that's hardly going to hit the headlines, ever.
 Still, it represents about 8 man-years of work from skilled and very dedicated developers.
-And it's software to be proud of. Hopefully, it will make your lives a bit less unbearable.
+And it's software to be proud of, that still works fine over ten years later.
+Hopefully, it will make your lives a bit less unbearable.
 
 Installing from the GitHub repo
 -------------------------------
@@ -64,26 +65,10 @@ Credits
 
 Read contributors.txt
 
-What more can you tell me about Wedge?
---------------------------------------
+Anything else?
+--------------
 
-No one can be told you what Wedge really is. You have to read the website for yourself.
-Plus, it saves me the hassle. And I'm lazy. See? I can't even come up with my own quotes.
-
-- [![Download](https://img.shields.io/badge/Wedge-Forum-brightgreen.svg)](https://wedge.org)
-- [![Download](https://img.shields.io/badge/Wedge-Blog-brightgreen.svg)](https://wedge.org/blog/) (development blog, spectacularly failing at being noob-friendly.)
-- [![Download](https://img.shields.io/badge/Pub-Faqs-brightgreen.svg)](https://wedge.org/pub/faq/) (mostly outdated, but we're working on it.)
-- [![Download](https://img.shields.io/badge/Pub-Feats-brightgreen.svg)](https://wedge.org/pub/feats/) (a list of features introduced in the first few years.)
-
-Can you read me my rights?
---------------------------
-
-Read license.txt, and if you don't get all of the legalese, it just means:
-- Currently, Wedge is free of charge, but it's not free to redistribute. As such, it's
-  not 'free and open source' software, but it's definitely open source. If you want to turn
-  one of its components into a MIT-licensed generic library, just ask me, I might do it.
-- You can't redistribute the package by yourself. If you ever find yourself in the need
-  to do so, go to wedge.org and drop a PM to Nao.
-- And other details that most people shouldn't have to bother with. Still, be respectful. Thanks.
+- Wedge is now released under the MIT license. It's very permissive, but please be kind. Thanks!
+- If you have any questions, contact me on Telegram. My user name over there is Naolog.
 
 -- René-Gilles Deberdt (Nao), from Paris, France.
