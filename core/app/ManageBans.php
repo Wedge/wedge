@@ -16,7 +16,6 @@ if (!defined('WEDGE'))
 */
 
 // !!! Needs documentation.
-
 function ManageBan()
 {
 	global $context, $txt;
@@ -85,7 +84,7 @@ function createBanList()
 	$ban_is_hard = $context['sub_action'] == 'hard';
 
 	// And delete any?
-	if (!empty($_POST['removeBans']) && !empty($_POST['remove']) && is_array($_POST['remove']))
+	if (isset($_POST['removeBans'], $_POST['remove']) && is_array($_POST['remove']))
 	{
 		checkSession();
 
